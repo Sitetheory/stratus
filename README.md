@@ -1,5 +1,7 @@
 # Stratus - Web Design Platform with Backbone.js
 
+[![Join the chat at https://gitter.im/Sitetheory/stratus](https://badges.gitter.im/Sitetheory/stratus.svg)](https://gitter.im/Sitetheory/stratus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Overview
 
 This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.
