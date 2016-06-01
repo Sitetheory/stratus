@@ -1,0 +1,14 @@
+# OSX
+.DS_Store
+
+# IDE Stuff (This covers PHPStorm, IntelliJ IDEA, Aptana, and Eclipse)
+.idea/
+.idea-new
+*.iml
+.project
+.settings
+.jar
+.ide_plugins/
+
+# Git
+*~HEAD
