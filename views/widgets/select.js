@@ -115,7 +115,7 @@
                 // TODO: point to the cloud server (PATH!)
                 // TODO: this (and all others) should point to current version path
                 // The CSS file to load for this widget
-                cssFile: ['/sitetheory/v/1/0/bundles/sitetheorycore/js/lib/stratus/views/templates/stratus.views.widgets.templates.select.css', '/sitetheory/v/1/0/bundles/sitetheorycore/css/Core/list.css'],
+                cssFile: ['/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/select.css', '/sitetheory/v/1/0/bundles/sitetheorycore/css/Core/list.css'],
                 // The class that should appear on the dropdown-menu (which is the containerOptions when this ui is
                 // set to display as a menu).  This is usually used to determine if you want to pull-left or right,
                 // but could add anything.
