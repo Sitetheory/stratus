@@ -1,0 +1,48 @@
+{% if (options.showSelected) { %}
+    <div class="well clearfix selectedOptionsContainer">
+        {% if (options.textSelectedHeader) { %}<h3 class="header">{{ options.textSelectedHeader }}</h3>{% } %}
+    {% if (options.source) { %}
+        <div id="{{ elementId }}-SelectedCollection" class="clearfix selectedCollection" data-type="Collection" data-property="{{ property }}" data-source="{{ options.source }}" data-templates='{{ JSON.stringify(options.selectedTemplates) }}' data-rerender="none" data-multiple="{{ options.multiple }}" data-meta='{{ JSON.stringify(options.selectedMeta) }}' data-textNoContent="{{ options.textSelectedNoContent }}" data-cssNoContent="{{ options.cssSelectedNoContent }}">
+            <div class="loadAnimation"></div>
+        </div>
+    {% } else { %}
+        <div class="selected">
+            <div class="loadAnimation"></div>
+        </div>
+    {% } %}
+    </div>
+{% } %}
+
+{% if (!options.ui && !options.source) { %}
+    <select class="selectOptionsContainer" name="{{ options.inputName }}"></select>
+{% } else { %}
+    {% if (options.ui == 'menu') { %}
+        <div class="dropdown">
+            <button id="dropdown-{{ elementId }}" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="placeholder">{{ options.placeholder }}</span>
+                <span class="caret"></span>
+            </button>
+    {% } %}
+    <div {% if (options.ui === 'menu') { %}aria-labelledby="dropdown-{{ elementId }}"{% } %} class="selectOptionsContainer {{ options.classDropdown }}">
+        {% if (options.source) { %}
+            {% if (options.showSearch) { %}
+                <div role="search" data-type="filter" data-entity="{{ options.source }}" data-fetch="false"  data-template="templates-filter-search"></div>
+            {% } %}
+            <!-- Dynamic Collection from Source -->
+            {% if (options.showPaginationTop) { %}
+                <div id="{{ elementId }}-OptionsCollectionPaginationTop" class="pagination top" data-entity="{{ options.source }}" data-type="pagination" data-fetch="false"></div>
+            {% } %}
+            <div id="{{ elementId }}-OptionsCollection" class="clearfix optionsCollection" data-type="Collection" data-entity="{{ options.source }}" {% if (options.sourceApi) { %}data-api='{{ JSON.stringify(options.sourceApi) }}'{% } %} {% if (options.collectionTarget) { %}data-target='{{ JSON.stringify(options.collectionTarget) }}'{% } %} data-templates='{{ JSON.stringify(options.sourceTemplates) }}' data-rerender="none" data-meta='{{ JSON.stringify(options.sourceMeta) }}'>
+                {% if (options.ui) { %}
+                    <div class="loadAnimation"></div>
+                {% } %}
+            </div>
+            {% if (options.ui) { %}
+                <div id="{{ elementId }}-OptionsCollectionPagination" class="pagination bottom" data-entity="{{ options.source }}" data-type="pagination" data-fetch="false"></div>
+            {% } %}
+        {% } %}
+    </div>
+    {% if (options.ui === 'menu') { %}
+        </div>
+    {% } %}
+{% } %}

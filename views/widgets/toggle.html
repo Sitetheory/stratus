@@ -1,0 +1,14 @@
+{% if (options.icon) { %}
+    {% if (options.gradient) { %}
+        <div class="{{ options.gradient }}"></div>
+    {% } %}
+        <span id="{{ elementId }}" class="{{ options.classBtn }}">{{ options.icon }}</span>
+{% } else { %}
+    <input id="{{ elementId }}" class="form-control" type="{{ options.ui }}" {% if (options.relatedRequire) { %}name="{{ options.related}}" {% } %} {% if (options.related) { %}data-togglerelated="{{ options.related}}" {% } %}>
+{% } %}
+{% if (!options.slider && options.textOn) { %}
+    <span class="{{ options.classOn}}">{{ options.textOn }}</span>
+{% } %}
+{% if (!options.slider && options.textOff) { %}
+    <span class="{{ options.classOff}}">{{ options.textOff }}</span>
+{% } %}

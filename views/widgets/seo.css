@@ -1,0 +1,20 @@
+#headerControlsSeoToggle-drawer {
+    width: 500px;
+    /* Our Drawer will use margin so the page changes responsively */
+    left: -500px;
+    text-transform: none;
+    background-color: #FFF;
+}
+body[data-draweropen="headerControlsSeoToggle"] #headerControlsSeoToggle-drawer {
+    left: 0;
+}
+body[data-draweropen="headerControlsSeoToggle"] #app {
+    left: 500px !important;
+}
+.routingInputMain {
+    width: 30px;
+    padding: 0 20px 20px;
+}
+.routingInputDelete svg {
+    width: 30px;
+}

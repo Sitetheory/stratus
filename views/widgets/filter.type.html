@@ -1,0 +1,31 @@
+{% console.log("Meta:", meta); %}
+
+{% if (typeof meta.contentTypes !== 'undefined' && meta.contentTypes.length) { %}
+    <h4 id="filterContentTypeTitle" class="customFontSecondary smallLabel">Filter by Type</h4>
+
+    <div id="filterContentTypeContainer" class="backgroundDark">
+        <ul id="filterContentType" class="filterContentType list-unstyled">
+            {% _.each(_.first(meta.contentTypes, 6), function(contentType) { %}
+                <li>
+                    <label>
+                        <input type="checkbox" name="qContentType[]" value="{{ contentType.value }}" checked class="form-control">{{ contentType.prompt }}
+                    </label>
+                </li>
+            {% }); %}
+        </ul>
+        {% if (meta.contentTypes.length > 6) { %}
+        <div id="filterContentTypeMoreContainer">
+            <div id="btn-filterContentTypeMore">show more</div>
+            <ul id="filterContentTypeMore" class="filterContentType list-unstyled">
+                {% _.each(_.rest(meta.contentTypes, 5), function(contentType) { %}
+                    <li>
+                        <label>
+                            <input class="form-control" type="checkbox" name="qContentType[]" value="{{ contentType.value }}" checked>{{ contentType.prompt }}
+                        </label>
+                    </li>
+                {% }); %}
+            </ul>
+        </div>
+        {% } %}
+    </div>
+{% } %}
