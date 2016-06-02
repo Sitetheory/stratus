@@ -82,9 +82,9 @@
                 unrenderEventDefault: 'blur',
                 // TODO: Point to CDN appropriately (PATH!)
                 requiredCssFile: [
-                    '/sitetheory/v/1/0/bundles/sitetheorycore/css/redactor/redactor.css',
-                    '/sitetheory/v/1/0/bundles/sitetheorycore/css/redactor/redactor-clips.css',
-                    '/sitetheory/v/1/0/bundles/sitetheorycore/js/lib/codemirror/lib/codemirror.css'
+                    '/sitetheory/v/1/0/bundles/sitetheorycore/js/redactor/redactor.css',
+                    '/sitetheory/v/1/0/bundles/sitetheorycore/js/redactor/redactor-clips.css',
+                    '/sitetheory/v/1/0/bundles/sitetheorycore/js/codemirror/lib/codemirror.css'
                 ],
                 redactor: {
                     // NOTE: callbacks don't work in this version so we do keybinding, and saving manually
