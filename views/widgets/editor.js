@@ -82,8 +82,8 @@
                 unrenderEventDefault: 'blur',
                 // TODO: Point to CDN appropriately (PATH!)
                 requiredCssFile: [
-                    '/sitetheory/v/1/0/bundles/sitetheorycore/css/redactor/redactor.css',
-                    '/sitetheory/v/1/0/bundles/sitetheorycore/css/redactor/redactor-clips.css',
+                    '/sitetheory/v/1/0/bundles/sitetheorycore/dist/redactor/redactor.css',
+                    '/sitetheory/v/1/0/bundles/sitetheorycore/dist/redactor/redactor-clips.css',
                     '/sitetheory/v/1/0/bundles/sitetheorycore/dist/codemirror/lib/codemirror.css'
                 ],
                 redactor: {
