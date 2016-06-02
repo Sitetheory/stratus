@@ -66,7 +66,7 @@
                 // This saves whether this toggle is bound to a model or a variable (within Stratus.Environment), e.g. model|var
                 dataType: null,
                 // SliderCss
-                sliderCss: ['/sitetheory/v/1/0/bundles/sitetheorycore/css/bootstrap/bootstrap-toggle.min.css']
+                sliderCss: ['/sitetheory/v/1/0/bundles/sitetheorycore/js/bootstrap/bootstrap-toggle.min.css']
             },
             public: {
                 // Optional: 'radio'|'checkbox'|'icon'|'slider'
