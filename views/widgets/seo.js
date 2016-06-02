@@ -62,7 +62,7 @@
                 classIcon: 'seoIcon glyphicon glyphicon-tag',
                 // TODO: point to the cloud server (PATH!)
                 // The CSS file to load for this widget
-                cssFile: ['/sitetheory/v/1/0/bundles/sitetheorycore/js/lib/stratus/views/templates/stratus.views.widgets.templates.seo.css']
+                cssFile: ['/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/seo.css']
             }
         }
     });
