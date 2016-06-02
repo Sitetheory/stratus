@@ -84,7 +84,7 @@
                 requiredCssFile: [
                     '/sitetheory/v/1/0/bundles/sitetheorycore/css/redactor/redactor.css',
                     '/sitetheory/v/1/0/bundles/sitetheorycore/css/redactor/redactor-clips.css',
-                    '/sitetheory/v/1/0/bundles/sitetheorycore/js/lib/codemirror/lib/codemirror.css'
+                    '/sitetheory/v/1/0/bundles/sitetheorycore/dist/codemirror/lib/codemirror.css'
                 ],
                 redactor: {
                     // NOTE: callbacks don't work in this version so we do keybinding, and saving manually
@@ -113,7 +113,7 @@
             public: {
                 // Flag whether or not to include codeMirror for HTML view
                 codemirror: true,
-                codemirrorCssFile: '/sitetheory/v/1/0/bundles/sitetheorycore/css/codemirror/sitetheory.css'
+                codemirrorCssFile: '/sitetheory/v/1/0/bundles/sitetheorycore/css/sitetheory.codemirror.css'
             }
         },
 
