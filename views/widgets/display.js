@@ -156,7 +156,7 @@
             return value;
         },
 
-
+        // TODO: we may want to move these into Stratus as a basic underscore mixin that we can reuse: date(time, format), timeSince(date)
         // formatDate()
         // ---------------
         // Format: Show the specific date
