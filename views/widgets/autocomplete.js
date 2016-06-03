@@ -53,7 +53,7 @@
         options: {
             private: {
                 // TODO: point to the cloud server (PATH!)
-                requiredCssFile: ['/sitetheory/v/1/0/bundles/sitetheorycore/css/selectize/selectize.css'],
+                requiredCssFile: ['/sitetheory/v/1/0/bundles/sitetheorycore/css/sitetheory.selectize.css'],
                 selectize: {
                     preload: true,
                     delimiter: null,

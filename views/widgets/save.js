@@ -63,7 +63,7 @@
                 // Allow specifying special save actions, e.g. 'version', 'duplicate'
                 action: null,
                 // TODO: point to the cloud server (PATH!)
-                //cssFile: '/sitetheory/v/1/0/bundles/sitetheorycore/js/lib/stratus/views/templates/stratus.views.templates.save.css',
+                //cssFile: '/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/save.css',
                 iconPath: '@SitetheoryCoreBundle:images/icons/actionButtons/save.svg',
                 // The text for the save button that appears when it's unsaved.
                 gradient: null,

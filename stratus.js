@@ -1495,7 +1495,6 @@
                         requirements.push('text!' + templates[key]);
                         templateMap.push(key);
                     } else {
-                        console.warn('External:', templates[key]);
                         requirements.push('text!' + templates[key]);
                         templateMap.push(key);
                     }

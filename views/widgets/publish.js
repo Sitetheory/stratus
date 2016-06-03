@@ -74,7 +74,7 @@
                 versionEntity: null,
                 // TODO: point to the cloud server (PATH!)
                 // The CSS file to load for this widget
-                cssFile: ['/sitetheory/v/1/0/bundles/sitetheorycore/js/lib/stratus/views/templates/stratus.views.widgets.templates.publish.css'],
+                cssFile: ['/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/publish.css'],
                 // Show or hide the custom dateTime picker in the "more" dropdown.
                 dateTimePicker: false,
                 // Show or hide the unpublish button in the "more" dropdown.
