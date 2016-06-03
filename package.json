@@ -1,0 +1,32 @@
+{
+  "name": "@Sitetheory/stratus",
+  "version": "0.6.0",
+  "description": "This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.",
+  "main": "stratus.html",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-jscs": "^3.0.2",
+    "gulp-jshint": "^2.0.1",
+    "gulp-notify": "^2.2.0",
+    "gulp-notify-growl": "^1.0.2",
+    "jshint-stylish": "^2.2.0"
+  },
+  "scripts": {
+    "build": "gulp",
+    "test": "gulp jscs",
+    "test-build": "gulp jscs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sitetheory/stratus.git"
+  },
+  "author": "Sitetheory Development Team",
+  "license": "Sitetheory",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus"
+}

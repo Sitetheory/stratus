@@ -1,0 +1,26 @@
+{
+  "name": "stratus",
+  "version": "0.6.0",
+  "main": [
+    "stratus.html"
+  ],
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "gulpfile.js",
+    "README.md"
+  ],
+  "authors": [
+    "Sitetheory Development Team"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Sitetheory/stratus.git"
+  },
+  "dependencies": {
+    "underscore": "^1.8.3",
+    "backbone": "^1.3.3"
+  },
+  "private": true
+}
