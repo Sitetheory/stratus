@@ -291,7 +291,7 @@
                                     unit = 6.048e+5;
                                     break;
                                 case 'y':
-                                    unit = 3.154e+7;
+                                    unit = 3.1558149504e+7;
                                     break;
                                 default:
                                     unit = 0;
