@@ -18,5 +18,4 @@ before_script:
 - bower install
 - gulp jscs
 script:
-- xvfb-run wct
-- "if [ \"${TRAVIS_PULL_REQUEST}\" = \"false\" ]; then wct -s default; fi"
+- npm test

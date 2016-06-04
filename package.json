@@ -12,12 +12,15 @@
     "gulp-jshint": "^2.0.1",
     "gulp-notify": "^2.2.0",
     "gulp-notify-growl": "^1.0.2",
-    "jshint-stylish": "^2.2.0"
+    "jshint-stylish": "^2.2.0",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-opera-launcher": "^1.0.0",
+    "karma-safari-launcher": "^1.0.0"
   },
   "scripts": {
-    "build": "gulp",
-    "test": "gulp jscs",
-    "test-build": "gulp jscs"
+    "test": "./node_modules/.bin/karma start --single-run"
   },
   "repository": {
     "type": "git",
