@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "gulp": "^3.9.1",
+    "gulp-cli": "^1.2.1",
     "gulp-jscs": "^3.0.2",
     "gulp-jshint": "^2.0.1",
     "gulp-notify": "^2.2.0",
@@ -20,7 +21,8 @@
     "karma-safari-launcher": "^1.0.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma start --single-run"
+    "test": "./node_modules/.bin/gulp jscs",
+    "karma": "./node_modules/.bin/karma start --single-run"
   },
   "repository": {
     "type": "git",
