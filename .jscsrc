@@ -7,8 +7,8 @@
         "beforeOpeningRoundBrace": true
     },
     "disallowSpacesInsideBrackets": true,
-    "disallowEmptyBlocks": true,
-    "disallowSpacesInCallExpression": true,
+    "disallowEmptyBlocks": null,
+    "disallowSpacesInCallExpression": null,
     "disallowSpacesInsideArrayBrackets": true,
     "disallowSpacesInsideParentheses": true,
     "disallowQuotedKeysInObjects": true,
@@ -21,7 +21,7 @@
     ],
     "disallowMixedSpacesAndTabs": true,
     "disallowTrailingWhitespace": true,
-    "requireTrailingComma": false,
+    "requireTrailingComma": null,
     "requireSpaceAfterComma": true,
     "disallowYodaConditions": true,
     "disallowKeywords": [ "with" ],
@@ -30,9 +30,8 @@
     "disallowMultipleLineStrings": true,
     "disallowMultipleVarDecl": true,
     "disallowSpaceBeforeComma": true,
-    "disallowSpaceBeforeSemicolon": true,
+    "disallowSpaceBeforeSemicolon": null,
     "disallowSpacesInsideTemplateStringPlaceholders": true,
-    "disallowArrayDestructuringReturn": true,
     "requireSpaceBeforeBlockStatements": true,
     "requireParenthesesAroundIIFE": true,
     "requireSpacesInAnonymousFunctionExpression": {
@@ -44,7 +43,7 @@
     "requireCommaBeforeLineBreak": true,
     "requireSpaceBeforeBinaryOperators": true,
     "requireSpaceAfterBinaryOperators": true,
-    "requireCamelCaseOrUpperCaseIdentifiers": { "ignoreProperties": true },
+    "requireCamelCaseOrUpperCaseIdentifiers": true,
     "requireDollarBeforejQueryAssignment": true,
     "requireLineFeedAtFileEnd": true,
     "requireCapitalizedConstructors": true,
@@ -71,16 +70,13 @@
     "requirePaddingNewLinesBeforeLineComments": {
         "allExcept": "firstAfterCurly"
     },
-    "requirePaddingNewLinesAfterBlocks": true,
+    "requirePaddingNewLinesAfterBlocks": null,
     "requireSemicolons": true,
     "requireShorthandArrowFunctions": true,
-    "requireSpacesInsideImportedObjectBraces": true,
     "safeContextKeyword": "_this",
     "validateLineBreaks": "LF",
-    "validateQuoteMarks": { "mark": "'", "escape": true, "ignoreJSX": true },
-    "validateIndentation": 2,
-    "maximumLineLength": {
-        "value": 100,
-        "allExcept": ["urlComments"]
-    }
+    "validateQuoteMarks": { "mark": "'", "escape": true },
+    "validateIndentation": 4,
+    "maximumLineLength": null,
+    "excludeFiles": ["bower_components/**", "node_modules/**"]
 }

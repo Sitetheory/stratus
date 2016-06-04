@@ -72,7 +72,7 @@
         /* Settings */
         Settings: {
             image: {
-                size: {"XS": 200, "S": 400, "M": 600, "L": 800, "XL": 1200, "HQ": 1600}
+                size: { XS: 200, S: 400, M: 600, L: 800, XL: 1200, HQ: 1600 }
             }
         },
         /* Native */
@@ -144,6 +144,7 @@
         ucfirst: function (string) {
             return (typeof string === 'string' && string) ? string.charAt(0).toUpperCase() + string.substring(1) : null;
         },
+
         // This function simply changes the first letter of a string to a lower case.
         /**
          * @param string
@@ -152,6 +153,7 @@
         lcfirst: function (string) {
             return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null;
         },
+
         // Converge a list and return the prime key through specified method.
         /**
          * @param list
@@ -178,6 +180,7 @@
                 return list;
             }
         },
+
         // This synchronously repeats a function a certain number of times
         /**
          * @param fn
@@ -190,6 +193,7 @@
                 console.warn('Underscore cannot repeat function:', fn, 'with number of times:', times);
             }
         },
+
         // This function hydrates a string into an Object, Boolean, or Null value, if applicable.
         /**
          * @param string
@@ -198,6 +202,7 @@
         hydrate: function (string) {
             return _.isJSON(string) ? JSON.parse(string) : string;
         },
+
         // This is an alias to the hydrate function for backwards compatibility.
         /**
          * @param string
@@ -206,21 +211,21 @@
         hydrateString: function (string) {
             return _.hydrate(string);
         },
+
         // This function utilizes tree building to clone an object.
         /**
          * @param obj
          * @returns {*}
          */
         cloneDeep: function (obj) {
-            if (typeof obj !== 'object') {
-                return obj;
-            }
+            if (typeof obj !== 'object') return obj;
             var shallow = _.clone(obj);
             _.each(shallow, function (value, key) {
                 shallow[key] = _.cloneDeep(value);
             });
             return shallow;
         },
+
         // Get a specific value or all values located in the URL
         /**
          * @param key
@@ -235,6 +240,7 @@
             });
             return (typeof key !== 'undefined' && key) ? vars[key] : vars;
         },
+
         // Ensure all values in an array or object are true
         /**
          * @param values
@@ -245,6 +251,7 @@
                 return value;
             }) : false;
         },
+
         // Determines whether or not the string supplied is in a valid JSON format
         /**
          * @param str
@@ -443,7 +450,7 @@
          * @param options
          */
         initialize: function (options) {
-            if (!Stratus.Environment.get('production')) console.info("Chronos Invoked!");
+            if (!Stratus.Environment.get('production')) console.info('Chronos Invoked!');
             this.on('change', this.synchronize, this);
         },
         synchronize: function () {
@@ -656,6 +663,7 @@
         this.add = function (attr, value) {
             // Ensure a placeholder exists
             if (!this.has(attr)) this.set(attr, []);
+
             // only add value if it's supplied (sometimes we want to create an empty placeholder first)
             if (typeof value !== 'undefined' && !_.contains(this.attributes[attr], value)) {
                 this.attributes[attr].push(value);
@@ -776,11 +784,10 @@
                     }
                 });
             } else {
-                reject(new Stratus.Prototypes.Error({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this));
+                reject(new Stratus.Prototypes.Error({ code: 'LoadCSS', message: 'No CSS Resource URLs found!' }, this));
             }
         });
     };
-
 
     // OnScroll()
     // -----------
@@ -846,6 +853,7 @@
             lwt = Stratus.Environment.get('windowTop'),
             wh = $(window).height(),
             dh = $(document).height();
+
         // return NULL if there is no scroll, otherwise up or down
         var down = lwt ? (wt > lwt) : false;
         var up = lwt ? (wt < lwt && (wt + wh) < dh) : false;
@@ -870,7 +878,6 @@
         return (eb >= wt + offset && et <= wb - offset);
     };
 
-
     // Internal Anchor Capture
     // -----------------------
 
@@ -881,7 +888,7 @@
     Stratus.Internals.Anchor = Backbone.View.extend({
         el: 'a[href*=\\#]:not([href=\\#]):not([data-scroll="false"])',
         events: {
-            'click': 'clickAction'
+            click: 'clickAction'
         },
         clickAction: function (event) {
             if (location.pathname.replace(/^\//, '') === event.currentTarget.pathname.replace(/^\//, '') && location.hostname === event.currentTarget.hostname) {
@@ -920,11 +927,12 @@
         el: 'img[data-src]',
         initialize: function () {
             if (this.$el.length === 0) return false;
+
+            // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
             _.each(this.$el, function (el) {
                 Stratus.RegisterGroup.add('OnScroll', {
                     method: Stratus.Internals.LoadImage,
                     el: $(el),
-                    // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
                     spy: $(el).data('spy') ? $($(el).data('spy')) : $(el)
                 });
             });
@@ -954,6 +962,7 @@
                 size = obj.el.data('size');
             } else {
                 var width = null;
+
                 // Check if there is CSS width hard coded on the element
                 if (obj.el.prop('style').width) {
                     width = obj.el.prop('style').width;
@@ -981,6 +990,7 @@
                     }
 
                 }
+
                 // If no appropriate width was found, abort
                 if (width <= 0) return false;
 
@@ -988,6 +998,7 @@
                 size = _.findKey(Stratus.Settings.image.size, function (s, k) {
                     return (s > width);
                 });
+
                 // default to largest size if the container is larger and it didn't find a size
                 size = size ? size : 'HQ';
             }
@@ -1003,6 +1014,7 @@
             obj.el.load(function () {
                 $(this).addClass('loaded').removeClass('placeholder loading');
             });
+
             // Remove from registration
             Stratus.RegisterGroup.remove('OnScroll', obj);
         }
@@ -1020,7 +1032,6 @@
         var match = regexp.exec(classes);
         return (typeof match[1] !== 'undefined') ? match[1] : false;
     };
-
 
     /**
      * @param url
@@ -1041,9 +1052,9 @@
                 Stratus.CSS[url] = false;
 
                 /* Create Link */
-                var link = document.createElement("link");
-                link.type = "text/css";
-                link.rel = "stylesheet";
+                var link = document.createElement('link');
+                link.type = 'text/css';
+                link.rel = 'stylesheet';
                 link.href = url;
 
                 /* Track Fulfillment */
@@ -1063,7 +1074,7 @@
                 }
 
                 /* Inject Link into Head */
-                $("head").prepend(link);
+                $('head').prepend(link);
             }
         });
     };
@@ -1090,7 +1101,7 @@
             $.ajax({
                 type: 'POST',
                 url: '/Api' + encodeURIComponent(query || ''),
-                data: {convoy: JSON.stringify(convoy)},
+                data: { convoy: JSON.stringify(convoy) },
                 dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType')) ? convoy.meta.dataType : 'json',
                 xhrFields: {
                     withCredentials: true
@@ -1104,7 +1115,7 @@
                     return response;
                 },
                 error: function (response) {
-                    reject(new Stratus.Prototypes.Error({code: 'Convoy', message: response}, this));
+                    reject(new Stratus.Prototypes.Error({ code: 'Convoy', message: response }, this));
                     return response;
                 }
             });
@@ -1127,7 +1138,7 @@
         if (meta === undefined || meta === null) meta = {};
         if (payload === undefined) payload = {};
 
-        if (typeof meta !== 'object') meta = {method: meta};
+        if (typeof meta !== 'object') meta = { method: meta };
         if (!_.has(meta, 'method')) meta.method = 'GET';
 
         return Stratus.Internals.Convoy({
@@ -1169,7 +1180,7 @@
                     data: null
                 };
                 Stratus.Events.once('resource:' + path, fulfill);
-                var meta = {path: path, dataType: 'text'};
+                var meta = { path: path, dataType: 'text' };
                 if (elementId !== undefined) {
                     meta.elementId = elementId;
                 }
@@ -1249,6 +1260,7 @@
         toObject: function () {
             return _.clone(this.attributes);
         },
+
         // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
         hydrate: function () {
             var selector = this.get('el');
@@ -1267,18 +1279,25 @@
 
                 // Entity Type (i.e. 'View' which would correlate to a Restful /Api/View Request)
                 entity: (typeof selector.dataAttr('entity') !== 'undefined') ? _.ucfirst(selector.dataAttr('entity')) : null,
+
                 // Entity ID (Determines Model or Collection)
                 id: (typeof selector.dataAttr('id') !== 'undefined') ? selector.dataAttr('id') : null,
+
                 // Determines whether or not we should create an Entity Stub to render the dependent widgets
                 manifest: (typeof selector.dataAttr('manifest') !== 'undefined') ? selector.dataAttr('manifest') : null,
+
                 // API Options are added to the Request URL
                 api: (typeof selector.dataAttr('api') !== 'undefined') ? selector.dataAttr('api') : null,
+
                 // Determine whether this widget will fetch
                 fetch: (typeof selector.dataAttr('fetch') !== 'undefined') ? selector.dataAttr('fetch') : true,
+
                 // Specify Target
                 target: (typeof selector.dataAttr('target') !== 'undefined') ? selector.dataAttr('target') : null,
+
                 // This is determines what a new Entity's settings would be on creation
                 prototype: (typeof selector.dataAttr('prototype') !== 'undefined') ? selector.dataAttr('prototype') : null,
+
                 // Stuff
                 autoSave: (typeof selector.dataAttr('autoSave') !== 'undefined') ? selector.dataAttr('autoSave') : null,
 
@@ -1316,6 +1335,7 @@
                     this.set('plugins', (plugins.length > 1) ? plugins : [this.get('plugin')]);
                 } else if (plugins.length > 1) {
                     this.set('plugin', _.first(plugins));
+
                     // Add additional plugins
                     this.set('plugins', _.rest(plugins));
                 }
@@ -1334,9 +1354,10 @@
         },
         clean: function () {
             if (!this.has('entity') || this.get('entity').toLowerCase() === 'none') {
-                this.set({entity: null, scope: null});
+                this.set({ entity: null, scope: null });
             }
         },
+
         // Give Nested Attributes for Child Views
         /**
          * @returns {{entity: *, id: *, versionEntity: *, versionRouter: *, versionId: *, scope: *, manifest: *}}
@@ -1351,6 +1372,7 @@
                 scope: this.get('scope'),
                 manifest: this.get('manifest')
             };
+
             // Add Model or Collection to Nest
             if (this.has(nest.scope)) {
                 nest[nest.scope] = this.get(nest.scope);
@@ -1442,7 +1464,7 @@
         var parentView = (view) ? view : null;
         var parentChild = false;
 
-        view = new Stratus.Internals.View({el: $(el)});
+        view = new Stratus.Internals.View({ el: $(el) });
         view.hydrate();
         if (parentView) {
             if (!view.has('entity')) {
@@ -1457,6 +1479,7 @@
             if (view.get('alias') && !_.has(requirejs.s.contexts._.config.paths, view.get('alias'))) {
                 if (!Stratus.Environment.get('production')) console.warn('Type:', view.get('alias'), 'not configured in require.js');
             }
+
             // TODO: Add Previous Requirements Here!
             if (typeof requirements === 'undefined') requirements = ['stratus'];
             var template = view.get('template'),
@@ -1470,10 +1493,10 @@
                 requirements.push(view.get('alias'));
             }
             if (template !== null) {
-                templates = _.extend((templates !== null) ? templates : {}, {combined: template});
+                templates = _.extend((templates !== null) ? templates : {}, { combined: template });
             }
             if (dialogue !== null) {
-                templates = _.extend((templates !== null) ? templates : {}, {dialogue: dialogue});
+                templates = _.extend((templates !== null) ? templates : {}, { dialogue: dialogue });
             }
             if (templates !== null) {
                 for (var key in templates) {
@@ -1547,7 +1570,7 @@
                             if (value.search(re) !== -1) {
                                 var match = re.exec(value);
                                 while (match !== null) {
-                                    var subRequirement = "stratus.views." + (view.get('plugin') ? 'plugins' : 'widgets') + "." + match[1].toLowerCase();
+                                    var subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase();
                                     if (subRequirement && !_.has(requirejs.s.contexts._.config.paths, subRequirement)) {
                                         if (!Stratus.Environment.get('production')) console.warn('Sub Type:', subRequirement, 'not configured in require.js');
                                     }
@@ -1644,8 +1667,10 @@
                 }
             }
 
-            if (modelInit) modelReference.safeInitialize(view.toObject());
-            view.set({model: modelReference});
+            if (modelInit) {
+                modelReference.safeInitialize(view.toObject());
+            }
+            view.set({ model: modelReference });
         } else if (view.get('scope') === 'collection') {
             // Create reference, if not defined
             if (!Stratus.Collections.has(view.get('entity'))) {
@@ -1665,10 +1690,9 @@
             }
 
             // Set collection reference
-            view.set({collection: collectionReference});
-        } else {
-            //if (!Stratus.Environment.get('production')) console.warn('No Scope:', view.toObject());
+            view.set({ collection: collectionReference });
         }
+
         if (view.get('type') !== null) {
             var type = _.ucfirst(view.get('type'));
             if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
@@ -1744,7 +1768,6 @@
         });
     };
 
-
     // Internal URL Handling
     // ---------------------
 
@@ -1770,7 +1793,6 @@
         return url;
     };
 
-
     // AddClose
     // --------
     // TODO: I'm not sure if this is the best way of doing this... currently used in the Drawer
@@ -1778,7 +1800,6 @@
     Stratus.PluginMethods.AddClose = function (el) {
         el.prepend('<button type="button" class="btnClose"><span class="sr-only">Toggle Navigation</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-' + el.attr('id') + '" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg></button>');
     };
-
 
     // Post Message Handling
     // ---------------------
@@ -1808,8 +1829,8 @@
          console.log('PostMessage', event, convoy);
          */
 
-        if ($.cookie("SITETHEORY") !== convoy.meta.session) {
-            $.cookie("SITETHEORY", convoy.meta.session);
+        if ($.cookie('SITETHEORY') !== convoy.meta.session) {
+            $.cookie('SITETHEORY', convoy.meta.session);
             if (!Stratus.Client.safari) location.reload(true);
         }
         /*event.source.postMessage()*/
@@ -1871,11 +1892,13 @@
         }
         Stratus.Internals.Compatibility();
         Stratus.RegisterGroup = new Stratus.Prototypes.Collection();
+
         // Start Generic Router
         require(['stratus.routers.generic'], function () {
             Stratus.Routers.set('generic', new Stratus.Routers.Generic());
             Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
         });
+
         // Load Views
         Stratus.Internals.Loader().done(function (views) {
             if (!Stratus.Environment.get('production')) console.info('Views:', views);
@@ -2013,7 +2036,7 @@
     // TODO: DOM.ready and DOM.complete is redundant from version above. Remove?
     // On DOM Ready, add browser compatible CSS classes and digest DOM data-entity attributes.
     Stratus.DOM.ready(function () {
-        $('body').removeClass("loaded unloaded").addClass('loading');
+        $('body').removeClass('loaded unloaded').addClass('loading');
         Stratus.Events.trigger('initialize');
     });
 
@@ -2022,7 +2045,7 @@
 
     // Stratus Events are more accurate than the DOM, so nothing is added to this stub.
     Stratus.DOM.complete(function () {
-        $('body').removeClass("loading unloaded").addClass('loaded');
+        $('body').removeClass('loading unloaded').addClass('loaded');
     });
 
     // DOM Unload Routines
@@ -2033,7 +2056,7 @@
     // while providing the user with a confirmation box, if necessary,
     // before close routines are triggered.
     Stratus.DOM.unload(function (event) {
-        $('body').removeClass("loading loaded").addClass('unloaded');
+        $('body').removeClass('loading loaded').addClass('unloaded');
         Stratus.Events.trigger('terminate', event);
         if (event.cancelable === true) {
             // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
