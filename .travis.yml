@@ -17,5 +17,5 @@ before_script:
 - npm install -g bower gulp-cli@1
 - bower install
 - gulp jscs
-script:
-- npm test
+#script:
+#- npm test
