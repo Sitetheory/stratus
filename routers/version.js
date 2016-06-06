@@ -19,7 +19,7 @@
 // -------------
 
 // Define this module and its dependencies
-define("stratus.routers.version", ["underscore", "stratus", "backbone"], function (_, Stratus, Backbone) {
+define('stratus.routers.version', ['underscore', 'stratus', 'backbone'], function (_, Stratus, Backbone) {
 
     // Version Router
     // -------------
@@ -27,7 +27,7 @@ define("stratus.routers.version", ["underscore", "stratus", "backbone"], functio
     // TODO: Move this into a Generic Model Router or possibly the Collection Router
     Stratus.Routers.Version = Backbone.Router.extend({
         routes: {
-            "version/:id": "version"
+            'version/:id': 'version'
         },
         initialize: function (options) {
             if (!_.has(options, 'model')) {
@@ -36,7 +36,7 @@ define("stratus.routers.version", ["underscore", "stratus", "backbone"], functio
             }
             this.model = options.model;
             this.modelId = this.model.get('id');
-            this.versionEntityId = this.model.versionEntity+'.id';
+            this.versionEntityId = this.model.versionEntity + '.id';
             if (!this.model.isHydrated()) {
                 this.model.once('success', function () {
                     this.model.once('change', function () {
@@ -54,7 +54,7 @@ define("stratus.routers.version", ["underscore", "stratus", "backbone"], functio
             }
         },
         register: function () {
-            this.model.on('change:'+this.versionEntityId, this.change, this);
+            this.model.on('change:' + this.versionEntityId, this.change, this);
             this.change();
         },
         change: function () {
@@ -62,7 +62,7 @@ define("stratus.routers.version", ["underscore", "stratus", "backbone"], functio
                 if (this.model.has(this.versionEntityId) && this.versionId !== this.model.get(this.versionEntityId)) {
                     this.versionId = this.model.get(this.versionEntityId);
                     if (!Stratus.Environment.get('production')) console.info('Navigate:', 'version/' + this.versionId);
-                    this.navigate('version/' + this.versionId, {replace: true});
+                    this.navigate('version/' + this.versionId, { replace: true });
                 }
             } else {
                 Stratus.Events.once('finalized', function () { this.change(); }, this);

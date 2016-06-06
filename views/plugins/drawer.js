@@ -15,16 +15,17 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Plugin
-// ======
+// Function Factory
+// ----------------
 
-// Data Options
-// -
-
-// Require.js
-// -------------
-// Define this module and its dependencies
-define("stratus.views.plugins.drawer", ["stratus", "jquery", "stratus.views.plugins.addclass", "stratus.views.plugins.base"], function (Stratus, $) {
+// Define AMD, Require.js, or Contextual Scope
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass'], factory);
+    } else {
+        factory(root.Stratus, root.$, root._);
+    }
+}(this, function (Stratus, $, _) {
 
     // Drawer
     // -------------
@@ -34,19 +35,17 @@ define("stratus.views.plugins.drawer", ["stratus", "jquery", "stratus.views.plug
     Stratus.Views.Plugins.Drawer = Stratus.Views.Plugins.Base.extend({
 
         events: {
-            'click': 'toggle'
+            click: 'toggle'
         },
 
-        // Custom Actions for View
         initialize: function (options) {
-
             this.prepare(options);
 
             if (!this.$el.attr('id')) {
                 console.warn('No ID supplied for data-plugin="Drawer" button.', this.$el);
                 return false;
             }
-            var drawer = this.$el.data('target') ? $(this.$el.data('target')) : $('#'+this.$el.attr('id')+'-drawer');
+            var drawer = this.$el.data('target') ? $(this.$el.data('target')) : $('#' + this.$el.attr('id') + '-drawer');
             if (!drawer) {
                 console.warn('No ID supplied for data-plugin="Drawer" targetted drawer.', this.$el);
                 return false;
@@ -58,32 +57,24 @@ define("stratus.views.plugins.drawer", ["stratus", "jquery", "stratus.views.plug
             // Add Default Classes
             drawer.addClass(this.drawerClass);
             drawer.attr('aria-labelledby', this.$el.attr('id'));
-            // Add a close button
 
+            // Add a close button
             var close = drawer.find('.btnClose');
             if (!close.length) {
                 Stratus.PluginMethods.AddClose(drawer);
                 close = drawer.find('.btnClose');
             }
-            close.on('click', function() { this.toggle()}.bind(this));
-
+            close.on('click', function () { this.toggle();}.bind(this));
         },
 
-        toggle: function() {
-            // NOTE: with this method only one drawer can be open at a time
+        // NOTE: with this method only one drawer can be open at a time
+        toggle: function () {
+            $('#' + this.$el.attr('id') + '-drawer').removeClass('hidden');
             var drawerVar = this.drawerClass.toLowerCase();
-            $('#'+this.$el.attr('id')+'-drawer').removeClass('hidden');
-            $('body').attr('data-'+drawerVar+'open') !== this.$el.attr('id') ? $('body').attr('data-'+drawerVar+'open', this.$el.attr('id')) : $('body').attr('data-'+drawerVar+'open', null);
+            var $body = $('body');
+            ($body.attr('data-' + drawerVar + 'open') !== this.$el.attr('id')) ? $body.attr('data-' + drawerVar + 'open', this.$el.attr('id')) : $body.attr('data-' + drawerVar + 'open', null);
         }
 
     });
 
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
-
-});
+}));

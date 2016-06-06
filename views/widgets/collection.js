@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "masonry", "sortable", "stratus.views.widgets.base", "stratus.views.widgets.generic"], factory);
+        define(['stratus', 'jquery', 'underscore', 'masonry', 'sortable', 'stratus.views.widgets.base', 'stratus.views.widgets.generic'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.Masonry, root.Sortable);
     }
@@ -37,13 +37,14 @@
         // -------------
 
         template: _.template('<div data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-id="{{ model.id }}"></div>'),
+
         // If you need custom error Messages, you can define the optionsCustom in data attributes to the set the
         // text, OR you can pass in a custom list template in the data-templates='{"list":"path or config value"}'
         errorTemplate: _.template('{% if (collection.meta.has("api.q")) { %}<div class="{{ options.cssNoResults}}"><div class="message">{{ options.textNoResults }}</div><div class="icon"></div></div>{% } else { %}<div class="{{ options.cssNoContent }}"><div class="message">{{ options.textNoContent }}</div><div class="icon"></div></div>{% } %}'),
         events: {
             'keypress #newGeneric': 'createOnEnter',
-            'start': 'dragStart',
-            'end': 'dragEnd'
+            start: 'dragStart',
+            end: 'dragEnd'
         },
         templateRender: 'container',
         options: {
@@ -86,12 +87,15 @@
                 standalone: false,
 
                 /* display */
+
                 // TODO: these messages should be more intelligent with different messages for context, i.e. if something was searched/filtered, or if there just isn't any content by default yet.
                 // Default message if there are no results found.
                 textNoResults: 'We were unable to find any content matching your request.',
+
                 // Default animation if there are no results found.
                 cssNoResults: 'error',
                 textNoContent: 'No content available.',
+
                 // Default animation if there are no results found.
                 cssNoContent: 'empty'
             }
@@ -162,7 +166,6 @@
             });
         },
 
-
         // postOptions()
         // ------------------
         // Some values must trigger other conditional default values
@@ -170,7 +173,6 @@
             // allow data-limit attribute to set the limit.
             if (this.options.limit) this.options.api.limit = this.options.limit;
         },
-
 
         // Priming
         // -------------
@@ -210,7 +212,7 @@
          * @param xhr
          */
         primeSuccess: function (model, xhr) {
-            if (!this.options.success || this.options.success === "all") this.addAll();
+            if (!this.options.success || this.options.success === 'all') this.addAll();
         },
 
         // primeError
@@ -229,7 +231,7 @@
          * @param options
          */
         primeChange: function (model, options) {
-            if (!this.options.change || this.options.change === "all" || (_.has(options, 'xhr') && (!this.options.success || this.options.success === "all")) ) {
+            if (!this.options.change || this.options.change === 'all' || (_.has(options, 'xhr') && (!this.options.success || this.options.success === 'all'))) {
                 this.addAll();
             }
         },
@@ -283,7 +285,7 @@
                 entity: _.ucfirst(this.options.source),
                 target: this.modelTarget(),
                 initialize: true,
-                api: {property: this.propertyName}
+                api: { property: this.propertyName }
             });
             Stratus.Instances[this.collection.globals.get('uid')] = this.collection;
             if (typeof this.propertyName === 'string') {
@@ -291,7 +293,7 @@
                     this.model.once('success', function () {
                         this.model.once('change', function () {
                             this.collection.target = this.modelTarget();
-                            this.collection.refresh({reset: true});
+                            this.collection.refresh({ reset: true });
                         }, this);
                     }, this);
                 }, this);
@@ -481,19 +483,23 @@
             if (_.has(this.views, uid) && false) {
                 this.views[uid].globals = globals;
             } else {
-                Stratus.Instances[guid] = this.views[uid] = new Stratus.Views.Widgets.Generic({
-                    model: model,
-                    collection: this.collection,
+                var view = new Stratus.Internals.View(_.extend({}, this.view.nest(), {
+                    uid: globals.uid,
+                    id: model.get('id'),
+                    scope: 'model',
+                    model: model
+                }));
+                var options = _.extend({}, view.toObject(), {
                     collectionView: this,
                     globals: globals,
                     templates: this.templates,
                     type: 'generic',
-                    uid: globals.uid,
                     rerender: {
                         change: this.options.change
                     },
-                    view: this.view
+                    view: view
                 });
+                Stratus.Instances[guid] = this.views[uid] = new Stratus.Views.Widgets.Generic(options);
             }
 
             // Sortable Children
@@ -519,15 +525,15 @@
                     if (i === (phantoms - 1)) {
                         phantom.last = true;
                     }
-                    $(phantom.hook).append(phantomTemplate({scope: 'entity', globals: phantom}));
+                    $(phantom.hook).append(phantomTemplate({ scope: 'entity', globals: phantom }));
                 }
             }
 
             // TODO: make this attached to parent iteration, which takes precedence if it exists in the model
-            if (this.collection.globals.get("lastLevel") > globals.level) {
-                this.collection.globals.set('level' + this.collection.globals.get("lastLevel"), 0);
+            if (this.collection.globals.get('lastLevel') > globals.level) {
+                this.collection.globals.set('level' + this.collection.globals.get('lastLevel'), 0);
             }
-            this.collection.globals.set("lastLevel", globals.level);
+            this.collection.globals.set('lastLevel', globals.level);
         },
 
         // addAll
@@ -539,7 +545,7 @@
             };
             this.$el.html(_.has(this.templates, 'combined') ? this.templates.combined(list) : (_.has(this.templates, 'list') ? this.templates.list(list) : ''));
             if (!this.$el.html() && !this.collection.size()) {
-                this.$el.html(this.errorTemplate({collection: this.collection, options: this.options}));
+                this.$el.html(this.errorTemplate({ collection: this.collection, options: this.options }));
             }
             if (_.has(this.templates, 'combined') || _.has(this.templates, 'list')) {
                 Stratus.Internals.Loader(this.el, this.view).done(function (entries) {
@@ -557,13 +563,14 @@
             if (this.options.masonry) {
                 new Masonry(this.el, {
                     itemSelector: '.grid-item',
+
                     //columnWidth: 160
                     columnWidth: '.grid-sizer',
                     percentPosition: true
                 });
             }
             if (this.options.sortable) {
-                Sortable.create(this.el, {group: this.entity});
+                Sortable.create(this.el, { group: this.entity });
             }
             this.trigger('render', this);
         },
@@ -580,14 +587,14 @@
          */
         dragEnd: function (e) {
             // find qualifying hook
-            var el = $(e.originalEvent.item);
-            el = (el.data('id')) ? el : el.find('[data-id]');
+            var $el = $(e.originalEvent.item);
+            $el = (el.data('id')) ? el : el.find('[data-id]');
 
             // store information
             var proto = {
-                el: el,
-                id: el.data('id'),
-                entity: el.data('entity'),
+                el: $el,
+                id: $el.data('id'),
+                entity: $el.data('entity'),
                 priority: _.size(this.collection.models) - e.originalEvent.newIndex,
                 reference: Stratus.Models.Generic
             };

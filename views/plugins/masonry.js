@@ -32,13 +32,17 @@ data-delay: if you need to set an alternative delay, you can pass in a JSON stri
 data-placement: The location of the masonry, e.g. "auto top", "right", "bottom" "left"
  */
 
-// Plugin
-// ======
+// Function Factory
+// ----------------
 
-// Require.js
-// -------------
-// Define this module and its dependencies
-define("stratus.views.plugins.masonry", ["stratus", "jquery", "masonry", "stratus.views.plugins.base"], function (Stratus, $, Backbone, Masonry) {
+// Define AMD, Require.js, or Contextual Scope
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore', 'masonry', 'stratus.views.plugins.base'], factory);
+    } else {
+        factory(root.Stratus, root.$, root._, root.Masonry);
+    }
+}(this, function (Stratus, $, _, Masonry) {
 
     // Masonry
     // -------------
@@ -49,23 +53,17 @@ define("stratus.views.plugins.masonry", ["stratus", "jquery", "masonry", "stratu
             this.prepare(options);
             this.render();
         },
-        render: function() {
+        render: function () {
             new Masonry(this.el, {
+                /*
                 // set itemSelector so .grid-sizer is not used in layout
-                //itemSelector: '.grid-item',
+                itemSelector: '.grid-item',
                 // use element for option
-                //columnWidth: '.grid-sizer',
-                //percentPosition: true
+                columnWidth: '.grid-sizer',
+                percentPosition: true
+                */
             });
         }
     });
 
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
-
-});
+}));

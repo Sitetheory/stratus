@@ -275,7 +275,9 @@
                 var timePairs = str.match(/([\d+\.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/gi);
                 if (_.size(timePairs)) {
                     var digest = /([\d+\.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i;
-                    var time, unit, value;
+                    var time;
+                    var unit;
+                    var value;
                     _.each(timePairs, function (timePair) {
                         time = digest.exec(timePair);
                         value = parseFloat(time[1]);
@@ -560,10 +562,7 @@
          * @param scope
          */
         this.each = function (callback, scope) {
-            if (typeof scope === 'undefined') {
-                scope = this;
-            }
-            _.each.apply(scope, _.union([this.attributes], arguments));
+            _.each.apply((scope === undefined) ? this : scope, _.union([this.attributes], arguments));
         };
         /**
          * @param attr
@@ -571,8 +570,8 @@
          */
         this.get = function (attr) {
             if (typeof attr === 'string' && attr.indexOf('.') !== -1) {
-                var reference = this.attributes,
-                    chain = attr.split('.');
+                var reference = this.attributes;
+                var chain = attr.split('.');
                 _.find(chain, function (link) {
                     if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
                         reference = reference[link];
@@ -619,8 +618,8 @@
          */
         this.setAttribute = function (attr, value) {
             if (typeof attr === 'string' && attr.indexOf('.') !== -1) {
-                var reference = this.attributes,
-                    chain = attr.split('.');
+                var reference = this.attributes;
+                var chain = attr.split('.');
                 _.find(_.initial(chain), function (link) {
                     if (!_.has(reference, link) || !reference[link]) reference[link] = {};
                     if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
@@ -747,6 +746,7 @@
     // It Prepends CSS files to the top of the list, so that it
     // doesn't overwrite the site.css. So we reverse the order of the list of urls so they load the order specified.
     /**
+     * TODO: Determine relative or CDN based URLs
      * @param urls
      * @returns {Promise}
      * @constructor
@@ -849,10 +849,10 @@
      * @constructor
      */
     Stratus.Internals.GetScrollDir = function () {
-        var wt = $(window).scrollTop(),
-            lwt = Stratus.Environment.get('windowTop'),
-            wh = $(window).height(),
-            dh = $(document).height();
+        var wt = $(window).scrollTop();
+        var lwt = Stratus.Environment.get('windowTop');
+        var wh = $(window).height();
+        var dh = $(document).height();
 
         // return NULL if there is no scroll, otherwise up or down
         var down = lwt ? (wt > lwt) : false;
@@ -871,10 +871,10 @@
      */
     Stratus.Internals.IsOnScreen = function (el, offset) {
         offset = offset || 0;
-        var wt = $(window).scrollTop(),
-            wb = wt + $(window).height(),
-            et = el.offset().top,
-            eb = et + el.height();
+        var wt = $(window).scrollTop();
+        var wb = wt + $(window).height();
+        var et = el.offset().top;
+        var eb = et + el.height();
         return (eb >= wt + offset && et <= wb - offset);
     };
 
@@ -892,13 +892,13 @@
         },
         clickAction: function (event) {
             if (location.pathname.replace(/^\//, '') === event.currentTarget.pathname.replace(/^\//, '') && location.hostname === event.currentTarget.hostname) {
-                var target = $(event.currentTarget.hash),
-                    anchor = event.currentTarget.hash.slice(1);
-                target = target.length ? target : $('[name=' + anchor + ']');
+                var $target = $(event.currentTarget.hash);
+                var anchor = event.currentTarget.hash.slice(1);
+                $target = ($target.length) ? $target : $('[name=' + anchor + ']');
                 /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
-                if (target.length) {
+                if ($target.length) {
                     $('html,body').animate({
-                        scrollTop: target.offset().top
+                        scrollTop: $target.offset().top
                     }, 1000, function () {
                         Backbone.history.navigate(anchor);
                     });
@@ -929,10 +929,12 @@
             if (this.$el.length === 0) return false;
 
             // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
+            var $el;
             _.each(this.$el, function (el) {
+                $el = $(el);
                 Stratus.RegisterGroup.add('OnScroll', {
                     method: Stratus.Internals.LoadImage,
-                    el: $(el),
+                    el: $el,
                     spy: $(el).data('spy') ? $($(el).data('spy')) : $(el)
                 });
             });
@@ -1340,9 +1342,9 @@
                     this.set('plugins', _.rest(plugins));
                 }
             }
-            var id = this.get('id'),
-                type = (this.get('type') !== null) ? this.get('type') : this.get('plugin'),
-                loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins';
+            var id = this.get('id');
+            var type = (this.get('type') !== null) ? this.get('type') : this.get('plugin');
+            var loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins';
             this.set({
                 scope: (id !== null) ? 'model' : 'collection',
                 alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
@@ -1411,10 +1413,13 @@
      */
     Stratus.Internals.Loader = function (selector, view, requirements) {
         if (typeof selector === 'undefined') {
-            var body = $('body');
-            selector = (!body.dataAttr('loaded')) ? '[data-entity],[data-plugin]' : null;
-            if (selector) body.dataAttr('loaded', true);
-            else console.trace('attempting to load stratus root repeatedly!');
+            var $body = $('body');
+            selector = (!$body.dataAttr('loaded')) ? '[data-entity],[data-plugin]' : null;
+            if (selector) {
+                $body.dataAttr('loaded', true);
+            } else {
+                console.warn('Attempting to load Stratus root repeatedly!');
+            }
         }
         /*
          if (typeof selector === 'string') selector = $(selector);
@@ -1464,7 +1469,8 @@
         var parentView = (view) ? view : null;
         var parentChild = false;
 
-        view = new Stratus.Internals.View({ el: $(el) });
+        var $el = $(el);
+        view = new Stratus.Internals.View({ el: $el });
         view.hydrate();
         if (parentView) {
             if (!view.has('entity')) {
@@ -1482,10 +1488,10 @@
 
             // TODO: Add Previous Requirements Here!
             if (typeof requirements === 'undefined') requirements = ['stratus'];
-            var template = view.get('template'),
-                templates = view.get('templates'),
-                dialogue = view.get('dialogue'),
-                templateMap = [];
+            var template = view.get('template');
+            var templates = view.get('templates');
+            var dialogue = view.get('dialogue');
+            var templateMap = [];
             if (view.get('scope') !== null) {
                 requirements.push('stratus.' + view.get('scope') + 's.generic');
             }
@@ -1510,9 +1516,9 @@
                         if (!Stratus.Environment.get('production')) {
                             console.info('DOM Template:', templates[key]);
                         }
-                        var domTemplate = $(templates[key]);
-                        if (domTemplate.length > 0) {
-                            templates[key] = domTemplate.html();
+                        var $domTemplate = $(templates[key]);
+                        if ($domTemplate.length > 0) {
+                            templates[key] = $domTemplate.html();
                         }
                     } else if (templates[key] in requirejs.s.contexts._.config.paths) {
                         requirements.push('text!' + templates[key]);
@@ -1639,28 +1645,28 @@
             var modelReference;
             var modelInstance;
             var modelInit = false;
-            var modelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null;
+            var ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null;
 
             if (!view.get('id') && view.get('manifest')) {
                 modelInstance = view.get('entity') + 'Manifest';
                 modelReference = Stratus.Instances[modelInstance];
                 if (!modelReference) {
-                    Stratus.Instances[modelInstance] = new modelType();
+                    Stratus.Instances[modelInstance] = new ModelType();
                     modelReference = Stratus.Instances[modelInstance];
                     modelInit = true;
                 }
             } else {
-                if (modelType && _.has(modelType, 'findOrCreate')) {
-                    modelReference = modelType.findOrCreate(view.get('id'));
+                if (ModelType && _.has(ModelType, 'findOrCreate')) {
+                    modelReference = ModelType.findOrCreate(view.get('id'));
                     if (!modelReference) {
-                        modelReference = new modelType(view.modelAttributes());
+                        modelReference = new ModelType(view.modelAttributes());
                         modelInit = true;
                     }
                 } else {
                     modelInstance = view.get('entity') + view.get('id');
                     modelReference = Stratus.Instances[modelInstance];
                     if (!modelReference) {
-                        Stratus.Instances[modelInstance] = new modelType(view.modelAttributes());
+                        Stratus.Instances[modelInstance] = new ModelType(view.modelAttributes());
                         modelReference = Stratus.Instances[modelInstance];
                         modelInit = true;
                     }

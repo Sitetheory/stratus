@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "underscore", "backbone", "jquery"], factory);
+        define(['stratus', 'underscore', 'backbone', 'jquery'], factory);
     } else {
         factory(root.Stratus, root._, root.Backbone, root.$);
     }
@@ -49,7 +49,6 @@
         _isEvaluated: false,
         _isHydrated: false,
         _saving: false,
-
 
         // Constructor
         // -----------
@@ -165,8 +164,8 @@
 
             // Create Version Router
             if (this.isVersioned()) {
-                require(["stratus", "stratus.routers.version"], function (Stratus) {
-                    Stratus.Instances[_.uniqueId('router.version_')] = new Stratus.Routers.Version({model: this});
+                require(['stratus', 'stratus.routers.version'], function (Stratus) {
+                    Stratus.Instances[_.uniqueId('router.version_')] = new Stratus.Routers.Version({ model: this });
                 }.bind(this));
             }
 
@@ -201,7 +200,7 @@
          */
         refresh: function () {
             if (!this.isVersioned() || this.isEvaluated()) {
-                this.fetch((this.meta.size() > 0) ? {data: this.meta.toObject()} : {});
+                this.fetch((this.meta.size() > 0) ? { data: this.meta.toObject() } : {});
             }
             return true;
         },
@@ -311,9 +310,9 @@
             if (entity) {
                 if (scope === 'model' && !Stratus.Models.has(entity)) {
                     /* TODO: Make this work using the same function(s) we use in Stratus to create a model for the first time inside of a collection with its referential information */
-                    Stratus.Models.set(entity, Stratus.Models.Generic.extend({entity: entity}));
+                    Stratus.Models.set(entity, Stratus.Models.Generic.extend({ entity: entity }));
                 } else if (scope === 'collection' && !Stratus.Collections.has(entity)) {
-                    Stratus.Collections.set(entity, Stratus.Collections.Generic.extend({entity: entity}));
+                    Stratus.Collections.set(entity, Stratus.Collections.Generic.extend({ entity: entity }));
                 }
             }
         },
@@ -356,6 +355,7 @@
                         _.each(resp.meta.relations, this.hydrateTypes, this);
                     }
                     this.relations = resp.meta.relations;
+
                     // FIXME: This has problems with initializing relations multiple times
                     _.each(this.relations, function (relation) {
                         Backbone.Relational.store.initializeRelation(this, relation, options);
@@ -423,6 +423,7 @@
 
                 // If nothing was actually changed on this save, discard the request
                 /* if (!_.size(this.patch)) return false; */
+
                 // Gather Data Points
                 var current = this.toJSON();
                 var payload = (_.has(current, 'payload')) ? current.payload : current;
@@ -434,7 +435,7 @@
 
                 // Overwrite Options
                 key = current;
-                val = {patch: true};
+                val = { patch: true };
             }
 
             // Call

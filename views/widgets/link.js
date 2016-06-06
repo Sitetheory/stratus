@@ -41,7 +41,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "stratus.views.widgets.base"], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -62,26 +62,33 @@
             private: {
                 // Not Editable
                 editable: false,
+
                 // A toggle will automatically save on click
                 autoSave: false,
+
                 // This saves whether this toggle is bound to a model or a variable (within Stratus.Environment), e.g. model|var
                 dataType: null
             },
             public: {
                 // enter the CSS class of a gradient class to make a div appear above the SVG for styling
                 gradient: false,
+
                 // set to NULL to use default icon, FALSE to hide button, or set to HTML (e.g. an SVG) if you want a custom icon.
                 icon: null,
+
                 // set to null if you don't want an icon
                 iconPath: '@SitetheoryCoreBundle:images/icons/actionButtons/preview.svg',
+
                 // set to empty if you do not want text buttons
                 textOn: 'Hide',
                 textOff: 'Show',
                 classBtn: 'btnIcon',
                 classOn: 'btnText smallLabel textOn',
                 classOff: 'btnText smallLabel textOff',
+
                 // variables to add to the end of the string
                 urlVars: null,
+
                 // Set to true if you want to replace the current URL, or false if you want to just append to the current URL
                 replaceUrl: false
             }
@@ -142,6 +149,7 @@
                 this.model.on('change', this.scopeChanged, this);
             }
             this.scopeChanged();
+
             // set events after model is rendered
         },
 
@@ -161,7 +169,6 @@
             return true;
         },
 
-
         // scopeChanged()
         // -------------
         // If this entity is changed anywhere, check the status and update the DOM.
@@ -174,7 +181,6 @@
         }
 
     });
-
 
     // Require.js
     // -------------

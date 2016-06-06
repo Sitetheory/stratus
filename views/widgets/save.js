@@ -35,7 +35,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "stratus.views.widgets.base"], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -51,7 +51,7 @@
         model: Stratus.Models.Generic,
         template: _.template('{% if (options.icon) { %}{% if (options.gradient) { %}<div class="{{ options.gradient }}"></div>{% } %}<span id="{{ elementId }}" class="{{ options.classBtn }}">{{ options.icon }}</span>{% } %}{% if (options.textOn || options.textOff) { %}<span class="{{ options.classOn}}">{{ options.textOn }}</span><span class="{{ options.classOff}}">{{ options.textOff }}</span>{% } %}'),
         events: {
-            'click': 'saveNowAction'
+            click: 'saveNowAction'
         },
 
         options: {
@@ -62,17 +62,22 @@
             public: {
                 // Allow specifying special save actions, e.g. 'version', 'duplicate'
                 action: null,
+
                 // TODO: point to the cloud server (PATH!)
                 //cssFile: '/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/save.css',
                 iconPath: '@SitetheoryCoreBundle:images/icons/actionButtons/save.svg',
+
                 // The text for the save button that appears when it's unsaved.
                 gradient: null,
                 textOff: 'Save',
+
                 // The text for the information that appears after the model is successful saved (in sync with the model), e.g. no value by default, since we use a check mark in the class.
                 textOn: '',
                 classBtn: 'btnIcon',
+
                 // The CSS class that is on the element that shows up when the model is changed (unsaved).
                 classOff: 'btnText smallLabel textOff',
+
                 // The CSS class that is on the element that shows up when the model is saved.
                 classOn: 'btnText smallLabel textOn glyphicon glyphicon-ok success'
             }
@@ -176,9 +181,10 @@
             if (this.model.get('id') !== this.originalId) {
                 var url = window.location.toString();
                 var urlNew = url.replace(/id=[0-9]+/, 'id=' + this.model.get('id'));
+
                 // If there was no ID, find the URL of the new page
                 if (urlNew === url) {
-                    urlNew = (this.originalId === null) ? Stratus.Internals.SetUrlParams({id: this.model.get('id')}) : this.model.get('routingPrimary.url');
+                    urlNew = (this.originalId === null) ? Stratus.Internals.SetUrlParams({ id: this.model.get('id') }) : this.model.get('routingPrimary.url');
                 }
                 if (urlNew) window.location.replace(urlNew);
             }

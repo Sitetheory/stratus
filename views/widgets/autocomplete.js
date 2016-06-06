@@ -33,8 +33,8 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === "function" && define.amd) {
-        define(["stratus", "jquery", "underscore", "stratus.views.widgets.base", "selectize"], factory);
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base', 'selectize'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -103,19 +103,21 @@
                 request: true,
                 load: true
             };
+
             // Manually Select the items selected (this shouldn't be necessary since we set the 'items' field in the options, but that doesn't work so we are currently doing it manually.
-            var view = this;
+            var _this = this;
             this.$el[0].selectize.on('load', function () {
-                if (view.initial.load && view.options.selectize.items !== null && view.options.selectize.items.length > 0) {
-                    view.initial.load = false;
-                    _.each(view.options.selectize.items, function (el) {
+                if (_this.initial.load && _this.options.selectize.items !== null && _this.options.selectize.items.length > 0) {
+                    _this.initial.load = false;
+                    _.each(_this.options.selectize.items, function (el) {
                         // If the value doesn't exists in the list add it to the list so that it shows up
                         if (!_.has(this.options, el)) {
                             var data = {};
-                            data[view.options.selectize.valueField] = el;
-                            data[view.options.selectize.labelField] = el;
+                            data[_this.options.selectize.valueField] = el;
+                            data[_this.options.selectize.labelField] = el;
                             this.addOption(data);
                         }
+
                         // set the default value selected
                         this.setValue([el]);
                     }, this);
@@ -139,19 +141,19 @@
             // Add Standard Options to Selectize (on init)
             this.options.selectize.render = {
                 option: function (model, escape) {
-                    return this.template({model: model, options: this.options});
+                    return this.template({ model: model, options: this.options });
                 }.bind(this)
             };
             this.options.selectize.load = function (query, callback) {
                 if (!query.length && !this.initial.request) return callback();
                 this.initial.request = false;
                 $.ajax({
-                    url: this.url + '?query=' + query + '&' + $.param({options: this.options.api}),
+                    url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
                     type: 'GET',
-                    error: function() {
+                    error: function () {
                         callback();
                     },
-                    success: function(res) {
+                    success: function (res) {
                         callback(res.payload);
                     }
                 });

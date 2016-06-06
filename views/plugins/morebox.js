@@ -15,16 +15,17 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Plugin
-// ======
+// Function Factory
+// ----------------
 
-// Data Options (see addClass plugin for further options)
-
-
-// Require.js
-// -------------
-// Define this module and its dependencies
-define("stratus.views.plugins.morebox", ["stratus", "jquery", "stratus.views.plugins.addclass", "stratus.views.plugins.base"], function (Stratus, $) {
+// Define AMD, Require.js, or Contextual Scope
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass'], factory);
+    } else {
+        factory(root.Stratus, root.$, root._);
+    }
+}(this, function (Stratus, $, _) {
 
     // MoreBox
     // -------------
@@ -35,11 +36,10 @@ define("stratus.views.plugins.morebox", ["stratus", "jquery", "stratus.views.plu
 
         // Custom Actions for View
         initialize: function (options) {
-
             // Add Default Plugin Values
             // Use the element's ID as the default base for the moreBox target.
             if (!this.$el.attr('data-target')) {
-                this.$el.attr('data-target', '#'+this.$el.attr('id')+'-moreBox');
+                this.$el.attr('data-target', '#' + this.$el.attr('id') + '-moreBox');
             }
             if (!this.$el.attr('data-event')) {
                 this.$el.attr('data-event', 'click');
@@ -48,24 +48,16 @@ define("stratus.views.plugins.morebox", ["stratus", "jquery", "stratus.views.plu
                 this.$el.attr('data-class', 'show');
             }
             this.$el.attr('data-classremove', 'hidden');
+
             // Add Default Classes
-            var moreBox = $(this.$el.data('target'));
-            moreBox.addClass('moreBox');
-            moreBox.attr('aria-labelledby', this.$el.attr('id'));
+            var $moreBox = $(this.$el.data('target'));
+            $moreBox.addClass('moreBox');
+            $moreBox.attr('aria-labelledby', this.$el.attr('id'));
 
             // Utilize Standard AddClass Plugin
-            new Stratus.Views.Plugins.AddClass({el: this.el});
-
+            new Stratus.Views.Plugins.AddClass({ el: this.el });
         }
 
     });
 
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
-
-});
+}));

@@ -15,7 +15,6 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-
 // Examples
 // ========
 
@@ -32,7 +31,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "stratus.views.widgets.base"], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -60,6 +59,7 @@
                 textTitle: 'SEO',
                 textBtn: null,
                 classIcon: 'seoIcon glyphicon glyphicon-tag',
+
                 // TODO: point to the cloud server (PATH!)
                 // The CSS file to load for this widget
                 cssFile: ['/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/seo.css']

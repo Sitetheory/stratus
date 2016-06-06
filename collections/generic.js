@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "underscore", "backbone", "stratus.models.generic"], factory);
+        define(['stratus', 'underscore', 'backbone', 'stratus.models.generic'], factory);
     } else {
         factory(root.Stratus, root._, root.Backbone);
     }
@@ -100,7 +100,7 @@
 
             this.globals.set('uid', _.uniqueId('collection_'));
 
-            this.refresh({reset: true});
+            this.refresh({ reset: true });
         },
 
         /**
@@ -148,9 +148,9 @@
             if (entity) {
                 if (scope === 'model' && !Stratus.Models.has(entity)) {
                     /* TODO: Make this work using the same function(s) we use in Stratus to create a model for the first time inside of a collection with its referential information */
-                    Stratus.Models.set(entity, Stratus.Models.Generic.extend({entity: entity}));
+                    Stratus.Models.set(entity, Stratus.Models.Generic.extend({ entity: entity }));
                 } else if (scope === 'collection' && !Stratus.Collections.has(entity)) {
-                    Stratus.Collections.set(entity, Stratus.Collections.Generic.extend({entity: entity}));
+                    Stratus.Collections.set(entity, Stratus.Collections.Generic.extend({ entity: entity }));
                 }
             }
         },
@@ -193,7 +193,7 @@
 
                 /* Create Relational Object, if undefined */
                 if (!Stratus.Models.has(this.globals.get('entity'))) {
-                    Stratus.Models.set(this.globals.get('entity'), (typeof resp.meta.relations === 'object') ? Stratus.Models.Generic.extend({relations: resp.meta.relations}) : Stratus.Models.Generic.extend());
+                    Stratus.Models.set(this.globals.get('entity'), (typeof resp.meta.relations === 'object') ? Stratus.Models.Generic.extend({ relations: resp.meta.relations }) : Stratus.Models.Generic.extend());
                 }
 
                 //console.log('Model:', Stratus.Models.get(this.globals.get('entity')));
@@ -239,7 +239,7 @@
         // Refresh the Data Set According to the API Data
         refresh: function (options) {
             options = (options && typeof options === 'object') ? options : {};
-            this.fetch(this.meta.has('api') ? _.extend(options, {data: this.meta.get('api')}) : options);
+            this.fetch(this.meta.has('api') ? _.extend(options, { data: this.meta.get('api') }) : options);
         },
 
         /**
@@ -390,10 +390,10 @@
 
             //if (!weight) weight = this.compare(model1, model2, "level");
             if (!weight) {
-                weight = this.compare(model1, model2, "priority", true, "parent");
+                weight = this.compare(model1, model2, 'priority', true, 'parent');
             }
             if (!weight) {
-                weight = this.compare(model1, model2, "priority", true);
+                weight = this.compare(model1, model2, 'priority', true);
             }
             if (!weight) {
                 weight = 0;
@@ -403,7 +403,7 @@
         },
         save: function () {
             console.warn('Saving collections is not fully implemented.');
-            this.sync('update', this, {url: this.url});
+            this.sync('update', this, { url: this.url });
         },
         saveOne: function (model) {
             model.save();

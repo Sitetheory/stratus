@@ -15,7 +15,6 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-
 // Examples
 // ========
 
@@ -32,7 +31,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "stratus.views.widgets.base"], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -47,9 +46,8 @@
         // Properties
         template: _.template('{% if (options.icon !== false) { %}<span id="{{ elementId }}" class="{{ options.classBtn }}">{% if (options.icon === null) { %}<svg viewBox="0 0 50 50" version="1.1"xmlns:xlink="http://www.w3.org/1999/xlink"><defs><linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-{{ elementId }}"><stop class="stop1" stop-color="#666666" offset="0%"></stop><stop class="stop2" stop-color="#666666" offset="100%"></stop></linearGradient></defs><g id="{{ elementId }}" class="actionButton" fill="url(#linearGradient-{{ elementId }})"><path d="M9.98721875,42 C9.98721875,44.209 11.736676,45.99 13.8951228,45.99 L36.092096,45.99 C38.2564134,45.99 40,44.204 40,42 L40,17 L10,17 L9.98721875,42 Z M16.9936094,23.904 L18.9872188,23.904 L18.9872188,40.0891113 L16.9936094,40.0891113 L16.9936094,23.904 Z M23.9286042,23.904 L25.9872188,23.904 L25.9872188,40.0891113 L23.9286042,40.0891113 L23.9286042,23.904 Z M30.9936094,23.904 L32.9872188,23.904 L32.9872188,40.0891113 L30.9936094,40.0891113 L30.9936094,23.904 Z" id="trashBase"></path><path d="M29.2875402,9.05695537 L29.2875402,5 L20.7124598,5 L20.7124598,9.05695537 L13.20584,9.05695537 C11.4407276,9.05695537 9.99360938,10.4185299 9.99360938,12.0985149 L9.98721875,15 L40,15 L40.0063906,12.0985149 C40.0063906,10.4222324 38.5680784,9.05695537 36.79416,9.05695537 L29.2875402,9.05695537 Z M22.8562299,7.02801488 L27.1437701,7.02801488 L27.1437701,9.05602976 L22.8562299,9.05602976 L22.8562299,7.02801488 Z" id="trashLid"></path></g></svg>{% } else { %}{{ options.icon }}{% } %}</span>{% } %}{% if (options.textOn !== false) { %}<span class="{{ options.classOn }}">{{ options.textOn }}</span><span class="{{ options.classOff }}">{{ options.textOff }}</span>{% } %}'),
         events: {
-            'click': 'saveAction'
+            click: 'saveAction'
         },
-
         options: {
             private: {
                 editable: false,
@@ -58,6 +56,7 @@
             public: {
                 // set to NULL to use default icon, FALSE to hide button, or set to HTML (e.g. an SVG) if you want a custom icon.
                 icon: null,
+
                 // set to false if you do not want delete/undelete text
                 textOn: 'Delete',
                 textOff: 'Undelete',
@@ -66,8 +65,10 @@
                 classOn: 'btnText smallLabel textOn',
                 classOff: 'btnText smallLabel textOff',
                 destroy: false,
+
                 // specify if the widget should redirect the page after deletion
                 redirect: null,
+
                 // specify an integer representing the minimum number of collections that need to be present in order for
                 // button to appear
                 collectionMin: null
@@ -116,13 +117,13 @@
                         {
                             message: this.options.textDeleteConfirm,
                             handler: function (result) {
-                                if (result) this.model.save({'status': this.toggleValue()});
+                                if (result) this.model.save({ status: this.toggleValue() });
                             }.bind(this)
                         }
                     );
                     Stratus.Events.trigger('confirm', this.confirm);
                 } else {
-                    this.model.save({'status': this.toggleValue()});
+                    this.model.save({ status: this.toggleValue() });
                 }
             }
 

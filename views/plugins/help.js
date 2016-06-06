@@ -22,33 +22,26 @@
 // ----------------------------------
 // See Popover plugin for details. This Help just extends popover with a standard class for the icon.
 
+// Function Factory
+// ----------------
 
-// Plugin
-// ======
+// Define AMD, Require.js, or Contextual Scope
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore', 'bootstrap', 'stratus.views.plugins.base', 'stratus.views.plugins.popover'], factory);
+    } else {
+        factory(root.Stratus, root.$, root._);
+    }
+}(this, function (Stratus, $, _) {
 
-// Require.js
-// -------------
-// Define this module and its dependencies
-define("stratus.views.plugins.help", ["stratus", "jquery", "bootstrap", "stratus.views.plugins.popover"], function (Stratus, $) {
-
-    // Popover
-    // -------------
+    // Help Popover
+    // ------------
 
     // The Popover view is very simple and extends the Backbone View (not the base view like many other widgets)
     Stratus.Views.Plugins.Help = Stratus.Views.Plugins.Popover.extend({
-
-        style: function() {
+        style: function () {
             this.$el.addClass('btn-help glyphicon glyphicon-question-sign');
         }
-
     });
 
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
-
-});
+}));

@@ -15,7 +15,6 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-
 // Examples
 // ========
 
@@ -50,14 +49,13 @@ data-options: A JSON string of options to overwrite the javascript options, e.g.
 
  */
 
-
 // Widget
 // ======
 
 // Require.js
 // -------------
 // Define this module and its dependencies
-define("stratus.views.base", ["stratus", "jquery", "underscore", "backbone"], function (Stratus, $, _, Backbone) {
+define('stratus.views.base', ['stratus', 'jquery', 'underscore', 'backbone'], function (Stratus, $, _, Backbone) {
 
     // Base Model View
     // -------------
@@ -68,7 +66,7 @@ define("stratus.views.base", ["stratus", "jquery", "underscore", "backbone"], fu
         /**
          * @param options
          */
-        initialize: function(options) {
+        initialize: function (options) {
             if (!Stratus.Environment.get('production')) console.log(options);
         }
 

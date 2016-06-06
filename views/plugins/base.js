@@ -15,11 +15,17 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
+// Function Factory
+// ----------------
 
-// Require.js
-// -------------
-// Define this module and its dependencies
-define("stratus.views.plugins.base", ["stratus", "backbone"], function (Stratus, Backbone) {
+// Define AMD, Require.js, or Contextual Scope
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore'], factory);
+    } else {
+        factory(root.Stratus, root.$, root._);
+    }
+}(this, function (Stratus, $, _) {
 
     // Plugins Base
     // -------------
@@ -32,22 +38,11 @@ define("stratus.views.plugins.base", ["stratus", "backbone"], function (Stratus,
         // ---------
         // This should be added to the initialize of every plugin.
         prepare: function (options) {
-
             this.uid = (_.has(options, 'uid')) ? options.uid : null;
             this.plugin = options.plugin.toLowerCase();
             this.view = options.view;
-
-            // TODO: load from the CDN
             Stratus.Internals.LoadCss('/sitetheory/v/1/0/bundles/sitetheorycore/css/Core/plugins.css');
         }
     });
 
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
-
-});
+}));

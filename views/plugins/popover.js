@@ -32,13 +32,17 @@ data-delay: if you need to set an alternative delay, you can pass in a JSON stri
 data-placement: The location of the popover, e.g. "auto top", "right", "bottom" "left"
  */
 
-// Plugin
-// ======
+// Function Factory
+// ----------------
 
-// Require.js
-// -------------
-// Define this module and its dependencies
-define("stratus.views.plugins.popover", ["stratus", "jquery", "bootstrap", "stratus.views.plugins.base"], function (Stratus, $) {
+// Define AMD, Require.js, or Contextual Scope
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore', 'bootstrap', 'stratus.views.plugins.base'], factory);
+    } else {
+        factory(root.Stratus, root.$, root._);
+    }
+}(this, function (Stratus, $, _) {
 
     // Popover
     // -------------
@@ -47,8 +51,8 @@ define("stratus.views.plugins.popover", ["stratus", "jquery", "bootstrap", "stra
     Stratus.Views.Plugins.Popover = Stratus.Views.Plugins.Base.extend({
 
         events: {
-            'mouseenter': 'show',
-            'mouseleave': 'hide'
+            mouseenter: 'show',
+            mouseleave: 'hide'
         },
 
         // Custom Actions for View
@@ -57,8 +61,7 @@ define("stratus.views.plugins.popover", ["stratus", "jquery", "bootstrap", "stra
             this.render();
         },
 
-        render: function() {
-
+        render: function () {
             // Add Extra Styles (if this is extended, e.g. help)
             this.style();
 
@@ -68,8 +71,8 @@ define("stratus.views.plugins.popover", ["stratus", "jquery", "bootstrap", "stra
                 trigger: 'manual',
                 placement: this.$el.data('placement') ? this.$el.data('placement') : 'auto top',
                 delay: this.$el.data('delay') ? this.$el.data('delay').toJSON() : {
-                    'show': 50,
-                    'hide': 400
+                    show: 50,
+                    hide: 400
                 },
                 container: 'body',
                 content: function () {
@@ -78,16 +81,16 @@ define("stratus.views.plugins.popover", ["stratus", "jquery", "bootstrap", "stra
             });
         },
 
-        style: function() {},
+        style: function () {},
 
-        show: function() {
+        show: function () {
             this.$el.popover('show');
             $('.popover').on('mouseleave', function () {
                 this.$el.popover('hide');
             }.bind(this));
         },
 
-        hide: function() {
+        hide: function () {
             setTimeout((function () {
                 if (!$('.popover:hover').length) {
                     this.$el.popover('hide');
@@ -95,15 +98,6 @@ define("stratus.views.plugins.popover", ["stratus", "jquery", "bootstrap", "stra
             }.bind(this)), 100);
         }
 
-
     });
 
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
-
-});
+}));

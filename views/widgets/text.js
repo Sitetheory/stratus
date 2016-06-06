@@ -19,7 +19,6 @@
 // -------------
 // Render a widget that edits basic text content.
 
-
 // Examples
 // -------------
 
@@ -65,7 +64,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "stratus.views.widgets.base"], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -79,6 +78,7 @@
 
         // Properties
         model: Stratus.Models.Generic,
+
         // The template MUST add the id = elementId
         template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widgetText" contenteditable="true"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
 
@@ -131,5 +131,5 @@
         }
 
     });
-    
+
 }));

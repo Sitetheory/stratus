@@ -7,6 +7,7 @@
     "test": "test"
   },
   "devDependencies": {
+    "bower": "^1.7.9",
     "gulp": "^3.9.1",
     "gulp-cli": "^1.2.1",
     "gulp-jscs": "^3.0.2",

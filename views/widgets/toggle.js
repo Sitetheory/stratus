@@ -37,7 +37,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "text!templates-toggle", "stratus.views.widgets.base", "bootstrap-toggle"], factory);
+        define(['stratus', 'jquery', 'underscore', 'text!templates-toggle', 'stratus.views.widgets.base', 'bootstrap-toggle'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -53,7 +53,7 @@
         model: Stratus.Models.Generic,
         template: _.template(Template || ''),
         events: {
-            'click': 'clickAction'
+            click: 'clickAction'
         },
 
         // Options that are customizable in the data attribute of the DOM
@@ -61,10 +61,13 @@
             private: {
                 // Technically it is editable since it saves a value
                 editable: true,
+
                 // A toggle will automatically save on click
                 autoSave: false,
+
                 // This saves whether this toggle is bound to a model or a variable (within Stratus.Environment), e.g. model|var
                 dataType: null,
+
                 // SliderCss
                 sliderCss: ['/sitetheory/v/1/0/bundles/sitetheorycore/dist/bootstrap/bootstrap-toggle.min.css']
             },
@@ -72,11 +75,14 @@
                 // Optional: 'radio'|'checkbox'|'icon'|'slider'
                 ui: 'icon',
                 style: 'widget',
+
                 // enter the CSS class of a gradient class to make a div appear above the SVG for styling
                 gradient: false,
+
                 // set to NULL to use default icon, FALSE to hide button, or set to HTML (e.g. an SVG) if you want a custom icon.
                 icon: null,
                 iconPath: '@SitetheoryCoreBundle:images/icons/actionButtons/visibility.svg',
+
                 // set to empty if you do not want text buttons
                 textOn: 'Hide',
                 textOff: 'Show',
@@ -84,32 +90,43 @@
                 classBtn: 'btnIcon',
                 classOn: 'btnText smallLabel textOn',
                 classOff: 'btnText smallLabel textOff',
+
                 // specify whether the value being toggled is 'boolean' (true|false) or 'string' (1|0, red|green)
                 // If value is 'string' you MUST set the valueOn and valueOff
                 valueType: 'boolean',
+
                 // specify what the value should be for ON and OFF if valueType is not boolean
                 valueOn: true,
                 valueOff: false,
+
                 // specify if you want this toggle to relate to other toggles (either matching or inverse value)
                 related: null,
+
                 // By default checking one will uncheck the others (inverse). But if you want it to match, set to false and checking one will check others.
                 relatedInverse: false,
+
                 // By default if you set related, one must always be checked (radio), but if you don't want
                 // to require a value, then set this to false, so that they are checkboxes
                 relatedRequire: false,
+
                 // If you set related values, and you want to do a re-sync from the database (because you have a
                 // listener that updates the values), then set sync as true. See setRelated() method for more details.
                 relatedSync: false,
+
                 // This allows for a checkbox to have Javascript level styling
                 slider: false,
+
                 // large, normal, small, mini
-                sliderSize: "normal",
+                sliderSize: 'normal',
+
                 // default, primary, success, info, warning, danger (default: primary)
-                sliderOnStyle: "info",
+                sliderOnStyle: 'info',
+
                 // default, primary, success, info, warning, danger (default: default)
-                sliderOffStyle: "warning",
+                sliderOffStyle: 'warning',
+
                 // adds a class to the bootstrapToggle container
-                sliderStyle: "",
+                sliderStyle: '',
                 sliderWidth: null,
                 sliderHeight: null
             }
@@ -193,9 +210,10 @@
          */
         onRender: function (options) {
             // Bootstrap Toggle
-            if (this.options.ui === "checkbox" && this.options.slider) {
+            if (this.options.ui === 'checkbox' && this.options.slider) {
                 // Find DOM Element
-                this.slider = this.$el.find("input");
+                this.slider = this.$el.find('input');
+
                 // Initialize
                 this.slider.bootstrapToggle({
                     on: this.options.textOn,
@@ -207,6 +225,7 @@
                     width: this.options.sliderWidth,
                     height: this.options.sliderHeight
                 });
+
                 // Listen for Changes
                 this.slider.change(function (event) {
                     this.$el.dataAttr('value', this.slider.prop('checked'));
@@ -214,7 +233,6 @@
                 }.bind(this));
             }
         },
-
 
         // clickAction()
         // -------------
@@ -229,14 +247,14 @@
             var newValue = this.toggleValue();
             if (this.options.ui === 'radio' && newValue === this.getValueOff()) return;
             this.setValue(newValue);
+
             // Whenever an element is clicked (and sets value), it also needs to check related
             if (this.options.dataType === 'model') {
                 // this calls the default saveAction which sets to the model
-                this.safeSaveAction({saveNow: true});
+                this.safeSaveAction({ saveNow: true });
             }
             this.setRelated();
         },
-
 
         // modelChange()
         // -------------
@@ -249,6 +267,7 @@
             // Toggle Class: if the value is boolean (if the status is true then the "on" class is set)
             // If this is a model, we want to get the data of the model, otherwise
             var value = this.getPropertyValue();
+
             // If boolean, set the opposite of the class, otherwise, set the class name to be the value
             // Set Value on the element's data attribute
             this.setValue(value);
@@ -265,7 +284,6 @@
             }
             return true;
         },
-
 
         // toggleValue()
         // -------------
@@ -302,7 +320,6 @@
             return (this.options.valueType === 'boolean') ? false : this.options.valueOff;
         },
 
-
         // setValue()
         // -----------
         // This sets the value on the DOM (not set the value to the model)
@@ -315,6 +332,7 @@
             // Since this doesn't save to model, the normal save won't work so we just save it right away manually
             if (this.options.dataType === 'var') {
                 Stratus.Environment.set(this.propertyName, value);
+
                 // Since this doesn't register a 'change' event on the model, we just have to call scopeChanged manually
                 // Set the value on the body, so we can referenece this in CSS if necessary, e.g. data-liveEdit
                 $('#app').dataAttr(this.propertyName.toLowerCase(), value);
@@ -340,7 +358,6 @@
             if (value === undefined) value = this.getValue();
             return (value === this.getValueOn()) ? this.getValueOff() : this.getValueOn();
         },
-
 
         // setRelated()
         // --------------
@@ -392,7 +409,6 @@
 
         },
 
-
         // setValueProperty()
         // --------------------
         // Only set the checked value if the element is a checkbox or radio
@@ -412,7 +428,6 @@
                 }
             }
         }
-
 
     });
 

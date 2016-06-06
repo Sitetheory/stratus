@@ -13,3 +13,7 @@ addons:
 cache:
   directories:
     - node_modules
+#before_script:
+#  - bower install
+#script:
+#  - npm test

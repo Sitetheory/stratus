@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "underscore", "backbone"], factory);
+        define(['stratus', 'underscore', 'backbone'], factory);
     } else {
         factory(root.Stratus, root._, root.Backbone);
     }
@@ -33,14 +33,14 @@
     // TODO: This basically needs to handle every collection separately by use of the stratus model and collection references provided by the loader and an entity identifier to determine which to add the new one on
     Stratus.Routers.Generic = Backbone.Router.extend({
         routes: {
-            "new/:entity": "new",
-            "filter/:entity": "filter",
-            "filter/:entity/:filter": "filter",
-            "page/:entity": "paginate",
-            "page/:entity/:page": "paginate"
+            'new/:entity': 'new',
+            'filter/:entity': 'filter',
+            'filter/:entity/:filter': 'filter',
+            'page/:entity': 'paginate',
+            'page/:entity/:page': 'paginate'
         },
         initialize: function (options) {
-            if (!Stratus.Environment.get('production')) console.info("Generic Router Invoked!");
+            if (!Stratus.Environment.get('production')) console.info('Generic Router Invoked!');
         },
         change: function (bubble) {
             if (!Stratus.Environment.get('production')) console.log('Model(s):', arguments);
@@ -50,7 +50,7 @@
             var collection = Stratus.Collections.get(_.ucfirst(entity));
             if (typeof collection === 'object') {
                 this.navigate('#');
-                collection.create(_.has(collection, 'prototype') ? collection.prototype : {}, {wait: true});
+                collection.create(_.has(collection, 'prototype') ? collection.prototype : {}, { wait: true });
             }
         },
         filter: function (entity, filter) {
@@ -62,7 +62,7 @@
                     if (collection.meta.has('api.q')) {
                         collection.meta.set('api.q', filter);
                     } else {
-                        collection.meta.set('api', _.extend(collection.meta.get('api'), {q: filter}));
+                        collection.meta.set('api', _.extend(collection.meta.get('api'), { q: filter }));
                     }
 
                     // Reset to Page 1 on every new Query
@@ -72,7 +72,7 @@
                 } else {
                     collection.meta.set('api.q', filter);
                 }
-                collection.refresh({reset: true});
+                collection.refresh({ reset: true });
                 if (!Stratus.Environment.get('production')) console.info('Route Filter', filter);
             }
         },
@@ -85,7 +85,7 @@
                     if (collection.meta.has('pageCurrent') && collection.meta.get('pageCurrent') !== parseInt(page)) {
                         if (collection.meta.get('pageTotal') >= parseInt(page) && parseInt(page) >= 1) {
                             collection.meta.set('api.p', page);
-                            collection.refresh({reset: true});
+                            collection.refresh({ reset: true });
                         } else {
                             if (!Stratus.Environment.get('production')) console.log('Page', page, 'of entity', entity, 'does not exist.');
                         }

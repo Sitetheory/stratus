@@ -31,7 +31,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "moment", "stratus.views.widgets.base"], factory);
+        define(['stratus', 'jquery', 'underscore', 'moment', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.moment);
     }
@@ -55,20 +55,24 @@
             public: {
                 // The type of data which determines how the value should be formatted, e.g. date, timeSince, timeSinceDate
                 formatType: null,
+
                 // The format that should be applied, e.g. when used in conjunction with date this should be a valid Moment format.
                 format: 'MMM D, YYYY @h:mm a',
+
                 // A way to flag the element for initiating a refresh at a set interval (milliseconds to lapse between refreshes).
                 interval: null,
+
                 // text prepended before value
                 before: null,
+
                 // text appended after value
                 after: null,
+
                 // Option used with format=timeSincedate. This is the amount of seconds to show "timeSince" formatting,
                 // after which the simple date will display
                 timeSinceLimit: 3600
             }
         },
-
 
         // promise()
         // -------------

@@ -8,10 +8,8 @@ var jscs = require('gulp-jscs');
 gulp.task('jscs', function () {
     gulp.src(['stratus.js', 'collections/*.js', 'models/*.js', 'routers/*.js', 'views/base.js', 'views/plugins/*.js', 'views/widgets/*.js'])
         .pipe(jscs())
-        .pipe(notify({
-            title: 'JSCS',
-            message: 'JSCS Passed!'
-        }));
+        .pipe(jscs.reporter())
+        .pipe(jscs.reporter('fail'));
 });
 
 /*

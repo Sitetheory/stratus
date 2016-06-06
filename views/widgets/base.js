@@ -15,7 +15,6 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-
 // Examples
 // ========
 
@@ -58,7 +57,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "backbone", "tether", "moment", "promise", "stratus.models.generic", "stratus.collections.generic"], factory);
+        define(['stratus', 'jquery', 'underscore', 'backbone', 'tether', 'moment', 'promise', 'stratus.models.generic', 'stratus.collections.generic'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.Backbone, root.Tether, root.moment);
     }
@@ -91,24 +90,32 @@
                 // not interact with a model or interacts in a simple way (e.g. toggle, display) and shouldn't display as a
                 // form, then set this to false
                 editable: true,
+
                 // Default to where the widget's data is stored. Options: 'model', 'var'
                 // Var is used in toggle (sometimes) if you want to save a value to the Stratus.Environment object. But in most
                 // cases the dataType is 'model'
                 dataType: 'model',
+
                 // Determine whether this view should register for auto saving
                 autoSave: false,
+
                 // Determine how often the model should auto-save. The lowest set autoSaveInterval will have priority.
                 autoSaveInterval: '3s',
+
                 // Default Action for unrendering
                 unrenderEventDefault: 'blur',
+
                 // specify false if you do not want Stratus.Internals.Loader to run
                 // and load sub widgets after view is rendered
                 autoLoader: true,
+
                 // This will force a type of model or collection to be present for the particular widget
                 forceType: null,
+
                 // Add Required CSS Files, if necessary
                 requiredCssFile: []
             },
+
             // Attributes Editable from Data-Attributes on the DOM
             public: {
                 // Specify if what the empty value should be, e.g. '' or 'null'.
@@ -117,18 +124,23 @@
                 // current typeof(value) which will result in strings being set as '' and objects and arrays set as null.
                 // This default, will work in most situations.
                 emptyValue: null,
+
                 // This is the value that should show up when live edit makes widgets clickable
                 placeholder: 'Click to Edit',
+
                 // Add text before the input
                 before: '',
+
                 // Add text after the input
                 after: '',
+
                 // determine if the widget should be rendered as a 'form', e.g. have form-control added
                 style: null,
                 label: null,
                 help: null,
                 feedback: null,
                 render: 'auto',
+
                 // By default this will use the unrenderEventDefault for the widget (e.g. blur). But if you don't want to
                 // unrender, then data-unrender="false" should be set on the DOM. If the widget has a complex internal way
                 // of detecting blur (e.g. editor, datetimepicker), it must call blurAction() manually when detecting a blur,
@@ -136,11 +148,14 @@
                 unrender: null,
                 format: null,
                 interval: null,
+
                 // specify an integer representing the minimum number of collections that need to be present in order for
                 // widget to appear (e.g. this is used by delete)
                 collectionMin: null,
+
                 // Universal option to limit (used on contexts of lists, e.g. 'collection' widget)
                 limit: null,
+
                 // Determine Autosort
                 autosort: false,
                 cssFile: []
@@ -151,6 +166,7 @@
         options: {
             // Internal Attributes (Not DOM Accessible)
             private: {},
+
             // Attributes Editable from Data-Attributes on the DOM
             public: {}
         },
@@ -234,18 +250,22 @@
             if (scope) {
                 // Set Loading Animation
                 if (!this[scope].isHydrated()) this.setStatus('load');
+
                 // Listen for Request
                 this[scope].on('request', function () {
                     this.setStatus('request');
                 }.bind(this));
+
                 // Listen for Error
                 this[scope].on('error', function () {
                     this.setStatus('error');
                 }.bind(this));
+
                 // Listen for Success
                 this[scope].on('success', function () {
                     this.setStatus('success');
                 }.bind(this));
+
                 // Remove DOM Elements on Model Destruction
                 if (scope === 'model') {
                     this.model.on('destroy', function () {
@@ -309,6 +329,7 @@
 
             this.propertyName = options.property;
             this.propertyValue = null;
+
             // This is the Id that should be set on the editable element
             this.element = this.$el.data('id') ? this.$el.data('id') : _.uniqueId('Widget-');
 
@@ -332,7 +353,7 @@
 
             // Merge CSS File Requirements
             this.mergeCssOptions(options);
-            
+
             // Allow Options to be Changed on a Per-Widget Bases
             this.postOptions(options);
 
@@ -368,6 +389,7 @@
             // Clean Options
             this.options.cssFile = (this.options.cssFile === 'string') ? [this.options.cssFile] : (_.isArray(this.options.cssFile) ? this.options.cssFile : []);
             this.options.requiredCssFile = (this.options.requiredCssFile === 'string') ? [this.options.requiredCssFile] : (_.isArray(this.options.requiredCssFile) ? this.options.requiredCssFile : []);
+
             // Unite
             this.options.cssFile = _.union(this.options.cssFile, this.options.requiredCssFile);
         },
@@ -547,9 +569,9 @@
             if (typeof renderTemplate === 'function') {
                 this.template = renderTemplate;
             } else if (renderTemplate.indexOf('#') === 0) {
-                renderTemplate = $(renderTemplate);
-                if (renderTemplate.length > 0) {
-                    this.template = _.template(renderTemplate.html());
+                var $renderTemplate = $(renderTemplate);
+                if ($renderTemplate.length > 0) {
+                    this.template = _.template($renderTemplate.html());
                 }
             }
 
@@ -584,8 +606,7 @@
                     this.model.autoSave(this.options.autoSave);
                 }
             }
-            this.options.feedback = this.options.feedback || this.options.style === 'form' ? true : false;
-
+            this.options.feedback = (this.options.feedback || this.options.style === 'form') ? true : false;
 
             return true;
         },
@@ -626,7 +647,6 @@
             }
         },
 
-
         // render()
         // -------
         // If there is a template set, proceed to render the template immediately or on click (in cases where rendering
@@ -651,8 +671,10 @@
             } else {
                 // Register Custom Render Event Trigger
                 this.primeRenderTrigger();
+
                 // Listen for LiveEdit
                 this.primeLiveEdit();
+
                 // If set to render on click, set initial value on parent element
                 this.unrender();
             }
@@ -719,9 +741,12 @@
                 elementId: this.element,
                 property: this.propertyName,
                 options: this.options,
+                scope: 'entity',
+
                 // Libraries
                 moment: moment,
                 tether: Tether,
+
                 // List Items
                 globals: (_.has(this, 'globals')) ? this.globals : {},
                 icon: (_.has(this, 'icon')) ? this.icon : {}
@@ -735,13 +760,12 @@
 
             // Add Collection Information with Meta Precedence
             if (this.collection && typeof this.collection === 'object') {
-                templateData.collection = this.collection;
+                templateData.collection = this.collection.models;
                 templateData.meta = this.collection.meta.toObject();
             }
 
             // Add the Editable Element Inside a Container
             editElement = this.template(templateData);
-
 
             // If this is not auto render, then it's being rendered based on an event. In that case, we do not want to
             // show the feedback option twice, so we should remove the status until an event happens again
@@ -873,6 +897,7 @@
         liveEditOn: function () {
             // If the widget is not editable, i.e. a getValue is not defined (e.g. display widgets), then don't do anything
             if (this.getValue() === 'undefined' || !Stratus.Environment.get('liveEdit')) return false;
+
             // If the widget is not rendered yet, and this model value is empty, set default value on the DOM element
             // before it's even rendered, so that users can see the fields that are available
             var modelValue = this.getPropertyValue();
@@ -909,7 +934,8 @@
             // NOTE: It doesn't matter if the template is rendered, or just a placeholder, either way we reset the element with
             // the model value
             // Save Before Unrendering
-            this.safeSaveAction({saveNow: true});
+            this.safeSaveAction({ saveNow: true });
+
             // TODO: don't save placeholder value
             // TODO: allow placeholder to be customized in the data attribute
 
@@ -917,6 +943,7 @@
             // value, but can be manipulated)
             var unrenderedValue = this.options.before + this.getDisplayValue() + this.options.after;
             unrenderedValue = unrenderedValue === null ? '' : unrenderedValue;
+
             // This sets the contents of the element itself, not using traditional setValue()
             this.$el.html(unrenderedValue);
             this.isRendered = false;
@@ -935,7 +962,7 @@
          * @returns {{parent: *, nest: *}}
          */
         loaderCallback: function (nest, parent) {
-            var entries = {parent: parent, nest: nest};
+            var entries = { parent: parent, nest: nest };
             var register = function (view) {
                 view.dispatch = this.dispatch;
             };
@@ -977,7 +1004,7 @@
         focusAction: function (event) {
             if (!this.isFocused) {
                 this.isFocused = true;
-                this.$el.addClass("editing");
+                this.$el.addClass('editing');
                 this.primeIdleCheck();
             }
             return true;
@@ -995,7 +1022,7 @@
         blurAction: function (event) {
             if (this.isFocused) {
                 this.isFocused = false;
-                this.$el.removeClass("editing");
+                this.$el.removeClass('editing');
                 this.primeIdleCheck();
                 /*
                 if (this.model && typeof this.model === 'object') {
@@ -1005,6 +1032,7 @@
                 }
                 */
                 this.safeSaveAction();
+
                 // If it's still rendered, AND the unrender options is set (whether it's an event or just true) then we call unrender
                 if (this.isRendered && this.options.unrender) {
                     // Some widgets can't detect a blur event, instead they record isFocused (e.g. editor, datetimepicker, etc).
@@ -1045,14 +1073,17 @@
             // Enter should blur focus and trigger the changes to be set to the model
             if (event.keyCode === Stratus.Key.Enter) {
                 event.preventDefault();
+
                 // safeSaveAction() is called on blur so we can just blur
                 $(event.target).blur();
             }
+
             // Escape should cancel the changes
             if (event.keyCode === Stratus.Key.Escape) {
                 event.preventDefault();
                 this.closeAction(event);
             }
+
             // Update Key Timestamp
             this._timestamp = Date.now();
             return true;
@@ -1093,11 +1124,13 @@
         safeSaveAction: function (options) {
             // Ensure we can save
             if (!this.propertyName || this.options.dataType !== 'model' || !this.isRendered || !this.options.editable) return false;
+
             // if getValue() method has not been customized, then the widget is not enabled for editing and shouldn't set
             var value = this.getValue();
             if (typeof value !== 'boolean' && _.isEmpty(value)) {
                 value = this.options.emptyValue;
             }
+
             // Save Data if Different
             if (value !== this.getPropertyValue()) {
                 this.saveAction(options);
@@ -1127,6 +1160,7 @@
         // But we really only want an array of simple values (whatever field is the identifier)
         getPropertyValues: function () {
             var value = this.getPropertyValue();
+
             // If value is not an array then just return it as a simple array
             if (!_.isArray(value)) {
                 value = [value];
@@ -1379,6 +1413,7 @@
             // Determine Scope
             var scope = this.propertyName || 'change';
             if (scope !== 'change') scope = 'change:' + scope;
+
             // Listen to Properties
             if (this.model && typeof this.model === 'object') {
                 this.model.on(scope, this.scopeChanged, this);

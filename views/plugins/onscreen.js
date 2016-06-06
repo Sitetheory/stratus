@@ -15,46 +15,55 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Plugin
-// ======
+// Function Factory
+// ----------------
 
-// Require.js
-// -------------
-// Define this module and its dependencies
-define("stratus.views.plugins.onscreen", ["stratus", "jquery", "stratus.views.plugins.base"], function (Stratus, $) {
+// Define AMD, Require.js, or Contextual Scope
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base'], factory);
+    } else {
+        factory(root.Stratus, root.$, root._);
+    }
+}(this, function (Stratus, $, _) {
 
     // OnScreen
-    // -------------
+    // --------
 
     // The OnScreen plugin registers all onscreen events and cycles through them in one screen scroll listener.
     Stratus.Views.Plugins.OnScreen = Stratus.Views.Plugins.Base.extend({
-
         // Custom Actions for View
         initialize: function (options) {
-
             this.prepare(options);
 
-            // register onscreen plugins so we only loop once
-            var options = {};
-            options.method = Stratus.PluginMethods.CheckOnScreen;
-            options.el = this.$el;
-            options.target =   this.$el.data('target') ? $(this.$el.data('target')) : this.$el;
-            options.spy =      this.$el.data('spy') ? $(this.$el.data('spy')) : this.$el;
-            // event can be multiple listeners: reset
-            options.event =    this.$el.data('event') ? this.$el.data('event').split(' ') : [];
-            // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
-            options.offset =   this.$el.data('offset') ? this.$el.data('offset') : 0;
-            // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
-            options.reset =   this.$el.data('reset') ? this.$el.data('reset') : 0;
-
             // register to the single onScroll list
-            Stratus.RegisterGroup.add('OnScroll', options);
+            Stratus.RegisterGroup.add('OnScroll', {
+                method: Stratus.PluginMethods.CheckOnScreen,
+                el: this.$el,
+                target: this.$el.data('target') ? $(this.$el.data('target')) : this.$el,
+                spy: this.$el.data('spy') ? $(this.$el.data('spy')) : this.$el,
+
+                // event can be multiple listeners: reset
+                event: this.$el.data('event') ? this.$el.data('event').split(' ') : [],
+
+                // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
+                offset: this.$el.data('offset') || 0,
+
+                // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
+                reset: this.$el.data('reset') || 0
+            });
 
         }
-
     });
 
-    Stratus.PluginMethods.CheckOnScreen = function(options) {
+    // CheckOnScreen
+    // --------
+
+    /**
+     * @param options
+     * @constructor
+     */
+    Stratus.PluginMethods.CheckOnScreen = function (options) {
 
         // If no scrolling has occurred remain false
         var lastScroll = Stratus.Environment.get('lastScroll');
@@ -64,7 +73,7 @@ define("stratus.views.plugins.onscreen", ["stratus", "jquery", "stratus.views.pl
         // Reset
         if (options.event.indexOf('reset') !== -1) {
             // remove all classes when the scroll is all the way back at the top of thepage (or the spy is above a specific location specified location)
-            if ((options.reset > 0 && options.el.offset().top <= options.reset ) || $(window).scrollTop() <= 0) {
+            if ((options.reset > 0 && options.el.offset().top <= options.reset) || $(window).scrollTop() <= 0) {
                 isReset = true;
                 options.target.removeClass('onScreen offScreen scrollUp scrollDown');
             }
@@ -92,21 +101,12 @@ define("stratus.views.plugins.onscreen", ["stratus", "jquery", "stratus.views.pl
                 // Add init class so we can know it's been on screen before
 
                 options.target.removeClass('offScreen offScreenScrollUp offScreenScrollDown').addClass('onScreen onScreenInit');
-                if (lastScroll) options.target.addClass('onScreenScroll'+ _.ucfirst(lastScroll)).removeClass('onScreenScroll'+ _.ucfirst(notLastScroll));
+                if (lastScroll) options.target.addClass('onScreenScroll' + _.ucfirst(lastScroll)).removeClass('onScreenScroll' + _.ucfirst(notLastScroll));
             } else {
                 options.target.removeClass('onScreen onScreenScrollUp onScreenScrollDown').addClass('offScreen');
-                if (lastScroll) options.target.addClass('offScreenScroll'+ _.ucfirst(lastScroll)).removeClass('offScreenScroll'+ _.ucfirst(notLastScroll));
+                if (lastScroll) options.target.addClass('offScreenScroll' + _.ucfirst(lastScroll)).removeClass('offScreenScroll' + _.ucfirst(notLastScroll));
             }
         }
-
     };
 
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
-
-});
+}));

@@ -32,32 +32,33 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
+
             // Libraries
-            "stratus",
-            "jquery",
-            "underscore",
-            "codemirror",
+            'stratus',
+            'jquery',
+            'underscore',
+            'codemirror',
 
             // Stratus
-            "stratus.views.widgets.base",
+            'stratus.views.widgets.base',
 
             // jQuery Modules
-            "jquery-cookie",
+            'jquery-cookie',
 
             // Redactor Modules
-            "redactor",
-            "redactor-clips",
-            "redactor-definedlinks",
-            "redactor-filemanager",
-            "redactor-fullscreen",
-            "redactor-imagemanager",
-            "redactor-table",
-            "redactor-textexpander",
-            "redactor-video",
+            'redactor',
+            'redactor-clips',
+            'redactor-definedlinks',
+            'redactor-filemanager',
+            'redactor-fullscreen',
+            'redactor-imagemanager',
+            'redactor-table',
+            'redactor-textexpander',
+            'redactor-video',
 
             // CodeMirror Modules
-            "codemirror-htmlmixed",
-            "codemirror-matchbrackets"
+            'codemirror-htmlmixed',
+            'codemirror-matchbrackets'
         ], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.CodeMirror);
@@ -80,6 +81,7 @@
                 editable: true,
                 autoSave: true,
                 unrenderEventDefault: 'blur',
+
                 // TODO: Point to CDN appropriately (PATH!)
                 requiredCssFile: [
                     '/sitetheory/v/1/0/bundles/sitetheorycore/dist/redactor/redactor.css',
@@ -94,9 +96,9 @@
                     paragraphize: false,
                     replaceDivs: false,
                     minHeight: 120,
-                    fileUpload: 'https://app.sitetheory.io:3000/?session=' + $.cookie("SITETHEORY"),
+                    fileUpload: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
                     fileManagerJson: '/Api/Media/?filter=file',
-                    imageUpload: 'https://app.sitetheory.io:3000/?session=' + $.cookie("SITETHEORY"),
+                    imageUpload: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
                     imageManagerJson: '/Api/Media/?filter=image',
                     formatting: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'script', 'svg'],
                     textexpander: [
@@ -185,11 +187,12 @@
                 // Initialize CodeMirror
                 this.codeMirror = CodeMirror.fromTextArea(this.$element[0], {
                     lineNumbers: true,
-                    mode: "text/html",
+                    mode: 'text/html',
                     matchBrackets: true,
                     lineWrapping: true,
                     theme: 'sitetheory'
                 });
+
                 // List for CodeMirror Events
                 this.codeMirror.on('blur', function (event) {
                     this.codeMirrorIsFocused = false;

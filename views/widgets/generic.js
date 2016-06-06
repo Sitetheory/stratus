@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "sortable", "moment", "stratus.views.widgets.base", "stratus.views.widgets.dialogue"], factory);
+        define(['stratus', 'jquery', 'underscore', 'sortable', 'moment', 'stratus.views.widgets.base', 'stratus.views.widgets.dialogue'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.Sortable, root.moment);
     }
@@ -35,7 +35,7 @@
 
         timestamp: Date.now(),
         templateRender: 'entity',
-        template: _.template("{{ model.id }}"),
+        template: _.template('{{ model.id }}'),
         dialogueContainer: _.template('<div data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-id="{{ model.id }}" data-dialogue="true"></div>'),
         el: function () {
             return '[data-collection="' + this.collection.globals.get('uid') + '"][data-entity="' + this.model.collection.globals.get('entity') + '"][data-id="' + this.model.get('id') + '"]:not([data-dialogue="true"])';
@@ -45,14 +45,12 @@
             'dblclick [data-editable="true"]': 'edit',
             'keypress [contenteditable="true"]': 'updateOnEnter',
             'keydown [contenteditable="true"]': 'revertOnEscape',
-            'focusout [contenteditable="true"]': 'close'
-            //'dragover [data-draggable="true"]': 'dragOver',
-            //'dragenter [data-draggable="true"]': 'dragEnter',
-            //'dragleave [data-draggable="true"]': 'dragLeave',
-            //'drop': 'drop'
+            'focusout [contenteditable="true"]': 'close',
+            'dragover [data-draggable="true"]': 'dragOver',
+            'dragenter [data-draggable="true"]': 'dragEnter',
+            'dragleave [data-draggable="true"]': 'dragLeave',
+            drop: 'drop'
         },
-
-        subviewTotal: 0,
         editable: 0,
         _isEditing: false,
 
@@ -70,11 +68,13 @@
             this.templates = (_.has(options, 'templates')) ? options.templates : null;
 
             // Handle Re-rendering
-            this.rerender = {
-                change: null
-            };
-            if (_.has(options, 'rerender')) this.rerender = options.rerender;
-            if (!this.rerender.change || this.rerender.change === "one") this.model.on('change', this.render, this);
+            this.rerender = { change: null };
+            if (_.has(options, 'rerender')) {
+                this.rerender = options.rerender;
+            }
+            if (!this.rerender.change || this.rerender.change === 'one') {
+                this.model.on('change', this.render, this);
+            }
             this.model.on('destroy', this.destroy, this);
 
             // Create Template Information
@@ -119,44 +119,9 @@
                 fulfill(this);
             }
         },
-        /**
-         * @returns {boolean}
-         */
-        render: function () {
-            // TODO: allow the base's rendering to handle this particular widget comparably
-            this.$el.html(this.template(
-                {
-                    scope: 'entity',
-                    moment: moment,
-                    meta: (this.collection) ? this.collection.meta.toObject() : {},
-                    globals: this.globals,
-                    model: this.model.attributes,
-                    icon: this.icon
-                }
-            ));
-
-            // TODO: Enable the following loader method to allow for a more structured base system instead of what follows
-            //this.autoload();
-            Stratus.Internals.Loader(this.$el).done(function (entries) {
-                this.subviewTotal = entries.total;
-                //if (entries.total > 1) console.log('Generic Entries:', entries);
-                this.onRender(entries);
-            }.bind(this), function (error) {
-                console.error('Widgets.Generic:', error);
-            });
-            return true;
-        },
-        /**
-         * @param entries
-         * @returns {Stratus.Views.Widgets.Generic}
-         */
         onRender: function (entries) {
-            // Toggle Edit Ability
             this.editable = _.size(this.$el.find('[data-editable="true"]'));
-            // Gather Stats
-            //if (typeof entries.parent === 'object') this.subviewTotal += entries.parent.total;
-            //if (typeof entries.nest === 'object') this.subviewTotal += entries.nest.total;
-            return this;
+            return true;
         },
         destroy: function () {
             // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
@@ -167,6 +132,7 @@
             this._isEditing = true;
             if (!this.editable) return;
             $(event.target).addClass('editing');
+
             // TODO: ContentEditable should be enabled with a data-attribute, not innately stuck
             //$(event.target).attr('contenteditable', 'true');
             $(event.target).focus();
@@ -177,16 +143,17 @@
         close: function (event) {
             this._isEditing = false;
             if (!this.editable) return;
-            $(event.target).html(this.model.get($(event.target).data('field')));
+            $(event.target).html(this.model.get($(event.target).data('property')));
+
             // TODO: ContentEditable should be enabled with a data-attribute, not innately stuck
             //$(event.target).attr('contenteditable', 'false');
-            $(event.target).removeClass("editing");
+            $(event.target).removeClass('editing');
         },
         updateOnEnter: function (event) {
             if (!this.editable) return;
             if (event.keyCode === Stratus.Key.Enter) {
                 event.preventDefault();
-                this.model.set($(event.target).data('field'), event.target.innerHTML);
+                this.model.set($(event.target).data('property'), event.target.innerHTML);
                 this.model.save();
                 $(event.target).blur();
             }
@@ -204,14 +171,14 @@
         },
         dragEnter: function (event) {
             if (!Stratus.Environment.get('production')) console.log('Enter:', event);
-            var dropContainer = $(event.currentTarget);
-            dropContainer.animate({opacity: 1}, 'fast');
+            var $dropContainer = $(event.currentTarget);
+            $dropContainer.animate({ opacity: 1 }, 'fast');
             return this;
         },
         dragLeave: function (event) {
             if (!Stratus.Environment.get('production')) console.log('Leave:', event);
-            var dropContainer = $(event.currentTarget);
-            dropContainer.animate({opacity: 0.5}, 'fast');
+            var $dropContainer = $(event.currentTarget);
+            $dropContainer.animate({ opacity: 0.5 }, 'fast');
             return this;
         },
         drop: function (event) {

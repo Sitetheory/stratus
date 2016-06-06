@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(["stratus", "jquery", "underscore", "tether", "stratus.views.widgets.base"], factory);
+        define(['stratus', 'jquery', 'underscore', 'tether', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.Tether);
     }
@@ -33,13 +33,13 @@
     // This Backbone View intends to handle Generic rendering for a single Model.
     Stratus.Views.Widgets.Dialogue = Stratus.Views.Widgets.Base.extend({
 
-        template: _.template("{{ model.id }}"),
+        template: _.template('{{ model.id }}'),
         el: function () {
             return '[data-collection="' + this.collection.globals.get('uid') + '"][data-entity="' + this.model.collection.globals.get('entity') + '"][data-id="' + this.model.get('id') + '"][data-dialogue="true"]';
         },
         events: {
-            'click': 'open',
-            'dblclick': 'open'
+            click: 'open',
+            dblclick: 'open'
         },
 
         timestamp: Date.now(),
@@ -67,6 +67,7 @@
                             target: this.widget.$el.selector,
                             attachment: 'top left',
                             targetAttachment: 'top right'
+
                             //offset: '0 10px'
                             //constraints: [{to: 'window',pin: true}]
                         });
