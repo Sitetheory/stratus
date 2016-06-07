@@ -159,7 +159,9 @@
                 this.model.meta.temp('api.duplicate', true);
             }
 
-            this.model.trigger('save');
+            if (_.size(this.model.patch)) {
+                this.model.trigger('save');
+            }
 
             // check the model for changes and update the DOM classes, just in case a save doesn't trigger a change event
             // so we can make sure the button stays in sync with the model changes
@@ -189,10 +191,9 @@
                 if (urlNew) window.location.replace(urlNew);
             }
 
-            // TODO: listen for success messages once to ensure saving occurred
-
             // Confirm if the "change" is from a full API change (will have id) or from a user change
             // timeEdit will only be in the change set when it fetches the full model from the API
+            //this.primeChanges(!_.size(this.model.patch));
             this.primeChanges((!_.size(this.model.patch) || this.model.hasChanged('timeStatus') || (this.model.hasChanged('timeEdit') && this.model.get('timEdit') !== 'API::NOW')));
         },
 

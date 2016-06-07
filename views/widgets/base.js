@@ -987,7 +987,7 @@
         idleCheck: function () {
             if (this._timestamp && ((Date.now() - this._timestamp) > (_.seconds(this.options.autoSaveInterval) * 1000))) {
                 this._timestamp = null;
-                this.safeSaveAction();
+                this.savePropertyValue();
             }
             return true;
         },
@@ -1010,6 +1010,17 @@
             return true;
         },
 
+        /**
+         * @returns {*|boolean}
+         */
+        savePropertyValue: function () {
+            if (this.getValue() !== this.getPropertyValue()) {
+                this.setPropertyValue(this.getValue());
+                this.safeSaveAction();
+            }
+            return true;
+        },
+
         // blurAction()
         // -----------
         // Register a value when the editable element is focused, so we can check whether certain events should fire.
@@ -1024,14 +1035,7 @@
                 this.isFocused = false;
                 this.$el.removeClass('editing');
                 this.primeIdleCheck();
-                /*
-                if (this.model && typeof this.model === 'object') {
-                    this.safeSaveAction({saveNow: true});
-                } else {
-                    this.safeSaveAction();
-                }
-                */
-                this.safeSaveAction();
+                this.savePropertyValue();
 
                 // If it's still rendered, AND the unrender options is set (whether it's an event or just true) then we call unrender
                 if (this.isRendered && this.options.unrender) {
@@ -1122,19 +1126,8 @@
          * @returns {boolean}
          */
         safeSaveAction: function (options) {
-            // Ensure we can save
             if (!this.propertyName || this.options.dataType !== 'model' || !this.isRendered || !this.options.editable) return false;
-
-            // if getValue() method has not been customized, then the widget is not enabled for editing and shouldn't set
-            var value = this.getValue();
-            if (typeof value !== 'boolean' && _.isEmpty(value)) {
-                value = this.options.emptyValue;
-            }
-
-            // Save Data if Different
-            if (value !== this.getPropertyValue()) {
-                this.saveAction(options);
-            }
+            this.saveAction(options);
             return true;
         },
 
@@ -1185,6 +1178,12 @@
          * @returns {*}
          */
         setPropertyValue: function (value) {
+            // Ensure Changing
+            if (this.getPropertyValue() === value) return true;
+
+            // Set Change Status
+            this.setStatus('change');
+
             // Determine Value Scope
             var scope = this.propertyName;
             if (value === null && typeof scope === 'string' && scope.indexOf('.') !== -1) {
@@ -1193,6 +1192,7 @@
                     scope = scope.slice(0, -3);
                 }
             }
+
             // Remove Empty Values
             if (typeof value !== 'boolean' && !value) value = this.options.emptyValue;
 
@@ -1273,11 +1273,8 @@
         saveAction: function (options) {
             if (!this.propertyName) return false;
 
-            if (typeof options === 'undefined') options = {};
-
-            // set the changes to the model
-            this.setPropertyValue(this.getValue());
-            this.setStatus('change');
+            // Ensure Options Exist
+            if (options === undefined) options = {};
 
             // If auto save is set, the stratus will automatically save at intervals
             if (this.model && typeof this.model === 'object' && (!this.options.autoSave || options.saveNow)) {
