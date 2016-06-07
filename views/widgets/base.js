@@ -537,7 +537,7 @@
 
         // <div id="foobar" data-type="myWidget"></div><script id="render_foobar">TEMPLATE CONTENT INSERTED HERE</script>.
 
-        // data-templates='{"container":"templates-menuprimary-container","entity":"templates-menuprimary-entity"}'
+        // data-templates='{"container":"sitetheorymenu/stratus/templates/menuPrimary.container.html","entity":"sitetheorymenu/stratus/templates/menuPrimary.entity.html"}'
         // data-templates='{"container":"#MenuLinkContainer","entity":"#MenuLinkEntity"}'
 
         // TODO: more details needed here...
