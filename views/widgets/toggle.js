@@ -248,6 +248,8 @@
             var newValue = this.toggleValue();
             if (this.options.ui === 'radio' && newValue === this.getValueOff()) return;
 
+            this.setPropertyValue(newValue);
+
             // Whenever an element is clicked (and sets value), it also needs to check related
             if (this.options.dataType === 'model') {
                 // this calls the default saveAction which sets to the model
