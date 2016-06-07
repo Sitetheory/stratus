@@ -73,7 +73,7 @@
             },
             public: {
                 // Optional: 'radio'|'checkbox'|'icon'|'slider'
-                ui: 'icon',
+                ui: 'checkbox',
                 style: 'widget',
 
                 // enter the CSS class of a gradient class to make a div appear above the SVG for styling
