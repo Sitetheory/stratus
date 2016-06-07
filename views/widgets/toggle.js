@@ -141,6 +141,9 @@
          * @param reject
          */
         promise: function (options, fulfill, reject) {
+            // set empty value as the off value
+            this.options.emptyValue = this.options.valueOff;
+
             // TODO: Move this into the base for Icon Registration
             if (this.options.ui === 'icon' && this.options.iconPath) {
                 Stratus.Internals.Resource(this.options.iconPath, this.element).done(function (icon) {
@@ -181,8 +184,6 @@
                 this.options.textOn = null;
                 this.options.textOff = null;
             }
-            // set empty value as the off value
-            this.options.emptyValue = this.options.valueOff;
             this.options.valueType = typeof(this.options.valueOn);
         },
 
@@ -246,8 +247,7 @@
             // If ui is set as 'radio', don't let them uncheck
             var newValue = this.toggleValue();
             if (this.options.ui === 'radio' && newValue === this.getValueOff()) return;
-            this.setPropertyValue(newValue);
-            
+
             // Whenever an element is clicked (and sets value), it also needs to check related
             if (this.options.dataType === 'model') {
                 // this calls the default saveAction which sets to the model
