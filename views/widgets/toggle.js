@@ -184,7 +184,7 @@
                 this.options.textOn = null;
                 this.options.textOff = null;
             }
-            this.options.valueType = typeof(this.options.valueOn);
+            this.options.valueType = typeof (this.options.valueOn);
         },
 
         // validate()
@@ -296,7 +296,7 @@
          */
         toggleValue: function () {
             var value = this.getPropertyValue();
-            
+
             // NOTE: If the value is relatedRequire (radio) it will always be the on/true value
             // If the Value is boolean, just get the opposite for now (see above)
             // NOTE: an icon based toggle will have this.options.related=null
