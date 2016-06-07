@@ -69,7 +69,11 @@
                 dataType: null,
 
                 // SliderCss
-                sliderCss: ['/sitetheory/v/1/0/bundles/sitetheorycore/dist/bootstrap/bootstrap-toggle.min.css']
+                sliderCss: ['/sitetheory/v/1/0/bundles/sitetheorycore/dist/bootstrap/bootstrap-toggle.min.css'],
+
+                // specify whether the value being toggled is 'boolean' (true|false) or 'string' (1|0, red|green)
+                // If value is 'string' you MUST set the valueOn and valueOff
+                valueType: null
             },
             public: {
                 // Optional: 'radio'|'checkbox'|'icon'|'slider'
@@ -90,10 +94,6 @@
                 classBtn: 'btnIcon',
                 classOn: 'btnText smallLabel textOn',
                 classOff: 'btnText smallLabel textOff',
-
-                // specify whether the value being toggled is 'boolean' (true|false) or 'string' (1|0, red|green)
-                // If value is 'string' you MUST set the valueOn and valueOff
-                valueType: 'boolean',
 
                 // specify what the value should be for ON and OFF if valueType is not boolean
                 valueOn: true,
@@ -181,6 +181,9 @@
                 this.options.textOn = null;
                 this.options.textOff = null;
             }
+            // set empty value as the off value
+            this.options.emptyValue = this.options.valueOff;
+            this.options.valueType = typeof(this.options.valueOn);
         },
 
         // validate()
@@ -211,6 +214,9 @@
         onRender: function (options) {
             // Bootstrap Toggle
             if (this.options.ui === 'checkbox' && this.options.slider) {
+
+                this.scopeChanged();
+
                 // Find DOM Element
                 this.slider = this.$el.find('input');
 
@@ -225,12 +231,6 @@
                     width: this.options.sliderWidth,
                     height: this.options.sliderHeight
                 });
-
-                // Listen for Changes
-                this.slider.change(function (event) {
-                    this.$el.dataAttr('value', this.slider.prop('checked'));
-                    this.clickAction();
-                }.bind(this));
             }
         },
 
@@ -246,8 +246,8 @@
             // If ui is set as 'radio', don't let them uncheck
             var newValue = this.toggleValue();
             if (this.options.ui === 'radio' && newValue === this.getValueOff()) return;
-            this.setValue(newValue);
-
+            this.setPropertyValue(newValue);
+            
             // Whenever an element is clicked (and sets value), it also needs to check related
             if (this.options.dataType === 'model') {
                 // this calls the default saveAction which sets to the model
@@ -282,6 +282,7 @@
             if (this.options.ui === 'checkbox' || this.options.ui === 'radio') {
                 value ? this.$element.attr('checked', 'checked') : this.$element.removeAttr('checked');
             }
+
             return true;
         },
 
@@ -293,7 +294,7 @@
          */
         toggleValue: function () {
             var value = this.getPropertyValue();
-
+            
             // NOTE: If the value is relatedRequire (radio) it will always be the on/true value
             // If the Value is boolean, just get the opposite for now (see above)
             // NOTE: an icon based toggle will have this.options.related=null
@@ -327,12 +328,23 @@
          * @param value
          */
         setValue: function (value) {
-            this.setValueProperty(this.$element, value);
+
+            // Store as JSON so that it boolean remains
+            this.$element.closest('[data-type="toggle"]').dataAttr('value', value);
+
+            // Check if this toggle is a checkbox or radio (determined if it's flagged as 'related')
+            if (this.options.related) {
+                if (value === this.getValueOn()) {
+                    this.$element.prop('checked', true);
+                    this.$element.attr('checked', 'checked');
+                } else {
+                    this.$element.prop('checked', false);
+                    this.$element.removeAttr('checked');
+                }
+            }
 
             // Since this doesn't save to model, the normal save won't work so we just save it right away manually
             if (this.options.dataType === 'var') {
-                Stratus.Environment.set(this.propertyName, value);
-
                 // Since this doesn't register a 'change' event on the model, we just have to call scopeChanged manually
                 // Set the value on the body, so we can referenece this in CSS if necessary, e.g. data-liveEdit
                 $('#app').dataAttr(this.propertyName.toLowerCase(), value);
@@ -407,26 +419,6 @@
                 }
             }
 
-        },
-
-        // setValueProperty()
-        // --------------------
-        // Only set the checked value if the element is a checkbox or radio
-        setValueProperty: function (el, value) {
-
-            // Store as JSON so that it boolean remains
-            el.parent('[data-type="toggle"]').dataAttr('value', value);
-
-            // Check if this toggle is a checkbox or radio (determined if it's flagged as 'related')
-            if (this.options.related) {
-                if (value === this.getValueOn()) {
-                    el.prop('checked', true);
-                    el.attr('checked', 'checked');
-                } else {
-                    el.prop('checked', false);
-                    el.removeAttr('checked');
-                }
-            }
         }
 
     });

@@ -1193,9 +1193,8 @@
                     scope = scope.slice(0, -3);
                 }
             }
-
             // Remove Empty Values
-            if (typeof value !== 'boolean' && _.isEmpty(value)) value = this.options.emptyValue;
+            if (typeof value !== 'boolean' && !value) value = this.options.emptyValue;
 
             // Set Value
             if (this.options.dataType === 'model') {
