@@ -12,8 +12,7 @@ addons:
     - google-chrome-stable
 cache:
   directories:
-    - node_modules
-#before_script:
-#  - bower install
-#script:
-#  - npm test
+  - node_modules
+notifications:
+  slack:
+    secure: oy+z9DTNpZktMwhMg6/rehtwW23p5FKa506EiPzkNCG7Iv/yoYL7iJnIMad91lgFgiR2Nljg0kXc7qU3S9iDmby1gnw/OoTG2ExJoECzFqkaC2OI4IVoDEAblYk3sKHjHKtkD2kt8Z7HsUUscBFogf3tjmUc3WLG3l+EI5ghMnSb25HkmdUwwlr95q5sJ6Vopr+k3WSyH+pLjc5k5UTTELpOw7YVUmupfxSiw4ZTd8MqmQ9locXUKzmkc/Lu2Sa7O0Jnr0a4FV9Cw84lrdTn6LxR1jofNxMHPbIOIPEHxKzm6MA41GJ/ovJl6kIam/ku9I5VXeBsvHXnWl3gp3GKcXN7m8cJ7wEEdy6bfEKjOTyGwZ23IXtzlmMME0xW/G2i/CiApLHwH0KVPBPPZUVRL+E/hf57gEmOqqgG7ZD8BJndWjbu2ejJZnH8ChGFHzIWPLmHPh3nWVJWbD//t065wgq9EC0X1o9Vxx5ddKYvI8mBBLuCvNCp9mk/W6WByLKNB1ZWqZbdHqPmYwej7im6RaGwK+IufL4KKMmViMpm+43v0AnqQUEUaJsrGVnkWcs+CnjPdYVFr+TikEVGiK5uxwguJWkb7jRRyqNdnHa6HLm/dut+BxQe/X3gW7F86/5UKCsXcGKGFqpcwjjBoGbfRKGK9PhiLc+UFtGqw3C7nQQ=
