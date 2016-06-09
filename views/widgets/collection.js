@@ -487,7 +487,8 @@
                     uid: globals.uid,
                     id: model.get('id'),
                     scope: 'model',
-                    model: model
+                    model: model,
+                    collection: this.collection
                 }));
                 var options = _.extend({}, view.toObject(), {
                     collectionView: this,

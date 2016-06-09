@@ -151,50 +151,6 @@
             'click .selectedOptionsContainer button.delete': 'removeSelectedOption'
         },
 
-        renderInitialized: false,
-
-        // These are functions that should only happen ONCE on initial render
-        initializeRender: function () {
-
-            // Register Events
-            // Set Values on DOM first time, and every time the model changes (if there is a model)
-            // Since this isn't a traditional "input" that we can get the data from on the DOM, we need
-            // to set the initial value ON the dom. The modelChange will do a setValue from the getModelValue
-            // (which will be the model or the internal var.
-            if (this.options.dataType === 'model') {
-                //this.model.on('change', this.scopeChanged, this);
-                this.getSelectedCollection();
-
-                // If this is display ui=menu and showSelected is not on, we need to get the selected manually
-                this.model.on('change:' + this.propertyName, function () {
-                    this.model.once('success', function () {
-                        if (this.options.ui === 'menu' && !this.options.showSelected) {
-                            this.getSelectedCollection();
-                        }
-                    }, this);
-                }, this);
-            }
-
-            // If the choices are supplied manually, we can check the model has changed immediately in
-            // the addOptions() method. If the choices are added dynamically via an API source then we need
-            // run the model Change AFTER the sub widget for Collection is loaded, e.g. loaderCallback()
-
-            // If the options are loaded dynamically from an API source, we need to sync the DOM with the model
-            // AFTER the collection is loaded fully, which is why this is done in the loaderCallback() method
-            if (this.options.source) {
-
-                // If we are loading the options from a source collection, and there is pagination or filtering
-                // then we need to resync the inputs to the model data whenever they update (to see if they are
-                // checked). So we have to add a listener to the collection where these options exist, so that
-                // when that collection changes, we run our internal syncDom() function again.
-                // The Dispatch is a bubble around this select widget and all it's children, so whenever
-                // children change they trigger this dispatch and we are notified here and execute our method.
-                this.dispatch.on('render', this.syncDom, this);
-            }
-
-            return true;
-        },
-
         // postOptions()
         // ------------------
         // Some values must trigger other conditional default values
@@ -314,13 +270,56 @@
                 }, this);
             }
 
-            this.renderInitialized = this.renderInitialized || this.initializeRender();
             this.addOptions();
 
             if (this.options.showSelected) {
                 // TODO: add funcitonality to allow drag/drop of options into the selected
             }
 
+        },
+
+        /**
+         * @returns {boolean}
+         */
+        onRegister: function () {
+
+            // Register Events
+            // Set Values on DOM first time, and every time the model changes (if there is a model)
+            // Since this isn't a traditional "input" that we can get the data from on the DOM, we need
+            // to set the initial value ON the dom. The modelChange will do a setValue from the getModelValue
+            // (which will be the model or the internal var.
+            if (this.options.dataType === 'model') {
+                //this.model.on('change', this.scopeChanged, this);
+                this.getSelectedCollection();
+
+                // If this is display ui=menu and showSelected is not on, we need to get the selected manually
+                this.model.on('change:' + this.propertyName, function () {
+                    this.model.once('success', function () {
+                        if (this.options.ui === 'menu' && !this.options.showSelected) {
+                            this.getSelectedCollection();
+                        }
+                    }, this);
+                }, this);
+            }
+
+            // If the choices are supplied manually, we can check the model has changed immediately in
+            // the addOptions() method. If the choices are added dynamically via an API source then we need
+            // run the model Change AFTER the sub widget for Collection is loaded, e.g. loaderCallback()
+
+            // If the options are loaded dynamically from an API source, we need to sync the DOM with the model
+            // AFTER the collection is loaded fully, which is why this is done in the loaderCallback() method
+            if (this.options.source) {
+
+                // If we are loading the options from a source collection, and there is pagination or filtering
+                // then we need to resync the inputs to the model data whenever they update (to see if they are
+                // checked). So we have to add a listener to the collection where these options exist, so that
+                // when that collection changes, we run our internal syncDom() function again.
+                // The Dispatch is a bubble around this select widget and all it's children, so whenever
+                // children change they trigger this dispatch and we are notified here and execute our method.
+                this.dispatch.on('render', this.syncDom, this);
+            }
+
+            return true;
         },
 
         // TODO: create option to display the "selected" in a separate list. This is
@@ -428,9 +427,9 @@
                 } else {
                     modelValue = _.without(modelValue, inputValue);
                 }
-                this.setValue(modelValue);
+                this.setPropertyValue(modelValue);
             } else {
-                this.setValue(inputValue);
+                this.setPropertyValue(inputValue);
             }
 
             // we set the value on the DOM, so that a saveAction can getValue (from DOM)
