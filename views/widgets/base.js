@@ -665,7 +665,6 @@
                 this.isRendered = true;
                 return false;
             }
-
             if (this.options.render === 'auto') {
                 this.renderTemplate();
             } else {

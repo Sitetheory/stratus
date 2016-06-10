@@ -43,6 +43,8 @@
     // Display view which extends the base view.
     Stratus.Views.Widgets.Display = Stratus.Views.Widgets.Base.extend({
 
+        template: _.template('<div class="input-group">{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widgetText"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}</div>'),
+
         options: {
             private: {
                 editable: false,
@@ -109,7 +111,7 @@
          */
         setValue: function (value) {
             this.propertyValue = this.processValue(value);
-            this.$el.html(this.propertyValue);
+            this.$element.html(this.propertyValue);
             return this.propertyValue;
         },
 
