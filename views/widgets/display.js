@@ -43,9 +43,6 @@
     // Display view which extends the base view.
     Stratus.Views.Widgets.Display = Stratus.Views.Widgets.Base.extend({
 
-        // Properties
-        model: Stratus.Models.Generic,
-
         options: {
             private: {
                 editable: false,
@@ -73,26 +70,6 @@
                 timeSinceLimit: 3600
             }
         },
-
-        // promise()
-        // -------------
-        // Begin initializing the widget within an asynchronous promise realm
-        /**
-         * @param options
-         * @param fulfill
-         * @param reject
-         */
-        /*
-        promise: function (options, fulfill, reject) {
-            // This is not necessary, since it will already automatically update whenever the model changes.
-            // Also it appears to be set to 60 seconds (60000) from somewhere unknown
-            if (this.options.interval) {
-                setInterval(function () {
-                    this.scopeChanged();
-                }.bind(this), this.options.interval);
-            }
-        },
-        */
 
         // validate()
         // -----------
