@@ -69,7 +69,7 @@
 
                 // Option used with format=timeSincedate. This is the amount of seconds to show "timeSince" formatting,
                 // after which the simple date will display
-                timeSinceLimit: 3600
+                timeSinceLimit: 86400 // OLD: 3600
             }
         },
 

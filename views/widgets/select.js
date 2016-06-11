@@ -145,7 +145,7 @@
             'click .selectOptionsContainer .optionContainer input': 'syncModel',
 
             // Select
-            'change select.optionsCollection': 'syncModel',
+            'change .selectOptionsContainer select': 'syncModel',
 
             // If the showSelected is enabled, make the delete button work
             'click .selectedOptionsContainer button.delete': 'removeSelectedOption'

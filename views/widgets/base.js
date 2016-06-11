@@ -1040,7 +1040,7 @@
                 if (this.isRendered && this.options.unrender) {
                     // Some widgets can't detect a blur event, instead they record isFocused (e.g. editor, datetimepicker, etc).
                     // So in those cases the widget needs to trigger the blurAction by it's own methods. which will call this here.
-                    this.trigger('unrender');
+                    this.unrender();
                 }
             }
             return true;
