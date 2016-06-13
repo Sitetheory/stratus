@@ -1506,16 +1506,8 @@
             }
             if (templates !== null) {
                 for (var key in templates) {
-                    if (!templates.hasOwnProperty(key)) {
-                        continue;
-                    }
-                    if (typeof templates[key] === 'function') {
-                        continue;
-                    }
+                    if (!templates.hasOwnProperty(key) || typeof templates[key] === 'function') continue;
                     if (templates[key].indexOf('#') === 0) {
-                        if (!Stratus.Environment.get('production')) {
-                            console.info('DOM Template:', templates[key]);
-                        }
                         var $domTemplate = $(templates[key]);
                         if ($domTemplate.length > 0) {
                             templates[key] = $domTemplate.html();
