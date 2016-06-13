@@ -2064,15 +2064,15 @@
     Stratus.DOM.unload(function (event) {
         $('body').removeClass('loading loaded').addClass('unloaded');
         Stratus.Events.trigger('terminate', event);
+        /*
         if (event.cancelable === true) {
             // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
             event.preventDefault();
-            /*
             var confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
             (event || window.event).returnValue = confirmationMessage;
             return confirmationMessage;
-            */
         }
+        */
     });
 
     // Handle Scope
