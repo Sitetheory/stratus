@@ -47,13 +47,10 @@
     // Save view that extends the view base.
     Stratus.Views.Widgets.Save = Stratus.Views.Widgets.Base.extend({
 
-        // Properties
-        model: Stratus.Models.Generic,
         template: _.template('{% if (options.icon) { %}{% if (options.gradient) { %}<div class="{{ options.gradient }}"></div>{% } %}<span id="{{ elementId }}" class="{{ options.classBtn }}">{{ options.icon }}</span>{% } %}{% if (options.textOn || options.textOff) { %}<span class="{{ options.classOn}}">{{ options.textOn }}</span><span class="{{ options.classOff}}">{{ options.textOff }}</span>{% } %}'),
         events: {
             click: 'saveNowAction'
         },
-
         options: {
             private: {
                 editable: false,
@@ -157,6 +154,7 @@
                 this.model.set('timeEdit', 'API::NOW');
             } else if (this.options.action === 'duplicate') {
                 this.model.meta.temp('api.duplicate', true);
+                this.model.set('timeEdit', 'API::NOW');
             }
 
             if (_.size(this.model.patch)) {
