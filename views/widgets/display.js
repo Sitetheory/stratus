@@ -80,9 +80,12 @@
          * @returns {boolean}
          */
         validate: function () {
-            if (!this.$el.data('property')) {
-                // message, title, class
-                Stratus.Events.trigger('toast', 'The data-property attribute is missing.', 'Missing Data Attribute', 'danger');
+            if (!this.$el.dataAttr('property')) {
+                Stratus.Events.trigger('toast', new Stratus.Prototypes.Toast({
+                    priority: 'danger',
+                    title: 'Missing Data Attribute',
+                    message: 'The data-property attribute is missing.'
+                }));
                 return false;
             }
             return true;

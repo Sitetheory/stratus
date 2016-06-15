@@ -36,7 +36,8 @@
     "masonry": "^4.1.0",
     "text": "^2.0.15",
     "jquery-ui": "^1.11.4",
-    "jquery.toaster": "^1.2.0"
+    "jquery.toaster": "^1.2.0",
+    "dropzone": "^4.3.0"
   },
   "private": true
 }

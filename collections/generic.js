@@ -239,6 +239,7 @@
         // Refresh the Data Set According to the API Data
         refresh: function (options) {
             options = (options && typeof options === 'object') ? options : {};
+            //console.log('fetch:', this.meta.has('api') ? _.extend(options, { data: this.meta.get('api') }) : options);
             this.fetch(this.meta.has('api') ? _.extend(options, { data: this.meta.get('api') }) : options);
         },
 
