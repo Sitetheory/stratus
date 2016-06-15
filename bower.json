@@ -37,7 +37,8 @@
     "text": "^2.0.15",
     "jquery-ui": "^1.11.4",
     "jquery.toaster": "^1.2.0",
-    "dropzone": "^4.3.0"
+    "dropzone": "^4.3.0",
+    "selectize": "^0.12.1"
   },
   "private": true
 }

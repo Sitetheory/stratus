@@ -181,28 +181,20 @@
 
             if (typeof this.globals.get('entity') !== 'undefined') {
 
-                //console.log('Format:', _.cloneDeep(resp.meta.relations));
-
                 /* Hydrate Backbone Relations */
                 if (typeof resp.meta.relations === 'object') {
                     _.each(resp.meta.relations, this.hydrateRelations, Backbone);
                 }
-
-                //console.log('Hydrate:', _.cloneDeep(resp.meta.relations));
 
                 /* Create Relational Object, if undefined */
                 if (!Stratus.Models.has(this.globals.get('entity'))) {
                     Stratus.Models.set(this.globals.get('entity'), (typeof resp.meta.relations === 'object') ? Stratus.Models.Generic.extend({ relations: resp.meta.relations }) : Stratus.Models.Generic.extend());
                 }
 
-                //console.log('Model:', Stratus.Models.get(this.globals.get('entity')));
-
                 /* Hydrate Undefined Relations */
                 if (typeof resp.meta.relations === 'object') {
                     _.each(resp.meta.relations, this.hydrateTypes, this);
                 }
-
-                //console.log('Types:', _.cloneDeep(resp.meta.relations));
 
                 /* Store Pagination Data */
                 var storeMeta = function (collection, data, key) {
