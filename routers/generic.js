@@ -40,13 +40,19 @@
             'page/:entity/:page': 'paginate'
         },
         initialize: function (options) {
-            if (!Stratus.Environment.get('production')) console.info('Generic Router Invoked!');
+            if (!Stratus.Environment.get('production')) {
+                console.info('Generic Router Invoked!');
+            }
         },
         change: function (bubble) {
-            if (!Stratus.Environment.get('production')) console.log('Model(s):', arguments);
+            if (!Stratus.Environment.get('production')) {
+                console.log('Model(s):', arguments);
+            }
         },
         new: function (entity) {
-            if (!Stratus.Environment.get('production')) console.log('Route New:', arguments);
+            if (!Stratus.Environment.get('production')) {
+                console.log('Route New:', arguments);
+            }
             var collection = Stratus.Collections.get(_.ucfirst(entity));
             if (typeof collection === 'object') {
                 this.navigate('#');
@@ -54,31 +60,24 @@
             }
         },
         filter: function (entity, filter) {
-            if (typeof filter === 'undefined') filter = '';
-            if (!Stratus.Environment.get('production')) console.log('Route Filter:', arguments);
+            if (filter === undefined) filter = '';
             var collection = Stratus.Collections.get(_.ucfirst(entity));
             if (typeof collection === 'object') {
-                if (collection.meta.has('api')) {
-                    if (collection.meta.has('api.q')) {
-                        collection.meta.set('api.q', filter);
-                    } else {
-                        collection.meta.set('api', _.extend(collection.meta.get('api'), { q: filter }));
-                    }
-
-                    // Reset to Page 1 on every new Query
-                    if (collection.meta.has('api.p')) {
-                        collection.meta.set('api.p', 1);
-                    }
-                } else {
-                    collection.meta.set('api.q', filter);
+                if (!Stratus.Environment.get('production')) {
+                    console.info('Route Filter:', filter);
+                }
+                collection.meta.set('api.q', filter);
+                if (collection.meta.has('api.p')) {
+                    collection.meta.set('api.p', 1);
                 }
                 collection.refresh({ reset: true });
-                if (!Stratus.Environment.get('production')) console.info('Route Filter', filter);
             }
         },
         paginate: function (entity, page) {
-            if (typeof page === 'undefined') page = '1';
-            if (!Stratus.Environment.get('production')) console.log('Entity:', entity, 'Page:', page);
+            if (page === undefined) page = '1';
+            if (!Stratus.Environment.get('production')) {
+                console.log('Entity:', entity, 'Page:', page);
+            }
             var collection = Stratus.Collections.get(_.ucfirst(entity));
             if (typeof collection === 'object') {
                 if (collection.isHydrated()) {
@@ -87,7 +86,9 @@
                             collection.meta.set('api.p', page);
                             collection.refresh({ reset: true });
                         } else {
-                            if (!Stratus.Environment.get('production')) console.log('Page', page, 'of entity', entity, 'does not exist.');
+                            if (!Stratus.Environment.get('production')) {
+                                console.log('Page', page, 'of entity', entity, 'does not exist.');
+                            }
                         }
                     }
                 } else {
@@ -102,12 +103,5 @@
             }
         }
     });
-
-    // Require.js
-    // -------------
-
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
 
 }));
