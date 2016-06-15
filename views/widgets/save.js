@@ -150,10 +150,10 @@
             // Pass in other options
             // Get Special Actions
             if (this.options.action === 'version') {
-                this.model.meta.temp('api.iterateVersion', true);
+                this.model.meta.temp('apiSpecialAction', 'iterateVersion');
                 this.model.set('timeEdit', 'API::NOW');
             } else if (this.options.action === 'duplicate') {
-                this.model.meta.temp('api.duplicate', true);
+                this.model.meta.temp('apiSpecialAction', 'duplicate');
                 this.model.set('timeEdit', 'API::NOW');
             }
 
