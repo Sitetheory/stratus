@@ -366,9 +366,12 @@
             this.options.dataType = (this.model && typeof this.model === 'object') ? 'model' : ((this.collection && typeof this.collection === 'object') ? 'collection' : 'var');
 
             // specify the best empty value ('' or null)
-            if (typeof this.$el.dataAttr('emptyValue') === 'undefined') {
-                this.options.emptyValue = (typeof this.getPropertyValue() === 'object') ? null : '';
+            // TODO: @deprecated since it's null by default already
+            /*
+            if (typeof this.$el.dataAttr('emptyValue') === 'undefined' && typeof this.getPropertyValue() === 'object') {
+                this.options.emptyValue = null;
             }
+            */
 
             // Ensure System Variables are Defined
             if (this.options.dataType === 'var' && typeof Stratus.Environment.get(this.propertyName) === 'undefined') {
@@ -900,7 +903,7 @@
             // If the widget is not rendered yet, and this model value is empty, set default value on the DOM element
             // before it's even rendered, so that users can see the fields that are available
             var modelValue = this.getPropertyValue();
-            if (!this.isRendered && !modelValue && modelValue !== 0) {
+            if (!this.isRendered && modelValue === this.options.emptyValue) {
                 // This sets the contents of the element itself, not using traditional setValue()
                 this.$el.html(this.options.placeholder);
             }
