@@ -136,6 +136,9 @@
 
                 // determine if the widget should be rendered as a 'form', e.g. have form-control added
                 style: null,
+
+                // determine if the 'form-control' class should be added to widgets on render in live edit mode.
+                formControl: false,
                 label: null,
                 help: null,
                 feedback: null,
@@ -789,7 +792,11 @@
 
             if (this.options.style === 'form') {
                 this.$el.addClass('form-group has-feedback');
-                this.$element.addClass('form-control');
+
+                // Do not add form-control if mode = live edit, unless specifically requested
+                if(!Stratus.Environment.get('liveEdit') || this.options.formControl) {
+                    this.$element.addClass('form-control');
+                }
             } else {
                 this.$el.addClass('widgetContainer');
             }
