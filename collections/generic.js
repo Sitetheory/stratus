@@ -33,11 +33,14 @@
     // This Backbone Collection intends to handle Generic API routines.
     Stratus.Collections.Generic = Backbone.Collection.extend({
 
-        meta: Stratus.Prototypes.Collection,
+        // Backbone Targeting
         model: Stratus.Models.Generic,
-
+        meta: Stratus.Prototypes.Collection,
         url: '/Api',
         entity: 'Unknown',
+
+        // Modular Timing
+        _isHydrated: false,
 
         /**
          * @param options
@@ -229,6 +232,8 @@
 
         // Refresh the Data Set According to the API Data
         refresh: function (options) {
+
+            // TODO: Fetching needs to wait for a generic router evaluation to change a boolean value on Stratus.Environment before continuing with a fetch to ensure targets are set
             options = (options && typeof options === 'object') ? options : {};
             this.fetch(this.meta.has('api') ? _.extend(options, { data: this.meta.get('api') }) : options);
         },
