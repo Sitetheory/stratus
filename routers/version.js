@@ -1,4 +1,4 @@
-//     Stratus.Routers.Generic.js 1.0
+//     Stratus.Routers.Version.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
