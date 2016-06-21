@@ -122,7 +122,7 @@
         RegisterGroup: {}
     };
 
-    // Set Environment
+    // Declare Warm Up
     if (!Stratus.Environment.get('production')) {
         console.group('Stratus Warm Up');
     }
@@ -345,6 +345,15 @@
     $.fn.notClicked = function (event) {
         return (!$(event.target).closest(this.selector).length && !$(event.target).parents(this.selector).length);
     };
+
+    // Stratus Environment Initialization
+    // ----------------------------------
+
+    // This needs to run after the jQuery library is configured.
+    var initialLoad = $('body').dataAttr('environment');
+    if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
+        Stratus.Environment.set(initialLoad);
+    }
 
     // Backbone Relational Settings
     // ----------------------------

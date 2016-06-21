@@ -745,6 +745,9 @@
                 options: this.options,
                 scope: 'entity',
 
+                // Stratus Exposure
+                environment: Stratus.Environment.attributes,
+
                 // Libraries
                 moment: moment,
                 tether: Tether,
