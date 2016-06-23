@@ -1305,7 +1305,11 @@
                 // NOTE: We do not want the current field to be updated if the model updates from a save somewhere else
                 // otherwise, the stuff we typed since last save is going to be overwritten
                 this.setValue(this.getPropertyValue());
+            } else if (!this.isRendered && this.options.unrender) {
+                var displayValue = this.options.before + this.getDisplayValue() + this.options.after;
+                this.$el.html(displayValue || '');
             }
+            console.log('scopeChanged:', this.isRendered, this.options.unrender, _.clone(this.model.patch));
             return true;
         },
 
