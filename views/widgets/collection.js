@@ -545,10 +545,10 @@
                 options: this.options
             };
             this.$el.html(_.has(this.templates, 'combined') ? this.templates.combined(list) : (_.has(this.templates, 'list') ? this.templates.list(list) : ''));
-            if (!this.$el.html() && !this.collection.size()) {
+            if ((!this.$el.html() || !this.$el.html().trim().length) && !this.collection.size()) {
                 this.$el.html(this.errorTemplate({ collection: this.collection, options: this.options }));
             }
-            if (_.has(this.templates, 'combined') || _.has(this.templates, 'list')) {
+            if (this.$el.html() && this.$el.html().trim().length) {
                 Stratus.Internals.Loader(this.el, this.view).done(function (entries) {
                     //if (!Stratus.Environment.get('production')) console.info('List Entries:', entries);
                 }, function (error) {
