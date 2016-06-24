@@ -1,4 +1,4 @@
-//     Stratus.Views.Text.js 1.0
+//     Stratus.Views.Upload.js 1.0
 //
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
