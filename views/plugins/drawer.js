@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass'], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass', 'stratus.views.plugins.addclose'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -61,7 +61,7 @@
             // Add a close button
             var close = drawer.find('.btnClose');
             if (!close.length) {
-                Stratus.PluginMethods.AddClose(drawer);
+                new Stratus.Views.Plugins.AddClose({ el: drawer });
                 close = drawer.find('.btnClose');
             }
             close.on('click', function () { this.toggle();}.bind(this));
