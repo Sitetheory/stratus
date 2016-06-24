@@ -150,9 +150,8 @@
             this.versionRouter = options.versionRouter;
             this.versionId = options.versionId;
 
-            // FIXME: @Disabled! Get the version router to work perfectly in all situations
             // Store Internal Version Information
-            this._isVersioned = (this.versionEntity && this.versionRouter && false);
+            this._isVersioned = (this.versionEntity && this.versionRouter);
             this._isEvaluated = false;
 
             // Set API Options

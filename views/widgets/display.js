@@ -136,8 +136,10 @@
                 value = this.formatTimeSinceDate(value);
             }
 
+            /*
             value = this.options.before ? this.options.before.toString() + value.toString() : value;
             value = this.options.after ? value.toString() + this.options.after.toString() : value;
+            */
 
             return value;
         },

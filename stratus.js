@@ -122,7 +122,7 @@
         RegisterGroup: {}
     };
 
-    // Set Environment
+    // Declare Warm Up
     if (!Stratus.Environment.get('production')) {
         console.group('Stratus Warm Up');
     }
@@ -345,6 +345,15 @@
     $.fn.notClicked = function (event) {
         return (!$(event.target).closest(this.selector).length && !$(event.target).parents(this.selector).length);
     };
+
+    // Stratus Environment Initialization
+    // ----------------------------------
+
+    // This needs to run after the jQuery library is configured.
+    var initialLoad = $('body').dataAttr('environment');
+    if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
+        Stratus.Environment.set(initialLoad);
+    }
 
     // Backbone Relational Settings
     // ----------------------------
@@ -1348,7 +1357,7 @@
             this.set({
                 scope: (id !== null) ? 'model' : 'collection',
                 alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
-                path: (type !== null) ? 'stratus/views/' + loaderType + '/stratus.views.' + loaderType + '.' + type.toLowerCase() : null
+                path: (type !== null) ? type : null
             });
             if (this.isNew() && this.get('entity') !== null && this.get('manifest') !== null) {
                 this.set('scope', 'model');
@@ -1482,9 +1491,6 @@
         view.clean();
 
         if (!parentChild) {
-            if (view.get('alias') && !_.has(requirejs.s.contexts._.config.paths, view.get('alias'))) {
-                if (!Stratus.Environment.get('production')) console.warn('Type:', view.get('alias'), 'not configured in require.js');
-            }
 
             // TODO: Add Previous Requirements Here!
             if (typeof requirements === 'undefined') requirements = ['stratus'];
@@ -1492,18 +1498,39 @@
             var templates = view.get('templates');
             var dialogue = view.get('dialogue');
             var templateMap = [];
+
+            // Add Scope
             if (view.get('scope') !== null) {
                 requirements.push('stratus.' + view.get('scope') + 's.generic');
             }
-            if (view.get('alias') !== null) {
+
+            // Handle Alias or External Link
+            if (view.get('alias') && _.has(requirejs.s.contexts._.config.paths, view.get('alias'))) {
                 requirements.push(view.get('alias'));
+            } else if (view.get('path')) {
+                requirements.push(view.get('path'));
+                var srcRegex = /(?=[^\/]*$)([a-zA-Z]+)/i;
+                var srcMatch = srcRegex.exec(view.get('path'));
+                view.set('type', _.ucfirst(srcMatch[1]));
+            } else {
+                view.set({
+                    type: null,
+                    alias: null,
+                    path: null
+                });
             }
+
+            // Aggregate Template
             if (template !== null) {
                 templates = _.extend((templates !== null) ? templates : {}, { combined: template });
             }
+
+            // Aggregate Dialogue
             if (dialogue !== null) {
                 templates = _.extend((templates !== null) ? templates : {}, { dialogue: dialogue });
             }
+
+            // Gather All Templates
             if (templates !== null) {
                 for (var key in templates) {
                     if (!templates.hasOwnProperty(key) || typeof templates[key] === 'function') continue;
