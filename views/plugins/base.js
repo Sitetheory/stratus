@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'underscore'], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -32,16 +32,16 @@
 
     // Like a MoreBox but attached to the side and pushes the app body over. Will only allow one drawer to
     // be open at a time.
-    Stratus.Views.Plugins.Base = Backbone.View.extend({
+    Stratus.Views.Plugins.Base = Stratus.Views.Base.extend({
 
         // prepare()
         // ---------
         // This should be added to the initialize of every plugin.
         prepare: function (options) {
             this.uid = (_.has(options, 'uid')) ? options.uid : null;
-            this.plugin = options.plugin.toLowerCase();
+            this.plugin = (_.has(options, 'plugin')) ? options.plugin.toLowerCase() : null;
             this.view = options.view;
-            Stratus.Internals.LoadCss('/sitetheory/v/1/0/bundles/sitetheorycore/css/Core/plugins.css');
+            Stratus.Internals.LoadCss(Stratus.BaseUrl + 'sitetheorycore/css/Core/plugins.css');
         }
     });
 

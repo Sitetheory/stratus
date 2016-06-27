@@ -7,11 +7,10 @@ var uglify = require('gulp-uglify');
 var _ = require('underscore');
 
 // Helper Functions
-var nullify = function (proto, context) {
+var nullify = function (proto) {
     proto = proto || [];
-    context = context || null;
     var clone = _.clone(proto);
-    if (_.size(proto) && context) {
+    if (_.size(proto)) {
         _.each(clone, function (value, key, list) {
             list[key] = '!' + value;
         });
@@ -40,8 +39,8 @@ var minList = [
 ];
 
 // Generate Exclusions
-var core = _.union(coreList, nullify(minList, 'all'));
-var min = _.union(minList, nullify(coreList, 'all'));
+var core = _.union(coreList, nullify(minList));
+var min = _.union(minList, nullify(coreList));
 
 // Functions
 gulp.task('clean', function () {

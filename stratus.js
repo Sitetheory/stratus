@@ -75,10 +75,12 @@
                 size: { XS: 200, S: 400, M: 600, L: 800, XL: 1200, HQ: 1600 }
             }
         },
+
         /* Native */
         DOM: {},
         Key: {},
         PostMessage: {},
+        BaseUrl: ((requirejs && _.has(requirejs.s.contexts._, 'config')) ? requirejs.s.contexts._.config.baseUrl : null) || '/',
 
         // TODO: Change each of these "namespaces" into Backbone.Models references so that we can easily
         // use the events of type changes to hook different initialization routines to wait for the type
@@ -1816,14 +1818,6 @@
         url = (glue >= 0) ? url.substring(0, glue) : url;
         url += '?' + $.param(vars);
         return url;
-    };
-
-    // AddClose
-    // --------
-    // TODO: I'm not sure if this is the best way of doing this... currently used in the Drawer
-    // Add a standard close button to any element.
-    Stratus.PluginMethods.AddClose = function (el) {
-        el.prepend('<button type="button" class="btnClose"><span class="sr-only">Toggle Navigation</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-' + el.attr('id') + '" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg></button>');
     };
 
     // Post Message Handling

@@ -564,9 +564,7 @@
             if (this.options.masonry) {
                 new Masonry(this.el, {
                     itemSelector: '.grid-item',
-
-                    //columnWidth: 160
-                    columnWidth: '.grid-sizer',
+                    columnWidth: 160,
                     percentPosition: true
                 });
             }

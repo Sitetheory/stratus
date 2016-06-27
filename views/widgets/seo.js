@@ -62,7 +62,7 @@
 
                 // TODO: point to the cloud server (PATH!)
                 // The CSS file to load for this widget
-                cssFile: ['/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/seo.css']
+                cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/seo.css']
             }
         }
     });

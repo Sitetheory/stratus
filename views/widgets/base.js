@@ -57,17 +57,17 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'underscore', 'backbone', 'tether', 'moment', 'promise', 'stratus.models.generic', 'stratus.collections.generic'], factory);
+        define(['stratus', 'jquery', 'underscore', 'tether', 'moment', 'promise', 'stratus.views.base', 'stratus.models.generic', 'stratus.collections.generic'], factory);
     } else {
-        factory(root.Stratus, root.$, root._, root.Backbone, root.Tether, root.moment);
+        factory(root.Stratus, root.$, root._, root.Tether, root.moment);
     }
-}(this, function (Stratus, $, _, Backbone, Tether, moment) {
+}(this, function (Stratus, $, _, Tether, moment) {
 
     // Base Model View
     // -------------
     // This Backbone View intends to handle Generic rendering for a single Model.
 
-    Stratus.Views.Widgets.Base = Backbone.View.extend({
+    Stratus.Views.Widgets.Base = Stratus.Views.Base.extend({
 
         // Typical References
         model: Stratus.Models.Generic,
@@ -1312,6 +1312,9 @@
                 // NOTE: We do not want the current field to be updated if the model updates from a save somewhere else
                 // otherwise, the stuff we typed since last save is going to be overwritten
                 this.setValue(this.getPropertyValue());
+            } else if (!this.isRendered && this.options.unrender) {
+                var displayValue = this.options.before + this.getDisplayValue() + this.options.after;
+                this.$el.html(displayValue || '');
             }
             return true;
         },

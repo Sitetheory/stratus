@@ -69,7 +69,7 @@
                 dataType: null,
 
                 // SliderCss
-                sliderCss: ['/sitetheory/v/1/0/bundles/sitetheorycore/dist/bootstrap/bootstrap-toggle.min.css'],
+                sliderCss: [Stratus.BaseUrl + 'sitetheorycore/dist/bootstrap/bootstrap-toggle.min.css'],
 
                 // specify whether the value being toggled is 'boolean' (true|false) or 'string' (1|0, red|green)
                 // If value is 'string' you MUST set the valueOn and valueOff
