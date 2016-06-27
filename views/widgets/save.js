@@ -61,7 +61,7 @@
                 action: null,
 
                 // TODO: point to the cloud server (PATH!)
-                //cssFile: '/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/save.css',
+                //cssFile: Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/save.css',
                 iconPath: '@SitetheoryCoreBundle:images/icons/actionButtons/save.svg',
 
                 // The text for the save button that appears when it's unsaved.

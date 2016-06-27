@@ -75,10 +75,12 @@
                 size: { XS: 200, S: 400, M: 600, L: 800, XL: 1200, HQ: 1600 }
             }
         },
+
         /* Native */
         DOM: {},
         Key: {},
         PostMessage: {},
+        BaseUrl: ((requirejs && _.has(requirejs.s.contexts._, 'config')) ? requirejs.s.contexts._.config.baseUrl : null) || '/',
 
         // TODO: Change each of these "namespaces" into Backbone.Models references so that we can easily
         // use the events of type changes to hook different initialization routines to wait for the type

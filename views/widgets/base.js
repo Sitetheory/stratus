@@ -1309,7 +1309,6 @@
                 var displayValue = this.options.before + this.getDisplayValue() + this.options.after;
                 this.$el.html(displayValue || '');
             }
-            console.log('scopeChanged:', this.isRendered, this.options.unrender, _.clone(this.model.patch));
             return true;
         },
 

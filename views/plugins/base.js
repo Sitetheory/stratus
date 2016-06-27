@@ -41,7 +41,7 @@
             this.uid = (_.has(options, 'uid')) ? options.uid : null;
             this.plugin = (_.has(options, 'plugin')) ? options.plugin.toLowerCase() : null;
             this.view = options.view;
-            Stratus.Internals.LoadCss('/sitetheory/v/1/0/bundles/sitetheorycore/css/Core/plugins.css');
+            Stratus.Internals.LoadCss(Stratus.BaseUrl + 'sitetheorycore/css/Core/plugins.css');
         }
     });
 
