@@ -70,6 +70,9 @@
                 // TODO: this hasn't yet been tested on an entity property that allows multiple (testing required)
                 multiple: false,
 
+                // The number of options to display in a multiple list
+                multipleSize: 5,
+
                 // Options to Determine How Select UI is Rendered, can be combined with multiple to allow menu that
                 // is also multiple selectable.
                 // null: a basic HTML select

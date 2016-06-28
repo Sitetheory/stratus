@@ -14,7 +14,7 @@
 {% } %}
 
 {% if (!options.ui && !options.source) { %}
-    <select class="selectOptionsContainer" name="{{ options.inputName }}"></select>
+    <select class="selectOptionsContainer" name="{{ options.inputName }}" {% if(options.multiple) { %}multiple size="{{ options.multipleSize }}"{% } %}></select>
 {% } else { %}
     {% if (options.ui == 'menu') { %}
         <div class="dropdown">
