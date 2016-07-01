@@ -84,6 +84,9 @@
          * @param reject
          */
         promise: function (options, fulfill, reject) {
+            if (this.$el.dataAttr('entity') && this.$el.dataAttr('id')) {
+                this.options.forceType = 'model';
+            }
             if (_.contains(this.options.selectize.plugins, 'drag_drop')) {
                 require(['jquery-ui'], function () {
                     Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
@@ -96,6 +99,11 @@
         // render()
         // --------
         // Overwriting Basic Render
+        /**
+         * TODO: Change this to onRender, which will force local DOM templates to be converted into .html files for re-use
+         * @param entries
+         * @returns {Stratus.Views.Widgets.Autocomplete}
+         */
         render: function (entries) {
             // NOTE: this overwrites the this.$el with the selectize, so it wipes out the normal widget prompt, status responses, etc
             this.$el.selectize(this.options.selectize);
