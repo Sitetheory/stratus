@@ -52,7 +52,6 @@
 
         options: {
             private: {
-                // TODO: point to the cloud server (PATH!)
                 requiredCssFile: [Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.selectize.css'],
                 selectize: {
                     preload: true,
