@@ -83,9 +83,6 @@
          * @param reject
          */
         promise: function (options, fulfill, reject) {
-            if (this.$el.dataAttr('entity') && this.$el.dataAttr('id')) {
-                this.options.forceType = 'model';
-            }
             if (_.contains(this.options.selectize.plugins, 'drag_drop')) {
                 require(['jquery-ui'], function () {
                     Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);

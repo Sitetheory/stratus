@@ -362,7 +362,10 @@
 
     // This is provides a Stratus scope for Dynamic Relations.
     Backbone.Relational.store.addModelScope(Stratus.Models.attributes);
+
+    /*
     Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
+    */
 
     // Backbone Relational Functions
     // -----------------------------
