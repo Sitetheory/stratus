@@ -47,7 +47,7 @@
     Stratus.Views.Widgets.Autocomplete = Stratus.Views.Widgets.Base.extend({
 
         model: Stratus.Models.Generic,
-        template: _.template('<div><span class="title"><span class="name">{{ model.id }}</span></span></div>'),
+        template: _.template('<div><span class="title"><span class="name">{{ (typeof model === "object" && model && _.has(model, "id")) ? model.id : "item" }}</span></span></div>'),
         url: '/Api/',
 
         options: {
@@ -63,7 +63,8 @@
                     searchField: ['id'],
                     maxItems: 1,
                     create: true,
-                    persist: false
+                    persist: false,
+                    allowEmptyOption: false
                 },
                 api: {
                     limit: null
@@ -72,6 +73,62 @@
             public: {
                 target: null
             }
+        },
+
+        // initialize()
+        // -------------
+        // Force model types when present, before initialization
+        /**
+         * @param options
+         * @returns {*}
+         */
+        initialize: function (options) {
+            if (this.$el.dataAttr('entity') && this.$el.dataAttr('id')) {
+                this.options.forceType = 'model';
+            }
+            return Stratus.Views.Widgets.Base.prototype.initialize.call(this, options);
+        },
+
+        // postOptions()
+        // -------------
+        // Set Custom Options: this is the bulk of what is customized for this view
+        // controller. The 'options' variable has anything that is defined the in
+        // Auto Loader (Stratus.Internals.LoadViews),
+        // e.g. options.el, options.entity, options.template, options.options
+        /**
+         * @param options
+         */
+        postOptions: function (options) {
+
+            // Dynamic Api Url
+            if (this.options.target !== null) {
+                this.url = '/Api/' + this.options.target + '/';
+            }
+
+            // Grab Selectize Options from DOM
+            this.getDataOptions(this.options.selectize);
+
+            // Add Standard Options to Selectize (on init)
+            this.options.selectize.render = {
+                option: function (model, escape) {
+                    // TODO: Switch this for a more appropriate template (i.e. list, container, entity)
+                    return this.template({ model: model, options: this.options });
+                }.bind(this)
+            };
+            this.options.selectize.load = function (query, callback) {
+                if (!query.length && !this.initial.request) return callback();
+                this.initial.request = false;
+                $.ajax({
+                    url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
+                    type: 'GET',
+                    error: function () {
+                        callback();
+                    },
+                    success: function (res) {
+                        callback(res.payload);
+                    }
+                });
+            }.bind(this);
         },
 
         // promise()
@@ -92,25 +149,32 @@
             }
         },
 
+        /**
+         * @param selectedElement
+         */
+        storeElement: function (selectedElement) {
+            // NOTE: this overwrites the this.$el with the selectize, so it wipes out the normal widget prompt, status responses, etc
+            this.$el.selectize(this.options.selectize);
+            this.initial = this.initial || {
+                    request: true,
+                    load: true
+                };
+            this.$element = this.$el[0].selectize;
+            this.registeredElement = false;
+        },
+
         // render()
         // --------
         // Overwriting Basic Render
         /**
          * TODO: Change this to onRender, which will force local DOM templates to be converted into .html files for re-use
          * @param entries
-         * @returns {Stratus.Views.Widgets.Autocomplete}
+         * @returns {boolean}
          */
-        render: function (entries) {
-            // NOTE: this overwrites the this.$el with the selectize, so it wipes out the normal widget prompt, status responses, etc
-            this.$el.selectize(this.options.selectize);
-            this.initial = this.initial || {
-                request: true,
-                load: true
-            };
-
+        onRender: function (entries) {
             // Manually Select the items selected (this shouldn't be necessary since we set the 'items' field in the options, but that doesn't work so we are currently doing it manually.
             var _this = this;
-            this.$el[0].selectize.on('load', function () {
+            this.$element.on('load', function () {
                 if (_this.initial.load && _this.options.selectize.items !== null && _this.options.selectize.items.length > 0) {
                     _this.initial.load = false;
                     _.each(_this.options.selectize.items, function (el) {
@@ -127,41 +191,56 @@
                     }, this);
                 }
             });
-
-            return this;
+            return true;
         },
 
-        // Set Custom Options: this is the bulk of what is customized for this view
-        // controller. The 'options' variable has anything that is defined the in
-        // Auto Loader (Stratus.Internals.LoadViews),
-        // e.g. options.el, options.entity, options.template, options.options
-        postOptions: function (options) {
-
-            // Dynamic Api Url
-            if (this.options.target !== null) {
-                this.url = '/Api/' + this.options.target + '/';
+        // getValue()
+        // -----------
+        // Get the value for this widget
+        /**
+         * @returns {*}
+         */
+        getValue: function () {
+            if (!this.$element || typeof this.$element !== 'object' || (typeof this.$element.length !== 'undefined' && !this.$element.length)) {
+                return false;
             }
+            var parsed = [];
+            var selected = this.$element.getValue();
+            selected = (selected.length) ? selected.split(',') : null;
+            if (selected) {
+                var id;
+                _.each(selected, function (value) {
+                    id = parseInt(value);
+                    if (!isNaN(id)) {
+                        parsed.push({ id: id });
+                    }
+                }, parsed);
+            }
+            return parsed;
+        },
 
-            // Add Standard Options to Selectize (on init)
-            this.options.selectize.render = {
-                option: function (model, escape) {
-                    return this.template({ model: model, options: this.options });
-                }.bind(this)
-            };
-            this.options.selectize.load = function (query, callback) {
-                if (!query.length && !this.initial.request) return callback();
-                this.initial.request = false;
-                $.ajax({
-                    url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
-                    type: 'GET',
-                    error: function () {
-                        callback();
-                    },
-                    success: function (res) {
-                        callback(res.payload);
+        // setValue()
+        // -----------
+        // Set the value on this widget
+        /**
+         * @param value
+         * @returns {boolean}
+         */
+        setValue: function (value) {
+            if (!this.$element || typeof this.$element !== 'object' || (typeof this.$element.length !== 'undefined' && !this.$element.length)) {
+                return false;
+            }
+            var parsed = '';
+            if (value && value.length) {
+                _.each(value, function (selected) {
+                    if (selected && typeof selected === 'object' && _.has(selected, 'id')) {
+                        if (parsed.length) parsed += ',';
+                        parsed += selected.id;
                     }
                 });
-            }.bind(this);
+            }
+            this.$element.setValue(parsed);
+            return true;
         }
 
     });

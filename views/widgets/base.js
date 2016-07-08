@@ -786,19 +786,17 @@
             this.$el.html(this.renderContainer(editElement));
 
             // Assign Element Selector as a local property
-            var selectedElement = Stratus.Views.Widgets.Base.prototype.$element.call(this);
+            this.storeElement(Stratus.Views.Widgets.Base.prototype.$element.call(this));
 
-            if (typeof this.$element === 'function' || !_.isEqual(this.$element, selectedElement)) {
-                this.$element = selectedElement;
-                this.registeredElement = false;
-            }
-
+            // Handle Input Design
             if (this.options.style === 'form') {
                 this.$el.addClass('form-group has-feedback');
 
                 // Do not add form-control if mode = live edit, unless specifically requested
                 if (!Stratus.Environment.get('liveEdit') || this.options.formControl) {
-                    this.$element.addClass('form-control');
+                    if (_.has(this.$element, 'addClass')) {
+                        this.$element.addClass('form-control');
+                    }
                 }
             } else {
                 this.$el.addClass('widgetContainer');
@@ -838,6 +836,16 @@
             return true;
         },
 
+        /**
+         * @param selectedElement
+         */
+        storeElement: function (selectedElement) {
+            if (typeof this.$element === 'function' || !_.isEqual(this.$element, selectedElement)) {
+                this.$element = selectedElement;
+                this.registeredElement = false;
+            }
+        },
+
         // Prime Auto-Saving Routines
         /**
          * @returns {boolean}
@@ -852,7 +860,9 @@
          * @returns {boolean}
          */
         registerElement: function () {
-            if (!this.$element || !this.$element.length) return false;
+            if (!this.$element || typeof this.$element !== 'object' || (typeof this.$element.length !== 'undefined' && !this.$element.length)) {
+                return false;
+            }
             this.$element.on('focus', function (event) {
                 this.focusAction(event);
             }.bind(this));

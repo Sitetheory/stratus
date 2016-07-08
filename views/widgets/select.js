@@ -51,7 +51,7 @@
 
         // Properties
         model: Stratus.Models.Generic,
-        template: _.template(Template),
+        template: _.template(Template || ''),
 
         //templateOptionsCheckbox: _.template(),
 
