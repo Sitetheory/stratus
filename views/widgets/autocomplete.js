@@ -175,20 +175,28 @@
             // Manually Select the items selected (this shouldn't be necessary since we set the 'items' field in the options, but that doesn't work so we are currently doing it manually.
             var _this = this;
             this.$element.on('load', function () {
-                if (_this.initial.load && _this.options.selectize.items !== null && _this.options.selectize.items.length > 0) {
+                if (_this.initial.load) {
                     _this.initial.load = false;
-                    _.each(_this.options.selectize.items, function (el) {
-                        // If the value doesn't exists in the list add it to the list so that it shows up
-                        if (!_.has(this.options, el)) {
-                            var data = {};
-                            data[_this.options.selectize.valueField] = el;
-                            data[_this.options.selectize.labelField] = el;
-                            this.addOption(data);
-                        }
 
-                        // set the default value selected
-                        this.setValue([el]);
-                    }, this);
+                    if (_this.options.selectize.items !== null && _this.options.selectize.items.length > 0) {
+                        _.each(_this.options.selectize.items, function (el) {
+                            // If the value doesn't exists in the list add it to the list so that it shows up
+                            if (!_.has(this.options, el)) {
+                                var data = {};
+                                data[_this.options.selectize.valueField] = el;
+                                data[_this.options.selectize.labelField] = el;
+                                this.addOption(data);
+                            }
+
+                            // set the default value selected
+                            this.setValue([el]);
+                        }, this);
+                    }
+
+                    // set dynamic api value if available
+                    if (_.has(_this, 'selected')) {
+                        this.setValue(_this.selected);
+                    }
                 }
             });
             return true;
@@ -230,16 +238,20 @@
             if (!this.$element || typeof this.$element !== 'object' || (typeof this.$element.length !== 'undefined' && !this.$element.length)) {
                 return false;
             }
+            this.selected = [];
             var parsed = '';
             if (value && value.length) {
-                _.each(value, function (selected) {
-                    if (selected && typeof selected === 'object' && _.has(selected, 'id')) {
+                _.each(value, function (model) {
+                    if (model && typeof model === 'object' && _.has(model, 'id')) {
                         if (parsed.length) parsed += ',';
-                        parsed += selected.id;
+                        parsed += model.id;
+                        this.selected.push(model.id);
                     }
-                });
+                }, this);
             }
-            this.$element.setValue(parsed);
+            this.$el.dataAttr('value', parsed);
+            console.log('set value:', this.selected);
+            this.$element.setValue(this.selected);
             return true;
         }
 

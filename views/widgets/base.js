@@ -793,10 +793,8 @@
                 this.$el.addClass('form-group has-feedback');
 
                 // Do not add form-control if mode = live edit, unless specifically requested
-                if (!Stratus.Environment.get('liveEdit') || this.options.formControl) {
-                    if (_.has(this.$element, 'addClass')) {
-                        this.$element.addClass('form-control');
-                    }
+                if ((!Stratus.Environment.get('liveEdit') || this.options.formControl) && this.$element.addClass) {
+                    this.$element.addClass('form-control');
                 }
             } else {
                 this.$el.addClass('widgetContainer');
