@@ -217,7 +217,11 @@
 
             // Return Promise for Loader Validation
             this.initializer = new Promise(function (fulfill, reject) {
-                this.fork(options, fulfill, reject);
+                if (!this.prepare(options)) {
+                    reject(new Stratus.Prototypes.Error('Prepare', this));
+                } else {
+                    this.fork(options, fulfill, reject);
+                }
             }.bind(this));
 
             // Return Boolean for Constructor
@@ -262,6 +266,7 @@
                 // Listen for Error
                 this[scope].on('error', function () {
                     this.setStatus('error');
+                    this.onError.apply(this, arguments);
                 }.bind(this));
 
                 // Listen for Success
@@ -277,6 +282,16 @@
                 }
             }
 
+            return true;
+        },
+
+        /**
+         * @param scope
+         * @param response
+         * @param options
+         * @returns {boolean}
+         */
+        onError: function (scope, response, options) {
             return true;
         },
 
@@ -305,12 +320,7 @@
                 }, this);
             } else {
                 this.$el.removeClass('has-load');
-                if (!this.prepare(options)) {
-                    reject(new Stratus.Prototypes.Error('Preparation', this));
-                    success = false;
-                } else {
-                    this.promise(options, fulfill, reject);
-                }
+                this.promise(options, fulfill, reject);
             }
             return success;
         },
@@ -368,14 +378,6 @@
             // specify whether this is the model or the alternative var (e.g. for Stratus.Environment variables)
             this.options.dataType = (this.model && typeof this.model === 'object') ? 'model' : ((this.collection && typeof this.collection === 'object') ? 'collection' : 'var');
 
-            // specify the best empty value ('' or null)
-            // TODO: @deprecated since it's null by default already
-            /*
-            if (typeof this.$el.dataAttr('emptyValue') === 'undefined' && typeof this.getPropertyValue() === 'object') {
-                this.options.emptyValue = null;
-            }
-            */
-
             // Ensure System Variables are Defined
             if (this.options.dataType === 'var' && typeof Stratus.Environment.get(this.propertyName) === 'undefined') {
                 Stratus.Environment.set(this.propertyName, this.options.emptyValue);
@@ -383,6 +385,8 @@
 
             // Manipulate any custom options
             this.getStandardData();
+
+            // Select Template for Rendering
             this.selectTemplate(options);
 
             return true;

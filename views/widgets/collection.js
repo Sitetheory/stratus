@@ -40,7 +40,7 @@
 
         // If you need custom error Messages, you can define the optionsCustom in data attributes to the set the
         // text, OR you can pass in a custom list template in the data-templates='{"list":"path or config value"}'
-        errorTemplate: _.template('{% if (collection.meta.has("api.q")) { %}<div class="{{ options.cssNoResults}}"><div class="message">{{ options.textNoResults }}</div><div class="icon"></div></div>{% } else { %}<div class="{{ options.cssNoContent }}"><div class="message">{{ options.textNoContent }}</div><div class="icon"></div></div>{% } %}'),
+        errorTemplate: _.template('{% if (collection.meta.has("api.q")) { %}<div class="{{ options.cssNoResults}}"><div class="message">{{ options.textNoResults }}</div><div class="icon"></div></div>{% } else if (typeof code === "string") { %}<div class="{{ options.cssError}}"><div class="message">An Internal Error (Code: {{ code }}) occurred.  Please notify support with the url and time of the error.</div><div class="icon"></div></div>{% } else { %}<div class="{{ options.cssNoContent }}"><div class="message">{{ options.textNoContent }}</div><div class="icon"></div></div>{% } %}'),
         events: {
             'keypress #newGeneric': 'createOnEnter',
             start: 'dragStart',
@@ -92,11 +92,14 @@
                 // Default message if there are no results found.
                 textNoResults: 'We were unable to find any content matching your request.',
 
-                // Default animation if there are no results found.
-                cssNoResults: 'error',
+                // Default animation if there aren't any query results found.
+                cssNoResults: 'empty',
                 textNoContent: 'No content available.',
 
-                // Default animation if there are no results found.
+                // Default animation if the XHR request failed
+                cssError: 'error',
+
+                // Default animation if there aren't any initial content found.
                 cssNoContent: 'empty'
             }
         },
@@ -368,6 +371,19 @@
 
         drag: function () {
             // TODO: Handle Drag Event
+        },
+
+        /**
+         * @param scope
+         * @param response
+         * @param options
+         * @returns {boolean}
+         */
+        onError: function (scope, response, options) {
+            if (_.has(response, 'status') && response.status !== 200) {
+                this.$el.html(this.errorTemplate({ collection: this.collection, options: this.options, code: response.status.toString() }));
+            }
+            return true;
         },
 
         // addOne

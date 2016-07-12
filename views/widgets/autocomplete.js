@@ -112,7 +112,7 @@
             this.options.selectize.render = {
                 option: function (model, escape) {
                     // TODO: Switch this for a more appropriate template (i.e. list, container, entity)
-                    return this.template({ model: model, options: this.options });
+                    return this.template({ model: model, options: this.options, scope: 'suggestion' });
                 }.bind(this)
             };
             this.options.selectize.load = function (query, callback) {
@@ -154,12 +154,17 @@
          */
         storeElement: function (selectedElement) {
             // NOTE: this overwrites the this.$el with the selectize, so it wipes out the normal widget prompt, status responses, etc
-            this.$el.selectize(this.options.selectize);
+            var $parent = this.$el;
+            if (this.options.label) {
+                this.$el.append('<div class="autocomplete"></div>');
+                $parent = this.$el.find('.autocomplete');
+            }
+            $parent.selectize(this.options.selectize);
             this.initial = this.initial || {
                     request: true,
                     load: true
                 };
-            this.$element = this.$el[0].selectize;
+            this.$element = $parent[0].selectize;
             this.registeredElement = false;
         },
 
@@ -250,7 +255,6 @@
                 }, this);
             }
             this.$el.dataAttr('value', parsed);
-            console.log('set value:', this.selected);
             this.$element.setValue(this.selected);
             return true;
         }

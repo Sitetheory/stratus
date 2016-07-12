@@ -1844,10 +1844,10 @@
         var convoy = JSON.parse(event.data);
 
         /*
-         Stratus.Events.trigger("alert", JSON.stringify(convoy));
-         Stratus.Events.trigger("alert", 'mobile: '+Stratus.Client.mobile);
-         console.log('Session:', $.cookie("SITETHEORY"));
-         console.log(($.cookie("SITETHEORY") !== convoy.meta.session) ? 'Changed:' : 'No Changes:', $.cookie("SITETHEORY"), convoy.meta.session);
+         Stratus.Events.trigger('alert', JSON.stringify(convoy));
+         Stratus.Events.trigger('alert', 'mobile: ' + Stratus.Client.mobile);
+         console.log('Session:', $.cookie('SITETHEORY'));
+         console.log(($.cookie('SITETHEORY') !== convoy.meta.session) ? 'Changed:' : 'No Changes:', $.cookie('SITETHEORY'), convoy.meta.session);
          console.log('PostMessage', event, convoy);
          */
 

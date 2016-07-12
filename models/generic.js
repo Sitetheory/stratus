@@ -374,7 +374,11 @@
                 var status = _.first(resp.meta.status);
                 if (status.code !== 'SUCCESS') {
                     // TODO: Add Validation Messages
-                    Stratus.Events.trigger('toast', status.message, status.code, 'danger');
+                    Stratus.Events.trigger('toast', new Stratus.Prototypes.Toast({
+                        title: status.code,
+                        message: status.message,
+                        class: 'danger'
+                    }));
                     if (!Stratus.Environment.get('production')) console.trace('Error:', resp);
                     this.trigger('error', this, options);
                 } else {
