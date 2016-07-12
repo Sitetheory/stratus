@@ -39,16 +39,25 @@
             'page/:entity': 'paginate',
             'page/:entity/:page': 'paginate'
         },
+        /**
+         * @param options
+         */
         initialize: function (options) {
             if (!Stratus.Environment.get('production')) {
                 console.info('Generic Router Invoked!');
             }
         },
+        /**
+         * @param bubble
+         */
         change: function (bubble) {
             if (!Stratus.Environment.get('production')) {
                 console.log('Model(s):', arguments);
             }
         },
+        /**
+         * @param entity
+         */
         new: function (entity) {
             if (!Stratus.Environment.get('production')) {
                 console.log('Route New:', arguments);
@@ -59,6 +68,10 @@
                 collection.create(_.has(collection, 'prototype') ? collection.prototype : {}, { wait: true });
             }
         },
+        /**
+         * @param entity
+         * @param filter
+         */
         filter: function (entity, filter) {
             if (filter === undefined) filter = '';
             var collection = Stratus.Collections.get(_.ucfirst(entity));
@@ -73,6 +86,10 @@
                 collection.refresh({ reset: true });
             }
         },
+        /**
+         * @param entity
+         * @param page
+         */
         paginate: function (entity, page) {
             if (page === undefined) page = '1';
             if (!Stratus.Environment.get('production')) {

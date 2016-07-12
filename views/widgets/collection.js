@@ -514,7 +514,8 @@
                     rerender: {
                         change: this.options.change
                     },
-                    view: view
+                    view: view,
+                    style: this.options.style
                 });
                 Stratus.Instances[guid] = this.views[uid] = new Stratus.Views.Widgets.Generic(options);
             }

@@ -67,6 +67,11 @@
             // Store Templates for Dialogue
             this.templates = (_.has(options, 'templates')) ? options.templates : null;
 
+            // Transcend Parent Style
+            if (_.has(options, 'style')) {
+                this.options.style = options.style;
+            }
+
             // Handle Re-rendering
             this.rerender = { change: null };
             if (_.has(options, 'rerender')) {

@@ -611,7 +611,9 @@
             // style set as form then set the widget default this.options.style='widget' (or data-style="widget" on the DOM)
 
             if (this.options.editable) {
-                if (this.options.style === null) this.options.style = 'form';
+                if (this.options.style === null) {
+                    this.options.style = 'form';
+                }
                 if (this.options.autoSave && this.model && typeof this.model === 'object') {
                     this.model.autoSave(this.options.autoSave);
                 }
