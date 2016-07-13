@@ -604,7 +604,7 @@
         dragEnd: function (e) {
             // find qualifying hook
             var $el = $(e.originalEvent.item);
-            $el = (el.data('id')) ? el : el.find('[data-id]');
+            $el = ($el.dataAttr('id')) ? $el : $el.find('[data-id]');
 
             // store information
             var proto = {

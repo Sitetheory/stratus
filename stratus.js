@@ -1840,20 +1840,18 @@
     // When a message arrives from another source, handle the Convoy
     // appropriately.
     Stratus.PostMessage.Convoy(function (event) {
-
-        /*if (event.origin !== "https://auth.sitetheory.io/" || event.origin !== "https://admin.sitetheory.io/") return;*/
+        if (event.origin !== 'https://auth.sitetheory.io' && event.origin !== 'http://admin.sitetheory.io') return false;
         var convoy = JSON.parse(event.data);
 
         /*
-         Stratus.Events.trigger('alert', JSON.stringify(convoy));
-         Stratus.Events.trigger('alert', 'mobile: ' + Stratus.Client.mobile);
+         Stratus.Events.trigger('alert', 'Session: ' + JSON.stringify(convoy.meta.session));
          console.log('Session:', $.cookie('SITETHEORY'));
          console.log(($.cookie('SITETHEORY') !== convoy.meta.session) ? 'Changed:' : 'No Changes:', $.cookie('SITETHEORY'), convoy.meta.session);
          console.log('PostMessage', event, convoy);
          */
 
-        if ($.cookie('SITETHEORY') !== convoy.meta.session) {
-            $.cookie('SITETHEORY', convoy.meta.session);
+        if (convoy.meta.session && convoy.meta.session !== $.cookie('SITETHEORY')) {
+            $.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
             if (!Stratus.Client.safari) location.reload(true);
         }
         /*event.source.postMessage()*/
