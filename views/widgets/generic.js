@@ -142,6 +142,7 @@
             //$(event.target).attr('contenteditable', 'true');
             $(event.target).focus();
             if (this.dialogue && typeof this.dialogue === 'object') {
+                console.log('Dialogue:', this.dialogue);
                 this.dialogue.open();
             }
         },

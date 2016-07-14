@@ -72,7 +72,7 @@
         /* Settings */
         Settings: {
             image: {
-                size: { XS: 200, S: 400, M: 600, L: 800, XL: 1200, HQ: 1600 }
+                size: { xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600 }
             }
         },
 
@@ -1842,19 +1842,10 @@
     Stratus.PostMessage.Convoy(function (event) {
         if (event.origin !== 'https://auth.sitetheory.io' && event.origin !== 'http://admin.sitetheory.io') return false;
         var convoy = JSON.parse(event.data);
-
-        /*
-         Stratus.Events.trigger('alert', 'Session: ' + JSON.stringify(convoy.meta.session));
-         console.log('Session:', $.cookie('SITETHEORY'));
-         console.log(($.cookie('SITETHEORY') !== convoy.meta.session) ? 'Changed:' : 'No Changes:', $.cookie('SITETHEORY'), convoy.meta.session);
-         console.log('PostMessage', event, convoy);
-         */
-
         if (convoy.meta.session && convoy.meta.session !== $.cookie('SITETHEORY')) {
             $.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
             if (!Stratus.Client.safari) location.reload(true);
         }
-        /*event.source.postMessage()*/
     });
 
     // DOM Listeners
