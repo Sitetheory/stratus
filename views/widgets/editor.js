@@ -83,7 +83,7 @@
                 unrenderEventDefault: 'blur',
 
                 // TODO: Point to CDN appropriately (PATH!)
-	            // Redactor using LESS appears to break at this time
+                // Redactor using LESS appears to break at this time
                 requiredCssFile: [
                     Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor.css',
                     Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.less',
