@@ -84,9 +84,10 @@
 
                 // TODO: Point to CDN appropriately (PATH!)
                 requiredCssFile: [
+                    //Redactor using LESS appears to break at this time
                     Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor.css',
-                    Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.css',
-                    Stratus.BaseUrl + 'sitetheorycore/dist/codemirror/lib/codemirror.css'
+                    Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.less',
+                    Stratus.BaseUrl + 'sitetheorycore/dist/codemirror/lib/codemirror.less'
                 ],
                 redactor: {
                     // NOTE: callbacks don't work in this version so we do keybinding, and saving manually
