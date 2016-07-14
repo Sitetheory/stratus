@@ -1017,7 +1017,7 @@
                 });
 
                 // default to largest size if the container is larger and it didn't find a size
-                size = size ? size : 'HQ';
+                size = size ? size : 'hq';
             }
 
             // Change Source to right size (get the base and extension and ignore size)
