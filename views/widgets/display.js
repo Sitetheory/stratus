@@ -47,11 +47,12 @@
 
         options: {
             private: {
-                editable: false,
                 autoSave: false,
                 forceType: 'model'
             },
             public: {
+                editable: false,
+
                 // The type of data which determines how the value should be formatted, e.g. date, timeSince, timeSinceDate
                 formatType: null,
 

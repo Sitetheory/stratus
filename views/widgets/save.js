@@ -53,10 +53,11 @@
         },
         options: {
             private: {
-                editable: false,
                 forceType: 'model'
             },
             public: {
+                editable: false,
+
                 // Allow specifying special save actions, e.g. 'version', 'duplicate'
                 action: null,
 

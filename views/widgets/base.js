@@ -86,10 +86,6 @@
         defaults: {
             // Internal Attributes (Not DOM Accessible)
             private: {
-                // If a widget is some sort of an editable user input, then this should be set as true. But if a widget does
-                // not interact with a model or interacts in a simple way (e.g. toggle, display) and shouldn't display as a
-                // form, then set this to false
-                editable: true,
 
                 // Default to where the widget's data is stored. Options: 'model', 'var'
                 // Var is used in toggle (sometimes) if you want to save a value to the Stratus.Environment object. But in most
@@ -118,6 +114,11 @@
 
             // Attributes Editable from Data-Attributes on the DOM
             public: {
+                // If a widget is some sort of an editable user input, then this should be set as true. But if a widget does
+                // not interact with a model or interacts in a simple way (e.g. toggle, display) and shouldn't display as a
+                // form, then set this to false
+                editable: true,
+
                 // Specify if what the empty value should be, e.g. '' or 'null'.
                 // Strings that are nullable, however, should be set as `null` in the setValue, so that they don't trigger
                 // a changeSet when they load the first time. If null is set, we will determine the emptyValue based on the

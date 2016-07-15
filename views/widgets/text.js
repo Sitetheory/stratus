@@ -85,10 +85,11 @@
         // Standard Options for View
         options: {
             private: {
-                // Editable Input
-                editable: true,
                 autoSave: true,
                 forceType: 'model'
+            },
+            public: {
+                editable: true
             }
         },
 
