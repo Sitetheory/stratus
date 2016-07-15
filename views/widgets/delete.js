@@ -54,6 +54,7 @@
             },
             public: {
                 editable: false,
+
                 // set to NULL to use default icon, FALSE to hide button, or set to HTML (e.g. an SVG) if you want a custom icon.
                 icon: null,
 
