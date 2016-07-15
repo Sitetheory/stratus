@@ -112,6 +112,7 @@
             },
             public: {
                 editable: true,
+
                 // Flag whether or not to include codeMirror for HTML view
                 codemirror: true,
                 codemirrorCssFile: Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css'
