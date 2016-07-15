@@ -60,9 +60,6 @@
         // Standard Options for View
         options: {
             private: {
-                // Not Editable
-                editable: false,
-
                 // A toggle will automatically save on click
                 autoSave: false,
 
@@ -70,6 +67,8 @@
                 dataType: null
             },
             public: {
+                editable: false,
+
                 // enter the CSS class of a gradient class to make a div appear above the SVG for styling
                 gradient: false,
 

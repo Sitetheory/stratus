@@ -59,9 +59,6 @@
         // Options that are customizable in the data attribute of the DOM
         options: {
             private: {
-                // Technically it is editable since it saves a value
-                editable: true,
-
                 // A toggle will automatically save on click
                 autoSave: false,
 
@@ -76,6 +73,9 @@
                 valueType: null
             },
             public: {
+                // Technically it is editable since it saves a value
+                editable: true,
+
                 // Optional: 'radio'|'checkbox'|'icon'|'slider'
                 ui: 'checkbox',
                 style: 'widget',

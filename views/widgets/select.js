@@ -57,14 +57,14 @@
 
         options: {
             private: {
-                // Technically it is editable since it saves a value
-                editable: true,
-
                 // A select will automatically save on click
                 autoSave: false,
                 forceType: 'model'
             },
             public: {
+                // Technically it is editable since it saves a value
+                editable: true,
+
                 // Indicate whether to allow selecting multiple options, or only a single option
                 // e.g. checkbox if it's multiple, radio if it's exclusive
                 // TODO: this hasn't yet been tested on an entity property that allows multiple (testing required)

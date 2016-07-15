@@ -42,7 +42,6 @@
         // Standard Options for View
         options: {
             private: {
-                editable: false,
                 dropzone: {
                     url: 'https://app.sitetheory.io:3000/?session={{ session }}',
                     method: 'POST',
@@ -50,6 +49,9 @@
                     clickable: true,
                     maxFiles: null
                 }
+            },
+            public: {
+                editable: false
             }
         },
 
