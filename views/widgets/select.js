@@ -134,7 +134,7 @@
                 // TODO: point to the cloud server (PATH!)
                 // TODO: this (and all others) should point to current version path
                 // The CSS file to load for this widget
-                cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/select.css', Stratus.BaseUrl + 'sitetheorycore/css/Core/list.css'],
+                cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/select.css', Stratus.BaseUrl + 'sitetheorycore/css/Core/list.less'],
 
                 // The class that should appear on the dropdown-menu (which is the containerOptions when this ui is
                 // set to display as a menu).  This is usually used to determine if you want to pull-left or right,
