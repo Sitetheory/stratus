@@ -55,7 +55,7 @@
 
                 // If there is no model you want this to sync with, but you want to set a default starting value
                 customValue: null,
-                requiredCssFile: [Stratus.BaseUrl + 'sitetheorycore/dist/bootstrap/bootstrap-datetimepicker.min.less'],
+                requiredCssFile: [Stratus.BaseUrl + 'sitetheorycore/dist/bootstrap/bootstrap-datetimepicker.min.css'],
 
                 // Valid options that can be passed into dateTimePicker
                 dateTimePicker: {
