@@ -128,18 +128,28 @@
             // Handle Render Triggers
             if (_.has(this.options, 'rerender')) {
                 var events = ['success', 'error', 'add', 'change', 'destroy'];
-                var triggers = _.isArray(this.options.rerender) ? _.clone(this.options.rerender) : null;
-                var action = (triggers) ? 'none' : this.options.rerender;
+                var triggers = (_.isArray(this.options.rerender) || _.isObject(this.options.rerender)) ? _.clone(this.options.rerender) : null;
+                var massAction = (triggers) ? 'none' : this.options.rerender;
 
                 // Set Chosen Events
                 _.each(events, function (event) {
-                    this.options[event] = action;
+                    this.options[event] = massAction;
                 }, this);
 
                 // Set Triggers
                 if (triggers) {
-                    _.each(triggers, function (event) {
-                        this.options[event] = 'all';
+                    _.each(triggers, function (value, key) {
+                        if (value) {
+                            if (_.isObject(value)) {
+                                _.each(value, function (action, event) {
+                                    this.options[event] = action;
+                                }, this);
+                            } else if (_.isString(key)) {
+                                this.options[key] = value;
+                            } else {
+                                this.options[value] = 'all';
+                            }
+                        }
                     }, this);
                 }
 
@@ -192,9 +202,14 @@
             if (!this.options.add || this.options.add === 'all') {
                 this.addAll();
             } else if (this.options.add === 'one' || this.options.add === 'none') {
-                this.clearGlobals();
-                this.collection.models.forEach(this.buildGlobals, this);
-                this.addOne(model);
+                if (this.collection.size() > 1) {
+                    //this.clearGlobals();
+                    //this.collection.models.forEach(this.buildGlobals, this);
+                    this.buildGlobals(model);
+                    this.addOne(model);
+                } else {
+                    this.addAll();
+                }
             } else {
                 console.warn('Add Event contains unknown option:', this.options.add);
             }
@@ -211,11 +226,16 @@
 
         // primeSuccess
         /**
-         * @param model
+         * @param scope
          * @param xhr
          */
-        primeSuccess: function (model, xhr) {
-            if (!this.options.success || this.options.success === 'all') this.addAll();
+        primeSuccess: function (scope, xhr) {
+            console.log('Success:', this.options.success, ((scope instanceof Stratus.Collections.Generic && this.options.success === 'collection') || (scope instanceof Stratus.Models.Generic && this.options.success === 'model')), scope);
+            if (!this.options.success || this.options.success === 'all') {
+                this.addAll();
+            } else if ((scope instanceof Stratus.Collections.Generic && this.options.success === 'collection') || (scope instanceof Stratus.Models.Generic && this.options.success === 'model')) {
+                this.addAll();
+            }
         },
 
         // primeError
@@ -493,32 +513,35 @@
             // Iterate Model Number and create GUID for this View
             this.collection.globals.iterate('modelNumber');
             var uid = (model.has('id')) ? model.get('id') : this.collection.globals.get('modelNumber');
-            var guid = _.uniqueId(this.entity + '_generic');
+            var guid;
 
             // Create Generic View and store in Collection View
-            if (_.has(this.views, uid) && false) {
-                this.views[uid].globals = globals;
-            } else {
-                var view = new Stratus.Internals.View(_.extend({}, this.view.nest(), {
-                    uid: globals.uid,
-                    id: model.get('id'),
-                    scope: 'model',
-                    model: model,
-                    collection: this.collection
-                }));
-                var options = _.extend({}, view.toObject(), {
-                    collectionView: this,
-                    globals: globals,
-                    templates: this.templates,
-                    type: 'generic',
-                    rerender: {
-                        change: this.options.change
-                    },
-                    view: view,
-                    style: this.options.style
-                });
-                Stratus.Instances[guid] = this.views[uid] = new Stratus.Views.Widgets.Generic(options);
+            if (_.has(this.views, uid)) {
+                guid = this.views[uid].guid;
+                this.views[uid].destroy();
+                Stratus.Instances.Clean(guid);
             }
+            var view = new Stratus.Internals.View(_.extend({}, this.view.nest(), {
+                uid: globals.uid,
+                id: model.get('id'),
+                scope: 'model',
+                model: model,
+                collection: this.collection
+            }));
+            var options = _.extend({}, view.toObject(), {
+                collectionView: this,
+                globals: globals,
+                templates: this.templates,
+                type: 'generic',
+                rerender: {
+                    change: this.options.change
+                },
+                view: view,
+                style: this.options.style
+            });
+            guid = _.uniqueId(this.entity + '_generic');
+            this.views[uid] = Stratus.Instances[guid] = new Stratus.Views.Widgets.Generic(options);
+            this.views[uid].guid = guid;
 
             // Sortable Children
             if (globals.child && globals.last) {

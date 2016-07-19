@@ -671,6 +671,11 @@
         render: function () {
 
             if (this.template === null || typeof this.template !== 'function') {
+                // Handle Element, regardless of rendering method (some widgets may have a completely customized element
+                // and desire functionality without template rendering.)
+                this.storeElement(Stratus.Views.Widgets.Base.prototype.$element.call(this));
+                this.primeElement();
+
                 // If it doesn't render, we still need to call the renderCallback because we may normally render a template
                 // but some widget sets data-render="false" but it still needs the callback to execute the model change
                 // event, e.g. link
@@ -930,7 +935,7 @@
             var modelValue = this.getPropertyValue();
             if (!this.isRendered && modelValue === this.options.emptyValue) {
                 // This sets the contents of the element itself, not using traditional setValue()
-                this.$el.html(this.options.placeholder);
+                //this.$el.html(this.options.placeholder);
             }
         },
 
@@ -1329,7 +1334,7 @@
                 this.setValue(this.getPropertyValue());
             } else if (!this.isRendered && this.options.unrender) {
                 var displayValue = this.options.before + this.getDisplayValue() + this.options.after;
-                this.$el.html(displayValue || '');
+                //this.$el.html(displayValue || '');
             }
             return true;
         },

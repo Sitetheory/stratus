@@ -128,8 +128,17 @@
             this.editable = _.size(this.$el.find('[data-editable="true"]'));
             return true;
         },
+        refresh: function () {
+            if (this.dialogue) {
+                this.dialogue.refresh.call(this.dialogue);
+            }
+            this.render();
+        },
         destroy: function () {
             // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
+            if (this.dialogue) {
+                this.dialogue.destroy();
+            }
             this.remove();
             this.$el.remove();
         },
@@ -138,11 +147,10 @@
             if (!this.editable) return;
             $(event.target).addClass('editing');
 
-            // TODO: ContentEditable should be enabled with a data-attribute, not innately stuck
-            //$(event.target).attr('contenteditable', 'true');
+            // TODO: ContentEditable should be enabled with a data-inline, not innately stuck
+            $(event.target).attr('contenteditable', 'true');
             $(event.target).focus();
             if (this.dialogue && typeof this.dialogue === 'object') {
-                console.log('Dialogue:', this.dialogue);
                 this.dialogue.open();
             }
         },
@@ -152,7 +160,7 @@
             $(event.target).html(this.model.get($(event.target).data('property')));
 
             // TODO: ContentEditable should be enabled with a data-attribute, not innately stuck
-            //$(event.target).attr('contenteditable', 'false');
+            $(event.target).attr('contenteditable', 'false');
             $(event.target).removeClass('editing');
         },
         updateOnEnter: function (event) {
