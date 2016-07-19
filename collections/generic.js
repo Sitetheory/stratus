@@ -231,8 +231,10 @@
         },
 
         // Refresh the Data Set According to the API Data
+        /**
+         * @param options
+         */
         refresh: function (options) {
-
             // TODO: Fetching needs to wait for a generic router evaluation to change a boolean value on Stratus.Environment before continuing with a fetch to ensure targets are set
             options = (options && typeof options === 'object') ? options : {};
             this.fetch(this.meta.has('api') ? _.extend(options, { data: this.meta.get('api') }) : options);

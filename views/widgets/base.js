@@ -262,28 +262,38 @@
                 // Listen for Request
                 this[scope].on('request', function () {
                     this.setStatus('request');
-                }.bind(this));
+                }, this);
 
                 // Listen for Error
                 this[scope].on('error', function () {
                     this.setStatus('error');
                     this.onError.apply(this, arguments);
-                }.bind(this));
+                }, this);
 
                 // Listen for Success
                 this[scope].on('success', function () {
                     this.setStatus('success');
-                }.bind(this));
+                }, this);
 
                 // Remove DOM Elements on Model Destruction
                 if (scope === 'model') {
-                    this.model.on('destroy', function () {
-                        this.$el.html('');
-                    }.bind(this));
+                    this.model.on('destroy', this.onDestroy, this);
                 }
             }
 
             return true;
+        },
+
+        // When a Model is destroyed, the widget will also be removed
+        onDestroy: function () {
+            // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
+            this.$el.remove();
+            if (this.uid) {
+                Stratus.Instances.Clean(this.uid);
+            }
+            /*
+            this.$el.html('');
+            */
         },
 
         /**
@@ -935,7 +945,7 @@
             var modelValue = this.getPropertyValue();
             if (!this.isRendered && modelValue === this.options.emptyValue) {
                 // This sets the contents of the element itself, not using traditional setValue()
-                //this.$el.html(this.options.placeholder);
+                this.$el.html(this.options.placeholder);
             }
         },
 
@@ -1334,7 +1344,7 @@
                 this.setValue(this.getPropertyValue());
             } else if (!this.isRendered && this.options.unrender) {
                 var displayValue = this.options.before + this.getDisplayValue() + this.options.after;
-                //this.$el.html(displayValue || '');
+                this.$el.html(displayValue || '');
             }
             return true;
         },

@@ -230,7 +230,6 @@
          * @param xhr
          */
         primeSuccess: function (scope, xhr) {
-            console.log('Success:', this.options.success, ((scope instanceof Stratus.Collections.Generic && this.options.success === 'collection') || (scope instanceof Stratus.Models.Generic && this.options.success === 'model')), scope);
             if (!this.options.success || this.options.success === 'all') {
                 this.addAll();
             } else if ((scope instanceof Stratus.Collections.Generic && this.options.success === 'collection') || (scope instanceof Stratus.Models.Generic && this.options.success === 'model')) {
@@ -513,13 +512,10 @@
             // Iterate Model Number and create GUID for this View
             this.collection.globals.iterate('modelNumber');
             var uid = (model.has('id')) ? model.get('id') : this.collection.globals.get('modelNumber');
-            var guid;
 
             // Create Generic View and store in Collection View
             if (_.has(this.views, uid)) {
-                guid = this.views[uid].guid;
-                this.views[uid].destroy();
-                Stratus.Instances.Clean(guid);
+                this.views[uid].onDestroy();
             }
             var view = new Stratus.Internals.View(_.extend({}, this.view.nest(), {
                 uid: globals.uid,
@@ -529,6 +525,7 @@
                 collection: this.collection
             }));
             var options = _.extend({}, view.toObject(), {
+                uid: _.uniqueId('generic_'),
                 collectionView: this,
                 globals: globals,
                 templates: this.templates,
@@ -539,9 +536,7 @@
                 view: view,
                 style: this.options.style
             });
-            guid = _.uniqueId(this.entity + '_generic');
-            this.views[uid] = Stratus.Instances[guid] = new Stratus.Views.Widgets.Generic(options);
-            this.views[uid].guid = guid;
+            this.views[uid] = Stratus.Instances[options.uid] = new Stratus.Views.Widgets.Generic(options);
 
             // Sortable Children
             if (globals.child && globals.last) {
@@ -618,7 +613,7 @@
          * @param e
          */
         dragStart: function (e) {
-            console.log('Start:', e.originalEvent);
+            //console.log('Start:', e.originalEvent);
         },
 
         /**
@@ -648,11 +643,13 @@
                     model.set('priority', newPriority);
                 });
                 */
+                proto.reference.once('success', function (scope, xhr) {
+                    this.collection.refresh({ reset: true });
+                }, this);
                 proto.reference.save('priority', proto.priority);
-                this.collection.refresh();
             }
 
-            console.log('End:', e.originalEvent.newIndex, proto);
+            //console.log('End:', e.originalEvent.newIndex, proto);
         }
     });
 

@@ -111,11 +111,6 @@
          */
         close: function () {
             return this.$el.removeClass('initializeDialogue');
-        },
-
-        destroy: function () {
-            this.remove();
-            this.$el.remove();
         }
 
     });

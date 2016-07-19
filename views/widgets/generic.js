@@ -80,7 +80,6 @@
             if (!this.rerender.change || this.rerender.change === 'one') {
                 this.model.on('change', this.render, this);
             }
-            this.model.on('destroy', this.destroy, this);
 
             // Create Template Information
             this.globals = (_.has(options, 'globals')) ? options.globals : {};
@@ -102,13 +101,14 @@
                     globals: this.globals,
                     model: this.model.attributes
                 }));
-                Stratus.Instances[_.uniqueId(this.model.collection.globals.get('entity') + '_dialogue_')] = this.dialogue = new Stratus.Views.Widgets.Dialogue({
+                var uid = _.uniqueId('dialogue_');
+                Stratus.Instances[uid] = this.dialogue = new Stratus.Views.Widgets.Dialogue({
                     globals: this.globals,
                     model: this.model,
                     collection: this.collection,
                     templates: this.templates,
                     type: 'dialogue',
-                    uid: this.globals.uid,
+                    uid: uid,
                     view: this.view,
                     widget: this
                 });
@@ -134,13 +134,9 @@
             }
             this.render();
         },
-        destroy: function () {
-            // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
-            if (this.dialogue) {
-                this.dialogue.destroy();
-            }
-            this.remove();
-            this.$el.remove();
+        onDestroy: function () {
+            if (this.dialogue) this.dialogue.onDestroy();
+            Stratus.Views.Widgets.Base.prototype.onDestroy.call(this);
         },
         edit: function (event) {
             this._isEditing = true;
@@ -196,7 +192,7 @@
             return this;
         },
         drop: function (event) {
-            if (!Stratus.Environment.get('production')) console.log('Drop:', event);
+            //if (!Stratus.Environment.get('production')) console.log('Drop:', event);
             return this;
         }
     });
