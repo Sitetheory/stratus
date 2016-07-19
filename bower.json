@@ -39,7 +39,8 @@
     "jquery.toaster": "^1.2.0",
     "dropzone": "^4.3.0",
     "selectize": "^0.12.1",
-    "chartist": "^0.9.8"
+    "chartist": "^0.9.8",
+    "less": "^2.7.1"
   },
   "private": true
 }
