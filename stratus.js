@@ -1057,42 +1057,47 @@
      */
     Stratus.Internals.CssLoader = function (url) {
         return new Promise(function (fulfill, reject) {
-            /* Verify Identical Calls */
-            if (url in Stratus.CSS) {
-                if (Stratus.CSS[url]) {
-                    fulfill();
+            var extension =/\.([0-9a-z]+)$/i;
+            extension = extension.exec(url);
+            var fetch = function () {
+                /* Verify Identical Calls */
+                if (url in Stratus.CSS) {
+                    if (Stratus.CSS[url]) {
+                        fulfill();
+                    } else {
+                        Stratus.Events.once('onload:' + url, fulfill);
+                    }
                 } else {
-                    Stratus.Events.once('onload:' + url, fulfill);
-                }
-            } else {
-                /* Set CSS State */
-                Stratus.CSS[url] = false;
+                    /* Set CSS State */
+                    Stratus.CSS[url] = false;
 
-                /* Create Link */
-                var link = document.createElement('link');
-                link.type = 'text/css';
-                link.rel = 'stylesheet';
-                link.href = url;
+                    /* Create Link */
+                    var link = document.createElement('link');
+                    link.type = 'text/' + extension[1];
+                    link.rel = 'stylesheet';
+                    link.href = url;
 
-                /* Track Fulfillment */
-                Stratus.Events.once('onload:' + url, function () {
-                    Stratus.CSS[url] = true;
-                    fulfill();
-                });
+                    /* Track Fulfillment */
+                    Stratus.Events.once('onload:' + url, function () {
+                        Stratus.CSS[url] = true;
+                        fulfill();
+                    });
 
-                /* Capture OnLoad or Fallback */
-                if ('onload' in link && !Stratus.Client.android) {
-                    link.onload = function () {
+                    /* Capture OnLoad or Fallback */
+                    if ('onload' in link && !Stratus.Client.android) {
+                        link.onload = function () {
+                            Stratus.Events.trigger('onload:' + url);
+                        };
+                    } else {
+                        Stratus.CSS[url] = true;
                         Stratus.Events.trigger('onload:' + url);
-                    };
-                } else {
-                    Stratus.CSS[url] = true;
-                    Stratus.Events.trigger('onload:' + url);
-                }
+                    }
 
-                /* Inject Link into Head */
-                $('head').prepend(link);
-            }
+                    /* Inject Link into Head */
+                    $('head').prepend(link);
+                }
+            };
+            require(['less'], fetch);
         });
     };
 

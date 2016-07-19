@@ -84,8 +84,8 @@
                 // Redactor using LESS appears to break at this time
                 requiredCssFile: [
                     Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor.css',
-                    Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.less',
-                    Stratus.BaseUrl + 'sitetheorycore/dist/codemirror/lib/codemirror.less'
+                    Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.css',
+                    Stratus.BaseUrl + 'sitetheorycore/dist/codemirror/lib/codemirror.css'
                 ],
                 redactor: {
                     // NOTE: callbacks don't work in this version so we do keybinding, and saving manually
