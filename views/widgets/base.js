@@ -288,12 +288,9 @@
         onDestroy: function () {
             // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
             this.$el.remove();
-            if (this.uid) {
-                Stratus.Instances.Clean(this.uid);
+            if (!this.uid || !Stratus.Instances.Clean(this.uid)) {
+                this.remove();
             }
-            /*
-            this.$el.html('');
-            */
         },
 
         /**
