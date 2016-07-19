@@ -61,22 +61,30 @@
         onRender: function (entries) {
             if (this.widget) {
                 this.widget.initializer.done(function () {
-                    if (this.widget.$el.length) {
-                        this.tether = new Tether({
-                            element: this.$el.selector,
-                            target: this.widget.$el.selector,
-                            attachment: 'top left',
-                            targetAttachment: 'top right'
-
-                            //offset: '0 10px'
-                            //constraints: [{to: 'window',pin: true}]
-                        });
-                    } else {
-                        console.info('dialogue parent didn\'t render:', this.widget);
-                    }
+                    this.primeTether();
                 }.bind(this));
             }
             return this;
+        },
+
+        primeTether: function () {
+            if (this.widget.$el.length) {
+                this.tether = new Tether({
+                    element: this.$el.selector,
+                    target: this.widget.$el.selector,
+                    attachment: 'top left',
+                    targetAttachment: 'top right'
+
+                    //offset: '0 10px'
+                    //constraints: [{to: 'window',pin: true}]
+                });
+            } else {
+                console.info('dialogue parent didn\'t render:', this.widget);
+            }
+        },
+
+        refresh: function () {
+            this.primeTether();
         },
 
         /**
@@ -91,11 +99,18 @@
             return true;
         },
 
+        /**
+         * @returns {*}
+         */
         open: function () {
-            this.$el.addClass('initializeDialogue');
+            return this.$el.addClass('initializeDialogue');
         },
+
+        /**
+         * @returns {*}
+         */
         close: function () {
-            this.$el.removeClass('initializeDialogue');
+            return this.$el.removeClass('initializeDialogue');
         }
 
     });

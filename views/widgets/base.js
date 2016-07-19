@@ -262,28 +262,35 @@
                 // Listen for Request
                 this[scope].on('request', function () {
                     this.setStatus('request');
-                }.bind(this));
+                }, this);
 
                 // Listen for Error
                 this[scope].on('error', function () {
                     this.setStatus('error');
                     this.onError.apply(this, arguments);
-                }.bind(this));
+                }, this);
 
                 // Listen for Success
                 this[scope].on('success', function () {
                     this.setStatus('success');
-                }.bind(this));
+                }, this);
 
                 // Remove DOM Elements on Model Destruction
                 if (scope === 'model') {
-                    this.model.on('destroy', function () {
-                        this.$el.html('');
-                    }.bind(this));
+                    this.model.on('destroy', this.onDestroy, this);
                 }
             }
 
             return true;
+        },
+
+        // When a Model is destroyed, the widget will also be removed
+        onDestroy: function () {
+            // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
+            this.$el.remove();
+            if (!this.uid || !Stratus.Instances.Clean(this.uid)) {
+                this.remove();
+            }
         },
 
         /**
@@ -671,6 +678,11 @@
         render: function () {
 
             if (this.template === null || typeof this.template !== 'function') {
+                // Handle Element, regardless of rendering method (some widgets may have a completely customized element
+                // and desire functionality without template rendering.)
+                this.storeElement(Stratus.Views.Widgets.Base.prototype.$element.call(this));
+                this.primeElement();
+
                 // If it doesn't render, we still need to call the renderCallback because we may normally render a template
                 // but some widget sets data-render="false" but it still needs the callback to execute the model change
                 // event, e.g. link

@@ -80,7 +80,6 @@
             if (!this.rerender.change || this.rerender.change === 'one') {
                 this.model.on('change', this.render, this);
             }
-            this.model.on('destroy', this.destroy, this);
 
             // Create Template Information
             this.globals = (_.has(options, 'globals')) ? options.globals : {};
@@ -102,13 +101,14 @@
                     globals: this.globals,
                     model: this.model.attributes
                 }));
-                Stratus.Instances[_.uniqueId(this.model.collection.globals.get('entity') + '_dialogue_')] = this.dialogue = new Stratus.Views.Widgets.Dialogue({
+                var uid = _.uniqueId('dialogue_');
+                Stratus.Instances[uid] = this.dialogue = new Stratus.Views.Widgets.Dialogue({
                     globals: this.globals,
                     model: this.model,
                     collection: this.collection,
                     templates: this.templates,
                     type: 'dialogue',
-                    uid: this.globals.uid,
+                    uid: uid,
                     view: this.view,
                     widget: this
                 });
@@ -128,21 +128,25 @@
             this.editable = _.size(this.$el.find('[data-editable="true"]'));
             return true;
         },
-        destroy: function () {
-            // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
-            this.remove();
-            this.$el.remove();
+        refresh: function () {
+            if (this.dialogue) {
+                this.dialogue.refresh.call(this.dialogue);
+            }
+            this.render();
+        },
+        onDestroy: function () {
+            if (this.dialogue) this.dialogue.onDestroy();
+            Stratus.Views.Widgets.Base.prototype.onDestroy.call(this);
         },
         edit: function (event) {
             this._isEditing = true;
             if (!this.editable) return;
             $(event.target).addClass('editing');
 
-            // TODO: ContentEditable should be enabled with a data-attribute, not innately stuck
-            //$(event.target).attr('contenteditable', 'true');
+            // TODO: ContentEditable should be enabled with a data-inline, not innately stuck
+            $(event.target).attr('contenteditable', 'true');
             $(event.target).focus();
             if (this.dialogue && typeof this.dialogue === 'object') {
-                console.log('Dialogue:', this.dialogue);
                 this.dialogue.open();
             }
         },
@@ -152,7 +156,7 @@
             $(event.target).html(this.model.get($(event.target).data('property')));
 
             // TODO: ContentEditable should be enabled with a data-attribute, not innately stuck
-            //$(event.target).attr('contenteditable', 'false');
+            $(event.target).attr('contenteditable', 'false');
             $(event.target).removeClass('editing');
         },
         updateOnEnter: function (event) {
@@ -188,7 +192,7 @@
             return this;
         },
         drop: function (event) {
-            if (!Stratus.Environment.get('production')) console.log('Drop:', event);
+            //if (!Stratus.Environment.get('production')) console.log('Drop:', event);
             return this;
         }
     });

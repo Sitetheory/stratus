@@ -419,8 +419,12 @@
 
         if (typeof instances === 'object' && Array.isArray(instances)) {
             _.each(instances, function (value) {
-                Stratus.Instances[value].remove();
-                delete Stratus.Instances[value];
+                if (_.has(Stratus.Instances, value)) {
+                    if (typeof Stratus.Instances[value].remove === 'function') {
+                        Stratus.Instances[value].remove();
+                    }
+                    delete Stratus.Instances[value];
+                }
             });
         } else {
             return false;
