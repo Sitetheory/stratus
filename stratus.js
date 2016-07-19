@@ -1061,7 +1061,7 @@
      */
     Stratus.Internals.CssLoader = function (url) {
         return new Promise(function (fulfill, reject) {
-            var extension =/\.([0-9a-z]+)$/i;
+            var extension = /\.([0-9a-z]+)$/i;
             extension = extension.exec(url);
             var fetch = function () {
                 /* Verify Identical Calls */
