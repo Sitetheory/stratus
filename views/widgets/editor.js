@@ -57,8 +57,8 @@
             'redactor-video',
 
             // CodeMirror Modules
-            'codemirror-htmlmixed',
-            'codemirror-matchbrackets'
+            'codemirror/mode/htmlmixed/htmlmixed',
+            'codemirror/addon/edit/matchbrackets'
         ], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.CodeMirror);
@@ -86,7 +86,7 @@
                 requiredCssFile: [
                     Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor.css',
                     Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.css',
-                    Stratus.BaseUrl + 'sitetheorycore/dist/codemirror/lib/codemirror.css'
+                    Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css'
                 ],
                 redactor: {
                     // NOTE: callbacks don't work in this version so we do keybinding, and saving manually
