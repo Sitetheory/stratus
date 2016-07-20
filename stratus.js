@@ -1101,7 +1101,11 @@
                     $('head').prepend(link);
                 }
             };
-            require(['less'], fetch);
+            if (extension[1] === 'less') {
+                require(['less'], fetch);
+            } else {
+                fetch();
+            }
         });
     };
 
