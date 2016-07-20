@@ -87,6 +87,9 @@
             // Internal Attributes (Not DOM Accessible)
             private: {
 
+                // By default, we blur when Enter is pressed
+                blurOnEnter: true,
+
                 // Default to where the widget's data is stored. Options: 'model', 'var'
                 // Var is used in toggle (sometimes) if you want to save a value to the Stratus.Environment object. But in most
                 // cases the dataType is 'model'
@@ -1114,10 +1117,8 @@
          */
         keyActions: function (event) {
             // Enter should blur focus and trigger the changes to be set to the model
-            if (event.keyCode === Stratus.Key.Enter) {
+            if (event.keyCode === Stratus.Key.Enter && this.options.blurOnEnter) {
                 event.preventDefault();
-
-                // safeSaveAction() is called on blur so we can just blur
                 $(event.target).blur();
             }
 

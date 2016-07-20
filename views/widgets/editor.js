@@ -77,6 +77,7 @@
 
         options: {
             private: {
+                blurOnEnter: false,
                 autoSave: true,
                 unrenderEventDefault: 'blur',
 
