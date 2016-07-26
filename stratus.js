@@ -72,7 +72,7 @@
         /* Settings */
         Settings: {
             image: {
-                size: { xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600 }
+                size: {xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600}
             }
         },
 
@@ -121,7 +121,12 @@
         // Plugins */
         PluginMethods: {},
         /* Methods that need to be called as a group later, e.g. OnScroll */
-        RegisterGroup: {}
+        RegisterGroup: {},
+
+        // TODO: Turn this into a Dynamic Object
+        Api: {
+            GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA'
+        }
     };
 
     // Declare Warm Up
@@ -190,7 +195,8 @@
          */
         repeat: function (fn, times) {
             if (typeof fn === 'function' && typeof times === 'number') {
-                var i; for (i = 0; i < times; i++) fn();
+                var i;
+                for (i = 0; i < times; i++) fn();
             } else {
                 console.warn('Underscore cannot repeat function:', fn, 'with number of times:', times);
             }
@@ -365,8 +371,8 @@
     Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
 
     /*
-    Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
-    */
+     Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
+     */
 
     // Backbone Relational Functions
     // -----------------------------
@@ -457,7 +463,7 @@
     // ----------------
 
     /**
-     * @returns {Stratus.Prototypes.Dispatch}
+     * @returns {Object}
      * @constructor
      */
     Stratus.Prototypes.Dispatch = function () {
@@ -537,7 +543,7 @@
          */
         toggle: function (uid, value) {
             var success = this.has(uid);
-            if (success) this.set(uid + '.enabled', (typeof value === 'boolean') ?  value : !this.get(uid + '.enabled'));
+            if (success) this.set(uid + '.enabled', (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'));
             return success;
         }
     });
@@ -803,7 +809,7 @@
                     }
                 });
             } else {
-                reject(new Stratus.Prototypes.Error({ code: 'LoadCSS', message: 'No CSS Resource URLs found!' }, this));
+                reject(new Stratus.Prototypes.Error({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this));
             }
         });
     };
@@ -1055,6 +1061,28 @@
     };
 
     /**
+     * @param options
+     * @constructor
+     */
+    Stratus.Internals.Location = function (options) {
+        return new Promise(function (fulfill, reject) {
+            if (!('geolocation' in navigator)) {
+                reject(new Stratus.Prototypes.Error({
+                    code: 'Location',
+                    message: 'HTML5 Geo-Location isn\'t supported on this browser.'
+                }, this));
+            } else {
+                options = _.extend({
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }, options || {});
+                navigator.geolocation.getCurrentPosition(fulfill, reject, options);
+            }
+        });
+    };
+
+    /**
      * @param url
      * @returns {Promise}
      * @constructor
@@ -1131,7 +1159,7 @@
             $.ajax({
                 type: 'POST',
                 url: '/Api' + encodeURIComponent(query || ''),
-                data: { convoy: JSON.stringify(convoy) },
+                data: {convoy: JSON.stringify(convoy)},
                 dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType')) ? convoy.meta.dataType : 'json',
                 xhrFields: {
                     withCredentials: true
@@ -1145,7 +1173,7 @@
                     return response;
                 },
                 error: function (response) {
-                    reject(new Stratus.Prototypes.Error({ code: 'Convoy', message: response }, this));
+                    reject(new Stratus.Prototypes.Error({code: 'Convoy', message: response}, this));
                     return response;
                 }
             });
@@ -1168,7 +1196,7 @@
         if (meta === undefined || meta === null) meta = {};
         if (payload === undefined) payload = {};
 
-        if (typeof meta !== 'object') meta = { method: meta };
+        if (typeof meta !== 'object') meta = {method: meta};
         if (!_.has(meta, 'method')) meta.method = 'GET';
 
         return Stratus.Internals.Convoy({
@@ -1210,7 +1238,7 @@
                     data: null
                 };
                 Stratus.Events.once('resource:' + path, fulfill);
-                var meta = { path: path, dataType: 'text' };
+                var meta = {path: path, dataType: 'text'};
                 if (elementId !== undefined) {
                     meta.elementId = elementId;
                 }
@@ -1384,7 +1412,7 @@
         },
         clean: function () {
             if (!this.has('entity') || this.get('entity').toLowerCase() === 'none') {
-                this.set({ entity: null, scope: null });
+                this.set({entity: null, scope: null});
             }
         },
 
@@ -1498,7 +1526,7 @@
         var parentChild = false;
 
         var $el = $(el);
-        view = new Stratus.Internals.View({ el: $el });
+        view = new Stratus.Internals.View({el: $el});
         view.hydrate();
         if (parentView) {
             if (!view.has('entity')) {
@@ -1541,12 +1569,12 @@
 
             // Aggregate Template
             if (template !== null) {
-                templates = _.extend((templates !== null) ? templates : {}, { combined: template });
+                templates = _.extend((templates !== null) ? templates : {}, {combined: template});
             }
 
             // Aggregate Dialogue
             if (dialogue !== null) {
-                templates = _.extend((templates !== null) ? templates : {}, { dialogue: dialogue });
+                templates = _.extend((templates !== null) ? templates : {}, {dialogue: dialogue});
             }
 
             // Gather All Templates
@@ -1714,7 +1742,7 @@
             if (modelInit) {
                 modelReference.safeInitialize(view.toObject());
             }
-            view.set({ model: modelReference });
+            view.set({model: modelReference});
         } else if (view.get('scope') === 'collection') {
             // Create reference, if not defined
             if (!Stratus.Collections.has(view.get('entity'))) {
@@ -1734,7 +1762,7 @@
             }
 
             // Set collection reference
-            view.set({ collection: collectionReference });
+            view.set({collection: collectionReference});
         }
 
         if (view.get('type') !== null) {
@@ -1856,7 +1884,7 @@
         if (event.origin !== 'https://auth.sitetheory.io' && event.origin !== 'http://admin.sitetheory.io') return false;
         var convoy = JSON.parse(event.data);
         if (convoy.meta.session && convoy.meta.session !== $.cookie('SITETHEORY')) {
-            $.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
+            $.cookie('SITETHEORY', convoy.meta.session, {expires: 365, path: '/'});
             if (!Stratus.Client.safari) location.reload(true);
         }
     });
