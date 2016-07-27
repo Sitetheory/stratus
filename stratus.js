@@ -107,6 +107,8 @@
         Chronos: null,
         Environment: new Backbone.Model({
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
+            language: navigator.language,
+            timezone: new Date().getTimezoneOffset() / 60,
             debugNest: false,
             liveEdit: false,
             viewPortChange: false,
