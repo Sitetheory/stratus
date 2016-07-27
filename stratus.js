@@ -353,6 +353,7 @@
      * @returns {boolean}
      */
     $.fn.notClicked = function (event) {
+        if (!this.selector) console.error('No Selector:', this);
         return (!$(event.target).closest(this.selector).length && !$(event.target).parents(this.selector).length);
     };
 

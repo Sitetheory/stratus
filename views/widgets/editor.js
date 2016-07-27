@@ -162,23 +162,23 @@
          * @returns {boolean}
          */
         registerElement: function () {
-
-            // Add the redactor to the editable element (not the widget container)
             // Set the value of codeMirror from user options
             this.options.redactor.codemirror = this.options.codemirror;
 
+            // Add the redactor to the editable element (not the widget container)
             this.$element.redactor(this.options.redactor);
             this.redactor = this.$element.data('redactor');
+
+            // Listen for Redactor Box Focus
+            this.primeFocusListener();
 
             // The built in callbacks: keydown, blur, etc doesn't trigger so we do it manually
             // Manually record whether the redactor or the codeMirror editors are focused so we can do specific actions
             this.redactor.$editor.on('blur', function (event) {
                 this.redactorIsFocused = false;
-                this.isFocusedCheck(event);
             }.bind(this));
             this.redactor.$editor.on('focus', function (event) {
                 this.redactorIsFocused = true;
-                this.isFocusedCheck(event);
             }.bind(this));
             this.redactor.$editor.on('keydown', function (event) {
                 this.keyActions(event);
@@ -197,11 +197,9 @@
                 // List for CodeMirror Events
                 this.codeMirror.on('blur', function (event) {
                     this.codeMirrorIsFocused = false;
-                    this.isFocusedCheck(event);
                 }.bind(this));
                 this.codeMirror.on('focus', function (event) {
                     this.codeMirrorIsFocused = true;
-                    this.isFocusedCheck(event);
                 }.bind(this));
                 this.codeMirror.on('keydown', function (event) {
                     this.keyActions(event);
@@ -231,16 +229,26 @@
             this.redactor.focus.setEnd();
         },
 
-        // isFocusedCheck()
+        /**
+         * @returns {boolean}
+         */
+        primeFocusListener: function () {
+            this.focusBind = this.focusBind || this.focusListener();
+            return true;
+        },
+
+        // focusListener()
         // ---------------
-        // Since there can be two editors, and sometimes we need to know if the entire widget is focused or not (unrender)
-        // we need to combine the values
-        isFocusedCheck: function (event) {
-            if ((this.redactorIsFocused || this.codeMirrorIsFocused)) {
-                this.focusAction(event);
-            } else {
-                this.blurAction(event);
-            }
+        // Since there can be two editors, a toolbar, etc, we need to know if the entire widget is focused or not
+        focusListener: function () {
+            $(document).click(function (event) {
+                this.box = this.box || this.$el.find('.redactor-box');
+                if (!(this.box.notClicked(event))) {
+                    this.focusAction(event);
+                } else {
+                    this.blurAction(event);
+                }
+            }.bind(this));
         },
 
         // scopeChanged()
