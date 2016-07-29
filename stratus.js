@@ -992,13 +992,27 @@
                 size = obj.el.data('size');
             } else {
                 var width = null;
+                var unit = null;
+                var percentage = null;
 
                 if (obj.el.prop('style').width) {
                     // Check if there is CSS width hard coded on the element
                     width = obj.el.prop('style').width;
                 } else if (obj.el.attr('width')) {
                     width = obj.el.attr('width');
-                } else {
+                }
+
+                // Digest Width Attribute
+                if (width) {
+                    var digest = /([\d]+)(.*)/;
+                    width = digest.exec(width);
+                    unit = width[2];
+                    width = parseInt(width[1]);
+                    percentage = (unit === '%') ? (width / 100) : null;
+                }
+
+                // Gather Container (Calculated) Width
+                if (!width || unit === '%') {
                     // If there is no CSS width, calculate the parent container's width
                     // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
                     // So we need to find the first parent that is visible and use that width
@@ -1015,21 +1029,20 @@
                             width = Math.round(width / colWidth);
                         }
                     }
-                }
 
-                // Digest Width Attribute
-                var digest = /([\d]+)(.*)/;
-                width = digest.exec(width);
-                var unit = width[2];
-                width = parseInt(width[1]);
+                    // Calculate Percentage
+                    if (percentage) {
+                        width = Math.round(width * percentage);
+                    }
+                }
 
                 // If no appropriate width was found, abort
                 if (width <= 0) return false;
 
                 // Return the first size that is bigger than container width
-                size = (unit !== '%') ? _.findKey(Stratus.Settings.image.size, function (s, k) {
+                size = _.findKey(Stratus.Settings.image.size, function (s, k) {
                     return (s > width);
-                }) : 'hq';
+                });
 
                 // default to largest size if the container is larger and it didn't find a size
                 size = size || 'hq';
