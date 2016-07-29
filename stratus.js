@@ -993,16 +993,13 @@
             } else {
                 var width = null;
 
-                // Check if there is CSS width hard coded on the element
                 if (obj.el.prop('style').width) {
+                    // Check if there is CSS width hard coded on the element
                     width = obj.el.prop('style').width;
-
-                    // Check if there is a width attribute
                 } else if (obj.el.attr('width')) {
                     width = obj.el.attr('width');
-
-                    // If there is no CSS width, calculate the parent container's width
                 } else {
+                    // If there is no CSS width, calculate the parent container's width
                     // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
                     // So we need to find the first parent that is visible and use that width
                     var $visibleParent = $(_.first(obj.el.parents(':visible')));
@@ -1018,19 +1015,24 @@
                             width = Math.round(width / colWidth);
                         }
                     }
-
                 }
+
+                // Digest Width Attribute
+                var digest = /([\d]+)(.*)/;
+                width = digest.exec(width);
+                var unit = width[2];
+                width = parseInt(width[1]);
 
                 // If no appropriate width was found, abort
                 if (width <= 0) return false;
 
                 // Return the first size that is bigger than container width
-                size = _.findKey(Stratus.Settings.image.size, function (s, k) {
+                size = (unit !== '%') ? _.findKey(Stratus.Settings.image.size, function (s, k) {
                     return (s > width);
-                });
+                }) : 'hq';
 
                 // default to largest size if the container is larger and it didn't find a size
-                size = size ? size : 'hq';
+                size = size || 'hq';
             }
 
             // Change Source to right size (get the base and extension and ignore size)
