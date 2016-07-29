@@ -15,9 +15,6 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// TODO: this needs to be brought up to our Widget standards so it's more consistent with the way we do things now with
-// promises, rendering, switching templates, etc.
-
 // Examples
 // ========
 
@@ -50,15 +47,40 @@
         template: _.template(''),
         url: '/Api/',
 
-        options: {},
+        options: {
+            private: {
+                requiredCssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/fullcalendar/dist/fullcalendar.min.css']
+            }
+        },
 
         /**
          * @param entries
          * @returns {boolean}
          */
         onRender: function (entries) {
-            // TODO: Add logic here
-            //this.$el.fullCalendar();
+            var that = this;
+            this.$el.fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                eventLimit: true,
+                events: function (start, end, timezone, callback) {
+                    var events = [];
+                    _.each(that.collection.toJSON().payload, function (payload) {
+                        events.push({
+                            id: payload.id,
+                            title: payload.viewVersion.title,
+                            start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),//"YYYY-MM-DD"TODO add time? only if not all day?
+                            url: payload.routingPrimary.url,
+                            allDay: true //hides the time
+                            //end: needs to be event to have end
+                        });
+                    });
+                    callback(events);
+                }
+            });
             return true;
         }
     });
