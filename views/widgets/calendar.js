@@ -46,6 +46,10 @@
         model: Stratus.Models.Generic,
         template: _.template(''),
         url: '/Api/',
+        /*routes: {
+            'range/:dateStart': 'paginate',
+            'range/:dateStart/:dateEnd': 'paginate'
+        },*/
 
         options: {
             private: {
@@ -65,7 +69,8 @@
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay'
                 },
-                eventLimit: true,
+                eventLimit: false,//a number assigns the max number of events to display per day
+                fixedWeekCount: false,//true = month sets there to always be 6 weeks displayed
                 events: function (start, end, timezone, callback) {
                     var events = [];
                     _.each(that.collection.toJSON().payload, function (payload) {
@@ -82,7 +87,41 @@
                 }
             });
             return true;
-        }
+        },
+        /**
+         * @param dateStart
+         * @param dateEnd
+         */
+        /*paginate: function (dateStart, dateEnd) {
+            if (dateStart === undefined) dateStart = '1';
+            if (dateEnd === undefined) dateEnd = '1';
+            if (!Stratus.Environment.get('production')) {
+                console.log('Range: dateStart=', dateStart, 'dateEnd=', dateEnd);
+            }
+            var collection = Stratus.Collections.get(_.ucfirst(entity));
+            if (typeof collection === 'object') {
+                if (collection.isHydrated()) {
+                    if (collection.meta.has('pageCurrent') && collection.meta.get('pageCurrent') !== parseInt(page)) {
+                        if (collection.meta.get('pageTotal') >= parseInt(page) && parseInt(page) >= 1) {
+                            collection.meta.set('api.p', page);
+                            collection.refresh({ reset: true });
+                        } else {
+                            if (!Stratus.Environment.get('production')) {
+                                console.log('Page', page, 'of entity', entity, 'does not exist.');
+                            }
+                        }
+                    }
+                } else {
+                    collection.once('reset', function () {
+                        this.paginate(dateStart, dateEnd);
+                    }, this);
+                }
+            } else {
+                Stratus.Collections.once('change:' + _.ucfirst(entity), function () {
+                    this.paginate(dateStart, dateEnd);
+                }, this);
+            }
+        }*/
     });
 
 }));
