@@ -73,7 +73,7 @@
     "requirePaddingNewLinesAfterBlocks": null,
     "requireSemicolons": true,
     "requireShorthandArrowFunctions": true,
-    "safeContextKeyword": "_this",
+    "safeContextKeyword": "that",
     "validateLineBreaks": "LF",
     "validateQuoteMarks": { "mark": "'", "escape": true },
     "validateIndentation": 4,

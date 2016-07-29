@@ -40,7 +40,11 @@
     "dropzone": "^4.3.0",
     "selectize": "^0.12.1",
     "chartist": "^0.9.8",
-    "less": "^2.7.1"
+    "less": "^2.7.1",
+    "tether-drop": "^1.4.2",
+    "tether-tooltip": "^1.2.0",
+    "d3": "^4.1.1",
+    "fullcalendar": "^2.9.0"
   },
   "private": true
 }

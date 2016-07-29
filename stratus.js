@@ -107,6 +107,8 @@
         Chronos: null,
         Environment: new Backbone.Model({
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
+            language: navigator.language,
+            timezone: new Date().getTimezoneOffset() / 60,
             debugNest: false,
             liveEdit: false,
             viewPortChange: false,
@@ -121,7 +123,12 @@
         // Plugins */
         PluginMethods: {},
         /* Methods that need to be called as a group later, e.g. OnScroll */
-        RegisterGroup: {}
+        RegisterGroup: {},
+
+        // TODO: Turn this into a Dynamic Object
+        Api: {
+            GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA'
+        }
     };
 
     // Declare Warm Up
@@ -190,7 +197,8 @@
          */
         repeat: function (fn, times) {
             if (typeof fn === 'function' && typeof times === 'number') {
-                var i; for (i = 0; i < times; i++) fn();
+                var i;
+                for (i = 0; i < times; i++) fn();
             } else {
                 console.warn('Underscore cannot repeat function:', fn, 'with number of times:', times);
             }
@@ -345,6 +353,7 @@
      * @returns {boolean}
      */
     $.fn.notClicked = function (event) {
+        if (!this.selector) console.error('No Selector:', this);
         return (!$(event.target).closest(this.selector).length && !$(event.target).parents(this.selector).length);
     };
 
@@ -365,8 +374,8 @@
     Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
 
     /*
-    Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
-    */
+     Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
+     */
 
     // Backbone Relational Functions
     // -----------------------------
@@ -457,7 +466,7 @@
     // ----------------
 
     /**
-     * @returns {Stratus.Prototypes.Dispatch}
+     * @returns {Object}
      * @constructor
      */
     Stratus.Prototypes.Dispatch = function () {
@@ -537,7 +546,7 @@
          */
         toggle: function (uid, value) {
             var success = this.has(uid);
-            if (success) this.set(uid + '.enabled', (typeof value === 'boolean') ?  value : !this.get(uid + '.enabled'));
+            if (success) this.set(uid + '.enabled', (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'));
             return success;
         }
     });
@@ -984,16 +993,13 @@
             } else {
                 var width = null;
 
-                // Check if there is CSS width hard coded on the element
                 if (obj.el.prop('style').width) {
+                    // Check if there is CSS width hard coded on the element
                     width = obj.el.prop('style').width;
-
-                    // Check if there is a width attribute
                 } else if (obj.el.attr('width')) {
                     width = obj.el.attr('width');
-
-                    // If there is no CSS width, calculate the parent container's width
                 } else {
+                    // If there is no CSS width, calculate the parent container's width
                     // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
                     // So we need to find the first parent that is visible and use that width
                     var $visibleParent = $(_.first(obj.el.parents(':visible')));
@@ -1009,19 +1015,24 @@
                             width = Math.round(width / colWidth);
                         }
                     }
-
                 }
+
+                // Digest Width Attribute
+                var digest = /([\d]+)(.*)/;
+                width = digest.exec(width);
+                var unit = width[2];
+                width = parseInt(width[1]);
 
                 // If no appropriate width was found, abort
                 if (width <= 0) return false;
 
                 // Return the first size that is bigger than container width
-                size = _.findKey(Stratus.Settings.image.size, function (s, k) {
+                size = (unit !== '%') ? _.findKey(Stratus.Settings.image.size, function (s, k) {
                     return (s > width);
-                });
+                }) : 'hq';
 
                 // default to largest size if the container is larger and it didn't find a size
-                size = size ? size : 'hq';
+                size = size || 'hq';
             }
 
             // Change Source to right size (get the base and extension and ignore size)
@@ -1052,6 +1063,28 @@
         var regexp = /col-.{2}-([0-9]*)/g;
         var match = regexp.exec(classes);
         return (typeof match[1] !== 'undefined') ? match[1] : false;
+    };
+
+    /**
+     * @param options
+     * @constructor
+     */
+    Stratus.Internals.Location = function (options) {
+        return new Promise(function (fulfill, reject) {
+            if (!('geolocation' in navigator)) {
+                reject(new Stratus.Prototypes.Error({
+                    code: 'Location',
+                    message: 'HTML5 Geo-Location isn\'t supported on this browser.'
+                }, this));
+            } else {
+                options = _.extend({
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }, options || {});
+                navigator.geolocation.getCurrentPosition(fulfill, reject, options);
+            }
+        });
     };
 
     /**
@@ -1101,7 +1134,11 @@
                     $('head').prepend(link);
                 }
             };
-            require(['less'], fetch);
+            if (extension[1] === 'less') {
+                require(['less'], fetch);
+            } else {
+                fetch();
+            }
         });
     };
 

@@ -38,7 +38,7 @@
         // ---------
         // This should be added to the initialize of every plugin.
         prepare: function (options) {
-            this.uid = (_.has(options, 'uid')) ? options.uid : null;
+            this.uid = options.uid || null;
             this.plugin = (_.has(options, 'plugin')) ? options.plugin.toLowerCase() : null;
             this.view = options.view;
             Stratus.Internals.LoadCss(Stratus.BaseUrl + 'sitetheorycore/css/Core/plugins.css');

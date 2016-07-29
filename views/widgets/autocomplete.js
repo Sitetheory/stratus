@@ -178,18 +178,18 @@
          */
         onRender: function (entries) {
             // Manually Select the items selected (this shouldn't be necessary since we set the 'items' field in the options, but that doesn't work so we are currently doing it manually.
-            var _this = this;
+            var that = this;
             this.$element.on('load', function () {
-                if (_this.initial.load) {
-                    _this.initial.load = false;
+                if (that.initial.load) {
+                    that.initial.load = false;
 
-                    if (_this.options.selectize.items !== null && _this.options.selectize.items.length > 0) {
-                        _.each(_this.options.selectize.items, function (el) {
+                    if (that.options.selectize.items !== null && that.options.selectize.items.length > 0) {
+                        _.each(that.options.selectize.items, function (el) {
                             // If the value doesn't exists in the list add it to the list so that it shows up
                             if (!_.has(this.options, el)) {
                                 var data = {};
-                                data[_this.options.selectize.valueField] = el;
-                                data[_this.options.selectize.labelField] = el;
+                                data[that.options.selectize.valueField] = el;
+                                data[that.options.selectize.labelField] = el;
                                 this.addOption(data);
                             }
 
@@ -199,8 +199,8 @@
                     }
 
                     // set dynamic api value if available
-                    if (_.has(_this, 'selected')) {
-                        this.setValue(_this.selected);
+                    if (_.has(that, 'selected')) {
+                        this.setValue(that.selected);
                     }
                 }
             });
