@@ -165,7 +165,10 @@
 
                 // Determine Autosort
                 autosort: false,
-                cssFile: []
+                cssFile: [],
+
+                // These will be fetched and keyed respectively for template rendering
+                resource: null
             }
         },
 
