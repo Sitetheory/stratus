@@ -54,8 +54,51 @@
         options: {
             private: {
                 requiredCssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/fullcalendar/dist/fullcalendar.min.css']
+            },
+            public: {
+                customButtons: null, //See http://fullcalendar.io/docs/display/customButtons/
+                buttonIcons: { //object. Determines which icons are displayed in buttons of the header. See http://fullcalendar.io/docs/display/buttonIcons/
+                    prev: 'left-single-arrow',
+                    next: 'right-single-arrow',
+                    prevYear: 'left-double-arrow',
+                    nextYear: 'right-double-arrow'
+                },
+                header: { //object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultDate: null, //Moment or date String(2014-02-01). The initial date displayed when the calendar first loads
+                nowIndicator: false, //boolean. Whether or not to display a marker indicating the current time(week or day view)
+                timezone: false, //false (default), 'local' (client-side), 'UTC', a timezone string ('America/Chicago'). Determines the timezone in which dates throughout the API are parsed and rendered
+                eventForceAllDay: false, //boolean. Override option directly for events. true = shows only the date and hides time(even on week/day view)
+                eventLimit: false, //false or int, a number assigns the max number of events to display per day
+                eventLimitClick: 'popover', //'popover', 'week', 'day', view name, Function. Determines the action taken when the user clicks on a "more" link created by the eventLimit option. See http://fullcalendar.io/docs/display/eventLimitClick/
+                fixedWeekCount: false, //boolean. true = month sets there to always be 6 weeks displayed
+                firstDay: 0, //int. The day that each week begins. 0 = Sunday
+                weekends: true, //boolean. Whether to include Saturday/Sunday columns
+                hiddenDays: [], //Array of numbers. Exclude certain days-of-the-week from being displayed
+                weekNumbers: false, //boolean. Determines if week numbers should be displayed
+                weekNumberCalculation: 'local', //'local', 'ISO', or a Function. The method for calculating week numbers that are displayed
+                businessHours: false, //boolean or object. Emphasizes certain time slots on the calendar. By default, Monday-Friday, 9am-5pm. See http://fullcalendar.io/docs/display/businessHours/
+                RTLmode: false, //boolean. Displays the calendar in right-to-left mode
+                height: null, //int, Function, 'parent', 'auto'. Will make the entire calendar (including header) a pixel height
+                contentHeight: null, //int, Function, 'auto'. Will make the calendar's content area a pixel height
+                aspectRatio: 1.35, //float. Determines the width-to-height aspect ratio of the calendar
+                handleWindowResize: true, //boolean. Whether to automatically resize the calendar when the browser window resizes
+                windowResizeDelay: 100 //int. Time, in milliseconds, the calendar will wait to adjust its size after a window resize event occurs
             }
         },
+
+        initialRequest: true,
+
+        /**
+         * Methods to look into:
+         * 'viewRender' for callbacks on new date range (pagination maybe)  - http://fullcalendar.io/docs/display/viewRender/
+         * 'dayRender' for modifying day cells - http://fullcalendar.io/docs/display/dayRender/
+         * 'windowResize' for callbacks on window resizing - http://fullcalendar.io/docs/display/windowResize/
+         * 'render' force calendar to redraw - http://fullcalendar.io/docs/display/render/
+         */
 
         /**
          * @param entries
@@ -63,31 +106,68 @@
          */
         onRender: function (entries) {
             var that = this;
-            this.$el.fullCalendar({
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                eventLimit: false,//a number assigns the max number of events to display per day
-                fixedWeekCount: false,//true = month sets there to always be 6 weeks displayed
+            that.$el.fullCalendar({
+                customButtons: that.options.customButtons,
+                buttonIcons: that.options.buttonIcons,
+                header: that.options.header,
+                defaultDate: that.options.defaultDate,
+                nowIndicator: that.options.nowIndicator,
+                timezone: that.options.timezone,
+                eventLimit: that.options.eventLimit,
+                eventLimitClick: that.options.eventLimitClick,
+                fixedWeekCount: that.options.fixedWeekCount,
+                firstDay: that.options.firstDay,
+                weekends: that.options.weekends,
+                hiddenDays: that.options.hiddenDays,
+                weekNumbers: that.options.weekNumbers,
+                weekNumberCalculation: that.options.weekNumberCalculation,
+                businessHours: that.options.businessHours,
+                isRTL: that.options.RTLmode,
+                height: that.options.height,
+                contentHeight: that.options.contentHeight,
+                aspectRatio: that.options.aspectRatio,
+                handleWindowResize: that.options.handleWindowResize,
+                windowResizeDelay: that.options.windowResizeDelay,
                 events: function (start, end, timezone, callback) {
-                    var events = [];
-                    _.each(that.collection.toJSON().payload, function (payload) {
-                        events.push({
-                            id: payload.id,
-                            title: payload.viewVersion.title,
-                            start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),//"YYYY-MM-DD"TODO add time? only if not all day?
-                            url: payload.routingPrimary.url,
-                            allDay: true //hides the time
-                            //end: needs to be event to have end
-                        });
-                    });
-                    callback(events);
+                    if (!that.initialRequest) {
+                        //TODO make the Collection fetch a new date range, THEN parse events again
+                        //Is there a way to merely append to the collection, rather than replacing it(and not duplicate events)?
+                        /*$.ajax({
+                            url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
+                            type: 'GET',
+                            error: function () {
+                                callback();
+                            },
+                            success: function (res) {
+                                callback(res.payload);
+                            }
+                        });*/
+                        console.log('Calendar fetch data!');
+                        console.log('Collection:', that.collection);
+                        that.parseEvents(that.collection, callback);
+                    } else {
+                        that.parseEvents(that.collection, callback);
+                        that.initialRequest = false;
+                    }
                 }
             });
             return true;
         },
+        parseEvents: function (collection, callback) {
+            var that = this;
+            var events = [];
+            _.each(collection.toJSON().payload, function (payload) {
+                events.push({
+                    id: payload.id,
+                    title: payload.viewVersion.title,
+                    start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),
+                    end: (!that.options.eventForceAllDay || !payload.viewVersion.allDay) ? payload.viewVersion.timeEnd || null : null,//TODO entities do not have timeEnd or allDay yet
+                    url: payload.routingPrimary.url,
+                    allDay: that.options.eventForceAllDay || payload.viewVersion.allDay //TODO entities do not have allDay yet
+                });
+            });
+            callback(events);
+        }
         /**
          * @param dateStart
          * @param dateEnd
