@@ -44,7 +44,8 @@
     "tether-drop": "^1.4.2",
     "tether-tooltip": "^1.2.0",
     "d3": "^4.1.1",
-    "fullcalendar": "^2.9.0"
+    "fullcalendar": "^2.9.0",
+    "mathjs": "^3.3.0"
   },
   "private": true
 }
