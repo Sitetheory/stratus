@@ -91,7 +91,8 @@
         },
 
         initialRequest: true,
-
+        startRange: moment(),
+        endRange: moment(),
         /**
          * Methods to look into:
          * 'viewRender' for callbacks on new date range (pagination maybe)  - http://fullcalendar.io/docs/display/viewRender/
@@ -99,7 +100,6 @@
          * 'windowResize' for callbacks on window resizing - http://fullcalendar.io/docs/display/windowResize/
          * 'render' force calendar to redraw - http://fullcalendar.io/docs/display/render/
          */
-
         /**
          * @param entries
          * @returns {boolean}
@@ -129,44 +129,72 @@
                 handleWindowResize: that.options.handleWindowResize,
                 windowResizeDelay: that.options.windowResizeDelay,
                 events: function (start, end, timezone, callback) {
-                    if (!that.initialRequest) {
-                        //TODO make the Collection fetch a new date range, THEN parse events again
-                        //Is there a way to merely append to the collection, rather than replacing it(and not duplicate events)?
-                        /*$.ajax({
-                            url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
-                            type: 'GET',
-                            error: function () {
-                                callback();
-                            },
-                            success: function (res) {
-                                callback(res.payload);
-                            }
-                        });*/
-                        console.log('Calendar fetch data!');
-                        console.log('Collection:', that.collection);
-                        that.parseEvents(that.collection, callback);
+                    //Alter the start/end to only fetch the range we don't have & Set the new parsed range
+                    if (that.startRange <= start) {
+                        start = null;
+                    }
+                    if (that.endRange >= end) {
+                        end = null;
+                    }
+                    if (start != null && end != null) {//Overall greater scope
+                        that.startRange = start;
+                        that.endRange = end;
                     } else {
-                        that.parseEvents(that.collection, callback);
+                        if (start == null && end != null) {//Extend scope right
+                            start = that.endRange;
+                            that.endRange = end;
+                        } else if (end == null && start != null) {//Extend scope left
+                            end = that.startRange;
+                            that.startRange = start;
+                        } //Else no scope change
+                    }
+
+                    if (!that.initialRequest && start != null && end != null) { //Request on other than initial and if there is a scope change
+                        that.collection.once('success', function () {
+                            console.log('Calendar fetch data: ', start.format(), end.format());
+                            callback(that.parseEvents());
+                        });
+                        that.collection.meta.set('api.startRange', start.format('X'));
+                        that.collection.meta.set('api.endRange', end.format('X'));
+                        that.collection.refresh(); //FIXME Does this merge the new collection results with the current?
+                    } else {
+                        callback(that.parseEvents());
                         that.initialRequest = false;
                     }
                 }
             });
             return true;
         },
-        parseEvents: function (collection, callback) {
+        /**
+         * Parse Asset Collection into JSON Array usable by fullcalendar
+         * @param callback {Array}
+         * @returns {Array}
+         */
+        parseEvents: function (callback) {
             var that = this;
             var events = [];
-            _.each(collection.toJSON().payload, function (payload) {
-                events.push({
-                    id: payload.id,
-                    title: payload.viewVersion.title,
-                    start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),
-                    end: (!that.options.eventForceAllDay || !payload.viewVersion.allDay) ? payload.viewVersion.timeEnd || null : null,//TODO entities do not have timeEnd or allDay yet
-                    url: payload.routingPrimary.url,
-                    allDay: that.options.eventForceAllDay || payload.viewVersion.allDay //TODO entities do not have allDay yet
-                });
+            _.each(that.collection.toJSON().payload, function (payload) {
+                if (payload.viewVersion != null) {
+                    events.push({
+                        id: payload.id,
+                        title: payload.viewVersion.title,
+                        start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),
+                        end: (!that.options.eventForceAllDay || !payload.viewVersion.allDay) ? payload.viewVersion.timeEnd || null : null,//TODO entities do not have timeEnd or allDay yet
+                        url: payload.routingPrimary.url,
+                        allDay: that.options.eventForceAllDay || payload.viewVersion.allDay //TODO entities do not have allDay yet
+                    });
+                } else {
+                    events.push({
+                        id: payload.id,
+                        title: payload.name,
+                        start: moment.unix(payload.time).format(),
+                        url: '//' + payload.url,
+                        allDay: that.options.eventForceAllDay
+                    });
+                }
             });
-            callback(events);
+            if (callback) callback(events);
+            return events;
         }
         /**
          * @param dateStart
