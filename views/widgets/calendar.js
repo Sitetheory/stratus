@@ -184,11 +184,12 @@
                         allDay: that.options.eventForceAllDay || payload.viewVersion.allDay //TODO entities do not have allDay yet
                     });
                 } else {
+                    //no viewVersion would likely mean it is a media resource
                     events.push({
                         id: payload.id,
                         title: payload.name,
                         start: moment.unix(payload.time).format(),
-                        url: '//' + payload.url,
+                        url: '//' + payload.url + (payload.extension ? '.' + payload.extension : null),
                         allDay: that.options.eventForceAllDay
                     });
                 }
