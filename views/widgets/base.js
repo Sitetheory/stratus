@@ -781,8 +781,8 @@
                 tether: Tether,
 
                 // List Items
-                globals: (_.has(this, 'globals')) ? this.globals : {},
-                icon: (_.has(this, 'icon')) ? this.icon : {}
+                globals: _.has(this, 'globals') ? this.globals : {},
+                icon: _.has(this, 'icon') ? this.icon : {}
             };
 
             // Add Model Information
@@ -1395,6 +1395,7 @@
          * @returns {boolean}
          */
         onRender: function (entries) {
+            this.childViews = entries;
             return true;
         },
 

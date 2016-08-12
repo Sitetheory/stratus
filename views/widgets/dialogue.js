@@ -59,6 +59,7 @@
          * @returns {Stratus.Views.Widgets.Dialogue}
          */
         onRender: function (entries) {
+            Stratus.Views.Widgets.Base.prototype.onRender.call(this);
             if (this.widget) {
                 this.widget.initializer.done(function () {
                     this.primeTether();

@@ -133,21 +133,22 @@
                     if (that.startRange <= start) {
                         start = null;
                     }
+
                     if (that.endRange >= end) {
                         end = null;
                     }
-                    if (start != null && end != null) {//Overall greater scope
+
+                    // Handle Scope
+                    if (start != null && end != null) {//Overall greater
                         that.startRange = start;
                         that.endRange = end;
-                    } else {
-                        if (start == null && end != null) {//Extend scope right
-                            start = that.endRange;
-                            that.endRange = end;
-                        } else if (end == null && start != null) {//Extend scope left
-                            end = that.startRange;
-                            that.startRange = start;
-                        } //Else no scope change
-                    }
+                    } else if (start == null && end != null) {//Extend right
+                        start = that.endRange;
+                        that.endRange = end;
+                    } else if (end == null && start != null) {//Extend left
+                        end = that.startRange;
+                        that.startRange = start;
+                    } //Else no scope change
 
                     if (!that.initialRequest && start != null && end != null) { //Request on other than initial and if there is a scope change
                         that.collection.once('success', function () {
@@ -156,7 +157,7 @@
                         });
                         that.collection.meta.set('api.startRange', start.format('X'));
                         that.collection.meta.set('api.endRange', end.format('X'));
-                        that.collection.refresh(); //FIXME Does this merge the new collection results with the current?
+                        that.collection.refresh(); //FIXME: Does this merge the new collection results with the current?
                     } else {
                         callback(that.parseEvents());
                         that.initialRequest = false;
@@ -174,12 +175,12 @@
             var that = this;
             var events = [];
             _.each(that.collection.toJSON().payload, function (payload) {
-                if (payload.viewVersion != null) {
+                if (payload.viewVersion) {
                     events.push({
                         id: payload.id,
                         title: payload.viewVersion.title,
                         start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),
-                        end: ( (!that.options.eventForceAllDay || !payload.viewVersion.meta.allDay) && payload.viewVersion.meta.timeEnd)  ? moment.unix(payload.viewVersion.meta.timeEnd).format() : null,
+                        end: ((!that.options.eventForceAllDay || !payload.viewVersion.meta.allDay) && payload.viewVersion.meta.timeEnd) ? moment.unix(payload.viewVersion.meta.timeEnd).format() : null,
                         url: payload.routingPrimary.url,
                         allDay: that.options.eventForceAllDay || payload.viewVersion.meta.allDay
                     });
