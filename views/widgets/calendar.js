@@ -31,7 +31,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'underscore', 'moment', 'stratus.views.widgets.base', 'fullcalendar'], factory);
+        define(['stratus', 'jquery', 'underscore', 'moment', 'moment-range', 'stratus.views.widgets.base', 'fullcalendar'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.moment);
     }
@@ -56,6 +56,7 @@
                 requiredCssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/fullcalendar/dist/fullcalendar.min.css']
             },
             public: {
+                cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/calendar.css'],
                 customButtons: null, //See http://fullcalendar.io/docs/display/customButtons/
                 buttonIcons: { //object. Determines which icons are displayed in buttons of the header. See http://fullcalendar.io/docs/display/buttonIcons/
                     prev: 'left-single-arrow',
@@ -106,6 +107,7 @@
          */
         onRender: function (entries) {
             var that = this;
+            that.setupCustomView();
             that.$el.fullCalendar({
                 customButtons: that.options.customButtons,
                 buttonIcons: that.options.buttonIcons,
@@ -197,41 +199,203 @@
             });
             if (callback) callback(events);
             return events;
-        }
-        /**
-         * @param dateStart
-         * @param dateEnd
-         */
-        /*paginate: function (dateStart, dateEnd) {
-            if (dateStart === undefined) dateStart = '1';
-            if (dateEnd === undefined) dateEnd = '1';
-            if (!Stratus.Environment.get('production')) {
-                console.log('Range: dateStart=', dateStart, 'dateEnd=', dateEnd);
-            }
-            var collection = Stratus.Collections.get(_.ucfirst(entity));
-            if (typeof collection === 'object') {
-                if (collection.isHydrated()) {
-                    if (collection.meta.has('pageCurrent') && collection.meta.get('pageCurrent') !== parseInt(page)) {
-                        if (collection.meta.get('pageTotal') >= parseInt(page) && parseInt(page) >= 1) {
-                            collection.meta.set('api.p', page);
-                            collection.refresh({ reset: true });
-                        } else {
-                            if (!Stratus.Environment.get('production')) {
-                                console.log('Page', page, 'of entity', entity, 'does not exist.');
+        },
+        setupCustomView: function () {
+            //TODO Needs to be setup to allow views to be 'plugged in'
+            var FC = $.fullCalendar; // a reference to FullCalendar's root namespace
+
+            FC.ListView = FC.View.extend({
+                /**
+                 * Determines is a 'time' falls within the current interval
+                 * @param time
+                 * @returns {!boolean}
+                 */
+                isMomentInRange: function (time) {
+                    var intervalRange = moment.range(this.intervalStart, this.intervalEnd);
+                    return time.within(intervalRange);
+                },
+                /**
+                 * Determine if an event falls within the current interval
+                 * @param event
+                 * @returns boolean
+                 */
+                isEventInRange: function (event) {
+                    if (event.end) {
+                        var intervalRange = moment.range(this.intervalStart, this.intervalEnd);
+                        var eventRange = moment.range(event.start, event.end);
+                        return eventRange.overlaps(intervalRange);
+                    } else {
+                        return this.isMomentInRange(event.start);
+                    }
+                },
+                /**
+                 * Duplicate the list of events and use the duplicate to format and print ordered list of events for only this date range
+                 * We need to duplicate so that we can have multiple-days event split into number of each day event for the displaying purpose
+                 * Event start Monday to Friday, we will have to display the same event everyday, hence adding that on Tuesday, Wednesday and Thursday
+                 *
+                 * For multiple-days event, We need to know each and every day this particular event should be displayed for
+                 * an event that start from 12 - 15 / we have to display this event also on 13 and 14 hence a new list of objects to hold these displaying dates
+                 * @param events
+                 * @returns {Array}
+                 */
+                prepareEvents: function (events) {
+                    var preparedEvents = [];
+                    var tStart;
+                    var tEnd;
+                    var event;
+                    for (i in events) {
+                        if (events.hasOwnProperty(i)) {
+                            if (this.isEventInRange(events[i])) {
+                                tStart = events[i].start.clone();
+                                tEnd = events[i].end ? events[i].end.clone() : events[i].start.clone();
+                                while (tEnd >= tStart) {
+                                    if (this.isMomentInRange(tStart)) {
+                                        event = Object.create(events[i]);
+                                        event.displayDay = tStart.clone();
+
+                                        preparedEvents.push(event);
+                                    }
+
+                                    tStart.add(1, 'day');
+                                }
                             }
                         }
                     }
-                } else {
-                    collection.once('reset', function () {
-                        this.paginate(dateStart, dateEnd);
-                    }, this);
+
+                    // We would like to display these events in order, newest first
+                    preparedEvents.sort(function (a, b) {
+                        var  dateA = new Date(a.displayDay);
+                        var dateB = new Date(b.displayDay);
+                        return dateA - dateB;
+                    });
+
+                    return preparedEvents;
+                },
+                /**
+                 * Re-renders the view
+                 * Called on each interval change and initialization
+                 * @param events
+                 * @param modifiedEventId
+                 */
+                renderEvents: function (events, modifiedEventId) {
+                    console.log('Rending Events');
+
+                    var preparedEvents = this.prepareEvents(events);
+
+                    //Start displaying our sorted list
+                    var viewName = this.opt('viewName') || 'list';
+                    var $html = $('<ul class="fc-' + viewName + '"></ul>');
+
+                    var disLeft;
+                    var disRight;
+                    var lUrl;
+                    var lTitle;
+                    var allDay;
+                    var startDate;
+                    var endDate;
+                    var classes;
+                    var description;
+                    var dayCompare;
+                    var temp;
+                    var count = 0;
+
+                    for (i in preparedEvents) {
+                        if (preparedEvents.hasOwnProperty(i)) {
+                            disLeft = disRight = lUrl = lTitle = allDay = startDate = endDate = classes = description = null;
+
+                            count++;
+                            disLeft          = moment(preparedEvents[i].displayDay).format(this.opt('leftHeaderFormat'));
+                            disRight         = moment(preparedEvents[i].displayDay).format(this.opt('rightHeaderFormat'));
+                            dayCompare      = moment(preparedEvents[i].displayDay).format('LL');
+                            lTitle          = FC.htmlEscape(preparedEvents[i].title);
+                            allDay          = preparedEvents[i].allDay;
+                            startDate       = FC.htmlEscape(moment(preparedEvents[i].start).format(this.opt('eventTimeFormat')));
+                            if (preparedEvents[i].end) {
+                                endDate         = FC.htmlEscape(moment(preparedEvents[i].end).format(this.opt('eventTimeFormat')));
+                            }
+                            lUrl        = preparedEvents[i].url;
+                            classes     = preparedEvents[i].className;
+                            description = preparedEvents[i].description;
+
+                            // if the events are from source, then pick the className from the source not from event object itself
+                            if (preparedEvents[i].source) {
+                                classes = classes.concat(preparedEvents[i].source.className);
+                            }
+                            if (dayCompare != temp) {
+                                $(
+                                    '<li class="fc-dayHeader">' +
+                                        '<span class="fc-headerLeft">' + disLeft + '</span>' +
+                                        '<span class="fc-headerRight">' + disRight + '</span>' +
+                                    '</li>'
+                                ).appendTo($html);
+                                temp = dayCompare;
+                            }
+                            if (allDay) {
+                                // if the event is all day , make sure you print that and not date and time
+                                // otherwise do the opposite
+                                $eventdisplay = $(
+                                    '<li class="fc-item">' +
+                                        '<' + (lUrl ? 'a href="' + FC.htmlEscape(lUrl) + '"' : 'div') +
+                                        ' class="fc-listEvent ' + classes + '">' +
+                                            '<div class="fc-time">' +
+                                                '<span class="fc-all-day">' + this.opt('allDayText') + '</span>' +
+                                            '</div>' +
+                                            '<div class="fc-details">' +
+                                                '<div class="fc-title">' + lTitle + '</div>' +
+                                                (description ? '<div class="fc-desc">' + FC.htmlEscape(description) + '</div>' : '') +
+                                            '</div>' +
+                                        '</' + (lUrl ? 'a' : 'div') + '>' +
+                                    '</li>'
+                                ).appendTo($html);
+                            } else {
+                                $eventdisplay = $(
+                                    '<li class="fc-item">' +
+                                        '<' + (lUrl ? 'a href="' + FC.htmlEscape(lUrl) + '"' : 'div') +
+                                        ' class="fc-listEvent ' + classes + '">' +
+                                            '<div class="fc-time">' +
+                                                '<span class="fc-start-time">' + startDate + '</span> ' +
+                                                '<span class="fc-end-time">' + (endDate ? endDate : '') + '</span>' +
+                                            '</div>' +
+                                            '<div class="fc-details">' +
+                                                '<div class="fc-title">' + lTitle + '</div>' +
+                                                (description ? '<div class="fc-desc">' + FC.htmlEscape(description) + '</div>' : '') +
+                                            '</div>' +
+                                        '</' + (lUrl ? 'a' : 'div') + '>' +
+                                    '</li>'
+                                ).appendTo($html);
+                            }
+                        }
+                    }
+                    $(this.el).html($html);
+                    this.trigger('eventAfterAllRender');
                 }
-            } else {
-                Stratus.Collections.once('change:' + _.ucfirst(entity), function () {
-                    this.paginate(dateStart, dateEnd);
-                }, this);
-            }
-        }*/
+            });
+            FC.views.listMonth = {
+                duration: { months: 1 },
+                defaults: {
+                    viewName: 'list', //Affects the class name
+                    eventTimeFormat: 'LT', //8:30 PM
+                    leftHeaderFormat: 'dddd', //Monday
+                    rightHeaderFormat: 'MMMM Do', //August 2nd
+                    allDayText: 'All Day',
+                    buttonText: 'month'
+                },
+                class: FC.ListView
+            };
+
+            FC.views.listWeek = {
+                duration: { weeks: 1 },
+                defaults: {
+                    viewName: 'list', //Affects the class name
+                    eventTimeFormat: 'LT', //8:30 PM
+                    leftHeaderFormat: 'dddd', //Monday
+                    rightHeaderFormat: 'MMMM Do', //August 2nd
+                    allDayText: 'All Day',
+                    buttonText: 'week'
+                },
+                class: FC.ListView
+            };
+        }
     });
 
 }));
