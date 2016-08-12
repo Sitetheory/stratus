@@ -179,9 +179,9 @@
                         id: payload.id,
                         title: payload.viewVersion.title,
                         start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),
-                        end: (!that.options.eventForceAllDay || !payload.viewVersion.allDay) ? payload.viewVersion.timeEnd || null : null,//TODO entities do not have timeEnd or allDay yet
+                        end: ( (!that.options.eventForceAllDay || !payload.viewVersion.meta.allDay) && payload.viewVersion.meta.timeEnd)  ? moment.unix(payload.viewVersion.meta.timeEnd).format() : null,
                         url: payload.routingPrimary.url,
-                        allDay: that.options.eventForceAllDay || payload.viewVersion.allDay //TODO entities do not have allDay yet
+                        allDay: that.options.eventForceAllDay || payload.viewVersion.meta.allDay
                     });
                 } else {
                     //no viewVersion would likely mean it is a media resource
