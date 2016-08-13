@@ -1027,7 +1027,7 @@
         /**
          * @param entries
          */
-        registerChildViews: function(entries) {
+        registerChildViews: function (entries) {
             if (entries && typeof entries === 'object' && entries.total > 0) {
                 _.each(entries.views, function (view) {
                     view.dispatch = this.dispatch;
