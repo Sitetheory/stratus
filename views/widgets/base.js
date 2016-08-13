@@ -222,6 +222,9 @@
             // Register Main Events
             this.primeEvents();
 
+            // Child View Registry
+            this.childViews = [];
+
             // Return Promise for Loader Validation
             this.initializer = new Promise(function (fulfill, reject) {
                 if (!this.prepare(options)) {
@@ -290,13 +293,34 @@
             return true;
         },
 
-        // When a Model is destroyed, the widget will also be removed
-        onDestroy: function () {
-            // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
-            this.$el.remove();
-            if (!this.uid || !Stratus.Instances.Clean(this.uid)) {
-                this.remove();
+        /**
+         * @param target
+         * @returns {boolean}
+         */
+        destroyViews: function (target) {
+            if (!target) return false;
+            if (_.isArray(target) && _.size(target) > 0) {
+                _.each(target, function (view) {
+                    this.destroyViews(view);
+                }, this);
+                return true;
+            } else if (_.isObject(target)) {
+                if (target.childViews && _.size(target.childViews) > 0) {
+                    this.destroyViews(target.childViews);
+                }
+                target.$el.remove();
+                if (!target.uid || !Stratus.Instances.Clean(target.uid)) {
+                    target.remove();
+                }
+                return true;
             }
+            return false;
+        },
+
+        // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
+        // When a Model is destroyed, the widget and its children will also be removed
+        onDestroy: function () {
+            this.destroyViews(this);
         },
 
         /**
@@ -1000,6 +1024,18 @@
             this.trigger('unrender');
         },
 
+        /**
+         * @param entries
+         */
+        registerChildViews: function(entries) {
+            if (entries && typeof entries === 'object' && entries.total > 0) {
+                _.each(entries.views, function (view) {
+                    view.dispatch = this.dispatch;
+                    this.childViews.push(view);
+                }, this);
+            }
+        },
+
         // After all widgets return their promise, we share dispatch objects one level deep
         /**
          * @param nest
@@ -1008,11 +1044,8 @@
          */
         loaderCallback: function (nest, parent) {
             var entries = { parent: parent, nest: nest };
-            var register = function (view) {
-                view.dispatch = this.dispatch;
-            };
-            if (parent && typeof parent === 'object' && parent.total > 0) _.each(parent.views, register, this);
-            if (nest && typeof nest === 'object' && nest.total > 0) _.each(nest.views, register, this);
+            this.registerChildViews(parent);
+            this.registerChildViews(nest);
             this.renderEvent(entries);
             return entries;
         },
@@ -1387,7 +1420,7 @@
         },
 
         // onRender()
-        // ----------------
+        // ----------
 
         // Called after rendering of the template is complete.
         /**
@@ -1395,12 +1428,12 @@
          * @returns {boolean}
          */
         onRender: function (entries) {
-            this.childViews = entries;
             return true;
         },
 
         // onPostRender()
-        // -------------
+        // --------------
+
         // Methods to execute after any custom renderCallback()
         /**
          * @param entries
