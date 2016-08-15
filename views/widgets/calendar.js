@@ -69,11 +69,12 @@
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay'
                 },
+                defaultView: 'month',
                 defaultDate: null, //Moment or date String(2014-02-01). The initial date displayed when the calendar first loads
                 nowIndicator: false, //boolean. Whether or not to display a marker indicating the current time(week or day view)
                 timezone: false, //false (default), 'local' (client-side), 'UTC', a timezone string ('America/Chicago'). Determines the timezone in which dates throughout the API are parsed and rendered
                 eventForceAllDay: false, //boolean. Override option directly for events. true = shows only the date and hides time(even on week/day view)
-                eventLimit: false, //false or int, a number assigns the max number of events to display per day
+                eventLimit: 7, //false or int, a number assigns the max number of events to display per day
                 eventLimitClick: 'popover', //'popover', 'week', 'day', view name, Function. Determines the action taken when the user clicks on a "more" link created by the eventLimit option. See http://fullcalendar.io/docs/display/eventLimitClick/
                 fixedWeekCount: false, //boolean. true = month sets there to always be 6 weeks displayed
                 firstDay: 0, //int. The day that each week begins. 0 = Sunday
@@ -82,7 +83,7 @@
                 weekNumbers: false, //boolean. Determines if week numbers should be displayed
                 weekNumberCalculation: 'local', //'local', 'ISO', or a Function. The method for calculating week numbers that are displayed
                 businessHours: false, //boolean or object. Emphasizes certain time slots on the calendar. By default, Monday-Friday, 9am-5pm. See http://fullcalendar.io/docs/display/businessHours/
-                RTLmode: false, //boolean. Displays the calendar in right-to-left mode
+                RTL: false, //boolean. Displays the calendar in right-to-left mode
                 height: null, //int, Function, 'parent', 'auto'. Will make the entire calendar (including header) a pixel height
                 contentHeight: null, //int, Function, 'auto'. Will make the calendar's content area a pixel height
                 aspectRatio: 1.35, //float. Determines the width-to-height aspect ratio of the calendar
@@ -112,6 +113,7 @@
                 customButtons: that.options.customButtons,
                 buttonIcons: that.options.buttonIcons,
                 header: that.options.header,
+                defaultView: that.options.defaultView,
                 defaultDate: that.options.defaultDate,
                 nowIndicator: that.options.nowIndicator,
                 timezone: that.options.timezone,
@@ -124,7 +126,7 @@
                 weekNumbers: that.options.weekNumbers,
                 weekNumberCalculation: that.options.weekNumberCalculation,
                 businessHours: that.options.businessHours,
-                isRTL: that.options.RTLmode,
+                isRTL: that.options.RTL,
                 height: that.options.height,
                 contentHeight: that.options.contentHeight,
                 aspectRatio: that.options.aspectRatio,
@@ -202,6 +204,7 @@
         },
         setupCustomView: function () {
             //TODO Needs to be setup to allow views to be 'plugged in'
+            //TODO need to render these from their own template file
             var FC = $.fullCalendar; // a reference to FullCalendar's root namespace
 
             FC.ListView = FC.View.extend({
