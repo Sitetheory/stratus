@@ -74,13 +74,19 @@
                 Math.floor(worldCoordinate.x * scale / this.tile),
                 Math.floor(worldCoordinate.y * scale / this.tile));
 
-            return [
-                'Lat/Lng: ' + latLng,
-                'Zoom level: ' + zoom,
-                'World Coordinate: ' + worldCoordinate,
-                'Pixel Coordinate: ' + pixelCoordinate,
-                'Tile Coordinate: ' + tileCoordinate
-            ].join('<br>');
+            var output = [];
+            if (this.error) {
+                output.push('Error: ' + this.error);
+            } else {
+                output = [
+                    'Lat/Lng: ' + latLng,
+                    'Zoom level: ' + zoom,
+                    'World Coordinate: ' + worldCoordinate,
+                    'Pixel Coordinate: ' + pixelCoordinate,
+                    'Tile Coordinate: ' + tileCoordinate
+                ];
+            }
+            return output.join('<br>');
         },
 
         /**
@@ -91,25 +97,37 @@
             // Gather Current Geo-Location (For the Initial Example)
             Stratus.Internals.Location().done(function (pos) {
                 this.location = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-
-                this.map = new google.maps.Map(this.$el[0], {
-                    center: this.location,
-                    zoom: 13
-                });
-
-                var coordInfoWindow = new google.maps.InfoWindow();
-
-                coordInfoWindow.setContent(this.createInfoWindowContent(this.location, this.map.getZoom()));
-                coordInfoWindow.setPosition(this.location);
-                coordInfoWindow.open(this.map);
-
-                this.map.addListener('zoom_changed', function () {
-                    coordInfoWindow.setContent(this.createInfoWindowContent(this.location, this.map.getZoom()));
-                    coordInfoWindow.open(this.map);
-                }.bind(this));
+                this.displayMap();
             }.bind(this), function (error) {
-                console.error('Location:', error.message);
+                this.error = error.message;
+                this.location = new google.maps.LatLng(37.8988771, -122.0591649);
+                this.displayMap();
+            }.bind(this));
+        },
+
+        /**
+         * @returns {boolean}
+         */
+        displayMap: function () {
+            if (!this.location) return false;
+
+            this.map = new google.maps.Map(this.$el[0], {
+                center: this.location,
+                zoom: 13
             });
+
+            var coordInfoWindow = new google.maps.InfoWindow();
+
+            coordInfoWindow.setContent(this.createInfoWindowContent(this.location, this.map.getZoom()));
+            coordInfoWindow.setPosition(this.location);
+            coordInfoWindow.open(this.map);
+
+            this.map.addListener('zoom_changed', function () {
+                coordInfoWindow.setContent(this.createInfoWindowContent(this.location, this.map.getZoom()));
+                coordInfoWindow.open(this.map);
+            }.bind(this));
+
+            return true;
         }
     });
 

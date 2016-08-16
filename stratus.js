@@ -1092,8 +1092,8 @@
             } else {
                 options = _.extend({
                     enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
+                    timeout: 20000,
+                    maximumAge: 50000
                 }, options || {});
                 navigator.geolocation.getCurrentPosition(fulfill, reject, options);
             }

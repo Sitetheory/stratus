@@ -343,13 +343,13 @@
                 var checked = null;
                 var containerClass = '';
                 if (typeof option === 'object') {
-                    value = typeof option.value !== 'undefined' ? option.value : null;
-                    label = typeof option.label !== 'undefined' ? option.label : value;
-                    containerClass = typeof option.containerClass !== 'undefined' ? ' ' + option.containerClass : '';
+                    value = option.value ? option.value : null;
+                    label = option.label ? option.label : value;
+                    containerClass = option.containerClass ? ' ' + option.containerClass : '';
                     if (typeof option.checked !== 'undefined' && option.checked === true) {
                         checked = this.options.ui === 'menu' ? 'checked="checked"' : 'selected="selected"';
                     }
-                    if (typeof option.image !== 'undefined') {
+                    if (option.image) {
                         image = option.image;
                         imageBg = 'style="background-image:url(' + option.image + ');"';
                         containerClass += ' hasImage';
@@ -520,7 +520,7 @@
                         labels.push({ value: value, label: label });
                     }
                 }, this);
-            } else if (this.options.source && typeof this.selectedCollection !== 'undefined' && this.selectedCollection.models.length > 0) {
+            } else if (this.options.source && this.selectedCollection && this.selectedCollection.models.length > 0) {
                 // If the options are sourced from the API, e.g. Collection, then we get the selected options
                 this.selectedCollection.forEach(function (option) {
                     var value = option.get(this.options.sourceIdAttribute);
