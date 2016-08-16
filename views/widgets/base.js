@@ -706,7 +706,6 @@
          * @returns {boolean}
          */
         render: function () {
-
             if (this.template === null || typeof this.template !== 'function') {
                 // Handle Element, regardless of rendering method (some widgets may have a completely customized element
                 // and desire functionality without template rendering.)

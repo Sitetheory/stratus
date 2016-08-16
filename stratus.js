@@ -1109,50 +1109,60 @@
         return new Promise(function (fulfill, reject) {
             var extension = /\.([0-9a-z]+)$/i;
             extension = extension.exec(url);
-            var fetch = function () {
-                /* Verify Identical Calls */
-                if (url in Stratus.CSS) {
-                    if (Stratus.CSS[url]) {
-                        fulfill();
-                    } else {
-                        Stratus.Events.once('onload:' + url, fulfill);
-                    }
-                } else {
-                    /* Set CSS State */
-                    Stratus.CSS[url] = false;
-
-                    /* Create Link */
-                    var link = document.createElement('link');
-                    link.type = 'text/' + extension[1];
-                    link.rel = 'stylesheet';
-                    link.href = url;
-
-                    /* Track Fulfillment */
-                    Stratus.Events.once('onload:' + url, function () {
-                        Stratus.CSS[url] = true;
-                        fulfill();
-                    });
-
-                    /* Capture OnLoad or Fallback */
-                    if ('onload' in link && !Stratus.Client.android) {
-                        link.onload = function () {
-                            Stratus.Events.trigger('onload:' + url);
-                        };
-                    } else {
-                        Stratus.CSS[url] = true;
-                        Stratus.Events.trigger('onload:' + url);
-                    }
-
-                    /* Inject Link into Head */
-                    $('head').prepend(link);
-                }
-            };
             if (extension[1] === 'less') {
-                require(['less'], fetch);
+                require(['less'], function () {
+                    Stratus.Internals.CssFetch(fulfill, reject, extension[1], url);
+                });
             } else {
-                fetch();
+                Stratus.Internals.CssFetch(fulfill, reject, extension[1], url);
             }
         });
+    };
+
+    /**
+     * @param fulfill
+     * @param reject
+     * @param extension
+     * @param url
+     * @constructor
+     */
+    Stratus.Internals.CssFetch = function (fulfill, reject, extension, url) {
+        /* Verify Identical Calls */
+        if (url in Stratus.CSS) {
+            if (Stratus.CSS[url]) {
+                fulfill();
+            } else {
+                Stratus.Events.once('onload:' + url, fulfill);
+            }
+        } else {
+            /* Set CSS State */
+            Stratus.CSS[url] = false;
+
+            /* Create Link */
+            var link = document.createElement('link');
+            link.type = 'text/' + extension;
+            link.rel = 'stylesheet';
+            link.href = url;
+
+            /* Track Fulfillment */
+            Stratus.Events.once('onload:' + url, function () {
+                Stratus.CSS[url] = true;
+                fulfill();
+            });
+
+            /* Capture OnLoad or Fallback */
+            if ('onload' in link && !Stratus.Client.android) {
+                link.onload = function () {
+                    Stratus.Events.trigger('onload:' + url);
+                };
+            } else {
+                Stratus.CSS[url] = true;
+                Stratus.Events.trigger('onload:' + url);
+            }
+
+            /* Inject Link into Head */
+            $('head').prepend(link);
+        }
     };
 
     // Internal Convoy Dispatcher

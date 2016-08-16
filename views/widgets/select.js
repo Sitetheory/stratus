@@ -214,7 +214,6 @@
                 }
                 this.options.textSelectedNoContent = this.options.textSelectedNoContent.replace('{{TYPE}}', _.ucfirst(this.options.source));
             }
-
         },
 
         // validate()
@@ -240,11 +239,28 @@
             return true;
         },
 
+        /**
+         * @param options
+         * @param fulfill
+         * @param reject
+         */
+        promise: function (options, fulfill, reject) {
+            console.log('promise:', this.$el);
+            Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
+        },
+
+        render: function () {
+            console.log('render:', this.$el);
+            Stratus.Views.Widgets.Base.prototype.render.call(this);
+        },
+
         // onRender()
         // ----------------
         // After the template renders, get the value and update the DOM. Use the same method for both model bound
         // objects and simple variable toggles, since all it does is gets the value and updates the class
         onRender: function (entries) {
+
+            console.log('entries:', entries);
 
             // Container for the options
             this.containerOptions = this.$el.find('.selectOptionsContainer');
@@ -276,7 +292,7 @@
             this.addOptions();
 
             if (this.options.showSelected) {
-                // TODO: add funcitonality to allow drag/drop of options into the selected
+                // TODO: add functionality to allow drag/drop of options into the selected
             }
 
         },
