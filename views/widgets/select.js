@@ -134,7 +134,7 @@
                 // TODO: point to the cloud server (PATH!)
                 // TODO: this (and all others) should point to current version path
                 // The CSS file to load for this widget
-                cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/select.less', Stratus.BaseUrl + 'sitetheorycore/css/Core/list.less'],
+                cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/select.css', Stratus.BaseUrl + 'sitetheorycore/css/Core/list.css'],
 
                 // The class that should appear on the dropdown-menu (which is the containerOptions when this ui is
                 // set to display as a menu).  This is usually used to determine if you want to pull-left or right,
@@ -239,28 +239,11 @@
             return true;
         },
 
-        /**
-         * @param options
-         * @param fulfill
-         * @param reject
-         */
-        promise: function (options, fulfill, reject) {
-            console.log('promise:', this.$el);
-            Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
-        },
-
-        render: function () {
-            console.log('render:', this.$el);
-            Stratus.Views.Widgets.Base.prototype.render.call(this);
-        },
-
         // onRender()
         // ----------------
         // After the template renders, get the value and update the DOM. Use the same method for both model bound
         // objects and simple variable toggles, since all it does is gets the value and updates the class
         onRender: function (entries) {
-
-            console.log('entries:', entries);
 
             // Container for the options
             this.containerOptions = this.$el.find('.selectOptionsContainer');
