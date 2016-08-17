@@ -47,19 +47,6 @@
             }
         },
 
-        /**
-         * Initialize the map by first requiring the Google API 'AFTER' the key is known
-         * @param options
-         */
-        initialize: function (options) {
-
-            var that = this;
-            require(['//maps.googleapis.com/maps/api/js?key=' + that.options.public.apiKey], function () {
-                return Stratus.Views.Widgets.Base.prototype.initialize.call(that, options);
-            });
-
-        },
-
         // The mapping between latitude, longitude and pixels is defined by the web
         // mercator projection.
         /**
@@ -83,14 +70,16 @@
          * @returns {boolean}
          */
         onRender: function (entries) {
-            // Gather Current Geo-Location (For the Initial Example)
-            Stratus.Internals.Location().done(function (pos) {
-                this.location = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-                this.displayMap();
-            }.bind(this), function (error) {
-                this.error = error.message;
-                this.location = new google.maps.LatLng(37.8988771, -122.0591649);
-                this.displayMap();
+            require(['//maps.googleapis.com/maps/api/js?key=' + this.options.apiKey], function () {
+                // Gather Current Geo-Location (For the Initial Example)
+                Stratus.Internals.Location().done(function (pos) {
+                    this.location = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+                    this.displayMap();
+                }.bind(this), function (error) {
+                    this.error = error.message;
+                    this.location = new google.maps.LatLng(37.8988771, -122.0591649);
+                    this.displayMap();
+                }.bind(this));
             }.bind(this));
         },
 
@@ -99,7 +88,6 @@
          * @returns {string}
          */
         createInfoWindowContent: function () {
-            console.log('!!!OPTIONS', this.options);
             var scale = 1 << (this.map ? this.map.getZoom() : this.options.zoom);
             var worldCoordinate = this.project(this.location);
 
@@ -137,7 +125,7 @@
             if (content instanceof String) {
                 coordInfoWindow.setContent(content);
             } else if (content instanceof Function) {
-                coordInfoWindow.setContent(content());
+                coordInfoWindow.setContent(content.call(this));
             }
             coordInfoWindow.setPosition(latLng);
             coordInfoWindow.open(this.map);
@@ -147,7 +135,7 @@
                 if (content instanceof String) {
                     coordInfoWindow.setContent(content);
                 } else if (content instanceof Function) {
-                    coordInfoWindow.setContent(content());
+                    coordInfoWindow.setContent(content.call(this));
                 }
                 coordInfoWindow.open(this.map);
             }.bind(this));
