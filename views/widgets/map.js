@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base', '//maps.googleapis.com/maps/api/js?key=' + Stratus.Api.GoogleMaps], factory);
+        define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -36,7 +36,29 @@
         // Map Objects
         location: null,
         map: null,
-        tile: 256,
+
+        options: {
+            private: {},
+            public: {
+                apiKey: Stratus.Api.GoogleMaps, //using our API unless specified
+                tile: 256,
+                zoom: 13
+
+            }
+        },
+
+        /**
+         * Initialize the map by first requiring the Google API 'AFTER' the key is known
+         * @param options
+         */
+        initialize: function (options) {
+
+            var that = this;
+            require(['//maps.googleapis.com/maps/api/js?key=' + that.options.public.apiKey], function () {
+                return Stratus.Views.Widgets.Base.prototype.initialize.call(that, options);
+            });
+
+        },
 
         // The mapping between latitude, longitude and pixels is defined by the web
         // mercator projection.
@@ -52,41 +74,8 @@
             siny = Math.min(Math.max(siny, -0.9999), 0.9999);
 
             return new google.maps.Point(
-                this.tile * (0.5 + latLng.lng() / 360),
-                this.tile * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)));
-        },
-
-        // This function builds a particular info window
-        /**
-         * @param latLng
-         * @param zoom
-         * @returns {string}
-         */
-        createInfoWindowContent: function (latLng, zoom) {
-            var scale = 1 << zoom;
-            var worldCoordinate = this.project(latLng);
-
-            var pixelCoordinate = new google.maps.Point(
-                Math.floor(worldCoordinate.x * scale),
-                Math.floor(worldCoordinate.y * scale));
-
-            var tileCoordinate = new google.maps.Point(
-                Math.floor(worldCoordinate.x * scale / this.tile),
-                Math.floor(worldCoordinate.y * scale / this.tile));
-
-            var output = [];
-            if (this.error) {
-                output.push('Error: ' + this.error);
-            } else {
-                output = [
-                    'Lat/Lng: ' + latLng,
-                    'Zoom level: ' + zoom,
-                    'World Coordinate: ' + worldCoordinate,
-                    'Pixel Coordinate: ' + pixelCoordinate,
-                    'Tile Coordinate: ' + tileCoordinate
-                ];
-            }
-            return output.join('<br>');
+                this.options.tile * (0.5 + latLng.lng() / 360),
+                this.options.tile * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)));
         },
 
         /**
@@ -105,6 +94,65 @@
             }.bind(this));
         },
 
+        // This function builds a particular info window
+        /**
+         * @returns {string}
+         */
+        createInfoWindowContent: function () {
+            console.log('!!!OPTIONS', this.options);
+            var scale = 1 << (this.map ? this.map.getZoom() : this.options.zoom);
+            var worldCoordinate = this.project(this.location);
+
+            var pixelCoordinate = new google.maps.Point(
+                Math.floor(worldCoordinate.x * scale),
+                Math.floor(worldCoordinate.y * scale));
+
+            var tileCoordinate = new google.maps.Point(
+                Math.floor(worldCoordinate.x * scale / this.options.tile),
+                Math.floor(worldCoordinate.y * scale / this.options.tile));
+
+            var output = [];
+            if (this.error) {
+                output.push('Error: ' + this.error);
+            } else {
+                output = [
+                    'Lat/Lng: ' + this.location,
+                    'Zoom level: ' + (this.map ? this.map.getZoom() : this.options.zoom),
+                    'World Coordinate: ' + worldCoordinate,
+                    'Pixel Coordinate: ' + pixelCoordinate,
+                    'Tile Coordinate: ' + tileCoordinate
+                ];
+            }
+            return output.join('<br>');
+        },
+
+        // This function builds a particular info window
+        /**
+         * @param latLng Google Object
+         * @param content String or Function
+         */
+        createInfoWindow: function (latLng, content) {
+            var coordInfoWindow = new google.maps.InfoWindow();
+
+            if (content instanceof String) {
+                coordInfoWindow.setContent(content);
+            } else if (content instanceof Function) {
+                coordInfoWindow.setContent(content());
+            }
+            coordInfoWindow.setPosition(latLng);
+            coordInfoWindow.open(this.map);
+
+            //TODO need to set custom specifiers for listeners and data
+            this.map.addListener('zoom_changed', function () {
+                if (content instanceof String) {
+                    coordInfoWindow.setContent(content);
+                } else if (content instanceof Function) {
+                    coordInfoWindow.setContent(content());
+                }
+                coordInfoWindow.open(this.map);
+            }.bind(this));
+        },
+
         /**
          * @returns {boolean}
          */
@@ -113,19 +161,11 @@
 
             this.map = new google.maps.Map(this.$el[0], {
                 center: this.location,
-                zoom: 13
+                zoom: this.options.zoom
             });
 
-            var coordInfoWindow = new google.maps.InfoWindow();
-
-            coordInfoWindow.setContent(this.createInfoWindowContent(this.location, this.map.getZoom()));
-            coordInfoWindow.setPosition(this.location);
-            coordInfoWindow.open(this.map);
-
-            this.map.addListener('zoom_changed', function () {
-                coordInfoWindow.setContent(this.createInfoWindowContent(this.location, this.map.getZoom()));
-                coordInfoWindow.open(this.map);
-            }.bind(this));
+            //this.createInfoWindow(this.location, 'This is a standard message');
+            this.createInfoWindow(this.location, this.createInfoWindowContent);
 
             return true;
         }
