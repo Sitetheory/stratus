@@ -65,13 +65,11 @@
                     create: true,
                     persist: false,
                     allowEmptyOption: false
-                },
-                api: {
-                    limit: null
                 }
             },
             public: {
-                target: null
+                target: null,
+                api: null
             }
         },
 
@@ -188,6 +186,11 @@
                             // If the value doesn't exists in the list add it to the list so that it shows up
                             if (!_.has(this.options, el)) {
                                 var data = {};
+                                /*
+                                var data = new Stratus.Prototypes.Collection();
+                                data.set(that.options.selectize.valueField, el);
+                                data.set(that.options.selectize.labelField, el);
+                                */
                                 data[that.options.selectize.valueField] = el;
                                 data[that.options.selectize.labelField] = el;
                                 this.addOption(data);

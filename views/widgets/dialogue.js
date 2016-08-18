@@ -30,6 +30,10 @@
     // Generic Model View
     // -------------
 
+    // NOTE: This ideology only works because dialogues don't have a stagnant DOM element, and instead can actually tether to anything on a particular page
+    // TODO: I need each dialogue instance to be able to maintain itself by a particular template, which we can then use to 'thin the herd' of dialogue widgets
+    // TODO: After the instances are more generalized, we can maintain various data sources, so that a particular widget can attach to any particular source
+
     // This Backbone View intends to handle Generic rendering for a single Model.
     Stratus.Views.Widgets.Dialogue = Stratus.Views.Widgets.Base.extend({
 
@@ -50,8 +54,8 @@
          * @param options
          */
         preOptions: function (options) {
-            this.globals = (_.has(options, 'globals')) ? options.globals : {};
-            this.widget = (_.has(options, 'widget')) ? options.widget : null;
+            this.globals = options.globals || {};
+            this.widget = options.widget || null;
         },
 
         /**
@@ -79,7 +83,7 @@
                     //constraints: [{to: 'window',pin: true}]
                 });
             } else {
-                console.info('dialogue parent didn\'t render:', this.widget);
+                // console.info('dialogue parent didn\'t render:', this.widget);
             }
         },
 
