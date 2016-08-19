@@ -225,6 +225,10 @@
             // Child View Registry
             this.childViews = [];
 
+            // Store Options Locally
+            this.templates = (_.has(options, 'templates')) ? options.templates : null;
+            this.entity = (_.has(options, 'entity')) ? options.entity : null;
+
             // Return Promise for Loader Validation
             this.initializer = new Promise(function (fulfill, reject) {
                 if (!this.prepare(options)) {

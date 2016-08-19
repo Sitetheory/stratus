@@ -121,10 +121,6 @@
              if (typeof options.template === 'function') {}
              */
 
-            // Store Options Locally
-            this.templates = (_.has(options, 'templates')) ? options.templates : null;
-            this.entity = (_.has(options, 'entity')) ? options.entity : null;
-
             // Handle Render Triggers
             if (_.has(this.options, 'rerender')) {
                 var events = ['success', 'error', 'add', 'change', 'destroy'];
