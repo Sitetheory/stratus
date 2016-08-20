@@ -41,16 +41,30 @@
         infoWindows: [],
 
         options: {
-            private: {},
+            private: {
+                locationSample: {
+                    position: { lat: 37.8288771, lng: -122.1591649 },
+                    center: false, //if set will make the map center on this marker. may not work with multiple centers or if 'fitBounds' is true. Overrides base center
+                    title: 'Second Place',
+                    template: 'template name set in templates'
+                }
+            },
             public: {
                 apiKey: Stratus.Api.GoogleMaps, //using our API unless specified
                 tile: 256,
+                fitBounds: true, //attempt to automatically center and zoom
+                autoLabel: false, //{false, 'alpha', 'numeric'
+                labelOptions: { //If autoLabeling, specifies what character to start at
+                    numericStart: 1,
+                    alphaStart: 'A'
+
+                    //TODO direction
+                },
                 zoom: 13,
                 center: {
                     lat: 37.8988771,
                     lng: -122.0591649
                 },
-                action: 'findMe',
                 locations: []
             }
         },
@@ -80,7 +94,7 @@
             if (!(this.options.center instanceof google.maps.LatLng) && this.options.center.lat !== undefined && this.options.center.lng !== undefined) {
                 this.options.center = new google.maps.LatLng(this.options.center);
             }
-            if ((this.options.locations !== undefined) && this.options.locations instanceof Object && !(this.options.locations instanceof Array)) {
+            if ((this.options.locations !== undefined) && this.options.locations instanceof Object) {
                 if (!(this.options.locations instanceof Array)) {
                     this.options.locations = [this.options.locations];
                 }
@@ -88,8 +102,18 @@
                 _.each(this.options.locations, function (location) {
                     if (location.position != undefined) {location.position = this.prepareLatLng(location.position);}
 
-                    //location.template = _.template('<div>Test Template Here!</div>');
-                }.bind(this));
+                    if (location.center && location.position != undefined) {this.options.center = location.position;}
+
+                    if (typeof location.template == 'string' && this.templates[location.template]) { // Check if a path was specified
+                        location.template = this.templates[location.template];
+                    } else if (this.templates instanceof Array && this.templates[0]) { // else fetch the first of the template batch
+                        location.template = this.templates[0];
+                    } else if (this.template) { // else fetch the only template available
+                        location.template = this.template;
+                    } else if (typeof location.template !== 'function') {
+                        delete location.template;
+                    }
+                }, this);
             }
 
         },
@@ -122,7 +146,6 @@
                 }.bind(this), function (error) {
                     console.warn(error);
 
-                    //this.location = new google.maps.LatLng(37.8988771, -122.0591649);
                     //this.setupSampleMap();
                     this.setupDynaMap();
                 }.bind(this));
@@ -221,25 +244,44 @@
         setupDynaMap: function () {
             this.renderMap();
 
+            //create empty LatLngBounds object for centering map
+            var bounds = new google.maps.LatLngBounds();
+            var numericLabel = this.options.labelOptions.numericStart;
+            var alphaLabel = this.options.labelOptions.alphaStart.charCodeAt(0);
+
             _.each(this.options.locations, function (location) {
-                if (location == undefined || location.position == undefined) {return false;}
-                if (location.template == undefined) {return false;} //FIXME temporary
-                //location.position = this.prepareLatLng(location.position);
-                location.template = _.template('<div>Test Template Here!</div>');
+                if (!location || !location.position) {return false;}
+                if (typeof location.template !== 'function') {return false;} //FIXME temporary
 
+                //setup objects
                 var infoWin = this.addInfoWindow({
-                    content: location.template()
+                    content: location.template({ location: location }) //inject itself
                 });
 
-                var marker = this.addMarker({
-                    position: location.position
-                });
+                var markerOptions = { position: location.position };
+                markerOptions.animation = google.maps.Animation.DROP;
+                if (this.options.autoLabel == 'numeric') {
+                    markerOptions.label = '' + numericLabel++;
+                } else if (this.options.autoLabel == 'alpha') {
+                    markerOptions.label = String.fromCharCode(alphaLabel++);
+                }
 
+                var marker = this.addMarker(markerOptions);
+
+                //extend the bounds to include each marker's position
+                bounds.extend(location.position);
+
+                //setup marker events
                 marker.addListener('click', function () {
                     infoWin.open(this.map, marker);
-                });
+                }.bind(this));
 
-            }.bind(this));
+            }, this);
+
+            //now fit the map to the newly inclusive bounds (Center and Zoom)
+            if (this.options.fitBounds) {
+                this.map.fitBounds(bounds);
+            }
 
         },
 
