@@ -33,8 +33,12 @@
     // This Backbone View intends to handle rendering for a Map on a page.
     Stratus.Views.Widgets.Map = Stratus.Views.Widgets.Base.extend({
 
-        // Map Objects
-        //location: null, //TODO there can't just be a generic single location
+        model: Stratus.Models.Generic,
+
+        // Shouldn't use template, as that is assumed to be the whole widget. set to templates instead
+        templates: {
+            infoWindow: _.template('<div>{% if (location.title) { %}<h3>{{ location.title }}</h3>{% } %}{% if (location.details) { %}<p>{{ location.details }}</p>{% } %}</div>')
+        }, //FIXME this.templates becomes unset if data-templates is not set!!!
         currentLocation: null,
         map: null,
         markers: [],
@@ -42,17 +46,20 @@
 
         options: {
             private: {
-                locationSample: {
+                locationSample: { //An example of what to place in the .this.options.locations[]
                     position: { lat: 37.8288771, lng: -122.1591649 },
                     center: false, //if set will make the map center on this marker. may not work with multiple centers or if 'fitBounds' is true. Overrides base center
-                    title: 'Second Place',
-                    template: 'template name set in templates'
+                    template: 'template name set in templates (optional)',
+                    title: 'Marker Name',
+                    details: 'The first template assumes a details variable can exist'
                 }
             },
             public: {
-                apiKey: Stratus.Api.GoogleMaps, //using our API unless specified
+                template: 'sitetheorymap/stratus/templates/map.infoWindow.html',
+                apiKey: Stratus.Api.GoogleMaps, //using our API unless specified. This key not work on custom domains
                 tile: 256,
                 fitBounds: true, //attempt to automatically center and zoom
+                centerOnUser: false, //attempt to fetch the user and center on user. requires SSL
                 autoLabel: false, //{false, 'alpha', 'numeric'
                 labelOptions: { //If autoLabeling, specifies what character to start at
                     numericStart: 1,
@@ -61,7 +68,7 @@
                     //TODO direction
                 },
                 zoom: 13,
-                center: {
+                center: { //Overwritten by fitBounds and 'location center'
                     lat: 37.8988771,
                     lng: -122.0591649
                 },
@@ -69,23 +76,8 @@
             }
         },
 
-        // The mapping between latitude, longitude and pixels is defined by the web
-        // mercator projection.
-        /**
-         * @param latLng
-         * @returns {streamGeometryType.Point}
-         */
-        project: function (latLng) {
-            var siny = Math.sin(latLng.lat() * Math.PI / 180);
-
-            // Truncating to 0.9999 effectively limits latitude to 89.189. This is
-            // about a third of a tile past the edge of the world tile.
-            siny = Math.min(Math.max(siny, -0.9999), 0.9999);
-
-            return new google.maps.Point(
-                this.options.tile * (0.5 + latLng.lng() / 360),
-                this.options.tile * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)));
-        },
+        //Order of priority for centering:
+        //options.centerOnUser > options.fitBounds > options.locations.center > options.center
 
         /**
          * Converts the current objects into the correct Google instances if needed
@@ -106,16 +98,14 @@
 
                     if (typeof location.template == 'string' && this.templates[location.template]) { // Check if a path was specified
                         location.template = this.templates[location.template];
-                    } else if (this.templates instanceof Array && this.templates[0]) { // else fetch the first of the template batch
-                        location.template = this.templates[0];
-                    } else if (this.template) { // else fetch the only template available
-                        location.template = this.template;
+                    } else if (this.templates != undefined && this.templates[Object.keys(this.templates)[0]]) { // else fetch the first of the template batch
+                        location.template = this.templates[Object.keys(this.templates)[0]];
                     } else if (typeof location.template !== 'function') {
+                        console.warn('no template for location', location);
                         delete location.template;
                     }
                 }, this);
             }
-
         },
 
         /**
@@ -137,18 +127,12 @@
         onRender: function (entries) {
             require(['//maps.googleapis.com/maps/api/js?key=' + this.options.apiKey], function () {
                 this.prepareOptions();
-                console.log('!!OPTIONS', this.options);
-                this.fetchCurrentLocation().done(function (currentLocation) {
-                    this.options.center = currentLocation;
+                console.log('!!MAP OPTIONS', this.options);
 
-                    //this.setupSampleMap();
-                    this.setupDynaMap();
-                }.bind(this), function (error) {
-                    console.warn(error);
+                console.warn(this.collection.toJSON().payload);
 
-                    //this.setupSampleMap();
-                    this.setupDynaMap();
-                }.bind(this));
+                //TODO provide more layouts and a way to switch between them
+                this.setupMarkersLayout();
 
             }.bind(this));
         },
@@ -163,85 +147,12 @@
                     this.currentLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
                     if (fulfill) fulfill(this.currentLocation);
                 }.bind(this), function (error) {
-                    this.currentLocation = null;
                     if (reject) reject(error);
                 }.bind(this));
             });
         },
 
-        // This function builds a particular info window
-        /**
-         * @param latLng {LatLng} The origin location of window
-         * @param content String or Function
-         */
-        createInfoWindow: function (latLng, content) {
-            if (!this.map) return false;
-
-            var coordInfoWindow = new google.maps.InfoWindow();
-
-            if (content instanceof String) {
-                coordInfoWindow.setContent(content);
-            } else if (content instanceof Function) {
-                coordInfoWindow.setContent(content.call(this));
-            }
-            coordInfoWindow.setPosition(latLng);
-            coordInfoWindow.open(this.map);
-
-            //TODO need to set custom specifiers for listeners and data
-            this.map.addListener('zoom_changed', function () {
-                if (content instanceof String) {
-                    coordInfoWindow.setContent(content);
-                } else if (content instanceof Function) {
-                    coordInfoWindow.setContent(content.call(this));
-                }
-                coordInfoWindow.open(this.map);
-            }.bind(this));
-        },
-
-        setupSampleMap: function () {
-            this.renderMap();
-
-            //this.createInfoWindow(this.location, 'This is a standard message');
-            //this.createInfoWindow(this.options.center, this.sampleContent);
-
-            var contentString = '<div id="content">' +
-                '<div id="siteNotice">' +
-                '</div>' +
-                '<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
-                '<div id="bodyContent">' +
-                '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-                'sandstone rock formation in the southern part of the ' +
-                'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) ' +
-                'south west of the nearest large town, Alice Springs; 450&#160;km ' +
-                '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major ' +
-                'features of the Uluru - Kata Tjuta National Park. Uluru is ' +
-                'sacred to the Pitjantjatjara and Yankunytjatjara, the ' +
-                'Aboriginal people of the area. It has many springs, waterholes, ' +
-                'rock caves and ancient paintings. Uluru is listed as a World ' +
-                'Heritage Site.</p>' +
-                '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-                'https://en.wikipedia.org/w/index.php?title=Uluru</a> ' +
-                '(last visited June 22, 2009).</p>' +
-                '</div>' +
-                '</div>';
-
-            var testTemplate = _.template('<div>Test Template Here! {{ name }}</div>')({ name: 'test' });
-
-            var infoWin = this.addInfoWindow({ content: testTemplate });
-
-            var marker = this.addMarker({
-                position: new google.maps.LatLng(37.8948762, -122.0551638),
-                title: 'Hello World!',
-                label: 'B',
-                draggable: true
-            });
-
-            marker.addListener('click', function () {
-                infoWin.open(this.map, marker);
-            });
-        },
-
-        setupDynaMap: function () {
+        setupMarkersLayout: function () {
             this.renderMap();
 
             //create empty LatLngBounds object for centering map
@@ -250,8 +161,7 @@
             var alphaLabel = this.options.labelOptions.alphaStart.charCodeAt(0);
 
             _.each(this.options.locations, function (location) {
-                if (!location || !location.position) {return false;}
-                if (typeof location.template !== 'function') {return false;} //FIXME temporary
+                if (!location || !location.position || typeof location.template !== 'function') {return false;}
 
                 //setup objects
                 var infoWin = this.addInfoWindow({
@@ -259,7 +169,7 @@
                 });
 
                 var markerOptions = { position: location.position };
-                markerOptions.animation = google.maps.Animation.DROP;
+                markerOptions.animation = google.maps.Animation.DROP; //TODO need to set animation options
                 if (this.options.autoLabel == 'numeric') {
                     markerOptions.label = '' + numericLabel++;
                 } else if (this.options.autoLabel == 'alpha') {
@@ -283,13 +193,26 @@
                 this.map.fitBounds(bounds);
             }
 
+            if (this.options.centerOnUser) {
+                this.fetchCurrentLocation().done(function (currentLocation) {
+                    this.options.center = currentLocation;
+                    this.map.setCenter(this.options.center);
+                }.bind(this), function (error) {
+                    console.warn('Can\'t get currentLocation', error);
+                    if (this.currentLocation) { //At least grab the last known location
+                        this.options.center = this.currentLocation;
+                        this.map.setCenter(this.options.center);
+                    }
+                }.bind(this));
+            }
+
         },
 
         /**
          * @returns {boolean}
          */
         renderMap: function (options, callback) {
-            if (this.map) return false; //TODO possibly allow rerendering later if we redo objects?
+            if (this.map) return false; //TODO possibly allow re-rendering later if we redo objects?
 
             this.map = new google.maps.Map(this.$el[0], {
                 center: (options || {}).center || this.options.center,
@@ -332,13 +255,31 @@
             return infoWindow;
         },
 
+        // The mapping between latitude, longitude and pixels is defined by the web
+        // mercator projection.
+        /**
+         * @param latLng
+         * @returns {streamGeometryType.Point}
+         */
+        projectCoord: function (latLng) {
+            var siny = Math.sin(latLng.lat() * Math.PI / 180);
+
+            // Truncating to 0.9999 effectively limits latitude to 89.189. This is
+            // about a third of a tile past the edge of the world tile.
+            siny = Math.min(Math.max(siny, -0.9999), 0.9999);
+
+            return new google.maps.Point(
+                this.options.tile * (0.5 + latLng.lng() / 360),
+                this.options.tile * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)));
+        },
+
         // This function builds a particular info window
         /**
          * @returns {string}
          */
         sampleContent: function () {
             var scale = 1 << (this.map ? this.map.getZoom() : this.options.zoom);
-            var worldCoordinate = this.project(this.currentLocation || this.options.center);
+            var worldCoordinate = this.projectCoord(this.currentLocation || this.options.center);
 
             var pixelCoordinate = new google.maps.Point(
                 Math.floor(worldCoordinate.x * scale),
