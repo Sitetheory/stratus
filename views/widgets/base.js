@@ -226,7 +226,7 @@
             this.childViews = [];
 
             // Store Options Locally
-            this.templates = (_.has(options, 'templates')) ? options.templates : null;
+            this.templates = (_.has(options, 'templates') && options.templates != undefined) ? options.templates : this.templates;
             this.entity = (_.has(options, 'entity')) ? options.entity : null;
 
             // Return Promise for Loader Validation
