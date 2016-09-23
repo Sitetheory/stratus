@@ -76,6 +76,11 @@
             if (filter === undefined) filter = '';
             var collection = Stratus.Collections.get(_.ucfirst(entity));
             if (typeof collection === 'object') {
+                //Parse an arrayed query
+                if (filter.startsWith('[]')) {
+                    filter = filter.substring(2);
+                    filter = filter.split(',[]');
+                }
                 if (!Stratus.Environment.get('production')) {
                     console.info('Route Filter:', filter);
                 }
