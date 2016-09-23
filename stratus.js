@@ -327,6 +327,119 @@
                 seconds = null;
             }
             return seconds;
+        },
+        /**
+         * @param target
+         * @param search
+         * @returns {boolean}
+         */
+        startsWith: function (target, search) {
+            return (target.substr(0, search.length).toUpperCase() == search.toUpperCase());
+        },
+        /**
+         * @param target
+         * @param limit
+         * @param suffix
+         * @returns {string}
+         */
+        truncate: function (target, limit, suffix) {
+            limit = limit || 100;
+            suffix = suffix || '...';
+
+            var arr = target.replace(/</g, '\n<')
+                .replace(/>/g, '>\n')
+                .replace(/\n\n/g, '\n')
+                .replace(/^\n/g, '')
+                .replace(/\n$/g, '')
+                .split('\n');
+
+            var sum = 0;
+            var row;
+            var cut;
+            var add;
+            var tagMatch;
+            var tagName;
+            var tagStack = [];
+            var more = false;
+
+            for (var i = 0; i < arr.length; i++) {
+
+                row = arr[i];
+
+                // count multiple spaces as one character
+                var rowCut = row.replace(/[ ]+/g, ' ');
+
+                if (!row.length) continue;
+
+                if (row[0] !== '<') {
+
+                    if (sum >= limit) {
+                        row = '';
+                    } else if ((sum + rowCut.length) >= limit) {
+
+                        cut = limit - sum;
+
+                        if (row[cut - 1] === ' ') {
+                            while (cut) {
+                                cut -= 1;
+                                if (row[cut - 1] !== ' ') {
+                                    break;
+                                }
+                            }
+                        } else {
+
+                            add = row.substring(cut).split('').indexOf(' ');
+                            if (add !== -1) {
+                                cut += add;
+                            } else {
+                                cut = row.length;
+                            }
+                        }
+
+                        row = row.substring(0, cut) + suffix;
+
+                        /*
+                        if (moreLink) {
+                            row += '<a href="' + moreLink + '" style="display:inline">' + moreText + '</a>';
+                        }
+                        */
+
+                        sum = limit;
+                        more = true;
+                    } else {
+                        sum += rowCut.length;
+                    }
+                } else if (sum >= limit) {
+
+                    tagMatch = row.match(/[a-zA-Z]+/);
+                    tagName = tagMatch ? tagMatch[0] : '';
+
+                    if (tagName) {
+                        if (row.substring(0, 2) !== '</') {
+
+                            tagStack.push(tagName);
+                            row = '';
+                        } else {
+
+                            while (tagStack[tagStack.length - 1] !== tagName && tagStack.length) {
+                                tagStack.pop();
+                            }
+
+                            if (tagStack.length) {
+                                row = '';
+                            }
+
+                            tagStack.pop();
+                        }
+                    } else {
+                        row = '';
+                    }
+                }
+
+                arr[i] = row;
+            }
+
+            return arr.join('\n').replace(/\n/g, '');
         }
     });
 

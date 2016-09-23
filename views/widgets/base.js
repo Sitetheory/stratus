@@ -225,6 +225,9 @@
             // Child View Registry
             this.childViews = [];
 
+            // Data Attribute Registry
+            this.data = {};
+
             // Store Options Locally
             this.templates = (_.has(options, 'templates') && options.templates != undefined) ? options.templates : this.templates;
             this.entity = (_.has(options, 'entity')) ? options.entity : null;
@@ -399,6 +402,14 @@
 
             // All the display options to be customized by data attribute options (merge with optionsCustom)
             this.getDataOptions(this.options.public);
+
+            // Store all Data Attributes for Custom Template Usage
+            _.each(this.$el[0].attributes, function (attribute) {
+                if (_.startsWith(attribute.name, 'data-')) {
+                    key = attribute.name.substr(5);
+                    this.data[key] = this.$el.dataAttr(key);
+                }
+            }, this);
 
             // Bring Nested Values to Surface
             this.options = _.extend(this.options.public, this.options.private);
@@ -822,6 +833,14 @@
             if (this.collection && typeof this.collection === 'object') {
                 templateData.collection = this.collection.models;
                 templateData.meta = this.collection.meta.toObject();
+            }
+
+            // This is for custom template values
+            if (_.has(this, 'collectionView')) {
+                templateData.options = this.collectionView.options;
+                if (_.has(this.collectionView, 'data')) {
+                    templateData.data = this.collectionView.data;
+                }
             }
 
             // Add the Editable Element Inside a Container
