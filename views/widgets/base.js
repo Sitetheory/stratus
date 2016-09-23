@@ -836,11 +836,8 @@
             }
 
             // This is for custom template values
-            if (_.has(this, 'collectionView')) {
-                templateData.options = this.collectionView.options;
-                if (_.has(this.collectionView, 'data')) {
-                    templateData.data = this.collectionView.data;
-                }
+            if (_.has(this, 'collectionView') && _.has(this.collectionView, 'data')) {
+                templateData.data = this.collectionView.data;
             }
 
             // Add the Editable Element Inside a Container

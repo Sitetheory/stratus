@@ -100,7 +100,10 @@
                 cssError: 'error',
 
                 // Default animation if there aren't any initial content found.
-                cssNoContent: 'empty'
+                cssNoContent: 'empty',
+
+                // Truncate each entity to a particular length
+                truncate: 250
             }
         },
 
@@ -432,7 +435,9 @@
 
                 weight: 0,
                 gravity: 0,
-                compound: 0
+                compound: 0,
+
+                options: this.options
             };
 
             // TODO: If batch exists, then we need to create a fake "parent" in which (iteration % batch === 1)
