@@ -585,9 +585,12 @@
                 this.$el.html(this.errorTemplate({ collection: this.collection, options: this.options }));
             }
             if (this.$el.html() && this.$el.html().trim().length) {
-                Stratus.Internals.Loader(this.el, this.view).done(function (entries) {
-                    //if (!Stratus.Environment.get('production')) console.info('List Entries:', entries);
-                }, function (error) {
+                Stratus.Internals.Loader(this.el || this.$el, this.view).done(function (nest) {
+                    /* Second Loader for Parent-Children */
+                    Stratus.Internals.Loader(this.$el.find('[data-entity]')).done(function (parent) {
+                        //this.loaderCallback(nest, parent);
+                    }.bind(this));
+                }.bind(this), function (error) {
                     console.error('List Views:', error);
                 });
             }
