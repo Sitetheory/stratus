@@ -1729,7 +1729,7 @@
 
         return new Promise(function (fulfill, reject) {
             if (view.get('guid')) {
-                if (!Stratus.Environment.get('production')) console.error('View hydration halted on', view.get('guid'), 'due to repeat calls on the same element.', view.toObject());
+                if (!Stratus.Environment.get('production')) console.warn('View hydration halted on', view.get('guid'), 'due to repeat calls on the same element.', view.toObject());
                 fulfill(true);
                 return true;
             }
