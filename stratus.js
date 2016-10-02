@@ -1033,17 +1033,23 @@
         },
         clickAction: function (event) {
             if (location.pathname.replace(/^\//, '') === event.currentTarget.pathname.replace(/^\//, '') && location.hostname === event.currentTarget.hostname) {
-                var $target = $(event.currentTarget.hash);
-                var anchor = event.currentTarget.hash.slice(1);
-                $target = ($target.length) ? $target : $('[name=' + anchor + ']');
-                /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
-                if ($target.length) {
-                    $('html,body').animate({
-                        scrollTop: $target.offset().top
-                    }, 1000, function () {
-                        Backbone.history.navigate(anchor);
-                    });
-                    return false;
+                var reserved = ['new', 'filter', 'page', 'version'];
+                var valid = _.every(reserved, function (keyword) {
+                    return !_.startsWith(event.currentTarget.hash, '#' + keyword);
+                }, this);
+                if (valid) {
+                    var $target = $(event.currentTarget.hash);
+                    var anchor = event.currentTarget.hash.slice(1);
+                    $target = ($target.length) ? $target : $('[name=' + anchor + ']');
+                    /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
+                    if ($target.length) {
+                        $('html,body').animate({
+                            scrollTop: $target.offset().top
+                        }, 1000, function () {
+                            Backbone.history.navigate(anchor);
+                        });
+                        return false;
+                    }
                 }
             }
         }
