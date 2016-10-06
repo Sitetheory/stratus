@@ -701,16 +701,20 @@
                 reject(new Stratus.Prototypes.Error(_.ucfirst(this.options.forceType) + ' not present on widget.', this));
             } else if (_.size(this.options.cssFile)) {
                 Stratus.Internals.LoadCss(this.options.cssFile).done(function () {
+                    this.onFulfill();
                     this.render();
                     fulfill(this);
                 }.bind(this), function (rejection) {
                     reject(new Stratus.Prototypes.Error(rejection, this));
                 }.bind(this));
             } else {
+                this.onFulfill();
                 this.render();
                 fulfill(this);
             }
         },
+
+        onFulfill: function () {},
 
         // render()
         // -------

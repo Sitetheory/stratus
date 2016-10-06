@@ -170,25 +170,6 @@
                 }
             }
 
-            // Make Sure sourceTarget is an array we can cycle through for including the collection
-            if (_.isObject(this.options.sourceTarget) && !_.isArray(this.options.sourceTarget)) {
-                this.options.sourceTarget = [this.options.sourceTarget];
-            }
-
-            // Validate each sourceTarget is complete
-            if (_.isArray(this.options.sourceTarget)) {
-                this.options.collectionTarget = [];
-                _.each(this.options.sourceTarget, function (el, k) {
-                    // if there is no id but there is an idAttribute, find the id in the model
-                    if (!_.has(el, 'id') && _.has(el, 'idAttribute') && this.model.get(el.idAttribute)) {
-                        el.id = this.model.get(el.idAttribute);
-                    }
-                    if (_.has(el, 'entity') && _.has(el, 'id')) {
-                        this.options.collectionTarget.push({ entity: el.entity, id: el.id });
-                    }
-                }, this);
-            }
-
             // Set standard values for the input (which are passed to the templates rendering the inputs)
             this.options.inputType = this.options.multiple === true ? 'checkbox' : 'radio';
             this.options.inputName = this.uid + '_' + this.propertyName.replace('.', '_');
@@ -213,6 +194,27 @@
                     };
                 }
                 this.options.textSelectedNoContent = this.options.textSelectedNoContent.replace('{{TYPE}}', _.ucfirst(this.options.source));
+            }
+        },
+
+        onFulfill: function () {
+            // Make Sure sourceTarget is an array we can cycle through for including the collection
+            if (_.isObject(this.options.sourceTarget) && !_.isArray(this.options.sourceTarget)) {
+                this.options.sourceTarget = [this.options.sourceTarget];
+            }
+
+            // Validate each sourceTarget is complete
+            if (_.isArray(this.options.sourceTarget)) {
+                this.options.collectionTarget = [];
+                _.each(this.options.sourceTarget, function (el, k) {
+                    // if there is no id but there is an idAttribute, find the id in the model
+                    if (!_.has(el, 'id') && _.has(el, 'idAttribute') && this.model.get(el.idAttribute)) {
+                        el.id = this.model.get(el.idAttribute);
+                    }
+                    if (_.has(el, 'entity') && _.has(el, 'id')) {
+                        this.options.collectionTarget.push({ entity: el.entity, id: el.id });
+                    }
+                }, this);
             }
         },
 

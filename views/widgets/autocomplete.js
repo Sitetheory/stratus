@@ -113,6 +113,8 @@
                     return this.template({ model: model, options: this.options, scope: 'suggestion' });
                 }.bind(this)
             };
+
+            // FIXME: We need an option in place to allow these AJAX calls from Backbone Collections by default, and separate for particular widgets
             this.options.selectize.load = function (query, callback) {
                 if (!query.length && !this.initial.request) return callback();
                 this.initial.request = false;
@@ -176,6 +178,7 @@
          */
         onRender: function (entries) {
             // Manually Select the items selected (this shouldn't be necessary since we set the 'items' field in the options, but that doesn't work so we are currently doing it manually.
+            // FIXME: Various things aren't firing in this widget; we'll need to go through and debug most of it.
             var that = this;
             this.$element.on('load', function () {
                 if (that.initial.load) {
