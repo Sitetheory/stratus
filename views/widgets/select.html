@@ -1,7 +1,10 @@
 {% if (options.showSelected) { %}
     <div class="well clearfix selectedOptionsContainer">
-        {% if (options.textSelectedHeader) { %}<h3 class="header">{{ options.textSelectedHeader }}</h3>{% } %}
+        {% if (options.textSelectedHeader) { %}
+            <h3 class="header">{{ options.textSelectedHeader }}</h3>
+        {% } %}
     {% if (options.source) { %}
+        <!-- FIXME: This collection should only have the selected media, but instead it has all -->
         <div id="{{ elementId }}-SelectedCollection" class="clearfix selectedCollection" data-type="Collection" data-property="{{ property }}" data-source="{{ options.source }}" data-templates='{{ JSON.stringify(options.selectedTemplates) }}' data-rerender="none" data-multiple="{{ options.multiple }}" data-meta='{{ JSON.stringify(options.selectedMeta) }}' data-textNoContent="{{ options.textSelectedNoContent }}" data-cssNoContent="{{ options.cssSelectedNoContent }}">
             <div class="loadAnimation"></div>
         </div>
@@ -14,7 +17,7 @@
 {% } %}
 
 {% if (!options.ui && !options.source) { %}
-    <select class="selectOptionsContainer" name="{{ options.inputName }}" {% if(options.multiple) { %}multiple size="{{ options.multipleSize }}"{% } %}></select>
+    <select class="selectOptionsContainer" name="{{ options.inputName }}" {% if (options.multiple) { %}multiple size="{{ options.multipleSize }}"{% } %}></select>
 {% } else { %}
     {% if (options.ui == 'menu') { %}
         <div class="dropdown">
