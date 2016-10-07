@@ -20,6 +20,10 @@
                     <div class="image">
                         <img src="//{{ image.url }}-xs.{{ image.extension }}" data-src="lazy">
                     </div>
+                {% } else if (_.has(model, 'url') && _.has(model, 'extension')) { %}
+                    <div class="image">
+                        <img src="//{{ model.url }}-xs.{{ model.extension }}" data-src="lazy">
+                    </div>
                 {% } %}
                 <div class="title">{{ model[globals.meta.modelLabelAttribute] }}</div>
             </label>
