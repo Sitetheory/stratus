@@ -1277,8 +1277,13 @@
          * @returns {*}
          */
         setPropertyValue: function (value) {
+            console.log('dataType:', this.options.dataType);
+            console.log('comparison:', value, this.getPropertyValue());
+
             // Ensure Changing
             if (this.getPropertyValue() === value) return true;
+
+            console.log('changing!');
 
             // Set Change Status
             this.setStatus('change');
@@ -1377,8 +1382,10 @@
 
             // If auto save is set, the stratus will automatically save at intervals
             if (this.model && typeof this.model === 'object' && (!this.options.autoSave || options.saveNow)) {
+                console.log('saveInterval!');
                 this.model.saveInterval();
             }
+            console.log('saved?', this.model.patch);
 
             return true;
         },

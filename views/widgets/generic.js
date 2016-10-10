@@ -38,7 +38,11 @@
         template: _.template('{{ model.id }}'),
         dialogueContainer: _.template('<div data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-id="{{ model.id }}" data-dialogue="true"></div>'),
         el: function () {
-            return '[data-collection="' + this.collection.globals.get('uid') + '"][data-entity="' + this.model.collection.globals.get('entity') + '"][data-id="' + this.model.get('id') + '"]:not([data-dialogue="true"])';
+            var selector = '[data-collection="' + this.collection.globals.get('uid') + '"]';
+            if (this.model.collection.globals.get('entity')) {
+                selector += '[data-entity="' + this.model.collection.globals.get('entity') + '"]';
+            }
+            return selector + '[data-id="' + this.model.get('id') + '"]:not([data-dialogue="true"])';
         },
         events: {
             'click [data-editable="true"]': 'edit',

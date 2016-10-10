@@ -302,12 +302,22 @@
                 // create collection inside parent (i.e. streams->viewVersions associations)
             } else {
             */
-            this.collection = new Stratus.Collections.Generic({
-                entity: _.ucfirst(this.options.source),
-                target: this.modelTarget(),
-                initialize: true,
-                api: { property: this.propertyName }
-            });
+            var target = this.model.get(this.propertyName);
+            if (_.isArray(target)) {
+                this.collection = new Stratus.Collections.Generic({
+                    initialize: true
+                });
+                this.collection.set(target);
+            } else {
+                this.collection = new Stratus.Collections.Generic({
+                    entity: _.ucfirst(this.options.source),
+                    target: this.modelTarget(),
+                    initialize: true,
+                    api: {
+                        property: this.propertyName
+                    }
+                });
+            }
             Stratus.Instances[this.collection.globals.get('uid')] = this.collection;
             if (typeof this.propertyName === 'string') {
                 this.model.on('change:' + this.propertyName, function () {
@@ -493,7 +503,11 @@
                 globals.total = this.collection.globals.get('parentTotal' + globals.parent);
                 globals.last = (globals.iteration === globals.total);
 
-                var parent = '[data-collection="' + globals.uid + '"][data-entity="' + globals.entity + '"][data-hook="parent' + globals.parent + '"]';
+                var parent = '[data-collection="' + globals.uid + '"]';
+                if (globals.entity) {
+                    parent += '[data-entity="' + globals.entity + '"]';
+                }
+                parent += '[data-hook="parent' + globals.parent + '"]';
                 if ($(parent).length > 0) globals.hook = parent;
             }
 

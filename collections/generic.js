@@ -53,7 +53,7 @@
             if (this.initialized) {
                 return true;
             }
-            if (options.initialize) {
+            if (options && _.isObject(options) && options.initialize) {
                 this.safeInitialize(options);
             }
         },
@@ -237,7 +237,16 @@
         refresh: function (options) {
             // TODO: Fetching needs to wait for a generic router evaluation to change a boolean value on Stratus.Environment before continuing with a fetch to ensure targets are set
             options = (options && typeof options === 'object') ? options : {};
-            this.fetch(this.meta.has('api') ? _.extend(options, { data: this.meta.get('api') }) : options);
+            if (typeof (this.url) === 'string' && this.url.toLowerCase() !== '/Api'.toLowerCase()) {
+                this.fetch(this.meta.has('api') ? _.extend(options, { data: this.meta.get('api') }) : options);
+            } else if (this.models.length) {
+                this._isHydrated = true;
+                _.each(this.models, function (model) {
+                    model._isHydrated = true;
+                });
+                this.trigger('success', this, this.models, options);
+                this.trigger('reset', this, options);
+            }
         },
 
         /**

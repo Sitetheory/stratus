@@ -93,7 +93,7 @@
 
                 // Customize the layout of the selected items. The 'combined' template can contain all of them, otherwise
                 // specify 'list', 'container', and 'entity' templates separtely
-                selectedTemplates: { combined: 'templates-widgets-selected-options' },
+                selectedTemplates: {combined: 'templates-widgets-selected-options'},
 
                 // The title inside the selected container. Set as empty if no header is desired.
                 textSelectedHeader: 'Selected Options',
@@ -126,7 +126,7 @@
                 // should include the basic element and logic for checkbox vs. radio inputs.
                 // Customize the layout of the selected items. The 'combined' template can contain all of them, otherwise
                 // specify 'list', 'container', and 'entity' templates separtely
-                sourceTemplates: { combined: 'templates-widgets-select-options' },
+                sourceTemplates: {combined: 'templates-widgets-select-options'},
 
                 // Limit the source collection
                 sourceLimit: null,
@@ -175,7 +175,7 @@
             this.options.inputName = this.uid + '_' + this.propertyName.replace('.', '_');
 
             if (this.options.source) {
-                this.options.sourceApi = _.extend(this.options.sourceApi || {}, { limit: this.options.sourceLimit });
+                this.options.sourceApi = _.extend(this.options.sourceApi || {}, {limit: this.options.sourceLimit});
                 this.options.sourceMeta = {
                     ui: this.options.ui,
                     inputType: this.options.inputType,
@@ -212,7 +212,7 @@
                         el.id = this.model.get(el.idAttribute);
                     }
                     if (_.has(el, 'entity') && _.has(el, 'id')) {
-                        this.options.collectionTarget.push({ entity: el.entity, id: el.id });
+                        this.options.collectionTarget.push({entity: el.entity, id: el.id});
                     }
                 }, this);
             }
@@ -453,6 +453,9 @@
                 if (removeValue) {
                     // Update the model, and the DOM will sync
                     var modelValue = this.getPropertyValue();
+                    if (modelValue && typeof (modelValue) === 'object') {
+                        modelValue = _.clone(modelValue);
+                    }
                     var direct = false;
                     if (!_.isArray(modelValue)) {
                         modelValue = [modelValue];
@@ -468,7 +471,10 @@
                             modelValue.splice(k, 1);
                         }
                     });
-                    this.setValue(direct ? _.first(modelValue) : modelValue);
+
+                    var newValue = direct ? _.first(modelValue) : modelValue;
+                    this.setPropertyValue(newValue);
+                    this.setValue(newValue);
                     this.safeSaveAction();
                 }
             }
@@ -518,7 +524,7 @@
                         label = typeof option.label !== 'undefined' ? option.label : value;
                     }
                     if (_.contains(values, value)) {
-                        labels.push({ value: value, label: label });
+                        labels.push({value: value, label: label});
                     }
                 }, this);
             } else if (this.options.source && this.selectedCollection && this.selectedCollection.models.length > 0) {
@@ -527,7 +533,7 @@
                     var value = option.get(this.options.sourceIdAttribute);
                     var label = option.get(this.options.sourceLabelAttribute);
                     if (_.contains(values, value)) {
-                        labels.push({ value: value, label: label });
+                        labels.push({value: value, label: label});
                     }
                 }, this);
             }
@@ -562,7 +568,7 @@
                     entity: _.ucfirst(this.options.source),
                     target: this.modelTarget(),
                     initialize: true,
-                    api: { property: this.propertyName }
+                    api: {property: this.propertyName}
                 });
                 Stratus.Instances[this.selectedCollection.globals.get('uid')] = this.selectedCollection;
                 if (typeof this.propertyName === 'string') {
@@ -570,7 +576,7 @@
                         this.model.once('success', function () {
                             this.model.once('change', function () {
                                 this.selectedCollection.target = this.modelTarget();
-                                this.selectedCollection.refresh({ reset: true });
+                                this.selectedCollection.refresh({reset: true});
                             }, this);
                         }, this);
                     }, this);
@@ -579,7 +585,7 @@
                 // set placeholder AFTER we get the collection
                 this.selectedCollection.on('reset', this.syncDom, this);
             } else {
-                this.selectedCollection.refresh({ reset: true });
+                this.selectedCollection.refresh({reset: true});
             }
         },
 
