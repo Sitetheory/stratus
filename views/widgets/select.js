@@ -106,7 +106,7 @@
                 // TODO: Determine if user can drag items from the options to the selected list
                 selectedDrag: false,
 
-                // Manually provide a JSON string of options. This can be either a simple array (e.g. ["value1", "value2"] where the values will be used for key and label), or an array of objects (e.g. [{value: "value1", label: "Value 1", image: "//www.sitetheory.io/images/foo.jpg"}, {value: "value2", label: "Value 2", image: "//www.sitetheory.io/images/foo2.jpg"}]).
+                // Manually provide a JSON string of options. This can be either a simple array (e.g. ["value1", "value2"] where the values will be used for key and label), or an array of objects (e.g. [{"value": "value1", "label": "Value 1", "image": "//www.sitetheory.io/images/foo.jpg"}, {"value": "value2", "label": "Value 2", "image": "//www.sitetheory.io/images/foo2.jpg"}]).
                 // Allowed Properties: value, label, image, containerClass, checked
                 choices: null,
 
