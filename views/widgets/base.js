@@ -404,12 +404,16 @@
             this.getDataOptions(this.options.public);
 
             // Store all Data Attributes for Custom Template Usage
-            _.each(this.$el[0].attributes, function (attribute) {
-                if (_.startsWith(attribute.name, 'data-')) {
-                    key = attribute.name.substr(5);
-                    this.data[key] = this.$el.dataAttr(key);
-                }
-            }, this);
+            if (this.$el && this.$el.length) {
+                _.each(this.$el[0].attributes, function (attribute) {
+                    if (_.startsWith(attribute.name, 'data-')) {
+                        key = attribute.name.substr(5);
+                        this.data[key] = this.$el.dataAttr(key);
+                    }
+                }, this);
+            } else {
+                console.log('$el:', this.$el);
+            }
 
             // Bring Nested Values to Surface
             this.options = _.extend(this.options.public, this.options.private);
@@ -1277,13 +1281,8 @@
          * @returns {*}
          */
         setPropertyValue: function (value) {
-            console.log('dataType:', this.options.dataType);
-            console.log('comparison:', value, this.getPropertyValue());
-
             // Ensure Changing
             if (this.getPropertyValue() === value) return true;
-
-            console.log('changing!');
 
             // Set Change Status
             this.setStatus('change');
@@ -1382,10 +1381,8 @@
 
             // If auto save is set, the stratus will automatically save at intervals
             if (this.model && typeof this.model === 'object' && (!this.options.autoSave || options.saveNow)) {
-                console.log('saveInterval!');
                 this.model.saveInterval();
             }
-            console.log('saved?', this.model.patch);
 
             return true;
         },

@@ -69,7 +69,8 @@
             },
             public: {
                 target: null,
-                api: null
+                api: null,
+                decouple: false
             }
         },
 
@@ -100,7 +101,15 @@
 
             // Dynamic Api Url
             if (this.options.target !== null) {
-                this.url = '/Api/' + this.options.target + '/';
+                var entity = _.ucfirst(this.options.target);
+                this.url = '/Api/' + entity + '/';
+                if (!Stratus.Collections.has(entity)) {
+                    Stratus.Collections.set(entity, new Stratus.Collections.Generic({
+                        entity: entity,
+                        initialize: true
+                    }));
+                }
+                this.suggestions = Stratus.Collections.get(entity);
             }
 
             // Grab Selectize Options from DOM
@@ -114,20 +123,34 @@
                 }.bind(this)
             };
 
-            // FIXME: We need an option in place to allow these AJAX calls from Backbone Collections by default, and separate for particular widgets
             this.options.selectize.load = function (query, callback) {
                 if (!query.length && !this.initial.request) return callback();
                 this.initial.request = false;
-                $.ajax({
-                    url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
-                    type: 'GET',
-                    error: function () {
-                        callback();
-                    },
-                    success: function (res) {
-                        callback(res.payload);
+                if (!this.options.decouple && _.has(this, 'suggestions')) {
+                    var convoy = {};
+                    if (query.length) {
+                        this.suggestions.meta.set('api.query', query);
+                        this.suggestions.once('success', function () {
+                            convoy = this.suggestions.toJSON();
+                            callback(_.has(convoy, 'payload') ? convoy.payload : convoy);
+                        }, this);
+                        this.suggestions.refresh({ reset: true });
+                    } else {
+                        convoy = this.suggestions.toJSON();
+                        callback(_.has(convoy, 'payload') ? convoy.payload : convoy);
                     }
-                });
+                } else {
+                    $.ajax({
+                        url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
+                        type: 'GET',
+                        error: function () {
+                            callback();
+                        },
+                        success: function (res) {
+                            callback(res.payload);
+                        }
+                    });
+                }
             }.bind(this);
         },
 

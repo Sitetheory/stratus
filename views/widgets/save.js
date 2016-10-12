@@ -179,6 +179,7 @@
             // If the model was duplicated then we need to redirect to the new URL
             // If the current page is accessed based on an ID (e.g. admin) modify that in the URL
             // Otherwise redirect to the new url
+            // FIXME: Move this logic into the model!
             if (this.model.get('id') !== this.originalId) {
                 var url = window.location.toString();
                 var urlNew = url.replace(/id=[0-9]+/, 'id=' + this.model.get('id'));

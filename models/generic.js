@@ -67,6 +67,19 @@
             this.autoSaveInit = false;
             */
 
+            /*
+             TODO: handle the rest!
+
+             Options
+             data-pipeline=message|redirect
+             data-messageSuccess
+             data-messageError
+             data-redirectSuccess
+             data-redirectError
+
+             Then on success, clear out the contents of the <div data-entity> and add the message, and ad class=“messageSuccess” and data-id=“{id}"
+             */
+
             // Handle Collections & Meta
             this.meta = new Stratus.Prototypes.Collection();
             if (_.has(this, 'collection') && _.has(this.collection, 'api') && this.collection.api) {
@@ -138,6 +151,8 @@
          * @returns {boolean}
          */
         safeInitialize: function (options) {
+
+            // FIXME: Move the url / success on manifest all in this portion
 
             // Ensure we only run this function once
             if (this.initialized) return true;
