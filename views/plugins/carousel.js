@@ -77,38 +77,49 @@
             var colMinSize = this.$el.data('colminsize') ? this.$el.data('colminsize') : 'xs';
 
             // Empty inner Coursel
-            var $itemContainer = this.$el.find('.carousel-inner');
-            $itemContainer.empty();
+            if(group > 1) {
+                var $itemContainer = this.$el.find('.carousel-inner');
+                $itemContainer.empty();
+            }
 
             // check if there is an active class yet
             var activeSet = false;
+
             _.each(items, function (el, i) {
+                // Only subnest if grouping is requested
+                if(group > 1) {
+                    // Check if a group item exists and how many children it has
+                    var groupCount = 0;
+                    var groupContainers = $itemContainer.children('.item');
+                    var $groupContainer;
+                    if (groupContainers.length > 0) {
+                        $groupContainer = $(_.last(groupContainers));
+                        groupCount = $groupContainer.children('.nestedItem').length;
+                    }
 
-                // Check if a group item exists and how many children it has
-                var groupCount = 0;
-                var groupContainers = $itemContainer.children('.item');
-                var $groupContainer;
-                if (groupContainers.length > 0) {
-                    $groupContainer = $(_.last(groupContainers));
-                    groupCount = $groupContainer.children('.nestedItem').length;
-                }
+                    // Create a new container if there is no groupCount or the container is full
+                    if (!groupCount || groupCount >= group) {
+                        $groupContainer = $('<div class="item"></div>');
+                        $itemContainer.append($groupContainer);
+                    }
 
-                // Create a new container if there is no groupCount or the container if full
-                if (!groupCount || groupCount >= group) {
-                    $groupContainer = $('<div class="item"></div>');
-                    $itemContainer.append($groupContainer);
-                }
+                    // Prepare nested items to be inserted into item group
+                    $(el).removeClass('item').addClass('nestedItem col-' + colMinSize + '-' + cols);
+                    $groupContainer.append($(el));
 
-                // Prepare nested items to be inserted into item group
-                $(el).removeClass('item').addClass('nestedItem col-' + colMinSize + '-' + cols);
-                $groupContainer.append($(el));
-
-                // Add Active to the Group Container
-                if ($(el).hasClass('active')) {
-                    activeSet = true;
-                    $groupContainer.addClass('active');
+                    // Add Active to the Group Container
+                    if ($(el).hasClass('active')) {
+                        activeSet = true;
+                        $groupContainer.addClass('active');
+                    }
+                } else {
+                    // Add Active to the Group Container
+                    if ($(el).hasClass('active')) {
+                        activeSet = true;
+                    }
                 }
             }.bind(this));
+
             if (!activeSet) {
                 $(_.first(this.$el.find('.carousel-inner .item'))).addClass('active');
             }
