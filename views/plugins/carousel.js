@@ -77,7 +77,7 @@
             var colMinSize = this.$el.data('colminsize') ? this.$el.data('colminsize') : 'xs';
 
             // Empty inner Coursel
-            if(group > 1) {
+            if (group > 1) {
                 var $itemContainer = this.$el.find('.carousel-inner');
                 $itemContainer.empty();
             }
@@ -87,7 +87,7 @@
 
             _.each(items, function (el, i) {
                 // Only subnest if grouping is requested
-                if(group > 1) {
+                if (group > 1) {
                     // Check if a group item exists and how many children it has
                     var groupCount = 0;
                     var groupContainers = $itemContainer.children('.item');
