@@ -1166,7 +1166,7 @@
                 if (width <= 0) return false;
 
                 // Double for HD
-                if(hd) {
+                if (hd) {
                     width = width * 2;
                 }
 
