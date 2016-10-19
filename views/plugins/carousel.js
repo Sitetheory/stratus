@@ -51,18 +51,18 @@
             var items = this.$el.find('.carousel-inner > .item');
 
             // If this is mobile, take all the .nestedItem elements and extract them into main layer so there is only one per frame
-            if (Stratus.Client.mobile && this.$el.data('groupmobile')) {
-                this.batchItems(this.$el.data('groupmobile'), items);
-            } else if (this.$el.data('group')) {
-                this.batchItems(this.$el.data('group'), items);
+            if (Stratus.Client.mobile && this.$el.dataAttr('groupmobile')) {
+                this.batchItems(this.$el.dataAttr('groupmobile'), items);
+            } else if (this.$el.dataAttr('group')) {
+                this.batchItems(this.$el.dataAttr('group'), items);
             }
 
             // Instantiate the Carousel Manually So we can wait until after we've re-arranged the DOM
             this.$el.carousel({
-                interval: this.$el.data('interval') ? this.$el.data('interval') : 5000,
-                pause: this.$el.data('pause') ? this.$el.data('pause') : 'hover',
-                wrap: this.$el.data('wrap') ? this.$el.data('wrap') : true,
-                keyboard: this.$el.data('keyboard') ? this.$el.data('keyboard') : true
+                interval: this.$el.dataAttr('interval') || 5000,
+                pause: this.$el.dataAttr('pause') || 'hover',
+                wrap: this.$el.dataAttr('wrap') || true,
+                keyboard: this.$el.dataAttr('keyboard') || true
             });
 
             this.$el.on('slid.bs.carousel', function () {
@@ -70,11 +70,26 @@
                     Stratus.Environment.set('viewPortChange', true);
                 }
             });
+
+            // Register Listening for Pausing until OnScreen
+            if (this.$el.dataAttr('startonscreen') !== false) {
+                this.$el.carousel('pause');
+                var that = this;
+                this.onScreen = new Stratus.Views.Plugins.OnScreen({
+                    el: this.el,
+                    onScreen: function () {
+                        that.$el.carousel('cycle');
+                    },
+                    offScreen: function () {
+                        that.$el.carousel('pause');
+                    }
+                });
+            }
         },
         batchItems: function (group, items) {
             group = group <= 0 ? 1 : group;
             var cols = Math.round(12 / group);
-            var colMinSize = this.$el.data('colminsize') ? this.$el.data('colminsize') : 'xs';
+            var colMinSize = this.$el.dataAttr('colminsize') ? this.$el.dataAttr('colminsize') : 'xs';
 
             // Empty inner Coursel
             if (group > 1) {

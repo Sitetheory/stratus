@@ -1074,6 +1074,7 @@
         el: 'img[data-src]',
         initialize: function () {
             if (this.$el.length === 0) return false;
+
             // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
             var $el;
             _.each(this.$el, function (el) {

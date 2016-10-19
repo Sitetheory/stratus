@@ -50,9 +50,16 @@
                 offset: this.$el.data('offset') || 0,
 
                 // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
-                reset: this.$el.data('reset') || 0
-            });
+                reset: this.$el.data('reset') || 0,
 
+                // Custom Methods for On/Off Screen
+                onScreen: function () {
+                    return (options.onScreen) ? options.onScreen() : true;
+                },
+                offScreen: function () {
+                    return (options.offScreen) ? options.offScreen() : true;
+                }
+            });
         }
     });
 
@@ -102,9 +109,15 @@
 
                 options.target.removeClass('offScreen offScreenScrollUp offScreenScrollDown').addClass('onScreen onScreenInit');
                 if (lastScroll) options.target.addClass('onScreenScroll' + _.ucfirst(lastScroll)).removeClass('onScreenScroll' + _.ucfirst(notLastScroll));
+
+                // Execute Custom Methods
+                options.onScreen();
             } else {
                 options.target.removeClass('onScreen onScreenScrollUp onScreenScrollDown').addClass('offScreen');
                 if (lastScroll) options.target.addClass('offScreenScroll' + _.ucfirst(lastScroll)).removeClass('offScreenScroll' + _.ucfirst(notLastScroll));
+
+                // Execute Custom Methods
+                options.offScreen();
             }
         }
     };
