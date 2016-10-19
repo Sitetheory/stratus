@@ -1074,7 +1074,6 @@
         el: 'img[data-src]',
         initialize: function () {
             if (this.$el.length === 0) return false;
-
             // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
             var $el;
             _.each(this.$el, function (el) {
@@ -1097,6 +1096,11 @@
     Stratus.Internals.LoadImage = function (obj) {
         obj.el.addClass('placeholder');
         if (Stratus.Internals.IsOnScreen(obj.spy)) {
+
+            // By default we'll load larger versions of an image to look good on HD displays, but if you
+            // don't want that, you can bypass it with data-hd="false"
+            //var hd = !obj.el.data('hd') ? false : true;
+            var hd = true;
 
             // Don't Get the Width, until it's "onScreen" (in case it was collapsed offscreen originally)
             var src = obj.el.data('src');
@@ -1135,7 +1139,10 @@
                     // If there is no CSS width, calculate the parent container's width
                     // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
                     // So we need to find the first parent that is visible and use that width
-                    var $visibleParent = $(_.first(obj.el.parents(':visible')));
+                    // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
+                    // so in some cases we need to flag to find the parent regardless of invisibility.
+                    var visibilitySelector = (obj.el.data('ignorevisibility')) ? null : ':visible';
+                    var $visibleParent = $(_.first(obj.el.parents(visibilitySelector)));
                     width = $visibleParent.width();
 
                     // If one of parents of the image (and child of the found parent) has a bootstrap col-*-* set
@@ -1157,6 +1164,11 @@
 
                 // If no appropriate width was found, abort
                 if (width <= 0) return false;
+
+                // Double for HD
+                if(hd) {
+                    width = width * 2;
+                }
 
                 // Return the first size that is bigger than container width
                 size = _.findKey(Stratus.Settings.image.size, function (s, k) {
