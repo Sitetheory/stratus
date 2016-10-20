@@ -79,10 +79,10 @@
 
         // Reset
         if (options.event.indexOf('reset') !== -1) {
-            // remove all classes when the scroll is all the way back at the top of thepage (or the spy is above a specific location specified location)
+            // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
             if ((options.reset > 0 && options.el.offset().top <= options.reset) || $(window).scrollTop() <= 0) {
                 isReset = true;
-                options.target.removeClass('onScreen offScreen scrollUp scrollDown');
+                options.target.removeClass('onScreen offScreen scrollUp scrollDown reveal unreveal');
             }
         }
 
@@ -101,20 +101,33 @@
                 options.target.removeClass('scrollUp');
             }
 
-            // Always detect if it's OnScreen (top OR bottom is within screen, or top AND bottom are outside of screen and the whole element is displayed)
-            // NOTE: top and bottom don't change positions, but windowTop and windowBottom do
-            var notLastScroll = !lastScroll || lastScroll === 'up' ? 'down' : 'up';
             if (Stratus.Internals.IsOnScreen(options.spy, options.offset)) {
                 // Add init class so we can know it's been on screen before
-
-                options.target.removeClass('offScreen offScreenScrollUp offScreenScrollDown').addClass('onScreen onScreenInit');
-                if (lastScroll) options.target.addClass('onScreenScroll' + _.ucfirst(lastScroll)).removeClass('onScreenScroll' + _.ucfirst(notLastScroll));
+                // remove the reveal/unreveal classes that are used for elements revealed when something is offscreen
+                options.target.removeClass('offScreen reveal unreveal').addClass('onScreen onScreenInit');
 
                 // Execute Custom Methods
                 options.onScreen();
             } else {
-                options.target.removeClass('onScreen onScreenScrollUp onScreenScrollDown').addClass('offScreen');
-                if (lastScroll) options.target.addClass('offScreenScroll' + _.ucfirst(lastScroll)).removeClass('offScreenScroll' + _.ucfirst(notLastScroll));
+                options.target.removeClass('onScreen').addClass('offScreen');
+
+                // Headers that use this to reveal when offscreen, need to know when to trigger the 'retract' which
+                // should happen only when it's already open (.offScreen.scrollUp and then you are scrolling down).
+                // You can't just make the retract animation happen '.offScreen.scrollDown' because that happens
+                // immediately when you scroll down from the header, which triggers a retract before the reveal has
+                // engaged the header to begin with, which makes an odd pop open then close.
+                // So we really need to add a class ONLY if the reveal class was there.
+                if(lastScroll == 'down' && options.target.hasClass('reveal')) {
+                    options.target.removeClass('reveal').addClass('unreveal');
+                } else if(lastScroll == 'up') {
+                    options.target.removeClass('unreveal').addClass('reveal');
+                }
+                // If you want to reveal the opposite direction (e.g. a footer)
+                if(lastScroll == 'up' && options.target.hasClass('revealDown')) {
+                    options.target.removeClass('revealDown').addClass('unrevealDown');
+                } else if(lastScroll == 'down') {
+                    options.target.removeClass('unrevealDown').addClass('revealDown');
+                }
 
                 // Execute Custom Methods
                 options.offScreen();
