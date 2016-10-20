@@ -117,15 +117,16 @@
                 // immediately when you scroll down from the header, which triggers a retract before the reveal has
                 // engaged the header to begin with, which makes an odd pop open then close.
                 // So we really need to add a class ONLY if the reveal class was there.
-                if(lastScroll == 'down' && options.target.hasClass('reveal')) {
+                if (lastScroll == 'down' && options.target.hasClass('reveal')) {
                     options.target.removeClass('reveal').addClass('unreveal');
-                } else if(lastScroll == 'up') {
+                } else if (lastScroll == 'up') {
                     options.target.removeClass('unreveal').addClass('reveal');
                 }
+
                 // If you want to reveal the opposite direction (e.g. a footer)
-                if(lastScroll == 'up' && options.target.hasClass('revealDown')) {
+                if (lastScroll == 'up' && options.target.hasClass('revealDown')) {
                     options.target.removeClass('revealDown').addClass('unrevealDown');
-                } else if(lastScroll == 'down') {
+                } else if (lastScroll == 'down') {
                     options.target.removeClass('unrevealDown').addClass('revealDown');
                 }
 
