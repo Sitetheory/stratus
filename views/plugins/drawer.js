@@ -41,7 +41,6 @@
         initialize: function (options) {
             this.prepare(options);
 
-
             if (!this.$el.attr('id')) {
                 console.warn('No ID supplied for data-plugin="Drawer" button.', this.$el);
                 return false;
@@ -63,9 +62,10 @@
 
             // Add Default Classes
             drawer.addClass(this.drawerClass);
+
             // Only add the label if it's not there yet (in case there are multiple drawer buttons acting on the same
             // drawer
-            if(!drawer.attr('aria-labelledby')) {
+            if (!drawer.attr('aria-labelledby')) {
                 drawer.attr('aria-labelledby', toggleId);
             }
 
