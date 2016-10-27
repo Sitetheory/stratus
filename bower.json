@@ -46,7 +46,9 @@
     "tether-tooltip": "^1.2.0",
     "d3": "^4.1.1",
     "fullcalendar": "^2.9.0",
-    "mathjs": "^3.3.0"
+    "mathjs": "^3.3.0",
+    "angular": "^1.5.8",
+    "angular-material": "^1.1.1"
   },
   "private": true
 }
