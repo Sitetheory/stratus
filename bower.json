@@ -48,7 +48,8 @@
     "fullcalendar": "^2.9.0",
     "mathjs": "^3.3.0",
     "angular": "^1.5.8",
-    "angular-material": "^1.1.1"
+    "angular-material": "^1.1.1",
+    "angular-chart.js": "^1.0.3"
   },
   "private": true
 }

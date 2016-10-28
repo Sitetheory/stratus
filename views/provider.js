@@ -1,4 +1,4 @@
-//     Stratus.Models.Generic.js 1.0
+//     Stratus.Models.Provider.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -21,18 +21,27 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['angular'], factory);
+        define(['stratus', 'angular'], factory);
     } else {
-        factory(root.angular);
+        factory(root.Stratus);
     }
-}(this, function (angular) {
+}(this, function (Stratus) {
 
-    // Injector Model
+    // Angular View
     // -------------
 
-    // This Angular Model Service handle data banding with the $http Service
-    angular.module('modelService', []).factory('GenericModel', function ($http) {
-        console.log($http);
-    });
+    // This View Service handles element binding for a single scope and element
+    Stratus.Views.Provider = ['$provide', function ($provide) {
+        $provide.factory('view', function ($scope, $element) {
+            return function (options) {
+                this.promise = null;
+                this.initialize = function (options) {
+                    console.log('element:', $element);
+                    console.log('options:', options);
+                };
+                this.initialize(options);
+            };
+        })
+    }]
 
 }));

@@ -119,6 +119,7 @@
         Internals: {},
         Prototypes: {},
         Resources: {},
+        Tools: {},
 
         // Plugins */
         PluginMethods: {},
@@ -135,6 +136,27 @@
     if (!Stratus.Environment.get('production')) {
         console.group('Stratus Warm Up');
     }
+
+    // Stratus Tools
+    // -------------
+
+    // This function simply capitalizes the first letter of a string.
+    /**
+     * @param string
+     * @returns {*}
+     */
+    Stratus.Tools.UpperFirst = function (string) {
+        return (typeof string === 'string' && string) ? string.charAt(0).toUpperCase() + string.substring(1) : null;
+    };
+
+    // This function simply changes the first letter of a string to a lower case.
+    /**
+     * @param string
+     * @returns {*}
+     */
+    Stratus.Tools.LowerFirst = function (string) {
+        return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null;
+    };
 
     // Underscore Mixins
     // ------------------
