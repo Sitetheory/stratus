@@ -35,7 +35,7 @@
         $provide.factory('collection', function ($http) {
             return function (options) {
                 this.entity = null;
-                if (options && typeof(options) == 'object') {
+                if (options && typeof (options) == 'object') {
                     angular.extend(this, options);
                 }
                 this.url = '/Api';
@@ -65,7 +65,7 @@
                     console.error(response);
                 };
                 this.fetch = function (callback) {
-                    if (typeof(callback) !== 'function') callback = function () {};
+                    if (typeof (callback) !== 'function') callback = function () {};
                     that.sync().then(function (response) {
                         if (response.status == '200') {
                             that.meta = response.data.meta || {};
@@ -76,8 +76,11 @@
                         }
                     }, that.error);
                 };
+                this.filter = function (query) {
+                    console.log('filter:', query);
+                };
             };
-        })
-    }]
+        });
+    }];
 
 }));
