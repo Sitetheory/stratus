@@ -65,20 +65,18 @@
                     };
                     return $http(prototype);
                 };
-                this.error = function (response) {
-                    console.error(response);
-                };
-                this.fetch = function (callback) {
-                    if (typeof (callback) !== 'function') callback = function () {};
-                    that.sync().then(function (response) {
-                        if (response.status == '200') {
-                            that.meta = response.data.meta || {};
-                            that.attributes = response.data.payload || response.data;
-                            callback();
-                        } else {
-                            that.error(response);
-                        }
-                    }, that.error);
+                this.fetch = function () {
+                    return new Promise(function (fulfill, reject) {
+                        that.sync().then(function (response) {
+                            if (response.status == '200') {
+                                that.meta = response.data.meta || {};
+                                that.attributes = response.data.payload || response.data;
+                                fulfill(response);
+                            } else {
+                                reject(response);
+                            }
+                        }, reject);
+                    });
                 };
             };
         });

@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular'], factory);
+        define(['stratus', 'angular', 'promise'], factory);
     } else {
         factory(root.Stratus);
     }
@@ -64,17 +64,18 @@
                 this.error = function (response) {
                     console.error(response);
                 };
-                this.fetch = function (callback) {
-                    if (typeof (callback) !== 'function') callback = function () {};
-                    that.sync().then(function (response) {
-                        if (response.status == '200') {
-                            that.meta = response.data.meta || {};
-                            that.models = response.data.payload || response.data;
-                            callback();
-                        } else {
-                            that.error(response);
-                        }
-                    }, that.error);
+                this.fetch = function () {
+                    return new Promise(function (fulfill, reject) {
+                        that.sync().then(function (response) {
+                            if (response.status == '200') {
+                                that.meta = response.data.meta || {};
+                                that.models = response.data.payload || response.data;
+                                fulfill(response);
+                            } else {
+                                reject(response);
+                            }
+                        }, reject);
+                    });
                 };
                 this.filter = function (query) {
                     console.log('filter:', query);
