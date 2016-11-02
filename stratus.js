@@ -1431,6 +1431,7 @@
     Stratus.Internals.Compatibility = function () {
         var profile = [];
 
+        // Operating System
         if (Stratus.Client.android) {
             profile.push('android');
         } else if (Stratus.Client.ios) {
@@ -1445,6 +1446,7 @@
             profile.push('os');
         }
 
+        // Browser Type
         if (Stratus.Client.chrome) {
             profile.push('chrome');
         } else if (Stratus.Client.firefox) {
@@ -1461,12 +1463,16 @@
             profile.push('browser');
         }
 
+        // Browser Major Version
         if (Stratus.Client.version) {
             profile.push('version' + Stratus.Client.version.split('.')[0]);
         }
 
+        // Platform
         if (Stratus.Client.mobile) {
             profile.push('mobile');
+        } else if (Stratus.Client.tablet) {
+            profile.push('tablet');
         } else {
             profile.push('desktop');
         }

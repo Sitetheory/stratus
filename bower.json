@@ -4,7 +4,7 @@
   "main": [
     "stratus.html"
   ],
-  "license": "http://polymer.github.io/LICENSE.txt",
+  "license": "http://sitetheory.github.io/stratus/LICENSE",
   "ignore": [
     "/.*",
     "/test/",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sitetheory/stratus.git"
+    "url": "git://github.com/Sitetheory/stratus.git"
   },
   "dependencies": {
     "promisejs.org": "https://github.com/ForbesLindesay/promisejs.org.git#d787bfc484b86607ddfcc61c2cfebd5a4566d631",
@@ -51,5 +51,5 @@
     "angular-material": "^1.1.1",
     "angular-chart.js": "^1.0.3"
   },
-  "private": true
+  "private": false
 }
