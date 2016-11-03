@@ -38,8 +38,16 @@
                 if (options && typeof (options) == 'object') {
                     angular.extend(this, options);
                 }
+
+                // Infrastructure
                 this.url = '/Api';
                 this.models = [];
+                this.meta = new Stratus.Prototypes.Collection();
+
+                // Internals
+                this.pending = true;
+                this.error = false;
+                this.completed = false;
 
                 // Generate URL
                 if (this.entity) {
@@ -51,34 +59,63 @@
 
                 // TODO: Abstract this deeper
                 // Handle Convoy
-                this.sync = function (action) {
+                this.sync = function (action, data) {
+                    action = action || 'GET';
                     var prototype = {
-                        method: action || 'GET',
+                        method: action,
                         url: that.url,
                         headers: {
-                            action: action || 'GET'
+                            action: action
                         }
                     };
+                    if (angular.isDefined(data)) {
+                        if (action === 'GET') {
+                            if (angular.isObject(data)) {
+                                var values = [];
+                                angular.forEach(data, function (value, key) {
+                                    values.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                                });
+                                if (values.length) {
+                                    prototype.url += '?' + values.join('&');
+                                }
+                            }
+                        } else {
+                            prototype.headers['Content-Type'] = 'application/json';
+                            prototype.data = JSON.stringify(data);
+                        }
+                    }
                     return $http(prototype);
                 };
-                this.error = function (response) {
-                    console.error(response);
-                };
-                this.fetch = function () {
+                this.fetch = function (action, data) {
+                    this.pending = true;
                     return new Promise(function (fulfill, reject) {
-                        that.sync().then(function (response) {
+                        that.sync(action, data || that.meta.get('api')).then(function (response) {
                             if (response.status == '200') {
-                                that.meta = response.data.meta || {};
+                                // Data
+                                that.meta.set(response.data.meta);
                                 that.models = response.data.payload || response.data;
+
+                                // Internals
+                                that.pending = false;
+                                that.completed = true;
+
+                                // Promise
                                 fulfill(response);
                             } else {
+                                // Internals
+                                that.pending = false;
+                                that.error = true;
+
+                                // Promise
                                 reject(response);
                             }
                         }, reject);
                     });
                 };
                 this.filter = function (query) {
-                    console.log('filter:', query);
+                    this.meta.set('api.q', query);
+                    console.log('query:', query);
+                    return this.fetch();
                 };
             };
         });
