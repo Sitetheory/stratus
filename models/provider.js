@@ -33,13 +33,14 @@
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Models.Provider = ['$provide', function ($provide) {
         $provide.factory('model', function ($http) {
-            return function (options) {
+            return function (options, attributes) {
+
+                // Build Environment
                 this.entity = null;
-                if (options && typeof (options) == 'object') {
-                    angular.extend(this, options);
-                }
+                if (options && typeof options == 'object') angular.extend(this, options);
                 this.url = '/Api';
                 this.attributes = {};
+                if (attributes && typeof attributes == 'object') angular.extend(this.attributes, attributes);
 
                 // Generate URL
                 if (this.entity) {
@@ -49,16 +50,11 @@
                 // Contextual Hoisting
                 var that = this;
 
-                // Current ID
-                this.id = function () {
-                    return (that.attributes && typeof (that.attributes) === 'object' && that.attributes.id) ? that.attributes.id : null;
-                };
-
                 // Handle Convoy
                 this.sync = function (action) {
                     var prototype = {
                         method: action || 'GET',
-                        url: that.id() ? that.url + '/' + that.id() : that.url,
+                        url: that.get('id') ? that.url + '/' + that.get('id') : that.url,
                         headers: {
                             action: action || 'GET'
                         }
@@ -77,6 +73,23 @@
                             }
                         }, reject);
                     });
+                };
+
+                // Attribute Functions
+                this.get = function (attribute) {
+                    if (typeof attribute !== 'string' || !that.attributes || typeof (that.attributes) !== 'object') {
+                        return undefined;
+                    } else {
+                        return attribute.split('.').reduce(function (attributes, a) {
+                            return attributes && attributes[a];
+                        }, that.attributes);
+                    }
+                };
+                this.toggle = function (attribute, item) {
+                    return that.get(attribute);
+                };
+                this.exists = function (attribute, item) {
+                    return that.get(attribute);
                 };
             };
         });

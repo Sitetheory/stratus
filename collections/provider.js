@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular', 'promise'], factory);
+        define(['stratus', 'angular', 'promise', 'stratus.models.provider'], factory);
     } else {
         factory(root.Stratus);
     }
@@ -35,7 +35,7 @@
         $provide.factory('collection', function ($http) {
             return function (options) {
                 this.entity = null;
-                if (options && typeof (options) == 'object') {
+                if (options && typeof options == 'object') {
                     angular.extend(this, options);
                 }
 
@@ -93,7 +93,16 @@
                             if (response.status == '200') {
                                 // Data
                                 that.meta.set(response.data.meta);
-                                that.models = response.data.payload || response.data;
+                                that.models = [];
+
+                                angular.forEach(response.data.payload || response.data, function (model) {
+                                    /* FIXME: It seems difficult to call an Angular Service within another.
+                                    that.models.push(new Stratus.Models.Prototype({
+                                        'entity': that.entity
+                                    }, model));
+                                    */
+                                    that.models.push({ attributes: model });
+                                });
 
                                 // Internals
                                 that.pending = false;
