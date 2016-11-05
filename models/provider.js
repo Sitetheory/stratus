@@ -23,9 +23,9 @@
     if (typeof define === 'function' && define.amd) {
         define(['stratus', 'angular'], factory);
     } else {
-        factory(root.Stratus, root.angular);
+        factory(root.Stratus);
     }
-}(this, function (Stratus, angular) {
+}(this, function (Stratus) {
 
     // Angular Model
     // -------------
@@ -37,10 +37,14 @@
 
                 // Build Environment
                 this.entity = null;
-                if (options && typeof options == 'object') angular.extend(this, options);
+                if (options && typeof options == 'object') {
+                    angular.extend(this, options);
+                }
                 this.url = '/Api';
                 this.attributes = {};
-                if (attributes && typeof attributes == 'object') angular.extend(this.attributes, attributes);
+                if (attributes && typeof attributes == 'object') {
+                    angular.extend(this.attributes, attributes);
+                }
 
                 // Generate URL
                 if (this.entity) {
@@ -51,6 +55,11 @@
                 var that = this;
 
                 // Handle Convoy
+
+                /**
+                 * @param action
+                 * @returns {*}
+                 */
                 this.sync = function (action) {
                     var prototype = {
                         method: action || 'GET',
@@ -61,6 +70,10 @@
                     };
                     return $http(prototype);
                 };
+
+                /**
+                 * @returns {Promise}
+                 */
                 this.fetch = function () {
                     return new Promise(function (fulfill, reject) {
                         that.sync().then(function (response) {
@@ -76,8 +89,13 @@
                 };
 
                 // Attribute Functions
+
+                /**
+                 * @param attribute
+                 * @returns {*}
+                 */
                 this.get = function (attribute) {
-                    if (typeof attribute !== 'string' || !that.attributes || typeof (that.attributes) !== 'object') {
+                    if (typeof attribute !== 'string' || !that.attributes || typeof that.attributes !== 'object') {
                         return undefined;
                     } else {
                         return attribute.split('.').reduce(function (attributes, a) {
@@ -85,11 +103,61 @@
                         }, that.attributes);
                     }
                 };
+
+                /**
+                 * @param attribute
+                 * @param item
+                 * @returns {*}
+                 */
                 this.toggle = function (attribute, item) {
                     return that.get(attribute);
                 };
+
+                /**
+                 * @param attribute
+                 * @returns {*}
+                 */
+                this.pluck = function (attribute) {
+                    if (typeof attribute === 'string' && attribute.indexOf('[].') > -1) {
+                        var request = attribute.split('[].');
+                        if (request.length > 1) {
+                            attribute = that.get(request[0]);
+                            if (attribute && angular.isArray(attribute)) {
+                                var list = [];
+                                attribute.forEach(function (element) {
+                                    if (angular.isObject(element) && request[1] in element) {
+                                        list.push(element[request[1]]);
+                                    }
+                                });
+                                if (list.length) {
+                                    return list;
+                                }
+                            }
+                        }
+                    } else {
+                        return that.get(attribute);
+                    }
+                    return undefined;
+                };
+
+                /**
+                 * @param attribute
+                 * @param item
+                 * @returns {boolean}
+                 */
                 this.exists = function (attribute, item) {
-                    return that.get(attribute);
+                    if (!item) {
+                        attribute = that.get(attribute);
+                        return typeof attribute !== 'undefined' && attribute;
+                    } else if (typeof attribute === 'string' && item) {
+                        attribute = that.pluck(attribute);
+                        if (angular.isArray(attribute)) {
+                            return typeof attribute.find(function (element) {
+                                    return element === item || (angular.isObject(element) && element.id && element.id === item);
+                                }) !== 'undefined';
+                        }
+                    }
+                    return false;
                 };
             };
         });

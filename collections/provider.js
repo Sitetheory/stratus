@@ -32,9 +32,14 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Collections.Provider = ['$provide', function ($provide) {
-        $provide.factory('collection', function ($http) {
+        $provide.factory('collection', function ($q, $http, $timeout, model) {
             return function (options) {
                 this.entity = null;
+                this.infinite = false;
+                this.threshold = 0.5;
+                this.qualifier = ''; // ng-if
+                this.decay = 0;
+
                 if (options && typeof options == 'object') {
                     angular.extend(this, options);
                 }
@@ -43,6 +48,7 @@
                 this.url = '/Api';
                 this.models = [];
                 this.meta = new Stratus.Prototypes.Collection();
+                this.model = model;
 
                 // Internals
                 this.pending = true;
@@ -95,14 +101,14 @@
                                 that.meta.set(response.data.meta);
                                 that.models = [];
 
-                                angular.forEach(response.data.payload || response.data, function (model) {
-                                    /* FIXME: It seems difficult to call an Angular Service within another.
-                                    that.models.push(new Stratus.Models.Prototype({
-                                        'entity': that.entity
-                                    }, model));
-                                    */
-                                    that.models.push({ attributes: model });
-                                });
+                                var data = response.data.payload || response.data;
+                                if (angular.isArray(data)) {
+                                    data.forEach(function (entity) {
+                                        that.models.push(new that.model({
+                                            entity: that.entity
+                                        }, entity));
+                                    });
+                                }
 
                                 // Internals
                                 that.pending = false;
@@ -123,9 +129,46 @@
                 };
                 this.filter = function (query) {
                     this.meta.set('api.q', query);
-                    console.log('query:', query);
                     return this.fetch();
                 };
+
+                // Infinite Scrolling
+                /*
+                this.infiniteModels = {
+                    numLoaded_: 0,
+                    toLoad_: 0,
+
+                    // Required.
+                    getItemAtIndex: function (index) {
+                        if (index > this.numLoaded_) {
+                            this.fetchMoreItems_(index);
+                            return null;
+                        }
+
+                        return index;
+                    },
+
+                    // Required.
+                    // For infinite scroll behavior, we always return a slightly higher
+                    // number than the previously loaded items.
+                    getLength: function () {
+                        return this.numLoaded_ + 5;
+                    },
+
+                    fetchMoreItems_: function (index) {
+                        // For demo purposes, we simulate loading more items with a timed
+                        // promise. In real code, this function would likely contain an
+                        // $http request.
+
+                        if (this.toLoad_ < index) {
+                            this.toLoad_ += 20;
+                            $timeout(angular.noop, 300).then(angular.bind(this, function () {
+                                this.numLoaded_ = this.toLoad_;
+                            }));
+                        }
+                    }
+                }
+                */
             };
         });
     }];
