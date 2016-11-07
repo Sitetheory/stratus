@@ -31,7 +31,18 @@
 // the Stratus environment to ensure its acceptance regardless of page context.
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['text', 'jquery', 'underscore', 'backbone', 'bowser', 'bootbox', 'promise', 'backbone.relational', 'jquery-cookie', 'jquery-toaster'], function (text, $, _, Backbone, bowser, bootbox) {
+        define([
+            'text',
+            'jquery',
+            'underscore',
+            'backbone',
+            'bowser',
+            'bootbox',
+            'promise',
+            'backbone.relational',
+            'jquery-cookie',
+            'jquery-toaster'
+        ], function (text, $, _, Backbone, bowser, bootbox) {
             return (root.Stratus = factory(text, $, _, Backbone, bowser, bootbox));
         });
     } else {
@@ -108,7 +119,7 @@
         Environment: new Backbone.Model({
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
             language: navigator.language,
-            timezone: new Date().getTimezoneOffset() / 60,
+            timezone: null,
             debugNest: false,
             liveEdit: false,
             viewPortChange: false,
@@ -499,6 +510,19 @@
     var initialLoad = $('body').dataAttr('environment');
     if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
         Stratus.Environment.set(initialLoad);
+        if (!Stratus.Environment.has('timezone')) {
+            $.ajax({
+                type: 'PUT',
+                url: '/Api/Session',
+                data: {
+                    timezone: new Date().toString().match(/\((.*)\)/)[1]
+                },
+                dataType: 'json',
+                xhrFields: {
+                    withCredentials: true
+                }
+            });
+        }
     }
 
     // Backbone Relational Settings
