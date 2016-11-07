@@ -515,7 +515,11 @@
                 type: 'PUT',
                 url: '/Api/Session',
                 data: {
-                    timezone: new Date().toString().match(/\((.*)\)/)[1]
+                    convoy: JSON.stringify({
+                        payload: {
+                            timezone: new Date().toString().match(/\((.*)\)/)[1]
+                        }
+                    })
                 },
                 dataType: 'json',
                 xhrFields: {
