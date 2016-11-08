@@ -33,15 +33,16 @@
     if (typeof define === 'function' && define.amd) {
         define([
             'text',
-            'jquery',
-            'underscore',
-            'backbone',
+            'jquery', // legacy
+            'underscore', // legacy
+            'backbone', // legacy
             'bowser',
-            'bootbox',
-            'promise',
-            'backbone.relational',
-            'jquery-cookie',
-            'jquery-toaster'
+            'bootbox', // legacy
+            'angular',
+            'promise', // legacy
+            'backbone.relational', // legacy
+            'jquery-cookie', // legacy
+            'jquery-toaster' // legacy
         ], function (text, $, _, Backbone, bowser, bootbox) {
             return (root.Stratus = factory(text, $, _, Backbone, bowser, bootbox));
         });
@@ -514,13 +515,7 @@
             $.ajax({
                 type: 'PUT',
                 url: '/Api/Session',
-                data: {
-                    convoy: JSON.stringify({
-                        payload: {
-                            timezone: new Date().toString().match(/\((.*)\)/)[1]
-                        }
-                    })
-                },
+                data: JSON.stringify({ timezone: new Date().toString().match(/\((.*)\)/)[1]}),
                 dataType: 'json',
                 xhrFields: {
                     withCredentials: true
