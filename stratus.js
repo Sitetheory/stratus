@@ -85,6 +85,17 @@
         Settings: {
             image: {
                 size: { xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600 }
+            },
+            status: {
+                reset: -2,
+                deleted: -1,
+                inactive: 0,
+                active: 1
+            },
+            consent: {
+                reject: -1,
+                pending: 0,
+                accept: 1
             }
         },
 
@@ -122,10 +133,14 @@
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
             language: navigator.language,
             timezone: null,
-            trackLocation: false,
+            trackLocation: 0,
+            trackLocationConsent: 0,
             lat: null,
             lng: null,
             postalCode: null,
+            city: null,
+            region: null,
+            country: null,
             debugNest: false,
             liveEdit: false,
             viewPortChange: false,
@@ -523,18 +538,28 @@
         }
         // Track Location if Requested
         if (Stratus.Environment.get('trackLocation')) {
-            // TODO: use native AJAX
-            $.getJSON('https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/', function (data) {
-                if (!data) return false;
-                if (data.postal) {
-                    envData.postalCode = data.postal;
-                    envData.lat = data.latitude;
-                    envData.lng = data.longitude;
-                    Stratus.Environment.set('postalCode', data.postal);
-                    Stratus.Environment.set('lat', data.latitude);
-                    Stratus.Environment.set('lng', data.longitude);
-                }
-            });
+            if (Stratus.Environment.get('trackLocationConsent')) {
+                // TODO: get geolocation through popup that asks for consent (but is more accurate)
+            } else {
+                // TODO: use native AJAX
+                $.getJSON('https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/', function (data) {
+                    if (!data) return false;
+                    if (data.postal) {
+                        envData.postalCode = data.postal;
+                        envData.lat = data.latitude;
+                        envData.lng = data.longitude;
+                        envData.city = data.city;
+                        envData.region = data.region;
+                        envData.country = data.country;
+                        Stratus.Environment.set('postalCode', data.postal);
+                        Stratus.Environment.set('lat', data.latitude);
+                        Stratus.Environment.set('lng', data.longitude);
+                        Stratus.Environment.set('city', data.city);
+                        Stratus.Environment.set('region', data.region);
+                        Stratus.Environment.set('country', data.country);
+                    }
+                });
+            }
         }
         if(Object.keys(envData).length) {
             // TODO: use native AJAX
