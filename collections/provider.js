@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular', 'promise', 'stratus.models.provider'], factory);
+        define(['stratus', 'angular', 'stratus.models.provider'], factory);
     } else {
         factory(root.Stratus);
     }
@@ -64,7 +64,11 @@
                 var that = this;
 
                 // TODO: Abstract this deeper
-                // Handle Convoy
+                /**
+                 * @param action
+                 * @param data
+                 * @returns {*}
+                 */
                 this.sync = function (action, data) {
                     action = action || 'GET';
                     var prototype = {
@@ -92,9 +96,15 @@
                     }
                     return $http(prototype);
                 };
+
+                /**
+                 * @param action
+                 * @param data
+                 * @returns {*}
+                 */
                 this.fetch = function (action, data) {
                     this.pending = true;
-                    return new Promise(function (fulfill, reject) {
+                    return $q(function (resolve, reject) {
                         that.sync(action, data || that.meta.get('api')).then(function (response) {
                             if (response.status == '200') {
                                 // Data
@@ -115,7 +125,7 @@
                                 that.completed = true;
 
                                 // Promise
-                                fulfill(response);
+                                resolve(that.models);
                             } else {
                                 // Internals
                                 that.pending = false;
@@ -127,9 +137,14 @@
                         }, reject);
                     });
                 };
+
+                /**
+                 * @param query
+                 * @returns {*|Promise}
+                 */
                 this.filter = function (query) {
-                    this.meta.set('api.q', query);
-                    return this.fetch();
+                    that.meta.set('api.q', query);
+                    return that.fetch();
                 };
 
                 // Infinite Scrolling

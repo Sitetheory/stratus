@@ -32,7 +32,7 @@
 
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Models.Provider = ['$provide', function ($provide) {
-        $provide.factory('model', function ($http) {
+        $provide.factory('model', function ($q, $http) {
             return function (options, attributes) {
 
                 // Build Environment
@@ -54,8 +54,6 @@
                 // Contextual Hoisting
                 var that = this;
 
-                // Handle Convoy
-
                 /**
                  * @param action
                  * @returns {*}
@@ -72,15 +70,15 @@
                 };
 
                 /**
-                 * @returns {Promise}
+                 * @returns {*}
                  */
                 this.fetch = function () {
-                    return new Promise(function (fulfill, reject) {
+                    return $q(function (resolve, reject) {
                         that.sync().then(function (response) {
                             if (response.status == '200') {
                                 that.meta = response.data.meta || {};
                                 that.attributes = response.data.payload || response.data;
-                                fulfill(response);
+                                resolve(that.attributes);
                             } else {
                                 reject(response);
                             }
