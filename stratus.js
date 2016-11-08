@@ -118,6 +118,7 @@
         CSS: {},
         Chronos: null,
         Environment: new Backbone.Model({
+            ip: null,
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
             language: navigator.language,
             timezone: null,
