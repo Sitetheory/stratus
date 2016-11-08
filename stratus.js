@@ -121,6 +121,9 @@
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
             language: navigator.language,
             timezone: null,
+            lat: null,
+            lng: null,
+            postalCode: null,
             debugNest: false,
             liveEdit: false,
             viewPortChange: false,
@@ -508,14 +511,38 @@
     // ----------------------------------
 
     // This needs to run after the jQuery library is configured.
-    var initialLoad = $('body').dataAttr('environment');
+    var initialLoad = document.querySelector('body').getAttribute('data-environment');
     if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
         Stratus.Environment.set(initialLoad);
+        var envData = {};
         if (!Stratus.Environment.has('timezone')) {
+            Stratus.Environment.set('timezone', new Date().toString().match(/\((.*)\)/)[1]);
+            envData.timezone = Stratus.Environment.get('timezone');
+        }
+        // Load More Tracking Data If Necessary
+        if (!Stratus.Environment.has('lat')) {
+            var ipTracking = document.querySelector('body').getAttribute('data-ipTracking');
+            if(ipTracking) {
+                // TODO: use native AJAX
+                $.getJSON('https://ipapi.co/' + ipTracking + '/json/', function (data) {
+                    if (!data) return false;
+                    if (data.postal) {
+                        envData.postalCode = data.postal;
+                        envData.lat = data.latitude;
+                        envData.lng = data.longitude;
+                        Stratus.Environment.set('postalCode', data.postal);
+                        Stratus.Environment.set('lat', data.latitude);
+                        Stratus.Environment.set('lng', data.longitude);
+                    }
+                });
+            }
+        }
+        if(Object.keys(envData).length) {
+            // TODO: use native AJAX
             $.ajax({
                 type: 'PUT',
                 url: '/Api/Session',
-                data: JSON.stringify({ timezone: new Date().toString().match(/\((.*)\)/)[1]}),
+                data: JSON.stringify(envData),
                 dataType: 'json',
                 xhrFields: {
                     withCredentials: true
@@ -523,6 +550,9 @@
             });
         }
     }
+
+
+
 
     // Backbone Relational Settings
     // ----------------------------
