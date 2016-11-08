@@ -122,6 +122,7 @@
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
             language: navigator.language,
             timezone: null,
+            trackLocation: false,
             lat: null,
             lng: null,
             postalCode: null,
@@ -520,23 +521,20 @@
             Stratus.Environment.set('timezone', new Date().toString().match(/\((.*)\)/)[1]);
             envData.timezone = Stratus.Environment.get('timezone');
         }
-        // Load More Tracking Data If Necessary
-        if (!Stratus.Environment.has('lat')) {
-            var ipTracking = document.querySelector('body').getAttribute('data-ipTracking');
-            if(ipTracking) {
-                // TODO: use native AJAX
-                $.getJSON('https://ipapi.co/' + ipTracking + '/json/', function (data) {
-                    if (!data) return false;
-                    if (data.postal) {
-                        envData.postalCode = data.postal;
-                        envData.lat = data.latitude;
-                        envData.lng = data.longitude;
-                        Stratus.Environment.set('postalCode', data.postal);
-                        Stratus.Environment.set('lat', data.latitude);
-                        Stratus.Environment.set('lng', data.longitude);
-                    }
-                });
-            }
+        // Track Location if Requested
+        if (Stratus.Environment.get('trackLocation')) {
+            // TODO: use native AJAX
+            $.getJSON('https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/', function (data) {
+                if (!data) return false;
+                if (data.postal) {
+                    envData.postalCode = data.postal;
+                    envData.lat = data.latitude;
+                    envData.lng = data.longitude;
+                    Stratus.Environment.set('postalCode', data.postal);
+                    Stratus.Environment.set('lat', data.latitude);
+                    Stratus.Environment.set('lng', data.longitude);
+                }
+            });
         }
         if(Object.keys(envData).length) {
             // TODO: use native AJAX
