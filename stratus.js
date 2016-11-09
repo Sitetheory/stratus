@@ -2133,7 +2133,6 @@
                     url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
                     success: function (data) {
                         if (!data) data = {};
-                        console.log('ipapi:', data);
                         if (typeof data === 'object' && Object.keys(data).length && data.postal) {
                             envData.postalCode = data.postal;
                             envData.lat = data.latitude;
