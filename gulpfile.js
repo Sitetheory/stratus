@@ -21,6 +21,7 @@ var nullify = function (proto) {
 // Locations
 var coreList = [
     'stratus.js',
+    'normalizers/*.js',
     'collections/*.js',
     'models/*.js',
     'routers/*.js',
@@ -30,6 +31,7 @@ var coreList = [
 ];
 var minList = [
     'stratus.min.js',
+    'normalizers/*.min.js',
     'collections/*.min.js',
     'models/*.min.js',
     'routers/*.min.js',

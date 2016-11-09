@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'backbone', 'stratus.models.generic'], factory);
+        define(['stratus', 'underscore', 'backbone', 'backbone.relational', 'stratus.models.generic'], factory);
     } else {
         factory(root.Stratus, root._, root.Backbone);
     }

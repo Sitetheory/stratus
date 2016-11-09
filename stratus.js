@@ -33,23 +33,19 @@
     if (typeof define === 'function' && define.amd) {
         define([
             'text',
-            'jquery', // legacy
-            'underscore', // legacy
-            'backbone', // legacy
+            'jquery', // @deprecated!
+            'underscore',
+            'backbone',
             'bowser',
-            'bootbox', // legacy
-            'angular',
-            'promise', // legacy
-            'backbone.relational', // legacy
-            'jquery-cookie', // legacy
-            'jquery-toaster' // legacy
-        ], function (text, $, _, Backbone, bowser, bootbox) {
-            return (root.Stratus = factory(text, $, _, Backbone, bowser, bootbox));
+            'promise',
+            'jquery-cookie' // @deprecated!
+        ], function (text, $, _, Backbone, bowser) {
+            return (root.Stratus = factory(text, $, _, Backbone, bowser));
         });
     } else {
-        root.Stratus = factory(root.text, root.$, root._, root.Backbone, root.bowser, root.bootbox);
+        root.Stratus = factory(root.text, root.$, root._, root.Backbone, root.bowser);
     }
-}(this, function (text, $, _, Backbone, bowser, bootbox) {
+}(this, function (text, $, _, Backbone, bowser) {
 
     // Underscore Settings
     // -------------------
@@ -172,7 +168,7 @@
     // Stratus Tools
     // -------------
 
-    // This function simply capitalizes the first letter of a string.
+    // Simply capitalize the first letter of a string.
     /**
      * @param string
      * @returns {*}
@@ -181,13 +177,27 @@
         return (typeof string === 'string' && string) ? string.charAt(0).toUpperCase() + string.substring(1) : null;
     };
 
-    // This function simply changes the first letter of a string to a lower case.
+    // Simply change the first letter of a string to a lower case.
     /**
      * @param string
      * @returns {*}
      */
     Stratus.Tools.LowerFirst = function (string) {
         return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null;
+    };
+
+    // Simply detect valid JSON
+    /**
+     * @param str
+     * @returns {boolean}
+     */
+    Stratus.Tools.isJSON = function (str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
     };
 
     // Underscore Mixins
@@ -497,130 +507,15 @@
         }
     });
 
-    // jQuery Functions
-    // ------------------
-
-    /**
-     * @param key
-     * @param value
-     * @returns {*|{class, aria-disabled}}
-     */
-    $.fn.dataAttr = function (key, value) {
-        if (key === undefined) console.error('$().dataAttr(key, value) contains an undefined key!');
-        if (value === undefined) {
-            value = this.attr('data-' + key);
-            return _.isJSON(value) ? JSON.parse(value) : value;
-        } else {
-            return this.attr('data-' + key, JSON.stringify(value));
-        }
-    };
-
-    /**
-     * @param event
-     * @returns {boolean}
-     */
-    $.fn.notClicked = function (event) {
-        if (!this.selector) console.error('No Selector:', this);
-        return (!$(event.target).closest(this.selector).length && !$(event.target).parents(this.selector).length);
-    };
-
     // Stratus Environment Initialization
     // ----------------------------------
 
     // This needs to run after the jQuery library is configured.
     var initialLoad = document.querySelector('body').getAttribute('data-environment');
+    if (_.isJSON(initialLoad)) initialLoad = JSON.parse(initialLoad);
     if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
         Stratus.Environment.set(initialLoad);
-        var envData = {};
-        if (!Stratus.Environment.has('timezone')) {
-            Stratus.Environment.set('timezone', new Date().toString().match(/\((.*)\)/)[1]);
-            envData.timezone = Stratus.Environment.get('timezone');
-        }
-        // Track Location if Requested
-        if (Stratus.Environment.get('trackLocation')) {
-            if (Stratus.Environment.get('trackLocationConsent')) {
-                // TODO: get geolocation through popup that asks for consent (but is more accurate)
-            } else {
-                // TODO: use native AJAX
-                $.getJSON('https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/', function (data) {
-                    if (!data) return false;
-                    if (data.postal) {
-                        envData.postalCode = data.postal;
-                        envData.lat = data.latitude;
-                        envData.lng = data.longitude;
-                        envData.city = data.city;
-                        envData.region = data.region;
-                        envData.country = data.country;
-                        Stratus.Environment.set('postalCode', data.postal);
-                        Stratus.Environment.set('lat', data.latitude);
-                        Stratus.Environment.set('lng', data.longitude);
-                        Stratus.Environment.set('city', data.city);
-                        Stratus.Environment.set('region', data.region);
-                        Stratus.Environment.set('country', data.country);
-                    }
-                });
-            }
-        }
-        if(Object.keys(envData).length) {
-            // TODO: use native AJAX
-            $.ajax({
-                type: 'PUT',
-                url: '/Api/Session',
-                data: JSON.stringify(envData),
-                dataType: 'json',
-                xhrFields: {
-                    withCredentials: true
-                }
-            });
-        }
     }
-
-
-
-
-    // Backbone Relational Settings
-    // ----------------------------
-
-    // This is provides a Stratus scope for Dynamic Relations.
-    Backbone.Relational.store.addModelScope(Stratus.Models.attributes);
-    Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
-
-    /*
-     Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
-     */
-
-    // Backbone Relational Functions
-    // -----------------------------
-
-    // This function gathers data from a model within a model.
-    // This should only occur when using Backbone Relations to
-    // display data from parent or child objects.
-    /**
-     * @param model
-     * @param scope
-     * @param property
-     * @returns {*}
-     * @constructor
-     */
-    Stratus.Relations.Sanitize = function (model, scope, property) {
-        var data = null;
-        if (typeof model.get(scope) !== 'undefined') {
-            if (typeof model.get(scope) === 'object' && model.get(scope) !== null) {
-                if (typeof model.get(scope).get(property) !== 'undefined') {
-                    if (model.get(scope).get(property).length === 0) {
-                        /* do nothing */
-                    } else if (model.get(scope).get(property).length === 1) {
-                        data = model.get(scope).get(property)[0];
-                    } else {
-                        data = model.get(scope).get(property);
-                    }
-                }
-            } else {
-                data = model.get(scope);
-            }
-        }
-        return data;
-    };
 
     // Instance Clean
     // --------------
@@ -977,6 +872,69 @@
         this.initialize.apply(this, arguments);
 
         return this;
+    };
+
+    /**
+     * @param request
+     * @constructor
+     */
+    Stratus.Internals.Ajax = function (request) {
+
+        // Defaults
+        this.method = 'GET';
+        this.url = '/Api';
+        this.data = {};
+        this.type = '';
+
+        /**
+         * @param response
+         * @returns {*}
+         */
+        this.success = function (response) {
+            return response;
+        };
+
+        /**
+         * @param response
+         * @returns {*}
+         */
+        this.error = function (response) {
+            return response;
+        };
+
+        // Customize & Hoist
+        _.extend(this, request);
+        var that = this;
+
+        // Make Request
+        this.xhr = new XMLHttpRequest();
+        var promise = new Promise(function (fulfill, reject) {
+            that.xhr.open(that.method, that.url, true);
+            if (typeof that.type === 'string' && that.type.length) {
+                that.xhr.setRequestHeader('Content-Type', that.type);
+            }
+            that.xhr.onload = function () {
+                if (that.xhr.status >= 200 && that.xhr.status < 400) {
+                    var response = that.xhr.responseText;
+                    if (_.isJSON(response)) response = JSON.parse(response);
+                    fulfill(response);
+                } else {
+                    reject(that.xhr);
+                }
+            };
+
+            that.xhr.onerror = function () {
+                reject(that.xhr);
+            };
+
+            if (Object.keys(that.data).length) {
+                that.xhr.send(JSON.stringify(that.data));
+            } else {
+                that.xhr.send();
+            }
+        });
+        promise.done(that.success, that.error);
+        return promise;
     };
 
     // Internal CSS Loader
@@ -2116,6 +2074,85 @@
         url += '?' + $.param(vars);
         return url;
     };
+
+    // Update Environment
+    // ------------------
+
+    // This function requires more details.
+    /**
+     * @constructor
+     */
+    Stratus.Internals.UpdateEnvironment = function (request) {
+        if (!request) request = {};
+        if (typeof request === 'object' && Object.keys(request).length) {
+            Stratus.Internals.Ajax({
+                method: 'PUT',
+                url: '/Api/Session',
+                data: request,
+                type: 'application/json',
+                success: function (response) {
+                    var settings = response.payload || response;
+                    if (typeof settings === 'object') {
+                        Object.keys(settings).forEach(function (key) {
+                            Stratus.Environment.set(key, settings[key]);
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.error('error:', error);
+                }
+            });
+        }
+    };
+
+    // Track Location
+    // --------------
+
+    // This function requires more details.
+    /**
+     * @constructor
+     */
+    Stratus.Internals.TrackLocation = function () {
+        var envData = {};
+        if (!Stratus.Environment.has('timezone') || true) {
+            envData.timezone = new Date().toString().match(/\((.*)\)/)[1];
+        }
+        if (Stratus.Environment.get('trackLocation')) {
+            if (Stratus.Environment.get('trackLocationConsent')) {
+                Stratus.Internals.Location().done(function (pos) {
+                    envData.lat = pos.coords.latitude;
+                    envData.lng = pos.coords.longitude;
+                    Stratus.Environment.set('lat', pos.coords.latitude);
+                    Stratus.Environment.set('lng', pos.coords.longitude);
+                    Stratus.Internals.UpdateEnvironment(envData);
+                }, function (error) {
+                    console.error('Stratus Location:', error);
+                });
+            } else {
+                Stratus.Internals.Ajax({
+                    url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
+                    success: function (data) {
+                        if (!data) data = {};
+                        console.log('ipapi:', data);
+                        if (typeof data === 'object' && Object.keys(data).length && data.postal) {
+                            envData.postalCode = data.postal;
+                            envData.lat = data.latitude;
+                            envData.lng = data.longitude;
+                            envData.city = data.city;
+                            envData.region = data.region;
+                            envData.country = data.country;
+                            Stratus.Internals.UpdateEnvironment(envData);
+                        }
+                    }
+                });
+            }
+        } else {
+            Stratus.Internals.UpdateEnvironment(envData);
+        }
+    };
+
+    // Handle Location
+    Stratus.Internals.TrackLocation();
 
     // Post Message Handling
     // ---------------------
