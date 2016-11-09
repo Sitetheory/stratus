@@ -137,21 +137,21 @@
         // Begin initializing the widget within an asynchronous promise realm
         /**
          * @param options
-         * @param fulfill
+         * @param resolve
          * @param reject
          */
-        promise: function (options, fulfill, reject) {
+        promise: function (options, resolve, reject) {
             // set empty value as the off value
             this.options.emptyValue = this.options.valueOff;
 
             // TODO: Move this into the base for Icon Registration
             if (this.options.ui === 'icon' && this.options.iconPath) {
-                Stratus.Internals.Resource(this.options.iconPath, this.element).done(function (icon) {
+                Stratus.Internals.Resource(this.options.iconPath, this.element).then(function (icon) {
                     this.options.icon = icon;
-                    Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
+                    Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
                 }.bind(this));
             } else {
-                Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
+                Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
             }
         },
 

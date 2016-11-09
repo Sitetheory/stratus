@@ -63,10 +63,10 @@
         // Begin initializing the widget within an asynchronous promise realm
         /**
          * @param options
-         * @param fulfill
+         * @param resolve
          * @param reject
          */
-        promise: function (options, fulfill, reject) {
+        promise: function (options, resolve, reject) {
 
             // Store Templates for Dialogue
             this.templates = (_.has(options, 'templates')) ? options.templates : null;
@@ -116,16 +116,16 @@
                     view: this.view,
                     widget: this
                 });
-                this.dialogue.initializer.done(function (dialogue) {
+                this.dialogue.initializer.then(function (dialogue) {
                     this.dialogue = dialogue;
                     this.render();
-                    fulfill(this);
+                    resolve(this);
                 }.bind(this), function (rejection) {
                     reject(new Stratus.Prototypes.Error(rejection, this));
                 }.bind(this));
             } else {
                 this.render();
-                fulfill(this);
+                resolve(this);
             }
         },
         onRender: function (entries) {

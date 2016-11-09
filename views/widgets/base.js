@@ -233,11 +233,11 @@
             this.entity = (_.has(options, 'entity')) ? options.entity : null;
 
             // Return Promise for Loader Validation
-            this.initializer = new Promise(function (fulfill, reject) {
+            this.initializer = new Promise(function (resolve, reject) {
                 if (!this.prepare(options)) {
                     reject(new Stratus.Prototypes.Error('Prepare', this));
                 } else {
-                    this.fork(options, fulfill, reject);
+                    this.fork(options, resolve, reject);
                 }
             }.bind(this));
 
@@ -343,21 +343,21 @@
         // Passively fork this method until a Collection or Model is Hydrated
         /**
          * @param options
-         * @param fulfill
+         * @param resolve
          * @param reject
          * @returns {boolean}
          */
-        fork: function (options, fulfill, reject) {
+        fork: function (options, resolve, reject) {
             var success = true;
             if (this.collection && typeof this.collection === 'object' && !this.collection.isHydrated()) {
                 this.collection.once('success', function () {
-                    // FIXME: this.collection.once('reset', function () { this.fork(options, fulfill, reject); }, this);
-                    this.fork(options, fulfill, reject);
+                    // FIXME: this.collection.once('reset', function () { this.fork(options, resolve, reject); }, this);
+                    this.fork(options, resolve, reject);
                 }, this);
             } else if (this.model && typeof this.model === 'object' && !this.model.isHydrated()) {
                 this.model.once('success', function () {
                     this.model.once('change', function () {
-                        this.fork(options, fulfill, reject);
+                        this.fork(options, resolve, reject);
                     }, this);
                 }, this);
                 this.model.once('error', function () {
@@ -365,7 +365,7 @@
                 }, this);
             } else {
                 this.$el.removeClass('has-load');
-                this.promise(options, fulfill, reject);
+                this.promise(options, resolve, reject);
             }
             return success;
         },
@@ -692,33 +692,33 @@
 
         // promise()
         // ----------
-        // This needs to contain a fulfillment of the parent promise in every extension
+        // This needs to contain a resolution of the parent promise in every extension
         // or it will stop the finalize routines from ever executing, since they wait
-        // for widget fulfillment before continuing.
+        // for widget resolution before continuing.
         /**
          * @param options
-         * @param fulfill
+         * @param resolve
          * @param reject
          */
-        promise: function (options, fulfill, reject) {
+        promise: function (options, resolve, reject) {
             if (this.options.forceType && (!_.has(this, this.options.forceType) || typeof this[this.options.forceType] !== 'object')) {
                 reject(new Stratus.Prototypes.Error(_.ucfirst(this.options.forceType) + ' not present on widget.', this));
             } else if (_.size(this.options.cssFile)) {
-                Stratus.Internals.LoadCss(this.options.cssFile).done(function () {
-                    this.onFulfill();
+                Stratus.Internals.LoadCss(this.options.cssFile).then(function () {
+                    this.onResolve();
                     this.render();
-                    fulfill(this);
+                    resolve(this);
                 }.bind(this), function (rejection) {
                     reject(new Stratus.Prototypes.Error(rejection, this));
                 }.bind(this));
             } else {
-                this.onFulfill();
+                this.onResolve();
                 this.render();
-                fulfill(this);
+                resolve(this);
             }
         },
 
-        onFulfill: function () {},
+        onResolve: function () {},
 
         // render()
         // -------
@@ -958,9 +958,9 @@
         // Auto-loads all nest and parent widgets within the current rendered template and initializes
         // the loaderCallback which aggregates data and kicks off a render event & dispatch
         autoload: function () {
-            Stratus.Internals.Loader(this.el || this.$el, this.view).done(function (nest) {
+            Stratus.Internals.Loader(this.el || this.$el, this.view).then(function (nest) {
                 /* Second Loader for Parent-Children */
-                Stratus.Internals.Loader(this.$el.find('[data-entity]')).done(function (parent) {
+                Stratus.Internals.Loader(this.$el.find('[data-entity]')).then(function (parent) {
                     this.loaderCallback(nest, parent);
                 }.bind(this));
             }.bind(this));

@@ -159,16 +159,16 @@
         // Begin initializing the widget within an asynchronous promise realm
         /**
          * @param options
-         * @param fulfill
+         * @param resolve
          * @param reject
          */
-        promise: function (options, fulfill, reject) {
+        promise: function (options, resolve, reject) {
             if (_.contains(this.options.selectize.plugins, 'drag_drop')) {
                 require(['jquery-ui'], function () {
-                    Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
+                    Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
                 }.bind(this));
             } else {
-                Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
+                Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
             }
         },
 

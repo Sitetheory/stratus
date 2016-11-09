@@ -115,10 +115,10 @@
         // Begin initializing the widget within an asynchronous promise realm
         /**
          * @param options
-         * @param fulfill
+         * @param resolve
          * @param reject
          */
-        promise: function (options, fulfill, reject) {
+        promise: function (options, resolve, reject) {
 
             /*
              if (typeof options.template === 'function') {}
@@ -174,7 +174,7 @@
             this.views = {};
 
             this.once('render', function (widget) {
-                fulfill(widget);
+                resolve(widget);
             });
         },
 
@@ -599,9 +599,9 @@
                 this.$el.html(this.errorTemplate({ collection: this.collection, options: this.options }));
             }
             if (this.$el.html() && this.$el.html().trim().length) {
-                Stratus.Internals.Loader(this.el || this.$el, this.view).done(function (nest) {
+                Stratus.Internals.Loader(this.el || this.$el, this.view).then(function (nest) {
                     /* Second Loader for Parent-Children */
-                    Stratus.Internals.Loader(this.$el.find('[data-entity]')).done(function (parent) {
+                    Stratus.Internals.Loader(this.$el.find('[data-entity]')).then(function (parent) {
                         //this.loaderCallback(nest, parent);
                     }.bind(this));
                 }.bind(this), function (error) {

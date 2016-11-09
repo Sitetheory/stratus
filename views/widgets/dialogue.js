@@ -64,7 +64,7 @@
          */
         onRender: function (entries) {
             if (this.widget) {
-                this.widget.initializer.done(function () {
+                this.widget.initializer.then(function () {
                     this.primeTether();
                 }.bind(this));
             }

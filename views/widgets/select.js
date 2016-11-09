@@ -197,7 +197,7 @@
             }
         },
 
-        onFulfill: function () {
+        onResolve: function () {
             // Make Sure sourceTarget is an array we can cycle through for including the collection
             if (_.isObject(this.options.sourceTarget) && !_.isArray(this.options.sourceTarget)) {
                 this.options.sourceTarget = [this.options.sourceTarget];

@@ -933,7 +933,7 @@
                 that.xhr.send();
             }
         });
-        promise.done(that.success, that.error);
+        promise.then(that.success, that.error);
         return promise;
     };
 
@@ -973,7 +973,7 @@
                             fulfill(cssEntries);
                         }
                     } else {
-                        Stratus.Internals.CssLoader(url).done(function (entry) {
+                        Stratus.Internals.CssLoader(url).then(function (entry) {
                             cssEntries[cssEntry] = true;
                             if (cssEntries.total === cssEntries.iteration && _.allTrue(cssEntries)) {
                                 fulfill(cssEntries);
@@ -1446,7 +1446,7 @@
                 if (elementId !== undefined) {
                     meta.elementId = elementId;
                 }
-                Stratus.Internals.Api('Resource', meta, {}).done(function (data) {
+                Stratus.Internals.Api('Resource', meta, {}).then(function (data) {
                     Stratus.Resources[path].success = true;
                     Stratus.Resources[path].data = data;
                     Stratus.Events.trigger('resource:' + path, data);
@@ -1706,7 +1706,7 @@
                     entries.iteration++;
                     var entry = _.uniqueId('entry_');
                     entries.views[entry] = false;
-                    Stratus.Internals.ViewLoader(el, view, requirements).done(function (view) {
+                    Stratus.Internals.ViewLoader(el, view, requirements).then(function (view) {
                         entries.views[entry] = view;
                         if (entries.total === entries.iteration && _.allTrue(entries.views)) {
                             fulfill(entries);
@@ -1895,7 +1895,7 @@
                             require(requirements, function (Stratus) {
                                 Stratus.Internals[loaderType](fulfill, reject, view, requirements);
                             });
-                        }).done(fulfill, reject);
+                        }).then(fulfill, reject);
                     }
                 });
             });
@@ -1984,7 +1984,7 @@
                 Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options);
                 Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'));
                 if (_.has(Stratus.Instances[view.get('uid')], 'promise')) {
-                    Stratus.Instances[view.get('uid')].initializer.done(fulfill, reject);
+                    Stratus.Instances[view.get('uid')].initializer.then(fulfill, reject);
                 } else {
                     fulfill(Stratus.Instances[view.get('uid')]);
                 }
@@ -1999,7 +1999,7 @@
         } else {
             var nest = view.get('el').find('[data-type],[data-plugin]');
             if (nest.length > 0) {
-                Stratus.Internals.Loader(view.get('el'), view, requirements).done(function (fulfillment) {
+                Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (fulfillment) {
                     if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd();
                     fulfill(fulfillment);
                 }, function (rejection) {
@@ -2036,7 +2036,7 @@
                 Stratus.Instances[view.get('uid')] = new Stratus.Views.Plugins[type](options);
                 Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'));
                 if (_.has(Stratus.Instances[view.get('uid')], 'promise')) {
-                    Stratus.Instances[view.get('uid')].initializer.done(fulfill, reject);
+                    Stratus.Instances[view.get('uid')].initializer.then(fulfill, reject);
                 } else {
                     fulfill(Stratus.Instances[view.get('uid')]);
                 }
@@ -2119,7 +2119,7 @@
         }
         if (Stratus.Environment.get('trackLocation')) {
             if (Stratus.Environment.get('trackLocationConsent')) {
-                Stratus.Internals.Location().done(function (pos) {
+                Stratus.Internals.Location().then(function (pos) {
                     envData.lat = pos.coords.latitude;
                     envData.lng = pos.coords.longitude;
                     Stratus.Environment.set('lat', pos.coords.latitude);
@@ -2241,7 +2241,7 @@
         });
 
         // Load Views
-        Stratus.Internals.Loader().done(function (views) {
+        Stratus.Internals.Loader().then(function (views) {
             if (!Stratus.Environment.get('production')) console.info('Views:', views);
             Stratus.Events.on('finalize', function (views) {
                 if (!Backbone.History.started) Backbone.history.start();

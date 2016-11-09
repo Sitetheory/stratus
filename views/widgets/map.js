@@ -142,10 +142,10 @@
          */
         fetchCurrentLocation: function () {
             // Gather Current Geo-Location
-            return new Promise(function (fulfill, reject) {
-                Stratus.Internals.Location().done(function (pos) {
+            return new Promise(function (resolve, reject) {
+                Stratus.Internals.Location().then(function (pos) {
                     this.currentLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-                    if (fulfill) fulfill(this.currentLocation);
+                    if (resolve) resolve(this.currentLocation);
                 }.bind(this), function (error) {
                     if (reject) reject(error);
                 }.bind(this));
@@ -194,7 +194,7 @@
             }
 
             if (this.options.centerOnUser) {
-                this.fetchCurrentLocation().done(function (currentLocation) {
+                this.fetchCurrentLocation().then(function (currentLocation) {
                     this.options.center = currentLocation;
                     this.map.setCenter(this.options.center);
                 }.bind(this), function (error) {

@@ -41,7 +41,7 @@
                 };
                 this.initialize(options);
             };
-        })
-    }]
+        });
+    }];
 
 }));

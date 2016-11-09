@@ -90,18 +90,18 @@
         // Begin initializing the widget within an asynchronous promise realm
         /**
          * @param options
-         * @param fulfill
+         * @param resolve
          * @param reject
          */
-        promise: function (options, fulfill, reject) {
+        promise: function (options, resolve, reject) {
             if (this.options.iconPath) {
-                Stratus.Internals.Resource(this.options.iconPath, this.element).done(function (icon) {
+                Stratus.Internals.Resource(this.options.iconPath, this.element).then(function (icon) {
                     // get the resource text and set as the icon
                     this.options.icon = icon;
-                    Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
+                    Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
                 }.bind(this));
             } else {
-                Stratus.Views.Widgets.Base.prototype.promise.call(this, options, fulfill, reject);
+                Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
             }
         },
 

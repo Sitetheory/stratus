@@ -25,9 +25,7 @@ var coreList = [
     'collections/*.js',
     'models/*.js',
     'routers/*.js',
-    'views/base.js',
-    'views/plugins/*.js',
-    'views/widgets/*.js'
+    'views/**/*.js'
 ];
 var minList = [
     'stratus.min.js',
@@ -35,9 +33,7 @@ var minList = [
     'collections/*.min.js',
     'models/*.min.js',
     'routers/*.min.js',
-    'views/base.min.js',
-    'views/plugins/*.min.js',
-    'views/widgets/*.min.js'
+    'views/**/*.min.js'
 ];
 
 // Generate Exclusions
