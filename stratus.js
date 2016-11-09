@@ -908,7 +908,7 @@
 
         // Make Request
         this.xhr = new XMLHttpRequest();
-        var promise = new Promise(function (fulfill, reject) {
+        var promise = new Promise(function (resolve, reject) {
             that.xhr.open(that.method, that.url, true);
             if (typeof that.type === 'string' && that.type.length) {
                 that.xhr.setRequestHeader('Content-Type', that.type);
@@ -917,7 +917,7 @@
                 if (that.xhr.status >= 200 && that.xhr.status < 400) {
                     var response = that.xhr.responseText;
                     if (_.isJSON(response)) response = JSON.parse(response);
-                    fulfill(response);
+                    resolve(response);
                 } else {
                     reject(that.xhr);
                 }
@@ -950,7 +950,7 @@
      * @constructor
      */
     Stratus.Internals.LoadCss = function (urls) {
-        return new Promise(function (fulfill, reject) {
+        return new Promise(function (resolve, reject) {
             if (typeof urls === 'undefined' || typeof urls === 'function') {
                 reject(new Stratus.Prototypes.Error({
                     code: 'LoadCSS',
@@ -970,13 +970,13 @@
                     if (typeof url === 'undefined' || !url) {
                         cssEntries[cssEntry] = true;
                         if (cssEntries.total === cssEntries.iteration && _.allTrue(cssEntries)) {
-                            fulfill(cssEntries);
+                            resolve(cssEntries);
                         }
                     } else {
                         Stratus.Internals.CssLoader(url).then(function (entry) {
                             cssEntries[cssEntry] = true;
                             if (cssEntries.total === cssEntries.iteration && _.allTrue(cssEntries)) {
-                                fulfill(cssEntries);
+                                resolve(cssEntries);
                             }
                         }, reject);
                     }
@@ -1272,7 +1272,7 @@
      * @constructor
      */
     Stratus.Internals.Location = function (options) {
-        return new Promise(function (fulfill, reject) {
+        return new Promise(function (resolve, reject) {
             if (!('geolocation' in navigator)) {
                 reject(new Stratus.Prototypes.Error({
                     code: 'Location',
@@ -1284,7 +1284,7 @@
                     timeout: 20000,
                     maximumAge: 50000
                 }, options || {});
-                navigator.geolocation.getCurrentPosition(fulfill, reject, options);
+                navigator.geolocation.getCurrentPosition(resolve, reject, options);
             }
         });
     };
@@ -1295,7 +1295,7 @@
      * @constructor
      */
     Stratus.Internals.CssLoader = function (url) {
-        return new Promise(function (fulfill, reject) {
+        return new Promise(function (resolve, reject) {
             /* Digest Extension */
             /*
             FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
@@ -1305,9 +1305,9 @@
             /* Verify Identical Calls */
             if (url in Stratus.CSS) {
                 if (Stratus.CSS[url]) {
-                    fulfill();
+                    resolve();
                 } else {
-                    Stratus.Events.once('onload:' + url, fulfill);
+                    Stratus.Events.once('onload:' + url, resolve);
                 }
             } else {
                 /* Set CSS State */
@@ -1319,10 +1319,10 @@
                 link.rel = 'stylesheet';
                 link.href = url;
 
-                /* Track Fulfillment */
+                /* Track Resolution */
                 Stratus.Events.once('onload:' + url, function () {
                     Stratus.CSS[url] = true;
-                    fulfill();
+                    resolve();
                 });
 
                 /* Capture OnLoad or Fallback */
@@ -1353,7 +1353,7 @@
      * @constructor
      */
     Stratus.Internals.Convoy = function (convoy, query) {
-        return new Promise(function (fulfill, reject) {
+        return new Promise(function (resolve, reject) {
             if (convoy === undefined) {
                 reject(new Stratus.Prototypes.Error({
                     code: 'Convoy',
@@ -1373,7 +1373,7 @@
                     'Access-Control-Allow-Origin': '*'
                 },
                 success: function (response) {
-                    fulfill(response);
+                    resolve(response);
                     return response;
                 },
                 error: function (response) {
@@ -1423,7 +1423,7 @@
      * @constructor
      */
     Stratus.Internals.Resource = function (path, elementId) {
-        return new Promise(function (fulfill, reject) {
+        return new Promise(function (resolve, reject) {
             if (typeof path === 'undefined') {
                 reject(new Stratus.Prototypes.Error({
                     code: 'Resource',
@@ -1432,16 +1432,16 @@
             }
             if (_.has(Stratus.Resources, path)) {
                 if (Stratus.Resources[path].success) {
-                    fulfill(Stratus.Resources[path].data);
+                    resolve(Stratus.Resources[path].data);
                 } else {
-                    Stratus.Events.once('resource:' + path, fulfill);
+                    Stratus.Events.once('resource:' + path, resolve);
                 }
             } else {
                 Stratus.Resources[path] = {
                     success: false,
                     data: null
                 };
-                Stratus.Events.once('resource:' + path, fulfill);
+                Stratus.Events.once('resource:' + path, resolve);
                 var meta = { path: path, dataType: 'text' };
                 if (elementId !== undefined) {
                     meta.elementId = elementId;
@@ -1695,7 +1695,7 @@
         if (selector) {
             selector = (view && selector && typeof selector === 'object') ? $(selector).find('[data-type],[data-plugin]') : $(selector);
         }
-        return new Promise(function (fulfill, reject) {
+        return new Promise(function (resolve, reject) {
             var entries = {
                 total: (selector && typeof selector === 'object') ? selector.length : 0,
                 iteration: 0,
@@ -1709,12 +1709,12 @@
                     Stratus.Internals.ViewLoader(el, view, requirements).then(function (view) {
                         entries.views[entry] = view;
                         if (entries.total === entries.iteration && _.allTrue(entries.views)) {
-                            fulfill(entries);
+                            resolve(entries);
                         }
                     }, reject);
                 });
             } else {
-                fulfill(entries);
+                resolve(entries);
             }
         });
     };
@@ -1809,15 +1809,15 @@
             }
         }
 
-        return new Promise(function (fulfill, reject) {
+        return new Promise(function (resolve, reject) {
             if (view.get('guid')) {
                 if (!Stratus.Environment.get('production')) console.warn('View hydration halted on', view.get('guid'), 'due to repeat calls on the same element.', view.toObject());
-                fulfill(true);
+                resolve(true);
                 return true;
             }
             if (parentChild) {
                 /* if (!Stratus.Environment.get('production')) console.warn('Parent Child Detected:', view.toObject()); */
-                fulfill(true);
+                resolve(true);
                 return true;
             }
             require(requirements, function (Stratus) {
@@ -1888,14 +1888,14 @@
                 _.each(loaderTypes, function (loaderType) {
                     /* If subRequirements are detected in Custom Template, load their types before the View is instantiated. */
                     if (_.size(subRequirements) === 0) {
-                        Stratus.Internals[loaderType](fulfill, reject, view, requirements);
+                        Stratus.Internals[loaderType](resolve, reject, view, requirements);
                     } else {
                         requirements = _.union(requirements, subRequirements);
-                        new Promise(function (fulfill, reject) {
+                        new Promise(function (resolve, reject) {
                             require(requirements, function (Stratus) {
-                                Stratus.Internals[loaderType](fulfill, reject, view, requirements);
+                                Stratus.Internals[loaderType](resolve, reject, view, requirements);
                             });
-                        }).then(fulfill, reject);
+                        }).then(resolve, reject);
                     }
                 });
             });
@@ -1904,13 +1904,13 @@
 
     // Load Widgets
     /**
-     * @param fulfill
+     * @param resolve
      * @param reject
      * @param view
      * @param requirements
      * @constructor
      */
-    Stratus.Internals.WidgetLoader = function (fulfill, reject, view, requirements) {
+    Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) {
         /* TODO: In the a model scope, we are more likely to want a collection of the View to create the original reference, since it will be able to determine the model's relational data at runtime */
         if (view.get('scope') === 'model') {
             if (!Stratus.Models.has(view.get('entity'))) {
@@ -1984,9 +1984,9 @@
                 Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options);
                 Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'));
                 if (_.has(Stratus.Instances[view.get('uid')], 'promise')) {
-                    Stratus.Instances[view.get('uid')].initializer.then(fulfill, reject);
+                    Stratus.Instances[view.get('uid')].initializer.then(resolve, reject);
                 } else {
-                    fulfill(Stratus.Instances[view.get('uid')]);
+                    resolve(Stratus.Instances[view.get('uid')]);
                 }
             } else {
                 if (!Stratus.Environment.get('production')) console.warn('Stratus.Views.Widgets.' + type + ' is not correctly configured.');
@@ -1999,9 +1999,9 @@
         } else {
             var nest = view.get('el').find('[data-type],[data-plugin]');
             if (nest.length > 0) {
-                Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (fulfillment) {
+                Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (resolution) {
                     if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd();
-                    fulfill(fulfillment);
+                    resolve(resolution);
                 }, function (rejection) {
                     if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd();
                     reject(new Stratus.Prototypes.Error(rejection, nest));
@@ -2009,10 +2009,10 @@
             } else {
                 if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) {
                     console.warn('No Innate or Nested Type Found:', view.toObject());
-                    fulfill(view.toObject());
+                    resolve(view.toObject());
                     console.groupEnd();
                 } else {
-                    fulfill(view.toObject());
+                    resolve(view.toObject());
                 }
             }
         }
@@ -2020,13 +2020,13 @@
 
     // Load Plugins Like we Load Views
     /**
-     * @param fulfill
+     * @param resolve
      * @param reject
      * @param view
      * @param requirements
      * @constructor
      */
-    Stratus.Internals.PluginLoader = function (fulfill, reject, view, requirements) {
+    Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) {
         var types = _.union([view.get('plugin')], view.get('plugins'));
         _.each(types, function (type) {
             type = _.ucfirst(type);
@@ -2036,9 +2036,9 @@
                 Stratus.Instances[view.get('uid')] = new Stratus.Views.Plugins[type](options);
                 Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'));
                 if (_.has(Stratus.Instances[view.get('uid')], 'promise')) {
-                    Stratus.Instances[view.get('uid')].initializer.then(fulfill, reject);
+                    Stratus.Instances[view.get('uid')].initializer.then(resolve, reject);
                 } else {
-                    fulfill(Stratus.Instances[view.get('uid')]);
+                    resolve(Stratus.Instances[view.get('uid')]);
                 }
             } else {
                 if (!Stratus.Environment.get('production')) console.warn('Stratus.Views.Plugins.' + type + ' is not correctly configured.');
