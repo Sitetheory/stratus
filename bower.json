@@ -40,7 +40,7 @@
     "jquery-ui": "^1.*",
     "jquery.toaster": "^1.*",
     "dropzone": "^4.*",
-    "selectize": "^0.*",
+    "selectize": "^0.12.4",
     "chartist": "^0.*",
     "less": "^2.*",
     "tether-drop": "^1.*",
