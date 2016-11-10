@@ -124,6 +124,7 @@
         /* Stratus */
         CSS: {},
         Chronos: null,
+        Cookies: null,
         Environment: new Backbone.Model({
             ip: null,
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
@@ -147,7 +148,6 @@
         Internals: {},
         Prototypes: {},
         Resources: {},
-        Tools: {},
 
         // Plugins */
         PluginMethods: {},
@@ -164,41 +164,6 @@
     if (!Stratus.Environment.get('production')) {
         console.group('Stratus Warm Up');
     }
-
-    // Stratus Tools
-    // -------------
-
-    // Simply capitalize the first letter of a string.
-    /**
-     * @param string
-     * @returns {*}
-     */
-    Stratus.Tools.UpperFirst = function (string) {
-        return (typeof string === 'string' && string) ? string.charAt(0).toUpperCase() + string.substring(1) : null;
-    };
-
-    // Simply change the first letter of a string to a lower case.
-    /**
-     * @param string
-     * @returns {*}
-     */
-    Stratus.Tools.LowerFirst = function (string) {
-        return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null;
-    };
-
-    // Simply detect valid JSON
-    /**
-     * @param str
-     * @returns {boolean}
-     */
-    Stratus.Tools.isJSON = function (str) {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
-        return true;
-    };
 
     // Underscore Mixins
     // ------------------
@@ -658,6 +623,131 @@
         }
     });
     Stratus.Chronos = new Stratus.Prototypes.Chronos();
+
+
+    // Cookie System
+    // --------------
+    Stratus.Prototypes.Cookies = Backbone.Model.extend({
+        /**
+         * @param options
+         */
+        initialize: function (options) {
+            if (!Stratus.Environment.get('production')) console.info('Cookie Manager Invoked!');
+            this.on('change', this.synchronize, this);
+        },
+        synchronize: function () {
+            _.each(this.changed, function (job, key) {
+                if (typeof key === 'string' && key.indexOf('.') !== -1) {
+                    key = _.first(key.split('.'));
+                    job = this.get(key);
+                }
+                if (!job.code && job.enabled) {
+                    job.code = setInterval(function (job) {
+                        job.func.call(job.scope);
+                    }, job.time * 1000, job);
+                } else if (job.code && !job.enabled) {
+                    clearInterval(job.code);
+                    job.code = 0;
+                }
+            }, this);
+        },
+        /**
+         * @param time
+         * @param func
+         * @param scope
+         * @returns {string}
+         */
+        add: function (time, func, scope) {
+            var uid = null;
+            time = _.seconds(time);
+            if (time !== null && typeof func === 'function') {
+                uid = _.uniqueId('job_');
+                scope = scope || window;
+                this.set(uid, {
+                    time: time,
+                    func: func,
+                    scope: scope,
+                    code: 0,
+                    enabled: false
+                });
+            }
+            return uid;
+        },
+        /**
+         * @param uid
+         * @returns {boolean|*}
+         */
+        enable: function (uid) {
+            var success = this.has(uid);
+            if (success) this.set(uid + '.enabled', true);
+            return success;
+        },
+        /**
+         * @param uid
+         * @returns {boolean|*}
+         */
+        disable: function (uid) {
+            var success = this.has(uid);
+            if (success) this.set(uid + '.enabled', false);
+            return success;
+        },
+        /**
+         * @param uid
+         * @param value
+         * @returns {boolean|*}
+         */
+        toggle: function (uid, value) {
+            var success = this.has(uid);
+            if (success) this.set(uid + '.enabled', (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'));
+            return success;
+        },
+
+        // TODO: Implement Functions Below into the Standards Above
+
+        /**
+         * @param name
+         * @returns {null}
+         */
+        retrieve: function (name) {
+            var search = '(?:^' + name + '|;\s*' + name + ')=(.*?)(?:;|$)';
+            console.log('search:', search);
+            var regexp = new RegExp(search, 'gi');
+            var result = regexp.exec(document.cookie);
+            return (result === null) ? null : result[1];
+        },
+        /**
+         * @param name
+         * @param value
+         * @param expires
+         * @param path
+         * @param domain
+         */
+        create: function (name, value, expires, path, domain) {
+            var cookie = name + '=' + escape(value) + ';';
+            if (expires) {
+                if (expires instanceof Date) {
+                    if (isNaN(expires.getTime())) {
+                        expires = new Date();
+                    }
+                } else {
+                    expires = new Date(new Date().getTime() + parseInt(expires) * 1000 * 60 * 60 * 24);
+                }
+                cookie += 'expires=' + expires.toGMTString() + ';';
+            }
+            if (path) cookie += 'path=' + path + ';';
+            if (domain) cookie += 'domain=' + domain + ';';
+            document.cookie = cookie;
+        },
+        /**
+         * @param name
+         */
+        remove: function (name) {
+            if (this.retrieve(name)) {
+                this.create(name, '', -1);
+            }
+        }
+    });
+    Stratus.Cookies = new Stratus.Prototypes.Cookies();
 
     // Internal Collections
     // --------------------

@@ -21,11 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular'], factory);
+        define(['stratus', 'underscore', 'angular'], factory);
     } else {
-        factory(root.Stratus);
+        factory(root.Stratus, root._);
     }
-}(this, function (Stratus) {
+}(this, function (Stratus, _) {
 
     // Angular Model
     // -------------
@@ -48,7 +48,7 @@
 
                 // Generate URL
                 if (this.entity) {
-                    this.url += '/' + Stratus.Tools.UpperFirst(this.entity);
+                    this.url += '/' + _.ucfirst(this.entity);
                 }
 
                 // Contextual Hoisting

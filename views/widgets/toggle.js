@@ -37,7 +37,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'underscore', 'text!templates-toggle', 'stratus.views.widgets.base', 'bootstrap-toggle'], factory);
+        define(['stratus', 'jquery', 'underscore', 'text!templates-toggle', 'stratus.views.widgets.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -66,7 +66,9 @@
                 dataType: null,
 
                 // SliderCss
-                sliderCss: [Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css'],
+                sliderCss: [
+                    // Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css'
+                ],
 
                 // specify whether the value being toggled is 'boolean' (true|false) or 'string' (1|0, red|green)
                 // If value is 'string' you MUST set the valueOn and valueOff
@@ -218,6 +220,7 @@
 
                 this.scopeChanged();
 
+                /*
                 // Find DOM Element
                 this.slider = this.$el.find('input');
 
@@ -232,6 +235,7 @@
                     width: this.options.sliderWidth,
                     height: this.options.sliderHeight
                 });
+                */
             }
         },
 
