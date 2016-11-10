@@ -50,7 +50,9 @@
     "mathjs": "^3.*",
     "angular": "^1.*",
     "angular-material": "^1.*",
-    "angular-chart.js": "^1.*"
+    "angular-chart.js": "^1.*",
+    "angular-redactor": "^1.*",
+    "angular-moment-picker": "moment-picker#^0.*"
   },
   "private": false
 }
