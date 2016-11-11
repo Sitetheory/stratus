@@ -624,7 +624,6 @@
     });
     Stratus.Chronos = new Stratus.Prototypes.Chronos();
 
-
     // Cookie System
     // --------------
     Stratus.Prototypes.Cookies = Backbone.Model.extend({

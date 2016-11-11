@@ -67,6 +67,7 @@
 
                 // SliderCss
                 sliderCss: [
+
                     // Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css'
                 ],
 
