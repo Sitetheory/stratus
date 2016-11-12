@@ -35,13 +35,16 @@
         $provide.factory('model', function ($q, $http) {
             return function (options, attributes) {
 
-                // Build Environment
+                // Environment
                 this.entity = null;
                 if (options && typeof options == 'object') {
                     angular.extend(this, options);
                 }
+
+                // Infrastructure
                 this.url = '/Api';
                 this.attributes = {};
+                this.meta = new Stratus.Prototypes.Collection();
                 if (attributes && typeof attributes == 'object') {
                     angular.extend(this.attributes, attributes);
                 }
@@ -50,6 +53,11 @@
                 if (this.entity) {
                     this.url += '/' + _.ucfirst(this.entity);
                 }
+
+                // Internals
+                this.pending = true;
+                this.error = false;
+                this.completed = false;
 
                 // Contextual Hoisting
                 var that = this;
@@ -76,10 +84,22 @@
                     return $q(function (resolve, reject) {
                         that.sync().then(function (response) {
                             if (response.status == '200') {
+                                // Data
                                 that.meta = response.data.meta || {};
                                 that.attributes = response.data.payload || response.data;
+
+                                // Internals
+                                that.pending = false;
+                                that.completed = true;
+
+                                // Promise
                                 resolve(that.attributes);
                             } else {
+                                // Internals
+                                that.pending = false;
+                                that.error = true;
+
+                                // Promise
                                 reject(response);
                             }
                         }, reject);

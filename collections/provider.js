@@ -34,6 +34,8 @@
     Stratus.Collections.Provider = ['$provide', function ($provide) {
         $provide.factory('collection', function ($q, $http, $timeout, model) {
             return function (options) {
+
+                // Environment
                 this.entity = null;
                 this.infinite = false;
                 this.threshold = 0.5;
