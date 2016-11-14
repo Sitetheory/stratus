@@ -37,16 +37,17 @@
 
                 // Environment
                 this.entity = null;
+                this.manifest = false;
                 if (options && typeof options == 'object') {
                     angular.extend(this, options);
                 }
 
                 // Infrastructure
                 this.url = '/Api';
-                this.data = {};
+                this.attributes = {};
                 this.meta = new Stratus.Prototypes.Collection();
                 if (attributes && typeof attributes == 'object') {
-                    angular.extend(this.data, attributes);
+                    angular.extend(this.attributes, attributes);
                 }
 
                 // Generate URL
@@ -64,36 +65,48 @@
 
                 /**
                  * @param action
+                 * @param data
                  * @returns {*}
                  */
-                this.sync = function (action) {
-                    var prototype = {
-                        method: action || 'GET',
-                        url: that.get('id') ? that.url + '/' + that.get('id') : that.url,
-                        headers: {
-                            action: action || 'GET'
-                        }
-                    };
-                    return $http(prototype);
-                };
-
-                /**
-                 * @returns {*}
-                 */
-                this.fetch = function () {
+                this.sync = function (action, data) {
+                    this.pending = true;
                     return $q(function (resolve, reject) {
-                        that.sync().then(function (response) {
+                        action = action || 'GET';
+                        var prototype = {
+                            method: action,
+                            url: that.get('id') ? that.url + '/' + that.get('id') : that.url,
+                            headers: {
+                                action: action
+                            }
+                        };
+                        if (angular.isDefined(data)) {
+                            if (action === 'GET') {
+                                if (angular.isObject(data)) {
+                                    var values = [];
+                                    angular.forEach(data, function (value, key) {
+                                        values.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                                    });
+                                    if (values.length) {
+                                        prototype.url += '?' + values.join('&');
+                                    }
+                                }
+                            } else {
+                                prototype.headers['Content-Type'] = 'application/json';
+                                prototype.data = JSON.stringify(data);
+                            }
+                        }
+                        $http(prototype).then(function (response) {
                             if (response.status == '200') {
                                 // Data
                                 that.meta = response.data.meta || {};
-                                that.data = response.data.payload || response.data;
+                                that.attributes = response.data.payload || response.data;
 
                                 // Internals
                                 that.pending = false;
                                 that.completed = true;
 
                                 // Promise
-                                resolve(that.data);
+                                resolve(that.attributes);
                             } else {
                                 // Internals
                                 that.pending = false;
@@ -106,19 +119,42 @@
                     });
                 };
 
+                /**
+                 * @param action
+                 * @param data
+                 * @returns {*}
+                 */
+                this.fetch = function (action, data) {
+                    return that.sync(action, data || that.meta.get('api'));
+                };
+
+                /**
+                 * @returns {*}
+                 */
+                this.save = function () {
+                    return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON());
+                };
+
                 // Attribute Functions
+
+                /**
+                 * @returns {Array}
+                 */
+                this.toJSON = function () {
+                    return that.attributes;
+                };
 
                 /**
                  * @param attribute
                  * @returns {*}
                  */
                 this.get = function (attribute) {
-                    if (typeof attribute !== 'string' || !that.data || typeof that.data !== 'object') {
+                    if (typeof attribute !== 'string' || !that.attributes || typeof that.attributes !== 'object') {
                         return undefined;
                     } else {
                         return attribute.split('.').reduce(function (attributes, a) {
                             return attributes && attributes[a];
-                        }, that.data);
+                        }, that.attributes);
                     }
                 };
 
@@ -177,6 +213,16 @@
                     }
                     return false;
                 };
+
+                /**
+                 * @type {any}
+                 */
+                this.initialize = this.initialize || function () {
+                    if (that.manifest && !that.get('id')) {
+                        that.sync('POST').then(function () {}, console.error);
+                    }
+                };
+                this.initialize();
             };
         });
     }];
