@@ -44,10 +44,10 @@
 
                 // Infrastructure
                 this.url = '/Api';
-                this.attributes = {};
+                this.data = {};
                 this.meta = new Stratus.Prototypes.Collection();
                 if (attributes && typeof attributes == 'object') {
-                    angular.extend(this.attributes, attributes);
+                    angular.extend(this.data, attributes);
                 }
 
                 // Generate URL
@@ -99,14 +99,14 @@
                             if (response.status == '200') {
                                 // Data
                                 that.meta = response.data.meta || {};
-                                that.attributes = response.data.payload || response.data;
+                                that.data = response.data.payload || response.data;
 
                                 // Internals
                                 that.pending = false;
                                 that.completed = true;
 
                                 // Promise
-                                resolve(that.attributes);
+                                resolve(that.data);
                             } else {
                                 // Internals
                                 that.pending = false;
@@ -141,7 +141,7 @@
                  * @returns {Array}
                  */
                 this.toJSON = function () {
-                    return that.attributes;
+                    return that.data;
                 };
 
                 /**
@@ -149,12 +149,12 @@
                  * @returns {*}
                  */
                 this.get = function (attribute) {
-                    if (typeof attribute !== 'string' || !that.attributes || typeof that.attributes !== 'object') {
+                    if (typeof attribute !== 'string' || !that.data || typeof that.data !== 'object') {
                         return undefined;
                     } else {
                         return attribute.split('.').reduce(function (attributes, a) {
                             return attributes && attributes[a];
-                        }, that.attributes);
+                        }, that.data);
                     }
                 };
 
