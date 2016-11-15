@@ -65,6 +65,28 @@
                 // Contextual Hoisting
                 var that = this;
 
+                /**
+                 * @param obj
+                 * @param chain
+                 * @returns {string}
+                 */
+                this.serialize = function (obj, chain) {
+                    var str = [];
+                    obj = obj || {};
+                    angular.forEach(obj, function (value, key) {
+                        if (angular.isObject(value)) {
+                            str.push(that.serialize(value, key));
+                        } else {
+                            var encoded = '';
+                            if (chain) encoded += chain + '[';
+                            encoded += key;
+                            if (chain) encoded += ']';
+                            str.push(encoded + '=' + value);
+                        }
+                    });
+                    return str.join('&');
+                };
+
                 // TODO: Abstract this deeper
                 /**
                  * @param action
@@ -84,14 +106,8 @@
                         };
                         if (angular.isDefined(data)) {
                             if (action === 'GET') {
-                                if (angular.isObject(data)) {
-                                    var values = [];
-                                    angular.forEach(data, function (value, key) {
-                                        values.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-                                    });
-                                    if (values.length) {
-                                        prototype.url += '?' + values.join('&');
-                                    }
+                                if (angular.isObject(data) && Object.keys(data).length) {
+                                    prototype.url += '?' + that.serialize(data);
                                 }
                             } else {
                                 prototype.headers['Content-Type'] = 'application/json';
@@ -164,41 +180,41 @@
 
                 // Infinite Scrolling
                 /*
-                this.infiniteModels = {
-                    numLoaded_: 0,
-                    toLoad_: 0,
+                 this.infiniteModels = {
+                 numLoaded_: 0,
+                 toLoad_: 0,
 
-                    // Required.
-                    getItemAtIndex: function (index) {
-                        if (index > this.numLoaded_) {
-                            this.fetchMoreItems_(index);
-                            return null;
-                        }
+                 // Required.
+                 getItemAtIndex: function (index) {
+                 if (index > this.numLoaded_) {
+                 this.fetchMoreItems_(index);
+                 return null;
+                 }
 
-                        return index;
-                    },
+                 return index;
+                 },
 
-                    // Required.
-                    // For infinite scroll behavior, we always return a slightly higher
-                    // number than the previously loaded items.
-                    getLength: function () {
-                        return this.numLoaded_ + 5;
-                    },
+                 // Required.
+                 // For infinite scroll behavior, we always return a slightly higher
+                 // number than the previously loaded items.
+                 getLength: function () {
+                 return this.numLoaded_ + 5;
+                 },
 
-                    fetchMoreItems_: function (index) {
-                        // For demo purposes, we simulate loading more items with a timed
-                        // promise. In real code, this function would likely contain an
-                        // $http request.
+                 fetchMoreItems_: function (index) {
+                 // For demo purposes, we simulate loading more items with a timed
+                 // promise. In real code, this function would likely contain an
+                 // $http request.
 
-                        if (this.toLoad_ < index) {
-                            this.toLoad_ += 20;
-                            $timeout(angular.noop, 300).then(angular.bind(this, function () {
-                                this.numLoaded_ = this.toLoad_;
-                            }));
-                        }
-                    }
-                }
-                */
+                 if (this.toLoad_ < index) {
+                 this.toLoad_ += 20;
+                 $timeout(angular.noop, 300).then(angular.bind(this, function () {
+                 this.numLoaded_ = this.toLoad_;
+                 }));
+                 }
+                 }
+                 }
+                 */
             };
         });
     }];

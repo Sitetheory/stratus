@@ -118,6 +118,10 @@
         Events: {},
         Relations: {},
 
+        /* Angular */
+        Directives: {},
+        Filters: {},
+
         /* Bowser */
         Client: bowser,
 

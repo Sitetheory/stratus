@@ -27,11 +27,11 @@
     }
 }(this, function (Stratus) {
 
-    // Angular View Provider
-    // ---------------------
+    // Angular Directive Provider
+    // --------------------------
 
     // This View Service handles element binding for a single scope and element
-    Stratus.Views.Provider = ['$provide', function ($provide) {
+    Stratus.Directives.Provider = ['$provide', function ($provide) {
         $provide.factory('view', function ($scope, $element) {
             return function (options) {
                 this.promise = null;
