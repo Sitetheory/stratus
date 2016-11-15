@@ -27,8 +27,8 @@
     }
 }(this, function (Stratus) {
 
-    // Angular View
-    // -------------
+    // Angular View Provider
+    // ---------------------
 
     // This View Service handles element binding for a single scope and element
     Stratus.Views.Provider = ['$provide', function ($provide) {

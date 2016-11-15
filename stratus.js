@@ -965,6 +965,19 @@
     };
 
     /**
+     * @param str
+     * @returns {boolean}
+     */
+    Stratus.Internals.isJSON = function (str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    };
+
+    /**
      * @param request
      * @constructor
      */

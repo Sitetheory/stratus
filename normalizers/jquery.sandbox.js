@@ -28,12 +28,15 @@
 }(this, function () {
 
     // This sandboxes jquery's dollar sign
-    var sandbox =  jQuery.noConflict(true);
+    // FIXME: noConflict causes Angular to never detect jQuery, so it is disabled temporarily!
+    var sandbox = jQuery || jQuery.noConflict(true);
 
     // Notify developers of sandbox version
+    /*
     if (typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1) {
         console.log('Sandbox jQuery:', sandbox.fn.jquery);
     }
+    */
 
     /**
      * @param str

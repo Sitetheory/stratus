@@ -72,42 +72,33 @@
                  * @returns {*}
                  */
                 this.sync = function (action, data) {
-                    action = action || 'GET';
-                    var prototype = {
-                        method: action,
-                        url: that.url,
-                        headers: {
-                            action: action
-                        }
-                    };
-                    if (angular.isDefined(data)) {
-                        if (action === 'GET') {
-                            if (angular.isObject(data)) {
-                                var values = [];
-                                angular.forEach(data, function (value, key) {
-                                    values.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-                                });
-                                if (values.length) {
-                                    prototype.url += '?' + values.join('&');
-                                }
-                            }
-                        } else {
-                            prototype.headers['Content-Type'] = 'application/json';
-                            prototype.data = JSON.stringify(data);
-                        }
-                    }
-                    return $http(prototype);
-                };
-
-                /**
-                 * @param action
-                 * @param data
-                 * @returns {*}
-                 */
-                this.fetch = function (action, data) {
                     this.pending = true;
                     return $q(function (resolve, reject) {
-                        that.sync(action, data || that.meta.get('api')).then(function (response) {
+                        action = action || 'GET';
+                        var prototype = {
+                            method: action,
+                            url: that.url,
+                            headers: {
+                                action: action
+                            }
+                        };
+                        if (angular.isDefined(data)) {
+                            if (action === 'GET') {
+                                if (angular.isObject(data)) {
+                                    var values = [];
+                                    angular.forEach(data, function (value, key) {
+                                        values.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                                    });
+                                    if (values.length) {
+                                        prototype.url += '?' + values.join('&');
+                                    }
+                                }
+                            } else {
+                                prototype.headers['Content-Type'] = 'application/json';
+                                prototype.data = JSON.stringify(data);
+                            }
+                        }
+                        $http(prototype).then(function (response) {
                             if (response.status == '200') {
                                 // Data
                                 that.meta.set(response.data.meta);
@@ -141,12 +132,34 @@
                 };
 
                 /**
+                 * @param action
+                 * @param data
+                 * @returns {*}
+                 */
+                this.fetch = function (action, data) {
+                    return that.sync(action, data || that.meta.get('api'));
+                };
+
+                /**
                  * @param query
-                 * @returns {*|Promise}
+                 * @returns {*}
                  */
                 this.filter = function (query) {
                     that.meta.set('api.q', query);
                     return that.fetch();
+                };
+
+                /**
+                 * @returns {Array}
+                 */
+                this.toJSON = function () {
+                    var sanitized = [];
+                    that.models.forEach(function (model) {
+                        if (typeof model.toJSON === 'function') {
+                            sanitized.push(model.toJSON());
+                        }
+                    });
+                    return sanitized;
                 };
 
                 // Infinite Scrolling
