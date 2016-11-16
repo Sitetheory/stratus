@@ -46,7 +46,9 @@
     "requireCamelCaseOrUpperCaseIdentifiers": true,
     "requireDollarBeforejQueryAssignment": true,
     "requireLineFeedAtFileEnd": true,
-    "requireCapitalizedConstructors": true,
+    "requireCapitalizedConstructors": {
+        "allExcept": ["collection", "model"]
+    },
     "requireDotNotation": true,
     "requireSpacesInForStatement": true,
     "requireSpacesInsideObjectBrackets": "all",
