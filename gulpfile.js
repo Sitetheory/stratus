@@ -27,6 +27,7 @@ var coreList = [
     'models/*.js',
     'normalizers/*.js',
     'routers/*.js',
+    'controllers/*.js',
     'views/**/*.js'
 ];
 var minList = [
@@ -37,6 +38,7 @@ var minList = [
     'models/*.min.js',
     'normalizers/*.min.js',
     'routers/*.min.js',
+    'controllers/*.min.js',
     'views/**/*.min.js'
 ];
 

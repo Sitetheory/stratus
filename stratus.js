@@ -73,9 +73,6 @@
     // individual instance of Stratus Objects are currently not maintained within
     // the Stratus Layer's Global Object.  There may be a future implementation of a
     // Stratus Property to contain these instances within the Stratus Layer as well.
-    /**
-     * @type {{DOM: {}, Key: {}, PostMessage: {}, Models: {}, Collections: {}, Views: {}, Routers: {}, Events: {}, Relations: {}, Client: *, CSS: {}, Environment: {}, Internals: {}, Instances: {}, Resources: {}, History: {}}}
-     */
     var Stratus = {
         /* Settings */
         Settings: {
@@ -111,6 +108,7 @@
         Collections: new Backbone.Model(),
         Models: new Backbone.Model(),
         Routers: new Backbone.Model(),
+        Controllers: {},
         Views: {
             Plugins: {},
             Widgets: {}
@@ -520,11 +518,16 @@
     // ----------------------------------
 
     // This needs to run after the jQuery library is configured.
-    var initialLoad = document.querySelector('body').getAttribute('data-environment');
-    if (_.isJSON(initialLoad)) initialLoad = JSON.parse(initialLoad);
-    if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
-        Stratus.Environment.set(initialLoad);
-    }
+    /**
+     * @constructor
+     */
+    Stratus.Internals.LoadEnvironment = function () {
+        var initialLoad = document.querySelector('body').getAttribute('data-environment');
+        if (_.isJSON(initialLoad)) initialLoad = JSON.parse(initialLoad);
+        if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
+            Stratus.Environment.set(initialLoad);
+        }
+    };
 
     // Instance Clean
     // --------------
@@ -2365,6 +2368,7 @@
             console.groupEnd();
             console.group('Stratus Initialize');
         }
+        Stratus.Internals.LoadEnvironment();
         Stratus.Internals.Compatibility();
         Stratus.RegisterGroup = new Stratus.Prototypes.Collection();
 
