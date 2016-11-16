@@ -21,7 +21,7 @@
 // Enable noConflict to ensure this version's jQuery globals aren't set in Require.js
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['jquery-core'], factory);
+        define(['jquery'], factory);
     } else {
         factory(root.jQuery);
     }
@@ -29,14 +29,15 @@
 
     // This sandboxes jquery's dollar sign
     // FIXME: noConflict causes Angular to never detect jQuery, so it is disabled temporarily!
-    var sandbox = jQuery || jQuery.noConflict(true);
+    var sandbox = jQuery.noConflict(true);
+
+    // Expose
+    window[sandbox.fn.jquery.replace(/./g, ' ')] = sandbox;
 
     // Notify developers of sandbox version
-    /*
     if (typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1) {
         console.log('Sandbox jQuery:', sandbox.fn.jquery);
     }
-    */
 
     /**
      * @param str

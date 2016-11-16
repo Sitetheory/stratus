@@ -476,6 +476,46 @@
         }
     });
 
+    // jQuery Plugins
+    // --------------
+
+    /**
+     * @param str
+     * @returns {boolean}
+     */
+    $.fn.isJSON = function (str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    };
+
+    /**
+     * @param key
+     * @param value
+     * @returns {*}
+     */
+    $.fn.dataAttr = function (key, value) {
+        if (key === undefined) console.error('$().dataAttr(key, value) contains an undefined key!');
+        if (value === undefined) {
+            value = this.attr('data-' + key);
+            return $.fn.isJSON(value) ? JSON.parse(value) : value;
+        } else {
+            return this.attr('data-' + key, JSON.stringify(value));
+        }
+    };
+
+    /**
+     * @param event
+     * @returns {boolean}
+     */
+    $.fn.notClicked = function (event) {
+        if (!this.selector) console.error('No Selector:', this);
+        return (!sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length);
+    };
+
     // Stratus Environment Initialization
     // ----------------------------------
 
@@ -966,19 +1006,6 @@
         this.initialize.apply(this, arguments);
 
         return this;
-    };
-
-    /**
-     * @param str
-     * @returns {boolean}
-     */
-    Stratus.Internals.isJSON = function (str) {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
-        return true;
     };
 
     /**
