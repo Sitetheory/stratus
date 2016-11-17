@@ -1366,12 +1366,15 @@
                 }
 
                 // Return the first size that is bigger than container width
-                size = _.findKey(Stratus.Settings.image.size, function (s, k) {
-                    return (s > width);
+                size = _.findKey(Stratus.Settings.image.size, function (s) {
+                    var ratio = s / width;
+                    return ((0.85 < ratio && ratio < 1.15) || s > width);
                 });
 
                 // default to largest size if the container is larger and it didn't find a size
                 size = size || 'hq';
+
+                // console.log('Image:', obj.el, 'width:', width, 'size:', size);
             }
 
             // Change Source to right size (get the base and extension and ignore size)
