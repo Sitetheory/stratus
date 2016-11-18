@@ -47,7 +47,7 @@
                 }
 
                 // Infrastructure
-                this.url = '/Api';
+                this.urlRoot = '/Api';
                 this.models = [];
                 this.meta = new Stratus.Prototypes.Collection();
                 this.model = model;
@@ -59,7 +59,7 @@
 
                 // Generate URL
                 if (this.entity) {
-                    this.url += '/' + _.ucfirst(this.entity);
+                    this.urlRoot += '/' + _.ucfirst(this.entity);
                 }
 
                 // Contextual Hoisting
@@ -87,6 +87,13 @@
                     return str.join('&');
                 };
 
+                /**
+                 * @returns {*}
+                 */
+                this.url = function () {
+                    return that.urlRoot;
+                };
+
                 // TODO: Abstract this deeper
                 /**
                  * @param action
@@ -99,7 +106,7 @@
                         action = action || 'GET';
                         var prototype = {
                             method: action,
-                            url: that.url,
+                            url: that.url(),
                             headers: {
                                 action: action
                             }
@@ -116,6 +123,7 @@
                         }
                         $http(prototype).then(function (response) {
                             if (response.status == '200') {
+                                // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta);
                                 that.models = [];

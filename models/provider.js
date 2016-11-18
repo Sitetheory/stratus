@@ -43,7 +43,7 @@
                 }
 
                 // Infrastructure
-                this.url = '/Api';
+                this.urlRoot = '/Api';
                 this.data = {};
                 this.meta = new Stratus.Prototypes.Collection();
                 if (attributes && typeof attributes == 'object') {
@@ -52,7 +52,7 @@
 
                 // Generate URL
                 if (this.entity) {
-                    this.url += '/' + _.ucfirst(this.entity);
+                    this.urlRoot += '/' + _.ucfirst(this.entity);
                 }
 
                 // Internals
@@ -64,6 +64,36 @@
                 var that = this;
 
                 /**
+                 * @returns {*}
+                 */
+                this.url = function () {
+                    return that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot
+                };
+
+                /**
+                 * @param obj
+                 * @param chain
+                 * @returns {string}
+                 */
+                this.serialize = function (obj, chain) {
+                    var str = [];
+                    obj = obj || {};
+                    angular.forEach(obj, function (value, key) {
+                        if (angular.isObject(value)) {
+                            str.push(that.serialize(value, key));
+                        } else {
+                            var encoded = '';
+                            if (chain) encoded += chain + '[';
+                            encoded += key;
+                            if (chain) encoded += ']';
+                            str.push(encoded + '=' + value);
+                        }
+                    });
+                    return str.join('&');
+                };
+
+                // TODO: Abstract this deeper
+                /**
                  * @param action
                  * @param data
                  * @returns {*}
@@ -74,21 +104,15 @@
                         action = action || 'GET';
                         var prototype = {
                             method: action,
-                            url: that.get('id') ? that.url + '/' + that.get('id') : that.url,
+                            url: that.url(),
                             headers: {
                                 action: action
                             }
                         };
                         if (angular.isDefined(data)) {
                             if (action === 'GET') {
-                                if (angular.isObject(data)) {
-                                    var values = [];
-                                    angular.forEach(data, function (value, key) {
-                                        values.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-                                    });
-                                    if (values.length) {
-                                        prototype.url += '?' + values.join('&');
-                                    }
+                                if (angular.isObject(data) && Object.keys(data).length) {
+                                    prototype.url += '?' + that.serialize(data);
                                 }
                             } else {
                                 prototype.headers['Content-Type'] = 'application/json';
@@ -97,6 +121,7 @@
                         }
                         $http(prototype).then(function (response) {
                             if (response.status == '200') {
+                                // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta = response.data.meta || {};
                                 that.data = response.data.payload || response.data;

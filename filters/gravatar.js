@@ -1,4 +1,4 @@
-//     Stratus.Directives.Help.js 1.0
+//     Stratus.Filters.Gravatar.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -21,19 +21,20 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular', 'angular-material'], factory);
+        define(['stratus', 'angular', 'md5'], factory);
     } else {
         factory(root.Stratus);
     }
 }(this, function (Stratus) {
-    // TODO: Convert to Tether-Tooltip
-    angular.module('stratus-help', [])
-        .directive('stratusHelp', function ($compile) {
-            return {
-                restrict: 'AE',
-                transclude: true,
-                template: '<md-button class="md-icon-button" aria-label="refresh"><md-tooltip md-direction="top"><div ng-transclude=""></div></md-tooltip><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon></md-button>'
-            };
-        });
+
+    // Angular Gravatar Filter
+    // ------------------------
+
+    // This filter allows a display of time since the given date
+    Stratus.Filters.Gravatar = angular.module('gravatar', []).filter('gravatar', function () {
+        return function (input) {
+            return '//www.gravatar.com/avatar/' + md5(input.trim().toLowerCase());
+        };
+    });
 
 }));
