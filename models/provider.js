@@ -67,7 +67,7 @@
                  * @returns {*}
                  */
                 this.url = function () {
-                    return that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot
+                    return that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
                 };
 
                 /**
