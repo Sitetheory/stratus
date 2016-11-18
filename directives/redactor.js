@@ -1,4 +1,4 @@
-//     Stratus.Models.Provider.js 1.0
+//     Stratus.Directives.Redactor.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
