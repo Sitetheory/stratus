@@ -39,6 +39,7 @@
     // This View Service handles element binding for a single scope and element
     Stratus.Controllers.Generic = ['StratusController', function ($scope, $element, $mdToast, $http, collection, model) {
         // Data Binding
+        var api;
         if ($element.attr('data-manifest') || $element.attr('data-id')) {
             $scope.model = new model({
                 entity: $element.attr('data-target'),
@@ -46,12 +47,16 @@
             }, {
                 id: $element.attr('data-id')
             });
+            api = $element.attr('data-api') || null;
+            if (api && _.isJSON(api)) {
+                $scope.collection.meta.set('api', JSON.parse(api));
+            }
             $scope.model.fetch();
         } else {
             $scope.collection = new collection({
                 entity: $element.attr('data-target')
             });
-            var api = $element.attr('data-api') || null;
+            api = $element.attr('data-api') || null;
             if (api && _.isJSON(api)) {
                 $scope.collection.meta.set('api', JSON.parse(api));
             }
