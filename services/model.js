@@ -1,4 +1,4 @@
-//     Stratus.Models.Provider.js 1.0
+//     Stratus.services.model.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -27,11 +27,11 @@
     }
 }(this, function (Stratus, _) {
 
-    // Angular Model
-    // -------------
+    // Angular Model Service
+    // ---------------------
 
     // This Model Service handles data binding for a single object with the $http Service
-    Stratus.Models.Provider = ['$provide', function ($provide) {
+    Stratus.Services.Model = ['$provide', function ($provide) {
         $provide.factory('model', function ($q, $http) {
             return function (options, attributes) {
 

@@ -15,8 +15,8 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Function Factory
-// ----------------
+// Stratus DateTime Directive
+// ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
@@ -26,20 +26,21 @@
         factory(root.Stratus, root.moment);
     }
 }(this, function (Stratus, moment) {
-    // TODO: Convert to Tether-Tooltip
+    // This directive intends to handle binding of
+    // Date and Time into a simple unix timestamp
+    Stratus.Directives.DateTime = {
+        restrict: 'AE',
+        scope: {
+            ngModel: '='
+        },
+        link: function ($scope) {
+            $scope.timestamp = $scope.ngModel ? moment.unix($scope.ngModel).format() : moment().endOf('week');
+            $scope.date = new Date($scope.timestamp.toISOString());
+        },
+        template: '<input type="datetime-local" name="input" ng-model="date" placeholder="yyyy-MM-ddTHH:mm"/>'
+    };
     angular.module('stratus-date-time', [])
         .directive('stratusDateTime', function ($compile) {
-            return {
-                restrict: 'AE',
-                scope: {
-                    ngModel: '='
-                },
-                link: function ($scope) {
-                    $scope.timestamp = $scope.ngModel ? moment.unix($scope.ngModel).format() : moment().endOf('week');
-                    $scope.date = new Date($scope.timestamp.toISOString());
-                },
-                template: '<input type="datetime-local" name="input" ng-model="date" placeholder="yyyy-MM-ddTHH:mm"/>'
-            };
+            return Stratus.Directives.DateTime;
         });
-
 }));

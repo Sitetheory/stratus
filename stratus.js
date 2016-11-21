@@ -108,7 +108,6 @@
         Collections: new Backbone.Model(),
         Models: new Backbone.Model(),
         Routers: new Backbone.Model(),
-        Controllers: {},
         Views: {
             Plugins: {},
             Widgets: {}
@@ -119,6 +118,8 @@
         /* Angular */
         Directives: {},
         Filters: {},
+        Controllers: {},
+        Services: {},
 
         /* Bowser */
         Client: bowser,

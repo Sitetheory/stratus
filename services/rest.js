@@ -1,4 +1,4 @@
-//     Stratus.Views.Provider.js 1.0
+//     Stratus.services.collection.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -21,25 +21,20 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular'], factory);
+        define(['stratus', 'underscore', 'angular', 'stratus.services.collection', 'stratus.services.model'], factory);
     } else {
-        factory(root.Stratus);
+        factory(root.Stratus, root._);
     }
-}(this, function (Stratus) {
+}(this, function (Stratus, _) {
 
-    // Angular Directive Provider
-    // --------------------------
+    // Angular Rest Service
+    // --------------------
 
-    // This View Service handles element binding for a single scope and element
-    Stratus.Directives.Provider = ['$provide', function ($provide) {
-        $provide.factory('view', function ($scope, $element) {
+    // This Collection Service handles data binding for multiple objects with the $http Service
+    Stratus.Services.Rest = ['$provide', function ($provide) {
+        $provide.factory('rest', function ($q) {
             return function (options) {
-                this.promise = null;
-                this.initialize = function (options) {
-                    console.log('element:', $element);
-                    console.log('options:', options);
-                };
-                this.initialize(options);
+                console.log('coming soon!');
             };
         });
     }];

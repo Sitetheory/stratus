@@ -20,26 +20,40 @@ var nullify = function (proto) {
 
 // Locations
 var coreList = [
+
+    // Stratus
     'stratus.js',
+    'normalizers/*.js',
+
+    // Backbone
+    'models/*.js',
     'collections/*.js',
+    'routers/*.js',
+    'views/**/*.js',
+
+    // Angular
+    'controllers/*.js',
     'directives/*.js',
     'filters/*.js',
-    'models/*.js',
-    'normalizers/*.js',
-    'routers/*.js',
-    'controllers/*.js',
-    'views/**/*.js'
+    'services/*.js'
 ];
 var minList = [
+
+    // Stratus
     'stratus.min.js',
+    'normalizers/*.min.js',
+
+    // Backbone
+    'models/*.min.js',
     'collections/*.min.js',
+    'routers/*.min.js',
+    'views/**/*.min.js',
+
+    // Angular
+    'controllers/*.min.js',
     'directives/*.min.js',
     'filters/*.min.js',
-    'models/*.min.js',
-    'normalizers/*.min.js',
-    'routers/*.min.js',
-    'controllers/*.min.js',
-    'views/**/*.min.js'
+    'services/*.min.js'
 ];
 
 // Generate Exclusions

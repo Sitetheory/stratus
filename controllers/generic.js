@@ -15,8 +15,8 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Function Factory
-// ----------------
+// Angular Generic Controller
+// --------------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
@@ -25,58 +25,55 @@
             'stratus',
             'underscore',
             'angular',
-            'stratus.models.provider',
-            'stratus.collections.provider'
+            'stratus.services.model',
+            'stratus.services.collection'
         ], factory);
     } else {
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-
-    // Angular View Provider
-    // ---------------------
-
-    // This View Service handles element binding for a single scope and element
-    Stratus.Controllers.Generic = ['StratusController', function ($scope, $element, $mdToast, $http, collection, model) {
-        // Data Binding
-        var api;
-        if ($element.attr('data-manifest') || $element.attr('data-id')) {
-            $scope.model = new model({
-                entity: $element.attr('data-target'),
-                manifest: $element.attr('data-manifest')
-            }, {
-                id: $element.attr('data-id')
-            });
-            api = $element.attr('data-api') || null;
-            if (api && _.isJSON(api)) {
-                $scope.collection.meta.set('api', JSON.parse(api));
+    // This Controller handles simple element binding
+    // for a single scope to an API Object Reference.
+    Stratus.Controllers.Generic = {
+        alias: 'StratusController',
+        initialize: function ($scope, $element, $mdToast, $http, collection, model) {
+            // Data Binding
+            var data;
+            if ($element.attr('data-manifest') || $element.attr('data-id')) {
+                data = $scope.model = new model({
+                    entity: $element.attr('data-target'),
+                    manifest: $element.attr('data-manifest')
+                }, {
+                    id: $element.attr('data-id')
+                });
+            } else {
+                data = $scope.collection = new collection({
+                    entity: $element.attr('data-target')
+                });
             }
-            $scope.model.fetch();
-        } else {
-            $scope.collection = new collection({
-                entity: $element.attr('data-target')
-            });
-            api = $element.attr('data-api') || null;
+
+            // Filter and Fetch
+            var api = $element.attr('data-api') || null;
             if (api && _.isJSON(api)) {
-                $scope.collection.meta.set('api', JSON.parse(api));
+                data.meta.set('api', JSON.parse(api));
             }
-            $scope.collection.fetch();
+            data.fetch();
+
+            // Notifications
+            $scope.showActionToast = function (message) {
+                var toast = $mdToast.simple()
+                    .textContent(message)
+                    .action('UNDO')
+                    .highlightAction(true)
+                    .highlightClass('md-accent')
+                    .position('top right');
+                $mdToast.show(toast).then(function (response) {
+                    if (response == 'ok') {
+                        console('undo clicked.');
+                    }
+                }, $scope.error);
+            };
         }
-
-        // Notifications
-        $scope.showActionToast = function (message) {
-            var toast = $mdToast.simple()
-                .textContent(message)
-                .action('UNDO')
-                .highlightAction(true)
-                .highlightClass('md-accent')
-                .position('top right');
-            $mdToast.show(toast).then(function (response) {
-                if (response == 'ok') {
-                    console('undo clicked.');
-                }
-            }, $scope.error);
-        };
-    }];
+    };
 
 }));

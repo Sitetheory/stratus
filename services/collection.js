@@ -1,4 +1,4 @@
-//     Stratus.Collections.Provider.js 1.0
+//     Stratus.services.collection.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -21,17 +21,17 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'stratus.models.provider'], factory);
+        define(['stratus', 'underscore', 'angular', 'stratus.services.model'], factory);
     } else {
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
 
-    // Angular Collection
-    // ------------------
+    // Angular Collection Service
+    // --------------------------
 
     // This Collection Service handles data binding for multiple objects with the $http Service
-    Stratus.Collections.Provider = ['$provide', function ($provide) {
+    Stratus.Services.Collections = ['$provide', function ($provide) {
         $provide.factory('collection', function ($q, $http, $timeout, model) {
             return function (options) {
 

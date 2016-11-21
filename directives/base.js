@@ -1,4 +1,4 @@
-//     Stratus.Directives.Help.js 1.0
+//     Stratus.Directives.Base.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,27 +15,31 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Help Directive
+// Stratus Base Directive
 // ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular', 'angular-material'], factory);
+        define(['stratus', 'angular'], factory);
     } else {
         factory(root.Stratus);
     }
 }(this, function (Stratus) {
-    // TODO: Convert to Tether-Tooltip
-    // This directive intends to display help information
-    // in an widely accessible tooltip icon standard.
-    Stratus.Directives.Help = {
+    // This directive intends to provide basic logic for extending
+    // the Stratus Auto-Loader for various contextual uses.
+    Stratus.Directives.Base = {
         restrict: 'AE',
-        transclude: true,
-        template: '<md-button class="md-icon-button" aria-label="refresh"><md-tooltip md-direction="top"><div ng-transclude=""></div></md-tooltip><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon></md-button>'
+        scope: {
+            ngModel: '='
+        },
+        link: function ($scope, $element) {
+            console.log($scope, $element);
+        },
+        template: '<div class="noTemplate"></div>'
     };
-    angular.module('stratus-help', [])
-        .directive('stratusHelp', function ($compile) {
-            return Stratus.Directives.Help;
+    angular.module('stratus-base', [])
+        .directive('stratusBase', function ($compile) {
+            return Stratus.Directives.Base;
         });
 }));
