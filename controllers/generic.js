@@ -38,26 +38,39 @@
         alias: 'StratusController',
         initialize: function ($scope, $element, $mdToast, $http, collection, model) {
             // Data Binding
-            var data;
             if ($element.attr('data-manifest') || $element.attr('data-id')) {
-                data = $scope.model = new model({
+                $scope.model = new model({
                     entity: $element.attr('data-target'),
                     manifest: $element.attr('data-manifest')
                 }, {
                     id: $element.attr('data-id')
                 });
+                $scope.data = $scope.model;
             } else {
-                data = $scope.collection = new collection({
+                $scope.collection = new collection({
                     entity: $element.attr('data-target')
                 });
+                $scope.data = $scope.collection;
             }
 
             // Filter and Fetch
             var api = $element.attr('data-api') || null;
             if (api && _.isJSON(api)) {
-                data.meta.set('api', JSON.parse(api));
+                $scope.data.meta.set('api', JSON.parse(api));
             }
-            data.fetch();
+            $scope.data.fetch();
+
+            // Scaling
+            $scope.scale = 100;
+            $scope.$watch('scale', function() {
+                var scale = "Medium";
+                if ($scope.scale > 70) {
+                    scale = "Large";
+                } else if ($scope.scale < 30) {
+                    scale = "Small";
+                }
+                document.querySelector('body').dataset.scale = scale;
+            });
 
             // Notifications
             $scope.showActionToast = function (message) {
