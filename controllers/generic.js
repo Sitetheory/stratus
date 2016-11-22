@@ -62,12 +62,12 @@
 
             // Scaling
             $scope.scale = 100;
-            $scope.$watch('scale', function() {
-                var scale = "Medium";
+            $scope.$watch('scale', function () {
+                var scale = 'Medium';
                 if ($scope.scale > 70) {
-                    scale = "Large";
+                    scale = 'Large';
                 } else if ($scope.scale < 30) {
-                    scale = "Small";
+                    scale = 'Small';
                 }
                 document.querySelector('body').dataset.scale = scale;
             });
