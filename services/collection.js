@@ -33,6 +33,7 @@
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Collection = ['$provide', function ($provide) {
         $provide.factory('collection', function ($q, $http, $timeout, model) {
+            // TODO: Store the Constructor for future usage as an 'instanceof foo'
             return function (options) {
 
                 // Environment

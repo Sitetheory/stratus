@@ -26,7 +26,8 @@
             'underscore',
             'angular',
             'stratus.services.model',
-            'stratus.services.collection'
+            'stratus.services.collection',
+            'stratus.services.registry'
         ], factory);
     } else {
         factory(root.Stratus, root._);
@@ -36,29 +37,17 @@
     // for a single scope to an API Object Reference.
     Stratus.Controllers.Generic = {
         alias: 'StratusController',
-        initialize: function ($scope, $element, $mdToast, $http, collection, model) {
-            // Data Binding
-            if ($element.attr('data-manifest') || $element.attr('data-id')) {
-                $scope.model = new model({
-                    entity: $element.attr('data-target'),
-                    manifest: $element.attr('data-manifest')
-                }, {
-                    id: $element.attr('data-id')
-                });
-                $scope.data = $scope.model;
-            } else {
-                $scope.collection = new collection({
-                    entity: $element.attr('data-target')
-                });
-                $scope.data = $scope.collection;
-            }
+        initialize: function ($scope, $element, $mdToast, $http, collection, model, registry) {
+            // Registry
+            $scope.registry = new registry();
+            $scope.data = $scope.registry.fetch($element);
 
-            // Filter and Fetch
-            var api = $element.attr('data-api') || null;
-            if (api && _.isJSON(api)) {
-                $scope.data.meta.set('api', JSON.parse(api));
+            // Evaluate Type
+            if ($scope.data instanceof model) {
+                $scope.model = $scope.data;
+            } else if ($scope.data instanceof collection) {
+                $scope.collection = $scope.data;
             }
-            $scope.data.fetch();
 
             // Scaling
             $scope.scale = 100;

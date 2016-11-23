@@ -116,6 +116,7 @@
         Relations: {},
 
         /* Angular */
+        Apps: {},
         Directives: {},
         Filters: {},
         Controllers: {},
@@ -2389,14 +2390,16 @@
                 'angular-material',
                 'stratus.services.model',
                 'stratus.services.collection',
+                'stratus.services.registry',
                 'stratus.controllers.generic',
                 'stratus.filters.moment',
                 'stratus.filters.gravatar'
             ], function () {
-                Stratus.Foo = angular.module('stratusApp', ['ngMaterial', 'ngMessages', 'moment', 'gravatar']);
-                Stratus.Foo.config(Stratus.Services.Model);
-                Stratus.Foo.config(Stratus.Services.Collection);
-                Stratus.Foo.controller(Stratus.Controllers.Generic.alias, Stratus.Controllers.Generic.initialize);
+                Stratus.Apps.Generic = angular.module('stratusApp', ['ngMaterial', 'ngMessages', 'moment', 'gravatar']);
+                Stratus.Apps.Generic.config(Stratus.Services.Model);
+                Stratus.Apps.Generic.config(Stratus.Services.Collection);
+                Stratus.Apps.Generic.config(Stratus.Services.Registry);
+                Stratus.Apps.Generic.controller(Stratus.Controllers.Generic.alias, Stratus.Controllers.Generic.initialize);
                 angular.bootstrap(document.querySelector('body'), ['stratusApp']);
             });
         }

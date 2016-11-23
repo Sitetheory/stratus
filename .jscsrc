@@ -47,7 +47,7 @@
     "requireDollarBeforejQueryAssignment": true,
     "requireLineFeedAtFileEnd": true,
     "requireCapitalizedConstructors": {
-        "allExcept": ["collection", "model"]
+        "allExcept": ["collection", "model", "registry"]
     },
     "requireDotNotation": true,
     "requireSpacesInForStatement": true,
