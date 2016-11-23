@@ -2382,6 +2382,25 @@
             Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
         });
 
+        // Angular Injector
+        if (document.querySelectorAll('[ng-controller]').length) {
+            require([
+                'angular',
+                'angular-material',
+                'stratus.services.model',
+                'stratus.services.collection',
+                'stratus.controllers.generic',
+                'stratus.filters.moment',
+                'stratus.filters.gravatar'
+            ], function () {
+                Stratus.Foo = angular.module('stratusApp', ['ngMaterial', 'ngMessages', 'moment', 'gravatar']);
+                Stratus.Foo.config(Stratus.Services.Model);
+                Stratus.Foo.config(Stratus.Services.Collection);
+                Stratus.Foo.controller(Stratus.Controllers.Generic.alias, Stratus.Controllers.Generic.initialize);
+                angular.bootstrap(document.querySelector('body'), ['stratusApp']);
+            });
+        }
+
         // Load Views
         Stratus.Internals.Loader().then(function (views) {
             if (!Stratus.Environment.get('production')) console.info('Views:', views);

@@ -1,4 +1,4 @@
-//     Stratus.services.collection.js 1.0
+//     Stratus.Services.Registry.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -27,14 +27,16 @@
     }
 }(this, function (Stratus, _) {
 
-    // Angular Rest Service
-    // --------------------
+    // Angular Registry Service
+    // ------------------------
 
     // This Collection Service handles data binding for multiple objects with the $http Service
-    Stratus.Services.Rest = ['$provide', function ($provide) {
-        $provide.factory('rest', function ($q) {
+    Stratus.Services.Registry = ['$provide', function ($provide) {
+        $provide.factory('registry', function ($q) {
             return function (options) {
-                console.log('coming soon!');
+                // Maintain all models in Namespace
+                // Inverse the parent and child objects the same way Doctrine does
+                return true;
             };
         });
     }];

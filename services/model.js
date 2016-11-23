@@ -35,6 +35,8 @@
         $provide.factory('model', function ($q, $http) {
             return function (options, attributes) {
 
+                // TODO: Add Auto-Saving
+
                 // Environment
                 this.entity = null;
                 this.manifest = false;
