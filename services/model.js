@@ -38,7 +38,7 @@
                 // TODO: Add Auto-Saving
 
                 // Environment
-                this.entity = null;
+                this.target = null;
                 this.manifest = false;
                 if (options && typeof options == 'object') {
                     angular.extend(this, options);
@@ -53,12 +53,12 @@
                 }
 
                 // Generate URL
-                if (this.entity) {
-                    this.urlRoot += '/' + _.ucfirst(this.entity);
+                if (this.target) {
+                    this.urlRoot += '/' + _.ucfirst(this.target);
                 }
 
                 // Internals
-                this.pending = true;
+                this.pending = false;
                 this.error = false;
                 this.completed = false;
 

@@ -37,7 +37,7 @@
             return function (options) {
 
                 // Environment
-                this.entity = null;
+                this.target = null;
                 this.infinite = false;
                 this.threshold = 0.5;
                 this.qualifier = ''; // ng-if
@@ -54,13 +54,13 @@
                 this.model = model;
 
                 // Internals
-                this.pending = true;
+                this.pending = false;
                 this.error = false;
                 this.completed = false;
 
                 // Generate URL
-                if (this.entity) {
-                    this.urlRoot += '/' + _.ucfirst(this.entity);
+                if (this.target) {
+                    this.urlRoot += '/' + _.ucfirst(this.target);
                 }
 
                 // Contextual Hoisting
@@ -131,10 +131,10 @@
 
                                 var data = response.data.payload || response.data;
                                 if (angular.isArray(data)) {
-                                    data.forEach(function (entity) {
+                                    data.forEach(function (target) {
                                         that.models.push(new that.model({
-                                            entity: that.entity
-                                        }, entity));
+                                            target: that.target
+                                        }, target));
                                     });
                                 }
 

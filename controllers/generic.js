@@ -25,8 +25,6 @@
             'stratus',
             'underscore',
             'angular',
-            'stratus.services.model',
-            'stratus.services.collection',
             'stratus.services.registry'
         ], factory);
     } else {
@@ -37,19 +35,12 @@
     // for a single scope to an API Object Reference.
     Stratus.Controllers.Generic = {
         alias: 'StratusController',
-        initialize: function ($scope, $element, $mdToast, $http, collection, model, registry) {
+        initialize: function ($scope, $element, $mdToast, registry) {
             // Registry
             $scope.registry = new registry();
-            $scope.data = $scope.registry.fetch($element);
+            $scope.registry.fetch($element, $scope);
 
-            // Evaluate Type
-            if ($scope.data instanceof model) {
-                $scope.model = $scope.data;
-            } else if ($scope.data instanceof collection) {
-                $scope.collection = $scope.data;
-            }
-
-            // Scaling
+            // Scaling Controller
             $scope.scale = 100;
             $scope.$watch('scale', function () {
                 var scale = 'Medium';
@@ -61,7 +52,14 @@
                 document.querySelector('body').dataset.scale = scale;
             });
 
-            // Notifications
+            // Settings
+            /*
+            $scope.froalaOptions = {
+                toolbarButtons: ['bold', 'italic', 'underline', '|', 'align']
+            };
+            */
+
+            // Notifications Service
             $scope.showActionToast = function (message) {
                 var toast = $mdToast.simple()
                     .textContent(message)
@@ -75,6 +73,9 @@
                     }
                 }, $scope.error);
             };
+
+            // Store Instance
+            Stratus.Instances[_.uniqueId('controller_')] = this;
         }
     };
 

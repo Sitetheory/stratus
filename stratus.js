@@ -117,9 +117,11 @@
 
         /* Angular */
         Apps: {},
+        Catalog: {},
+        Components: {},
+        Controllers: {},
         Directives: {},
         Filters: {},
-        Controllers: {},
         Services: {},
 
         /* Bowser */
@@ -2386,21 +2388,80 @@
         // Angular Injector
         if (document.querySelectorAll('[ng-controller]').length) {
             require([
+                // Angular
                 'angular',
                 'angular-material',
+
+                // Services
                 'stratus.services.model',
                 'stratus.services.collection',
                 'stratus.services.registry',
+
+                // Controllers
                 'stratus.controllers.generic',
+
+                // Filters
                 'stratus.filters.moment',
-                'stratus.filters.gravatar'
+                'stratus.filters.gravatar',
+
+                // Directives
+                'stratus.directives.datetime',
+                'stratus.directives.help',
+
+                // Froala
+                'froala',
+                'froala-align',
+                'angular-froala',
+
+                // Code Mirror
+                'codemirror',
+                'codemirror/mode/htmlmixed/htmlmixed',
+                'codemirror/addon/edit/matchbrackets'
             ], function () {
-                Stratus.Apps.Generic = angular.module('stratusApp', ['ngMaterial', 'ngMessages', 'moment', 'gravatar']);
+                // Froala License
+                $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
+
+                // App Reference
+                Stratus.Apps.Generic = angular.module('stratusApp', [
+                    'ngMaterial',
+                    'ngMessages',
+                    'moment',
+                    'gravatar',
+                    'froala',
+                    'stratus-date-time',
+                    'stratus-help'
+                ]);
+
+                // Services
                 Stratus.Apps.Generic.config(Stratus.Services.Model);
                 Stratus.Apps.Generic.config(Stratus.Services.Collection);
                 Stratus.Apps.Generic.config(Stratus.Services.Registry);
+
+                // Controllers
                 Stratus.Apps.Generic.controller(Stratus.Controllers.Generic.alias, Stratus.Controllers.Generic.initialize);
-                angular.bootstrap(document.querySelector('body'), ['stratusApp']);
+
+                // CSS
+                var css = [];
+                if (document.querySelectorAll('stratus-help').length) {
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css')
+                }
+                if (document.querySelectorAll('[froala]').length) {
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css')
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css')
+                }
+
+                if (css.length) {
+                    var counter = 0;
+                    angular.forEach(css, function (url) {
+                        Stratus.Internals.CssLoader(url).then(function () {
+                            if (++counter === css.length) {
+                                angular.bootstrap(document.querySelector('body'), ['stratusApp']);
+                            }
+                        });
+                    });
+                } else {
+                    angular.bootstrap(document.querySelector('body'), ['stratusApp']);
+                }
             });
         }
 

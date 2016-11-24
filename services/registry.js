@@ -36,30 +36,72 @@
             return function () {
                 // Maintain all models in Namespace
                 // Inverse the parent and child objects the same way Doctrine does
-                this.fetch = function ($element) {
-                    // Find or Create Reference
+                this.fetch = function ($element, $scope) {
+                    if (angular.isString($element)) $element = { target: $element };
+                    var options = {
+                        target: $element.attr ? $element.attr('data-target') : $element.target,
+                        id: $element.attr ? $element.attr('data-id') : $element.id,
+                        manifest: $element.attr ? $element.attr('data-manifest') : $element.manifest,
+                        decouple: $element.attr ? $element.attr('data-decouple') : $element.decouple,
+                        api: $element.attr ? $element.attr('data-api') : $element.api
+                    };
                     var data;
-                    if ($element.attr('data-manifest') || $element.attr('data-id')) {
-                        data = new model({
-                            entity: $element.attr('data-target'),
-                            manifest: $element.attr('data-manifest')
-                        }, {
-                            id: $element.attr('data-id')
-                        });
-                    } else {
-                        data = new collection({
-                            entity: $element.attr('data-target')
-                        });
+                    if (options.target) {
+                        // Find or Create Reference
+                        if (options.manifest || options.id) {
+                            if (!Stratus.Catalog[options.target]) {
+                                Stratus.Catalog[options.target] = {};
+                            }
+                            var id = options.id || 'manifest';
+                            if (options.decouple || !Stratus.Catalog[options.target][id]) {
+                                data = new model({
+                                    target: options.target,
+                                    manifest: options.manifest
+                                }, {
+                                    id: options.id
+                                });
+                                if (!options.decouple) {
+                                    Stratus.Catalog[options.target][id] = data;
+                                }
+                            } else if (Stratus.Catalog[options.target][id]) {
+                                data = Stratus.Catalog[options.target][id];
+                            }
+                        } else {
+                            if (!Stratus.Catalog[options.target]) {
+                                Stratus.Catalog[options.target] = {};
+                            }
+                            if (options.decouple || !Stratus.Catalog[options.target].collection) {
+                                data = new collection({
+                                    target: options.target
+                                });
+                                if (!options.decouple) {
+                                    Stratus.Catalog[options.target].collection = data;
+                                }
+                            } else if (Stratus.Catalog[options.target].collection) {
+                                data = Stratus.Catalog[options.target].collection;
+                            }
+                        }
+
+                        // Filter if Necessary
+                        if (options.api) {
+                            data.meta.set('api', _.isJSON(options.api) ? JSON.parse(options.api) : options.api);
+                        }
                     }
 
-                    // Filter if Necessary
-                    var api = $element.attr('data-api') || null;
-                    if (api && _.isJSON(api)) {
-                        data.meta.set('api', JSON.parse(api));
+                    // Evaluate
+                    if (angular.isObject(data)) {
+                        if (typeof $scope !== 'undefined') {
+                            $scope.data = data;
+                            if (data instanceof model) {
+                                $scope.model = data;
+                            } else if (data instanceof collection) {
+                                $scope.collection = data;
+                            }
+                        }
+                        if (!data.pending && !data.completed) {
+                            data.fetch();
+                        }
                     }
-
-                    // Fetch Data
-                    data.fetch();
                     return data;
                 };
             };

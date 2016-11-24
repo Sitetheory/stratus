@@ -32,7 +32,7 @@
     Stratus.Directives.Help = {
         restrict: 'AE',
         transclude: true,
-        template: '<md-button class="md-icon-button" aria-label="refresh"><md-tooltip md-direction="top"><div ng-transclude=""></div></md-tooltip><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon></md-button>'
+        template: '<md-button class="md-icon-button" aria-label="help"><md-tooltip md-direction="top"><div ng-transclude=""></div></md-tooltip><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon></md-button>'
     };
     angular.module('stratus-help', [])
         .directive('stratusHelp', function ($compile) {
