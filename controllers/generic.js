@@ -41,12 +41,12 @@
             $scope.registry.fetch($element, $scope);
 
             // Scaling Controller
-            $scope.scale = 100;
+            $scope.scale = 2;
             $scope.$watch('scale', function () {
                 var scale = 'Medium';
-                if ($scope.scale > 70) {
+                if ($scope.scale == 2) {
                     scale = 'Large';
-                } else if ($scope.scale < 30) {
+                } else if ($scope.scale == 0) {
                     scale = 'Small';
                 }
                 document.querySelector('body').dataset.scale = scale;
