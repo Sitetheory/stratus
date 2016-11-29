@@ -2388,6 +2388,7 @@
         // Angular Injector
         if (document.querySelectorAll('[ng-controller]').length) {
             require([
+
                 // Angular
                 'angular',
                 'angular-material',
@@ -2407,6 +2408,7 @@
                 // Directives
                 'stratus.directives.datetime',
                 'stratus.directives.help',
+                'stratus.directives.trigger',
 
                 // Froala
                 'froala',
@@ -2429,7 +2431,8 @@
                     'gravatar',
                     'froala',
                     'stratus-date-time',
-                    'stratus-help'
+                    'stratus-help',
+                    'stratus-trigger'
                 ]);
 
                 // Services
@@ -2438,16 +2441,16 @@
                 Stratus.Apps.Generic.config(Stratus.Services.Registry);
 
                 // Controllers
-                Stratus.Apps.Generic.controller(Stratus.Controllers.Generic.alias, Stratus.Controllers.Generic.initialize);
+                Stratus.Apps.Generic.controller.apply(this, Stratus.Controllers.Generic);
 
                 // CSS
                 var css = [];
                 if (document.querySelectorAll('stratus-help').length) {
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css')
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
                 if (document.querySelectorAll('[froala]').length) {
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css')
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css')
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css');
                 }
 
                 if (css.length) {

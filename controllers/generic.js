@@ -33,50 +33,57 @@
 }(this, function (Stratus, _) {
     // This Controller handles simple element binding
     // for a single scope to an API Object Reference.
-    Stratus.Controllers.Generic = {
-        alias: 'StratusController',
-        initialize: function ($scope, $element, $mdToast, registry) {
-            // Registry
-            $scope.registry = new registry();
-            $scope.registry.fetch($element, $scope);
+    Stratus.Controllers.Generic = ['StratusController', function ($scope, $element, $mdToast, $log, registry) {
+        // Registry
+        $scope.registry = new registry();
+        $scope.registry.fetch($element, $scope);
 
-            // Scaling Controller
-            $scope.scale = 2;
-            $scope.$watch('scale', function () {
-                var scale = 'Medium';
-                if ($scope.scale == 2) {
-                    scale = 'Large';
-                } else if ($scope.scale == 0) {
-                    scale = 'Small';
+        // Wrappers
+        $scope.Stratus = Stratus;
+        $scope.setUrlParams = function (options) {
+            if (angular.isObject(options)) {
+                window.location.replace(Stratus.Internals.SetUrlParams(options));
+            }
+        };
+        $scope.$log = $log;
+
+        // Scaling Controller
+        $scope.scale = 2;
+        $scope.$watch('scale', function () {
+            var scale = 'Medium';
+            if ($scope.scale == 2) {
+                scale = 'Large';
+            } else if ($scope.scale == 0) {
+                scale = 'Small';
+            }
+            document.querySelector('body').dataset.scale = scale;
+        });
+
+        // Settings
+        /*
+        $scope.froalaOptions = {
+            toolbarButtons: ['bold', 'italic', 'underline', '|', 'align']
+        };
+        */
+
+        // Notifications Service
+        $scope.showActionToast = function (message) {
+            var toast = $mdToast.simple()
+                .textContent(message)
+                .action('UNDO')
+                .highlightAction(true)
+                .highlightClass('md-accent')
+                .position('top right');
+            $mdToast.show(toast).then(function (response) {
+                if (response == 'ok') {
+                    console('undo clicked.');
                 }
-                document.querySelector('body').dataset.scale = scale;
-            });
+            }, $scope.error);
+        };
 
-            // Settings
-            /*
-            $scope.froalaOptions = {
-                toolbarButtons: ['bold', 'italic', 'underline', '|', 'align']
-            };
-            */
-
-            // Notifications Service
-            $scope.showActionToast = function (message) {
-                var toast = $mdToast.simple()
-                    .textContent(message)
-                    .action('UNDO')
-                    .highlightAction(true)
-                    .highlightClass('md-accent')
-                    .position('top right');
-                $mdToast.show(toast).then(function (response) {
-                    if (response == 'ok') {
-                        console('undo clicked.');
-                    }
-                }, $scope.error);
-            };
-
-            // Store Instance
-            Stratus.Instances[_.uniqueId('controller_')] = this;
-        }
-    };
+        // Store Instance
+        Stratus.Instances[_.uniqueId('controller_')] = $scope;
+    }
+    ];
 
 }));
