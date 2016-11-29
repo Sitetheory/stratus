@@ -2424,7 +2424,7 @@
                 $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
 
                 // App Reference
-                Stratus.Apps.Generic = angular.module('stratusApp', [
+                angular.module('stratusApp', [
                     'ngMaterial',
                     'ngMessages',
                     'moment',
@@ -2436,12 +2436,12 @@
                 ]);
 
                 // Services
-                Stratus.Apps.Generic.config(Stratus.Services.Model);
-                Stratus.Apps.Generic.config(Stratus.Services.Collection);
-                Stratus.Apps.Generic.config(Stratus.Services.Registry);
+                angular.module('stratusApp').config(Stratus.Services.Model);
+                angular.module('stratusApp').config(Stratus.Services.Collection);
+                angular.module('stratusApp').config(Stratus.Services.Registry);
 
                 // Controllers
-                Stratus.Apps.Generic.controller.apply(this, Stratus.Controllers.Generic);
+                angular.module('stratusApp').controller.apply(this, Stratus.Controllers.Generic);
 
                 // CSS
                 var css = [];

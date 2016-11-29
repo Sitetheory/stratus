@@ -1,4 +1,4 @@
-//     Stratus.Directives.DateTime.js 1.0
+//     Stratus.Directives.Trigger.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,7 +15,7 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus DateTime Directive
+// Stratus Trigger Directive
 // ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
@@ -40,7 +40,9 @@
                     $scope.$watch(function () {
                         return ngModel.$modelValue;
                     }, function (newValue) {
-                        if (newValue) ($parse($scope.stratusTrigger))($scope.$parent);
+                        if (typeof newValue !== 'undefined') {
+                            ($parse($scope.stratusTrigger))($scope.$parent);
+                        }
                     });
                 }
             };
