@@ -199,6 +199,13 @@
                     }
                 };
 
+                /**
+                 * @param target
+                 */
+                this.remove = function(target) {
+                    console.log('remove:', target);
+                };
+
                 // Infinite Scrolling
                 /*
                  this.infiniteModels = {
