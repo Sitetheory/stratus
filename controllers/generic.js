@@ -42,7 +42,19 @@
         $scope.Stratus = Stratus;
         $scope.setUrlParams = function (options) {
             if (angular.isObject(options)) {
-                window.location.replace(Stratus.Internals.SetUrlParams(options));
+                var substance = false;
+                angular.forEach(options, function (value) {
+                    if (angular.isDefined(value) && value !== null) {
+                        if (!angular.isString(value)) {
+                            substance = true;
+                        } else if (value.length > 0) {
+                            substance = true;
+                        }
+                    }
+                });
+                if (substance) {
+                    window.location.replace(Stratus.Internals.SetUrlParams(options));
+                }
             }
         };
         $scope.$log = $log;

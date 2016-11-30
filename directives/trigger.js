@@ -26,8 +26,7 @@
         factory(root.Stratus);
     }
 }(this, function (Stratus) {
-    // This directive intends to handle binding of
-    // Date and Time into a simple unix timestamp
+    // This directive intends to handle binding of a model to a function, triggered upon true
     angular.module('stratus-trigger', [])
         .directive('stratusTrigger', function ($compile, $parse) {
             return {

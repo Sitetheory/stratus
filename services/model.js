@@ -246,7 +246,7 @@
                  */
                 this.initialize = this.initialize || function () {
                     if (that.manifest && !that.get('id')) {
-                        that.sync('POST').then(function () {}, console.error);
+                        that.sync('POST', {}).then(function () {}, console.error);
                     }
                 };
                 this.initialize();

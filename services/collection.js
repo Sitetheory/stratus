@@ -33,7 +33,6 @@
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Collection = ['$provide', function ($provide) {
         $provide.factory('collection', function ($q, $http, $timeout, model) {
-            // TODO: Store the Constructor for future usage as an 'instanceof foo'
             return function (options) {
 
                 // Environment
@@ -185,6 +184,19 @@
                         }
                     });
                     return sanitized;
+                };
+
+                /**
+                 * @param target
+                 */
+                this.add = function (target) {
+                    if (angular.isObject(target)) {
+                        that.models.push(
+                            (target instanceof model) ? target : new that.model({
+                                target: that.target
+                            }, target)
+                        );
+                    }
                 };
 
                 // Infinite Scrolling
