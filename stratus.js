@@ -2403,12 +2403,16 @@
 
                 // Filters
                 'stratus.filters.moment',
+                'stratus.filters.truncate',
                 'stratus.filters.gravatar',
 
                 // Directives
                 'stratus.directives.datetime',
                 'stratus.directives.help',
                 'stratus.directives.trigger',
+
+                // Charts
+                'angular-chart',
 
                 // Froala
                 'froala',
@@ -2428,11 +2432,13 @@
                     'ngMaterial',
                     'ngMessages',
                     'moment',
+                    'truncate',
                     'gravatar',
                     'froala',
                     'stratus-date-time',
                     'stratus-help',
-                    'stratus-trigger'
+                    'stratus-trigger',
+                    'chart.js'
                 ]);
 
                 // Services

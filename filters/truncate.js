@@ -1,4 +1,4 @@
-//     Stratus.Filters.Moment.js 1.0
+//     Stratus.Filters.Truncate.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -21,24 +21,22 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'moment', 'angular'], factory);
+        define(['stratus', 'underscore', 'angular'], factory);
     } else {
-        factory(root.Stratus, root.moment);
+        factory(root.Stratus, root._);
     }
-}(this, function (Stratus, moment) {
+}(this, function (Stratus, _) {
 
-    // Angular Moment Filter
+    // Angular Truncate Filter
     // ---------------------
 
-    // This filter allows a display of time since the given date
-    Stratus.Filters.Moment = angular.module('moment', []).filter('moment', function () {
+    // This filter truncates a sentence
+    Stratus.Filters.Truncate = angular.module('truncate', []).filter('truncate', function () {
         return function (input, options) {
-            this.since = false;
-            this.relative = '1w';
-            this.format = 'MMM Do YYYY, h:mma';
+            this.limit = null;
+            this.suffix = null;
             if (angular.isObject(options)) angular.extend(this, options);
-            if (this.relative && typeof this.relative === 'string' && Math.round(new Date().getTime() / 1000) > (input + _.seconds(this.relative))) this.since = false;
-            return (!this.since) ? moment.unix(input).format(this.format) : moment.unix(input).fromNow(true);
+            return _.truncate(input, this.limit, this.suffix);
         };
     });
 
