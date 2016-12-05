@@ -31,11 +31,13 @@
     Stratus.Directives.Pagination = {
         restrict: 'AE',
         link: function ($scope) {
-            // TODO: collection.meta.attributes.pageTotal
-            console.log('scope:', $scope);
-            console.log('parent:', $scope.$parent);
+            /*
+            $scope.$watch('collection.meta.attributes.pageTotal', function (newValue) {
+                console.log('pageTotal:', newValue)
+            });
+            */
         },
-        template: 'coming soon!'
+        template: 'Pages: {{ collection.meta.attributes.pageTotal }}'
     };
     angular.module('stratus-pagination', [])
         .directive('stratusPagination', function ($compile) {
