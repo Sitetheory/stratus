@@ -2386,7 +2386,7 @@
         });
 
         // Angular Injector
-        if (document.querySelectorAll('[ng-controller]').length) {
+        if (document.querySelectorAll('[ng-controller]').length || document.querySelectorAll('[flex]').length) {
             require([
 
                 // Angular
