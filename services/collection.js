@@ -202,7 +202,7 @@
                 /**
                  * @param target
                  */
-                this.remove = function(target) {
+                this.remove = function (target) {
                     console.log('remove:', target);
                 };
 

@@ -2408,6 +2408,7 @@
                 // Directives
                 'stratus.directives.datetime',
                 'stratus.directives.help',
+                'stratus.directives.pagination',
                 'stratus.directives.trigger',
 
                 // Froala
@@ -2432,6 +2433,7 @@
                     'froala',
                     'stratus-date-time',
                     'stratus-help',
+                    'stratus-pagination',
                     'stratus-trigger'
                 ]);
 
