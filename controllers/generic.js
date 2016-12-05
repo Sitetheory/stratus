@@ -33,7 +33,7 @@
 }(this, function (Stratus, _) {
     // This Controller handles simple element binding
     // for a single scope to an API Object Reference.
-    Stratus.Controllers.Generic = ['StratusController', function ($scope, $element, $mdToast, $log, registry) {
+    Stratus.Controllers.Generic = ['StratusController', function ($scope, $element, $mdToast, $log, $parse, registry) {
         // Registry
         $scope.registry = new registry();
         $scope.registry.fetch($element, $scope);
@@ -58,6 +58,21 @@
             }
         };
         $scope.$log = $log;
+
+        // Handle Selected
+        if ($scope.collection) {
+            var selected = $element.attr('data-selected');
+            if (selected) {
+                // $scope.selected = { data: { id: parseInt(selected) } };
+                $scope.$watch('collection.models', function (models) {
+                    angular.forEach(models, function (model) {
+                        if (selected == model.get('id')) {
+                            $scope.selected = model;
+                        }
+                    });
+                });
+            }
+        }
 
         // Scaling Controller
         $scope.scale = 2;

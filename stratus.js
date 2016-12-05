@@ -2403,6 +2403,7 @@
 
                 // Filters
                 'stratus.filters.moment',
+                'stratus.filters.truncate',
                 'stratus.filters.gravatar',
 
                 // Directives
@@ -2410,6 +2411,9 @@
                 'stratus.directives.help',
                 'stratus.directives.pagination',
                 'stratus.directives.trigger',
+
+                // Charts
+                'angular-chart',
 
                 // Froala
                 'froala',
@@ -2421,7 +2425,7 @@
                 'codemirror/mode/htmlmixed/htmlmixed',
                 'codemirror/addon/edit/matchbrackets'
             ], function () {
-                // Froala License
+                // Froala
                 $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
 
                 // App Reference
@@ -2429,12 +2433,14 @@
                     'ngMaterial',
                     'ngMessages',
                     'moment',
+                    'truncate',
                     'gravatar',
                     'froala',
                     'stratus-date-time',
                     'stratus-help',
                     'stratus-pagination',
-                    'stratus-trigger'
+                    'stratus-trigger',
+                    'chart.js'
                 ]);
 
                 // Services
