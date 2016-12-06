@@ -27,7 +27,7 @@
     "disallowKeywords": [ "with" ],
     "disallowKeywordsOnNewLine": ["else"],
     "disallowMultipleLineBreaks": true,
-    "disallowMultipleLineStrings": true,
+    "disallowMultipleLineStrings": null,
     "disallowMultipleVarDecl": true,
     "disallowSpaceBeforeComma": true,
     "disallowSpaceBeforeSemicolon": null,

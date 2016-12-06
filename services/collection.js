@@ -56,6 +56,7 @@
                 this.pending = false;
                 this.error = false;
                 this.completed = false;
+                this.paginate = false;
 
                 // Generate URL
                 if (this.target) {
@@ -140,6 +141,7 @@
                                 // Internals
                                 that.pending = false;
                                 that.completed = true;
+                                that.paginate = false;
 
                                 // Promise
                                 resolve(that.models);
@@ -170,6 +172,16 @@
                  */
                 this.filter = function (query) {
                     that.meta.set('api.q', query);
+                    return that.fetch();
+                };
+
+                /**
+                 * @param page
+                 * @returns {*}
+                 */
+                this.page = function (page) {
+                    that.paginate = true;
+                    that.meta.set('api.p', page);
                     return that.fetch();
                 };
 

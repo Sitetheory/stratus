@@ -61,12 +61,12 @@
 
         // Handle Selected
         if ($scope.collection) {
-            var selected = $element.attr('data-selected');
-            if (selected) {
+            var selectedSetting = $element.attr('data-selected');
+            if (selectedSetting) {
                 // $scope.selected = { data: { id: parseInt(selected) } };
                 $scope.$watch('collection.models', function (models) {
                     angular.forEach(models, function (model) {
-                        if (selected == model.get('id')) {
+                        if (selectedSetting == model.get('id')) {
                             $scope.selected = model;
                         }
                     });
