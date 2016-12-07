@@ -2387,6 +2387,7 @@
 
         // Angular Injector
         if (document.querySelectorAll('[ng-controller]').length || document.querySelectorAll('[flex]').length) {
+            // TODO: Build list of Stratus Directives, Filters, and Controllers
             require([
 
                 // Angular
@@ -2453,7 +2454,8 @@
                 // Controllers
                 angular.module('stratusApp').controller.apply(this, Stratus.Controllers.Generic);
 
-                // CSS
+                // Load CSS
+                // TODO: Make Dynamic
                 var css = [];
                 if (document.querySelectorAll('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');

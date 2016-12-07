@@ -113,7 +113,6 @@
 
         // Store Instance
         Stratus.Instances[_.uniqueId('controller_')] = $scope;
-    }
-    ];
+    }];
 
 }));
