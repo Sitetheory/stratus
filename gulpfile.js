@@ -64,12 +64,13 @@ var min = _.union(minList, nullify(coreList));
 
 // Functions
 gulp.task('clean', function () {
-    return gulp.src(min, { base: '.', read: false })
+    return gulp.src(minList, { base: '.', read: false })
         .pipe(debug({ title: 'Clean:' }))
         .pipe(vinylPaths(del));
 });
 gulp.task('jscs', function () {
     return gulp.src(core)
+        .pipe(debug({ title: 'Verify:' }))
         .pipe(jscs())
         .pipe(jscs.reporter())
         .pipe(jscs.reporter('fail'));

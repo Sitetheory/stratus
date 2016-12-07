@@ -48,6 +48,7 @@
                     var data;
                     if (options.target) {
                         options.target = _.ucfirst(options.target);
+
                         // Find or Create Reference
                         if (options.manifest || options.id) {
                             if (!Stratus.Catalog[options.target]) {
