@@ -28,14 +28,14 @@
 }(this, function (Stratus) {
     // This directive intends to handle binding of a model to a function, triggered upon true
     angular.module('stratus-trigger', [])
-        .directive('stratusTrigger', function ($compile, $parse) {
+        .directive('stratusTrigger', function ($parse) {
             return {
                 restrict: 'AE',
                 require: 'ngModel',
                 scope: {
                     stratusTrigger: '@'
                 },
-                link: function ($scope, $element, attrs, ngModel) {
+                link: function ($scope, $element, ngModel) {
                     $scope.$watch(function () {
                         return ngModel.$modelValue;
                     }, function (newValue) {

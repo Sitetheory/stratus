@@ -2434,6 +2434,8 @@
                 angular.module('stratusApp', [
                     'ngMaterial',
                     'ngMessages',
+
+                    // TODO: Load Dynamically
                     'moment',
                     'truncate',
                     'gravatar',
@@ -2470,12 +2472,12 @@
                     angular.forEach(css, function (url) {
                         Stratus.Internals.CssLoader(url).then(function () {
                             if (++counter === css.length) {
-                                angular.bootstrap(document.querySelector('body'), ['stratusApp']);
+                                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                             }
                         });
                     });
                 } else {
-                    angular.bootstrap(document.querySelector('body'), ['stratusApp']);
+                    angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                 }
             });
         }

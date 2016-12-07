@@ -1,9 +1,11 @@
 // Dependencies
 var gulp = require('gulp');
-var clean = require('gulp-clean');
+var debug = require('gulp-debug');
 var dest = require('gulp-dest');
 var jscs = require('gulp-jscs');
 var uglify = require('gulp-uglify');
+var del = require('del');
+var vinylPaths = require('vinyl-paths');
 var _ = require('underscore');
 
 // Helper Functions
@@ -62,8 +64,9 @@ var min = _.union(minList, nullify(coreList));
 
 // Functions
 gulp.task('clean', function () {
-    return gulp.src(min, { read: false })
-        .pipe(clean());
+    return gulp.src(min, { base: '.', read: false })
+        .pipe(debug({ title: 'Clean:' }))
+        .pipe(vinylPaths(del));
 });
 gulp.task('jscs', function () {
     return gulp.src(core)
@@ -73,6 +76,7 @@ gulp.task('jscs', function () {
 });
 gulp.task('compress', ['clean'], function () {
     return gulp.src(core, { base: '.' })
+        .pipe(debug({ title: 'Compress:' }))
         .pipe(uglify({
             preserveComments: 'license'
         }))
