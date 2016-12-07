@@ -65,7 +65,7 @@
                 <a ng-click="collection.meta.attributes.pageCurrent == 1 || collection.page(collection.meta.attributes.pageCurrent - 1)">Previous</a>\
             </li>\
             <li ng-repeat="page in pages" ng-class="{active:collection.meta.attributes.pageCurrent == page}">\
-                <a ng-click="collection.page(page)">{{page}}</a>\
+                <a ng-click="collection.page(page)">{{ page }}</a>\
             </li>\
             <li ng-class="{disabled:collection.meta.attributes.pageCurrent == collection.meta.attributes.pageTotal}">\
                 <a ng-click="collection.meta.attributes.pageCurrent == collection.meta.attributes.pageTotal || collection.page(collection.meta.attributes.pageCurrent + 1)">Next</a>\
@@ -74,6 +74,7 @@
                 <a ng-click="collection.meta.attributes.pageCurrent == collection.meta.attributes.pageTotal || collection.page(collection.meta.attributes.pageTotal)">Last</a>\
             </li>\
         </ul>\
+        <span ng-show="false" class="paginatorTotal customFontSecondary smallLabel">({{ collection.meta.attributes.countTotal }} Results)</span>\
         <md-progress-linear ng-if="collection.paginate" md-mode="indeterminate"></md-progress-linear>'
     };
     angular.module('stratus-pagination', [])

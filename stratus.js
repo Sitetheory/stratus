@@ -2409,6 +2409,7 @@
                 // Directives
                 'stratus.directives.datetime',
                 'stratus.directives.help',
+                'stratus.directives.optionValue',
                 'stratus.directives.pagination',
                 'stratus.directives.trigger',
 
@@ -2438,6 +2439,7 @@
                     'froala',
                     'stratus-date-time',
                     'stratus-help',
+                    'stratus-option-value',
                     'stratus-pagination',
                     'stratus-trigger',
                     'chart.js'
