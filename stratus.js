@@ -154,6 +154,26 @@
         Internals: {},
         Prototypes: {},
         Resources: {},
+        Roster: {
+            controller: {
+                selector: '[ng-controller]',
+                namespace: 'stratus.controllers.'
+            },
+            directive: {
+                selector: [
+                    'stratus-date-time',
+                    'stratus-help',
+                    'stratus-option-value',
+                    'stratus-pagination',
+                    'stratus-trigger'
+                ],
+                namespace: 'stratus.directives.'
+            },
+            flex: {
+                selector: '[flex]',
+                require: ['angular', 'angular-material']
+            }
+        },
 
         // Plugins */
         PluginMethods: {},
@@ -362,6 +382,18 @@
                 seconds = null;
             }
             return seconds;
+        },
+        /**
+         * @param target
+         */
+        hyphenToCamel: function (target) {
+            return target.replace(/(-\w)/g, function (m) { return m[1].toUpperCase(); });
+        },
+        /**
+         * @param target
+         */
+        snakeToCamel: function (target) {
+            return target.replace(/(_\w)/g, function (m) { return m[1].toUpperCase(); });
         },
         /**
          * @param target
@@ -2385,10 +2417,48 @@
             Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
         });
 
+        // Auto-Loader
+        var requirements = [];
+        _.forEach(Stratus.Roster, function (element) {
+            if (element && element.selector) {
+                var nodes;
+                if (_.isArray(element.selector)) {
+                    element.length = 0;
+                    _.forEach(element.selector, function (selector) {
+                        nodes = document.querySelectorAll(selector);
+                        element.length += nodes.length;
+                        if (nodes.length) {
+                            requirements.push(element.namespace + _.lcfirst(_.hyphenToCamel(selector.replace('stratus', ''))));
+                        }
+                    });
+                } else {
+                    nodes = document.querySelectorAll(element.selector);
+                    element.length = nodes.length;
+                    if (nodes.length) {
+                        if (element.namespace) {
+                            var requests = [];
+                            var attribute = element.selector.replace('[', '').replace(']', '');
+                            nodes.forEach(function (node) {
+                                var name = node.getAttribute(attribute);
+                                if (name) {
+                                    requirements.push(element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', ''))));
+                                }
+                            });
+                        } else if (element.require) {
+                            requirements = _.union(requirements, element.require);
+                        }
+                    }
+                }
+            }
+        });
+        requirements = _.uniq(requirements);
+        window.requirements = requirements;
+
         // Angular Injector
         if (document.querySelectorAll('[ng-controller]').length || document.querySelectorAll('[flex]').length) {
             // TODO: Build list of Stratus Directives, Filters, and Controllers
-            require([
+            /*
+            var list = [
 
                 // Angular
                 'angular',
@@ -2408,7 +2478,7 @@
                 'stratus.filters.gravatar',
 
                 // Directives
-                'stratus.directives.datetime',
+                'stratus.directives.dateTime',
                 'stratus.directives.help',
                 'stratus.directives.optionValue',
                 'stratus.directives.pagination',
@@ -2426,16 +2496,21 @@
                 'codemirror',
                 'codemirror/mode/htmlmixed/htmlmixed',
                 'codemirror/addon/edit/matchbrackets'
-            ], function () {
+            ];
+            */
+            if (requirements.length) require(requirements, function () {
                 // Froala
-                $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
+                if ($.FroalaEditor) {
+                    $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
+                }
 
                 // App Reference
                 angular.module('stratusApp', [
                     'ngMaterial',
-                    'ngMessages',
+                    'ngMessages'
 
                     // TODO: Load Dynamically
+                    /*
                     'moment',
                     'truncate',
                     'gravatar',
@@ -2446,9 +2521,11 @@
                     'stratus-pagination',
                     'stratus-trigger',
                     'chart.js'
+                    */
                 ]);
 
                 // Services
+                /*
                 angular.module('stratusApp').config(Stratus.Services.Model);
                 angular.module('stratusApp').config(Stratus.Services.Collection);
                 angular.module('stratusApp').config(Stratus.Services.Registry);
@@ -2479,6 +2556,8 @@
                 } else {
                     angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                 }
+                */
+                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
             });
         }
 
