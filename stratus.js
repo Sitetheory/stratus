@@ -159,7 +159,14 @@
                 selector: '[ng-controller]',
                 namespace: 'stratus.controllers.'
             },
-            directive: {
+            components: {
+                selector: [
+                    // 'stratus-base'
+                ],
+                namespace: 'stratus.components.'
+            },
+            /*
+            directives: {
                 selector: [
                     'stratus-date-time',
                     'stratus-help',
@@ -169,6 +176,7 @@
                 ],
                 namespace: 'stratus.directives.'
             },
+            */
             flex: {
                 selector: '[flex]',
                 require: ['angular', 'angular-material']
@@ -2528,20 +2536,19 @@
                 ]);
 
                 // Services
-                if (Stratus.Services.Model) {
-                    angular.module('stratusApp').config(Stratus.Services.Model);
-                }
-                if (Stratus.Services.Collection) {
-                    angular.module('stratusApp').config(Stratus.Services.Collection);
-                }
-                if (Stratus.Services.Registry) {
-                    angular.module('stratusApp').config(Stratus.Services.Registry);
-                }
+                angular.forEach(Stratus.Services, function (service) {
+                    angular.module('stratusApp').config(service);
+                });
+
+                // Components
+                angular.forEach(Stratus.Components, function (controller, name) {
+                    angular.module('stratusApp').component('stratus' + name, controller);
+                });
 
                 // Controllers
-                if (Stratus.Controllers.Generic) {
-                    angular.module('stratusApp').controller.apply(this, Stratus.Controllers.Generic);
-                }
+                angular.forEach(Stratus.Controllers, function (controller, name) {
+                    angular.module('stratusApp').controller('Stratus' + name, controller);
+                });
 
                 /*
                 // Load CSS

@@ -43,12 +43,14 @@ var location = {
     preserve: {
         core: [
             'controllers/*.js',
+            'components/*.js',
             'directives/*.js',
             'filters/*.js',
             'services/*.js'
         ],
         min: [
             'controllers/*.min.js',
+            'components/*.min.js',
             'directives/*.min.js',
             'filters/*.min.js',
             'services/*.min.js'
