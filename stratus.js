@@ -2498,6 +2498,9 @@
                 'codemirror/addon/edit/matchbrackets'
             ];
             */
+            ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
+                requirements.push(requirement);
+            });
             if (requirements.length) require(requirements, function () {
                 // Froala
                 if ($.FroalaEditor) {
@@ -2507,13 +2510,13 @@
                 // App Reference
                 angular.module('stratusApp', [
                     'ngMaterial',
-                    'ngMessages'
+                    'ngMessages',
 
                     // TODO: Load Dynamically
-                    /*
                     'moment',
                     'truncate',
-                    'gravatar',
+                    'gravatar'
+                    /*
                     'froala',
                     'stratus-date-time',
                     'stratus-help',
@@ -2525,14 +2528,22 @@
                 ]);
 
                 // Services
-                /*
-                angular.module('stratusApp').config(Stratus.Services.Model);
-                angular.module('stratusApp').config(Stratus.Services.Collection);
-                angular.module('stratusApp').config(Stratus.Services.Registry);
+                if (Stratus.Services.Model) {
+                    angular.module('stratusApp').config(Stratus.Services.Model);
+                }
+                if (Stratus.Services.Collection) {
+                    angular.module('stratusApp').config(Stratus.Services.Collection);
+                }
+                if (Stratus.Services.Registry) {
+                    angular.module('stratusApp').config(Stratus.Services.Registry);
+                }
 
                 // Controllers
-                angular.module('stratusApp').controller.apply(this, Stratus.Controllers.Generic);
+                if (Stratus.Controllers.Generic) {
+                    angular.module('stratusApp').controller.apply(this, Stratus.Controllers.Generic);
+                }
 
+                /*
                 // Load CSS
                 // TODO: Make Dynamic
                 var css = [];
