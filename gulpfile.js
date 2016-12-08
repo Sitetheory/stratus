@@ -21,65 +21,71 @@ var nullify = function (proto) {
 };
 
 // Locations
-var coreList = [
-
-    // Stratus
-    'stratus.js',
-    'normalizers/*.js',
-
-    // Backbone
-    'models/*.js',
-    'collections/*.js',
-    'routers/*.js',
-    'views/**/*.js',
-
-    // Angular
-    'controllers/*.js',
-    'directives/*.js',
-    'filters/*.js',
-    'services/*.js'
-];
-var minList = [
-
-    // Stratus
-    'stratus.min.js',
-    'normalizers/*.min.js',
-
-    // Backbone
-    'models/*.min.js',
-    'collections/*.min.js',
-    'routers/*.min.js',
-    'views/**/*.min.js',
-
-    // Angular
-    'controllers/*.min.js',
-    'directives/*.min.js',
-    'filters/*.min.js',
-    'services/*.min.js'
-];
-
-// Generate Exclusions
-var core = _.union(coreList, nullify(minList));
-var min = _.union(minList, nullify(coreList));
+var location = {
+    mangle: {
+        core: [
+            'stratus.js',
+            'normalizers/*.js',
+            'models/*.js',
+            'collections/*.js',
+            'routers/*.js',
+            'views/**/*.js'
+        ],
+        min: [
+            'stratus.min.js',
+            'normalizers/*.min.js',
+            'models/*.min.js',
+            'collections/*.min.js',
+            'routers/*.min.js',
+            'views/**/*.min.js'
+        ]
+    },
+    preserve: {
+        core: [
+            'controllers/*.js',
+            'directives/*.js',
+            'filters/*.js',
+            'services/*.js'
+        ],
+        min: [
+            'controllers/*.min.js',
+            'directives/*.min.js',
+            'filters/*.min.js',
+            'services/*.min.js'
+        ]
+    }
+};
 
 // Functions
 gulp.task('clean', function () {
-    return gulp.src(minList, { base: '.', read: false })
+    return gulp.src(_.union(location.mangle.min, location.preserve.min), { base: '.', read: false })
         .pipe(debug({ title: 'Clean:' }))
         .pipe(vinylPaths(del));
 });
 gulp.task('jscs', function () {
-    return gulp.src(core)
+    return gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min)))
         .pipe(debug({ title: 'Verify:' }))
         .pipe(jscs())
         .pipe(jscs.reporter())
         .pipe(jscs.reporter('fail'));
 });
-gulp.task('compress', ['clean'], function () {
-    return gulp.src(core, { base: '.' })
+gulp.task('compress', ['compress:mangle', 'compress:preserve']);
+gulp.task('compress:mangle', ['clean'], function () {
+    return gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), { base: '.' })
+        .pipe(debug({ title: 'Mangle:' }))
+        .pipe(uglify({
+            preserveComments: 'license',
+            mangle: true
+        }))
+        .pipe(dest('.', { ext: '.min.js' }))
+        .pipe(gulp.dest('.'));
+});
+gulp.task('compress:preserve', ['clean'], function () {
+    return gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), { base: '.' })
         .pipe(debug({ title: 'Compress:' }))
         .pipe(uglify({
-            preserveComments: 'license'
+            preserveComments: 'license',
+            mangle: false
         }))
         .pipe(dest('.', { ext: '.min.js' }))
         .pipe(gulp.dest('.'));
