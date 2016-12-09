@@ -2486,6 +2486,7 @@
                 'codemirror/addon/edit/matchbrackets'
             ];
             */
+
             // FIXME: Filters should load the same way everything else does
             ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
                 requirements.push(requirement);
