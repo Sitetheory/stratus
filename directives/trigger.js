@@ -27,23 +27,23 @@
     }
 }(this, function (Stratus) {
     // This directive intends to handle binding of a model to a function, triggered upon true
-    angular.module('stratus-trigger', [])
-        .directive('stratusTrigger', function ($parse) {
-            return {
-                restrict: 'AE',
-                require: 'ngModel',
-                scope: {
-                    stratusTrigger: '@'
-                },
-                link: function ($scope, $element, ngModel) {
-                    $scope.$watch(function () {
-                        return ngModel.$modelValue;
-                    }, function (newValue) {
-                        if (typeof newValue !== 'undefined') {
-                            ($parse($scope.stratusTrigger))($scope.$parent);
-                        }
-                    });
-                }
-            };
-        });
+    Stratus.Directives.Trigger = function ($parse) {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                stratusTrigger: '@'
+            },
+            link: function ($scope, $element, ngModel) {
+                console.log($scope);
+                $scope.$watch(function () {
+                    return ngModel.$modelValue;
+                }, function (newValue) {
+                    if (typeof newValue !== 'undefined') {
+                        ($parse($scope.stratusTrigger))($scope.$parent);
+                    }
+                });
+            }
+        };
+    };
 }));

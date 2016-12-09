@@ -161,22 +161,21 @@
             },
             components: {
                 selector: [
-                    // 'stratus-base'
+                    'stratus-base',
+                    'stratus-pagination'
                 ],
                 namespace: 'stratus.components.'
             },
-            /*
             directives: {
                 selector: [
-                    'stratus-date-time',
-                    'stratus-help',
-                    'stratus-option-value',
-                    'stratus-pagination',
-                    'stratus-trigger'
+                    '[stratus-base]',
+                    '[stratus-date-time]',
+                    '[stratus-help]',
+                    '[stratus-option-value]',
+                    '[stratus-trigger]'
                 ],
                 namespace: 'stratus.directives.'
             },
-            */
             flex: {
                 selector: '[flex]',
                 require: ['angular', 'angular-material']
@@ -2427,16 +2426,21 @@
 
         // Auto-Loader
         var requirements = [];
+        var requirement;
+        var nodes;
         _.forEach(Stratus.Roster, function (element) {
             if (element && element.selector) {
-                var nodes;
                 if (_.isArray(element.selector)) {
                     element.length = 0;
                     _.forEach(element.selector, function (selector) {
                         nodes = document.querySelectorAll(selector);
                         element.length += nodes.length;
                         if (nodes.length) {
-                            requirements.push(element.namespace + _.lcfirst(_.hyphenToCamel(selector.replace('stratus', ''))));
+                            var name = selector.replace('[', '').replace(']', '');
+                            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('stratus', '')));
+                            if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+                                requirements.push(requirement);
+                            }
                         }
                     });
                 } else {
@@ -2444,12 +2448,14 @@
                     element.length = nodes.length;
                     if (nodes.length) {
                         if (element.namespace) {
-                            var requests = [];
                             var attribute = element.selector.replace('[', '').replace(']', '');
                             nodes.forEach(function (node) {
                                 var name = node.getAttribute(attribute);
                                 if (name) {
-                                    requirements.push(element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', ''))));
+                                    requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')));
+                                    if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+                                        requirements.push(requirement);
+                                    }
                                 }
                             });
                         } else if (element.require) {
@@ -2464,34 +2470,8 @@
 
         // Angular Injector
         if (document.querySelectorAll('[ng-controller]').length || document.querySelectorAll('[flex]').length) {
-            // TODO: Build list of Stratus Directives, Filters, and Controllers
             /*
             var list = [
-
-                // Angular
-                'angular',
-                'angular-material',
-
-                // Services
-                'stratus.services.model',
-                'stratus.services.collection',
-                'stratus.services.registry',
-
-                // Controllers
-                'stratus.controllers.generic',
-
-                // Filters
-                'stratus.filters.moment',
-                'stratus.filters.truncate',
-                'stratus.filters.gravatar',
-
-                // Directives
-                'stratus.directives.dateTime',
-                'stratus.directives.help',
-                'stratus.directives.optionValue',
-                'stratus.directives.pagination',
-                'stratus.directives.trigger',
-
                 // Charts
                 'angular-chart',
 
@@ -2506,6 +2486,7 @@
                 'codemirror/addon/edit/matchbrackets'
             ];
             */
+            // FIXME: Filters should load the same way everything else does
             ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
                 requirements.push(requirement);
             });
@@ -2520,17 +2501,12 @@
                     'ngMaterial',
                     'ngMessages',
 
-                    // TODO: Load Dynamically
+                    // TODO: Load Filters Dynamically
                     'moment',
                     'truncate',
                     'gravatar'
                     /*
                     'froala',
-                    'stratus-date-time',
-                    'stratus-help',
-                    'stratus-option-value',
-                    'stratus-pagination',
-                    'stratus-trigger',
                     'chart.js'
                     */
                 ]);
@@ -2545,9 +2521,15 @@
                     angular.module('stratusApp').component('stratus' + name, controller);
                 });
 
+                // Directives
+                angular.forEach(Stratus.Directives, function (controller, name) {
+                    angular.module('stratusApp').directive('stratus' + name, controller);
+                });
+
                 // Controllers
                 angular.forEach(Stratus.Controllers, function (controller, name) {
                     angular.module('stratusApp').controller('Stratus' + name, controller);
+                    angular.module('stratusApp').controller(name, controller);
                 });
 
                 /*

@@ -28,18 +28,16 @@
 }(this, function (Stratus) {
     // This directive intends to provide basic logic for extending
     // the Stratus Auto-Loader for various contextual uses.
-    Stratus.Directives.Base = {
-        restrict: 'AE',
-        scope: {
-            ngModel: '='
-        },
-        link: function ($scope, $element) {
-            console.log($scope, $element);
-        },
-        template: '<div class="noTemplate"></div>'
+    Stratus.Directives.Base = function ($compile) {
+        return {
+            restrict: 'A',
+            scope: {
+                ngModel: '='
+            },
+            link: function ($scope, $element) {
+                console.log($scope, $element);
+            },
+            template: '<div class="noTemplate"></div>'
+        };
     };
-    angular.module('stratus-base', [])
-        .directive('stratusBase', function ($compile) {
-            return Stratus.Directives.Base;
-        });
 }));
