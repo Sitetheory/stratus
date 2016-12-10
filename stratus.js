@@ -162,6 +162,7 @@
             components: {
                 selector: [
                     'stratus-base',
+                    'stratus-facebook',
                     'stratus-pagination'
                 ],
                 namespace: 'stratus.components.'

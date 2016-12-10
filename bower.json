@@ -49,6 +49,7 @@
     "fullcalendar": "^2.*",
     "mathjs": "^3.*",
     "angular": "^1.*",
+    "angular-sanitize": "^1.*",
     "angular-material": "^1.*",
     "angular-chart.js": "^1.*",
     "froala-wysiwyg-editor": "^2.3.*",
