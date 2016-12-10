@@ -35,10 +35,10 @@
                 stratusTrigger: '@'
             },
             link: function ($scope, $element, ngModel) {
-                console.log($scope);
                 $scope.$watch(function () {
                     return ngModel.$modelValue;
                 }, function (newValue) {
+                    console.log('value:', newValue);
                     if (typeof newValue !== 'undefined') {
                         ($parse($scope.stratusTrigger))($scope.$parent);
                     }

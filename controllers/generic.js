@@ -41,6 +41,7 @@
         // Wrappers
         $scope.Stratus = Stratus;
         $scope.setUrlParams = function (options) {
+            console.log(options);
             if (angular.isObject(options)) {
                 var substance = false;
                 angular.forEach(options, function (value) {
