@@ -1,4 +1,4 @@
-//     Stratus.Directives.DateTime.js 1.0
+//     Stratus.Components.DateTime.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,7 +15,7 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus DateTime Directive
+// Stratus DateTime Component
 // --------------------------
 
 // Define AMD, Require.js, or Contextual Scope
@@ -26,20 +26,16 @@
         factory(root.Stratus, root.moment);
     }
 }(this, function (Stratus, moment) {
-    // This directive intends to handle binding of
+    // This component intends to handle binding of
     // Date and Time into a simple unix timestamp
-    angular.module('stratus-date-time', [])
-        .directive('stratusDateTime', function ($compile) {
-            return {
-                restrict: 'AE',
-                scope: {
-                    ngModel: '='
-                },
-                link: function ($scope) {
-                    $scope.timestamp = $scope.ngModel ? moment.unix($scope.ngModel).format() : moment().endOf('week');
-                    $scope.date = new Date($scope.timestamp.toISOString());
-                },
-                template: '<input type="datetime-local" name="input" ng-model="date" placeholder="yyyy-MM-ddTHH:mm"/>'
-            };
-        });
+    Stratus.Components.DateTime = {
+        bindings: {
+            ngModel: '='
+        },
+        link: function ($scope) {
+            $scope.timestamp = $scope.ngModel ? moment.unix($scope.ngModel).format() : moment().endOf('week');
+            $scope.date = new Date($scope.timestamp.toISOString());
+        },
+        template: '<input type="datetime-local" name="input" ng-model="date" placeholder="yyyy-MM-ddTHH:mm"/>'
+    };
 }));

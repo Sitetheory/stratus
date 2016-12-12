@@ -162,7 +162,10 @@
             components: {
                 selector: [
                     'stratus-base',
+                    'stratus-date-time',
                     'stratus-facebook',
+                    'stratus-help',
+                    'stratus-option-value',
                     'stratus-pagination'
                 ],
                 namespace: 'stratus.components.'
@@ -183,7 +186,7 @@
             },
             modules: {
                 selector: [
-                    '[froala]'
+                    '[froala]', '[ng-sanitize]'
                 ],
                 namespace: 'angular-',
                 module: true
@@ -197,7 +200,8 @@
 
         // TODO: Turn this into a Dynamic Object
         Api: {
-            GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA'
+            GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA',
+            Froala: ''
         }
     };
 
@@ -645,6 +649,28 @@
 
     // Chronos System
     // --------------
+
+    // This constructor builds jobs for various methods.
+    /**
+     * @param time
+     * @param method
+     * @param scope
+     * @constructor
+     */
+    Stratus.Prototypes.Job = function (time, method, scope) {
+        this.enabled = false;
+        if (typeof time === 'string') {
+            this.time = time;
+            this.method = method;
+            this.scope = scope;
+        } else if (time && typeof time === 'object') {
+            _.extend(this, time);
+        }
+        this.time = _.seconds(this.time);
+        this.scope = this.scope || window;
+    };
+
+    // This model handles all time related jobs.
     Stratus.Prototypes.Chronos = Backbone.Model.extend({
         /**
          * @param options
@@ -661,7 +687,7 @@
                 }
                 if (!job.code && job.enabled) {
                     job.code = setInterval(function (job) {
-                        job.func.call(job.scope);
+                        job.method.call(job.scope);
                     }, job.time * 1000, job);
                 } else if (job.code && !job.enabled) {
                     clearInterval(job.code);
@@ -671,23 +697,17 @@
         },
         /**
          * @param time
-         * @param func
+         * @param method
          * @param scope
          * @returns {string}
          */
-        add: function (time, func, scope) {
+        add: function (time, method, scope) {
             var uid = null;
-            time = _.seconds(time);
-            if (time !== null && typeof func === 'function') {
+            var job = new Stratus.Prototypes.Job(time, method, scope);
+            if (job.time !== null && typeof job.method === 'function') {
                 uid = _.uniqueId('job_');
-                scope = scope || window;
-                this.set(uid, {
-                    time: time,
-                    func: func,
-                    scope: scope,
-                    code: 0,
-                    enabled: false
-                });
+                this.set(uid, job);
+                Stratus.Instances[uid] = job;
             }
             return uid;
         },
@@ -1865,11 +1885,11 @@
                         element.length += nodes.length;
                         if (nodes.length) {
                             var name = selector.replace('[', '').replace(']', '');
-                            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('stratus', '')));
+                            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('stratus', '').replace('ng', '')));
                             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
                                 requirements.push(requirement);
                                 if (element.module) {
-                                    modules.push(name);
+                                    modules.push(_.lcfirst(_.hyphenToCamel(name)));
                                 }
                             }
                         }
@@ -1900,7 +1920,7 @@
         window.requirements = requirements;
 
         // Angular Injector
-        if (document.querySelectorAll('[ng-controller]').length || document.querySelectorAll('[flex]').length) {
+        if (requirements.length) {
             /* TODO: Load Dynamically
              var list = [
              'codemirror',
@@ -1913,7 +1933,7 @@
             ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
                 requirements.push(requirement);
             });
-            if (requirements.length) require(requirements, function () {
+            require(requirements, function () {
                 // TODO: Make Dynamic
                 // Froala
                 if ($.FroalaEditor) {
@@ -1951,7 +1971,7 @@
 
                 // Controllers
                 angular.forEach(Stratus.Controllers, function (controller, name) {
-                    angular.module('stratusApp').controller('Stratus' + name, controller);
+                    angular.module('stratusApp').controller('Stratus' + name, controller); // TODO: @deprecated!
                     angular.module('stratusApp').controller(name, controller);
                 });
 

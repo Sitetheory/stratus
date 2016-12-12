@@ -1,4 +1,4 @@
-//     Stratus.Directives.Help.js 1.0
+//     Stratus.Components.Help.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,7 +15,7 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Help Directive
+// Stratus Help Component
 // ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
@@ -27,15 +27,10 @@
     }
 }(this, function (Stratus) {
     // TODO: Convert to Tether-Tooltip
-    // This directive intends to display help information
+    // This component intends to display help information
     // in an widely accessible tooltip icon standard.
-    Stratus.Directives.Help = {
-        restrict: 'AE',
+    Stratus.Components.Help = {
         transclude: true,
         template: '<md-button class="md-icon-button" aria-label="help"><md-tooltip md-direction="top"><div ng-transclude=""></div></md-tooltip><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon></md-button>'
     };
-    angular.module('stratus-help', [])
-        .directive('stratusHelp', function ($compile) {
-            return Stratus.Directives.Help;
-        });
 }));

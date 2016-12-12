@@ -1,4 +1,4 @@
-//     Stratus.Directives.Pagination.js 1.0
+//     Stratus.Components.Pagination.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,7 +15,7 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Pagination Directive
+// Stratus Pagination Component
 // ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
@@ -26,7 +26,7 @@
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-    // $scope component intends to handle binding and
+    // This component intends to handle binding and
     // full pagination for the scope's collection.
     Stratus.Components.Pagination = {
         controller: function ($scope) {
