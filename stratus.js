@@ -180,6 +180,13 @@
             flex: {
                 selector: '[flex]',
                 require: ['angular', 'angular-material']
+            },
+            modules: {
+                selector: [
+                    '[froala]'
+                ],
+                namespace: 'angular-',
+                module: true
             }
         },
 
@@ -1841,6 +1848,144 @@
         }
     });
 
+    /**
+     * @constructor
+     */
+    Stratus.Internals.AngularLoader = function () {
+        var requirements = [];
+        var requirement;
+        var nodes;
+        var modules = [];
+        _.forEach(Stratus.Roster, function (element) {
+            if (element && element.selector) {
+                if (_.isArray(element.selector)) {
+                    element.length = 0;
+                    _.forEach(element.selector, function (selector) {
+                        nodes = document.querySelectorAll(selector);
+                        element.length += nodes.length;
+                        if (nodes.length) {
+                            var name = selector.replace('[', '').replace(']', '');
+                            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('stratus', '')));
+                            if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+                                requirements.push(requirement);
+                                if (element.module) {
+                                    modules.push(name);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    nodes = document.querySelectorAll(element.selector);
+                    element.length = nodes.length;
+                    if (nodes.length) {
+                        if (element.namespace) {
+                            var attribute = element.selector.replace('[', '').replace(']', '');
+                            nodes.forEach(function (node) {
+                                var name = node.getAttribute(attribute);
+                                if (name) {
+                                    requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')));
+                                    if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+                                        requirements.push(requirement);
+                                    }
+                                }
+                            });
+                        } else if (element.require) {
+                            requirements = _.union(requirements, element.require);
+                        }
+                    }
+                }
+            }
+        });
+        requirements = _.uniq(requirements);
+        window.requirements = requirements;
+
+        // Angular Injector
+        if (document.querySelectorAll('[ng-controller]').length || document.querySelectorAll('[flex]').length) {
+            /* TODO: Load Dynamically
+             var list = [
+             'codemirror',
+             'codemirror/mode/htmlmixed/htmlmixed',
+             'codemirror/addon/edit/matchbrackets'
+             ];
+             */
+
+            // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
+            ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
+                requirements.push(requirement);
+            });
+            if (requirements.length) require(requirements, function () {
+                // TODO: Make Dynamic
+                // Froala
+                if ($.FroalaEditor) {
+                    $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
+                }
+
+                // Modular Injectors
+                var baseModules = [
+                    'ngMaterial',
+                    'ngMessages'
+                ];
+
+                // App Reference
+                angular.module('stratusApp', _.union(baseModules, modules));
+
+                // Services
+                angular.forEach(Stratus.Services, function (service) {
+                    angular.module('stratusApp').config(service);
+                });
+
+                // Components
+                angular.forEach(Stratus.Components, function (component, name) {
+                    angular.module('stratusApp').component('stratus' + name, component);
+                });
+
+                // Directives
+                angular.forEach(Stratus.Directives, function (directive, name) {
+                    angular.module('stratusApp').directive('stratus' + name, directive);
+                });
+
+                // Filters
+                angular.forEach(Stratus.Filters, function (filter, name) {
+                    angular.module('stratusApp').filter(_.lcfirst(name), filter);
+                });
+
+                // Controllers
+                angular.forEach(Stratus.Controllers, function (controller, name) {
+                    angular.module('stratusApp').controller('Stratus' + name, controller);
+                    angular.module('stratusApp').controller(name, controller);
+                });
+
+                // Load CSS
+                // TODO: Make Dynamic
+                var css = [];
+                if (document.querySelectorAll('stratus-help').length) {
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
+                }
+                if (document.querySelectorAll('[froala]').length) {
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css');
+                }
+
+                if (css.length) {
+                    // var counter = 0;
+                    angular.forEach(css, function (url) {
+                        Stratus.Internals.CssLoader(url).then(function () {
+                            /*
+                            if (++counter === css.length) {
+                                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                            }
+                            */
+                        });
+                    });
+                }
+                /*else {
+                    angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                }*/
+                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+            });
+        }
+    };
+
     // Internal View Loader
     // ----------------------
 
@@ -2425,143 +2570,8 @@
             Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
         });
 
-        // Auto-Loader
-        var requirements = [];
-        var requirement;
-        var nodes;
-        _.forEach(Stratus.Roster, function (element) {
-            if (element && element.selector) {
-                if (_.isArray(element.selector)) {
-                    element.length = 0;
-                    _.forEach(element.selector, function (selector) {
-                        nodes = document.querySelectorAll(selector);
-                        element.length += nodes.length;
-                        if (nodes.length) {
-                            var name = selector.replace('[', '').replace(']', '');
-                            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('stratus', '')));
-                            if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
-                                requirements.push(requirement);
-                            }
-                        }
-                    });
-                } else {
-                    nodes = document.querySelectorAll(element.selector);
-                    element.length = nodes.length;
-                    if (nodes.length) {
-                        if (element.namespace) {
-                            var attribute = element.selector.replace('[', '').replace(']', '');
-                            nodes.forEach(function (node) {
-                                var name = node.getAttribute(attribute);
-                                if (name) {
-                                    requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')));
-                                    if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
-                                        requirements.push(requirement);
-                                    }
-                                }
-                            });
-                        } else if (element.require) {
-                            requirements = _.union(requirements, element.require);
-                        }
-                    }
-                }
-            }
-        });
-        requirements = _.uniq(requirements);
-        window.requirements = requirements;
-
-        // Angular Injector
-        if (document.querySelectorAll('[ng-controller]').length || document.querySelectorAll('[flex]').length) {
-            /*
-            var list = [
-                // Charts
-                'angular-chart',
-
-                // Froala
-                'froala',
-                'froala-align',
-                'angular-froala',
-
-                // Code Mirror
-                'codemirror',
-                'codemirror/mode/htmlmixed/htmlmixed',
-                'codemirror/addon/edit/matchbrackets'
-            ];
-            */
-
-            // FIXME: Filters should load the same way everything else does
-            ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
-                requirements.push(requirement);
-            });
-            if (requirements.length) require(requirements, function () {
-                // Froala
-                if ($.FroalaEditor) {
-                    $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
-                }
-
-                // App Reference
-                angular.module('stratusApp', [
-                    'ngMaterial',
-                    'ngMessages',
-
-                    // TODO: Load Filters Dynamically
-                    'moment',
-                    'truncate',
-                    'gravatar'
-                    /*
-                    'froala',
-                    'chart.js'
-                    */
-                ]);
-
-                // Services
-                angular.forEach(Stratus.Services, function (service) {
-                    angular.module('stratusApp').config(service);
-                });
-
-                // Components
-                angular.forEach(Stratus.Components, function (controller, name) {
-                    angular.module('stratusApp').component('stratus' + name, controller);
-                });
-
-                // Directives
-                angular.forEach(Stratus.Directives, function (controller, name) {
-                    angular.module('stratusApp').directive('stratus' + name, controller);
-                });
-
-                // Controllers
-                angular.forEach(Stratus.Controllers, function (controller, name) {
-                    angular.module('stratusApp').controller('Stratus' + name, controller);
-                    angular.module('stratusApp').controller(name, controller);
-                });
-
-                /*
-                // Load CSS
-                // TODO: Make Dynamic
-                var css = [];
-                if (document.querySelectorAll('stratus-help').length) {
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
-                }
-                if (document.querySelectorAll('[froala]').length) {
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css');
-                }
-
-                if (css.length) {
-                    var counter = 0;
-                    angular.forEach(css, function (url) {
-                        Stratus.Internals.CssLoader(url).then(function () {
-                            if (++counter === css.length) {
-                                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-                            }
-                        });
-                    });
-                } else {
-                    angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-                }
-                */
-                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-            });
-        }
+        // Load Angular
+        Stratus.Internals.AngularLoader();
 
         // Load Views
         Stratus.Internals.Loader().then(function (views) {

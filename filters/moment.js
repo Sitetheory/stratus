@@ -31,7 +31,7 @@
     // ---------------------
 
     // This filter allows a display of time since the given date
-    Stratus.Filters.Moment = angular.module('moment', []).filter('moment', function () {
+    Stratus.Filters.Moment = function () {
         return function (input, options) {
             this.since = false;
             this.relative = '1w';
@@ -40,6 +40,6 @@
             if (this.relative && typeof this.relative === 'string' && Math.round(new Date().getTime() / 1000) > (input + _.seconds(this.relative))) this.since = false;
             return (!this.since) ? moment.unix(input).format(this.format) : moment.unix(input).fromNow(true);
         };
-    });
+    };
 
 }));

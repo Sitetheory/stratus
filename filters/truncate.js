@@ -31,13 +31,13 @@
     // ---------------------
 
     // This filter truncates a sentence
-    Stratus.Filters.Truncate = angular.module('truncate', []).filter('truncate', function () {
+    Stratus.Filters.Truncate = function () {
         return function (input, options) {
             this.limit = null;
             this.suffix = null;
             if (angular.isObject(options)) angular.extend(this, options);
             return _.truncate(input, this.limit, this.suffix);
         };
-    });
+    };
 
 }));

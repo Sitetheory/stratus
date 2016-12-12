@@ -52,8 +52,8 @@
     "angular-sanitize": "^1.*",
     "angular-material": "^1.*",
     "angular-chart.js": "^1.*",
-    "froala-wysiwyg-editor": "^2.3.*",
-    "angular-froala": "^2.3.*",
+    "froala-wysiwyg-editor": "^2.4.*",
+    "angular-froala": "^2.4.*",
     "font-awesome": "^4.7.*",
     "js-md5": "md5#^0.4.1"
   },

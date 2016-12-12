@@ -31,10 +31,10 @@
     // ------------------------
 
     // This filter allows a display of time since the given date
-    Stratus.Filters.Gravatar = angular.module('gravatar', []).filter('gravatar', function () {
+    Stratus.Filters.Gravatar = function () {
         return function (input) {
             return '//www.gravatar.com/avatar/' + md5(input.trim().toLowerCase());
         };
-    });
+    };
 
 }));
