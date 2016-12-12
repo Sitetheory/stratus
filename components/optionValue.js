@@ -64,5 +64,5 @@
             </md-input-container>\
             <md-button ng-if="$last" ng-click="items.push({})">add {{ type }}</md-button>\
         </div>'
-    }
+    };
 }));
