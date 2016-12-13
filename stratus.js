@@ -190,6 +190,14 @@
                 ],
                 namespace: 'angular-',
                 module: true
+            },
+            countUp: {
+                selector: [
+                    '[count-up]'
+                ],
+                namespace: 'angular-',
+                module: true,
+                suffix: 'Module'
             }
         },
 
@@ -201,7 +209,7 @@
         // TODO: Turn this into a Dynamic Object
         Api: {
             GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA',
-            Froala: ''
+            Froala: 'KybxhzguB-7j1jC3A-16y=='
         }
     };
 
@@ -1889,7 +1897,7 @@
                             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
                                 requirements.push(requirement);
                                 if (element.module) {
-                                    modules.push(_.lcfirst(_.hyphenToCamel(name)));
+                                    modules.push(_.lcfirst(_.hyphenToCamel(name + (element.suffix || ''))));
                                 }
                             }
                         }
@@ -1937,7 +1945,7 @@
                 // TODO: Make Dynamic
                 // Froala
                 if ($.FroalaEditor) {
-                    $.FroalaEditor.DEFAULTS.key = 'KybxhzguB-7j1jC3A-16y==';
+                    $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
                 }
 
                 // Modular Injectors
