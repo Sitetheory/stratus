@@ -30,6 +30,7 @@
     // full pagination for the scope's collection.
     Stratus.Components.Pagination = {
         controller: function ($scope) {
+            Stratus.Instances[_.uniqueId('pagination_')] = $scope;
             $scope.pages = [];
             $scope.startPage = 0;
             $scope.endPage = 0;

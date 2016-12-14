@@ -32,7 +32,8 @@
         bindings: {
             ngModel: '='
         },
-        link: function ($scope) {
+        controller: function ($scope) {
+            Stratus.Instances[_.uniqueId('date_time_')] = $scope;
             $scope.timestamp = $scope.ngModel ? moment.unix($scope.ngModel).format() : moment().endOf('week');
             $scope.date = new Date($scope.timestamp.toISOString());
         },

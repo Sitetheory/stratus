@@ -37,6 +37,7 @@
             type: '@'
         },
         controller: function ($scope, $element, $parse, attributes, ngModel) {
+            Stratus.Instances[_.uniqueId('option_value_')] = $scope;
             $scope.model = $parse(attributes.ngModel);
             $scope.items = ngModel;
             var normalize = function () {

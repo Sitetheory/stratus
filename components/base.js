@@ -33,6 +33,7 @@
             hello: '@'
         },
         controller: function () {
+            Stratus.Instances[_.uniqueId('base_')] = $scope;
             console.log('component:', this);
         },
         template: 'hello: {{ hello }}'

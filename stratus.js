@@ -193,7 +193,7 @@
             },
             countUp: {
                 selector: [
-                    '[count-up]'
+                    '[count-up]', '[scroll-spy]'
                 ],
                 namespace: 'angular-',
                 module: true,

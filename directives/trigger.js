@@ -21,11 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular'], factory);
+        define(['stratus', 'underscore', 'angular'], factory);
     } else {
-        factory(root.Stratus);
+        factory(root.Stratus, root._);
     }
-}(this, function (Stratus) {
+}(this, function (Stratus, _) {
     // This directive intends to handle binding of a model to a function, triggered upon true
     Stratus.Directives.Trigger = function ($parse) {
         return {
@@ -35,10 +35,10 @@
                 stratusTrigger: '@'
             },
             link: function ($scope, $element, ngModel) {
+                Stratus.Instances[_.uniqueId('trigger_')] = $scope;
                 $scope.$watch(function () {
                     return ngModel.$modelValue;
                 }, function (newValue) {
-                    console.log('value:', newValue);
                     if (typeof newValue !== 'undefined') {
                         ($parse($scope.stratusTrigger))($scope.$parent);
                     }
