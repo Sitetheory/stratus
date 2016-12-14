@@ -46,7 +46,6 @@
             var relatedContainerId = 'currentMediaContainer';
             var relatedContainerOffset = -150;
 
-
             ////////////////
             // Setup
             ////////////////
@@ -59,12 +58,13 @@
             ////////////////
             function resizePlugin() {
                 // Manually resize Facebook Plugin's span and iframe to be 100%
-                var plugin = document.querySelector('.fb-page')
+                var plugin = document.querySelector('.fb-page');
                 var containerSpan = plugin.querySelector('span');
-                containerSpan.style.width = "100%";
+                containerSpan.style.width = '100%';
                 var iframe = plugin.querySelector('iframe');
-                iframe.width = "100%";
-                iframe.style.width = "100%";
+                iframe.width = '100%';
+                iframe.style.width = '100%';
+
                 // FB has max 500px, scale if it's bigger so it fits in space at least
                 var maxWidth = 500;
                 var width = container.offsetWidth;
@@ -104,7 +104,6 @@
             FB.Event.subscribe('xfbml.render', function () {
                 resizePlugin();
             });
-
 
             // (HACK): LoadPlugin does not resize height correctly on Load because it does not know the correct height so we delay it until the height is set
             loadJob = Stratus.Chronos.add(0.2, function () {
