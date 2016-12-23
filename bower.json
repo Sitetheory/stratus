@@ -57,7 +57,8 @@
     "font-awesome": "^4.7.*",
     "js-md5": "md5#^0.4.1",
     "countUp.js": "^1.8.0",
-    "angular-scroll-spy": "https://github.com/inorganik/angular-scroll-spy.git"
+    "angular-scroll-spy": "https://github.com/inorganik/angular-scroll-spy.git",
+    "zeptojs": "^1.2.0"
   },
   "private": false
 }

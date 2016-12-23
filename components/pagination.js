@@ -36,7 +36,7 @@
             $scope.endPage = 0;
             $scope.collection = $scope.$parent && $scope.$parent.collection ? $scope.$parent.collection : null;
             $scope.meta = $scope.collection && $scope.collection.meta ? $scope.collection.meta : null;
-            if(!$scope.meta) return null;
+            if (!$scope.meta) return null;
             $scope.$watch('meta.attributes.pageCurrent', function (newValue) {
                 if ($scope.meta.get('pageTotal') <= 10) {
                     // less than 10 total pages so show all
