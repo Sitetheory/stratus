@@ -6,6 +6,7 @@
   "directories": {
     "test": "test"
   },
+  "dependencies": {},
   "devDependencies": {
     "bower": "~1.8.*",
     "del": "^2.2.2",
@@ -26,17 +27,25 @@
     "vinyl-paths": "^2.1.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp jscs",
-    "karma": "./node_modules/.bin/karma start --single-run"
+    "test": "gulp jscs",
+    "karma": "karma start --single-run"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sitetheory/stratus.git"
+    "url": "git+https://github.com/sitetheory/stratus.git"
   },
-  "author": "Sitetheory Development Team",
-  "license": "Sitetheory",
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/Sitetheory/stratus/issues"
   },
-  "homepage": "https://github.com/Sitetheory/stratus"
+  "homepage": "https://github.com/Sitetheory/stratus",
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "widgets",
+    "angular",
+    "backbone",
+    "underscore"
+  ]
 }
