@@ -1,6 +1,6 @@
 {
   "name": "stratus.js",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.",
   "main": "stratus.html",
   "directories": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "bower": "~1.8.*",
-    "underscore": "~1.8.*",
+    "underscore": "~1.8.*"
   },
   "devDependencies": {
     "del": "^2.2.2",
