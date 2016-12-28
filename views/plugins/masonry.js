@@ -38,7 +38,7 @@ data-placement: The location of the masonry, e.g. "auto top", "right", "bottom" 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'underscore', 'masonry', 'stratus.views.plugins.base'], factory);
+        define(['stratus', 'zepto', 'underscore', 'masonry', 'stratus.views.plugins.base'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.Masonry);
     }

@@ -1,5 +1,5 @@
 {
-  "name": "@Sitetheory/stratus",
+  "name": "stratus.js",
   "version": "0.6.0",
   "description": "This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.",
   "main": "stratus.html",
