@@ -1,4 +1,4 @@
-//     Stratus.services.collection.js 1.0
+//     Stratus.Services.Collection.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -126,15 +126,13 @@
                             if (response.status == '200') {
                                 // TODO: Make this into an over-writable function
                                 // Data
-                                that.meta.set(response.data.meta);
+                                that.meta.set(response.data.meta || {});
                                 that.models = [];
 
                                 var data = response.data.payload || response.data;
                                 if (angular.isArray(data)) {
                                     data.forEach(function (target) {
-                                        that.models.push(new that.model({
-                                            target: that.target
-                                        }, target));
+                                        that.models.push(new that.model({ collection: that }, target));
                                     });
                                 }
 

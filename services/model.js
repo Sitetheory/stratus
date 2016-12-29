@@ -1,4 +1,4 @@
-//     Stratus.services.model.js 1.0
+//     Stratus.Services.Model.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -40,14 +40,21 @@
                 // Environment
                 this.target = null;
                 this.manifest = false;
-                if (options && typeof options == 'object') {
-                    angular.extend(this, options);
-                }
+                if (!options || typeof options != 'object') options = {};
+                angular.extend(this, options);
 
                 // Infrastructure
                 this.urlRoot = '/Api';
                 this.data = {};
+
+                // Handle Collections & Meta
                 this.meta = new Stratus.Prototypes.Collection();
+                if (_.has(this, 'collection')) {
+                    if (this.collection.target) this.target = this.collection.target;
+                    if (this.collection.meta.has('api')) this.meta.set('api', this.collection.meta.get('api'));
+                }
+
+                // Handle Attributes (Typically from Collection Hydration)
                 if (attributes && typeof attributes == 'object') {
                     angular.extend(this.data, attributes);
                 }
@@ -125,7 +132,7 @@
                             if (response.status == '200') {
                                 // TODO: Make this into an over-writable function
                                 // Data
-                                that.meta = response.data.meta || {};
+                                that.meta.set(response.data.meta || {});
                                 that.data = response.data.payload || response.data;
 
                                 // Internals
@@ -165,10 +172,17 @@
                 // Attribute Functions
 
                 /**
-                 * @returns {Array}
+                 * @returns {{meta, payload}}
                  */
                 this.toJSON = function () {
-                    return that.data;
+                    var data = (that.meta.has('api')) ? {
+                            meta: that.meta.get('api'),
+                            payload: that.data
+                        } : that.data;
+                    if (this.meta.size() > 0) {
+                        this.meta.clearTemp();
+                    }
+                    return data;
                 };
 
                 /**
