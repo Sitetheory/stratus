@@ -39,8 +39,7 @@
         controller: function ($scope, $element, $attrs, $parse) {
             Stratus.Instances[_.uniqueId('option_value_')] = $scope;
             $scope.model = $parse($attrs.ngModel);
-            // $scope.items = $scope.model($scope.$parent);
-            $scope.items = this.options;
+            $scope.items = $scope.model($scope.$parent);
             var normalize = function () {
                 if (!angular.isArray($scope.items)) $scope.items = [];
                 if (!$scope.items.length) $scope.items.push({});
@@ -55,8 +54,8 @@
             }, true);
         },
         template: '<div ng-if="items.length" ng-repeat="item in items" layout="row">\
-            <md-select ng-model="item.type" flex="10" aria-label="{{ type }}">\
-                <md-option ng-repeat="option in options" ng-value="option" ng-selected="item.name == option">\
+            <md-select ng-model="item.type" flex="10" aria-label="{{ $ctrl.type }}">\
+                <md-option ng-repeat="option in $ctrl.options" ng-value="option" ng-selected="item.name == option">\
                     {{ option }}\
                 </md-option>\
             </md-select>\
