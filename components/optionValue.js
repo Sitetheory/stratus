@@ -36,10 +36,11 @@
             options: '=',
             type: '@'
         },
-        controller: function ($scope, $element, $parse, attributes, ngModel) {
+        controller: function ($scope, $element, $attrs, $parse) {
             Stratus.Instances[_.uniqueId('option_value_')] = $scope;
-            $scope.model = $parse(attributes.ngModel);
-            $scope.items = ngModel;
+            $scope.model = $parse($attrs.ngModel);
+            // $scope.items = $scope.model($scope.$parent);
+            $scope.items = this.options;
             var normalize = function () {
                 if (!angular.isArray($scope.items)) $scope.items = [];
                 if (!$scope.items.length) $scope.items.push({});
@@ -48,7 +49,7 @@
             $scope.$watch('items', function (items) {
                 $scope.model.assign($scope.$parent, items);
             }, true);
-            $scope.$parent.$watch(attributes.ngModel, function (items) {
+            $scope.$parent.$watch($attrs.ngModel, function (items) {
                 $scope.items = items;
                 normalize();
             }, true);
