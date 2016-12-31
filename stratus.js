@@ -184,6 +184,12 @@
                 selector: '[flex]',
                 require: ['angular', 'angular-material']
             },
+            chart: {
+                selector: '[chart]',
+                require: ['angular', 'angular-chart'],
+                module: true,
+                suffix: '.js'
+            },
             modules: {
                 selector: [
                     '[froala]', '[ng-sanitize]'
@@ -1884,7 +1890,7 @@
         var requirement;
         var nodes;
         var modules = [];
-        _.forEach(Stratus.Roster, function (element) {
+        _.forEach(Stratus.Roster, function (element, key) {
             if (element && element.selector) {
                 if (_.isArray(element.selector)) {
                     element.length = 0;
@@ -1906,8 +1912,8 @@
                     nodes = document.querySelectorAll(element.selector);
                     element.length = nodes.length;
                     if (nodes.length) {
+                        var attribute = element.selector.replace('[', '').replace(']', '');
                         if (element.namespace) {
-                            var attribute = element.selector.replace('[', '').replace(']', '');
                             nodes.forEach(function (node) {
                                 var name = node.getAttribute(attribute);
                                 if (name) {
@@ -1919,6 +1925,9 @@
                             });
                         } else if (element.require) {
                             requirements = _.union(requirements, element.require);
+                            if (element.module) {
+                                modules.push(_.lcfirst(_.hyphenToCamel(attribute + (element.suffix || ''))));
+                            }
                         }
                     }
                 }
