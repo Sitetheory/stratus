@@ -36,7 +36,7 @@
             showVersionHistory: '=',
             redirect: '@'
         },
-        controller: function ($scope, $element, $parse, $attr) {
+        controller: function ($scope, $element, $parse, $attrs) {
             Stratus.Instances[_.uniqueId('publish_')] = $scope;
             $scope.model = $parse($attrs.ngModel);
             $scope.elementId = ($scope.elementId) ? $scope.elementId : 'publish';
