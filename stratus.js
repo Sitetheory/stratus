@@ -166,7 +166,8 @@
                     'stratus-facebook',
                     'stratus-help',
                     'stratus-option-value',
-                    'stratus-pagination'
+                    'stratus-pagination',
+                    'stratus-publish'
                 ],
                 namespace: 'stratus.components.'
             },
