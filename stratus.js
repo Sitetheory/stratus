@@ -325,6 +325,26 @@
             return shallow;
         },
 
+        // This function utilizes tree building to clone an object.
+        /**
+         * @param target
+         * @param merger
+         * @returns {*}
+         */
+        extendDeep: function (target, merger) {
+            var shallow = _.clone(target);
+            if (merger && typeof merger === 'object') {
+                _.each(merger, function (value, key) {
+                    if (shallow && typeof shallow === 'object') {
+                        shallow[key] = (key in shallow) ? _.extendDeep(shallow[key], merger[key]) : merger[key];
+                    }
+                });
+            } else {
+                shallow = merger;
+            }
+            return shallow;
+        },
+
         // Get a specific value or all values located in the URL
         /**
          * @param key
