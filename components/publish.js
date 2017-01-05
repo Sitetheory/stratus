@@ -44,8 +44,10 @@
             $scope.showUnpublish = $scope.showUnpublish || false;
             $scope.showVersionHistory = $scope.showVersionHistory || false;
             $scope.showMore = ($scope.showDateTimePicker || $scope.showUnpublish || $scope.showVersionHistory) ? true : false;
+
             // TODO: add a redirect if requested
             $scope.redirect = $scope.redirect || false;
+
             // TODO: disable/hide if this model doesn't have a versionEntity and/or timePublish
         },
         template: '<div class="customFontPrimary btn-group">\
