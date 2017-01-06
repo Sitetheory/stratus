@@ -32,11 +32,11 @@
     angular.module('angular-redactor', [])
         .constant('redactorOptions', redactorOptions)
         .directive('redactor', ['$timeout', function ($timeout) {
-            [
+            _.forEach([
                 Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor.css',
                 Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.css',
                 Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css'
-            ].forEach(function (url) {
+            ], function (url) {
                 Stratus.Internals.CssLoader(url);
             });
             return {

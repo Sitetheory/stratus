@@ -1935,7 +1935,7 @@
                     if (nodes.length) {
                         var attribute = element.selector.replace('[', '').replace(']', '');
                         if (element.namespace) {
-                            nodes.forEach(function (node) {
+                            _.forEach(nodes, function (node) {
                                 var name = node.getAttribute(attribute);
                                 if (name) {
                                     requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')));
@@ -2480,7 +2480,7 @@
                 success: function (response) {
                     var settings = response.payload || response;
                     if (typeof settings === 'object') {
-                        Object.keys(settings).forEach(function (key) {
+                        _.forEach(Object.keys(settings), function (key) {
                             Stratus.Environment.set(key, settings[key]);
                         });
                     }
