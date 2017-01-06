@@ -128,7 +128,8 @@
                                 prototype.data = JSON.stringify(data);
                             }
                         }
-                        $http(prototype).then(function (response) {
+                        var request = $http(prototype);
+                        request.then(function (response) {
                             if (response.status == '200') {
                                 // TODO: Make this into an over-writable function
                                 // Data
@@ -150,6 +151,9 @@
                                 reject(response);
                             }
                         }, reject);
+                        if (request.catch) {
+                            request.catch(reject);
+                        }
                     });
                 };
 
@@ -197,6 +201,49 @@
                             return attributes && attributes[a];
                         }, that.data);
                     }
+                };
+
+                /**
+                 * @param attr
+                 * @param value
+                 */
+                this.set = function (attr, value) {
+                    if (attr && typeof attr === 'object') {
+                        _.each(attr, function (value, attr) {
+                            this.setAttribute(attr, value);
+                        }, this);
+                    } else {
+                        this.setAttribute(attr, value);
+                    }
+                };
+
+                /**
+                 * @param attr
+                 * @param value
+                 */
+                this.setAttribute = function (attr, value) {
+                    if (typeof attr === 'string' && attr.indexOf('.') !== -1) {
+                        var reference = this.attributes;
+                        var chain = attr.split('.');
+                        _.find(_.initial(chain), function (link) {
+                            if (!_.has(reference, link) || !reference[link]) reference[link] = {};
+                            if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
+                                reference = reference[link];
+                            } else {
+                                reference = this.attributes;
+                                return true;
+                            }
+                        }, this);
+                        if (!_.isEqual(reference, this.attributes)) {
+                            var link = _.last(chain);
+                            if (reference && typeof reference === 'object') {
+                                reference[link] = value;
+                            }
+                        }
+                    } else {
+                        this.attributes[attr] = value;
+                    }
+                    /* TODO: this.trigger('change:' + attr, value); */
                 };
 
                 /**
@@ -259,10 +306,11 @@
                  * @type {any}
                  */
                 this.initialize = this.initialize || function () {
-                    if (that.manifest && !that.get('id')) {
-                        that.sync('POST', {}).then(function () {}, console.error);
-                    }
-                };
+                        if (that.manifest && !that.get('id')) {
+                            that.sync('POST', {}).then(function () {
+                            }, console.error);
+                        }
+                    };
                 this.initialize();
             };
         });
