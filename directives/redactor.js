@@ -21,11 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular', 'redactor'], factory);
+        define(['stratus', 'underscore', 'angular', 'redactor'], factory);
     } else {
-        factory(root.Stratus);
+        factory(root.Stratus, root._);
     }
-}(this, function (Stratus) {
+}(this, function (Stratus, _) {
 
     var redactorOptions = {};
 
