@@ -155,7 +155,7 @@
          * @param options
          * @returns {boolean}
          */
-        saveAction: function (options) {
+         saveAction: function (options) {
 
             if (typeof options === 'undefined') options = {};
             options.actions = options.actions ? options.actions : 'publish';
@@ -190,7 +190,7 @@
                 timePublish = timePublish ? timePublish : 'API::NOW';
             }
 
-            if (this.options.versionEntity) {
+           if (this.options.versionEntity) {
                 this.model.set(this.options.versionEntity + '.timePublish', timePublish);
             } else if (this.model.has('timePublish')) {
                 this.model.set('timePublish', timePublish);
