@@ -15,17 +15,25 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
+// TODO: this component has not been finished. It needs to do everything that the previous widgets/publish.js did and some of that code has been ported over, some hasn't, and some needs to be slightly changed based on how Angular works. We just need the overall functionality to allow you to
+// - publish now (main button
+// - click an arrow to the right side of the button and pull down a menu that lets you select a publish date.
+// - unpublish if it's already published
+// - show link to version history page
+// - change colors based on whether or not it's unpublished, published in the past, or published in the future (pending).
+-
+
 // Stratus Publish Component
 // -----------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'moment', 'angular', 'stratus.components.dateTime'], factory);
+        define(['stratus', 'moment', 'zepto', 'angular', 'stratus.components.dateTime'], factory);
     } else {
-        factory(root.Stratus, root.moment);
+        factory(root.Stratus, root.moment, root.$);
     }
-}(this, function (Stratus, moment) {
+}(this, function (Stratus, moment, $) {
     // This component intends to allow publishing a versionable entity with additional advanced options
     // TODO: port over the extensive logic from the old widgets/publish.js (read all comments)
     Stratus.Components.Publish = {
@@ -34,7 +42,7 @@
             elementId: '@',
             versionEntity: '@',
             action: '@',
-            showDateTimePicker: '@',
+            showDateTime: '@',
             showUnpublish: '@',
             showVersionHistory: '@',
             redirect: '@'
@@ -61,14 +69,19 @@
             // Options
             $scope.elementId = $attrs.elementId || uid;
             $scope.action = $attrs.action == 'unpublish' ? 'unpublish' : 'publish';
-            $scope.showDataTimePicker = $attrs.versionEntity || null;
+            $scope.showDateTime = $attrs.showDateTime || false;
             $scope.showUnpublish = $attrs.showUnpublish || false;
             $scope.showVersionHistory = $attrs.showVersionHistory || false;
-            $scope.showMore = ($scope.showDateTimePicker || $scope.showUnpublish || $scope.showVersionHistory) ? true : false;
+            $scope.showMore = ($scope.showDateTime || $scope.showUnpublish || $scope.showVersionHistory) ? true : false;
             $scope.timePublish = null;
 
+            var $dateTimeComponent = null;
+            if($scope.showDateTime) {
+                $dateTimeComponent = $('#'+$scope.elementId+' stratus-date-time');
+            }
+
             if ($scope.action === 'unpublish') {
-                // TODO: Set the dateTimePicker date to current time (so when they open it again it's at today) and then clear
+                // TODO: Set the dateTime component date to current time (so when they open it again it's at today) and then clear
                 /*
                 if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
                     this.dateTimePickerView.dateTimePicker.date(moment());
@@ -82,18 +95,16 @@
 
                 // TODO: if timePublish is set, make sure the date picker uses the correct time
 
-                if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
-                    // return a moment object
-                    $scope.timePublish = this.dateTimePickerView.dateTimePicker.date();
+                if ($dateTimeComponent && typeof $dateTimeComponent === 'object' && $dateTimeComponent.length) {
 
                     // If expired publish (published for past date and superceded by new version)
                     // and publish is clicked without changing the date (the dates are identical)
                     // then use the now date like they just want to publish at this moment.
                     if (this.isPublished === 3 && timePublish && timePublish.unix() === this.timePublish) {
-                        timePublish = null;
+
                     } else {
                         // convert moment object to unix milliseconds
-                        timePublish = timePublish ? timePublish.unix() : null;
+                        $scope.timePublish = $scope.version.get(propertyTimePublish);
                     }
                 }
             }
@@ -130,7 +141,7 @@
         </div>\
         <md-menu-content class="btnPublishDropdown" aria-labelledby="dropdownBtn-{{ elementId }}">\
             <!-- TODO: after converting to dateTime component make sure these options are not needed anymore-->\
-            <stratus-date-time ng-if="showDateTimePicker" \
+            <stratus-date-time ng-if="showDateTime" \
             ng-model="timePublish"\
             data-usecurrent="false"\
             data-defaultTimestamp="{{ timePublish || null }}" \

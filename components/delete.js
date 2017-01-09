@@ -15,6 +15,8 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
+// TODO: this component needs to be finished
+
 // Stratus Delete Component
 // -----------------------
 
@@ -67,11 +69,10 @@
             $scope.timePublish = '';
             $scope.$watch('timePublish', $scope.setTimePublish(value));
         },
-        template: '<md-button ng-if="model.id" aria-label="Delete" id="{{ elementId }}" class="btn btnDelete"\
-        ng-click="setDelete()">\
+        template: '<md-button ng-if="model.id" aria-label="Delete" id="{{ elementId }}" class="btn btnDelete" ng-click="setDelete()">\
     <div class="btnGradientLight"></div>\
     <md-icon class="deleteIcon" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>\
     <span class="deleteText">Delete</span>\
-</md-button>\'
+</md-button>'
     };
 }));
