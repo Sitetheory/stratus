@@ -142,7 +142,7 @@
                                 that.paginate = false;
 
                                 // Promise
-                                resolve(that.models);
+                                resolve(response.data.payload);
                             } else {
                                 // Internals
                                 that.pending = false;
