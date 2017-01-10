@@ -32,8 +32,10 @@
         bindings: {
             ngModel: '=',
             elementId: '@',
+
             // A unix timestamp to default the picker
             defaultTimestamp: '@',
+
             // An ISO Date timestamp to default the picker
             defaultDate: '@'
         },
@@ -43,13 +45,14 @@
             $scope.elementId = $attrs.elementId || uid;
 
             // Custom Functions for updating Model and DOM
-            var updateModel = function(property) {
+            var updateModel = function (property) {
                 // Watch for changes to the datetime string, and set the model
                 return moment(property).unix();
             };
-            var updateDOM = function(property, $attrs) {
+            var updateDOM = function (property, $attrs) {
                 // Get the timestamp from the model and convert to a moment object
                 var momentTime = property ? moment.unix(property) : moment();
+
                 // Create Date Time String in ISOformat (without seconds though)
                 return new Date(momentTime.year(), momentTime.month(), momentTime.date(), momentTime.hour(), momentTime.minute());
             };
@@ -63,10 +66,10 @@
             // TODO: are we concerned that this will automatically update the model even the user hasn't
             // personally set the time? Perhaps that is just controlled by the calling function that says it wants
             // a default date
-            if(!$scope.property) {
-                if($attrs.defaultTimestamp) {
+            if (!$scope.property) {
+                if ($attrs.defaultTimestamp) {
                     $scope.property = parseInt($attrs.defaultTimestamp);
-                } else if($attrs.defaultTimestamp) {
+                } else if ($attrs.defaultTimestamp) {
                     $scope.property = parseInt(moment($attrs.defaultTimestamp).unix());
                 }
             }
@@ -76,6 +79,7 @@
                 // if the property changes, update the model
                 $scope.model.assign($scope.$parent, updateModel(property));
             }, true);
+
             $scope.$parent.$watch($attrs.ngModel, function (property) {
                 // if the model changes, update the DOM
                 $scope.property = updateDOM(property, $attrs);
