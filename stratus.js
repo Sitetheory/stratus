@@ -163,10 +163,12 @@
                 selector: [
                     'stratus-base',
                     'stratus-date-time',
+                    'stratus-delete',
                     'stratus-facebook',
                     'stratus-help',
                     'stratus-option-value',
                     'stratus-pagination',
+                    'stratus-permission',
                     'stratus-publish'
                 ],
                 namespace: 'stratus.components.'
@@ -174,9 +176,6 @@
             directives: {
                 selector: [
                     '[stratus-base]',
-                    '[stratus-date-time]',
-                    '[stratus-help]',
-                    '[stratus-option-value]',
                     '[stratus-trigger]'
                 ],
                 namespace: 'stratus.directives.'

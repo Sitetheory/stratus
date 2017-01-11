@@ -26,12 +26,16 @@
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-    // This component is just a simple base.
-    Stratus.Components.Base = {
-        transclude: true,
+    // This component intends to allow editing of various permissions depending on context.
+    Stratus.Components.Permission = {
         bindings: {
             elementId: '@',
-            hello: '@'
+            user: '@',
+            role: '@',
+            bundle: '@',
+            type: '@',
+            target: '@',
+            sentinel: '@'
         },
         controller: function ($scope, $attrs, $log) {
             this.uid = _.uniqueId('base_');
