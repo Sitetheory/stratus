@@ -2519,6 +2519,7 @@
                 Stratus.Internals.Ajax({
                     url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
                     success: function (data) {
+                        console.log('location', data);
                         if (!data) data = {};
                         if (typeof data === 'object' && Object.keys(data).length && data.postal) {
                             envData.postalCode = data.postal;
@@ -2537,8 +2538,6 @@
         }
     };
 
-    // Handle Location
-    Stratus.Internals.TrackLocation();
 
     // Post Message Handling
     // ---------------------
@@ -2627,6 +2626,9 @@
             Stratus.Routers.set('generic', new Stratus.Routers.Generic());
             Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
         });
+
+        // Handle Location
+        Stratus.Internals.TrackLocation();
 
         // Load Angular
         Stratus.Internals.AngularLoader();
