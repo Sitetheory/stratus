@@ -43,6 +43,7 @@
             Stratus.Instances[_.uniqueId('delete_')] = $scope;
             $scope.model = $scope.$parent.model;
             $scope.versionEntity = $attrs.versionEntity || NULL;
+
             //console.log('setup publish controller', $scope.model, $scope.versionEntity);
             $scope.version = null;
             if ($scope.versionEntity && !$scope.model.has(versionEntity)) {
@@ -56,13 +57,14 @@
             $scope.showUnpublish = $attrs.showUnpublish || false;
             $scope.showVersionHistory = $attrs.showVersionHistory || false;
             $scope.showMore = ($scope.showDateTimePicker || $scope.showUnpublish || $scope.showVersionHistory) ? true : false;
+
             // TODO: add a redirect if requested
             $scope.redirect = $attrs.redirect || false;
 
             // Methods
-            $scope.setDelete = function(time) {
-                $scope.model.status = '-1';
-                $scope.model.save()
+            $scope.setDelete = function (time) {
+                $scope.model.set('status', -1);
+                $scope.model.save();
             };
 
             // Watchers
@@ -70,9 +72,9 @@
             $scope.$watch('timePublish', $scope.setTimePublish(value));
         },
         template: '<md-button ng-if="model.id" aria-label="Delete" id="{{ elementId }}" class="btn btnDelete" ng-click="setDelete()">\
-    <div class="btnGradientLight"></div>\
-    <md-icon class="deleteIcon" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>\
-    <span class="deleteText">Delete</span>\
-</md-button>'
+            <div class="btnGradientLight"></div>\
+            <md-icon class="deleteIcon" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>\
+            <span class="deleteText">Delete</span>\
+        </md-button>'
     };
 }));

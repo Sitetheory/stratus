@@ -163,10 +163,12 @@
                 selector: [
                     'stratus-base',
                     'stratus-date-time',
+                    'stratus-delete',
                     'stratus-facebook',
                     'stratus-help',
                     'stratus-option-value',
                     'stratus-pagination',
+                    'stratus-permission',
                     'stratus-publish'
                 ],
                 namespace: 'stratus.components.'
@@ -174,9 +176,6 @@
             directives: {
                 selector: [
                     '[stratus-base]',
-                    '[stratus-date-time]',
-                    '[stratus-help]',
-                    '[stratus-option-value]',
                     '[stratus-trigger]'
                 ],
                 namespace: 'stratus.directives.'
@@ -902,7 +901,7 @@
     });
     Stratus.Cookies = new Stratus.Prototypes.Cookies();
 
-    // Internal Collections
+    // Collection Prototype
     // --------------------
 
     // This function is meant to be extended for collections, models, etc, that want to use internal attributes in a Backbone way, without having to make an actual collection with an API and such.
@@ -1178,6 +1177,83 @@
         });
         promise.then(that.success, that.error);
         return promise;
+    };
+
+    // Sentinel Prototype
+    // --------------------
+
+    // This class intends to handle typical Sentinel operations.
+    /**
+     * @returns {Stratus.Prototypes.Sentinel}
+     * @constructor
+     */
+    Stratus.Prototypes.Sentinel = function () {
+        this.zero = function () {
+            _.extend(this, {
+                view: false,
+                create: false,
+                edit: false,
+                delete: false,
+                publish: false,
+                design: false,
+                dev: false,
+                master: false
+            });
+        };
+        this.permissions = function (value) {
+            if (!isNaN(value)) {
+                _.each(value.toString(2).split('').reverse(), function (bit, key) {
+                    if (bit == '1') {
+                        switch (key) {
+                            case 0:
+                                this.view = true;
+                                break;
+                            case 1:
+                                this.create = true;
+                                break;
+                            case 2:
+                                this.edit = true;
+                                break;
+                            case 3:
+                                this.delete = true;
+                                break;
+                            case 4:
+                                this.publish = true;
+                                break;
+                            case 5:
+                                this.design = true;
+                                break;
+                            case 6:
+                                this.dev = true;
+                                break;
+                            case 7:
+                                this.view = true;
+                                this.create = true;
+                                this.edit = true;
+                                this.delete = true;
+                                this.publish = true;
+                                this.design = true;
+                                this.dev = true;
+                                this.master = true;
+                                break;
+                        }
+                    }
+                }, this);
+            } else {
+                var decimal = 0;
+                decimal += (this.view) ? (1 << 0) : (0 << 0);
+                decimal += (this.create) ? (1 << 1) : (0 << 1);
+                decimal += (this.edit) ? (1 << 2) : (0 << 2);
+                decimal += (this.delete) ? (1 << 3) : (0 << 3);
+                decimal += (this.publish) ? (1 << 4) : (0 << 4);
+                decimal += (this.design) ? (1 << 5) : (0 << 5);
+                decimal += (this.dev) ? (1 << 6) : (0 << 6);
+                decimal += (this.master) ? (1 << 7) : (0 << 7);
+                return decimal;
+            }
+        };
+        this.zero();
+        return this;
     };
 
     // Internal CSS Loader
@@ -1935,7 +2011,7 @@
                     if (nodes.length) {
                         var attribute = element.selector.replace('[', '').replace(']', '');
                         if (element.namespace) {
-                            nodes.forEach(function (node) {
+                            _.forEach(nodes, function (node) {
                                 var name = node.getAttribute(attribute);
                                 if (name) {
                                     requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')));
@@ -2480,7 +2556,7 @@
                 success: function (response) {
                     var settings = response.payload || response;
                     if (typeof settings === 'object') {
-                        Object.keys(settings).forEach(function (key) {
+                        _.forEach(Object.keys(settings), function (key) {
                             Stratus.Environment.set(key, settings[key]);
                         });
                     }

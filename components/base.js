@@ -30,12 +30,17 @@
     Stratus.Components.Base = {
         transclude: true,
         bindings: {
+            elementId: '@',
             hello: '@'
         },
-        controller: function () {
-            Stratus.Instances[_.uniqueId('base_')] = $scope;
-            console.log('component:', this);
+        controller: function ($scope, $attrs, $log) {
+            this.uid = _.uniqueId('base_');
+            Stratus.Instances[this.uid] = $scope;
+            $scope.elementId = $attrs.elementId || this.uid;
+            $log.log('component:', this);
         },
-        template: 'hello: {{ hello }}'
+        template: '<div id="{{ elementId }}">\
+            hello: {{ hello }}\
+        </div>'
     };
 }));

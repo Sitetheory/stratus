@@ -61,14 +61,17 @@
 
         // Handle Selected
         if ($scope.collection) {
-            var selected = $element.attr('data-selected');
-            if (selected) {
+            var selected = {
+                id: $element.attr('data-selected'),
+                raw: $element.attr('data-raw')
+            };
+            if (selected.id) {
                 // $scope.selected = { data: { id: parseInt(selected) } };
                 $scope.$watch('collection.models', function (models) {
                     if (!$scope.selected && !$scope.selectedInit) {
                         angular.forEach(models, function (model) {
-                            if (selected == model.get('id')) {
-                                $scope.selected = model;
+                            if (selected.id == model.get('id')) {
+                                $scope.selected = selected.raw ? model.data : model;
                                 $scope.selectedInit = true;
                             }
                         });
