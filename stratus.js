@@ -2595,7 +2595,6 @@
                 Stratus.Internals.Ajax({
                     url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
                     success: function (data) {
-                        console.log('location', data);
                         if (!data) data = {};
                         if (typeof data === 'object' && Object.keys(data).length && data.postal) {
                             envData.postalCode = data.postal;
