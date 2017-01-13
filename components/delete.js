@@ -42,7 +42,10 @@
         controller: function ($scope, $element, $parse, $attrs) {
             Stratus.Instances[_.uniqueId('delete_')] = $scope;
             $scope.model = $scope.$parent.model;
-            $scope.versionEntity = $attrs.versionEntity || NULL;
+            $scope.versionEntity = $attrs.versionEntity || null;
+
+            // FIXME: Temporarily Disable this Widget during repairs
+            return true;
 
             //console.log('setup publish controller', $scope.model, $scope.versionEntity);
             $scope.version = null;

@@ -39,14 +39,15 @@
             sentinel: '@'
         },
         controller: function ($scope, $attrs, $log) {
-            this.uid = _.uniqueId('base_');
+            this.uid = _.uniqueId('permission_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
             $scope.sentinel = new Stratus.Prototypes.Sentinel();
             $scope.$watch('sentinel', function (value) {
                 // $log.log('sentinel:', value, );
             }, true);
-            $log.log('component:', this);
+
+            // $log.log('component:', this);
         },
         template: '<div id="{{ elementId }}">\
             <!-- Header -->\
