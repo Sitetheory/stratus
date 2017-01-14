@@ -29,7 +29,8 @@ var location = {
             'models/*.js',
             'collections/*.js',
             'routers/*.js',
-            'views/**/*.js'
+            'views/**/*.js',
+            'bower_components/requirejs/require.js'
         ],
         min: [
             'stratus.min.js',
@@ -37,7 +38,8 @@ var location = {
             'models/*.min.js',
             'collections/*.min.js',
             'routers/*.min.js',
-            'views/**/*.min.js'
+            'views/**/*.min.js',
+            'bower_components/requirejs/require.min.js'
         ]
     },
     preserve: {

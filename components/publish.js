@@ -54,10 +54,10 @@
                 $scope.model = $scope.$parent.model;
                 $scope.versionEntity = $attrs.versionEntity || null;
 
-                $log.log('model:', $scope.model);
-
                 // FIXME: Temporarily Disable this Widget during repairs
                 return true;
+
+                $log.log('model:', $scope.model);
 
                 // Allow publish to work on versionable entities or the actual version entity directly
                 if ($scope.versionEntity && $scope.model.has($scope.versionEntity) && $scope.model.get($scope.versionEntity).has(propertyTimePublish)) {

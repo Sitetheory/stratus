@@ -2048,11 +2048,6 @@
                 requirements.push(requirement);
             });
             require(requirements, function () {
-                // TODO: Make Dynamic
-                // Froala
-                if ($.FroalaEditor) {
-                    $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
-                }
 
                 // Modular Injectors
                 var baseModules = [
@@ -2062,6 +2057,15 @@
 
                 // App Reference
                 angular.module('stratusApp', _.union(baseModules, modules));
+
+                // TODO: Make Dynamic
+                // Froala Configuration
+                if ($.FroalaEditor) {
+                    $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
+                    angular.module('stratusApp').value('froalaConfig', {
+                        toolbarButtons: ['bold', 'italic', 'underline', '|', 'align', 'formatOL', 'formatUL']
+                    });
+                }
 
                 // Services
                 angular.forEach(Stratus.Services, function (service) {
