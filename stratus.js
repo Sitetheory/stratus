@@ -169,7 +169,8 @@
                     'stratus-option-value',
                     'stratus-pagination',
                     'stratus-permission',
-                    'stratus-publish'
+                    'stratus-publish',
+                    'stratus-tweet'
                 ],
                 namespace: 'stratus.components.'
             },
@@ -455,6 +456,18 @@
          */
         startsWith: function (target, search) {
             return (target.substr(0, search.length).toUpperCase() == search.toUpperCase());
+        },
+        /**
+         * @param a
+         * @param b
+         * @returns {number}
+         */
+        strcmp: function (a, b) {
+            a = a.toString();
+            b = b.toString();
+            for (var i=0, n=Math.max(a.length, b.length); i<n && a.charAt(i) === b.charAt(i); ++i);
+            if (i === n) return 0;
+            return a.charAt(i) > b.charAt(i) ? -1 : 1;
         },
         /**
          * @param target
