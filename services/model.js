@@ -252,6 +252,14 @@
                  * @returns {*}
                  */
                 this.toggle = function (attribute, item) {
+                    var target = that.get(attribute);
+                    if (typeof item === 'undefined') {
+                        that.set(attribute, !target);
+                    } else if (item && typeof item === 'object') {
+                        if (_.isArray(target) && !that.exists(attribute, item)) {
+                            that.get(attribute).push(item);
+                        }
+                    }
                     return that.get(attribute);
                 };
 
