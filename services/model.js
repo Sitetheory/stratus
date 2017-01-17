@@ -252,12 +252,28 @@
                  * @returns {*}
                  */
                 this.toggle = function (attribute, item) {
-                    var target = that.get(attribute);
+                    var request = attribute.split('[].');
+                    var target = that.get((request.length > 1) ? request[0] : attribute);
                     if (typeof item === 'undefined') {
                         that.set(attribute, !target);
-                    } else if (item && typeof item === 'object') {
-                        if (_.isArray(target) && !that.exists(attribute, item)) {
-                            that.get(attribute).push(item);
+                    } else if (angular.isArray(target)) {
+                        var hydrate = {};
+                        if (request.length > 1) {
+                            hydrate[request[1]] = { id: item };
+                        } else {
+                            hydrate.id = item;
+                        }
+                        if (!that.exists(attribute, item)) {
+                            target.push(hydrate);
+                        } else {
+                            _.each(target, function (element, key) {
+                                var child = (request.length > 1 && angular.isObject(element) && request[1] in element) ? element[request[1]] : element;
+                                var childId = (angular.isObject(child) && child.id) ? child.id : child;
+                                var itemId = (angular.isObject(item) && item.id) ? item.id : item;
+                                if (childId === itemId || (angular.isString(childId) && angular.isString(itemId) && _.strcmp(childId, itemId) === 0)) {
+                                    target.splice(key, 1);
+                                }
+                            });
                         }
                     }
                     return that.get(attribute);

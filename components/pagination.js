@@ -60,20 +60,20 @@
                 }
             });
         },
-        template: '<ul ng-if="meta && meta.attributes.pageTotal > 1" class="pagination">\
-                    <li ng-show="startPage > 1" ng-class="{disabled:meta.attributes.pageCurrent == 1}">\
+        template: '<ul ng-if="meta && meta.attributes.pageTotal > 1" class="listInline paginator">\
+                    <li ng-show="startPage > 1" class="paginatorPrevious" ng-class="{disabled:meta.attributes.pageCurrent == 1}">\
                         <a ng-click="meta.attributes.pageCurrent == 1 || page(1)">First</a>\
                     </li>\
-                    <li ng-class="{disabled:meta.attributes.pageCurrent == 1}">\
+                    <li class="paginatorPrevious" ng-class="{disabled:meta.attributes.pageCurrent == 1}">\
                         <a ng-click="meta.attributes.pageCurrent == 1 || collection.page(meta.attributes.pageCurrent - 1)">Previous</a>\
                     </li>\
-                    <li ng-repeat="page in pages" ng-class="{active:meta.attributes.pageCurrent == page}">\
+                    <li class="paginatorPages" ng-repeat="page in pages" ng-class="{active:meta.attributes.pageCurrent == page}">\
                         <a ng-click="collection.page(page)">{{ page }}</a>\
                     </li>\
-                    <li ng-class="{disabled:meta.attributes.pageCurrent == meta.attributes.pageTotal}">\
+                    <li class="paginatorNext" ng-class="{disabled:meta.attributes.pageCurrent == meta.attributes.pageTotal}">\
                         <a ng-click="meta.attributes.pageCurrent == meta.attributes.pageTotal || collection.page(meta.attributes.pageCurrent + 1)">Next</a>\
                     </li>\
-                    <li ng-show="endPage < meta.attributes.pageTotal" ng-class="{disabled:meta.attributes.pageCurrent == meta.attributes.pageTotal}">\
+                    <li class="paginatorNext" ng-show="endPage < meta.attributes.pageTotal" ng-class="{disabled:meta.attributes.pageCurrent == meta.attributes.pageTotal}">\
                         <a ng-click="meta.attributes.pageCurrent == meta.attributes.pageTotal || collection.page(meta.attributes.pageTotal)">Last</a>\
                     </li>\
                 </ul>\

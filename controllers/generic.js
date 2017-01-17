@@ -66,17 +66,32 @@
                 raw: $element.attr('data-raw')
             };
             if (selected.id) {
-                // $scope.selected = { data: { id: parseInt(selected) } };
-                $scope.$watch('collection.models', function (models) {
-                    if (!$scope.selected && !$scope.selectedInit) {
-                        angular.forEach(models, function (model) {
-                            if (selected.id == model.get('id')) {
-                                $scope.selected = selected.raw ? model.data : model;
-                                $scope.selectedInit = true;
+                if (angular.isString(selected.id)) {
+                    if (_.isJSON(selected.id)) {
+                        selected.id = JSON.parse(selected.id);
+                        $scope.$watch('collection.models', function (models) {
+                            if (!$scope.selected && !$scope.selectedInit) {
+                                angular.forEach(models, function (model) {
+                                    if (selected.id == model.get('id')) {
+                                        $scope.selected = selected.raw ? model.data : model;
+                                        $scope.selectedInit = true;
+                                    }
+                                });
                             }
                         });
+                    } else {
+                        selected.model = $parse(selected.id);
+                        selected.value = selected.model($scope.$parent);
+                        if (angular.isArray(selected.value)) {
+                            selected.value = selected.value.filter(function (n) {
+                                return n;
+                            });
+                            if (selected.value.length) {
+                                $scope.selected = _.first(selected.value);
+                            }
+                        }
                     }
-                });
+                }
             }
         }
 
