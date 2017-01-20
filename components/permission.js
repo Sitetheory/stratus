@@ -52,29 +52,58 @@
         template: '<div id="{{ elementId }}">\
             <!-- Header -->\
             <md-list-item layout="row" flex="100">\
-                <!--<div flex><h2>User</h2></div>-->\
-                <!-- TODO If they choose a bundle, disable ContentType and Target, or make the list include bundles as well as content type -->\
+                <div flex\
+                    ng-controller="Generic"\
+                    data-raw="true"\
+                    data-target="User">\
+                    <stratus-help flex="5">\
+                        Choose a User to add to this permission.\
+                    </stratus-help>\
+                    <h2 flex>User</h2>\
+                    <md-autocomplete\
+                        md-menu-class="autocomplete-custom-template"\
+                        md-selected-item="selected"\
+                        md-search-text="query"\
+                        md-items="user in collection.filter(query)"\
+                        md-no-cache="true"\
+                        md-autoselect="true"\
+                        placeholder="Add a User to this Permission">\
+                        <md-item-template>\
+                            <div class="contact-item" layout="row">\
+                                <img ng-src="{{ user.email | gravatar }}" class="md-avatar" alt="{{ user.bestName }}" />\
+                                <div flex class="md-list-item-text compact">\
+                                    <p class="md-contact-name" md-highlight-text="true" md-highlight-flags="i">\
+                                        {{ user.bestName }}\
+                                    </p>\
+                                    <p class="md-contact-email">\
+                                        {{ user.email }}\
+                                    </p>\
+                                </div>\
+                            </div>\
+                        </md-item-template>\
+                    </md-autocomplete>\
+                </div>\
                 <div flex>\
                     <stratus-help flex="5">\
                         Choose an entire bundle of features.\
                     </stratus-help>\
-                    <h2 flex="95">Bundle</h2>\
+                    <h2 flex>Bundle</h2>\
                 </div>\
                 <div flex>\
                     <stratus-help flex="5">\
                         Choose a specific type of content to restrict.\
                     </stratus-help>\
-                    <h2 flex="95">Type</h2>\
+                    <h2 flex>Type</h2>\
                 </div>\
                 <div flex>\
                     <stratus-help flex="5">\
                         Limit to a specific instance of this content type.\
                     </stratus-help>\
-                    <h2 flex="95">Target</h2>\
+                    <h2 flex>Target</h2>\
                 </div>\
                 <div flex>\
                     <stratus-help flex="5"></stratus-help>\
-                    <h2 flex="95">Permissions</h2>\
+                    <h2 flex>Permissions</h2>\
                 </div>\
             </md-list-item>\
             <md-list-item layout="row" flex="100">\
