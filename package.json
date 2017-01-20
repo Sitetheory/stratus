@@ -16,6 +16,7 @@
     "gulp-cli": "~1.2.*",
     "gulp-debug": "^3.0.0",
     "gulp-dest": "~0.2.*",
+    "gulp-htmlmin": "^3.0.0",
     "gulp-jscs": "~3.0.*",
     "gulp-uglify": "~1.5.*",
     "jshint": "~2.9.*",

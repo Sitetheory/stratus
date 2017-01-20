@@ -29,7 +29,7 @@
     // This component is just a simple base.
     Stratus.Components.Tweet = {
         bindings: {
-            ngModel: '@'
+            ngModel: '='
         },
         controller: function ($scope, $element, $attrs, $parse, $window, $log) {
             this.uid = _.uniqueId('tweet_');

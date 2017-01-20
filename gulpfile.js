@@ -4,6 +4,7 @@ var debug = require('gulp-debug');
 var dest = require('gulp-dest');
 var jscs = require('gulp-jscs');
 var uglify = require('gulp-uglify');
+var htmlmin = require('gulp-htmlmin');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
 var _ = require('underscore');
@@ -57,12 +58,20 @@ var location = {
             'filters/*.min.js',
             'services/*.min.js'
         ]
+    },
+    template: {
+        core: [
+            'components/*.html'
+        ],
+        min: [
+            'components/*.min.html'
+        ]
     }
 };
 
 // Functions
 gulp.task('clean', function () {
-    return gulp.src(_.union(location.mangle.min, location.preserve.min), { base: '.', read: false })
+    return gulp.src(_.union(location.mangle.min, location.preserve.min, location.template.min), { base: '.', read: false })
         .pipe(debug({ title: 'Clean:' }))
         .pipe(vinylPaths(del));
 });
@@ -73,7 +82,7 @@ gulp.task('jscs', function () {
         .pipe(jscs.reporter())
         .pipe(jscs.reporter('fail'));
 });
-gulp.task('compress', ['compress:mangle', 'compress:preserve']);
+gulp.task('compress', ['compress:mangle', 'compress:preserve', 'compress:template']);
 gulp.task('compress:mangle', ['clean'], function () {
     return gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), { base: '.' })
         .pipe(debug({ title: 'Mangle:' }))
@@ -92,5 +101,14 @@ gulp.task('compress:preserve', ['clean'], function () {
             mangle: false
         }))
         .pipe(dest('.', { ext: '.min.js' }))
+        .pipe(gulp.dest('.'));
+});
+gulp.task('compress:template', ['clean'], function () {
+    return gulp.src(_.union(location.template.core, nullify(location.template.min)), { base: '.' })
+        .pipe(debug({ title: 'Template:' }))
+        .pipe(htmlmin({
+            collapseWhitespace: true
+        }))
+        .pipe(dest('.', { ext: '.min.html' }))
         .pipe(gulp.dest('.'));
 });
