@@ -1197,10 +1197,18 @@
 
     // This class intends to handle typical Sentinel operations.
     /**
-     * @returns {Stratus.Prototypes.Sentinel}
+     * @returns {Stratus.Sentinel.Prototypes}
      * @constructor
      */
     Stratus.Prototypes.Sentinel = function () {
+        this.view = false;
+        this.create = false;
+        this.edit = false;
+        this.delete = false;
+        this.publish = false;
+        this.design = false;
+        this.dev = false;
+        this.master = false;
         this.zero = function () {
             _.extend(this, {
                 view: false,
@@ -1265,7 +1273,6 @@
                 return decimal;
             }
         };
-        this.zero();
         return this;
     };
 

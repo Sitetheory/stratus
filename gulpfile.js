@@ -70,11 +70,6 @@ var location = {
 };
 
 // Functions
-gulp.task('clean', function () {
-    return gulp.src(_.union(location.mangle.min, location.preserve.min, location.template.min), { base: '.', read: false })
-        .pipe(debug({ title: 'Clean:' }))
-        .pipe(vinylPaths(del));
-});
 gulp.task('jscs', function () {
     return gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min)))
         .pipe(debug({ title: 'Verify:' }))
@@ -83,7 +78,12 @@ gulp.task('jscs', function () {
         .pipe(jscs.reporter('fail'));
 });
 gulp.task('compress', ['compress:mangle', 'compress:preserve', 'compress:template']);
-gulp.task('compress:mangle', ['clean'], function () {
+gulp.task('clean:mangle', function () {
+    return gulp.src(location.mangle.min, { base: '.', read: false })
+        .pipe(debug({ title: 'Clean:' }))
+        .pipe(vinylPaths(del));
+});
+gulp.task('compress:mangle', ['clean:mangle'], function () {
     return gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), { base: '.' })
         .pipe(debug({ title: 'Mangle:' }))
         .pipe(uglify({
@@ -93,7 +93,12 @@ gulp.task('compress:mangle', ['clean'], function () {
         .pipe(dest('.', { ext: '.min.js' }))
         .pipe(gulp.dest('.'));
 });
-gulp.task('compress:preserve', ['clean'], function () {
+gulp.task('clean:preserve', function () {
+    return gulp.src(location.preserve.min, { base: '.', read: false })
+        .pipe(debug({ title: 'Clean:' }))
+        .pipe(vinylPaths(del));
+});
+gulp.task('compress:preserve', ['clean:preserve'], function () {
     return gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), { base: '.' })
         .pipe(debug({ title: 'Compress:' }))
         .pipe(uglify({
@@ -103,7 +108,12 @@ gulp.task('compress:preserve', ['clean'], function () {
         .pipe(dest('.', { ext: '.min.js' }))
         .pipe(gulp.dest('.'));
 });
-gulp.task('compress:template', ['clean'], function () {
+gulp.task('clean:template', function () {
+    return gulp.src(location.template.min, { base: '.', read: false })
+        .pipe(debug({ title: 'Clean:' }))
+        .pipe(vinylPaths(del));
+});
+gulp.task('compress:template', ['clean:template'], function () {
     return gulp.src(_.union(location.template.core, nullify(location.template.min)), { base: '.' })
         .pipe(debug({ title: 'Template:' }))
         .pipe(htmlmin({
