@@ -50,7 +50,7 @@
     <div flex>
         <md-menu>
             <a ng-click="$mdOpenMenu($event)" aria-label="Choose Permissions" href="#">
-                {{ permission.data.sentinel.summary.join(", ") }}
+                {{ sentinel[permission.data.id].summary().join(", ") }}
             </a>
             <md-menu-content width="3">
 

@@ -210,10 +210,10 @@
                 this.set = function (attr, value) {
                     if (attr && typeof attr === 'object') {
                         _.each(attr, function (value, attr) {
-                            this.setAttribute(attr, value);
+                            that.setAttribute(attr, value);
                         }, this);
                     } else {
-                        this.setAttribute(attr, value);
+                        that.setAttribute(attr, value);
                     }
                 };
 
@@ -223,27 +223,27 @@
                  */
                 this.setAttribute = function (attr, value) {
                     if (typeof attr === 'string' && attr.indexOf('.') !== -1) {
-                        var reference = this.attributes;
+                        var reference = that.data;
                         var chain = attr.split('.');
                         _.find(_.initial(chain), function (link) {
                             if (!_.has(reference, link) || !reference[link]) reference[link] = {};
                             if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
                                 reference = reference[link];
                             } else {
-                                reference = this.attributes;
+                                reference = that.data;
                                 return true;
                             }
                         }, this);
-                        if (!_.isEqual(reference, this.attributes)) {
+                        if (!_.isEqual(reference, that.data)) {
                             var link = _.last(chain);
                             if (reference && typeof reference === 'object') {
                                 reference[link] = value;
                             }
                         }
                     } else {
-                        this.attributes[attr] = value;
+                        that.data[attr] = value;
                     }
-                    /* TODO: this.trigger('change:' + attr, value); */
+                    /* TODO: that.trigger('change:' + attr, value); */
                 };
 
                 /**

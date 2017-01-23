@@ -1273,6 +1273,13 @@
                 return decimal;
             }
         };
+        this.summary = function () {
+            var output = [];
+            _.each(this, function (value, key) {
+                if (typeof value === 'boolean' && value) output.push(_.ucfirst(key));
+            });
+            return output;
+        };
         return this;
     };
 
