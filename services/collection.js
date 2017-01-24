@@ -132,7 +132,7 @@
                                 var data = response.data.payload || response.data;
                                 if (angular.isArray(data)) {
                                     data.forEach(function (target) {
-                                        that.models.push(new that.model({ collection: that }, target));
+                                        that.models.push(new model({ collection: that }, target));
                                     });
                                 }
 
@@ -202,8 +202,8 @@
                 this.add = function (target) {
                     if (angular.isObject(target)) {
                         that.models.push(
-                            (target instanceof model) ? target : new that.model({
-                                target: that.target
+                            (target instanceof model) ? target : new model({
+                                collection: that
                             }, target)
                         );
                     }
@@ -213,7 +213,7 @@
                  * @param target
                  */
                 this.remove = function (target) {
-                    console.log('remove:', target);
+                    that.models.splice(that.models.indexOf(target), 1);
                 };
 
                 // Infinite Scrolling

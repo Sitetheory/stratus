@@ -327,15 +327,20 @@
                 };
 
                 /**
-                 * @returns {boolean}
+                 * @type {Function}
                  */
                 this.destroy = function () {
-                    $log.log('Destroying...');
-                    return true;
+                    if (that.collection) {
+                        that.collection.remove(that);
+                    }
+                    if (that.get('id')) {
+                        that.sync('DELETE', {}).then(function () {
+                        }, console.error);
+                    }
                 };
 
                 /**
-                 * @type {any}
+                 * @type {Function}
                  */
                 this.initialize = this.initialize || function () {
                         if (that.manifest && !that.get('id')) {
