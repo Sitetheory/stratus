@@ -2,14 +2,16 @@ language: node_js
 sudo: required
 dist: trusty
 node_js: stable
-addons:
-  firefox: latest
-  sauce_connect: true
-  apt:
-    sources:
-    - google-chrome
-    packages:
-    - google-chrome-stable
+#addons:
+#  firefox: latest
+#  sauce_connect:
+#    username: "Your Sauce Labs username"
+#    access_key: "Your Sauce Labs access key"
+#  apt:
+#    sources:
+#    - google-chrome
+#    packages:
+#    - google-chrome-stable
 cache:
   directories:
   - node_modules

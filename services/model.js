@@ -327,6 +327,14 @@
                 };
 
                 /**
+                 * @returns {boolean}
+                 */
+                this.destroy = function () {
+                    $log.log('Destroying...');
+                    return true;
+                };
+
+                /**
                  * @type {any}
                  */
                 this.initialize = this.initialize || function () {
