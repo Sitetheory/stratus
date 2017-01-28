@@ -108,11 +108,9 @@
         });
 
         // Settings
-        /*
         $scope.froalaOptions = {
-            toolbarButtons: ['bold', 'italic', 'underline', '|', 'align']
+            toolbarButtons: ['bold', 'italic', 'underline', '|', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', 'color', 'formatBlock', 'blockStyle', 'inlineStyle', 'align', 'insertOrderedList', 'insertUnorderedList', 'outdent', 'indent', 'selectAll', 'createLink', 'insertImage', 'insertVideo', 'table', 'undo', 'redo', 'html', 'save', 'insertHorizontalRule', 'uploadFile', 'removeFormat', 'fullscreen']
         };
-        */
 
         // Notifications Service
         $scope.showActionToast = function (message) {

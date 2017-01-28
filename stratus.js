@@ -77,7 +77,7 @@
         /* Settings */
         Settings: {
             image: {
-                size: { xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600 }
+                size: {xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600}
             },
             status: {
                 reset: -2,
@@ -367,8 +367,8 @@
          */
         allTrue: function (values) {
             return (typeof values === 'object') ? _.every(values, function (value) {
-                return value;
-            }) : false;
+                    return value;
+                }) : false;
         },
 
         // Determines whether or not the string supplied is in a valid JSON format
@@ -441,13 +441,17 @@
          * @param target
          */
         hyphenToCamel: function (target) {
-            return target.replace(/(-\w)/g, function (m) { return m[1].toUpperCase(); });
+            return target.replace(/(-\w)/g, function (m) {
+                return m[1].toUpperCase();
+            });
         },
         /**
          * @param target
          */
         snakeToCamel: function (target) {
-            return target.replace(/(_\w)/g, function (m) { return m[1].toUpperCase(); });
+            return target.replace(/(_\w)/g, function (m) {
+                return m[1].toUpperCase();
+            });
         },
         /**
          * @param target
@@ -532,10 +536,10 @@
                         row = row.substring(0, cut) + suffix;
 
                         /*
-                        if (moreLink) {
-                            row += '<a href="' + moreLink + '" style="display:inline">' + moreText + '</a>';
-                        }
-                        */
+                         if (moreLink) {
+                         row += '<a href="' + moreLink + '" style="display:inline">' + moreText + '</a>';
+                         }
+                         */
 
                         sum = limit;
                         more = true;
@@ -1328,7 +1332,7 @@
                     }
                 });
             } else {
-                reject(new Stratus.Prototypes.Error({ code: 'LoadCSS', message: 'No CSS Resource URLs found!' }, this));
+                reject(new Stratus.Prototypes.Error({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this));
             }
         });
     };
@@ -1647,10 +1651,10 @@
         return new Promise(function (resolve, reject) {
             /* Digest Extension */
             /*
-            FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
-            var extension = /\.([0-9a-z]+)$/i;
-            extension = extension.exec(url);
-            */
+             FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
+             var extension = /\.([0-9a-z]+)$/i;
+             extension = extension.exec(url);
+             */
             /* Verify Identical Calls */
             if (url in Stratus.CSS) {
                 if (Stratus.CSS[url]) {
@@ -1712,7 +1716,7 @@
             $.ajax({
                 type: 'POST',
                 url: '/Api' + encodeURIComponent(query || ''),
-                data: { convoy: JSON.stringify(convoy) },
+                data: {convoy: JSON.stringify(convoy)},
                 dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType')) ? convoy.meta.dataType : 'json',
                 xhrFields: {
                     withCredentials: true
@@ -1726,7 +1730,7 @@
                     return response;
                 },
                 error: function (response) {
-                    reject(new Stratus.Prototypes.Error({ code: 'Convoy', message: response }, this));
+                    reject(new Stratus.Prototypes.Error({code: 'Convoy', message: response}, this));
                     return response;
                 }
             });
@@ -1749,7 +1753,7 @@
         if (meta === undefined || meta === null) meta = {};
         if (payload === undefined) payload = {};
 
-        if (typeof meta !== 'object') meta = { method: meta };
+        if (typeof meta !== 'object') meta = {method: meta};
         if (!_.has(meta, 'method')) meta.method = 'GET';
 
         return Stratus.Internals.Convoy({
@@ -1791,7 +1795,7 @@
                     data: null
                 };
                 Stratus.Events.once('resource:' + path, resolve);
-                var meta = { path: path, dataType: 'text' };
+                var meta = {path: path, dataType: 'text'};
                 if (elementId !== undefined) {
                     meta.elementId = elementId;
                 }
@@ -1971,7 +1975,7 @@
         },
         clean: function () {
             if (!this.has('entity') || this.get('entity').toLowerCase() === 'none') {
-                this.set({ entity: null, scope: null });
+                this.set({entity: null, scope: null});
             }
         },
 
@@ -2062,13 +2066,37 @@
 
         // Angular Injector
         if (requirements.length) {
-            /* TODO: Load Dynamically
-             var list = [
-             'codemirror',
-             'codemirror/mode/htmlmixed/htmlmixed',
-             'codemirror/addon/edit/matchbrackets'
-             ];
-             */
+            // TODO: Load Dynamically
+            if (_.contains(requirements, 'angular-froala')) {
+                [
+                    'codemirror',
+                    'codemirror/mode/htmlmixed/htmlmixed',
+                    'codemirror/addon/edit/matchbrackets',
+                    'froala-align',
+                    'froala-code-beautifier',
+                    'froala-code-view',
+                    'froala-draggable',
+                    'froala-entities',
+                    'froala-file',
+                    'froala-forms',
+                    'froala-fullscreen',
+                    'froala-help',
+                    'froala-image',
+                    'froala-image-manager',
+                    'froala-inline-style',
+                    'froala-link',
+                    'froala-lists',
+                    'froala-paragraph-format',
+                    'froala-paragraph-style',
+                    'froala-quick-insert',
+                    'froala-quote',
+                    'froala-table',
+                    'froala-url',
+                    'froala-video'
+                ].forEach(function (requirement) {
+                    requirements.push(requirement);
+                });
+            }
 
             // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
             ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
@@ -2089,8 +2117,18 @@
                 // Froala Configuration
                 if ($.FroalaEditor) {
                     $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
+
+                    // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
+                    var buttons = ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock', 'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'help', 'html', 'fullscreen'];
                     angular.module('stratusApp').value('froalaConfig', {
-                        toolbarButtons: ['bold', 'italic', 'underline', '|', 'align', 'formatOL', 'formatUL']
+                        codeMirror: true,
+                        codeMirrorOptions: {
+                            tabSize: 4
+                        },
+                        toolbarButtons: buttons,
+                        toolbarButtonsMD: buttons,
+                        toolbarButtonsSM: buttons,
+                        toolbarButtonsXS: buttons
                     });
                 }
 
@@ -2129,6 +2167,19 @@
                 if (document.querySelectorAll('[froala]').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css');
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/code_view.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/draggable.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/file.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/fullscreen.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/help.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image_manager.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/quick_insert.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/special_characters.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/table.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/video.min.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css');
+                    css.push(Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css');
                 }
 
                 if (css.length) {
@@ -2136,16 +2187,16 @@
                     angular.forEach(css, function (url) {
                         Stratus.Internals.CssLoader(url).then(function () {
                             /*
-                            if (++counter === css.length) {
-                                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-                            }
-                            */
+                             if (++counter === css.length) {
+                             angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                             }
+                             */
                         });
                     });
                 }
                 /*else {
-                    angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-                }*/
+                 angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                 }*/
                 angular.bootstrap(document.querySelector('html'), ['stratusApp']);
             });
         }
@@ -2230,7 +2281,7 @@
         var parentChild = false;
 
         var $el = $(el);
-        view = new Stratus.Internals.View({ el: $el });
+        view = new Stratus.Internals.View({el: $el});
         view.hydrate();
         if (parentView) {
             if (!view.has('entity')) {
@@ -2273,12 +2324,12 @@
 
             // Aggregate Template
             if (template !== null) {
-                templates = _.extend((templates !== null) ? templates : {}, { combined: template });
+                templates = _.extend((templates !== null) ? templates : {}, {combined: template});
             }
 
             // Aggregate Dialogue
             if (dialogue !== null) {
-                templates = _.extend((templates !== null) ? templates : {}, { dialogue: dialogue });
+                templates = _.extend((templates !== null) ? templates : {}, {dialogue: dialogue});
             }
 
             // Gather All Templates
@@ -2446,7 +2497,7 @@
             if (modelInit) {
                 modelReference.safeInitialize(view.toObject());
             }
-            view.set({ model: modelReference });
+            view.set({model: modelReference});
         } else if (view.get('scope') === 'collection') {
             // Create reference, if not defined
             if (!Stratus.Collections.has(view.get('entity'))) {
@@ -2466,7 +2517,7 @@
             }
 
             // Set collection reference
-            view.set({ collection: collectionReference });
+            view.set({collection: collectionReference});
         }
 
         if (view.get('type') !== null) {
@@ -2663,7 +2714,7 @@
         if (event.origin !== 'https://auth.sitetheory.io' && event.origin !== 'http://admin.sitetheory.io') return false;
         var convoy = JSON.parse(event.data);
         if (convoy.meta.session && convoy.meta.session !== $.cookie('SITETHEORY')) {
-            $.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
+            $.cookie('SITETHEORY', convoy.meta.session, {expires: 365, path: '/'});
             if (!Stratus.Client.safari) location.reload(true);
         }
     });
@@ -2898,14 +2949,14 @@
         $('body').removeClass('loading loaded').addClass('unloaded');
         Stratus.Events.trigger('terminate', event);
         /*
-        if (event.cancelable === true) {
-            // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
-            event.preventDefault();
-            var confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
-            (event || window.event).returnValue = confirmationMessage;
-            return confirmationMessage;
-        }
-        */
+         if (event.cancelable === true) {
+         // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
+         event.preventDefault();
+         var confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
+         (event || window.event).returnValue = confirmationMessage;
+         return confirmationMessage;
+         }
+         */
     });
 
     // Handle Scope

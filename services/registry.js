@@ -32,7 +32,7 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Registry = ['$provide', function ($provide) {
-        $provide.factory('registry', function (collection, model) {
+        $provide.factory('registry', function (collection, model, $parse, $interpolate) {
             return function () {
                 // Maintain all models in Namespace
                 // Inverse the parent and child objects the same way Doctrine does
@@ -46,6 +46,9 @@
                         api: $element.attr ? $element.attr('data-api') : $element.api
                     };
                     var data;
+                    _.each(options, function (element, key) {
+                        if (element) options[key] = $interpolate(element)($scope.$parent);
+                    });
                     if (options.target) {
                         options.target = _.ucfirst(options.target);
 
