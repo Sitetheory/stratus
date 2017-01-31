@@ -1,4 +1,4 @@
-//     Stratus.Components.Permission.js 1.0
+//     Stratus.Components.Base.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,8 +15,8 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Permission Component
-// ----------------------------
+// Stratus Base Component
+// ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {

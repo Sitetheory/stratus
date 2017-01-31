@@ -161,6 +161,7 @@
             },
             components: {
                 selector: [
+                    'stratus-asset',
                     'stratus-base',
                     'stratus-date-time',
                     'stratus-delete',
@@ -170,7 +171,8 @@
                     'stratus-pagination',
                     'stratus-permission',
                     'stratus-publish',
-                    'stratus-tweet'
+                    'stratus-tweet',
+                    'stratus-upload'
                 ],
                 namespace: 'stratus.components.'
             },
