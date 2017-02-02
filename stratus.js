@@ -24,7 +24,7 @@
 // responsiveness and speed in correlation with a user's input.
 
 // Require.js
-// -------------
+// ----------
 
 // We use this function factory to ensure that the Stratus Layer can work outside of a
 // Require.js environment.  This function needs to exist on every module defined within

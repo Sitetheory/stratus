@@ -96,6 +96,7 @@
         }
 
         // Scaling Controller
+        /*
         $scope.scale = 2;
         $scope.$watch('scale', function () {
             var scale = 'Medium';
@@ -106,11 +107,7 @@
             }
             document.querySelector('body').dataset.scale = scale;
         });
-
-        // Settings
-        $scope.froalaOptions = {
-            toolbarButtons: ['bold', 'italic', 'underline', '|', 'strikeThrough', 'subscript', 'superscript', 'fontFamily', 'fontSize', 'color', 'formatBlock', 'blockStyle', 'inlineStyle', 'align', 'insertOrderedList', 'insertUnorderedList', 'outdent', 'indent', 'selectAll', 'createLink', 'insertImage', 'insertVideo', 'table', 'undo', 'redo', 'html', 'save', 'insertHorizontalRule', 'uploadFile', 'removeFormat', 'fullscreen']
-        };
+        */
 
         // Notifications Service
         $scope.showActionToast = function (message) {
