@@ -113,12 +113,8 @@
                         action = action || 'GET';
                         var prototype = {
                             method: action,
-                            url: that.url()
-                            /* FIXME: Some APIs don't allow such headers *
-                            headers: {
-                                action: action
-                            }
-                            /**/
+                            url: that.url(),
+                            headers: {}
                         };
                         if (angular.isDefined(data)) {
                             if (action === 'GET') {

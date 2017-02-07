@@ -107,12 +107,8 @@
                         action = action || 'GET';
                         var prototype = {
                             method: action,
-                            url: that.url()
-                            /* FIXME: Some APIs don't allow such headers *
-                            headers: {
-                                action: action
-                            }
-                            /**/
+                            url: that.url(),
+                            headers: {}
                         };
                         if (angular.isDefined(data)) {
                             if (action === 'GET') {
@@ -205,8 +201,8 @@
                     if (angular.isObject(target)) {
                         that.models.push(
                             (target instanceof model) ? target : new model({
-                                collection: that
-                            }, target)
+                                    collection: that
+                                }, target)
                         );
                     }
                 };

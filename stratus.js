@@ -2127,7 +2127,11 @@
                         codeMirrorOptions: {
                             tabSize: 4
                         },
-                        imageManagerLoadURL: '/Api/Media',
+                        imageManagerPageSize: 20,
+                        imageManagerScrollOffset: 10,
+                        imageManagerLoadURL: '/Api/Media?payload-only=true',
+                        imageManagerLoadMethod: 'GET',
+                        imageManagerDeleteMethod: 'DELETE',
                         toolbarSticky: false,
                         toolbarButtons: buttons,
                         toolbarButtonsMD: buttons,
