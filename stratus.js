@@ -38,7 +38,6 @@
             'backbone',
             'bowser',
             'promise',
-            'ng-file-upload',
             'jquery-cookie' // @deprecated!
         ], function (text, $, _, Backbone, bowser) {
             return (root.Stratus = factory(text, $, _, Backbone, bowser));
@@ -123,6 +122,10 @@
         Controllers: {},
         Directives: {},
         Filters: {},
+        Modules: {
+            ngMaterial: true,
+            ngMessages: true
+        },
         Services: {},
 
         /* Bowser */
@@ -168,13 +171,13 @@
                     'stratus-delete',
                     'stratus-facebook',
                     'stratus-help',
+                    'stratus-media-selector',
                     'stratus-option-value',
                     'stratus-pagination',
                     'stratus-permission',
                     'stratus-publish',
                     'stratus-tweet',
-                    'stratus-upload',
-                    'stratus-media-selector'
+                    'stratus-upload'
                 ],
                 namespace: 'stratus.components.'
             },
@@ -2107,16 +2110,8 @@
                 requirements.push(requirement);
             });
             require(requirements, function () {
-
-                // Modular Injectors
-                var baseModules = [
-                    'ngMaterial',
-                    'ngMessages',
-                    'ngFileUpload'
-                ];
-
                 // App Reference
-                angular.module('stratusApp', _.union(baseModules, modules));
+                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules));
 
                 // TODO: Make Dynamic
                 // Froala Configuration
