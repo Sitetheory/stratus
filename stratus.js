@@ -122,6 +122,10 @@
         Controllers: {},
         Directives: {},
         Filters: {},
+        Modules: {
+            ngMaterial: true,
+            ngMessages: true
+        },
         Services: {},
 
         /* Bowser */
@@ -167,6 +171,7 @@
                     'stratus-delete',
                     'stratus-facebook',
                     'stratus-help',
+                    'stratus-media-selector',
                     'stratus-option-value',
                     'stratus-pagination',
                     'stratus-permission',
@@ -2105,15 +2110,8 @@
                 requirements.push(requirement);
             });
             require(requirements, function () {
-
-                // Modular Injectors
-                var baseModules = [
-                    'ngMaterial',
-                    'ngMessages'
-                ];
-
                 // App Reference
-                angular.module('stratusApp', _.union(baseModules, modules));
+                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules));
 
                 // TODO: Make Dynamic
                 // Froala Configuration
