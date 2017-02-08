@@ -38,6 +38,7 @@
             'backbone',
             'bowser',
             'promise',
+            'ng-file-upload',
             'jquery-cookie' // @deprecated!
         ], function (text, $, _, Backbone, bowser) {
             return (root.Stratus = factory(text, $, _, Backbone, bowser));
@@ -172,7 +173,8 @@
                     'stratus-permission',
                     'stratus-publish',
                     'stratus-tweet',
-                    'stratus-upload'
+                    'stratus-upload',
+                    'stratus-media-selector'
                 ],
                 namespace: 'stratus.components.'
             },
@@ -2109,7 +2111,8 @@
                 // Modular Injectors
                 var baseModules = [
                     'ngMaterial',
-                    'ngMessages'
+                    'ngMessages',
+                    'ngFileUpload'
                 ];
 
                 // App Reference
