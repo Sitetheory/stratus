@@ -2814,6 +2814,7 @@
 
         // Load Internals after Widgets and Plugins
         new Stratus.Internals.Anchor();
+        new Stratus.Internals.LazyLoad();
 
         // Call Any Registered Group Methods that plugins might use, e.g. OnScroll
         if (Stratus.RegisterGroup.size) {
@@ -2939,7 +2940,6 @@
     // Stratus Events are more accurate than the DOM, so nothing is added to this stub.
     Stratus.DOM.complete(function () {
         $('body').removeClass('loading unloaded').addClass('loaded');
-        new Stratus.Internals.LazyLoad();
     });
 
     // DOM Unload Routines
