@@ -1514,8 +1514,8 @@
 
             // By default we'll load larger versions of an image to look good on HD displays, but if you
             // don't want that, you can bypass it with data-hd="false"
-            //var hd = !obj.el.data('hd') ? false : true;
-            var hd = true;
+            var hd = obj.el.data('hd');
+            hd = (typeof hd === 'undefined') ? true : (_.isJSON(hd) ? JSON.parse(hd) : hd);
 
             // Don't Get the Width, until it's "onScreen" (in case it was collapsed offscreen originally)
             var src = obj.el.data('src');
@@ -1593,8 +1593,6 @@
 
                 // default to largest size if the container is larger and it didn't find a size
                 size = size || 'hq';
-
-                // console.log('Image:', obj.el, 'width:', width, 'size:', size);
             }
 
             // Change Source to right size (get the base and extension and ignore size)
@@ -2816,7 +2814,6 @@
 
         // Load Internals after Widgets and Plugins
         new Stratus.Internals.Anchor();
-        new Stratus.Internals.LazyLoad();
 
         // Call Any Registered Group Methods that plugins might use, e.g. OnScroll
         if (Stratus.RegisterGroup.size) {
@@ -2942,6 +2939,7 @@
     // Stratus Events are more accurate than the DOM, so nothing is added to this stub.
     Stratus.DOM.complete(function () {
         $('body').removeClass('loading unloaded').addClass('loaded');
+        new Stratus.Internals.LazyLoad();
     });
 
     // DOM Unload Routines
