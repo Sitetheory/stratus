@@ -254,15 +254,21 @@
                     var target = that.get((request.length > 1) ? request[0] : attribute);
                     if (typeof item === 'undefined') {
                         that.set(attribute, !target);
-                    } else if (angular.isArray(target)) {
+                    } else if (angular.isArray(target) || typeof target === 'undefined') {
+                        if (!angular.isArray(target)) {
+                            target = [];
+                            that.set((request.length > 1) ? request[0] : attribute, target);
+                        }
+                        /* This is disabled, since hydration should not be forced by default *
                         var hydrate = {};
                         if (request.length > 1) {
                             hydrate[request[1]] = { id: item };
                         } else {
                             hydrate.id = item;
                         }
+                        /**/
                         if (!that.exists(attribute, item)) {
-                            target.push(hydrate);
+                            target.push(item);
                         } else {
                             _.each(target, function (element, key) {
                                 var child = (request.length > 1 && angular.isObject(element) && request[1] in element) ? element[request[1]] : element;
