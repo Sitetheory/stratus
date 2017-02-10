@@ -36,6 +36,7 @@
             return function (options, attributes) {
 
                 // TODO: Add Auto-Saving
+                // TODO: Create a deep watcher for the data property
 
                 // Environment
                 this.target = null;

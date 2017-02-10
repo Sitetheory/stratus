@@ -1,37 +1,34 @@
-
 ul.fc-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 ul.fc-list .fc-dayHeader {
-    background-color: #F0F0F0;
-    border-bottom: 1px solid #E0E0E0;
-    padding: 10px;
-    overflow: hidden;
+  background-color: #F0F0F0;
+  border-bottom: 1px solid #E0E0E0;
+  padding: 10px;
+  overflow: hidden;
 }
 ul.fc-list .fc-dayHeader .fc-headerLeft {
-    float: left;
-    font-weight: 700;
+  float: left;
+  font-weight: 700;
 }
 ul.fc-list .fc-dayHeader .fc-headerRight {
-    float: right;
-    font-weight: 500;
+  float: right;
+  font-weight: 500;
 }
-
-
-ul.fc-list .fc-item+.fc-item {
-    border-top: 1px solid #E0E0E0;
+ul.fc-list .fc-item + .fc-item {
+  border-top: 1px solid #E0E0E0;
 }
 ul.fc-list .fc-item .fc-listEvent {
-    display: block;
-    padding: 8px;
-    margin: 2px;
+  display: block;
+  padding: 8px;
+  margin: 2px;
 }
 ul.fc-list .fc-item .fc-listEvent .fc-time {
-    display: inline-block;
-    width: 15%;
+  display: inline-block;
+  width: 15%;
 }
 ul.fc-list .fc-item .fc-listEvent .fc-details {
-    display: inline-block;
+  display: inline-block;
 }

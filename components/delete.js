@@ -59,7 +59,7 @@
             $scope.showDataTimePicker = $attrs.versionEntity || null;
             $scope.showUnpublish = $attrs.showUnpublish || false;
             $scope.showVersionHistory = $attrs.showVersionHistory || false;
-            $scope.showMore = ($scope.showDateTimePicker || $scope.showUnpublish || $scope.showVersionHistory) ? true : false;
+            $scope.showMore = !!($scope.showDateTimePicker || $scope.showUnpublish || $scope.showVersionHistory);
 
             // TODO: add a redirect if requested
             $scope.redirect = $attrs.redirect || false;
