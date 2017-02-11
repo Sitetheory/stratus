@@ -47,6 +47,7 @@ var location = {
     },
     preserve: {
         core: [
+            'config.js',
             'controllers/*.js',
             'components/*.js',
             'directives/*.js',
@@ -54,6 +55,7 @@ var location = {
             'services/*.js'
         ],
         min: [
+            'config.min.js',
             'controllers/*.min.js',
             'components/*.min.js',
             'directives/*.min.js',
@@ -63,20 +65,24 @@ var location = {
     },
     less: {
         core: [
+            'stratus.less',
             'components/*.less',
             'views/**/*.less'
         ],
         compile: [
+            'stratus.css',
             'components/*.css',
             'views/**/*.css'
         ]
     },
     css: {
         core: [
+            'stratus.css',
             'components/*.css',
             'views/**/*.css'
         ],
         min: [
+            'stratus.min.css',
             'components/*.min.css',
             'views/**/*.min.css'
         ]

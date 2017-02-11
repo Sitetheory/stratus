@@ -42,7 +42,7 @@
 }
 /* TODO: point to our own cool image */
 [data-type="select"] .hasImage input:checked {
-  background-image: url('/sitetheory/v/1/0/bundles/sitetheorystratus/stratus/views/widgets/check-mark.png');
+  background-image: url('/assets/1/0/bundles/sitetheorystratus/stratus/views/widgets/check-mark.png');
 }
 [data-type="select"] .title {
   padding: 10px 0;

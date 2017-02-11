@@ -121,25 +121,7 @@ requirejs.config({
                 'zepto',
                 'moment'
             ]
-        },
-
-        /* Sitetheory Custom */
-        'backbone.d3view': {
-            deps: [
-                'backbone',
-                'd3'
-            ]
-        },
-        bootbox: { deps: ['bootstrap'] },
-        datetimepicker: {
-            deps: [
-                'bootstrap',
-                'moment'
-            ]
         }
-        /**
-         'jquery-toaster': { deps: ['zepto'] },
-         /**/
     },
 
     // Internal Mapping
@@ -359,28 +341,6 @@ requirejs.config({
         /* Tether */
         tether: bundle + 'stratus/bower_components/tether/dist/js/tether' + suffix,
         'tether-drop': bundle + 'stratus/bower_components/tether-drop/dist/js/drop' + suffix,
-        'tether-tooltip': bundle + 'stratus/bower_components/tether-tooltip/dist/js/tooltip' + suffix,
-
-        /* Sitetheory Custom */
-        backbone: 'sitetheorycore/dist/backbone/backbone' + suffix,
-        'backbone.d3view': 'sitetheorycore/dist/backbone/backbone.d3view' + suffix,
-        zepto: 'sitetheorycore/dist/zepto/zepto' + suffix,
-        'jquery-toaster': 'sitetheorycore/dist/jquery/jquery.toaster' + suffix,
-        'jquery-sortable': 'sitetheorycore/dist/jquery/jquery.sortable' + suffix,
-        redactor: 'sitetheorycore/dist/redactor/redactor' + suffix,
-        'redactor-clips': 'sitetheorycore/dist/redactor/redactor.clips' + suffix,
-        'redactor-definedlinks': 'sitetheorycore/dist/redactor/redactor.definedlinks' + suffix,
-        'redactor-filemanager': 'sitetheorycore/dist/redactor/redactor.filemanager' + suffix,
-        'redactor-fullscreen': 'sitetheorycore/dist/redactor/redactor.fullscreen' + suffix,
-        'redactor-imagemanager': 'sitetheorycore/dist/redactor/redactor.imagemanager' + suffix,
-        'redactor-table': 'sitetheorycore/dist/redactor/redactor.table' + suffix,
-        'redactor-textexpander': 'sitetheorycore/dist/redactor/redactor.textexpander' + suffix,
-        'redactor-video': 'sitetheorycore/dist/redactor/redactor.video' + suffix,
-        'stratus.views.widgets.location': 'sitetheorylocation/stratus/views/widgets/location',
-        'stratus.views.widgets.media': 'sitetheorymedia/stratus/views/widgets/media',
-        'stratus.views.plugins.tweet': 'sitetheoryneural/stratus/views/plugins/tweet',
-        bootstrap: 'sitetheorycore/dist/bootstrap/bootstrap' + suffix,
-        bootbox: 'sitetheorycore/dist/bootstrap/bootbox' + suffix,
-        datetimepicker: 'sitetheorycore/dist/bootstrap/bootstrap-datetimepicker' + suffix
+        'tether-tooltip': bundle + 'stratus/bower_components/tether-tooltip/dist/js/tooltip' + suffix
     }
 });
