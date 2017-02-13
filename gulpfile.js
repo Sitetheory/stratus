@@ -4,6 +4,8 @@ var debug = require('gulp-debug');
 var dest = require('gulp-dest');
 var jscs = require('gulp-jscs');
 var uglify = require('gulp-uglify');
+var less = require('gulp-less');
+var cleanCSS = require('gulp-clean-css');
 var htmlmin = require('gulp-htmlmin');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
@@ -65,6 +67,26 @@ var location = {
         ],
         min: [
             'components/*.min.html'
+        ]
+    },
+    less: {
+        source: [
+            'components/*.less',
+            'views/**/*.less'
+        ],
+        compile: [
+            'components/*.css',
+            'views/**/*.css'
+        ]
+    },
+    css: {
+        core: [
+            'components/*.css',
+            'views/**/*.css'
+        ],
+        min: [
+            'components/*.min.css',
+            'views/**/*.min.css'
         ]
     }
 };

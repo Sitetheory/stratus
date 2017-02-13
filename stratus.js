@@ -125,6 +125,7 @@
         Modules: {
             ngMaterial: true,
             ngMessages: true
+            //ngFileUpload: true
         },
         Services: {},
 
@@ -1510,107 +1511,111 @@
      */
     Stratus.Internals.LoadImage = function (obj) {
         obj.el.addClass('placeholder');
-        if (Stratus.Internals.IsOnScreen(obj.spy)) {
+        if (Stratus.Internals.IsOnScreen(obj.spy) && !obj.el.dataAttr('loading')) {
+            obj.el.dataAttr('loading', true);
 
-            // By default we'll load larger versions of an image to look good on HD displays, but if you
-            // don't want that, you can bypass it with data-hd="false"
-            //var hd = !obj.el.data('hd') ? false : true;
-            var hd = true;
+            Stratus.DOM.complete(function () {
 
-            // Don't Get the Width, until it's "onScreen" (in case it was collapsed offscreen originally)
-            var src = obj.el.data('src');
+                // By default we'll load larger versions of an image to look good on HD displays, but if you
+                // don't want that, you can bypass it with data-hd="false"
+                var hd = obj.el.data('hd');
+                hd = (typeof hd === 'undefined') ? true : (_.isJSON(hd) ? JSON.parse(hd) : hd);
 
-            // If a src is provided already, us that
-            if (src === 'lazy') src = obj.el.attr('src');
+                // Don't Get the Width, until it's "onScreen" (in case it was collapsed offscreen originally)
+                var src = obj.el.data('src');
 
-            var size = null;
+                // If a src is provided already, us that
+                if (src === 'lazy') src = obj.el.attr('src');
 
-            // if a specific valid size is requested, use that
-            if (obj.el.data('size') && size.indexOf(obj.el.data('size')) !== false) {
-                size = obj.el.data('size');
-            } else {
-                var width = null;
-                var unit = null;
-                var percentage = null;
+                var size = null;
 
-                if (obj.el.prop('style').width) {
-                    // Check if there is CSS width hard coded on the element
-                    width = obj.el.prop('style').width;
-                } else if (obj.el.attr('width')) {
-                    width = obj.el.attr('width');
-                }
+                // if a specific valid size is requested, use that
+                if (obj.el.data('size') && size.indexOf(obj.el.data('size')) !== false) {
+                    size = obj.el.data('size');
+                } else {
+                    var width = null;
+                    var unit = null;
+                    var percentage = null;
 
-                // Digest Width Attribute
-                if (width) {
-                    var digest = /([\d]+)(.*)/;
-                    width = digest.exec(width);
-                    unit = width[2];
-                    width = parseInt(width[1]);
-                    percentage = (unit === '%') ? (width / 100) : null;
-                }
+                    if (obj.el.prop('style').width) {
+                        // Check if there is CSS width hard coded on the element
+                        width = obj.el.prop('style').width;
+                    } else if (obj.el.attr('width')) {
+                        width = obj.el.attr('width');
+                    }
 
-                // Gather Container (Calculated) Width
-                if (!width || unit === '%') {
-                    // If there is no CSS width, calculate the parent container's width
-                    // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
-                    // So we need to find the first parent that is visible and use that width
-                    // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
-                    // so in some cases we need to flag to find the parent regardless of invisibility.
-                    var visibilitySelector = (obj.el.data('ignorevisibility')) ? null : ':visible';
-                    var $visibleParent = $(_.first(obj.el.parents(visibilitySelector)));
-                    width = $visibleParent.width();
+                    // Digest Width Attribute
+                    if (width) {
+                        var digest = /([\d]+)(.*)/;
+                        width = digest.exec(width);
+                        unit = width[2];
+                        width = parseInt(width[1]);
+                        percentage = (unit === '%') ? (width / 100) : null;
+                    }
 
-                    // If one of parents of the image (and child of the found parent) has a bootstrap col-*-* set
-                    // divide width by that in anticipation (e.g. Carousel that has items grouped)
-                    var $col = $(_.first($visibleParent.find('[class*="col-"]')));
+                    // FIXME: This should only happen if the CSS has completely loaded.
+                    // Gather Container (Calculated) Width
+                    if (!width || unit === '%') {
+                        // If there is no CSS width, calculate the parent container's width
+                        // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
+                        // So we need to find the first parent that is visible and use that width
+                        // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
+                        // so in some cases we need to flag to find the parent regardless of invisibility.
+                        var visibilitySelector = (obj.el.data('ignorevisibility')) ? null : ':visible';
+                        var $visibleParent = $(_.first(obj.el.parents(visibilitySelector)));
+                        width = $visibleParent.width();
 
-                    if ($col.length > 0) {
-                        var colWidth = Stratus.Internals.GetColWidth($col);
-                        if (colWidth) {
-                            width = Math.round(width / colWidth);
+                        // If one of parents of the image (and child of the found parent) has a bootstrap col-*-* set
+                        // divide width by that in anticipation (e.g. Carousel that has items grouped)
+                        var $col = $(_.first($visibleParent.find('[class*="col-"]')));
+
+                        if ($col.length > 0) {
+                            var colWidth = Stratus.Internals.GetColWidth($col);
+                            if (colWidth) {
+                                width = Math.round(width / colWidth);
+                            }
+                        }
+
+                        // Calculate Percentage
+                        if (percentage) {
+                            width = Math.round(width * percentage);
                         }
                     }
 
-                    // Calculate Percentage
-                    if (percentage) {
-                        width = Math.round(width * percentage);
+                    // If no appropriate width was found, abort
+                    if (width <= 0) return false;
+
+                    // Double for HD
+                    if (hd) {
+                        width = width * 2;
                     }
+
+                    // Return the first size that is bigger than container width
+                    size = _.findKey(Stratus.Settings.image.size, function (s) {
+                        var ratio = s / width;
+                        return ((0.85 < ratio && ratio < 1.15) || s > width);
+                    });
+
+                    // default to largest size if the container is larger and it didn't find a size
+                    size = size || 'hq';
                 }
 
-                // If no appropriate width was found, abort
-                if (width <= 0) return false;
+                // Change Source to right size (get the base and extension and ignore size)
+                var srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi;
+                var srcMatch = srcRegex.exec(src);
+                src = srcMatch[1] + '-' + size + '.' + srcMatch[3];
 
-                // Double for HD
-                if (hd) {
-                    width = width * 2;
-                }
-
-                // Return the first size that is bigger than container width
-                size = _.findKey(Stratus.Settings.image.size, function (s) {
-                    var ratio = s / width;
-                    return ((0.85 < ratio && ratio < 1.15) || s > width);
+                // Change the Source to be the desired path
+                obj.el.attr('src', src);
+                obj.el.addClass('loading');
+                obj.el.load(function () {
+                    $(this).addClass('loaded').removeClass('placeholder loading');
                 });
 
-                // default to largest size if the container is larger and it didn't find a size
-                size = size || 'hq';
+                // Remove from registration
+                Stratus.RegisterGroup.remove('OnScroll', obj);
 
-                // console.log('Image:', obj.el, 'width:', width, 'size:', size);
-            }
-
-            // Change Source to right size (get the base and extension and ignore size)
-            var srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi;
-            var srcMatch = srcRegex.exec(src);
-            src = srcMatch[1] + '-' + size + '.' + srcMatch[3];
-
-            // Change the Source to be the desired path
-            obj.el.attr('src', src);
-            obj.el.addClass('loading');
-            obj.el.load(function () {
-                $(this).addClass('loaded').removeClass('placeholder loading');
             });
-
-            // Remove from registration
-            Stratus.RegisterGroup.remove('OnScroll', obj);
         }
     };
 

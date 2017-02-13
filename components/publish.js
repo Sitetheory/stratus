@@ -77,7 +77,7 @@
                 $scope.showDateTime = $attrs.showDateTime || false;
                 $scope.showUnpublish = $attrs.showUnpublish || false;
                 $scope.showVersionHistory = $attrs.showVersionHistory || false;
-                $scope.showMore = ($scope.showDateTime || $scope.showUnpublish || $scope.showVersionHistory) ? true : false;
+                $scope.showMore = !!($scope.showDateTime || $scope.showUnpublish || $scope.showVersionHistory);
                 $scope.timePublish = null;
 
                 var $dateTimeComponent = null;

@@ -675,7 +675,7 @@
                     this.model.autoSave(this.options.autoSave);
                 }
             }
-            this.options.feedback = (this.options.feedback || this.options.style === 'form') ? true : false;
+            this.options.feedback = !!(this.options.feedback || this.options.style === 'form');
 
             return true;
         },
