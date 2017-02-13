@@ -94,6 +94,26 @@ var location = {
         min: [
             'components/*.min.html'
         ]
+    },
+    less: {
+        source: [
+            'components/*.less',
+            'views/**/*.less'
+        ],
+        compile: [
+            'components/*.css',
+            'views/**/*.css'
+        ]
+    },
+    css: {
+        core: [
+            'components/*.css',
+            'views/**/*.css'
+        ],
+        min: [
+            'components/*.min.css',
+            'views/**/*.min.css'
+        ]
     }
 };
 
