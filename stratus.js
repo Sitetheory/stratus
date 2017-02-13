@@ -125,7 +125,6 @@
         Modules: {
             ngMaterial: true,
             ngMessages: true
-            //ngFileUpload: true
         },
         Services: {},
 
