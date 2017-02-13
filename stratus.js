@@ -2029,6 +2029,7 @@
         var requirement;
         var nodes;
         var modules = [];
+
         // TODO: Search through requirejs.s.contexts._.config.paths
         _.forEach(Stratus.Roster, function (element, key) {
             if (element && element.selector) {
