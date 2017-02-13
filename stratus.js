@@ -2029,6 +2029,7 @@
         var requirement;
         var nodes;
         var modules = [];
+        // TODO: Search through requirejs.s.contexts._.config.paths
         _.forEach(Stratus.Roster, function (element, key) {
             if (element && element.selector) {
                 if (_.isArray(element.selector)) {
@@ -2787,6 +2788,7 @@
         Stratus.Internals.Compatibility();
         Stratus.RegisterGroup = new Stratus.Prototypes.Collection();
 
+        /* FIXME: This breaks outside of Sitetheory *
         // Start Generic Router
         require(['stratus.routers.generic'], function () {
             Stratus.Routers.set('generic', new Stratus.Routers.Generic());
@@ -2795,6 +2797,7 @@
 
         // Handle Location
         Stratus.Internals.TrackLocation();
+        /**/
 
         // Load Angular
         Stratus.Internals.AngularLoader();
