@@ -20,7 +20,7 @@
 
 /* Gather Development Information */
 var dev = (typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1);
-var local = (typeof document.cookie === 'string' && document.cookie.indexOf('local=') !== -1) || true;
+var local = (typeof document.cookie === 'string' && document.cookie.indexOf('local=') !== -1);
 var suffix = (dev) ? '' : '.min';
 var dashSuffix = (dev) ? '' : '-min';
 var directory = (dev) ? '' : 'min/';
