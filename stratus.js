@@ -2169,7 +2169,9 @@
 
                 // Load CSS
                 // TODO: Make Dynamic
-                var css = [];
+                var css = [
+                    Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material.min.css'
+                ];
                 if (document.querySelectorAll('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
