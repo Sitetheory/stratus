@@ -164,21 +164,6 @@
                 namespace: 'stratus.controllers.'
             },
             components: {
-                selector: [
-                    'stratus-asset',
-                    'stratus-base',
-                    'stratus-date-time',
-                    'stratus-delete',
-                    'stratus-facebook',
-                    'stratus-help',
-                    'stratus-media-selector',
-                    'stratus-option-value',
-                    'stratus-pagination',
-                    'stratus-permission',
-                    'stratus-publish',
-                    'stratus-tweet',
-                    'stratus-upload'
-                ],
                 namespace: 'stratus.components.'
             },
             directives: {
@@ -443,6 +428,12 @@
                 seconds = null;
             }
             return seconds;
+        },
+        /**
+         * @param target
+         */
+        camelToHyphen: function (target) {
+            return target.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
         },
         /**
          * @param target
@@ -2030,9 +2021,15 @@
         var nodes;
         var modules = [];
 
-        // TODO: Search through requirejs.s.contexts._.config.paths
         _.forEach(Stratus.Roster, function (element, key) {
-            if (element && element.selector) {
+            if (typeof element === 'object' && element) {
+                if (_.isUndefined(element.selector)) {
+                    element.selector = _.filter(
+                        _.map(requirejs.s.contexts._.config.paths, function (path, key) {
+                            return _.startsWith(key, 'stratus.components') ? _.camelToHyphen(key.replace('.components.', '-')) : null;
+                        })
+                    );
+                }
                 if (_.isArray(element.selector)) {
                     element.length = 0;
                     _.forEach(element.selector, function (selector) {
@@ -2049,7 +2046,7 @@
                             }
                         }
                     });
-                } else {
+                } else if (_.isString(element.selector)) {
                     nodes = document.querySelectorAll(element.selector);
                     element.length = nodes.length;
                     if (nodes.length) {
