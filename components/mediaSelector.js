@@ -38,16 +38,18 @@
         controller: function ($scope, $http, $attrs, $parse, $element, Upload) {
             Stratus.Instances[_.uniqueId('media_selector')] = $scope;
             console.log(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector.css');
+
             //load component css
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector.css');
             $scope.model = $scope.$parent.model;
+
             // set media library to false
             $scope.showLibrary = false;
             $scope.showDragDropLibrary = false;
-            //initialise library class to plus
-            $scope.showLibraryClass = "fa fa-plus-square-o";
-            $scope.dragDropClass = "fa fa-plus";
 
+            //initialise library class to plus
+            $scope.showLibraryClass = 'fa fa-plus-square-o';
+            $scope.dragDropClass = 'fa fa-plus';
 
             // $scope.media = $parse($attrs.ngModel);
             // Methods
@@ -58,14 +60,14 @@
                 console.log(file[0]);
 
                 //upload file to session api
-              Upload.upload({
+                Upload.upload({
                     url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
                     data: {
                         // username: 'test',
                         file: file[0]
                     }
                 }).then(function (resp) {
-                   // console.log(resp);
+                    // console.log(resp);
                 });
             };
 
@@ -74,12 +76,12 @@
                  '<h3>Header <span><i class="fa fa-question" aria-hidden="true"></i></span></h3> ' +
                  '</div><!-- Gallery header Ends --> ' +*/
                 '<div class="gl-content"> ' +
-                '<div class="search-bar">'+
+                '<div class="search-bar">' +
                 '<div class="gal-search"><h4>SEARCH</h4> <input type="text" class="search-gl-txt" placeholder="Travel" /> ' +
                 '<button class="search--btn"><i class="fa fa-search" aria-hidden="true"></i></button> ' +
-                '</div>'+
-                '<p>To upload more images to library, drag and drop here or <a href="#"> Click Here </a></p>'+
-                '</div><!-- Search Bar Ends -->'+
+                '</div>' +
+                '<p>To upload more images to library, drag and drop here or <a href="#"> Click Here </a></p>' +
+                '</div><!-- Search Bar Ends -->' +
                 '<ul> ' +
                 '<li>' +
                 '<div class="gl-img-container dummy-image">' +
@@ -275,54 +277,48 @@
                 '</div><!-- Gl Content Ends --> ' +
                 '</div><!-- Gallery Box Ends --> ';
 
-
-
-
-            $scope.openLibrary = function() {
-              // show library media
-                if($scope.showLibraryClass === 'fa fa-plus-square-o') {
-                    $scope.showLibraryClass = "fa fa-minus-square-o";
+            $scope.openLibrary = function () {
+                // show library media
+                if ($scope.showLibraryClass === 'fa fa-plus-square-o') {
+                    $scope.showLibraryClass = 'fa fa-minus-square-o';
                     $scope.showLibrary = true;
                     $scope.showDragDropLibrary = false;
-                    $scope.dragDropClass = "fa fa-plus";
-                    var myEl = angular.element( document.querySelector( '#openLibrary' ) );
+                    $scope.dragDropClass = 'fa fa-plus';
+                    var myEl = angular.element(document.querySelector('#openLibrary'));
                     myEl.html('');
                     myEl.prepend(html);
 
-                     $http.get('https://admin.sitetheory.io/Api/Media').then(function(resp){
-                     console.log(Stratus.BaseUrl);
-                     });
+                    $http.get('https://admin.sitetheory.io/Api/Media').then(function (resp) {
+                        console.log(Stratus.BaseUrl);
+                    });
 
-                } else  if($scope.showLibraryClass === 'fa fa-minus-square-o') {
-                    $scope.showLibraryClass = "fa fa-plus-square-o";
+                } else if ($scope.showLibraryClass === 'fa fa-minus-square-o') {
+                    $scope.showLibraryClass = 'fa fa-plus-square-o';
                     $scope.showLibrary = false;
                 }
-             }
+            };
 
-            $scope.mediaLibrary = function() {
-                 if($scope.dragDropClass === "fa fa-plus"){
-                    $scope.dragDropClass = "fa fa-minus";
-                    $scope.showLibraryClass = "fa fa-plus-square-o";
+            $scope.mediaLibrary = function () {
+                if ($scope.dragDropClass === 'fa fa-plus') {
+                    $scope.dragDropClass = 'fa fa-minus';
+                    $scope.showLibraryClass = 'fa fa-plus-square-o';
                     $scope.showLibrary = false;
                     $scope.showDragDropLibrary = true;
 
-                     var myEl = angular.element( document.querySelector( '#openDragDropLibrary' ) );
-                     myEl.html('');
-                     myEl.prepend(html);
-                     $http.get('https://admin.sitetheory.io/Api/Media').then(function(resp){
+                    var myEl = angular.element(document.querySelector('#openDragDropLibrary'));
+                    myEl.html('');
+                    myEl.prepend(html);
+                    $http.get('https://admin.sitetheory.io/Api/Media').then(function (resp) {
                          console.log(Stratus.BaseUrl);
                      });
 
-                 }else if($scope.dragDropClass === "fa fa-minus"){
-                    $scope.dragDropClass = "fa fa-plus";
-                     $scope.showDragDropLibrary = false;
-                 }
-            }
+                }else if ($scope.dragDropClass === 'fa fa-minus') {
+                    $scope.dragDropClass = 'fa fa-plus';
+                    $scope.showDragDropLibrary = false;
+                }
+            };
 
         },
-
-
-
 
         template: '<div class="container">' +
                     '<div class="gallery-box"> ' +
@@ -333,7 +329,7 @@
                             '<a href="#" ng-click="openLibrary()"><i ng-class="showLibraryClass" aria-hidden="true"></i> Open library to select images or drag, drop new images here</a> ' +
                         '</div><!-- Gl Content Ends --> ' +
                     '</div><!-- Gallery Box Ends --> ' +
-                    '<div id="openLibrary" ng-show="showLibrary"></div>'+
+                    '<div id="openLibrary" ng-show="showLibrary"></div>' +
                     '<div class="gallery-box"> ' +
                         '<div class="gl-header"> ' +
                             '<h3>DRAG & DROP <span><i class="fa fa-question" aria-hidden="true"></i></span></h3> ' +
@@ -539,7 +535,7 @@
                         '</ul> ' +
                 '</div><!-- Gl Content Ends --> ' +
             '</div><!-- Gallery Box Ends --> ' +
-            '<div id="openDragDropLibrary" ng-show="showDragDropLibrary"></div>'+
+            '<div id="openDragDropLibrary" ng-show="showDragDropLibrary"></div>' +
         '</div>'
     };
 }));

@@ -125,7 +125,6 @@
         Modules: {
             ngMaterial: true,
             ngMessages: true
-            //ngFileUpload: true
         },
         Services: {},
 
@@ -165,21 +164,6 @@
                 namespace: 'stratus.controllers.'
             },
             components: {
-                selector: [
-                    'stratus-asset',
-                    'stratus-base',
-                    'stratus-date-time',
-                    'stratus-delete',
-                    'stratus-facebook',
-                    'stratus-help',
-                    'stratus-media-selector',
-                    'stratus-option-value',
-                    'stratus-pagination',
-                    'stratus-permission',
-                    'stratus-publish',
-                    'stratus-tweet',
-                    'stratus-upload'
-                ],
                 namespace: 'stratus.components.'
             },
             directives: {
@@ -444,6 +428,12 @@
                 seconds = null;
             }
             return seconds;
+        },
+        /**
+         * @param target
+         */
+        camelToHyphen: function (target) {
+            return target.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
         },
         /**
          * @param target
@@ -2030,8 +2020,16 @@
         var requirement;
         var nodes;
         var modules = [];
+
         _.forEach(Stratus.Roster, function (element, key) {
-            if (element && element.selector) {
+            if (typeof element === 'object' && element) {
+                if (_.isUndefined(element.selector)) {
+                    element.selector = _.filter(
+                        _.map(requirejs.s.contexts._.config.paths, function (path, key) {
+                            return _.startsWith(key, 'stratus.components') ? _.camelToHyphen(key.replace('.components.', '-')) : null;
+                        })
+                    );
+                }
                 if (_.isArray(element.selector)) {
                     element.length = 0;
                     _.forEach(element.selector, function (selector) {
@@ -2048,7 +2046,7 @@
                             }
                         }
                     });
-                } else {
+                } else if (_.isString(element.selector)) {
                     nodes = document.querySelectorAll(element.selector);
                     element.length = nodes.length;
                     if (nodes.length) {
@@ -2788,6 +2786,7 @@
         Stratus.Internals.Compatibility();
         Stratus.RegisterGroup = new Stratus.Prototypes.Collection();
 
+        /* FIXME: This breaks outside of Sitetheory *
         // Start Generic Router
         require(['stratus.routers.generic'], function () {
             Stratus.Routers.set('generic', new Stratus.Routers.Generic());
@@ -2796,6 +2795,7 @@
 
         // Handle Location
         Stratus.Internals.TrackLocation();
+        /**/
 
         // Load Angular
         Stratus.Internals.AngularLoader();

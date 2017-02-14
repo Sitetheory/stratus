@@ -47,6 +47,7 @@ var location = {
     },
     preserve: {
         core: [
+            'config.js',
             'controllers/*.js',
             'components/*.js',
             'directives/*.js',
@@ -54,11 +55,36 @@ var location = {
             'services/*.js'
         ],
         min: [
+            'config.min.js',
             'controllers/*.min.js',
             'components/*.min.js',
             'directives/*.min.js',
             'filters/*.min.js',
             'services/*.min.js'
+        ]
+    },
+    less: {
+        core: [
+            'stratus.less',
+            'components/*.less',
+            'views/**/*.less'
+        ],
+        compile: [
+            'stratus.css',
+            'components/*.css',
+            'views/**/*.css'
+        ]
+    },
+    css: {
+        core: [
+            'stratus.css',
+            'components/*.css',
+            'views/**/*.css'
+        ],
+        min: [
+            'stratus.min.css',
+            'components/*.min.css',
+            'views/**/*.min.css'
         ]
     },
     template: {
@@ -68,30 +94,10 @@ var location = {
         min: [
             'components/*.min.html'
         ]
-    },
-    less: {
-        source: [
-            'components/*.less',
-            'views/**/*.less'
-        ],
-        compile: [
-            'components/*.css',
-            'views/**/*.css'
-        ]
-    },
-    css: {
-        core: [
-            'components/*.css',
-            'views/**/*.css'
-        ],
-        min: [
-            'components/*.min.css',
-            'views/**/*.min.css'
-        ]
     }
 };
 
-// Functions
+// Code Styling
 gulp.task('jscs', function () {
     return gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min)))
         .pipe(debug({ title: 'Verify:' }))
@@ -99,7 +105,13 @@ gulp.task('jscs', function () {
         .pipe(jscs.reporter())
         .pipe(jscs.reporter('fail'));
 });
-gulp.task('compress', ['compress:mangle', 'compress:preserve', 'compress:template']);
+
+// Blanket Functions
+gulp.task('compile', ['compile:less']);
+gulp.task('compress', ['compress:mangle', 'compress:preserve', 'compress:css', 'compress:template']);
+gulp.task('clean', ['clean:mangle', 'clean:preserve', 'clean:less', 'clean:css', 'clean:template']);
+
+// Mangle Functions
 gulp.task('clean:mangle', function () {
     return gulp.src(location.mangle.min, { base: '.', read: false })
         .pipe(debug({ title: 'Clean:' }))
@@ -115,6 +127,8 @@ gulp.task('compress:mangle', ['clean:mangle'], function () {
         .pipe(dest('.', { ext: '.min.js' }))
         .pipe(gulp.dest('.'));
 });
+
+// Preserve Functions
 gulp.task('clean:preserve', function () {
     return gulp.src(location.preserve.min, { base: '.', read: false })
         .pipe(debug({ title: 'Clean:' }))
@@ -130,6 +144,38 @@ gulp.task('compress:preserve', ['clean:preserve'], function () {
         .pipe(dest('.', { ext: '.min.js' }))
         .pipe(gulp.dest('.'));
 });
+
+// LESS Functions
+gulp.task('clean:less', function () {
+    return gulp.src(location.less.compile, { base: '.', read: false })
+        .pipe(debug({ title: 'Clean:' }))
+        .pipe(vinylPaths(del));
+});
+gulp.task('compile:less', ['clean:less'], function () {
+    return gulp.src(_.union(location.less.core, nullify(location.less.compile)), { base: '.' })
+        .pipe(debug({ title: 'LESS:' }))
+        .pipe(less({}))
+        .pipe(dest('.', { ext: '.css' }))
+        .pipe(gulp.dest('.'));
+});
+
+// CSS Functions
+gulp.task('clean:css', function () {
+    return gulp.src(location.css.min, { base: '.', read: false })
+        .pipe(debug({ title: 'Clean:' }))
+        .pipe(vinylPaths(del));
+});
+gulp.task('compress:css', ['clean:css'], function () {
+    return gulp.src(_.union(location.css.core, nullify(location.css.min)), { base: '.' })
+        .pipe(debug({ title: 'CSS:' }))
+        .pipe(cleanCSS({
+            compatibility: '*'
+        }))
+        .pipe(dest('.', { ext: '.min.css' }))
+        .pipe(gulp.dest('.'));
+});
+
+// Template Functions
 gulp.task('clean:template', function () {
     return gulp.src(location.template.min, { base: '.', read: false })
         .pipe(debug({ title: 'Clean:' }))

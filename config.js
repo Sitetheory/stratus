@@ -20,7 +20,7 @@
 
 /* Gather Development Information */
 var dev = (typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1);
-var local = (typeof document.cookie === 'string' && document.cookie.indexOf('local=') !== -1) || true;
+var local = (typeof document.cookie === 'string' && document.cookie.indexOf('local=') !== -1);
 var suffix = (dev) ? '' : '.min';
 var dashSuffix = (dev) ? '' : '-min';
 var directory = (dev) ? '' : 'min/';
@@ -78,37 +78,7 @@ requirejs.config({
         watch: { deps: ['zepto'] },
         masonry: { deps: ['zepto'] },
 
-        /* Froala */
-        'froala-align': { deps: ['froala'] },
-        'froala-char-counter': { deps: ['froala'] },
-        'froala-code-beautifier': { deps: ['froala'] },
-        'froala-code-view': { deps: ['froala'] },
-        'froala-colors': { deps: ['froala'] },
-        'froala-draggable': { deps: ['froala'] },
-        'froala-emoticons': { deps: ['froala'] },
-        'froala-entities': { deps: ['froala'] },
-        'froala-file': { deps: ['froala'] },
-        'froala-font-family': { deps: ['froala'] },
-        'froala-font-size': { deps: ['froala'] },
-        'froala-forms': { deps: ['froala'] },
-        'froala-fullscreen': { deps: ['froala'] },
-        'froala-help': { deps: ['froala'] },
-        'froala-image': { deps: ['froala'] },
-        'froala-image-manager': { deps: ['froala', 'froala-image'] },
-        'froala-inline-style': { deps: ['froala'] },
-        'froala-line-breaker': { deps: ['froala'] },
-        'froala-link': { deps: ['froala'] },
-        'froala-lists': { deps: ['froala'] },
-        'froala-paragraph-format': { deps: ['froala'] },
-        'froala-paragraph-style': { deps: ['froala'] },
-        'froala-quick-insert': { deps: ['froala'] },
-        'froala-quote': { deps: ['froala'] },
-        'froala-save': { deps: ['froala'] },
-        'froala-special-characters': { deps: ['froala'] },
-        'froala-table': { deps: ['froala'] },
-        'froala-url': { deps: ['froala'] },
-        'froala-video': { deps: ['froala'] },
-        'angular-froala': { deps: ['angular', 'froala'] },
+        /* Angular */
         'angular-countUp': { deps: ['angular', 'countUp'] },
         'angular-scrollSpy': { deps: ['angular'] },
 
@@ -121,25 +91,7 @@ requirejs.config({
                 'zepto',
                 'moment'
             ]
-        },
-
-        /* Sitetheory Custom */
-        'backbone.d3view': {
-            deps: [
-                'backbone',
-                'd3'
-            ]
-        },
-        bootbox: { deps: ['bootstrap'] },
-        datetimepicker: {
-            deps: [
-                'bootstrap',
-                'moment'
-            ]
         }
-        /**
-         'jquery-toaster': { deps: ['zepto'] },
-         /**/
     },
 
     // Internal Mapping
@@ -359,28 +311,6 @@ requirejs.config({
         /* Tether */
         tether: bundle + 'stratus/bower_components/tether/dist/js/tether' + suffix,
         'tether-drop': bundle + 'stratus/bower_components/tether-drop/dist/js/drop' + suffix,
-        'tether-tooltip': bundle + 'stratus/bower_components/tether-tooltip/dist/js/tooltip' + suffix,
-
-        /* Sitetheory Custom */
-        backbone: 'sitetheorycore/dist/backbone/backbone' + suffix,
-        'backbone.d3view': 'sitetheorycore/dist/backbone/backbone.d3view' + suffix,
-        zepto: 'sitetheorycore/dist/zepto/zepto' + suffix,
-        'jquery-toaster': 'sitetheorycore/dist/jquery/jquery.toaster' + suffix,
-        'jquery-sortable': 'sitetheorycore/dist/jquery/jquery.sortable' + suffix,
-        redactor: 'sitetheorycore/dist/redactor/redactor' + suffix,
-        'redactor-clips': 'sitetheorycore/dist/redactor/redactor.clips' + suffix,
-        'redactor-definedlinks': 'sitetheorycore/dist/redactor/redactor.definedlinks' + suffix,
-        'redactor-filemanager': 'sitetheorycore/dist/redactor/redactor.filemanager' + suffix,
-        'redactor-fullscreen': 'sitetheorycore/dist/redactor/redactor.fullscreen' + suffix,
-        'redactor-imagemanager': 'sitetheorycore/dist/redactor/redactor.imagemanager' + suffix,
-        'redactor-table': 'sitetheorycore/dist/redactor/redactor.table' + suffix,
-        'redactor-textexpander': 'sitetheorycore/dist/redactor/redactor.textexpander' + suffix,
-        'redactor-video': 'sitetheorycore/dist/redactor/redactor.video' + suffix,
-        'stratus.views.widgets.location': 'sitetheorylocation/stratus/views/widgets/location',
-        'stratus.views.widgets.media': 'sitetheorymedia/stratus/views/widgets/media',
-        'stratus.views.plugins.tweet': 'sitetheoryneural/stratus/views/plugins/tweet',
-        bootstrap: 'sitetheorycore/dist/bootstrap/bootstrap' + suffix,
-        bootbox: 'sitetheorycore/dist/bootstrap/bootbox' + suffix,
-        datetimepicker: 'sitetheorycore/dist/bootstrap/bootstrap-datetimepicker' + suffix
+        'tether-tooltip': bundle + 'stratus/bower_components/tether-tooltip/dist/js/tooltip' + suffix
     }
 });
