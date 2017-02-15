@@ -477,7 +477,7 @@
         setStatus: function (status) {
 
             // Don't Change the status if it's identical
-            //if (status === this.$el.attr('data-status')) return true;
+            // if (status === this.$el.attr('data-status')) return true;
             this.$el.attr('data-status', status);
 
             var statuses = {
@@ -1310,7 +1310,7 @@
         },
 
         // REQUIRED TO BE SET ON EVERY VIEW THAT INTERACTS WITH AUTO SAVE
-        //---------------------------------------------------------------
+        // --------------------------------------------------------------
 
         // getValue()
         // ----------

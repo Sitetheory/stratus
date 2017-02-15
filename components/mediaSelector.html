@@ -16,16 +16,16 @@
             <ul>
                 <li ng-repeat="df in draggedFiles">
                     <div class="gl-img-container">
-                        <a href="#"> <img ngf-src="df.filename"></a>
+                        <a href="#"> <img ngf-src="df.url"></a>
                         </div><!-- Gallery Image Container Ends -->
 
                     <div class="image-info-outer">
                         <div class="img-info">
                             <div class="img-info-left">
                                 <div class="format-size">
-                                    <span class="fm-tag">JPG</span> <span class="size">89 KB</span>
+                                    <span class="fm-tag">{{ df.extension | upper }}</span> <span class="size">{{ df.bytesHuman }}</span>
                                     </div>
-                                <p>Loren ipsum is dummy text</p>
+                                <p>{{ df.name }}</p>
                                 </div><!-- Image Left Info Ends -->
                             <div class="img-info-right">
                                 <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a>

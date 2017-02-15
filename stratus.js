@@ -1068,7 +1068,7 @@
          */
         this.remove = function (attr, value) {
             if (value === undefined) {
-                //delete this.attributes[attr];
+                // delete this.attributes[attr];
             } else {
                 // TODO: use dot notation for nested removal or _.without for array values (these should be separate functions)
                 this.attributes[attr] = _.without(this.attributes[attr], value);
@@ -1099,7 +1099,7 @@
         this.clearTemp = function () {
             for (var attribute in this.temps) {
                 if (this.temps.hasOwnProperty(attribute)) {
-                    //delete this.attributes[attribute];
+                    // delete this.attributes[attribute];
                     // this.remove(attribute);
                     delete this.temps[attribute];
                 }
@@ -1123,7 +1123,7 @@
         }
 
         // Add Events
-        //_.extend(this, Backbone.Events);
+        // _.extend(this, Backbone.Events);
 
         // Initialize
         this.initialize.apply(this, arguments);
@@ -2534,7 +2534,7 @@
         if (view.get('type') !== null) {
             var type = _.ucfirst(view.get('type'));
             if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
-                //if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
+                // if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
                 var options = view.toObject();
                 options.view = view;
                 Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options);

@@ -53,7 +53,7 @@
         model: Stratus.Models.Generic,
         template: _.template(Template || ''),
 
-        //templateOptionsCheckbox: _.template(),
+        // templateOptionsCheckbox: _.template(),
 
         options: {
             private: {
@@ -293,7 +293,7 @@
             // to set the initial value ON the dom. The modelChange will do a setValue from the getModelValue
             // (which will be the model or the internal var.
             if (this.options.dataType === 'model') {
-                //this.model.on('change', this.scopeChanged, this);
+                // this.model.on('change', this.scopeChanged, this);
                 this.getSelectedCollection();
 
                 // If this is display ui=menu and showSelected is not on, we need to get the selected manually
@@ -403,7 +403,7 @@
             // with dynamic API sourced options. At this time, we don't need to code a selected list for
             // custom choices because those will rarely be so many that you can't just look in the existing list.
             // When we do code it, it will need to work like addOptions, and add/remove from the selected list
-            //if(this.containerSelected) this.setSelected();
+            // if(this.containerSelected) this.setSelected();
         },
 
         // syncModel()
@@ -438,7 +438,7 @@
 
             // we set the value on the DOM, so that a saveAction can getValue (from DOM)
             // We do not setPropertyValue() directly because that would remove the changeSet
-            //this.setValue(this.getInputValues());
+            // this.setValue(this.getInputValues());
             // standard function that will save the value returned from getValue()
             this.safeSaveAction();
         },

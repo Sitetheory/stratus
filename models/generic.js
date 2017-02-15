@@ -31,7 +31,7 @@
     // -------------
 
     // This Backbone Model is reflective of a Generic entity.
-    //Stratus.Prototypes.Models.Generic = Backbone.RelationalModel.extend({
+    // Stratus.Prototypes.Models.Generic = Backbone.RelationalModel.extend({
     Stratus.Models.Generic = Backbone.RelationalModel.extend({
 
         // API Queries
@@ -405,7 +405,7 @@
             } else {
                 if (this.attributes && this.versionEntity && _.has(resp[this.versionEntity], 'id')) {
                     if (this.versionId !== resp[this.versionEntity].id) {
-                        //this.set({ versionId: resp[this.versionEntity].id });
+                        // this.set({ versionId: resp[this.versionEntity].id });
                     }
                 }
                 return resp;

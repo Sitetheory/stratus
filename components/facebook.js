@@ -37,25 +37,19 @@
         controller: function ($scope, $http) {
             Stratus.Instances[_.uniqueId('facebook_')] = $scope;
 
-            ////////////////////
             // Custom Variables
-            ////////////////////
             var facebookPageName = 'Brand New Congress';
             var facebookPageId = 'brandnewcongress';
             var containerId = 'facebookPageContainer';
             var relatedContainerId = 'currentMediaContainer';
             var relatedContainerOffset = -150;
 
-            ////////////////
             // Setup
-            ////////////////
             var container = document.getElementById(containerId);
             var relatedContainer = document.getElementById((relatedContainerId || containerId));
             var loadJob;
 
-            ////////////////
             // Functions
-            ////////////////
             function resizePlugin() {
                 // Manually resize Facebook Plugin's span and iframe to be 100%
                 var plugin = document.querySelector('.fb-page');
@@ -98,7 +92,7 @@
 
                 // Parse Plugin
                 FB.XFBML.parse();
-            };
+            }
 
             // Register Resize after Plugin is Rendered
             FB.Event.subscribe('xfbml.render', function () {
@@ -120,7 +114,7 @@
                 loadPlugin();
             };
 
-            /*
+            /**
             $scope.fetch = function () {
                 if ($scope.bindings.appId) {
                     $http({
@@ -139,7 +133,7 @@
                     });
                 }
             };
-            */
+            /**/
             $scope.$watch('bindings', function () {
                 // $scope.fetch();
             });

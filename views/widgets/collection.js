@@ -202,8 +202,8 @@
                 this.addAll();
             } else if (this.options.add === 'one' || this.options.add === 'none') {
                 if (this.collection.size() > 1) {
-                    //this.clearGlobals();
-                    //this.collection.models.forEach(this.buildGlobals, this);
+                    // this.clearGlobals();
+                    // this.collection.models.forEach(this.buildGlobals, this);
                     this.buildGlobals(model);
                     this.addOne(model);
                 } else {
@@ -602,7 +602,7 @@
                 Stratus.Internals.Loader(this.el || this.$el, this.view).then(function (nest) {
                     /* Second Loader for Parent-Children */
                     Stratus.Internals.Loader(this.$el.find('[data-entity]')).then(function (parent) {
-                        //this.loaderCallback(nest, parent);
+                        // this.loaderCallback(nest, parent);
                     }.bind(this));
                 }.bind(this), function (error) {
                     console.error('List Views:', error);
@@ -631,7 +631,7 @@
          * @param e
          */
         dragStart: function (e) {
-            //console.log('Start:', e.originalEvent);
+            // console.log('Start:', e.originalEvent);
         },
 
         /**
@@ -667,7 +667,7 @@
                 proto.reference.save('priority', proto.priority);
             }
 
-            //console.log('End:', e.originalEvent.newIndex, proto);
+            // console.log('End:', e.originalEvent.newIndex, proto);
         }
     });
 
