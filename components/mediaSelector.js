@@ -18,8 +18,7 @@
 // Stratus Media Selector Component
 // ----------------------
 
-// Define AMD, Require.js, or Contextual Scope
-
+// Define AMD, Require.js, or Contextual Scope 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['stratus', 'jquery', 'angular', 'jquery-cookie', 'angular-file-upload'], factory);
