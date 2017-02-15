@@ -47,7 +47,7 @@
                     };
                     var data;
                     _.each(options, function (element, key) {
-                        if (element) options[key] = $interpolate(element)($scope.$parent);
+                        if (element) options[key] = $interpolate(element)($scope);
                     });
                     if (options.target) {
                         options.target = _.ucfirst(options.target);
