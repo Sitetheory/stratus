@@ -138,7 +138,7 @@
                                 html1 += '<div class="img-info"> ';
                                 html1 += '<div class="img-info-left"> ';
                                 html1 += '<div class="format-size">';
-                                html1 += '<span class="fm-tag">' + value.extension + '</span> <span class="size">' + value.bytesHuman + '</span>';
+                                html1 += '<span class="fm-tag">' + value.extension.toUpperCase() + '</span> <span class="size">' + value.bytesHuman + '</span>';
                                 html1 += '</div>';
                                 html1 += '<p>' + value.name + '</p> ';
                                 html1 += '</div><!-- Image Left Info Ends --> ';
@@ -210,7 +210,7 @@
                         html1 += '<div class="img-info"> ';
                         html1 += '<div class="img-info-left"> ';
                         html1 += '<div class="format-size">';
-                        html1 += '<span class="fm-tag">' + value.extension + '</span> <span class="size">' + value.bytesHuman + '</span>';
+                        html1 += '<span class="fm-tag">' + value.extension.toUpperCase() + '</span> <span class="size">' + value.bytesHuman + '</span>';
                         html1 += '</div>';
                         html1 += '<p>' + value.name + '</p> ';
                         html1 += '</div><!-- Image Left Info Ends --> ';

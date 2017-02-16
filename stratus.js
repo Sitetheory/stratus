@@ -2170,7 +2170,7 @@
                 // Load CSS
                 // TODO: Make Dynamic
                 var css = [
-                    Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material.min.css'
+                    Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
                 ];
                 if (document.querySelectorAll('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
@@ -2636,11 +2636,15 @@
 
     // This function requires more details.
     /**
+     * @param request
+     * @returns {boolean}
      * @constructor
      */
     Stratus.Internals.UpdateEnvironment = function (request) {
         if (!request) request = {};
+        if (typeof document.cookie !== 'string' || !$.cookie('SITETHEORY')) return false;
         if (typeof request === 'object' && Object.keys(request).length) {
+            // TODO: Create a better URL, switching between relative APIs based on environment
             Stratus.Internals.Ajax({
                 method: 'PUT',
                 url: '/Api/Session',
@@ -2794,10 +2798,10 @@
             Stratus.Routers.set('generic', new Stratus.Routers.Generic());
             Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
         });
+        /**/
 
         // Handle Location
         Stratus.Internals.TrackLocation();
-        /**/
 
         // Load Angular
         Stratus.Internals.AngularLoader();
