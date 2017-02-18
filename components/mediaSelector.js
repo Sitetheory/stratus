@@ -21,11 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'angular', 'jquery-cookie', 'angular-file-upload'], factory);
+        define(['stratus', 'jquery', 'angular', 'jquery-cookie', 'angular-file-upload', 'stratus.services.registry'], factory);
     } else {
-        factory(root.Stratus, root.$);
+        factory(root.Stratus, root.$, root.Template);
     }
-}(this, function (Stratus, $) {
+}(this, function (Stratus, $, Template) {
     // We need to ensure the ng-file-upload is registered
     Stratus.Modules.ngFileUpload = true;
 
@@ -35,12 +35,17 @@
         bindings: {
             ngModel: '='
         },
-        controller: function ($scope, $http, $attrs, $parse, $element, Upload) {
+        controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry) {
             Stratus.Instances[_.uniqueId('media_selector')] = $scope;
 
             // load component css
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
-            $scope.model = $scope.$parent.model;
+
+            // use ng-model seperately here
+
+            // use stratus collection
+            $scope.registry = new registry();
+            $scope.registry.fetch('Media', $scope);
 
             // var count = 0;
             // set media library to false
@@ -49,6 +54,8 @@
             $scope.dragDrop = false;
             $scope.browseDiv = true;
             $scope.draggedFiles = [];
+            $scope.mediaLib = {};
+            $scope.mediaLibrary2 = {};
 
             // initialise library class to plus
             $scope.showLibraryClass = 'fa fa-plus-square-o';
@@ -71,11 +78,12 @@
                 $scope.showLibrary = false;
 
                 // show media library on drag & drop
-                $scope.showDragDropLibrary = true;
+                // $scope.showDragDropLibrary = true;
 
                 // check if media library already opened, then load media library
                 if ($scope.dragDropClass === 'fa fa-minus') {
                     // $scope.dragDropClass = 'fa fa-minus';
+                    $scope.showDragDropLibrary = true;
                     $scope.uploadDragDropLibrary();
                 }
 
@@ -88,18 +96,20 @@
             // common function to save media
             $scope.saveMedia = function (file) {
                 // upload file to session api
+                console.log(file);
+
                 Upload.upload({
                     // This is the correct
                     url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+
+                    // url: 'https://angular-file-upload-cors-srv.appspot.com',
                     data: {
-                        // username: 'test',
                         file: file
                     }
                 }).then(function (resp) {
                     $scope.draggedFiles.push(resp.data);
-                    console.log(resp);
-                });
 
+                });
             };
 
             $scope.openLibrary = function () {
@@ -115,48 +125,16 @@
                         $scope.dragDropClass = 'fa fa-plus';
                     }
 
+                    // TODO: Add Registry Here
                     $http.get('/Api/Media').then(function (resp) {
-                        console.log(resp.data.payload);
                         if (resp) {
-                            // TODO: After this logic works flawlessly, this will need to be a template feature
-                            var html1 = '<div class="gallery-box"> ';
-                            html1 += '<div class="gl-content"> ';
-                            html1 += '<div class="search-bar">';
-                            html1 += '<div class="gal-search"><h4>SEARCH</h4> <input type="text" class="search-gl-txt" placeholder="Travel" /> ';
-                            html1 += '<button class="search--btn"><i class="fa fa-search" aria-hidden="true"></i></button> ';
-                            html1 += '</div>';
-                            html1 += '<p>To upload more images to library, drag and drop here or <a href="#"> Click Here </a></p>';
-                            html1 += '</div><!-- Search Bar Ends -->';
-                            html1 += '<ul> ';
-                            angular.forEach(resp.data.payload, function (value, key) {
+                            $scope.mediaLib = resp.data.payload;
 
-                                html1 += '<li>';
-                                html1 += '<div class="gl-img-container">';
-                                html1 += '<a href="#"><img src="' + value.url + '"></a>';
-                                html1 += '</div><!-- Gallery Image Container Ends --> ';
-                                html1 += '<div class="image-info-outer">';
-                                html1 += '<div class="img-info"> ';
-                                html1 += '<div class="img-info-left"> ';
-                                html1 += '<div class="format-size">';
-                                html1 += '<span class="fm-tag">' + value.extension.toUpperCase() + '</span> <span class="size">' + value.bytesHuman + '</span>';
-                                html1 += '</div>';
-                                html1 += '<p>' + value.name + '</p> ';
-                                html1 += '</div><!-- Image Left Info Ends --> ';
-                                html1 += '<div class="img-info-right"> ';
-                                html1 += '<a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> ';
-                                html1 += '<a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a> ';
-                                html1 += '</div><!-- Image Info Right Ends --> ';
-                                html1 += '</div><!-- Image Info Ends --> ';
-                                html1 += '</div><!-- Image Outer Ends --> ';
-                                html1 += '</li> ';
-                            });
-                            html1 += '</ul>';
-                            html1 += '</div>';
-                            html1 += '</div>';
+                            // template: _.template('<div>Filter Template Here!</div>');
+                            // var myEl = angular.element(document.querySelector('#openLibrary'));
+                            // myEl.html('');
+                            // myEl.prepend( _.template('<div>Filter Template Here!</div>'));
 
-                            var myEl = angular.element(document.querySelector('#openLibrary'));
-                            myEl.html('');
-                            myEl.prepend(html1);
                         }
 
                     });
@@ -181,6 +159,7 @@
 
                     // load media library
                     $scope.uploadDragDropLibrary();
+
                 } else if ($scope.dragDropClass === 'fa fa-minus') {
                     $scope.dragDropClass = 'fa fa-plus';
                     $scope.showDragDropLibrary = false;
@@ -189,46 +168,9 @@
 
             // common function to load media library into html when drag and dropped
             $scope.uploadDragDropLibrary = function () {
+                // TODO: Add Registry Here
                 $http.get('/Api/Media').then(function (resp) {
-                    // TODO: After this logic works flawlessly, this will need to be a template feature
-                    var html1 = '<div class="gallery-box"> ';
-                    html1 += '<div class="gl-content"> ';
-                    html1 += '<div class="search-bar">';
-                    html1 += '<div class="gal-search"><h4>SEARCH</h4> <input type="text" class="search-gl-txt" placeholder="Travel" /> ';
-                    html1 += '<button class="search--btn"><i class="fa fa-search" aria-hidden="true"></i></button> ';
-                    html1 += '</div>';
-                    html1 += '<p>To upload more images to library, drag and drop here or <a href="#"> Click Here </a></p>';
-                    html1 += '</div><!-- Search Bar Ends -->';
-                    html1 += '<ul> ';
-                    angular.forEach(resp.data.payload, function (value, key) {
-
-                        html1 += '<li>';
-                        html1 += '<div class="gl-img-container">';
-                        html1 += '<a href="#"><img src="' + value.url + '"></a>';
-                        html1 += '</div><!-- Gallery Image Container Ends --> ';
-                        html1 += '<div class="image-info-outer">';
-                        html1 += '<div class="img-info"> ';
-                        html1 += '<div class="img-info-left"> ';
-                        html1 += '<div class="format-size">';
-                        html1 += '<span class="fm-tag">' + value.extension.toUpperCase() + '</span> <span class="size">' + value.bytesHuman + '</span>';
-                        html1 += '</div>';
-                        html1 += '<p>' + value.name + '</p> ';
-                        html1 += '</div><!-- Image Left Info Ends --> ';
-                        html1 += '<div class="img-info-right"> ';
-                        html1 += '<a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> ';
-                        html1 += '<a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a> ';
-                        html1 += '</div><!-- Image Info Right Ends --> ';
-                        html1 += '</div><!-- Image Info Ends --> ';
-                        html1 += '</div><!-- Image Outer Ends --> ';
-                        html1 += '</li> ';
-                    });
-                    html1 += '</ul>';
-                    html1 += '</div>';
-                    html1 += '</div>';
-
-                    var myEl = angular.element(document.querySelector('#openDragDropLibrary'));
-                    myEl.html('');
-                    myEl.prepend(html1);
+                    $scope.mediaLibrary2 = resp.data.payload;
                 });
             };
 
