@@ -21,11 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'angular', 'jquery-cookie', 'angular-file-upload', 'stratus.services.registry'], factory);
+        define(['stratus', 'jquery', 'angular', 'jquery-cookie', 'angular-file-upload', 'stratus.services.registry', 'angular-material'], factory);
     } else {
-        factory(root.Stratus, root.$, root.Template);
+        factory(root.Stratus, root.$);
     }
-}(this, function (Stratus, $, Template) {
+}(this, function (Stratus, $) {
     // We need to ensure the ng-file-upload is registered
     Stratus.Modules.ngFileUpload = true;
 
@@ -35,27 +35,33 @@
         bindings: {
             ngModel: '='
         },
-        controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry) {
+        controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel) {
             Stratus.Instances[_.uniqueId('media_selector')] = $scope;
 
             // load component css
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
-            // use ng-model seperately here
-
-            // use stratus collection
+            // use stratus collection locally
             $scope.registry = new registry();
+
+            // fetch media collection and hydrate to $scope.collection
             $scope.registry.fetch('Media', $scope);
 
-            // var count = 0;
             // set media library to false
             $scope.showLibrary = false;
             $scope.showDragDropLibrary = false;
             $scope.dragDrop = false;
             $scope.browseDiv = true;
             $scope.draggedFiles = [];
+
+            // switch to ng-model and Stratus Collection
+            /**
             $scope.mediaLib = {};
             $scope.mediaLibrary2 = {};
+            /**/
+
+            // this._mdPanel = $mdPanel;
+            var panelRef = $scope._mdPanelRef;
 
             // initialise library class to plus
             $scope.showLibraryClass = 'fa fa-plus-square-o';
@@ -65,8 +71,54 @@
             $scope.mediaUpload = function () {
                 alert('get all media');
             };
+
+            $scope.zoomView = function (event) {
+                console.log(event);
+                console.log(Stratus);
+                $scope.mediaDetail = event;
+                var position = $mdPanel.newPanelPosition()
+                    .absolute()
+                    .center();
+
+                var config = {
+                    attachTo: angular.element(document.body),
+
+                    // controller: 'mediaZoomView',
+                    // controllerAs: 'ctrl',
+                    scope: $scope,
+                    disableParentScroll: this.disableParentScroll,
+                    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDetail' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
+
+                    // hasBackdrop: true,
+                    panelClass: 'media-dialog',
+                    position: position,
+                    trapFocus: true,
+                    zIndex: 150,
+                    clickOutsideToClose: true,
+                    escapeToClose: true,
+                    focusOnOpen: true
+                };
+
+                $mdPanel.open(config);
+
+            };
+
+            $scope.closeDialog = function () {
+
+                console.log(panelRef);
+                panelRef.close();
+            };
+
+            /* $scope.beforeChange = function(files) {
+                 alert('before change');
+                 console.log(files);
+             }*/
+
             $scope.uploadFiles = function (files) {
                 console.log(files);
+
+                // alert('upload');
+                return false;
 
                 // show drag & drop div
                 $scope.dragDrop = true;
@@ -90,6 +142,26 @@
                 // dynamic content to media library
                 angular.forEach(files, function (file) {
                     $scope.saveMedia(file);
+                });
+            };
+
+            // upload directly to media library
+            $scope.uploadToLibrary = function (files) {
+                angular.forEach(files, function (file) {
+                    Upload.upload({
+                        // This is the correct
+                        url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+
+                        // url: 'https://angular-file-upload-cors-srv.appspot.com',
+                        data: {
+                            file: file
+                        }
+                    }).then(function (resp) {
+                        // will be changed once templating is done
+                        $scope.mediaLib.push(resp.data);
+
+                        // $scope.mediaLibrary2.push(resp.data);
+                    });
                 });
             };
 
@@ -125,7 +197,10 @@
                         $scope.dragDropClass = 'fa fa-plus';
                     }
 
-                    // TODO: Add Registry Here
+                    // switch to registry controls
+                    $scope.collection.fetch();
+
+                    /**
                     $http.get('/Api/Media').then(function (resp) {
                         if (resp) {
                             $scope.mediaLib = resp.data.payload;
@@ -136,8 +211,8 @@
                             // myEl.prepend( _.template('<div>Filter Template Here!</div>'));
 
                         }
-
                     });
+                    /**/
 
                 } else if ($scope.showLibraryClass === 'fa fa-minus-square-o') {
                     $scope.showLibraryClass = 'fa fa-plus-square-o';
@@ -168,10 +243,14 @@
 
             // common function to load media library into html when drag and dropped
             $scope.uploadDragDropLibrary = function () {
-                // TODO: Add Registry Here
+                // switch to registry controls
+                $scope.collection.fetch();
+
+                /**
                 $http.get('/Api/Media').then(function (resp) {
                     $scope.mediaLibrary2 = resp.data.payload;
                 });
+                /**/
             };
 
         },

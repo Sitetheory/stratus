@@ -124,7 +124,8 @@
         Filters: {},
         Modules: {
             ngMaterial: true,
-            ngMessages: true
+            ngMessages: true,
+            ngMdIcons: true
         },
         Services: {},
 

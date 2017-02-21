@@ -69,11 +69,7 @@ var location = {
             'components/*.less',
             'views/**/*.less'
         ],
-        compile: [
-            'stratus.css',
-            'components/*.css',
-            'views/**/*.css'
-        ]
+        compile: []
     },
     css: {
         core: [

@@ -16,22 +16,27 @@
                     <div class="gal-search">
                         <h4>SEARCH</h4>
                         <input type="text" class="search-gl-txt" ng-model="query" placeholder="Travel"/>
-                        <button class="search--btn" ng-click="collection.filter(query)"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <button class="search--btn" ng-click="collection.filter(query)"><i class="fa fa-search"
+                                                                                           aria-hidden="true"></i>
+                        </button>
                     </div>
-                    <p>To upload more images to library, drag and drop here or <a href="#"> Click Here </a></p>
+                    <p>To upload more images to library, drag and drop here or <a href="#"
+                                                                                  ngf-select="uploadToLibrary($files)">
+                        Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <ul>
-                    <li ng-repeat="ml in mediaLib">
+                <ul ngf-drop="uploadToLibrary($files)">
+                    <li ng-repeat="media in collection.models">
                         <div class="gl-img-container">
-                            <a href="#"><img draggable="true" src="{{ml.url}}"></a>
+                            <a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer">
                             <div class="img-info">
                                 <div class="img-info-left">
                                     <div class="format-size">
-                                        <span class="fm-tag">{{ml.extension|uppercase}}</span> <span class="size">{{ml.bytesHuman}}</span>
+                                        <span class="fm-tag">{{media.data.extension|uppercase}}</span> <span
+                                            class="size">{{media.data.bytesHuman}}</span>
                                     </div>
-                                    <p>{{ml.name}}</p>
+                                    <p>{{media.data.name}}</p>
                                 </div><!-- Image Left Info Ends -->
                                 <div class="img-info-right">
                                     <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a>
@@ -49,7 +54,7 @@
             <h3>MEDIA <span><i class="fa fa-question" aria-hidden="true"></i></span></h3>
         </div><!-- Gallery header Ends -->
         <div class="gl-content" ngf-enable-firefox-paste="true" ngf-drop="uploadFiles($files)" ngf-multiple="true"
-             ngf-change="uploadFiles($files)" ngf-drag-over-class="dragover">
+             ngf-change="uploadFiles($files)" ng-model="draggedfile" name="draggedfile" ngf-drag-over-class="dragover">
             <ul>
                 <li ng-repeat="df in draggedFiles">
                     <div class="gl-img-container">
@@ -81,24 +86,25 @@
         <div class="gallery-box">
             <div class="gl-content">
                 <div class="search-bar">
-                    <div class="gal-search"><h4>SEARCH</h4> <input type="text" class="search-gl-txt"
-                                                                   placeholder="Travel"/>
-                        <button class="search--btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    <div class="gal-search">
+                        <h4>SEARCH</h4>
+                        <input type="text" class="search-gl-txt" ng-model="query" placeholder="Travel"/>
+                        <button ng-click="collection.filter(query)" class="search--btn"><i class="fa fa-search" aria-hidden="true"></i></button>
                     </div>
                     <p>To upload more images to library, drag and drop here or <a href="#"> Click Here </a></p>
                 </div><!-- Search Bar Ends -->
                 <ul>
-                    <li ng-repeat="ml in mediaLibrary2">
+                    <li ng-repeat="media in collection.models">
                         <div class="gl-img-container">
-                            <a href="#"><img draggable="true" src="{{ml.url}}"></a>
+                            <a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer">
                             <div class="img-info">
                                 <div class="img-info-left">
                                     <div class="format-size">
-                                        <span class="fm-tag">{{ml.extension|uppercase}}</span> <span class="size">{{ml.bytesHuman}}</span>
+                                        <span class="fm-tag">{{media.data.extension|uppercase}}</span> <span class="size">{{media.data.bytesHuman}}</span>
                                     </div>
-                                    <p>{{ml.name}}</p>
+                                    <p>{{media.data.name}}</p>
                                 </div><!-- Image Left Info Ends -->
                                 <div class="img-info-right">
                                     <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a>
