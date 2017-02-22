@@ -124,8 +124,8 @@
         Filters: {},
         Modules: {
             ngMaterial: true,
-            ngMessages: true,
-            ngMdIcons: true
+            ngMessages: true
+            /* ngMdIcons: true */
         },
         Services: {},
 
@@ -2110,7 +2110,13 @@
             }
 
             // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
-            ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
+            [
+                'stratus.filters.map',
+                'stratus.filters.moment',
+                'stratus.filters.reduce',
+                'stratus.filters.truncate',
+                'stratus.filters.gravatar'
+            ].forEach(function (requirement) {
                 requirements.push(requirement);
             });
             require(requirements, function () {

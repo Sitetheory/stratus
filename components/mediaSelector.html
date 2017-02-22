@@ -14,17 +14,19 @@
             <div class="gl-content">
                 <div class="search-bar">
                     <div class="gal-search">
+                        <stratus-search flex></stratus-search>
+                        <!--
                         <h4>SEARCH</h4>
                         <input type="text" class="search-gl-txt" ng-model="query" placeholder="Travel"/>
-                        <button class="search--btn" ng-click="collection.filter(query)"><i class="fa fa-search"
-                                                                                           aria-hidden="true"></i>
+                        <button class="search--btn" ng-click="collection.filter(query)">
+                            <i class="fa fa-search" aria-hidden="true"></i>
                         </button>
+                        -->
                     </div>
-                    <p>To upload more images to library, drag and drop here or <a href="#"
-                                                                                  ngf-select="uploadToLibrary($files)">
+                    <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">
                         Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <ul ngf-drop="uploadToLibrary($files)">
+                <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true">
                     <li ng-repeat="media in collection.models">
                         <div class="gl-img-container">
                             <a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a>
@@ -87,13 +89,18 @@
             <div class="gl-content">
                 <div class="search-bar">
                     <div class="gal-search">
+                        <stratus-search flex></stratus-search>
+                        <!--
                         <h4>SEARCH</h4>
                         <input type="text" class="search-gl-txt" ng-model="query" placeholder="Travel"/>
-                        <button ng-click="collection.filter(query)" class="search--btn"><i class="fa fa-search" aria-hidden="true"></i></button>
+                        <button ng-click="collection.filter(query)" class="search--btn">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                        -->
                     </div>
-                    <p>To upload more images to library, drag and drop here or <a href="#"> Click Here </a></p>
+                    <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)"> Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <ul>
+                <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true">
                     <li ng-repeat="media in collection.models">
                         <div class="gl-img-container">
                             <a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a>
