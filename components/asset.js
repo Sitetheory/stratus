@@ -21,64 +21,40 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.collection'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.registry'], factory);
     } else {
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-    // This component intends to allow editing of various permissions depending on context.
-    Stratus.Components.Permission = {
+    // This component intends to allow editing of various sssets depending on context.
+    Stratus.Components.Asset = {
         bindings: {
             elementId: '@',
             ngModel: '=',
-            user: '@',
-            role: '@',
-            bundle: '@',
-            type: '@',
-            target: '@',
-            sentinel: '@'
+            assetType: '@',
+            entityType: '@',
+            entityId: '@'
         },
-        controller: function ($scope, $attrs, $log, collection) {
+        controller: function ($scope, $attrs, $log, registry) {
             // Initialize
-            this.uid = _.uniqueId('permission_');
+            this.uid = _.uniqueId('asset_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
 
-            // Permission Collection
-            $scope.collection = null;
+            // Asset Collection
+            if ($attrs.assetType) {
+                $scope.registry = new registry();
+                $scope.registry.fetch($attrs.assetType, $scope);
+            }
+
+            // options[paging] = false
+
+            // Data Connectivity
+            $scope.assets = null;
             $scope.$watch('$ctrl.ngModel', function (data) {
-                if (data instanceof collection) {
-                    $scope.collection = data;
-                }
+                $log.log('Assets:', data);
+                $scope.assets = data;
             });
-
-            // Sentinel Objects
-            $scope.sentinel = {};
-            $scope.$watch('collection.models.length', function () {
-                var models = $scope.collection ? $scope.collection.models : [];
-                _.each(models, function (model) {
-                    if (model.exists('id') && model.exists('sentinel')) {
-                        var sentinel = new Stratus.Prototypes.Sentinel();
-                        sentinel.permissions(model.get('permissions'));
-                        $scope.sentinel[model.get('id')] = sentinel;
-                    }
-                });
-            });
-
-            // Permission Calculations
-            $scope.$watch('sentinel', function (sentinels) {
-                if (angular.isObject(sentinels)) {
-                    _.each(sentinels, function (sentinel, id) {
-                        if (angular.isObject($scope.collection) && angular.isObject(sentinel)) {
-                            _.each($scope.collection.models || [], function (model) {
-                                if (angular.isObject(model) && model.get('id') === parseInt(id)) {
-                                    model.set('permissions', sentinel.permissions());
-                                }
-                            });
-                        }
-                    });
-                }
-            }, true);
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/asset' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };

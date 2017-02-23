@@ -167,9 +167,10 @@
             components: {
                 namespace: 'stratus.components.'
             },
-            directives: {
+            directives: { /* TODO: Allow the following directives to run on the config the same way the components do. */
                 selector: [
                     '[stratus-base]',
+                    '[stratus-sortable]',
                     '[stratus-trigger]'
                 ],
                 namespace: 'stratus.directives.'
@@ -1420,7 +1421,7 @@
         offset = offset || 0;
         var wt = $(window).scrollTop();
         var wb = wt + $(window).height();
-        var et = el.offset().top;
+        var et = el.offset() ? el.offset().top : null;
         var eb = et + el.height();
         return (eb >= wt + offset && et <= wb - offset);
     };
@@ -2042,7 +2043,7 @@
                             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
                                 requirements.push(requirement);
                                 if (element.module) {
-                                    modules.push(_.lcfirst(_.hyphenToCamel(name + (element.suffix || ''))));
+                                    modules.push(_.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(name + (element.suffix || ''))));
                                 }
                             }
                         }
@@ -2065,7 +2066,7 @@
                         } else if (element.require) {
                             requirements = _.union(requirements, element.require);
                             if (element.module) {
-                                modules.push(_.lcfirst(_.hyphenToCamel(attribute + (element.suffix || ''))));
+                                modules.push(_.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(attribute + (element.suffix || ''))));
                             }
                         }
                     }
