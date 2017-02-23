@@ -79,8 +79,8 @@
                     attachment: 'top left',
                     targetAttachment: 'top right'
 
-                    //offset: '0 10px'
-                    //constraints: [{to: 'window',pin: true}]
+                    // offset: '0 10px'
+                    // constraints: [{to: 'window',pin: true}]
                 });
             } else {
                 // console.info('dialogue parent didn\'t render:', this.widget);

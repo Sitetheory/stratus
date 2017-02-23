@@ -125,6 +125,7 @@
         Modules: {
             ngMaterial: true,
             ngMessages: true
+            /* ngMdIcons: true */
         },
         Services: {},
 
@@ -166,9 +167,10 @@
             components: {
                 namespace: 'stratus.components.'
             },
-            directives: {
+            directives: { /* TODO: Allow the following directives to run on the config the same way the components do. */
                 selector: [
                     '[stratus-base]',
+                    '[stratus-sortable]',
                     '[stratus-trigger]'
                 ],
                 namespace: 'stratus.directives.'
@@ -1068,7 +1070,7 @@
          */
         this.remove = function (attr, value) {
             if (value === undefined) {
-                //delete this.attributes[attr];
+                // delete this.attributes[attr];
             } else {
                 // TODO: use dot notation for nested removal or _.without for array values (these should be separate functions)
                 this.attributes[attr] = _.without(this.attributes[attr], value);
@@ -1099,7 +1101,7 @@
         this.clearTemp = function () {
             for (var attribute in this.temps) {
                 if (this.temps.hasOwnProperty(attribute)) {
-                    //delete this.attributes[attribute];
+                    // delete this.attributes[attribute];
                     // this.remove(attribute);
                     delete this.temps[attribute];
                 }
@@ -1123,7 +1125,7 @@
         }
 
         // Add Events
-        //_.extend(this, Backbone.Events);
+        // _.extend(this, Backbone.Events);
 
         // Initialize
         this.initialize.apply(this, arguments);
@@ -1419,7 +1421,7 @@
         offset = offset || 0;
         var wt = $(window).scrollTop();
         var wb = wt + $(window).height();
-        var et = el.offset().top;
+        var et = el.offset() ? el.offset().top : null;
         var eb = et + el.height();
         return (eb >= wt + offset && et <= wb - offset);
     };
@@ -2041,7 +2043,7 @@
                             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
                                 requirements.push(requirement);
                                 if (element.module) {
-                                    modules.push(_.lcfirst(_.hyphenToCamel(name + (element.suffix || ''))));
+                                    modules.push(_.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(name + (element.suffix || ''))));
                                 }
                             }
                         }
@@ -2064,7 +2066,7 @@
                         } else if (element.require) {
                             requirements = _.union(requirements, element.require);
                             if (element.module) {
-                                modules.push(_.lcfirst(_.hyphenToCamel(attribute + (element.suffix || ''))));
+                                modules.push(_.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(attribute + (element.suffix || ''))));
                             }
                         }
                     }
@@ -2109,7 +2111,13 @@
             }
 
             // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
-            ['stratus.filters.moment', 'stratus.filters.truncate', 'stratus.filters.gravatar'].forEach(function (requirement) {
+            [
+                'stratus.filters.map',
+                'stratus.filters.moment',
+                'stratus.filters.reduce',
+                'stratus.filters.truncate',
+                'stratus.filters.gravatar'
+            ].forEach(function (requirement) {
                 requirements.push(requirement);
             });
             require(requirements, function () {
@@ -2170,7 +2178,7 @@
                 // Load CSS
                 // TODO: Make Dynamic
                 var css = [
-                    Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material.min.css'
+                    Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
                 ];
                 if (document.querySelectorAll('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
@@ -2534,7 +2542,7 @@
         if (view.get('type') !== null) {
             var type = _.ucfirst(view.get('type'));
             if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
-                //if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
+                // if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
                 var options = view.toObject();
                 options.view = view;
                 Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options);
@@ -2636,11 +2644,15 @@
 
     // This function requires more details.
     /**
+     * @param request
+     * @returns {boolean}
      * @constructor
      */
     Stratus.Internals.UpdateEnvironment = function (request) {
         if (!request) request = {};
+        if (typeof document.cookie !== 'string' || !$.cookie('SITETHEORY')) return false;
         if (typeof request === 'object' && Object.keys(request).length) {
+            // TODO: Create a better URL, switching between relative APIs based on environment
             Stratus.Internals.Ajax({
                 method: 'PUT',
                 url: '/Api/Session',
@@ -2794,10 +2806,10 @@
             Stratus.Routers.set('generic', new Stratus.Routers.Generic());
             Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
         });
+        /**/
 
         // Handle Location
         Stratus.Internals.TrackLocation();
-        /**/
 
         // Load Angular
         Stratus.Internals.AngularLoader();

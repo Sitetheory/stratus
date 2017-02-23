@@ -38,7 +38,7 @@
         // Shouldn't use template, as that is assumed to be the whole widget. set to templates instead
         templates: {
             infoWindow: _.template('<div>{% if (location.title) { %}<h3>{{ location.title }}</h3>{% } %}{% if (location.details) { %}<p>{{ location.details }}</p>{% } %}</div>')
-        }, //FIXME this.templates becomes unset if data-templates is not set!!!
+        }, // FIXME this.templates becomes unset if data-templates is not set!!!
         currentLocation: null,
         map: null,
         markers: [],
@@ -46,9 +46,9 @@
 
         options: {
             private: {
-                locationSample: { //An example of what to place in the .this.options.locations[]
+                locationSample: { // An example of what to place in the .this.options.locations[]
                     position: { lat: 37.8288771, lng: -122.1591649 },
-                    center: false, //if set will make the map center on this marker. may not work with multiple centers or if 'fitBounds' is true. Overrides base center
+                    center: false, // if set will make the map center on this marker. may not work with multiple centers or if 'fitBounds' is true. Overrides base center
                     template: 'template name set in templates (optional)',
                     title: 'Marker Name',
                     details: 'The first template assumes a details variable can exist'
@@ -56,19 +56,19 @@
             },
             public: {
                 template: 'sitetheorymap/stratus/templates/map.infoWindow.html',
-                apiKey: Stratus.Api.GoogleMaps, //using our API unless specified. This key not work on custom domains
+                apiKey: Stratus.Api.GoogleMaps, // using our API unless specified. This key not work on custom domains
                 tile: 256,
-                fitBounds: true, //attempt to automatically center and zoom
-                centerOnUser: false, //attempt to fetch the user and center on user. requires SSL
-                autoLabel: false, //{false, 'alpha', 'numeric'
-                labelOptions: { //If autoLabeling, specifies what character to start at
+                fitBounds: true, // attempt to automatically center and zoom
+                centerOnUser: false, // attempt to fetch the user and center on user. requires SSL
+                autoLabel: false, // {false, 'alpha', 'numeric'
+                labelOptions: { // If autoLabeling, specifies what character to start at
                     numericStart: 1,
                     alphaStart: 'A'
 
-                    //TODO direction
+                    // TODO direction
                 },
                 zoom: 13,
-                center: { //Overwritten by fitBounds and 'location center'
+                center: { // Overwritten by fitBounds and 'location center'
                     lat: 37.8988771,
                     lng: -122.0591649
                 },
@@ -76,8 +76,8 @@
             }
         },
 
-        //Order of priority for centering:
-        //options.centerOnUser > options.fitBounds > options.locations.center > options.center
+        // Order of priority for centering:
+        // options.centerOnUser > options.fitBounds > options.locations.center > options.center
 
         /**
          * Converts the current objects into the correct Google instances if needed
@@ -131,7 +131,7 @@
 
                 console.warn(this.collection.toJSON().payload);
 
-                //TODO provide more layouts and a way to switch between them
+                // TODO provide more layouts and a way to switch between them
                 this.setupMarkersLayout();
 
             }.bind(this));
@@ -155,7 +155,7 @@
         setupMarkersLayout: function () {
             this.renderMap();
 
-            //create empty LatLngBounds object for centering map
+            // create empty LatLngBounds object for centering map
             var bounds = new google.maps.LatLngBounds();
             var numericLabel = this.options.labelOptions.numericStart;
             var alphaLabel = this.options.labelOptions.alphaStart.charCodeAt(0);
@@ -163,13 +163,13 @@
             _.each(this.options.locations, function (location) {
                 if (!location || !location.position || typeof location.template !== 'function') {return false;}
 
-                //setup objects
+                // setup objects
                 var infoWin = this.addInfoWindow({
-                    content: location.template({ location: location }) //inject itself
+                    content: location.template({ location: location }) // inject itself
                 });
 
                 var markerOptions = { position: location.position };
-                markerOptions.animation = google.maps.Animation.DROP; //TODO need to set animation options
+                markerOptions.animation = google.maps.Animation.DROP; // TODO need to set animation options
                 if (this.options.autoLabel == 'numeric') {
                     markerOptions.label = '' + numericLabel++;
                 } else if (this.options.autoLabel == 'alpha') {
@@ -178,17 +178,17 @@
 
                 var marker = this.addMarker(markerOptions);
 
-                //extend the bounds to include each marker's position
+                // extend the bounds to include each marker's position
                 bounds.extend(location.position);
 
-                //setup marker events
+                // setup marker events
                 marker.addListener('click', function () {
                     infoWin.open(this.map, marker);
                 }.bind(this));
 
             }, this);
 
-            //now fit the map to the newly inclusive bounds (Center and Zoom)
+            // now fit the map to the newly inclusive bounds (Center and Zoom)
             if (this.options.fitBounds) {
                 this.map.fitBounds(bounds);
             }
@@ -199,7 +199,7 @@
                     this.map.setCenter(this.options.center);
                 }.bind(this), function (error) {
                     console.warn('Can\'t get currentLocation', error);
-                    if (this.currentLocation) { //At least grab the last known location
+                    if (this.currentLocation) { // At least grab the last known location
                         this.options.center = this.currentLocation;
                         this.map.setCenter(this.options.center);
                     }
@@ -212,7 +212,7 @@
          * @returns {boolean}
          */
         renderMap: function (options, callback) {
-            if (this.map) return false; //TODO possibly allow re-rendering later if we redo objects?
+            if (this.map) return false; // TODO possibly allow re-rendering later if we redo objects?
 
             this.map = new google.maps.Map(this.$el[0], {
                 center: (options || {}).center || this.options.center,

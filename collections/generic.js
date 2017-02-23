@@ -395,7 +395,7 @@
         comparator: function (model1, model2) {
             var weight = null;
 
-            //if (!weight) weight = this.compare(model1, model2, "level");
+            // if (!weight) weight = this.compare(model1, model2, "level");
             if (!weight) {
                 weight = this.compare(model1, model2, 'priority', true, 'parent');
             }

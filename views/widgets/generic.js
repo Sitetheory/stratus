@@ -196,7 +196,7 @@
             return this;
         },
         drop: function (event) {
-            //if (!Stratus.Environment.get('production')) console.log('Drop:', event);
+            // if (!Stratus.Environment.get('production')) console.log('Drop:', event);
             return this;
         }
     });

@@ -62,7 +62,7 @@
                 action: null,
 
                 // TODO: point to the cloud server (PATH!)
-                //cssFile: Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/save.css',
+                // cssFile: Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/save.css',
                 iconPath: '@SitetheoryCoreBundle:images/icons/actionButtons/save.svg',
 
                 // The text for the save button that appears when it's unsaved.
@@ -193,7 +193,7 @@
 
             // Confirm if the "change" is from a full API change (will have id) or from a user change
             // timeEdit will only be in the change set when it fetches the full model from the API
-            //this.primeChanges(!_.size(this.model.patch));
+            // this.primeChanges(!_.size(this.model.patch));
             this.primeChanges((!_.size(this.model.patch) || this.model.hasChanged('timeStatus') || (this.model.hasChanged('timeEdit') && this.model.get('timEdit') !== 'API::NOW')));
         },
 

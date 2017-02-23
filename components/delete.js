@@ -47,7 +47,7 @@
             // FIXME: Temporarily Disable this Widget during repairs
             return true;
 
-            //console.log('setup publish controller', $scope.model, $scope.versionEntity);
+            // console.log('setup publish controller', $scope.model, $scope.versionEntity);
             $scope.version = null;
             if ($scope.versionEntity && !$scope.model.has(versionEntity)) {
                 $scope.version = $scope.model.get(versionEntity);

@@ -151,7 +151,7 @@
                     window.location.href = this.options.redirect;
                 } else if (this.options.destroy) {
                     // TODO: allow specifying an alternative element (e.g. not the delete button)
-                    //this.$el.remove();
+                    // this.$el.remove();
                 }
             }
         },

@@ -57,38 +57,38 @@
             },
             public: {
                 cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/calendar.css'],
-                customButtons: null, //See http://fullcalendar.io/docs/display/customButtons/
-                buttonIcons: { //object. Determines which icons are displayed in buttons of the header. See http://fullcalendar.io/docs/display/buttonIcons/
+                customButtons: null, // See http://fullcalendar.io/docs/display/customButtons/
+                buttonIcons: { // object. Determines which icons are displayed in buttons of the header. See http://fullcalendar.io/docs/display/buttonIcons/
                     prev: 'left-single-arrow',
                     next: 'right-single-arrow',
                     prevYear: 'left-double-arrow',
                     nextYear: 'right-double-arrow'
                 },
-                header: { //object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
+                header: { // object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
                     left: 'prev,next today',
                     center: 'title',
                     right: 'month,agendaWeek,agendaDay'
                 },
                 defaultView: 'month',
-                defaultDate: null, //Moment or date String(2014-02-01). The initial date displayed when the calendar first loads
-                nowIndicator: false, //boolean. Whether or not to display a marker indicating the current time(week or day view)
-                timezone: false, //false (default), 'local' (client-side), 'UTC', a timezone string ('America/Chicago'). Determines the timezone in which dates throughout the API are parsed and rendered
-                eventForceAllDay: false, //boolean. Override option directly for events. true = shows only the date and hides time(even on week/day view)
-                eventLimit: 7, //false or int, a number assigns the max number of events to display per day
-                eventLimitClick: 'popover', //'popover', 'week', 'day', view name, Function. Determines the action taken when the user clicks on a "more" link created by the eventLimit option. See http://fullcalendar.io/docs/display/eventLimitClick/
-                fixedWeekCount: false, //boolean. true = month sets there to always be 6 weeks displayed
-                firstDay: 0, //int. The day that each week begins. 0 = Sunday
-                weekends: true, //boolean. Whether to include Saturday/Sunday columns
-                hiddenDays: [], //Array of numbers. Exclude certain days-of-the-week from being displayed
-                weekNumbers: false, //boolean. Determines if week numbers should be displayed
-                weekNumberCalculation: 'local', //'local', 'ISO', or a Function. The method for calculating week numbers that are displayed
-                businessHours: false, //boolean or object. Emphasizes certain time slots on the calendar. By default, Monday-Friday, 9am-5pm. See http://fullcalendar.io/docs/display/businessHours/
-                RTL: false, //boolean. Displays the calendar in right-to-left mode
-                height: null, //int, Function, 'parent', 'auto'. Will make the entire calendar (including header) a pixel height
-                contentHeight: null, //int, Function, 'auto'. Will make the calendar's content area a pixel height
-                aspectRatio: 1.35, //float. Determines the width-to-height aspect ratio of the calendar
-                handleWindowResize: true, //boolean. Whether to automatically resize the calendar when the browser window resizes
-                windowResizeDelay: 100 //int. Time, in milliseconds, the calendar will wait to adjust its size after a window resize event occurs
+                defaultDate: null, // Moment or date String(2014-02-01). The initial date displayed when the calendar first loads
+                nowIndicator: false, // boolean. Whether or not to display a marker indicating the current time(week or day view)
+                timezone: false, // false (default), 'local' (client-side), 'UTC', a timezone string ('America/Chicago'). Determines the timezone in which dates throughout the API are parsed and rendered
+                eventForceAllDay: false, // boolean. Override option directly for events. true = shows only the date and hides time(even on week/day view)
+                eventLimit: 7, // false or int, a number assigns the max number of events to display per day
+                eventLimitClick: 'popover', // 'popover', 'week', 'day', view name, Function. Determines the action taken when the user clicks on a "more" link created by the eventLimit option. See http://fullcalendar.io/docs/display/eventLimitClick/
+                fixedWeekCount: false, // boolean. true = month sets there to always be 6 weeks displayed
+                firstDay: 0, // int. The day that each week begins. 0 = Sunday
+                weekends: true, // boolean. Whether to include Saturday/Sunday columns
+                hiddenDays: [], // Array of numbers. Exclude certain days-of-the-week from being displayed
+                weekNumbers: false, // boolean. Determines if week numbers should be displayed
+                weekNumberCalculation: 'local', // 'local', 'ISO', or a Function. The method for calculating week numbers that are displayed
+                businessHours: false, // boolean or object. Emphasizes certain time slots on the calendar. By default, Monday-Friday, 9am-5pm. See http://fullcalendar.io/docs/display/businessHours/
+                RTL: false, // boolean. Displays the calendar in right-to-left mode
+                height: null, // int, Function, 'parent', 'auto'. Will make the entire calendar (including header) a pixel height
+                contentHeight: null, // int, Function, 'auto'. Will make the calendar's content area a pixel height
+                aspectRatio: 1.35, // float. Determines the width-to-height aspect ratio of the calendar
+                handleWindowResize: true, // boolean. Whether to automatically resize the calendar when the browser window resizes
+                windowResizeDelay: 100 // int. Time, in milliseconds, the calendar will wait to adjust its size after a window resize event occurs
             }
         },
 
@@ -97,7 +97,7 @@
         endRange: moment(),
         /**
          * Methods to look into:
-         * 'viewRender' for callbacks on new date range (pagination maybe)  - http://fullcalendar.io/docs/display/viewRender/
+         * 'viewRender' for callbacks on new date range (pagination maybe)  - http:// fullcalendar.io/docs/display/viewRender/
          * 'dayRender' for modifying day cells - http://fullcalendar.io/docs/display/dayRender/
          * 'windowResize' for callbacks on window resizing - http://fullcalendar.io/docs/display/windowResize/
          * 'render' force calendar to redraw - http://fullcalendar.io/docs/display/render/
@@ -133,7 +133,7 @@
                 handleWindowResize: that.options.handleWindowResize,
                 windowResizeDelay: that.options.windowResizeDelay,
                 events: function (start, end, timezone, callback) {
-                    //Alter the start/end to only fetch the range we don't have & Set the new parsed range
+                    // Alter the start/end to only fetch the range we don't have & Set the new parsed range
                     if (that.startRange <= start) {
                         start = null;
                     }
@@ -142,26 +142,26 @@
                         end = null;
                     }
 
-                    // Handle Scope
-                    if (start != null && end != null) {//Overall greater
+                    //  Handle Scope
+                    if (start != null && end != null) {// Overall greater
                         that.startRange = start;
                         that.endRange = end;
-                    } else if (start == null && end != null) {//Extend right
+                    } else if (start == null && end != null) {// Extend right
                         start = that.endRange;
                         that.endRange = end;
-                    } else if (end == null && start != null) {//Extend left
+                    } else if (end == null && start != null) {// Extend left
                         end = that.startRange;
                         that.startRange = start;
-                    } //Else no scope change
+                    } // Else no scope change
 
-                    if (!that.initialRequest && start != null && end != null) { //Request on other than initial and if there is a scope change
+                    if (!that.initialRequest && start != null && end != null) { // Request on other than initial and if there is a scope change
                         that.collection.once('success', function () {
                             console.log('Calendar fetch data: ', start.format(), end.format());
                             callback(that.parseEvents());
                         });
                         that.collection.meta.set('api.startRange', start.format('X'));
                         that.collection.meta.set('api.endRange', end.format('X'));
-                        that.collection.refresh(); //FIXME: Does this merge the new collection results with the current?
+                        that.collection.refresh(); // FIXME: Does this merge the new collection results with the current?
                     } else {
                         callback(that.parseEvents());
                         that.initialRequest = false;
@@ -189,7 +189,7 @@
                         allDay: that.options.eventForceAllDay || payload.viewVersion.meta.allDay
                     });
                 } else {
-                    //no viewVersion would likely mean it is a media resource
+                    // no viewVersion would likely mean it is a media resource
                     events.push({
                         id: payload.id,
                         title: payload.name,
@@ -203,8 +203,8 @@
             return events;
         },
         setupCustomView: function () {
-            //TODO Needs to be setup to allow views to be 'plugged in'
-            //TODO need to render these from their own template file
+            // TODO Needs to be setup to allow views to be 'plugged in'
+            // TODO need to render these from their own template file
             var FC = $.fullCalendar; // a reference to FullCalendar's root namespace
 
             FC.ListView = FC.View.extend({
@@ -285,7 +285,7 @@
 
                     var preparedEvents = this.prepareEvents(events);
 
-                    //Start displaying our sorted list
+                    // Start displaying our sorted list
                     var viewName = this.opt('viewName') || 'list';
                     var $html = $('<ul class="fc-' + viewName + '"></ul>');
 
@@ -376,10 +376,10 @@
             FC.views.listMonth = {
                 duration: { months: 1 },
                 defaults: {
-                    viewName: 'list', //Affects the class name
-                    eventTimeFormat: 'LT', //8:30 PM
-                    leftHeaderFormat: 'dddd', //Monday
-                    rightHeaderFormat: 'MMMM Do', //August 2nd
+                    viewName: 'list', // Affects the class name
+                    eventTimeFormat: 'LT', // 8:30 PM
+                    leftHeaderFormat: 'dddd', // Monday
+                    rightHeaderFormat: 'MMMM Do', // August 2nd
                     allDayText: 'All Day',
                     buttonText: 'month'
                 },
@@ -389,10 +389,10 @@
             FC.views.listWeek = {
                 duration: { weeks: 1 },
                 defaults: {
-                    viewName: 'list', //Affects the class name
-                    eventTimeFormat: 'LT', //8:30 PM
-                    leftHeaderFormat: 'dddd', //Monday
-                    rightHeaderFormat: 'MMMM Do', //August 2nd
+                    viewName: 'list', // Affects the class name
+                    eventTimeFormat: 'LT', // 8:30 PM
+                    leftHeaderFormat: 'dddd', // Monday
+                    rightHeaderFormat: 'MMMM Do', // August 2nd
                     allDayText: 'All Day',
                     buttonText: 'week'
                 },

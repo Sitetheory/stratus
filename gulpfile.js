@@ -69,11 +69,7 @@ var location = {
             'components/*.less',
             'views/**/*.less'
         ],
-        compile: [
-            'stratus.css',
-            'components/*.css',
-            'views/**/*.css'
-        ]
+        compile: []
     },
     css: {
         core: [
@@ -185,7 +181,9 @@ gulp.task('compress:template', ['clean:template'], function () {
     return gulp.src(_.union(location.template.core, nullify(location.template.min)), { base: '.' })
         .pipe(debug({ title: 'Template:' }))
         .pipe(htmlmin({
-            collapseWhitespace: true
+            collapseWhitespace: true,
+            removeComments: true,
+            removeEmptyAttributes: true
         }))
         .pipe(dest('.', { ext: '.min.html' }))
         .pipe(gulp.dest('.'));

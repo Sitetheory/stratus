@@ -53,6 +53,9 @@
     "requireSpacesInForStatement": true,
     "requireSpacesInsideObjectBrackets": "all",
     "requireSpaceBetweenArguments": true,
+    "requireSpaceAfterLineComment": {
+        "allExcept": ["#", "="]
+    },
     "requireCurlyBraces": [
         "do"
     ],
