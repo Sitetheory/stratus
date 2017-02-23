@@ -40,7 +40,7 @@
 .gallery-box{float:left; width:100%; margin:0 0 30px 0;}
 .upload-image a{color:#bfbfbf; font-size:18px; text-decoration:none;}
 .upload-image i {
-    margin: 0px 20px 0 0;
+    margin: -16px 2px 0 0;
     font-size: 24px;
     display: inline-block;
     vertical-align: middle;
@@ -91,3 +91,27 @@
 .media-cross{ }
 
 
+/*--23-feb-2017---*/
+.dropped-files{ background: #ffffff none repeat scroll 0 0;  border: 2px solid rgba(0, 0, 0, 0.3); min-height: 150px; padding: 20px;}
+.progress div {
+     background: #ffa500 none repeat scroll 0 0;
+     font-size: smaller;
+     width: 0;
+   /* background: rgba(255, 255, 255, 0.9) none repeat scroll 0 0;
+    border-radius: 8px;
+    height: 16px;
+    left: 50%;
+    margin-left: -40px;
+    margin-top: -8px;
+    opacity: 1;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    width: 80px;
+    z-index: 1000;*/
+}
+.thumb{
+    height:20%;
+    width:20%;
+}
