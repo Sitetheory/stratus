@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.registry'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.registry', 'stratus.services.model'], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -32,10 +32,9 @@
             elementId: '@',
             ngModel: '=',
             assetType: '@',
-            entityType: '@',
-            entityId: '@'
+            assetProperty: '@'
         },
-        controller: function ($scope, $attrs, $log, registry) {
+        controller: function ($scope, $attrs, $log, registry, model) {
             // Initialize
             this.uid = _.uniqueId('asset_');
             Stratus.Instances[this.uid] = $scope;
@@ -44,16 +43,22 @@
             // Asset Collection
             if ($attrs.assetType) {
                 $scope.registry = new registry();
-                $scope.registry.fetch($attrs.assetType, $scope);
+                $scope.registry.fetch({
+                    target: $attrs.assetType,
+                    decouple: 'true',
+                    api: '{"options":{"paging": false},"limit":5000}'
+                }, $scope);
             }
 
-            // options[paging] = false
+            // Store Asset Property for Verification
+            $scope.assetProperty = $attrs.assetProperty || null;
 
             // Data Connectivity
-            $scope.assets = null;
+            $scope.model = null;
             $scope.$watch('$ctrl.ngModel', function (data) {
-                $log.log('Assets:', data);
-                $scope.assets = data;
+                if (data instanceof model && data !== $scope.model) {
+                    $scope.model = data;
+                }
             });
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/asset' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'

@@ -38,7 +38,6 @@
                 // Inverse the parent and child objects the same way Doctrine does
                 this.fetch = function ($element, $scope) {
                     if (angular.isString($element)) $element = { target: $element };
-                    console.log('element:', $element);
                     var options = {
                         target: $element.attr ? $element.attr('data-target') : $element.target,
                         id: $element.attr ? $element.attr('data-id') : $element.id,
