@@ -61,7 +61,8 @@
             $scope.showLibrary = false;
             $scope.showDragDropLibrary = false;
             $scope.draggedFiles = [];
-           // $scope.log = '';
+
+            // $scope.log = '';
             $scope.files = [];
 
             // initialise library class to plus
@@ -75,6 +76,7 @@
                     .center();
                 var config = {
                     attachTo: angular.element(document.body),
+
                     // controller: 'mediaZoomView',
                     // controllerAs: 'ctrl',
                     scope: $scope,
@@ -91,6 +93,7 @@
                 };
                 $mdPanel.open(config);
             };
+
             // function called when is uploaded or drag/dropped
             $scope.uploadFiles = function (files) {
                 // hide if media library is opened on click
@@ -101,11 +104,12 @@
                     .center();
                 var config = {
                     attachTo: angular.element(document.body),
+
                     // controller: 'mediaZoomView',
                     // controllerAs: 'ctrl',
                     scope: $scope,
                     disableParentScroll: this.disableParentScroll,
-                    templateUrl:'uploadedFiles.html',
+                    templateUrl: 'uploadedFiles.html',
                     hasBackdrop: true,
                     panelClass: 'media-dialog',
                     position: position,
@@ -120,6 +124,7 @@
                 // check if media library already opened, then load media library
                 if ($scope.dragDropClass === 'fa fa-minus') {
                     $scope.showDragDropLibrary = true;
+
                     // $scope.uploadMedia();
                 }
             };
@@ -161,10 +166,13 @@
             $scope.mediaLibrary = function () {
                 if ($scope.dragDropClass === 'fa fa-plus') {
                     $scope.dragDropClass = 'fa fa-minus';
-                     // hide if library opened above
+
+                    // hide if library opened above
                     $scope.showLibrary = false;
+
                     // show media library div
                     $scope.showDragDropLibrary = true;
+
                     // load media library
                     $scope.uploadMedia();
                 } else if ($scope.dragDropClass === 'fa fa-minus') {
@@ -210,6 +218,7 @@
                 file.upload.then(function (response) {
                     file.result = response.data;
                     $scope.draggedFiles.push(response.data);
+
                    // $scope.uploadMedia();
                 }, function (response) {
                     if (response.status > 0)
