@@ -170,6 +170,7 @@
             directives: { /* TODO: Allow the following directives to run on the config the same way the components do. */
                 selector: [
                     '[stratus-base]',
+                    '[stratus-froala]',
                     '[stratus-sortable]',
                     '[stratus-trigger]'
                 ],
@@ -186,8 +187,9 @@
                 suffix: '.js'
             },
             modules: {
+                /* '[froala]', */
                 selector: [
-                    '[froala]', '[ng-sanitize]'
+                    '[ng-sanitize]'
                 ],
                 namespace: 'angular-',
                 module: true
@@ -2079,7 +2081,7 @@
         // Angular Injector
         if (requirements.length) {
             // TODO: Load Dynamically
-            if (_.contains(requirements, 'angular-froala')) {
+            if (_.contains(requirements, 'stratus-froala')) {
                 [
                     'codemirror/mode/htmlmixed/htmlmixed',
                     'codemirror/addon/edit/matchbrackets',
@@ -2218,7 +2220,7 @@
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
                 /**/
-                if (document.querySelectorAll('[froala]').length) {
+                if (document.querySelectorAll('[stratus-froala]').length) {
                     [
                         Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
                         Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css',
