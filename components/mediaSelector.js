@@ -61,9 +61,10 @@
             $scope.showLibrary = false;
             $scope.showDragDropLibrary = false;
             $scope.draggedFiles = [];
-
-            // $scope.log = '';
             $scope.files = [];
+
+            // done button when uploading is finished
+            $scope.uploadComp = false;
 
             // initialise library class to plus
             $scope.showLibraryClass = 'fa fa-plus-square-o';
@@ -76,9 +77,6 @@
                     .center();
                 var config = {
                     attachTo: angular.element(document.body),
-
-                    // controller: 'mediaZoomView',
-                    // controllerAs: 'ctrl',
                     scope: $scope,
                     disableParentScroll: this.disableParentScroll,
                     templateUrl: 'mediaDetail.html',
@@ -99,14 +97,13 @@
                 // hide if media library is opened on click
                 $scope.showLibrary = false;
 
+                // done button when uploading is finished
+                // $scope.uploadComp = false;
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
                 var config = {
                     attachTo: angular.element(document.body),
-
-                    // controller: 'mediaZoomView',
-                    // controllerAs: 'ctrl',
                     scope: $scope,
                     disableParentScroll: this.disableParentScroll,
                     templateUrl: 'uploadedFiles.html',
@@ -217,6 +214,8 @@
                 });
                 file.upload.then(function (response) {
                     file.result = response.data;
+                    $scope.uploadComp = true;
+                    console.log($scope.uploadComp);
                     $scope.draggedFiles.push(response.data);
 
                    // $scope.uploadMedia();

@@ -49,7 +49,7 @@
                 <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true">
                     <li ng-repeat="media in collection.models">
                         <div class="gl-img-container">
-                            <a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a>
+                            <a href="#" ng-click="zoomView(media.data)"><img draggable="true" ng-src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer">
                             <div class="img-info">
@@ -86,7 +86,7 @@
                 <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true">
                     <li ng-repeat="media in collection.models">
                         <div class="gl-img-container">
-                            <a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a>
+                            <a href="#" ng-click="zoomView(media.data)"><img draggable="true" ng-src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer">
                             <div class="img-info">
@@ -109,20 +109,27 @@
         </div>
     </div>
 </div>
-<!---show light box overlay for drag/dropped--->
+<!---show light box overlay for drag/dropped files--->
 <script type="text/ng-template" id="uploadedFiles.html">
 <div class="dropped-files">
     <ul style="clear:both" class="response">
         <li class="sel-file" ng-repeat="f in files">
             <div>
                 <img ngf-thumbnail="!f.$error && f" class="thumb">
-                    <span class="progress" ng-show="f.progress >= 0">
+                    <span class="progress" ng-show="f.progress >= 0 && f.progress != 100">
                         <div style="width:{{f.progress}}%">{{f.progress}}%</div>
                     </span>
-                {{f.name}} - size: {{f.size}}B - type: {{f.type}}
+                <button ng-click="f.upload.abort();f.upload.aborted=true"
+                        ng-show="f.upload != null && f.progress < 100 && !f.upload.aborted">
+                    Cancel
+                </button>
+               <span class="image-size"> {{f.size}}<!--B - type: {{f.type}}--></span>   <span title="{{f.name}}" class="image-name">{{f.name}}</span>
+                <span ng-show="f.progress == 100" class="hover-tick-run"></span>
             </div>
         </li>
     </ul>
+
+    <md-button ng-show="uploadComp" class="grey_btn" ng-click="closeDialog();">DONE</md-button>
 </div>
 </script>
 <!---show light box overlay for media detail--->
@@ -132,7 +139,7 @@
             <a href="javascript:;"></a>
         </div>
         <div class="right-image">
-            <img src="{{mediaDetail.url}}" alt="">
+            <img ng-src="{{mediaDetail.url}}" alt="">
             <label>Tags</label><span>Travel</span><span>Nature</span><span>Thailand</span>
         </div>
         <div class="left-txt">

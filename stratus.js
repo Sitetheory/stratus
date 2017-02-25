@@ -2081,9 +2081,9 @@
             // TODO: Load Dynamically
             if (_.contains(requirements, 'angular-froala')) {
                 [
-                    'codemirror',
                     'codemirror/mode/htmlmixed/htmlmixed',
                     'codemirror/addon/edit/matchbrackets',
+                    'codemirror',
                     'froala-align',
                     'froala-code-beautifier',
                     'froala-code-view',
@@ -2130,17 +2130,50 @@
                     $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
 
                     // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
-                    var buttons = ['bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock', 'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile', 'insertTable', '|', 'undo', 'redo', 'help', 'html', 'fullscreen'];
+                    var buttons = [
+                        'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
+                        'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
+                        'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
+                        'insertTable', '|', 'undo', 'redo', 'help', 'html', 'fullscreen'
+                    ];
                     angular.module('stratusApp').value('froalaConfig', {
+                        codeBeautifierOptions: {
+                            end_with_newline: true,
+                            indent_inner_html: true,
+                            extra_liners: "['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre', 'ul', 'ol', 'table', 'dl']",
+                            brace_style: 'expand',
+                            indent_char: ' ',
+                            indent_size: 4,
+                            wrap_line_length: 0
+                        },
                         codeMirror: true,
                         codeMirrorOptions: {
+                            indentWithTabs: false,
+                            lineNumbers: true,
+                            lineWrapping: true,
+                            mode: 'text/html',
+                            tabMode: 'space',
                             tabSize: 4
                         },
+                        fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+                        htmlAllowedAttrs: ['.*'],
+                        htmlAllowedEmptyTags: [
+                            'textarea', 'a', '.fa',
+                            'iframe', 'object', 'video',
+                            'style', 'script', 'div'
+                        ],
+                        htmlAllowedTags: ['.*'],
+                        htmlRemoveTags: [''],
+                        htmlUntouched: true,
                         imageManagerPageSize: 20,
                         imageManagerScrollOffset: 10,
                         imageManagerLoadURL: '/Api/Media?payload-only=true',
                         imageManagerLoadMethod: 'GET',
                         imageManagerDeleteMethod: 'DELETE',
+                        multiLine: true,
+                        pasteDeniedAttrs: [''],
+                        pasteDeniedTags: [''],
+                        pastePlain: false,
                         toolbarSticky: false,
                         toolbarButtons: buttons,
                         toolbarButtonsMD: buttons,
@@ -2180,42 +2213,48 @@
                 var css = [
                     Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
                 ];
+                /**
                 if (document.querySelectorAll('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
+                /**/
                 if (document.querySelectorAll('[froala]').length) {
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/code_view.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/draggable.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/file.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/fullscreen.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/help.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image_manager.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/quick_insert.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/special_characters.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/table.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/video.min.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css');
-                    css.push(Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css');
+                    [
+                        Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/code_view.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/draggable.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/file.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/fullscreen.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/help.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image_manager.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/quick_insert.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/special_characters.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/table.min.css',
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/video.min.css'
+                    ].forEach(function (stylesheet) {
+                        css.push(stylesheet);
+                    });
                 }
 
                 if (css.length) {
-                    // var counter = 0;
+                    var counter = 0;
                     angular.forEach(css, function (url) {
                         Stratus.Internals.CssLoader(url).then(function () {
-                            /*
-                             if (++counter === css.length) {
-                             angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-                             }
-                             */
+                            /**
+                            if (++counter === css.length) {
+                                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                            }
+                            /**/
                         });
                     });
+                } /** else {
+                    angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                 }
-                /*else {
-                 angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-                 }*/
+                /**/
                 angular.bootstrap(document.querySelector('html'), ['stratusApp']);
             });
         }
