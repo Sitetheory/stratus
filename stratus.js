@@ -187,9 +187,8 @@
                 suffix: '.js'
             },
             modules: {
-                /* '[froala]', */
                 selector: [
-                    '[ng-sanitize]'
+                    '[ng-sanitize]', '[froala]'
                 ],
                 namespace: 'angular-',
                 module: true
@@ -2081,7 +2080,7 @@
         // Angular Injector
         if (requirements.length) {
             // TODO: Load Dynamically
-            if (_.contains(requirements, 'stratus-froala')) {
+            if (_.contains(requirements, 'angular-froala') || _.contains(requirements, 'stratus-froala')) {
                 [
                     'codemirror/mode/htmlmixed/htmlmixed',
                     'codemirror/addon/edit/matchbrackets',
@@ -2106,7 +2105,8 @@
                     'froala-quote',
                     'froala-table',
                     'froala-url',
-                    'froala-video'
+                    'froala-video',
+                    'froala-word-paste'
                 ].forEach(function (requirement) {
                     requirements.push(requirement);
                 });
@@ -2136,7 +2136,7 @@
                         'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
                         'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
                         'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
-                        'insertTable', '|', 'undo', 'redo', 'help', 'html', 'fullscreen'
+                        'insertTable', '|', 'undo', 'redo', 'removeFormat', 'wordPaste', 'help', 'html', 'fullscreen'
                     ];
                     angular.module('stratusApp').value('froalaConfig', {
                         codeBeautifierOptions: {
@@ -2220,7 +2220,7 @@
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
                 /**/
-                if (document.querySelectorAll('[stratus-froala]').length) {
+                if (document.querySelectorAll('[froala]').length || document.querySelectorAll('[stratus-froala]').length) {
                     [
                         Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
                         Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css',
