@@ -61,8 +61,10 @@
             $scope.showLibrary = false;
             $scope.showDragDropLibrary = false;
             $scope.draggedFiles = [];
-           // $scope.log = '';
             $scope.files = [];
+            $scope.draggedDivChanged = false;
+            // done button when uploading is finished
+            $scope.uploadComp = false;
 
             // initialise library class to plus
             $scope.showLibraryClass = 'fa fa-plus-square-o';
@@ -75,8 +77,6 @@
                     .center();
                 var config = {
                     attachTo: angular.element(document.body),
-                    // controller: 'mediaZoomView',
-                    // controllerAs: 'ctrl',
                     scope: $scope,
                     disableParentScroll: this.disableParentScroll,
                     templateUrl: 'mediaDetail.html',
@@ -91,28 +91,34 @@
                 };
                 $mdPanel.open(config);
             };
+
             // function called when is uploaded or drag/dropped
             $scope.uploadFiles = function (files) {
                 // hide if media library is opened on click
                 $scope.showLibrary = false;
+                $scope.uploadComp = false;
 
+                $scope.draggedDivChanged = true;
+                // done button when uploading is finished
+                // $scope.uploadComp = false;
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
                 var config = {
                     attachTo: angular.element(document.body),
-                    // controller: 'mediaZoomView',
-                    // controllerAs: 'ctrl',
                     scope: $scope,
+                    controller: DialogController,
+                    controllerAs: 'ctrl',
+                    id: 'uploadPanel',
                     disableParentScroll: this.disableParentScroll,
-                    templateUrl:'uploadedFiles.html',
+                    templateUrl: 'uploadedFiles.html',
                     hasBackdrop: true,
                     panelClass: 'media-dialog',
                     position: position,
                     trapFocus: true,
                     zIndex: 150,
-                    clickOutsideToClose: true,
-                    escapeToClose: true,
+                    clickOutsideToClose: false,
+                    escapeToClose: false,
                     focusOnOpen: true
                 };
                 $mdPanel.open(config);
@@ -120,19 +126,39 @@
                 // check if media library already opened, then load media library
                 if ($scope.dragDropClass === 'fa fa-minus') {
                     $scope.showDragDropLibrary = true;
+
                     // $scope.uploadMedia();
                 }
             };
 
             // upload directly to media library
             $scope.uploadToLibrary = function (files) {
-                var promises = [];
-                angular.forEach(files, function (file) {
-                    promises.push($scope.saveMedia(file));
-                });
-                $q.all(promises).then(function (data) {
-                    $scope.uploadMedia();
-                });
+                // update scope of files for watch
+                $scope.uploadComp = false;
+                // set this variable to false,when media is dragged to media library
+                $scope.draggedDivChanged = false;
+
+                var position = $mdPanel.newPanelPosition()
+                    .absolute()
+                    .center();
+                var config = {
+                    attachTo: angular.element(document.body),
+                    scope: $scope,
+                    controller: DialogController,
+                    controllerAs: 'ctrl',
+                    disableParentScroll: this.disableParentScroll,
+                    templateUrl: 'uploadedFiles.html',
+                    hasBackdrop: true,
+                    panelClass: 'media-dialog',
+                    position: position,
+                    trapFocus: true,
+                    zIndex: 150,
+                    clickOutsideToClose: false,
+                    escapeToClose: false,
+                    focusOnOpen: true
+                };
+                $mdPanel.open(config);
+                $scope.files = files;
             };
 
             // open libary div when clicked on upper browse div
@@ -161,10 +187,13 @@
             $scope.mediaLibrary = function () {
                 if ($scope.dragDropClass === 'fa fa-plus') {
                     $scope.dragDropClass = 'fa fa-minus';
-                     // hide if library opened above
+
+                    // hide if library opened above
                     $scope.showLibrary = false;
+
                     // show media library div
                     $scope.showDragDropLibrary = true;
+
                     // load media library
                     $scope.uploadMedia();
                 } else if ($scope.dragDropClass === 'fa fa-minus') {
@@ -189,15 +218,50 @@
                         });
                         return;
                     }
+                    var promises = [];
                     for (var i = 0; i < files.length; i++) {
                         $scope.errorMsg = null;
                         (function (f) {
-                            $scope.saveMedia(f);
+                            //setTimeout(function(){ promises.push($scope.saveMedia(f)); }, 3000);
+                            promises.push($scope.saveMedia(f));
+
                         })(files[i]);
 
                     }
+                    //show done button when all promises are completed
+                    if(promises.length > 0) {
+                        $q.all(promises).then(function (data) {
+
+                            $scope.uploadComp = true;
+                            $scope.uploadMedia();
+                            if($scope.draggedDivChanged == true) {
+                                angular.forEach(data, function (dragged) {
+                                    $scope.draggedFiles.push(dragged.data);
+                                });
+
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                            console.log(error.config.data.file.upload.aborted);
+                            if(error.config.data.file.upload.aborted == true) {
+                                $scope.uploadComp = true;
+                            }
+                            /* angular.forEach(error, function (errorFile) {
+                             console.log(errorFile.config.data.file.upload.aborted);
+                             });*/
+                            // Handle any error from all above steps
+                        });
+                        // $scope.uploadComp = false;
+                    }
                 }
             });
+
+            // close mdPanel when all images are uploaded
+            function DialogController(mdPanelRef) {
+                $scope.closeDialog = function(){
+                    mdPanelRef.close();
+                }
+            }
 
             // common function to save media to server
             $scope.saveMedia = function (file) {
@@ -209,15 +273,20 @@
                 });
                 file.upload.then(function (response) {
                     file.result = response.data;
-                    $scope.draggedFiles.push(response.data);
-                   // $scope.uploadMedia();
+                    //  $scope.draggedFiles.push(response.data);
                 }, function (response) {
                     if (response.status > 0)
                         $scope.errorMsg = response.status + ': ' + response.data;
                 });
                 file.upload.progress(function (evt) {
+                    // setTimeout(function(){ file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total)); }, 5000);
                     file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
                 });
+                /* file.upload.xhr(function (xhr) {
+                 xhr.upload.addEventListener('abort', function(){console.log('abort complete')}, false);
+                 });*/
+                return file.upload;
+
             };
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
