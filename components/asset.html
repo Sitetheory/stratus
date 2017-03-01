@@ -1,37 +1,6 @@
-<div>Assets:</div>
-<div ng-show="assets" layout="row" flex="100" ng-repeat="asset in assets">
-    {{ asset.name || asset.title || 'Unknown' }}
-</div>
-<div>Models:</div>
-<div ng-show="collection.models" layout="row" flex="100" ng-repeat="model in collection.models">
-    {{ model.data.name || model.data.title || 'Unknown' }}
-</div>
-
-<!--
-<md-autocomplete
-        md-menu-class="autocomplete-custom-template"
-        md-selected-item="asset"
-        md-search-text="query"
-        md-items="model in collection.filter(query)"
-        md-item-text="model.data.name || model.data.title || 'Unknown'"
-        md-no-cache="true"
-        md-autoselect="true"
-        md-floating-label="Asset"
-        placeholder="Choose an Asset">
-    <md-item-template>
-        {{ model.data.name || model.data.title || 'Unknown' }}
-    </md-item-template>
-</md-autocomplete>
-<div flex>
-    <md-button class="md-icon-button" aria-label="delete" ng-click="asset.destroy()">
-        <md-icon
-                md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
-        <md-tooltip>Delete</md-tooltip>
-    </md-button>
-    <md-button  ng-show="$last" class="md-icon-button" aria-label="add" ng-click="collection.add({})">
-        <md-icon
-                md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-        <md-tooltip>Add</md-tooltip>
-    </md-button>
-</div>
--->
+<md-button ng-if="collection && model && assetProperty" ng-repeat="option in collection.models" class="md-raised"
+           aria-label="{{ option.data.name }}"
+           ng-class="{ 'md-accent': model.exists(assetProperty, option.data.id) }"
+           ng-click="model.toggle(assetProperty, option.data.id)">
+    {{ option.data.name || option.data.title || 'Unknown' }}
+</md-button>

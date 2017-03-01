@@ -1,1 +1,46 @@
-<div class="container"><div class="gallery-box" ng-show="browseDiv"><div class="gl-header"><h3>MEDIA <span><i class="fa fa-question" aria-hidden="true"></i></span></h3></div><div class="gl-content upload-image" ng-model="file" name="file" ngf-multiple="true" ngf-drop="uploadFiles($files)" ngf-drag-over-class="dragover"><a href="#" ng-click="openLibrary()"><i ng-class="showLibraryClass" aria-hidden="true"></i> Open library to select images or drag, drop new images here</a></div></div><div id="openLibrary" ng-show="showLibrary"><div class="gallery-box"><div class="gl-content"><div class="search-bar"><div class="gal-search"><stratus-search flex></stratus-search></div><p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">Click Here</a></p></div><ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true"><li ng-repeat="media in collection.models"><div class="gl-img-container"><a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a></div><div class="image-info-outer"><div class="img-info"><div class="img-info-left"><div class="format-size"><span class="fm-tag">{{media.data.extension|uppercase}}</span> <span class="size">{{media.data.bytesHuman}}</span></div><p>{{media.data.name}}</p></div><div class="img-info-right"><a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a></div></div></div></li></ul></div></div></div><div class="gallery-box" ng-show="dragDrop"><div class="gl-header"><h3>MEDIA <span><i class="fa fa-question" aria-hidden="true"></i></span></h3></div><div class="gl-content" ngf-enable-firefox-paste="true" ngf-drop="uploadFiles($files)" ngf-multiple="true" ngf-change="uploadFiles($files)" ng-model="draggedfile" name="draggedfile" ngf-drag-over-class="dragover"><ul><li ng-repeat="df in draggedFiles"><div class="gl-img-container"><a href="#"><img ngf-src="df.url"></a></div><div class="image-info-outer"><div class="img-info"><div class="img-info-left"><div class="format-size"><span class="fm-tag">{{ df.extension | uppercase }}</span> <span class="size">{{ df.bytesHuman }}</span></div><p>{{ df.name }}</p></div><div class="img-info-right"><a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a></div></div></div></li><li class="action-btn"><a href="#" ng-click="mediaLibrary()" class="add-del"><i ng-class="dragDropClass" aria-hidden="true"></i></a></li></ul></div></div><div id="openDragDropLibrary" ng-show="showDragDropLibrary"><div class="gallery-box"><div class="gl-content"><div class="search-bar"><div class="gal-search"><stratus-search flex></stratus-search></div><p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">Click Here</a></p></div><ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true"><li ng-repeat="media in collection.models"><div class="gl-img-container"><a href="#" ng-click="zoomView(media.data)"><img draggable="true" src="{{media.data.url}}"></a></div><div class="image-info-outer"><div class="img-info"><div class="img-info-left"><div class="format-size"><span class="fm-tag">{{media.data.extension|uppercase}}</span> <span class="size">{{media.data.bytesHuman}}</span></div><p>{{media.data.name}}</p></div><div class="img-info-right"><a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a></div></div></div></li></ul></div></div></div></div>
+<div class="container"><div class="gallery-box"><div class="gl-header"><h3>MEDIA <span><i class="fa fa-question" aria-hidden="true"></i></span></h3></div><div class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true" ngf-drop="uploadFiles($files)" ngf-change="uploadFiles($files)" ngf-drag-over-class="dragover"><a ng-if="!draggedFiles.length" href="#" ng-click="openLibrary()"><i ng-class="showLibraryClass" aria-hidden="true"></i> Open library to select images or drag, drop new images here</a><ul ng-if="draggedFiles.length"><li ng-repeat="df in draggedFiles"><div class="gl-img-container"><a href="#"><img ngf-src="df.url"></a></div><div class="image-info-outer"><div class="img-info"><div class="img-info-left"><div class="format-size"><span class="fm-tag">{{ df.extension | uppercase }}</span> <span class="size">{{ df.bytesHuman }}</span></div><p>{{ df.name }}</p></div><div class="img-info-right"><a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a></div></div></div></li><li class="action-btn"><a href="#" ng-click="mediaLibrary()" class="add-del"><i ng-class="dragDropClass" aria-hidden="true"></i></a></li></ul></div></div><div id="openLibrary" ng-show="showLibrary"><div class="gallery-box"><div class="gl-content"><div class="search-bar"><div class="gal-search"><stratus-search flex></stratus-search></div><p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">Click Here</a></p></div><ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true"><li ng-repeat="media in collection.models"><div class="gl-img-container"><a href="#" ng-click="zoomView(media.data)"><img draggable="true" ng-src="{{media.data.url}}"></a></div><div class="image-info-outer"><div class="img-info"><div class="img-info-left"><div class="format-size"><span class="fm-tag">{{media.data.extension|uppercase}}</span> <span class="size">{{media.data.bytesHuman}}</span></div><p>{{media.data.name}}</p></div><div class="img-info-right"><a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a></div></div></div></li></ul></div><stratus-pagination></stratus-pagination></div></div><div id="openDragDropLibrary" ng-show="showDragDropLibrary"><div class="gallery-box"><div class="gl-content"><div class="search-bar"><div class="gal-search"><stratus-search flex></stratus-search></div><p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">Click Here</a></p></div><ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true"><li ng-repeat="media in collection.models"><div class="gl-img-container"><a href="#" ng-click="zoomView(media.data)"><img draggable="true" ng-src="{{media.data.url}}"></a></div><div class="image-info-outer"><div class="img-info"><div class="img-info-left"><div class="format-size"><span class="fm-tag">{{media.data.extension|uppercase}}</span> <span class="size">{{media.data.bytesHuman}}</span></div><p>{{media.data.name}}</p></div><div class="img-info-right"><a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a> <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a></div></div></div></li></ul></div><stratus-pagination></stratus-pagination></div></div></div><script type="text/ng-template" id="uploadedFiles.html"><div class="dropped-files">
+    <ul style="clear:both" class="response">
+        <li class="sel-file" ng-repeat="f in files">
+            <div>
+                <img ngf-thumbnail="!f.$error && f" class="thumb">
+                    <span class="progress" ng-show="f.progress >= 0 && f.progress != 100">
+                        <div style="width:{{f.progress}}%">{{f.progress}}%</div>
+                    </span>
+                <button ng-click="f.upload.abort();f.upload.aborted=true"
+                        ng-show="f.upload != null && f.progress < 100 && !f.upload.aborted">
+                    Cancel
+                </button>
+               <span class="image-size"> {{f.size}}<!--B - type: {{f.type}}--></span>   <span title="{{f.name}}" class="image-name">{{f.name}}</span>
+                <span ng-show="f.progress == 100" class="hover-tick-run"></span>
+            </div>
+        </li>
+    </ul>
+
+    <md-button ng-show="uploadComp" class="grey_btn" ng-click="closeDialog();">DONE</md-button>
+</div></script><script type="text/ng-template" id="mediaDetail.html"><div class="media-popup" role="dialog">
+        <div class="cross-btn">
+            <a href="javascript:;"></a>
+        </div>
+        <div class="right-image">
+            <img ng-src="{{mediaDetail.url}}" alt="">
+            <label>Tags</label><span>Travel</span><span>Nature</span><span>Thailand</span>
+        </div>
+        <div class="left-txt">
+            <h2>{{mediaDetail.filename}}</h2>
+            <p>{{mediaDetail.description}}</p>
+            <div class="img-tag">
+                {{mediaDetail.extension| uppercase}}
+            </div>
+            <label>Size<span>{{mediaDetail.bytesHuman}}</span></label>
+            <label>Ratio<span>{{mediaDetail.ratio}}</span></label>
+            <label>Date<span>07/02/16 @3:25PM</span></label>
+            <div class="action-section">
+                <label>Actions</label>
+                <ul>
+                    <li><a href="javascript:;" class="del-img">Delete</a></li>
+                    <li><a href="javascript:;" class="replace-img">Replace</a></li>
+                    <li><a href="javascript:;" class="download-img">Download</a></li>
+                </ul>
+            </div>
+        </div>
+    </div></script>
