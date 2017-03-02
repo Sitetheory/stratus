@@ -66,6 +66,8 @@
             // done button when uploading is finished
             $scope.uploadComp = false;
 
+            $scope.errorUpload = false;
+
             // initialise library class to plus
             $scope.showLibraryClass = 'fa fa-plus-square-o';
             $scope.dragDropClass = 'fa fa-plus';
@@ -240,17 +242,10 @@
                                 });
 
                             }
-                        }).catch(function (error) {
-                            console.log(error);
-                            console.log(error.config.data.file.upload.aborted);
-                            if(error.config.data.file.upload.aborted == true) {
+                        }) .catch(function (error) {
+
                                 $scope.uploadComp = true;
-                            }
-                            /* angular.forEach(error, function (errorFile) {
-                             console.log(errorFile.config.data.file.upload.aborted);
-                             });*/
-                            // Handle any error from all above steps
-                        });
+                            });
                         // $scope.uploadComp = false;
                     }
                 }
@@ -265,6 +260,10 @@
 
             // common function to save media to server
             $scope.saveMedia = function (file) {
+                file.errorMsg = null;
+                file.uploadStatus = false;
+                file.errorUpload = false;
+
                 file.upload = Upload.upload({
                     url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
                     data: {
@@ -274,9 +273,29 @@
                 file.upload.then(function (response) {
                     file.result = response.data;
                     //  $scope.draggedFiles.push(response.data);
+                    // set status of upload to success
+                    $scope.uploadStatus = true;
                 }, function (response) {
-                    if (response.status > 0)
-                        $scope.errorMsg = response.status + ': ' + response.data;
+                    console.log('response',response);
+                    // if file is aborted handle error messages
+                    if(response.config.data.file.upload.aborted == true) {
+                        file.uploadStatus = false;
+                        // show cross icon if upload failed
+                        file.errorUpload = true;
+                        file.errorMsg = 'Aborted';
+                        console.log(file.errorMsg);
+                    }
+                    // if file not uploaded due to server error
+                  //else if (response.status > 0)
+                    else {
+                        //hide progress bar
+                        file.uploadStatus = false;
+                        // show cross icon if upload failed
+                        file.errorUpload = true;
+                        // $scope.errorMsg = response.status + ': ' + response.data;
+                        file.errorMsg = 'Server Error!Please try again';
+                        console.log(file.errorMsg);
+                    }
                 });
                 file.upload.progress(function (evt) {
                     // setTimeout(function(){ file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total)); }, 5000);

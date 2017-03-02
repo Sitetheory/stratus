@@ -136,17 +136,22 @@ ul.response {
 }
 
 li.sel-file {
-    border-radius: 20px;
     display: inline-block;
     margin: 10px 15px;
-    overflow: hidden;
     position: relative;
     vertical-align: top;
     width: 40%;
-    max-height: 120px;
-
 }
-
+.image--cn{
+    border-radius: 20px;
+    display: inline-block;
+    /*margin: 10px 15px;*/
+    overflow: hidden;
+    position: relative;
+    vertical-align: top;
+    width: 100%;
+    border-radius:10px;
+    max-height: 120px;}
 span.progress{
     background:rgba(255, 255, 255, 0.84) none repeat scroll 0 0;
     border-radius: 19px;
@@ -160,10 +165,6 @@ span.progress{
     top: 44px;
     width: 75% !important;
 }
-
-
-
-
 .sel-file:hover img {
     filter: blur(8px);
     /*transform: scale(1.05, 1.05);*/
@@ -223,9 +224,9 @@ span.progress{
 .hover-tick-run{animation:hovertick ease-out 1.5s 0s;}
 
 @-webkit-keyframes hovertick{
-    from {top:120%;}
-    to {top:0;}
-}
+     from {top:120%;}
+     to {top:0;}
+ }
 @-moz-keyframes hovertick{
     from {top:120%;}
     to {top:0;}
@@ -233,10 +234,6 @@ span.progress{
 @-o-keyframes hovertick{
     from {top:120%;}
     to {top:0;}
-}
-@keyframes hovertick{
-    from {top:120%; opacity: 1;}
-    to {top:-10px; opacity: 0;}
 }
 button.grey_btn{
     background: #333333 none repeat scroll 0 0;
@@ -284,4 +281,42 @@ button.black_btn{
     margin-top: 0 !important;
     padding: 9px 0 0 25px;
 }
-
+.error-upload-msg {
+    padding:8px;
+    left: 0px;
+    right:0;
+    margin:0 auto;
+    position: absolute;
+    top: 108%;
+    width: 140px;
+    background: #be2626;
+    color:#fff;
+    font-size:12px;
+    border-radius:10px;
+    display: none;
+}
+.error-upload-msg:after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -8px;
+    width: 0; height: 0;
+    border-bottom: 8px solid #be2626;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+}
+li.sel-file:hover .error-upload-msg{display:block;}
+.hover-cross
+{   background-image: url("/sitetheory/v/1/0/bundles/sitetheorycore/images/media/hover-close.png");
+    background-size: 48px auto;
+    top: 120%;
+    height: 48px;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    width: 48px;
+    transition: all ease 0.5s;
+}
+.hover-cross-run{top:30%;}

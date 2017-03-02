@@ -4,7 +4,7 @@
             <h3>MEDIA <span><i class="fa fa-question" aria-hidden="true"></i></span></h3>
         </div><!-- Gallery header Ends -->
         <div class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"
-             ngf-drop="uploadFiles($files)" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf'}"  ngf-change="uploadFiles($files)" ngf-drag-over-class="dragover">
+             ngf-drop="uploadFiles($files)" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-change="uploadFiles($files)" ngf-drag-over-class="dragover">
             <!-- show only if no files are dragged-->
             <a ng-if="!draggedFiles.length" href="#" ng-click="openLibrary()"><i ng-class="showLibraryClass" aria-hidden="true"></i> Open library to
                 select images or drag, drop new images here</a>
@@ -87,7 +87,7 @@
                     </div>
                     <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)"> Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf'}">
+                <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}">
                     <li ng-repeat="media in collection.models">
                         <div class="gl-img-container">
                             <a href="#" ng-click="zoomView(media.data)"><img draggable="true" ng-src="{{media.data.url}}"></a>
@@ -118,20 +118,24 @@
     <div class="dropped-files" role="dialog">
         <ul style="clear:both" class="response">
             <li class="sel-file" ng-repeat="f in files">
-                <div>
-
+                <div class="image--cn">
                     <i ng-if="f.type == 'application/x-unknown'" class="fa fa-file" style="font-size:115px;"></i>
-
                     <img ngf-thumbnail="!f.$error && f" class="thumb">
-                    <span class="progress" ng-show="f.progress >= 0 && f.progress != 100">
+                    <!-- <span class="progress" ng-show="f.progress >= 0 && f.progress != 100">-->
+                    <span class="progress" ng-show="f.progress >= 0 && f.uploadStatus == false && f.errorUpload == false" >
                         <div style="width:{{f.progress}}%">{{f.progress}}%</div>
                     </span>
-                    <button class="cancel--btn" ng-click="f.upload.abort();f.upload.aborted=true"
+                    <button title="Abort" class="cancel--btn" ng-click="f.upload.abort();f.upload.aborted=true"
                             ng-show="f.upload != null && f.progress < 100 && !f.upload.aborted">
                     </button>
-                    <span class="image-size"> {{f.size}}<!--B - type: {{f.type}}--></span>   <span title="{{f.name}}" class="image-name">{{f.name}}</span>
-                    <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>
+                    <span ng-show="f.errorUpload == true && f.uploadStatus == false" class="hover-cross hover-cross-run"></span>
+                    <span class="image-size"> {{f.size}}<!--B - type: {{f.type}}--></span>
+                    <span title="{{f.name}}" class="image-name">{{f.name}}</span>
+                   <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
+                    <span  ng-show="uploadStatus == true" class="hover-tick hover-tick-run"></span>
                 </div>
+                <!-- show error message if uploading fails--->
+                <span class="error-upload-msg" ng-show="f.errorUpload == true && f.uploadStatus == false">{{f.errorMsg}}</span>
             </li>
             <li class="media-err-msg"  ng-repeat="f in invalidFiles">
 
