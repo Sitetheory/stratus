@@ -1,6 +1,7 @@
 .search {
     position: relative;
     display: table;
+    width: 100%;
 }
 
 .search input {
@@ -9,6 +10,7 @@
     color: black;
     font-family: arial, sans-serif;
     font-size: 16px;
+    width: 100%;
 }
 
 .search input:focus {
