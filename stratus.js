@@ -621,6 +621,17 @@
         return (!sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length);
     };
 
+    // Error Handling Wrapper
+    // ----------------------------------
+
+    /**
+     * @type {*}
+     */
+    $.error = function (handler) {
+        Stratus.meow = this;
+        console.log('error:', this, handler)
+    };
+
     // Stratus Environment Initialization
     // ----------------------------------
 

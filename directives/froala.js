@@ -22,11 +22,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'froala', 'angular'], factory);
+        define(['stratus', 'zepto', 'froala', 'angular'], factory);
     } else {
-        factory(root.Stratus);
+        factory(root.Stratus, root.$);
     }
-}(this, function (Stratus) {
+}(this, function (Stratus, $) {
     // This directive intends to provide basic froala capabilities.
     Stratus.Directives.Froala = ['froalaConfig', function (froalaConfig) {
         'use strict'; // Scope strict mode to only this directive
@@ -56,6 +56,9 @@
             require: 'ngModel',
             scope: scope,
             link: function (scope, element, attrs, ngModel) {
+
+                // Twiddle Element to Zepto since Angular is lame and doesn't handle anything other than jQuery...
+                element = element.length ? $(element[0]) : element;
 
                 var specialTag = false;
                 if (SPECIAL_TAGS.indexOf(element.prop('tagName').toLowerCase()) != -1) {
@@ -111,7 +114,7 @@
                             return true;
                         }
 
-                        var isEmpty = element.froalaEditor('node.isEmpty', jQuery('<div>' + value + '</div>').get(0));
+                        var isEmpty = element.froalaEditor('node.isEmpty', $('<div>' + value + '</div>').get(0));
                         return isEmpty;
                     };
                 };
@@ -234,6 +237,21 @@
                     scope.initFunction({ initControls: controls });
                 }
                 ctrl.init();
+            }
+        };
+    }];
+    Stratus.Directives.FroalaView = ['$sce', function ($sce) {
+        return {
+            restrict: 'ACM',
+            scope: false,
+            link: function (scope, element, attrs) {
+                element.addClass('fr-view');
+                scope.$watch(attrs.froalaView, function (nv) {
+                    if (nv || nv === '') {
+                        var explicitlyTrustedValue = $sce.trustAsHtml(nv);
+                        element.html(explicitlyTrustedValue.toString());
+                    }
+                });
             }
         };
     }];
