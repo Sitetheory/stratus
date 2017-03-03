@@ -18,6 +18,7 @@
 // Stratus Media Selector Component
 // ----------------------
 
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -274,7 +275,11 @@
                     file.result = response.data;
                     //  $scope.draggedFiles.push(response.data);
                     // set status of upload to success
-                    $scope.uploadStatus = true;
+                    file.uploadStatus = true;
+                    file.errorUpload = false;
+                    console.log('success');
+                    console.log(file);
+                    
                 }, function (response) {
                     console.log('response',response);
                     // if file is aborted handle error messages

@@ -52,10 +52,10 @@
                 </div><!-- Search Bar Ends -->
                 <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                     <li ng-repeat="media in collection.models">
-                        <div class="gl-img-container">
+                        <div class="gl-img-container" ng-class="{'selected--img': hovering}">
                             <a href="#" ng-click="zoomView(media.data)"><img draggable="true" ng-src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
-                        <div class="image-info-outer">
+                        <div class="image-info-outer" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
                             <div class="img-info">
                                 <div class="img-info-left">
                                     <div class="format-size">
@@ -66,7 +66,7 @@
                                 </div><!-- Image Left Info Ends -->
                                 <div class="img-info-right">
                                     <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a>
-                                    <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                   <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
                                 </div><!-- Image Info Right Ends -->
                             </div><!-- Image Info Ends -->
                         </div><!-- Image Outer Ends -->
@@ -89,10 +89,10 @@
                 </div><!-- Search Bar Ends -->
                 <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}">
                     <li ng-repeat="media in collection.models">
-                        <div class="gl-img-container">
+                        <div class="gl-img-container" ng-class="{'selected--img': hover}">
                             <a href="#" ng-click="zoomView(media.data)"><img draggable="true" ng-src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
-                        <div class="image-info-outer">
+                        <div class="image-info-outer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
                             <div class="img-info">
                                 <div class="img-info-left">
                                     <div class="format-size">
@@ -102,7 +102,7 @@
                                 </div><!-- Image Left Info Ends -->
                                 <div class="img-info-right">
                                     <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a>
-                                    <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                   <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
                                 </div><!-- Image Info Right Ends -->
                             </div><!-- Image Info Ends -->
                         </div><!-- Image Outer Ends -->
@@ -132,7 +132,7 @@
                     <span class="image-size"> {{f.size}}<!--B - type: {{f.type}}--></span>
                     <span title="{{f.name}}" class="image-name">{{f.name}}</span>
                    <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                    <span  ng-show="uploadStatus == true" class="hover-tick hover-tick-run"></span>
+                    <span  ng-show="f.uploadStatus == true && f.errorUpload == false" class="hover-tick hover-tick-run"></span>
                 </div>
                 <!-- show error message if uploading fails--->
                 <span class="error-upload-msg" ng-show="f.errorUpload == true && f.uploadStatus == false">{{f.errorMsg}}</span>
