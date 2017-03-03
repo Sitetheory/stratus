@@ -629,7 +629,7 @@
      */
     $.error = function (handler) {
         Stratus.meow = this;
-        console.log('error:', this, handler)
+        console.log('error:', this, handler);
     };
 
     // Stratus Environment Initialization

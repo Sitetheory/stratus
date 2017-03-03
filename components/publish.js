@@ -88,7 +88,7 @@
 
                 // Watchers
                 $scope.$watch('timePublish', function (data) {
-                    $scope.setTimePublish(data)
+                    $scope.setTimePublish(data);
                 });
 
                 return true;
