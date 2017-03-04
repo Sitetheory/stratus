@@ -52,6 +52,7 @@
             controller: function ($scope, $element, $parse, $attrs, $log, model) {
                 var uid = _.uniqueId('publish_');
                 Stratus.Instances[uid] = $scope;
+                Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/publish' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
                 // Configuration
                 $scope.elementId = $attrs.elementId || uid;
@@ -81,7 +82,7 @@
 
                 // Methods
                 $scope.setTimePublish = function (time) {
-                    $log.log('timePublish:', time, $scope.model);
+                    // $log.log('timePublish:', time, $scope.model);
                     if (!$scope.model || !$scope.model.get($scope.propertyTimePublish)) return false;
                     !$scope.model.set($scope.propertyTimePublish, time || 'API::NOW').save();
                 };

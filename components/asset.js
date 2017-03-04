@@ -52,12 +52,14 @@
 
             // Store Asset Property for Verification
             $scope.assetProperty = $attrs.assetProperty || null;
+            $log.log('property:', $scope.assetProperty);
 
             // Data Connectivity
             $scope.model = null;
             $scope.$watch('$ctrl.ngModel', function (data) {
                 if (data instanceof model && data !== $scope.model) {
                     $scope.model = data;
+                    $log.log('ngModel:', data);
                 }
             });
         },
