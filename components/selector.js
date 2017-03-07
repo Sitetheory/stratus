@@ -52,8 +52,7 @@
             }
 
             // Store Asset Property for Verification
-            $scope.assetProperty = $attrs.assetProperty || null;
-            $log.log('property:', $scope.assetProperty);
+            $scope.property = $attrs.property || null;
 
             // Data Connectivity
             $scope.model = null;

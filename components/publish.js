@@ -84,7 +84,8 @@
                 $scope.setTimePublish = function (time) {
                     // $log.log('timePublish:', time, $scope.model);
                     if (!$scope.model || !$scope.model.get($scope.propertyTimePublish)) return false;
-                    !$scope.model.set($scope.propertyTimePublish, time || 'API::NOW').save();
+                    // $scope.model.set($scope.propertyTimePublish, time || 'API::NOW');
+                    // $scope.model.save();
                 };
 
                 // Watchers

@@ -33,7 +33,7 @@
     <!-- datetimepicker="true" unpublish="true" versionHistory="true" -->
     <md-button id="headerControlsBtnPublishNow" class="mdButtonStrip btnPublish positionAnchor clearfix"
                ng-click="model.set(property + '.timePublish', 'API::NOW'); model.save()"
-               ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') != 1 || model.get(property + '.isPublished') == 3, delayed: model.get(property + '.isPublished') == 2}">
+               ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') < 1, delayed: model.get(property + '.isPublished') == 2}">
         <div class="btnGradientLight"></div>
         <div class="btnIcon">
             <md-icon class="publishIcon"
@@ -43,34 +43,28 @@
     </md-button>
     <md-menu>
         <a ng-click="$mdOpenMenu($event)" aria-label="Open interactions menu"
-           ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') != 1 || model.get(property + '.isPublished') == 3, delayed: model.get(property + '.isPublished') == 2}"
+           ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') < 1, delayed: model.get(property + '.isPublished') == 2}"
            href="#" id="headerControlsPublishOptions" class="btnPublish positionAnchor">
             <div class="btnGradientLight"></div>
             <div class="caret"></div>
             <md-tooltip>Publish Options</md-tooltip>
         </a>
-        <md-menu-content width="3">
-            <stratus-date-time ng-if="showDateTime"
-                               ng-model="timePublish"
-                               data-usecurrent="false"
-                               data-defaultTimestamp="{{ timePublish || null }}"
-                               data-style="widget">
-            </stratus-date-time>
-            <!--
-            <md-menu-item>
-                <md-button href="">
-                    <div id="meow">Option 1
-                    </div>
+        <md-menu-content width="2">
+            <md-menu-item ng-if="model.get(property + '.isPublished') < 1">
+                <stratus-date-time ng-if="showDateTime" ng-model="timePublish" data-usecurrent="false" data-defaultTimestamp="{{ timePublish || null }}" data-style="widget">
+                </stratus-date-time>
+            </md-menu-item>
+            <md-menu-item ng-if="model.get(property + '.isPublished') > 0">
+                <md-button ng-click="model.set(property + '.timePublish', null); model.save()">
+                    Unpublish
                 </md-button>
             </md-menu-item>
             <md-menu-divider></md-menu-divider>
             <md-menu-item>
-                <md-button href="">
-                    <div id="meowseph">Option 2
-                    </div>
+                <md-button ng-href="/Content/Versions/Edit?id={{ model.data.id }}">
+                    Versions
                 </md-button>
             </md-menu-item>
-            -->
         </md-menu-content>
     </md-menu>
 </div>
@@ -78,7 +72,7 @@
 <!-- Publish Button Only -->
 <md-button aria-label="publish" class="btn btnPublish" ng-if="!full && model.get(property)"
            ng-click="model.set(property + '.timePublish', 'API::NOW'); model.save()"
-           ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') != 1 || model.get(property + '.isPublished') == 3, delayed: model.get(property + '.isPublished') == 2}">
+           ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') < 1, delayed: model.get(property + '.isPublished') == 2}">
     <md-icon class="btnIcon publishIcon"
              md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/publish.svg"></md-icon>
 </md-button>
