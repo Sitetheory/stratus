@@ -31,7 +31,6 @@
 <!-- Full Publish Button with Calendar -->
 <div ng-if="full && model.get(property)">
     <!-- datetimepicker="true" unpublish="true" versionHistory="true" -->
-    <!-- .btn.unpublished.btnPublish -->
     <md-button id="headerControlsBtnPublishNow" class="mdButtonStrip btnPublish positionAnchor clearfix"
                ng-click="model.set(property + '.timePublish', 'API::NOW'); model.save()"
                ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') != 1 || model.get(property + '.isPublished') == 3, delayed: model.get(property + '.isPublished') == 2}">
@@ -40,16 +39,24 @@
             <md-icon class="publishIcon"
                      md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/publish.svg"></md-icon>
         </div>
-        <div class="btnText fontPrimary">Publish</div>
+        <div class="btnText fontPrimary">{{ model.get(property + '.isPublished') == 1 ? 'Published' : 'Publish' }}</div>
     </md-button>
     <md-menu>
         <a ng-click="$mdOpenMenu($event)" aria-label="Open interactions menu"
+           ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') != 1 || model.get(property + '.isPublished') == 3, delayed: model.get(property + '.isPublished') == 2}"
            href="#" id="headerControlsPublishOptions" class="btnPublish positionAnchor">
             <div class="btnGradientLight"></div>
             <div class="caret"></div>
             <md-tooltip>Publish Options</md-tooltip>
         </a>
         <md-menu-content width="3">
+            <stratus-date-time ng-if="showDateTime"
+                               ng-model="timePublish"
+                               data-usecurrent="false"
+                               data-defaultTimestamp="{{ timePublish || null }}"
+                               data-style="widget">
+            </stratus-date-time>
+            <!--
             <md-menu-item>
                 <md-button href="">
                     <div id="meow">Option 1
@@ -63,6 +70,7 @@
                     </div>
                 </md-button>
             </md-menu-item>
+            -->
         </md-menu-content>
     </md-menu>
 </div>
