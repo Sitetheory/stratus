@@ -30,8 +30,11 @@
 
 <!-- Full Publish Button with Calendar -->
 <div ng-if="full && model.get(property)">
+    <!-- datetimepicker="true" unpublish="true" versionHistory="true" -->
+    <!-- .btn.unpublished.btnPublish -->
     <md-button id="headerControlsBtnPublishNow" class="mdButtonStrip btnPublish positionAnchor clearfix"
-               data-datetimepicker="true" data-unpublish="true" data-versionHistory="true">
+               ng-click="model.set(property + '.timePublish', 'API::NOW'); model.save()"
+               ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') != 1 || model.get(property + '.isPublished') == 3, delayed: model.get(property + '.isPublished') == 2}">
         <div class="btnGradientLight"></div>
         <div class="btnIcon">
             <md-icon class="publishIcon"

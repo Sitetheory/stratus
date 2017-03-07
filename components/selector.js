@@ -26,13 +26,14 @@
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-    // This component intends to allow editing of various sssets depending on context.
-    Stratus.Components.Asset = {
+    // This component intends to allow editing of various selections depending on context.
+    Stratus.Components.Selector = {
+        // transclude: true,
         bindings: {
             elementId: '@',
             ngModel: '=',
-            assetType: '@',
-            assetProperty: '@'
+            type: '@',
+            property: '@'
         },
         controller: function ($scope, $attrs, $log, registry, model) {
             // Initialize
@@ -41,10 +42,10 @@
             $scope.elementId = $attrs.elementId || this.uid;
 
             // Asset Collection
-            if ($attrs.assetType) {
+            if ($attrs.type) {
                 $scope.registry = new registry();
                 $scope.registry.fetch({
-                    target: $attrs.assetType,
+                    target: $attrs.type,
                     decouple: 'true',
                     api: '{"options":{"paging": false},"limit":5000}'
                 }, $scope);
