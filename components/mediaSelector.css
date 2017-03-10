@@ -8,7 +8,7 @@
 .gl-img-container{ display:inline-block; max-height:60px; overflow:hidden; width:100%; height:100%; border:3px solid transparent; background-size: cover;}
 .gl-img-container:hover{ border:3px solid #3d96ff;}
 .gl-content ul li img{width:100%; transition:all ease-in 0.3s;}
-.image-info-outer{position:absolute; z-index:99; padding:0 0 35px 0; top:-115px; width:300px; left:-110%;  margin:0 auto; display:none; color:#fff;}
+.image-info-outer{position:absolute; z-index:99; padding:0 0 13px 0; top:-115px; width:300px; left:-110%;  margin:0 auto; display:none; color:#fff;}
 .img-info{position:relative; z-index:99; padding:15px; background:#4a4a4a; float:left; width:300px; margin:0; color:#fff;}
 .gl-content ul li:hover .image-info-outer{ display:block;}
 .img-info-left{float:left; padding:0 5%; border-right:1px solid #fff;}
@@ -48,7 +48,7 @@
 .add-del{width:60px; height:58px; line-height:70px; color:#333; border:2px solid #aeaeae; display:inline-block; text-align:center; }
 .add-del i{font-size:40px; color:#aeaeae;}
 .dummy-image{
-    background-image:url('/sitetheory/v/1/0/bundles/sitetheorycore/images/media/img-1.jpg');
+    background-image:url('/assets/1/0/bundles/sitetheorycore/images/media/img-1.jpg');
     background-repeat: no-repeat;
 }
 .gl-content ul li.action-btn{width:auto; margin-top: 7px;}
@@ -66,7 +66,7 @@
 .search-bar p a{text-decoration:underline;}
 /*-------- popup css-------------*/
 .media-popup{ max-width:800px; margin:0 auto; width:100%; background:rgba(0,0,0,0.70); padding:40px; display:inline-block; position:relative;}
-.cross-btn{ position:absolute; right:10px; top:10px; background:url('/sitetheory/v/1/0/bundles/sitetheorycore/images/media/cross.png') no-repeat;}
+.cross-btn{ position:absolute; right:10px; top:10px; background:url('/assets/1/0/bundles/sitetheorycore/images/media/cross.png') no-repeat;}
 .cross-btn a{ float:left; outline:none;}
 .cross-btn a img{ float:left;}
 .right-image{ float: right; width: 75%;}
@@ -82,9 +82,9 @@
 .action-section ul{ margin:10px 0 0; padding:0; width:100%; float:left;}
 .action-section ul li{ margin:0; padding:0 5px; float:left; width:auto; list-style-type:none;}
 .action-section ul li a{ width:100%; float:left; color:#fff; text-decoration:none; outline:0 none; padding-top:25px; text-align:center;}
-.del-img{ background:url('/sitetheory/v/1/0/bundles/sitetheorycore/images/media/delete.png') no-repeat; background-position:center top; width:20px; height:25px; }
-.replace-img{ background:url('/sitetheory/v/1/0/bundles/sitetheorycore/images/media/replace.png') no-repeat; background-position:center top; width:20px; height:25px; }
-.download-img{ background:url('/sitetheory/v/1/0/bundles/sitetheorycore/images/media/download.png') no-repeat; background-position:center top; width:20px; height:25px; }
+.del-img{ background:url('/assets/1/0/bundles/sitetheorycore/images/media/delete.png') no-repeat; background-position:center top; width:20px; height:25px; }
+.replace-img{ background:url('/assets/1/0/bundles/sitetheorycore/images/media/replace.png') no-repeat; background-position:center top; width:20px; height:25px; }
+.download-img{ background:url('/assets/1/0/bundles/sitetheorycore/images/media/download.png') no-repeat; background-position:center top; width:20px; height:25px; }
 .right-image label{ float:left; color:#8f8f8f; margin-top:10px; margin-right:10px;}
 .right-image span{ background:#f5a623; color:#fff; padding:2px 5px; margin:10px 5px 0; float:left; border:1px solid #979797; font-size:15px;}
 .media-dialog{ text-align: center;}
@@ -210,7 +210,7 @@ span.progress{
 /*transition: all 0.5s ease;  -webkit-transition: all 0.5s ease;*/
 .sel-file:hover .image-name,.sel-file:hover .image-size{display: block;}
 .hover-tick
-{   background-image: url("/sitetheory/v/1/0/bundles/sitetheorycore/images/media/hover-tick.png");
+{   background-image: url("/assets/1/0/bundles/sitetheorycore/images/media/hover-tick.png");
     background-size: 48px auto;
     bottom: 0;
     height: 48px;
@@ -224,16 +224,16 @@ span.progress{
 .hover-tick-run{animation:hovertick ease-out 1.5s 0s;}
 
 @-webkit-keyframes hovertick{
-     from {top:120%;}
-     to {top:0;}
+     from {top:120%; opacity:1;}
+     to {top:0; opacity:0;}
  }
 @-moz-keyframes hovertick{
-    from {top:120%;}
-    to {top:0;}
+    from {top:120%; opacity:1;}
+    to {top:0; opacity:0;}
 }
 @-o-keyframes hovertick{
-    from {top:120%;}
-    to {top:0;}
+    from {top:120%; opacity:1;}
+    to {top:0; opacity:0;}
 }
 button.grey_btn{
     background: #333333 none repeat scroll 0 0;
@@ -252,7 +252,7 @@ button.black_btn{
     font-weight: 600;
 }
 .cancel--btn {
-    background: rgba(0, 0, 0, 0) url("/sitetheory/v/1/0/bundles/sitetheorycore/images/media/close_red.png") repeat scroll 0 0 / 34px auto;
+    background: rgba(0, 0, 0, 0) url("/assets/1/0/bundles/sitetheorycore/images/media/close_red.png") repeat scroll 0 0 / 34px auto;
     border: medium none;
     color: #ff0000;
     cursor: pointer;
@@ -308,7 +308,7 @@ button.black_btn{
 }
 li.sel-file:hover .error-upload-msg{display:block;}
 .hover-cross
-{   background-image: url("/sitetheory/v/1/0/bundles/sitetheorycore/images/media/hover-close.png");
+{   background-image: url("/assets/1/0/bundles/sitetheorycore/images/media/hover-close.png");
     background-size: 48px auto;
     top: 120%;
     height: 48px;
@@ -320,3 +320,28 @@ li.sel-file:hover .error-upload-msg{display:block;}
     transition: all ease 0.5s;
 }
 .hover-cross-run{top:30%;}
+.selected--img
+{ border:3px solid #3d96ff;}
+
+.custom-class {
+    color:red;
+}
+.selected--list {
+    border:3px solid red;
+}
+.selected--list{opacity:0.5;}
+.add_icon,.minus_icon,.del_item{ position:relative; }
+.add_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-plus.png"), auto;}
+.minus_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
+/*.add_icon:after{content:"\f067"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}
+.minus_icon:after{content:"\f068"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}*/
+.del_item:after{content:"\f014"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:26px; top:-37px;}
+/*.add_icon i,.minus_icon i{font-size:26px; text-shadow: 1px 1px 5px #000000;}*/
+.icon_show{display:block;}
+.layer_black::after{background:rgba(0,0,0,0.5); content:""; height: 100%; left: 0; position: absolute; top: 0; width: 100%; z-index: 9;}
+.layer_black{position:relative; float:left;}
+.max-z{z-index:99;}
+.yellow-border{border:2px solid rgb(248,234,31);}
+.drag_cursor li{
+    cursor:pointer;
+}
