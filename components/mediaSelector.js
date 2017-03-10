@@ -64,6 +64,7 @@
             $scope.draggedFiles = [];
             $scope.files = [];
             $scope.draggedDivChanged = false;
+
             // done button when uploading is finished
             $scope.uploadComp = false;
 
@@ -102,6 +103,7 @@
                 $scope.uploadComp = false;
 
                 $scope.draggedDivChanged = true;
+
                 // done button when uploading is finished
                 // $scope.uploadComp = false;
                 var position = $mdPanel.newPanelPosition()
@@ -138,6 +140,7 @@
             $scope.uploadToLibrary = function (files) {
                 // update scope of files for watch
                 $scope.uploadComp = false;
+
                 // set this variable to false,when media is dragged to media library
                 $scope.draggedDivChanged = false;
 
@@ -225,28 +228,29 @@
                     for (var i = 0; i < files.length; i++) {
                         $scope.errorMsg = null;
                         (function (f) {
-                            //setTimeout(function(){ promises.push($scope.saveMedia(f)); }, 3000);
+                            // setTimeout(function(){ promises.push($scope.saveMedia(f)); }, 3000);
                             promises.push($scope.saveMedia(f));
 
                         })(files[i]);
 
                     }
-                    //show done button when all promises are completed
-                    if(promises.length > 0) {
+
+                    // show done button when all promises are completed
+                    if (promises.length > 0) {
                         $q.all(promises).then(function (data) {
 
                             $scope.uploadComp = true;
                             $scope.uploadMedia();
-                            if($scope.draggedDivChanged == true) {
+                            if ($scope.draggedDivChanged == true) {
                                 angular.forEach(data, function (dragged) {
                                     $scope.draggedFiles.push(dragged.data);
                                 });
 
                             }
-                        }) .catch(function (error) {
+                        }).catch(function (error) {
+                            $scope.uploadComp = true;
+                        });
 
-                                $scope.uploadComp = true;
-                            });
                         // $scope.uploadComp = false;
                     }
                 }
@@ -254,9 +258,9 @@
 
             // close mdPanel when all images are uploaded
             function DialogController(mdPanelRef) {
-                $scope.closeDialog = function(){
+                $scope.closeDialog = function () {
                     mdPanelRef.close();
-                }
+                };
             }
 
             // common function to save media to server
@@ -273,7 +277,8 @@
                 });
                 file.upload.then(function (response) {
                     file.result = response.data;
-                    //  $scope.draggedFiles.push(response.data);
+
+                    // $scope.draggedFiles.push(response.data);
                     // set status of upload to success
                     file.uploadStatus = true;
                     file.errorUpload = false;
@@ -281,22 +286,27 @@
                     console.log(file);
                     
                 }, function (response) {
-                    console.log('response',response);
+                    console.log('response', response);
+
                     // if file is aborted handle error messages
-                    if(response.config.data.file.upload.aborted == true) {
+                    if (response.config.data.file.upload.aborted == true) {
                         file.uploadStatus = false;
+
                         // show cross icon if upload failed
                         file.errorUpload = true;
                         file.errorMsg = 'Aborted';
                         console.log(file.errorMsg);
                     }
+
                     // if file not uploaded due to server error
-                  //else if (response.status > 0)
+                    // else if (response.status > 0)
                     else {
-                        //hide progress bar
+                        // hide progress bar
                         file.uploadStatus = false;
+
                         // show cross icon if upload failed
                         file.errorUpload = true;
+
                         // $scope.errorMsg = response.status + ': ' + response.data;
                         file.errorMsg = 'Server Error!Please try again';
                         console.log(file.errorMsg);

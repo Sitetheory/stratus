@@ -29,56 +29,73 @@
 // Define AMD, Require.js, or Contextual Scope
     (function (root, factory) {
         if (typeof define === 'function' && define.amd) {
-            define(['stratus', 'moment', 'zepto', 'angular', 'stratus.components.dateTime'], factory);
+            define(['stratus', 'moment', 'zepto', 'underscore', 'angular', 'stratus.services.model', 'stratus.components.dateTime'], factory);
         } else {
-            factory(root.Stratus, root.moment, root.$);
+            factory(root.Stratus, root.moment, root.$, root._);
         }
-    }(this, function (Stratus, moment, $) {
+    }(this, function (Stratus, moment, $, _) {
+
         // This component intends to allow publishing a versionable entity with additional advanced options
         // TODO: port over the extensive logic from the old widgets/publish.js (read all comments)
         Stratus.Components.Publish = {
             bindings: {
                 ngModel: '=',
                 elementId: '@',
-                versionEntity: '@',
+                property: '@',
+                full: '@',
                 action: '@',
                 showDateTime: '@',
                 showUnpublish: '@',
                 showVersionHistory: '@',
                 redirect: '@'
             },
-            controller: function ($scope, $element, $parse, $attrs, $log) {
-                var propertyTimePublish = 'timePublish';
+            controller: function ($scope, $element, $parse, $attrs, $log, model) {
                 var uid = _.uniqueId('publish_');
                 Stratus.Instances[uid] = $scope;
-                $scope.model = $scope.$parent.model;
-                $scope.versionEntity = $attrs.versionEntity || null;
+                Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/publish' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
-                // FIXME: Temporarily Disable this Widget during repairs
-                return true;
-
-                $log.log('model:', $scope.model);
-
-                // Allow publish to work on versionable entities or the actual version entity directly
-                if ($scope.versionEntity && $scope.model.has($scope.versionEntity) && $scope.model.get($scope.versionEntity).has(propertyTimePublish)) {
-                    $scope.version = $scope.model.get($scope.versionEntity);
-                } else if ($scope.model.has(propertyTimePublish)) {
-                    $scope.version = $scope.model;
-                } else {
-                    console.warn('This entity is either not versionable or a valid data-version-entity was not set');
-                    return false;
-                }
-
-                $log.log('version', $scope.version);
-
-                // Options
+                // Configuration
                 $scope.elementId = $attrs.elementId || uid;
-                $scope.action = $attrs.action == 'unpublish' ? 'unpublish' : 'publish';
+                $scope.property = $attrs.property || null;
+                $scope.full = $attrs.full || true;
+                if (_.isString($scope.full)) {
+                    $scope.full = _.hydrate($scope.full);
+                }
+                $scope.action = $attrs.action === 'unpublish' ? 'unpublish' : 'publish';
                 $scope.showDateTime = $attrs.showDateTime || false;
                 $scope.showUnpublish = $attrs.showUnpublish || false;
                 $scope.showVersionHistory = $attrs.showVersionHistory || false;
+                $scope.redirect = $attrs.redirect || false;
+
+                // Settings
+                $scope.propertyTimePublish = $scope.property ? $scope.property + '.timePublish' : null;
                 $scope.showMore = !!($scope.showDateTime || $scope.showUnpublish || $scope.showVersionHistory);
                 $scope.timePublish = null;
+
+                // Model Handling
+                $scope.model = null;
+                $scope.$watch('$ctrl.ngModel', function (data) {
+                    if (data instanceof model && data !== $scope.model) {
+                        $scope.model = data;
+                    }
+                });
+
+                // Methods
+                $scope.setTimePublish = function (time) {
+                    // $log.log('timePublish:', time, $scope.model);
+                    if (!$scope.model || !$scope.model.get($scope.propertyTimePublish)) return false;
+                    /*
+                    $scope.model.set($scope.propertyTimePublish, time || 'API::NOW');
+                    $scope.model.save();
+                    */
+                };
+
+                // Watchers
+                $scope.$watch('timePublish', function (data) {
+                    /* $scope.setTimePublish(data); */
+                });
+
+                return true;
 
                 var $dateTimeComponent = null;
                 if ($scope.showDateTime) {
@@ -113,48 +130,7 @@
                         }
                     }
                 }
-
-                // TODO: add a redirect if requested
-                $scope.redirect = $attrs.redirect || false;
-
-                // Methods
-                $scope.setTimePublish = function (time) {
-                    $log.log('set time publish', time, $scope.version);
-                    if (!$scope.version) return false;
-                    time = time || 'API::NOW';
-                    $scope.version.timePublish = time;
-                    $scope.model.save();
-                };
-
-                // Watchers
-                $scope.$watch('timePublish', $scope.setTimePublish(value));
             },
-            template: '<div ng-if="model.has(versionEntity)" class="customFontPrimary btn-group">\
-                <md-button aria-label="Publish" id="{{ elementId }}" class="btn btnPublish btnPublishNow"\
-                    ng-click="setTimePublish()"\
-                    ng-class="{published: version.isPublished == 1, unpublished: version.isPublished != 1}">\
-                    <div class="btnGradientLight"></div>\
-                    <md-icon class="publishIcon" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/publish.svg"></md-icon>\
-                    <span class="publishText">Publish</span>\
-                </md-button>\
-                <md-menu ng-if="showMore">\
-                    <div id="dropdownBtn-{{ elementId }}" class="btn btnPublish btnPublishMore">\
-                        <div class="btnGradientLight"></div>\
-                        <span class="caret"></span>\
-                    </div>\
-                    <md-menu-content class="btnPublishDropdown" aria-labelledby="dropdownBtn-{{ elementId }}">\
-                        <!-- TODO: after converting to dateTime component make sure these options are not needed anymore-->\
-                        <stratus-date-time ng-if="showDateTime" \
-                        ng-model="timePublish"\
-                        data-usecurrent="false"\
-                        data-defaultTimestamp="{{ timePublish || null }}" \
-                        data-style="widget"></stratus-date-time>\
-                        <div ng-if="showUnpublish">\
-                            <md-button class="action btnUnpublish" ng-click="setUnpublish()">Unpublish this Version</md-button>\
-                        </div>\
-                        <a ng-if="showRevisionHistory && version" class="btnVersionHistory" href="/Content/Versions/Edit?id={{ model.data.id }}&versionId={{ version.id }}">Revision History</a>\
-                    </md-menu-content>\
-                </md-menu>\
-            </div>'
+            templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/publish' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
         };
     }));

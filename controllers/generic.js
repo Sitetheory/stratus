@@ -59,6 +59,17 @@
         };
         $scope.$log = $log;
 
+        // Type Checks
+        $scope.isArray = angular.isArray;
+        $scope.isDate = angular.isDate;
+        $scope.isDefined = angular.isDefined;
+        $scope.isElement = angular.isElement;
+        $scope.isFunction = angular.isFunction;
+        $scope.isNumber = angular.isNumber;
+        $scope.isObject = angular.isObject;
+        $scope.isString = angular.isString;
+        $scope.isUndefined = angular.isUndefined;
+
         // Handle Selected
         if ($scope.collection) {
             var selected = {

@@ -252,6 +252,7 @@
                  */
                 this.toggle = function (attribute, item) {
                     var request = attribute.split('[].');
+                    console.log('toggle:', attribute, item);
                     var target = that.get((request.length > 1) ? request[0] : attribute);
                     if (typeof item === 'undefined') {
                         that.set(attribute, !target);
@@ -268,6 +269,7 @@
                             hydrate.id = item;
                         }
                         /**/
+                        console.log('target:', target);
                         if (!that.exists(attribute, item)) {
                             target.push(item);
                         } else {
@@ -280,6 +282,9 @@
                                 }
                             });
                         }
+                    } else if (angular.isObject(target)) {
+                        // TODO: Continue down this rabbit hole
+                        console.log('model:', attribute, item);
                     }
                     return that.get(attribute);
                 };
@@ -326,6 +331,8 @@
                             return typeof attribute.find(function (element) {
                                     return element === item || (angular.isObject(element) && element.id && element.id === item);
                                 }) !== 'undefined';
+                        } else if (angular.isObject(attribute)) {
+                            return attribute === item || (attribute.id && attribute.id === item);
                         }
                     }
                     return false;

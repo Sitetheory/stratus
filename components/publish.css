@@ -1,5 +1,5 @@
 /* TODO: make publish svg a sprite and reset position (not rotation like it currently does for testing only) */
-stratus-publish .btn.btnPublish {
+.btn.btnPublish {
   padding: 14px 20px 0 20px !important;
   width: inherit;
   height: 55px;
@@ -24,37 +24,43 @@ stratus-publish .btn.btnPublish {
   background: #FF7550;
 }
 /* Published */
-.btn.published.btnPublish svg .actionButton {
+.published.btnPublish svg .actionButton {
   transform: translateX(-25%);
   -webkit-transform: translateX(-25%);
 }
-.btn.published.btnPublish {
+.published.md-button.btnPublish,
+.published.btnPublish {
   background: #56995E;
 }
-.btn.published.btnPublish:hover {
+.published.md-button.btnPublish:not([disabled]):hover,
+.published.btnPublish:not([disabled]):hover {
   background: #7CB27D;
 }
 /* Unpublished */
-.btn.unpublished.btnPublish {
+.unpublished.md-button.btnPublish,
+.unpublished.btnPublish {
   background: #D96236;
 }
-.btn.unpublished.btnPublish:hover {
+.unpublished.md-button.btnPublish:not([disabled]):hover,
+.unpublished.btnPublish:not([disabled]):hover {
   background: #FF7B55;
 }
 /* Delayed */
-.btn.delayed.btnPublish {
+.delayed.md-button.btnPublish,
+.delayed.btnPublish {
   background: #734564;
 }
-.btn.delayed.btnPublish:hover {
+.delayed.md-button.btnPublish:not([disabled]):hover,
+.delayed.btnPublish:not([disabled]):hover {
   background: #A47594;
 }
-.btn.delayed.btnPublish svg .actionButton {
+.delayed.btnPublish svg .actionButton {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
-.btn.btnPublish:hover .publishIcon svg,
-.btn.published.btnPublish:hover .publishIcon svg,
-.btn.delayed.btnPublish:hover .publishIcon svg {
+.btnPublish:hover .publishIcon svg,
+.published.btnPublish:hover .publishIcon svg,
+.delayed.btnPublish:hover .publishIcon svg {
   animation: btnIconGrow 0.3s ease-out both;
   -webkit-animation: btnIconGrow 0.3s ease-out both;
 }
