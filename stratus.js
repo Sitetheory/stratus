@@ -2085,6 +2085,10 @@
                 }
             }
         });
+
+        // Ensure Modules enabled are in the requirements
+        // TODO: store the require config in a stratus key: requirejs.s.contexts._.config
+        requirements.push('angular-material');
         requirements = _.uniq(requirements);
         window.requirements = requirements;
 
