@@ -141,6 +141,7 @@
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
             context: null,
             contextId: null,
+            contextMasterSiteId: null,
             siteId: null,
             masterSiteId: null,
             language: navigator.language,
