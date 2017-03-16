@@ -139,6 +139,10 @@
         Environment: new Backbone.Model({
             ip: null,
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
+            context: null,
+            contextId: null,
+            siteId: null,
+            masterSiteId: null,
             language: navigator.language,
             timezone: null,
             trackLocation: 0,
