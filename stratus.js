@@ -177,6 +177,7 @@
                     '[stratus-base]',
                     '[stratus-froala]',
                     '[stratus-sortable]',
+                    '[stratus-src]',
                     '[stratus-trigger]'
                 ],
                 namespace: 'stratus.directives.'
@@ -2144,7 +2145,13 @@
             });
             require(requirements, function () {
                 // App Reference
-                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules));
+                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
+                    $sceDelegateProvider.resourceUrlWhitelist([
+                        'self',
+                        'http://*.sitetheory.io/**',
+                        'https://*.sitetheory.io/**'
+                    ]);
+                }]);
 
                 // TODO: Make Dynamic
                 // Froala Configuration
