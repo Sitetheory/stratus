@@ -33,6 +33,7 @@
     // This filter truncates a sentence
     Stratus.Filters.Truncate = function () {
         return function (input, options) {
+            if (!angular.isString(input)) return input;
             this.limit = null;
             this.suffix = null;
             if (angular.isObject(options)) angular.extend(this, options);

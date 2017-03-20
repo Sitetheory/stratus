@@ -139,6 +139,11 @@
         Environment: new Backbone.Model({
             ip: null,
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
+            context: null,
+            contextId: null,
+            contextMasterSiteId: null,
+            siteId: null,
+            masterSiteId: null,
             language: navigator.language,
             timezone: null,
             trackLocation: 0,
@@ -172,6 +177,7 @@
                     '[stratus-base]',
                     '[stratus-froala]',
                     '[stratus-sortable]',
+                    '[stratus-src]',
                     '[stratus-trigger]'
                 ],
                 namespace: 'stratus.directives.'
@@ -2139,7 +2145,13 @@
             });
             require(requirements, function () {
                 // App Reference
-                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules));
+                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
+                    $sceDelegateProvider.resourceUrlWhitelist([
+                        'self',
+                        'http://*.sitetheory.io/**',
+                        'https://*.sitetheory.io/**'
+                    ]);
+                }]);
 
                 // TODO: Make Dynamic
                 // Froala Configuration

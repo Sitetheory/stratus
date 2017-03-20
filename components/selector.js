@@ -63,6 +63,6 @@
                 }
             });
         },
-        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/asset' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/selector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
 }));
