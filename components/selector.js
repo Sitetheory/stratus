@@ -59,7 +59,6 @@
             $scope.$watch('$ctrl.ngModel', function (data) {
                 if (data instanceof model && data !== $scope.model) {
                     $scope.model = data;
-                    $log.log('ngModel:', data);
                 }
             });
         },

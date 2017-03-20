@@ -330,9 +330,10 @@ li.sel-file:hover .error-upload-msg{display:block;}
     border:3px solid red;
 }
 .selected--list{opacity:0.5;}
-.add_icon,.minus_icon,.del_item{ position:relative; }
+.add_icon,.minus_icon,.del_item,.trash_icon{ position:relative; }
 .add_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-plus.png"), auto;}
 .minus_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
+.trash_icon{cusror: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
 /*.add_icon:after{content:"\f067"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}
 .minus_icon:after{content:"\f068"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}*/
 .del_item:after{content:"\f014"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:26px; top:-37px;}

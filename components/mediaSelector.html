@@ -1,27 +1,42 @@
 <div class="container">
+
+ <!--   <div id="draggable">
+        <span>Drag</span>
+    </div>-->
+
+   <!-- <div id="droppable">
+        <span>Drop here</span>
+    </div>-->
+
     <div class="gallery-box">
-        <div class="gl-header">
-            <h3>MEDIA <span><i class="fa fa-question" aria-hidden="true"></i></span></h3>
-        </div><!-- Gallery header Ends -->
-        <div ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
-              ngf-drop ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"   ngf-drag-over-class="yellow-border">
+        <!-- Gallery header Ends -->
+        <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
+              ngf-drop ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover" ngf-drag="dragSelected($isDragging, $class, $event)">
             <!-- show only if no files are dragged-->
-            <a ng-if="!draggedFiles.length"  ngf-drop ngf-multiple="true" ngf-before-model-change="beforeChange($files,$event)"
+         <!--   <a ng-if="!draggedFiles.length"  ngf-drop ngf-multiple="true" ngf-before-model-change="beforeChange($files,$event)"
                ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"
-               ngf-drag-over-class="dragover" href="#" ng-click="openLibrary()">
+               ngf-drag-over-class="dragover" href="#" ng-click="openLibrary()">-->
+
+            <a ng-if="!draggedFiles.length"  href="#" ng-click="openLibrary()">
+
                 <i ng-class="showLibraryClass" aria-hidden="true"></i> Open library to
                 select images or drag, drop new images here</a>
 
-            <ul ng-if="draggedFiles.length"  >
-                <li ng-repeat="df in draggedFiles"  ngf-drag="drag($isDragging, $class, $event, df)" draggable="true">
-                    <div class="file-upload-drag" ng-if="df.mime == 'application/x-unknown'"><i class="fa fa-file file-icon-drag"></i></div>
-                    <div ng-if="df.mime != 'application/x-unknown'" class="gl-img-container">
+      <!-- <div id="draggable">dfsdfsdfsdf</div>-->
 
-                        <a href="#">
+            <ul  ng-if="draggedFiles.length">
 
-                            <img  ngf-src="df.url"></a>
+
+               <!-- <li id="{{df.id}}" ng-class="{'trash_icon':trashIconStyle}" ng-repeat="df in draggedFiles" ngf-drop   ngf-drag="dragSelected($isDragging, $class, $event, df)">-->
+                <li ng-class="{'ui-draggable': true, 'draggables':true}" ng-repeat="df in draggedFiles">
+                    <div class="file-upload-drag" ng-if="df.mime == 'application/x-unknown'">
+                        <i class="fa fa-file file-icon-drag"></i>
+                    </div>
+                    <div  ng-if="df.mime != 'application/x-unknown'" class="gl-img-container">
+                        <a  href="#">
+                            <img id="{{df.id}}" ngf-src="df.url">
+                        </a>
                     </div><!-- Gallery Image Container Ends -->
-
                     <div class="image-info-outer">
                         <div class="img-info">
                             <div class="img-info-left">
@@ -56,8 +71,12 @@
                 <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                     <li  ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)" draggable="true">
                         <div class="gl-img-container" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
+                           <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
+                               ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">-->
+
                             <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
-                               ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
+                               stratus-sglclick="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
+
                                 <img  ng-src="{{media.data.url}} "></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
@@ -97,7 +116,7 @@
                         <div class="gl-img-container" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                             <a href="#" ng-mouseleave="iconStyles = ''" ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyles]"
                                ng-mouseenter="iconStyles=media.data.selectedClass"
-                               ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
+                               stratus-sglclick="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
                                 <img draggable="true" ng-src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
@@ -187,4 +206,25 @@
             </div>
         </div>
     </div>
+</script>
+<script type="text/javascript">
+
+    $(function() {
+        $("#draggable").draggable({
+            start: function(event,ui){
+                $(this).css("cursor", "no-drop");
+            },
+            stop: function(event,ui){
+                $(this).css("cursor", "initial");
+            }
+        });
+        $("#droppable").droppable({
+            over: function(event, ui) {
+                ui.draggable.css("cursor", "copy");
+            },
+            out: function(event, ui) {
+                ui.draggable.css("cursor", "no-drop");
+            }
+        });
+    });
 </script>
