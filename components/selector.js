@@ -1,4 +1,4 @@
-//     Stratus.Components.Base.js 1.0
+//     Stratus.Components.Selector.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,8 +15,8 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Base Component
-// ----------------------
+// Stratus Selector Component
+// --------------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
@@ -37,7 +37,7 @@
         },
         controller: function ($scope, $attrs, $log, registry, model) {
             // Initialize
-            this.uid = _.uniqueId('asset_');
+            this.uid = _.uniqueId('selector_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
 
