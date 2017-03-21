@@ -121,6 +121,7 @@
         */
 
         // Notifications Service
+        /*
         $scope.showActionToast = function (message) {
             var toast = $mdToast.simple()
                 .textContent(message)
@@ -134,6 +135,7 @@
                 }
             }, $scope.error);
         };
+        */
 
         // Store Instance
         Stratus.Instances[_.uniqueId('controller_')] = $scope;

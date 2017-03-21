@@ -1,0 +1,16 @@
+<!-- rendered items -->
+<!-- FIXME: ng-transclude="render" -->
+<span ng-show="!edit" ng-click="edit=true" ng-mouseover="edit=true">{{ model }}</span>
+
+<!-- simple editor -->
+<span ng-show="edit" ng-mouseleave="cancel()">
+    <input type="text" ng-model="model">
+    <md-button class="md-raised" ng-click="accept()">
+        <span class="fa fa-check"></span>
+    </md-button>
+    <!--
+    <md-button class="md-raised" ng-click="cancel()">
+        <span class="fa fa-times"></span>
+    </md-button>
+    -->
+</span>
