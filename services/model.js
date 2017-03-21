@@ -291,6 +291,7 @@
                                 }
                             });
                         }
+                        console.log('changed:', target);
                     } else if (angular.isObject(target)) {
                         // TODO: Continue down this rabbit hole
                         console.log('model:', attribute, item);
