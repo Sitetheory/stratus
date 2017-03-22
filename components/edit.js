@@ -28,11 +28,9 @@
 }(this, function (Stratus, _) {
     // This component intends to allow editing of various attributes depending on context.
     Stratus.Components.Edit = {
-        /* FIXME: This never renders correctly *
-         transclude: {
-         render: 'stratusRender'
-         },
-         /* */
+        transclude: {
+            render: 'stratusRender'
+        },
         bindings: {
             elementId: '@',
             ngModel: '='
@@ -67,11 +65,20 @@
             };
 
             // Trigger on Enter
-            /* *
-            $element.bind("keydown keypress", function (event) {
-                if (event.which === Stratus.Key.Enter) $scope.accept();
+            $element.bind('keydown keypress', function (event) {
+                switch (event.which) {
+                    case Stratus.Key.Enter:
+                        $scope.$apply(function () {
+                            $scope.accept();
+                        });
+                        break;
+                    case Stratus.Key.Escape:
+                        $scope.$apply(function () {
+                            $scope.cancel();
+                        });
+                        break;
+                }
             });
-            /* */
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
