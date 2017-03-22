@@ -196,14 +196,16 @@
 
                 /**
                  * @param target
+                 * @param options
                  */
-                this.add = function (target) {
+                this.add = function (target, options) {
+                    if (!options || typeof options != 'object') options = {};
                     if (angular.isObject(target)) {
-                        that.models.push(
-                            (target instanceof model) ? target : new model({
-                                    collection: that
-                                }, target)
-                        );
+                        target = (target instanceof model) ? target : new model({
+                            collection: that
+                        }, target) ;
+                        that.models.push(target);
+                        if (options.save) target.save();
                     }
                 };
 
