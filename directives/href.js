@@ -1,4 +1,4 @@
-//     Stratus.Directives.Src.js 1.0
+//     Stratus.Directives.Href.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,7 +15,7 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Src Directive
+// Stratus HREF Directive
 // ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
@@ -27,25 +27,28 @@
     }
 }(this, function (Stratus, _) {
     // This directive intends to handle binding of a dynamic variable to
-    Stratus.Directives.Src = function ($parse, $log) {
+    Stratus.Directives.Href = function ($parse, $location, $log) {
         return {
             restrict: 'A',
             link: function ($scope, $element, $attrs) {
-                Stratus.Instances[_.uniqueId('src_')] = $scope;
-                if ($attrs.stratusSrc) {
-                    var src = $parse($attrs.stratusSrc);
+                Stratus.Instances[_.uniqueId('href_')] = $scope;
+                $scope.href = null;
+                if ($attrs.stratusHref) {
+                    var href = $parse($attrs.stratusHref);
                     $scope.$watch('$parent', function (newValue) {
                         if (typeof newValue !== 'undefined') {
-                            $log.log('stratus-src:', src($scope.$parent));
+                            $scope.href = href($scope.$parent);
+                            $log.log('stratus-href:', href($scope.href));
                         }
                     });
+                    $element.bind('click', function () {
+                        $scope.$apply(function () {
+                            if ($scope.href) {
+                                $location.path($scope.href);
+                            }
+                        });
+                    });
                 }
-                $log.log('register:', $element);
-                Stratus.RegisterGroup.add('OnScroll', {
-                    method: Stratus.Internals.LoadImage,
-                    el: $element,
-                    spy: $element.data('spy') ? $($element.data('spy')) : $element
-                });
             }
         };
     };

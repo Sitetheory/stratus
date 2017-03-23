@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model'], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -29,13 +29,15 @@
     // This component intends to allow editing of various attributes depending on context.
     Stratus.Components.Edit = {
         transclude: {
-            render: 'stratusRender'
+            view: '?stratusView',
+            input: '?stratusInput'
         },
         bindings: {
             elementId: '@',
-            ngModel: '='
+            ngModel: '=',
+            property: '@'
         },
-        controller: function ($scope, $element, $attrs) {
+        controller: function ($scope, $element, $attrs, model) {
             // Initialize
             this.uid = _.uniqueId('edit_');
             Stratus.Instances[this.uid] = $scope;
@@ -43,28 +45,36 @@
 
             // Settings
             $scope.edit = false;
+            $scope.property = $attrs.property || null;
 
             // Data Connectivity
             $scope.model = null;
-            $scope.$watch('$ctrl.ngModel', function (data) {
-                if (!_.isEqual(data, $scope.model)) {
-                    $scope.model = data;
-                }
-            });
-
-            // Save Model
+            $scope.value = null;
+            if ($scope.property) {
+                $scope.$watch('$ctrl.ngModel', function (data) {
+                    if (data instanceof model && !_.isEqual(data, $scope.model)) {
+                        $scope.model = data;
+                    }
+                });
+                $scope.$watch('model.data.' + $scope.property, function (data) {
+                    $scope.value = data;
+                });
+            }
             $scope.accept = function () {
-                $scope.$ctrl.ngModel = $scope.model;
+                if ($scope.model instanceof model && $scope.property) {
+                    $scope.model.set($scope.property, $scope.value);
+                    $scope.model.save();
+                }
                 $scope.edit = false;
             };
-
-            // Cancel Edit
             $scope.cancel = function () {
-                $scope.model = $scope.$ctrl.ngModel;
+                if ($scope.model instanceof model && $scope.property) {
+                    $scope.value = $scope.model.get($scope.property);
+                }
                 $scope.edit = false;
             };
 
-            // Trigger on Enter
+            // Key Triggers
             $element.bind('keydown keypress', function (event) {
                 switch (event.which) {
                     case Stratus.Key.Enter:
