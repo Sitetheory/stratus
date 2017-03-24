@@ -175,6 +175,8 @@
             directives: { /* TODO: Allow the following directives to run on the config the same way the components do. */
                 selector: [
                     '[stratus-base]',
+                    '[stratus-drag]',
+                    '[stratus-drop]',
                     '[stratus-froala]',
                     '[stratus-sortable]',
                     '[stratus-src]',
