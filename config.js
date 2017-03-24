@@ -1,4 +1,4 @@
-//     Config.js 1.0
+//     Boot.Config.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //

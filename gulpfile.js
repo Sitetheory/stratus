@@ -27,6 +27,7 @@ var nullify = function (proto) {
 var location = {
     mangle: {
         core: [
+            'boot/boot.js',
             'stratus.js',
             'normalizers/*.js',
             'models/*.js',

@@ -74,7 +74,7 @@
                 var that = this;
 
                 // Watch for Data Changes
-                $rootScope.$watch(function() {
+                $rootScope.$watch(function () {
                     return that.data;
                 }, function (newValue, oldValue) {
                     if (that.completed) {

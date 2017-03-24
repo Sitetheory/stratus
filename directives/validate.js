@@ -41,8 +41,6 @@
 //    <div ng-message="validateAny">Ya you really messed up.</div>
 // </div>
 
-
-
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -52,7 +50,7 @@
     }
 }(this, function (Stratus, _) {
 
-    Stratus.Directives.Validate = function($parse) {
+    Stratus.Directives.Validate = function ($parse) {
         return {
             restrict: 'A',
             require: 'ngModel',
@@ -61,7 +59,7 @@
                 validateInvalid: '=validateInvalid',
                 validateComparison: '=validateComparison'
             },
-            link: function($scope, $element, $attrs, $ctrl) {
+            link: function ($scope, $element, $attrs, $ctrl) {
                 Stratus.Instances[_.uniqueId('validate_')] = $scope;
 
                 // Check Allowed Values
@@ -77,13 +75,13 @@
                     }
 
                     // Check valid and invalid values
-                    if($scope.validateInvalid) {
+                    if ($scope.validateInvalid) {
                         $scope.checks.validateInvalid = !_.contains(_.isArray($scope.validateInvalid) ? $scope.validateInvalid : [$scope.validateInvalid], ngModelValue);
-                    } else if($scope.validateValid) {
+                    } else if ($scope.validateValid) {
                         $scope.checks.validateValid = _.contains(_.isArray($scope.validateValid) ? $scope.validateValid : [$scope.validateValid], ngModelValue);
                     }
 
-                    _.each($scope.checks, function(el, key) {
+                    _.each($scope.checks, function (el, key) {
                         $ctrl.$setValidity(key, el);
                     });
                     $ctrl.$setValidity('validateAny', _.every($scope.checks));
@@ -99,5 +97,4 @@
     };
 
 }));
-
 

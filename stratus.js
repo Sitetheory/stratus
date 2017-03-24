@@ -172,18 +172,9 @@
             components: {
                 namespace: 'stratus.components.'
             },
-            directives: { /* TODO: Allow the following directives to run on the config the same way the components do. */
-                selector: [
-                    '[stratus-base]',
-                    '[stratus-drag]',
-                    '[stratus-drop]',
-                    '[stratus-froala]',
-                    '[stratus-sortable]',
-                    '[stratus-src]',
-                    '[stratus-trigger]',
-                    '[stratus-validator]'
-                ],
-                namespace: 'stratus.directives.'
+            directives: {
+                namespace: 'stratus.directives.',
+                type: 'attribute'
             },
             flex: {
                 selector: '[flex]',
@@ -2046,10 +2037,11 @@
 
         _.forEach(Stratus.Roster, function (element, key) {
             if (typeof element === 'object' && element) {
-                if (_.isUndefined(element.selector)) {
+                if (_.isUndefined(element.selector) && element.namespace) {
                     element.selector = _.filter(
                         _.map(requirejs.s.contexts._.config.paths, function (path, key) {
-                            return _.startsWith(key, 'stratus.components') ? _.camelToHyphen(key.replace('.components.', '-')) : null;
+                            // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
+                            return _.startsWith(key, element.namespace) ? (element.type == 'attribute' ? '[' : '') + _.camelToHyphen(key.replace(element.namespace, 'stratus-')) + (element.type == 'attribute' ? ']' : '') : null;
                         })
                     );
                 }
