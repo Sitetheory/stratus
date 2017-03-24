@@ -32,7 +32,7 @@
 
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Services.Model = ['$provide', function ($provide) {
-        $provide.factory('model', function ($q, $http) {
+        $provide.factory('model', function ($q, $http, $rootScope) {
             return function (options, attributes) {
 
                 // TODO: Add Auto-Saving
@@ -72,6 +72,15 @@
 
                 // Contextual Hoisting
                 var that = this;
+
+                // Watch for Data Changes
+                $rootScope.$watch(function() {
+                    return that.data;
+                }, function (newValue, oldValue) {
+                    if (that.completed) {
+                        $log.log(newValue, oldValue);
+                    }
+                }, true);
 
                 /**
                  * @returns {*}
