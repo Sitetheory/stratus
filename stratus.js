@@ -180,7 +180,8 @@
                     '[stratus-froala]',
                     '[stratus-sortable]',
                     '[stratus-src]',
-                    '[stratus-trigger]'
+                    '[stratus-trigger]',
+                    '[stratus-validator]'
                 ],
                 namespace: 'stratus.directives.'
             },
