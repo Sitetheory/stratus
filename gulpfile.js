@@ -27,7 +27,6 @@ var nullify = function (proto) {
 var location = {
     mangle: {
         core: [
-            'boot/boot.js',
             'stratus.js',
             'normalizers/*.js',
             'models/*.js',
@@ -48,7 +47,7 @@ var location = {
     },
     preserve: {
         core: [
-            'config.js',
+            'boot/*.js',
             'controllers/*.js',
             'components/*.js',
             'directives/*.js',
@@ -56,7 +55,7 @@ var location = {
             'services/*.js'
         ],
         min: [
-            'config.min.js',
+            'boot/*.min.js',
             'controllers/*.min.js',
             'components/*.min.js',
             'directives/*.min.js',
