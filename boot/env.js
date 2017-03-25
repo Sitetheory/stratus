@@ -29,5 +29,6 @@ boot.merge = function (destination, source) {
 };
 boot.config = function (configuration) {
     if (typeof configuration !== 'object') return false;
-    return boot.merge(boot.configuration, (!configuration.paths) ? { paths: configuration } : configuration);
+    boot.merge(boot.configuration, (!configuration.paths) ? { paths: configuration } : configuration);
+    return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration;
 };
