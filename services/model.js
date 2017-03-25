@@ -78,7 +78,7 @@
                     return that.data;
                 }, function (newValue, oldValue) {
                     if (that.completed) {
-                        $log.log(newValue, oldValue);
+                        console.log(newValue, oldValue);
                     }
                 }, true);
 

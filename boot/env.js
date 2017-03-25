@@ -1,4 +1,4 @@
-// Initializer
+// Environment
 // -----------
 
 var boot = {
@@ -18,23 +18,16 @@ var boot = {
 boot.suffix = (boot.dev) ? '' : '.min';
 boot.dashSuffix = (boot.dev) ? '' : '-min';
 boot.directory = (boot.dev) ? '' : 'min/';
-boot.config = function (configuration) {
-    console.log('configure:', boot.configuration, configuration);
-};
-
-// Examples
-// --------
-
-/* *
-boot.config({
-    shim: {
-        //
-    },
-    paths: {
-        foo: 'bar.js'
+boot.merge = function (destination, source) {
+    if (destination === null || source === null) return destination;
+    for (var key in source) {
+        if (source.hasOwnProperty(key)) {
+            destination[key] = (typeof destination[key] === 'object') ? boot.merge(destination[key], source[key]) : source[key];
+        }
     }
-});
-boot.config({
-    foo: 'bar.js'
-});
-/* */
+    return destination;
+};
+boot.config = function (configuration) {
+    if (typeof configuration !== 'object') return false;
+    return boot.merge(boot.configuration, (!configuration.paths) ? { paths: configuration } : configuration);
+};
