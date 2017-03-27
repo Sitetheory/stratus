@@ -10,11 +10,11 @@ boot.config({
     urlArgs: 'v=' + boot.cacheTime,
 
     // Version Location (Disabled During Beta Testing)
-    baseUrl: ((boot.dev || boot.local) ? '/' : boot.cdn) + relative,
+    baseUrl: ((boot.dev || boot.local) ? '/' : boot.cdn) + boot.relative,
 
     // Dependencies
     shim: {
-        /* Angular */
+        /* Angular Cire */
         angular: {
             exports: 'angular'
         },
@@ -28,8 +28,12 @@ boot.config({
                 'angular-messages'
             ]
         },
-        'angular-file-upload': { deps: ['angular'] },
         'angular-sanitize': { deps: ['angular'] },
+
+        /* Angular Modules */
+        'angular-countUp': { deps: ['angular', 'countUp'] },
+        'angular-file-upload': { deps: ['angular'] },
+        'angular-scrollSpy': { deps: ['angular'] },
 
         // Charts
         'chart.js': {
@@ -47,12 +51,38 @@ boot.config({
         watch: { deps: ['zepto'] },
         masonry: { deps: ['zepto'] },
 
-        /* Angular */
-        'angular-countUp': { deps: ['angular', 'countUp'] },
-        'angular-scrollSpy': { deps: ['angular'] },
-
-        /* Bootstrap */
-        'bootstrap-toggle': { deps: ['bootstrap'] },
+        /* Froala */
+        'froala-align': { deps: ['froala'] },
+        'froala-char-counter': { deps: ['froala'] },
+        'froala-code-beautifier': { deps: ['froala'] },
+        'froala-code-view': { deps: ['froala'] },
+        'froala-colors': { deps: ['froala'] },
+        'froala-draggable': { deps: ['froala'] },
+        'froala-emoticons': { deps: ['froala'] },
+        'froala-entities': { deps: ['froala'] },
+        'froala-file': { deps: ['froala'] },
+        'froala-font-family': { deps: ['froala'] },
+        'froala-font-size': { deps: ['froala'] },
+        'froala-forms': { deps: ['froala'] },
+        'froala-fullscreen': { deps: ['froala'] },
+        'froala-help': { deps: ['froala'] },
+        'froala-image': { deps: ['froala'] },
+        'froala-image-manager': { deps: ['froala', 'froala-image'] },
+        'froala-inline-style': { deps: ['froala'] },
+        'froala-line-breaker': { deps: ['froala'] },
+        'froala-link': { deps: ['froala'] },
+        'froala-lists': { deps: ['froala'] },
+        'froala-paragraph-format': { deps: ['froala'] },
+        'froala-paragraph-style': { deps: ['froala'] },
+        'froala-quick-insert': { deps: ['froala'] },
+        'froala-quote': { deps: ['froala'] },
+        'froala-save': { deps: ['froala'] },
+        'froala-special-characters': { deps: ['froala'] },
+        'froala-table': { deps: ['froala'] },
+        'froala-url': { deps: ['froala'] },
+        'froala-video': { deps: ['froala'] },
+        'froala-word-paste': { deps: ['froala'] },
+        'angular-froala': { deps: ['angular', 'froala'] },
 
         /* Calendar */
         fullcalendar: {
@@ -61,17 +91,6 @@ boot.config({
                 'moment'
             ]
         }
-    },
-
-    // Internal Mapping
-    map: {
-        // Internal Injection should only be enabled if there
-        // is more than one version of jQuery present in this
-        // instance of Require.js.
-        /**
-         '*': { 'jquery': 'jquery-private' },
-         'jquery-private': { 'jquery': 'jquery' }
-         /**/
     },
 
     // Package Directories
@@ -277,12 +296,10 @@ boot.config({
         selectize: boot.bundle + 'stratus/bower_components/selectize/dist/js/standalone/selectize' + boot.suffix,
         watch: '//cdnjs.cloudflare.com/ajax/libs/watch/2.0.4/jquery.watch' + boot.suffix,
 
-        /* Bootstrap */
-        'bootstrap-toggle': boot.bundle + 'stratus/bower_components/bootstrap-toggle/js/bootstrap-toggle' + boot.suffix,
-
         /* Tether */
         tether: boot.bundle + 'stratus/bower_components/tether/dist/js/tether' + boot.suffix,
         'tether-drop': boot.bundle + 'stratus/bower_components/tether-drop/dist/js/drop' + boot.suffix,
+        'tether-shepherd': boot.bundle + 'stratus/bower_components/tether-shepherd/dist/js/shepherd' + boot.suffix,
         'tether-tooltip': boot.bundle + 'stratus/bower_components/tether-tooltip/dist/js/tooltip' + boot.suffix
     }
 });

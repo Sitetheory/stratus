@@ -65,22 +65,33 @@
                     this.urlRoot += '/' + _.ucfirst(this.target);
                 }
 
-                // Internals
+                // XHR Flags
                 this.pending = false;
                 this.error = false;
                 this.completed = false;
+
+                // Auto-Saving Flags
+                this.changing = false;
+                this.changed = 0;
+                this.saving = false;
+                this.watching = false;
 
                 // Contextual Hoisting
                 var that = this;
 
                 // Watch for Data Changes
-                $rootScope.$watch(function () {
-                    return that.data;
-                }, function (newValue, oldValue) {
-                    if (that.completed) {
-                        console.log(newValue, oldValue);
-                    }
-                }, true);
+                this.watcher = function () {
+                    if (that.watching) return true;
+                    that.watching = true;
+                    $rootScope.$watch(function () {
+                        return that.data;
+                    }, function (newData, oldData) {
+                        if (!_.isEqual(newData, oldData)) {
+                            that.changing = true;
+                            that.changed = 1;
+                        }
+                    }, true);
+                };
 
                 /**
                  * @returns {*}
@@ -138,20 +149,26 @@
                         }
                         var request = $http(prototype);
                         request.then(function (response) {
-                            if (response.status == '200') {
+                            if (response.status === 200) {
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
-                                that.data = response.data.payload || response.data;
+                                that.data = angular.isObject(response.data) ? response.data.payload || response.data : {};
 
-                                // Internals
+                                // XHR Flags
                                 that.pending = false;
                                 that.completed = true;
+
+                                // Auto-Saving Settings
+                                that.saving = false;
+
+                                // Begin Watching
+                                that.watcher();
 
                                 // Promise
                                 resolve(that.data);
                             } else {
-                                // Internals
+                                // XHR Flags
                                 that.pending = false;
                                 that.error = true;
 
@@ -178,6 +195,8 @@
                  * @returns {*}
                  */
                 this.save = function () {
+                    that.changing = false;
+                    that.saving = true;
                     return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON());
                 };
 
@@ -188,9 +207,9 @@
                  */
                 this.toJSON = function () {
                     var data = (that.meta.has('api')) ? {
-                            meta: that.meta.get('api'),
-                            payload: that.data
-                        } : that.data;
+                        meta: that.meta.get('api'),
+                        payload: that.data
+                    } : that.data;
                     if (this.meta.size() > 0) {
                         this.meta.clearTemp();
                     }
@@ -256,45 +275,43 @@
 
                 /**
                  * @param attribute
-                 * @param item
+                 * @param options
                  * @returns {*}
                  */
-                this.toggle = function (attribute, item) {
+                this.toggle = function (attribute, options) {
+                    if (typeof options !== 'object') options = { item: options, multiple: true };
                     var request = attribute.split('[].');
-                    console.log('toggle:', attribute, item);
-                    var target = that.get((request.length > 1) ? request[0] : attribute);
-                    if (typeof item === 'undefined') {
+                    var target = that.get(request.length > 1 ? request[0] : attribute);
+                    if (typeof target === 'undefined') {
+                        target = options.multiple ? [] : null;
+                        that.set(request.length > 1 ? request[0] : attribute, target);
+                    }
+                    if (typeof options.item === 'undefined') {
                         that.set(attribute, !target);
-                    } else if (angular.isArray(target) || typeof target === 'undefined') {
-                        if (!angular.isArray(target)) {
-                            target = [];
-                            that.set((request.length > 1) ? request[0] : attribute, target);
-                        }
+                    } else if (angular.isArray(target)) {
                         /* This is disabled, since hydration should not be forced by default *
                         var hydrate = {};
                         if (request.length > 1) {
-                            hydrate[request[1]] = { id: item };
+                            hydrate[request[1]] = { id: options.item };
                         } else {
-                            hydrate.id = item;
+                            hydrate.id = options.item;
                         }
-                        /**/
-                        console.log('target:', target);
-                        if (!that.exists(attribute, item)) {
-                            target.push(item);
+                        /* */
+                        if (!that.exists(attribute, options.item)) {
+                            target.push(options.item);
                         } else {
                             _.each(target, function (element, key) {
                                 var child = (request.length > 1 && angular.isObject(element) && request[1] in element) ? element[request[1]] : element;
                                 var childId = (angular.isObject(child) && child.id) ? child.id : child;
-                                var itemId = (angular.isObject(item) && item.id) ? item.id : item;
+                                var itemId = (angular.isObject(options.item) && options.item.id) ? options.item.id : options.item;
                                 if (childId === itemId || (angular.isString(childId) && angular.isString(itemId) && _.strcmp(childId, itemId) === 0)) {
                                     target.splice(key, 1);
                                 }
                             });
                         }
-                        console.log('changed:', target);
-                    } else if (angular.isObject(target)) {
-                        // TODO: Continue down this rabbit hole
-                        console.log('model:', attribute, item);
+                    } else if (typeof target === 'object' || typeof target === 'number') {
+                        // (options.item && typeof options.item !== 'object') ? { id: options.item } : options.item
+                        that.set(attribute, !that.exists(attribute, options.item) ? options.item : null);
                     }
                     return that.get(attribute);
                 };
@@ -339,10 +356,16 @@
                         attribute = that.pluck(attribute);
                         if (angular.isArray(attribute)) {
                             return typeof attribute.find(function (element) {
-                                    return element === item || (angular.isObject(element) && element.id && element.id === item);
+                                    return element === item || (
+                                        angular.isObject(element) && element.id && element.id === item || _.isEqual(element, item)
+                                    );
                                 }) !== 'undefined';
-                        } else if (angular.isObject(attribute)) {
-                            return attribute === item || (attribute.id && attribute.id === item);
+                        } else {
+                            return attribute === item || (
+                                    angular.isObject(attribute) && attribute.id && (
+                                        _.isEqual(attribute, item) || attribute.id === item
+                                    )
+                                );
                         }
                     }
                     return false;
@@ -356,7 +379,10 @@
                         that.collection.remove(that);
                     }
                     if (that.get('id')) {
-                        that.sync('DELETE', {}).then(function () {
+                        that.sync('DELETE', {
+                            // nothing yet
+                        }).then(function () {
+                            // nothing yet
                         }, console.error);
                     }
                 };
@@ -366,7 +392,10 @@
                  */
                 this.initialize = this.initialize || function () {
                         if (that.manifest && !that.get('id')) {
-                            that.sync('POST', {}).then(function () {
+                            that.sync('POST', {
+                                // nothing yet
+                            }).then(function () {
+                                // nothing yet
                             }, console.error);
                         }
                     };

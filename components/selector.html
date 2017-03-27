@@ -1,11 +1,13 @@
 <md-button ng-if="collection && model && property" ng-repeat="option in collection.models" class="md-raised"
            aria-label="{{ option.data.name }}" ng-class="{ 'md-accent': model.exists(property, option.data.id) }"
            ng-click="model.toggle(property, option.data.id)">
-    <span ng-if="option.data.mime && option.data.mime.indexOf('image') == 0">
-        <img ng-src="{{ option.data.url }}" />
+    <span ng-if="option.data.mime && option.data.mime.indexOf('image') == 0" ng-transclude="image">
+        <img ng-src="{{ option.data.url }}"/>
     </span>
-    <span ng-if="!option.data.mime || option.data.mime.indexOf('image') != 0">
+    <span ng-if="!option.data.mime || option.data.mime.indexOf('image') != 0" ng-transclude="label">
         {{ option.data.name || option.data.title || 'Unknown' }}
     </span>
-    <md-tooltip>{{ option.data.name || option.data.title || 'Unknown' }}</md-tooltip>
+    <md-tooltip>
+        <span ng-transclude="label">{{ option.data.name || option.data.title || 'Unknown' }}</span>
+    </md-tooltip>
 </md-button>

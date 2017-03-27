@@ -117,7 +117,7 @@ gulp.task('compress:mangle', ['clean:mangle'], function () {
     return gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), { base: '.' })
         .pipe(debug({ title: 'Mangle:' }))
         .pipe(uglify({
-            preserveComments: 'license',
+            // preserveComments: 'license',
             mangle: true
         }))
         .pipe(dest('.', { ext: '.min.js' }))
@@ -134,7 +134,7 @@ gulp.task('compress:preserve', ['clean:preserve'], function () {
     return gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), { base: '.' })
         .pipe(debug({ title: 'Compress:' }))
         .pipe(uglify({
-            preserveComments: 'license',
+            // preserveComments: 'license',
             mangle: false
         }))
         .pipe(dest('.', { ext: '.min.js' }))

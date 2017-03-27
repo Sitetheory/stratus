@@ -23,8 +23,8 @@
 
     var componentLoader = {
         src: {
-            'require': 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.3/require.min.js',
-            'config': 'https://bnc.sitetheory.net/assets/1/0/bundles/sitetheorycore/js/boot/config.js'
+            require: 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.3/require.min.js',
+            config: 'https://bnc.sitetheory.net/assets/1/0/bundles/sitetheorycore/js/boot/config.js'
         },
         loaded: []
     };
@@ -40,7 +40,6 @@
             document.head.appendChild(script);
         }
     }
-
 
     // Load require.js with custom config.js, and then load Stratus
     if (typeof require !== 'object') {
@@ -63,6 +62,4 @@
     }
 
 }));
-
-
 

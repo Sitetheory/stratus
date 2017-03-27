@@ -27,8 +27,18 @@ boot.merge = function (destination, source) {
     }
     return destination;
 };
-boot.config = function (configuration) {
+boot.config = function (configuration, options) {
     if (typeof configuration !== 'object') return false;
-    boot.merge(boot.configuration, (!configuration.paths) ? { paths: configuration } : configuration);
+    /* *
+    if (typeof options !== 'object') options = {};
+    var args = [
+        boot.configuration,
+        !configuration.paths ? { paths: configuration } : configuration
+    ];
+    if (typeof boot.merge === 'function') {
+        boot.merge.apply(this, options.inverse ? args.reverse() : args);
+    }
     return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration;
+    /* */
+    return boot.merge(boot.configuration, !configuration.paths ? { paths: configuration } : configuration);
 };

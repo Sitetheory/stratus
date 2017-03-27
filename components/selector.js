@@ -28,7 +28,10 @@
 }(this, function (Stratus, _) {
     // This component intends to allow editing of various selections depending on context.
     Stratus.Components.Selector = {
-        // transclude: true,
+        transclude: {
+            image: '?stratusSelectorImage',
+            label: '?stratusSelectorLabel'
+        },
         bindings: {
             elementId: '@',
             ngModel: '=',
