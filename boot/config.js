@@ -279,7 +279,7 @@ boot.config({
         'angular-chart': boot.bundle + 'stratus/bower_components/angular-chart.js/dist/angular-chart' + boot.suffix,
         'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
         'angular-redactor': boot.bundle + 'stratus/directives/redactor' + boot.suffix,
-        'angular-countUp': boot.bundle + 'stratus/bower_components/countUp.js/dist/angular-countUp' + boot.suffix,
+        // 'angular-countUp': boot.bundle + 'stratus/bower_components/countUp.js/dist/angular-countUp' + boot.suffix,
         'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
 
         /* Backbone */
