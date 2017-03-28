@@ -32,8 +32,9 @@
             'angular-material',
             'stratus.components.search',
             'jquery-ui',
-            'stratus.components.pagination',
-            'stratus.directives.sglclick'
+            'stratus.components.pagination'
+
+            // 'stratus.directives.sglclick'
         ], factory);
     } else {
         factory(root.Stratus, root.$, root._);
