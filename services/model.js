@@ -41,7 +41,7 @@
                 // Environment
                 this.target = null;
                 this.manifest = false;
-                if (!options || typeof options != 'object') options = {};
+                if (!options || typeof options !== 'object') options = {};
                 angular.extend(this, options);
 
                 // Infrastructure
@@ -56,7 +56,7 @@
                 }
 
                 // Handle Attributes (Typically from Collection Hydration)
-                if (attributes && typeof attributes == 'object') {
+                if (attributes && typeof attributes === 'object') {
                     angular.extend(this.data, attributes);
                 }
 
@@ -147,8 +147,7 @@
                                 prototype.data = JSON.stringify(data);
                             }
                         }
-                        var request = $http(prototype);
-                        request.then(function (response) {
+                        $http(prototype).then(function (response) {
                             if (response.status === 200) {
                                 // TODO: Make this into an over-writable function
                                 // Data
@@ -175,10 +174,7 @@
                                 // Promise
                                 reject(response);
                             }
-                        }, reject);
-                        if (request.catch) {
-                            request.catch(reject);
-                        }
+                        }, reject).catch(reject);
                     });
                 };
 
