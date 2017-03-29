@@ -66,7 +66,7 @@
                                ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">-->
 
                             <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
-                               stratus-sglclick="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
+                               stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
 
                                 <img class="imgLibDrag" id="lib_{{media.data.id}}"   ng-src="{{media.data.url}}" draggable="true"></a>
                         </div><!-- Gallery Image Container Ends -->
@@ -108,7 +108,7 @@
                         <div class="gl-img-container" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                             <a href="#" ng-mouseleave="iconStyles = ''" ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyles]"
                                ng-mouseenter="iconStyles=media.data.selectedClass"
-                               stratus-sglclick="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
+                               stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
                                 <img class="imgLibDrag" id="libb_{{media.data.id}}" draggable="true" ng-src="{{media.data.url}}" draggable="true"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">

@@ -186,6 +186,8 @@
                 module: true,
                 suffix: '.js'
             },
+
+            // TODO: Move Froala to Sitetheory since it is specific to Sitetheory
             modules: {
                 selector: [
                     '[ng-sanitize]', '[froala]'
@@ -193,6 +195,8 @@
                 namespace: 'angular-',
                 module: true
             },
+
+            // TODO: Move these to Sitetheory since they are specific to Sitetheory
             countUp: {
                 selector: [
                     '[count-up]', '[scroll-spy]'
@@ -208,7 +212,7 @@
         /* Methods that need to be called as a group later, e.g. OnScroll */
         RegisterGroup: {},
 
-        // TODO: Turn this into a Dynamic Object
+        // TODO: Turn this into a Dynamic Object loaded from the DOM in Sitetheory
         Api: {
             GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA',
             Froala: 'KybxhzguB-7j1jC3A-16y=='

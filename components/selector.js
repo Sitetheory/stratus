@@ -36,7 +36,8 @@
             elementId: '@',
             ngModel: '=',
             type: '@',
-            property: '@'
+            property: '@',
+            multiple: '&'
         },
         controller: function ($scope, $attrs, $log, registry, model) {
             // Initialize
@@ -56,6 +57,11 @@
 
             // Store Asset Property for Verification
             $scope.property = $attrs.property || null;
+
+            // Store Toggle Options for Custom Actions
+            $scope.toggleOptions = {
+                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : true
+            };
 
             // Data Connectivity
             $scope.model = null;

@@ -1,6 +1,6 @@
 <md-button ng-if="collection && model && property" ng-repeat="option in collection.models" class="md-raised"
            aria-label="{{ option.data.name }}" ng-class="{ 'md-accent': model.exists(property, option.data.id) }"
-           ng-click="model.toggle(property, option.data.id)">
+           ng-click="model.toggle(property, option.data.id, toggleOptions)">
     <span ng-if="option.data.mime && option.data.mime.indexOf('image') == 0" ng-transclude="image">
         <img ng-src="{{ option.data.url }}"/>
     </span>

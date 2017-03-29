@@ -31,7 +31,6 @@ boot.config({
         'angular-sanitize': { deps: ['angular'] },
 
         /* Angular Modules */
-        'angular-countUp': { deps: ['angular', 'countUp'] },
         'angular-file-upload': { deps: ['angular'] },
         'angular-icons': { deps: ['angular'] },
         'angular-scrollSpy': { deps: ['angular'] },
@@ -46,7 +45,6 @@ boot.config({
 
         /* jQuery */
         'jquery-cookie': { deps: ['zepto'] },
-        gridster: { deps: ['zepto'] },
         selectize: { deps: ['zepto'] },
         timeago: { deps: ['zepto'] },
         watch: { deps: ['zepto'] },
@@ -142,8 +140,6 @@ boot.config({
         'stratus.components.mediaSelector': boot.bundle + 'stratus/components/mediaSelector' + boot.suffix,
         'stratus.components.optionValue': boot.bundle + 'stratus/components/optionValue' + boot.suffix,
         'stratus.components.pagination': boot.bundle + 'stratus/components/pagination' + boot.suffix,
-        'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
-        'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
         'stratus.components.search': boot.bundle + 'stratus/components/search' + boot.suffix,
         'stratus.components.selector': boot.bundle + 'stratus/components/selector' + boot.suffix,
         'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
@@ -151,18 +147,24 @@ boot.config({
         'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
         'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
 
+        // TODO: Move these to Sitetheory since they are specific to Sitetheory
+        'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
+        'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
+
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
         'stratus.directives.drag': boot.bundle + 'stratus/directives/drag' + boot.suffix,
         'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
-        'stratus.directives.froala': boot.bundle + 'stratus/directives/froala' + boot.suffix,
         'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
-        'stratus.directives.redactor': boot.bundle + 'stratus/directives/redactor' + boot.suffix,
         'stratus.directives.singleClick': boot.bundle + 'stratus/directives/singleClick' + boot.suffix,
         'stratus.directives.sortable': boot.bundle + 'stratus/directives/sortable' + boot.suffix,
         'stratus.directives.src': boot.bundle + 'stratus/directives/src' + boot.suffix,
         'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
         'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
+
+        // TODO: Move these to Sitetheory since they are specific to Sitetheory
+        'stratus.directives.froala': boot.bundle + 'stratus/directives/froala' + boot.suffix,
+        'stratus.directives.redactor': boot.bundle + 'stratus/directives/redactor' + boot.suffix,
 
         /* Stratus Core Filters */
         'stratus.filters.gravatar': boot.bundle + 'stratus/filters/gravatar' + boot.suffix,
@@ -230,6 +232,7 @@ boot.config({
         'templates-upload': boot.bundle + 'stratus/views/widgets/upload.html',
 
         /* Froala Libraries */
+        // TODO: Move these to Sitetheory since they are specific to Sitetheory
         froala: boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/froala_editor.min',
         'froala-align': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/align.min',
         'froala-char-counter': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/char_counter.min',
@@ -267,7 +270,6 @@ boot.config({
         bowser: boot.bundle + 'stratus/bower_components/bowser/src/bowser',
         chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart',
         chartist: '//cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist' + boot.suffix,
-        countUp: boot.bundle + 'stratus/bower_components/countUp.js/countUp',
         d3: '//cdnjs.cloudflare.com/ajax/libs/d3/3.5.10/d3' + boot.suffix,
         dropzone: '//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/' + boot.directory + 'dropzone-amd-module' + boot.suffix,
         fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
@@ -293,11 +295,11 @@ boot.config({
         'angular-chart': boot.bundle + 'stratus/bower_components/angular-chart.js/dist/angular-chart' + boot.suffix,
         'angular-icons': boot.bundle + 'stratus/bower_components/angular-material-icons/angular-material-icons' + boot.suffix,
         'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
-        // 'angular-countUp': boot.bundle + 'stratus/bower_components/countUp.js/dist/angular-countUp' + boot.suffix,
         'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
 
         /* Backbone */
         underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
+        backbone: boot.bundle + 'stratus/external/backbone' + boot.suffix,
         'backbone.relational': boot.bundle + 'stratus/normalizers/backbone.relational.injector',
         'backbone.relational.core': boot.bundle + 'stratus/bower_components/backbone-relational/backbone-relational',
 
@@ -306,7 +308,6 @@ boot.config({
         jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
         'jquery-ui': boot.bundle + 'stratus/bower_components/jquery-ui/jquery-ui' + boot.suffix,
         'jquery-cookie': boot.bundle + 'stratus/bower_components/jquery.cookie/jquery.cookie',
-        gridster: '//cdnjs.cloudflare.com/ajax/libs/jquery.gridster/0.5.6/jquery.gridster' + boot.suffix,
         selectize: boot.bundle + 'stratus/bower_components/selectize/dist/js/standalone/selectize' + boot.suffix,
         watch: '//cdnjs.cloudflare.com/ajax/libs/watch/2.0.4/jquery.watch' + boot.suffix,
 
