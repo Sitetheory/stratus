@@ -32,9 +32,8 @@
             'angular-material',
             'stratus.components.search',
             'jquery-ui',
-            'stratus.components.pagination'
-
-            // 'stratus.directives.sglclick'
+            'stratus.components.pagination',
+            'stratus.directives.sglclick'
         ], factory);
     } else {
         factory(root.Stratus, root.$, root._);
@@ -67,9 +66,10 @@
             // set media library to false
             $scope.showLibrary = false;
             $scope.showDragDropLibrary = false;
-            $scope.draggedFiles = []; // TODO: This variable should be renamed from 'draggedFiles' to `selectedFiles`
+            $scope.draggedFiles = [];
             $scope.files = [];
             $scope.draggedDivChanged = false;
+            $scope.dropDisabled = false;
 
             // Data Connectivity
             $scope.$watch('$ctrl.ngModel', function (data) {
@@ -115,78 +115,21 @@
                     escapeToClose: true,
                     focusOnOpen: true
                 };
+
                 $mdPanel.open(config);
             };
-
-            //   $scope.trashIconStyle = false;
-            // add trash icon when(PENDING)
-            //  $scope.dragSelected = function($isDragging, $class, $event, file) {
-
-            /*  photo = $('#selected_drop_area')
-              offset = photo.offset()
-              photoViewportOffsetTop = offset.top - $(document).scrollTop();
-              photoViewportOffsetLeft = offset.left - $(document).scrollLeft();
-              console.log('DropAreaTop',photoViewportOffsetTop);
-              console.log('DropAreaLeft',photoViewportOffsetLeft);*/
-
-            //  }
             $scope.draggedFileId = '';
-            /*
-                     $('#selected_drop_area').droppable({
-                           over: function(event, ui) {
-                             ui.draggable.css("cursor", "copy");
-                             },
-                            out: function(event, ui) {
-                                console.log(event);
-                                ui.draggable.css("cursor", "wait");
-                            }
-                        });
 
-                        $("#draggable").draggable({
-                            start: function(event,ui){
-                                $(this).css("cursor", "no-drop");
-                            },
-                            stop: function(event,ui){
-                                $(this).css("cursor", "initial");
-                            }
-                        });
-                     $("#dushman > li.draggables ").draggable({
-                            start: function(event,ui){
-                                $(this).css("cursor", "no-drop");
-                            },
-                            stop: function(event,ui){
-                                $(this).css("cursor", "initial");
-                            }
-                        });*/
-
+            // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
-
-                console.log('isDragging', $isDragging);
-                console.log('ngf-drag', $event);
-                console.log($event.explicitOriginalTarget.id);
                 if ($event.type == 'dragover') {
                     if ($event.explicitOriginalTarget.id != '') {
                         $scope.draggedFileId = $event.explicitOriginalTarget.id;
-                        console.log('fileId', $scope.draggedFileId);
                     }
                 }
-
                 if ($event.type == 'dragleave') {
-                    //  console.log($event.target.style.cursor);
                     $scope.removeFromSelected($scope.draggedFileId);
-                    for (var j = 0; j < $scope.collection.models.length; j++) {
-                        if ($scope.collection.models[j].data.id == $scope.draggedFileId) {
-                            $scope.collection.models[j].data.selectedClass = false;
-                        }
-                    }
-
-                    /*   document.getElementById("1859").addEventListener("dragleave", function( event ) {
-                     console.log('EV',event);
-                     event.target.style.cursor = "wait";
-                     }, false);*/
-
                 }
-
             };
 
             $scope.beforeChange = function (file, $event) {
@@ -200,35 +143,25 @@
                            if ($scope.collection.models[i].data.id == $scope.movedFileId) {
                                // add class selected
                                $scope.collection.models[i].data.selectedClass = true;
-
                            }
                        }
+                       $scope.movedFileId = '';
 
                    }, function (rejection) {
                        console.log(rejection.data);
                    });
-
-                    // $scope.draggedFiles.push(file);
-                }                else
-               {
-                   $scope.imageMoved == false;
-                   $scope.uploadFiles();
-
-                   // updateFilesModel(file);
-                   // $scope.files = file;
-
-               }
+                }else {
+                    $scope.imageMoved == false;
+                    $scope.uploadFiles();
+                    $scope.movedFileId = '';
+                }
             };
             $scope.imageMoved = false;
             $scope.dragFromLib = function ($isDragging, $class, $event, fileId) {
-                console.log($isDragging);
-                console.log($event);
                 if ($event.type == 'dragleave') {
                     $scope.movedFileId = fileId;
                     $scope.imageMoved = true;
                 }
-                $scope.dragClass = true;
-
             };
             $scope.dragClass = false;
 
@@ -277,6 +210,11 @@
                 for (var i = $scope.draggedFiles.length - 1; i >= 0; i--) {
                     if ($scope.draggedFiles[i].id == fileId) {
                         $scope.draggedFiles.splice(i, 1);
+                    }
+                }
+                for (var j = 0; j < $scope.collection.models.length; j++) {
+                    if ($scope.collection.models[j].data.id == fileId) {
+                        $scope.collection.models[j].data.selectedClass = false;
                     }
                 }
             };
@@ -444,26 +382,18 @@
                     for (var i = 0; i < files.length; i++) {
                         $scope.errorMsg = null;
                         (function (f) {
-                            // setTimeout(function(){ promises.push($scope.saveMedia(f)); }, 3000);
                             promises.push($scope.saveMedia(f));
-                            console.log($scope.promises);
-
-                            // $scope.files.push($scope.saveMedia(f));
-
                         })(files[i]);
                     }
 
                     // show done button when all promises are completed
                     if (promises.length > 0) {
                         $q.all(promises).then(function (data) {
-
                             $scope.uploadComp = true;
                             $scope.uploadMedia();
                             if ($scope.draggedDivChanged == true) {
                                 angular.forEach(data, function (dragged) {
                                     $scope.draggedFiles.push(dragged.data);
-                                    console.log(dragged.data.id);
-
                                 });
 
                             }
@@ -480,7 +410,6 @@
                 file.errorMsg = null;
                 file.uploadStatus = false;
                 file.errorUpload = false;
-
                 file.upload = Upload.upload({
                         url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
                         data: {
@@ -494,8 +423,6 @@
                     file.uploadStatus = true;
                     file.errorUpload = false;
                 }, function (response) {
-                    console.log('response', response);
-
                     // if file is aborted handle error messages
                     if (response.config.data.file.upload.aborted == true) {
                         file.uploadStatus = false;
@@ -533,13 +460,10 @@
             function ZoomController(mdPanelRef) {
                 // delete media from library
                 $scope.deleteMediaFromLibrary = function (fileId) {
-                    console.log(fileId);
-                    console.log(Stratus.BaseUrl);
-
                     mdPanelRef.close();
                     var confirm = $mdDialog.confirm()
                         .title('DELETE MEDIA')
-                        .textContent('Would you like to delete your media?')
+                        .textContent('Are you sure you want to permanently delete this from your library?')
 
                         //  .ariaLabel('Lucky day')
                         // .targetEvent(ev)
@@ -602,21 +526,6 @@
                 }
 
             };
-
-            /*  document.getElementById("openLibrary").addEventListener("dragend", function( event ) {
-                    $scope.dragClass = false;
-                }, false);
-                document.getElementById("openDragDropLibrary").addEventListener("dragend", function( event ) {
-                    $scope.dragClass = false;
-                }, false);
-                */
-
-            // hide dragover class on dragend
-            document.addEventListener('dragend', function (event) {
-                // reset the transparency
-                $scope.dragClass = false;
-            }, false);
-
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };

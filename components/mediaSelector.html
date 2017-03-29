@@ -1,17 +1,8 @@
 <div class="container">
-
- <!--   <div id="draggable">
-        <span>Drag</span>
-    </div>-->
-
-   <!-- <div id="droppable">
-        <span>Drop here</span>
-    </div>-->
-
     <div class="gallery-box">
         <!-- Gallery header Ends -->
         <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
-              ngf-drop ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover" ngf-drag="dragSelected($isDragging, $class, $event)">
+              ngf-drop ngf-max-files="20"  ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover" ngf-drag="dragSelected($isDragging, $class, $event)">
             <!-- show only if no files are dragged-->
          <!--   <a ng-if="!draggedFiles.length"  ngf-drop ngf-multiple="true" ngf-before-model-change="beforeChange($files,$event)"
                ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"
@@ -24,17 +15,17 @@
 
       <!-- <div id="draggable">dfsdfsdfsdf</div>-->
 
-            <ul  ng-if="draggedFiles.length">
+            <ul id="dushman"  ng-if="draggedFiles.length">
 
 
                <!-- <li id="{{df.id}}" ng-class="{'trash_icon':trashIconStyle}" ng-repeat="df in draggedFiles" ngf-drop   ngf-drag="dragSelected($isDragging, $class, $event, df)">-->
-                <li ng-class="{'ui-draggable': true, 'draggables':true}" ng-repeat="df in draggedFiles">
+                <li class="draggableImg" ng-repeat="df in draggedFiles">
                     <div class="file-upload-drag" ng-if="df.mime == 'application/x-unknown'">
                         <i class="fa fa-file file-icon-drag"></i>
                     </div>
                     <div  ng-if="df.mime != 'application/x-unknown'" class="gl-img-container">
                         <a  href="#">
-                            <img id="{{df.id}}" ngf-src="df.url">
+                            <img class="selectImgDrag" id="{{df.id}}" ngf-src="df.url" >
                         </a>
                     </div><!-- Gallery Image Container Ends -->
                     <div class="image-info-outer">
@@ -69,7 +60,7 @@
                         Click Here </a></p>
                 </div><!-- Search Bar Ends -->
                 <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
-                    <li  ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)" draggable="true">
+                    <li  ng-repeat="media in collection.models"  ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
                         <div class="gl-img-container" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                            <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">-->
@@ -77,7 +68,7 @@
                             <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                stratus-sglclick="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
 
-                                <img  ng-src="{{media.data.url}} "></a>
+                                <img class="imgLibDrag" id="lib_{{media.data.id}}"   ng-src="{{media.data.url}}" draggable="true"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
                             <div class="img-info">
@@ -112,12 +103,13 @@
                     <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)"> Click Here </a></p>
                 </div><!-- Search Bar Ends -->
                 <ul ngf-drop="uploadToLibrary($files)"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}">
+                 <!--   <li ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">-->
                     <li ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
                         <div class="gl-img-container" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                             <a href="#" ng-mouseleave="iconStyles = ''" ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyles]"
                                ng-mouseenter="iconStyles=media.data.selectedClass"
                                stratus-sglclick="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
-                                <img draggable="true" ng-src="{{media.data.url}}"></a>
+                                <img class="imgLibDrag" id="libb_{{media.data.id}}" draggable="true" ng-src="{{media.data.url}}" draggable="true"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
                             <div class="img-info">
@@ -185,10 +177,11 @@
         </div>
         <div class="right-image">
             <img ng-src="{{mediaDetail.url}}" alt="">
-            <label>Tags</label><span>Travel</span><span>Nature</span><span>Thailand</span>
+            <label>Tags</label>
+            <<span ng-if="mediaDetail.tags.length" ng-repeat="tag in mediaDetail.tags">{{tag.name}}</span>
         </div>
         <div class="left-txt">
-            <h2>{{mediaDetail.filename}}</h2>
+            <h2>{{mediaDetail.name}}</h2>
             <p>{{mediaDetail.description}}</p>
             <div class="img-tag">
                 {{mediaDetail.extension| uppercase}}
@@ -200,31 +193,10 @@
                 <label>Actions</label>
                 <ul>
                     <li><a href="javascript:;" class="del-img" ng-click="deleteMediaFromLibrary(mediaDetail.id);">Delete</a></li>
-                    <li><a href="javascript:;" class="replace-img">Replace</a></li>
-                    <li><a href="javascript:;" class="download-img">Download</a></li>
+                  <!--  <li><a href="javascript:;" class="replace-img">Replace</a></li>-->
+                    <li><a href="{{mediaDetail.url}}"  class="download-img">Download</a></li>
                 </ul>
             </div>
         </div>
     </div>
-</script>
-<script type="text/javascript">
-
-    $(function() {
-        $("#draggable").draggable({
-            start: function(event,ui){
-                $(this).css("cursor", "no-drop");
-            },
-            stop: function(event,ui){
-                $(this).css("cursor", "initial");
-            }
-        });
-        $("#droppable").droppable({
-            over: function(event, ui) {
-                ui.draggable.css("cursor", "copy");
-            },
-            out: function(event, ui) {
-                ui.draggable.css("cursor", "no-drop");
-            }
-        });
-    });
 </script>
