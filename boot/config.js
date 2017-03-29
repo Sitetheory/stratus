@@ -14,7 +14,7 @@ boot.config({
 
     // Dependencies
     shim: {
-        /* Angular Cire */
+        /* Angular */
         angular: {
             exports: 'angular'
         },
@@ -33,6 +33,7 @@ boot.config({
         /* Angular Modules */
         'angular-countUp': { deps: ['angular', 'countUp'] },
         'angular-file-upload': { deps: ['angular'] },
+        'angular-icons': { deps: ['angular'] },
         'angular-scrollSpy': { deps: ['angular'] },
 
         // Charts
@@ -131,10 +132,10 @@ boot.config({
         'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
 
         /* Stratus Core Components */
-        'stratus.components.asset': boot.bundle + 'stratus/components/asset' + boot.suffix,
         'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
         'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
         'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
+        'stratus.components.edit': boot.bundle + 'stratus/components/edit' + boot.suffix,
         'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
         'stratus.components.filter': boot.bundle + 'stratus/components/filter' + boot.suffix,
         'stratus.components.help': boot.bundle + 'stratus/components/help' + boot.suffix,
@@ -144,17 +145,30 @@ boot.config({
         'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
         'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
         'stratus.components.search': boot.bundle + 'stratus/components/search' + boot.suffix,
+        'stratus.components.selector': boot.bundle + 'stratus/components/selector' + boot.suffix,
         'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
         'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
         'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
+        'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
 
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
+        'stratus.directives.drag': boot.bundle + 'stratus/directives/drag' + boot.suffix,
+        'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
+        'stratus.directives.froala': boot.bundle + 'stratus/directives/froala' + boot.suffix,
+        'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
+        'stratus.directives.redactor': boot.bundle + 'stratus/directives/redactor' + boot.suffix,
+        'stratus.directives.singleClick': boot.bundle + 'stratus/directives/singleClick' + boot.suffix,
+        'stratus.directives.sortable': boot.bundle + 'stratus/directives/sortable' + boot.suffix,
+        'stratus.directives.src': boot.bundle + 'stratus/directives/src' + boot.suffix,
         'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
+        'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
 
         /* Stratus Core Filters */
         'stratus.filters.gravatar': boot.bundle + 'stratus/filters/gravatar' + boot.suffix,
+        'stratus.filters.map': boot.bundle + 'stratus/filters/map' + boot.suffix,
         'stratus.filters.moment': boot.bundle + 'stratus/filters/moment' + boot.suffix,
+        'stratus.filters.reduce': boot.bundle + 'stratus/filters/reduce' + boot.suffix,
         'stratus.filters.truncate': boot.bundle + 'stratus/filters/truncate' + boot.suffix,
 
         /* Stratus Core Services */
@@ -203,6 +217,7 @@ boot.config({
         'stratus.views.plugins.popover': boot.bundle + 'stratus/views/plugins/popover' + boot.suffix,
 
         /* Stratus Core Underscore Templates */
+        /* TODO: remove these, they aren't even used anymore. Convert to components and remove. */
         'templates-base': boot.bundle + 'stratus/views/widgets/base.html',
         'templates-filter-search': boot.bundle + 'stratus/views/widgets/filter.search.html',
         'templates-filter-sort': boot.bundle + 'stratus/views/widgets/filter.sort.html',
@@ -245,15 +260,14 @@ boot.config({
         'froala-table': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/table.min',
         'froala-url': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/url.min',
         'froala-video': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/video.min',
+        'froala-word-paste': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/word_paste.min',
         'angular-froala': boot.bundle + 'stratus/bower_components/angular-froala/src/angular-froala',
-
-        /* Stratus Core Angular Templates */
-        'templates-permission': boot.bundle + 'stratus/components/permission.html',
 
         /* Common Libraries */
         bowser: boot.bundle + 'stratus/bower_components/bowser/src/bowser',
         chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart',
         chartist: '//cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist' + boot.suffix,
+        countUp: boot.bundle + 'stratus/bower_components/countUp.js/countUp',
         d3: '//cdnjs.cloudflare.com/ajax/libs/d3/3.5.10/d3' + boot.suffix,
         dropzone: '//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/' + boot.directory + 'dropzone-amd-module' + boot.suffix,
         fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
@@ -267,7 +281,7 @@ boot.config({
         'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
         promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
         sortable: boot.bundle + 'stratus/bower_components/Sortable/Sortable' + boot.suffix,
-        countUp: boot.bundle + 'stratus/bower_components/countUp.js/countUp',
+        zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
 
         /* Angular */
         angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
@@ -277,9 +291,8 @@ boot.config({
         'angular-messages': boot.bundle + 'stratus/bower_components/angular-messages/angular-messages' + boot.suffix,
         'angular-sanitize': boot.bundle + 'stratus/bower_components/angular-sanitize/angular-sanitize' + boot.suffix,
         'angular-chart': boot.bundle + 'stratus/bower_components/angular-chart.js/dist/angular-chart' + boot.suffix,
+        'angular-icons': boot.bundle + 'stratus/bower_components/angular-material-icons/angular-material-icons' + boot.suffix,
         'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
-        'angular-redactor': boot.bundle + 'stratus/directives/redactor' + boot.suffix,
-
         // 'angular-countUp': boot.bundle + 'stratus/bower_components/countUp.js/dist/angular-countUp' + boot.suffix,
         'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
 

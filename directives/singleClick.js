@@ -1,4 +1,4 @@
-//     Stratus.Directives.Singleclick.js 1.0
+//     Stratus.Directives.SingleClick.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -27,12 +27,12 @@
 }(this, function (Stratus, _) {
 
     // This directive intends to handle binding of a dynamic variable to
-    Stratus.Directives.Sglclick = function ($parse, $log) {
+    Stratus.Directives.SingleClick = function ($parse, $log) {
         return {
             restrict: 'A',
             link: function ($scope, $element, $attr) {
 
-                var fn = $parse($attr.stratusSglclick);
+                var fn = $parse($attr.stratusSingleClick);
                 var delay = 300;
                 var clicks = 0;
                 var timer = null;
@@ -58,7 +58,7 @@
                         clicks = 0;
                     }
                 });
-            };
+            }
         };
     };
 }));

@@ -33,7 +33,7 @@
             'stratus.components.search',
             'jquery-ui',
             'stratus.components.pagination',
-            'stratus.directives.sglclick'
+            'stratus.directives.singleClick'
         ], factory);
     } else {
         factory(root.Stratus, root.$, root._);
