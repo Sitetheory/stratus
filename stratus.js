@@ -2238,9 +2238,15 @@
 
                 // Load CSS
                 // TODO: Make Dynamic
-                var css = [
-                    Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
-                ];
+                var css = [];
+                var cssLoaded = _.map(document.querySelectorAll('link[satisfies]'), function (node) {
+                    return node.getAttribute('satisfies');
+                });
+                if (!_.contains(cssLoaded, 'angular-material.css')) {
+                    css.push(
+                        Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
+                    );
+                }
                 /**
                 if (document.querySelectorAll('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
