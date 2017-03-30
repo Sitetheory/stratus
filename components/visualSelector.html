@@ -1,36 +1,36 @@
 <div id="comp" class="container">
+    {{$ctrl.ngModel.data.viewVersion.layout}}
     <div class="layout_bx">
         <div class="lt-header">
-            <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Layout</h3>
+            <h3><span><i class="fa fa-question" aria-hidden="true" ></i></span> Layout</h3>
         </div><!-- Gallery header Ends -->
-        {{selectListArr}}
-        <div class="lt_box">
+        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel.data.viewVersion.layout === null" ng-click="toggleGallery();">
+            <i   ng-class="galleryClass"  class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
+      <!--  <span ng-show="$ctrl.ngModel.data.viewVersion.layout === null">Please select from options below</span>-->
+        <div class="lt_box" ng-repeat="sel in selectListArr">
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
-            <div class="lt-image">
-
+            <button  class="cancel--btn" ng-click="removeSelected(sel);"></button>
+            <div class="lt-image" ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']">
                 <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
-                <!-- <div ng-if="$ctrl.layoutOption != 'expanded'">-->
-
-                <a href="#" ng-if="$ctrl.layoutOption === 'collapsed'" class="blck_btn" ng-click="displayGallery();">Change</a>
-            </div><!-- layout image ends -->
+                <div ng-if="$ctrl.layoutOption != 'expanded'">
+                    <a href="#" ng-if="$ctrl.layoutOption === 'collapsed'" class="blck_btn" ng-click="displayGallery();">Change</a>
+                </div>
+            </div>
             <div class="lt-content">
-                <h4>Foo Layout</h4>
-                <p>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                    industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                    and scrambled it to make a type specimen book. It has survived not only five centuries, but also the
-                    leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
-                    with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-                    publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                </p>
-            </div><!-- Layout content Ends -->
+                <h4>{{sel.name}}</h4>
+                <p>{{sel.description}}</p>
+            </div>
         </div><!-- Layout box Inner ends -->
+        <div ng-show="selectListArr.length === 0">
+            <span>No Items selected</span>
+        </div>
     </div><!-- Layout Box Ends -->
+
     <div class="layout_bx" ng-show="showGallery || $ctrl.layoutOption === 'expanded'">
 
         <div class="lt-header">
-            <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Layout</h3>
+            <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Choose From Layout</h3>
         </div><!-- Gallery header Ends -->
         <div class="search--gallery">
             <stratus-search ng-if="$ctrl.search === true" flex="40"></stratus-search>
@@ -58,7 +58,7 @@
             <li><a href="#">5</a>
             <li><a href="#">NEXT</a>
         </ul>-->
-        <stratus-pagination></stratus-pagination>
+        <stratus-pagination class="lt-pagination"></stratus-pagination>
     </div><!-- Layout Box Ends -->
 
     <!---Detail Page ends here---------->

@@ -59,7 +59,8 @@
                     <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">
                         Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <ul ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
+                <div ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
+                <ul>
                     <li  ng-repeat="media in collection.models"  ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
                         <div class="gl-img-container" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                            <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
@@ -87,7 +88,7 @@
                         </div><!-- Image Outer Ends -->
                     </li>
                 </ul>
-
+                </div>
             </div>
             <stratus-pagination></stratus-pagination>
         </div>
@@ -102,7 +103,8 @@
                     </div>
                     <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)"> Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <ul ngf-drop="uploadToLibrary($files)"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}">
+                <div ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
+                <ul>
                  <!--   <li ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">-->
                     <li ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
                         <div class="gl-img-container" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
@@ -127,6 +129,7 @@
                         </div><!-- Image Outer Ends -->
                     </li>
                 </ul>
+                    </div>
             </div>
             <stratus-pagination></stratus-pagination>
         </div>

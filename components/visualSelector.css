@@ -48,3 +48,19 @@ ul.lt-pagination li:last-child{margin-left:20px;}
 .select-highlight{ border: 3px solid red;}
 
 .layout-dialog{max-width:800px; margin: 0 auto; width: 100%; background: rgba(0, 0, 0, .7); padding: 40px; display: inline-block;position: absolute; left: 0; right: 0; margin: auto; top: 0; bottom: 0;}
+.cancel--btn {
+    background: rgba(0, 0, 0, 0) url(/assets/1/0/bundles/sitetheorycore/images/media/close_red.png) repeat scroll 0 0 / 34px auto;
+    border: medium none;
+    color: #ff0000;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    height: 34px;
+    margin: 0 auto;
+    padding: 5px 8px;
+    position: relative;
+    right: 16px;
+    top: -6px;
+    width: 34px;
+    z-index: 99;
+}
