@@ -32,7 +32,7 @@
         bindings: {
             elementId: '@'
         },
-        controller: function ($scope, $element, $attrs, $window, $log) {
+        controller: function ($scope, $element, $attrs, $window) {
             this.uid = _.uniqueId('upload_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
@@ -52,14 +52,6 @@
                 }
             }, 1000);
         },
-        template: '<div id="{{ elementId }}">\
-            <div class="dz-message">\
-                Drop files here or click to upload.<br />\
-                <span class="note">(Files will be visible in your library)</span>\
-            </div>\
-            <div class="fallback">\
-                <input name="file" type="file" multiple />\
-            </div>\
-        </div>'
+        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/upload' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
 }));
