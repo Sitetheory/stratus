@@ -232,6 +232,7 @@ boot.config({
         'templates-upload': boot.bundle + 'stratus/views/widgets/upload.html',
 
         /* Froala Libraries */
+
         // TODO: Move these to Sitetheory since they are specific to Sitetheory
         froala: boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/froala_editor.min',
         'froala-align': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/align.min',

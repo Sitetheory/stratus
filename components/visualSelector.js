@@ -21,12 +21,20 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
+
+            // Libraries
             'stratus',
             'jquery',
+            'underscore',
             'angular',
-            'jquery-cookie',
-            'stratus.services.collection',
+
+            // Modules
             'angular-material',
+
+            // Services
+            'stratus.services.collection',
+
+            // Components
             'stratus.components.search',
             'stratus.components.pagination'
         ], factory);
@@ -43,14 +51,29 @@
             ngModel: '=',
             layoutOption: '@',
             details: '<',
-            search: '<'
+            search: '<',
+            target: '@',
+            limit: '@'
         },
-        controller: function ($scope, $mdPanel) {
+        controller: function ($scope, $mdPanel, $attrs, registry) {
 
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/visualSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
             $scope.showGallery = false;
             $scope.selectListArr = {};
+
+            // fetch target collection and hydrate to $scope.collection
+            $scope.registry = new registry();
+            $scope.registry.fetch({
+                target: $attrs.target || 'Layout',
+                id: null,
+                manifest: false,
+                decouple: true,
+                api: {
+                    options: {},
+                    limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 3
+                }
+            }, $scope);
 
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {
@@ -91,7 +114,7 @@
 
                     mdPanelRef.close();
                 };
-            };
+            }
             $scope.chooseLayout = function (selectedData, $event) {
 
                 // add class

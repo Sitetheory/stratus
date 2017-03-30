@@ -1,21 +1,28 @@
-<div id="comp" class="container" ng-controller="Generic" data-target="Layout" l  data-api='{"options": {"contentType": 2}}'>
+<div id="comp" class="container">
     <div class="layout_bx">
         <div class="lt-header">
             <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Layout</h3>
         </div><!-- Gallery header Ends -->
         {{selectListArr}}
         <div class="lt_box">
-            <div class="lt-image" ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']">
+            <!-- FIXME: This was broken on the following div: -->
+            <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
+            <div class="lt-image">
 
-                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg"  alt="" />
-              <!-- <div ng-if="$ctrl.layoutOption != 'expanded'">-->
+                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
+                <!-- <div ng-if="$ctrl.layoutOption != 'expanded'">-->
 
-                    <a href="#"  ng-if="$ctrl.layoutOption === 'collapsed'"  class="blck_btn"   ng-click="displayGallery();">Change</a>
+                <a href="#" ng-if="$ctrl.layoutOption === 'collapsed'" class="blck_btn" ng-click="displayGallery();">Change</a>
             </div><!-- layout image ends -->
             <div class="lt-content">
                 <h4>Foo Layout</h4>
                 <p>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                    industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
+                    and scrambled it to make a type specimen book. It has survived not only five centuries, but also the
+                    leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
+                    with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
+                    publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                 </p>
             </div><!-- Layout content Ends -->
         </div><!-- Layout box Inner ends -->
@@ -30,9 +37,12 @@
         </div>
         <div class="lt_box">
             <ul class="layout_gallery">
-                <li ng-repeat="model in collection.models" >
-					<span class="galleryimg-cont" ng-class="{'select-highlight': isSelected(model.data)}"><img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt="" />
-						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(model.data);"><i class="fa fa-search" aria-hidden="true"></i></a>
+                <li ng-repeat="model in collection.models">
+					<span class="galleryimg-cont" ng-class="{'select-highlight': isSelected(model.data)}">
+                        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt=""/>
+						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(model.data);">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </a>
 						<a href="#" ng-click="chooseLayout(model.data,$event)" class="bl_btn">Choose Layout </a>
 					</span>
                     <h5>{{model.data.name}}</h5>
@@ -56,19 +66,19 @@
 
 <script type="text/ng-template" id="layoutDetail.html">
     <!---Detail Page starts from here---------->
-    <div class="layout-dialog" role="dialog" >
-    <div class="lt-popup">
-        <div class="ltpop-left">
-            <h3>{{layoutDetail.name}}</h3>
-            <p>{{layoutDetail.description}}</p>
-            <a href="#" ng-click="chooseLayout(layoutDetail,$event)" class="bl_btn">Choose Layout </a>
-        </div>
-        <div class="ltpop-right">
-            <a href="#">
-                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt="" />
-            </a>
-        </div>
-        <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
-    </div><!-- Layout popup ends -->
-        </div>
+    <div class="layout-dialog" role="dialog">
+        <div class="lt-popup">
+            <div class="ltpop-left">
+                <h3>{{layoutDetail.name}}</h3>
+                <p>{{layoutDetail.description}}</p>
+                <a href="#" ng-click="chooseLayout(layoutDetail,$event)" class="bl_btn">Choose Layout </a>
+            </div>
+            <div class="ltpop-right">
+                <a href="#">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
+                </a>
+            </div>
+            <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
+        </div><!-- Layout popup ends -->
+    </div>
 </script>

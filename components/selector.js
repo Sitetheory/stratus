@@ -50,8 +50,13 @@
                 $scope.registry = new registry();
                 $scope.registry.fetch({
                     target: $attrs.type,
-                    decouple: 'true',
-                    api: '{"options":{"paging": false},"limit":5000}'
+                    decouple: true,
+                    api: {
+                        options: {
+                            paging: false
+                        },
+                        limit: 5000
+                    }
                 }, $scope);
             }
 

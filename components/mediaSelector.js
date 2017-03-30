@@ -21,24 +21,33 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
+
+            // Libraries
             'stratus',
-            'jquery',
             'underscore',
             'angular',
-            'jquery-cookie',
-            'angular-file-upload',
-            'stratus.services.registry',
-            'stratus.services.model',
+
+            // UI Additions
             'angular-material',
+
+            // Modules
+            'angular-file-upload',
+            'jquery-cookie',
+
+            // Components
             'stratus.components.search',
-            'jquery-ui',
             'stratus.components.pagination',
-            'stratus.directives.singleClick'
+
+            // Directives
+            'stratus.directives.singleClick',
+
+            // Services
+            'stratus.services.registry'
         ], factory);
     } else {
-        factory(root.Stratus, root.$, root._);
+        factory(root.Stratus, root._);
     }
-}(this, function (Stratus, $, _) {
+}(this, function (Stratus, _) {
 
     // We need to ensure the ng-file-upload is registered
     Stratus.Modules.ngFileUpload = true;
@@ -47,19 +56,27 @@
     // item array into a particular attribute.
     Stratus.Components.MediaSelector = {
         bindings: {
-            ngModel: '='
+            ngModel: '=',
+            target: '@',
+            limit: '@'
         },
-        controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog, model) {
+        controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog) {
             Stratus.Instances[_.uniqueId('media_selector_')] = $scope;
 
             // load component css
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
-            // use stratus collection locally
-            $scope.registry = new registry();
-
             // fetch media collection and hydrate to $scope.collection
-            $scope.registry.fetch('Media', $scope);
+            $scope.registry = new registry();
+            $scope.registry.fetch({
+                target: $attrs.target || 'Media',
+                id: null,
+                manifest: false,
+                decouple: true,
+                api: {
+                    limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 30
+                }
+            }, $scope);
 
             // set media library to false
             $scope.showLibrary = false;
@@ -72,7 +89,7 @@
             // Data Connectivity
             $scope.$watch('$ctrl.ngModel', function (data) {
                 if (!_.isUndefined(data) && !_.isEqual($scope.draggedFiles, data)) {
-                    $scope.draggedFiles = data;
+                    $scope.draggedFiles = data || [];
                 }
             });
             $scope.$watch('draggedFiles', function (data) {
@@ -120,25 +137,25 @@
 
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
-                if ($event.type == 'dragover') {
-                    if ($event.explicitOriginalTarget.id != '') {
+                if ($event.type === 'dragover') {
+                    if ($event.explicitOriginalTarget.id !== '') {
                         $scope.draggedFileId = $event.explicitOriginalTarget.id;
                     }
                 }
-                if ($event.type == 'dragleave') {
+                if ($event.type === 'dragleave') {
                     $scope.removeFromSelected($scope.draggedFileId);
                 }
             };
 
             $scope.beforeChange = function (file, $event) {
-                if ($event.dataTransfer.dropEffect == 'move') {
+                if ($event.dataTransfer.dropEffect === 'move') {
                     $http({
                        method: 'GET',
                        url: '/Api/Media/' + $scope.movedFileId
                    }).then(function (response) {
                        $scope.draggedFiles.push(response.data.payload);
                        for (var i = 0; i < $scope.collection.models.length; i++) {
-                           if ($scope.collection.models[i].data.id == $scope.movedFileId) {
+                           if ($scope.collection.models[i].data.id === $scope.movedFileId) {
                                // add class selected
                                $scope.collection.models[i].data.selectedClass = true;
                            }
@@ -149,14 +166,14 @@
                        console.log(rejection.data);
                    });
                 }else {
-                    $scope.imageMoved == false;
+                    $scope.imageMoved === false;
                     $scope.uploadFiles();
                     $scope.movedFileId = '';
                 }
             };
             $scope.imageMoved = false;
             $scope.dragFromLib = function ($isDragging, $class, $event, fileId) {
-                if ($event.type == 'dragleave') {
+                if ($event.type === 'dragleave') {
                     $scope.movedFileId = fileId;
                     $scope.imageMoved = true;
                 }
@@ -316,7 +333,7 @@
 
             // check if ng-model value changes
             $scope.$watch('files', function (files) {
-                if (files != null) {
+                if (files !== null) {
                     $scope.dragClass = false;
 
                     // make files array for not multiple to be able to be used in ng-repeat in the ui
@@ -389,7 +406,7 @@
                         $q.all(promises).then(function (data) {
                             $scope.uploadComp = true;
                             $scope.uploadMedia();
-                            if ($scope.draggedDivChanged == true) {
+                            if ($scope.draggedDivChanged === true) {
                                 angular.forEach(data, function (dragged) {
                                     $scope.draggedFiles.push(dragged.data);
                                 });
@@ -503,7 +520,7 @@
                         if ($scope.draggedFiles[k].id === fileId) {
                             $scope.draggedFiles.splice(k, 1);
                             for (var j = 0; j < $scope.collection.models.length; j++) {
-                                if ($scope.collection.models[j].data.id == fileId) {
+                                if ($scope.collection.models[j].data.id === fileId) {
                                     $scope.collection.models[j].data.selectedClass = false;
                                 }
                             }
@@ -514,10 +531,9 @@
                         method: 'GET',
                         url: '/Api/Media/' + fileId
                     }).then(function (response) {
-                        $scope.draggedFiles = $scope.draggedFiles || [];
                         $scope.draggedFiles.push(response.data.payload);
                         for (var j = 0; j < $scope.collection.models.length; j++) {
-                            if ($scope.collection.models[j].data.id == fileId) {
+                            if ($scope.collection.models[j].data.id === fileId) {
                                 $scope.collection.models[j].data.selectedClass = true;
                             }
                         }

@@ -32,23 +32,62 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Registry = ['$provide', function ($provide) {
-        $provide.factory('registry', function (collection, model, $parse, $interpolate) {
+        $provide.factory('registry', function (collection, model, $interpolate, $q) {
             return function () {
                 // Maintain all models in Namespace
                 // Inverse the parent and child objects the same way Doctrine does
+                /**
+                 * @param $element
+                 * @param $scope
+                 * @returns {$q}
+                 */
                 this.fetch = function ($element, $scope) {
-                    if (angular.isString($element)) $element = { target: $element };
-                    var options = {
-                        target: $element.attr ? $element.attr('data-target') : $element.target,
-                        id: $element.attr ? $element.attr('data-id') : $element.id,
-                        manifest: $element.attr ? $element.attr('data-manifest') : $element.manifest,
-                        decouple: $element.attr ? $element.attr('data-decouple') : $element.decouple,
-                        api: $element.attr ? $element.attr('data-api') : $element.api
-                    };
-                    var data;
-                    _.each(options, function (element, key) {
-                        if (element) options[key] = $interpolate(element)($scope);
+                    var that = this;
+                    return new $q(function (resolve, reject) {
+                        if (angular.isString($element)) $element = { target: $element };
+                        var options = {
+                            target: $element.attr ? $element.attr('data-target') : $element.target,
+                            id: $element.attr ? $element.attr('data-id') : $element.id,
+                            manifest: $element.attr ? $element.attr('data-manifest') : $element.manifest,
+                            decouple: $element.attr ? $element.attr('data-decouple') : $element.decouple,
+                            api: $element.attr ? $element.attr('data-api') : $element.api
+                        };
+                        var completed = 0;
+                        $scope.$watch(function () {
+                            return completed;
+                        }, function (iteration) {
+                            if (_.isNumber(iteration) && parseInt(iteration) === _.size(options)) {
+                                resolve(that.build(options, $scope));
+                            }
+                        });
+                        _.each(options, function (element, key) {
+                            if (element && angular.isString(element)) {
+                                var interpreter = $interpolate(element, false, null, true);
+                                var initial = interpreter($scope.$parent);
+                                if (angular.isDefined(initial)) {
+                                    options[key] = initial;
+                                    completed++;
+                                } else {
+                                    $scope.$watch(function () {
+                                        return interpreter($scope.$parent);
+                                    }, function (value) {
+                                        if (value) {
+                                            options[key] = value;
+                                            completed++;
+                                        }
+                                    });
+                                }
+                            } else {
+                                completed++;
+                            }
+                        });
                     });
+                };
+                /**
+                 * @returns {collection|model|*}
+                 */
+                this.build = function (options, $scope) {
+                    var data;
                     if (options.target) {
                         options.target = _.ucfirst(options.target);
 

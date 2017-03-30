@@ -271,43 +271,44 @@
 
                 /**
                  * @param attribute
+                 * @param item
                  * @param options
                  * @returns {*}
                  */
-                this.toggle = function (attribute, options) {
-                    if (typeof options !== 'object') options = { item: options, multiple: true };
+                this.toggle = function (attribute, item, options) {
+                    if (typeof options !== 'object') options = { multiple: true };
                     var request = attribute.split('[].');
                     var target = that.get(request.length > 1 ? request[0] : attribute);
                     if (typeof target === 'undefined') {
                         target = options.multiple ? [] : null;
                         that.set(request.length > 1 ? request[0] : attribute, target);
                     }
-                    if (typeof options.item === 'undefined') {
+                    if (typeof item === 'undefined') {
                         that.set(attribute, !target);
                     } else if (angular.isArray(target)) {
                         /* This is disabled, since hydration should not be forced by default *
                         var hydrate = {};
                         if (request.length > 1) {
-                            hydrate[request[1]] = { id: options.item };
+                            hydrate[request[1]] = { id: item };
                         } else {
-                            hydrate.id = options.item;
+                            hydrate.id = item;
                         }
                         /* */
-                        if (!that.exists(attribute, options.item)) {
-                            target.push(options.item);
+                        if (!that.exists(attribute, item)) {
+                            target.push(item);
                         } else {
                             _.each(target, function (element, key) {
                                 var child = (request.length > 1 && angular.isObject(element) && request[1] in element) ? element[request[1]] : element;
                                 var childId = (angular.isObject(child) && child.id) ? child.id : child;
-                                var itemId = (angular.isObject(options.item) && options.item.id) ? options.item.id : options.item;
+                                var itemId = (angular.isObject(item) && item.id) ? item.id : item;
                                 if (childId === itemId || (angular.isString(childId) && angular.isString(itemId) && _.strcmp(childId, itemId) === 0)) {
                                     target.splice(key, 1);
                                 }
                             });
                         }
                     } else if (typeof target === 'object' || typeof target === 'number') {
-                        // (options.item && typeof options.item !== 'object') ? { id: options.item } : options.item
-                        that.set(attribute, !that.exists(attribute, options.item) ? options.item : null);
+                        // (item && typeof item !== 'object') ? { id: item } : item
+                        that.set(attribute, !that.exists(attribute, item) ? item : null);
                     }
                     return that.get(attribute);
                 };

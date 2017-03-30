@@ -42,7 +42,7 @@
                 this.qualifier = ''; // ng-if
                 this.decay = 0;
 
-                if (options && typeof options == 'object') {
+                if (options && typeof options === 'object') {
                     angular.extend(this, options);
                 }
 
@@ -121,7 +121,7 @@
                             }
                         }
                         $http(prototype).then(function (response) {
-                            if (response.status == '200') {
+                            if (response.status === 200) {
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
@@ -203,7 +203,7 @@
                     if (angular.isObject(target)) {
                         target = (target instanceof model) ? target : new model({
                             collection: that
-                        }, target) ;
+                        }, target);
                         that.models.push(target);
                         if (options.save) target.save();
                     }
@@ -217,42 +217,42 @@
                 };
 
                 // Infinite Scrolling
-                /*
-                 this.infiniteModels = {
-                 numLoaded_: 0,
-                 toLoad_: 0,
+                /* *
+                this.infiniteModels = {
+                    numLoaded_: 0,
+                    toLoad_: 0,
 
-                 // Required.
-                 getItemAtIndex: function (index) {
-                 if (index > this.numLoaded_) {
-                 this.fetchMoreItems_(index);
-                 return null;
-                 }
+                    // Required.
+                    getItemAtIndex: function (index) {
+                        if (index > this.numLoaded_) {
+                            this.fetchMoreItems_(index);
+                            return null;
+                        }
 
-                 return index;
-                 },
+                        return index;
+                    },
 
-                 // Required.
-                 // For infinite scroll behavior, we always return a slightly higher
-                 // number than the previously loaded items.
-                 getLength: function () {
-                 return this.numLoaded_ + 5;
-                 },
+                    // Required.
+                    // For infinite scroll behavior, we always return a slightly higher
+                    // number than the previously loaded items.
+                    getLength: function () {
+                        return this.numLoaded_ + 5;
+                    },
 
-                 fetchMoreItems_: function (index) {
-                 // For demo purposes, we simulate loading more items with a timed
-                 // promise. In real code, this function would likely contain an
-                 // $http request.
+                    fetchMoreItems_: function (index) {
+                        // For demo purposes, we simulate loading more items with a timed
+                        // promise. In real code, this function would likely contain an
+                        // $http request.
 
-                 if (this.toLoad_ < index) {
-                 this.toLoad_ += 20;
-                 $timeout(angular.noop, 300).then(angular.bind(this, function () {
-                 this.numLoaded_ = this.toLoad_;
-                 }));
-                 }
-                 }
-                 }
-                 */
+                        if (this.toLoad_ < index) {
+                            this.toLoad_ += 20;
+                            $timeout(angular.noop, 300).then(angular.bind(this, function () {
+                                this.numLoaded_ = this.toLoad_;
+                            }));
+                        }
+                    }
+                }
+                /* */
             };
         });
     }];

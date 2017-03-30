@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.collection'], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -29,15 +29,30 @@
     // This component intends to handle binding and
     // full pagination for the scope's collection.
     Stratus.Components.Pagination = {
-        controller: function ($scope) {
+        controller: function ($scope, collection) {
             Stratus.Instances[_.uniqueId('pagination_')] = $scope;
+
+            // Load Component CSS
+            Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/pagination' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+
+            // Settings
             $scope.pages = [];
             $scope.startPage = 0;
             $scope.endPage = 0;
-            $scope.collection = $scope.$parent && $scope.$parent.collection ? $scope.$parent.collection : null;
-            $scope.meta = $scope.collection && $scope.collection.meta ? $scope.collection.meta : null;
-            if (!$scope.meta) return null;
-            $scope.$watch('meta.attributes.pageCurrent', function (newValue) {
+
+            // Localize Collection & Meta
+            $scope.collection = null;
+            $scope.meta = null;
+            $scope.$watch('$parent.collection', function (data) {
+                if (data && data instanceof collection) {
+                    $scope.collection = data;
+                    $scope.meta = data.meta;
+                }
+            });
+
+            // Handle Page Changes
+            $scope.$watch('meta.attributes.pageCurrent', function (pageCurrent) {
+                if (!pageCurrent) return true;
                 if ($scope.meta.get('pageTotal') <= 10) {
                     // less than 10 total pages so show all
                     $scope.startPage = 1;
