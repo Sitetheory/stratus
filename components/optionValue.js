@@ -40,6 +40,7 @@
             Stratus.Instances[_.uniqueId('option_value_')] = $scope;
             $scope.model = $parse($attrs.ngModel);
             $scope.items = $scope.model($scope.$parent);
+
             // FIXME: This seems a bit more complex than need be, since ngModel and options are both double bound
             var normalize = function () {
                 if (!angular.isArray($scope.items)) $scope.items = [];
