@@ -1,0 +1,21 @@
+<ul ng-if="meta && meta.attributes.pageTotal > 1" class="listInline paginator">
+    <li ng-show="startPage > 1" class="paginatorPrevious" ng-class="{disabled:meta.attributes.pageCurrent == 1}">
+        <a ng-click="meta.attributes.pageCurrent == 1 || page(1)">First</a>
+    </li>
+    <li class="paginatorPrevious" ng-class="{disabled:meta.attributes.pageCurrent == 1}">
+        <a ng-click="meta.attributes.pageCurrent == 1 || collection.page(meta.attributes.pageCurrent - 1)">Previous</a>
+    </li>
+    <li class="paginatorPages" ng-repeat="page in pages" ng-class="{active:meta.attributes.pageCurrent == page}">
+        <a ng-click="collection.page(page)">{{ page }}</a>
+    </li>
+    <li class="paginatorNext" ng-class="{disabled:meta.attributes.pageCurrent == meta.attributes.pageTotal}">
+        <a ng-click="meta.attributes.pageCurrent == meta.attributes.pageTotal || collection.page(meta.attributes.pageCurrent + 1)">Next</a>
+    </li>
+    <li class="paginatorNext" ng-show="endPage < meta.attributes.pageTotal"
+        ng-class="{disabled:meta.attributes.pageCurrent == meta.attributes.pageTotal}">
+        <a ng-click="meta.attributes.pageCurrent == meta.attributes.pageTotal || collection.page(meta.attributes.pageTotal)">Last</a>
+    </li>
+</ul>
+<span ng-show="false"
+      class="paginatorTotal customFontSecondary smallLabel">({{ meta.attributes.countTotal }} Results)</span>
+<md-progress-linear ng-if="collection.paginate" md-mode="indeterminate"></md-progress-linear>

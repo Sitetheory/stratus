@@ -1,3 +1,7 @@
+<ul ng-if="model && property && model.get(property)" style="list-style-type: none;">
+    <li ng-repeat="selected in model.get(property)" style="float: left; padding: 5px;" ng-transclude="selection">{{ selected }}</li>
+</ul>
+<stratus-search></stratus-search>
 <md-button ng-if="collection && model && property" ng-repeat="option in collection.models" class="md-raised"
            aria-label="{{ option.data.name }}" ng-class="{ 'md-accent': model.exists(property, option.data.id) }"
            ng-click="model.toggle(property, option.data.id, toggleOptions)">
@@ -11,3 +15,4 @@
         <span ng-transclude="label">{{ option.data.name || option.data.title || 'Unknown' }}</span>
     </md-tooltip>
 </md-button>
+<stratus-pagination></stratus-pagination>

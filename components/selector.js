@@ -21,7 +21,23 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.registry', 'stratus.services.model'], factory);
+        define([
+            // Libraries
+            'stratus',
+            'underscore',
+            'angular',
+
+            // Modules
+            'angular-material',
+
+            // Components
+            'stratus.components.pagination',
+            'stratus.components.search',
+
+            // Services
+            'stratus.services.registry',
+            'stratus.services.model'
+        ], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -30,14 +46,17 @@
     Stratus.Components.Selector = {
         transclude: {
             image: '?stratusSelectorImage',
-            label: '?stratusSelectorLabel'
+            label: '?stratusSelectorLabel',
+            selection: '?stratusSelectorSelection'
         },
         bindings: {
             elementId: '@',
             ngModel: '=',
             type: '@',
             property: '@',
-            multiple: '&'
+            multiple: '@',
+            api: '@',
+            limit: '@'
         },
         controller: function ($scope, $attrs, $log, registry, model) {
             // Initialize
@@ -45,19 +64,26 @@
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
 
+            // Hydrate Settings
+            $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
+
             // Asset Collection
             if ($attrs.type) {
                 $scope.registry = new registry();
-                $scope.registry.fetch({
+                var request = {
                     target: $attrs.type,
                     decouple: true,
                     api: {
                         options: {
-                            paging: false
+                            // paging: false
                         },
-                        limit: 5000
+                        limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
                     }
-                }, $scope);
+                };
+                if ($scope.api && angular.isObject($scope.api)) {
+                    request.api = _.extendDeep(request.api, $scope.api);
+                }
+                $scope.registry.fetch(request, $scope);
             }
 
             // Store Asset Property for Verification

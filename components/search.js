@@ -21,7 +21,18 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular', 'stratus.services.registry', 'angular-material'], factory);
+        define([
+            // Libraries
+            'stratus',
+            'angular',
+
+            // Modules
+            'angular-material',
+
+            // Services
+            'stratus.services.registry',
+            'stratus.services.collection'
+        ], factory);
     } else {
         factory(root.Stratus);
     }
@@ -33,19 +44,31 @@
             ngModel: '=',
             target: '@'
         },
-        controller: function ($scope, $attrs, registry) {
-            Stratus.Instances[_.uniqueId('search')] = $scope;
+        controller: function ($scope, $attrs, registry, collection) {
+            Stratus.Instances[_.uniqueId('search_')] = $scope;
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/search' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
-            $scope.collection = ($scope.$parent && $scope.$parent.collection) ? $scope.$parent.collection : null;
+
+            // Localize Collection
+            $scope.collection = null;
+            $scope.$watch('$parent.collection', function (data) {
+                if (data && data instanceof collection) {
+                    $scope.collection = data;
+                }
+            });
+
+            // Initial Query
             $scope.query = '';
-            /**
-             $scope.$watch('query', function (query) {
+
+            // TODO: Add the ability to use either its own collection or hoist the parent's
+
+            /* *
+            $scope.$watch('query', function (query) {
                 console.log('query:', query);
-             });
-             console.log('attributes:', $attrs.ngModel);
-             $scope.registry = new registry();
-             $scope.registry.fetch('Media', $scope);
-             /**/
+            });
+            console.log('attributes:', $attrs.ngModel);
+            $scope.registry = new registry();
+            $scope.registry.fetch('Media', $scope);
+            /* */
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/search' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };

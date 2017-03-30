@@ -40,6 +40,7 @@
             Stratus.Instances[_.uniqueId('option_value_')] = $scope;
             $scope.model = $parse($attrs.ngModel);
             $scope.items = $scope.model($scope.$parent);
+            // FIXME: This seems a bit more complex than need be, since ngModel and options are both double bound
             var normalize = function () {
                 if (!angular.isArray($scope.items)) $scope.items = [];
                 if (!$scope.items.length) $scope.items.push({});
@@ -53,17 +54,6 @@
                 normalize();
             }, true);
         },
-        template: '<div ng-if="items.length" ng-repeat="item in items" layout="row">\
-            <md-select ng-model="item.type" flex="10" aria-label="{{ $ctrl.type }}">\
-                <md-option ng-repeat="option in $ctrl.options" ng-value="option" ng-selected="item.name == option">\
-                    {{ option }}\
-                </md-option>\
-            </md-select>\
-            <md-input-container flex>\
-                <label>{{ type }}</label>\
-                <input type="text" ng-model="item.value">\
-            </md-input-container>\
-            <md-button ng-if="$last" ng-click="items.push({})">add {{ type }}</md-button>\
-        </div>'
+        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/optionValue' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
 }));

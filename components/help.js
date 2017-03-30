@@ -26,11 +26,11 @@
         factory(root.Stratus);
     }
 }(this, function (Stratus) {
-    // TODO: Convert to Tether-Tooltip
+    // TODO: Possibly Convert to Tether-Tooltip
     // This component intends to display help information
     // in an widely accessible tooltip icon standard.
     Stratus.Components.Help = {
         transclude: true,
-        template: '<md-button class="md-icon-button" aria-label="help"><md-tooltip md-direction="top"><div ng-transclude=""></div></md-tooltip><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon></md-button>'
+        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/help' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
 }));
