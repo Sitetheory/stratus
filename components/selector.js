@@ -47,8 +47,7 @@
     Stratus.Components.Selector = {
         transclude: {
             image: '?stratusSelectorImage',
-            label: '?stratusSelectorLabel',
-            selection: '?stratusSelectorSelection'
+            label: '?stratusSelectorLabel'
         },
         bindings: {
             elementId: '@',
