@@ -333,6 +333,7 @@
 
             // check if ng-model value changes
             $scope.$watch('files', function (files) {
+
                 if (files !== null) {
                     $scope.dragClass = false;
 
@@ -359,7 +360,7 @@
                     // show done button when all promises are completed
                     if (promises.length > 0) {
                         $q.all(promises).then(function (data) {
-
+                            console.log('test');
                             $scope.uploadComp = true;
                             $scope.uploadMedia();
                             if ($scope.draggedDivChanged === true) {

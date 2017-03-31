@@ -87,7 +87,7 @@
 .download-img{ background:url('/assets/1/0/bundles/sitetheorycore/images/media/download.png') no-repeat; background-position:center top; width:20px; height:25px; }
 .right-image label{ float:left; color:#8f8f8f; margin-top:10px; margin-right:10px;}
 .right-image span{ background:#f5a623; color:#fff; padding:2px 5px; margin:10px 5px 0; float:left; border:1px solid #979797; font-size:15px;}
-.media-dialog{ text-align: center;}
+.media-dialog{ text-align: center;width:100% !important;}
 .media-cross{ }
 
 
@@ -224,9 +224,9 @@ span.progress{
 .hover-tick-run{animation:hovertick ease-out 1.5s 0s;}
 
 @-webkit-keyframes hovertick{
-     from {top:120%; opacity:1;}
-     to {top:0; opacity:0;}
- }
+    from {top:120%; opacity:1;}
+    to {top:0; opacity:0;}
+}
 @-moz-keyframes hovertick{
     from {top:120%; opacity:1;}
     to {top:0; opacity:0;}
