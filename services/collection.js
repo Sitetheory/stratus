@@ -121,7 +121,7 @@
                             }
                         }
                         $http(prototype).then(function (response) {
-                            if (response.status === 200) {
+                            if (response.status === 200 && angular.isObject(response.data)) {
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
@@ -129,6 +129,7 @@
 
                                 var data = response.data.payload || response.data;
                                 if (angular.isArray(data)) {
+                                    // TODO: Make this able to be flagged as direct entities
                                     data.forEach(function (target) {
                                         that.models.push(new model({ collection: that }, target));
                                     });
@@ -147,7 +148,7 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response);
+                                reject(response.statusText || angular.isObject(response.data) ? response.data : 'Invalid Payload:' + prototype.method + ' ' + prototype.url);
                             }
                         }, reject);
                     });

@@ -23,7 +23,6 @@
     "requirejs": "^2.*",
     "bowser": "^1.*",
     "jquery": "^2.*",
-    "jquery.cookie": "jquery-cookie#^1.*",
     "codemirror": "^5.*",
     "underscore": "^1.*",
     "backbone": "^1.*",

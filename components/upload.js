@@ -21,7 +21,18 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'jquery', 'dropzone', 'angular', 'angular-material', 'jquery-cookie'], factory);
+        define([
+
+            // Libraries
+            'stratus',
+            'underscore',
+            'jquery',
+            'dropzone',
+            'angular',
+
+            // Modules
+            'angular-material'
+        ], factory);
     } else {
         factory(root.Stratus, root._, root.$, root.Dropzone);
     }
@@ -41,7 +52,7 @@
                 var $target = $('#' + $scope.elementId);
                 if ($target.length && !$scope.dropzone) {
                     $scope.dropzone = new Dropzone($target[0], {
-                        url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+                        url: 'https://app.sitetheory.io:3000/?session=' + Stratus.Cookies.retrieve('SITETHEORY'),
                         method: 'POST',
                         parallelUploads: 5,
                         clickable: true,

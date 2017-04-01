@@ -44,7 +44,6 @@ boot.config({
         'backbone.relational': { deps: ['backbone'] },
 
         /* jQuery */
-        'jquery-cookie': { deps: ['zepto'] },
         selectize: { deps: ['zepto'] },
         timeago: { deps: ['zepto'] },
         watch: { deps: ['zepto'] },
@@ -308,7 +307,6 @@ boot.config({
         'jquery-sandbox': boot.bundle + 'stratus/normalizers/jquery.sandbox' + boot.suffix,
         jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
         'jquery-ui': boot.bundle + 'stratus/bower_components/jquery-ui/jquery-ui' + boot.suffix,
-        'jquery-cookie': boot.bundle + 'stratus/bower_components/jquery.cookie/jquery.cookie',
         selectize: boot.bundle + 'stratus/bower_components/selectize/dist/js/standalone/selectize' + boot.suffix,
         watch: '//cdnjs.cloudflare.com/ajax/libs/watch/2.0.4/jquery.watch' + boot.suffix,
 

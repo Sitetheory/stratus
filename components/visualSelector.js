@@ -18,7 +18,6 @@
 // Stratus Media Selector Component
 // ----------------------
 // Define AMD, Require.js, or Contextual Scope
-console.log('test');
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([

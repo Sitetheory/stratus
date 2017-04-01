@@ -32,7 +32,6 @@
 
             // Modules
             'angular-file-upload',
-            'jquery-cookie',
 
             // Components
             'stratus.components.search',
@@ -49,7 +48,7 @@
     }
 }(this, function (Stratus, _) {
 
-    // We need to ensure the ng-file-upload is registered
+    // We need to ensure the ng-file-upload and ng-cookies are registered
     Stratus.Modules.ngFileUpload = true;
 
     // This component intends to handle binding of an
@@ -166,6 +165,7 @@
                        console.log(rejection.data);
                    });
                 }else {
+                    // FIXME: There is a random comparison below
                     $scope.imageMoved === false;
                     $scope.uploadFiles();
                     $scope.movedFileId = '';
@@ -427,7 +427,7 @@
                 file.uploadStatus = false;
                 file.errorUpload = false;
                 file.upload = Upload.upload({
-                        url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+                        url: 'https://app.sitetheory.io:3000/?session=' + Stratus.Cookies.retrieve('SITETHEORY'),
                         data: {
                             file: file
                         }

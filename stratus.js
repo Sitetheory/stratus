@@ -37,8 +37,7 @@
             'underscore',
             'backbone',
             'bowser',
-            'promise',
-            'jquery-cookie' // @deprecated!
+            'promise'
         ], function (text, $, _, Backbone, bowser) {
             return (root.Stratus = factory(text, $, _, Backbone, bowser));
         });
@@ -818,84 +817,13 @@
          */
         initialize: function (options) {
             if (!Stratus.Environment.get('production')) console.info('Cookie Manager Invoked!');
-            this.on('change', this.synchronize, this);
         },
-        synchronize: function () {
-            _.each(this.changed, function (job, key) {
-                if (typeof key === 'string' && key.indexOf('.') !== -1) {
-                    key = _.first(key.split('.'));
-                    job = this.get(key);
-                }
-                if (!job.code && job.enabled) {
-                    job.code = setInterval(function (job) {
-                        job.func.call(job.scope);
-                    }, job.time * 1000, job);
-                } else if (job.code && !job.enabled) {
-                    clearInterval(job.code);
-                    job.code = 0;
-                }
-            }, this);
-        },
-        /**
-         * @param time
-         * @param func
-         * @param scope
-         * @returns {string}
-         */
-        add: function (time, func, scope) {
-            var uid = null;
-            time = _.seconds(time);
-            if (time !== null && typeof func === 'function') {
-                uid = _.uniqueId('job_');
-                scope = scope || window;
-                this.set(uid, {
-                    time: time,
-                    func: func,
-                    scope: scope,
-                    code: 0,
-                    enabled: false
-                });
-            }
-            return uid;
-        },
-        /**
-         * @param uid
-         * @returns {boolean|*}
-         */
-        enable: function (uid) {
-            var success = this.has(uid);
-            if (success) this.set(uid + '.enabled', true);
-            return success;
-        },
-        /**
-         * @param uid
-         * @returns {boolean|*}
-         */
-        disable: function (uid) {
-            var success = this.has(uid);
-            if (success) this.set(uid + '.enabled', false);
-            return success;
-        },
-        /**
-         * @param uid
-         * @param value
-         * @returns {boolean|*}
-         */
-        toggle: function (uid, value) {
-            var success = this.has(uid);
-            if (success) this.set(uid + '.enabled', (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'));
-            return success;
-        },
-
-        // TODO: Implement Functions Below into the Standards Above
-
         /**
          * @param name
          * @returns {null}
          */
         retrieve: function (name) {
             var search = '(?:^' + name + '|;\s*' + name + ')=(.*?)(?:;|$)';
-            console.log('search:', search);
             var regexp = new RegExp(search, 'gi');
             var result = regexp.exec(document.cookie);
             return (result === null) ? null : result[1];
@@ -2183,7 +2111,7 @@
                             tabMode: 'space',
                             tabSize: 4
                         },
-                        fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+                        fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + Stratus.Cookies.retrieve('SITETHEORY'),
                         htmlAllowedAttrs: ['.*'],
                         htmlAllowedEmptyTags: [
                             'textarea', 'a', '.fa',
@@ -2723,7 +2651,7 @@
      */
     Stratus.Internals.UpdateEnvironment = function (request) {
         if (!request) request = {};
-        if (typeof document.cookie !== 'string' || !$.cookie('SITETHEORY')) return false;
+        if (typeof document.cookie !== 'string' || !Stratus.Cookies.retrieve('SITETHEORY')) return false;
         if (typeof request === 'object' && Object.keys(request).length) {
             // TODO: Create a better URL, switching between relative APIs based on environment
             Stratus.Internals.Ajax({
@@ -2809,8 +2737,8 @@
     Stratus.PostMessage.Convoy(function (event) {
         if (event.origin !== 'https://auth.sitetheory.io' && event.origin !== 'http://admin.sitetheory.io') return false;
         var convoy = JSON.parse(event.data);
-        if (convoy.meta.session && convoy.meta.session !== $.cookie('SITETHEORY')) {
-            $.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
+        if (convoy.meta.session && convoy.meta.session !== Stratus.Cookies.retrieve('SITETHEORY')) {
+            Stratus.Cookies.create('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
             if (!Stratus.Client.safari) location.reload(true);
         }
     });

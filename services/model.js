@@ -148,11 +148,11 @@
                             }
                         }
                         $http(prototype).then(function (response) {
-                            if (response.status === 200) {
+                            if (response.status === 200 && angular.isObject(response.data)) {
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
-                                that.data = angular.isObject(response.data) ? response.data.payload || response.data : {};
+                                that.data = response.data.payload || response.data;
 
                                 // XHR Flags
                                 that.pending = false;
@@ -172,7 +172,7 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response);
+                                reject(response.statusText || angular.isObject(response.data) ? response.data : 'Invalid Payload: ' + prototype.method + ' ' + prototype.url);
                             }
                         }, reject).catch(reject);
                     });
@@ -277,6 +277,7 @@
                  */
                 this.toggle = function (attribute, item, options) {
                     if (typeof options !== 'object') options = { multiple: true };
+                    console.log('toggle:', attribute, item, options);
                     var request = attribute.split('[].');
                     var target = that.get(request.length > 1 ? request[0] : attribute);
                     if (typeof target === 'undefined') {

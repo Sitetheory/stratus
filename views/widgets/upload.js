@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'text!templates-upload', 'stratus.views.widgets.base', 'jquery-cookie', 'dropzone'], factory);
+        define(['stratus', 'zepto', 'underscore', 'text!templates-upload', 'stratus.views.widgets.base', 'dropzone'], factory);
     } else {
         factory(root.Stratus, root.$, root._, root.Template);
     }
@@ -61,7 +61,7 @@
          */
         onRender: function (entries) {
             var hydrate = _.template(this.options.dropzone.url);
-            this.options.dropzone.url = hydrate({ session: $.cookie('SITETHEORY') });
+            this.options.dropzone.url = hydrate({ session: Stratus.Cookies.retrieve('SITETHEORY') });
             this.$el.dropzone(this.options.dropzone);
             return true;
         }
