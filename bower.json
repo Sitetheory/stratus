@@ -54,7 +54,8 @@
     "ng-file-upload": "^12.2.13",
     "tether-shepherd": "^1.8.1",
     "tether-drop": "^1.4.2",
-    "tether-tooltip": "^1.2.0"
+    "tether-tooltip": "^1.2.0",
+    "interactjs": "^1.2.8"
   },
   "private": false
 }

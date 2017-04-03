@@ -57,7 +57,9 @@
                             return completed;
                         }, function (iteration) {
                             if (_.isNumber(iteration) && parseInt(iteration) === _.size(options)) {
-                                resolve(that.build(options, $scope));
+                                var test = that.build(options, $scope);
+                                console.log(test);
+                                resolve(test);
                             }
                         });
                         _.each(options, function (element, key) {

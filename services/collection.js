@@ -148,7 +148,7 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response.statusText || angular.isObject(response.data) ? response.data : 'Invalid Payload:' + prototype.method + ' ' + prototype.url);
+                                reject(response.statusText || angular.isObject(response.data) ? response.data : 'Invalid Payload: ' + prototype.method + ' ' + prototype.url);
                             }
                         }, reject);
                     });
