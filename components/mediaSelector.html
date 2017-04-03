@@ -2,7 +2,7 @@
     <div class="gallery-box">
         <!-- Gallery header Ends -->
         <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
-              ngf-drop ngf-max-files="20"  ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover" ngf-drag="dragSelected($isDragging, $class, $event)">
+              ngf-drop ngf-max-files="20"  ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover"  ngf-drop   ngf-drag="dragSelected($isDragging, $class, $event)">
             <!-- show only if no files are dragged-->
          <!--   <a ng-if="!draggedFiles.length"  ngf-drop ngf-multiple="true" ngf-before-model-change="beforeChange($files,$event)"
                ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"
@@ -59,9 +59,9 @@
                     <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">
                         Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <div ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
+                <div ngf-drop="uploadToLibrary($files)"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                 <ul>
-                    <li  ng-repeat="media in collection.models"  ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
+                    <li  ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
                         <div class="gl-img-container" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                            <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">-->
@@ -69,7 +69,7 @@
                             <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
 
-                                <img class="imgLibDrag" id="lib_{{media.data.id}}"   ng-src="{{media.data.url}}" draggable="true"></a>
+                                <img class="imgLibDrag" [itemid]="{{media.data.id}}"   ng-src="{{media.data.url}}" draggable="true"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
                             <div class="img-info">
@@ -175,9 +175,9 @@
 <!---show light box overlay for media detail--->
 <script type="text/ng-template" id="mediaDetail.html">
     <div class="media-popup" role="dialog" >
-        <div class="cross-btn">
-            <a href="javascript:;"></a>
-        </div>
+
+            <a class="cross-btn" href="javascript:;" ng-click="closeZoom();"></a>
+
         <div class="right-image">
             <img ng-src="{{mediaDetail.url}}" alt="">
             <label>Tags</label>
@@ -202,4 +202,7 @@
             </div>
         </div>
     </div>
+</script>
+<script>
+
 </script>
