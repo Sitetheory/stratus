@@ -18,6 +18,7 @@
 // Stratus Media Selector Component
 // ----------------------
 // Define AMD, Require.js, or Contextual Scope
+console.log('hello');
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
@@ -125,7 +126,7 @@
                     position: position,
                     trapFocus: true,
                     zIndex: 150,
-                    clickOutsideToClose: true,
+                    clickOutsideToClose: false,
                     escapeToClose: true,
                     focusOnOpen: true
                 };
@@ -136,13 +137,16 @@
 
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
+
+                // console.log(fileId);
                 if ($event.type === 'dragover') {
                     if ($event.explicitOriginalTarget.id !== '') {
                         $scope.draggedFileId = $event.explicitOriginalTarget.id;
                     }
                 }
                 if ($event.type === 'dragleave') {
-                    $scope.removeFromSelected($scope.draggedFileId);
+
+                    $scope.removeFromSelected(parseInt($scope.draggedFileId));
                 }
             };
 
@@ -166,13 +170,16 @@
                    });
                 }else {
                     // FIXME: There is a random comparison below
-                    $scope.imageMoved === false;
+                    $scope.imageMoved = false;
                     $scope.uploadFiles();
                     $scope.movedFileId = '';
                 }
             };
             $scope.imageMoved = false;
             $scope.dragFromLib = function ($isDragging, $class, $event, fileId) {
+                console.log('isDragging', $isDragging);
+                console.log('event', $event);
+                console.log('fileId', fileId);
                 if ($event.type === 'dragleave') {
                     $scope.movedFileId = fileId;
                     $scope.imageMoved = true;
@@ -223,11 +230,14 @@
             // remove media file from selected list
             $scope.removeFromSelected = function (fileId) {
                 for (var i = $scope.draggedFiles.length - 1; i >= 0; i--) {
+                    // used double precision because id uis passed as string in event
                     if ($scope.draggedFiles[i].id === fileId) {
+
                         $scope.draggedFiles.splice(i, 1);
                     }
                 }
                 for (var j = 0; j < $scope.collection.models.length; j++) {
+                    // used double precision because id uis passed as string in event
                     if ($scope.collection.models[j].data.id === fileId) {
                         $scope.collection.models[j].data.selectedClass = false;
                     }
@@ -360,7 +370,6 @@
                     // show done button when all promises are completed
                     if (promises.length > 0) {
                         $q.all(promises).then(function (data) {
-                            console.log('test');
                             $scope.uploadComp = true;
                             $scope.uploadMedia();
                             if ($scope.draggedDivChanged === true) {
@@ -511,6 +520,10 @@
                     });
                 };
 
+                $scope.closeZoom = function () {
+
+                    mdPanelRef.close();
+                };
             }
 
             // Manage classes on select/unselect media
