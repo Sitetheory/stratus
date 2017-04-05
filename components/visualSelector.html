@@ -1,21 +1,25 @@
 <div id="comp" class="container">
-    {{$ctrl.ngModel.data.viewVersion.layout}}
     <div class="layout_bx">
         <div class="lt-header">
             <h3><span><i class="fa fa-question" aria-hidden="true" ></i></span> Layout</h3>
         </div><!-- Gallery header Ends -->
-        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel.data.viewVersion.layout === null" ng-click="toggleGallery();">
+        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || $ctrl.ngModel === null" ng-click="toggleGallery();">
             <i   ng-class="galleryClass"  class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
       <!--  <span ng-show="$ctrl.ngModel.data.viewVersion.layout === null">Please select from options below</span>-->
         <div class="lt_box" ng-repeat="sel in selectListArr">
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
             <button  class="cancel--btn" ng-click="removeSelected(sel);"></button>
-            <div class="lt-image" ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']">
+            <div class="lt-image" ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed' && showGallery !== true]">
                 <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
-                <div ng-if="$ctrl.layoutOption != 'expanded'">
-                    <a href="#" ng-if="$ctrl.layoutOption === 'collapsed'" class="blck_btn" ng-click="displayGallery();">Change</a>
-                </div>
+                <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
+                    <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel !== null && showGallery !== true"
+                        ng-click="displayGallery();">
+                        <span>Change</span></a>
+                    <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel === null && showGallery !== true" class="blck_btn"
+                       ng-click="displayGallery();">
+                        <span>Choose Layout</span></a>
+                <!--</div>-->
             </div>
             <div class="lt-content">
                 <h4>{{sel.name}}</h4>
@@ -43,7 +47,7 @@
 						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(model.data);">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </a>
-						<a href="#" ng-click="chooseLayout(model.data,$event)" class="bl_btn">Choose Layout </a>
+						<a href="#" ng-hide="checkSelected(model.data)" ng-click="chooseLayout(model.data,$event)" class="bl_btn">Choose Layout </a>
 					</span>
                     <h5>{{model.data.name}}</h5>
                 </li>
@@ -71,7 +75,7 @@
             <div class="ltpop-left">
                 <h3>{{layoutDetail.name}}</h3>
                 <p>{{layoutDetail.description}}</p>
-                <a href="#" ng-click="chooseLayout(layoutDetail,$event)" class="bl_btn">Choose Layout </a>
+                <a href="#" ng-hide="checkSelected(layoutDetail)" ng-click="chooseLayout(layoutDetail,$event)" class="bl_btn">Choose Layout </a>
             </div>
             <div class="ltpop-right">
                 <a href="#">

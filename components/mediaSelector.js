@@ -18,7 +18,7 @@
 // Stratus Media Selector Component
 // ----------------------
 // Define AMD, Require.js, or Contextual Scope
-console.log('hello');
+console.log('drag again');
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
@@ -40,6 +40,7 @@ console.log('hello');
 
             // Directives
             'stratus.directives.singleClick',
+            'stratus.directives.sortable',
 
             // Services
             'stratus.services.registry'
@@ -527,7 +528,8 @@ console.log('hello');
             }
 
             // Manage classes on select/unselect media
-            $scope.addDeleteMedia = function (selectedStatus, fileId) {
+            $scope.addDeleteMedia = function (selectedStatus, fileId, $event) {
+
                 // if selected status is true,remove from draggedFiles and add minus icon
                 if (selectedStatus === true) {
                     for (var k = 0; k < $scope.draggedFiles.length; k++) {
@@ -536,6 +538,8 @@ console.log('hello');
                             for (var j = 0; j < $scope.collection.models.length; j++) {
                                 if ($scope.collection.models[j].data.id === fileId) {
                                     $scope.collection.models[j].data.selectedClass = false;
+                                    angular.element($event.currentTarget).removeClass('minus_icon');
+                                    angular.element($event.currentTarget).addClass('add_icon');
                                 }
                             }
                         }
@@ -549,6 +553,8 @@ console.log('hello');
                         for (var j = 0; j < $scope.collection.models.length; j++) {
                             if ($scope.collection.models[j].data.id === fileId) {
                                 $scope.collection.models[j].data.selectedClass = true;
+                                angular.element($event.currentTarget).removeClass('add_icon');
+                                angular.element($event.currentTarget).addClass('minus_icon');
                             }
                         }
                     });

@@ -2,7 +2,7 @@
     <div class="gallery-box">
         <!-- Gallery header Ends -->
         <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
-              ngf-drop ngf-max-files="20"  ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover"  ngf-drop   ngf-drag="dragSelected($isDragging, $class, $event)">
+              ngf-drop ngf-max-files="20"   ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover"  ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
             <!-- show only if no files are dragged-->
          <!--   <a ng-if="!draggedFiles.length"  ngf-drop ngf-multiple="true" ngf-before-model-change="beforeChange($files,$event)"
                ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"
@@ -15,7 +15,7 @@
 
       <!-- <div id="draggable">dfsdfsdfsdf</div>-->
 
-            <ul id="dushman"  ng-if="draggedFiles.length">
+            <ul ng-if="draggedFiles.length">
 
 
                <!-- <li id="{{df.id}}" ng-class="{'trash_icon':trashIconStyle}" ng-repeat="df in draggedFiles" ngf-drop   ngf-drag="dragSelected($isDragging, $class, $event, df)">-->
@@ -59,19 +59,19 @@
                     <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">
                         Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <div ngf-drop="uploadToLibrary($files)"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
+                <div ngf-drop="uploadToLibrary($files)" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                 <ul>
-                    <li  ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
+                    <li  ng-repeat="media in collection.models">
                         <div class="gl-img-container" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                            <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">-->
 
                             <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
-                               stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
+                               stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id,$event);" ng-dblclick="zoomView(media.data)">
 
-                                <img class="imgLibDrag" [itemid]="{{media.data.id}}"   ng-src="{{media.data.url}}" draggable="true"></a>
+                                <img class="imgLibDrag" [itemid]="{{media.data.id}}"   ng-src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
-                        <div class="image-info-outer" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
+                        <div class="image-info-outer" ng-mouseenter="hovering = true"  ng-mouseleave="hovering = false">
                             <div class="img-info">
                                 <div class="img-info-left">
                                     <div class="format-size">
@@ -103,15 +103,14 @@
                     </div>
                     <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)"> Click Here </a></p>
                 </div><!-- Search Bar Ends -->
-                <div ngf-drop="uploadToLibrary($files)" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
+                <div ngf-drop="uploadToLibrary($files)" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                 <ul>
-                 <!--   <li ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">-->
-                    <li ng-repeat="media in collection.models" ngf-drop ngf-drag="dragFromLib($isDragging, $class, $event, media.data.id)">
+                    <li ng-repeat="media in collection.models">
                         <div class="gl-img-container" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                             <a href="#" ng-mouseleave="iconStyles = ''" ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyles]"
                                ng-mouseenter="iconStyles=media.data.selectedClass"
                                stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">
-                                <img class="imgLibDrag" id="libb_{{media.data.id}}" draggable="true" ng-src="{{media.data.url}}" draggable="true"></a>
+                                <img class="imgLibDrag" id="libb_{{media.data.id}}"  ng-src="{{media.data.url}}"></a>
                         </div><!-- Gallery Image Container Ends -->
                         <div class="image-info-outer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
                             <div class="img-info">
