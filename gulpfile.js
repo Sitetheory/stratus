@@ -33,7 +33,8 @@ var location = {
             'collections/*.js',
             'routers/*.js',
             'views/**/*.js',
-            'bower_components/requirejs/require.js'
+            'bower_components/requirejs/require.js',
+            'bower_components/ng-sortable/angular-legacy-sortable.js'
         ],
         min: [
             'stratus.min.js',
@@ -42,7 +43,8 @@ var location = {
             'collections/*.min.js',
             'routers/*.min.js',
             'views/**/*.min.js',
-            'bower_components/requirejs/require.min.js'
+            'bower_components/requirejs/require.min.js',
+            'bower_components/ng-sortable/angular-legacy-sortable.min.js'
         ]
     },
     preserve: {
