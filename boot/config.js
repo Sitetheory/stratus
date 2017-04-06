@@ -156,7 +156,6 @@ boot.config({
         'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
         'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
         'stratus.directives.singleClick': boot.bundle + 'stratus/directives/singleClick' + boot.suffix,
-        'stratus.directives.sortable': boot.bundle + 'stratus/directives/sortable' + boot.suffix,
         'stratus.directives.src': boot.bundle + 'stratus/directives/src' + boot.suffix,
         'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
         'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
@@ -282,7 +281,7 @@ boot.config({
         'moment-timezone': boot.bundle + 'stratus/bower_components/moment-timezone/builds/moment-timezone-with-data' + boot.suffix,
         'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
         promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
-        sortable: boot.bundle + 'stratus/bower_components/Sortable/Sortable' + boot.suffix,
+        sortablejs: boot.bundle + 'stratus/bower_components/Sortable/Sortable' + boot.suffix,
         zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
 
         /* Angular */
@@ -295,6 +294,7 @@ boot.config({
         'angular-chart': boot.bundle + 'stratus/bower_components/angular-chart.js/dist/angular-chart' + boot.suffix,
         'angular-icons': boot.bundle + 'stratus/bower_components/angular-material-icons/angular-material-icons' + boot.suffix,
         'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
+        'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
         'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
 
         /* Backbone */

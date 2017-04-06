@@ -32,6 +32,7 @@
     "moment-timezone": "^0.*",
     "tether": "^1.*",
     "Sortable": "^1.*",
+    "ng-sortable": "https://github.com/SortableJS/angular-legacy-sortablejs.git",
     "masonry": "^4.*",
     "text": "^2.*",
     "jquery-ui": "^1.*",
