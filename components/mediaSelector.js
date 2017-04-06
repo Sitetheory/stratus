@@ -40,7 +40,7 @@ console.log('drag again');
 
             // Directives
             'stratus.directives.singleClick',
-            'stratus.directives.sortable',
+            'stratus.directives.src',
 
             // Services
             'stratus.services.registry'

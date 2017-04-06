@@ -828,8 +828,7 @@
          * @returns {null}
          */
         retrieve: function (name) {
-            var search = '(?:^' + name + '|;\s*' + name + ')=(.*?)(?:;|$)';
-            var regexp = new RegExp(search, 'gi');
+            var regexp = new RegExp('(?:^' + name + '|;\\s*' + name + ')=(.*?)(?:;|$)', 'g');
             var result = regexp.exec(document.cookie);
             return (result === null) ? null : result[1];
         },
@@ -1298,10 +1297,10 @@
      * @returns {boolean}
      * @constructor
      */
-    Stratus.Internals.OnScroll = function (elements) {
+    Stratus.Internals.OnScroll = _.once(function (elements) {
 
         // Reset Elements:
-        if (!elements || elements.length === 0) return false;
+        // if (!elements || elements.length === 0) return false;
 
         // Execute the methods for every registered object ONLY when there is a change to the viewPort
         Stratus.Environment.on('change:viewPortChange', function (model) {
@@ -1336,7 +1335,7 @@
 
         // Run Once initially
         Stratus.Environment.set('viewPortChange', true);
-    };
+    });
 
     // GetScrollDir()
     // --------------
@@ -1438,7 +1437,7 @@
                 Stratus.RegisterGroup.add('OnScroll', {
                     method: Stratus.Internals.LoadImage,
                     el: $el,
-                    spy: $(el).data('spy') ? $($(el).data('spy')) : $(el)
+                    spy: $el.data('spy') ? $($el.data('spy')) : $el
                 });
             });
         }
@@ -1454,7 +1453,6 @@
         obj.el.addClass('placeholder');
         if (Stratus.Internals.IsOnScreen(obj.spy) && !obj.el.dataAttr('loading')) {
             obj.el.dataAttr('loading', true);
-
             Stratus.DOM.complete(function () {
 
                 // By default we'll load larger versions of an image to look good on HD displays, but if you
@@ -1524,7 +1522,13 @@
                     }
 
                     // If no appropriate width was found, abort
-                    if (width <= 0) return false;
+                    if (width <= 0) {
+                        obj.el.dataAttr('loading', false);
+                        setTimeout(function () {
+                            Stratus.Internals.LoadImage(obj);
+                        }, 500);
+                        return false;
+                    }
 
                     // Double for HD
                     if (hd) {

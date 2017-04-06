@@ -164,7 +164,7 @@
         <a class="cross-btn" href="javascript:;" ng-click="closeZoom();"></a>
         <div class="right-image">
            <!-- <img  ng-src="{{ mediaDetail.url }}"  src="{{ mediaDetail.url }}" data-src="lazy"  alt="{{ mediaDetail.name }}">-->
-            <img  ng-src="//{{ mediaDetail.prefix }}.{{ mediaDetail.extension }}"   alt="{{ mediaDetail.name }}">
+            <img stratus-src="{{ mediaDetail.url }}" alt="{{ mediaDetail.name }}">
            <!-- <img ng-src="{{mediaDetail.url}}" alt="">-->
             <label>Tags</label>
             <<span ng-if="mediaDetail.tags.length" ng-repeat="tag in mediaDetail.tags">{{tag.name}}</span>
