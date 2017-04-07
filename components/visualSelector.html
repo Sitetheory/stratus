@@ -5,7 +5,7 @@
         </div><!-- Gallery header Ends -->
         <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || $ctrl.ngModel === null" ng-click="toggleGallery();">
             <i   ng-class="galleryClass"  class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
-      <!--  <span ng-show="$ctrl.ngModel.data.viewVersion.layout === null">Please select from options below</span>-->
+      <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
         <div class="lt_box" ng-repeat="sel in selectListArr">
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->

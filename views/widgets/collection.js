@@ -299,7 +299,7 @@
             // that are completely separate from the view. For Example:
             /*
             if (!this.standalone) {
-                // create collection inside parent (i.e. streams->viewVersions associations)
+                // create collection inside parent (i.e. streams->versions associations)
             } else {
             */
             var target = this.model.get(this.propertyName);
