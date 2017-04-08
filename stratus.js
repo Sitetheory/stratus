@@ -2082,11 +2082,22 @@
             require(requirements, function () {
                 // App Reference
                 angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
-                    $sceDelegateProvider.resourceUrlWhitelist([
+                    var whitelist = [
                         'self',
                         'http://*.sitetheory.io/**',
                         'https://*.sitetheory.io/**'
-                    ]);
+                    ];
+                    if (boot.host) {
+                        if (_.startsWith(boot.host, '//')) {
+                            _.each(['https:', 'http:'], function(proto) {
+                                whitelist.push(proto + boot.host + '/**');
+                            });
+                        } else {
+                            whitelist.push(boot.host + '/**');
+                        }
+                    }
+                    console.log('whitelist:', whitelist);
+                    $sceDelegateProvider.resourceUrlWhitelist(whitelist);
                 }]);
 
                 // TODO: Make Dynamic
@@ -2154,12 +2165,12 @@
 
                 // Components
                 angular.forEach(Stratus.Components, function (component, name) {
-                    angular.module('stratusApp').component('stratus' + name, component);
+                    angular.module('stratusApp').component('stratus' + _.ucfirst(name), component);
                 });
 
                 // Directives
                 angular.forEach(Stratus.Directives, function (directive, name) {
-                    angular.module('stratusApp').directive('stratus' + name, directive);
+                    angular.module('stratusApp').directive('stratus' + _.ucfirst(name), directive);
                 });
 
                 // Filters

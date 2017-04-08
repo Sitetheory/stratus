@@ -53,14 +53,14 @@
                     var initial = interpreter($scope.$parent);
                     if (angular.isDefined(initial)) {
                         $element.attr('src', initial);
-                        register()
+                        register();
                     } else {
                         $scope.$watch(function () {
                             return interpreter($scope.$parent);
                         }, function (value) {
                             if (angular.isDefined(value)) {
                                 $element.attr('src', value);
-                                register()
+                                register();
                             }
                         });
                     }

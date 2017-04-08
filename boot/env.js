@@ -5,9 +5,10 @@ var boot = {
     // Environment
     dev: (typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
     local: (typeof document.cookie === 'string' && document.cookie.indexOf('local=') !== -1) || true, // we are disabling the CDN until it is ready.
-    cacheTime: cacheTime || '1',
+    cacheTime: (typeof cacheTime !== 'undefined') ? cacheTime : '1',
 
     // Locations
+    host: '',
     cdn: '/',
     relative: '',
     bundle: '',
@@ -42,3 +43,11 @@ boot.config = function (configuration, options) {
     /* */
     return boot.merge(boot.configuration, !configuration.paths ? { paths: configuration } : configuration);
 };
+if (typeof config !== 'undefined') {
+    if (typeof config === 'function') {
+        config = config(boot);
+    }
+    if (typeof config === 'object' && config) {
+        boot.config(config);
+    }
+}

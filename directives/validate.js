@@ -82,9 +82,13 @@
                     }
 
                     _.each($scope.checks, function (el, key) {
-                        $ctrl.$setValidity(key, el);
+                        if ($ctrl && $ctrl.$setValidity) {
+                            $ctrl.$setValidity(key, el);
+                        }
                     });
-                    $ctrl.$setValidity('validateAny', _.every($scope.checks));
+                    if ($ctrl && $ctrl.$setValidity) {
+                        $ctrl.$setValidity('validateAny', _.every($scope.checks));
+                    }
 
                     // return a value to display to user
                     return ngModelValue;

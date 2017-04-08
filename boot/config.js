@@ -10,7 +10,7 @@ boot.config({
     urlArgs: 'v=' + boot.cacheTime,
 
     // Version Location (Disabled During Beta Testing)
-    baseUrl: ((boot.dev || boot.local) ? '/' : boot.cdn) + boot.relative,
+    baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) + boot.relative,
 
     // Dependencies
     shim: {
@@ -145,7 +145,7 @@ boot.config({
         'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
         'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
         'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
-	'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
+        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
 
         // TODO: Move these to Sitetheory since they are specific to Sitetheory
         'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
