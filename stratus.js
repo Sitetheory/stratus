@@ -33,6 +33,7 @@
     if (typeof define === 'function' && define.amd) {
         define([
             'text',
+
             // 'jquery', // @deprecated!
             'underscore',
             'backbone',
@@ -2096,7 +2097,7 @@
                     ];
                     if (boot.host) {
                         if (_.startsWith(boot.host, '//')) {
-                            _.each(['https:', 'http:'], function(proto) {
+                            _.each(['https:', 'http:'], function (proto) {
                                 whitelist.push(proto + boot.host + '/**');
                             });
                         } else {
