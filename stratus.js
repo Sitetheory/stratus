@@ -1673,7 +1673,7 @@
                     message: 'No Convoy defined for dispatch.'
                 }, this));
             }
-            if (!_.isDefined($)) {
+            if (_.isUndefined($)) {
                 reject('jQuery is not defined.');
                 return;
             }
@@ -2655,7 +2655,7 @@
      */
     Stratus.Internals.SetUrlParams = function (params, url) {
         if (typeof url === 'undefined') url = window.location.href;
-        if (!_.isDefined($)) {
+        if (_.isUndefined($)) {
             console.error('jQuery is not defined.');
             return url;
         }
