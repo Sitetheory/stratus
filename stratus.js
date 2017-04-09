@@ -1982,7 +1982,7 @@
                     element.selector = _.filter(
                         _.map(requirejs.s.contexts._.config.paths, function (path, key) {
                             // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
-                            return _.startsWith(key, element.namespace) ? (element.type == 'attribute' ? '[' : '') + _.camelToHyphen(key.replace(element.namespace, 'stratus-')) + (element.type == 'attribute' ? ']' : '') : null;
+                            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToHyphen(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null;
                         })
                     );
                 }
@@ -2096,7 +2096,6 @@
                             whitelist.push(boot.host + '/**');
                         }
                     }
-                    console.log('whitelist:', whitelist);
                     $sceDelegateProvider.resourceUrlWhitelist(whitelist);
                 }]);
 
