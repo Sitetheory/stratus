@@ -49,6 +49,7 @@ var location = {
             'collections/*.js',
             'routers/*.js',
             'views/**/*.js',
+            'dist/**/*.js',
             'bower_components/requirejs/require.js',
             'bower_components/ng-sortable/angular-legacy-sortable.js'
         ],
@@ -59,6 +60,7 @@ var location = {
             'collections/*.min.js',
             'routers/*.min.js',
             'views/**/*.min.js',
+            'dist/**/*.min.js',
             'bower_components/requirejs/require.min.js',
             'bower_components/ng-sortable/angular-legacy-sortable.min.js'
         ]
