@@ -5,7 +5,7 @@ var boot = {
     // Environment
     dev: (typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
     local: (typeof document.cookie === 'string' && document.cookie.indexOf('local=') !== -1) || true, // we are disabling the CDN until it is ready.
-    cacheTime: (typeof cacheTime !== 'undefined') ? cacheTime : '1',
+    cacheTime: (typeof cacheTime !== 'undefined') ? cacheTime : '2',
 
     // Locations
     host: '',
