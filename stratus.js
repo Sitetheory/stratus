@@ -2108,7 +2108,7 @@
 
                 // TODO: Make Dynamic
                 // Froala Configuration
-                if (_.isDefined($) && $.FroalaEditor) {
+                if (!_.isUndefined($) && $.FroalaEditor) {
                     $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
 
                     // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
