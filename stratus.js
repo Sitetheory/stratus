@@ -44,7 +44,7 @@
     } else {
         root.Stratus = factory(root.text, root._, root.Backbone, root.bowser);
     }
-}(this, function (text, $, _, Backbone, bowser) {
+}(this, function (text, _, Backbone, bowser) {
 
     // Underscore Settings
     // -------------------
