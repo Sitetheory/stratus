@@ -33,16 +33,16 @@
     if (typeof define === 'function' && define.amd) {
         define([
             'text',
-            'jquery', // @deprecated!
+            // 'jquery', // @deprecated!
             'underscore',
             'backbone',
             'bowser',
             'promise'
-        ], function (text, $, _, Backbone, bowser) {
-            return (root.Stratus = factory(text, $, _, Backbone, bowser));
+        ], function (text, _, Backbone, bowser) {
+            return (root.Stratus = factory(text, _, Backbone, bowser));
         });
     } else {
-        root.Stratus = factory(root.text, root.$, root._, root.Backbone, root.bowser);
+        root.Stratus = factory(root.text, root._, root.Backbone, root.bowser);
     }
 }(this, function (text, $, _, Backbone, bowser) {
 
@@ -592,53 +592,56 @@
     // jQuery Plugins
     // --------------
 
-    /**
-     * @param str
-     * @returns {boolean}
-     */
-    $.fn.isJSON = function (str) {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
-        return true;
-    };
+    if (_.isObject($) && $.fn) {
 
-    /**
-     * @param key
-     * @param value
-     * @returns {*}
-     */
-    $.fn.dataAttr = function (key, value) {
-        if (key === undefined) console.error('$().dataAttr(key, value) contains an undefined key!');
-        if (value === undefined) {
-            value = this.attr('data-' + key);
-            return $.fn.isJSON(value) ? JSON.parse(value) : value;
-        } else {
-            return this.attr('data-' + key, JSON.stringify(value));
-        }
-    };
+        /**
+         * @param str
+         * @returns {boolean}
+         */
+        $.fn.isJSON = function (str) {
+            try {
+                JSON.parse(str);
+            } catch (e) {
+                return false;
+            }
+            return true;
+        };
 
-    /**
-     * @param event
-     * @returns {boolean}
-     */
-    $.fn.notClicked = function (event) {
-        if (!this.selector) console.error('No Selector:', this);
-        return (!sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length);
-    };
+        /**
+         * @param key
+         * @param value
+         * @returns {*}
+         */
+        $.fn.dataAttr = function (key, value) {
+            if (key === undefined) console.error('$().dataAttr(key, value) contains an undefined key!');
+            if (value === undefined) {
+                value = this.attr('data-' + key);
+                return $.fn.isJSON(value) ? JSON.parse(value) : value;
+            } else {
+                return this.attr('data-' + key, JSON.stringify(value));
+            }
+        };
 
-    // Error Handling Wrapper
-    // ----------------------------------
+        /**
+         * @param event
+         * @returns {boolean}
+         */
+        $.fn.notClicked = function (event) {
+            if (!this.selector) console.error('No Selector:', this);
+            return (!sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length);
+        };
 
-    /**
-     * @type {*}
-     */
-    $.error = function (handler) {
-        Stratus.meow = this;
-        console.log('error:', this, handler);
-    };
+        // Error Handling Wrapper
+        // ----------------------------------
+
+        /**
+         * @type {*}
+         */
+        $.error = function (handler) {
+            Stratus.meow = this;
+            console.log('error:', this, handler);
+        };
+    }
 
     // Stratus Environment Initialization
     // ----------------------------------
@@ -1670,6 +1673,10 @@
                     message: 'No Convoy defined for dispatch.'
                 }, this));
             }
+            if (!_.isDefined($)) {
+                reject('jQuery is not defined.');
+                return;
+            }
             $.ajax({
                 type: 'POST',
                 url: '/Api' + encodeURIComponent(query || ''),
@@ -2101,7 +2108,7 @@
 
                 // TODO: Make Dynamic
                 // Froala Configuration
-                if ($.FroalaEditor) {
+                if (_.isDefined($) && $.FroalaEditor) {
                     $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
 
                     // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
@@ -2648,6 +2655,10 @@
      */
     Stratus.Internals.SetUrlParams = function (params, url) {
         if (typeof url === 'undefined') url = window.location.href;
+        if (!_.isDefined($)) {
+            console.error('jQuery is not defined.');
+            return url;
+        }
         var vars = {};
         var glue = url.indexOf('?');
         url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
