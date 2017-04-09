@@ -2983,7 +2983,9 @@
     // TODO: DOM.ready and DOM.complete is redundant from version above. Remove?
     // On DOM Ready, add browser compatible CSS classes and digest DOM data-entity attributes.
     Stratus.DOM.ready(function () {
-        $('body').removeClass('loaded unloaded').addClass('loading');
+        if (typeof $ === 'function' && $.fn) {
+            $('body').removeClass('loaded unloaded').addClass('loading');
+        }
         Stratus.Events.trigger('initialize');
     });
 
@@ -2992,7 +2994,9 @@
 
     // Stratus Events are more accurate than the DOM, so nothing is added to this stub.
     Stratus.DOM.complete(function () {
-        $('body').removeClass('loading unloaded').addClass('loaded');
+        if (typeof $ === 'function' && $.fn) {
+            $('body').removeClass('loading unloaded').addClass('loaded');
+        }
     });
 
     // DOM Unload Routines
@@ -3003,7 +3007,9 @@
     // while providing the user with a confirmation box, if necessary,
     // before close routines are triggered.
     Stratus.DOM.unload(function (event) {
-        $('body').removeClass('loading loaded').addClass('unloaded');
+        if (typeof $ === 'function' && $.fn) {
+            $('body').removeClass('loading loaded').addClass('unloaded');
+        }
         Stratus.Events.trigger('terminate', event);
         /*
          if (event.cancelable === true) {
