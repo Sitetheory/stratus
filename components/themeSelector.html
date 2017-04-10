@@ -1,4 +1,4 @@
-<div class="layout_bx">
+<div class="layout_bx theme-bx">
     <div class="lt-header">
         <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Theme</h3>
     </div><!-- Gallery header Ends -->
@@ -40,8 +40,8 @@
         <ul>
             <li>
                 <span class="galleryimg-cont"><img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt="" />
-                    <a href="#" class="sr_ico"><i class="fa fa-search" aria-hidden="true"></i></a>
-                    <a href="#" class="bl_btn">Choose Layout </a>
+                    <a href="#" ng-click="zoomView()" class="sr_ico"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    <a href="#" class="bl_btn">Choose Theme </a>
                 </span>
                 <span class="theme-description">
                     <span class="theme-des-header">
@@ -49,13 +49,13 @@
                         <i class="fa fa-heart-o" aria-hidden="true"></i>
                     </span><!-- Theme Description Header Ends -->
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
-                    <a href="#" class="bl_btn">Choose Layout </a>
+                    <a href="#" class="bl_btn">Choose Theme </a>
                 </span>
             </li>
             <li>
                 <span class="galleryimg-cont"><img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt="" />
-                    <a href="#" class="sr_ico"><i class="fa fa-search" aria-hidden="true"></i></a>
-                    <a href="#" class="bl_btn">Choose Layout </a>
+                    <a href="#" ng-click="zoomView()" class="sr_ico"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    <a href="#" class="bl_btn">Choose Theme </a>
                 </span>
                 <span class="theme-description">
                     <span class="theme-des-header">
@@ -63,6 +63,7 @@
                         <i class="fa fa-heart" aria-hidden="true"></i>
                     </span><!-- Theme Description Header Ends -->
                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</p>
+                    <a href="#" class="bl_btn">Choose Theme </a>
                 </span>
             </li>
         </ul>
@@ -77,3 +78,9 @@
         <li><a href="#">NEXT</a>
     </ul>
 </div><!-- Theme Selector Ends -->
+<script type="text/ng-template" id="themeDetail.html">
+    <!---Detail Page starts from here---------->
+    <div class="theme-dialog" role="dialog">
+       <div>test debug</div>
+    </div>
+</script>

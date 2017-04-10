@@ -53,6 +53,38 @@
 
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
+            $scope.zoomView = function () {
+
+                console.log('zoomview');
+                var position = $mdPanel.newPanelPosition()
+                    .absolute()
+                    .center();
+                var config = {
+                    attachTo: angular.element(document.body),
+                    scope: $scope,
+                    controller: ZoomController,
+                    templateUrl: 'themeDetail.html',
+                    hasBackdrop: true,
+                    panelClass: 'theme-dialog',
+                    position: position,
+                    trapFocus: true,
+                    zIndex: 150,
+                    clickOutsideToClose: true,
+                    escapeToClose: false,
+                    focusOnOpen: true
+                };
+
+                $mdPanel.open(config);
+            }
+
+            function ZoomController(mdPanelRef) {
+
+                $scope.closeDialog = function () {
+
+                    mdPanelRef.close();
+                };
+
+            }
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
