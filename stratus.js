@@ -33,8 +33,8 @@
     if (typeof define === 'function' && define.amd) {
         define([
             'text',
-            'backbone',
             'underscore',
+            'backbone',
             'backbone',
             'bowser',
             'promise'
