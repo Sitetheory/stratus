@@ -33,7 +33,7 @@
         <ul>
             <li><a href="#">Latest</a></li>
             <li><a href="#">Popular</a></li>
-            <li><a href="#">Favoruite (2)</a></li>
+            <li><a href="#">Favorite (2)</a></li>
         </ul>
     </div>
     <div class="theme-select-right">
@@ -80,7 +80,29 @@
 </div><!-- Theme Selector Ends -->
 <script type="text/ng-template" id="themeDetail.html">
     <!---Detail Page starts from here---------->
-    <div class="theme-dialog" role="dialog">
-       <div>test debug</div>
+    <div role="dialog">
+        <div class="lt-popup theme-preview">
+            <div class="ltpop-left">
+                <h3>Foo Layout Name
+                    <i aria-hidden="true" class="fa fa-heart-o"></i>
+                    <i aria-hidden="true" class="fa fa-heart"></i>
+                </h3>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s</p>
+                <a href="#" class="bl_btn">Choose Theme </a>
+                <a href="#" class="bl_btn_border">View Demo </a>
+            </div>
+            <div class="ltpop-right">
+                <div class="theme-view-list">
+                    <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
+                    <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
+                    <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
+                    <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
+                </div><!-- View list Ends -->
+                <a href="#">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt="" />
+                </a>
+            </div>
+            <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
+        </div><!-- Layout popup ends -->
     </div>
 </script>

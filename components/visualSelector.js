@@ -93,6 +93,7 @@
             $scope.displayGallery = function () {
 
                 $scope.showGallery = true;
+                $scope.galleryClass = 'fa fa-minus';
 
             };
 
@@ -154,6 +155,7 @@
                 }
             };
             $scope.removeSelected = function (selectedLayout) {
+
                 var index = $scope.selectListArr.indexOf(selectedLayout);
                 if (index >= 0) {
                     $scope.selectListArr.splice(index, 1);
@@ -163,7 +165,7 @@
 
             // hide choose layout button if layout is selected
             $scope.checkSelected = function (selectedLayout) {
-                console.log('second');
+
                 var index = $scope.selectListArr.indexOf(selectedLayout);
                 if (index >= 0) {
                     return true;

@@ -55,10 +55,6 @@
 
             $scope.zoomView = function () {
 
-                console.log('zoomview');
-                var position = $mdPanel.newPanelPosition()
-                    .absolute()
-                    .center();
                 var config = {
                     attachTo: angular.element(document.body),
                     scope: $scope,
@@ -66,10 +62,9 @@
                     templateUrl: 'themeDetail.html',
                     hasBackdrop: true,
                     panelClass: 'theme-dialog',
-                    position: position,
                     trapFocus: true,
                     zIndex: 150,
-                    clickOutsideToClose: true,
+                    clickOutsideToClose: false,
                     escapeToClose: false,
                     focusOnOpen: true
                 };
@@ -83,7 +78,6 @@
 
                     mdPanelRef.close();
                 };
-
             }
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'

@@ -14,7 +14,7 @@
                 <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
                 <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
                     <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel !== null && showGallery !== true"
-                        ng-click="displayGallery();">
+                        ng-click="displayGallery();" class="blck_btn">
                         <span>Change</span></a>
                     <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel === null && showGallery !== true" class="blck_btn"
                        ng-click="displayGallery();">
@@ -36,8 +36,8 @@
         <div class="lt-header">
             <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Choose From Layout</h3>
         </div><!-- Gallery header Ends -->
-        <div class="search--gallery">
-            <stratus-search ng-if="$ctrl.search === true" flex="40"></stratus-search>
+        <div class="search--gallery" ng-if="$ctrl.search === true">
+            <stratus-search  flex="40"></stratus-search>
         </div>
         <div class="lt_box">
             <ul class="layout_gallery">

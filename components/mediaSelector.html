@@ -13,7 +13,7 @@
                         <i class="fa fa-file file-icon-drag"></i>
                     </div>
                     <div  ng-if="df.mime != 'application/x-unknown'" class="gl-img-container">
-                        <a  href="#">
+                        <a  href="#" ng-dblclick="zoomView(df)">
                             <img class="selectImgDrag" id="{{df.id}}" ngf-src="df.url" >
                         </a>
                     </div><!-- Gallery Image Container Ends -->
@@ -26,7 +26,7 @@
                                 <p>{{ df.name }}</p>
                             </div><!-- Image Left Info Ends -->
                             <div class="img-info-right">
-                                <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true"></i></a>
+                                <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true" ng-click="zoomView(df)"></i></a>
                                 <a href="#"><i class="fa fa-trash-o" aria-hidden="true" ng-click="removeFromSelected(df.id);"></i></a>
                             </div><!-- Image Info Right Ends -->
                         </div><!-- Image Info Ends -->
