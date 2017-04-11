@@ -35,7 +35,6 @@
             'text',
             'underscore',
             'backbone',
-            'backbone',
             'bowser',
             'promise'
         ], function (text, _, Backbone, bowser) {
@@ -3079,7 +3078,4 @@
     return Stratus;
 
 }));
-
-
-
 
