@@ -33,8 +33,6 @@
     if (typeof define === 'function' && define.amd) {
         define([
             'text',
-
-            // 'jquery', // @deprecated!
             'underscore',
             'backbone',
             'bowser',
@@ -96,6 +94,27 @@
         DOM: {},
         Key: {},
         PostMessage: {},
+
+        /* Selector Logic */
+        Selector: {},
+        /**
+         * @param selector
+         * @returns {NodeList}
+         * @constructor
+         */
+        Select: function (selector) {
+            var target = 'querySelector';
+            if (_.startsWith(selector, '.')) target = 'querySelectorAll';
+            var selection = document[target](selector);
+            _.extend(selection, {
+                context: this,
+                selector: selector
+            });
+            _.extend(selection.__proto__, Stratus.Selector);
+            return selection;
+        },
+
+        /* Boot */
         BaseUrl: ((requirejs && _.has(requirejs.s.contexts._, 'config')) ? requirejs.s.contexts._.config.baseUrl : null) || '/',
 
         // TODO: Change each of these "namespaces" into Backbone.Models references so that we can easily
@@ -351,6 +370,7 @@
 
         // Get a specific value or all values located in the URL
         /**
+         * TODO: This is somewhat farther than underscore's ideology and should be moved into Stratus.Internals
          * @param key
          * @param href
          * @returns {{}}
@@ -469,7 +489,7 @@
          * @returns {boolean}
          */
         startsWith: function (target, search) {
-            return (target.substr(0, search.length).toUpperCase() == search.toUpperCase());
+            return (target.substr(0, search.length).toUpperCase() === search.toUpperCase());
         },
         /**
          * @param a
@@ -593,7 +613,7 @@
     // jQuery Plugins
     // --------------
 
-    if (_.isObject($) && $.fn) {
+    if (typeof $ === 'function' && $.fn) {
 
         /**
          * @param str
@@ -719,6 +739,7 @@
      * @constructor
      */
     Stratus.Prototypes.Dispatch = function () {
+        // if Backbone
         return _.extend(this, Backbone.Events);
     };
 
@@ -819,6 +840,7 @@
 
     // Cookie System
     // --------------
+    // TODO: This really doesn't need to be a prototype and could be a simple function in Stratus.Internals
 
     Stratus.Prototypes.Cookies = Backbone.Model.extend({
         /**
@@ -1237,6 +1259,32 @@
             return output;
         };
         return this;
+    };
+
+    // Selector Plugins
+    // ----------------
+
+    /**
+     * @param element
+     * @param className
+     * @constructor
+     */
+    Stratus.Selector.AddClass = function (element, className) {
+        var that = this;
+        if (!className) {
+            className = element;
+            element = that;
+        }
+        if (element.__proto__ instanceof NodeList) {
+            console.log('List:', element);
+        } else {
+            if (element.classList) {
+                element.classList.add(className);
+            } else {
+                element.className += ' ' + className;
+            }
+        }
+        return element;
     };
 
     // Internal CSS Loader
@@ -1674,7 +1722,7 @@
                     message: 'No Convoy defined for dispatch.'
                 }, this));
             }
-            if (_.isUndefined($)) {
+            if (typeof $ === 'function' && $.fn) {
                 reject('jQuery is not defined.');
                 return;
             }
@@ -2109,7 +2157,7 @@
 
                 // TODO: Make Dynamic
                 // Froala Configuration
-                if (!_.isUndefined($) && $.FroalaEditor) {
+                if (typeof $ === 'function' && $.fn && $.FroalaEditor) {
                     $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala;
 
                     // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
@@ -2656,7 +2704,7 @@
      */
     Stratus.Internals.SetUrlParams = function (params, url) {
         if (typeof url === 'undefined') url = window.location.href;
-        if (_.isUndefined($)) {
+        if (typeof $ === 'function' && $.fn) {
             console.error('jQuery is not defined.');
             return url;
         }
@@ -2983,6 +3031,7 @@
     // TODO: DOM.ready and DOM.complete is redundant from version above. Remove?
     // On DOM Ready, add browser compatible CSS classes and digest DOM data-entity attributes.
     Stratus.DOM.ready(function () {
+        Stratus.Select('body');
         if (typeof $ === 'function' && $.fn) {
             $('body').removeClass('loaded unloaded').addClass('loading');
         }
@@ -3029,3 +3078,4 @@
     return Stratus;
 
 }));
+
