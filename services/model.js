@@ -49,7 +49,7 @@
                 this.data = {};
 
                 // Handle Collections & Meta
-                this.meta = new Stratus.Prototypes.Collection();
+                this.meta = new Stratus.Prototypes.Model();
                 if (_.has(this, 'collection')) {
                     if (this.collection.target) this.target = this.collection.target;
                     if (this.collection.meta.has('api')) this.meta.set('api', this.collection.meta.get('api'));

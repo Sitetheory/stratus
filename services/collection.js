@@ -49,7 +49,7 @@
                 // Infrastructure
                 this.urlRoot = '/Api';
                 this.models = [];
-                this.meta = new Stratus.Prototypes.Collection();
+                this.meta = new Stratus.Prototypes.Model();
                 this.model = model;
 
                 // Internals

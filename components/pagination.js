@@ -49,7 +49,7 @@
             });
 
             // Handle Page Changes
-            $scope.$watch('collection.meta.attributes.pageCurrent', function (pageCurrent) {
+            $scope.$watch('collection.meta.data.pageCurrent', function (pageCurrent) {
                 if (!pageCurrent) return true;
                 if ($scope.collection.meta.get('pageTotal') <= 10) {
                     // less than 10 total pages so show all
