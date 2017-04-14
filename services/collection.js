@@ -148,9 +148,12 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response.statusText || angular.isObject(response.data) ? response.data : 'Invalid Payload: ' + prototype.method + ' ' + prototype.url);
+                                reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
+                                    angular.isObject(response.data) ? response.data : (
+                                    'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
+                                ));
                             }
-                        }, reject);
+                        }).catch(reject);
                     });
                 };
 
@@ -160,7 +163,7 @@
                  * @returns {*}
                  */
                 this.fetch = function (action, data) {
-                    return that.sync(action, data || that.meta.get('api'));
+                    return that.sync(action, data || that.meta.get('api')).catch(console.error);
                 };
 
                 /**

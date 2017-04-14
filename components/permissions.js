@@ -49,11 +49,10 @@
         },
         controller: function ($scope, $mdPanel, $attrs, registry) {
 
-
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
-            $("ul.be-select").on("click", ".init", function() {
-                $(this).closest("ul.be-select").children('li:not(.init)').toggle();
+            $('ul.be-select').on('click', '.init', function () {
+                $(this).closest('ul.be-select').children('li:not(.init)').toggle();
             });
 
             $scope.showRoleHeading = false;
@@ -65,21 +64,21 @@
                 $scope.roleSelected = selValue;
                 $scope.showRoleHeading = true;
                 console.log(selValue);
-            }
-
+            };
             $scope.showSelContent = function ($event, selValue) {
 
                 $scope.contentSelected = selValue;
                 $scope.showContentHeading = true;
                 console.log(selValue);
-            }
-           /* var allOptions = $("ul.be-select").children('li:not(.init)');
-            $("ul.be-select").on("click", "li:not(.init)", function() {
-                allOptions.removeClass('selected');
-                $(this).addClass('selected');
-                $(this).children('.init').html($(this).html());
-                allOptions.toggle();
-            });*/
+            };
+
+            /* var allOptions = $("ul.be-select").children('li:not(.init)');
+             $("ul.be-select").on("click", "li:not(.init)", function() {
+             allOptions.removeClass('selected');
+             $(this).addClass('selected');
+             $(this).children('.init').html($(this).html());
+             allOptions.toggle();
+             });*/
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };

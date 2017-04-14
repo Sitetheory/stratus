@@ -154,7 +154,6 @@
         /* Stratus */
         CSS: {},
         Chronos: null,
-        Cookies: null,
         Environment: new Backbone.Model({
             ip: null,
             production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
@@ -273,6 +272,39 @@
          */
         lcfirst: function (string) {
             return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null;
+        },
+
+        // This function allows creation, edit, retrieval and deletion of cookies.
+        // Note: Delete with `_.cookie(name, '', -1)`
+        /**
+         * @param name
+         * @param value
+         * @param expires
+         * @param path
+         * @param domain
+         * @returns {Array|{index: number, input: string}}
+         */
+        cookie: function (name, value, expires, path, domain) {
+            if (typeof value === 'undefined') {
+                var search = new RegExp('(?:^' + name + '|;\\s*' + name + ')=(.*?)(?:;|$)', 'g');
+                var data = search.exec(document.cookie);
+                return (data === null) ? null : data[1];
+            } else {
+                var cookie = name + '=' + escape(value) + ';';
+                if (expires) {
+                    if (expires instanceof Date) {
+                        if (isNaN(expires.getTime())) {
+                            expires = new Date();
+                        }
+                    } else {
+                        expires = new Date(new Date().getTime() + parseInt(expires) * 1000 * 60 * 60 * 24);
+                    }
+                    cookie += 'expires=' + expires.toGMTString() + ';';
+                }
+                if (path) cookie += 'path=' + path + ';';
+                if (domain) cookie += 'domain=' + domain + ';';
+                document.cookie = cookie;
+            }
         },
 
         // Converge a list and return the prime key through specified method.
@@ -837,60 +869,6 @@
         }
     });
     Stratus.Chronos = new Stratus.Prototypes.Chronos();
-
-    // Cookie System
-    // --------------
-    // TODO: This really doesn't need to be a prototype and could be a simple function in Stratus.Internals
-
-    Stratus.Prototypes.Cookies = Backbone.Model.extend({
-        /**
-         * @param options
-         */
-        initialize: function (options) {
-            if (!Stratus.Environment.get('production')) console.info('Cookie Manager Invoked!');
-        },
-        /**
-         * @param name
-         * @returns {null}
-         */
-        retrieve: function (name) {
-            var regexp = new RegExp('(?:^' + name + '|;\\s*' + name + ')=(.*?)(?:;|$)', 'g');
-            var result = regexp.exec(document.cookie);
-            return (result === null) ? null : result[1];
-        },
-        /**
-         * @param name
-         * @param value
-         * @param expires
-         * @param path
-         * @param domain
-         */
-        create: function (name, value, expires, path, domain) {
-            var cookie = name + '=' + escape(value) + ';';
-            if (expires) {
-                if (expires instanceof Date) {
-                    if (isNaN(expires.getTime())) {
-                        expires = new Date();
-                    }
-                } else {
-                    expires = new Date(new Date().getTime() + parseInt(expires) * 1000 * 60 * 60 * 24);
-                }
-                cookie += 'expires=' + expires.toGMTString() + ';';
-            }
-            if (path) cookie += 'path=' + path + ';';
-            if (domain) cookie += 'domain=' + domain + ';';
-            document.cookie = cookie;
-        },
-        /**
-         * @param name
-         */
-        remove: function (name) {
-            if (this.retrieve(name)) {
-                this.create(name, '', -1);
-            }
-        }
-    });
-    Stratus.Cookies = new Stratus.Prototypes.Cookies();
 
     // Collection Prototype
     // --------------------
@@ -2186,7 +2164,7 @@
                             tabMode: 'space',
                             tabSize: 4
                         },
-                        fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + Stratus.Cookies.retrieve('SITETHEORY'),
+                        fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                         htmlAllowedAttrs: ['.*'],
                         htmlAllowedEmptyTags: [
                             'textarea', 'a', '.fa',
@@ -2730,7 +2708,7 @@
      */
     Stratus.Internals.UpdateEnvironment = function (request) {
         if (!request) request = {};
-        if (typeof document.cookie !== 'string' || !Stratus.Cookies.retrieve('SITETHEORY')) return false;
+        if (typeof document.cookie !== 'string' || !_.cookie('SITETHEORY')) return false;
         if (typeof request === 'object' && Object.keys(request).length) {
             // TODO: Create a better URL, switching between relative APIs based on environment
             Stratus.Internals.Ajax({
@@ -2808,16 +2786,19 @@
      * @constructor
      */
     Stratus.PostMessage.Convoy = function (fn) {
-        window.addEventListener('message', fn, false);
+        window.addEventListener('message', function () {
+            if (event.origin !== 'https://auth.sitetheory.io') return false;
+            fn(_.isJSON(event.data) ? JSON.parse(event.data) : {});
+        }, false);
     };
 
     // When a message arrives from another source, handle the Convoy
     // appropriately.
-    Stratus.PostMessage.Convoy(function (event) {
-        if (event.origin !== 'https://auth.sitetheory.io' && event.origin !== 'http://admin.sitetheory.io') return false;
-        var convoy = JSON.parse(event.data);
-        if (convoy.meta.session && convoy.meta.session !== Stratus.Cookies.retrieve('SITETHEORY')) {
-            Stratus.Cookies.create('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
+    Stratus.PostMessage.Convoy(function (convoy) {
+        var ssoEnabled = _.cookie('sso');
+        ssoEnabled = (ssoEnabled === null) ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false);
+        if (convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY') && ssoEnabled) {
+            _.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
             if (!Stratus.Client.safari) location.reload(true);
         }
     });

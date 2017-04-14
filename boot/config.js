@@ -145,12 +145,12 @@ boot.config({
         'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
         'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
         'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
-        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
-	'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
 
         // TODO: Move these to Sitetheory since they are specific to Sitetheory
         'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
+        'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
         'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
+        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
 
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
