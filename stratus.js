@@ -1287,6 +1287,49 @@
         return element;
     };
 
+    /**
+     * @param element
+     * @param className
+     * @constructor
+     */
+    Stratus.Selector.RemoveClass = function (element, className) {
+        var that = this;
+        if (!className) {
+            className = element;
+            element = that;
+        }
+        if (element.__proto__ instanceof NodeList) {
+            console.log('List:', element);
+        } else {
+            if (element.classList) {
+                element.classList.remove(className);
+            } else {
+                element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+            }
+        }
+        return element;
+    };
+
+    /**
+     * @param element
+     * @param text
+     * @returns {*}
+     * @constructor
+     */
+    Stratus.Selector.Text = function (element, text) {
+        var that = this;
+        if (!text) {
+            text = element;
+            element = that;
+        }
+        if (element.__proto__ instanceof NodeList) {
+            console.log('List:', element);
+        } else if (text) {
+            element.textContent = text;
+        }
+        return text ? element : element.textContent;
+    };
+
     // Internal CSS Loader
     // -------------------
 
@@ -3065,9 +3108,12 @@
     // while providing the user with a confirmation box, if necessary,
     // before close routines are triggered.
     Stratus.DOM.unload(function (event) {
+        /* *
         if (typeof $ === 'function' && $.fn) {
             $('body').removeClass('loading loaded').addClass('unloaded');
         }
+        /* */
+        Stratus.Select('body').RemoveClass('loading loaded').AddClass('unloaded');
         Stratus.Events.trigger('terminate', event);
         /*
          if (event.cancelable === true) {
