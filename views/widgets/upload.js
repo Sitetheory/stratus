@@ -61,7 +61,7 @@
          */
         onRender: function (entries) {
             var hydrate = _.template(this.options.dropzone.url);
-            this.options.dropzone.url = hydrate({ session: Stratus.Cookies.retrieve('SITETHEORY') });
+            this.options.dropzone.url = hydrate({ session: _.cookie('SITETHEORY') });
             this.$el.dropzone(this.options.dropzone);
             return true;
         }

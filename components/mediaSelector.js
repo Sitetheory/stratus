@@ -437,7 +437,7 @@ console.log('drag again');
                 file.uploadStatus = false;
                 file.errorUpload = false;
                 file.upload = Upload.upload({
-                        url: 'https://app.sitetheory.io:3000/?session=' + Stratus.Cookies.retrieve('SITETHEORY'),
+                        url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                         data: {
                             file: file
                         }

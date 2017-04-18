@@ -242,7 +242,7 @@
     _.mixin({
 
         // Babel class inheritace block
-        createClass: function () {
+        createClass: (function () {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
                     var descriptor = props[i];
@@ -257,7 +257,7 @@
                 if (staticProps) defineProperties(Constructor, staticProps);
                 return Constructor;
             };
-        }(),
+        })(),
         possibleConstructorReturn: function (self, call) {
             if (!self) {
                 throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -549,7 +549,7 @@
          * @returns {boolean}
          */
         startsWith: function (target, search) {
-            return (target.substr(0, search.length).toUpperCase() === search.toUpperCase());
+            return (typeof target === 'string' && target.substr(0, search.length).toUpperCase() === search.toUpperCase());
         },
         /**
          * @param a
@@ -673,289 +673,405 @@
     // Native Selector
     // ---------------
 
-    // This function intends to allow jQuery-Type logic, natively
+    // This function intends to allow native jQuery-Type chaining and plugins
     /**
      * @param selector
      * @returns {NodeList}
      * @constructor
      */
     Stratus.Select = function (selector) {
-        var target = 'querySelector';
-        if (_.startsWith(selector, '.')) target = 'querySelectorAll';
-        var selection = document[target](selector);
-        _.extend(selection, {
-            context: this,
-            selector: selector
-        });
-        _.extend(selection.__proto__, Stratus.Selector);
+        if (!selector) return null;
+        var selection = selector;
+        if (typeof selector === 'string') {
+            var target;
+            if (_.startsWith(selector, '.') || _.contains(selector, '[')) {
+                target = 'querySelectorAll';
+            } else if (selector === 'body' || selector === 'html' || _.startsWith(selector, '#')) {
+                target = 'querySelector';
+            } else {
+                target = 'querySelectorAll';
+            }
+            selection = document[target](selector);
+        }
+        if (selection && typeof selection === 'object') {
+            _.extend(selection, {
+                context: this,
+                selector: selector
+            });
+            _.extend(selection.__proto__, Stratus.Selector);
+        }
         return selection;
+    };
+
+    // Selector Plugins
+    // ----------------
+
+    /**
+     * @param className
+     * @returns {*}
+     * @constructor
+     */
+    Stratus.Selector.addClass = function (className) {
+        var that = this;
+        if (that instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else {
+            _.each(className.split(' '), function (name) {
+                if (that.classList) {
+                    that.classList.add(name);
+                } else {
+                    that.className += ' ' + name;
+                }
+            });
+        }
+        return that;
+    };
+
+    /**
+     * @param attr
+     * @param value
+     * @returns {*}
+     * @constructor
+     */
+    Stratus.Selector.attr = function (attr, value) {
+        var that = this;
+        if (that instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else if (attr) {
+            if (!value) {
+                value = that.getAttribute(attr);
+                return _.isJSON(value) ? JSON.parse(value) : value;
+            } else {
+                that.setAttribute(attr, JSON.stringify(value));
+            }
+        }
+        return that;
+    };
+
+    /**
+     * @param callable
+     * @returns {*}
+     */
+    Stratus.Selector.each = function (callable) {
+        var that = this;
+        if (typeof callable !== 'function') {
+            callable = function (element) {
+                console.warn('each running on element:', element);
+            };
+        }
+        if (that instanceof NodeList) {
+            _.each(that, callable);
+        }
+        return that;
+    };
+
+    /**
+     * @param selector
+     * @returns {*}
+     */
+    Stratus.Selector.find = function (selector) {
+        var that = this;
+        if (that instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else if (selector) {
+            return that.querySelectorAll(selector);
+        }
+        return that;
+    };
+
+    /**
+     * @param className
+     * @returns {*}
+     * @constructor
+     */
+    Stratus.Selector.removeClass = function (className) {
+        var that = this;
+        if (that instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else {
+            if (that.classList) {
+                _.each(className.split(' '), function (name) {
+                    that.classList.remove(name);
+                });
+            } else {
+                that.className = that.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+            }
+        }
+        return that;
     };
 
     // Stratus Event System
     // --------------------
 
-    // This is largely based on the work of Stratus.Events
+    // This is largely based on the work of Backbone.Events
     // to provide the logic in case we don't have Backbone
     // loaded at this time.
-    if (typeof Backbone !== 'undefined' && Backbone.Events) {
-        _.extend(Stratus.Events, Backbone.Events);
-    } else {
-        // Regular expression used to split event strings.
-        var eventSplitter = /\s+/;
 
-        // Iterates over the standard `event, callback` (as well as the fancy multiple
-        // space-separated events `"change blur", callback` and jQuery-style event
-        // maps `{event: callback}`).
-        var eventsApi = function (iteratee, events, name, callback, opts) {
-            var i = 0, names;
-            if (name && typeof name === 'object') {
-                // Handle event maps.
-                if (callback !== void 0 && 'context' in opts && opts.context === void 0) opts.context = callback;
-                for (names = _.keys(name); i < names.length; i++) {
-                    events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
-                }
-            } else if (name && eventSplitter.test(name)) {
-                // Handle space-separated event names by delegating them individually.
-                for (names = name.split(eventSplitter); i < names.length; i++) {
-                    events = iteratee(events, names[i], callback, opts);
-                }
-            } else {
-                // Finally, standard events.
-                events = iteratee(events, name, callback, opts);
+    // Regular expression used to split event strings.
+    var eventSplitter = /\s+/;
+
+    // Iterates over the standard `event, callback` (as well as the fancy multiple
+    // space-separated events `"change blur", callback` and jQuery-style event
+    // maps `{event: callback}`).
+    var eventsApi = function (iteratee, events, name, callback, opts) {
+        var i = 0;
+        var names;
+        if (name && typeof name === 'object') {
+            // Handle event maps.
+            if (callback !== void 0 && 'context' in opts && opts.context === void 0) opts.context = callback;
+            for (names = _.keys(name); i < names.length; i++) {
+                events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
             }
-            return events;
-        };
-
-        // Bind an event to a `callback` function. Passing `"all"` will bind
-        // the callback to all events fired.
-        Stratus.Events.on = function (name, callback, context) {
-            return internalOn(this, name, callback, context);
-        };
-
-        // Guard the `listening` argument from the public API.
-        var internalOn = function (obj, name, callback, context, listening) {
-            obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
-                context: context,
-                ctx: obj,
-                listening: listening
-            });
-
-            if (listening) {
-                var listeners = obj._listeners || (obj._listeners = {});
-                listeners[listening.id] = listening;
+        } else if (name && eventSplitter.test(name)) {
+            // Handle space-separated event names by delegating them individually.
+            for (names = name.split(eventSplitter); i < names.length; i++) {
+                events = iteratee(events, names[i], callback, opts);
             }
+        } else {
+            // Finally, standard events.
+            events = iteratee(events, name, callback, opts);
+        }
+        return events;
+    };
 
-            return obj;
-        };
+    // Bind an event to a `callback` function. Passing `"all"` will bind
+    // the callback to all events fired.
+    Stratus.Events.on = function (name, callback, context) {
+        return internalOn(this, name, callback, context);
+    };
 
-        // Inversion-of-control versions of `on`. Tell *this* object to listen to
-        // an event in another object... keeping track of what it's listening to
-        // for easier unbinding later.
-        Stratus.Events.listenTo = function (obj, name, callback) {
-            if (!obj) return this;
-            var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
-            var listeningTo = this._listeningTo || (this._listeningTo = {});
-            var listening = listeningTo[id];
+    // Guard the `listening` argument from the public API.
+    var internalOn = function (obj, name, callback, context, listening) {
+        obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
+            context: context,
+            ctx: obj,
+            listening: listening
+        });
 
-            // This object is not listening to any other events on `obj` yet.
-            // Setup the necessary references to track the listening callbacks.
-            if (!listening) {
-                var thisId = this._listenId || (this._listenId = _.uniqueId('l'));
-                listening = listeningTo[id] = { obj: obj, objId: id, id: thisId, listeningTo: listeningTo, count: 0 };
+        if (listening) {
+            var listeners = obj._listeners || (obj._listeners = {});
+            listeners[listening.id] = listening;
+        }
+
+        return obj;
+    };
+
+    // Inversion-of-control versions of `on`. Tell *this* object to listen to
+    // an event in another object... keeping track of what it's listening to
+    // for easier unbinding later.
+    Stratus.Events.listenTo = function (obj, name, callback) {
+        if (!obj) return this;
+        var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
+        var listeningTo = this._listeningTo || (this._listeningTo = {});
+        var listening = listeningTo[id];
+
+        // This object is not listening to any other events on `obj` yet.
+        // Setup the necessary references to track the listening callbacks.
+        if (!listening) {
+            var thisId = this._listenId || (this._listenId = _.uniqueId('l'));
+            listening = listeningTo[id] = { obj: obj, objId: id, id: thisId, listeningTo: listeningTo, count: 0 };
+        }
+
+        // Bind callbacks on obj, and keep track of them on listening.
+        internalOn(obj, name, callback, this, listening);
+        return this;
+    };
+
+    // The reducing API that adds a callback to the `events` object.
+    var onApi = function (events, name, callback, options) {
+        if (callback) {
+            var handlers = events[name] || (events[name] = []);
+            var context = options.context;
+            var ctx = options.ctx;
+            var listening = options.listening;
+            if (listening) listening.count++;
+
+            handlers.push({ callback: callback, context: context, ctx: context || ctx, listening: listening });
+        }
+        return events;
+    };
+
+    // Remove one or many callbacks. If `context` is null, removes all
+    // callbacks with that function. If `callback` is null, removes all
+    // callbacks for the event. If `name` is null, removes all bound
+    // callbacks for all events.
+    Stratus.Events.off = function (name, callback, context) {
+        if (!this._events) return this;
+        this._events = eventsApi(offApi, this._events, name, callback, {
+            context: context,
+            listeners: this._listeners
+        });
+        return this;
+    };
+
+    // Tell this object to stop listening to either specific events ... or
+    // to every object it's currently listening to.
+    Stratus.Events.stopListening = function (obj, name, callback) {
+        var listeningTo = this._listeningTo;
+        if (!listeningTo) return this;
+
+        var ids = obj ? [obj._listenId] : _.keys(listeningTo);
+
+        for (var i = 0; i < ids.length; i++) {
+            var listening = listeningTo[ids[i]];
+
+            // If listening doesn't exist, this object is not currently
+            // listening to obj. Break out early.
+            if (!listening) break;
+
+            listening.obj.off(name, callback, this);
+        }
+
+        return this;
+    };
+
+    // The reducing API that removes a callback from the `events` object.
+    var offApi = function (events, name, callback, options) {
+        if (!events) return;
+
+        var i = 0;
+        var listening;
+        var context = options.context;
+        var listeners = options.listeners;
+
+        // Delete all events listeners and "drop" events.
+        if (!name && !callback && !context) {
+            var ids = _.keys(listeners);
+            for (; i < ids.length; i++) {
+                listening = listeners[ids[i]];
+                delete listeners[listening.id];
+                delete listening.listeningTo[listening.objId];
             }
+            return;
+        }
 
-            // Bind callbacks on obj, and keep track of them on listening.
-            internalOn(obj, name, callback, this, listening);
-            return this;
-        };
+        var names = name ? [name] : _.keys(events);
+        for (; i < names.length; i++) {
+            name = names[i];
+            var handlers = events[name];
 
-        // The reducing API that adds a callback to the `events` object.
-        var onApi = function (events, name, callback, options) {
-            if (callback) {
-                var handlers = events[name] || (events[name] = []);
-                var context = options.context, ctx = options.ctx, listening = options.listening;
-                if (listening) listening.count++;
+            // Bail out if there are no events stored.
+            if (!handlers) break;
 
-                handlers.push({ callback: callback, context: context, ctx: context || ctx, listening: listening });
-            }
-            return events;
-        };
-
-        // Remove one or many callbacks. If `context` is null, removes all
-        // callbacks with that function. If `callback` is null, removes all
-        // callbacks for the event. If `name` is null, removes all bound
-        // callbacks for all events.
-        Stratus.Events.off = function (name, callback, context) {
-            if (!this._events) return this;
-            this._events = eventsApi(offApi, this._events, name, callback, {
-                context: context,
-                listeners: this._listeners
-            });
-            return this;
-        };
-
-        // Tell this object to stop listening to either specific events ... or
-        // to every object it's currently listening to.
-        Stratus.Events.stopListening = function (obj, name, callback) {
-            var listeningTo = this._listeningTo;
-            if (!listeningTo) return this;
-
-            var ids = obj ? [obj._listenId] : _.keys(listeningTo);
-
-            for (var i = 0; i < ids.length; i++) {
-                var listening = listeningTo[ids[i]];
-
-                // If listening doesn't exist, this object is not currently
-                // listening to obj. Break out early.
-                if (!listening) break;
-
-                listening.obj.off(name, callback, this);
-            }
-
-            return this;
-        };
-
-        // The reducing API that removes a callback from the `events` object.
-        var offApi = function (events, name, callback, options) {
-            if (!events) return;
-
-            var i = 0, listening;
-            var context = options.context, listeners = options.listeners;
-
-            // Delete all events listeners and "drop" events.
-            if (!name && !callback && !context) {
-                var ids = _.keys(listeners);
-                for (; i < ids.length; i++) {
-                    listening = listeners[ids[i]];
-                    delete listeners[listening.id];
-                    delete listening.listeningTo[listening.objId];
-                }
-                return;
-            }
-
-            var names = name ? [name] : _.keys(events);
-            for (; i < names.length; i++) {
-                name = names[i];
-                var handlers = events[name];
-
-                // Bail out if there are no events stored.
-                if (!handlers) break;
-
-                // Replace events if there are any remaining.  Otherwise, clean up.
-                var remaining = [];
-                for (var j = 0; j < handlers.length; j++) {
-                    var handler = handlers[j];
-                    if (
-                        callback && callback !== handler.callback &&
-                        callback !== handler.callback._callback ||
-                        context && context !== handler.context
-                    ) {
-                        remaining.push(handler);
-                    } else {
-                        listening = handler.listening;
-                        if (listening && --listening.count === 0) {
-                            delete listeners[listening.id];
-                            delete listening.listeningTo[listening.objId];
-                        }
+            // Replace events if there are any remaining.  Otherwise, clean up.
+            var remaining = [];
+            for (var j = 0; j < handlers.length; j++) {
+                var handler = handlers[j];
+                if (
+                    callback && callback !== handler.callback &&
+                    callback !== handler.callback._callback ||
+                    context && context !== handler.context
+                ) {
+                    remaining.push(handler);
+                } else {
+                    listening = handler.listening;
+                    if (listening && --listening.count === 0) {
+                        delete listeners[listening.id];
+                        delete listening.listeningTo[listening.objId];
                     }
                 }
-
-                // Update tail event if the list has any events.  Otherwise, clean up.
-                if (remaining.length) {
-                    events[name] = remaining;
-                } else {
-                    delete events[name];
-                }
             }
-            return events;
-        };
 
-        // Bind an event to only be triggered a single time. After the first time
-        // the callback is invoked, its listener will be removed. If multiple events
-        // are passed in using the space-separated syntax, the handler will fire
-        // once for each event, not once for a combination of all events.
-        Stratus.Events.once = function (name, callback, context) {
-            // Map the event into a `{event: once}` object.
-            var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
-            if (typeof name === 'string' && context == null) callback = void 0;
-            return this.on(events, callback, context);
-        };
-
-        // Inversion-of-control versions of `once`.
-        Stratus.Events.listenToOnce = function (obj, name, callback) {
-            // Map the event into a `{event: once}` object.
-            var events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, obj));
-            return this.listenTo(obj, events);
-        };
-
-        // Reduces the event callbacks into a map of `{event: onceWrapper}`.
-        // `offer` unbinds the `onceWrapper` after it has been called.
-        var onceMap = function (map, name, callback, offer) {
-            if (callback) {
-                var once = map[name] = _.once(function () {
-                    offer(name, once);
-                    callback.apply(this, arguments);
-                });
-                once._callback = callback;
+            // Update tail event if the list has any events.  Otherwise, clean up.
+            if (remaining.length) {
+                events[name] = remaining;
+            } else {
+                delete events[name];
             }
-            return map;
-        };
+        }
+        return events;
+    };
 
-        // Trigger one or many events, firing all bound callbacks. Callbacks are
-        // passed the same arguments as `trigger` is, apart from the event name
-        // (unless you're listening on `"all"`, which will cause your callback to
-        // receive the true name of the event as the first argument).
-        Stratus.Events.trigger = function (name) {
-            if (!this._events) return this;
+    // Bind an event to only be triggered a single time. After the first time
+    // the callback is invoked, its listener will be removed. If multiple events
+    // are passed in using the space-separated syntax, the handler will fire
+    // once for each event, not once for a combination of all events.
+    Stratus.Events.once = function (name, callback, context) {
+        // Map the event into a `{event: once}` object.
+        var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
+        if (typeof name === 'string' && context == null) callback = void 0;
+        return this.on(events, callback, context);
+    };
 
-            var length = Math.max(0, arguments.length - 1);
-            var args = Array(length);
-            for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
+    // Inversion-of-control versions of `once`.
+    Stratus.Events.listenToOnce = function (obj, name, callback) {
+        // Map the event into a `{event: once}` object.
+        var events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, obj));
+        return this.listenTo(obj, events);
+    };
 
-            eventsApi(triggerApi, this._events, name, void 0, args);
-            return this;
-        };
+    // Reduces the event callbacks into a map of `{event: onceWrapper}`.
+    // `offer` unbinds the `onceWrapper` after it has been called.
+    var onceMap = function (map, name, callback, offer) {
+        if (callback) {
+            var once = map[name] = _.once(function () {
+                offer(name, once);
+                callback.apply(this, arguments);
+            });
+            once._callback = callback;
+        }
+        return map;
+    };
 
-        // Handles triggering the appropriate event callbacks.
-        var triggerApi = function (objEvents, name, callback, args) {
-            if (objEvents) {
-                var events = objEvents[name];
-                var allEvents = objEvents.all;
-                if (events && allEvents) allEvents = allEvents.slice();
-                if (events) triggerEvents(events, args);
-                if (allEvents) triggerEvents(allEvents, [name].concat(args));
-            }
-            return objEvents;
-        };
+    // Trigger one or many events, firing all bound callbacks. Callbacks are
+    // passed the same arguments as `trigger` is, apart from the event name
+    // (unless you're listening on `"all"`, which will cause your callback to
+    // receive the true name of the event as the first argument).
+    Stratus.Events.trigger = function (name) {
+        if (!this._events) return this;
 
-        // A difficult-to-believe, but optimized internal dispatch function for
-        // triggering events. Tries to keep the usual cases speedy (most internal
-        // Backbone events have 3 arguments).
-        var triggerEvents = function (events, args) {
-            var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
-            switch (args.length) {
-                case 0:
-                    while (++i < l) (ev = events[i]).callback.call(ev.ctx);
-                    return;
-                case 1:
-                    while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1);
-                    return;
-                case 2:
-                    while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2);
-                    return;
-                case 3:
-                    while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3);
-                    return;
-                default:
-                    while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
-                    return;
-            }
-        };
+        var length = Math.max(0, arguments.length - 1);
+        var args = Array(length);
+        for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
 
-        // Aliases for backwards compatibility.
-        Stratus.Events.bind = Stratus.Events.on;
-        Stratus.Events.unbind = Stratus.Events.off;
-    }
+        eventsApi(triggerApi, this._events, name, void 0, args);
+        return this;
+    };
+
+    // Handles triggering the appropriate event callbacks.
+    var triggerApi = function (objEvents, name, callback, args) {
+        if (objEvents) {
+            var events = objEvents[name];
+            var allEvents = objEvents.all;
+            if (events && allEvents) allEvents = allEvents.slice();
+            if (events) triggerEvents(events, args);
+            if (allEvents) triggerEvents(allEvents, [name].concat(args));
+        }
+        return objEvents;
+    };
+
+    // A difficult-to-believe, but optimized internal dispatch function for
+    // triggering events. Tries to keep the usual cases speedy (most internal
+    // Backbone events have 3 arguments).
+    var triggerEvents = function (events, args) {
+        var ev;
+        var i = -1;
+        var l = events.length;
+        var a1 = args[0];
+        var a2 = args[1];
+        var a3 = args[2];
+        switch (args.length) {
+            case 0:
+                while (++i < l) (ev = events[i]).callback.call(ev.ctx);
+                return;
+            case 1:
+                while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1);
+                return;
+            case 2:
+                while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2);
+                return;
+            case 3:
+                while (++i < l) (ev = events[i]).callback.call(ev.ctx, a1, a2, a3);
+                return;
+            default:
+                while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args);
+                return;
+        }
+    };
+
+    // Aliases for backwards compatibility.
+    Stratus.Events.bind = Stratus.Events.on;
+    Stratus.Events.unbind = Stratus.Events.off;
 
     // Model Prototype
     // ---------------
@@ -1173,21 +1289,8 @@
     // jQuery Plugins
     // --------------
 
+    // FIXME: These are deprecated, since they will never load in the core now that jQuery is gone
     if (typeof $ === 'function' && $.fn) {
-
-        /**
-         * @param str
-         * @returns {boolean}
-         */
-        $.fn.isJSON = function (str) {
-            try {
-                JSON.parse(str);
-            } catch (e) {
-                return false;
-            }
-            return true;
-        };
-
         /**
          * @param key
          * @param value
@@ -1197,7 +1300,7 @@
             if (key === undefined) console.error('$().dataAttr(key, value) contains an undefined key!');
             if (value === undefined) {
                 value = this.attr('data-' + key);
-                return $.fn.isJSON(value) ? JSON.parse(value) : value;
+                return _.isJSON(value) ? JSON.parse(value) : value;
             } else {
                 return this.attr('data-' + key, JSON.stringify(value));
             }
@@ -1211,17 +1314,6 @@
             if (!this.selector) console.error('No Selector:', this);
             return (!sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length);
         };
-
-        // Error Handling Wrapper
-        // ----------------------------------
-
-        /**
-         * @type {*}
-         */
-        $.error = function (handler) {
-            Stratus.meow = this;
-            console.log('error:', this, handler);
-        };
     }
 
     // Stratus Environment Initialization
@@ -1232,8 +1324,7 @@
      * @constructor
      */
     Stratus.Internals.LoadEnvironment = function () {
-        var initialLoad = document.querySelector('body').getAttribute('data-environment');
-        if (_.isJSON(initialLoad)) initialLoad = JSON.parse(initialLoad);
+        var initialLoad = Stratus.Select('body').attr('data-environment');
         if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
             Stratus.Environment.set(initialLoad);
         }
@@ -1555,75 +1646,6 @@
     });
     Stratus.Chronos.reinitialize();
 
-    // Selector Plugins
-    // ----------------
-
-    /**
-     * @param element
-     * @param className
-     * @constructor
-     */
-    Stratus.Selector.AddClass = function (element, className) {
-        var that = this;
-        if (!className) {
-            className = element;
-            element = that;
-        }
-        if (element.__proto__ instanceof NodeList) {
-            console.log('List:', element);
-        } else {
-            if (element.classList) {
-                element.classList.add(className);
-            } else {
-                element.className += ' ' + className;
-            }
-        }
-        return element;
-    };
-
-    /**
-     * @param element
-     * @param className
-     * @constructor
-     */
-    Stratus.Selector.RemoveClass = function (element, className) {
-        var that = this;
-        if (!className) {
-            className = element;
-            element = that;
-        }
-        if (element.__proto__ instanceof NodeList) {
-            console.log('List:', element);
-        } else {
-            if (element.classList) {
-                element.classList.remove(className);
-            } else {
-                element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-            }
-        }
-        return element;
-    };
-
-    /**
-     * @param element
-     * @param text
-     * @returns {*}
-     * @constructor
-     */
-    Stratus.Selector.Text = function (element, text) {
-        var that = this;
-        if (!text) {
-            text = element;
-            element = that;
-        }
-        if (element.__proto__ instanceof NodeList) {
-            console.log('List:', element);
-        } else if (text) {
-            element.textContent = text;
-        }
-        return text ? element : element.textContent;
-    };
-
     // Internal CSS Loader
     // -------------------
 
@@ -1768,11 +1790,11 @@
 
     // This function allows anchor capture for smooth scrolling before propagation.
     /**
-     * FIXME: This is a core item that using a large quantity of logic from Backbone Views
      * @type {*|Function|void}
      */
-    if (typeof Backbone === 'object') {
-        Stratus.Internals.Anchor = Backbone.View.extend({
+    Stratus.Internals.Anchor = (function Anchor() {
+        Anchor.initialize = true;
+        return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
             el: 'a[href*=\\#]:not([href=\\#]):not([data-scroll="false"])',
             events: {
                 click: 'clickAction'
@@ -1802,49 +1824,10 @@
                 }
             }
         });
-    }
+    })();
 
-    // LazyLoad Images
+    // Lazy Load Image
     // ---------------
-
-    // Find all images that have data-src and lazy load the "best" size version that will fit
-    // inside the container.
-    // If they have a src already, that's okay, it was just a placeholder image to allow us to have
-    // the correct ratio of the image for reserving space in the design, and it will be replaced.
-    // But if you set a src, you don't need to redundantly set the full path in the data-src, you can just enter data-src="lazy"
-    // If you need the image to be a specific size (e.g. a small version) and you want to load the
-    // right size image for the hard coded size (and not let it fetch the larger or smaller version that fits in the container), you can specify the width in CSS.
-    // If you want to specify the size to load, you can add an attribute for data-size and specify
-    // HQ, XL, L, M, S, XS
-    // By default images will NOT be refetched at a larger size when the browser is made larger,
-    // because that it's rare that people will resize their browser, and if the images get a little
-    // blurry that's better than everything reloading on the page (next page load will fix this
-    // automatically). But on mobile, we will listen for resize of window because
-    /**
-     * FIXME: This is a core item that using a large quantity of logic from Backbone Views
-     * @type {*|Function|void}
-     */
-    if (typeof Backbone === 'object') {
-        Stratus.Internals.LazyLoad = Backbone.View.extend({
-            el: 'img[data-src]',
-            initialize: function () {
-                if (this.$el.length === 0) return false;
-
-                // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
-                var $el;
-                _.each(this.$el, function (el) {
-                    $el = $(el);
-                    Stratus.RegisterGroup.add('OnScroll', {
-                        method: Stratus.Internals.LoadImage,
-                        el: $el,
-                        spy: $el.data('spy') ? $($el.data('spy')) : $el
-                    });
-                });
-            }
-        });
-    }
-
-    // Load Image
     /**
      * @param obj
      * @returns {boolean}
@@ -1852,8 +1835,8 @@
      */
     Stratus.Internals.LoadImage = function (obj) {
         obj.el.addClass('placeholder');
-        if (Stratus.Internals.IsOnScreen(obj.spy) && !obj.el.dataAttr('loading')) {
-            obj.el.dataAttr('loading', true);
+        if (Stratus.Internals.IsOnScreen(obj.spy) && !obj.el.attr('data-loading')) {
+            obj.el.attr('loading', 'true');
             Stratus.DOM.complete(function () {
 
                 // By default we'll load larger versions of an image to look good on HD displays, but if you
@@ -1864,8 +1847,10 @@
                 // Don't Get the Width, until it's "onScreen" (in case it was collapsed offscreen originally)
                 var src = obj.el.data('src');
 
-                // If a src is provided already, us that
-                if (src === 'lazy') src = obj.el.attr('src');
+                // Handle precedence
+                if (!src || src === 'lazy') {
+                    src = obj.el.attr('src');
+                }
 
                 var size = null;
 
@@ -2228,7 +2213,7 @@
         }
 
         /*Stratus.Events.trigger('alert', profile + JSON.stringify(Stratus.Client));*/
-        $('body').addClass(profile.join(' '));
+        Stratus.Select('body').addClass(profile.join(' '));
     };
 
     // Internal View Model
@@ -2241,7 +2226,7 @@
      */
 
     // TODO: Combine this inheritance logic into a single underscore function
-    Stratus.Internals.View = function (_Model) {
+    Stratus.Internals.View = (function (_Model) {
         _.inherits(View, _Model);
 
         function View(length) {
@@ -2263,60 +2248,60 @@
                         uid: _.uniqueId('view_'),
 
                         // This is set as a widget is created to ensure duplicates don't exist
-                        guid: (typeof selector.dataAttr('guid') !== 'undefined') ? selector.dataAttr('guid') : null,
+                        guid: (typeof selector.attr('data-guid') !== 'undefined') ? selector.attr('data-guid') : null,
 
                         // Model or Collection
                         // -----------
 
                         // Entity Type (i.e. 'View' which would correlate to a Restful /Api/View Request)
-                        entity: (typeof selector.dataAttr('entity') !== 'undefined') ? _.ucfirst(selector.dataAttr('entity')) : null,
+                        entity: (typeof selector.attr('data-entity') !== 'undefined') ? _.ucfirst(selector.attr('data-entity')) : null,
 
                         // Entity ID (Determines Model or Collection)
-                        id: (typeof selector.dataAttr('id') !== 'undefined') ? selector.dataAttr('id') : null,
+                        id: (typeof selector.attr('data-id') !== 'undefined') ? selector.attr('data-id') : null,
 
                         // Determines whether or not we should create an Entity Stub to render the dependent widgets
-                        manifest: (typeof selector.dataAttr('manifest') !== 'undefined') ? selector.dataAttr('manifest') : null,
+                        manifest: (typeof selector.attr('data-manifest') !== 'undefined') ? selector.attr('data-manifest') : null,
 
                         // API Options are added to the Request URL
-                        api: (typeof selector.dataAttr('api') !== 'undefined') ? selector.dataAttr('api') : null,
+                        api: (typeof selector.attr('data-api') !== 'undefined') ? selector.attr('data-api') : null,
 
                         // Determine whether this widget will fetch
-                        fetch: (typeof selector.dataAttr('fetch') !== 'undefined') ? selector.dataAttr('fetch') : true,
+                        fetch: (typeof selector.attr('data-fetch') !== 'undefined') ? selector.attr('data-fetch') : true,
 
                         // Specify Target
-                        target: (typeof selector.dataAttr('target') !== 'undefined') ? selector.dataAttr('target') : null,
+                        target: (typeof selector.attr('data-target') !== 'undefined') ? selector.attr('data-target') : null,
 
                         // This is determines what a new Entity's settings would be on creation
-                        prototype: (typeof selector.dataAttr('prototype') !== 'undefined') ? selector.dataAttr('prototype') : null,
+                        prototype: (typeof selector.attr('data-prototype') !== 'undefined') ? selector.attr('data-prototype') : null,
 
                         // Stuff
-                        autoSave: (typeof selector.dataAttr('autoSave') !== 'undefined') ? selector.dataAttr('autoSave') : null,
+                        autoSave: (typeof selector.attr('data-autoSave') !== 'undefined') ? selector.attr('data-autoSave') : null,
 
                         // View
                         // -----------
 
-                        type: (typeof selector.dataAttr('type') !== 'undefined') ? selector.dataAttr('type') : null,
-                        types: (typeof selector.dataAttr('types') !== 'undefined') ? selector.dataAttr('types') : null,
-                        template: (typeof selector.dataAttr('template') !== 'undefined') ? selector.dataAttr('template') : null,
-                        templates: (typeof selector.dataAttr('templates') !== 'undefined') ? selector.dataAttr('templates') : null,
-                        dialogue: (typeof selector.dataAttr('dialogue') !== 'undefined') ? selector.dataAttr('dialogue') : null,
-                        pagination: (typeof selector.dataAttr('pagination') !== 'undefined') ? selector.dataAttr('pagination') : null,
-                        property: (typeof selector.dataAttr('property') !== 'undefined') ? selector.dataAttr('property') : null,
-                        field: (typeof selector.dataAttr('field') !== 'undefined') ? selector.dataAttr('field') : null,
-                        load: (typeof selector.dataAttr('load') !== 'undefined') ? selector.dataAttr('load') : null,
-                        options: (typeof selector.dataAttr('options') !== 'undefined') ? selector.dataAttr('options') : null,
+                        type: (typeof selector.attr('data-type') !== 'undefined') ? selector.attr('data-type') : null,
+                        types: (typeof selector.attr('data-types') !== 'undefined') ? selector.attr('data-types') : null,
+                        template: (typeof selector.attr('data-template') !== 'undefined') ? selector.attr('data-template') : null,
+                        templates: (typeof selector.attr('data-templates') !== 'undefined') ? selector.attr('data-templates') : null,
+                        dialogue: (typeof selector.attr('data-dialogue') !== 'undefined') ? selector.attr('data-dialogue') : null,
+                        pagination: (typeof selector.attr('data-pagination') !== 'undefined') ? selector.attr('data-pagination') : null,
+                        property: (typeof selector.attr('data-property') !== 'undefined') ? selector.attr('data-property') : null,
+                        field: (typeof selector.attr('data-field') !== 'undefined') ? selector.attr('data-field') : null,
+                        load: (typeof selector.attr('data-load') !== 'undefined') ? selector.attr('data-load') : null,
+                        options: (typeof selector.attr('data-options') !== 'undefined') ? selector.attr('data-options') : null,
 
                         // Versioning
                         // -----------
 
-                        versionEntity: (typeof selector.dataAttr('versionentity') !== 'undefined') ? selector.dataAttr('versionentity') : null,
-                        versionRouter: (typeof selector.dataAttr('versionrouter') !== 'undefined') ? selector.dataAttr('versionrouter') : null,
-                        versionId: (typeof selector.dataAttr('versionid') !== 'undefined') ? selector.dataAttr('versionid') : null,
+                        versionEntity: (typeof selector.attr('data-versionentity') !== 'undefined') ? selector.attr('data-versionentity') : null,
+                        versionRouter: (typeof selector.attr('data-versionrouter') !== 'undefined') ? selector.attr('data-versionrouter') : null,
+                        versionId: (typeof selector.attr('data-versionid') !== 'undefined') ? selector.attr('data-versionid') : null,
 
                         // Plugins
                         // -----------
 
-                        plugin: (typeof selector.dataAttr('plugin') !== 'undefined') ? selector.dataAttr('plugin') : null,
+                        plugin: (typeof selector.attr('data-plugin') !== 'undefined') ? selector.attr('data-plugin') : null,
                         plugins: []
                     });
 
@@ -2383,7 +2368,7 @@
         }
 
         return View;
-    }(Stratus.Prototypes.Model);
+    })(Stratus.Prototypes.Model);
 
     /**
      * @constructor
@@ -2407,7 +2392,7 @@
                 if (_.isArray(element.selector)) {
                     element.length = 0;
                     _.forEach(element.selector, function (selector) {
-                        nodes = document.querySelectorAll(selector);
+                        nodes = Stratus.Select(selector);
                         element.length += nodes.length;
                         if (nodes.length) {
                             var name = selector.replace('[', '').replace(']', '');
@@ -2421,7 +2406,7 @@
                         }
                     });
                 } else if (_.isString(element.selector)) {
-                    nodes = document.querySelectorAll(element.selector);
+                    nodes = Stratus.Select(element.selector);
                     element.length = nodes.length;
                     if (nodes.length) {
                         var attribute = element.selector.replace('[', '').replace(']', '');
@@ -2604,7 +2589,7 @@
                 // Load CSS
                 // TODO: Make Dynamic
                 var css = [];
-                var cssLoaded = _.map(document.querySelectorAll('link[satisfies]'), function (node) {
+                var cssLoaded = _.map(Stratus.Select('link[satisfies]'), function (node) {
                     return node.getAttribute('satisfies');
                 });
                 if (!_.contains(cssLoaded, 'angular-material.css')) {
@@ -2613,11 +2598,11 @@
                     );
                 }
                 /**
-                if (document.querySelectorAll('stratus-help').length) {
+                if (Stratus.Select('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
                 /**/
-                if (document.querySelectorAll('[froala]').length || document.querySelectorAll('[stratus-froala]').length) {
+                if (Stratus.Select('[froala]').length || Stratus.Select('[stratus-froala]').length) {
                     [
                         Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
                         Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css',
@@ -2645,16 +2630,16 @@
                         Stratus.Internals.CssLoader(url).then(function () {
                             /**
                             if (++counter === css.length) {
-                                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                                angular.bootstrap(Stratus.Select('html'), ['stratusApp']);
                             }
                             /**/
                         });
                     });
                 } /** else {
-                    angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                    angular.bootstrap(Stratus.Select('html'), ['stratusApp']);
                 }
                 /**/
-                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                angular.bootstrap(Stratus.Select('html'), ['stratusApp']);
             });
         }
     };
@@ -2681,10 +2666,10 @@
      */
     Stratus.Internals.Loader = function (selector, view, requirements) {
         if (typeof selector === 'undefined') {
-            var $body = $('body');
-            selector = (!$body.dataAttr('loaded')) ? '[data-entity],[data-plugin]' : null;
+            var body = Stratus.Select('body');
+            selector = !body.attr('data-loaded') ? '[data-entity],[data-plugin]' : null;
             if (selector) {
-                $body.dataAttr('loaded', true);
+                body.attr('data-loaded', true);
             } else {
                 console.warn('Attempting to load Stratus root repeatedly!');
             }
@@ -2695,7 +2680,7 @@
          */
         /* We check view, selector, and type in this order to save a small amount of power */
         if (selector) {
-            selector = (view && selector && typeof selector === 'object') ? $(selector).find('[data-type],[data-plugin]') : $(selector);
+            selector = (view && selector && typeof selector === 'object') ? Stratus.Select(selector).find('[data-type],[data-plugin]') : Stratus.Select(selector);
         }
         return new Promise(function (resolve, reject) {
             var entries = {
@@ -2704,7 +2689,7 @@
                 views: {}
             };
             if (entries.total > 0) {
-                selector.each(function (index, el) {
+                selector.each(function (el, index, list) {
                     entries.iteration++;
                     var entry = _.uniqueId('entry_');
                     entries.views[entry] = false;
@@ -2737,8 +2722,9 @@
         var parentView = (view) ? view : null;
         var parentChild = false;
 
-        var $el = $(el);
-        view = new Stratus.Internals.View({ el: $el });
+        var element = Stratus.Select(el);
+        view = new Stratus.Internals.View();
+        view.set('el', element);
         view.hydrate();
         if (parentView) {
             if (!view.has('entity')) {
@@ -3280,12 +3266,10 @@
 
         // Load Internals after Widgets and Plugins
         if (typeof Backbone === 'object') {
-            if (Stratus.Internals.Anchor) {
-                new Stratus.Internals.Anchor();
+            if (Stratus.Internals.Anchor.initialize) {
+                Stratus.Internals.Anchor = Stratus.Internals.Anchor();
             }
-            if (Stratus.Internals.LazyLoad) {
-                new Stratus.Internals.LazyLoad();
-            }
+            new Stratus.Internals.Anchor();
         }
 
         // Call Any Registered Group Methods that plugins might use, e.g. OnScroll
@@ -3399,13 +3383,9 @@
 
     // DOM Ready Routines
     // ------------------
-    // TODO: DOM.ready and DOM.complete is redundant from version above. Remove?
     // On DOM Ready, add browser compatible CSS classes and digest DOM data-entity attributes.
     Stratus.DOM.ready(function () {
-        Stratus.Select('body');
-        if (typeof $ === 'function' && $.fn) {
-            $('body').removeClass('loaded unloaded').addClass('loading');
-        }
+        Stratus.Select('body').removeClass('loaded unloaded').addClass('loading');
         Stratus.Events.trigger('initialize');
     });
 
@@ -3414,9 +3394,7 @@
 
     // Stratus Events are more accurate than the DOM, so nothing is added to this stub.
     Stratus.DOM.complete(function () {
-        if (typeof $ === 'function' && $.fn) {
-            $('body').removeClass('loading unloaded').addClass('loaded');
-        }
+        Stratus.Select('body').removeClass('loading unloaded').addClass('loaded');
     });
 
     // DOM Unload Routines
@@ -3427,29 +3405,23 @@
     // while providing the user with a confirmation box, if necessary,
     // before close routines are triggered.
     Stratus.DOM.unload(function (event) {
+        Stratus.Select('body').removeClass('loading loaded').addClass('unloaded');
+        Stratus.Events.trigger('terminate', event);
         /* *
-        if (typeof $ === 'function' && $.fn) {
-            $('body').removeClass('loading loaded').addClass('unloaded');
+        if (event.cancelable === true) {
+            // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
+            event.preventDefault();
+            var confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
+            (event || window.event).returnValue = confirmationMessage;
+            return confirmationMessage;
         }
         /* */
-        Stratus.Select('body').RemoveClass('loading loaded').AddClass('unloaded');
-        Stratus.Events.trigger('terminate', event);
-        /*
-         if (event.cancelable === true) {
-         // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
-         event.preventDefault();
-         var confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
-         (event || window.event).returnValue = confirmationMessage;
-         return confirmationMessage;
-         }
-         */
     });
 
     // Handle Scope
     // ------------
 
     // Return the Stratus Object so it can be attached in the correct context as either a Global Variable or Object Reference
-    return Stratus;
+    return Stratus;s
 
 }));
-

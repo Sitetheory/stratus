@@ -213,6 +213,7 @@ boot.config({
         'stratus.views.plugins.dim': boot.bundle + 'stratus/views/plugins/dim' + boot.suffix,
         'stratus.views.plugins.drawer': boot.bundle + 'stratus/views/plugins/drawer' + boot.suffix,
         'stratus.views.plugins.help': boot.bundle + 'stratus/views/plugins/help' + boot.suffix,
+        'stratus.views.plugins.lazy': boot.bundle + 'stratus/views/plugins/lazy' + boot.suffix,
         'stratus.views.plugins.masonry': boot.bundle + 'stratus/views/plugins/masonry' + boot.suffix,
         'stratus.views.plugins.morebox': boot.bundle + 'stratus/views/plugins/morebox' + boot.suffix,
         'stratus.views.plugins.onscreen': boot.bundle + 'stratus/views/plugins/onscreen' + boot.suffix,

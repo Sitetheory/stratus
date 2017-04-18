@@ -41,7 +41,7 @@
                     var register = function () {
                         if (registered) return true;
                         registered = true;
-                        $element.attr('data-src', 'lazy');
+                        $element.attr('data-src', 'lazy');  // This is here for CSS backwards compatibility
                         Stratus.RegisterGroup.add('OnScroll', {
                             method: Stratus.Internals.LoadImage,
                             el: $element,

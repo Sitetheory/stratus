@@ -141,12 +141,14 @@
 
             // If lazyloading images with data-lazysrc we wait to lazy-load until after the groupings are created
             // so that the proper size is loaded for column sizes
+            /* TODO: Check if this is still needed *
             var $images = $('[data-lazysrc]');
             if ($images.length > 0) {
                 _.each($images, function (el) {
                     $(el).attr('data-src', $(el).attr('data-lazysrc')).attr('data-lazysrc', null);
                 });
             }
+            /* */
         }
 
     });

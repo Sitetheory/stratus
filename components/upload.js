@@ -52,7 +52,7 @@
                 var $target = $('#' + $scope.elementId);
                 if ($target.length && !$scope.dropzone) {
                     $scope.dropzone = new Dropzone($target[0], {
-                        url: 'https://app.sitetheory.io:3000/?session=' + Stratus.Cookies.retrieve('SITETHEORY'),
+                        url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                         method: 'POST',
                         parallelUploads: 5,
                         clickable: true,
