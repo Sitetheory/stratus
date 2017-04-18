@@ -24,11 +24,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'stratus.views.plugins.base'], factory);
+        define(['stratus', 'jquery', 'stratus.views.plugins.base'], factory);
     } else {
-        factory(root.Stratus);
+        factory(root.Stratus, root.$);
     }
-}(this, function (Stratus) {
+}(this, function (Stratus, $) {
 
     // Lazy Plugin
     // -----------

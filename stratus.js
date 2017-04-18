@@ -694,11 +694,12 @@
             selection = document[target](selector);
         }
         if (selection && typeof selection === 'object') {
-            _.extend(selection, {
+            selection = _.extend({}, Stratus.Selector, {
                 context: this,
+                length: _.size(selection),
+                selection: selection,
                 selector: selector
             });
-            _.extend(selection.__proto__, Stratus.Selector);
         }
         return selection;
     };
@@ -713,14 +714,14 @@
      */
     Stratus.Selector.addClass = function (className) {
         var that = this;
-        if (that instanceof NodeList) {
+        if (that.selection instanceof NodeList) {
             if (!Stratus.Environment.get('production')) console.log('List:', that);
         } else {
             _.each(className.split(' '), function (name) {
-                if (that.classList) {
-                    that.classList.add(name);
+                if (that.selection.classList) {
+                    that.selection.classList.add(name);
                 } else {
-                    that.className += ' ' + name;
+                    that.selection.className += ' ' + name;
                 }
             });
         }
@@ -735,14 +736,14 @@
      */
     Stratus.Selector.attr = function (attr, value) {
         var that = this;
-        if (that instanceof NodeList) {
+        if (that.selection instanceof NodeList) {
             if (!Stratus.Environment.get('production')) console.log('List:', that);
         } else if (attr) {
             if (!value) {
-                value = that.getAttribute(attr);
+                value = that.selection.getAttribute(attr);
                 return _.isJSON(value) ? JSON.parse(value) : value;
             } else {
-                that.setAttribute(attr, JSON.stringify(value));
+                that.selection.setAttribute(attr, JSON.stringify(value));
             }
         }
         return that;
@@ -759,8 +760,8 @@
                 console.warn('each running on element:', element);
             };
         }
-        if (that instanceof NodeList) {
-            _.each(that, callable);
+        if (that.selection instanceof NodeList) {
+            _.each(that.selection, callable);
         }
         return that;
     };
@@ -771,10 +772,27 @@
      */
     Stratus.Selector.find = function (selector) {
         var that = this;
-        if (that instanceof NodeList) {
+        if (that.selection instanceof NodeList) {
             if (!Stratus.Environment.get('production')) console.log('List:', that);
         } else if (selector) {
-            return that.querySelectorAll(selector);
+            return that.selection.querySelectorAll(selector);
+        }
+        return that;
+    };
+
+    /**
+     * @param callable
+     * @returns {*}
+     */
+    Stratus.Selector.map = function (callable) {
+        var that = this;
+        if (typeof callable !== 'function') {
+            callable = function (element) {
+                console.warn('map running on element:', element);
+            };
+        }
+        if (that.selection instanceof NodeList) {
+            return _.map(that.selection, callable);
         }
         return that;
     };
@@ -786,15 +804,17 @@
      */
     Stratus.Selector.removeClass = function (className) {
         var that = this;
-        if (that instanceof NodeList) {
-            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        if (that.selection instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) {
+                console.log('List:', that);
+            }
         } else {
-            if (that.classList) {
+            if (that.selection.classList) {
                 _.each(className.split(' '), function (name) {
-                    that.classList.remove(name);
+                    that.selection.classList.remove(name);
                 });
             } else {
-                that.className = that.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+                that.selection.className = that.selection.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
         }
         return that;
@@ -2234,7 +2254,14 @@
             var that = _.possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).call(this, length, length));
             _.extend(that, {
                 toObject: function () {
-                    return _.clone(this.attributes);
+                    var sanitized = _.clone(this.data);
+                    if (sanitized.el && sanitized.el.selection) {
+                        sanitized.el = sanitized.el.selection;
+                        if (typeof $ === 'function' && $.fn) {
+                            sanitized.$el = $(sanitized.el);
+                        }
+                    }
+                    return sanitized;
                 },
 
                 // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
@@ -2392,7 +2419,7 @@
                 if (_.isArray(element.selector)) {
                     element.length = 0;
                     _.forEach(element.selector, function (selector) {
-                        nodes = Stratus.Select(selector);
+                        nodes = document.querySelectorAll(selector);
                         element.length += nodes.length;
                         if (nodes.length) {
                             var name = selector.replace('[', '').replace(']', '');
@@ -2406,7 +2433,7 @@
                         }
                     });
                 } else if (_.isString(element.selector)) {
-                    nodes = Stratus.Select(element.selector);
+                    nodes = document.querySelectorAll(element.selector);
                     element.length = nodes.length;
                     if (nodes.length) {
                         var attribute = element.selector.replace('[', '').replace(']', '');
@@ -2589,7 +2616,7 @@
                 // Load CSS
                 // TODO: Make Dynamic
                 var css = [];
-                var cssLoaded = _.map(Stratus.Select('link[satisfies]'), function (node) {
+                var cssLoaded = Stratus.Select('link[satisfies]').map(function (node) {
                     return node.getAttribute('satisfies');
                 });
                 if (!_.contains(cssLoaded, 'angular-material.css')) {
@@ -2630,16 +2657,16 @@
                         Stratus.Internals.CssLoader(url).then(function () {
                             /**
                             if (++counter === css.length) {
-                                angular.bootstrap(Stratus.Select('html'), ['stratusApp']);
+                                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                             }
                             /**/
                         });
                     });
                 } /** else {
-                    angular.bootstrap(Stratus.Select('html'), ['stratusApp']);
+                    angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                 }
                 /**/
-                angular.bootstrap(Stratus.Select('html'), ['stratusApp']);
+                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
             });
         }
     };
