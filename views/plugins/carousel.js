@@ -50,6 +50,8 @@
 
             var items = this.$el.find('.carousel-inner > .item');
 
+            // TODO: Stratus.Select() switcher
+
             // If this is mobile, take all the .nestedItem elements and extract them into main layer so there is only one per frame
             if (Stratus.Client.mobile && this.$el.dataAttr('groupmobile')) {
                 this.batchItems(this.$el.dataAttr('groupmobile'), items);

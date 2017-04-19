@@ -694,6 +694,9 @@
             selection = document[target](selector);
         }
         if (selection && typeof selection === 'object') {
+            if (typeof jQuery === 'function' && selection instanceof jQuery) {
+                selection = selection.length ? selection[0] : {};
+            }
             selection = _.extend({}, Stratus.Selector, {
                 context: this,
                 length: _.size(selection),
@@ -1311,21 +1314,6 @@
 
     // FIXME: These are deprecated, since they will never load in the core now that jQuery is gone
     if (typeof $ === 'function' && $.fn) {
-        /**
-         * @param key
-         * @param value
-         * @returns {*}
-         */
-        $.fn.dataAttr = function (key, value) {
-            if (key === undefined) console.error('$().dataAttr(key, value) contains an undefined key!');
-            if (value === undefined) {
-                value = this.attr('data-' + key);
-                return _.isJSON(value) ? JSON.parse(value) : value;
-            } else {
-                return this.attr('data-' + key, JSON.stringify(value));
-            }
-        };
-
         /**
          * @param event
          * @returns {boolean}
@@ -3273,6 +3261,7 @@
         // Load Views
         Stratus.Internals.Loader().then(function (views) {
             if (!Stratus.Environment.get('production')) console.info('Views:', views);
+            window.views = views;
             Stratus.Events.on('finalize', function (views) {
                 if (typeof Backbone !== 'undefined' && !Backbone.History.started) {
                     Backbone.history.start();
