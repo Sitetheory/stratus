@@ -3092,10 +3092,6 @@
      */
     Stratus.Internals.SetUrlParams = function (params, url) {
         if (typeof url === 'undefined') url = window.location.href;
-        if (typeof $ === 'function' && $.fn) {
-            console.error('jQuery is not defined.');
-            return url;
-        }
         var vars = {};
         var glue = url.indexOf('?');
         url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -3103,7 +3099,12 @@
         });
         vars = _.extend(vars, params);
         url = (glue >= 0) ? url.substring(0, glue) : url;
-        url += '?' + $.param(vars);
+        console.log(url, vars);
+        url += _.reduce(_.map(vars, function (value, key) {
+            return key + '=' + value;
+        }), function (memo, value) {
+            return memo + '&' + value;
+        });
         return url;
     };
 
