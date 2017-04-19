@@ -31,7 +31,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'bootstrap', 'stratus.views.plugins.base', 'stratus.views.plugins.onscreen'], factory);
+        define(['stratus', 'zepto', 'underscore', 'bootstrap', 'stratus.views.plugins.base', 'stratus.views.plugins.onscreen', 'stratus.views.plugins.lazy'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -139,17 +139,6 @@
             if (!activeSet) {
                 $(_.first(this.$el.find('.carousel-inner .item'))).addClass('active');
             }
-
-            // If lazyloading images with data-lazysrc we wait to lazy-load until after the groupings are created
-            // so that the proper size is loaded for column sizes
-            /* TODO: Check if this is still needed *
-            var $images = $('[data-lazysrc]');
-            if ($images.length > 0) {
-                _.each($images, function (el) {
-                    $(el).attr('data-src', $(el).attr('data-lazysrc')).attr('data-lazysrc', null);
-                });
-            }
-            /* */
         }
 
     });

@@ -686,7 +686,7 @@
             var target;
             if (_.startsWith(selector, '.') || _.contains(selector, '[')) {
                 target = 'querySelectorAll';
-            } else if (selector === 'body' || selector === 'html' || _.startsWith(selector, '#')) {
+            } else if (_.contains(['html', 'head', 'body'], selector) || _.startsWith(selector, '#')) {
                 target = 'querySelector';
             } else {
                 target = 'querySelectorAll';
@@ -796,6 +796,20 @@
         }
         if (that.selection instanceof NodeList) {
             return _.map(that.selection, callable);
+        }
+        return that;
+    };
+
+    /**
+     * @param child
+     * @returns {*}
+     */
+    Stratus.Selector.prepend = function (child) {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else if (child) {
+            that.selection.insertBefore(child, that.selection.firstChild);
         }
         return that;
     };
@@ -1179,28 +1193,31 @@
          * @param value
          */
         this.setAttribute = function (attr, value) {
-            if (typeof attr === 'string' && attr.indexOf('.') !== -1) {
-                var reference = this.data;
-                var chain = attr.split('.');
-                _.find(_.initial(chain), function (link) {
-                    if (!_.has(reference, link) || !reference[link]) reference[link] = {};
-                    if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
-                        reference = reference[link];
-                    } else {
-                        reference = this.data;
-                        return true;
+            if (typeof attr === 'string') {
+                if (attr.indexOf('.') !== -1) {
+                    var reference = this.data;
+                    var chain = attr.split('.');
+                    _.find(_.initial(chain), function (link) {
+                        if (!_.has(reference, link) || !reference[link]) reference[link] = {};
+                        if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
+                            reference = reference[link];
+                        } else {
+                            reference = this.data;
+                            return true;
+                        }
+                    }, this);
+                    if (!_.isEqual(reference, this.data)) {
+                        var link = _.last(chain);
+                        if (reference && typeof reference === 'object' && (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
+                            reference[link] = value;
+                            this.trigger('change:' + attr, this);
+                        }
                     }
-                }, this);
-                if (!_.isEqual(reference, this.data)) {
-                    var link = _.last(chain);
-                    if (reference && typeof reference === 'object') {
-                        reference[link] = value;
-                    }
+                } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
+                    this.data[attr] = value;
+                    this.trigger('change:' + attr, this);
                 }
-            } else {
-                this.data[attr] = value;
             }
-            /* TODO: this.trigger('change:' + attr, value); */
         };
         /**
          * @param attr
@@ -1742,18 +1759,22 @@
                 model.set('windowTop', $(window).scrollTop());
             }
         });
-        $(window).scroll(function () {
-            if (Stratus.Environment.get('viewPortChange') === false) {
-                Stratus.Environment.set('viewPortChange', true);
-            }
-        });
 
-        // Resizing can change what's on screen so we need to check the scrolling
-        $(window).resize(function () {
-            if (Stratus.Environment.get('viewPortChange') === false) {
-                Stratus.Environment.set('viewPortChange', true);
-            }
-        });
+        // jQuery Binding
+        if (typeof $ === 'function' && $.fn) {
+            $(window).scroll(function () {
+                if (Stratus.Environment.get('viewPortChange') === false) {
+                    Stratus.Environment.set('viewPortChange', true);
+                }
+            });
+
+            // Resizing can change what's on screen so we need to check the scrolling
+            $(window).resize(function () {
+                if (Stratus.Environment.get('viewPortChange') === false) {
+                    Stratus.Environment.set('viewPortChange', true);
+                }
+            });
+        }
 
         // Run Once initially
         Stratus.Environment.set('viewPortChange', true);
@@ -1846,8 +1867,8 @@
      */
     Stratus.Internals.LoadImage = function (obj) {
         obj.el.addClass('placeholder');
-        if (Stratus.Internals.IsOnScreen(obj.spy) && !obj.el.attr('data-loading')) {
-            obj.el.attr('loading', 'true');
+        if (Stratus.Internals.IsOnScreen(obj.spy) && !Stratus.Select(obj.el).attr('data-loading')) {
+            obj.el.attr('data-loading', 'true');
             Stratus.DOM.complete(function () {
 
                 // By default we'll load larger versions of an image to look good on HD displays, but if you
@@ -1920,7 +1941,7 @@
 
                     // If no appropriate width was found, abort
                     if (width <= 0) {
-                        Stratus.Select(obj.el).attr('data-loading', false);
+                        obj.el.attr('data-loading', 'false');
                         setTimeout(function () {
                             Stratus.Internals.LoadImage(obj);
                         }, 500);
@@ -1951,7 +1972,7 @@
                 obj.el.attr('src', src);
                 obj.el.addClass('loading');
                 obj.el.load(function () {
-                    $(this).addClass('loaded').removeClass('placeholder loading');
+                    Stratus.Select(this).addClass('loaded').removeClass('placeholder loading');
                 });
 
                 // Remove from registration
@@ -2043,7 +2064,7 @@
                 }
 
                 /* Inject Link into Head */
-                $('head').prepend(link);
+                Stratus.Select('head').prepend(link);
             }
         });
     };
@@ -2068,7 +2089,7 @@
                 }, this));
             }
             if (typeof $ === 'function' && $.fn) {
-                reject('jQuery is not defined.');
+                reject('jQuery is not defined and there isn\t a native AJAX alternative at the moment.');
                 return;
             }
             $.ajax({
@@ -2248,16 +2269,18 @@
                     var sanitized = _.clone(this.data);
                     if (sanitized.el && sanitized.el.selection) {
                         sanitized.el = sanitized.el.selection;
+                        /* TODO: This may not be necessary */
                         if (typeof $ === 'function' && $.fn) {
                             sanitized.$el = $(sanitized.el);
                         }
+                        /* */
                     }
                     return sanitized;
                 },
 
                 // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
                 hydrate: function () {
-                    var selector = this.get('el');
+                    var nel = this.get('el');
                     this.set({
                         // Unique IDs
                         // -----------
@@ -2266,60 +2289,60 @@
                         uid: _.uniqueId('view_'),
 
                         // This is set as a widget is created to ensure duplicates don't exist
-                        guid: (typeof selector.attr('data-guid') !== 'undefined') ? selector.attr('data-guid') : null,
+                        guid: (typeof nel.attr('data-guid') !== 'undefined') ? nel.attr('data-guid') : null,
 
                         // Model or Collection
                         // -----------
 
                         // Entity Type (i.e. 'View' which would correlate to a Restful /Api/View Request)
-                        entity: (typeof selector.attr('data-entity') !== 'undefined') ? _.ucfirst(selector.attr('data-entity')) : null,
+                        entity: (typeof nel.attr('data-entity') !== 'undefined') ? _.ucfirst(nel.attr('data-entity')) : null,
 
                         // Entity ID (Determines Model or Collection)
-                        id: (typeof selector.attr('data-id') !== 'undefined') ? selector.attr('data-id') : null,
+                        id: (typeof nel.attr('data-id') !== 'undefined') ? nel.attr('data-id') : null,
 
                         // Determines whether or not we should create an Entity Stub to render the dependent widgets
-                        manifest: (typeof selector.attr('data-manifest') !== 'undefined') ? selector.attr('data-manifest') : null,
+                        manifest: (typeof nel.attr('data-manifest') !== 'undefined') ? nel.attr('data-manifest') : null,
 
                         // API Options are added to the Request URL
-                        api: (typeof selector.attr('data-api') !== 'undefined') ? selector.attr('data-api') : null,
+                        api: (typeof nel.attr('data-api') !== 'undefined') ? nel.attr('data-api') : null,
 
                         // Determine whether this widget will fetch
-                        fetch: (typeof selector.attr('data-fetch') !== 'undefined') ? selector.attr('data-fetch') : true,
+                        fetch: (typeof nel.attr('data-fetch') !== 'undefined') ? nel.attr('data-fetch') : true,
 
                         // Specify Target
-                        target: (typeof selector.attr('data-target') !== 'undefined') ? selector.attr('data-target') : null,
+                        target: (typeof nel.attr('data-target') !== 'undefined') ? nel.attr('data-target') : null,
 
                         // This is determines what a new Entity's settings would be on creation
-                        prototype: (typeof selector.attr('data-prototype') !== 'undefined') ? selector.attr('data-prototype') : null,
+                        prototype: (typeof nel.attr('data-prototype') !== 'undefined') ? nel.attr('data-prototype') : null,
 
                         // Stuff
-                        autoSave: (typeof selector.attr('data-autoSave') !== 'undefined') ? selector.attr('data-autoSave') : null,
+                        autoSave: (typeof nel.attr('data-autoSave') !== 'undefined') ? nel.attr('data-autoSave') : null,
 
                         // View
                         // -----------
 
-                        type: (typeof selector.attr('data-type') !== 'undefined') ? selector.attr('data-type') : null,
-                        types: (typeof selector.attr('data-types') !== 'undefined') ? selector.attr('data-types') : null,
-                        template: (typeof selector.attr('data-template') !== 'undefined') ? selector.attr('data-template') : null,
-                        templates: (typeof selector.attr('data-templates') !== 'undefined') ? selector.attr('data-templates') : null,
-                        dialogue: (typeof selector.attr('data-dialogue') !== 'undefined') ? selector.attr('data-dialogue') : null,
-                        pagination: (typeof selector.attr('data-pagination') !== 'undefined') ? selector.attr('data-pagination') : null,
-                        property: (typeof selector.attr('data-property') !== 'undefined') ? selector.attr('data-property') : null,
-                        field: (typeof selector.attr('data-field') !== 'undefined') ? selector.attr('data-field') : null,
-                        load: (typeof selector.attr('data-load') !== 'undefined') ? selector.attr('data-load') : null,
-                        options: (typeof selector.attr('data-options') !== 'undefined') ? selector.attr('data-options') : null,
+                        type: (typeof nel.attr('data-type') !== 'undefined') ? nel.attr('data-type') : null,
+                        types: (typeof nel.attr('data-types') !== 'undefined') ? nel.attr('data-types') : null,
+                        template: (typeof nel.attr('data-template') !== 'undefined') ? nel.attr('data-template') : null,
+                        templates: (typeof nel.attr('data-templates') !== 'undefined') ? nel.attr('data-templates') : null,
+                        dialogue: (typeof nel.attr('data-dialogue') !== 'undefined') ? nel.attr('data-dialogue') : null,
+                        pagination: (typeof nel.attr('data-pagination') !== 'undefined') ? nel.attr('data-pagination') : null,
+                        property: (typeof nel.attr('data-property') !== 'undefined') ? nel.attr('data-property') : null,
+                        field: (typeof nel.attr('data-field') !== 'undefined') ? nel.attr('data-field') : null,
+                        load: (typeof nel.attr('data-load') !== 'undefined') ? nel.attr('data-load') : null,
+                        options: (typeof nel.attr('data-options') !== 'undefined') ? nel.attr('data-options') : null,
 
                         // Versioning
                         // -----------
 
-                        versionEntity: (typeof selector.attr('data-versionentity') !== 'undefined') ? selector.attr('data-versionentity') : null,
-                        versionRouter: (typeof selector.attr('data-versionrouter') !== 'undefined') ? selector.attr('data-versionrouter') : null,
-                        versionId: (typeof selector.attr('data-versionid') !== 'undefined') ? selector.attr('data-versionid') : null,
+                        versionEntity: (typeof nel.attr('data-versionentity') !== 'undefined') ? nel.attr('data-versionentity') : null,
+                        versionRouter: (typeof nel.attr('data-versionrouter') !== 'undefined') ? nel.attr('data-versionrouter') : null,
+                        versionId: (typeof nel.attr('data-versionid') !== 'undefined') ? nel.attr('data-versionid') : null,
 
                         // Plugins
                         // -----------
 
-                        plugin: (typeof selector.attr('data-plugin') !== 'undefined') ? selector.attr('data-plugin') : null,
+                        plugin: (typeof nel.attr('data-plugin') !== 'undefined') ? nel.attr('data-plugin') : null,
                         plugins: []
                     });
 
@@ -3291,7 +3314,7 @@
         }
 
         // Call Any Registered Group Methods that plugins might use, e.g. OnScroll
-        if (Stratus.RegisterGroup.size) {
+        if (Stratus.RegisterGroup.size()) {
             Stratus.RegisterGroup.each(function (objs, key) {
                 // for each different type of registered plugin, pass all the registered elements
                 if (_.has(Stratus.Internals, key)) {
