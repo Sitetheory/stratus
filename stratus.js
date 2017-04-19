@@ -1144,7 +1144,9 @@
          * @returns {*}
          */
         this.get = function (attr) {
-            return _.reduce(attr.split('.'), function (attrs, a) { return attrs && attrs[a];}, this.data);
+            return _.reduce(typeof attr === 'string' ? attr.split('.') : [], function (attrs, a) {
+                return attrs && attrs[a];
+            }, this.data);
         };
         /**
          * @param attr
@@ -1414,15 +1416,16 @@
      */
     Stratus.Prototypes.Job = function (time, method, scope) {
         this.enabled = false;
-        if (typeof time === 'string') {
+        if (time && typeof time === 'object') {
+            _.extend(this, time);
+        } else {
             this.time = time;
             this.method = method;
             this.scope = scope;
-        } else if (time && typeof time === 'object') {
-            _.extend(this, time);
         }
         this.time = _.seconds(this.time);
         this.scope = this.scope || window;
+        return this;
     };
 
     /**
@@ -1917,7 +1920,7 @@
 
                     // If no appropriate width was found, abort
                     if (width <= 0) {
-                        obj.el.dataAttr('loading', false);
+                        Stratus.Select(obj.el).attr('data-loading', false);
                         setTimeout(function () {
                             Stratus.Internals.LoadImage(obj);
                         }, 500);
@@ -2394,7 +2397,7 @@
         var nodes;
         var modules = [];
 
-        _.forEach(Stratus.Roster, function (element, key) {
+        _.each(Stratus.Roster, function (element, key) {
             if (typeof element === 'object' && element) {
                 if (_.isUndefined(element.selector) && element.namespace) {
                     element.selector = _.filter(
@@ -2406,7 +2409,7 @@
                 }
                 if (_.isArray(element.selector)) {
                     element.length = 0;
-                    _.forEach(element.selector, function (selector) {
+                    _.each(element.selector, function (selector) {
                         nodes = document.querySelectorAll(selector);
                         element.length += nodes.length;
                         if (nodes.length) {
@@ -2426,7 +2429,7 @@
                     if (nodes.length) {
                         var attribute = element.selector.replace('[', '').replace(']', '');
                         if (element.namespace) {
-                            _.forEach(nodes, function (node) {
+                            _.each(nodes, function (node) {
                                 var name = node.getAttribute(attribute);
                                 if (name) {
                                     requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')));
@@ -2576,28 +2579,27 @@
                 }
 
                 // Services
-                angular.forEach(Stratus.Services, function (service) {
+                _.each(Stratus.Services, function (service) {
                     angular.module('stratusApp').config(service);
                 });
 
                 // Components
-                angular.forEach(Stratus.Components, function (component, name) {
+                _.each(Stratus.Components, function (component, name) {
                     angular.module('stratusApp').component('stratus' + _.ucfirst(name), component);
                 });
 
                 // Directives
-                angular.forEach(Stratus.Directives, function (directive, name) {
+                _.each(Stratus.Directives, function (directive, name) {
                     angular.module('stratusApp').directive('stratus' + _.ucfirst(name), directive);
                 });
 
                 // Filters
-                angular.forEach(Stratus.Filters, function (filter, name) {
+                _.each(Stratus.Filters, function (filter, name) {
                     angular.module('stratusApp').filter(_.lcfirst(name), filter);
                 });
 
                 // Controllers
-                angular.forEach(Stratus.Controllers, function (controller, name) {
-                    angular.module('stratusApp').controller('Stratus' + name, controller); // TODO: @deprecated!
+                _.each(Stratus.Controllers, function (controller, name) {
                     angular.module('stratusApp').controller(name, controller);
                 });
 
@@ -2641,7 +2643,7 @@
 
                 if (css.length) {
                     var counter = 0;
-                    angular.forEach(css, function (url) {
+                    _.each(css, function (url) {
                         Stratus.Internals.CssLoader(url).then(function () {
                             /**
                             if (++counter === css.length) {
@@ -3104,7 +3106,7 @@
                 success: function (response) {
                     var settings = response.payload || response;
                     if (typeof settings === 'object') {
-                        _.forEach(Object.keys(settings), function (key) {
+                        _.each(Object.keys(settings), function (key) {
                             Stratus.Environment.set(key, settings[key]);
                         });
                     }

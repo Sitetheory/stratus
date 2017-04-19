@@ -49,22 +49,21 @@
             this.prepare(options);
 
             var items = this.$el.find('.carousel-inner > .item');
-
-            // TODO: Stratus.Select() switcher
+            this.select = Stratus.Select(this.$el);
 
             // If this is mobile, take all the .nestedItem elements and extract them into main layer so there is only one per frame
-            if (Stratus.Client.mobile && this.$el.dataAttr('groupmobile')) {
-                this.batchItems(this.$el.dataAttr('groupmobile'), items);
-            } else if (this.$el.dataAttr('group')) {
-                this.batchItems(this.$el.dataAttr('group'), items);
+            if (Stratus.Client.mobile && this.select.attr('data-groupmobile')) {
+                this.batchItems(this.select.attr('data-groupmobile'), items);
+            } else if (this.select.attr('data-group')) {
+                this.batchItems(this.select.attr('data-group'), items);
             }
 
             // Instantiate the Carousel Manually So we can wait until after we've re-arranged the DOM
             this.$el.carousel({
-                interval: this.$el.dataAttr('interval') || 5000,
-                pause: this.$el.dataAttr('pause') || 'hover',
-                wrap: this.$el.dataAttr('wrap') || true,
-                keyboard: this.$el.dataAttr('keyboard') || true
+                interval: this.select.attr('data-interval') || 5000,
+                pause: this.select.attr('data-pause') || 'hover',
+                wrap: this.select.attr('data-wrap') || true,
+                keyboard: this.select.attr('data-keyboard') || true
             });
 
             this.$el.on('slid.bs.carousel', function () {
@@ -74,7 +73,7 @@
             });
 
             // Register Listening for Pausing until OnScreen
-            if (this.$el.dataAttr('startonscreen') !== false) {
+            if (this.select.attr('data-startonscreen') !== false) {
                 this.$el.carousel('pause');
                 var that = this;
                 this.onScreen = new Stratus.Views.Plugins.OnScreen({
@@ -91,7 +90,7 @@
         batchItems: function (group, items) {
             group = group <= 0 ? 1 : group;
             var cols = Math.round(12 / group);
-            var colMinSize = this.$el.dataAttr('colminsize') ? this.$el.dataAttr('colminsize') : 'xs';
+            var colMinSize = this.select.attr('data-colminsize') ? this.select.attr('data-colminsize') : 'xs';
 
             // Empty inner Coursel
             if (group > 1) {
