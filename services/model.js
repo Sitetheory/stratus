@@ -32,7 +32,7 @@
 
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Services.Model = ['$provide', function ($provide) {
-        $provide.factory('model', function ($q, $http, $rootScope) {
+        $provide.factory('model', ['$q', '$http', '$rootScope', function ($q, $http, $rootScope) {
             return function (options, attributes) {
 
                 // TODO: Add Auto-Saving
@@ -394,7 +394,7 @@
                     };
                 this.initialize();
             };
-        });
+        }]);
     }];
 
 }));

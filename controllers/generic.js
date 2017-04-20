@@ -33,7 +33,7 @@
 }(this, function (Stratus, _) {
     // This Controller handles simple element binding
     // for a single scope to an API Object Reference.
-    Stratus.Controllers.Generic = function ($scope, $element, $mdToast, $log, $parse, registry) {
+    Stratus.Controllers.Generic = ['$scope', '$element', '$mdToast', '$log', '$parse', 'registry', function ($scope, $element, $mdToast, $log, $parse, registry) {
         // Registry
         $scope.registry = new registry();
         $scope.registry.fetch($element, $scope);
@@ -139,6 +139,6 @@
 
         // Store Instance
         Stratus.Instances[_.uniqueId('controller_')] = $scope;
-    };
+    }];
 
 }));

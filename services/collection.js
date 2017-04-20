@@ -32,7 +32,7 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Collection = ['$provide', function ($provide) {
-        $provide.factory('collection', function ($q, $http, $timeout, model) {
+        $provide.factory('collection', ['$q', '$http', '$timeout', 'model', function ($q, $http, $timeout, model) {
             return function (options) {
 
                 // Environment
@@ -258,7 +258,7 @@
                 }
                 /* */
             };
-        });
+        }]);
     }];
 
 }));
