@@ -1,0 +1,73 @@
+<div class="option-row">
+    <div class="select-options" >
+        <p ng-show="showRoleHeading"><small><b>User or Role*</b></small></p>
+        <ul class="be-select" tabindex="0">
+            <li class="init" ng-model="roleSelected" ng-init="roleSelected = 'User or Role*'">{{roleSelected}}</li>
+
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/thumb-1.jpg" alt="" />
+                </span>
+                <span class="option-text" ng-click="showSelRole($event,'Designer');">Designer</span>
+            </li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/thumb-2.jpg" alt="" />
+                </span> <span class="option-text" ng-click="showSelRole($event,'Desmond');">Desmond</span></li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/thumb-3.jpg" alt="" />
+                </span>
+                <span class="option-text" ng-click="showSelRole($event,'Desiree');">Desiree</span>
+            </li>
+        </ul>
+    </div>
+    <div class="select-options">
+        <ul class="be-select" tabindex="0">
+            <p ng-show="showContentHeading"><small><b>Content*</b></small></p>
+            <li class="init" ng-model="contentSelected" ng-init="contentSelected = 'Content*'">{{contentSelected}}</li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/thumb-1.jpg" alt="" />
+                </span>
+                <span class="option-text" ng-click="showSelContent($event,'Art Bundle');">Art Bundle</span>
+            </li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/thumb-2.jpg" alt="" />
+                </span>
+                <span class="option-text" ng-click="showSelContent($event,'Articles');">Articles </span></li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/thumb-3.jpg" alt="" />
+                </span>
+                <span class="option-text" ng-click="showSelContent($event,'The Art of being awesome');"> The Art of being awesome </span>
+            </li>
+        </ul>
+    </div>
+    <div class="select-options">
+        <ul class="be-select" tabindex="0">
+            <li class="init">Action</li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <input type="checkbox" /> <span class="chk-bg"></span>
+                </span>
+                <span class="option-text">View</span>
+            </li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <input type="checkbox" />
+                    <span class="chk-bg"></span>
+                </span>
+                <span class="option-text">Create</span>
+            </li>
+            <li data-value="value 1">
+                <span class="select-inner-opt">
+                    <input type="checkbox" />
+                    <span class="chk-bg"></span>
+                </span>
+                <span class="option-text">Edit</span>
+            </li>
+        </ul>
+    </div>
+</div>

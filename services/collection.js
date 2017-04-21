@@ -32,7 +32,7 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Collection = ['$provide', function ($provide) {
-        $provide.factory('collection', function ($q, $http, $timeout, model) {
+        $provide.factory('collection', ['$q', '$http', '$timeout', 'model', function ($q, $http, $timeout, model) {
             return function (options) {
 
                 // Environment
@@ -49,7 +49,7 @@
                 // Infrastructure
                 this.urlRoot = '/Api';
                 this.models = [];
-                this.meta = new Stratus.Prototypes.Collection();
+                this.meta = new Stratus.Prototypes.Model();
                 this.model = model;
 
                 // Internals
@@ -121,7 +121,7 @@
                             }
                         }
                         $http(prototype).then(function (response) {
-                            if (response.status === 200) {
+                            if (response.status === 200 && angular.isObject(response.data)) {
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
@@ -129,6 +129,7 @@
 
                                 var data = response.data.payload || response.data;
                                 if (angular.isArray(data)) {
+                                    // TODO: Make this able to be flagged as direct entities
                                     data.forEach(function (target) {
                                         that.models.push(new model({ collection: that }, target));
                                     });
@@ -147,9 +148,12 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response);
+                                reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
+                                    angular.isObject(response.data) ? response.data : (
+                                    'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
+                                ));
                             }
-                        }, reject);
+                        }).catch(reject);
                     });
                 };
 
@@ -159,7 +163,7 @@
                  * @returns {*}
                  */
                 this.fetch = function (action, data) {
-                    return that.sync(action, data || that.meta.get('api'));
+                    return that.sync(action, data || that.meta.get('api')).catch(console.error);
                 };
 
                 /**
@@ -254,7 +258,7 @@
                 }
                 /* */
             };
-        });
+        }]);
     }];
 
 }));

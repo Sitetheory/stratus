@@ -1,18 +1,29 @@
+<!-- hide this if not pagination -->
 <ul ng-if="model && property && model.get(property)" style="list-style-type: none;">
-    <li ng-repeat="selected in model.get(property)" style="float: left; padding: 5px;" ng-transclude="selection">{{ selected }}</li>
+    <li ng-repeat="target in model.get(property)" style="float: left; padding: 5px;">
+        <span ng-transclude="label">
+            {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
+        </span>
+        <!-- delete button -->
+    </li>
 </ul>
+<!-- hide this if not pagination -->
 <stratus-search></stratus-search>
-<md-button ng-if="collection && model && property" ng-repeat="option in collection.models" class="md-raised"
-           aria-label="{{ option.data.name }}" ng-class="{ 'md-accent': model.exists(property, option.data.id) }"
-           ng-click="model.toggle(property, option.data.id, toggleOptions)">
-    <span ng-if="option.data.mime && option.data.mime.indexOf('image') == 0" ng-transclude="image">
-        <img ng-src="{{ option.data.url }}"/>
-    </span>
-    <span ng-if="!option.data.mime || option.data.mime.indexOf('image') != 0" ng-transclude="label">
-        {{ option.data.name || option.data.title || 'Unknown' }}
-    </span>
-    <md-tooltip>
-        <span ng-transclude="label">{{ option.data.name || option.data.title || 'Unknown' }}</span>
-    </md-tooltip>
-</md-button>
+<span ng-if="collection && model && property" ng-repeat="target in collection.models" ng-cloak>
+    <md-button aria-label="{{ target.data.name }}" ng-class="{ 'md-accent': model.exists(property, target.data.id) }"
+               ng-click="model.toggle(property, target.data.id, toggleOptions)" class="md-raised">
+        <span ng-if="target.data.mime && target.data.mime.indexOf('image') == 0" ng-transclude="image">
+            <img ng-src="{{ target.data.url }}"/>
+        </span>
+        <span ng-if="!target.data.mime || target.data.mime.indexOf('image') != 0" ng-transclude="label">
+            {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
+        </span>
+        <md-tooltip>
+            <span ng-transclude="label">
+                {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
+            </span>
+        </md-tooltip>
+    </md-button>
+</span>
+<!-- hide this if not pagination -->
 <stratus-pagination></stratus-pagination>

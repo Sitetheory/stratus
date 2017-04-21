@@ -42,9 +42,6 @@
             // Stratus
             'stratus.views.widgets.base',
 
-            // jQuery Modules
-            'jquery-cookie',
-
             // Redactor Modules
             'redactor',
             'redactor-clips',
@@ -96,9 +93,9 @@
                     paragraphize: false,
                     replaceDivs: false,
                     minHeight: 120,
-                    fileUpload: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+                    fileUpload: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                     fileManagerJson: '/Api/Media/?filter=file',
-                    imageUpload: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+                    imageUpload: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                     imageManagerJson: '/Api/Media/?filter=image',
                     formatting: ['p', 'blockquote', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'script', 'svg'],
                     textexpander: [

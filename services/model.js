@@ -32,7 +32,7 @@
 
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Services.Model = ['$provide', function ($provide) {
-        $provide.factory('model', function ($q, $http, $rootScope) {
+        $provide.factory('model', ['$q', '$http', '$rootScope', function ($q, $http, $rootScope) {
             return function (options, attributes) {
 
                 // TODO: Add Auto-Saving
@@ -49,7 +49,7 @@
                 this.data = {};
 
                 // Handle Collections & Meta
-                this.meta = new Stratus.Prototypes.Collection();
+                this.meta = new Stratus.Prototypes.Model();
                 if (_.has(this, 'collection')) {
                     if (this.collection.target) this.target = this.collection.target;
                     if (this.collection.meta.has('api')) this.meta.set('api', this.collection.meta.get('api'));
@@ -148,11 +148,11 @@
                             }
                         }
                         $http(prototype).then(function (response) {
-                            if (response.status === 200) {
+                            if (response.status === 200 && angular.isObject(response.data)) {
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
-                                that.data = angular.isObject(response.data) ? response.data.payload || response.data : {};
+                                that.data = response.data.payload || response.data;
 
                                 // XHR Flags
                                 that.pending = false;
@@ -172,9 +172,12 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response);
+                                reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
+                                    angular.isObject(response.data) ? response.data : (
+                                    'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
+                                ));
                             }
-                        }, reject).catch(reject);
+                        }).catch(reject);
                     });
                 };
 
@@ -184,7 +187,7 @@
                  * @returns {*}
                  */
                 this.fetch = function (action, data) {
-                    return that.sync(action, data || that.meta.get('api'));
+                    return that.sync(action, data || that.meta.get('api')).catch(console.error);
                 };
 
                 /**
@@ -193,7 +196,7 @@
                 this.save = function () {
                     that.changing = false;
                     that.saving = true;
-                    return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON());
+                    return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON()).catch(console.error);
                 };
 
                 // Attribute Functions
@@ -277,6 +280,7 @@
                  */
                 this.toggle = function (attribute, item, options) {
                     if (typeof options !== 'object') options = { multiple: true };
+                    console.log('toggle:', attribute, item, options);
                     var request = attribute.split('[].');
                     var target = that.get(request.length > 1 ? request[0] : attribute);
                     if (typeof target === 'undefined') {
@@ -376,11 +380,7 @@
                         that.collection.remove(that);
                     }
                     if (that.get('id')) {
-                        that.sync('DELETE', {
-                            // nothing yet
-                        }).then(function () {
-                            // nothing yet
-                        }, console.error);
+                        that.sync('DELETE', {}).catch(console.error);
                     }
                 };
 
@@ -389,16 +389,12 @@
                  */
                 this.initialize = this.initialize || function () {
                         if (that.manifest && !that.get('id')) {
-                            that.sync('POST', {
-                                // nothing yet
-                            }).then(function () {
-                                // nothing yet
-                            }, console.error);
+                            that.sync('POST', {}).catch(console.error);
                         }
                     };
                 this.initialize();
             };
-        });
+        }]);
     }];
 
 }));

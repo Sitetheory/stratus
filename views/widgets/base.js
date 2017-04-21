@@ -407,8 +407,8 @@
             if (this.$el && this.$el.length) {
                 _.each(this.$el[0].attributes, function (attribute) {
                     if (_.startsWith(attribute.name, 'data-')) {
-                        key = attribute.name.substr(5);
-                        this.data[key] = this.$el.dataAttr(key);
+                        var key = attribute.name.substr(5);
+                        this.data[key] = Stratus.Select(this.$el).attr(key);
                     }
                 }, this);
             } else {
@@ -562,7 +562,7 @@
             };
             _.each(options, function (value, key) {
                 data.key = key.toLowerCase();
-                data.value = this.$el.dataAttr(data.key);
+                data.value = Stratus.Select(this.$el).attr(data.key);
                 if (data.value !== undefined) {
                     options[key] = data.value;
                 }

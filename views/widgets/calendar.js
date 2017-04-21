@@ -179,17 +179,17 @@
             var that = this;
             var events = [];
             _.each(that.collection.toJSON().payload, function (payload) {
-                if (payload.viewVersion) {
+                if (payload.version) {
                     events.push({
                         id: payload.id,
-                        title: payload.viewVersion.title,
-                        start: moment.unix(payload.viewVersion.timeCustom || payload.viewVersion.timePublish || payload.time).format(),
-                        end: ((!that.options.eventForceAllDay || !payload.viewVersion.meta.allDay) && payload.viewVersion.meta.timeEnd) ? moment.unix(payload.viewVersion.meta.timeEnd).format() : null,
+                        title: payload.version.title,
+                        start: moment.unix(payload.version.timeCustom || payload.version.timePublish || payload.time).format(),
+                        end: ((!that.options.eventForceAllDay || !payload.version.meta.allDay) && payload.version.meta.timeEnd) ? moment.unix(payload.version.meta.timeEnd).format() : null,
                         url: payload.routingPrimary.url,
-                        allDay: that.options.eventForceAllDay || payload.viewVersion.meta.allDay
+                        allDay: that.options.eventForceAllDay || payload.version.meta.allDay
                     });
                 } else {
-                    // no viewVersion would likely mean it is a media resource
+                    // no version would likely mean it is a media resource
                     events.push({
                         id: payload.id,
                         title: payload.name,

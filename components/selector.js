@@ -48,7 +48,8 @@
         transclude: {
             image: '?stratusSelectorImage',
             label: '?stratusSelectorLabel',
-            selection: '?stratusSelectorSelection'
+            option: '?stratusSelectorOption',
+            selected: '?stratusSelectorSelected'
         },
         bindings: {
             elementId: '@',

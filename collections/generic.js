@@ -35,7 +35,7 @@
 
         // Backbone Targeting
         model: Stratus.Models.Generic,
-        meta: Stratus.Prototypes.Collection,
+        meta: Stratus.Prototypes.Model,
         url: '/Api',
         entity: 'Unknown',
 
@@ -71,8 +71,8 @@
                 this.initialized = true;
             }
 
-            this.globals = new Stratus.Prototypes.Collection();
-            this.meta = new Stratus.Prototypes.Collection();
+            this.globals = new Stratus.Prototypes.Model();
+            this.meta = new Stratus.Prototypes.Model();
 
             if (_.has(options, 'entity')) this.entity = options.entity;
             if (_.has(options, 'target')) this.target = options.target;

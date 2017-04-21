@@ -10,7 +10,7 @@ boot.config({
     urlArgs: 'v=' + boot.cacheTime,
 
     // Version Location (Disabled During Beta Testing)
-    baseUrl: ((boot.dev || boot.local) ? '/' : boot.cdn) + boot.relative,
+    baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) + boot.relative,
 
     // Dependencies
     shim: {
@@ -44,7 +44,6 @@ boot.config({
         'backbone.relational': { deps: ['backbone'] },
 
         /* jQuery */
-        'jquery-cookie': { deps: ['zepto'] },
         selectize: { deps: ['zepto'] },
         timeago: { deps: ['zepto'] },
         watch: { deps: ['zepto'] },
@@ -149,7 +148,9 @@ boot.config({
 
         // TODO: Move these to Sitetheory since they are specific to Sitetheory
         'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
+        'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
         'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
+        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
 
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
@@ -157,7 +158,6 @@ boot.config({
         'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
         'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
         'stratus.directives.singleClick': boot.bundle + 'stratus/directives/singleClick' + boot.suffix,
-        'stratus.directives.sortable': boot.bundle + 'stratus/directives/sortable' + boot.suffix,
         'stratus.directives.src': boot.bundle + 'stratus/directives/src' + boot.suffix,
         'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
         'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
@@ -213,6 +213,7 @@ boot.config({
         'stratus.views.plugins.dim': boot.bundle + 'stratus/views/plugins/dim' + boot.suffix,
         'stratus.views.plugins.drawer': boot.bundle + 'stratus/views/plugins/drawer' + boot.suffix,
         'stratus.views.plugins.help': boot.bundle + 'stratus/views/plugins/help' + boot.suffix,
+        'stratus.views.plugins.lazy': boot.bundle + 'stratus/views/plugins/lazy' + boot.suffix,
         'stratus.views.plugins.masonry': boot.bundle + 'stratus/views/plugins/masonry' + boot.suffix,
         'stratus.views.plugins.morebox': boot.bundle + 'stratus/views/plugins/morebox' + boot.suffix,
         'stratus.views.plugins.onscreen': boot.bundle + 'stratus/views/plugins/onscreen' + boot.suffix,
@@ -283,7 +284,7 @@ boot.config({
         'moment-timezone': boot.bundle + 'stratus/bower_components/moment-timezone/builds/moment-timezone-with-data' + boot.suffix,
         'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
         promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
-        sortable: boot.bundle + 'stratus/bower_components/Sortable/Sortable' + boot.suffix,
+        sortablejs: boot.bundle + 'stratus/bower_components/Sortable/Sortable' + boot.suffix,
         zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
 
         /* Angular */
@@ -296,6 +297,7 @@ boot.config({
         'angular-chart': boot.bundle + 'stratus/bower_components/angular-chart.js/dist/angular-chart' + boot.suffix,
         'angular-icons': boot.bundle + 'stratus/bower_components/angular-material-icons/angular-material-icons' + boot.suffix,
         'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
+        'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
         'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
 
         /* Backbone */
@@ -308,7 +310,6 @@ boot.config({
         'jquery-sandbox': boot.bundle + 'stratus/normalizers/jquery.sandbox' + boot.suffix,
         jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
         'jquery-ui': boot.bundle + 'stratus/bower_components/jquery-ui/jquery-ui' + boot.suffix,
-        'jquery-cookie': boot.bundle + 'stratus/bower_components/jquery.cookie/jquery.cookie',
         selectize: boot.bundle + 'stratus/bower_components/selectize/dist/js/standalone/selectize' + boot.suffix,
         watch: '//cdnjs.cloudflare.com/ajax/libs/watch/2.0.4/jquery.watch' + boot.suffix,
 

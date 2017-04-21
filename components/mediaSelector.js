@@ -18,6 +18,7 @@
 // Stratus Media Selector Component
 // ----------------------
 // Define AMD, Require.js, or Contextual Scope
+console.log('drag again');
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
@@ -32,7 +33,6 @@
 
             // Modules
             'angular-file-upload',
-            'jquery-cookie',
 
             // Components
             'stratus.components.search',
@@ -40,6 +40,7 @@
 
             // Directives
             'stratus.directives.singleClick',
+            'stratus.directives.src',
 
             // Services
             'stratus.services.registry'
@@ -49,7 +50,7 @@
     }
 }(this, function (Stratus, _) {
 
-    // We need to ensure the ng-file-upload is registered
+    // We need to ensure the ng-file-upload and ng-cookies are registered
     Stratus.Modules.ngFileUpload = true;
 
     // This component intends to handle binding of an
@@ -126,7 +127,7 @@
                     position: position,
                     trapFocus: true,
                     zIndex: 150,
-                    clickOutsideToClose: true,
+                    clickOutsideToClose: false,
                     escapeToClose: true,
                     focusOnOpen: true
                 };
@@ -137,13 +138,16 @@
 
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
+
+                // console.log(fileId);
                 if ($event.type === 'dragover') {
                     if ($event.explicitOriginalTarget.id !== '') {
                         $scope.draggedFileId = $event.explicitOriginalTarget.id;
                     }
                 }
                 if ($event.type === 'dragleave') {
-                    $scope.removeFromSelected($scope.draggedFileId);
+
+                    $scope.removeFromSelected(parseInt($scope.draggedFileId));
                 }
             };
 
@@ -166,13 +170,17 @@
                        console.log(rejection.data);
                    });
                 }else {
-                    $scope.imageMoved === false;
+                    // FIXME: There is a random comparison below
+                    $scope.imageMoved = false;
                     $scope.uploadFiles();
                     $scope.movedFileId = '';
                 }
             };
             $scope.imageMoved = false;
             $scope.dragFromLib = function ($isDragging, $class, $event, fileId) {
+                console.log('isDragging', $isDragging);
+                console.log('event', $event);
+                console.log('fileId', fileId);
                 if ($event.type === 'dragleave') {
                     $scope.movedFileId = fileId;
                     $scope.imageMoved = true;
@@ -223,11 +231,14 @@
             // remove media file from selected list
             $scope.removeFromSelected = function (fileId) {
                 for (var i = $scope.draggedFiles.length - 1; i >= 0; i--) {
+                    // used double precision because id uis passed as string in event
                     if ($scope.draggedFiles[i].id === fileId) {
+
                         $scope.draggedFiles.splice(i, 1);
                     }
                 }
                 for (var j = 0; j < $scope.collection.models.length; j++) {
+                    // used double precision because id uis passed as string in event
                     if ($scope.collection.models[j].data.id === fileId) {
                         $scope.collection.models[j].data.selectedClass = false;
                     }
@@ -333,6 +344,7 @@
 
             // check if ng-model value changes
             $scope.$watch('files', function (files) {
+
                 if (files !== null) {
                     $scope.dragClass = false;
 
@@ -359,7 +371,6 @@
                     // show done button when all promises are completed
                     if (promises.length > 0) {
                         $q.all(promises).then(function (data) {
-
                             $scope.uploadComp = true;
                             $scope.uploadMedia();
                             if ($scope.draggedDivChanged === true) {
@@ -426,7 +437,7 @@
                 file.uploadStatus = false;
                 file.errorUpload = false;
                 file.upload = Upload.upload({
-                        url: 'https://app.sitetheory.io:3000/?session=' + $.cookie('SITETHEORY'),
+                        url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                         data: {
                             file: file
                         }
@@ -510,10 +521,15 @@
                     });
                 };
 
+                $scope.closeZoom = function () {
+
+                    mdPanelRef.close();
+                };
             }
 
             // Manage classes on select/unselect media
-            $scope.addDeleteMedia = function (selectedStatus, fileId) {
+            $scope.addDeleteMedia = function (selectedStatus, fileId, $event) {
+
                 // if selected status is true,remove from draggedFiles and add minus icon
                 if (selectedStatus === true) {
                     for (var k = 0; k < $scope.draggedFiles.length; k++) {
@@ -522,6 +538,8 @@
                             for (var j = 0; j < $scope.collection.models.length; j++) {
                                 if ($scope.collection.models[j].data.id === fileId) {
                                     $scope.collection.models[j].data.selectedClass = false;
+                                    angular.element($event.currentTarget).removeClass('minus_icon');
+                                    angular.element($event.currentTarget).addClass('add_icon');
                                 }
                             }
                         }
@@ -535,6 +553,8 @@
                         for (var j = 0; j < $scope.collection.models.length; j++) {
                             if ($scope.collection.models[j].data.id === fileId) {
                                 $scope.collection.models[j].data.selectedClass = true;
+                                angular.element($event.currentTarget).removeClass('add_icon');
+                                angular.element($event.currentTarget).addClass('minus_icon');
                             }
                         }
                     });

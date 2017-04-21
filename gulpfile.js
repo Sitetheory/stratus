@@ -1,5 +1,6 @@
 // Dependencies
 var gulp = require('gulp');
+var concat = require('gulp-concat');
 var debug = require('gulp-debug');
 var dest = require('gulp-dest');
 var jscs = require('gulp-jscs');
@@ -25,6 +26,21 @@ var nullify = function (proto) {
 
 // Locations
 var location = {
+    dist: {
+        core: [
+            'boot/env.js',
+            'bower_components/requirejs/require.js',
+            'boot/config.js',
+            'boot/init.js'
+        ],
+        min: [
+            'boot/env.min.js',
+            'bower_components/requirejs/require.min.js',
+            'boot/config.min.js',
+            'boot/init.min.js'
+        ],
+        output: 'dist/boot.js'
+    },
     mangle: {
         core: [
             'stratus.js',
@@ -33,7 +49,10 @@ var location = {
             'collections/*.js',
             'routers/*.js',
             'views/**/*.js',
-            'bower_components/requirejs/require.js'
+            'controllers/*.js',
+            'services/*.js',
+            'bower_components/requirejs/require.js',
+            'bower_components/ng-sortable/angular-legacy-sortable.js'
         ],
         min: [
             'stratus.min.js',
@@ -42,25 +61,24 @@ var location = {
             'collections/*.min.js',
             'routers/*.min.js',
             'views/**/*.min.js',
-            'bower_components/requirejs/require.min.js'
+            'controllers/*.min.js',
+            'services/*.min.js',
+            'bower_components/requirejs/require.min.js',
+            'bower_components/ng-sortable/angular-legacy-sortable.min.js'
         ]
     },
     preserve: {
         core: [
             'boot/*.js',
-            'controllers/*.js',
             'components/*.js',
             'directives/*.js',
-            'filters/*.js',
-            'services/*.js'
+            'filters/*.js'
         ],
         min: [
             'boot/*.min.js',
-            'controllers/*.min.js',
             'components/*.min.js',
             'directives/*.min.js',
-            'filters/*.min.js',
-            'services/*.min.js'
+            'filters/*.min.js'
         ]
     },
     less: {
@@ -106,6 +124,24 @@ gulp.task('jscs', function () {
 gulp.task('compile', ['compile:less']);
 gulp.task('compress', ['compress:mangle', 'compress:preserve', 'compress:css', 'compress:template']);
 gulp.task('clean', ['clean:mangle', 'clean:preserve', 'clean:less', 'clean:css', 'clean:template']);
+gulp.task('dist', ['dist:compile', 'dist:compress']);
+
+// Distribution Functions
+gulp.task('dist:compile', function () {
+    return gulp.src(_.union(location.dist.core, nullify(location.dist.min)), { base: '.' })
+        .pipe(concat(location.dist.output))
+        .pipe(gulp.dest('.'));
+});
+gulp.task('dist:compress', function () {
+    return gulp.src([location.dist.output], { base: '.' })
+        .pipe(debug({ title: 'Mangle:' }))
+        .pipe(uglify({
+            // preserveComments: 'license',
+            mangle: true
+        }))
+        .pipe(dest('.', { ext: '.min.js' }))
+        .pipe(gulp.dest('.'));
+});
 
 // Mangle Functions
 gulp.task('clean:mangle', function () {

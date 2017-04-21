@@ -40,34 +40,32 @@
             $scope.startPage = 0;
             $scope.endPage = 0;
 
-            // Localize Collection & Meta
+            // Localize Collection
             $scope.collection = null;
-            $scope.meta = null;
             $scope.$watch('$parent.collection', function (data) {
                 if (data && data instanceof collection) {
                     $scope.collection = data;
-                    $scope.meta = data.meta;
                 }
             });
 
             // Handle Page Changes
-            $scope.$watch('meta.attributes.pageCurrent', function (pageCurrent) {
+            $scope.$watch('collection.meta.data.pageCurrent', function (pageCurrent) {
                 if (!pageCurrent) return true;
-                if ($scope.meta.get('pageTotal') <= 10) {
+                if ($scope.collection.meta.get('pageTotal') <= 10) {
                     // less than 10 total pages so show all
                     $scope.startPage = 1;
-                    $scope.endPage = $scope.meta.get('pageTotal');
+                    $scope.endPage = $scope.collection.meta.get('pageTotal');
                 } else {
                     // more than 10 total pages so calculate start and end pages
-                    if ($scope.meta.get('pageCurrent') <= 6) {
+                    if ($scope.collection.meta.get('pageCurrent') <= 6) {
                         $scope.startPage = 1;
                         $scope.endPage = 10;
-                    } else if ($scope.meta.get('pageCurrent') + 4 >= $scope.meta.get('pageTotal')) {
-                        $scope.startPage = $scope.meta.get('pageTotal') - 9;
-                        $scope.endPage = $scope.meta.get('pageTotal');
+                    } else if ($scope.collection.meta.get('pageCurrent') + 4 >= $scope.collection.meta.get('pageTotal')) {
+                        $scope.startPage = $scope.collection.meta.get('pageTotal') - 9;
+                        $scope.endPage = $scope.collection.meta.get('pageTotal');
                     } else {
-                        $scope.startPage = $scope.meta.get('pageCurrent') - 5;
-                        $scope.endPage = $scope.meta.get('pageCurrent') + 4;
+                        $scope.startPage = $scope.collection.meta.get('pageCurrent') - 5;
+                        $scope.endPage = $scope.collection.meta.get('pageCurrent') + 4;
                     }
                 }
                 if (!isNaN($scope.startPage) && !isNaN($scope.endPage)) {

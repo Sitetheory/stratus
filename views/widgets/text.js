@@ -26,24 +26,24 @@
 /*
 
  <div data-entity="view" data-id="99">
- <div data-type="text" data-property="viewVersion.title"></div>
+ <div data-type="text" data-property="version.title"></div>
  </div>
 
- <div data-entity="view" data-id="99" data-type="text" data-property="viewVersion.title"></div>
+ <div data-entity="view" data-id="99" data-type="text" data-property="version.title"></div>
 
  */
 
 // All Options
 /*
 
- <div data-type="text" data-property="viewVersion.title" data-label="Title" data-help="Foo bar" data-style="form" data-render="click|auto" data-status="load" data-feedback="true" data-templates='{"render":"#myTemplate"}' data-options='{"autoSave": true, "autoSaveInterval": 5000}'></div>
+ <div data-type="text" data-property="version.title" data-label="Title" data-help="Foo bar" data-style="form" data-render="click|auto" data-status="load" data-feedback="true" data-templates='{"render":"#myTemplate"}' data-options='{"autoSave": true, "autoSaveInterval": 5000}'></div>
 
  */
 
 // The custom template must include the {{ elementId }} variable for the id of the editable element.
 /*
 
- <div id="fooBar" data-type="text" data-property="viewVersion.title"></div>
+ <div id="fooBar" data-type="text" data-property="version.title"></div>
  <script id="render_fooBar">
  <div id="{{ elementId }}">Template to Render</div>
  </script>

@@ -16,26 +16,20 @@ This platform intends to bridge the gap between Web Design and Development in a 
 ##### Dependent
 
 * Underscore.js
-* Backbone.js
 
-##### Optional
+##### Recommended
 
 * Require.js
 
+##### Optional
+
+* Angular.js
+* Backbone.js
+* React.js
+
 ## Usage
 
-##### Overview
-
-Core Types:
-
-* Collection
-* Model
-* Router
-* View
-  * Plugin
-  * Widget
-
-##### Deployment
+#### Deployment
 
 Stratus is built to run within a Require.js Asynchronous Environment with Promises.  For an independent implementation without Require.js, further functionality involving auto-loading dependencies will not be present, so these javascript dependencies and templates will need to be defined directly on the DOM. 
 
@@ -44,23 +38,17 @@ Stratus is built to run within a Require.js Asynchronous Environment with Promis
 if (tbd) console.log('tbd');
 ```
 
-##### Plugins
+#### Angular
 
-Plugins are simple objects that provide Design functionality to DOM elements, independent of a model or collection, which effectively removes all API support.
+Check the Docs folder for follow-up information
 
-```js
-// These examples will be expanded
-if (tbd) console.log('tbd');
-```
+#### Backbone
 
-##### Widgets
+Check the Docs folder for follow-up information
 
-Widgets are complex objects that provide API and Design functionality to DOM elements, which include a model or collection for API support.
+#### React
 
-```js
-// These examples will be expanded
-if (tbd) console.log('tbd');
-```
+Check the Docs folder for follow-up information
 
 ## Contributions
 

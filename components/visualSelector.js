@@ -53,14 +53,16 @@
             details: '<',
             search: '<',
             target: '@',
-            limit: '@'
+            limit: '@',
+            multiple: '<'
         },
         controller: function ($scope, $mdPanel, $attrs, registry) {
 
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/visualSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
             $scope.showGallery = false;
-            $scope.selectListArr = {};
+            $scope.selectListArr = [];
+            $scope.galleryClass = 'fa fa-plus';
 
             // fetch target collection and hydrate to $scope.collection
             $scope.registry = new registry();
@@ -75,10 +77,23 @@
                 }
             }, $scope);
 
+            // Data Connectivity
+            $scope.$watch('$ctrl.ngModel', function (data) {
+                if (!_.isUndefined(data) && !_.isEqual($scope.selectListArr, data)) {
+                    $scope.selectListArr = data || [];
+                }
+            });
+            $scope.$watch('selectListArr', function (data) {
+                if (_.isArray(data) && !_.isUndefined($scope.$ctrl.ngModel) && !_.isEqual($scope.selectListArr, $scope.$ctrl.ngModel)) {
+                    $scope.$ctrl.ngModel = $scope.selectListArr;
+                }
+            }, true);
+
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {
 
                 $scope.showGallery = true;
+                $scope.galleryClass = 'fa fa-minus';
 
             };
 
@@ -114,6 +129,7 @@
 
                     mdPanelRef.close();
                 };
+
             }
             $scope.chooseLayout = function (selectedData, $event) {
 
@@ -121,11 +137,41 @@
                 $scope.selected = selectedData;
 
                 // add to selected list
-                $scope.selectListArr = selectedData;
+                $scope.selectListArr = [];
+                $scope.selectListArr.push(selectedData);
+
             };
             $scope.isSelected = function (item) {
 
                 return $scope.selected === item;
+            };
+            $scope.toggleGallery = function () {
+                if ($scope.showGallery === true) {
+                    $scope.galleryClass = 'fa fa-plus';
+                    $scope.showGallery = false;
+                }else if ($scope.showGallery === false) {
+                    $scope.galleryClass = 'fa fa-minus';
+                    $scope.showGallery = true;
+                }
+            };
+            $scope.removeSelected = function (selectedLayout) {
+
+                var index = $scope.selectListArr.indexOf(selectedLayout);
+                if (index >= 0) {
+                    $scope.selectListArr.splice(index, 1);
+                    $scope.selected = {};
+                }
+            };
+
+            // hide choose layout button if layout is selected
+            $scope.checkSelected = function (selectedLayout) {
+
+                var index = $scope.selectListArr.indexOf(selectedLayout);
+                if (index >= 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             };
 
         },
