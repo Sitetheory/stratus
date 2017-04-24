@@ -3147,14 +3147,11 @@
             vars[key] = value;
         });
         vars = _.extend(vars, params);
-        url = (glue >= 0) ? url.substring(0, glue) : url;
-        console.log(url, vars);
-        url += _.reduce(_.map(vars, function (value, key) {
+        return (glue >= 0 ? url.substring(0, glue) : url) + '?' + _.reduce(_.map(vars, function (value, key) {
             return key + '=' + value;
         }), function (memo, value) {
             return memo + '&' + value;
         });
-        return url;
     };
 
     // Update Environment
