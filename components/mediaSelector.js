@@ -107,9 +107,9 @@ console.log('drag again');
             // $scope.selectedListDiv =  false;
             $scope.errorUpload = false;
 
-            // initialise library class to plus
-            $scope.showLibraryClass = 'fa fa-plus-square-o';
-            $scope.dragDropClass = 'fa fa-plus';
+            // UI Settings
+            $scope.libraryVisible = false;
+            $scope.dragLibraryVisible = false;
 
             $scope.zoomView = function (event) {
                 $scope.mediaDetail = event;
@@ -221,8 +221,8 @@ console.log('drag again');
                 $mdPanel.open(config);
 
                 // check if media library already opened, then load media library
-                if ($scope.dragDropClass === 'fa fa-minus') {
-                    $scope.showDragDropLibrary = true;
+                if ($scope.dragLibraryVisible) {
+                    $scope.dragLibraryVisible = true;
 
                     // $scope.uploadMedia();
                 }
@@ -280,47 +280,35 @@ console.log('drag again');
 
             };
 
-            // open libary div when clicked on upper browse div
+            // open library div when clicked on upper browse div
             $scope.openLibrary = function () {
                 // show library media
-                if ($scope.showLibraryClass === 'fa fa-plus-square-o') {
-                    $scope.showLibraryClass = 'fa fa-minus-square-o';
-                    $scope.showLibrary = true;
-                    $scope.showDragDropLibrary = false;
-                    $scope.dragDropClass = 'fa fa-plus';
-                    if ($scope.dragDropClass === 'fa fa-plus') {
-                        $scope.dragDropClass = 'fa fa-minus';
-                    } else {
-                        $scope.dragDropClass = 'fa fa-plus';
-                    }
+                if (!$scope.libraryVisible) {
+                    // twiddle
+                    $scope.libraryVisible = true;
+                    $scope.dragLibraryVisible = false;
 
                     // switch to registry controls
                     $scope.uploadMedia();
-                } else if ($scope.showLibraryClass === 'fa fa-minus-square-o') {
-                    $scope.showLibraryClass = 'fa fa-plus-square-o';
-                    $scope.showLibrary = false;
+                } else if ($scope.libraryVisible) {
+                    // twiddle
+                    $scope.libraryVisible = false;
                 }
             };
 
             // open media library when clicked on plus icon
             $scope.mediaLibrary = function () {
-                if ($scope.dragDropClass === 'fa fa-plus') {
-                    $scope.dragDropClass = 'fa fa-minus';
-
-                    // hide if library opened above
-                    $scope.showLibrary = false;
-
-                    // show media library div
-                    $scope.showDragDropLibrary = true;
+                if (!$scope.dragLibraryVisible) {
+                    // twiddle
+                    $scope.libraryVisible = false;
+                    $scope.dragLibraryVisible = true;
 
                     // load media library
                     $scope.uploadMedia();
-                } else if ($scope.dragDropClass === 'fa fa-minus') {
-                    $scope.dragDropClass = 'fa fa-plus';
-
-                    // close media library div if opened
-                    $scope.showDragDropLibrary = false;
-                    $scope.showLibrary = false;
+                } else if ($scope.dragLibraryVisible) {
+                    // twiddle
+                    $scope.libraryVisible = false;
+                    $scope.dragLibraryVisible = false;
                 }
             };
 
