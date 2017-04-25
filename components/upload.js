@@ -66,7 +66,7 @@
                 var $target = $('#' + $scope.elementId);
                 if ($target.length && !$scope.dropzone && (!$scope.mediaId || typeof $scope.mediaId === 'number')) {
                     $scope.dropzone = new Dropzone($target[0], {
-                        url: 'https://app002.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY') + (
+                        url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY') + (
                             $scope.mediaId ? ('&id=' + $scope.mediaId) : ''
                         ),
                         method: 'POST',
