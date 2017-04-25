@@ -1,7 +1,7 @@
 <div class="mediaSelector">
     <div class="selectorContainer selected borderDefault borderDefaultAll borderRadiusDefault">
 
-        <p class="smallLabel">Media</p>
+        <p class="smallLabel selectedMediaLabel">Media</p>
         <!-- Gallery header Ends -->
         <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
               ngf-drop ngf-max-files="20"   ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover"  ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
@@ -24,26 +24,39 @@
                                 <img id="{{df.id}}" class="shapeholder selectImgDrag" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             </div>
                         </a>
+
                     </div><!-- Media Selector Image Container Ends -->
 
 
-                    <div class="image-info-outer">
-                        <div class="img-info">
-                            <div class="img-info-left">
-                                <div class="format-size">
-                                    <span class="fm-tag">{{ df.extension | uppercase }}</span> <span class="size">{{ df.bytesHuman }}</span>
+                    <div class="imageInfoContainer">
+                        <div class="imageHoverInfo borderRadiusDefault">
+
+                            <div class="format-size">
+                                <div class="smallLabel fileDetails">
+                                    <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}89 KB</span>
                                 </div>
-                                <p>{{ df.name }}</p>
-                            </div><!-- Image Left Info Ends -->
-                            <div class="img-info-right">
-                                <a href="#" class="info-ico"><i class="fa fa-info" aria-hidden="true" ng-click="zoomView(df)"></i></a>
-                                <a href="#"><i class="fa fa-trash-o" aria-hidden="true" ng-click="removeFromSelected(df.id);"></i></a>
-                            </div><!-- Image Info Right Ends -->
+                            </div>
+                            <p class="fontBody">{{ df.name }}</p>
+                            <div class="positionActionArea">
+                                <div class="clearfix actionBtns">
+                                    <a href="#" class="infoIcon">
+                                        <div class="infoIcon" aria-hidden="true" ng-click="zoomView(df)">
+                                            <md-icon class="" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                                        </div>
+                                    </a>
+                                    <a href="#">
+                                        <div >
+                                            <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
                         </div><!-- Image Info Ends -->
-                    </div><!-- Image Outer Ends -->
+                    </div><!-- Image Info Container Ends -->
 
                 </li>
-                <li class="actionBtn">
+                <li class="actionBtn actionLibrary">
                     <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="mediaLibrary()">
                         <div ng-class="dragDropClass" aria-hidden="true">
                             <md-icon class="positionCenter" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
@@ -55,17 +68,17 @@
         </div><!-- Gl Content Ends -->
     </div><!-- Gallery Box Ends -->
     <div id="openLibrary" ng-show="libraryVisible">
-        <div class="selectorContainer">
-            <div class="gl-content" ng-class="{'layer_black':dragClass}">
+        <div class="selectorContainer mediaLibrary backgroundDark borderRadiusDefault">
+            <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
+            <p class="smallLabel">Media Library</p>
+            <div class="mediaLibraryContent" ng-class="{'layer_black':dragClass}">
                 <div class="search-bar">
                     <div class="gal-search">
                         <stratus-search flex></stratus-search>
                     </div>
-                    <p>To upload more images to library, drag and drop here or <a href="#" ngf-select="uploadToLibrary($files)">
-                        Click Here </a></p>
                 </div><!-- Search Bar Ends -->
                 <div ngf-drop="uploadToLibrary($files)" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
-                <ul>
+                <ul class="listInline">
                     <li  ng-repeat="media in collection.models">
                         <div class="gl-img-container" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                            <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
@@ -74,14 +87,17 @@
                             <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id,$event);" ng-dblclick="zoomView(media.data)">
 
-                                <img class="imgLibDrag" [itemid]="{{media.data.id}}"   ng-src="{{media.data.url}}"></a>
+                                <div class="imgLibDrag" [itemid]="{{media.data.id}}" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;">
+                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                </div>
+
+                            </a>
                         </div><!-- Gallery Image Container Ends -->
-                        <div class="image-info-outer" ng-mouseenter="hovering = true"  ng-mouseleave="hovering = false">
-                            <div class="img-info">
+                        <div class="imageInfoContainer" ng-mouseenter="hovering = true"  ng-mouseleave="hovering = false">
+                            <div class="imageHoverInfo">
                                 <div class="img-info-left">
                                     <div class="format-size">
-                                        <span class="fm-tag">{{media.data.extension|uppercase}}</span> <span
-                                            class="size">{{media.data.bytesHuman}}</span>
+                                        <span class="fileType">{{media.data.extension|uppercase}}</span><span class="fileSize">{{media.data.bytesHuman}}</span>
                                     </div>
                                     <p>{{media.data.name}}</p>
                                 </div><!-- Image Left Info Ends -->
@@ -102,7 +118,7 @@
         <div class="selectorContainer mediaLibrary backgroundDark borderRadiusDefault">
             <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
             <p class="smallLabel">Media Library</p>
-            <div class="mediaLibraryContent borderDefault borderDefaultTop" ng-class="{'layer_black':dragClass}">
+            <div class="mediaLibraryContent" ng-class="{'layer_black':dragClass}">
                 <div class="search-bar">
                     <div class="gal-search">
                         <stratus-search flex></stratus-search>
@@ -121,11 +137,11 @@
                                 </div>
                             </a>
                         </div><!-- Gallery Image Container Ends -->
-                        <div class="image-info-outer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
-                            <div class="img-info">
+                        <div class="imageInfoContainer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+                            <div class="imageHoverInfo">
                                 <div class="img-info-left">
                                     <div class="format-size">
-                                        <span class="fm-tag">{{media.data.extension|uppercase}}</span> <span class="size">{{media.data.bytesHuman}}</span>
+                                        <span class="fileType">{{media.data.extension|uppercase}}</span> <span class="fileSize">{{media.data.bytesHuman}}</span>
                                     </div>
                                     <p>{{media.data.name}}</p>
                                 </div><!-- Image Left Info Ends -->
