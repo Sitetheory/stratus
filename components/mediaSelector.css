@@ -92,6 +92,14 @@ stratus-media-selector {
 .selected .actionBtn a:hover svg g {
     fill: #111;
 }
+.selected--list {
+    border:3px solid red;
+}
+.selected--list{
+    opacity:0.5;
+}
+
+
 
 /* Image Library */
 
@@ -120,8 +128,7 @@ stratus-media-selector {
 
 
 
-
-.gl-img-container .imgLibDrag {
+.imgLibDrag {
     transition: all .2s ease-out;
     -webkit-transition: all .2s ease-out;
 }
@@ -142,12 +149,14 @@ stratus-media-selector {
     top: 0;
     left: 50%;
     visibility: hidden;
-    z-index:99;
+    z-index: 99;
     opacity: 0;
-    padding:0 0 13px 0;
+    margin: -6px 0 8px;
+    padding: 0;
     width: 150px;
     text-align: center;
     color:#fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
 }
 
 .draggableImg:hover .imageInfoContainer {
@@ -156,15 +165,13 @@ stratus-media-selector {
     visibility: visible;
     opacity: 1;
 }
-
-
 .imageHoverInfo {
     overflow: hidden;
     position:relative;
     z-index:99;
     padding:12px 12px 40px;
     background: #222;
-    margin:0;
+    margin: 0;
     color:#fff;
     height: 120px;
 }
@@ -209,10 +216,11 @@ stratus-media-selector {
     position: absolute;
     top: 100%;
     left: 50%;
-    width: 0; height: 0;
-    border-top: 14px solid #222;
-    border-right: 14px solid transparent;
-    border-left: 14px solid transparent;
+    width: 0;
+    height: 0;
+    border-top: 8px solid #222;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
 }
 
 
@@ -505,10 +513,7 @@ li.sel-file:hover .error-upload-msg{display:block;}
 .custom-class {
     color:red;
 }
-.selected--list {
-    border:3px solid red;
-}
-.selected--list{opacity:0.5;}
+
 .add_icon,.minus_icon,.del_item,.trash_icon{ position:relative; }
 .add_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-plus.png"), auto;}
 .minus_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
