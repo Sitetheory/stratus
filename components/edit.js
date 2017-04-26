@@ -29,8 +29,8 @@
     // This component intends to allow editing of various attributes depending on context.
     Stratus.Components.Edit = {
         transclude: {
-            view: '?stratusView',
-            input: '?stratusInput'
+            view: '?stratusEditView',
+            input: '?stratusEditInput'
         },
         bindings: {
             elementId: '@',
