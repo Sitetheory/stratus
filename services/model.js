@@ -152,17 +152,28 @@
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
-                                that.data = response.data.payload || response.data;
+                                var convoy = response.data.payload || response.data;
+                                if (angular.isArray(convoy) && convoy.length) {
+                                    that.data = _.first(that.data);
+                                    that.error = false;
+                                } else if (angular.isObject(convoy)) {
+                                    that.data = convoy;
+                                    that.error = false;
+                                } else {
+                                    that.error = true;
+                                }
 
-                                // XHR Flags
-                                that.pending = false;
-                                that.completed = true;
+                                if (!that.error) {
+                                    // XHR Flags
+                                    that.pending = false;
+                                    that.completed = true;
 
-                                // Auto-Saving Settings
-                                that.saving = false;
+                                    // Auto-Saving Settings
+                                    that.saving = false;
 
-                                // Begin Watching
-                                that.watcher();
+                                    // Begin Watching
+                                    that.watcher();
+                                }
 
                                 // Promise
                                 resolve(that.data);
@@ -205,12 +216,12 @@
                  * @returns {{meta, payload}}
                  */
                 this.toJSON = function () {
-                    var data = (that.meta.has('api')) ? {
+                    var data = that.meta.has('api') ? {
                         meta: that.meta.get('api'),
                         payload: that.data
                     } : that.data;
-                    if (this.meta.size() > 0) {
-                        this.meta.clearTemp();
+                    if (that.meta.size() > 0) {
+                        that.meta.clearTemp();
                     }
                     return data;
                 };
