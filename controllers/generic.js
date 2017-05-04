@@ -41,6 +41,9 @@
         '$parse',
         'registry',
         function ($scope, $element, $mdToast, $log, $parse, registry) {
+            // Store Instance
+            Stratus.Instances[_.uniqueId('generic_')] = $scope;
+
             // Registry
             $scope.registry = new registry();
             $scope.registry.fetch($element, $scope);
@@ -143,9 +146,6 @@
                 }, $scope.error);
             };
             /* */
-
-            // Store Instance
-            Stratus.Instances[_.uniqueId('controller_')] = $scope;
         }];
 
 }));

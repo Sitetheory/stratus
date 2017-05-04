@@ -126,6 +126,7 @@ boot.config({
         'stratus.routers.version': boot.bundle + 'stratus/routers/version' + boot.suffix,
 
         /* Stratus Controllers */
+        'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
         'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
 
         /* Stratus Core Components */
