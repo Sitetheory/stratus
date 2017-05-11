@@ -41,6 +41,7 @@
                 // Environment
                 this.target = null;
                 this.manifest = false;
+                this.stagger = false;
                 if (!options || typeof options !== 'object') options = {};
                 angular.extend(this, options);
 
@@ -87,6 +88,11 @@
                         return that.data;
                     }, function (newData, oldData) {
                         if (!_.isEqual(newData, oldData)) {
+                            if (newData.id && newData.id !== oldData.id) {
+                                window.location.replace(
+                                    Stratus.Internals.SetUrlParams({ id: newData.id })
+                                );
+                            }
                             that.changing = true;
                             that.changed = 1;
                         }
@@ -398,12 +404,17 @@
                 /**
                  * @type {Function}
                  */
-                this.initialize = this.initialize || function () {
+                this.initialize = _.once(this.initialize || function () {
                         if (that.manifest && !that.get('id')) {
-                            that.sync('POST', {}).catch(console.error);
+                            that.sync('POST', that.meta.has('api') ? {
+                                meta: that.meta.get('api'),
+                                payload: {}
+                            } : {}).catch(console.error);
                         }
-                    };
-                this.initialize();
+                    });
+                if (!that.stagger) {
+                    this.initialize();
+                }
             };
         }]);
     }];
