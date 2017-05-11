@@ -2690,7 +2690,7 @@
                             tabMode: 'space',
                             tabSize: 4
                         },
-                        fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
+                        fileUploadURL: 'https://app002.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                         htmlAllowedAttrs: ['.*'],
                         htmlAllowedEmptyTags: [
                             'textarea', 'a', '.fa',
