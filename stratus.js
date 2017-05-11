@@ -892,8 +892,8 @@
         var that = this;
         if (that.selection instanceof NodeList) {
             console.error('Unable to find height for element:', that.selection);
-        } else if (that.selection.length) {
-            return that.selection.offsetHeight;
+        } else {
+            return that.selection.offsetHeight || 0;
         }
         return that;
     };
@@ -905,7 +905,7 @@
         var that = this;
         if (that.selection instanceof NodeList) {
             console.error('Unable to find offset for element:', that.selection);
-        } else if (that.selection.length) {
+        } else if (that.selection.getBoundingClientRect) {
             var rect = that.selection.getBoundingClientRect();
             return {
                 top: rect.top + document.body.scrollTop,
@@ -1905,7 +1905,7 @@
         var wt = document.body.scrollTop;
         var wb = wt + document.body.offsetHeight;
         var et = el.offset() ? el.offset().top : null;
-        var eb = et + el.height();
+        var eb = el.height() + (typeof et === 'number' ? et : 0);
         return (eb >= wt + offset && et <= wb - offset);
     };
 
@@ -2014,8 +2014,8 @@
 
                         // FIXME: This is jquery and I wrote a possibly long-term solution natively
                         // var $visibleParent = $(_.first(obj.el.parents(visibilitySelector)));
-                        var $visibleParent = Stratus.Selector(obj.el).parent();
-                        width = $visibleParent.width();
+                        var $visibleParent = Stratus.Select(obj.el).parent();
+                        width = $visibleParent ? $visibleParent.offsetWidth : 0;
 
                         // If one of parents of the image (and child of the found parent) has a bootstrap col-*-* set
                         // divide width by that in anticipation (e.g. Carousel that has items grouped)
@@ -2066,9 +2066,13 @@
                 // Change the Source to be the desired path
                 obj.el.attr('src', src);
                 obj.el.addClass('loading');
-                obj.el.load(function () {
-                    Stratus.Select(this).addClass('loaded').removeClass('placeholder loading');
-                });
+                if (obj.el.load) {
+                    obj.el.load(function () {
+                        Stratus.Select(this).addClass('loaded').removeClass('placeholder loading');
+                    });
+                } else {
+                    Stratus.Select(obj.el).addClass('loaded').removeClass('placeholder loading');
+                }
 
                 // Remove from registration
                 Stratus.RegisterGroup.remove('OnScroll', obj);
