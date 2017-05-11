@@ -1,14 +1,15 @@
 # Stratus [![Build Status](https://travis-ci.org/Sitetheory/stratus.svg?branch=master)](https://travis-ci.org/Sitetheory/stratus) [![Join the chat at https://gitter.im/Sitetheory/stratus](https://badges.gitter.im/Sitetheory/stratus.svg)](https://gitter.im/Sitetheory/stratus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Overview
+## Thesis
 
-This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.
+The Designer always comes first in the Stratus Layer.
 
 ## Goals
 
 * Creative Design
+* Code-Free Design
 * Elegant Simplicity
-* Extensibility
+* Abstract Extensibility
 * Optimal Performance
 
 ## Frameworks & Libraries

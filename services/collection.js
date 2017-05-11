@@ -176,6 +176,29 @@
                 };
 
                 /**
+                 * @type {Function}
+                 */
+                this.throttle = _.throttle(this.fetch, 1000);
+
+                /**
+                 * @param query
+                 * @returns {*}
+                 */
+                this.throttleFilter = function (query) {
+                    that.meta.set('api.q', angular.isDefined(query) ? query : '');
+                    return $q(function (resolve, reject) {
+                        var request = that.throttle();
+                        console.log('request:', request);
+                        request.then(function (models) {
+                            console.log('throttled:', _.map(models, function (model) {
+                                return model.domainPrimary;
+                            }));
+                            resolve(models);
+                        }).catch(reject);
+                    });
+                };
+
+                /**
                  * @param page
                  * @returns {*}
                  */

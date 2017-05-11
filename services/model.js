@@ -41,6 +41,7 @@
                 // Environment
                 this.target = null;
                 this.manifest = false;
+                this.stagger = false;
                 if (!options || typeof options !== 'object') options = {};
                 angular.extend(this, options);
 
@@ -87,6 +88,11 @@
                         return that.data;
                     }, function (newData, oldData) {
                         if (!_.isEqual(newData, oldData)) {
+                            if (newData.id && newData.id !== oldData.id) {
+                                window.location.replace(
+                                    Stratus.Internals.SetUrlParams({ id: newData.id })
+                                );
+                            }
                             that.changing = true;
                             that.changed = 1;
                         }
@@ -152,17 +158,28 @@
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
-                                that.data = response.data.payload || response.data;
+                                var convoy = response.data.payload || response.data;
+                                if (angular.isArray(convoy) && convoy.length) {
+                                    that.data = _.first(that.data);
+                                    that.error = false;
+                                } else if (angular.isObject(convoy)) {
+                                    that.data = convoy;
+                                    that.error = false;
+                                } else {
+                                    that.error = true;
+                                }
 
-                                // XHR Flags
-                                that.pending = false;
-                                that.completed = true;
+                                if (!that.error) {
+                                    // XHR Flags
+                                    that.pending = false;
+                                    that.completed = true;
 
-                                // Auto-Saving Settings
-                                that.saving = false;
+                                    // Auto-Saving Settings
+                                    that.saving = false;
 
-                                // Begin Watching
-                                that.watcher();
+                                    // Begin Watching
+                                    that.watcher();
+                                }
 
                                 // Promise
                                 resolve(that.data);
@@ -205,12 +222,12 @@
                  * @returns {{meta, payload}}
                  */
                 this.toJSON = function () {
-                    var data = (that.meta.has('api')) ? {
+                    var data = that.meta.has('api') ? {
                         meta: that.meta.get('api'),
                         payload: that.data
                     } : that.data;
-                    if (this.meta.size() > 0) {
-                        this.meta.clearTemp();
+                    if (that.meta.size() > 0) {
+                        that.meta.clearTemp();
                     }
                     return data;
                 };
@@ -387,12 +404,17 @@
                 /**
                  * @type {Function}
                  */
-                this.initialize = this.initialize || function () {
+                this.initialize = _.once(this.initialize || function () {
                         if (that.manifest && !that.get('id')) {
-                            that.sync('POST', {}).catch(console.error);
+                            that.sync('POST', that.meta.has('api') ? {
+                                meta: that.meta.get('api'),
+                                payload: {}
+                            } : {}).catch(console.error);
                         }
-                    };
-                this.initialize();
+                    });
+                if (!that.stagger) {
+                    this.initialize();
+                }
             };
         }]);
     }];

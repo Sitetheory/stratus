@@ -241,7 +241,7 @@
      */
     _.mixin({
 
-        // Babel class inheritace block
+        // Babel class inheritance block
         createClass: (function () {
             function defineProperties(target, props) {
                 for (var i = 0; i < props.length; i++) {
@@ -258,12 +258,19 @@
                 return Constructor;
             };
         })(),
+        /**
+         * @param self
+         * @param call
+         * @returns {*}
+         */
         possibleConstructorReturn: function (self, call) {
-            if (!self) {
-                throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-            }
+            if (!self) throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
             return call && (typeof call === 'object' || typeof call === 'function') ? call : self;
         },
+        /**
+         * @param subClass
+         * @param superClass
+         */
         inherits: function (subClass, superClass) {
             if (typeof superClass !== 'function' && superClass !== null) {
                 throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
@@ -278,10 +285,31 @@
             });
             if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
         },
+        /**
+         * @param instance
+         * @param Constructor
+         */
         classCallCheck: function (instance, Constructor) {
             if (!(instance instanceof Constructor)) {
                 throw new TypeError('Cannot call a class as a function');
             }
+        },
+
+        // This function wraps the inheritance logic in a single usable function.
+        /**
+         * @param superClass
+         * @param subClass
+         * @returns {View}
+         */
+        inherit: function (superClass, subClass) {
+            var blob = function (length) {
+                _.classCallCheck(this, blob);
+                var that = _.possibleConstructorReturn(this, (blob.__proto__ || Object.getPrototypeOf(blob)).call(this, length, length));
+                _.extend(that, subClass);
+                return that;
+            };
+            _.inherits(blob, superClass);
+            return blob;
         },
 
         // This function simply capitalizes the first letter of a string.
@@ -2088,31 +2116,52 @@
                     message: 'No Convoy defined for dispatch.'
                 }, this));
             }
-            if (typeof $ === 'function' && $.fn) {
-                reject('jQuery is not defined and there isn\t a native AJAX alternative at the moment.');
-                return;
+            if (typeof $ === 'function' && $.ajax) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Api' + encodeURIComponent(query || ''),
+                    data: {
+                        convoy: JSON.stringify(convoy)
+                    },
+                    dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType')) ? convoy.meta.dataType : 'json',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    success: function (response) {
+                        resolve(response);
+                        return response;
+                    },
+                    error: function (response) {
+                        reject(new Stratus.Prototypes.Error({ code: 'Convoy', message: response }, this));
+                        return response;
+                    }
+                });
+            } else {
+                Stratus.Internals.Ajax({
+                    method: 'POST',
+                    url: '/Api' + encodeURIComponent(query || ''),
+                    data: {
+                        convoy: JSON.stringify(convoy)
+                    },
+                    type: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType')) ? convoy.meta.dataType : 'application/json',
+                    success: function (response) {
+                        response = response.payload || response;
+                        resolve(response);
+                        return response;
+                    },
+                    error: function (response) {
+                        reject(new Stratus.Prototypes.Error({
+                            code: 'Convoy',
+                            message: response
+                        }, this));
+                        return response;
+                    }
+                });
             }
-            $.ajax({
-                type: 'POST',
-                url: '/Api' + encodeURIComponent(query || ''),
-                data: { convoy: JSON.stringify(convoy) },
-                dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType')) ? convoy.meta.dataType : 'json',
-                xhrFields: {
-                    withCredentials: true
-                },
-                crossDomain: true,
-                headers: {
-                    'Access-Control-Allow-Origin': '*'
-                },
-                success: function (response) {
-                    resolve(response);
-                    return response;
-                },
-                error: function (response) {
-                    reject(new Stratus.Prototypes.Error({ code: 'Convoy', message: response }, this));
-                    return response;
-                }
-            });
         });
     };
 
@@ -3098,14 +3147,11 @@
             vars[key] = value;
         });
         vars = _.extend(vars, params);
-        url = (glue >= 0) ? url.substring(0, glue) : url;
-        console.log(url, vars);
-        url += _.reduce(_.map(vars, function (value, key) {
+        return (glue >= 0 ? url.substring(0, glue) : url) + '?' + _.reduce(_.map(vars, function (value, key) {
             return key + '=' + value;
         }), function (memo, value) {
             return memo + '&' + value;
         });
-        return url;
     };
 
     // Update Environment
