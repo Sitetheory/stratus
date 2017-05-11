@@ -1,4 +1,4 @@
-<div ng-if="collection.meta.data.api.q.length > 0 || (collection.meta && collection.meta.data.pageTotal > 1)" class="search" flex>
+<div ng-if="display || collection.meta.data.api.q.length > 0 || (collection.meta && collection.meta.data.pageTotal > 1)" class="search" flex>
     <i class="fa fa-search left-icon" aria-label="Search" ng-click="collection && collection.filter(query)"></i>
     <input ng-model="query" placeholder="Search here"
            ng-keyup="$event.keyCode == 13 && collection && collection.filter(query)"/>

@@ -43,11 +43,16 @@
     Stratus.Components.Search = {
         bindings: {
             ngModel: '=',
-            target: '@'
+            target: '@',
+            display: '@'
         },
         controller: function ($scope, $attrs, registry, collection) {
             Stratus.Instances[_.uniqueId('search_')] = $scope;
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/search' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+
+            // Settings
+            $scope.display = $attrs.display && _.isJSON($attrs.display) ? JSON.parse($attrs.display) : false;
+            console.log('display:', $scope.display);
 
             // Localize Collection
             $scope.collection = null;
