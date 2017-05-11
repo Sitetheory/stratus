@@ -496,6 +496,25 @@
             }
             return true;
         },
+
+        // Determines whether or not the element was selected from Angular
+        /**
+         * @param element
+         * @returns {boolean}
+         */
+        isAngular: function (element) {
+            return typeof angular === 'object' && angular && angular.element && element instanceof angular.element;
+        },
+
+        // Determines whether or not the element was selected from Angular
+        /**
+         * @param element
+         * @returns {boolean}
+         */
+        isjQuery: function (element) {
+            return typeof jQuery === 'function' && element instanceof jQuery;
+        },
+
         /**
          * @param str
          * @returns {number|null}
@@ -722,8 +741,8 @@
             selection = document[target](selector);
         }
         if (selection && typeof selection === 'object') {
-            if (typeof jQuery === 'function' && selection instanceof jQuery) {
-                selection = selection.length ? selection[0] : {};
+            if (_.isAngular(selection) || _.isjQuery(selection)) {
+                selection = selection.length ? _.first(selection) : {};
             }
             selection = _.extend({}, Stratus.Selector, {
                 context: this,
@@ -747,7 +766,7 @@
         var that = this;
         if (that.selection instanceof NodeList) {
             if (!Stratus.Environment.get('production')) console.log('List:', that);
-        } else {
+        } else if (that.selection.length) {
             _.each(className.split(' '), function (name) {
                 if (that.selection.classList) {
                     that.selection.classList.add(name);
@@ -853,7 +872,7 @@
             if (!Stratus.Environment.get('production')) {
                 console.log('List:', that);
             }
-        } else {
+        } else if (that.selection.length) {
             if (that.selection.classList) {
                 _.each(className.split(' '), function (name) {
                     that.selection.classList.remove(name);
@@ -861,6 +880,50 @@
             } else {
                 that.selection.className = that.selection.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
+        }
+        return that;
+    };
+
+    // Positioning Plugins
+    /**
+     * @returns {*}
+     */
+    Stratus.Selector.height = function () {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            console.error('Unable to find height for element:', that.selection);
+        } else if (that.selection.length) {
+            return that.selection.offsetHeight;
+        }
+        return that;
+    };
+
+    /**
+     * @returns {*}
+     */
+    Stratus.Selector.offset = function () {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            console.error('Unable to find offset for element:', that.selection);
+        } else if (that.selection.length) {
+            var rect = that.selection.getBoundingClientRect();
+            return {
+                top: rect.top + document.body.scrollTop,
+                left: rect.left + document.body.scrollLeft
+            };
+        }
+        return that;
+    };
+
+    /**
+     * @returns {*}
+     */
+    Stratus.Selector.parent = function () {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            console.error('Unable to find offset for element:', that.selection);
+        } else if (that.selection.length) {
+            return that.selection.parentNode;
         }
         return that;
     };
@@ -1837,9 +1900,10 @@
      * @constructor
      */
     Stratus.Internals.IsOnScreen = function (el, offset) {
+        el = Stratus.Select(el);
         offset = offset || 0;
-        var wt = $(window).scrollTop();
-        var wb = wt + $(window).height();
+        var wt = document.body.scrollTop;
+        var wb = wt + document.body.offsetHeight;
         var et = el.offset() ? el.offset().top : null;
         var eb = et + el.height();
         return (eb >= wt + offset && et <= wb - offset);
@@ -1947,7 +2011,10 @@
                         // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
                         // so in some cases we need to flag to find the parent regardless of invisibility.
                         var visibilitySelector = (obj.el.data('ignorevisibility')) ? null : ':visible';
-                        var $visibleParent = $(_.first(obj.el.parents(visibilitySelector)));
+
+                        // FIXME: This is jquery and I wrote a possibly long-term solution natively
+                        // var $visibleParent = $(_.first(obj.el.parents(visibilitySelector)));
+                        var $visibleParent = Stratus.Selector(obj.el).parent();
                         width = $visibleParent.width();
 
                         // If one of parents of the image (and child of the found parent) has a bootstrap col-*-* set
