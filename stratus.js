@@ -2013,13 +2013,16 @@
                         var visibilitySelector = (obj.el.data('ignorevisibility')) ? null : ':visible';
 
                         // FIXME: This is jquery and I wrote a possibly long-term solution natively
-                        // var $visibleParent = $(_.first(obj.el.parents(visibilitySelector)));
+                        var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
+
+                        /* *
                         var $visibleParent = Stratus.Select(obj.el).parent();
                         width = $visibleParent ? $visibleParent.offsetWidth : 0;
+                        /* */
 
                         // If one of parents of the image (and child of the found parent) has a bootstrap col-*-* set
                         // divide width by that in anticipation (e.g. Carousel that has items grouped)
-                        var $col = $(_.first($visibleParent.find('[class*="col-"]')));
+                        var $col = $(_.first($($visibleParent[0]).find('[class*="col-"]')));
 
                         if ($col.length > 0) {
                             var colWidth = Stratus.Internals.GetColWidth($col);
