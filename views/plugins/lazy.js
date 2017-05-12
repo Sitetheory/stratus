@@ -52,7 +52,7 @@
             if (this.$el.length === 0) return false;
 
             // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
-            var el = Stratus.Select(this.el);
+            var el = Stratus(this.el);
             var $el = this.$el;
             Stratus.RegisterGroup.add('OnScroll', {
                 method: Stratus.Internals.LoadImage,

@@ -49,7 +49,7 @@
             this.prepare(options);
 
             var items = this.$el.find('.carousel-inner > .item');
-            this.select = Stratus.Select(this.$el);
+            this.select = Stratus(this.$el);
 
             // If this is mobile, take all the .nestedItem elements and extract them into main layer so there is only one per frame
             if (Stratus.Client.mobile && this.select.attr('data-groupmobile')) {

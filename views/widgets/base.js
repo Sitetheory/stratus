@@ -408,7 +408,7 @@
                 _.each(this.$el[0].attributes, function (attribute) {
                     if (_.startsWith(attribute.name, 'data-')) {
                         var key = attribute.name.substr(5);
-                        this.data[key] = Stratus.Select(this.$el).attr(key);
+                        this.data[key] = Stratus(this.$el).attr(key);
                     }
                 }, this);
             } else {
@@ -562,7 +562,7 @@
             };
             _.each(options, function (value, key) {
                 data.key = key.toLowerCase();
-                data.value = Stratus.Select(this.$el).attr(data.key);
+                data.value = Stratus(this.$el).attr(data.key);
                 if (data.value !== undefined) {
                     options[key] = data.value;
                 }

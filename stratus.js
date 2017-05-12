@@ -723,11 +723,13 @@
     // This function intends to allow native jQuery-Type chaining and plugins
     /**
      * @param selector
+     * @param context
      * @returns {NodeList}
      * @constructor
      */
-    Stratus.Select = function (selector) {
+    Stratus = _.extend(function (selector, context) {
         if (!selector) return null;
+        if (!context) context = document;
         var selection = selector;
         if (typeof selector === 'string') {
             var target;
@@ -738,7 +740,7 @@
             } else {
                 target = 'querySelectorAll';
             }
-            selection = document[target](selector);
+            selection = context[target](selector);
         }
         if (selection && typeof selection === 'object') {
             if (_.isAngular(selection) || _.isjQuery(selection)) {
@@ -752,31 +754,10 @@
             });
         }
         return selection;
-    };
+    }, Stratus);
 
     // Selector Plugins
     // ----------------
-
-    /**
-     * @param className
-     * @returns {*}
-     * @constructor
-     */
-    Stratus.Selector.addClass = function (className) {
-        var that = this;
-        if (that.selection instanceof NodeList) {
-            if (!Stratus.Environment.get('production')) console.log('List:', that);
-        } else {
-            _.each(className.split(' '), function (name) {
-                if (that.selection.classList) {
-                    that.selection.classList.add(name);
-                } else {
-                    that.selection.className += ' ' + name;
-                }
-            });
-        }
-        return that;
-    };
 
     /**
      * @param attr
@@ -793,7 +774,7 @@
                 value = that.selection.getAttribute(attr);
                 return _.isJSON(value) ? JSON.parse(value) : value;
             } else {
-                that.selection.setAttribute(attr, JSON.stringify(value));
+                that.selection.setAttribute(attr, typeof value === 'string' ? value : JSON.stringify(value));
             }
         }
         return that;
@@ -825,7 +806,7 @@
         if (that.selection instanceof NodeList) {
             if (!Stratus.Environment.get('production')) console.log('List:', that);
         } else if (selector) {
-            return that.selection.querySelectorAll(selector);
+            return Stratus(selector, that.selection);
         }
         return that;
     };
@@ -861,6 +842,28 @@
         return that;
     };
 
+    // Design Plugins
+    /**
+     * @param className
+     * @returns {*}
+     * @constructor
+     */
+    Stratus.Selector.addClass = function (className) {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else {
+            _.each(className.split(' '), function (name) {
+                if (that.selection.classList) {
+                    that.selection.classList.add(name);
+                } else {
+                    that.selection.className += ' ' + name;
+                }
+            });
+        }
+        return that;
+    };
+
     /**
      * @param className
      * @returns {*}
@@ -884,9 +887,22 @@
         return that;
     };
 
+    /**
+     * @returns {CSSStyleDeclaration|*}
+     */
+    Stratus.Selector.style = function () {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else if (that.selection instanceof Node) {
+            return getComputedStyle(that.selection);
+        }
+        return that;
+    };
+
     // Positioning Plugins
     /**
-     * @returns {*}
+     * @returns {number|*}
      */
     Stratus.Selector.height = function () {
         var that = this;
@@ -899,7 +915,20 @@
     };
 
     /**
-     * @returns {*}
+     * @returns {number|*}
+     */
+    Stratus.Selector.width = function () {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            console.error('Unable to find width for element:', that.selection);
+        } else {
+            return that.selection.offsetWidth || 0;
+        }
+        return that;
+    };
+
+    /**
+     * @returns {{top: number, left: number}|*}
      */
     Stratus.Selector.offset = function () {
         var that = this;
@@ -923,7 +952,7 @@
         if (that.selection instanceof NodeList) {
             console.error('Unable to find offset for element:', that.selection);
         } else {
-            return that.selection.parentNode;
+            return Stratus(that.selection.parentNode);
         }
         return that;
     };
@@ -1442,7 +1471,7 @@
      * @constructor
      */
     Stratus.Internals.LoadEnvironment = function () {
-        var initialLoad = Stratus.Select('body').attr('data-environment');
+        var initialLoad = Stratus('body').attr('data-environment');
         if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
             Stratus.Environment.set(initialLoad);
         }
@@ -1900,7 +1929,7 @@
      * @constructor
      */
     Stratus.Internals.IsOnScreen = function (el, offset) {
-        el = Stratus.Select(el);
+        el = Stratus(el);
         offset = offset || 0;
         var wt = document.body.scrollTop;
         var wb = wt + document.body.offsetHeight;
@@ -1958,39 +1987,43 @@
      * @constructor
      */
     Stratus.Internals.LoadImage = function (obj) {
-        obj.el.addClass('placeholder');
-        if (Stratus.Internals.IsOnScreen(obj.spy) && !Stratus.Select(obj.el).attr('data-loading')) {
-            obj.el.attr('data-loading', 'true');
+        var el = Stratus(obj.el);
+        el.addClass('placeholder');
+        if (Stratus.Internals.IsOnScreen(obj.spy) && !el.attr('data-loading')) {
+            el.attr('data-loading', true);
             Stratus.DOM.complete(function () {
 
                 // By default we'll load larger versions of an image to look good on HD displays, but if you
                 // don't want that, you can bypass it with data-hd="false"
-                var hd = obj.el.data('hd');
-                hd = (typeof hd === 'undefined') ? true : (_.isJSON(hd) ? JSON.parse(hd) : hd);
+                var hd = el.attr('data-hd');
+                if (typeof hd === 'undefined') {
+                    hd = true;
+                }
 
                 // Don't Get the Width, until it's "onScreen" (in case it was collapsed offscreen originally)
-                var src = obj.el.data('src');
+                var src = el.attr('data-src');
 
                 // Handle precedence
                 if (!src || src === 'lazy') {
-                    src = obj.el.attr('src');
+                    src = el.attr('src');
                 }
 
                 var size = null;
 
                 // if a specific valid size is requested, use that
-                if (obj.el.data('size') && size.indexOf(obj.el.data('size')) !== false) {
-                    size = obj.el.data('size');
+                // FIXME: size.indexOf should never return anything useful
+                if (el.attr('data-size') && size.indexOf(el.attr('data-size')) !== false) {
+                    size = el.attr('data-size');
                 } else {
                     var width = null;
                     var unit = null;
                     var percentage = null;
 
-                    if (obj.el.prop('style').width) {
+                    if (el.style().width) {
                         // Check if there is CSS width hard coded on the element
-                        width = obj.el.prop('style').width;
-                    } else if (obj.el.attr('width')) {
-                        width = obj.el.attr('width');
+                        width = el.style().width;
+                    } else if (el.attr('width')) {
+                        width = el.attr('width');
                     }
 
                     // Digest Width Attribute
@@ -2005,24 +2038,23 @@
                     // FIXME: This should only happen if the CSS has completely loaded.
                     // Gather Container (Calculated) Width
                     if (!width || unit === '%') {
+                        // FIXME: This is jquery and I wrote a possibly long-term solution natively
+                        /* *
                         // If there is no CSS width, calculate the parent container's width
                         // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
                         // So we need to find the first parent that is visible and use that width
                         // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
                         // so in some cases we need to flag to find the parent regardless of invisibility.
-                        var visibilitySelector = (obj.el.data('ignorevisibility')) ? null : ':visible';
-
-                        // FIXME: This is jquery and I wrote a possibly long-term solution natively
+                        var visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible';
                         var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
-
-                        /* *
-                        var $visibleParent = Stratus.Select(obj.el).parent();
-                        width = $visibleParent ? $visibleParent.offsetWidth : 0;
                         /* */
+
+                        var $visibleParent = el.parent();
+                        width = $visibleParent ? $visibleParent.width() : 0;
 
                         // If one of parents of the image (and child of the found parent) has a bootstrap col-*-* set
                         // divide width by that in anticipation (e.g. Carousel that has items grouped)
-                        var $col = $(_.first($($visibleParent[0]).find('[class*="col-"]')));
+                        var $col = $visibleParent.find('[class*="col-"]');
 
                         if ($col.length > 0) {
                             var colWidth = Stratus.Internals.GetColWidth($col);
@@ -2039,7 +2071,7 @@
 
                     // If no appropriate width was found, abort
                     if (width <= 0) {
-                        obj.el.attr('data-loading', 'false');
+                        el.attr('data-loading', false);
                         setTimeout(function () {
                             Stratus.Internals.LoadImage(obj);
                         }, 500);
@@ -2067,14 +2099,14 @@
                 src = srcMatch[1] + '-' + size + '.' + srcMatch[3];
 
                 // Change the Source to be the desired path
-                obj.el.attr('src', src);
-                obj.el.addClass('loading');
+                el.attr('src', src.startsWith('//') ? location.protocol + src : src);
+                el.addClass('loading');
                 if (obj.el.load) {
                     obj.el.load(function () {
-                        Stratus.Select(this).addClass('loaded').removeClass('placeholder loading');
+                        el.addClass('loaded').removeClass('placeholder loading');
                     });
                 } else {
-                    Stratus.Select(obj.el).addClass('loaded').removeClass('placeholder loading');
+                    el.addClass('loaded').removeClass('placeholder loading');
                 }
 
                 // Remove from registration
@@ -2166,7 +2198,7 @@
                 }
 
                 /* Inject Link into Head */
-                Stratus.Select('head').prepend(link);
+                Stratus('head').prepend(link);
             }
         });
     };
@@ -2368,7 +2400,7 @@
         }
 
         /*Stratus.Events.trigger('alert', profile + JSON.stringify(Stratus.Client));*/
-        Stratus.Select('body').addClass(profile.join(' '));
+        Stratus('body').addClass(profile.join(' '));
     };
 
     // Internal View Model
@@ -2752,7 +2784,7 @@
                 // Load CSS
                 // TODO: Make Dynamic
                 var css = [];
-                var cssLoaded = Stratus.Select('link[satisfies]').map(function (node) {
+                var cssLoaded = Stratus('link[satisfies]').map(function (node) {
                     return node.getAttribute('satisfies');
                 });
                 if (!_.contains(cssLoaded, 'angular-material.css')) {
@@ -2761,11 +2793,11 @@
                     );
                 }
                 /**
-                if (Stratus.Select('stratus-help').length) {
+                if (Stratus('stratus-help').length) {
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
                 /**/
-                if (Stratus.Select('[froala]').length || Stratus.Select('[stratus-froala]').length) {
+                if (Stratus('[froala]').length || Stratus('[stratus-froala]').length) {
                     [
                         Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
                         Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css',
@@ -2829,7 +2861,7 @@
      */
     Stratus.Internals.Loader = function (selector, view, requirements) {
         if (typeof selector === 'undefined') {
-            var body = Stratus.Select('body');
+            var body = Stratus('body');
             selector = !body.attr('data-loaded') ? '[data-entity],[data-plugin]' : null;
             if (selector) {
                 body.attr('data-loaded', true);
@@ -2843,7 +2875,7 @@
          */
         /* We check view, selector, and type in this order to save a small amount of power */
         if (selector) {
-            selector = (view && selector && typeof selector === 'object') ? Stratus.Select(selector).find('[data-type],[data-plugin]') : Stratus.Select(selector);
+            selector = (view && selector && typeof selector === 'object') ? Stratus(selector).find('[data-type],[data-plugin]') : Stratus(selector);
         }
         return new Promise(function (resolve, reject) {
             var entries = {
@@ -2885,7 +2917,7 @@
         var parentView = (view) ? view : null;
         var parentChild = false;
 
-        var element = Stratus.Select(el);
+        var element = Stratus(el);
         view = new Stratus.Internals.View();
         view.set('el', element);
         view.hydrate();
@@ -3547,7 +3579,7 @@
     // ------------------
     // On DOM Ready, add browser compatible CSS classes and digest DOM data-entity attributes.
     Stratus.DOM.ready(function () {
-        Stratus.Select('body').removeClass('loaded unloaded').addClass('loading');
+        Stratus('body').removeClass('loaded unloaded').addClass('loading');
         Stratus.Events.trigger('initialize');
     });
 
@@ -3556,7 +3588,7 @@
 
     // Stratus Events are more accurate than the DOM, so nothing is added to this stub.
     Stratus.DOM.complete(function () {
-        Stratus.Select('body').removeClass('loading unloaded').addClass('loaded');
+        Stratus('body').removeClass('loading unloaded').addClass('loaded');
     });
 
     // DOM Unload Routines
@@ -3567,7 +3599,7 @@
     // while providing the user with a confirmation box, if necessary,
     // before close routines are triggered.
     Stratus.DOM.unload(function (event) {
-        Stratus.Select('body').removeClass('loading loaded').addClass('unloaded');
+        Stratus('body').removeClass('loading loaded').addClass('unloaded');
         Stratus.Events.trigger('terminate', event);
         /* *
         if (event.cancelable === true) {
