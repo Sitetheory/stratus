@@ -70,6 +70,12 @@
     // individual instance of Stratus Objects are currently not maintained within
     // the Stratus Layer's Global Object.  There may be a future implementation of a
     // Stratus Property to contain these instances within the Stratus Layer as well.
+    /**
+     * @param selector
+     * @param context
+     * @returns {NodeList|Node}
+     * @constructor
+     */
     var Stratus = {
         /* Settings */
         Settings: {
@@ -724,7 +730,7 @@
     /**
      * @param selector
      * @param context
-     * @returns {NodeList}
+     * @returns {NodeList|Node}
      * @constructor
      */
     Stratus = _.extend(function (selector, context) {
@@ -2019,9 +2025,9 @@
                     var unit = null;
                     var percentage = null;
 
-                    if (el.style().width) {
+                    if (el.width()) {
                         // Check if there is CSS width hard coded on the element
-                        width = el.style().width;
+                        width = el.width();
                     } else if (el.attr('width')) {
                         width = el.attr('width');
                     }
