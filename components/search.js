@@ -52,7 +52,6 @@
 
             // Settings
             $scope.display = $attrs.display && _.isJSON($attrs.display) ? JSON.parse($attrs.display) : false;
-            console.log('display:', $scope.display);
 
             // Localize Collection
             $scope.collection = null;

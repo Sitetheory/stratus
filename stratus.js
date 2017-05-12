@@ -766,7 +766,7 @@
         var that = this;
         if (that.selection instanceof NodeList) {
             if (!Stratus.Environment.get('production')) console.log('List:', that);
-        } else if (that.selection.length) {
+        } else {
             _.each(className.split(' '), function (name) {
                 if (that.selection.classList) {
                     that.selection.classList.add(name);
@@ -872,7 +872,7 @@
             if (!Stratus.Environment.get('production')) {
                 console.log('List:', that);
             }
-        } else if (that.selection.length) {
+        } else {
             if (that.selection.classList) {
                 _.each(className.split(' '), function (name) {
                     that.selection.classList.remove(name);
@@ -922,7 +922,7 @@
         var that = this;
         if (that.selection instanceof NodeList) {
             console.error('Unable to find offset for element:', that.selection);
-        } else if (that.selection.length) {
+        } else {
             return that.selection.parentNode;
         }
         return that;
