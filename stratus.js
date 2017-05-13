@@ -35,7 +35,8 @@
             'text',
             'underscore',
             'bowser',
-            'promise'
+            'promise',
+            'jquery' // TODO: Remove this!
         ], function (text, _, bowser) {
             return (root.Stratus = factory(text, _, bowser));
         });
@@ -1935,33 +1936,15 @@
      * @constructor
      */
     Stratus.Internals.IsOnScreen = function (el, offset) {
+        el = Stratus(el);
         offset = offset || 0;
-        /* FIXME: Native Logic is broken on "et" and "eb" *
         var position = {
-            target: Stratus(el)
+            wt: document.body.scrollTop,
+            et: el.offset().top || null
         };
-        position.wt = document.body.scrollTop;
         position.wb = position.wt + document.body.offsetHeight;
-        position.et = position.target.offset() ? position.target.offset().top : null;
-        position.eb = position.target.height() + (typeof position.et === 'number' ? position.et : 0);
-        //return position.eb >= (position.wt + offset) && position.et <= (position.wb - offset);
-        /* */
-
-        var legacy = {};
-        legacy.wt = $(window).scrollTop();
-        legacy.wb = legacy.wt + $(window).height();
-        legacy.et = el.offset() ? el.offset().top : null;
-        legacy.eb = legacy.et + el.height();
-
-        /* FIXME: Native Logic is broken on "et" and "eb" *
-        _.each(position, function (value, key) {
-            if (key !== 'target' && legacy[key] !== value) {
-                console.log(key + ':', value, '!==', legacy[key])
-            }
-        });
-        /* */
-
-        return (legacy.eb >= legacy.wt + offset && legacy.et <= legacy.wb - offset);
+        position.eb = el.height() + (position.et || 0);
+        return position.eb >= (position.wt + offset) && position.et <= (position.wb - offset);
     };
 
     // Internal Anchor Capture

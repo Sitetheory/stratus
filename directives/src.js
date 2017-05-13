@@ -51,7 +51,7 @@
                 };
 
                 // Source Interpolation
-                $scope.src = $attrs.stratusSrc || $element.attr('src');
+                $scope.src = $element.attr('src') || $element.attr('stratus-src');
                 $scope.interpreter = $interpolate($scope.src, false, null, true);
                 $scope.initial = $scope.interpreter($scope.$parent);
                 if (angular.isDefined($scope.initial)) {
