@@ -1,4 +1,5 @@
 <div class="layout_bx theme-bx">
+    <!-- TODO: only show the header and help bubble if one is specified in the component attribute settings -->
     <div class="lt-header">
         <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Theme</h3>
     </div><!-- Gallery header Ends -->
@@ -15,6 +16,8 @@
                 It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
                 and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
             </p>
+            <!-- TODO: make this float right. -->
+            <div><a ng-href="{{ collection.meta.data.editUrl}}?id={{ model.data.id }}">Customize</a></div>
         </div><!-- Layout content Ends -->
     </div><!-- Layout box Inner ends -->
 </div><!-- Layout Box Ends -->
