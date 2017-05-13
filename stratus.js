@@ -1935,13 +1935,33 @@
      * @constructor
      */
     Stratus.Internals.IsOnScreen = function (el, offset) {
-        el = Stratus(el);
         offset = offset || 0;
-        var wt = document.body.scrollTop;
-        var wb = wt + document.body.offsetHeight;
-        var et = el.offset() ? el.offset().top : null;
-        var eb = el.height() + (typeof et === 'number' ? et : 0);
-        return (eb >= wt + offset && et <= wb - offset);
+        /* FIXME: Native Logic is broken on "et" and "eb" *
+        var position = {
+            target: Stratus(el)
+        };
+        position.wt = document.body.scrollTop;
+        position.wb = position.wt + document.body.offsetHeight;
+        position.et = position.target.offset() ? position.target.offset().top : null;
+        position.eb = position.target.height() + (typeof position.et === 'number' ? position.et : 0);
+        //return position.eb >= (position.wt + offset) && position.et <= (position.wb - offset);
+        /* */
+
+        var legacy = {};
+        legacy.wt = $(window).scrollTop();
+        legacy.wb = legacy.wt + $(window).height();
+        legacy.et = el.offset() ? el.offset().top : null;
+        legacy.eb = legacy.et + el.height();
+
+        /* FIXME: Native Logic is broken on "et" and "eb" *
+        _.each(position, function (value, key) {
+            if (key !== 'target' && legacy[key] !== value) {
+                console.log(key + ':', value, '!==', legacy[key])
+            }
+        });
+        /* */
+
+        return (legacy.eb >= legacy.wt + offset && legacy.et <= legacy.wb - offset);
     };
 
     // Internal Anchor Capture
@@ -2038,7 +2058,7 @@
                         width = digest.exec(width);
                         unit = width[2];
                         width = parseInt(width[1]);
-                        percentage = (unit === '%') ? (width / 100) : null;
+                        percentage = unit === '%' ? (width / 100) : null;
                     }
 
                     // FIXME: This should only happen if the CSS has completely loaded.

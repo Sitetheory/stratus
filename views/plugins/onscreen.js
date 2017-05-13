@@ -91,12 +91,12 @@
 
             // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
             if (lastScroll === 'down') {
-                options.target.addClass('scrollDown').removeClass('scrollUp');
+                options.target.addClass('scrollDown');
             } else {
                 options.target.removeClass('scrollDown');
             }
             if (lastScroll === 'up') {
-                options.target.addClass('scrollUp').removeClass('scrollDown');
+                options.target.addClass('scrollUp');
             } else {
                 options.target.removeClass('scrollUp');
             }
@@ -134,6 +134,14 @@
                 options.offScreen();
             }
         }
+
+        /* FIXME: Native IsOnScreen is broken... *
+        console.log('CheckOnScreen:', {
+            direction: lastScroll,
+            spy: options.spy,
+            offset: options.offset
+        }, Stratus.Internals.IsOnScreen(options.spy, options.offset));
+        /* */
     };
 
 }));
