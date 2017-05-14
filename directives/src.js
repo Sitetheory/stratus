@@ -42,11 +42,13 @@
                     if ($scope.registered) return true;
                     $scope.registered = true;
                     $element.attr('data-src', 'lazy');  // This is here for CSS backwards compatibility
-                    Stratus.RegisterGroup.add('OnScroll', {
+                    $scope.group = {
                         method: Stratus.Internals.LoadImage,
                         el: $element,
                         spy: $element.data('spy') ? Stratus($element.data('spy')) : $element
-                    });
+                    };
+                    Stratus.RegisterGroup.add('OnScroll', $scope.group);
+                    Stratus.Internals.LoadImage($scope.group);
                     Stratus.Internals.OnScroll();
                 };
 
