@@ -77,6 +77,9 @@
                 this.saving = false;
                 this.watching = false;
 
+                // Auto-Saving Logic
+                this.patch = {};
+
                 // Contextual Hoisting
                 var that = this;
 
@@ -86,13 +89,16 @@
                     that.watching = true;
                     $rootScope.$watch(function () {
                         return that.data;
-                    }, function (newData, oldData) {
-                        if (!_.isEqual(newData, oldData)) {
-                            if (newData.id && newData.id !== oldData.id) {
+                    }, function (newData, priorData) {
+                        var patch = _.patch(newData, priorData);
+                        if (patch) {
+                            if (newData.id && newData.id !== priorData.id) {
                                 window.location.replace(
                                     Stratus.Internals.SetUrlParams({ id: newData.id })
                                 );
                             }
+                            that.patch = _.extend(that.patch, patch);
+                            console.log('patch:', that.patch);
                             that.changing = true;
                             that.changed = 1;
                         }
@@ -204,7 +210,9 @@
                  * @returns {*}
                  */
                 this.fetch = function (action, data) {
-                    return that.sync(action, data || that.meta.get('api')).catch(console.error);
+                    return that.sync(action, data || that.meta.get('api')).catch(function (message) {
+                        console.error('FETCH:', message);
+                    });
                 };
 
                 /**
@@ -213,23 +221,44 @@
                 this.save = function () {
                     that.changing = false;
                     that.saving = true;
-                    return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON()).catch(console.error);
+                    return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON({
+                        patch: true
+                    })).catch(function (message) {
+                        console.error('SAVE:', message);
+                    });
                 };
 
                 // Attribute Functions
 
                 /**
+                 * @param options
                  * @returns {{meta, payload}}
                  */
-                this.toJSON = function () {
-                    var data = that.meta.has('api') ? {
+                this.toJSON = function (options) {
+                    /* *
+                    options = _.extend(options || {}, {
+                        patch: false
+                    });
+                    /* */
+                    var data;
+
+                    // options.patch ? that.toPatch() :
+                    data = that.data;
+                    data = that.meta.has('api') ? {
                         meta: that.meta.get('api'),
-                        payload: that.data
-                    } : that.data;
+                        payload: data
+                    } : data;
                     if (that.meta.size() > 0) {
                         that.meta.clearTemp();
                     }
                     return data;
+                };
+
+                /**
+                 * @returns {null}
+                 */
+                that.toPatch = function () {
+                    return that.patch;
                 };
 
                 /**
@@ -397,7 +426,9 @@
                         that.collection.remove(that);
                     }
                     if (that.get('id')) {
-                        that.sync('DELETE', {}).catch(console.error);
+                        that.sync('DELETE', {}).catch(function (message) {
+                            console.error('DESTROY:', message);
+                        });
                     }
                 };
 
@@ -409,7 +440,9 @@
                             that.sync('POST', that.meta.has('api') ? {
                                 meta: that.meta.get('api'),
                                 payload: {}
-                            } : {}).catch(console.error);
+                            } : {}).catch(function (message) {
+                                console.error('MANIFEST:', message);
+                            });
                         }
                     });
                 if (!that.stagger) {

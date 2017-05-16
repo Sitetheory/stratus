@@ -163,7 +163,11 @@
                  * @returns {*}
                  */
                 this.fetch = function (action, data) {
-                    return that.sync(action, data || that.meta.get('api')).catch(console.error);
+                    return that.sync(action, data || that.meta.get('api')).catch(
+                        function (message) {
+                            console.error('FETCH:', message);
+                        }
+                    );
                 };
 
                 /**
@@ -172,7 +176,9 @@
                  */
                 this.filter = function (query) {
                     that.meta.set('api.q', angular.isDefined(query) ? query : '');
-                    return that.fetch();
+                    var data = that.fetch();
+                    console.log('filter:', data);
+                    return data;
                 };
 
                 /**

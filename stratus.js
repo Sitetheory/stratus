@@ -36,7 +36,10 @@
             'underscore',
             'bowser',
             'promise',
-            'jquery' // TODO: Remove this!
+
+            // TODO: Remove below once phased out appropriately
+            'backbone',
+            'jquery'
         ], function (text, _, bowser) {
             return (root.Stratus = factory(text, _, bowser));
         });
@@ -65,12 +68,13 @@
     // Stratus Layer Prototype
     // -----------------------
 
-    // This prototype is the only Global Object that should ever be used within the
-    // Stratus layer.  Currently, all Stratus Backbone Objects (Models, Collections,
-    // Views, Routers, and Events) are defined within each Stratus Property.  Each
-    // individual instance of Stratus Objects are currently not maintained within
-    // the Stratus Layer's Global Object.  There may be a future implementation of a
-    // Stratus Property to contain these instances within the Stratus Layer as well.
+    // This prototype is the only Global Object that will ever be used within the
+    // Stratus layer.  Each individual instantiated reference from a constructor gets
+    // stored in the Instances property, and every Data Set is maintained in the
+    // Catalog, for efficient access and debugging purposes.  Further down this
+    // initialization routine, this Global Object gets mixed with a function that
+    // allows for Native DOM Selectors with added functionality to ensure the core
+    // Stratus files never require external DOM Libraries, such as jQuery.
     /**
      * @param selector
      * @param context
@@ -606,6 +610,47 @@
             return (typeof target === 'string' && target.substr(0, search.length).toUpperCase() === search.toUpperCase());
         },
         /**
+         * @param newData
+         * @param priorData
+         * @returns {*}
+         */
+        patch: function (newData, priorData) {
+            if (!_.isObject(newData) || !_.size(newData)) return null;
+            var patch = {};
+            var processor = {
+                eax: undefined,
+                ebx: undefined,
+                ecx: undefined,
+                edx: undefined
+            };
+            if (!_.isObject(priorData) || !_.size(priorData)) {
+                console.error('bad prior:', priorData);
+            } else {
+                var detect = function (value, key) {
+                    processor.eax = processor.ecx ? processor.ecx + '.' + key : key;
+                    if (_.isObject(value)) {
+                        processor.ecx = processor.eax;
+                        _.each(value, detect);
+                        processor.ecx = processor.ecx === key ? undefined : processor.ecx.substring(0, processor.ecx.lastIndexOf('.'));
+                    } else {
+                        processor.ebx = _.reduce(processor.eax.split('.'), function (data, a) {
+                            return data && data[a];
+                        }, priorData);
+                        if (processor.ebx !== value) {
+                            processor.edx = value;
+                        }
+                    }
+                    if (processor.edx !== undefined) {
+                        patch[processor.eax] = value;
+                        processor.edx = undefined;
+                    }
+                };
+                _.each(newData, detect);
+            }
+            return (!patch || !_.size(patch)) ? null : patch;
+        },
+
+        /**
          * @param a
          * @param b
          * @returns {number}
@@ -727,15 +772,14 @@
     // Native Selector
     // ---------------
 
-    // This function intends to allow native jQuery-Type chaining and plugins
+    // This function intends to allow native jQuery-Type chaining and plugins.
     /**
      * @param selector
      * @param context
      * @returns {NodeList|Node}
      * @constructor
      */
-    Stratus = _.extend(function (selector, context) {
-        if (!selector) return null;
+    Stratus.Select = function (selector, context) {
         if (!context) context = document;
         var selection = selector;
         if (typeof selector === 'string') {
@@ -761,6 +805,11 @@
             });
         }
         return selection;
+    };
+    Stratus = _.extend(function (selector, context) {
+        // The function is a basic shortcut to the Stratus.Select
+        // function for native jQuery-like chaining and plugins.
+        return Stratus.Select(selector, context);
     }, Stratus);
 
     // Selector Plugins
