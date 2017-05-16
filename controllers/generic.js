@@ -50,6 +50,7 @@
 
             // Wrappers
             $scope.Stratus = Stratus;
+            $scope._ = _;
             $scope.setUrlParams = function (options) {
                 if (angular.isObject(options)) {
                     var substance = false;

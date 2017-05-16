@@ -98,7 +98,6 @@
                                 );
                             }
                             that.patch = _.extend(that.patch, patch);
-                            console.log('patch:', that.patch);
                             that.changing = true;
                             that.changed = 1;
                         }
@@ -182,6 +181,7 @@
 
                                     // Auto-Saving Settings
                                     that.saving = false;
+                                    that.patch = {};
 
                                     // Begin Watching
                                     that.watcher();

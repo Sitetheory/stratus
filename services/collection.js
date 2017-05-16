@@ -176,9 +176,7 @@
                  */
                 this.filter = function (query) {
                     that.meta.set('api.q', angular.isDefined(query) ? query : '');
-                    var data = that.fetch();
-                    console.log('filter:', data);
-                    return data;
+                    return that.fetch();
                 };
 
                 /**
