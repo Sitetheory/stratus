@@ -1,24 +1,27 @@
 <div id="comp">
     <div class="layout_bx">
         <div class="lt-header">
-            <h3><span><i class="fa fa-question" aria-hidden="true" ></i></span> Layout</h3>
+            <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Layout</h3>
         </div><!-- Gallery header Ends -->
-        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || $ctrl.ngModel === null" ng-click="toggleGallery();">
-            <i   ng-class="galleryClass"  class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
-      <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
-        <div class="lt_box" ng-repeat="sel in selectListArr">
+        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || model.exists(property)"
+           ng-click="toggleGallery();">
+            <i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
+        <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
+        <div class="lt_box" ng-repeat="sel in model.get(property)">
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
-            <button  class="cancel--btn" ng-click="removeSelected(sel);"></button>
-            <div class="lt-image" ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed' && showGallery !== true]">
+            <button class="cancel--btn" ng-click="model.toggle(property, sel.data.id, toggleOptions);"></button>
+            <div class="lt-image"
+                 ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
                 <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
                 <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
-                    <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel !== null && showGallery !== true"
-                        ng-click="displayGallery();" class="blck_btn">
-                        <span>Change</span></a>
-                    <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && $ctrl.ngModel === null && showGallery !== true" class="blck_btn"
-                       ng-click="displayGallery();">
-                        <span>Choose Layout</span></a>
+                <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
+                   ng-click="displayGallery();" class="blck_btn">
+                    <span>Change</span></a>
+                <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
+                   class="blck_btn"
+                   ng-click="displayGallery();">
+                    <span>Choose Layout</span></a>
                 <!--</div>-->
             </div>
             <div class="lt-content">
@@ -26,7 +29,7 @@
                 <p>{{sel.description}}</p>
             </div>
         </div><!-- Layout box Inner ends -->
-        <div ng-show="selectListArr.length === 0">
+        <div ng-show="!model.get(property).length">
             <span>No Items selected</span>
         </div>
     </div><!-- Layout Box Ends -->
@@ -37,35 +40,38 @@
             <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Choose From Layout</h3>
         </div><!-- Gallery header Ends -->
         <div class="search--gallery" ng-if="$ctrl.search === true">
-            <stratus-search  flex="40"></stratus-search>
+            <stratus-search flex="40"></stratus-search>
         </div>
         <div class="lt_box">
             <ul class="layout_gallery">
-                <li ng-repeat="model in collection.models">
-					<span class="galleryimg-cont" ng-class="{'select-highlight': isSelected(model.data)}">
+                <li ng-repeat="target in collection.models">
+					<span class="galleryimg-cont" ng-class="{'select-highlight': isSelected(target.data)}">
                         <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt=""/>
-						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(model.data);">
+						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(target.data);">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </a>
-						<a href="#" ng-hide="checkSelected(model.data)" ng-click="chooseLayout(model.data,$event)" class="bl_btn">Choose Layout </a>
+						<a href="#" ng-hide="model.exists(property, target.data.id)"
+                           ng-click="model.toggle(property, target.data.id, toggleOptions)"
+                           class="bl_btn">Choose Layout </a>
 					</span>
-                    <h5>{{model.data.name}}</h5>
+                    <h5>{{target.data.name}}</h5>
                 </li>
             </ul><!-- Layout Gallery Ends -->
         </div><!-- Layout box Inner ends -->
         <stratus-pagination class="visual-pag"></stratus-pagination>
     </div><!-- Layout Box Ends -->
-    <!---Detail Page ends here---------->
+    <!-- Detail Page ends here -->
 </div>
 
 <script type="text/ng-template" id="layoutDetail.html">
-    <!---Detail Page starts from here---------->
+    <!-- Detail Page starts from here -->
     <div class="layout-dialog" role="dialog">
         <div class="lt-popup">
             <div class="ltpop-left">
                 <h3>{{layoutDetail.name}}</h3>
                 <p>{{layoutDetail.description}}</p>
-                <a href="#" ng-hide="checkSelected(layoutDetail)" ng-click="chooseLayout(layoutDetail,$event)" class="bl_btn">Choose Layout </a>
+                <a href="#" ng-hide="model.exists(property, layoutDetail.data.id)"
+                   ng-click="model.toggle(property, layoutDetail.id, toggleOptions)" class="bl_btn">Choose Layout </a>
             </div>
             <div class="ltpop-right">
                 <a href="#">

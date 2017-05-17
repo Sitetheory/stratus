@@ -32,7 +32,9 @@
             'angular-material',
 
             // Services
+            'stratus.services.registry',
             'stratus.services.collection',
+            'stratus.services.model',
 
             // Components
             'stratus.components.search',
@@ -48,58 +50,80 @@
     // code layout-option{'collapsed','expanded'}
     Stratus.Components.VisualSelector = {
         bindings: {
+            // Basic
+            elementId: '@',
             ngModel: '=',
+            property: '@',
+
+            // Selector
+            type: '@',
+            limit: '@',
+            multiple: '<',
+
+            // Custom
             layoutOption: '@',
             details: '<',
-            search: '<',
-            target: '@',
-            limit: '@',
-            multiple: '<'
+            search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registry) {
+        controller: function ($scope, $mdPanel, $attrs, registry, model) {
+            // Initialize
+            this.uid = _.uniqueId('visual_selector_');
+            Stratus.Instances[this.uid] = $scope;
+            $scope.elementId = $attrs.elementId || this.uid;
 
+            // CSS
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/visualSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
+            // Settings
             $scope.showGallery = false;
-            $scope.selectListArr = [];
             $scope.galleryClass = 'fa fa-plus';
 
-            // fetch target collection and hydrate to $scope.collection
-            $scope.registry = new registry();
-            $scope.registry.fetch({
-                target: $attrs.target || 'Layout',
-                id: null,
-                manifest: false,
-                decouple: true,
-                api: {
-                    options: {},
-                    limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 3
+            // Hydrate Settings
+            $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
+
+            // Asset Collection
+            if ($attrs.type) {
+                $scope.registry = new registry();
+                var request = {
+                    target: $attrs.type || 'Layout',
+                    id: null,
+                    manifest: false,
+                    decouple: true,
+                    api: {
+                        options: {},
+                        limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
+                    }
+                };
+                if ($scope.api && angular.isObject($scope.api)) {
+                    request.api = _.extendDeep(request.api, $scope.api);
                 }
-            }, $scope);
+                $scope.registry.fetch(request, $scope);
+            }
+
+            // Store Asset Property for Verification
+            $scope.property = $attrs.property || null;
+
+            // Store Toggle Options for Custom Actions
+            $scope.toggleOptions = {
+                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : true
+            };
 
             // Data Connectivity
+            $scope.model = null;
             $scope.$watch('$ctrl.ngModel', function (data) {
-                if (!_.isUndefined(data) && !_.isEqual($scope.selectListArr, data)) {
-                    $scope.selectListArr = data || [];
+                if (data instanceof model && data !== $scope.model) {
+                    $scope.model = data;
                 }
             });
-            $scope.$watch('selectListArr', function (data) {
-                if (_.isArray(data) && !_.isUndefined($scope.$ctrl.ngModel) && !_.isEqual($scope.selectListArr, $scope.$ctrl.ngModel)) {
-                    $scope.$ctrl.ngModel = $scope.selectListArr;
-                }
-            }, true);
 
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {
-
                 $scope.showGallery = true;
                 $scope.galleryClass = 'fa fa-minus';
-
             };
 
             // zoom view for chosen  layout
             $scope.zoomView = function (layoutDetail) {
-
                 $scope.layoutDetail = layoutDetail;
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
@@ -120,60 +144,23 @@
                 };
 
                 $mdPanel.open(config);
-
             };
 
             function ZoomController(mdPanelRef) {
-
                 $scope.closeDialog = function () {
-
                     mdPanelRef.close();
                 };
-
             }
-            $scope.chooseLayout = function (selectedData, $event) {
 
-                // add class
-                $scope.selected = selectedData;
-
-                // add to selected list
-                $scope.selectListArr = [];
-                $scope.selectListArr.push(selectedData);
-
-            };
-            $scope.isSelected = function (item) {
-
-                return $scope.selected === item;
-            };
             $scope.toggleGallery = function () {
                 if ($scope.showGallery === true) {
                     $scope.galleryClass = 'fa fa-plus';
                     $scope.showGallery = false;
-                }else if ($scope.showGallery === false) {
+                } else if ($scope.showGallery === false) {
                     $scope.galleryClass = 'fa fa-minus';
                     $scope.showGallery = true;
                 }
             };
-            $scope.removeSelected = function (selectedLayout) {
-
-                var index = $scope.selectListArr.indexOf(selectedLayout);
-                if (index >= 0) {
-                    $scope.selectListArr.splice(index, 1);
-                    $scope.selected = {};
-                }
-            };
-
-            // hide choose layout button if layout is selected
-            $scope.checkSelected = function (selectedLayout) {
-
-                var index = $scope.selectListArr.indexOf(selectedLayout);
-                if (index >= 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            };
-
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/visualSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
