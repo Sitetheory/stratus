@@ -3407,7 +3407,7 @@
      * @constructor
      */
     Stratus.PostMessage.Convoy = function (fn) {
-        window.addEventListener('message', function () {
+        window.addEventListener('message', function (event) {
             if (event.origin !== 'https://auth.sitetheory.io') return false;
             fn(_.isJSON(event.data) ? JSON.parse(event.data) : {});
         }, false);
