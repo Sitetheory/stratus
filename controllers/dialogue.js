@@ -68,7 +68,7 @@
                     controller: function ($scope, $mdDialog, ngModel) {
                         Stratus.Instances[uid + '_mdDialog'] = $scope;
                         $scope.model = ngModel;
-                        $scope.close = function () {
+                        $scope.hide = function () {
                             $mdDialog.hide();
                         };
                     }
