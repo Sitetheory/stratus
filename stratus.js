@@ -3422,7 +3422,7 @@
         ssoEnabled = (ssoEnabled === null) ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false);
         if (convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY') && ssoEnabled) {
             _.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
-            if (!Stratus.Client.safari) location.reload(true);
+            if (!Stratus.Client.safari && false) location.reload(true);
         }
     }));
 
