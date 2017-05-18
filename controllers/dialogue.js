@@ -39,7 +39,8 @@
         '$mdDialog',
         function ($scope, $element, $parse, $mdDialog) {
             // Store Instance
-            Stratus.Instances[_.uniqueId('dialog_')] = $scope;
+            var uid = _.uniqueId('dialogue_');
+            Stratus.Instances[uid] = $scope;
 
             // Digest Template
             $scope.template = $element.attr('template') || null;
@@ -65,6 +66,7 @@
                         ngModel: $scope.model
                     },
                     controller: function ($scope, $mdDialog, ngModel) {
+                        Stratus.Instances[uid + '_mdDialog'] = $scope;
                         $scope.model = ngModel;
                         $scope.close = function () {
                             $mdDialog.hide();
