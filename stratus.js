@@ -370,7 +370,9 @@
                 }
                 if (path) cookie += 'path=' + path + ';';
                 if (domain) cookie += 'domain=' + domain + ';';
-                document.cookie = cookie;
+
+                // document.cookie = cookie;
+                console.log('cookie:', cookie, 'current:', document.cookie);
             }
         },
 
@@ -3415,14 +3417,14 @@
 
     // When a message arrives from another source, handle the Convoy
     // appropriately.
-    Stratus.PostMessage.Convoy(function (convoy) {
+    Stratus.PostMessage.Convoy(_.once(function (convoy) {
         var ssoEnabled = _.cookie('sso');
         ssoEnabled = (ssoEnabled === null) ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false);
         if (convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY') && ssoEnabled) {
             _.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
             if (!Stratus.Client.safari) location.reload(true);
         }
-    });
+    }));
 
     // DOM Listeners
     // -------------
