@@ -30,6 +30,7 @@
     "moment": "^2.*",
     "moment-range": "^2.*",
     "moment-timezone": "^0.*",
+    "angular-material-datetimepicker": "^1.5",
     "tether": "^1.*",
     "Sortable": "^1.*",
     "ng-sortable": "https://github.com/SortableJS/angular-legacy-sortablejs.git",
