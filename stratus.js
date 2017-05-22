@@ -352,27 +352,39 @@
          * @returns {Array|{index: number, input: string}}
          */
         cookie: function (name, value, expires, path, domain) {
-            if (typeof value === 'undefined') {
-                var search = new RegExp('(?:^' + name + '|;\\s*' + name + ')=(.*?)(?:;|$)', 'g');
+            var request = {
+                name: name,
+                value: value,
+                expires: expires,
+                path: path || '/',
+                domain: domain
+            };
+            if (name && typeof name === 'object') {
+                _.extend(request, name);
+            }
+            if (typeof request.value === 'undefined') {
+                var search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name + ')=(.*?)(?:;|$)', 'g');
                 var data = search.exec(document.cookie);
                 return (data === null) ? null : data[1];
             } else {
-                var cookie = name + '=' + escape(value) + ';';
-                if (expires) {
-                    if (expires instanceof Date) {
-                        if (isNaN(expires.getTime())) {
-                            expires = new Date();
+                var cookie = request.name + '=' + escape(request.value) + ';';
+                if (request.expires) {
+                    if (request.expires instanceof Date) {
+                        if (isNaN(request.expires.getTime())) {
+                            request.expires = new Date();
                         }
                     } else {
-                        expires = new Date(new Date().getTime() + parseInt(expires) * 1000 * 60 * 60 * 24);
+                        request.expires = new Date(new Date().getTime() + _.seconds(request.expires) * 1000);
                     }
-                    cookie += 'expires=' + expires.toGMTString() + ';';
+                    cookie += 'expires=' + request.expires.toUTCString() + ';';
                 }
-                if (path) cookie += 'path=' + path + ';';
-                if (domain) cookie += 'domain=' + domain + ';';
-
-                // document.cookie = cookie;
-                console.log('cookie:', cookie, 'current:', document.cookie);
+                if (request.path) {
+                    cookie += 'path=' + request.path + ';';
+                }
+                if (request.domain) {
+                    cookie += 'domain=' + request.domain + ';';
+                }
+                document.cookie = cookie;
             }
         },
 
@@ -2471,160 +2483,147 @@
     /**
      * @type {void|*}
      */
-
-    // TODO: Combine this inheritance logic into a single underscore function
-    Stratus.Internals.View = (function (_Model) {
-        _.inherits(View, _Model);
-
-        function View(length) {
-            _.classCallCheck(this, View);
-            var that = _.possibleConstructorReturn(this, (View.__proto__ || Object.getPrototypeOf(View)).call(this, length, length));
-            _.extend(that, {
-                toObject: function () {
-                    var sanitized = _.clone(this.data);
-                    if (sanitized.el && sanitized.el.selection) {
-                        sanitized.el = sanitized.el.selection;
-                        /* TODO: This may not be necessary */
-                        if (typeof $ === 'function' && $.fn) {
-                            sanitized.$el = $(sanitized.el);
-                        }
-                        /* */
-                    }
-                    return sanitized;
-                },
-
-                // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
-                hydrate: function () {
-                    var nel = this.get('el');
-                    this.set({
-                        // Unique IDs
-                        // -----------
-
-                        // This is set as the widgets are gathered
-                        uid: _.uniqueId('view_'),
-
-                        // This is set as a widget is created to ensure duplicates don't exist
-                        guid: (typeof nel.attr('data-guid') !== 'undefined') ? nel.attr('data-guid') : null,
-
-                        // Model or Collection
-                        // -----------
-
-                        // Entity Type (i.e. 'View' which would correlate to a Restful /Api/View Request)
-                        entity: (typeof nel.attr('data-entity') !== 'undefined') ? _.ucfirst(nel.attr('data-entity')) : null,
-
-                        // Entity ID (Determines Model or Collection)
-                        id: (typeof nel.attr('data-id') !== 'undefined') ? nel.attr('data-id') : null,
-
-                        // Determines whether or not we should create an Entity Stub to render the dependent widgets
-                        manifest: (typeof nel.attr('data-manifest') !== 'undefined') ? nel.attr('data-manifest') : null,
-
-                        // API Options are added to the Request URL
-                        api: (typeof nel.attr('data-api') !== 'undefined') ? nel.attr('data-api') : null,
-
-                        // Determine whether this widget will fetch
-                        fetch: (typeof nel.attr('data-fetch') !== 'undefined') ? nel.attr('data-fetch') : true,
-
-                        // Specify Target
-                        target: (typeof nel.attr('data-target') !== 'undefined') ? nel.attr('data-target') : null,
-
-                        // This is determines what a new Entity's settings would be on creation
-                        prototype: (typeof nel.attr('data-prototype') !== 'undefined') ? nel.attr('data-prototype') : null,
-
-                        // Stuff
-                        autoSave: (typeof nel.attr('data-autoSave') !== 'undefined') ? nel.attr('data-autoSave') : null,
-
-                        // View
-                        // -----------
-
-                        type: (typeof nel.attr('data-type') !== 'undefined') ? nel.attr('data-type') : null,
-                        types: (typeof nel.attr('data-types') !== 'undefined') ? nel.attr('data-types') : null,
-                        template: (typeof nel.attr('data-template') !== 'undefined') ? nel.attr('data-template') : null,
-                        templates: (typeof nel.attr('data-templates') !== 'undefined') ? nel.attr('data-templates') : null,
-                        dialogue: (typeof nel.attr('data-dialogue') !== 'undefined') ? nel.attr('data-dialogue') : null,
-                        pagination: (typeof nel.attr('data-pagination') !== 'undefined') ? nel.attr('data-pagination') : null,
-                        property: (typeof nel.attr('data-property') !== 'undefined') ? nel.attr('data-property') : null,
-                        field: (typeof nel.attr('data-field') !== 'undefined') ? nel.attr('data-field') : null,
-                        load: (typeof nel.attr('data-load') !== 'undefined') ? nel.attr('data-load') : null,
-                        options: (typeof nel.attr('data-options') !== 'undefined') ? nel.attr('data-options') : null,
-
-                        // Versioning
-                        // -----------
-
-                        versionEntity: (typeof nel.attr('data-versionentity') !== 'undefined') ? nel.attr('data-versionentity') : null,
-                        versionRouter: (typeof nel.attr('data-versionrouter') !== 'undefined') ? nel.attr('data-versionrouter') : null,
-                        versionId: (typeof nel.attr('data-versionid') !== 'undefined') ? nel.attr('data-versionid') : null,
-
-                        // Plugins
-                        // -----------
-
-                        plugin: (typeof nel.attr('data-plugin') !== 'undefined') ? nel.attr('data-plugin') : null,
-                        plugins: []
-                    });
-
-                    if (this.get('plugin') !== null) {
-                        var plugins = this.get('plugin').split(' ');
-                        if (this.get('type') !== null) {
-                            this.set('plugins', (plugins.length > 1) ? plugins : [this.get('plugin')]);
-                        } else if (plugins.length > 1) {
-                            this.set('plugin', _.first(plugins));
-
-                            // Add additional plugins
-                            this.set('plugins', _.rest(plugins));
-                        }
-                    }
-                    var id = this.get('id');
-                    var type = (this.get('type') !== null) ? this.get('type') : this.get('plugin');
-                    var loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins';
-                    this.set({
-                        scope: (id !== null) ? 'model' : 'collection',
-                        alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
-                        path: (type !== null) ? type : null
-                    });
-                    if (!id && this.get('entity') !== null && this.get('manifest') !== null) {
-                        this.set('scope', 'model');
-                    }
-                },
-                clean: function () {
-                    if (!this.get('entity') || this.get('entity').toLowerCase() === 'none') {
-                        this.set({ entity: null, scope: null });
-                    }
-                },
-
-                // Give Nested Attributes for Child Views
-                /**
-                 * @returns {{entity: *, id: *, versionEntity: *, versionRouter: *, versionId: *, scope: *, manifest: *}}
-                 */
-                nest: function () {
-                    var nest = {
-                        entity: this.get('entity'),
-                        id: this.get('id'),
-                        versionEntity: this.get('versionEntity'),
-                        versionRouter: this.get('versionRouter'),
-                        versionId: this.get('versionId'),
-                        scope: this.get('scope'),
-                        manifest: this.get('manifest')
-                    };
-
-                    // Add Model or Collection to Nest
-                    if (this.has(nest.scope)) {
-                        nest[nest.scope] = this.get(nest.scope);
-                    }
-                    return nest;
-                },
-                /**
-                 * @returns {{id: *}}
-                 */
-                modelAttributes: function () {
-                    return {
-                        id: this.get('id')
-                    };
+    Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
+        toObject: function () {
+            var sanitized = _.clone(this.data);
+            if (sanitized.el && sanitized.el.selection) {
+                sanitized.el = sanitized.el.selection;
+                /* TODO: This may not be necessary */
+                if (typeof $ === 'function' && $.fn) {
+                    sanitized.$el = $(sanitized.el);
                 }
-            });
-            return that;
-        }
+                /* */
+            }
+            return sanitized;
+        },
 
-        return View;
-    })(Stratus.Prototypes.Model);
+        // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
+        hydrate: function () {
+            var nel = this.get('el');
+            this.set({
+                // Unique IDs
+                // -----------
+
+                // This is set as the widgets are gathered
+                uid: _.uniqueId('view_'),
+
+                // This is set as a widget is created to ensure duplicates don't exist
+                guid: (typeof nel.attr('data-guid') !== 'undefined') ? nel.attr('data-guid') : null,
+
+                // Model or Collection
+                // -----------
+
+                // Entity Type (i.e. 'View' which would correlate to a Restful /Api/View Request)
+                entity: (typeof nel.attr('data-entity') !== 'undefined') ? _.ucfirst(nel.attr('data-entity')) : null,
+
+                // Entity ID (Determines Model or Collection)
+                id: (typeof nel.attr('data-id') !== 'undefined') ? nel.attr('data-id') : null,
+
+                // Determines whether or not we should create an Entity Stub to render the dependent widgets
+                manifest: (typeof nel.attr('data-manifest') !== 'undefined') ? nel.attr('data-manifest') : null,
+
+                // API Options are added to the Request URL
+                api: (typeof nel.attr('data-api') !== 'undefined') ? nel.attr('data-api') : null,
+
+                // Determine whether this widget will fetch
+                fetch: (typeof nel.attr('data-fetch') !== 'undefined') ? nel.attr('data-fetch') : true,
+
+                // Specify Target
+                target: (typeof nel.attr('data-target') !== 'undefined') ? nel.attr('data-target') : null,
+
+                // This is determines what a new Entity's settings would be on creation
+                prototype: (typeof nel.attr('data-prototype') !== 'undefined') ? nel.attr('data-prototype') : null,
+
+                // Stuff
+                autoSave: (typeof nel.attr('data-autoSave') !== 'undefined') ? nel.attr('data-autoSave') : null,
+
+                // View
+                // -----------
+
+                type: (typeof nel.attr('data-type') !== 'undefined') ? nel.attr('data-type') : null,
+                types: (typeof nel.attr('data-types') !== 'undefined') ? nel.attr('data-types') : null,
+                template: (typeof nel.attr('data-template') !== 'undefined') ? nel.attr('data-template') : null,
+                templates: (typeof nel.attr('data-templates') !== 'undefined') ? nel.attr('data-templates') : null,
+                dialogue: (typeof nel.attr('data-dialogue') !== 'undefined') ? nel.attr('data-dialogue') : null,
+                pagination: (typeof nel.attr('data-pagination') !== 'undefined') ? nel.attr('data-pagination') : null,
+                property: (typeof nel.attr('data-property') !== 'undefined') ? nel.attr('data-property') : null,
+                field: (typeof nel.attr('data-field') !== 'undefined') ? nel.attr('data-field') : null,
+                load: (typeof nel.attr('data-load') !== 'undefined') ? nel.attr('data-load') : null,
+                options: (typeof nel.attr('data-options') !== 'undefined') ? nel.attr('data-options') : null,
+
+                // Versioning
+                // -----------
+
+                versionEntity: (typeof nel.attr('data-versionentity') !== 'undefined') ? nel.attr('data-versionentity') : null,
+                versionRouter: (typeof nel.attr('data-versionrouter') !== 'undefined') ? nel.attr('data-versionrouter') : null,
+                versionId: (typeof nel.attr('data-versionid') !== 'undefined') ? nel.attr('data-versionid') : null,
+
+                // Plugins
+                // -----------
+
+                plugin: (typeof nel.attr('data-plugin') !== 'undefined') ? nel.attr('data-plugin') : null,
+                plugins: []
+            });
+
+            if (this.get('plugin') !== null) {
+                var plugins = this.get('plugin').split(' ');
+                if (this.get('type') !== null) {
+                    this.set('plugins', (plugins.length > 1) ? plugins : [this.get('plugin')]);
+                } else if (plugins.length > 1) {
+                    this.set('plugin', _.first(plugins));
+
+                    // Add additional plugins
+                    this.set('plugins', _.rest(plugins));
+                }
+            }
+            var id = this.get('id');
+            var type = (this.get('type') !== null) ? this.get('type') : this.get('plugin');
+            var loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins';
+            this.set({
+                scope: (id !== null) ? 'model' : 'collection',
+                alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
+                path: (type !== null) ? type : null
+            });
+            if (!id && this.get('entity') !== null && this.get('manifest') !== null) {
+                this.set('scope', 'model');
+            }
+        },
+        clean: function () {
+            if (!this.get('entity') || this.get('entity').toLowerCase() === 'none') {
+                this.set({ entity: null, scope: null });
+            }
+        },
+
+        // Give Nested Attributes for Child Views
+        /**
+         * @returns {{entity: *, id: *, versionEntity: *, versionRouter: *, versionId: *, scope: *, manifest: *}}
+         */
+        nest: function () {
+            var nest = {
+                entity: this.get('entity'),
+                id: this.get('id'),
+                versionEntity: this.get('versionEntity'),
+                versionRouter: this.get('versionRouter'),
+                versionId: this.get('versionId'),
+                scope: this.get('scope'),
+                manifest: this.get('manifest')
+            };
+
+            // Add Model or Collection to Nest
+            if (this.has(nest.scope)) {
+                nest[nest.scope] = this.get(nest.scope);
+            }
+            return nest;
+        },
+        /**
+         * @returns {{id: *}}
+         */
+        modelAttributes: function () {
+            return {
+                id: this.get('id')
+            };
+        }
+    });
 
     /**
      * @constructor
@@ -3419,10 +3418,16 @@
     // appropriately.
     Stratus.PostMessage.Convoy(_.once(function (convoy) {
         var ssoEnabled = _.cookie('sso');
-        ssoEnabled = (ssoEnabled === null) ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false);
+        ssoEnabled = ssoEnabled === null ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false);
         if (convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY') && ssoEnabled) {
-            _.cookie('SITETHEORY', convoy.meta.session, { expires: 365, path: '/' });
-            if (!Stratus.Client.safari && false) location.reload(true);
+            _.cookie({
+                name: 'SITETHEORY',
+                value: convoy.meta.session,
+                expires: 365
+            });
+            if (!Stratus.Client.safari) {
+                location.reload(true);
+            }
         }
     }));
 
