@@ -229,14 +229,6 @@
                 namespace: 'angular-',
                 module: true,
                 suffix: 'Module'
-            },
-
-            // TODO: See if there is some way to make this more consistent
-            dateTimePicker: {
-                selector: '[mdc-datetime-picker]',
-                require: ['angular-datetime-picker'],
-                module: 'ngMaterialDatePicker',
-                stylesheet: boot.bundle + 'stratus/bower_components/angular-material-datetimepicker/dist/material-datetimepicker.min.css'
             }
         },
 
@@ -2660,7 +2652,13 @@
             injection = injection || {};
             _.each(injection, function (element, attribute) {
                 container[attribute] = container[attribute] || [];
-                container[attribute].push(element);
+                if (_.isArray(element)) {
+                    _.each(element, function (value) {
+                        container[attribute].push(value);
+                    });
+                } else {
+                    container[attribute].push(element);
+                }
             });
         };
 

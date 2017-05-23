@@ -301,7 +301,6 @@ boot.config({
         'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
         'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
         'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
-        'angular-material-datetimepicker': boot.bundle + 'stratus/bower_components/angular-material-datetimepicker/dist/angular-material-datetimepicker.min',
 
         /* Backbone */
         underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
