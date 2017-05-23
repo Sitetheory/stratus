@@ -178,6 +178,8 @@
         Prototypes: {},
         Resources: {},
         Roster: {
+
+            // dynamic
             controller: {
                 selector: '[ng-controller]',
                 namespace: 'stratus.controllers.'
@@ -189,10 +191,15 @@
                 namespace: 'stratus.directives.',
                 type: 'attribute'
             },
+
+            // angular material
             flex: {
                 selector: '[flex]',
                 require: ['angular', 'angular-material']
             },
+
+            // TODO: Find a more scalable ideology
+            // third party
             chart: {
                 selector: '[chart]',
                 require: ['angular', 'angular-chart'],
@@ -222,6 +229,14 @@
                 namespace: 'angular-',
                 module: true,
                 suffix: 'Module'
+            },
+
+            // TODO: See if there is some way to make this more consistent
+            dateTimePicker: {
+                selector: '[mdc-datetime-picker]',
+                require: ['angular-datetime-picker'],
+                module: 'ngMaterialDatePicker',
+                stylesheet: boot.bundle + 'stratus/bower_components/angular-material-datetimepicker/dist/material-datetimepicker.min.css'
             }
         },
 
@@ -2629,13 +2644,29 @@
      * @constructor
      */
     Stratus.Internals.AngularLoader = function () {
-        var requirements = [];
         var requirement;
         var nodes;
-        var modules = [];
+        var injection;
+
+        // This contains references for the auto-loader below
+        var container = {
+            requirement: [],
+            module: [],
+            stylesheet: []
+        };
+
+        // TODO: Add references to this prototype in the tree builder, accordingly
+        var injector = function (injection) {
+            injection = injection || {};
+            _.each(injection, function (element, attribute) {
+                container[attribute] = container[attribute] || [];
+                container[attribute].push(element);
+            });
+        };
 
         _.each(Stratus.Roster, function (element, key) {
             if (typeof element === 'object' && element) {
+                // sanitize roster fields without selector attribute
                 if (_.isUndefined(element.selector) && element.namespace) {
                     element.selector = _.filter(
                         _.map(requirejs.s.contexts._.config.paths, function (path, key) {
@@ -2644,6 +2675,8 @@
                         })
                     );
                 }
+
+                // digest roster
                 if (_.isArray(element.selector)) {
                     element.length = 0;
                     _.each(element.selector, function (selector) {
@@ -2653,10 +2686,13 @@
                             var name = selector.replace('[', '').replace(']', '');
                             requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('stratus', '').replace('ng', '')));
                             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
-                                requirements.push(requirement);
+                                injection = {
+                                    requirement: requirement
+                                };
                                 if (element.module) {
-                                    modules.push(_.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(name + (element.suffix || ''))));
+                                    injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(name + (element.suffix || '')));
                                 }
+                                injector(injection);
                             }
                         }
                     });
@@ -2671,15 +2707,23 @@
                                 if (name) {
                                     requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')));
                                     if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
-                                        requirements.push(requirement);
+                                        injector({
+                                            requirement: requirement
+                                        });
                                     }
                                 }
                             });
                         } else if (element.require) {
-                            requirements = _.union(requirements, element.require);
+                            // TODO: add an injector to the container
+                            container.requirement = _.union(container.requirement, element.require);
+                            injection = {};
                             if (element.module) {
-                                modules.push(_.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(attribute + (element.suffix || ''))));
+                                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(attribute + (element.suffix || '')));
                             }
+                            if (element.stylesheet) {
+                                injection.stylesheet = element.stylesheet;
+                            }
+                            injector(injection);
                         }
                     }
                 }
@@ -2688,14 +2732,16 @@
 
         // Ensure Modules enabled are in the requirements
         // TODO: store the require config in a stratus key: requirejs.s.contexts._.config
-        requirements.push('angular-material');
-        requirements = _.uniq(requirements);
-        window.requirements = requirements;
+        container.requirement.push('angular-material');
+        _.each(container, function (element, key) {
+            container[key] = _.uniq(element);
+        });
+        window.container = container;
 
         // Angular Injector
-        if (requirements.length) {
+        if (container.requirement.length) {
             // TODO: Load Dynamically
-            if (_.contains(requirements, 'angular-froala') || _.contains(requirements, 'stratus-froala')) {
+            if (_.contains(container.requirement, 'angular-froala') || _.contains(container.requirement, 'stratus-froala')) {
                 [
                     'codemirror/mode/htmlmixed/htmlmixed',
                     'codemirror/addon/edit/matchbrackets',
@@ -2723,7 +2769,7 @@
                     'froala-video',
                     'froala-word-paste'
                 ].forEach(function (requirement) {
-                    requirements.push(requirement);
+                    container.requirement.push(requirement);
                 });
             }
 
@@ -2735,11 +2781,11 @@
                 'stratus.filters.truncate',
                 'stratus.filters.gravatar'
             ].forEach(function (requirement) {
-                requirements.push(requirement);
+                container.requirement.push(requirement);
             });
-            require(requirements, function () {
+            require(container.requirement, function () {
                 // App Reference
-                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), modules)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
+                angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
                     var whitelist = [
                         'self',
                         'http://*.sitetheory.io/**',
@@ -2841,8 +2887,8 @@
                 });
 
                 // Load CSS
-                // TODO: Make Dynamic
-                var css = [];
+                // TODO: Move this reference to the stylesheets block above
+                var css = container.stylesheet;
                 var cssLoaded = Stratus('link[satisfies]').map(function (node) {
                     return node.getAttribute('satisfies');
                 });
@@ -2878,21 +2924,25 @@
                     });
                 }
 
+                // FIXME: What is above this line is total crap
+
                 if (css.length) {
                     var counter = 0;
                     _.each(css, function (url) {
                         Stratus.Internals.CssLoader(url).then(function () {
-                            /**
                             if (++counter === css.length) {
+                                console.log('loaded:', url);
+
+                                /* *
                                 angular.bootstrap(document.querySelector('html'), ['stratusApp']);
+                                /* */
                             }
-                            /**/
                         });
                     });
-                } /** else {
+                } /* * else {
                     angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                 }
-                /**/
+                /* */
                 angular.bootstrap(document.querySelector('html'), ['stratusApp']);
             });
         }
