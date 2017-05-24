@@ -2929,19 +2929,13 @@
                     _.each(css, function (url) {
                         Stratus.Internals.CssLoader(url).then(function () {
                             if (++counter === css.length) {
-                                console.log('loaded:', url);
-
-                                /* *
                                 angular.bootstrap(document.querySelector('html'), ['stratusApp']);
-                                /* */
                             }
                         });
                     });
-                } /* * else {
+                } else {
                     angular.bootstrap(document.querySelector('html'), ['stratusApp']);
                 }
-                /* */
-                angular.bootstrap(document.querySelector('html'), ['stratusApp']);
             });
         }
     };
@@ -3471,7 +3465,7 @@
             _.cookie({
                 name: 'SITETHEORY',
                 value: convoy.meta.session,
-                expires: 365
+                expires: '1w'
             });
             if (!Stratus.Client.safari) {
                 location.reload(true);
