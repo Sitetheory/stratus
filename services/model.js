@@ -35,9 +35,6 @@
         $provide.factory('model', ['$q', '$http', '$rootScope', function ($q, $http, $rootScope) {
             return function (options, attributes) {
 
-                // TODO: Add Auto-Saving
-                // TODO: Create a deep watcher for the data property
-
                 // Environment
                 this.target = null;
                 this.manifest = false;
@@ -325,15 +322,22 @@
                  * @returns {*}
                  */
                 this.toggle = function (attribute, item, options) {
-                    if (typeof options !== 'object') options = { multiple: true };
+                    if (angular.isObject(options) && angular.isDefined(options.multiple) && angular.isUndefined(options.strict)) {
+                        options.strict = true;
+                    }
+                    options = _.extend({
+                        multiple: true
+                    }, angular.isObject(options) ? options : {});
+                    /* After plucking has been tested, remove this log *
                     console.log('toggle:', attribute, item, options);
+                    /* */
                     var request = attribute.split('[].');
                     var target = that.get(request.length > 1 ? request[0] : attribute);
-                    if (typeof target === 'undefined') {
+                    if (angular.isUndefined(target) || (options.strict && angular.isArray(target) !== options.multiple)) {
                         target = options.multiple ? [] : null;
                         that.set(request.length > 1 ? request[0] : attribute, target);
                     }
-                    if (typeof item === 'undefined') {
+                    if (angular.isUndefined(item)) {
                         that.set(attribute, !target);
                     } else if (angular.isArray(target)) {
                         /* This is disabled, since hydration should not be forced by default *
