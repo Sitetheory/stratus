@@ -32,7 +32,7 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Registry = ['$provide', function ($provide) {
-        $provide.factory('registry', function (collection, model, $interpolate, $q) {
+        $provide.factory('registry', ['collection', 'model', '$interpolate', '$q', function (collection, model, $interpolate, $q) {
             return function () {
                 // Maintain all models in Namespace
                 // Inverse the parent and child objects the same way Doctrine does
@@ -100,7 +100,8 @@
                             if (options.decouple || !Stratus.Catalog[options.target][id]) {
                                 data = new model({
                                     target: options.target,
-                                    manifest: options.manifest
+                                    manifest: options.manifest,
+                                    stagger: true
                                 }, {
                                     id: options.id
                                 });
@@ -130,6 +131,11 @@
                         if (options.api) {
                             data.meta.set('api', _.isJSON(options.api) ? JSON.parse(options.api) : options.api);
                         }
+
+                        // Handle Staggered
+                        if (data.stagger && typeof data.initialize === 'function') {
+                            data.initialize();
+                        }
                     }
 
                     // Evaluate
@@ -149,7 +155,7 @@
                     return data;
                 };
             };
-        });
+        }]);
     }];
 
 }));

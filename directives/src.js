@@ -21,13 +21,13 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'zepto', 'angular'], factory);
+        define(['stratus', 'underscore', 'angular'], factory);
     } else {
-        factory(root.Stratus, root._, root.$);
+        factory(root.Stratus, root._);
     }
-}(this, function (Stratus, _, $) {
+}(this, function (Stratus, _) {
     // This directive intends to handle binding of a dynamic variable to
-    Stratus.Directives.Src = function ($parse, $interpolate, $log) {
+    Stratus.Directives.Src = function ($parse, $interpolate) {
         return {
             restrict: 'A',
             scope: {
@@ -35,35 +35,39 @@
             },
             link: function ($scope, $element, $attrs) {
                 Stratus.Instances[_.uniqueId('src_')] = $scope;
-                if ($attrs.stratusSrc) {
-                    var src = false;
-                    var registered = false;
-                    var register = function () {
-                        if (registered) return true;
-                        registered = true;
-                        $element.attr('data-src', 'lazy');
-                        Stratus.RegisterGroup.add('OnScroll', {
-                            method: Stratus.Internals.LoadImage,
-                            el: $element,
-                            spy: $element.data('spy') ? $($element.data('spy')) : $element
-                        });
-                        Stratus.Internals.OnScroll();
+
+                // Group Registration
+                $scope.registered = false;
+                $scope.register = function () {
+                    if ($scope.registered) return true;
+                    $scope.registered = true;
+                    $element.attr('data-src', 'lazy');  // This is here for CSS backwards compatibility
+                    $scope.group = {
+                        method: Stratus.Internals.LoadImage,
+                        el: $element,
+                        spy: $element.data('spy') ? Stratus($element.data('spy')) : $element
                     };
-                    var interpreter = $interpolate($attrs.stratusSrc, false, null, true);
-                    var initial = interpreter($scope.$parent);
-                    if (angular.isDefined(initial)) {
-                        $element.attr('src', initial);
-                        register();
-                    } else {
-                        $scope.$watch(function () {
-                            return interpreter($scope.$parent);
-                        }, function (value) {
-                            if (angular.isDefined(value)) {
-                                $element.attr('src', value);
-                                register();
-                            }
-                        });
-                    }
+                    Stratus.RegisterGroup.add('OnScroll', $scope.group);
+                    Stratus.Internals.LoadImage($scope.group);
+                    Stratus.Internals.OnScroll();
+                };
+
+                // Source Interpolation
+                $scope.src = $element.attr('src') || $element.attr('stratus-src');
+                $scope.interpreter = $interpolate($scope.src, false, null, true);
+                $scope.initial = $scope.interpreter($scope.$parent);
+                if (angular.isDefined($scope.initial)) {
+                    $element.attr('src', $scope.initial);
+                    $scope.register();
+                } else {
+                    $scope.$watch(function () {
+                        return $scope.interpreter($scope.$parent);
+                    }, function (value) {
+                        if (angular.isDefined(value)) {
+                            $element.attr('src', value);
+                            $scope.register();
+                        }
+                    });
                 }
             }
         };

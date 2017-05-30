@@ -54,10 +54,10 @@
 
                 // Custom Methods for On/Off Screen
                 onScreen: function () {
-                    return (options.onScreen) ? options.onScreen() : true;
+                    return options.onScreen ? options.onScreen() : true;
                 },
                 offScreen: function () {
-                    return (options.offScreen) ? options.offScreen() : true;
+                    return options.offScreen ? options.offScreen() : true;
                 }
             });
         }
@@ -91,12 +91,12 @@
 
             // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
             if (lastScroll === 'down') {
-                options.target.addClass('scrollDown').removeClass('scrollUp');
+                options.target.addClass('scrollDown');
             } else {
                 options.target.removeClass('scrollDown');
             }
             if (lastScroll === 'up') {
-                options.target.addClass('scrollUp').removeClass('scrollDown');
+                options.target.addClass('scrollUp');
             } else {
                 options.target.removeClass('scrollUp');
             }
@@ -117,16 +117,16 @@
                 // immediately when you scroll down from the header, which triggers a retract before the reveal has
                 // engaged the header to begin with, which makes an odd pop open then close.
                 // So we really need to add a class ONLY if the reveal class was there.
-                if (lastScroll == 'down' && options.target.hasClass('reveal')) {
+                if (lastScroll === 'down' && options.target.hasClass('reveal')) {
                     options.target.removeClass('reveal').addClass('unreveal');
-                } else if (lastScroll == 'up') {
+                } else if (lastScroll === 'up') {
                     options.target.removeClass('unreveal').addClass('reveal');
                 }
 
                 // If you want to reveal the opposite direction (e.g. a footer)
-                if (lastScroll == 'up' && options.target.hasClass('revealDown')) {
+                if (lastScroll === 'up' && options.target.hasClass('revealDown')) {
                     options.target.removeClass('revealDown').addClass('unrevealDown');
-                } else if (lastScroll == 'down') {
+                } else if (lastScroll === 'down') {
                     options.target.removeClass('unrevealDown').addClass('revealDown');
                 }
 
@@ -134,6 +134,14 @@
                 options.offScreen();
             }
         }
+
+        /* FIXME: Native IsOnScreen is broken... *
+        console.log('CheckOnScreen:', {
+            direction: lastScroll,
+            spy: options.spy,
+            offset: options.offset
+        }, Stratus.Internals.IsOnScreen(options.spy, options.offset));
+        /* */
     };
 
 }));

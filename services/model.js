@@ -32,7 +32,7 @@
 
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Services.Model = ['$provide', function ($provide) {
-        $provide.factory('model', function ($q, $http, $rootScope) {
+        $provide.factory('model', ['$q', '$http', '$rootScope', function ($q, $http, $rootScope) {
             return function (options, attributes) {
 
                 // TODO: Add Auto-Saving
@@ -41,6 +41,7 @@
                 // Environment
                 this.target = null;
                 this.manifest = false;
+                this.stagger = false;
                 if (!options || typeof options !== 'object') options = {};
                 angular.extend(this, options);
 
@@ -49,7 +50,7 @@
                 this.data = {};
 
                 // Handle Collections & Meta
-                this.meta = new Stratus.Prototypes.Collection();
+                this.meta = new Stratus.Prototypes.Model();
                 if (_.has(this, 'collection')) {
                     if (this.collection.target) this.target = this.collection.target;
                     if (this.collection.meta.has('api')) this.meta.set('api', this.collection.meta.get('api'));
@@ -76,6 +77,9 @@
                 this.saving = false;
                 this.watching = false;
 
+                // Auto-Saving Logic
+                this.patch = {};
+
                 // Contextual Hoisting
                 var that = this;
 
@@ -85,8 +89,15 @@
                     that.watching = true;
                     $rootScope.$watch(function () {
                         return that.data;
-                    }, function (newData, oldData) {
-                        if (!_.isEqual(newData, oldData)) {
+                    }, function (newData, priorData) {
+                        var patch = _.patch(newData, priorData);
+                        if (patch) {
+                            if (newData.id && newData.id !== priorData.id) {
+                                window.location.replace(
+                                    Stratus.Internals.SetUrlParams({ id: newData.id })
+                                );
+                            }
+                            that.patch = _.extend(that.patch, patch);
                             that.changing = true;
                             that.changed = 1;
                         }
@@ -152,17 +163,29 @@
                                 // TODO: Make this into an over-writable function
                                 // Data
                                 that.meta.set(response.data.meta || {});
-                                that.data = response.data.payload || response.data;
+                                var convoy = response.data.payload || response.data;
+                                if (angular.isArray(convoy) && convoy.length) {
+                                    that.data = _.first(that.data);
+                                    that.error = false;
+                                } else if (angular.isObject(convoy)) {
+                                    that.data = convoy;
+                                    that.error = false;
+                                } else {
+                                    that.error = true;
+                                }
 
-                                // XHR Flags
-                                that.pending = false;
-                                that.completed = true;
+                                if (!that.error) {
+                                    // XHR Flags
+                                    that.pending = false;
+                                    that.completed = true;
 
-                                // Auto-Saving Settings
-                                that.saving = false;
+                                    // Auto-Saving Settings
+                                    that.saving = false;
+                                    that.patch = {};
 
-                                // Begin Watching
-                                that.watcher();
+                                    // Begin Watching
+                                    that.watcher();
+                                }
 
                                 // Promise
                                 resolve(that.data);
@@ -172,9 +195,12 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response.statusText || angular.isObject(response.data) ? response.data : 'Invalid Payload: ' + prototype.method + ' ' + prototype.url);
+                                reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
+                                    angular.isObject(response.data) ? response.data : (
+                                    'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
+                                ));
                             }
-                        }, reject).catch(reject);
+                        }).catch(reject);
                     });
                 };
 
@@ -184,7 +210,9 @@
                  * @returns {*}
                  */
                 this.fetch = function (action, data) {
-                    return that.sync(action, data || that.meta.get('api'));
+                    return that.sync(action, data || that.meta.get('api')).catch(function (message) {
+                        console.error('FETCH:', message);
+                    });
                 };
 
                 /**
@@ -193,23 +221,44 @@
                 this.save = function () {
                     that.changing = false;
                     that.saving = true;
-                    return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON());
+                    return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON({
+                        patch: true
+                    })).catch(function (message) {
+                        console.error('SAVE:', message);
+                    });
                 };
 
                 // Attribute Functions
 
                 /**
+                 * @param options
                  * @returns {{meta, payload}}
                  */
-                this.toJSON = function () {
-                    var data = (that.meta.has('api')) ? {
+                this.toJSON = function (options) {
+                    /* *
+                    options = _.extend(options || {}, {
+                        patch: false
+                    });
+                    /* */
+                    var data;
+
+                    // options.patch ? that.toPatch() :
+                    data = that.data;
+                    data = that.meta.has('api') ? {
                         meta: that.meta.get('api'),
-                        payload: that.data
-                    } : that.data;
-                    if (this.meta.size() > 0) {
-                        this.meta.clearTemp();
+                        payload: data
+                    } : data;
+                    if (that.meta.size() > 0) {
+                        that.meta.clearTemp();
                     }
                     return data;
+                };
+
+                /**
+                 * @returns {null}
+                 */
+                that.toPatch = function () {
+                    return that.patch;
                 };
 
                 /**
@@ -377,29 +426,30 @@
                         that.collection.remove(that);
                     }
                     if (that.get('id')) {
-                        that.sync('DELETE', {
-                            // nothing yet
-                        }).then(function () {
-                            // nothing yet
-                        }, console.error);
+                        that.sync('DELETE', {}).catch(function (message) {
+                            console.error('DESTROY:', message);
+                        });
                     }
                 };
 
                 /**
                  * @type {Function}
                  */
-                this.initialize = this.initialize || function () {
+                this.initialize = _.once(this.initialize || function () {
                         if (that.manifest && !that.get('id')) {
-                            that.sync('POST', {
-                                // nothing yet
-                            }).then(function () {
-                                // nothing yet
-                            }, console.error);
+                            that.sync('POST', that.meta.has('api') ? {
+                                meta: that.meta.get('api'),
+                                payload: {}
+                            } : {}).catch(function (message) {
+                                console.error('MANIFEST:', message);
+                            });
                         }
-                    };
-                this.initialize();
+                    });
+                if (!that.stagger) {
+                    this.initialize();
+                }
             };
-        });
+        }]);
     }];
 
 }));

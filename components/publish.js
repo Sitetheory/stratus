@@ -41,7 +41,6 @@
             bindings: {
                 ngModel: '=',
                 elementId: '@',
-                property: '@',
                 full: '@',
                 action: '@',
                 showDateTime: '@',
@@ -56,7 +55,7 @@
 
                 // Configuration
                 $scope.elementId = $attrs.elementId || uid;
-                $scope.property = $attrs.property || null;
+                $scope.property = 'version';
                 $scope.full = $attrs.full || true;
                 if (_.isString($scope.full)) {
                     $scope.full = _.hydrate($scope.full);

@@ -70,7 +70,7 @@
                 };
 
                 $mdPanel.open(config);
-            }
+            };
 
             function ZoomController(mdPanelRef) {
 

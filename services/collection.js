@@ -32,7 +32,7 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Collection = ['$provide', function ($provide) {
-        $provide.factory('collection', function ($q, $http, $timeout, model) {
+        $provide.factory('collection', ['$q', '$http', '$timeout', 'model', function ($q, $http, $timeout, model) {
             return function (options) {
 
                 // Environment
@@ -49,7 +49,7 @@
                 // Infrastructure
                 this.urlRoot = '/Api';
                 this.models = [];
-                this.meta = new Stratus.Prototypes.Collection();
+                this.meta = new Stratus.Prototypes.Model();
                 this.model = model;
 
                 // Internals
@@ -148,9 +148,12 @@
                                 that.error = true;
 
                                 // Promise
-                                reject(response.statusText || angular.isObject(response.data) ? response.data : 'Invalid Payload: ' + prototype.method + ' ' + prototype.url);
+                                reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
+                                    angular.isObject(response.data) ? response.data : (
+                                    'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
+                                ));
                             }
-                        }, reject);
+                        }).catch(reject);
                     });
                 };
 
@@ -160,7 +163,11 @@
                  * @returns {*}
                  */
                 this.fetch = function (action, data) {
-                    return that.sync(action, data || that.meta.get('api'));
+                    return that.sync(action, data || that.meta.get('api')).catch(
+                        function (message) {
+                            console.error('FETCH:', message);
+                        }
+                    );
                 };
 
                 /**
@@ -170,6 +177,29 @@
                 this.filter = function (query) {
                     that.meta.set('api.q', angular.isDefined(query) ? query : '');
                     return that.fetch();
+                };
+
+                /**
+                 * @type {Function}
+                 */
+                this.throttle = _.throttle(this.fetch, 1000);
+
+                /**
+                 * @param query
+                 * @returns {*}
+                 */
+                this.throttleFilter = function (query) {
+                    that.meta.set('api.q', angular.isDefined(query) ? query : '');
+                    return $q(function (resolve, reject) {
+                        var request = that.throttle();
+                        console.log('request:', request);
+                        request.then(function (models) {
+                            console.log('throttled:', _.map(models, function (model) {
+                                return model.domainPrimary;
+                            }));
+                            resolve(models);
+                        }).catch(reject);
+                    });
                 };
 
                 /**
@@ -255,7 +285,7 @@
                 }
                 /* */
             };
-        });
+        }]);
     }];
 
 }));

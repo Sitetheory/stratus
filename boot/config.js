@@ -126,7 +126,9 @@ boot.config({
         'stratus.routers.version': boot.bundle + 'stratus/routers/version' + boot.suffix,
 
         /* Stratus Controllers */
+        'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
         'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
+        'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
 
         /* Stratus Core Components */
         'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
@@ -145,12 +147,12 @@ boot.config({
         'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
         'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
         'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
-        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
-	'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
 
         // TODO: Move these to Sitetheory since they are specific to Sitetheory
         'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
+        'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
         'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
+        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
 
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
@@ -213,6 +215,7 @@ boot.config({
         'stratus.views.plugins.dim': boot.bundle + 'stratus/views/plugins/dim' + boot.suffix,
         'stratus.views.plugins.drawer': boot.bundle + 'stratus/views/plugins/drawer' + boot.suffix,
         'stratus.views.plugins.help': boot.bundle + 'stratus/views/plugins/help' + boot.suffix,
+        'stratus.views.plugins.lazy': boot.bundle + 'stratus/views/plugins/lazy' + boot.suffix,
         'stratus.views.plugins.masonry': boot.bundle + 'stratus/views/plugins/masonry' + boot.suffix,
         'stratus.views.plugins.morebox': boot.bundle + 'stratus/views/plugins/morebox' + boot.suffix,
         'stratus.views.plugins.onscreen': boot.bundle + 'stratus/views/plugins/onscreen' + boot.suffix,

@@ -213,7 +213,7 @@
                             if (!_.has(this.options, el)) {
                                 var data = {};
                                 /*
-                                var data = new Stratus.Prototypes.Collection();
+                                var data = new Stratus.Prototypes.Model();
                                 data.set(that.options.selectize.valueField, el);
                                 data.set(that.options.selectize.labelField, el);
                                 */

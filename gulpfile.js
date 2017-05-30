@@ -49,6 +49,8 @@ var location = {
             'collections/*.js',
             'routers/*.js',
             'views/**/*.js',
+            'controllers/*.js',
+            'services/*.js',
             'bower_components/requirejs/require.js',
             'bower_components/ng-sortable/angular-legacy-sortable.js'
         ],
@@ -59,6 +61,8 @@ var location = {
             'collections/*.min.js',
             'routers/*.min.js',
             'views/**/*.min.js',
+            'controllers/*.min.js',
+            'services/*.min.js',
             'bower_components/requirejs/require.min.js',
             'bower_components/ng-sortable/angular-legacy-sortable.min.js'
         ]
@@ -66,19 +70,15 @@ var location = {
     preserve: {
         core: [
             'boot/*.js',
-            'controllers/*.js',
             'components/*.js',
             'directives/*.js',
-            'filters/*.js',
-            'services/*.js'
+            'filters/*.js'
         ],
         min: [
             'boot/*.min.js',
-            'controllers/*.min.js',
             'components/*.min.js',
             'directives/*.min.js',
-            'filters/*.min.js',
-            'services/*.min.js'
+            'filters/*.min.js'
         ]
     },
     less: {

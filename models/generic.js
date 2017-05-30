@@ -35,7 +35,7 @@
     Stratus.Models.Generic = Backbone.RelationalModel.extend({
 
         // API Queries
-        meta: Stratus.Prototypes.Collection,
+        meta: Stratus.Prototypes.Model,
 
         // Settings
         _isVersioned: false,
@@ -81,7 +81,7 @@
              */
 
             // Handle Collections & Meta
-            this.meta = new Stratus.Prototypes.Collection();
+            this.meta = new Stratus.Prototypes.Model();
             if (_.has(this, 'collection') && _.has(this.collection, 'api') && this.collection.api) {
                 this.meta.set(this.collection.api);
             }
