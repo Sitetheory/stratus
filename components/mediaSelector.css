@@ -233,7 +233,7 @@ a.minus_icon .addIcon {
     box-shadow: 0 2px 4px rgba(0,0,0,.2);
 }
 
-.draggableImg:hover .imageInfoContainer {
+.gl-img-container:hover .imageInfoContainer {
     transform: translate(-50%, -100%) scale(1);
     -wekbit-transform: translate(-50%, -100%) scale(1);
     visibility: visible;

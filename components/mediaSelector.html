@@ -18,41 +18,43 @@
                     <div  ng-if="df.mime != 'application/x-unknown'" class="gl-img-container">
 
 
-                        <a  href="#" ng-dblclick="zoomView(df)">
+                        <a href="#" ng-dblclick="zoomView(df)">
                             <div class="imgLibDrag" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
 
                                 <img id="{{df.id}}" class="shapeholder selectImgDrag" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             </div>
                         </a>
 
-                    </div><!-- Media Selector Image Container Ends -->
 
 
-                    <div class="imageInfoContainer">
-                        <div class="imageHoverInfo borderRadiusDefault">
 
-                            <div class="format-size">
-                                <div class="smallLabel fileDetails">
-                                    <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}89 KB</span>
+                        <div class="imageInfoContainer">
+                            <div class="imageHoverInfo borderRadiusDefault">
+
+                                <div class="format-size">
+                                    <div class="smallLabel fileDetails">
+                                        <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}89 KB</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <p class="fontBody">{{ df.name }}</p>
-                            <div class="positionActionArea">
-                                <div class="clearfix actionBtns">
-                                    <a href="#" class="infoIcon">
-                                        <div class="infoIcon" aria-hidden="true" ng-click="zoomView(df)">
-                                            <md-icon class="" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                                        </div>
-                                    </a>
-                                    <a href="#">
-                                        <div >
-                                            <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
-                                        </div>
-                                    </a>
+                                <p class="fontBody">{{ df.name }}</p>
+                                <div class="positionActionArea">
+                                    <div class="clearfix actionBtns">
+                                        <a href="#" class="infoIcon">
+                                            <div class="infoIcon" aria-hidden="true" ng-click="zoomView(df)">
+                                                <md-icon class="" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                                            </div>
+                                        </a>
+                                        <a href="#">
+                                            <div >
+                                                <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                            </div>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
 
-                        </div><!-- Image Info Ends -->
+                            </div><!-- Image Info Ends -->
+                        </div><!-- Media Selector Image Container Ends -->
+
                     </div><!-- Image Info Container Ends -->
 
                 </li>
@@ -100,21 +102,22 @@
                                 </div>
 
                             </a>
+
+                            <div class="imageInfoContainer" ng-mouseenter="hovering = true"  ng-mouseleave="hovering = false">
+                                <div class="imageHoverInfo">
+                                    <div class="img-info-left">
+                                        <div class="format-size">
+                                            <span class="fileType">{{media.data.extension|uppercase}}</span><span class="fileSize">{{media.data.bytesHuman}}</span>
+                                        </div>
+                                        <p>{{media.data.name}}</p>
+                                    </div><!-- Image Left Info Ends -->
+                                    <div class="img-info-right">
+                                        <a href="#" class="info-ico" ng-click="zoomView(media.data)"><i class="fa fa-info" aria-hidden="true"></i></a>
+                                       <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
+                                    </div><!-- Image Info Right Ends -->
+                                </div><!-- Image Info Ends -->
+                            </div><!-- Image Outer Ends -->
                         </div><!-- Gallery Image Container Ends -->
-                        <div class="imageInfoContainer" ng-mouseenter="hovering = true"  ng-mouseleave="hovering = false">
-                            <div class="imageHoverInfo">
-                                <div class="img-info-left">
-                                    <div class="format-size">
-                                        <span class="fileType">{{media.data.extension|uppercase}}</span><span class="fileSize">{{media.data.bytesHuman}}</span>
-                                    </div>
-                                    <p>{{media.data.name}}</p>
-                                </div><!-- Image Left Info Ends -->
-                                <div class="img-info-right">
-                                    <a href="#" class="info-ico" ng-click="zoomView(media.data)"><i class="fa fa-info" aria-hidden="true"></i></a>
-                                   <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
-                                </div><!-- Image Info Right Ends -->
-                            </div><!-- Image Info Ends -->
-                        </div><!-- Image Outer Ends -->
                     </li>
                 </ul>
                 </div>
@@ -144,21 +147,22 @@
                                     <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                                 </div>
                             </a>
+
+                            <div class="imageInfoContainer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
+                                <div class="imageHoverInfo">
+                                    <div class="img-info-left">
+                                        <div class="format-size">
+                                            <span class="fileType">{{media.data.extension|uppercase}}</span> <span class="fileSize">{{media.data.bytesHuman}}</span>
+                                        </div>
+                                        <p>{{media.data.name}}</p>
+                                    </div><!-- Image Left Info Ends -->
+                                    <div class="img-info-right">
+                                        <a href="#" class="info-ico" ng-click="zoomView(media.data)"><i class="fa fa-info" aria-hidden="true"></i></a>
+                                       <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
+                                    </div><!-- Image Info Right Ends -->
+                                </div><!-- Image Info Ends -->
+                            </div><!-- Image Outer Ends -->
                         </div><!-- Gallery Image Container Ends -->
-                        <div class="imageInfoContainer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
-                            <div class="imageHoverInfo">
-                                <div class="img-info-left">
-                                    <div class="format-size">
-                                        <span class="fileType">{{media.data.extension|uppercase}}</span> <span class="fileSize">{{media.data.bytesHuman}}</span>
-                                    </div>
-                                    <p>{{media.data.name}}</p>
-                                </div><!-- Image Left Info Ends -->
-                                <div class="img-info-right">
-                                    <a href="#" class="info-ico" ng-click="zoomView(media.data)"><i class="fa fa-info" aria-hidden="true"></i></a>
-                                   <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
-                                </div><!-- Image Info Right Ends -->
-                            </div><!-- Image Info Ends -->
-                        </div><!-- Image Outer Ends -->
                     </li>
                 </ul>
                     </div>
