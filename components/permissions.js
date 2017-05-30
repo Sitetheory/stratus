@@ -74,7 +74,7 @@
 
             /* var allOptions = $("ul.be-select").children('li:not(.init)');
              $("ul.be-select").on("click", "li:not(.init)", function() {
-             allOptions.removeClass('selected');
+             allOptions.removeClass('selected');  // TODO: use ngClass since this edits the DOM
              $(this).addClass('selected');
              $(this).children('.init').html($(this).html());
              allOptions.toggle();
