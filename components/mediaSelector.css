@@ -92,12 +92,7 @@ stratus-media-selector {
 .selected .actionBtn a:hover svg g {
     fill: #111;
 }
-.selected--list {
-    border:3px solid red;
-}
-.selected--list{
-    opacity:0.5;
-}
+
 
 
 
@@ -124,9 +119,88 @@ stratus-media-selector {
 .mediaLibrary .imgLibDrag {
     box-shadow: 0 0 2px rgba(0,0,0,.8);
 }
+.gl-img-container a {
+    display: block;
+}
+.selected--list a {
+    background: #000;
+}
+.selected--list {
+    border: 2px solid #FFF;
+}
 
 
+.checkIcon {
+    visibility: hidden;
+    z-index: 100;
+    width: 50%;
+}
+.checkIcon svg {
+    transition: all .05s ease-out;
+    -wekbit-transition: all .05s ease-out;
+}
+.selected--list .checkIcon {
+    visibility: visible;
+}
+.selected--list a:hover .checkIcon svg {
+    transform: scale(.3);
+    -webkit-transform: scale(.3);
+    opacity: 0;
+}
 
+
+.addIcon,
+.minusIcon {
+    visibility: hidden;
+    z-index: 100;
+    width: 65%;
+}
+a:hover .addIcon,
+a.minus_icon:hover .minusIcon {
+    visibility: visible;
+}
+.addIcon svg,
+.minusIcon svg {
+    transition: all .1s ease-out;
+    -wekbit-transition: all .1s ease-out;
+    transform: scale(.3);
+    -webkit-transform: scale(.3);
+    opacity: 0;
+}
+a:hover .addIcon svg,
+a.minus_icon:hover .minusIcon svg {
+    transform: scale(1);
+    -webkit-transform: scale(1);
+    opacity: 1;
+}
+a.minus_icon .addIcon {
+    visibility: hidden;
+}
+
+
+.addIcon md-icon,
+.minusIcon md-icon,
+.checkIcon md-icon {
+    width: 100%;
+    height: inherit;
+}
+.addIcon md-icon svg,
+.minusIcon md-icon svg,
+.checkIcon md-icon svg {
+    transform-origin: center center;
+    -webkit-transform-origin: center center;
+    fill: #FFF;
+
+}
+.addIcon md-icon svg g,
+.minusIcon md-icon svg g,
+.checkIcon md-icon svg g {
+    fill: #FFF;
+
+}
+.selected--list .imgLibDrag {
+    opacity: 0.4;
+}
 
 .imgLibDrag {
     transition: all .2s ease-out;
@@ -515,8 +589,8 @@ li.sel-file:hover .error-upload-msg{display:block;}
 }
 
 .add_icon,.minus_icon,.del_item,.trash_icon{ position:relative; }
-.add_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-plus.png"), auto;}
-.minus_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
+/* .add_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-plus.png"), auto;} */
+/* .minus_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;} */
 .trash_icon{cusror: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
 /*.add_icon:after{content:"\f067"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}
 .minus_icon:after{content:"\f068"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}*/

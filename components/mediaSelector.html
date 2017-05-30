@@ -80,13 +80,21 @@
                 <div ngf-drop="uploadToLibrary($files)" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                 <ul class="listInline">
                     <li  ng-repeat="media in collection.models">
-                        <div class="gl-img-container" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
+                        <div class="gl-img-container positionAnchor" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                            <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">-->
 
                             <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id,$event);" ng-dblclick="zoomView(media.data)">
-
+                                <div class="checkIcon positionCenter">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                                </div>
+                                <div class="addIcon positionCenter">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
+                                </div>
+                                <div class="minusIcon positionCenter">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"></md-icon>
+                                </div>
                                 <div class="imgLibDrag" [itemid]="{{media.data.id}}" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;">
                                     <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                                 </div>
