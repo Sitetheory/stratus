@@ -48,7 +48,6 @@ var location = {
             'models/*.js',
             'collections/*.js',
             'routers/*.js',
-            'views/**/*.js',
             'controllers/*.js',
             'services/*.js',
             'bower_components/requirejs/require.js',
@@ -60,7 +59,6 @@ var location = {
             'models/*.min.js',
             'collections/*.min.js',
             'routers/*.min.js',
-            'views/**/*.min.js',
             'controllers/*.min.js',
             'services/*.min.js',
             'bower_components/requirejs/require.min.js',
@@ -84,21 +82,18 @@ var location = {
     less: {
         core: [
             'stratus.less',
-            'components/*.less',
-            'views/**/*.less'
+            'components/*.less'
         ],
         compile: []
     },
     css: {
         core: [
             'stratus.css',
-            'components/*.css',
-            'views/**/*.css'
+            'components/*.css'
         ],
         min: [
             'stratus.min.css',
-            'components/*.min.css',
-            'views/**/*.min.css'
+            'components/*.min.css'
         ]
     },
     template: {

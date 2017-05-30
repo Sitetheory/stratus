@@ -2,7 +2,7 @@
 
 ## Thesis
 
-The Designer always comes first in the Stratus Layer.
+The Designer always comes first in the Stratus Layer.  [Read More...](docs/THESIS.md)
 
 ## Goals
 
@@ -41,19 +41,19 @@ if (tbd) console.log('tbd');
 
 #### Angular
 
-Check the Docs folder for follow-up information
+[Read More...](docs/ANGULAR.md)
 
 #### Backbone
 
-Check the Docs folder for follow-up information
+[Read More...](docs/BACKBONE.md)
 
 #### React
 
-Check the Docs folder for follow-up information
+We don't have any data bindings or Auto-Loading built for React, yet. [Read More...](docs/REACT.md)
 
 ## Contributions
 
-Always welcome.  We will add a link to further information when available.
+Always welcome!  [Read More...](docs/CONTRIBUTING.md)
 
 # License
 
