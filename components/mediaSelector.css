@@ -27,15 +27,18 @@ stratus-media-selector {
     -webkit-transition: all .2s ease-out;
     opacity: 1;
 }
-.actionBtns .infoIcon {
+.actionBtns svg {
     transition: all .2s ease-out;
     -webkit-transition: all .2s ease-out;
 }
-.actionBtns .infoIcon:hover {
+.actionBtns a:hover svg {
     transform: scale(1.1);
     -webkit-transform: scale(1.1);
 }
 .actionBtns svg g {
+    fill: #CCC;
+}
+.actionBtns a:hover svg g {
     fill: #FFF;
 }
 
@@ -62,7 +65,9 @@ stratus-media-selector {
 }
 .selected .selectedMediaLabel {
     margin-bottom: 18px;
+    padding-bottom: 18px;
     color: #111;
+    border-bottom: 1px solid #DDD;
 }
 .selectorContainer.selected ul li {
     width: 16.667%;
@@ -110,9 +115,10 @@ stratus-media-selector {
 }
 .mediaLibraryContent {
     margin: 18px 0 10px;
+    padding-top: 18px;
     border-top: 1px solid rgba(255,255,255,.18);
 }
-.mediaLibrary ul li {
+.mediaLibraryContent ul li {
     width: 10%;
     padding: 2px;
 }
@@ -122,9 +128,6 @@ stratus-media-selector {
 .gl-img-container a {
     display: block;
 }
-.selected--list a {
-    background: #000;
-}
 .selected--list {
     border: 2px solid #FFF;
 }
@@ -132,7 +135,7 @@ stratus-media-selector {
 
 .checkIcon {
     visibility: hidden;
-    z-index: 100;
+    z-index: 20;
     width: 50%;
 }
 .checkIcon svg {
@@ -261,12 +264,13 @@ a.minus_icon .addIcon {
 .imageHoverInfo .fileSize {
     color: #AAA;
 }
-.imageHoverInfo .fontBody {
+.imageHoverInfo .imgTitle {
+    overflow: hidden;
     padding-bottom: 5px;
     margin: 5px 0 0;
+    max-height: 36px;
     font-size: 13px;
     color: #CCC;
-
 }
 .imageHoverInfo .positionActionArea {
     position: absolute;
@@ -298,8 +302,58 @@ a.minus_icon .addIcon {
 }
 
 
+.mediaLibrary .paginator {
+    margin-top: 18px;
+}
+.mediaLibrary .paginator .paginatorPages a {
+    display: inline-block;
+    margin: 0 3px;
+    padding: 8px 12px;
+    font-weight: bold;
+    border: 1px solid rgba(200,200,200,.1);
+}
+.mediaLibrary .paginator .paginatorPrevious a,
+.mediaLibrary .paginator .paginatorNext a {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid rgba(200,200,200,.1);
+    background: rgba(66, 66, 66, 0.2);
+}
+.mediaLibrary .paginator .paginatorPrevious a:hover,
+.mediaLibrary .paginator .paginatorNext a:hover {
+    background: rgba(66, 66, 66, 0.7);
+}
 
-.upload-image a{color:#bfbfbf; font-size:18px; text-decoration:none;}
+.nothingSelectedInstructions a .linkEmphasized,
+.nothingSelectedInstructions a:link .linkEmphasized {
+    font-weight: bold;
+    text-decoration: underline;
+}
+.nothingSelectedInstructions a:hover .linkEmphasized {
+    color: #333;
+    text-decoration: none;
+}
+
+.nothingSelectedOpenLibrary {
+    display: table;
+    float: left;
+    margin-right: 12px;
+    width: 64px;
+    height: 64px;
+}
+.nothingSelectedOpenLibrary:hover {
+    border-color: rgba(0,0,0,.5);
+}
+.nothingSelectedOpenLibrary:hover svg g {
+    fill: #111;
+}
+.nothingSelectedTextLink {
+    display: inline-block;
+    margin-top: 24px;
+}
+
+
+.upload-image a{color:#bfbfbf; text-decoration:none;}
 .upload-image i {
     margin: -16px 2px 0 0;
     font-size: 24px;
@@ -315,8 +369,12 @@ a.minus_icon .addIcon {
 
 
 
-.search-bar{margin:0 0 15px 0;}
-.gal-search{margin:0 8% 0 0;}
+.search-bar{
+    margin: 0 0 20px;
+}
+.gal-search .search {
+    border-radius: 2px;
+}
 .gal-search h4{text-transform:uppercase; color:#747474; display:inline-block; margin:0 5px 0 0; vertical-align:middle;}
 .search-gl-txt{min-height:32px; padding:8px; border:1px solid #ececec; vertical-align:middle; outline:0;}
 .search--btn{color:#fff; background:#389ffb; border:1px solid #979797; height:32px; line-height:32px; text-align:center; display:inline-block; vertical-align:middle; cursor:pointer; outline:0;}
@@ -582,7 +640,7 @@ li.sel-file:hover .error-upload-msg{display:block;}
 }
 .hover-cross-run{top:30%;}
 .selected--img
-{ border:3px solid #3d96ff;}
+{ }
 
 .custom-class {
     color:red;
