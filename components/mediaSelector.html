@@ -45,7 +45,7 @@
                                             </div>
                                         </a>
                                         <a href="#">
-                                            <div >
+                                            <div class="deleteIcon">
                                                 <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
                                             </div>
                                         </a>
@@ -103,21 +103,36 @@
 
                             </a>
 
+
                             <div class="imageInfoContainer" ng-mouseenter="hovering = true"  ng-mouseleave="hovering = false">
-                                <div class="imageHoverInfo">
-                                    <div class="img-info-left">
-                                        <div class="format-size">
-                                            <span class="fileType">{{media.data.extension|uppercase}}</span><span class="fileSize">{{media.data.bytesHuman}}</span>
+                                <div class="imageHoverInfo borderRadiusDefault">
+
+                                    <div class="format-size">
+                                        <div class="smallLabel fileDetails">
+                                            <span class="fileType">{{media.data.extension|uppercase}}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}</span>
                                         </div>
-                                        <p>{{media.data.name}}</p>
-                                    </div><!-- Image Left Info Ends -->
-                                    <div class="img-info-right">
-                                        <a href="#" class="info-ico" ng-click="zoomView(media.data)"><i class="fa fa-info" aria-hidden="true"></i></a>
-                                       <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
-                                    </div><!-- Image Info Right Ends -->
+                                    </div>
+                                    <p class="fontBody">{{media.data.name}}</p>
+
+                                    <div class="positionActionArea">
+                                        <div class="clearfix actionBtns">
+                                            <a href="#" class="infoIcon" aria-hidden="true" ng-click="zoomView(media.data)">
+                                                <md-icon class="" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                                            </a>
+                                            <a href="#">
+                                                <div class="deleteIcon">
+                                                    <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+
                                 </div><!-- Image Info Ends -->
                             </div><!-- Image Outer Ends -->
                         </div><!-- Gallery Image Container Ends -->
+
+
+
                     </li>
                 </ul>
                 </div>
@@ -149,17 +164,26 @@
                             </a>
 
                             <div class="imageInfoContainer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
-                                <div class="imageHoverInfo">
-                                    <div class="img-info-left">
-                                        <div class="format-size">
-                                            <span class="fileType">{{media.data.extension|uppercase}}</span> <span class="fileSize">{{media.data.bytesHuman}}</span>
+                                <div class="imageHoverInfo borderRadiusDefault">
+                                    <div class="format-size">
+                                        <div class="smallLabel fileDetails">
+                                            <span class="fileType">{{media.data.extension|uppercase}}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}</span>
                                         </div>
-                                        <p>{{media.data.name}}</p>
-                                    </div><!-- Image Left Info Ends -->
-                                    <div class="img-info-right">
-                                        <a href="#" class="info-ico" ng-click="zoomView(media.data)"><i class="fa fa-info" aria-hidden="true"></i></a>
-                                       <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
-                                    </div><!-- Image Info Right Ends -->
+                                    </div>
+                                    <p class="fontBody">{{media.data.name}}</p>
+                                    <div class="clearfix actionBtns">
+                                        <div class="infoIcon">
+                                            <a href="#" class="infoIcon" ng-click="zoomView(media.data)">
+                                                <div class="infoIcon">
+                                                    <md-icon class="" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="deleteIcon">
+                                            <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                           <!-- <a href="#"><i class="fa fa-trash-o" aria-hidden="true"></i></a>-->
+                                        </div><!-- Image Info Right Ends -->
+                                    </div>
                                 </div><!-- Image Info Ends -->
                             </div><!-- Image Outer Ends -->
                         </div><!-- Gallery Image Container Ends -->
