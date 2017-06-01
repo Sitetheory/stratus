@@ -1,23 +1,19 @@
 <div class="mediaSelector">
     <div class="selectorContainer selected borderDefault borderDefaultAll borderRadiusDefault">
 
+        <p class="instructions nothingSelectedInstructions fontBody clearfix">
+            <!-- show only if no files are dragged-->
+
+            <a href="#" ng-click="openLibrary()" class="nothingSelectedTextLink">Open library to select images</a> or drag, drop new images below.
+        </p>
         <p class="smallLabel selectedMediaLabel">Media</p>
         <!-- Gallery header Ends -->
         <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
               ngf-drop ngf-max-files="20"   ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover"  ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
 
-            <div class="nothingSelectedInstructions fontBody clearfix">
-                <!-- show only if no files are dragged-->
-                <a ng-if="!draggedFiles.length"  href="#" ng-click="openLibrary()" class="nothingSelectedOpenLibrary positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1 positionAnchor"  ng-click="mediaLibrary()">
-                    <md-tooltip>Open Media Library</md-tooltip>
-                    <md-icon class="positionCenter" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                </a>
-                <a ng-if="!draggedFiles.length"  href="#" ng-click="openLibrary()" class="nothingSelectedTextLink"> <!-- why is this following in an i tag? can we toss this? --> <i aria-hidden="true" ng-class="{'stuff': libraryVisible}"></i><span class="linkEmphasized">Open library to
-                    select images</span> or drag, drop new images here</a>
-            </div>
-            <ul class="listInline" ng-if="draggedFiles.length" stratus-sortable ng-sortable="draggedFiles"  ng-sortable-item-selector=".draggableImg">
-                <li class="draggableImg" ng-repeat="df in draggedFiles">
+
+            <ul class="listInline" stratus-sortable ng-sortable="draggedFiles"  ng-sortable-item-selector=".draggableImg">
+                <li class="draggableImg" ng-if="draggedFiles.length" ng-repeat="df in draggedFiles">
                     <div class="file-upload-drag" ng-if="df.mime == 'application/x-unknown'">
                         <i class="fa fa-file file-icon-drag"></i>
                     </div>
@@ -42,12 +38,12 @@
                                 <p class="fontBody imgTitle">{{ df.name }}</p>
                                 <div class="positionActionArea">
                                     <div class="clearfix actionBtns">
-                                        <a href="#" aria-hidden="true" ng-click="zoomView(df)" class="infoIcon" >
-                                            <md-icon class="" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                                        <a href="#" ng-click="zoomView(df)" class="infoIcon" >
+                                            <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                         </a>
                                         <a href="#" class="deleteIcon">
                                             <div>
-                                                <md-icon class="" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                                <md-icon aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
                                             </div>
                                         </a>
                                     </div>
@@ -61,6 +57,9 @@
                 </li>
                 <li class="actionBtn actionLibrary">
                     <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="mediaLibrary()">
+
+                        <md-tooltip>Open Media Library</md-tooltip>
+
                         <div ng-class="dragDropClass" aria-hidden="true">
                             <md-icon class="positionCenter" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
                             <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
@@ -172,9 +171,9 @@
                                     </div>
                                     <p class="fontBody imgTitle">{{media.data.name}}</p>
                                     <a class="clearfix actionBtns">
-
                                         <a href="#" ng-click="zoomView(media.data)" class="infoIcon">
-                                            <md-icon class="" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                                            Info
+                                            <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                         </a>
                                         <!-- <a href="#" class="deleteIcon">
                                            <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>

@@ -1,6 +1,8 @@
 /*-------media selector-----*/
 
-
+#stratusContainer {
+    animation: itemsFadeIn .2s ease-out both;
+}
 stratus-media-selector {
     width: 100%;
 }
@@ -9,6 +11,7 @@ stratus-media-selector {
 }
 .mediaSelector p.instructions {
     font-size: 13px;
+    color: #777;
 }
 .mediaSelector .instructions a {
     text-decoration: underline;
@@ -43,9 +46,15 @@ stratus-media-selector {
 }
 
 .selectorContainer {
+    position: relative;
+    z-index: 1000;
     padding: 3%;
 }
 .selectorContainer ul {
+    animation: itemsGrow .2s ease-out both;
+    -webkit-animation: itemsGrow .2s ease-out both;
+    transform-origin: top left;
+    -webkit-transform-origin: top left;
     display: block;
     margin: 0 -2px;
 }
@@ -70,31 +79,36 @@ stratus-media-selector {
     border-bottom: 1px solid #DDD;
 }
 .selectorContainer.selected ul li {
-    width: 16.667%;
+    width: 16.5%;
     padding: 2px;
 }
-.selected li.actionBtn{
+.selected li.actionBtn {
     padding: 0;
 }
-.selected li.actionBtn a {
+.selected li.actionBtn a,
+.nothingSelectedOpenLibrary {
     transition: all .2s ease-out;
     -webkit-transition: all .2s ease-out;
     display: block;
 }
-.selected li.actionBtn a:hover {
+.selected li.actionBtn a:hover,
+.nothingSelectedOpenLibrary:hover {
     border-color: rgba(0,0,0,.5);
 }
-.selected .actionLibrary md-icon {
+.selected .actionLibrary md-icon,
+.nothingSelectedOpenLibrary md-icon {
     height: inherit;
     min-width: inherit;
     min-height: inherit;
     width: 50%;
 }
-.selected .actionBtn svg g {
+.selected .actionBtn svg g,
+.nothingSelectedOpenLibrary svg g {
     transition: all .2s ease-out;
     -webkit-transition: all .2s ease-out;
 }
-.selected .actionBtn a:hover svg g {
+.selected .actionBtn a:hover svg g,
+.nothingSelectedOpenLibrary:hover svg g {
     fill: #111;
 }
 
@@ -110,7 +124,7 @@ stratus-media-selector {
 .mediaLibrary.backgroundDark .smallLabel {
     color: #CBCBCB;
 }
-.mediaLibrary .instructions {
+.mediaSelector .instructions {
     float: right;
 }
 .mediaLibraryContent {
@@ -124,6 +138,12 @@ stratus-media-selector {
 }
 .mediaLibrary .imgLibDrag {
     box-shadow: 0 0 2px rgba(0,0,0,.8);
+}
+.gl-img-container {
+    animation: itemsGrow .2s ease-out both;
+    -webkit-animation: itemsGrow .2s ease-out both;
+    transform-origin: top left;
+    -webkit-transform-origin: top left;
 }
 .gl-img-container a {
     display: block;
@@ -237,8 +257,8 @@ a.minus_icon .addIcon {
 }
 
 .gl-img-container:hover .imageInfoContainer {
-    transform: translate(-50%, -100%) scale(1);
-    -wekbit-transform: translate(-50%, -100%) scale(1);
+    transform: translate(-50%, -94%) scale(1);
+    -wekbit-transform: translate(-50%, -94%) scale(1);
     visibility: visible;
     opacity: 1;
 }
@@ -324,6 +344,10 @@ a.minus_icon .addIcon {
     background: rgba(66, 66, 66, 0.7);
 }
 
+.nothingSelectedOpenLibrary {
+    animation: itemsGrow .2s ease-out both;
+    -webkit-animation: itemsGrow .2s ease-out both;
+}
 .nothingSelectedInstructions a .linkEmphasized,
 .nothingSelectedInstructions a:link .linkEmphasized {
     font-weight: bold;
@@ -338,18 +362,7 @@ a.minus_icon .addIcon {
     display: table;
     float: left;
     margin-right: 12px;
-    width: 64px;
-    height: 64px;
-}
-.nothingSelectedOpenLibrary:hover {
-    border-color: rgba(0,0,0,.5);
-}
-.nothingSelectedOpenLibrary:hover svg g {
-    fill: #111;
-}
-.nothingSelectedTextLink {
-    display: inline-block;
-    margin-top: 24px;
+    width: 16.667%;
 }
 
 
@@ -387,11 +400,36 @@ a.minus_icon .addIcon {
 /*-------- popup css-------------*/
 
 
-.media-popup{ max-width:800px; margin:0 auto; width:100%; background:rgba(0,0,0,0.70); padding:40px; display:inline-block; position:relative;}
+.media-popup{
+    max-width:800px;
+    margin:0 auto;
+    width:100%;
+    background:rgba(37,37,37,.9);
+    padding:40px;
+    display:inline-block;
+    position:relative;
+}
 
-.cross-btn{position:absolute; right:10px; top:10px; background:url('/assets/1/0/bundles/sitetheorycore/images/media/cross.png') no-repeat;  height: 20px; position: absolute; cursor: pointer; right: 10px; top: 10px; width: 20px; z-index: 999;}
-.cross-btn a{ float:left; outline:none;}
-.cross-btn a img{ float:left;}
+.cross-btn{
+    position:absolute;
+    right:10px;
+    top:10px;
+    background:url('/assets/1/0/bundles/sitetheorycore/images/media/cross.png') no-repeat;
+    height: 20px;
+    position: absolute;
+    cursor: pointer;
+    right: 10px;
+    top: 10px;
+    width: 20px;
+    z-index: 999;
+}
+.cross-btn a{
+    float:left;
+    outline:none;
+ }
+.cross-btn a img{
+    float:left;
+}
 .right-image{ float: right; width: 75%;}
 .right-image img{ width:100%; float:left;}
 .left-txt{ width:24%; float:left;}
