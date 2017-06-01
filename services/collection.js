@@ -131,6 +131,7 @@
                                 if (angular.isArray(data)) {
                                     // TODO: Make this able to be flagged as direct entities
                                     data.forEach(function (target) {
+                                        // TODO: Add references to the Catalog when creating these models
                                         that.models.push(new model({ collection: that }, target));
                                     });
                                 }
@@ -245,6 +246,26 @@
                  */
                 this.remove = function (target) {
                     that.models.splice(that.models.indexOf(target), 1);
+                };
+
+                /**
+                 * @param attribute
+                 * @returns {Array}
+                 */
+                this.pluck = function (attribute) {
+                    return _.map(that.models, function (element) {
+                        return element instanceof model ? element.pluck(attribute) : null;
+                    });
+                };
+
+                /**
+                 * @param attribute
+                 * @returns {boolean}
+                 */
+                this.exists = function (attribute) {
+                    return !!_.reduce(that.pluck(attribute) || [], function (memo, data) {
+                        return memo || angular.isDefined(data);
+                    });
                 };
 
                 // Infinite Scrolling

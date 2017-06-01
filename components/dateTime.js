@@ -46,8 +46,10 @@
             $scope.$watch(function () {
                 return $scope.$ctrl.ngModel;
             }, function (property) {
-                var momentTime = property ? moment.unix(parseInt(property)) : moment();
-                $scope.property = new Date(momentTime.year(), momentTime.month(), momentTime.date(), momentTime.hour(), momentTime.minute());
+                if (property) {
+                    var momentTime = property ? moment.unix(parseInt(property)) : moment();
+                    $scope.property = new Date(momentTime.year(), momentTime.month(), momentTime.date(), momentTime.hour(), momentTime.minute());
+                }
             }, true);
 
         },
