@@ -94,7 +94,7 @@ console.log('drag again');
                 }
             });
             $scope.$watch('draggedFiles', function (data) {
-                if (_.isArray(data) && !_.isUndefined($scope.$ctrl.ngModel) && !_.isEqual($scope.draggedFiles, $scope.$ctrl.ngModel)) {
+                if (_.isUndefined($scope.$ctrl.ngModel) || !_.isEqual($scope.draggedFiles, $scope.$ctrl.ngModel)) {
                     $scope.$ctrl.ngModel = $scope.draggedFiles;
                 }
             }, true);
@@ -154,22 +154,22 @@ console.log('drag again');
             $scope.beforeChange = function (file, $event) {
                 if ($event.dataTransfer.dropEffect === 'move') {
                     $http({
-                       method: 'GET',
-                       url: '/Api/Media/' + $scope.movedFileId
-                   }).then(function (response) {
-                       $scope.draggedFiles.push(response.data.payload);
-                       for (var i = 0; i < $scope.collection.models.length; i++) {
-                           if ($scope.collection.models[i].data.id === $scope.movedFileId) {
-                               // add class selected
-                               $scope.collection.models[i].data.selectedClass = true;
-                           }
-                       }
-                       $scope.movedFileId = '';
+                        method: 'GET',
+                        url: '/Api/Media/' + $scope.movedFileId
+                    }).then(function (response) {
+                        $scope.draggedFiles.push(response.data.payload);
+                        for (var i = 0; i < $scope.collection.models.length; i++) {
+                            if ($scope.collection.models[i].data.id === $scope.movedFileId) {
+                                // add class selected
+                                $scope.collection.models[i].data.selectedClass = true;
+                            }
+                        }
+                        $scope.movedFileId = '';
 
-                   }, function (rejection) {
-                       console.log(rejection.data);
-                   });
-                }else {
+                    }, function (rejection) {
+                        console.log(rejection.data);
+                    });
+                } else {
                     // FIXME: There is a random comparison below
                     $scope.imageMoved = false;
                     $scope.uploadFiles();
@@ -382,8 +382,7 @@ console.log('drag again');
                 };
             }
 
-            function updateFilesModel(files)
-            {
+            function updateFilesModel(files) {
                 if (files !== null) {
                     // make files array for not multiple to be able to be used in ng-repeat in the ui
                     if (!angular.isArray(files)) {
@@ -425,11 +424,11 @@ console.log('drag again');
                 file.uploadStatus = false;
                 file.errorUpload = false;
                 file.upload = Upload.upload({
-                        url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
-                        data: {
-                            file: file
-                        }
-                    });
+                    url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
+                    data: {
+                        file: file
+                    }
+                });
                 file.upload.then(function (response) {
                     file.result = response.data;
 
