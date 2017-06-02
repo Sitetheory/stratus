@@ -47,7 +47,7 @@ stratus-media-selector {
 
 .selectorContainer {
     position: relative;
-    z-index: 1000;
+    z-index: 100;
     padding: 3%;
 }
 .selectorContainer ul {
@@ -397,6 +397,21 @@ a.minus_icon .addIcon {
 .search-bar p a{text-decoration:underline;}
 
 
+
+
+.mediaDialogue.backgroundDark {
+    background: rgba(30, 30, 30, .9);
+}
+.mediaDialogue .titleContainer {
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(200,200,200,.3);
+}
+.mediaDialogue .titleContainer h2 {
+    color: #DDD;
+}
+
+
 /*-------- popup css-------------*/
 
 .media-dialog {
@@ -406,26 +421,45 @@ a.minus_icon .addIcon {
     max-width:800px;
     margin:0 auto;
     width:100%;
-    background:rgba(37,37,37,.9);
-    padding:30px;
+    padding:28px;
     position:relative;
 }
-.media-popup.backgroundDark {
-    background: rgba(37, 37, 37, .9);
+.media-popup .btnClose {
+    float: none;
+    position: absolute;
+    right: 20px;
+    top: 20px;
 }
-.media-popup .titleContainer {
-    margin-bottom: 26px;
-    padding-bottom: 26px;
-    border-bottom: 1px solid rgba(200,200,200,.3);
+.media-popup .btnClose svg g{
+    stroke: #FFF;
 }
 .media-popup .tagContainer {
     /* Make room for close button */
     padding-right: 50px;
     text-align: right;
 }
+.media-popup .tagContainer .smallLabel,
+.media-popup .tagContainer .btnAdd,
+.media-popup .tagContainer md-chips,
+.media-popup .tagContainer md-chips-wrap,
+.media-popup .tagContainer md-chip {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.media-popup .tagContainer .btn.btnAdd {
+    padding: 4px;
+    height: 32px;
+    border-radius: 4px;
+}
 .media-popup .tagContainer .smallLabel {
-    margin-top: 14px;
+    margin: 9px 6px 0 0;
     font-weight: bold;
+}
+.media-popup .tagContainer md-chip {
+    margin: 0 7px 0 0;
 }
 .media-popup h2 {
     margin: 0;
@@ -435,23 +469,6 @@ a.minus_icon .addIcon {
     margin-top: 30px;
     line-height: 1.3;
     color: #BBB;
-}
-.cross-btn{
-    position:absolute;
-    right:10px;
-    top:10px;
-    background: url('/assets/1/0/bundles/sitetheorycore/images/media/cross.png') no-repeat;
-    height: 20px;
-    cursor: pointer;
-    width: 20px;
-    z-index: 999;
-}
-.cross-btn a{
-    float:left;
-    outline:none;
- }
-.cross-btn a img{
-    float:left;
 }
 
 .mediaSpecs .smallLabel {
@@ -485,86 +502,57 @@ a.minus_icon .addIcon {
     width:100%;
 }
 
-.del-img{}
-.replace-img{}
-.download-img{}
+
+
+
 
 
 
 /*--23-feb-2017---*/
-
-.progress div {
-    background: #4d4d4d none repeat scroll 0 0;
-    border-radius: 19px;
-    font-size: smaller;
-    height: 16px;
-    /* background: rgba(255, 255, 255, 0.9) none repeat scroll 0 0;
-     border-radius: 8px;
-     height: 16px;
-     left: 50%;
-     margin-left: -40px;
-     margin-top: -8px;
-     opacity: 1;
-     overflow: hidden;
-     pointer-events: none;
-     position: absolute;
-     top: 50%;
-     width: 80px;
-     z-index: 1000;*/
+.progressPercentage {
+    margin-bottom: 3px;
+    font-size: 12px;
 }
-.thumb{
-    min-height: 120px;
-    min-width: 120px;
-    border-radius: 20px;
+.progress {
+    margin-bottom: 1px;
+    background: #FFF;
+}
+.progressColorBar {
+    background: #FE7C57 none repeat scroll 0 0;
+    height: 12px;
+}
+.progressImage {
+    position: relative;
+    height: 134px;
+    background: rgba(202,202,202,.12);
+}
+.progressImage img {
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 134px;
 }
 
 .dropped-files {
-    background: #fff;
-    border: 2px solid rgba(0, 0, 0, 0.3);
-    display: inline-block;
     min-height: 150px;
-    padding: 20px;
-    text-align: center;
-    width: 35%;
+    padding: 28px;
 }
-
-ul.response {
-    padding: 0;
-}
-
-li.sel-file {
-    display: inline-block;
-    margin: 10px 15px;
+.dropped-files ul li {
     position: relative;
-    vertical-align: top;
-    width: 40%;
+    margin-bottom: 40px;
+    padding: 0 4px;
+    width: 32.3%;
+    height: 134px;
 }
 .image--cn{
-    border-radius: 20px;
-    display: inline-block;
-    /*margin: 10px 15px;*/
-    overflow: hidden;
-    position: relative;
-    vertical-align: top;
-    width: 100%;
-    border-radius:10px;
-    max-height: 120px;}
-span.progress{
-    background:rgba(255, 255, 255, 0.84) none repeat scroll 0 0;
-    border-radius: 19px;
-    display: inline-block;
-    font-size: smaller;
-    height: 16px;
-    left: 0;
-    margin: 0 auto;
-    position: absolute;
-    right: 0;
-    top: 44px;
-    width: 75% !important;
 }
 .sel-file:hover img {
-    filter: blur(8px);
-    /*transform: scale(1.05, 1.05);*/
+    opacity: .3;
 }
 
 .image-name {
