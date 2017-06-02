@@ -42,6 +42,7 @@
             this.uid = _.uniqueId('edit_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
+            $scope.edit_input_container = $element[0].getElementsByClassName('stratus_edit_input_container')[0];
 
             // Settings
             $scope.edit = false;
@@ -60,6 +61,23 @@
                     $scope.value = data;
                 });
             }
+            $scope.setEdit = function (bool) {
+                // Only allow Edit mode if liveedit is enabled.
+                // TODO: provide an option to use this functionality
+                if (Stratus.Environment.data.liveEdit && bool) {
+                    $scope.edit = bool;
+                    if (bool) {
+                        if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
+                            // For some reason a timeout of 0 makes this work
+                            setTimeout(function () {
+                                $scope.edit_input_container.getElementsByTagName('input')[0].focus();
+                            }, 0);
+                        }
+                    }
+                } else {
+                    $scope.edit = false;
+                }
+            };
             $scope.accept = function () {
                 if ($scope.model instanceof model && $scope.property) {
                     $scope.model.set($scope.property, $scope.value);
@@ -75,7 +93,7 @@
             };
 
             // Key Triggers
-            $element.bind('keydown keypress', function (event) {
+            $element.on('keydown keypress', function (event) {
                 switch (event.which) {
                     case Stratus.Key.Enter:
                         $scope.$apply(function () {
@@ -89,6 +107,20 @@
                         break;
                 }
             });
+
+            setTimeout(function () {
+                if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
+                    $($scope.edit_input_container.getElementsByTagName('input')[0]).on('focusout', function (event) {
+                        switch (event.type) {
+                            case 'focusout':
+                                $scope.$apply(function () {
+                                    $scope.accept();
+                                });
+                                break;
+                        }
+                    });
+                }
+            }, 0);
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
