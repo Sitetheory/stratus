@@ -229,32 +229,62 @@
 </script>
 <!---show light box overlay for media detail--->
 <script type="text/ng-template" id="mediaDetail.html">
-    <div class="media-popup" role="dialog" >
+    <div class="media-popup backgroundDark clearfix borderRadiusDefault" role="dialog" >
         <a class="cross-btn" href="javascript:;" ng-click="closeZoom();"></a>
-        <div class="right-image">
-           <!-- <img  ng-src="{{ mediaDetail.url }}"  src="{{ mediaDetail.url }}" data-src="lazy"  alt="{{ mediaDetail.name }}">-->
-            <img stratus-src="{{ mediaDetail.url }}" alt="{{ mediaDetail.name }}">
-           <!-- <img ng-src="{{mediaDetail.url}}" alt="">-->
-            <label>Tags</label>
-            <<span ng-if="mediaDetail.tags.length" ng-repeat="tag in mediaDetail.tags">{{tag.name}}</span>
+        <div class="titleContainer clearfix">
+            <h2 class="stGrid column50">{{mediaDetail.name}}</h2>
+            <div class="tagContainer stGrid column50">
+                <p class="smallLabel">Tags</p>
+                <span ng-if="mediaDetail.tags.length" ng-repeat="tag in mediaDetail.tags">{{tag.name}}</span>
+            </div>
         </div>
-        <div class="left-txt">
-            <h2>{{mediaDetail.name}}</h2>
-            <p>{{mediaDetail.description}}</p>
-            <div class="img-tag">
-                {{mediaDetail.extension| uppercase}}
+        <div class="clearfix">
+
+
+            <div class="stGrid column20">
+                <div class="popupInfo">
+
+                    <div class="actionBtns">
+                        <ul class="listInline">
+                            <li>
+                                <a href="javascript:;" class="del-img borderRadiusDefault" ng-click="deleteMediaFromLibrary(mediaDetail.id);">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                </a>
+                            </li>
+                            <!--  <li><a href="javascript:;" class="replace-img">Replace</a></li>-->
+                            <li>
+                                <a href="javascript:;"  class="replace-img borderRadiusDefault">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/linkage.svg"></md-icon>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="//{{ mediaDetail.prefix }}.{{ mediaDetail.extension }}"  class="download-img borderRadiusDefault">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/save.svg"></md-icon>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mediaSpecs">
+                        <p class="smallLabel">07/02/16 @3:25PM</p>
+                        <p class="smallLabel">Type: <span>{{mediaDetail.extension}}</p>
+                        <p class="smallLabel">Size: <span>{{mediaDetail.bytesHuman}}</span></p>
+                        <p class="smallLabel">Ratio: <span>{{mediaDetail.ratio}}</span></p>
+                    </div>
+
+                    <p class="description">{{mediaDetail.description}}Vestibulum pulvinar tristique risus vel molestie. Sed ut elit consequat, luctus turpis nec, hendrerit dolor. Sed interdum erat at enim molestie eleifend.</p>
+
+                </div>
             </div>
-            <label>Size<span>{{mediaDetail.bytesHuman}}</span></label>
-            <label>Ratio<span>{{mediaDetail.ratio}}</span></label>
-            <label>Date<span>07/02/16 @3:25PM</span></label>
-            <div class="action-section">
-                <label>Actions</label>
-                <ul>
-                    <li><a href="javascript:;" class="del-img" ng-click="deleteMediaFromLibrary(mediaDetail.id);">Delete</a></li>
-                  <!--  <li><a href="javascript:;" class="replace-img">Replace</a></li>-->
-                    <li><a href="//{{ mediaDetail.prefix }}.{{ mediaDetail.extension }}"  class="download-img">Download</a></li>
-                </ul>
+            <div class="stGrid column80">
+                <div class="popupImage">
+                    <!-- <img  ng-src="{{ mediaDetail.url }}"  src="{{ mediaDetail.url }}" data-src="lazy"  alt="{{ mediaDetail.name }}">-->
+                    <img stratus-src="{{ mediaDetail.url }}" alt="{{ mediaDetail.name }}">
+                    <!-- <img ng-src="{{mediaDetail.url}}" alt="">-->
+
+                </div>
             </div>
+
         </div>
     </div>
 </script>
