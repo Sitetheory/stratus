@@ -3,8 +3,8 @@
 #stratusContainer {
     animation: itemsFadeIn .2s ease-out both;
 }
-stratus-media-selector {
-    width: 100%;
+a {
+    transition: all .2s ease-out;
 }
 .mediaSelector .smallLabel {
     font-weight: bold;
@@ -123,9 +123,6 @@ stratus-media-selector {
 }
 .mediaLibrary.backgroundDark .smallLabel {
     color: #CBCBCB;
-}
-.mediaSelector .instructions {
-    float: right;
 }
 .mediaLibraryContent {
     margin: 18px 0 10px;
@@ -398,6 +395,21 @@ a.minus_icon .addIcon {
 
 
 
+.instructions {
+    float: right;
+}
+.instructions a,
+.instructions a:link,
+.instructions a:visited,
+.instructions a:active {
+    text-decoration: underline;
+}
+.instructions a:hover {
+    text-decoration: none;
+}
+
+
+
 
 .mediaDialogue.backgroundDark {
     background: rgba(30, 30, 30, .9);
@@ -408,6 +420,7 @@ a.minus_icon .addIcon {
     border-bottom: 1px solid rgba(200,200,200,.3);
 }
 .mediaDialogue .titleContainer h2 {
+    margin: 0;
     color: #DDD;
 }
 
@@ -461,10 +474,6 @@ a.minus_icon .addIcon {
 .media-popup .tagContainer md-chip {
     margin: 0 7px 0 0;
 }
-.media-popup h2 {
-    margin: 0;
-    color: #BBB;
-}
 .description {
     margin-top: 30px;
     line-height: 1.3;
@@ -509,6 +518,41 @@ a.minus_icon .addIcon {
 
 
 /*--23-feb-2017---*/
+
+.dropped-files {
+    margin: 0 auto;
+    max-width: 600px;
+}
+.dropped-files.mediaDialogue .titleContainer h2 {
+    margin-top: 6px;
+}
+.dropped-files .btnDone,
+.dropped-files .btnDone:link,
+.dropped-files .btnDone:visited,
+.dropped-files .btnDone:active {
+    float: right;
+    margin-left: 14px;
+    color: #222;
+    background: #E2E2E2;
+}
+.dropped-files .btnDone:hover {
+    color: #FFF;
+    background: #FE7C57;
+}
+.dropped-files .btnDone .btnGradientLight {
+    background: -webkit-linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+    background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+.dropped-files .btnDone:hover .btnGradientLight {
+    opacity: .2;
+}
+.dropped-files .btnDone .btnText {
+    position: relative;
+    z-index: 20;
+}
+.dropped-files .instructions {
+    margin-top: 10px;
+}
 .progressPercentage {
     margin-bottom: 3px;
     font-size: 12px;
@@ -522,8 +566,9 @@ a.minus_icon .addIcon {
     height: 12px;
 }
 .progressImage {
+    transition: all .2s ease-out;
     position: relative;
-    height: 134px;
+    height: 125px;
     background: rgba(202,202,202,.12);
 }
 .progressImage img {
@@ -535,106 +580,78 @@ a.minus_icon .addIcon {
     display: block;
     margin: 0 auto;
     max-width: 100%;
-    max-height: 134px;
+    max-height: 125px;
 }
 
 .dropped-files {
     min-height: 150px;
     padding: 28px;
 }
+.dropped-files ul {
+    margin: 0 -4px;
+}
 .dropped-files ul li {
     position: relative;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
     padding: 0 4px;
     width: 32.3%;
-    height: 134px;
+    height: 125px;
 }
 .image--cn{
 }
-.sel-file:hover img {
-    opacity: .3;
+.sel-file:hover .progressImage {
+    opacity: .2;
 }
 
-.image-name {
-    background: rgba(255, 255, 255, 0.4) none repeat scroll 0 0;
-    border-radius: 4px;
-    bottom: 42px;
-    color: #000000;
-    display: block;
+.droppedImageInfo {
+    transition: all .2s ease-out;
+    display:none;
+    margin-top: 30px;
+    padding: 2px 10%;
+    width: 100%;
+    color: #FFF;
     font-size: 12px;
-    height: 22px;
-    left: 0;
-    margin: 0 auto;
-    overflow: hidden;
-    padding: 2px 8px;
-    position: absolute;
-    right: 0;
     text-align: center;
-    text-overflow: ellipsis !important;
-    white-space: nowrap;
-    width: 108px;
-    display:none;
 }
-.image-name:hover{ background: rgba(255, 255, 255, 0.8) none repeat scroll 0 0;}
-
-
-.image-size{
-    background: rgba(255, 255, 255, 0.4) none repeat scroll 0 0;
-    border-radius: 5px;
-    color: #000000;
-    font-size: 12px;
-    left: 0;
-    margin: 0 auto;
-    position: absolute;
-    right: 0;
-    top: 19px;
-    width: 61px;
-    display:none;
-
+.sel-file:hover .droppedImageInfo {
+    display: block;
 }
-.sel-file:hover .image-name,.sel-file:hover .image-size{display: block;}
-.hover-tick
-{   background-image: url("/assets/1/0/bundles/sitetheorycore/images/media/hover-tick.png");
-    background-size: 48px auto;
-    bottom: 0;
-    height: 48px;
-    left: 0;
-    margin: auto;
-    position: absolute;
-    right: 0;
-    width: 48px;
-    opacity: 0;
+.droppedImageInfo md-icon {
+    height: 36px;
+    width: 36px;
+    min-height: 36px;
+    width: 36px;
 }
-.hover-tick-run{animation:hovertick ease-out 1.5s 0s;}
-
+.droppedImageInfo svg g {
+    fill: #FFF;
+}
+.sel-file:hover .image-name,
+.sel-file:hover .image-size{
+    display: block;
+}
 @-webkit-keyframes hovertick{
-    from {top:120%; opacity:1;}
-    to {top:0; opacity:0;}
+    from {
+        opacity:1;}
+    to {
+        opacity:0;}
 }
-@-moz-keyframes hovertick{
-    from {top:120%; opacity:1;}
-    to {top:0; opacity:0;}
+.hover-tick {
+    margin: 0 auto 10px;
+    height: 36px;
+    width: 36px;
 }
-@-o-keyframes hovertick{
-    from {top:120%; opacity:1;}
-    to {top:0; opacity:0;}
+.hover-tick-run {
+    animation: hovertick ease-out 1.5s 0s;
 }
-button.grey_btn{
-    background: #333333 none repeat scroll 0 0;
-    border-radius: 0px;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
+.hover-cross {
+    transition: all ease 0.5s;
+    margin: 0 auto 10px;
+    height: 36px;
+    width: 36px;
 }
-button.grey_btn:hover{ background: rgba(0, 0, 0, 0) linear-gradient(#ffa68f, #fb8669) repeat scroll 0 0 !important;}
 
-button.black_btn{
-    background: #000 none repeat scroll 0 0;
-    border-radius: 7px;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-}
+
+
 .cancel--btn {
     background: rgba(0, 0, 0, 0) url("/assets/1/0/bundles/sitetheorycore/images/media/close_red.png") repeat scroll 0 0 / 34px auto;
     border: medium none;
@@ -666,44 +683,17 @@ button.black_btn{
     padding: 9px 0 0 25px;
 }
 .error-upload-msg {
-    padding:8px;
-    left: 0px;
-    right:0;
-    margin:0 auto;
-    position: absolute;
-    top: 108%;
-    width: 140px;
-    background: #be2626;
-    color:#fff;
-    font-size:12px;
-    border-radius:10px;
     display: none;
-}
-.error-upload-msg:after {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    margin-left: -8px;
-    width: 0; height: 0;
-    border-bottom: 8px solid #be2626;
-    border-right: 8px solid transparent;
-    border-left: 8px solid transparent;
+    margin: 0 auto;
+    padding: 8px;
+    width: 100%;
+    color: #FFF;
+    text-align: center;
+    border-radius: 2px;
+    background: #be2626;
 }
 li.sel-file:hover .error-upload-msg{display:block;}
-.hover-cross
-{   background-image: url("/assets/1/0/bundles/sitetheorycore/images/media/hover-close.png");
-    background-size: 48px auto;
-    top: 120%;
-    height: 48px;
-    left: 0;
-    margin: auto;
-    position: absolute;
-    right: 0;
-    width: 48px;
-    transition: all ease 0.5s;
-}
-.hover-cross-run{top:30%;}
+
 .selected--img
 { }
 
@@ -712,13 +702,8 @@ li.sel-file:hover .error-upload-msg{display:block;}
 }
 
 .add_icon,.minus_icon,.del_item,.trash_icon{ position:relative; }
-/* .add_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-plus.png"), auto;} */
-/* .minus_icon{cursor: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;} */
 .trash_icon{cusror: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
-/*.add_icon:after{content:"\f067"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}
-.minus_icon:after{content:"\f068"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:10px; bottom:10px;}*/
 .del_item:after{content:"\f014"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:26px; top:-37px;}
-/*.add_icon i,.minus_icon i{font-size:26px; text-shadow: 1px 1px 5px #000000;}*/
 .icon_show{display:block;}
 .layer_black::after{background:rgba(0,0,0,0.5); content:""; height: 100%; left: 0; position: absolute; top: 0; width: 100%; z-index: 9;}
 .layer_black{position:relative; float:left;}

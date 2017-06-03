@@ -193,9 +193,17 @@
 <!---show light box overlay for drag/dropped files--->
 
 <div class="dropped-files mediaDialogue backgroundDark borderRadiusDefault" role="dialog">
+
     <div class="titleContainer clearfix">
+        <a href="" class="btn btnDone positionAnchor">
+            <div class="btnText">Done</div>
+            <div class="btnGradientLight"></div>
+        </a>
+        <p class="instructions">Drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a> to upload more</p>
         <h2>Uploading</h2>
     </div>
+
+
     <ul class="listInline response clearfix">
         <li class="sel-file">
             <div class="image--cn">
@@ -210,14 +218,29 @@
                 </div>
                 <button hide title="Abort" class="cancel--btn">
                 </button>
-                <span hide class="hover-cross hover-cross-run"></span>
-                <span class="image-size"> 226K</span>
-                <span class="image-name">My Photo</span>
-                <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                <span  class="hover-tick hover-tick-run"></span>
+
+                <div class="verticalCenter droppedImageInfo">
+
+
+                        <div hide class="hover-tick hover-tick-run">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                        </div>
+
+                    <div class="actionBtns">
+                        <div class="hover-cross hover-cross-run">
+                            <a href="">
+                                <md-tooltip>Abort upload</md-tooltip>
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="smallLabel"> 226K</div>
+                    <div class="fontBody">My Photo</div>
+                </div>
+
             </div>
             <!-- show error message if uploading fails--->
-            <span hide class="error-upload-msg">{{f.errorMsg}}</span>
+            <div class="error-upload-msg fontBody verticalCenter">{{f.errorMsg}} You didn't do it right</div>
         </li>
         <li class="sel-file">
             <div class="image--cn">
