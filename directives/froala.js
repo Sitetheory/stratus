@@ -22,7 +22,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'froala', 'angular'], factory);
+        define(['stratus', 'jquery', 'froala', 'angular'], factory);
     } else {
         factory(root.Stratus, root.$);
     }
@@ -191,7 +191,7 @@
 
                         for (var i = 0; i < attributeNodes.length; i++) {
                             var attrName = attributeNodes[i].name;
-                            if (ctrl.options.angularIgnoreAttrs && ctrl.options.angularIgnoreAttrs.indexOf(attrName) != -1) {
+                            if (ctrl.options.angularIgnoreAttrs && ctrl.options.angularIgnoreAttrs.indexOf(attrName) !== -1) {
                                 continue;
                             }
                             attrs[attrName] = attributeNodes[i].value;
