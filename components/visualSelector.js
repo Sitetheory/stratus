@@ -145,6 +145,9 @@
 
                 $mdPanel.open(config);
             };
+            $scope.layoutRawDesc = function (plainText) {
+                return $sce.trustAsHtml(plainText);
+            }
 
             function ZoomController(mdPanelRef) {
                 $scope.closeDialog = function () {
