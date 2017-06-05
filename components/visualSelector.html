@@ -5,29 +5,38 @@
            ng-click="toggleGallery();">
             <i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
         <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
-        <div class="lt_box" ng-repeat="sel in model.get(property)">
+        
+        
+         <!-- ng-repeat="sel in model.get(property)" -->
+        
+        <div class="lt_box">
+            <div>{{model.dataDetails.name}}</div>
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
-            <button class="cancel--btn" ng-click="model.toggle(property, sel.data.id, toggleOptions);"></button>
+            <!-- <button class="cancel--btn" ng-click="model.toggle(property, sel.id, toggleOptions);"></button> -->
             <div class="lt-image"
                  ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
-                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
+                <img ng-if="model.get(property).images" src="model.get(property).images" alt="" />
+                
+                <img ng-if="!model.get(property).images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
                 <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
-                <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
+                <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
                    ng-click="displayGallery();" class="blck_btn">
                     <span>Change</span></a>
-                <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
+                <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
                    class="blck_btn"
                    ng-click="displayGallery();">
                     <span>Choose Layout</span></a>
                 <!--</div>-->
             </div>
             <div class="lt-content">
-                <h4>{{sel.name}}</h4>
-                <p>{{sel.description}}</p>
+                <h4 ng-if="!model.get(property).name">{{name}}</h4>
+                <h4>{{model.get(property).name}}</h4>
+                <p ng-if="!model.get(property).description">{{description}}</p>
+                <div class="name fontSecondary" ng-bind-html="layoutRawDesc(model.get(property).description) | truncate:{limit:300}"></div>
             </div>
         </div><!-- Layout box Inner ends -->
-        <div ng-show="!model.get(property).length">
+        <div ng-show="!model.get(property).id">
             <span>No Items selected</span>
         </div>
     </div><!-- Layout Box Ends -->
@@ -38,20 +47,24 @@
             <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Choose From Layout</h3>
         </div><!-- Gallery header Ends -->
         <div class="search--gallery" ng-if="$ctrl.search === true">
-            <stratus-search flex="40"></stratus-search>
+            <stratus-search  flex="3"></stratus-search>
         </div>
         <div class="lt_box">
+
             <ul class="layout_gallery">
                 <li ng-repeat="target in collection.models">
-					<span class="galleryimg-cont" ng-class="{'select-highlight': isSelected(target.data)}">
-                        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt=""/>
-						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(target.data);">
+                    <span class="galleryimg-cont" ng-class="{'select-highlight': model.exists(property, target.data.id)}">
+                        
+                        <img ng-if="target.data.images" src="target.data.images" alt="" />
+                        <img ng-if="!target.data.images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt="" />
+                        
+                        <a href="javascript:void(0)" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(target.data);">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </a>
-						<a href="#" ng-hide="model.exists(property, target.data.id)"
-                           ng-click="model.toggle(property, target.data.id, toggleOptions)"
+                        <a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)"
+                           ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions)"
                            class="bl_btn">Choose Layout </a>
-					</span>
+                    </span>
                     <h5>{{target.data.name}}</h5>
                 </li>
             </ul><!-- Layout Gallery Ends -->
@@ -67,16 +80,16 @@
         <div class="lt-popup">
             <div class="ltpop-left">
                 <h3>{{layoutDetail.name}}</h3>
-                <p>{{layoutDetail.description}}</p>
-                <a href="#" ng-hide="model.exists(property, layoutDetail.data.id)"
-                   ng-click="model.toggle(property, layoutDetail.id, toggleOptions)" class="bl_btn">Choose Layout </a>
+                <div class="name fontSecondary" ng-bind-html="layoutRawDesc(layoutDetail.description) | truncate:{limit:300}"></div>
+                <a href="javascript:void(0)" ng-hide="model.exists(property,layoutDetail.id)"
+                   ng-click="model.toggle(property, {'id': layoutDetail.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}, toggleOptions); closeDialog();" class="bl_btn">Choose Layout </a>
             </div>
             <div class="ltpop-right">
-                <a href="#">
+                <a href="javascript:void(0)">
                     <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
                 </a>
             </div>
-            <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
+            <a href="javascript:void(0)" class="lt-close" ng-click="closeDialog();">X</a>
         </div><!-- Layout popup ends -->
     </div>
 </script>
