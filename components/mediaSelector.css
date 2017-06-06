@@ -521,7 +521,7 @@ a.minus_icon .addIcon {
 
 .dropped-files {
     margin: 0 auto;
-    max-width: 600px;
+    max-width: 640px;
 }
 .dropped-files.mediaDialogue .titleContainer h2 {
     margin-top: 6px;
@@ -529,13 +529,22 @@ a.minus_icon .addIcon {
 .dropped-files .btnDone,
 .dropped-files .btnDone:link,
 .dropped-files .btnDone:visited,
-.dropped-files .btnDone:active {
+.dropped-files .btnDone:active,
+.dropped-files .md-button.md-default-theme:not([disabled]).md-focused,
+.dropped-files .md-button:not([disabled]).md-focused {
     float: right;
-    margin-left: 14px;
+    margin: 0 0 0 14px;
+    padding: 12px 14px;
+    min-height: inherit;
+    min-width: inherit;
+    font-size: 11px;
+    font-weight: bold;
     color: #222;
     background: #E2E2E2;
 }
-.dropped-files .btnDone:hover {
+.dropped-files .btnDone:hover,
+.dropped-files .md-button.md-default-theme:not([disabled]):hover,
+.dropped-files .md-button:not([disabled]):hover {
     color: #FFF;
     background: #FE7C57;
 }
@@ -582,7 +591,20 @@ a.minus_icon .addIcon {
     max-width: 100%;
     max-height: 125px;
 }
-
+.progressFile md-icon {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: inherit;
+}
+.progressFile #linearGradient-iconDocument .stop1 {
+    stop-color: #FFF;
+    stop-opacity: .7;
+}
+.progressFile #linearGradient-iconDocument .stop2 {
+    stop-color: #FFF;
+    stop-opacity: .5;
+}
 .dropped-files {
     min-height: 150px;
     padding: 28px;
@@ -595,38 +617,38 @@ a.minus_icon .addIcon {
     margin-bottom: 60px;
     padding: 0 4px;
     width: 32.3%;
-    height: 125px;
+
 }
 .image--cn{
+    height: 125px;
 }
 .sel-file:hover .progressImage {
     opacity: .2;
 }
-
-.droppedImageInfo {
+.hoverItems {
     transition: all .2s ease-out;
     display:none;
     margin-top: 30px;
     padding: 2px 10%;
     width: 100%;
     color: #FFF;
-    font-size: 12px;
     text-align: center;
 }
-.sel-file:hover .droppedImageInfo {
-    display: block;
+.hoverItems button {
+    background: none;
+    border: none;
 }
-.droppedImageInfo md-icon {
-    height: 36px;
-    width: 36px;
-    min-height: 36px;
-    width: 36px;
+.droppedImageInfo {
+    margin-top: 5px;
 }
-.droppedImageInfo svg g {
+.hoverItems md-icon {
+    height: inherit;
+    width: 50%;
+}
+.hoverItems svg g {
     fill: #FFF;
 }
-.sel-file:hover .image-name,
-.sel-file:hover .image-size{
+.sel-file:hover .hoverItems {
     display: block;
 }
 @-webkit-keyframes hovertick{
@@ -635,19 +657,9 @@ a.minus_icon .addIcon {
     to {
         opacity:0;}
 }
-.hover-tick {
-    margin: 0 auto 10px;
-    height: 36px;
-    width: 36px;
-}
+
 .hover-tick-run {
     animation: hovertick ease-out 1.5s 0s;
-}
-.hover-cross {
-    transition: all ease 0.5s;
-    margin: 0 auto 10px;
-    height: 36px;
-    width: 36px;
 }
 
 
