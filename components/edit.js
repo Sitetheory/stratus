@@ -67,12 +67,15 @@
                 if (Stratus.Environment.data.liveEdit && bool) {
                     $scope.edit = bool;
                     if (bool) {
-                        if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
-                            // For some reason a timeout of 0 makes this work
-                            setTimeout(function () {
+                        setTimeout(function () {
+                            if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
+                                // Focus on the input field
                                 $scope.edit_input_container.getElementsByTagName('input')[0].focus();
-                            }, 0);
-                        }
+                            } else if ($scope.edit_input_container.getElementsByClassName('fr-view').length > 0) {
+                                // Focus on the froala editable field
+                                $scope.edit_input_container.getElementsByClassName('fr-view')[0].focus();
+                            }
+                        }, 0);
                     }
                 } else {
                     $scope.edit = false;
@@ -109,15 +112,57 @@
             });
 
             setTimeout(function () {
+                /*var $editContainer;
                 if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
-                    $($scope.edit_input_container.getElementsByTagName('input')[0]).on('focusout', function (event) {
+                    // and input container
+                    $editContainer = $($scope.edit_input_container.getElementsByTagName('input')[0]);
+                } else if ($scope.edit_input_container.getElementsByClassName('fr-box').length > 0) {
+                    // froala element container
+                    $editContainer = $($scope.edit_input_container.getElementsByClassName('fr-box')[0]);
+                }
+                if ($editContainer) {
+                    $editContainer.on('focusout', function (event) {
                         switch (event.type) {
                             case 'focusout':
                                 $scope.$apply(function () {
                                     $scope.accept();
                                 });
+                                console.log('Focusing out');
                                 break;
                         }
+                    });
+
+                    // $editContainer.notClicked(function () {console.log('test!');});
+                }*/
+
+                // Save on Focus out
+                if ($scope.edit_input_container) {
+                    // FIXME this does not work for non-form type element (e.g. Media selector)
+                    $($scope.edit_input_container).on('focusout', function (event) {
+                        switch (event.type) {
+                            case 'focusout':
+                                $scope.$apply(function () {
+                                    $scope.accept();
+                                });
+                                console.log('Focusing out');
+                                break;
+                        }
+                    });
+
+                    $(document).on('click', function (event) {
+                        // console.log($($scope.edit_input_container).notClicked(event));
+                        /*console.log(event);
+                        if ((!event.target.closest('*').length && !$($scope.edit_input_container).parents('*').length)) {
+                            console.log('Element was not clicked');
+                        } else {
+                            console.log('it was clicked?');
+                        }*/
+
+                        /*if (
+                            $($scope.edit_input_container).parents('*').length
+                        ) {
+                            console.log($($scope.edit_input_container).parents('*'));
+                        }*/
                     });
                 }
             }, 0);
