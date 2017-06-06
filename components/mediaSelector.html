@@ -202,22 +202,22 @@
                 <div class="btnGradientLight"></div>
             </md-button>
 
-            <p class="instructions">Drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a> to upload more</p>
+            <p class="instructions"><span class="optional">Drag &amp; drop or </span><a href="#" ngf-select="uploadToLibrary($files)">browse</a> to upload<span class="optional"> more</span></p>
             <h2>Uploading</h2>
         </div>
 
         <ul class="listInline response clearfix">
             <li class="sel-file" ng-repeat="f in files">
-                <div class="image--cn">
+                <div class="image--cn" ng-class="'progressVisible':f.progress >= 0 && f.uploadStatus == false ">
 
-                    <div ng-show="f.progress >= 0 && f.uploadStatus == false && f.errorUpload == false">
+                    <div>
                         <div class="progressPercentage fontBody">{{f.progress}}%</div>
                         <div class="progress" >
-                            <div class="progressColorBar" style="width:{{f.progress}}%"></div>
+                            <div ng-show="f.progress >= 0 && f.uploadStatus == false && f.errorUpload == false" class="progressColorBar" style="width:{{f.progress}}%"></div>
                         </div>
                     </div>
 
-                    <div class="progressImage">
+                    <div class="progressImage" ng-class="'uploadComplete':f.uploadStatus == true">
                         <div ng-if="f.type == 'application/x-unknown'" class="progressFile positionCenter">
                             <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
                         </div>
@@ -225,29 +225,23 @@
                     </div>
 
                     <div class="hoverItems verticalCenter">
-
-                        <div hide class="hover-tick hover-tick-run">
+                        <div ng-show="f.uploadStatus == true" class="hover-tick hover-tick-run">
                             <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
                         </div>
 
                         <div class="actionBtns">
-                            <div ng-show="f.errorUpload == true && f.uploadStatus == false" class="hover-cross hover-cross-run">
-
-                            </div>
-                            <div class="hover-cross hover-cross-run">
-                                <button title="Abort" class="cancel--btn" ng-click="f.upload.abort();f.upload.aborted=true"
-                                        ng-show="f.upload != null && f.progress < 100 && !f.upload.aborted">
-                                    <md-tooltip>Abort upload</md-tooltip>
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
-                                </button>
-                            </div>
+                            <button title="Abort" ng-click="f.upload.abort();f.upload.aborted=true"
+                                    ng-show="f.upload != null && f.progress < 100 && !f.upload.aborted">
+                                <md-tooltip>Abort upload</md-tooltip>
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
+                            </button>
                         </div>
 
                     </div>
 
                     <div class="droppedImageInfo smallLabel">{{f.name}} | {{f.size}}</div>
 
-                    <span  ng-show="f.uploadStatus == true && f.errorUpload == false" class="hover-tick hover-tick-run"></span>
+                    <span ng-show="f.uploadStatus == true && f.errorUpload == false" class="hover-tick hover-tick-run"></span>
                 </div>
                 <!-- show error message if uploading fails--->
                 <div ng-show="f.errorUpload == true && f.uploadStatus == false" class="error-upload-msg fontBody verticalCenter">{{f.errorMsg}}</div>
@@ -257,7 +251,6 @@
 
             </li>
         </ul>
-        <md-button ng-show="uploadComp" class="grey_btn" ng-click="closeDialog();">DONE</md-button>
     </div>
 </script>
 

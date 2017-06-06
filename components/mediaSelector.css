@@ -521,6 +521,7 @@ a.minus_icon .addIcon {
 
 .dropped-files {
     margin: 0 auto;
+    padding : 0 6%;
     max-width: 640px;
 }
 .dropped-files.mediaDialogue .titleContainer h2 {
@@ -567,7 +568,13 @@ a.minus_icon .addIcon {
     font-size: 12px;
 }
 .progress {
+    transition: all .2s ease-out;
     margin-bottom: 1px;
+    height: 12px;
+
+    background: rgba(33,33,33,0);
+}
+.progressVisible .progress {
     background: #FFF;
 }
 .progressColorBar {
@@ -577,19 +584,28 @@ a.minus_icon .addIcon {
 .progressImage {
     transition: all .2s ease-out;
     position: relative;
-    height: 125px;
     background: rgba(202,202,202,.12);
 }
 .progressImage img {
-    transform: translate(-50%,-50%);
-    -webkit-transform: translate(-50%,-50%);
-    position: absolute;
-    left: 50%;
-    top: 50%;
+    transition: all .2s ease-out;
     display: block;
     margin: 0 auto;
     max-width: 100%;
     max-height: 125px;
+}
+@media (min-width: 480px) {
+    .image--cn,
+    .progressImage,
+    .progressImage img {
+        height: 125px;
+    }
+    .progressImage img {
+        transform: translate(-50%,-50%);
+        -webkit-transform: translate(-50%,-50%);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+    }
 }
 .progressFile md-icon {
     display: block;
@@ -615,14 +631,17 @@ a.minus_icon .addIcon {
 .dropped-files ul li {
     position: relative;
     margin-bottom: 60px;
-    padding: 0 4px;
-    width: 32.3%;
-
 }
-.image--cn{
-    height: 125px;
+@media (min-width: 480px) {
+    .dropped-files ul li {
+        padding: 0 4px;
+        width: 32.3%;
+    }
 }
-.sel-file:hover .progressImage {
+.sel-file:hover .progressVisible .progressImage {
+    opacity: .2;
+}
+.progressImage.uploadComplete {
     opacity: .2;
 }
 .hoverItems {
@@ -657,9 +676,17 @@ a.minus_icon .addIcon {
     to {
         opacity:0;}
 }
-
+/*
 .hover-tick-run {
     animation: hovertick ease-out 1.5s 0s;
+}*/
+@media (max-width: 479px) {
+    .dropped-files ul li {
+        display: block;
+    }
+    .optional {
+        display: none;
+    }
 }
 
 
