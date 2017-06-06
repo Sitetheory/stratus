@@ -1,14 +1,15 @@
 <div class="mediaSelector">
-    <div class="selectorContainer selected borderDefault borderDefaultAll borderRadiusDefault">
 
-        <p class="instructions nothingSelectedInstructions fontBody clearfix">
-            <!-- show only if no files are dragged-->
 
+    <div class="sectionContainer selectedContainer borderDefault borderDefaultAll borderRadiusDefault">
+
+        <p class="instructions fontBody clearfix">
             <a href="#" ng-click="openLibrary()" class="nothingSelectedTextLink">Open library to select images</a> or drag, drop new images below.
         </p>
+
         <p class="smallLabel selectedMediaLabel">Media</p>
-        <!-- Gallery header Ends -->
-        <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content upload-image" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
+
+        <div id="selected_drop_area" ng-class="{'yellow-border':dragClass}" class="gl-content" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
               ngf-drop ngf-max-files="20"   ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover"  ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
 
 
@@ -17,11 +18,11 @@
                     <div class="file-upload-drag" ng-if="df.mime == 'application/x-unknown'">
                         <i class="fa fa-file file-icon-drag"></i>
                     </div>
-                    <div  ng-if="df.mime != 'application/x-unknown'" class="gl-img-container">
+                    <div  ng-if="df.mime != 'application/x-unknown'" class="libraryItem">
 
 
                         <a href="#" ng-dblclick="zoomView(df)">
-                            <div class="imgLibDrag" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
+                            <div class="imageDraggable" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
 
                                 <img id="{{df.id}}" class="shapeholder selectImgDrag" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             </div>
@@ -39,12 +40,13 @@
                                 <div class="positionActionArea">
                                     <div class="clearfix actionBtns">
                                         <a href="#" ng-click="zoomView(df)" class="infoIcon" >
+                                            <md-tooltip>Image details</md-tooltip>
                                             <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                         </a>
                                         <a href="#" class="deleteIcon">
-                                            <div>
-                                                <md-icon aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
-                                            </div>
+                                            <md-tooltip>Remove selection</md-tooltip>
+                                            <md-icon aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+
                                         </a>
                                     </div>
                                 </div>
@@ -55,7 +57,7 @@
                     </div><!-- Image Info Container Ends -->
 
                 </li>
-                <li class="actionBtn actionLibrary">
+                <li class="libraryToggle">
                     <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="mediaLibrary()">
 
                         <md-tooltip>Open Media Library</md-tooltip>
@@ -69,12 +71,18 @@
             </ul>
         </div><!-- Gl Content Ends -->
     </div><!-- Gallery Box Ends -->
+
+
+
+
+
+
     <div id="openLibrary" ng-show="libraryVisible">
-        <div class="selectorContainer mediaLibrary backgroundDark borderRadiusDefault">
+        <div class="sectionContainer mediaLibrary backgroundDark borderRadiusDefault">
             <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
             <p class="smallLabel">Media Library</p>
             <div class="mediaLibraryContent" ng-class="{'layer_black':dragClass}">
-                <div class="search-bar">
+                <div class="searchBar">
                     <div class="gal-search">
                         <stratus-search flex></stratus-search>
                     </div>
@@ -82,7 +90,7 @@
                 <div ngf-drop="uploadToLibrary($files)" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}"  ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                 <ul class="listInline">
                     <li  ng-repeat="media in collection.models">
-                        <div class="gl-img-container positionAnchor" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
+                        <div class="libraryItem positionAnchor" ng-class="{'selected--img': hovering,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                            <!-- <a href="#" ng-mouseleave="iconStyle = ''"  ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyle]" ng-mouseenter="iconStyle=media.data.selectedClass"
                                ng-click="addDeleteMedia(media.data.selectedClass,media.data.id);" ng-dblclick="zoomView(media.data)">-->
 
@@ -97,7 +105,7 @@
                                 <div class="minusIcon positionCenter">
                                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"></md-icon>
                                 </div>
-                                <div class="imgLibDrag" [itemid]="{{media.data.id}}" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;">
+                                <div class="imageDraggable" [itemid]="{{media.data.id}}" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;">
                                     <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                                 </div>
 
@@ -117,10 +125,12 @@
                                     <div class="positionActionArea">
                                         <div class="clearfix actionBtns">
                                             <a href="#" aria-hidden="true" ng-click="zoomView(media.data)" class="infoIcon">
+                                                <md-tooltip>Image details</md-tooltip>
                                                 <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                             </a>
                                             <!-- This isn't working, should it be here? -->
                                             <a href="#" class="deleteIcon">
+                                                <md-tooltip>Permanently delete from libary</md-tooltip>
                                                 <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
                                             </a>
                                         </div>
@@ -139,12 +149,14 @@
             <stratus-pagination></stratus-pagination>
         </div>
     </div>
+    
+    
     <div id="openDragDropLibrary" ng-show="dragLibraryVisible">
-        <div class="selectorContainer mediaLibrary backgroundDark borderRadiusDefault">
+        <div class="sectionContainer mediaLibrary backgroundDark borderRadiusDefault">
             <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
             <p class="smallLabel">Media Library</p>
             <div class="mediaLibraryContent" ng-class="{'layer_black':dragClass}">
-                <div class="search-bar">
+                <div class="searchBar">
                     <div class="gal-search">
                         <stratus-search flex></stratus-search>
                     </div>
@@ -153,10 +165,19 @@
                 <div ngf-drop="uploadToLibrary($files)" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
                 <ul class="listInline">
                     <li ng-repeat="media in collection.models">
-                        <div class="gl-img-container" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
+                        <div class="libraryItem" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
                             <a href="#" ng-mouseleave="iconStyles = ''" ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyles]"
                                ng-mouseenter="iconStyles=media.data.selectedClass"
                                stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id,$event);" ng-dblclick="zoomView(media.data)">
+                                <div class="checkIcon positionCenter">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                                </div>
+                                <div class="addIcon positionCenter">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
+                                </div>
+                                <div class="minusIcon positionCenter">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"></md-icon>
+                                </div>
                                 <div class="imgLibDrag" id="libb_{{media.data.id}}" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;">
                                     <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                                 </div>
@@ -172,9 +193,11 @@
                                     <p class="fontBody imgTitle">{{media.data.name}}</p>
                                     <div class="clearfix actionBtns">
                                         <a href="#" ng-click="zoomView(media.data)" class="infoIcon">
+                                            <md-tooltip>Image details</md-tooltip>
                                             <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                         </a>
                                         <a href="#" class="deleteIcon">
+                                            <md-tooltip>Permanently delete from libary</md-tooltip>
                                            <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
                                         </a>
                                         <!-- Image Info Right Ends -->
@@ -190,7 +213,9 @@
         </div>
     </div>
 </div>
-<!---show light box overlay for drag/dropped files--->
+
+
+<!--- Info dialogue (Angular panel) --->
 
 <script type="text/ng-template" id="uploadedFiles.html">
     <div class="dropped-files mediaDialogue backgroundDark borderRadiusDefault" role="dialog">
@@ -207,17 +232,13 @@
         </div>
 
         <ul class="listInline response clearfix">
-            <li class="sel-file" ng-repeat="f in files">
-                <div class="image--cn" ng-class="'progressVisible':f.progress >= 0 && f.uploadStatus == false ">
+            <li class="sel-file" ng-repeat="f in files" ng-class="f.uploadStatus == true ? 'uploadComplete' ">
+                <div class="image--cn" ng-class="f.progress >= 0 && f.uploadStatus == false ? 'progressVisible' : 'progressInvisible' ">
 
-                    <div>
-                        <div class="progressPercentage fontBody">{{f.progress}}%</div>
-                        <div class="progress" >
-                            <div ng-show="f.progress >= 0 && f.uploadStatus == false && f.errorUpload == false" class="progressColorBar" style="width:{{f.progress}}%"></div>
-                        </div>
-                    </div>
 
-                    <div class="progressImage" ng-class="'uploadComplete':f.uploadStatus == true">
+                    <div class="droppedImageInfo smallLabel">{{f.name}} | {{f.size}}</div>
+
+                    <div class="progressImage">
                         <div ng-if="f.type == 'application/x-unknown'" class="progressFile positionCenter">
                             <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
                         </div>
@@ -225,9 +246,6 @@
                     </div>
 
                     <div class="hoverItems verticalCenter">
-                        <div ng-show="f.uploadStatus == true" class="hover-tick hover-tick-run">
-                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
-                        </div>
 
                         <div class="actionBtns">
                             <button title="Abort" ng-click="f.upload.abort();f.upload.aborted=true"
@@ -237,17 +255,25 @@
                             </button>
                         </div>
 
+                       <div ng-show="f.uploadStatus == true" class="hover-tick">
+                           <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                       </div>
+
                     </div>
 
-                    <div class="droppedImageInfo smallLabel">{{f.name}} | {{f.size}}</div>
+
+                    <div class="progress">
+                        <div ng-show="f.progress >= 0 && f.uploadStatus == false && f.errorUpload == false" class="progressColorBar" style="width:{{f.progress}}%"></div>
+                    </div>
+                    <div class="progressPercentage fontBody">{{f.progress}}%</div>
 
                     <span ng-show="f.uploadStatus == true && f.errorUpload == false" class="hover-tick hover-tick-run"></span>
                 </div>
                 <!-- show error message if uploading fails--->
                 <div ng-show="f.errorUpload == true && f.uploadStatus == false" class="error-upload-msg fontBody verticalCenter">{{f.errorMsg}}</div>
             </li>
-            <li class="media-err-msg"  ng-repeat="f in invalidFiles">
-                <div ng-if="f.$errorMessages.maxSize">File({{f.name}}) too large,maximum size allowed is {{f.$errorParam}}</div>
+            <li class="errorMessage fontBody"  ng-repeat="f in invalidFiles">
+                <div ng-if="f.$errorMessages.maxSize">Looks like your file ({{f.name}}) is too large. You can upload files up to {{f.$errorParam}}.</div>
 
             </li>
         </ul>
@@ -259,7 +285,7 @@
 
 <!---show light box overlay for media detail--->
 <script type="text/ng-template" id="mediaDetail.html">
-    <div class="media-popup mediaDialogue backgroundDark clearfix borderRadiusDefault" role="dialog" >
+    <div class="mediaInfoFull mediaDialogue backgroundDark clearfix borderRadiusDefault" role="dialog" >
 
         <button type="button" class="btnClose" href="javascript:;" ng-click="closeZoom();">
             <span class="sr-only">Toggle Navigation</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg>
@@ -308,7 +334,6 @@
                                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
                                 </a>
                             </li>
-                            <!--  <li><a href="javascript:;" class="replace-img">Replace</a></li>-->
                             <li>
                                 <a data-plugin="AddClass" data-target="#popupImage" data-class="displayInstructions" data-event="click" class="replace borderRadiusDefault">
                                     <md-tooltip>Replace image</md-tooltip>
@@ -336,11 +361,8 @@
                 </div>
             </div>
             <div class="stGrid column80">
-                <div id="popupImage" class="popupImage">
-                    <!-- <img  ng-src="{{ mediaDetail.url }}"  src="{{ mediaDetail.url }}" data-src="lazy"  alt="{{ mediaDetail.name }}">-->
+                <div id="popupImage" class="infoFullImage">
                     <img stratus-src="{{ mediaDetail.url }}" alt="{{ mediaDetail.name }}">
-                    <!-- <img ng-src="{{mediaDetail.url}}" alt="">-->
-
                 </div>
             </div>
 
