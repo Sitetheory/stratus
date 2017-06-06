@@ -174,9 +174,14 @@
                                         <a href="#" ng-click="zoomView(media.data)" class="infoIcon">
                                             <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                         </a>
-                                        <a href="#" class="deleteIcon">
-                                           <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                        <a href="#" 
+                                            
+                                           stratus-single-click="deleteMediaFromLibrary(df.id);" ng-dblclick="zoomView(media.data)">
+                                            <md-icon class="deleteIcon" stratus-single-click="deleteMediaFromLibrary(df.id);"  aria-hidden="true" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
                                         </a>
+                                        <!-- <a href="#" class="deleteIcon">
+                                           <md-icon class="deleteIcon" aria-hidden="true" stratus-single-click="testLib(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                        </a> -->
                                         <!-- Image Info Right Ends -->
                                     </div>
                                 </div><!-- Image Info Ends -->
@@ -192,169 +197,65 @@
 </div>
 <!---show light box overlay for drag/dropped files--->
 
-<div class="dropped-files mediaDialogue backgroundDark borderRadiusDefault" role="dialog">
-    <div class="titleContainer clearfix">
-        <h2>Uploading</h2>
-    </div>
-    <ul class="listInline response clearfix">
-        <li class="sel-file">
-            <div class="image--cn">
-                <i hide class="fa fa-file" style="font-size:115px;"></i>
-
-                <div class="progressPercentage fontBody">80%</div>
-                <div class="progress" >
-                    <div class="progressColorBar" style="width:80%"></div>
-                </div>
-                <div class="progressImage">
-                    <img src="//cdn.sitetheory.io/nest001/2168-quoteBackgroundImageStone-xs.jpg">
-                </div>
-                <button hide title="Abort" class="cancel--btn">
-                </button>
-                <span hide class="hover-cross hover-cross-run"></span>
-                <span class="image-size"> 226K</span>
-                <span class="image-name">My Photo</span>
-                <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                <span  class="hover-tick hover-tick-run"></span>
-            </div>
-            <!-- show error message if uploading fails--->
-            <span hide class="error-upload-msg">{{f.errorMsg}}</span>
-        </li>
-        <li class="sel-file">
-            <div class="image--cn">
-                <div class="progressPercentage fontBody">90%</div>
-                <div class="progress">
-                    <div class="progressColorBar" style="width:90%"></div>
-                </div>
-                <div class="progressImage">
-                    <img src="//cdn.sitetheory.io/nest001/270/Pristine%2001-xs.jpg">
-                </div>
-                <span class="image-size"> 226K</span>
-                <span class="image-name">My Photo</span>
-                <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                <span  class="hover-tick hover-tick-run"></span>
-            </div>
-            <!-- show error message if uploading fails--->
-            <span hide class="error-upload-msg">{{f.errorMsg}}</span>
-        </li>
-        <li class="sel-file">
-            <div class="image--cn">
-
-                <div class="progressPercentage fontBody">40%</div>
-                <div class="progress" >
-                    <div class="progressColorBar" style="width:40%"></div>
-                </div>
-                <div class="progressImage">
-                    <img src="//cdn.sitetheory.io/nest001/268-ws_Neural_1600x1200-xs.jpg">
-                </div>
-
-                <span class="image-size"> 226K</span>
-                <span class="image-name">My Photo</span>
-                <span  class="hover-tick hover-tick-run"></span>
-            </div>
-            <!-- show error message if uploading fails--->
-            <span hide class="error-upload-msg">{{f.errorMsg}}</span>
-        </li>
-        <li class="sel-file">
-            <div class="image--cn">
-
-                <div class="progressPercentage fontBody">10%</div>
-                <div class="progress" >
-                    <div class="progressColorBar" style="width:10%"></div>
-                </div>
-                <div class="progressImage">
-                    <img src="//cdn.sitetheory.io/nest001/255-Hex-Color-Chart-A1-xs.jpg">
-                </div>
-                <span class="image-size"> 226K</span>
-                <span class="image-name">My Photo</span>
-                <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                <span  class="hover-tick hover-tick-run"></span>
-            </div>
-            <!-- show error message if uploading fails--->
-            <span hide class="error-upload-msg">{{f.errorMsg}}</span>
-        </li>
-        <li class="sel-file">
-            <div cl ass="image--cn">
-                <div class="progressPercentage fontBody">4%</div>
-                <div class="progress" >
-                    <div class="progressColorBar" style="width:0%"></div>
-                </div>
-                <div class="progressImage">
-                    <img src="//cdn.sitetheory.io/nest001/254-Cyborg-xs.jpg">
-                </div>
-                <span class="image-size"> 226K</span>
-                <span class="image-name">My Photo</span>
-                <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                <span  class="hover-tick hover-tick-run"></span>
-            </div>
-            <!-- show error message if uploading fails--->
-            <span hide class="error-upload-msg">{{f.errorMsg}}</span>
-        </li>
-        <li class="sel-file">
-            <div class="image--cn">
-
-                <div class="progressPercentage fontBody">0%</div>
-                <div class="progress" >
-                    <div class="progressColorBar" style="width:0%"></div>
-                </div>
-                <div class="progressImage">
-                    <img src="//cdn.sitetheory.io/nest001/256-Business%20Man-xs.jpg">
-                </div>
-                <span class="image-size"> 226K</span>
-                <span class="image-name">My Photo</span>
-                <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                <span  class="hover-tick hover-tick-run"></span>
-            </div>
-            <!-- show error message if uploading fails--->
-            <span hide class="error-upload-msg">{{f.errorMsg}}</span>
-        </li>
-
-
-        <li class="media-err-msg">
-
-            <!--Invalid File: {{f.$errorMessages}} {{f.$errorParam}}, {{f.name}} - size: {{f.size}}B - type:
-            {{f.type}}-->
-            <span ng-if="f.$errorMessages.maxSize">File({{f.name}}) too large,maximum size allowed is {{f.$errorParam}}</span>
-
-        </li>
-    </ul>
-    <md-button ng-show="uploadComp" class="grey_btn" ng-click="closeDialog();">DONE</md-button>
-</div>
-
-
-
 <script type="text/ng-template" id="uploadedFiles.html">
-    <div class="dropped-files" role="dialog">
-        <ul style="clear:both" class="response">
+    <div class="dropped-files mediaDialogue backgroundDark borderRadiusDefault" role="dialog">
+
+        <div class="titleContainer clearfix">
+
+            <md-button ng-show="uploadComp" ng-click="closeDialog();" class="btn btnDone positionAnchor">
+                <div class="btnText">Done</div>
+                <div class="btnGradientLight"></div>
+            </md-button>
+
+            <p class="instructions"><span class="optional">Drag &amp; drop or </span><a href="#" ngf-select="uploadToLibrary($files)">browse</a> to upload<span class="optional"> more</span></p>
+            <h2>Uploading</h2>
+        </div>
+
+        <ul class="listInline response clearfix">
             <li class="sel-file" ng-repeat="f in files">
-                <div class="image--cn">
-                    <i ng-if="f.type == 'application/x-unknown'" class="fa fa-file" style="font-size:115px;"></i>
-                   <img ngf-thumbnail="!f.$error && f" class="thumb">
-             <!-- <img  ngf-src="!f.$error && f" class="thumb">-->
-                    <!-- <span class="progress" ng-show="f.progress >= 0 && f.progress != 100">-->
-                    <span class="progress" ng-show="f.progress >= 0 && f.uploadStatus == false && f.errorUpload == false" >
-                        <div style="width:{{f.progress}}%">{{f.progress}}%</div>
-                    </span>
-                    <button title="Abort" class="cancel--btn" ng-click="f.upload.abort();f.upload.aborted=true"
-                            ng-show="f.upload != null && f.progress < 100 && !f.upload.aborted">
-                    </button>
-                    <span ng-show="f.errorUpload == true && f.uploadStatus == false" class="hover-cross hover-cross-run"></span>
-                    <span class="image-size"> {{f.size}}<!--B - type: {{f.type}}--></span>
-                    <span title="{{f.name}}" class="image-name">{{f.name}}</span>
-                   <!-- <span ng-show="f.progress == 100 && f.upload.aborted != true" class="hover-tick hover-tick-run"></span>-->
-                    <span  ng-show="f.uploadStatus == true && f.errorUpload == false" class="hover-tick hover-tick-run"></span>
+                <div class="image--cn" ng-class="'progressVisible':f.progress >= 0 && f.uploadStatus == false ">
+
+                    <div>
+                        <div class="progressPercentage fontBody">{{f.progress}}%</div>
+                        <div class="progress" >
+                            <div ng-show="f.progress >= 0 && f.uploadStatus == false && f.errorUpload == false" class="progressColorBar" style="width:{{f.progress}}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progressImage" ng-class="'uploadComplete':f.uploadStatus == true">
+                        <div ng-if="f.type == 'application/x-unknown'" class="progressFile positionCenter">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
+                        </div>
+                        <img ngf-thumbnail="!f.$error && f">
+                    </div>
+
+                    <div class="hoverItems verticalCenter">
+                        <div ng-show="f.uploadStatus == true" class="hover-tick hover-tick-run">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                        </div>
+
+                        <div class="actionBtns">
+                            <button title="Abort" ng-click="f.upload.abort();f.upload.aborted=true"
+                                    ng-show="f.upload != null && f.progress < 100 && !f.upload.aborted">
+                                <md-tooltip>Abort upload</md-tooltip>
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="droppedImageInfo smallLabel">{{f.name}} | {{f.size}}</div>
+
+                    <span ng-show="f.uploadStatus == true && f.errorUpload == false" class="hover-tick hover-tick-run"></span>
                 </div>
                 <!-- show error message if uploading fails--->
-                <span class="error-upload-msg" ng-show="f.errorUpload == true && f.uploadStatus == false">{{f.errorMsg}}</span>
+                <div ng-show="f.errorUpload == true && f.uploadStatus == false" class="error-upload-msg fontBody verticalCenter">{{f.errorMsg}}</div>
             </li>
             <li class="media-err-msg"  ng-repeat="f in invalidFiles">
-
-                <!--Invalid File: {{f.$errorMessages}} {{f.$errorParam}}, {{f.name}} - size: {{f.size}}B - type:
-                {{f.type}}-->
-                <span ng-if="f.$errorMessages.maxSize">File({{f.name}}) too large,maximum size allowed is {{f.$errorParam}}</span>
+                <div ng-if="f.$errorMessages.maxSize">File({{f.name}}) too large,maximum size allowed is {{f.$errorParam}}</div>
 
             </li>
         </ul>
-        <md-button ng-show="uploadComp" class="grey_btn" ng-click="closeDialog();">DONE</md-button>
     </div>
 </script>
 

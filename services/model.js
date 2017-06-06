@@ -45,6 +45,7 @@
                 // Infrastructure
                 this.urlRoot = '/Api';
                 this.data = {};
+                this.dataDetails = {};
 
                 // Handle Collections & Meta
                 this.meta = new Stratus.Prototypes.Model();
@@ -82,6 +83,11 @@
 
                 // Watch for Data Changes
                 this.watcher = function () {
+                    //alert("I am ");
+                    
+                    that.getDetails();
+                    //console.log(that.dataDetails);
+
                     if (that.watching) return true;
                     that.watching = true;
                     $rootScope.$watch(function () {
@@ -129,6 +135,40 @@
                     });
                     return str.join('&');
                 };
+
+                this.getDetails = function(){
+                    var get_version = that.data.version;
+                    if(typeof get_version !== 'undefined'){
+                        var template_type = that.data.version.template;
+                        var layout_type = that.data.version.layout;
+                        if(typeof template_type !== 'undefined'){
+                            var data_url = "/Api/Template/"+that.data.version.template.id
+                        }
+                        if(typeof layout_type !== 'undefined'){
+
+                            var data_url = "/Api/Layout/"+that.data.version.layout.id
+                            //alert(data_url);
+                        }
+                        if(typeof template_type !== 'undefined' || typeof layout_type !== 'undefined'){
+                           that.dataDetails = {};
+                           action =  'GET';
+                            var prototype1 = {
+                                method: action,
+                                url: data_url,
+                                headers: {}
+                            };
+                            $http(prototype1).then(function (response) {
+                                if (response.status === 200 && angular.isObject(response.data)) {
+                                    var convoyDetails =  response.data.payload || response.data;
+                                    console.log(convoyDetails);
+                                    that.dataDetails.name = convoyDetails.name;
+                                    that.dataDetails.description = convoyDetails.description;
+                                          
+                                } 
+                            }); 
+                        }
+                    }
+                }
 
                 // TODO: Abstract this deeper
                 /**
@@ -263,6 +303,7 @@
                  * @returns {*}
                  */
                 this.get = function (attribute) {
+
                     if (typeof attribute !== 'string' || !that.data || typeof that.data !== 'object') {
                         return undefined;
                     } else {
@@ -322,6 +363,7 @@
                  * @returns {*}
                  */
                 this.toggle = function (attribute, item, options) {
+
                     if (angular.isObject(options) && angular.isDefined(options.multiple) && angular.isUndefined(options.strict)) {
                         options.strict = true;
                     }
@@ -364,6 +406,12 @@
                         // (item && typeof item !== 'object') ? { id: item } : item
                         that.set(attribute, !that.exists(attribute, item) ? item : null);
                     }
+                    if(attribute == "version.template" || attribute == "version.layout"){
+                        that.dataDetails = {};
+                        that.dataDetails.name = item.name;
+                        that.dataDetails.description = item.description;
+                    }
+                    
                     return that.get(attribute);
                 };
 
