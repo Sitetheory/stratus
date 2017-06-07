@@ -37,6 +37,7 @@ console.log('drag again');
             // Components
             'stratus.components.search',
             'stratus.components.pagination',
+            //'stratus.components.library',
 
             // Directives
             'stratus.directives.singleClick',
@@ -62,7 +63,7 @@ console.log('drag again');
             limit: '@'
         },
         controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog) {
-            Stratus.Instances[_.uniqueId('media_selector_')] = $scope;
+            Stratus.Instances[_.uniqueId('media_selector')] = $scope;
 
             // load component css
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
@@ -112,8 +113,17 @@ console.log('drag again');
             $scope.dragLibraryVisible = false;
 
             $scope.zoomView = function (event) {
+
+                
                 //$scope.imageWidth = null;
                 $scope.mediaDetail = event;
+
+                $scope.mediaDescription = [{
+                    name: "iVestibulum pulvinar tristique risus vel molestie. Sed ut elit consequat, luctus turpis nec, hendrerit dolor. Sed interdum erat at enim molestie eleifend.",
+                    editing: false
+                }];
+
+                console.log($scope.mediaDescription);
                 //$scope.imageWidth = ("http://"+$scope.mediaDetail.file+"."+$scope.mediaDetail.extension)
                 //alert($scope.imageWidth);
                 var position = $mdPanel.newPanelPosition()
@@ -138,6 +148,16 @@ console.log('drag again');
                 $mdPanel.open(config);
             };
             $scope.draggedFileId = '';
+
+
+            $scope.editItem = function (item) {
+                    item.editing = true;
+                }
+
+                $scope.doneEditing = function (item) {
+                    item.editing = false;
+                    //dong some background ajax calling for persistence...
+                };
 
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
@@ -237,7 +257,7 @@ console.log('drag again');
                 //mdPanelRef.close();
                 var confirm = $mdDialog.confirm()
                     .title('DELETE MEDIA')
-                    .textContent('Are you sure you want to  delete this from your library?')
+                    .htmlContent('Are you sure you want to  delete this from your library? <br>You may get broken images if any content still uses this image.')
 
                     //  .ariaLabel('Lucky day')
                     // .targetEvent(ev)
@@ -490,6 +510,8 @@ console.log('drag again');
 
             };
 
+            
+
             // controller for zoom panel
             function ZoomController(mdPanelRef) {
             
@@ -498,7 +520,7 @@ console.log('drag again');
                     mdPanelRef.close();
                     var confirm = $mdDialog.confirm()
                         .title('DELETE MEDIA')
-                        .textContent('Are you sure you want to permanently delete this from your library?')
+                        .htmlContent('Are you sure you want to permanently delete this from your library? <br>You may get broken images if any content still uses this image.')
 
                         //  .ariaLabel('Lucky day')
                         // .targetEvent(ev)
@@ -538,7 +560,7 @@ console.log('drag again');
 
             // Manage classes on select/unselect media
             $scope.addDeleteMedia = function (selectedStatus, fileId, $event) {
-                alert("Calllee");
+                //alert("Calllee");
                 // if selected status is true,remove from draggedFiles and add minus icon
                 if (selectedStatus === true) {
                     for (var k = 0; k < $scope.draggedFiles.length; k++) {

@@ -34,7 +34,7 @@
             // Services
             'stratus.services.registry',
             'stratus.services.collection',
-            'stratus.services.model',
+            'stratus.services.modelwithdetails',
 
             // Components
             'stratus.components.search',
@@ -65,7 +65,7 @@
             details: '<',
             search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registry, model, $http, $sce) {
+        controller: function ($scope, $mdPanel, $attrs, registry, modelwithdetails, $http, $sce) {
             // Initialize
             
             this.uid = _.uniqueId('visual_selector_');
@@ -100,7 +100,7 @@
                 }
                 $scope.registry.fetch(request, $scope);
 
-                console.log($attrs);
+                //console.log(model);
 
                 /*$scope.registry1 = new registry();
                 var request1 = {
@@ -132,17 +132,19 @@
             }
 
             // Data Connectivity
-            $scope.model = null;
+            $scope.modelwithdetails = null;
 
             $scope.$watch('$ctrl.ngModel', function (data) {
                 //alert("Heree");
-                console.log('componentWatch');
-                if (data instanceof model && data !== $scope.model) {
-                    $scope.model = data;
+                console.log(['data', data]);
+                if (data) {
+                    $scope.modelwithdetails = data;
+                    console.log(['modelwithdetails', modelwithdetails]);
                     //$scope.dataDetails(data);
                 }
                 
             });
+            console.log(['scopemodel',$scope.modelwithdetails]);
             
             $scope.getDetails = function (property) {
                 //alert($scope.property);

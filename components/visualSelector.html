@@ -1,40 +1,40 @@
 <div id="comp">
     <div class="layout_bx">
         <!-- Gallery header Ends -->
-        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || model.exists(property)"
+        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || modelwithdetails.exists(property)"
            ng-click="toggleGallery();">
             <i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
-        <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
+        <!--  <span ng-show="$ctrl.ngmodelwithdetails.data.version.layout === null">Please select from options below</span>-->
         
         
-         <!-- ng-repeat="sel in model.get(property)" -->
+         <!-- ng-repeat="sel in modelwithdetails.get(property)" -->
          
         <div class="lt_box">
             
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
-            <!-- <button class="cancel--btn" ng-click="model.toggle(property, sel.id, toggleOptions);"></button> -->
+            <!-- <button class="cancel--btn" ng-click="modelwithdetails.toggle(property, sel.id, toggleOptions);"></button> -->
             <div class="lt-image"
                  ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
-                <img ng-if="model.get(property).images" src="model.get(property).images" alt="" />
+                <img ng-if="modelwithdetails.get(property).images" src="modelwithdetails.get(property).images" alt="" />
                 
-                <img ng-if="!model.get(property).images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
+                <img ng-if="!modelwithdetails.get(property).images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
                 <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
-                <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
+                <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && modelwithdetails.exists(property) && !showGallery"
                    ng-click="displayGallery();" class="blck_btn">
                     <span>Change</span></a>
-                <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
+                <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && !modelwithdetails.exists(property) && !showGallery"
                    class="blck_btn"
                    ng-click="displayGallery();">
                     <span>Choose Layout</span></a>
                 <!--</div>-->
             </div>
             <div class="lt-content">
-                <h4>{{model.dataDetails.name}}</h4>
-                <div class="name fontSecondary" ng-bind-html="layoutRawDesc(model.dataDetails.description) | truncate:{limit:300}"></div>
+                <h4>{{modelwithdetails.dataDetails.name}}</h4>
+                <div class="name fontSecondary" ng-bind-html="layoutRawDesc(modelwithdetails.dataDetails.description) | truncate:{limit:300}"></div>
             </div>
         </div><!-- Layout box Inner ends -->
-        <div ng-show="!model.get(property).id">
+        <div ng-show="!modelwithdetails.get(property).id">
             <span>No Items selected</span>
         </div>
     </div><!-- Layout Box Ends -->
@@ -51,7 +51,7 @@
 
             <ul class="layout_gallery">
                 <li ng-repeat="target in collection.models">
-                    <span class="galleryimg-cont" ng-class="{'select-highlight': model.exists(property, target.data.id)}">
+                    <span class="galleryimg-cont" ng-class="{'select-highlight': modelwithdetails.exists(property, target.data.id)}">
                         
                         <img ng-if="target.data.images" src="target.data.images" alt="" />
                         <img ng-if="!target.data.images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt="" />
@@ -59,8 +59,8 @@
                         <a href="javascript:void(0)" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(target.data);">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </a>
-                        <a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)"
-                           ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions)"
+                        <a href="javascript:void(0)" ng-hide="modelwithdetails.exists(property, target.data.id)"
+                           ng-click="modelwithdetails.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions)"
                            class="bl_btn">Choose Layout </a>
                     </span>
                     <h5>{{target.data.name}}</h5>
@@ -79,8 +79,8 @@
             <div class="ltpop-left">
                 <h3>{{layoutDetail.name}}</h3>
                 <div class="name fontSecondary" ng-bind-html="layoutRawDesc(layoutDetail.description) | truncate:{limit:300}"></div>
-                <a href="javascript:void(0)" ng-hide="model.exists(property,layoutDetail.id)"
-                   ng-click="model.toggle(property, {'id': layoutDetail.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}, toggleOptions); closeDialog();" class="bl_btn">Choose Layout </a>
+                <a href="javascript:void(0)" ng-hide="modelwithdetails.exists(property,layoutDetail.id)"
+                   ng-click="modelwithdetails.toggle(property, {'id': layoutDetail.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}, toggleOptions); closeDialog();" class="bl_btn">Choose Layout </a>
             </div>
             <div class="ltpop-right">
                 <a href="javascript:void(0)">

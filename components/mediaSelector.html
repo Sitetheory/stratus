@@ -336,7 +336,12 @@
                         <p class="smallLabel">Ratio: <span>{{mediaDetail.ratio}}</span></p>
                     </div>
 
-                    <p class="description">{{mediaDetail.description}}Vestibulum pulvinar tristique risus vel molestie. Sed ut elit consequat, luctus turpis nec, hendrerit dolor. Sed interdum erat at enim molestie eleifend.</p>
+                
+
+                <div ng-repeat="item in mediaDescription">
+                <span ng-hide="item.editing" ng-dblclick="editItem(item)">{{item.name}}</span>
+                <input ng-show="item.editing" ng-model="item.name" ng-blur="doneEditing(item)" autofocus />
+                </div>
 
                 </div>
             </div>
