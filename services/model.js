@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material'], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -32,7 +32,7 @@
 
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Services.Model = ['$provide', function ($provide) {
-        $provide.factory('model', ['$q', '$http', '$rootScope', function ($q, $http, $rootScope) {
+        $provide.factory('model', ['$q', '$http', '$mdToast', '$rootScope', function ($q, $http, $mdToast, $rootScope) {
             return function (options, attributes) {
 
                 // Environment
@@ -197,7 +197,10 @@
                                     'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
                                 ));
                             }
-                        }).catch(reject);
+                        }).catch(function () {
+                            // (/(.*)\sReceived/i).exec(error.message)[1]
+                            reject('XHR: ' + prototype.method + ' ' + prototype.url);
+                        });
                     });
                 };
 
@@ -208,6 +211,13 @@
                  */
                 this.fetch = function (action, data) {
                     return that.sync(action, data || that.meta.get('api')).catch(function (message) {
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .textContent('Failure to Fetch!')
+                                .toastClass('errorMessage')
+                                .position('top right')
+                                .hideDelay(3000)
+                        );
                         console.error('FETCH:', message);
                     });
                 };
@@ -221,6 +231,13 @@
                     return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON({
                         patch: true
                     })).catch(function (message) {
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .textContent('Failure to Save!')
+                                .toastClass('errorMessage')
+                                .position('top right')
+                                .hideDelay(3000)
+                        );
                         console.error('SAVE:', message);
                     });
                 };
@@ -431,6 +448,13 @@
                     }
                     if (that.get('id')) {
                         that.sync('DELETE', {}).catch(function (message) {
+                            $mdToast.show(
+                                $mdToast.simple()
+                                    .textContent('Failure to Delete!')
+                                    .toastClass('errorMessage')
+                                    .position('top right')
+                                    .hideDelay(3000)
+                            );
                             console.error('DESTROY:', message);
                         });
                     }
@@ -445,6 +469,13 @@
                                 meta: that.meta.get('api'),
                                 payload: {}
                             } : {}).catch(function (message) {
+                                $mdToast.show(
+                                    $mdToast.simple()
+                                        .textContent('Failure to Manifest!')
+                                        .toastClass('errorMessage')
+                                        .position('top right')
+                                        .hideDelay(3000)
+                                );
                                 console.error('MANIFEST:', message);
                             });
                         }
