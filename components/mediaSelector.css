@@ -321,8 +321,12 @@ a.minus_icon .addIcon {
 
 /* Dialogue windows */
 
+.md-panel.media-dialog {
+    padding: 6%;
+    width: 100%;
+}
 .mediaDialogue.backgroundDark {
-    background: rgba(30, 30, 30, .9);
+    background: rgba(30, 30, 30, .95);
 }
 .mediaDialogue .titleContainer {
     margin-bottom: 22px;
@@ -385,6 +389,9 @@ a.minus_icon .addIcon {
 .mediaInfoFull .tagContainer md-chip {
     margin: 0 7px 0 0;
 }
+
+/* Full info window specs */
+
 .mediaInfoFull .description {
     margin-top: 30px;
     line-height: 1.3;
@@ -414,31 +421,43 @@ a.minus_icon .addIcon {
     fill: #FFF;
 }
 .infoFullImage {
-    padding-left: 20px;
+    margin-left: 20px;
+    background: rgba(200,200,200,.06);
 }
 .infoFullImage img {
     display: block;
-    width:100%;
+    margin: 0 auto;
+    max-height: 450px;
 }
-
+@media (max-width:959px) {
+    .mediaInfoFull .tagContainer {
+        margin-top: 12px;
+        padding-right: 0;
+        text-align: left;
+    }
+    .infoFullImage {
+        margin: 0 0 20px 0;
+    }
+}
 
 
 /* Dropped file uploader */
 
-.dropped-files {
+.dropContainer {
     margin: 0 auto;
     padding : 0 6%;
+    width: 100%;
     max-width: 640px;
 }
-.dropped-files.mediaDialogue .titleContainer h2 {
+.dropContainer .titleContainer h2 {
     margin-top: 6px;
 }
-.dropped-files .btnDone,
-.dropped-files .btnDone:link,
-.dropped-files .btnDone:visited,
-.dropped-files .btnDone:active,
-.dropped-files .md-button.md-default-theme:not([disabled]).md-focused,
-.dropped-files .md-button:not([disabled]).md-focused {
+.dropContainer .btnDone,
+.dropContainer .btnDone:link,
+.dropContainer .btnDone:visited,
+.dropContainer .btnDone:active,
+.dropContainer .md-button.md-default-theme:not([disabled]).md-focused,
+.dropContainer .md-button:not([disabled]).md-focused {
     float: right;
     margin: 0 0 0 14px;
     padding: 12px 14px;
@@ -449,54 +468,54 @@ a.minus_icon .addIcon {
     color: #222;
     background: #E2E2E2;
 }
-.dropped-files .btnDone:hover,
-.dropped-files .md-button.md-default-theme:not([disabled]):hover,
-.dropped-files .md-button:not([disabled]):hover {
+.dropContainer .btnDone:hover,
+.dropContainer .md-button.md-default-theme:not([disabled]):hover,
+.dropContainer .md-button:not([disabled]):hover {
     color: #FFF;
     background: #FE7C57;
 }
-.dropped-files .btnDone .btnGradientLight {
+.dropContainer .btnDone .btnGradientLight {
     background: -webkit-linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
     background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
-.dropped-files .btnDone:hover .btnGradientLight {
+.dropContainer .btnDone:hover .btnGradientLight {
     opacity: .2;
 }
-.dropped-files .btnDone .btnText {
+.dropContainer .btnDone .btnText {
     position: relative;
     z-index: 20;
 }
-.dropped-files .instructions {
+.dropContainer .instructions {
     margin-top: 10px;
 }
-.progressPercentage {
+.dropContainer .progressPercentage {
     margin-bottom: 3px;
     font-size: 12px;
     opacity: 0;
 }
-.progress {
+.dropContainer .progress {
     transition: all .2s ease-out;
     margin-top: 1px;
     height: 12px;
     opacity: 0;
     background: #FFF;
 }
-.progressVisible .progressPercentage,
-.progressVisible .progress {
+.dropContainer .progressVisible .progressPercentage,
+.dropContainer .progressVisible .progress {
     opacity: 1;
 }
-.progressColorBar {
+.dropContainer .progressColorBar {
     background: #FE7C57 none repeat scroll 0 0;
     height: 12px;
 }
-.progressImage {
+.dropContainer .droppedImage {
     transition: all .2s ease-out;
     position: relative;
     opacity: .8;
     background: rgba(202,202,202,.12);
 }
 
-.progressImage img {
+.droppedImage img {
     transition: all .2s ease-out;
     display: block;
     margin: 0 auto;
@@ -504,16 +523,16 @@ a.minus_icon .addIcon {
     max-height: 125px;
     opacity: .8;
 }
-.progressVisible .progressImage img {
+.progressVisible .droppedImage img {
     opacity: 1;
 }
 @media (min-width: 480px) {
     .image--cn,
-    .progressImage,
-    .progressImage img {
+    .droppedImage,
+    .droppedImage img {
         height: 125px;
     }
-    .progressImage img {
+    .droppedImage img {
         transform: translate(-50%,-50%);
         -webkit-transform: translate(-50%,-50%);
         position: absolute;
@@ -521,57 +540,49 @@ a.minus_icon .addIcon {
         top: 50%;
     }
 }
-.progressFile md-icon {
+.droppedUnknown md-icon {
     display: block;
     margin: 0 auto;
     width: 80%;
     height: inherit;
 }
-.progressFile #linearGradient-iconDocument .stop1 {
+.droppedUnknown #linearGradient-iconDocument .stop1 {
     stop-color: #FFF;
     stop-opacity: .7;
 }
-.progressFile #linearGradient-iconDocument .stop2 {
+.droppedUnknown #linearGradient-iconDocument .stop2 {
     stop-color: #FFF;
     stop-opacity: .5;
 }
-.dropped-files {
+.dropContainer {
     min-height: 150px;
     padding: 28px;
 }
-.dropped-files ul {
+.dropContainer ul {
     margin: 0 -4px;
 }
-.dropped-files ul li {
+.dropContainer ul li {
     position: relative;
     margin-bottom: 60px;
 }
 @media (min-width: 480px) {
-    .dropped-files ul li {
+    .dropContainer ul li {
         padding: 0 4px;
         width: 32.3%;
     }
 }
-.sel-file:hover .progressVisible .progressImage {
+.droppedItem:hover .progressVisible .droppedImage {
     opacity: .2;
 }
-
-
-
-@-webkit-keyframes hovertick{
+@-webkit-keyframes animateCheck {
     from {
         opacity: 0;}
     to {
         opacity: 1;}
 }
-.uploadComplete  .hover-tick {
-    animation: hovertick ease-out 1.5s 0s;
+.uploadComplete  .successCheck {
+    animation: animateCheck ease-out 1.5s 0s;
 }
-
-
-
-
-
 .hoverItems {
     margin-top: 24px;
     padding: 2px 10%;
@@ -583,7 +594,7 @@ a.minus_icon .addIcon {
     transition: all .2s ease-out;
     display:none;
 }
-.sel-file:hover .hoverItems .actionBtns  {
+.droppedItem:hover .hoverItems .actionBtns  {
     display: block;
 }
 .hoverItems button {
@@ -604,9 +615,14 @@ a.minus_icon .addIcon {
 .hoverItems svg g {
     fill: #FFF;
 }
-
+.dragBorder{
+    border:2px solid #FFF;
+}
+.dragCursor li{
+    cursor:pointer;
+}
 @media (max-width: 479px) {
-    .dropped-files ul li {
+    .dropContainer ul li {
         display: block;
     }
     .optional {
@@ -615,37 +631,9 @@ a.minus_icon .addIcon {
 }
 
 
+/* Error message */
 
-.cancel--btn {
-    background: rgba(0, 0, 0, 0) url("/assets/1/0/bundles/sitetheorycore/images/media/close_red.png") repeat scroll 0 0 / 34px auto;
-    border: medium none;
-    color: #ff0000;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 600;
-    height: 34px;
-    margin: 0 auto;
-    padding: 5px 8px;
-    position: absolute;
-    right: 4px;
-    top: 6px;
-    width: 34px;
-    z-index: 99;
-}
-.error {
-    width: 100%;
-    color: #ff895b;
-}
-.file-upload-drag {
-    height:60px;
-    background: white;
-}
-.file-icon-drag {
-    font-size: 40px !important;
-    margin-top: 0 !important;
-    padding: 9px 0 0 25px;
-}
-.error-upload-msg {
+.errorMessage {
     display: none;
     margin: 0 auto;
     padding: 8px;
@@ -655,24 +643,14 @@ a.minus_icon .addIcon {
     border-radius: 2px;
     background: #be2626;
 }
-li.sel-file:hover .error-upload-msg{display:block;}
-
-.selected--img
-{ }
-
-.custom-class {
-    color:red;
+.droppedItem:hover .errorMessage{
+    display:block;
 }
 
-.add_icon,.minus_icon,.del_item,.trash_icon{ position:relative; }
-.trash_icon{cusror: url("/assets/1/0/bundles/sitetheorycore/images/media/cursor-minus.png"), auto;}
-.del_item:after{content:"\f014"; position:absolute; font-family: FontAwesome; font-size:26px; text-shadow: 1px 1px 5px #000000; color:#fff; left:26px; top:-37px;}
-.icon_show{display:block;}
-.layer_black::after{background:rgba(0,0,0,0.5); content:""; height: 100%; left: 0; position: absolute; top: 0; width: 100%; z-index: 9;}
-.layer_black{position:relative; float:left;}
-.max-z{z-index:99;}
-.yellow-border{border:2px solid rgb(248,234,31);}
-.drag_cursor li{
-    cursor:pointer;
-}
+
+/* I don't exactly know when this kicks in */
+.layerBlack::after{background:rgba(0,0,0,0.5); content:""; height: 100%; left: 0; position: absolute; top: 0; width: 100%; z-index: 9;}
+.layerBlack{position:relative; float:left;}
+
+
 
