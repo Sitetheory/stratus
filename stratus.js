@@ -215,7 +215,7 @@
             // TODO: Move Froala to Sitetheory since it is specific to Sitetheory
             modules: {
                 selector: [
-                    '[ng-sanitize]' /*'[froala]'*/
+                    '[ng-sanitize]', '[froala]'
                 ],
                 namespace: 'angular-',
                 module: true
