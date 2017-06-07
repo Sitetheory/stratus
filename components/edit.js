@@ -67,12 +67,18 @@
                 if (Stratus.Environment.data.liveEdit && bool) {
                     $scope.edit = bool;
                     if (bool) {
-                        if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
-                            // For some reason a timeout of 0 makes this work
-                            setTimeout(function () {
+                        setTimeout(function () {
+                            if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
+                                // Focus on the input field
                                 $scope.edit_input_container.getElementsByTagName('input')[0].focus();
-                            }, 0);
-                        }
+                            } else if ($scope.edit_input_container.getElementsByClassName('fr-view').length > 0) {
+                                // Focus on the froala editable field
+                                $scope.edit_input_container.getElementsByClassName('fr-view')[0].focus();
+                            } else {
+                                // No known edit location, so focus on the entire container
+                                $scope.edit_input_container.focus();
+                            }
+                        }, 0);
                     }
                 } else {
                     $scope.edit = false;
@@ -109,8 +115,9 @@
             });
 
             setTimeout(function () {
-                if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
-                    $($scope.edit_input_container.getElementsByTagName('input')[0]).on('focusout', function (event) {
+                // Save on Focus out
+                if ($scope.edit_input_container) {
+                    $($scope.edit_input_container).on('focusout', function (event) {
                         switch (event.type) {
                             case 'focusout':
                                 $scope.$apply(function () {

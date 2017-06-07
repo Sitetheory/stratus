@@ -1535,8 +1535,8 @@
          * @returns {boolean}
          */
         $.fn.notClicked = function (event) {
-            if (!this.selector) console.error('No Selector:', this);
-            return (!sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length);
+            if (!this.selector && !this.context) console.error('No Selector or Context:', this);
+            return (!$(event.target).closest(this.selector || this.context).length && !$(event.target).parents(this.selector || this.context).length);
         };
     }
 
