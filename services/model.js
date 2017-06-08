@@ -242,6 +242,25 @@
                     });
                 };
 
+                /**
+                 * @type {Function}
+                 */
+                this.throttle = _.throttle(this.save, 2000);
+
+                /**
+                 * @returns {*}
+                 */
+                this.throttleSave = function () {
+                    return $q(function (resolve, reject) {
+                        var request = that.throttle();
+                        console.log('throttle request:', request);
+                        request.then(function (data) {
+                            console.log('throttle received:', data);
+                            resolve(data);
+                        }).catch(reject);
+                    });
+                };
+
                 // Attribute Functions
 
                 /**

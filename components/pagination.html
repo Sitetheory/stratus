@@ -1,4 +1,7 @@
 <ul ng-if="collection.meta && collection.meta.data.pageTotal > 1" class="listInline paginator">
+    <li ng-if="collection.paginate" class="paginatorProgress">
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </li>
     <li ng-show="startPage > 1" class="paginatorPrevious"
         ng-class="{disabled:collection.meta.data.pageCurrent == 1}">
         <a ng-click="collection.meta.data.pageCurrent == 1 || page(1)">First</a>
@@ -24,4 +27,3 @@
     </li>
 </ul>
 <!--<span class="paginatorTotal customFontSecondary smallLabel">({{ collection.meta.data.countTotal }} Results)</span>-->
-<md-progress-linear ng-if="collection.paginate" md-mode="indeterminate"></md-progress-linear>

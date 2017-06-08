@@ -35,11 +35,26 @@
             },
             link: function ($scope, $element, $attrs) {
                 Stratus.Instances[_.uniqueId('src_')] = $scope;
+                $scope.whitelist = [
+                    'jpg',
+                    'jpeg',
+                    'png'
+                ];
 
                 // Group Registration
                 $scope.registered = false;
                 $scope.register = function () {
                     if ($scope.registered) return true;
+                    var ext = $element.attr('src') ? $element.attr('src').match(/\.([0-9a-z]+)$/i) : null;
+                    if (ext) {
+                        ext = ext[1] ? ext[1].toLowerCase() : null;
+                    }
+                    var filter = _.filter($scope.whitelist, function (value) {
+                        return ext === value;
+                    });
+                    if (_.size(filter) < 1) {
+                        return true;
+                    }
                     $scope.registered = true;
                     $element.attr('data-src', 'lazy');  // This is here for CSS backwards compatibility
                     $scope.group = {
