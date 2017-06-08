@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'stratus.services.model'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model'], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -32,7 +32,7 @@
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Collection = ['$provide', function ($provide) {
-        $provide.factory('collection', ['$q', '$http', '$timeout', 'model', function ($q, $http, $timeout, model) {
+        $provide.factory('collection', ['$q', '$http', '$mdToast', '$timeout', 'model', function ($q, $http, $mdToast, $timeout, model) {
             return function (options) {
 
                 // Environment
@@ -151,10 +151,14 @@
                                 // Promise
                                 reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
                                     angular.isObject(response.data) ? response.data : (
-                                    'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
+                                        'Invalid Payload: ' + prototype.method + ' ' + prototype.url
+                                    )
                                 ));
                             }
-                        }).catch(reject);
+                        }).catch(function () {
+                            // (/(.*)\sReceived/i).exec(error.message)[1]
+                            reject('XHR: ' + prototype.method + ' ' + prototype.url);
+                        });
                     });
                 };
 
@@ -166,6 +170,13 @@
                 this.fetch = function (action, data) {
                     return that.sync(action, data || that.meta.get('api')).catch(
                         function (message) {
+                            $mdToast.show(
+                                $mdToast.simple()
+                                    .textContent('Failure to Fetch!')
+                                    .toastClass('errorMessage')
+                                    .position('top right')
+                                    .hideDelay(3000)
+                            );
                             console.error('FETCH:', message);
                         }
                     );

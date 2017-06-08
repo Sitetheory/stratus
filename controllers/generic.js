@@ -116,37 +116,6 @@
                     }
                 }
             }
-
-            // Scaling Controller
-            /* *
-            $scope.scale = 2;
-            $scope.$watch('scale', function () {
-                var scale = 'Medium';
-                if ($scope.scale === 2) {
-                    scale = 'Large';
-                } else if ($scope.scale === 0) {
-                    scale = 'Small';
-                }
-                document.querySelector('body').dataset.scale = scale;
-            });
-            /* */
-
-            // Notifications Service
-            /* *
-            $scope.showActionToast = function (message) {
-                var toast = $mdToast.simple()
-                    .textContent(message)
-                    .action('UNDO')
-                    .highlightAction(true)
-                    .highlightClass('md-accent')
-                    .position('top right');
-                $mdToast.show(toast).then(function (response) {
-                    if (response === 'ok') {
-                        console('undo clicked.');
-                    }
-                }, $scope.error);
-            };
-            /* */
         }];
 
 }));

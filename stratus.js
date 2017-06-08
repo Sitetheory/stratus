@@ -1535,8 +1535,8 @@
          * @returns {boolean}
          */
         $.fn.notClicked = function (event) {
-            if (!this.selector) console.error('No Selector:', this);
-            return (!sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length);
+            if (!this.selector && !this.context) console.error('No Selector or Context:', this);
+            return (!$(event.target).closest(this.selector || this.context).length && !$(event.target).parents(this.selector || this.context).length);
         };
     }
 
@@ -3642,43 +3642,33 @@
         }
     });
 
-    // This is the prototype for the toaster, in which one could be supplied
-    // for a toast message, or one will automatically be created at runtime
-    // using current arguments.
-    /**
-     * @param message
-     * @param title
-     * @param priority
-     * @param settings
-     * @constructor
-     */
-    Stratus.Prototypes.Toast = function (message, title, priority, settings) {
+    // This event allows a Notification to reach the browser.
+    Stratus.Events.on('notification', function (message, title) {
+        var options = {};
         if (message && typeof message === 'object') {
-            _.extend(this, message);
-            this.message = this.message || 'Message';
+            _.extend(options, message);
+            options.message = options.message || 'Message';
         } else {
-            this.message = message || 'Message';
+            options.message = message || 'Message';
         }
-        this.title = this.title || title || 'Toast';
-        this.priority = this.priority || priority || 'danger';
-        this.settings = this.settings || settings;
-        if (!this.settings || typeof this.settings !== 'object') {
-            this.settings = {};
-        }
-        this.settings.timeout = this.settings.timeout || 10000;
-    };
-
-    // This event only supports Toaster styling to generate a message
-    // with either a Bootbox or Native Alert as a fallback, respectively.
-    Stratus.Events.on('toast', function (message, title, priority, settings) {
-        if (!(message instanceof Stratus.Prototypes.Toast)) {
-            message = new Stratus.Prototypes.Toast(message, title, priority, settings);
-        }
-        /*if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') {*/
-        if (typeof $ !== 'undefined' && $.toaster) {
-            $.toaster(message);
-        } else {
-            Stratus.Events.trigger('alert', message.message);
+        options.title = options.title || title || 'Stratus';
+        options.icon = options.icon || 'https://avatars0.githubusercontent.com/u/15791995?v=3&s=200';
+        if (!('Notification' in window)) {
+            console.info('This browser does not support desktop notifications.  You should switch to a modern browser.');
+        } else if (Notification.permission === 'granted') {
+            var notification = new Notification(options.title, {
+                body: options.message,
+                icon: options.icon
+            });
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function (permission) {
+                if (permission === 'granted') {
+                    var notification = new Notification(options.title, {
+                        body: options.message,
+                        icon: options.icon
+                    });
+                }
+            });
         }
     });
 
