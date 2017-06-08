@@ -31,28 +31,30 @@
     Stratus.Components.OptionValue = {
         bindings: {
             ngModel: '=',
-            custom: '@',
-            multiple: '@',
+            multiple: '<',
             options: '=',
             type: '@'
         },
         controller: function ($scope, $element, $attrs, $parse) {
             Stratus.Instances[_.uniqueId('option_value_')] = $scope;
-            $scope.model = $parse($attrs.ngModel);
-            $scope.items = $scope.model($scope.$parent);
-
-            // FIXME: This seems a bit more complex than need be, since ngModel and options are both double bound
+            $scope.items = [];
             var normalize = function () {
-                if (!angular.isArray($scope.items)) $scope.items = [];
-                if (!$scope.items.length) $scope.items.push({});
+                if (!angular.isArray($scope.items)) {
+                    $scope.items = [];
+                }
+                if (!$scope.items.length) {
+                    $scope.items.push({});
+                }
             };
             normalize();
-            $scope.$watch('items', function (items) {
-                $scope.model.assign($scope.$parent, items);
+            $scope.$parent.$watch('$ctrl.ngModel', function (items) {
+                if (items !== $scope.items) {
+                    $scope.items = items;
+                    normalize();
+                }
             }, true);
-            $scope.$parent.$watch($attrs.ngModel, function (items) {
-                $scope.items = items;
-                normalize();
+            $scope.$watch('items', function (items) {
+                $scope.$ctrl.ngModel = items;
             }, true);
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/optionValue' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
