@@ -34,6 +34,7 @@
             scope: {
                 ngModel: '=',
                 property: '@',
+                emptyValue: '@', // A value to display if it is currently empty
                 stratusEdit: '=', // A value to define if the element can currently be editable
                 alwaysEdit: '@', // A bool/string to define if the element will always be in editable mode
                 autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
@@ -55,7 +56,7 @@
                 // METHODS
 
                 ngModel.$render = function () {
-                    $element.html($scope.value || '');
+                    $element.html($scope.value || $scope.emptyValue || '');
                 };
 
                 $scope.liveEditStatus = function () {
