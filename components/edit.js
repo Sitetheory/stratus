@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model', 'froala'], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -119,7 +119,6 @@
             // Save / Cancel value on key press
             // FIXME saving with key press with cause two saves (due to focus out). We need a save throttle to prevent errors
             $($scope.edit_input_container).on('keypress', function (event) {
-                console.log(event);
                 switch (event.which) {
                     case Stratus.Key.Enter:
                         if ($scope.autoSave !== false && $scope.autoSave !== 'false') {
