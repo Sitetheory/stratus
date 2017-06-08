@@ -9,7 +9,7 @@
 
         <p class="smallLabel selectedMediaLabel">Media</p>
 
-        <div id="selected_drop_area" ng-class="{'dragBorder':dragClass}" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
+        <div id="selectedDropArea" ng-class="{'dragBorder':dragClass}" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
               ngf-drop ngf-max-files="20"   ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"  ngf-drag-over-class="dragover"  ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
 
 
@@ -82,7 +82,7 @@
             <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
             <p class="smallLabel">Media Library</p>
             <div class="mediaLibraryContent" ng-class="{'layerBlack':dragClass}">
-                <div class="searchBar">
+                <div class="searchBar" ng-if="collection.meta && collection.meta.data.pageTotal > 1">
                     <div class="gal-search">
                         <stratus-search flex></stratus-search>
                     </div>
@@ -156,7 +156,7 @@
             <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
             <p class="smallLabel">Media Library</p>
             <div class="mediaLibraryContent" ng-class="{'layerBlack':dragClass}">
-                <div class="searchBar">
+                <div class="searchBar" ng-if="collection.meta && collection.meta.data.pageTotal > 1">
                     <div class="gal-search">
                         <stratus-search flex></stratus-search>
                     </div>
@@ -196,9 +196,8 @@
                                             <md-tooltip>Image details</md-tooltip>
                                             <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                         </a>
-                                        <a href="#" class="deleteIcon">
-                                            <md-tooltip>Permanently delete from libary</md-tooltip>
-                                           <md-icon class="deleteIcon" aria-hidden="true" ng-click="removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                                         <a href="#" stratus-single-click="deleteFromMedia(media.data.id);" ng-dblclick="zoomView(media.data)">
+                                            <md-icon class="deleteIcon"   aria-hidden="true" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
                                         </a>
                                         <!-- Image Info Right Ends -->
                                     </div>
@@ -344,15 +343,16 @@
                                 </a>
                             </li>
                             <li>
-                                <a data-plugin="AddClass" data-target="#popupImage" data-class="displayInstructions" data-event="click" class="replace borderRadiusDefault">
-                                    <md-tooltip>Replace image</md-tooltip>
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/replace.svg"></md-icon>
+                                <a ng-click="addClassOnPopup($event)" data-plugin="AddClass" data-target="#popupImage" data-class="displayInstructions" data-event="click" class="replace borderRadiusDefault">
+                                    <md-tooltip>Replace image</md-tooltip>Replace Image
+                                    <!-- <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/replace.svg"></md-icon> -->
+
                                 </a>
                             </li>
                             <li>
                                 <a href="//{{ mediaDetail.prefix }}.{{ mediaDetail.extension }}"  class="download borderRadiusDefault">
-                                    <md-tooltip>Download image</md-tooltip>
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/download.svg"></md-icon>
+                                    <md-tooltip>Download image</md-tooltip>Download image
+                                    <!-- <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/download.svg"></md-icon> -->
                                 </a>
                             </li>
                         </ul>

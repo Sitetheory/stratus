@@ -34,12 +34,12 @@
             // Services
             'stratus.services.registry',
             'stratus.services.collection',
-            'stratus.services.modelwithdetails',
+            'stratus.services.model',
 
             // Components
             'stratus.components.search',
             'stratus.components.pagination'
-            ], factory);
+        ], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -65,13 +65,12 @@
             details: '<',
             search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registry, modelwithdetails, $http, $sce) {
+        controller: function ($scope, $mdPanel, $attrs, registry, model, $http, $sce) {
             // Initialize
-            
             this.uid = _.uniqueId('visual_selector_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
-            //alert("yess");
+
             // CSS
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/visualSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
@@ -92,83 +91,37 @@
                     decouple: true,
                     api: {
                         options: {},
-                        limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 3
+                        limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
                     }
                 };
                 if ($scope.api && angular.isObject($scope.api)) {
                     request.api = _.extendDeep(request.api, $scope.api);
                 }
                 $scope.registry.fetch(request, $scope);
-
-                //console.log(model);
-
-                /*$scope.registry1 = new registry();
-                var request1 = {
-                    target: $attrs.type || 'Layout',
-                    id: 23,
-                    manifest: false,
-                    decouple: true,
-                    
-                };
-                if ($scope.api && angular.isObject($scope.api)) {
-                    request.api = _.extendDeep(request1.api, $scope.api);
-                }
-                $scope.registry1.fetch(request, $scope);*/
             }
-            
+
             // Store Asset Property for Verification
             $scope.property = $attrs.property || null;
 
             // Store Toggle Options for Custom Actions
-            $scope.toggleOptions = {
-                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : false
-            };
             /*$scope.toggleOptions = {
-                multiple: false
+                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : true
             };*/
+            $scope.toggleOptions = {
+                multiple: false
+            };
+            // Data Connectivity
+            $scope.model = null;
+            $scope.$watch('$ctrl.ngModel', function (data) {
+                if (data instanceof model && data !== $scope.model) {
+                    $scope.model = data;
+                }
+            });
 
             $scope.layoutRawDesc = function (plainText) {
                 return $sce.trustAsHtml(plainText);
             }
-
-            // Data Connectivity
-            $scope.modelwithdetails = null;
-
-            $scope.$watch('$ctrl.ngModel', function (data) {
-                //alert("Heree");
-                console.log(['data', data]);
-                if (data) {
-                    $scope.modelwithdetails = data;
-                    console.log(['modelwithdetails', modelwithdetails]);
-                    //$scope.dataDetails(data);
-                }
-                
-            });
-            console.log(['scopemodel',$scope.modelwithdetails]);
             
-            $scope.getDetails = function (property) {
-                //alert($scope.property);
-                
-                action =  'GET';
-                var prototype1 = {
-                    method: action,
-                    url: "https://admin.sitetheory.net/Api/ContentType/2/Layout/23",
-                    headers: {}
-                };
-                $http(prototype1).then(function (response) {
-                    if (response.status === 200 && angular.isObject(response.data)) {
-                        var convoyDetails =  response.data.payload || response.data;
-                        $scope.name = convoyDetails.name;
-                        $scope.description = convoyDetails.name;
-                              
-                    } 
-                });
-                
-            };
-
-
-            //model.getDetails();
-
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {
                 $scope.showGallery = true;
@@ -179,8 +132,8 @@
             $scope.zoomView = function (layoutDetail) {
                 $scope.layoutDetail = layoutDetail;
                 var position = $mdPanel.newPanelPosition()
-                .absolute()
-                .center();
+                    .absolute()
+                    .center();
                 var config = {
                     attachTo: angular.element(document.body),
                     scope: $scope,

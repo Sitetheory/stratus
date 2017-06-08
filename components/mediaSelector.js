@@ -37,7 +37,6 @@ console.log('drag again');
             // Components
             'stratus.components.search',
             'stratus.components.pagination',
-            //'stratus.components.library',
 
             // Directives
             'stratus.directives.singleClick',
@@ -63,7 +62,7 @@ console.log('drag again');
             limit: '@'
         },
         controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog) {
-            Stratus.Instances[_.uniqueId('media_selector')] = $scope;
+            Stratus.Instances[_.uniqueId('media_selector_')] = $scope;
 
             // load component css
             Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
@@ -113,19 +112,7 @@ console.log('drag again');
             $scope.dragLibraryVisible = false;
 
             $scope.zoomView = function (event) {
-
-                
-                //$scope.imageWidth = null;
                 $scope.mediaDetail = event;
-
-                $scope.mediaDescription = [{
-                    name: "iVestibulum pulvinar tristique risus vel molestie. Sed ut elit consequat, luctus turpis nec, hendrerit dolor. Sed interdum erat at enim molestie eleifend.",
-                    editing: false
-                }];
-
-                console.log($scope.mediaDescription);
-                //$scope.imageWidth = ("http://"+$scope.mediaDetail.file+"."+$scope.mediaDetail.extension)
-                //alert($scope.imageWidth);
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
@@ -149,16 +136,6 @@ console.log('drag again');
             };
             $scope.draggedFileId = '';
 
-
-            $scope.editItem = function (item) {
-                    item.editing = true;
-                }
-
-                $scope.doneEditing = function (item) {
-                    item.editing = false;
-                    //dong some background ajax calling for persistence...
-                };
-
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
 
@@ -177,22 +154,22 @@ console.log('drag again');
             $scope.beforeChange = function (file, $event) {
                 if ($event.dataTransfer.dropEffect === 'move') {
                     $http({
-                       method: 'GET',
-                       url: '/Api/Media/' + $scope.movedFileId
-                   }).then(function (response) {
-                       $scope.draggedFiles.push(response.data.payload);
-                       for (var i = 0; i < $scope.collection.models.length; i++) {
-                           if ($scope.collection.models[i].data.id === $scope.movedFileId) {
-                               // add class selected
-                               $scope.collection.models[i].data.selectedClass = true;
-                           }
-                       }
-                       $scope.movedFileId = '';
+                        method: 'GET',
+                        url: '/Api/Media/' + $scope.movedFileId
+                    }).then(function (response) {
+                        $scope.draggedFiles.push(response.data.payload);
+                        for (var i = 0; i < $scope.collection.models.length; i++) {
+                            if ($scope.collection.models[i].data.id === $scope.movedFileId) {
+                                // add class selected
+                                $scope.collection.models[i].data.selectedClass = true;
+                            }
+                        }
+                        $scope.movedFileId = '';
 
-                   }, function (rejection) {
-                       console.log(rejection.data);
-                   });
-                }else {
+                    }, function (rejection) {
+                        console.log(rejection.data);
+                    });
+                } else {
                     // FIXME: There is a random comparison below
                     $scope.imageMoved = false;
                     $scope.uploadFiles();
@@ -254,30 +231,56 @@ console.log('drag again');
             // remove media file from selected list
             $scope.removeFromSelected = function (fileId) {
 
+                for (var i = $scope.draggedFiles.length - 1; i >= 0; i--) {
+                    // used double precision because id uis passed as string in event
+                    if ($scope.draggedFiles[i].id === fileId) {
+
+                        $scope.draggedFiles.splice(i, 1);
+                    }
+                }
+                for (var j = 0; j < $scope.collection.models.length; j++) {
+                    // used double precision because id uis passed as string in event
+                    if ($scope.collection.models[j].data.id === fileId) {
+                        $scope.collection.models[j].data.selectedClass = false;
+                    }
+                }
+                
+
+                
+            };
+
+
+            $scope.deleteFromMedia = function (fileId) {
+                
                 //mdPanelRef.close();
-                var confirm = $mdDialog.confirm()
+                var confirmMedia = $mdDialog.confirm()
                     .title('DELETE MEDIA')
-                    .htmlContent('Are you sure you want to  delete this from your library? <br>You may get broken images if any content still uses this image.')
+                    .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
 
                     //  .ariaLabel('Lucky day')
                     // .targetEvent(ev)
                     .ok('Yes')
                     .cancel('No');
 
-                $mdDialog.show(confirm).then(function () {
-                    for (var i = $scope.draggedFiles.length - 1; i >= 0; i--) {
-                        // used double precision because id uis passed as string in event
-                        if ($scope.draggedFiles[i].id === fileId) {
+                $mdDialog.show(confirmMedia).then(function () {
+                $http({
+                        method: 'DELETE',
+                        url: '/Api/Media/' + fileId
+                    }).then(function (response) {
+                        // check if deleted media is dragged above,then remove from selected list
+                        if ($scope.draggedFiles.length > 0) {
+                            for (var k = 0; k < $scope.draggedFiles.length; k++) {
+                                if ($scope.draggedFiles[k].id === fileId) {
+                                    $scope.draggedFiles.splice(k, 1);
+                                }
+                            }
+                        }
 
-                            $scope.draggedFiles.splice(i, 1);
-                        }
-                    }
-                    for (var j = 0; j < $scope.collection.models.length; j++) {
-                        // used double precision because id uis passed as string in event
-                        if ($scope.collection.models[j].data.id === fileId) {
-                            $scope.collection.models[j].data.selectedClass = false;
-                        }
-                    }
+                        // fetch media library list
+                        $scope.uploadMedia();
+                    }, function (rejection) {
+                        console.log(rejection.data);
+                    });
                 });
 
 
@@ -422,8 +425,7 @@ console.log('drag again');
                 };
             }
 
-            function updateFilesModel(files)
-            {
+            function updateFilesModel(files) {
                 if (files !== null) {
                     // make files array for not multiple to be able to be used in ng-repeat in the ui
                     if (!angular.isArray(files)) {
@@ -465,11 +467,11 @@ console.log('drag again');
                 file.uploadStatus = false;
                 file.errorUpload = false;
                 file.upload = Upload.upload({
-                        url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
-                        data: {
-                            file: file
-                        }
-                    });
+                    url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
+                    data: {
+                        file: file
+                    }
+                });
                 file.upload.then(function (response) {
                     file.result = response.data;
 
@@ -510,46 +512,20 @@ console.log('drag again');
 
             };
 
-            
+            //Add Class on Popup Image
+
+            $scope.addClassOnPopup = function(event){
+                var myEl = angular.element( document.querySelector( $(event.target).attr("data-target") ) );
+                myEl.addClass($(event.target).attr("data-class"));
+            }
+
 
             // controller for zoom panel
             function ZoomController(mdPanelRef) {
-            
                 // delete media from library
                 $scope.deleteMediaFromLibrary = function (fileId) {
                     mdPanelRef.close();
-                    var confirm = $mdDialog.confirm()
-                        .title('DELETE MEDIA')
-                        .htmlContent('Are you sure you want to permanently delete this from your library? <br>You may get broken images if any content still uses this image.')
-
-                        //  .ariaLabel('Lucky day')
-                        // .targetEvent(ev)
-                        .ok('Yes')
-                        .cancel('No');
-
-                    $mdDialog.show(confirm).then(function () {
-                        $http({
-                            method: 'DELETE',
-                            url: '/Api/Media/' + fileId
-                        }).then(function (response) {
-                            // check if deleted media is dragged above,then remove from selected list
-                            if ($scope.draggedFiles.length > 0) {
-                                for (var k = 0; k < $scope.draggedFiles.length; k++) {
-                                    if ($scope.draggedFiles[k].id === fileId) {
-                                        $scope.draggedFiles.splice(k, 1);
-                                    }
-                                }
-                            }
-
-                            // fetch media library list
-                            $scope.uploadMedia();
-                        }, function (rejection) {
-                            console.log(rejection.data);
-                        });
-
-                    }, function () {
-                        console.log('No');
-                    });
+                    $scope.deleteFromMedia(fileId);
                 };
 
                 $scope.closeZoom = function () {
@@ -560,7 +536,7 @@ console.log('drag again');
 
             // Manage classes on select/unselect media
             $scope.addDeleteMedia = function (selectedStatus, fileId, $event) {
-                //alert("Calllee");
+
                 // if selected status is true,remove from draggedFiles and add minus icon
                 if (selectedStatus === true) {
                     for (var k = 0; k < $scope.draggedFiles.length; k++) {

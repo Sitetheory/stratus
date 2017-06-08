@@ -1,3 +1,4 @@
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js"></script>
 <div id="comp">
     <div class="layout_bx">
         <!-- Gallery header Ends -->
@@ -7,7 +8,6 @@
         <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
         
         <!-- ng-repeat="sel in model.get(property)" -->
-         
         <div class="lt_box">
 
             <!-- FIXME: This was broken on the following div: -->
@@ -30,9 +30,8 @@
             <!--</div>-->
             </div>
             <div class="lt-content">
-                <h4>{{model.dataDetails.name}}</h4>
-                <div class="name fontSecondary" ng-bind-html="themeRawDesc(model.dataDetails.description) | truncate:{limit:300}"></div>
-                
+                <h4>{{model.get(property).name}}</h4>
+                <div class="name fontSecondary" ng-bind-html="themeRawDesc(model.get(property).description) | truncate:{limit:300}"></div>
                  
                 
             </div>
