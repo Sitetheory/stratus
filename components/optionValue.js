@@ -35,7 +35,7 @@
             options: '=',
             type: '@'
         },
-        controller: function ($scope, $element, $attrs, $parse) {
+        controller: function ($scope) {
             Stratus.Instances[_.uniqueId('option_value_')] = $scope;
             $scope.items = [];
             var normalize = function () {
@@ -47,7 +47,9 @@
                 }
             };
             normalize();
-            $scope.$parent.$watch('$ctrl.ngModel', function (items) {
+            $scope.$parent.$watch(function () {
+                return $scope.$ctrl.ngModel;
+            }, function (items) {
                 if (items !== $scope.items) {
                     $scope.items = items;
                     normalize();
