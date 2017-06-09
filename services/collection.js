@@ -58,7 +58,7 @@
                 this.completed = false;
 
                 // Action Flags
-                this.filter = false;
+                this.filtering = false;
                 this.paginate = false;
 
                 // Generate URL
@@ -144,7 +144,7 @@
                                 that.completed = true;
 
                                 // Action Flags
-                                that.filter = false;
+                                that.filtering = false;
                                 that.paginate = false;
 
                                 // Promise
@@ -193,7 +193,7 @@
                  * @returns {*}
                  */
                 this.filter = function (query) {
-                    that.filter = true;
+                    that.filtering = true;
                     that.meta.set('api.q', angular.isDefined(query) ? query : '');
                     return that.fetch();
                 };
