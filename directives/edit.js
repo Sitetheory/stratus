@@ -35,6 +35,7 @@
                 ngModel: '=',
                 property: '@',
                 emptyValue: '@', // A value to display if it is currently empty
+                prefix: '@', // A value to prepend to the front of the value
                 stratusEdit: '=', // A value to define if the element can currently be editable
                 alwaysEdit: '@', // A bool/string to define if the element will always be in editable mode
                 autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
@@ -56,7 +57,7 @@
                 // METHODS
 
                 ngModel.$render = function () {
-                    $element.html($scope.value || $scope.emptyValue || '');
+                    $element.html(($scope.prefix || '') + ($scope.value || $scope.emptyValue || ''));
                 };
 
                 $scope.liveEditStatus = function () {
@@ -71,10 +72,14 @@
 
                 $scope.read = function () {
                     $scope.value = $element.html();
+                    if ($scope.prefix) {
+                        $scope.value = $scope.value.replace($scope.prefix, '');
+                    }
                 };
 
                 $scope.accept = function () {
                     if ($scope.model instanceof model && $scope.property) {
+                        // FIXME when the property is an array ( route[0].url ), model.set isn't treating route[0] as an array, but rather a whole new section.
                         $scope.model.set($scope.property, $scope.value);
                         $scope.model.save();
                     }
