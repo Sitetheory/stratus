@@ -78,7 +78,10 @@
                 };
 
                 $scope.accept = function () {
-                    if ($scope.model instanceof model && $scope.property) {
+                    if ($scope.model instanceof model
+                        && $scope.property
+                        && $scope.model.get($scope.property) !== $scope.value
+                    ) {
                         // FIXME when the property is an array ( route[0].url ), model.set isn't treating route[0] as an array, but rather a whole new section.
                         $scope.model.set($scope.property, $scope.value);
                         $scope.model.save();
