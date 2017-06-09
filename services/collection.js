@@ -56,6 +56,9 @@
                 this.pending = false;
                 this.error = false;
                 this.completed = false;
+
+                // Action Flags
+                this.filtering = false;
                 this.paginate = false;
 
                 // Generate URL
@@ -139,6 +142,9 @@
                                 // Internals
                                 that.pending = false;
                                 that.completed = true;
+
+                                // Action Flags
+                                that.filtering = false;
                                 that.paginate = false;
 
                                 // Promise
@@ -187,6 +193,7 @@
                  * @returns {*}
                  */
                 this.filter = function (query) {
+                    that.filtering = true;
                     that.meta.set('api.q', angular.isDefined(query) ? query : '');
                     return that.fetch();
                 };
@@ -242,7 +249,7 @@
                  * @param options
                  */
                 this.add = function (target, options) {
-                    if (!options || typeof options != 'object') options = {};
+                    if (!options || typeof options !== 'object') options = {};
                     if (angular.isObject(target)) {
                         target = (target instanceof model) ? target : new model({
                             collection: that

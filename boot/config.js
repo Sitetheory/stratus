@@ -156,6 +156,7 @@ boot.config({
 
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
+        'stratus.directives.edit': boot.bundle + 'stratus/directives/edit' + boot.suffix,
         'stratus.directives.drag': boot.bundle + 'stratus/directives/drag' + boot.suffix,
         'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
         'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,

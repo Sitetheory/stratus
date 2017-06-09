@@ -5,8 +5,8 @@
         </md-option>
     </md-select>
     <md-input-container flex>
-        <label>{{ type }}</label>
+        <label>{{ $ctrl.type }}</label>
         <input type="text" ng-model="item.value">
     </md-input-container>
-    <md-button ng-if="$last" ng-click="items.push({})">add {{ type }}</md-button>
+    <md-button ng-if="$last && $ctrl.multiple" ng-click="items.push({})">add {{ $ctrl.type }}</md-button>
 </div>

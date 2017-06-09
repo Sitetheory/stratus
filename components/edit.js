@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model', 'froala'], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -35,99 +35,111 @@
         bindings: {
             elementId: '@',
             ngModel: '=',
-            property: '@'
+            property: '@',
+            autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
         },
-        controller: function ($scope, $element, $attrs, model) {
+        controller: function ($scope, $element, $attrs, $timeout, model) {
+
             // Initialize
             this.uid = _.uniqueId('edit_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
             $scope.edit_input_container = $element[0].getElementsByClassName('stratus_edit_input_container')[0];
 
+            // TODO make a option to select the livEditStatus option
+
             // Settings
             $scope.edit = false;
             $scope.property = $attrs.property || null;
+            $scope.autoSave = $attrs.autoSave || null;
 
             // Data Connectivity
             $scope.model = null;
             $scope.value = null;
-            if ($scope.property) {
-                $scope.$watch('$ctrl.ngModel', function (data) {
-                    if (data instanceof model && !_.isEqual(data, $scope.model)) {
-                        $scope.model = data;
-                    }
-                });
-                $scope.$watch('model.data.' + $scope.property, function (data) {
-                    $scope.value = data;
-                });
+
+            if (!model || !$scope.property) {
+                console.warn($scope.uid + ' has no model or property!');
+                return;
             }
+
+            // METHODS
+
             $scope.setEdit = function (bool) {
                 // Only allow Edit mode if liveedit is enabled.
-                // TODO: provide an option to use this functionality
                 if (Stratus.Environment.data.liveEdit && bool) {
                     $scope.edit = bool;
-                    if (bool) {
-                        setTimeout(function () {
-                            if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
-                                // Focus on the input field
-                                $scope.edit_input_container.getElementsByTagName('input')[0].focus();
-                            } else if ($scope.edit_input_container.getElementsByClassName('fr-view').length > 0) {
-                                // Focus on the froala editable field
-                                $scope.edit_input_container.getElementsByClassName('fr-view')[0].focus();
-                            } else {
-                                // No known edit location, so focus on the entire container
-                                $scope.edit_input_container.focus();
-                            }
-                        }, 0);
-                    }
+                    $scope.focusOnEditable();
                 } else {
                     $scope.edit = false;
                 }
             };
+
+            $scope.focusOnEditable = function () {
+                $timeout(function () {
+                    if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
+                        // Focus on the input field
+                        $scope.edit_input_container.getElementsByTagName('input')[0].focus();
+                    } else if ($($scope.edit_input_container).find('[contenteditable]').length > 0) {
+                        // Focus on any contenteditable (including froala)
+                        $($scope.edit_input_container).find('[contenteditable]').focus();
+                    } else {
+                        // No known edit location, so try to focus on the entire container
+                        $scope.edit_input_container.focus();
+                    }
+                }, 0);
+            };
+
             $scope.accept = function () {
                 if ($scope.model instanceof model && $scope.property) {
                     $scope.model.set($scope.property, $scope.value);
                     $scope.model.save();
                 }
-                $scope.edit = false;
             };
+
             $scope.cancel = function () {
                 if ($scope.model instanceof model && $scope.property) {
                     $scope.value = $scope.model.get($scope.property);
                 }
-                $scope.edit = false;
+                $scope.setEdit(false);
             };
 
-            // Key Triggers
-            $element.on('keydown keypress', function (event) {
+            // WATCHERS
+
+            $scope.$watch('$ctrl.ngModel', function (data) {
+                if (data instanceof model && !_.isEqual(data, $scope.model)) {
+                    $scope.model = data;
+                }
+            });
+            $scope.$watch('model.data.' + $scope.property, function (data) {
+                $scope.value = data;
+            });
+
+            // TRIGGERS
+
+            // Save / Cancel value on key press
+            // FIXME saving with key press with cause two saves (due to focus out). We need a save throttle to prevent errors
+            $($scope.edit_input_container).on('keypress', function (event) {
                 switch (event.which) {
                     case Stratus.Key.Enter:
-                        $scope.$apply(function () {
-                            $scope.accept();
-                        });
+                        if ($scope.autoSave !== false && $scope.autoSave !== 'false') {
+                            $scope.$apply($scope.accept);
+                        }
+                        $scope.setEdit(false);
                         break;
                     case Stratus.Key.Escape:
-                        $scope.$apply(function () {
-                            $scope.cancel();
-                        });
+                        $scope.$apply($scope.cancel);
                         break;
                 }
             });
 
-            setTimeout(function () {
-                // Save on Focus out
-                if ($scope.edit_input_container) {
-                    $($scope.edit_input_container).on('focusout', function (event) {
-                        switch (event.type) {
-                            case 'focusout':
-                                $scope.$apply(function () {
-                                    $scope.accept();
-                                });
-                                break;
-                        }
-                    });
+            // FIXME save of focus out does not work on the media selector correctly
+            // Update value on change, save value on blur
+            $($scope.edit_input_container).on('focusout', function () {
+                if ($scope.autoSave !== false && $scope.autoSave !== 'false') {
+                    $scope.$apply($scope.accept);
                 }
-            }, 0);
+                $scope.setEdit(false);
+            });
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
