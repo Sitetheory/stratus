@@ -33,7 +33,7 @@
             scope: {
                 stratusSrc: '@stratusSrc'
             },
-            link: function ($scope, $element, $attrs) {
+            link: function ($scope, $element) {
                 Stratus.Instances[_.uniqueId('src_')] = $scope;
                 $scope.whitelist = [
                     'jpg',
@@ -45,7 +45,7 @@
                 $scope.registered = false;
                 $scope.register = function () {
                     if ($scope.registered) return true;
-                    var ext = $element.attr('src') ? $element.attr('src').match(/\.([0-9a-z]+)$/i) : null;
+                    var ext = $element.attr('src') ? $element.attr('src').match(/\.([0-9a-z]+)(\?.*)?$/i) : null;
                     if (ext) {
                         ext = ext[1] ? ext[1].toLowerCase() : null;
                     }
