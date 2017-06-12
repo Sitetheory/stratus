@@ -104,12 +104,12 @@ console.log('drag again');
 
             $scope.movedFileId = '';
 
-            // $scope.selectedListDiv =  false;
+            
             $scope.errorUpload = false;
 
             // UI Settings
             $scope.libraryVisible = false;
-            //$scope.dragLibraryVisible = false;
+            
 
             $scope.zoomView = function (event) {
                 $scope.mediaDetail = event;
@@ -139,7 +139,7 @@ console.log('drag again');
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
 
-                // console.log(fileId);
+                
                 if ($event.type === 'dragover') {
                     if ($event.explicitOriginalTarget.id !== '') {
                         $scope.draggedFileId = $event.explicitOriginalTarget.id;
@@ -196,8 +196,8 @@ console.log('drag again');
 
                 $scope.draggedDivChanged = true;
 
-                // done button when uploading is finished
-                // $scope.uploadComp = false;
+                
+                
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
@@ -220,12 +220,7 @@ console.log('drag again');
                 };
                 $mdPanel.open(config);
 
-                // check if media library already opened, then load media library
-                /*if ($scope.dragLibraryVisible) {
-                    $scope.dragLibraryVisible = true;
-
-                    // $scope.uploadMedia();
-                }*/
+                
             };
 
             // remove media file from selected list
@@ -251,7 +246,7 @@ console.log('drag again');
 
 
             $scope.deleteFromMedia = function (fileId) {
-                
+                console.log(fileId);
                 //mdPanelRef.close();
                 var confirmMedia = $mdDialog.confirm()
                     .title('DELETE MEDIA')
@@ -319,7 +314,7 @@ console.log('drag again');
                 $mdPanel.open(config);
                 $scope.files = files;
 
-                // updateFilesModel(files);
+                
 
             };
 
@@ -329,9 +324,7 @@ console.log('drag again');
                 if (!$scope.libraryVisible) {
                     // twiddle
                     $scope.libraryVisible = true;
-                    //$scope.dragLibraryVisible = false;
-
-                    // switch to registry controls
+                    
                     $scope.uploadMedia();
                 } else if ($scope.libraryVisible) {
                     // twiddle
@@ -339,21 +332,7 @@ console.log('drag again');
                 }
             };
 
-            // open media library when clicked on plus icon
-            /*$scope.mediaLibrary = function () {
-                if (!$scope.dragLibraryVisible) {
-                    // twiddle
-                    $scope.libraryVisible = false;
-                    $scope.dragLibraryVisible = true;
-
-                    // load media library
-                    $scope.uploadMedia();
-                } else if ($scope.dragLibraryVisible) {
-                    // twiddle
-                    $scope.libraryVisible = false;
-                    $scope.dragLibraryVisible = false;
-                }
-            };*/
+            
 
             // common function to load media library from collection
             $scope.uploadMedia = function () {
