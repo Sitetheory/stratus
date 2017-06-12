@@ -108,7 +108,7 @@
                     if (data instanceof model && !_.isEqual(data, $scope.model)) {
                         $scope.model = data;
                         var unwatch = $scope.$watch('model.data', function (dataCheck) {
-                            if(dataCheck !== undefined) {
+                            if (dataCheck !== undefined) {
                                 unwatch(); // Remove this watch as soon as it's run once
                                 ctrl.init(); // Initialize only after there is a model to work with
                             }
