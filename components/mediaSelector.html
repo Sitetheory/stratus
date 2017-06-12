@@ -58,7 +58,7 @@
 
                 </li>
                 <li class="libraryToggle">
-                    <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="mediaLibrary()">
+                    <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="openLibrary()">
 
                         <md-tooltip>Open Media Library</md-tooltip>
 
@@ -82,7 +82,7 @@
             <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
             <p class="smallLabel">Media Library</p>
             <div class="mediaLibraryContent" ng-class="{'layerBlack':dragClass}">
-                <div class="searchBar" ng-if="collection.meta && collection.meta.data.pageTotal > 1">
+                <div class="searchBar">
                     <div class="gal-search">
                         <stratus-search flex></stratus-search>
                     </div>
@@ -151,66 +151,7 @@
     </div>
     
     
-    <div id="openDragDropLibrary" ng-show="dragLibraryVisible">
-        <div class="sectionContainer mediaLibrary backgroundDark borderRadiusDefault">
-            <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a></p>
-            <p class="smallLabel">Media Library</p>
-            <div class="mediaLibraryContent" ng-class="{'layerBlack':dragClass}">
-                <div class="searchBar" ng-if="collection.meta && collection.meta.data.pageTotal > 1">
-                    <div class="gal-search">
-                        <stratus-search flex></stratus-search>
-                    </div>
-
-                </div><!-- Search Bar Ends -->
-                <div ngf-drop="uploadToLibrary($files)" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}" ngf-multiple="true" ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'},pattern: '.jpg,.pdf,.png'}">
-                <ul class="listInline">
-                    <li ng-repeat="media in collection.models">
-                        <div class="libraryItem" ng-class="{'selected--img': hover,'selected--list':media.data.selectedClass,'drag_cursor':dragClass}">
-                            <a href="#" ng-mouseleave="iconStyles = ''" ng-class="{true:'minus_icon' ,false: 'add_icon',undefined:'add_icon'}[iconStyles]"
-                               ng-mouseenter="iconStyles=media.data.selectedClass"
-                               stratus-single-click="addDeleteMedia(media.data.selectedClass,media.data.id,$event);" ng-dblclick="zoomView(media.data)">
-                                <div class="checkIcon positionCenter">
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
-                                </div>
-                                <div class="addIcon positionCenter">
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-                                </div>
-                                <div class="minusIcon positionCenter">
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"></md-icon>
-                                </div>
-                                <div class="imageDraggable" id="libb_{{media.data.id}}" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                </div>
-                            </a>
-
-                            <div class="imageInfoContainer" ng-mouseenter="hover = true" ng-mouseleave="hover = false">
-                                <div class="imageHoverInfo borderRadiusDefault">
-                                    <div class="format-size">
-                                        <div class="smallLabel fileDetails">
-                                            <span class="fileType">{{media.data.extension|uppercase}}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}</span>
-                                        </div>
-                                    </div>
-                                    <p class="fontBody imgTitle">{{media.data.name}}</p>
-                                    <div class="clearfix actionBtns">
-                                        <a href="#" ng-click="zoomView(media.data)" class="infoIcon">
-                                            <md-tooltip>Image details</md-tooltip>
-                                            <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                                        </a>
-                                         <a href="#" stratus-single-click="deleteFromMedia(media.data.id);" ng-dblclick="zoomView(media.data)">
-                                            <md-icon class="deleteIcon"   aria-hidden="true" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
-                                        </a>
-                                        <!-- Image Info Right Ends -->
-                                    </div>
-                                </div><!-- Image Info Ends -->
-                            </div><!-- Image Outer Ends -->
-                        </div><!-- Gallery Image Container Ends -->
-                    </li>
-                </ul>
-                    </div>
-            </div>
-            <stratus-pagination></stratus-pagination>
-        </div>
-    </div>
+   
 </div>
 
 

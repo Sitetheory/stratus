@@ -32,7 +32,7 @@
             'angular-material',
 
             // Services
-            'stratus.services.registry',
+            'stratus.services.registrywithdetails',
             'stratus.services.collection',
             'stratus.services.model',
 
@@ -64,7 +64,7 @@
             details: '<',
             search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registry, model, $sce) {
+        controller: function ($scope, $mdPanel, $attrs, registrywithdetails, model, $sce) {
 
             $scope.themeRawDesc = function (plainText) {
                 return $sce.trustAsHtml(plainText);
@@ -84,12 +84,14 @@
 
             // Asset Collection
             if ($attrs.type) {
-                $scope.registry = new registry();
+                $scope.registry = new registrywithdetails();
                 var request = {
                     target: $attrs.type || 'Template',
                     id: null,
                     manifest: false,
                     decouple: true,
+                    selectedid: $attrs.selectedid,
+                    property: $attrs.property,
                     api: {
                         options: {},
                         limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 3
@@ -98,7 +100,7 @@
                 if ($scope.api && angular.isObject($scope.api)) {
                     request.api = _.extendDeep(request.api, $scope.api);
                 }
-                $scope.registry.fetch(request, $scope);
+                $scope.registry.fetchwithdetails(request, $scope);
             }
             //console.log($scope);
             // Store Asset Property for Verification
@@ -108,9 +110,7 @@
             $scope.toggleOptions = {
                 multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : false
             };
-            /*$scope.toggleOptions = {
-                multiple: false
-            };*/
+            
 
             // Data Connectivity
             $scope.model = null;
@@ -122,6 +122,17 @@
                 }
                 
             });
+
+            //Update the Selected Theme Details
+
+            $scope.selectedName = null;
+            $scope.selectedDesc = null;
+
+            $scope.updateDetails = function(options){
+                console.log(options.description);
+                $scope.selectedName = options.name;
+                $scope.selectedDesc = options.description;
+            }
 
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {

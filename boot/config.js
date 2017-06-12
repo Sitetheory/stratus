@@ -180,6 +180,7 @@ boot.config({
         'stratus.services.model': boot.bundle + 'stratus/services/model' + boot.suffix,
         'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
         'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
+        'stratus.services.registrywithdetails': boot.bundle + 'stratus/services/registrywithdetails' + boot.suffix,
 
         /* Stratus Core Views */
         'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,

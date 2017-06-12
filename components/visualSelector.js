@@ -32,7 +32,7 @@
             'angular-material',
 
             // Services
-            'stratus.services.registry',
+            'stratus.services.registrywithdetails',
             'stratus.services.collection',
             'stratus.services.model',
 
@@ -65,7 +65,7 @@
             details: '<',
             search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registry, model, $http, $sce) {
+        controller: function ($scope, $mdPanel, $attrs, registrywithdetails, model, $http, $sce) {
             // Initialize
             this.uid = _.uniqueId('visual_selector_');
             Stratus.Instances[this.uid] = $scope;
@@ -83,12 +83,14 @@
 
             // Asset Collection
             if ($attrs.type) {
-                $scope.registry = new registry();
+                $scope.registry = new registrywithdetails();
                 var request = {
                     target: $attrs.type || 'Layout',
                     id: null,
                     manifest: false,
                     decouple: true,
+                    selectedid: $attrs.selectedid,
+                    property: $attrs.property,
                     api: {
                         options: {},
                         limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
@@ -97,19 +99,17 @@
                 if ($scope.api && angular.isObject($scope.api)) {
                     request.api = _.extendDeep(request.api, $scope.api);
                 }
-                $scope.registry.fetch(request, $scope);
+                $scope.registry.fetchwithdetails(request, $scope);
             }
 
             // Store Asset Property for Verification
             $scope.property = $attrs.property || null;
 
             // Store Toggle Options for Custom Actions
-            /*$scope.toggleOptions = {
-                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : true
-            };*/
             $scope.toggleOptions = {
-                multiple: false
+                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : false
             };
+            
             // Data Connectivity
             $scope.model = null;
             $scope.$watch('$ctrl.ngModel', function (data) {
@@ -120,6 +120,16 @@
 
             $scope.layoutRawDesc = function (plainText) {
                 return $sce.trustAsHtml(plainText);
+            }
+
+            //Update the Selected Layout Details
+            $scope.selectedName = null;
+            $scope.selectedDesc = null;
+
+            $scope.updateDetails = function(options){
+                console.log(options.description);
+                $scope.selectedName = options.name;
+                $scope.selectedDesc = options.description;
             }
             
             // display expanded view if clicked on change button

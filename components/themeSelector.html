@@ -30,8 +30,8 @@
             <!--</div>-->
             </div>
             <div class="lt-content">
-                <h4>{{model.get(property).name}}</h4>
-                <div class="name fontSecondary" ng-bind-html="themeRawDesc(model.get(property).description) | truncate:{limit:300}"></div>
+                <h4>{{selectedName}}</h4>
+                <div class="name fontSecondary" ng-bind-html="themeRawDesc(selectedDesc) | truncate:{limit:300}"></div>
                  
                 
             </div>
@@ -74,7 +74,7 @@
 
                         <a href="#" ng-click="zoomView(target.data)" class="sr_ico"><i class="fa fa-search" aria-hidden="true"></i></a>
                         <a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)"
-                        ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions)"
+                        ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images})"
                         class="bl_btn">Choose Theme </a>
                     </span>
                     <span class="theme-description">
@@ -86,12 +86,10 @@
                         <div class="name fontSecondary" ng-bind-html="themeRawDesc(target.data.description) | truncate:{limit:300}"></div>
                          
                         <a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)"
-                        ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions)"
+                        ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images})"
                         class="bl_btn">Choose Theme </a>
 
-                        <a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)"
-                        ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions)"
-                        class="bl_btn">Choose Theme </a>
+                        
                     </span>
                 </li>
                 
@@ -116,7 +114,7 @@
             <div class="name fontSecondary" ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
        
             <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
-            ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); closeDialog();"
+            ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
             class="bl_btn">Choose Theme </a>
 
 

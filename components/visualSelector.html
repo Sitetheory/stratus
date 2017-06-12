@@ -7,6 +7,7 @@
         <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
         
          <!-- ng-repeat="sel in model.get(property)" -->
+         
         <div class="lt_box">
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
@@ -24,9 +25,15 @@
                     <span>Choose Layout</span></a>
                 <!--</div>-->
             </div>
+             
+            
             <div class="lt-content">
-                <h4>{{model.get(property).name}}</h4>
-                <div class="name fontSecondary" ng-bind-html="layoutRawDesc(model.get(property).description) | truncate:{limit:300}"></div>
+                <h4>{{selectedName}}</h4>
+                
+                <div class="name fontSecondary" ng-bind-html="layoutRawDesc(selectedDesc) | truncate:{limit:300}"></div>
+
+                
+                
             </div>
         </div><!-- Layout box Inner ends -->
         <div ng-show="!model.get(property).id">
@@ -45,13 +52,14 @@
         <div class="lt_box">
             <ul class="layout_gallery">
                 <li ng-repeat="target in collection.models">
+               
 					<span class="galleryimg-cont" ng-class="{'select-highlight': model.exists(property, target.data.id)}">
                         <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt=""/>
 						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(target.data);">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </a>
 						<a href="#" ng-hide="model.exists(property, target.data.id)"
-                           ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions)"
+                           ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images});"
                            class="bl_btn">Choose Layout </a>
 					</span>
                     <h5>{{target.data.name}}</h5>
@@ -70,8 +78,8 @@
             <div class="ltpop-left">
                 <h3>{{layoutDetail.name}}</h3>
                 <div class="name fontSecondary" ng-bind-html="layoutRawDesc(layoutDetail.description) | truncate:{limit:300}"></div>
-                <a href="javascript:void(0)" ng-hide="modelwithdetails.exists(property,layoutDetail.id)"
-                   ng-click="modelwithdetails.toggle(property, {'id': layoutDetail.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}, toggleOptions); closeDialog();" class="bl_btn">Choose Layout </a>
+                <a href="javascript:void(0)" ng-hide="model.exists(property,layoutDetail.id)"
+                   ng-click="model.toggle(property, {'id': layoutDetail.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}, toggleOptions); ; updateDetails({'id': target.data.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}); closeDialog();" class="bl_btn">Choose Layout </a>
             </div>
             <div class="ltpop-right">
                 <a href="javascript:void(0)">
