@@ -1,5 +1,6 @@
 <div ng-if="items.length" ng-repeat="item in items" layout="row">
-    <md-select ng-model="item.type" flex="10" aria-label="{{ $ctrl.type }}">
+    <span ng-if="!item.type" ng-init="item.type = $ctrl.type" style="display:none;"></span>
+    <md-select ng-model="item.name" flex="10" aria-label="{{ $ctrl.type }}">
         <md-option ng-repeat="option in $ctrl.options" ng-value="option" ng-selected="item.name == option">
             {{ option }}
         </md-option>

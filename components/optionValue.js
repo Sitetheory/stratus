@@ -21,11 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'moment', 'angular'], factory);
+        define(['stratus', 'angular'], factory);
     } else {
-        factory(root.Stratus, root.moment);
+        factory(root.Stratus);
     }
-}(this, function (Stratus, moment) {
+}(this, function (Stratus) {
     // This component intends to handle binding of an
     // item array into a particular attribute.
     Stratus.Components.OptionValue = {

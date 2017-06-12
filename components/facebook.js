@@ -1,4 +1,4 @@
-//     Stratus.Components.Pagination.js 1.0
+//     Stratus.Components.Facebook.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
