@@ -845,9 +845,11 @@
     Stratus.Selector.attr = function (attr, value) {
         var that = this;
         if (that.selection instanceof NodeList) {
-            if (!Stratus.Environment.get('production')) console.log('List:', that);
+            if (!Stratus.Environment.get('production')) {
+                console.log('List:', that);
+            }
         } else if (attr) {
-            if (!value) {
+            if (typeof value === 'undefined') {
                 value = that.selection.getAttribute(attr);
                 return _.isJSON(value) ? JSON.parse(value) : value;
             } else {

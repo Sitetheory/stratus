@@ -31,6 +31,7 @@
         return {
             restrict: 'A',
             scope: {
+                src: '@src',
                 stratusSrc: '@stratusSrc'
             },
             link: function ($scope, $element) {
@@ -40,6 +41,7 @@
                     'jpeg',
                     'png'
                 ];
+                $scope.filter = null;
 
                 // Group Registration
                 $scope.registered = false;
@@ -49,12 +51,13 @@
                     if (ext) {
                         ext = ext[1] ? ext[1].toLowerCase() : null;
                     }
-                    var filter = _.filter($scope.whitelist, function (value) {
+                    $scope.filter = _.filter($scope.whitelist, function (value) {
                         return ext === value;
                     });
-                    if (_.size(filter) < 1) {
+                    if (!_.size($scope.filter)) {
                         return true;
                     }
+                    if ($scope.registered) return true;
                     $scope.registered = true;
                     $element.attr('data-src', 'lazy');  // This is here for CSS backwards compatibility
                     $scope.group = {
@@ -68,7 +71,7 @@
                 };
 
                 // Source Interpolation
-                $scope.src = $element.attr('src') || $element.attr('stratus-src');
+                $scope.src = $scope.src || $scope.stratusSrc;
                 $scope.interpreter = $interpolate($scope.src, false, null, true);
                 $scope.initial = $scope.interpreter($scope.$parent);
                 if (angular.isDefined($scope.initial)) {
