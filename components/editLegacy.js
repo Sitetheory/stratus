@@ -1,4 +1,4 @@
-//     Stratus.Components.Edit.js 1.0
+//     Stratus.Components.EditLegacy.js 1.0
 
 //     Copyright (c) 2016 by Sitetheory, All Rights Reserved
 //
@@ -15,24 +15,27 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Edit Component
+// Stratus Edit Legacy Component
 // ----------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model', 'stratus.directives.froala'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model', 'froala'], factory);
     } else {
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
     // This component intends to allow editing of various attributes depending on context.
-    Stratus.Components.EditA = {
+    Stratus.Components.EditLegacy = {
+        transclude: {
+            view: '?stratusEditView',
+            input: '?stratusEditInput'
+        },
         bindings: {
             elementId: '@',
             ngModel: '=',
             property: '@',
-            tagName: '@',
             autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
         },
         controller: function ($scope, $element, $attrs, $timeout, model) {
@@ -40,7 +43,6 @@
             // Initialize
             this.uid = _.uniqueId('edit_');
             Stratus.Instances[this.uid] = $scope;
-            $scope.Stratus = Stratus;
             $scope.elementId = $attrs.elementId || this.uid;
             $scope.edit_input_container = $element[0].getElementsByClassName('stratus_edit_input_container')[0];
 
@@ -50,8 +52,6 @@
             $scope.edit = false;
             $scope.property = $attrs.property || null;
             $scope.autoSave = $attrs.autoSave || null;
-            $scope.tagName = $scope.$ctrl.tagName || 'span';
-            $scope.elementClass = $attrs.elementClass || null;
 
             // Data Connectivity
             $scope.model = null;
@@ -112,8 +112,6 @@
             });
             $scope.$watch('model.data.' + $scope.property, function (data) {
                 $scope.value = data;
-                //$scope.changeTemplate('editB');
-                //$scope.$render();
             });
 
             // TRIGGERS
@@ -143,10 +141,6 @@
                 $scope.setEdit(false);
             });
         },
-        templateUrl: function ($attrs) {
-            var template = $attrs.type || 'A';
-            return Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' + template + (Stratus.Environment.get('production') ? '.min' : '') + '.html';
-        }
-
+        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
 }));

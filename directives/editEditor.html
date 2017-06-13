@@ -1,0 +1,8 @@
+<div class="stratus_edit_view_container stratus_edit_editor" ng-cloak ng-transclude="view"
+     ng-class="{ liveEdit: liveEditStatus() }" ng-show="!edit" ng-click="setEdit(true)"
+     ng-cloak>
+    <div ng-bind-html="value"></div>
+</div>
+<span class="stratus_edit_input_container stratus_edit_editor" ng-cloak ng-show="edit" tabindex="-1" ng-cloak ng-transclude="input">
+    <textarea stratus-froala ng-cloak ng-model="value"></textarea>
+</span>
