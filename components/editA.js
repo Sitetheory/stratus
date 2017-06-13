@@ -32,6 +32,7 @@
             elementId: '@',
             ngModel: '=',
             property: '@',
+            tagName: '@',
             autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
         },
         controller: function ($scope, $element, $attrs, $timeout, model) {
@@ -49,7 +50,7 @@
             $scope.edit = false;
             $scope.property = $attrs.property || null;
             $scope.autoSave = $attrs.autoSave || null;
-            $scope.tagName = $attrs.tagName || 'span';
+            $scope.tagName = $scope.$ctrl.tagName || 'span';
             $scope.elementClass = $attrs.elementClass || null;
 
             // Data Connectivity
