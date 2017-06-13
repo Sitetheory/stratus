@@ -134,7 +134,7 @@ boot.config({
         'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
         'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
         'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
-        'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix, // reanmme to editLEgacy (SECOND)
+        'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
         'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
         'stratus.components.filter': boot.bundle + 'stratus/components/filter' + boot.suffix,
         'stratus.components.help': boot.bundle + 'stratus/components/help' + boot.suffix,
@@ -156,8 +156,8 @@ boot.config({
 
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
-        'stratus.directives.edit': boot.bundle + 'stratus/directives/edit' + boot.suffix, // being renamed to edit (THIRD)
-        'stratus.directives.editInline': boot.bundle + 'stratus/directives/editInline' + boot.suffix, // being renamed to editInline (FIRST)
+        'stratus.directives.edit': boot.bundle + 'stratus/directives/edit' + boot.suffix,
+        'stratus.directives.editInline': boot.bundle + 'stratus/directives/editInline' + boot.suffix,
         'stratus.directives.drag': boot.bundle + 'stratus/directives/drag' + boot.suffix,
         'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
         'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
