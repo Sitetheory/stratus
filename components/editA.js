@@ -21,17 +21,13 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model', 'froala'], factory);
+        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model', 'stratus.directives.froala'], factory);
     } else {
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
     // This component intends to allow editing of various attributes depending on context.
     Stratus.Components.EditA = {
-        transclude: {
-            view: '?stratusEditView',
-            input: '?stratusEditInput'
-        },
         bindings: {
             elementId: '@',
             ngModel: '=',
@@ -43,6 +39,7 @@
             // Initialize
             this.uid = _.uniqueId('edit_');
             Stratus.Instances[this.uid] = $scope;
+            $scope.Stratus = Stratus;
             $scope.elementId = $attrs.elementId || this.uid;
             $scope.edit_input_container = $element[0].getElementsByClassName('stratus_edit_input_container')[0];
 
@@ -52,6 +49,8 @@
             $scope.edit = false;
             $scope.property = $attrs.property || null;
             $scope.autoSave = $attrs.autoSave || null;
+            $scope.tagName = $attrs.tagName || 'span';
+            $scope.elementClass = $attrs.elementClass || null;
 
             // Data Connectivity
             $scope.model = null;
@@ -112,6 +111,8 @@
             });
             $scope.$watch('model.data.' + $scope.property, function (data) {
                 $scope.value = data;
+                //$scope.changeTemplate('editB');
+                //$scope.$render();
             });
 
             // TRIGGERS
@@ -141,6 +142,10 @@
                 $scope.setEdit(false);
             });
         },
-        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/editA' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+        templateUrl: function ($attrs) {
+            var template = $attrs.type || 'A';
+            return Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' + template + (Stratus.Environment.get('production') ? '.min' : '') + '.html';
+        }
+
     };
 }));
