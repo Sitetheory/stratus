@@ -1,0 +1,7 @@
+<div class="stratus_edit_view_container supposeToBeA{{ tagName }} {{ elementClass }}"
+     ng-class="{ liveEdit: Stratus.Environment.data.liveEdit }" ng-show="!edit" ng-click="setEdit(true)"
+     ng-bind-html="value" ng-cloak>
+</div>
+<span class="stratus_edit_input_container" ng-cloak ng-show="edit" tabindex="-1">
+    <textarea stratus-froala ng-cloak ng-model="value" aria-label="Content Body"></textarea>
+</span>
