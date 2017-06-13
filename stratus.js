@@ -2900,7 +2900,7 @@
                     css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
                 }
                 /**/
-                if (Stratus('[froala]').length || Stratus('[stratus-froala]').length) {
+                if (Stratus('[froala]').length || Stratus.Directives.Froala) {
                     [
                         Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
                         Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css',
