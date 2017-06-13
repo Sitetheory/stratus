@@ -113,6 +113,7 @@ console.log('drag again');
 
             $scope.zoomView = function (event) {
                 $scope.mediaDetail = event;
+                console.log($scope.mediaDetail);
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();

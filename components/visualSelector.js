@@ -32,9 +32,10 @@
             'angular-material',
 
             // Services
-            'stratus.services.registrywithdetails',
+            'stratus.services.registry',
             'stratus.services.collection',
             'stratus.services.model',
+            'stratus.services.details',
 
             // Components
             'stratus.components.search',
@@ -65,7 +66,7 @@
             details: '<',
             search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registrywithdetails, model, $http, $sce) {
+        controller: function ($scope, $mdPanel, $attrs, registry, details, model, $http, $sce) {
             // Initialize
             this.uid = _.uniqueId('visual_selector_');
             Stratus.Instances[this.uid] = $scope;
@@ -83,7 +84,7 @@
 
             // Asset Collection
             if ($attrs.type) {
-                $scope.registry = new registrywithdetails();
+                $scope.registry = new registry();
                 var request = {
                     target: $attrs.type || 'Layout',
                     id: null,
@@ -99,7 +100,11 @@
                 if ($scope.api && angular.isObject($scope.api)) {
                     request.api = _.extendDeep(request.api, $scope.api);
                 }
-                $scope.registry.fetchwithdetails(request, $scope);
+                $scope.registry.fetch(request, $scope);
+
+                $scope.selectedDetails = new details();
+                $scope.selectedDetails.fetch(request, $scope);
+
             }
 
             // Store Asset Property for Verification

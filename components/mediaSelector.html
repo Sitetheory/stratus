@@ -172,7 +172,8 @@
         </div>
 
         <ul class="listInline response clearfix">
-            <li class="droppedItem" ng-repeat="f in files" ng-class="f.uploadStatus == true ? 'uploadComplete' ">
+        
+            <li class="droppedItem" ng-repeat="f in files" ng-class="f.uploadStatus == true ? 'uploadComplete' : '' ">
                 <div class="image--cn" ng-class="f.progress >= 0 && f.uploadStatus == false ? 'progressVisible' : 'progressInvisible' ">
 
 

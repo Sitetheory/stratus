@@ -32,9 +32,10 @@
             'angular-material',
 
             // Services
-            'stratus.services.registrywithdetails',
+            'stratus.services.registry',
             'stratus.services.collection',
             'stratus.services.model',
+            'stratus.services.details',
 
             // Components
             'stratus.components.search',
@@ -64,7 +65,7 @@
             details: '<',
             search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registrywithdetails, model, $sce) {
+        controller: function ($scope, $mdPanel, $attrs, registry, details, model, $sce) {
 
             $scope.themeRawDesc = function (plainText) {
                 return $sce.trustAsHtml(plainText);
@@ -84,7 +85,7 @@
 
             // Asset Collection
             if ($attrs.type) {
-                $scope.registry = new registrywithdetails();
+                $scope.registry = new registry();
                 var request = {
                     target: $attrs.type || 'Template',
                     id: null,
@@ -100,7 +101,11 @@
                 if ($scope.api && angular.isObject($scope.api)) {
                     request.api = _.extendDeep(request.api, $scope.api);
                 }
-                $scope.registry.fetchwithdetails(request, $scope);
+                $scope.registry.fetch(request, $scope);
+
+                //Get Details of selected template by attribute selectedid
+                $scope.selectedDetails = new details();
+                $scope.selectedDetails.fetch(request, $scope);
             }
             //console.log($scope);
             // Store Asset Property for Verification
@@ -129,7 +134,6 @@
             $scope.selectedDesc = null;
 
             $scope.updateDetails = function(options){
-                console.log(options.description);
                 $scope.selectedName = options.name;
                 $scope.selectedDesc = options.description;
             }
