@@ -1,0 +1,6 @@
+<span class="stratus_edit_view_container" ng-cloak ng-transclude="view" ng-show="!edit" ng-click="setEdit(true)">
+    {{ value }}
+</span>
+<span class="stratus_edit_input_container" ng-cloak ng-transclude="input" ng-show="edit" tabindex="-1">
+    <input type="text" ng-model="value">
+</span>

@@ -135,6 +135,7 @@ boot.config({
         'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
         'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
         'stratus.components.edit': boot.bundle + 'stratus/components/edit' + boot.suffix,
+        'stratus.components.editA': boot.bundle + 'stratus/components/editA' + boot.suffix, // a temporary replacement for stratus-edit
         'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
         'stratus.components.filter': boot.bundle + 'stratus/components/filter' + boot.suffix,
         'stratus.components.help': boot.bundle + 'stratus/components/help' + boot.suffix,
