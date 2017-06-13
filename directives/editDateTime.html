@@ -1,7 +1,9 @@
 <div class="stratus_edit_view_container stratus_edit_datetime" ng-transclude="view"
      ng-class="{ liveEdit: liveEditStatus() }" ng-show="!edit" ng-click="setEdit(true)"
      ng-cloak>
-    {{ value | moment:{'since':true, ago:true} }}
+    <span ng-if="value">
+        {{ value | moment:{'since':true, ago:true} }}
+    </span>
 </div>
 <span class="stratus_edit_input_container stratus_edit_datetime" ng-cloak ng-show="edit" tabindex="-1" ng-transclude="input">
     <md-input-container ng-cloak flex-gt-md="30">
