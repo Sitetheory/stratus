@@ -113,6 +113,11 @@ console.log('drag again');
 
             $scope.zoomView = function (event) {
                 $scope.mediaDetail = event;
+
+                $scope.selectedName = {name: $scope.mediaDetail.name, editing: false};
+
+                $scope.selectedDesc = {description: $scope.mediaDetail.description, editing: false};
+
                 console.log($scope.mediaDetail);
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
@@ -333,6 +338,34 @@ console.log('drag again');
                 }
             };
 
+
+
+
+
+            $scope.editItem = function (item) {
+                item.editing = true;
+            }
+
+            $scope.doneEditing = function (fileId,item) {
+                 
+                
+                //console.log($scope.draggedFiles.length);
+
+                /*if ($scope.draggedFiles.length > 0) {
+                    for (var k = 0; k < $scope.draggedFiles.length; k++) {
+                        if ($scope.draggedFiles[k].id === fileId) {
+                            console.log($scope.draggedFiles[k].id);
+                            Upload.rename($scope.draggedFiles[k],"testname.jpg"); 
+                        }
+                    }
+                }
+*/
+
+                item.editing = false;
+                //Upload.rename(file,"testname");
+                //dong some background ajax calling for persistence...
+            };
+
             
 
             // common function to load media library from collection
@@ -443,11 +476,14 @@ console.log('drag again');
 
             // common function to save media to server
             $scope.saveMedia = function (file) {
+
+                console.log(['savemedia'],file);
                 file.errorMsg = null;
                 file.uploadStatus = false;
                 file.errorUpload = false;
+                //Upload.rename(file, "newName.jpg");
                 file.upload = Upload.upload({
-                    url: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
+                    url: '//app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                     data: {
                         file: file
                     }
@@ -459,6 +495,7 @@ console.log('drag again');
                     file.uploadStatus = true;
                     file.errorUpload = false;
                 }, function (response) {
+                    
                     // if file is aborted handle error messages
                     if (response.config.data.file.upload.aborted === true) {
                         file.uploadStatus = false;

@@ -236,7 +236,9 @@
         </div>
 
         <div class="titleContainer clearfix">
-            <h2 class="stGrid column50">{{mediaDetail.name}}</h2>
+            
+            <h2 class="stGrid column50" ng-hide="selectedName.editing" ng-dblclick="editItem(selectedName)">{{selectedName.name}}</h2>
+            <input class="stGrid column50" ng-show="selectedName.editing" ng-model="selectedName.name" ng-blur="doneEditing(mediaDetail.id,selectedName)" autofocus />
             <div class="tagContainer stGrid column50">
                 <p class="smallLabel">Tags</p>
 
@@ -266,7 +268,9 @@
         </div>
 
         <div class="clearfix" layout-wrap layout-gt-sm="row">
-
+         
+                
+             
             <div flex-gt-sm="80" flex-order="1" flex-order-gt-sm="2">
                 <div id="popupImage" class="infoFullImage">
                     <img stratus-src="{{ mediaDetail.url }}" alt="{{ mediaDetail.name }}">
@@ -306,8 +310,10 @@
                         <p class="smallLabel">Size: <span>{{mediaDetail.bytesHuman}}</span></p>
                         <p class="smallLabel">Ratio: <span>{{mediaDetail.ratio}}</span></p>
                     </div>
-
-                    <p class="description">{{mediaDetail.description}}</p>
+                     
+                    
+                    <div class="description" ng-hide="selectedDesc.editing" ng-dblclick="editItem(selectedDesc)">{{selectedDesc.description}}</div>
+                    <input class="stGrid column100" ng-show="selectedDesc.editing" ng-model="selectedDesc.description" ng-blur="doneEditing(mediaDetail.id,selectedDesc)" autofocus />
 
                 </div>
             </div>
