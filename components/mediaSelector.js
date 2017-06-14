@@ -104,15 +104,16 @@ console.log('drag again');
 
             $scope.movedFileId = '';
 
-            // $scope.selectedListDiv =  false;
+            
             $scope.errorUpload = false;
 
             // UI Settings
             $scope.libraryVisible = false;
-            $scope.dragLibraryVisible = false;
+            
 
             $scope.zoomView = function (event) {
                 $scope.mediaDetail = event;
+                console.log($scope.mediaDetail);
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
@@ -139,7 +140,7 @@ console.log('drag again');
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
 
-                // console.log(fileId);
+                
                 if ($event.type === 'dragover') {
                     if ($event.explicitOriginalTarget.id !== '') {
                         $scope.draggedFileId = $event.explicitOriginalTarget.id;
@@ -196,8 +197,8 @@ console.log('drag again');
 
                 $scope.draggedDivChanged = true;
 
-                // done button when uploading is finished
-                // $scope.uploadComp = false;
+                
+                
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
@@ -220,16 +221,12 @@ console.log('drag again');
                 };
                 $mdPanel.open(config);
 
-                // check if media library already opened, then load media library
-                if ($scope.dragLibraryVisible) {
-                    $scope.dragLibraryVisible = true;
-
-                    // $scope.uploadMedia();
-                }
+                
             };
 
             // remove media file from selected list
             $scope.removeFromSelected = function (fileId) {
+
                 for (var i = $scope.draggedFiles.length - 1; i >= 0; i--) {
                     // used double precision because id uis passed as string in event
                     if ($scope.draggedFiles[i].id === fileId) {
@@ -243,6 +240,48 @@ console.log('drag again');
                         $scope.collection.models[j].data.selectedClass = false;
                     }
                 }
+                
+
+                
+            };
+
+
+            $scope.deleteFromMedia = function (fileId) {
+                console.log(fileId);
+                //mdPanelRef.close();
+                var confirmMedia = $mdDialog.confirm()
+                    .title('DELETE MEDIA')
+                    .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+
+                    //  .ariaLabel('Lucky day')
+                    // .targetEvent(ev)
+                    .ok('Yes')
+                    .cancel('No');
+
+                $mdDialog.show(confirmMedia).then(function () {
+                $http({
+                        method: 'DELETE',
+                        url: '/Api/Media/' + fileId
+                    }).then(function (response) {
+                        // check if deleted media is dragged above,then remove from selected list
+                        if ($scope.draggedFiles.length > 0) {
+                            for (var k = 0; k < $scope.draggedFiles.length; k++) {
+                                if ($scope.draggedFiles[k].id === fileId) {
+                                    $scope.draggedFiles.splice(k, 1);
+                                }
+                            }
+                        }
+
+                        // fetch media library list
+                        $scope.uploadMedia();
+                    }, function (rejection) {
+                        console.log(rejection.data);
+                    });
+                });
+
+
+
+                
             };
 
             // upload directly to media library
@@ -276,7 +315,7 @@ console.log('drag again');
                 $mdPanel.open(config);
                 $scope.files = files;
 
-                // updateFilesModel(files);
+                
 
             };
 
@@ -286,9 +325,7 @@ console.log('drag again');
                 if (!$scope.libraryVisible) {
                     // twiddle
                     $scope.libraryVisible = true;
-                    $scope.dragLibraryVisible = false;
-
-                    // switch to registry controls
+                    
                     $scope.uploadMedia();
                 } else if ($scope.libraryVisible) {
                     // twiddle
@@ -296,21 +333,7 @@ console.log('drag again');
                 }
             };
 
-            // open media library when clicked on plus icon
-            $scope.mediaLibrary = function () {
-                if (!$scope.dragLibraryVisible) {
-                    // twiddle
-                    $scope.libraryVisible = false;
-                    $scope.dragLibraryVisible = true;
-
-                    // load media library
-                    $scope.uploadMedia();
-                } else if ($scope.dragLibraryVisible) {
-                    // twiddle
-                    $scope.libraryVisible = false;
-                    $scope.dragLibraryVisible = false;
-                }
-            };
+            
 
             // common function to load media library from collection
             $scope.uploadMedia = function () {
@@ -469,43 +492,20 @@ console.log('drag again');
 
             };
 
+            //Add Class on Popup Image
+
+            $scope.addClassOnPopup = function(event){
+                var myEl = angular.element( document.querySelector( $(event.target).attr("data-target") ) );
+                myEl.addClass($(event.target).attr("data-class"));
+            }
+
+
             // controller for zoom panel
             function ZoomController(mdPanelRef) {
                 // delete media from library
                 $scope.deleteMediaFromLibrary = function (fileId) {
                     mdPanelRef.close();
-                    var confirm = $mdDialog.confirm()
-                        .title('DELETE MEDIA')
-                        .textContent('Are you sure you want to permanently delete this from your library?')
-
-                        //  .ariaLabel('Lucky day')
-                        // .targetEvent(ev)
-                        .ok('Yes')
-                        .cancel('No');
-
-                    $mdDialog.show(confirm).then(function () {
-                        $http({
-                            method: 'DELETE',
-                            url: '/Api/Media/' + fileId
-                        }).then(function (response) {
-                            // check if deleted media is dragged above,then remove from selected list
-                            if ($scope.draggedFiles.length > 0) {
-                                for (var k = 0; k < $scope.draggedFiles.length; k++) {
-                                    if ($scope.draggedFiles[k].id === fileId) {
-                                        $scope.draggedFiles.splice(k, 1);
-                                    }
-                                }
-                            }
-
-                            // fetch media library list
-                            $scope.uploadMedia();
-                        }, function (rejection) {
-                            console.log(rejection.data);
-                        });
-
-                    }, function () {
-                        console.log('No');
-                    });
+                    $scope.deleteFromMedia(fileId);
                 };
 
                 $scope.closeZoom = function () {

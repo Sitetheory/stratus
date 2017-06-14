@@ -35,6 +35,7 @@
             'stratus.services.registry',
             'stratus.services.collection',
             'stratus.services.model',
+            'stratus.services.details',
 
             // Components
             'stratus.components.search',
@@ -65,7 +66,7 @@
             details: '<',
             search: '<'
         },
-        controller: function ($scope, $mdPanel, $attrs, registry, model) {
+        controller: function ($scope, $mdPanel, $attrs, registry, details, model, $http, $sce) {
             // Initialize
             this.uid = _.uniqueId('visual_selector_');
             Stratus.Instances[this.uid] = $scope;
@@ -89,6 +90,8 @@
                     id: null,
                     manifest: false,
                     decouple: true,
+                    selectedid: $attrs.selectedid,
+                    property: $attrs.property,
                     api: {
                         options: {},
                         limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
@@ -98,6 +101,10 @@
                     request.api = _.extendDeep(request.api, $scope.api);
                 }
                 $scope.registry.fetch(request, $scope);
+
+                $scope.selectedDetails = new details();
+                $scope.selectedDetails.fetch(request, $scope);
+
             }
 
             // Store Asset Property for Verification
@@ -105,9 +112,9 @@
 
             // Store Toggle Options for Custom Actions
             $scope.toggleOptions = {
-                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : true
+                multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : false
             };
-
+            
             // Data Connectivity
             $scope.model = null;
             $scope.$watch('$ctrl.ngModel', function (data) {
@@ -116,6 +123,20 @@
                 }
             });
 
+            $scope.layoutRawDesc = function (plainText) {
+                return $sce.trustAsHtml(plainText);
+            }
+
+            //Update the Selected Layout Details
+            $scope.selectedName = null;
+            $scope.selectedDesc = null;
+
+            $scope.updateDetails = function(options){
+                console.log(options.description);
+                $scope.selectedName = options.name;
+                $scope.selectedDesc = options.description;
+            }
+            
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {
                 $scope.showGallery = true;

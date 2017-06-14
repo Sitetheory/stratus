@@ -20,21 +20,9 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define([
 
-            // Libraries
-            'stratus',
-            'jquery',
-            'underscore',
-            'angular',
-
-            // Modules
-            'angular-material',
-
-            // Services
-            'stratus.services.collection'
-
-        ], factory);
+        
+        define(['stratus','jquery', 'underscore', 'angular', 'angular-material', 'stratus.services.collection'], factory);
     } else {
         factory(root.Stratus, root.$, root._);
     }
@@ -45,40 +33,57 @@
     // code layout-option{'collapsed','expanded'}
     Stratus.Components.Permissions = {
         bindings: {
-            ngModel: '='
+            elementId: '@',
+            ngModel: '=',
+            user: '@',
+            role: '@',
+            bundle: '@',
+            type: '@',
+            target: '@',
+            sentinel: '@'
         },
-        controller: function ($scope, $mdPanel, $attrs, registry) {
+        controller: function ($scope, $attrs, $log, collection) {
+            // Initialize
+            this.uid = _.uniqueId('permissions_');
+            Stratus.Instances[this.uid] = $scope;
+            $scope.elementId = $attrs.elementId || this.uid;
 
-            Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
-
-            $('ul.be-select').on('click', '.init', function () {
-                $(this).closest('ul.be-select').children('li:not(.init)').toggle();
+            
+            // Permission Collection
+            $scope.collection = null;
+            $scope.$watch('$ctrl.ngModel', function (data) {
+                if (data instanceof collection) {
+                    $scope.collection = data;
+                }
             });
 
-            $scope.showRoleHeading = false;
-            $scope.showContentHeading = false;
+            // Sentinel Objects
+            $scope.sentinel = {};
+            $scope.$watch('collection.models.length', function () {
+                var models = $scope.collection ? $scope.collection.models : [];
+                _.each(models, function (model) {
+                    if (model.exists('id') && model.exists('sentinel')) {
+                        var sentinel = new Stratus.Prototypes.Sentinel();
+                        sentinel.permissions(model.get('permissions'));
+                        $scope.sentinel[model.get('id')] = sentinel;
+                    }
+                });
+            });
 
-            $scope.showSelRole = function ($event, selValue) {
-
-                console.log('show selected');
-                $scope.roleSelected = selValue;
-                $scope.showRoleHeading = true;
-                console.log(selValue);
-            };
-            $scope.showSelContent = function ($event, selValue) {
-
-                $scope.contentSelected = selValue;
-                $scope.showContentHeading = true;
-                console.log(selValue);
-            };
-
-            /* var allOptions = $("ul.be-select").children('li:not(.init)');
-             $("ul.be-select").on("click", "li:not(.init)", function() {
-             allOptions.removeClass('selected');  // TODO: use ngClass since this edits the DOM
-             $(this).addClass('selected');
-             $(this).children('.init').html($(this).html());
-             allOptions.toggle();
-             });*/
+            // Permission Calculations
+            $scope.$watch('sentinel', function (sentinels) {
+                if (angular.isObject(sentinels)) {
+                    _.each(sentinels, function (sentinel, id) {
+                        if (angular.isObject($scope.collection) && angular.isObject(sentinel)) {
+                            _.each($scope.collection.models || [], function (model) {
+                                if (angular.isObject(model) && model.get('id') === parseInt(id)) {
+                                    model.set('permissions', sentinel.permissions());
+                                }
+                            });
+                        }
+                    });
+                }
+            }, true);
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
