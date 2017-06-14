@@ -81,6 +81,41 @@
                         $scope.value = $element.html();
                         if ($scope.prefix) {
                             $scope.value = $scope.value.replace($scope.prefix, '');
+                            if (!$element.html().startsWith($scope.prefix)) {
+                                // Ensure the the prefix remains on
+                                ngModel.$render();
+                                $scope.moveCaret($scope.prefix.length);
+                            }
+                        }
+                    }
+                };
+
+                $scope.moveCaret = function (moveAmount, win) {
+                    if (win === undefined) {
+                        win = window;
+                    }
+                    var sel;
+                    var range;
+                    if (win.getSelection) {
+                        sel = win.getSelection();
+                        if (sel.rangeCount > 0) {
+                            var textNode = sel.focusNode;
+
+                            if (textNode.length === undefined && textNode.childNodes[0]) {
+                                textNode = textNode.childNodes[0];
+                            }
+                            if (textNode.length === undefined) {
+                                console.warn('stratus-edit-inline could not grab selection');
+                                return false;
+                            }
+
+                            var newOffset = sel.focusOffset + moveAmount;
+                            range = document.createRange();
+                            range.setStart(textNode, Math.min((textNode.length || 0) + moveAmount, newOffset));
+                            range.setStart(textNode, moveAmount);
+                            range.collapse(true);
+                            sel.removeAllRanges();
+                            sel.addRange(range);
                         }
                     }
                 };
@@ -91,9 +126,12 @@
                         && $scope.property
                         && $scope.model.get($scope.property) !== $scope.value
                     ) {
-                        // FIXME when the property is an array ( route[0].url ), model.set isn't treating route[0] as an array, but rather a whole new section.
+                        // FIXME when the property is an array ( route[0].url ), model.set isn't treating route[0] as an array, but rather a whole new section. (fix with $scope.model.toggle? )
                         $scope.model.set($scope.property, $scope.value);
-                        $scope.model.save();
+
+                        // $scope.model.toggle($scope.property, $scope.value);
+                        $scope.model.throttleSave();
+                        console.log('Saving!', $scope.property, $scope.model);
                     }
                 };
                 $scope.cancel = function () {
@@ -109,12 +147,14 @@
                 $scope.$watch('ngModel', function (data) {
                     if (data instanceof model && !_.isEqual(data, $scope.model)) {
                         $scope.model = data;
-                        var unwatch = $scope.$watch('model.data', function (dataCheck) {
-                            if (dataCheck !== undefined) {
-                                unwatch(); // Remove this watch as soon as it's run once
-                                ctrl.init(); // Initialize only after there is a model to work with
-                            }
-                        });
+                        if (ctrl.initialized !== true) {
+                            var unwatch = $scope.$watch('model.data', function (dataCheck) {
+                                if (dataCheck !== undefined) {
+                                    unwatch(); // Remove this watch as soon as it's run once
+                                    ctrl.init(); // Initialize only after there is a model to work with
+                                }
+                            });
+                        }
                     }
                 });
 
