@@ -39,7 +39,7 @@
         var innerHtmlAttr = 'innerHTML';
 
         var scope = {
-            froalaOptions: '=froala',
+            froalaOptions: '=stratusFroala',
             initFunction: '&froalaInit'
         };
 
