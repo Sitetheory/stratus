@@ -61,6 +61,9 @@
                 $scope.model = null;
                 $scope.value = null;
 
+                // FIXME stratus-froala recieves, but does not make use of any options
+                $scope.froalaOptions = {};
+
                 if (!ngModel || !$scope.property) {
                     console.warn($scope.uid + ' has no model or property!');
                     return;
