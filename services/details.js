@@ -1,6 +1,6 @@
 //     Stratus.Services.Details.js 1.0
 
-//     Copyright (c) 2016 by Sitetheory, All Rights Reserved
+//     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
 //     All information contained herein is, and remains the
 //     property of Sitetheory and its suppliers, if any.
@@ -30,12 +30,11 @@
     // Angular Details Service
     // ------------------------
 
-     
     Stratus.Services.Details = ['$provide', function ($provide) {
         $provide.factory('details', ['$http', 'model', '$interpolate', '$q', function ($http,  model, $interpolate, $q) {
             return function () {
 
-               this.fetch = function ($element, $scope) {
+                this.fetch = function ($element, $scope) {
                     var that = this;
                     return new $q(function (resolve, reject) {
                         if (angular.isString($element)) $element = { target: $element };
@@ -75,13 +74,13 @@
                         });
                     });
                 };
-                
+
                 this.build = function (options, $scope) {
                     if (options.selectedid) {
-                        if(options.property == 'version.layout'){
-                            var targetUrl = "/Api/Layout/"+options.selectedid
-                        }if(options.property == 'version.template'){
-                            var targetUrl = "/Api/Template/"+options.selectedid
+                        if (options.property == 'version.layout') {
+                            var targetUrl = '/Api/Layout/' + options.selectedid;
+                        }if (options.property == 'version.template') {
+                            var targetUrl = '/Api/Template/' + options.selectedid;
                         }
                         action =  'GET';
                         var prototype = {
@@ -95,11 +94,10 @@
                                 $scope.selectedName = $scope.convoyDetails.name;
                                 $scope.selectedDesc = $scope.convoyDetails.description;
 
+                            }
+                        });
 
-                            } 
-                        });                          
-
-                    } 
+                    }
                 };
             };
         }]);

@@ -56,9 +56,10 @@
   "requireLineFeedAtFileEnd": true,
   "requireCapitalizedConstructors": {
     "allExcept": [
+      "registry",
       "collection",
       "model",
-      "registry"
+      "details"
     ]
   },
   "requireDotNotation": true,

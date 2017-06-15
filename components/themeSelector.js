@@ -1,6 +1,6 @@
 //     Stratus.Components.themeSelector.js 1.0
 
-//     Copyright (c) 2016 by Sitetheory, All Rights Reserved
+//     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
 //     All information contained herein is, and remains the
 //     property of Sitetheory and its suppliers, if any.
@@ -17,6 +17,7 @@
 
 // Stratus Theme Selector Component
 // ----------------------
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -69,8 +70,8 @@
 
             $scope.themeRawDesc = function (plainText) {
                 return $sce.trustAsHtml(plainText);
-            }
-            
+            };
+
             this.uid = _.uniqueId('theme_selector_');
             Stratus.Instances[this.uid] = $scope;
             $scope.elementId = $attrs.elementId || this.uid;
@@ -103,11 +104,12 @@
                 }
                 $scope.registry.fetch(request, $scope);
 
-                //Get Details of selected template by attribute selectedid
+                // Get Details of selected template by attribute selectedid
                 $scope.selectedDetails = new details();
                 $scope.selectedDetails.fetch(request, $scope);
             }
-            //console.log($scope);
+
+            // console.log($scope);
             // Store Asset Property for Verification
             $scope.property = $attrs.property || null;
 
@@ -115,28 +117,27 @@
             $scope.toggleOptions = {
                 multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : false
             };
-            
 
             // Data Connectivity
             $scope.model = null;
 
             $scope.$watch('$ctrl.ngModel', function (data) {
-                
+
                 if (data instanceof model && data !== $scope.model) {
                     $scope.model = data;
                 }
-                
+
             });
 
-            //Update the Selected Theme Details
+            // Update the Selected Theme Details
 
             $scope.selectedName = null;
             $scope.selectedDesc = null;
 
-            $scope.updateDetails = function(options){
+            $scope.updateDetails = function (options) {
                 $scope.selectedName = options.name;
                 $scope.selectedDesc = options.description;
-            }
+            };
 
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {

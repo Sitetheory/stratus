@@ -1,6 +1,6 @@
 //     Stratus.Directives.Froala.js 1.0
 
-//     Copyright (c) 2016 by Sitetheory, All Rights Reserved
+//     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //     Copyright (c) 2015 Dorsata & Froala Labs
 //
 //     All information contained herein is, and remains the

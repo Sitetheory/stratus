@@ -1,6 +1,6 @@
-//     Stratus.Components.mediaSelector.js 1.0
+//     Stratus.Components.visualSelector.js 1.0
 
-//     Copyright (c) 2016 by Sitetheory, All Rights Reserved
+//     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
 //     All information contained herein is, and remains the
 //     property of Sitetheory and its suppliers, if any.
@@ -15,8 +15,9 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Media Selector Component
+// Stratus Visual Selector Component
 // ----------------------
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -114,7 +115,7 @@
             $scope.toggleOptions = {
                 multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : false
             };
-            
+
             // Data Connectivity
             $scope.model = null;
             $scope.$watch('$ctrl.ngModel', function (data) {
@@ -125,18 +126,20 @@
 
             $scope.layoutRawDesc = function (plainText) {
                 return $sce.trustAsHtml(plainText);
-            }
+            };
 
-            //Update the Selected Layout Details
+            // Update the Selected Layout Details
             $scope.selectedName = null;
             $scope.selectedDesc = null;
 
-            $scope.updateDetails = function(options){
-                console.log(options.description);
+            $scope.updateDetails = function (options) {
+                if (!Stratus.Environment.get('production')) {
+                    console.log(options.description);
+                }
                 $scope.selectedName = options.name;
                 $scope.selectedDesc = options.description;
-            }
-            
+            };
+
             // display expanded view if clicked on change button
             $scope.displayGallery = function () {
                 $scope.showGallery = true;

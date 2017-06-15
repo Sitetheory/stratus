@@ -1,6 +1,6 @@
 //     Stratus.Components.mediaSelector.js 1.0
 
-//     Copyright (c) 2016 by Sitetheory, All Rights Reserved
+//     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
 //     All information contained herein is, and remains the
 //     property of Sitetheory and its suppliers, if any.
@@ -17,8 +17,8 @@
 
 // Stratus Media Selector Component
 // ----------------------
+
 // Define AMD, Require.js, or Contextual Scope
-console.log('drag again');
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
@@ -104,21 +104,26 @@ console.log('drag again');
 
             $scope.movedFileId = '';
 
-            
             $scope.errorUpload = false;
 
             // UI Settings
             $scope.libraryVisible = false;
-            
 
             $scope.zoomView = function (event) {
                 $scope.mediaDetail = event;
+                $scope.selectedName = {
+                    name: $scope.mediaDetail.name,
+                    editing: false
+                };
+                $scope.selectedDesc = {
+                    description: $scope.mediaDetail.description,
+                    editing: false
+                };
 
-                $scope.selectedName = {name: $scope.mediaDetail.name, editing: false};
+                if (!Stratus.Environment.get('production')) {
+                    console.log($scope.mediaDetail);
+                }
 
-                $scope.selectedDesc = {description: $scope.mediaDetail.description, editing: false};
-
-                console.log($scope.mediaDetail);
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
@@ -145,7 +150,6 @@ console.log('drag again');
             // track drag event on selected list
             $scope.dragSelected = function ($isDragging, $class, $event) {
 
-                
                 if ($event.type === 'dragover') {
                     if ($event.explicitOriginalTarget.id !== '') {
                         $scope.draggedFileId = $event.explicitOriginalTarget.id;
@@ -173,7 +177,9 @@ console.log('drag again');
                         $scope.movedFileId = '';
 
                     }, function (rejection) {
-                        console.log(rejection.data);
+                        if (!Stratus.Environment.get('production')) {
+                            console.log(rejection.data);
+                        }
                     });
                 } else {
                     // FIXME: There is a random comparison below
@@ -184,9 +190,11 @@ console.log('drag again');
             };
             $scope.imageMoved = false;
             $scope.dragFromLib = function ($isDragging, $class, $event, fileId) {
-                console.log('isDragging', $isDragging);
-                console.log('event', $event);
-                console.log('fileId', fileId);
+                if (!Stratus.Environment.get('production')) {
+                    console.log('isDragging', $isDragging);
+                    console.log('event', $event);
+                    console.log('fileId', fileId);
+                }
                 if ($event.type === 'dragleave') {
                     $scope.movedFileId = fileId;
                     $scope.imageMoved = true;
@@ -202,8 +210,6 @@ console.log('drag again');
 
                 $scope.draggedDivChanged = true;
 
-                
-                
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
                     .center();
@@ -226,7 +232,6 @@ console.log('drag again');
                 };
                 $mdPanel.open(config);
 
-                
             };
 
             // remove media file from selected list
@@ -245,15 +250,15 @@ console.log('drag again');
                         $scope.collection.models[j].data.selectedClass = false;
                     }
                 }
-                
 
-                
             };
 
-
             $scope.deleteFromMedia = function (fileId) {
-                console.log(fileId);
-                //mdPanelRef.close();
+                if (!Stratus.Environment.get('production')) {
+                    console.log(fileId);
+                }
+
+                // mdPanelRef.close();
                 var confirmMedia = $mdDialog.confirm()
                     .title('DELETE MEDIA')
                     .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
@@ -264,7 +269,7 @@ console.log('drag again');
                     .cancel('No');
 
                 $mdDialog.show(confirmMedia).then(function () {
-                $http({
+                    $http({
                         method: 'DELETE',
                         url: '/Api/Media/' + fileId
                     }).then(function (response) {
@@ -280,13 +285,12 @@ console.log('drag again');
                         // fetch media library list
                         $scope.uploadMedia();
                     }, function (rejection) {
-                        console.log(rejection.data);
+                        if (!Stratus.Environment.get('production')) {
+                            console.log(rejection.data);
+                        }
                     });
                 });
 
-
-
-                
             };
 
             // upload directly to media library
@@ -320,8 +324,6 @@ console.log('drag again');
                 $mdPanel.open(config);
                 $scope.files = files;
 
-                
-
             };
 
             // open library div when clicked on upper browse div
@@ -330,7 +332,7 @@ console.log('drag again');
                 if (!$scope.libraryVisible) {
                     // twiddle
                     $scope.libraryVisible = true;
-                    
+
                     $scope.uploadMedia();
                 } else if ($scope.libraryVisible) {
                     // twiddle
@@ -338,35 +340,29 @@ console.log('drag again');
                 }
             };
 
-
-
-
-
             $scope.editItem = function (item) {
                 item.editing = true;
-            }
+            };
 
-            $scope.doneEditing = function (fileId,item) {
-                 
-                
-                //console.log($scope.draggedFiles.length);
+            $scope.doneEditing = function (fileId, item) {
+
+                // console.log($scope.draggedFiles.length);
 
                 /*if ($scope.draggedFiles.length > 0) {
                     for (var k = 0; k < $scope.draggedFiles.length; k++) {
                         if ($scope.draggedFiles[k].id === fileId) {
                             console.log($scope.draggedFiles[k].id);
-                            Upload.rename($scope.draggedFiles[k],"testname.jpg"); 
+                            Upload.rename($scope.draggedFiles[k],"testname.jpg");
                         }
                     }
                 }
 */
 
                 item.editing = false;
-                //Upload.rename(file,"testname");
-                //dong some background ajax calling for persistence...
-            };
 
-            
+                // Upload.rename(file,"testname");
+                // dong some background ajax calling for persistence...
+            };
 
             // common function to load media library from collection
             $scope.uploadMedia = function () {
@@ -477,11 +473,14 @@ console.log('drag again');
             // common function to save media to server
             $scope.saveMedia = function (file) {
 
-                console.log(['savemedia'],file);
+                if (!Stratus.Environment.get('production')) {
+                    console.log(['savemedia'], file);
+                }
                 file.errorMsg = null;
                 file.uploadStatus = false;
                 file.errorUpload = false;
-                //Upload.rename(file, "newName.jpg");
+
+                // Upload.rename(file, "newName.jpg");
                 file.upload = Upload.upload({
                     url: '//app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
                     data: {
@@ -495,7 +494,7 @@ console.log('drag again');
                     file.uploadStatus = true;
                     file.errorUpload = false;
                 }, function (response) {
-                    
+
                     // if file is aborted handle error messages
                     if (response.config.data.file.upload.aborted === true) {
                         file.uploadStatus = false;
@@ -529,13 +528,12 @@ console.log('drag again');
 
             };
 
-            //Add Class on Popup Image
+            // Add Class on Popup Image
 
-            $scope.addClassOnPopup = function(event){
-                var myEl = angular.element( document.querySelector( $(event.target).attr("data-target") ) );
-                myEl.addClass($(event.target).attr("data-class"));
-            }
-
+            $scope.addClassOnPopup = function (event) {
+                var myEl = angular.element(document.querySelector($(event.target).attr('data-target')));
+                myEl.addClass($(event.target).attr('data-class'));
+            };
 
             // controller for zoom panel
             function ZoomController(mdPanelRef) {

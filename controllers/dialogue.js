@@ -1,6 +1,6 @@
 //     Stratus.Controllers.Dialogue.js 1.0
 
-//     Copyright (c) 2016 by Sitetheory, All Rights Reserved
+//     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
 //     All information contained herein is, and remains the
 //     property of Sitetheory and its suppliers, if any.
