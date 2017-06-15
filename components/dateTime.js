@@ -53,6 +53,6 @@
             }, true);
 
         },
-        template: '<input id="{{ elementId }}" type="datetime-local" ng-model="property"/>'
+        template: '<input id="{{ elementId }}" type="datetime-local" ng-model="property" aria-label="datetime"/>'
     };
 }));
