@@ -40,6 +40,8 @@
                 ngModel: '=',
                 property: '@',
                 type: '@', // Editor / DateTime
+                prefix: '@', // A value to prepend to the front of the value
+                suffix: '@', // A value to append to the back of the value
                 stratusEdit: '=', // A value to define if the element can currently be editable
                 alwaysEdit: '@', // A bool/string to define if the element will always be in editable mode
                 autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
