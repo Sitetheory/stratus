@@ -295,15 +295,30 @@
                 };
 
                 /**
-                 * @param attribute
+                 * @type {RegExp}
+                 */
+                this.bracket = {
+                    match: /\[([\d+])]/,
+                    search: /\[([\d+])]/g
+                };
+
+                /**
+                 * @param attr
                  * @returns {*}
                  */
-                this.get = function (attribute) {
-                    if (typeof attribute !== 'string' || !that.data || typeof that.data !== 'object') {
+                this.get = function (attr) {
+                    if (typeof attr !== 'string' || !that.data || typeof that.data !== 'object') {
                         return undefined;
                     } else {
-                        return attribute.split('.').reduce(function (attributes, a) {
-                            return attributes && attributes[a];
+                        return attr.split('.').reduce(function (attrs, attr) {
+                            if (attr.match(that.bracket.match)) {
+                                var match = that.bracket.search.exec(attr);
+                                while (match !== null) {
+                                    console.log('bracket:', parseInt(match[1]), match);
+                                    match = that.bracket.search.exec(attr);
+                                }
+                            }
+                            return attrs && attrs[attr];
                         }, that.data);
                     }
                 };
