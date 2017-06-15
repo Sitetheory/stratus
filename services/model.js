@@ -295,11 +295,16 @@
                 };
 
                 /**
-                 * @type {RegExp}
+                 * @type {{match: RegExp, search: RegExp, attr: RegExp}}
                  */
                 this.bracket = {
-                    match: /\[([\d+])]/,
-                    search: /\[([\d+])]/g
+                    match: /\[[\d+]]/,
+                    search: /\[([\d+])]/g,
+                    attr: /(^[^\[]+)/
+                };
+
+                this.buildPath = function () {
+                    //
                 };
 
                 /**
@@ -310,15 +315,38 @@
                     if (typeof attr !== 'string' || !that.data || typeof that.data !== 'object') {
                         return undefined;
                     } else {
-                        return attr.split('.').reduce(function (attrs, attr) {
-                            if (attr.match(that.bracket.match)) {
-                                var match = that.bracket.search.exec(attr);
-                                while (match !== null) {
-                                    console.log('bracket:', parseInt(match[1]), match);
-                                    match = that.bracket.search.exec(attr);
+                        // TODO: Optimize and simplify this logic as much as possible with a pathBuilder function
+                        var search;
+                        var acc;
+                        var cur;
+                        return _.reduce(attr.split('.'), function (attrs, a) {
+                            if (a.match(that.bracket.match)) {
+                                acc = [];
+                                cur = that.bracket.attr.exec(a);
+                                if (cur !== null) {
+                                    acc.push(cur[1]);
+                                    cur = null;
+                                } else {
+                                    cur = false;
                                 }
+                                search = that.bracket.search.exec(a);
+                                while (search !== null) {
+                                    if (cur !== false) {
+                                        cur = parseInt(search[1]);
+                                        if (!isNaN(cur)) {
+                                            acc.push(cur);
+                                        } else {
+                                            cur = false;
+                                        }
+                                    }
+                                    search = that.bracket.search.exec(a);
+                                }
+                                return acc.length ? undefined : _.reduce(acc, function (attrsB, aB) {
+                                    return attrsB && attrsB[aB];
+                                }, attrs);
+                            } else {
+                                return attrs && attrs[a];
                             }
-                            return attrs && attrs[attr];
                         }, that.data);
                     }
                 };
@@ -345,6 +373,15 @@
                     if (typeof attr === 'string' && attr.indexOf('.') !== -1) {
                         var reference = that.data;
                         var chain = attr.split('.');
+
+                        // Search for Brackets
+                        if (attr.match(that.bracket.match)) {
+                            _.each(chain, function () {
+                                console.log('chain:', arguments);
+                            });
+                        }
+
+                        // Find Best Reference then build below
                         _.find(_.initial(chain), function (link) {
                             if (!_.has(reference, link) || !reference[link]) reference[link] = {};
                             if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
@@ -379,7 +416,7 @@
                     options = _.extend({
                         multiple: true
                     }, angular.isObject(options) ? options : {});
-                    /* After plucking has been tested, remove this log *
+                    /* TODO: After plucking has been tested, remove this log *
                     console.log('toggle:', attribute, item, options);
                     /* */
                     var request = attribute.split('[].');
@@ -459,8 +496,8 @@
                         if (angular.isArray(attribute)) {
                             return typeof attribute.find(function (element) {
                                     return element === item || (
-                                        angular.isObject(element) && element.id && element.id === item || _.isEqual(element, item)
-                                    );
+                                            angular.isObject(element) && element.id && element.id === item || _.isEqual(element, item)
+                                        );
                                 }) !== 'undefined';
                         } else {
                             return attribute === item || (

@@ -9,5 +9,10 @@
         <label>{{ $ctrl.type }}</label>
         <input type="text" ng-model="item.value">
     </md-input-container>
-    <md-button ng-if="$last && $ctrl.multiple" ng-click="items.push({})">add {{ $ctrl.type }}</md-button>
+    <md-button ng-if="$last && $ctrl.multiple" ng-click="items.push({})">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+    </md-button>
+    <md-button ng-if="$ctrl.multiple" ng-click="items.length < 2 ? item.value = null : items.splice($index, 1)">
+        <i class="fa fa-trash-o" aria-hidden="true"></i>
+    </md-button>
 </div>
