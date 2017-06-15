@@ -94,12 +94,13 @@
                 };
 
                 $scope.findAffix = function () {
-                    _.some($element.children('[prefix]'), function (el) {
+                    // Note: $element.children(param) doesn't work the same in JQlite as Jquery
+                    _.some($element.find('[prefix]'), function (el) {
                         $scope.prefix = $(el).html();
                         return true; // loop only once
                     });
 
-                    _.some($element.children('[suffix]'), function (el) {
+                    _.some($element.find('[suffix]'), function (el) {
                         $scope.suffix = $(el).html();
                         return true; // loop only once
                     });
