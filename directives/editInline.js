@@ -36,6 +36,7 @@
                 property: '@',
                 emptyValue: '@', // A value to display if it is currently empty
                 prefix: '@', // A value to prepend to the front of the value
+                suffix: '@', // A value to appended to the end of the value
                 stratusEdit: '=', // A value to define if the element can currently be editable
                 alwaysEdit: '@', // A bool/string to define if the element will always be in editable mode
                 autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
@@ -44,10 +45,12 @@
                 // Initialize
                 $scope.uid = this.uid = _.uniqueId('edit_');
                 Stratus.Instances[this.uid] = $scope;
+                $scope.value = $scope.originalValue = $element.html();
+                $scope.$value = $(document.createElement('span'));
+                $scope.$value.html($scope.value || $scope.emptyValue || '');
 
                 // Data Connectivity
                 $scope.model = null;
-                $scope.value = $element.html();
 
                 if (!ngModel || !$scope.property) {
                     console.warn($scope.uid + ' has no model or property!');
@@ -55,13 +58,51 @@
                 }
 
                 var ctrl = {
-                    initialized: false
+                    initialized: false,
+                    rendered: false
                 };
 
                 // METHODS
 
                 ngModel.$render = function () {
-                    $element.html(($scope.prefix || '') + ($scope.value || $scope.emptyValue || ''));
+                    if (ctrl.rendered === false) {
+                        ctrl.rendered = true;
+                        $scope.findAffix();
+
+                        $element.empty();
+
+                        if ($scope.prefix) {
+                            $scope.$prefix = $(document.createElement('span'));
+                            $scope.$prefix.html($scope.prefix);
+                            $scope.$prefix.attr('prefix', '');
+
+                            $element.append($scope.$prefix);
+                        }
+
+                        $element.append($scope.$value);
+
+                        if ($scope.suffix) {
+                            $scope.$suffix = $(document.createElement('span'));
+                            $scope.$suffix.html($scope.suffix);
+                            $scope.$suffix.attr('suffix', '');
+
+                            $element.append($scope.$suffix);
+                        }
+                    } else {
+                        $scope.$value.html($scope.value || $scope.emptyValue || '');
+                    }
+                };
+
+                $scope.findAffix = function () {
+                    _.some($element.children('[prefix]'), function (el) {
+                        $scope.prefix = $(el).html();
+                        return true; // loop only once
+                    });
+
+                    _.some($element.children('[suffix]'), function (el) {
+                        $scope.suffix = $(el).html();
+                        return true; // loop only once
+                    });
                 };
 
                 $scope.liveEditStatus = function () {
@@ -78,15 +119,7 @@
 
                 $scope.read = function () {
                     if (ctrl.initialized) {
-                        $scope.value = $element.html();
-                        if ($scope.prefix) {
-                            $scope.value = $scope.value.replace($scope.prefix, '');
-                            if (!$element.html().startsWith($scope.prefix)) {
-                                // Ensure the the prefix remains on
-                                ngModel.$render();
-                                $scope.moveCaret($scope.prefix.length);
-                            }
-                        }
+                        $scope.value = $scope.$value.html();
                     }
                 };
 
@@ -128,10 +161,7 @@
                     ) {
                         // FIXME when the property is an array ( route[0].url ), model.set isn't treating route[0] as an array, but rather a whole new section. (fix with $scope.model.toggle? )
                         $scope.model.set($scope.property, $scope.value);
-
-                        // $scope.model.toggle($scope.property, $scope.value);
                         $scope.model.throttleSave();
-                        console.log('Saving!', $scope.property, $scope.model);
                     }
                 };
                 $scope.cancel = function () {
@@ -172,7 +202,7 @@
 
                         if ($scope.alwaysEdit !== true && $scope.alwaysEdit !== 'true') {
                             $scope.$watch($scope.liveEditStatus, function (liveEdit) {
-                                $element.attr('contenteditable', liveEdit);
+                                $scope.$value.attr('contenteditable', liveEdit);
                                 if (liveEdit) {
                                     $element.addClass('liveEdit');
                                 } else {
@@ -180,13 +210,13 @@
                                 }
                             });
                         } else {
-                            $element.attr('contenteditable', true);
+                            $scope.$value.attr('contenteditable', true);
                         }
 
                         // TRIGGERS
 
                         // Update value on change, save value on blur
-                        $element.on('focusout keyup change', function () {
+                        $scope.$value.on('focusout keyup change', function () {
                             if (ctrl.initialized) {
                                 $scope.$apply($scope.read);
                                 if ($scope.autoSave !== false && $scope.autoSave !== 'false') {
@@ -201,7 +231,7 @@
                         });
 
                         // Save / Cancel value on key press
-                        $element.on('keydown keypress', function (event) {
+                        $scope.$value.on('keydown keypress', function (event) {
                             if (ctrl.initialized) {
                                 switch (event.which) {
                                     case Stratus.Key.Enter:
@@ -209,9 +239,11 @@
                                         if ($scope.autoSave !== false && $scope.autoSave !== 'false') { // Placed here because we still want to prevent Line breaks
                                             $scope.$apply($scope.accept);
                                         }
+                                        $scope.$value.blur();
                                         break;
                                     case Stratus.Key.Escape:
                                         $scope.$apply($scope.cancel);
+                                        $scope.$value.blur();
                                         break;
                                 }
                             }
