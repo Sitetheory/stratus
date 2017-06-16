@@ -21,7 +21,17 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'moment', 'angular-material', 'stratus.services.model', 'stratus.directives.froala', 'stratus.directives.src', 'stratus.components.mediaSelector'], factory);
+        define(['stratus',
+            'underscore',
+            'angular',
+            'moment',
+            'angular-material',
+            'stratus.services.model',
+            'stratus.directives.froala',
+            'stratus.directives.editInlineFroala',
+            'stratus.directives.src',
+            'stratus.components.mediaSelector'
+        ], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -158,7 +168,10 @@
                     $($scope.edit_input_container).on('keydown keypress', function (event) {
                         switch (event.which) {
                             case Stratus.Key.Enter:
-                                if ($scope.autoSave !== false && $scope.autoSave !== 'false') {
+                                if ($scope.autoSave !== false
+                                    && $scope.autoSave !== 'false'
+                                    && $scope.type !== 'Editor' // a quick fix. Stratus-Froala handles it's own auto saving
+                                ) {
                                     $scope.$apply($scope.accept);
                                 }
                                 $scope.setEdit(false);

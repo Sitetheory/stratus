@@ -6,5 +6,5 @@
     <span class="suffix" ng-bind-html="suffix"></span>
 </div>
 <span class="stratus_edit_input_container stratus_edit_editor" ng-cloak ng-show="edit" tabindex="-1" ng-cloak ng-transclude="input" >
-    <textarea stratus-froala froala-options="{{froalaOptions}}"  ng-model="value" ng-if="ctrl.initialized"></textarea>
+    <textarea stratus-froala froala-options="{{froalaOptions}}"  ng-model="model" property="{{property}}" auto-save="{{autoSave}}" ng-if="ctrl.initialized"></textarea>
 </span>

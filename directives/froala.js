@@ -27,6 +27,8 @@
             'jquery',
             'froala',
             'angular',
+            'underscore',
+            'stratus.services.model',
             'codemirror/mode/htmlmixed/htmlmixed',
             'codemirror/addon/edit/matchbrackets',
             'codemirror',
@@ -58,7 +60,7 @@
     }
 }(this, function (Stratus, $) {
     // This directive intends to provide basic froala capabilities.
-    Stratus.Directives.Froala = ['froalaConfig', function (froalaConfig) {
+    Stratus.Directives.Froala = ['froalaConfig', 'model', function (froalaConfig, model) {
         'use strict'; // Scope strict mode to only this directive
         var generatedIds = 0;
         var defaultConfig = {
@@ -68,14 +70,9 @@
 
         var innerHtmlAttr = 'innerHTML';
 
-        var scope = {
-            froalaOptions: '=stratusFroala',
-            staticOptions: '@froalaOptions', // Alias of stratusFroala, but for instances where the data cannot be bound
-            initFunction: '&froalaInit'
-        };
-
         froalaConfig = froalaConfig || {};
-        console.log('froalaConfig:', froalaConfig);
+
+        // console.log('froalaConfig:', froalaConfig);
 
         // Constants
         var MANUAL = 'manual';
@@ -85,8 +82,26 @@
         return {
             restrict: 'A',
             require: 'ngModel',
-            scope: scope,
+            scope: {
+                ngModel: '=',
+                property: '@',
+                froalaOptions: '=stratusFroala',
+                staticOptions: '@froalaOptions', // Alias of stratusFroala, but for instances where the data cannot be bound
+                initFunction: '&froalaInit',
+                autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
+            },
             link: function (scope, element, attrs, ngModel) {
+                // Initialize
+                scope.uid = this.uid = _.uniqueId('froala_');
+                Stratus.Instances[this.uid] = scope;
+
+                // Data Connectivity
+                scope.model = null;
+
+                if (!ngModel || !scope.property) {
+                    console.warn(scope.uid + ' has no model or property!');
+                    return;
+                }
 
                 // Twiddle Element to Zepto since Angular is lame and doesn't handle anything other than jQuery...
                 element = element.length ? $(element[0]) : element;
@@ -106,11 +121,51 @@
 
                 scope.initMode = attrs.froalaInit ? MANUAL : AUTOMATIC;
 
+                scope.settle = function () {
+                    if (ctrl.editorInitialized
+                        && scope.model instanceof model
+                        && scope.property
+                        && scope.model.get(scope.property) !== scope.value
+                    ) {
+                        scope.model.set(scope.property, scope.value);
+                        if (!scope.$root.$$phase) {
+                            scope.$apply();
+                        }
+                    }
+                };
+
+                scope.accept = function () {
+                    if (ctrl.editorInitialized
+                        && scope.model instanceof model
+                        && scope.property
+                        && scope.model.changed === true
+                    ) {
+                        // scope.model.set(scope.property, scope.value);
+                        scope.model.throttleSave();
+                    }
+                };
+
+                // We may not be using a cancel function
+                /*scope.cancel = function () {
+                    if (ctrl.editorInitialized
+                        && scope.model instanceof model
+                        && scope.property)
+                    {
+                        scope.value = scope.model.get(scope.property);
+                        ngModel.$render();
+                    }
+                };*/
+
                 ctrl.init = function () {
                     if (!attrs.id) {
                         // generate an ID if not present
                         attrs.$set('id', 'froala-' + generatedIds++);
                     }
+
+                    scope.$watch('model.data.' + scope.property, function (data) {
+                        scope.value = data;
+                        ngModel.$render(); // if the value changes, show the new change (since rendering doesn't always happen)
+                    });
 
                     // init the editor
                     if (scope.initMode === AUTOMATIC) {
@@ -121,7 +176,7 @@
                     ngModel.$render = function () {
                         if (ctrl.editorInitialized) {
                             if (specialTag) {
-                                var tags = ngModel.$modelValue;
+                                var tags = scope.value;
 
                                 // add tags on element
                                 if (tags) {
@@ -134,8 +189,8 @@
                                         element[0].innerHTML = tags[innerHtmlAttr];
                                     }
                                 }
-                            } else {
-                                element.froalaEditor('html.set', ngModel.$viewValue || '', true);
+                            } else if(element.froalaEditor('html.get') !== scope.value) { // only rerender if there is a change
+                                element.froalaEditor('html.set', scope.value || '', true);
 
                                 // This will reset the undo stack everytime the model changes externally. Can we fix this?
                                 element.froalaEditor('undo.reset');
@@ -149,8 +204,7 @@
                             return true;
                         }
 
-                        var isEmpty = element.froalaEditor('node.isEmpty', $('<div>' + value + '</div>').get(0));
-                        return isEmpty;
+                        return element.froalaEditor('node.isEmpty', $('<div>' + value + '</div>').get(0));
                     };
                 };
 
@@ -214,6 +268,33 @@
                         element.froalaEditor('destroy');
                         element = null;
                     });
+
+                    if (scope.autoSave !== false
+                        && scope.autoSave !== 'false'
+                    ) {
+                        element.froalaEditor('events.on', 'blur', function () {
+                            if (ctrl.editorInitialized) {
+                                switch (event.type) {
+                                    case 'focusout':
+                                    case 'blur':
+                                        scope.$apply(scope.accept);
+                                        break;
+                                }
+                            }
+                        });
+                    }
+
+                    // FIXME need to make blur on cancel
+                    /*element.froalaEditor('events.on', 'keydown keypress', function (event) {
+                        if (ctrl.editorInitialized) {
+                            switch (event.which) {
+                                case Stratus.Key.Escape:
+                                    scope.$apply(scope.cancel);
+                                    element.blur();
+                                    break;
+                            }
+                        }
+                    });*/
                 };
 
                 ctrl.updateModelView = function () {
@@ -242,10 +323,8 @@
                         }
                     }
 
-                    ngModel.$setViewValue(modelContent);
-                    if (!scope.$root.$$phase) {
-                        scope.$apply();
-                    }
+                    scope.value = modelContent;
+                    scope.settle();
                 };
 
                 ctrl.registerEventsWithCallbacks = function (eventName, callback) {
@@ -271,7 +350,20 @@
                     };
                     scope.initFunction({ initControls: controls });
                 }
-                ctrl.init();
+
+                scope.$watch('ngModel', function (data) {
+                    if (data instanceof model && !_.isEqual(data, scope.model)) {
+                        scope.model = data;
+                        if (ctrl.initialized !== true) {
+                            var unwatch = scope.$watch('model.data', function (dataCheck) {
+                                if (dataCheck !== undefined) {
+                                    unwatch(); // Remove this watch as soon as it's run once
+                                    ctrl.init(); // Initialize only after there is a model to work with
+                                }
+                            });
+                        }
+                    }
+                });
             }
         };
     }];
