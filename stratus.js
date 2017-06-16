@@ -2741,7 +2741,12 @@
         // Angular Injector
         if (container.requirement.length) {
             // TODO: Load Dynamically
-            if (_.contains(container.requirement, 'angular-froala') || _.contains(container.requirement, 'stratus-froala')) {
+            // NOTE: stratus.directives.edit requires froala, however froala cannot normally be seen on the
+            // container.requirement as a sub requirement. Need a better way to handle this.
+            if (_.contains(container.requirement, 'angular-froala')
+                || _.contains(container.requirement, 'stratus-froala')
+                || _.contains(container.requirement, 'stratus.directives.edit'))
+            {
                 [
                     'codemirror/mode/htmlmixed/htmlmixed',
                     'codemirror/addon/edit/matchbrackets',
