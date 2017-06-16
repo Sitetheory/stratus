@@ -44,7 +44,8 @@
                 suffix: '@', // A value to append to the back of the value
                 stratusEdit: '=', // A value to define if the element can currently be editable
                 alwaysEdit: '@', // A bool/string to define if the element will always be in editable mode
-                autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
+                autoSave: '@', // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
+                froalaOptions: '=' // Expects JSON. Options pushed to froala need to be initialized, so it will be a one time push
             },
             link: function ($scope, $element, $attrs, ngModel) {
                 // Initialize
@@ -61,22 +62,19 @@
                 $scope.model = null;
                 $scope.value = null;
 
-                // FIXME stratus-froala recieves, but does not make use of any options
-                $scope.froalaOptions = {};
-
                 if (!ngModel || !$scope.property) {
                     console.warn($scope.uid + ' has no model or property!');
                     return;
                 }
 
-                var ctrl = {
+                $scope.ctrl = {
                     initialized: false
                 };
 
                 // METHODS
 
                 $scope.liveEditStatus = function () {
-                    if (ctrl.initialized) {
+                    if ($scope.ctrl.initialized) {
                         if ($scope.stratusEdit !== undefined) {
                             return $scope.stratusEdit;
                         } else if (Stratus.Environment.data.liveEdit !== undefined) {
@@ -135,16 +133,16 @@
                         var unwatch = $scope.$watch('model.data', function (dataCheck) {
                             if (dataCheck !== undefined) {
                                 unwatch(); // Remove this watch as soon as it's run once
-                                ctrl.init(); // Initialize only after there is a model to work with
+                                $scope.ctrl.init(); // Initialize only after there is a model to work with
                             }
                         });
                     }
                 });
 
                 // Init() will have data rendered from the model rather than the element and allows for editing.
-                ctrl.init = function () {
-                    if (!ctrl.initialized) {
-                        ctrl.initialized = true;
+                $scope.ctrl.init = function () {
+                    if (!$scope.ctrl.initialized) {
+                        $scope.ctrl.initialized = true;
                     }
 
                     // WATCHERS

@@ -70,6 +70,7 @@
 
         var scope = {
             froalaOptions: '=stratusFroala',
+            staticOptions: '@froalaOptions', // Alias of stratusFroala, but for instances where the data cannot be bound
             initFunction: '&froalaInit'
         };
 
@@ -91,13 +92,17 @@
                 element = element.length ? $(element[0]) : element;
 
                 var specialTag = false;
-                if (SPECIAL_TAGS.indexOf(element.prop('tagName').toLowerCase()) != -1) {
+                if (SPECIAL_TAGS.indexOf(element.prop('tagName').toLowerCase()) !== -1) {
                     specialTag = true;
                 }
 
                 var ctrl = {
                     editorInitialized: false
                 };
+
+                if (scope.staticOptions && typeof scope.staticOptions === 'string') {
+                    scope.staticOptions = JSON.parse(scope.staticOptions);
+                }
 
                 scope.initMode = attrs.froalaInit ? MANUAL : AUTOMATIC;
 
@@ -153,7 +158,7 @@
                     ctrl.listeningEvents = ['froalaEditor'];
                     if (!ctrl.editorInitialized) {
                         froalaInitOptions = (froalaInitOptions || {});
-                        ctrl.options = angular.extend({}, defaultConfig, froalaConfig, scope.froalaOptions, froalaInitOptions);
+                        ctrl.options = angular.extend({}, defaultConfig, froalaConfig, scope.froalaOptions, scope.staticOptions, froalaInitOptions);
 
                         if (ctrl.options.immediateAngularModelUpdate) {
                             ctrl.listeningEvents.push('keyup');
