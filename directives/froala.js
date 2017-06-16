@@ -189,7 +189,7 @@
                                         element[0].innerHTML = tags[innerHtmlAttr];
                                     }
                                 }
-                            } else if(element.froalaEditor('html.get') !== scope.value) { // only rerender if there is a change
+                            } else if (element.froalaEditor('html.get') !== scope.value) { // only rerender if there is a change
                                 element.froalaEditor('html.set', scope.value || '', true);
 
                                 // This will reset the undo stack everytime the model changes externally. Can we fix this?
