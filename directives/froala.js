@@ -22,7 +22,37 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'jquery', 'froala', 'angular'], factory);
+        define([
+            'stratus',
+            'jquery',
+            'froala',
+            'angular',
+            'codemirror/mode/htmlmixed/htmlmixed',
+            'codemirror/addon/edit/matchbrackets',
+            'codemirror',
+            'froala-align',
+            'froala-code-beautifier',
+            'froala-code-view',
+            'froala-draggable',
+            'froala-entities',
+            'froala-file',
+            'froala-forms',
+            'froala-fullscreen',
+            'froala-help',
+            'froala-image',
+            'froala-image-manager',
+            'froala-inline-style',
+            'froala-link',
+            'froala-lists',
+            'froala-paragraph-format',
+            'froala-paragraph-style',
+            'froala-quick-insert',
+            'froala-quote',
+            'froala-table',
+            'froala-url',
+            'froala-video',
+            'froala-word-paste'
+        ], factory);
     } else {
         factory(root.Stratus, root.$);
     }

@@ -2740,13 +2740,8 @@
 
         // Angular Injector
         if (container.requirement.length) {
-            // TODO: Load Dynamically
-            // NOTE: stratus.directives.edit requires froala, however froala cannot normally be seen on the
-            // container.requirement as a sub requirement. Need a better way to handle this.
-            if (_.contains(container.requirement, 'angular-froala')
-                || _.contains(container.requirement, 'stratus-froala')
-                || _.contains(container.requirement, 'stratus.directives.edit'))
-            {
+            // Deprecated the use of the 'froala' directive for stratus-froala
+            /*if (_.contains(container.requirement, 'angular-froala')) {
                 [
                     'codemirror/mode/htmlmixed/htmlmixed',
                     'codemirror/addon/edit/matchbrackets',
@@ -2776,7 +2771,7 @@
                 ].forEach(function (requirement) {
                     container.requirement.push(requirement);
                 });
-            }
+            }*/
 
             // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
             [
@@ -2788,6 +2783,7 @@
             ].forEach(function (requirement) {
                 container.requirement.push(requirement);
             });
+
             require(container.requirement, function () {
                 // App Reference
                 angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
