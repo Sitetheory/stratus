@@ -69,8 +69,7 @@
                 this.completed = false;
 
                 // Auto-Saving Flags
-                this.changing = false;
-                this.changed = 0;
+                this.changed = false;
                 this.saving = false;
                 this.watching = false;
 
@@ -87,6 +86,7 @@
                     $rootScope.$watch(function () {
                         return that.data;
                     }, function (newData, priorData) {
+                        that.changed = true;
                         var patch = _.patch(newData, priorData);
                         if (patch) {
                             if (newData.id && newData.id !== priorData.id) {
@@ -95,8 +95,6 @@
                                 );
                             }
                             that.patch = _.extend(that.patch, patch);
-                            that.changing = true;
-                            that.changed = 1;
                         }
                     }, true);
                 };
@@ -178,6 +176,7 @@
 
                                     // Auto-Saving Settings
                                     that.saving = false;
+                                    that.changed = false;
                                     that.patch = {};
 
                                     // Begin Watching
@@ -226,7 +225,6 @@
                  * @returns {*}
                  */
                 this.save = function () {
-                    that.changing = false;
                     that.saving = true;
                     return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON({
                         patch: true
@@ -303,8 +301,48 @@
                     attr: /(^[^\[]+)/
                 };
 
-                this.buildPath = function () {
-                    //
+                /**
+                 * @param path
+                 * @returns {Array}
+                 */
+                this.buildPath = function (path) {
+                    var acc = [];
+                    if (!_.isString(path)) {
+                        return acc;
+                    }
+                    var cur;
+                    var search;
+                    _.each(path.split('.'), function (link) {
+                        // handle bracket chains
+                        if (link.match(that.bracket.match)) {
+                            // extract attribute
+                            cur = that.bracket.attr.exec(link);
+                            if (cur !== null) {
+                                acc.push(cur[1]);
+                                cur = null;
+                            } else {
+                                cur = false;
+                            }
+
+                            // extract cells
+                            search = that.bracket.search.exec(link);
+                            while (search !== null) {
+                                if (cur !== false) {
+                                    cur = parseInt(search[1]);
+                                    if (!isNaN(cur)) {
+                                        acc.push(cur);
+                                    } else {
+                                        cur = false;
+                                    }
+                                }
+                                search = that.bracket.search.exec(link);
+                            }
+                        } else {
+                            // normal attributes
+                            acc.push(link);
+                        }
+                    });
+                    return acc;
                 };
 
                 /**
@@ -315,38 +353,8 @@
                     if (typeof attr !== 'string' || !that.data || typeof that.data !== 'object') {
                         return undefined;
                     } else {
-                        // TODO: Optimize and simplify this logic as much as possible with a pathBuilder function
-                        var search;
-                        var acc;
-                        var cur;
-                        return _.reduce(attr.split('.'), function (attrs, a) {
-                            if (a.match(that.bracket.match)) {
-                                acc = [];
-                                cur = that.bracket.attr.exec(a);
-                                if (cur !== null) {
-                                    acc.push(cur[1]);
-                                    cur = null;
-                                } else {
-                                    cur = false;
-                                }
-                                search = that.bracket.search.exec(a);
-                                while (search !== null) {
-                                    if (cur !== false) {
-                                        cur = parseInt(search[1]);
-                                        if (!isNaN(cur)) {
-                                            acc.push(cur);
-                                        } else {
-                                            cur = false;
-                                        }
-                                    }
-                                    search = that.bracket.search.exec(a);
-                                }
-                                return acc.length ? undefined : _.reduce(acc, function (attrsB, aB) {
-                                    return attrsB && attrsB[aB];
-                                }, attrs);
-                            } else {
-                                return attrs && attrs[a];
-                            }
+                        return that.buildPath(attr).reduce(function (attrs, link) {
+                            return attrs && attrs[link];
                         }, that.data);
                     }
                 };
@@ -370,33 +378,18 @@
                  * @param value
                  */
                 this.setAttribute = function (attr, value) {
-                    if (typeof attr === 'string' && attr.indexOf('.') !== -1) {
-                        var reference = that.data;
-                        var chain = attr.split('.');
-
-                        // Search for Brackets
-                        if (attr.match(that.bracket.match)) {
-                            _.each(chain, function () {
-                                console.log('chain:', arguments);
-                            });
-                        }
-
-                        // Find Best Reference then build below
-                        _.find(_.initial(chain), function (link) {
-                            if (!_.has(reference, link) || !reference[link]) reference[link] = {};
-                            if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
-                                reference = reference[link];
-                            } else {
-                                reference = that.data;
-                                return true;
+                    if (typeof attr === 'string' && (_.contains(attr, '.') || _.contains(attr, '['))) {
+                        var future;
+                        that.buildPath(attr).reduce(function (attrs, link, index, chain) {
+                            future = index + 1;
+                            if (!_.has(attrs, link)) {
+                                attrs[link] = _.has(chain, future) && _.isNumber(chain[future]) ? [] : {};
                             }
-                        }, this);
-                        if (!_.isEqual(reference, that.data)) {
-                            var link = _.last(chain);
-                            if (reference && typeof reference === 'object') {
-                                reference[link] = value;
+                            if (!_.has(chain, future)) {
+                                attrs[link] = value;
                             }
-                        }
+                            return attrs && attrs[link];
+                        }, that.data);
                     } else {
                         that.data[attr] = value;
                     }
