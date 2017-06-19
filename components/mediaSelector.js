@@ -514,7 +514,7 @@
                         file.errorUpload = true;
 
                         // $scope.errorMsg = response.status + ': ' + response.data;
-                        file.errorMsg = 'Server Error!Please try again';
+                        file.errorMsg = 'Server Error! Please try again';
                     }
                 });
                 file.upload.progress(function (evt) {
