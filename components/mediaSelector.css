@@ -634,7 +634,7 @@ a.minus_icon .addIcon {
 /* Error message */
 
 .dropContainer .errorMessage {
-    display: none;
+    display: block;
     margin: 0 auto;
     padding: 8px;
     width: 100%;

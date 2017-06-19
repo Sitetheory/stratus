@@ -248,8 +248,31 @@
                 </a>
 
                 <!--<span ng-if="mediaDetail.tags.length" ng-repeat="tag in mediaDetail.tags">{{tag.name}}</span>-->
-
-                <md-chips class="fontSecondary">
+                <md-autocomplete flex
+                             md-min-length="0"
+                             md-delay="500"
+                             md-search-text="query"
+                             md-items="model in collection.filter(query)"
+                             md-item-text="model.name || model.data.name"
+                             md-floating-label=""
+                             placeholder="Click to add">
+                    <md-item-template>
+                        <span md-highlight-text="query">
+                            {{ model.name || model.data.name }}
+                        </span>
+                    </md-item-template>
+                </md-autocomplete>
+                <md-chip-template>
+                        <span>
+                            <strong>
+                                {{ $chip.name || $chip.data.name }}
+                            </strong>
+                            <em ng-show="$chip.data.assets">
+                                ({{ $chip.data.assets.length }})
+                            </em>
+                        </span>
+                </md-chip-template>
+                <!-- <md-chips class="fontSecondary">
                     <md-chip-template>
                         <md-chip>
                             <strong>
@@ -262,7 +285,7 @@
                             </strong>
                         </md-chip>
                     </md-chip-template>
-                </md-chips>
+                </md-chips> -->
 
             </div>
         </div>
