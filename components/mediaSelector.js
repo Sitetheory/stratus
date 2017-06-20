@@ -345,23 +345,26 @@
             };
 
             $scope.doneEditing = function (fileId, item) {
-
-                // console.log($scope.draggedFiles.length);
-
-                /*if ($scope.draggedFiles.length > 0) {
-                    for (var k = 0; k < $scope.draggedFiles.length; k++) {
-                        if ($scope.draggedFiles[k].id === fileId) {
-                            console.log($scope.draggedFiles[k].id);
-                            Upload.rename($scope.draggedFiles[k],"testname.jpg");
-                        }
-                    }
+                var data =  {};
+                if(item.description){
+                    data.description = item.description;
                 }
-*/
-
+                if(item.name){
+                    data.name = item.name;
+                }
+                $http({
+                        method: 'PUT',
+                        url: '/Api/Media/' + fileId,
+                        data: data
+                    }).then(function (response) {
+                        // fetch media library list
+                        $scope.uploadMedia();
+                    }, function (rejection) {
+                        if (!Stratus.Environment.get('production')) {
+                            console.log(rejection.data);
+                        }
+                    });
                 item.editing = false;
-
-                // Upload.rename(file,"testname");
-                // dong some background ajax calling for persistence...
             };
 
             // common function to load media library from collection
