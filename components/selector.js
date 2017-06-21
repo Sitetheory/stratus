@@ -1,4 +1,4 @@
-//     Stratus.Components.Selector.js 1.0
+//     Stratus.Components.Selector 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //

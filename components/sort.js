@@ -1,4 +1,4 @@
-//     Stratus.Components.Sort.js 1.0
+//     Stratus.Components.Sort 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //

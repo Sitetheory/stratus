@@ -1,4 +1,4 @@
-//     Stratus.Components.EditLegacy.js 1.0
+//     Stratus.Components.EditLegacy 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //

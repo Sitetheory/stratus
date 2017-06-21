@@ -1,4 +1,4 @@
-//     Stratus.Components.DateTime.js 1.0
+//     Stratus.Components.DateTime 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //

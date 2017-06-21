@@ -1,4 +1,4 @@
-//     Stratus.Components.Publish.js 1.0
+//     Stratus.Components.Publish 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
@@ -83,10 +83,10 @@
                 $scope.setTimePublish = function (time) {
                     // $log.log('timePublish:', time, $scope.model);
                     if (!$scope.model || !$scope.model.get($scope.propertyTimePublish)) return false;
-                    /*
+                    /* *
                     $scope.model.set($scope.propertyTimePublish, time || 'API::NOW');
                     $scope.model.save();
-                    */
+                    /* */
                 };
 
                 // Watchers
@@ -103,12 +103,12 @@
 
                 if ($scope.action === 'unpublish') {
                     // TODO: Set the dateTime component date to current time (so when they open it again it's at today) and then clear
-                    /*
-                     if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
-                     this.dateTimePickerView.dateTimePicker.date(moment());
-                     this.dateTimePickerView.dateTimePicker.clear();
-                     }
-                     */
+                    /* *
+                    if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
+                        this.dateTimePickerView.dateTimePicker.date(moment());
+                        this.dateTimePickerView.dateTimePicker.clear();
+                    }
+                    /* */
                 } else {
                     // If expired (published in the past) treat as if it's unpublished (and publish the current time
                     // if none specified).

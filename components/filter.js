@@ -1,4 +1,4 @@
-//     Stratus.Components.Filter.js 1.0
+//     Stratus.Components.Filter 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
