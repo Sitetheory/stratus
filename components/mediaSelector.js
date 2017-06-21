@@ -352,6 +352,12 @@
                 if(item.name){
                     data.name = item.name;
                 }
+                $scope.updateMedia(fileId, data);
+                
+                item.editing = false;
+            };
+
+            $scope.updateMedia = function(fileId, data){
                 $http({
                         method: 'PUT',
                         url: '/Api/Media/' + fileId,
@@ -364,8 +370,7 @@
                             console.log(rejection.data);
                         }
                     });
-                item.editing = false;
-            };
+            }
 
             // common function to load media library from collection
             $scope.uploadMedia = function () {
@@ -472,6 +477,43 @@
                     }
                 }
             }
+            $scope.createTag = function(query, fileId, tags){
+                var inserted_id = null;
+                $http({
+                        method: 'POST',
+                        url: '/Api/Tag',
+                        data: {"name": query}
+                    }).then(function (response) {
+                        if(fileId !== undefined){
+                            if(tags!== undefined){
+                                var tagArray = [];
+                                var dataRes = {};
+                                for (var k = 0; k < tags.length; k++) {
+                                    tagArray[k] = {};
+                                    tagArray[k].id = tags[k].id;
+                                    
+                                }
+                                tagArray[k+1] = {};
+                                tagArray[k+1].id = response.data.payload.id;
+                                dataRes.tags = tagArray;
+                                console.log(dataRes);
+                                $scope.updateMedia(fileId, dataRes);
+                            }
+                            
+                            
+                        }
+                        // fetch media library list
+                        //$scope.uploadMedia();
+                    }, function (rejection) {
+                        if (!Stratus.Environment.get('production')) {
+                            
+                        }
+                    });
+
+                
+            }
+
+
 
             // common function to save media to server
             $scope.saveMedia = function (file) {

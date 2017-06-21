@@ -229,7 +229,7 @@
 <script type="text/ng-template" id="mediaDetail.html">
     <div class="mediaInfoFull mediaDialogue backgroundDark clearfix borderRadiusDefault" role="dialog" >
 
-        {{mediaDetail.tags}}
+        
         <div>
             <button type="button" class="btnClose" href="javascript:;" ng-click="closeZoom();">
                 <span class="sr-only">Toggle Navigation</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg>
@@ -249,43 +249,38 @@
                 </a>
 
                 <!--<span ng-if="mediaDetail.tags.length" ng-repeat="tag in mediaDetail.tags">{{tag.name}}</span>-->
-                <md-autocomplete flex
-                             md-min-length="0"
-                             md-delay="500"
-                             md-search-text="query"
-                             md-items="model in collection.filter(query)"
-                             md-item-text="model.name || model.data.name"
-                             md-floating-label=""
-                             placeholder="Click to add">
-                    <md-item-template>
-                        <span md-highlight-text="query">
-                            {{ model.name || model.data.name }}
-                        </span>
-                    </md-item-template>
-                </md-autocomplete>
-                <md-chip-template>
-                        <span>
-                            <strong>
-                                {{ $chip.name || $chip.data.name }}
-                            </strong>
-                            <em ng-show="$chip.data.assets">
-                                ({{ $chip.data.assets.length }})
-                            </em>
-                        </span>
-                </md-chip-template>
                 
-                <li ng-repeat="tag in mediaDetail.tags">
-                    <strong>{{tag.name}}</strong>
-                </li>
-                <md-chips class="fontSecondary">
-                    <md-chip-template>
-                        <md-chip>
-                            <strong>
-                                Irish
-                            </strong>
-                        </md-chip>
-                    </md-chip-template>
-                </md-chips>
+                <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak>
+				    <md-chips ng-model="model.data.tags" md-autocomplete-snap>
+				        <md-autocomplete flex
+				                         md-min-length="0"
+				                         md-delay="500"
+				                         md-search-text="query"
+				                         md-items="model in collection.filter(query)"
+				                         md-item-text="model.name || model.data.name"
+				                         md-floating-label="Add Tags"
+				                         placeholder="Add Tag">
+				            <md-item-template>
+				                <span md-highlight-text="query">{{ model.name || model.data.name }}</span>
+				            </md-item-template>
+				            <md-not-found>
+							     <div ng-click="createTag(query,mediaDetail.id, mediaDetail.tags);">
+						            Create New Tag for "{{ query }}" ?
+						        </div>
+							</md-not-found>
+				        </md-autocomplete>
+				    <md-chip-template>
+					    <span>
+					        <strong>{{ $chip.name || $chip.data.name }}</strong>
+					        <em ng-show="$chip.data.assets">({{ $chip.data.assets.length }})</em>
+					    </span>
+				    </md-chip-template>
+				    </md-chips>
+				</div>
+
+
+                
+                
 
             </div>
         </div>
