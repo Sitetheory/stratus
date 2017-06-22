@@ -1,4 +1,4 @@
-//     Stratus.Components.MediaSelector 1.0
+//     Stratus.Components.mediaSelector.js 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
@@ -86,6 +86,8 @@
             $scope.files = [];
             $scope.draggedDivChanged = false;
             $scope.dropDisabled = false;
+            $scope.tagsModel = {};
+            $scope.infoId = null;
 
             // Data Connectivity
             $scope.$watch('$ctrl.ngModel', function (data) {
@@ -97,6 +99,14 @@
                 if (_.isUndefined($scope.$ctrl.ngModel) || !_.isEqual($scope.draggedFiles, $scope.$ctrl.ngModel)) {
                     $scope.$ctrl.ngModel = $scope.draggedFiles;
                 }
+            }, true);
+            $scope.$watch('tagsModel', function (data) {
+                if($scope.infoId !== undefined){
+                    var dataRes = {};
+                    dataRes.tags = $scope.tagsModel.tags;
+                    $scope.updateMedia($scope.infoId, dataRes);
+                }
+                
             }, true);
 
             // done button when uploading is finished
@@ -121,7 +131,7 @@
                 };
 
                 if (!Stratus.Environment.get('production')) {
-                    console.log($scope.mediaDetail);
+                    //console.log($scope.mediaDetail);
                 }
 
                 var position = $mdPanel.newPanelPosition()
@@ -142,8 +152,9 @@
                     escapeToClose: true,
                     focusOnOpen: true
                 };
-
                 $mdPanel.open(config);
+                $scope.tagsModel.tags = $scope.mediaDetail.tags;
+                $scope.infoId = $scope.mediaDetail.id;
             };
             $scope.draggedFileId = '';
 
@@ -345,32 +356,32 @@
             };
 
             $scope.doneEditing = function (fileId, item) {
-                var data = {};
-                if (item.description) {
+                var data =  {};
+                if(item.description){
                     data.description = item.description;
                 }
-                if (item.name) {
+                if(item.name){
                     data.name = item.name;
                 }
                 $scope.updateMedia(fileId, data);
-
+                
                 item.editing = false;
             };
 
-            $scope.updateMedia = function (fileId, data) {
+            $scope.updateMedia = function(fileId, data){
                 $http({
-                    method: 'PUT',
-                    url: '/Api/Media/' + fileId,
-                    data: data
-                }).then(function (response) {
-                    // fetch media library list
-                    $scope.uploadMedia();
-                }, function (rejection) {
-                    if (!Stratus.Environment.get('production')) {
-                        console.log(rejection.data);
-                    }
-                });
-            };
+                        method: 'PUT',
+                        url: '/Api/Media/' + fileId,
+                        data: data
+                    }).then(function (response) {
+                        // fetch media library list
+                        $scope.uploadMedia();
+                    }, function (rejection) {
+                        if (!Stratus.Environment.get('production')) {
+                            console.log(rejection.data);
+                        }
+                    });
+            }
 
             // common function to load media library from collection
             $scope.uploadMedia = function () {
@@ -477,41 +488,45 @@
                     }
                 }
             }
-
-            $scope.createTag = function (query, fileId, tags) {
-                var insertedId = null;
+            $scope.createTag = function(query, fileId, tags){
+                var inserted_id = null;
                 $http({
-                    method: 'POST',
-                    url: '/Api/Tag',
-                    data: { name: query }
-                }).then(function (response) {
-                    if (fileId !== undefined) {
-                        if (tags !== undefined) {
-                            var tagArray = [];
-                            var dataRes = {};
-                            for (var k = 0; k < tags.length; k++) {
-                                tagArray[k] = {};
-                                tagArray[k].id = tags[k].id;
-
+                        method: 'POST',
+                        url: '/Api/Tag',
+                        data: {"name": query}
+                    }).then(function (response) {
+                        if(fileId !== undefined){
+                            if(tags!== undefined){
+                                var dataRes = {};
+                                dataRes.tags = $scope.tagsModel.tags;
+                                $scope.updateMedia(fileId, dataRes);
                             }
-                            tagArray[k + 1] = {};
-                            tagArray[k + 1].id = response.data.payload.id;
-                            dataRes.tags = tagArray;
-                            console.log(dataRes);
-                            $scope.updateMedia(fileId, dataRes);
+                            
+                            
                         }
+                        // fetch media library list
+                        //$scope.uploadMedia();
+                    }, function (rejection) {
+                        if (!Stratus.Environment.get('production')) {
+                            
+                        }
+                    });
 
-                    }
+                
+            }
+            /*$scope.addChip = function(fileId, chip){
+                var dataRes = {};
+                dataRes.tags = $scope.tagsModel.tags;
+                $scope.updateMedia(fileId, dataRes);
+            }
+            $scope.removeChip = function(fileId, chip){
+                var dataRes = {};
+                dataRes.tags = $scope.tagsModel.tags;
+                $scope.updateMedia(fileId, dataRes);
+            }
 
-                    // fetch media library list
-                    // $scope.uploadMedia();
-                }, function (rejection) {
-                    if (!Stratus.Environment.get('production')) {
+            */
 
-                    }
-                });
-
-            };
 
             // common function to save media to server
             $scope.saveMedia = function (file) {

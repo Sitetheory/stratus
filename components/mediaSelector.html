@@ -6,7 +6,6 @@
         <p class="instructions fontBody clearfix">
             <a href="#" ng-click="openLibrary()" class="nothingSelectedTextLink">Open library to select images</a> or drag, drop new images below.
         </p>
-
         <p class="smallLabel selectedMediaLabel">Media</p>
 
         <div id="selectedDropArea" ng-class="{'dragBorder':dragClass}" ng-model="files" name="files" ngf-multiple="true"  ngf-before-model-change="beforeChange($files,$event)"
@@ -241,25 +240,22 @@
             <h2 class="stGrid column50" ng-hide="selectedName.editing" ng-dblclick="editItem(selectedName)">{{selectedName.name}}</h2>
             <input class="stGrid column50" ng-show="selectedName.editing" ng-model="selectedName.name" ng-blur="doneEditing(mediaDetail.id,selectedName)" autofocus />
             <div class="tagContainer stGrid column50">
-                <p class="smallLabel">Tags</p>
-
-                <a class="btn btnAdd" href="">
-                    <div class="btnGradientLight"></div>
-                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-                </a>
+                
 
                 <!--<span ng-if="mediaDetail.tags.length" ng-repeat="tag in mediaDetail.tags">{{tag.name}}</span>-->
                 
-                <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak>
-				    <md-chips ng-model="model.data.tags" md-autocomplete-snap>
+                <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak>                
+
+				    <md-chips class="media-tags-chips" ng-model="tagsModel.tags" md-autocomplete-snap>
 				        <md-autocomplete flex
-				                         md-min-length="0"
-				                         md-delay="500"
-				                         md-search-text="query"
-				                         md-items="model in collection.filter(query)"
-				                         md-item-text="model.name || model.data.name"
-				                         md-floating-label="Add Tags"
-				                         placeholder="Add Tag">
+				                        md-min-length="0"
+				                        md-delay="500"
+				                        md-search-text="query"
+				                        md-items="model in collection.filter(query)"
+				                        md-item-text="model.name || model.data.name"
+				                        
+				                        md-floating-label="Add Tags"
+				                        placeholder="Add Tag">
 				            <md-item-template>
 				                <span md-highlight-text="query">{{ model.name || model.data.name }}</span>
 				            </md-item-template>
@@ -269,19 +265,14 @@
 						        </div>
 							</md-not-found>
 				        </md-autocomplete>
-				    <md-chip-template>
-					    <span>
-					        <strong>{{ $chip.name || $chip.data.name }}</strong>
-					        <em ng-show="$chip.data.assets">({{ $chip.data.assets.length }})</em>
-					    </span>
-				    </md-chip-template>
+					    <md-chip-template>
+						    <span>
+						        <strong>{{ $chip.name || $chip.data.name }}</strong>
+						        <em ng-show="$chip.data.assets">({{ $chip.data.assets.length }})</em>
+						    </span>
+					    </md-chip-template>
 				    </md-chips>
 				</div>
-
-
-                
-                
-
             </div>
         </div>
 
