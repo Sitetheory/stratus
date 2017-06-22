@@ -101,12 +101,12 @@
                 }
             }, true);
             $scope.$watch('tagsModel', function (data) {
-                if($scope.infoId !== undefined){
+                if ($scope.infoId !== undefined) {
                     var dataRes = {};
                     dataRes.tags = $scope.tagsModel.tags;
                     $scope.updateMedia($scope.infoId, dataRes);
                 }
-                
+
             }, true);
 
             // done button when uploading is finished
@@ -131,7 +131,7 @@
                 };
 
                 if (!Stratus.Environment.get('production')) {
-                    //console.log($scope.mediaDetail);
+                    // console.log($scope.mediaDetail);
                 }
 
                 var position = $mdPanel.newPanelPosition()
@@ -357,18 +357,18 @@
 
             $scope.doneEditing = function (fileId, item) {
                 var data =  {};
-                if(item.description){
+                if (item.description) {
                     data.description = item.description;
                 }
-                if(item.name){
+                if (item.name) {
                     data.name = item.name;
                 }
                 $scope.updateMedia(fileId, data);
-                
+
                 item.editing = false;
             };
 
-            $scope.updateMedia = function(fileId, data){
+            $scope.updateMedia = function (fileId, data) {
                 $http({
                         method: 'PUT',
                         url: '/Api/Media/' + fileId,
@@ -381,7 +381,7 @@
                             console.log(rejection.data);
                         }
                     });
-            }
+            };
 
             // common function to load media library from collection
             $scope.uploadMedia = function () {
@@ -488,32 +488,31 @@
                     }
                 }
             }
-            $scope.createTag = function(query, fileId, tags){
-                var inserted_id = null;
+            $scope.createTag = function (query, fileId, tags) {
+                var insertedId = null;
                 $http({
                         method: 'POST',
                         url: '/Api/Tag',
-                        data: {"name": query}
+                        data: { name: query }
                     }).then(function (response) {
-                        if(fileId !== undefined){
-                            if(tags!== undefined){
+                        if (fileId !== undefined) {
+                            if (tags !== undefined) {
                                 var dataRes = {};
                                 dataRes.tags = $scope.tagsModel.tags;
                                 $scope.updateMedia(fileId, dataRes);
                             }
-                            
-                            
+
                         }
+
                         // fetch media library list
-                        //$scope.uploadMedia();
+                        // $scope.uploadMedia();
                     }, function (rejection) {
                         if (!Stratus.Environment.get('production')) {
-                            
+
                         }
                     });
 
-                
-            }
+            };
             /*$scope.addChip = function(fileId, chip){
                 var dataRes = {};
                 dataRes.tags = $scope.tagsModel.tags;
@@ -526,7 +525,6 @@
             }
 
             */
-
 
             // common function to save media to server
             $scope.saveMedia = function (file) {
