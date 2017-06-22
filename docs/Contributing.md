@@ -21,7 +21,7 @@ We aim to maintain this Designer-centric library with as little changes to the c
 To better maintain this project, we ask that you follow the following steps:
 
 * Fork this repository
-* Build your intended functionality
+* Build your intended functionality in your fork
 * Create a pull request describing your changes
 
 We will then be able to review your changes and either accept them or ask that further changes are made.
@@ -31,7 +31,16 @@ We will then be able to review your changes and either accept them or ask that f
 When you need to update your fork, please pull from the master branch and rebase to ensure there are not any merge commits, since they can cause the master branch to diverge and become quite the headache bringing them back to a workable standpoint without any data loss.
 
 * Commit your changes locally (do not stash!)
-* Pull from upstream/master
-* Rebase your clone to rewind and fast forward
-* Ensure there are not any merge commits
-* Push data to your fork
+* Execute `git pull upstream master` to get the latest commits
+* Execute `git rebase` to rewind and fast forward commits
+* Execute `git status` to ensure there are not any merge commits
+* Execute `git push origin master` to reconvene your fork from where it diverged
+
+##### Tracking Setup
+
+Whichever method you used to originally clone your fork, you should re-use for the upstream, whether that be SSH or HTTPS.  If you don't remember, you can type `git remote -v` to see what it currently looks like.  On our system, the upstream's remote is an SSH location, which looks like so: `git@github.com:Sitetheory/stratus.git`
+
+* Execute `git remote add upstream <url>` and replace url with the correct location as described before 
+* Execute `git fetch --all` to hydrate all remotes accordingly
+* Execute `git branch -u upstream/master` to track the project's history
+* Check `git status` to see where your clone sits
