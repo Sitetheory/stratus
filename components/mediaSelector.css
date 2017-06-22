@@ -526,6 +526,24 @@ a.minus_icon .addIcon {
 .progressVisible .droppedImage img {
     opacity: 1;
 }
+/*CSS UPDATE*/
+.md-virtual-repeat-container.md-autocomplete-suggestions-container{
+    z-index: 9999 !important;
+}
+.tagContainer{ width:100% !important; 
+    #tagContainer{width: 100%; }
+    .md-input-container{margin: 0 !important;}
+}
+
+
+ .tagContainer .md-chips .md-chip-input-container{width: 100% !important;}
+.md-chips .md-chip-input-container md-autocomplete input{
+    border-bottom: 1px solid #fff; 
+}
+
+
+
+/*END CSS UPDATE*/
 @media (min-width: 480px) {
     .image--cn,
     .droppedImage,
