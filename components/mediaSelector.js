@@ -106,7 +106,6 @@
                     dataRes.tags = $scope.tagsModel.tags;
                     $scope.updateMedia($scope.infoId, dataRes);
                 }
-
             }, true);
 
             // done button when uploading is finished
@@ -129,10 +128,6 @@
                     description: $scope.mediaDetail.description,
                     editing: false
                 };
-
-                if (!Stratus.Environment.get('production')) {
-                    // console.log($scope.mediaDetail);
-                }
 
                 var position = $mdPanel.newPanelPosition()
                     .absolute()
@@ -364,23 +359,22 @@
                     data.name = item.name;
                 }
                 $scope.updateMedia(fileId, data);
-
                 item.editing = false;
             };
 
             $scope.updateMedia = function (fileId, data) {
                 $http({
-                        method: 'PUT',
-                        url: '/Api/Media/' + fileId,
-                        data: data
-                    }).then(function (response) {
-                        // fetch media library list
-                        $scope.uploadMedia();
-                    }, function (rejection) {
-                        if (!Stratus.Environment.get('production')) {
-                            console.log(rejection.data);
-                        }
-                    });
+                    method: 'PUT',
+                    url: '/Api/Media/' + fileId,
+                    data: data
+                }).then(function (response) {
+                    // fetch media library list
+                    $scope.uploadMedia();
+                }, function (rejection) {
+                    if (!Stratus.Environment.get('production')) {
+                        console.log(rejection.data);
+                    }
+                });
             };
 
             // common function to load media library from collection
@@ -489,42 +483,30 @@
                 }
             }
             $scope.createTag = function (query, fileId, tags) {
-                var insertedId = null;
                 $http({
-                        method: 'POST',
-                        url: '/Api/Tag',
-                        data: { name: query }
-                    }).then(function (response) {
-                        if (fileId !== undefined) {
-                            if (tags !== undefined) {
-                                var dataRes = {};
-                                dataRes.tags = $scope.tagsModel.tags;
-                                $scope.updateMedia(fileId, dataRes);
-                            }
-
+                    method: 'POST',
+                    url: '/Api/Tag',
+                    data: { name: query }
+                }).then(function (response) {
+                    if (fileId !== undefined) {
+                        if (tags !== undefined) {
+                            var dataRes = {};
+                            $scope.tagsModel.tags.push(response.data.payload);
+                            dataRes.tags = $scope.tagsModel.tags;
+                            $scope.updateMedia(fileId, dataRes);
                         }
 
-                        // fetch media library list
-                        // $scope.uploadMedia();
-                    }, function (rejection) {
-                        if (!Stratus.Environment.get('production')) {
+                    }
 
-                        }
-                    });
+                    // fetch media library list
+                    // $scope.uploadMedia();
 
+                }, function (rejection) {
+                    if (!Stratus.Environment.get('production')) {
+                        console.log(rejection.data);
+                    }
+                });
             };
-            /*$scope.addChip = function(fileId, chip){
-                var dataRes = {};
-                dataRes.tags = $scope.tagsModel.tags;
-                $scope.updateMedia(fileId, dataRes);
-            }
-            $scope.removeChip = function(fileId, chip){
-                var dataRes = {};
-                dataRes.tags = $scope.tagsModel.tags;
-                $scope.updateMedia(fileId, dataRes);
-            }
-
-            */
 
             // common function to save media to server
             $scope.saveMedia = function (file) {
