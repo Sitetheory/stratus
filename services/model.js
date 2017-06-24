@@ -1,4 +1,4 @@
-//     Stratus.Services.Model.js 1.0
+//     Stratus.Services.Model 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //

@@ -1,4 +1,4 @@
-//     Stratus.Services.Collection.js 1.0
+//     Stratus.Services.Collection 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
