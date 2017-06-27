@@ -139,6 +139,7 @@ boot.config({
         'stratus.components.filter': boot.bundle + 'stratus/components/filter' + boot.suffix,
         'stratus.components.help': boot.bundle + 'stratus/components/help' + boot.suffix,
         'stratus.components.mediaSelector': boot.bundle + 'stratus/components/mediaSelector' + boot.suffix,
+        'stratus.components.mediaLibrary': boot.bundle + 'stratus/components/mediaLibrary' + boot.suffix,
         'stratus.components.optionValue': boot.bundle + 'stratus/components/optionValue' + boot.suffix,
         'stratus.components.pagination': boot.bundle + 'stratus/components/pagination' + boot.suffix,
         'stratus.components.search': boot.bundle + 'stratus/components/search' + boot.suffix,
