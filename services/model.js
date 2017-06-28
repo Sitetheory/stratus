@@ -1,5 +1,5 @@
-// Function Factory
-// ----------------
+// Model Service
+// -------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
@@ -9,9 +9,6 @@
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-
-    // Angular Model Service
-    // ---------------------
 
     // This Model Service handles data binding for a single object with the $http Service
     Stratus.Services.Model = ['$provide', function ($provide) {

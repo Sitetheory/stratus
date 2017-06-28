@@ -1,5 +1,5 @@
-// Function Factory
-// ----------------
+// Collection Service
+// ------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
@@ -9,9 +9,6 @@
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-
-    // Angular Collection Service
-    // --------------------------
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Collection = ['$provide', function ($provide) {

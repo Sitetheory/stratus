@@ -1,5 +1,5 @@
-// Angular Panel Controller
-// --------------------------
+// Panel Controller
+// ----------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {

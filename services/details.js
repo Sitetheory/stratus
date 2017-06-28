@@ -1,5 +1,5 @@
-// Function Factory
-// ----------------
+// Details Service
+// ---------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
@@ -10,11 +10,8 @@
     }
 }(this, function (Stratus, _) {
 
-    // Angular Details Service
-    // ------------------------
-
     Stratus.Services.Details = ['$provide', function ($provide) {
-        $provide.factory('details', ['$http', 'model', '$interpolate', '$q', function ($http,  model, $interpolate, $q) {
+        $provide.factory('details', ['$http', 'model', '$interpolate', '$q', function ($http, model, $interpolate, $q) {
             return function () {
 
                 this.fetch = function ($element, $scope) {
@@ -22,8 +19,8 @@
                     return new $q(function (resolve, reject) {
                         if (angular.isString($element)) $element = { target: $element };
                         var options = {
-                            selectedid: $element.attr ? $element.attr('data-selectedid') : $element.selectedid,
-                            property: $element.attr ? $element.attr('data-property') : $element.property,
+                            selectedId: $element.attr ? $element.attr('data-selectedId') : $element.selectedId,
+                            property: $element.attr ? $element.attr('data-property') : $element.property
                         };
 
                         var completed = 0;
@@ -59,13 +56,15 @@
                 };
 
                 this.build = function (options, $scope) {
-                    if (options.selectedid) {
-                        if (options.property == 'version.layout') {
-                            var targetUrl = '/Api/Layout/' + options.selectedid;
-                        }if (options.property == 'version.template') {
-                            var targetUrl = '/Api/Template/' + options.selectedid;
+                    if (options.selectedId) {
+                        var targetUrl;
+                        if (options.property === 'version.layout') {
+                            targetUrl = '/Api/Layout/' + options.selectedId;
                         }
-                        action =  'GET';
+                        if (options.property === 'version.template') {
+                            targetUrl = '/Api/Template/' + options.selectedId;
+                        }
+                        var action = 'GET';
                         var prototype = {
                             method: action,
                             url: targetUrl,
@@ -73,10 +72,9 @@
                         };
                         $http(prototype).then(function (response) {
                             if (response.status === 200 && angular.isObject(response.data)) {
-                                $scope.convoyDetails =  response.data.payload || response.data;
+                                $scope.convoyDetails = response.data.payload || response.data;
                                 $scope.selectedName = $scope.convoyDetails.name;
                                 $scope.selectedDesc = $scope.convoyDetails.description;
-
                             }
                         });
 

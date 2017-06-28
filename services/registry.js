@@ -1,4 +1,4 @@
-// Function Factory
+// Registry Service
 // ----------------
 
 // Define AMD, Require.js, or Contextual Scope
@@ -9,9 +9,6 @@
         factory(root.Stratus, root._);
     }
 }(this, function (Stratus, _) {
-
-    // Angular Registry Service
-    // ------------------------
 
     // This Collection Service handles data binding for multiple objects with the $http Service
     Stratus.Services.Registry = ['$provide', function ($provide) {

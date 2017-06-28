@@ -1,5 +1,5 @@
-// Angular Dialogue Controller
-// --------------------------
+// Dialogue Controller
+// -------------------
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {

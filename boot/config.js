@@ -116,10 +116,10 @@ boot.config({
         stratus: boot.bundle + 'stratus/stratus' + boot.suffix,
 
         /* Stratus Core Collections */
-        'stratus.collections.generic': boot.bundle + 'stratus/collections/generic' + boot.suffix,
+        'stratus.collections.generic': boot.bundle + 'stratus/legacy/collections/generic' + boot.suffix,
 
         /* Stratus Core Models */
-        'stratus.models.generic': boot.bundle + 'stratus/models/generic' + boot.suffix,
+        'stratus.models.generic': boot.bundle + 'stratus/legacy/models/generic' + boot.suffix,
 
         /* Stratus Core Routers */
         'stratus.routers.generic': boot.bundle + 'stratus/routers/generic' + boot.suffix,
@@ -308,8 +308,8 @@ boot.config({
 
         /* Backbone */
         underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
-        backbone: boot.bundle + 'stratus/external/backbone' + boot.suffix,
-        'backbone.relational': boot.bundle + 'stratus/normalizers/backbone.relational.injector',
+        backbone: boot.bundle + 'stratus/legacy/external/backbone' + boot.suffix,
+        'backbone.relational': boot.bundle + 'stratus/legacy/normalizers/backbone.relational.injector',
         'backbone.relational.core': boot.bundle + 'stratus/bower_components/backbone-relational/backbone-relational',
 
         /* jQuery */

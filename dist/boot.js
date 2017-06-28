@@ -2316,27 +2316,30 @@ boot.config({
         stratus: boot.bundle + 'stratus/stratus' + boot.suffix,
 
         /* Stratus Core Collections */
-        'stratus.collections.generic': boot.bundle + 'stratus/collections/generic' + boot.suffix,
+        'stratus.collections.generic': boot.bundle + 'stratus/legacy/collections/generic' + boot.suffix,
 
         /* Stratus Core Models */
-        'stratus.models.generic': boot.bundle + 'stratus/models/generic' + boot.suffix,
+        'stratus.models.generic': boot.bundle + 'stratus/legacy/models/generic' + boot.suffix,
 
         /* Stratus Core Routers */
         'stratus.routers.generic': boot.bundle + 'stratus/routers/generic' + boot.suffix,
         'stratus.routers.version': boot.bundle + 'stratus/routers/version' + boot.suffix,
 
         /* Stratus Controllers */
+        'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
         'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
+        'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
 
         /* Stratus Core Components */
         'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
         'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
         'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
-        'stratus.components.edit': boot.bundle + 'stratus/components/edit' + boot.suffix,
+        'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
         'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
         'stratus.components.filter': boot.bundle + 'stratus/components/filter' + boot.suffix,
         'stratus.components.help': boot.bundle + 'stratus/components/help' + boot.suffix,
         'stratus.components.mediaSelector': boot.bundle + 'stratus/components/mediaSelector' + boot.suffix,
+        'stratus.components.mediaLibrary': boot.bundle + 'stratus/components/mediaLibrary' + boot.suffix,
         'stratus.components.optionValue': boot.bundle + 'stratus/components/optionValue' + boot.suffix,
         'stratus.components.pagination': boot.bundle + 'stratus/components/pagination' + boot.suffix,
         'stratus.components.search': boot.bundle + 'stratus/components/search' + boot.suffix,
@@ -2345,14 +2348,17 @@ boot.config({
         'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
         'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
         'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
-        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
 
         // TODO: Move these to Sitetheory since they are specific to Sitetheory
         'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
+        'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
         'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
+        'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
 
         /* Stratus Core Directives */
         'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
+        'stratus.directives.edit': boot.bundle + 'stratus/directives/edit' + boot.suffix,
+        'stratus.directives.editInline': boot.bundle + 'stratus/directives/editInline' + boot.suffix,
         'stratus.directives.drag': boot.bundle + 'stratus/directives/drag' + boot.suffix,
         'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
         'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
@@ -2376,59 +2382,61 @@ boot.config({
         'stratus.services.model': boot.bundle + 'stratus/services/model' + boot.suffix,
         'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
         'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
+        'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
 
         /* Stratus Core Views */
-        'stratus.views.base': boot.bundle + 'stratus/views/base' + boot.suffix,
+        'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
 
         /* Stratus Core Widgets */
-        'stratus.views.widgets.base': boot.bundle + 'stratus/views/widgets/base' + boot.suffix,
-        'stratus.views.widgets.autocomplete': boot.bundle + 'stratus/views/widgets/autocomplete' + boot.suffix,
-        'stratus.views.widgets.calendar': boot.bundle + 'stratus/views/widgets/calendar' + boot.suffix,
-        'stratus.views.widgets.collection': boot.bundle + 'stratus/views/widgets/collection' + boot.suffix,
-        'stratus.views.widgets.datetime': boot.bundle + 'stratus/views/widgets/datetime' + boot.suffix,
-        'stratus.views.widgets.delete': boot.bundle + 'stratus/views/widgets/delete' + boot.suffix,
-        'stratus.views.widgets.dialogue': boot.bundle + 'stratus/views/widgets/dialogue' + boot.suffix,
-        'stratus.views.widgets.display': boot.bundle + 'stratus/views/widgets/display' + boot.suffix,
-        'stratus.views.widgets.editor': boot.bundle + 'stratus/views/widgets/editor' + boot.suffix,
-        'stratus.views.widgets.filter': boot.bundle + 'stratus/views/widgets/filter' + boot.suffix,
-        'stratus.views.widgets.generic': boot.bundle + 'stratus/views/widgets/generic' + boot.suffix,
-        'stratus.views.widgets.link': boot.bundle + 'stratus/views/widgets/link' + boot.suffix,
-        'stratus.views.widgets.map': boot.bundle + 'stratus/views/widgets/map' + boot.suffix,
-        'stratus.views.widgets.pagination': boot.bundle + 'stratus/views/widgets/pagination' + boot.suffix,
-        'stratus.views.widgets.password': boot.bundle + 'stratus/views/widgets/password' + boot.suffix,
-        'stratus.views.widgets.publish': boot.bundle + 'stratus/views/widgets/publish' + boot.suffix,
-        'stratus.views.widgets.save': boot.bundle + 'stratus/views/widgets/save' + boot.suffix,
-        'stratus.views.widgets.select': boot.bundle + 'stratus/views/widgets/select' + boot.suffix,
-        'stratus.views.widgets.text': boot.bundle + 'stratus/views/widgets/text' + boot.suffix,
-        'stratus.views.widgets.toggle': boot.bundle + 'stratus/views/widgets/toggle' + boot.suffix,
-        'stratus.views.widgets.routing': boot.bundle + 'stratus/views/widgets/routing' + boot.suffix,
-        'stratus.views.widgets.upload': boot.bundle + 'stratus/views/widgets/upload' + boot.suffix,
+        'stratus.views.widgets.base': boot.bundle + 'stratus/legacy/views/widgets/base' + boot.suffix,
+        'stratus.views.widgets.autocomplete': boot.bundle + 'stratus/legacy/views/widgets/autocomplete' + boot.suffix,
+        'stratus.views.widgets.calendar': boot.bundle + 'stratus/legacy/views/widgets/calendar' + boot.suffix,
+        'stratus.views.widgets.collection': boot.bundle + 'stratus/legacy/views/widgets/collection' + boot.suffix,
+        'stratus.views.widgets.datetime': boot.bundle + 'stratus/legacy/views/widgets/datetime' + boot.suffix,
+        'stratus.views.widgets.delete': boot.bundle + 'stratus/legacy/views/widgets/delete' + boot.suffix,
+        'stratus.views.widgets.dialogue': boot.bundle + 'stratus/legacy/views/widgets/dialogue' + boot.suffix,
+        'stratus.views.widgets.display': boot.bundle + 'stratus/legacy/views/widgets/display' + boot.suffix,
+        'stratus.views.widgets.editor': boot.bundle + 'stratus/legacy/views/widgets/editor' + boot.suffix,
+        'stratus.views.widgets.filter': boot.bundle + 'stratus/legacy/views/widgets/filter' + boot.suffix,
+        'stratus.views.widgets.generic': boot.bundle + 'stratus/legacy/views/widgets/generic' + boot.suffix,
+        'stratus.views.widgets.link': boot.bundle + 'stratus/legacy/views/widgets/link' + boot.suffix,
+        'stratus.views.widgets.map': boot.bundle + 'stratus/legacy/views/widgets/map' + boot.suffix,
+        'stratus.views.widgets.pagination': boot.bundle + 'stratus/legacy/views/widgets/pagination' + boot.suffix,
+        'stratus.views.widgets.password': boot.bundle + 'stratus/legacy/views/widgets/password' + boot.suffix,
+        'stratus.views.widgets.publish': boot.bundle + 'stratus/legacy/views/widgets/publish' + boot.suffix,
+        'stratus.views.widgets.save': boot.bundle + 'stratus/legacy/views/widgets/save' + boot.suffix,
+        'stratus.views.widgets.select': boot.bundle + 'stratus/legacy/views/widgets/select' + boot.suffix,
+        'stratus.views.widgets.text': boot.bundle + 'stratus/legacy/views/widgets/text' + boot.suffix,
+        'stratus.views.widgets.toggle': boot.bundle + 'stratus/legacy/views/widgets/toggle' + boot.suffix,
+        'stratus.views.widgets.routing': boot.bundle + 'stratus/legacy/views/widgets/routing' + boot.suffix,
+        'stratus.views.widgets.upload': boot.bundle + 'stratus/legacy/views/widgets/upload' + boot.suffix,
 
         /* Stratus Core Plugins */
-        'stratus.views.plugins.base': boot.bundle + 'stratus/views/plugins/base' + boot.suffix,
-        'stratus.views.plugins.addclass': boot.bundle + 'stratus/views/plugins/addclass' + boot.suffix,
-        'stratus.views.plugins.addclose': boot.bundle + 'stratus/views/plugins/addclose' + boot.suffix,
-        'stratus.views.plugins.carousel': boot.bundle + 'stratus/views/plugins/carousel' + boot.suffix,
-        'stratus.views.plugins.dim': boot.bundle + 'stratus/views/plugins/dim' + boot.suffix,
-        'stratus.views.plugins.drawer': boot.bundle + 'stratus/views/plugins/drawer' + boot.suffix,
-        'stratus.views.plugins.help': boot.bundle + 'stratus/views/plugins/help' + boot.suffix,
-        'stratus.views.plugins.masonry': boot.bundle + 'stratus/views/plugins/masonry' + boot.suffix,
-        'stratus.views.plugins.morebox': boot.bundle + 'stratus/views/plugins/morebox' + boot.suffix,
-        'stratus.views.plugins.onscreen': boot.bundle + 'stratus/views/plugins/onscreen' + boot.suffix,
-        'stratus.views.plugins.popover': boot.bundle + 'stratus/views/plugins/popover' + boot.suffix,
+        'stratus.views.plugins.base': boot.bundle + 'stratus/legacy/views/plugins/base' + boot.suffix,
+        'stratus.views.plugins.addclass': boot.bundle + 'stratus/legacy/views/plugins/addclass' + boot.suffix,
+        'stratus.views.plugins.addclose': boot.bundle + 'stratus/legacy/views/plugins/addclose' + boot.suffix,
+        'stratus.views.plugins.carousel': boot.bundle + 'stratus/legacy/views/plugins/carousel' + boot.suffix,
+        'stratus.views.plugins.dim': boot.bundle + 'stratus/legacy/views/plugins/dim' + boot.suffix,
+        'stratus.views.plugins.drawer': boot.bundle + 'stratus/legacy/views/plugins/drawer' + boot.suffix,
+        'stratus.views.plugins.help': boot.bundle + 'stratus/legacy/views/plugins/help' + boot.suffix,
+        'stratus.views.plugins.lazy': boot.bundle + 'stratus/legacy/views/plugins/lazy' + boot.suffix,
+        'stratus.views.plugins.masonry': boot.bundle + 'stratus/legacy/views/plugins/masonry' + boot.suffix,
+        'stratus.views.plugins.morebox': boot.bundle + 'stratus/legacy/views/plugins/morebox' + boot.suffix,
+        'stratus.views.plugins.onscreen': boot.bundle + 'stratus/legacy/views/plugins/onscreen' + boot.suffix,
+        'stratus.views.plugins.popover': boot.bundle + 'stratus/legacy/views/plugins/popover' + boot.suffix,
 
         /* Stratus Core Underscore Templates */
         /* TODO: remove these, they aren't even used anymore. Convert to components and remove. */
-        'templates-base': boot.bundle + 'stratus/views/widgets/base.html',
-        'templates-filter-search': boot.bundle + 'stratus/views/widgets/filter.search.html',
-        'templates-filter-sort': boot.bundle + 'stratus/views/widgets/filter.sort.html',
-        'templates-filter-type': boot.bundle + 'stratus/views/widgets/filter.type.html',
-        'templates-pagination': boot.bundle + 'stratus/views/widgets/pagination.html',
-        'templates-toggle': boot.bundle + 'stratus/views/widgets/toggle.html',
-        'templates-widgets-select': boot.bundle + 'stratus/views/widgets/select.html',
-        'templates-widgets-select-options': boot.bundle + 'stratus/views/widgets/select.options.html',
-        'templates-widgets-selected-options': boot.bundle + 'stratus/views/widgets/selected.options.html',
-        'templates-upload': boot.bundle + 'stratus/views/widgets/upload.html',
+        'templates-base': boot.bundle + 'stratus/legacy/views/widgets/base.html',
+        'templates-filter-search': boot.bundle + 'stratus/legacy/views/widgets/filter.search.html',
+        'templates-filter-sort': boot.bundle + 'stratus/legacy/views/widgets/filter.sort.html',
+        'templates-filter-type': boot.bundle + 'stratus/legacy/views/widgets/filter.type.html',
+        'templates-pagination': boot.bundle + 'stratus/legacy/views/widgets/pagination.html',
+        'templates-toggle': boot.bundle + 'stratus/legacy/views/widgets/toggle.html',
+        'templates-widgets-select': boot.bundle + 'stratus/legacy/views/widgets/select.html',
+        'templates-widgets-select-options': boot.bundle + 'stratus/legacy/views/widgets/select.options.html',
+        'templates-widgets-selected-options': boot.bundle + 'stratus/legacy/views/widgets/selected.options.html',
+        'templates-upload': boot.bundle + 'stratus/legacy/views/widgets/upload.html',
 
         /* Froala Libraries */
 
@@ -2500,8 +2508,8 @@ boot.config({
 
         /* Backbone */
         underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
-        backbone: boot.bundle + 'stratus/external/backbone' + boot.suffix,
-        'backbone.relational': boot.bundle + 'stratus/normalizers/backbone.relational.injector',
+        backbone: boot.bundle + 'stratus/legacy/external/backbone' + boot.suffix,
+        'backbone.relational': boot.bundle + 'stratus/legacy/normalizers/backbone.relational.injector',
         'backbone.relational.core': boot.bundle + 'stratus/bower_components/backbone-relational/backbone-relational',
 
         /* jQuery */
