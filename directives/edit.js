@@ -65,6 +65,7 @@
                 };
 
                 // METHODS
+                // -------
 
                 $scope.liveEditStatus = function () {
                     if ($scope.ctrl.initialized) {
@@ -80,8 +81,7 @@
 
                 $scope.setEdit = function (bool) {
                     // Only allow Edit mode if liveedit is enabled.
-                    if (bool && ($scope.liveEditStatus() || $scope.alwaysEdit)
-                    ) {
+                    if (bool && ($scope.liveEditStatus() || $scope.alwaysEdit)) {
                         $scope.edit = bool;
                         $scope.focusOnEditable();
                     } else {
@@ -119,6 +119,7 @@
                 };
 
                 // WATCHERS
+                // --------
 
                 $scope.$watch('ngModel', function (data) {
                     if (data instanceof model && !_.isEqual(data, $scope.model)) {
@@ -147,7 +148,7 @@
                     // TRIGGERS
 
                     // Save / Cancel value on key press
-                    // FIXME saving with key press with cause two saves (due to focus out). We need a save throttle to prevent errors
+                    // FIXME: saving with key press with cause two saves (due to focus out). We need a save throttle to prevent errors
                     $($scope.edit_input_container).on('keydown keypress', function (event) {
                         switch (event.which) {
                             case Stratus.Key.Enter:
@@ -165,7 +166,7 @@
                         }
                     });
 
-                    // FIXME save of focus out does not work on the media selector correctly
+                    // FIXME: save of focus out does not work on the media selector correctly
                     // Update value on change, save value on blur
                     $($scope.edit_input_container).on('focusout', function () {
                         if ($scope.autoSave !== false && $scope.autoSave !== 'false') {

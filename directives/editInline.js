@@ -199,6 +199,14 @@
 
                         // TRIGGERS
 
+                        $scope.$value.on('focus', function () {
+                            $element.addClass('focus');
+                        });
+
+                        $scope.$value.on('focusout', function () {
+                            $element.removeClass('focus');
+                        });
+
                         // Update value on change, save value on blur
                         $scope.$value.on('focusout keyup change', function () {
                             if (ctrl.initialized) {
