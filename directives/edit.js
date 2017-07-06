@@ -11,7 +11,8 @@
             'angular-material',
             'stratus.services.model',
             'stratus.directives.froala',
-            //'stratus.directives.editInlineFroala',
+
+            // 'stratus.directives.editInlineFroala',
             'stratus.directives.src',
             'stratus.components.mediaSelector'
         ], factory);
