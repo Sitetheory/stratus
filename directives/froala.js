@@ -163,7 +163,7 @@
                                 // add tags on element
                                 if (tags) {
                                     for (var attr in tags) {
-                                        if (tags.hasOwnProperty(attr) && attr != innerHtmlAttr) {
+                                        if (tags.hasOwnProperty(attr) && attr !== innerHtmlAttr) {
                                             element.attr(attr, tags[attr]);
                                         }
                                     }
