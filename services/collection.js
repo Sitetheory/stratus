@@ -175,6 +175,7 @@
                 this.filter = function (query) {
                     that.filtering = true;
                     that.meta.set('api.q', angular.isDefined(query) ? query : '');
+                    that.meta.set('api.p', 1);
                     return that.fetch();
                 };
 
