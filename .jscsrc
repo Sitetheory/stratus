@@ -32,7 +32,11 @@
   ],
   "disallowMultipleLineBreaks": true,
   "disallowMultipleLineStrings": null,
-  "disallowMultipleVarDecl": true,
+  "disallowMultipleVarDecl": {
+    "allExcept": [
+      "require"
+    ]
+  },
   "disallowSpaceBeforeComma": true,
   "disallowSpaceBeforeSemicolon": null,
   "disallowSpacesInsideTemplateStringPlaceholders": true,
