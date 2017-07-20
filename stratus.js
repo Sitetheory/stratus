@@ -91,7 +91,7 @@
         Select: null,
 
         /* Boot */
-        BaseUrl: ((requirejs && _.has(requirejs.s.contexts._, 'config')) ? requirejs.s.contexts._.config.baseUrl : null) || '/',
+        BaseUrl: (requirejs && _.has(requirejs.s.contexts._, 'config') ? requirejs.s.contexts._.config.baseUrl : null) || '/',
 
         // TODO: Change each of these "namespaces" into Backbone.Models references so that we can easily
         // use the events of type changes to hook different initialization routines to wait for the type
