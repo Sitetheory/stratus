@@ -252,7 +252,7 @@ a.minus_icon .addIcon {
     visibility: hidden;
     z-index: 99;
     opacity: 0;
-    margin: -6px 0 8px;
+    margin: -8px 0 8px;
     padding: 0;
     width: 150px;
     text-align: center;
@@ -327,6 +327,7 @@ a.minus_icon .addIcon {
     left: 50%;
     width: 0;
     height: 0;
+    margin-top: -1px;
     border-top: 8px solid #222222;
     border-right: 8px solid transparent;
     border-left: 8px solid transparent;
