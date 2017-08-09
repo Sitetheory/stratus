@@ -1,4 +1,4 @@
-//     Stratus.Components.mediaSelector 1.0
+//     Stratus.Components.Permissions 1.0
 
 //     Copyright (c) 2017 by Sitetheory, All Rights Reserved
 //
@@ -15,8 +15,9 @@
 //     For full details and documentation:
 //     http://docs.sitetheory.io
 
-// Stratus Media Selector Component
+// Stratus Permissions Component
 // ----------------------
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -39,10 +40,7 @@
         factory(root.Stratus, root.$, root._);
     }
 }(this, function (Stratus, $, _) {
-
-    // This component intends to handle binding of an
-    // item array into a particular attribute.
-    // code layout-option{'collapsed','expanded'}
+    // Permissions
     Stratus.Components.Permissions = {
         bindings: {
             ngModel: '='
@@ -72,13 +70,17 @@
                 console.log(selValue);
             };
 
-            /* var allOptions = $("ul.be-select").children('li:not(.init)');
-             $("ul.be-select").on("click", "li:not(.init)", function() {
-             allOptions.removeClass('selected');  // TODO: use ngClass since this edits the DOM
-             $(this).addClass('selected');
-             $(this).children('.init').html($(this).html());
-             allOptions.toggle();
-             });*/
+            /* *
+            var allOptions = $('ul.be-select').children('li:not(.init)');
+            $('ul.be-select').on('click', 'li:not(.init)', function () {
+                allOptions.removeClass('selected');  // TODO: use ngClass since this edits the DOM
+                $(this).addClass('selected');
+                $(this).children('.init').html(
+                    $(this).html()
+                );
+                allOptions.toggle();
+            });
+            /* */
         },
         templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
