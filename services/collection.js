@@ -4,7 +4,13 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.model'], factory);
+        define([
+            'stratus',
+            'underscore',
+            'angular',
+            'angular-material',
+            'stratus.services.model'
+        ], factory);
     } else {
         factory(root.Stratus, root._);
     }
