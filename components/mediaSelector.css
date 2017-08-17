@@ -277,7 +277,9 @@ a.minus_icon .addIcon {
     color: #FFFFFF;
     height: 120px;
 }
-
+.imageHoverInfo .smallLabel {
+    font-size: 10px;
+}
 .imageHoverInfo .fileType {
     color: #DDDDDD;
 }
