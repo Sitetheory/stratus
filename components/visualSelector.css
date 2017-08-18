@@ -5,28 +5,17 @@
 .layout_bx{float:left; width:100%; margin:0 0 50px 0;}
 .lt_box{ float: left; margin: 0; padding: 20px 0 0; width: 100%; min-width: 600px; }
 .lt-image{ float: left; overflow: hidden; position: relative; width: 13%; min-width: 100px; }
-/*.lt-image:after{content:""; position:absolute; top:100%; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); transition:all ease 0.3s;}*/
+
 .galleryimg-active:after{content:""; position:absolute; top:100%; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); transition:all ease 0.3s;}
 .lt-image:hover:after{top:0;}
-.lt-content{ float: right; margin: 0; padding: 0; width: 79%; }
-.lt-content h4{font-size:16px; color:#000; margin:0 0 15px 0;}
 .lt-content p{font-size:14px; color:#747474; line-height:22px;}
 .blck_btn{min-width:80px; padding:7px 15px; color:#fff !important; background:#000; text-decoration:none; font-size:13px; font-weight:600; z-index:99;}
 .lt-image a.blck_btn{width:80px; height:35px; position:absolute; top:0; left:-200%; right:0; margin:auto; bottom:0; transition:all ease 0.3s 0.1s;}
 .lt-image:hover a.blck_btn{left:0;}
-ul.layout_gallery{ list-style-type: none; margin: 0; padding: 0; text-align: left; width: 100%; }
-ul.layout_gallery li{ border: 2px solid transparent; display: inline-block; margin: 0 12px; overflow: hidden; position: relative; }
-ul.layout_gallery li:nth-child(3n){margin-right:0;}
-/*.galleryimg-active:after{content:""; position:absolute; top:0; left:0; right:0; bottom:0; width:0px; height:0px; background:rgba(0,0,0,0.5); transition:all ease 0.3s; margin:auto;}*/
-.galleryimg-cont{min-height:275px; max-height:275px; margin:0 0 8px 0; float:left; width:100%; position:relative;}
-ul.layout_gallery li h5{font-size:15px; color:#000; text-align:center;}
-.sr_ico i{color:#fff; font-size:40px;}
-.sr_ico{position:absolute; left:0; top:-120%; bottom:0; right:0; margin:auto; z-index:99; width: 40px; height: 42px; transition:all ease 0.2s .2s !important;}
+
 .bl_btn{min-width:80px; padding:10px 15px; color:#fff !important; background:#4a90e2; text-decoration:none; font-size:13px; font-weight:600; z-index:99;}
 .galleryimg-cont .bl_btn{ width:130px; position:absolute; bottom:-50%; left:0; right:0; margin:0 auto; text-align:center;transition:all ease 0.2s .2s;}
-ul.layout_gallery li:hover .galleryimg-cont:after{width:100%; height:100%;}
-ul.layout_gallery li:hover .sr_ico{top:-30%;}
-ul.layout_gallery li:hover .galleryimg-cont .bl_btn{bottom:30%;}
+
 ul.lt-pagination{float:right; clear:both; border-top:1px solid #979797; padding:10px 0 0 0;}
 ul.lt-pagination li{display:inline-block; margin:0 8px;}
 ul.lt-pagination li a{color:#747474; text-decoration:none; font-size:17px; font-weight:600;}
@@ -44,7 +33,77 @@ ul.lt-pagination li:last-child{margin-left:20px;}
 .media-dialog{ width:100%;top:10% !important;}
 /*.layout-dialog{ max-width:800px; margin:0 auto; width:100%; background:rgba(0,0,0,0.70); padding:40px; display:inline-block; position:relative;}*/
 .search--gallery{width:60%;}
-.select-highlight{ border: 3px solid red;}
+
+
+.selectorListImage img {
+    display: block;
+}
+.selectorListItem:hover .selectorListImage {
+    opacity: .3;
+}
+.selectorListItem .btn {
+    transition: all .1s ease-out !important;
+    transform: scale(.8);
+    display: block;
+    opacity: 0;
+    white-space: nowrap;
+}
+.selectorListItem:hover .btn {
+    transform: scale(1,1);
+    -webkit-transform: scale(1,1);
+    opacity: 1;
+}
+
+.selectorListImage .selectedBorder {
+    opacity: 0;
+    border: 5px solid #333;
+}
+.select-highlight .selectorListImage .selectedBorder {
+    opacity: 1;
+}
+.checkIcon.easyTransition {
+    transition-delay: .15s;
+    -webkit-transition-delay: .15s;
+}
+.checkIcon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    width: 20px;
+}
+.checkIcon md-icon {
+    width: 100%;
+    height: inherit;
+}
+.select-highlight .checkIcon {
+    opacity: 1;
+}
+.infoIcon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: block;
+    opacity: 0;
+    width: 32px;
+    height: 32px;
+}
+.selectorListItem:hover .infoIcon {
+    opacity: .8;
+}
+.selectorListItem:hover .infoIcon:hover {
+    transform: scale(1.25);
+    opacity: 1;
+}
+.infoIcon md-icon {
+    width: 100%;
+    height: inherit;
+}
+.infoIcon md-icon svg g {
+    fill: #FFF;
+}
+
+
 
 .layout-dialog{max-width:800px; margin: 0 auto; width: 100%; background: rgba(0, 0, 0, .7); padding: 40px; display: inline-block;position: absolute; left: 0; right: 0; margin: auto; top: 0; bottom: 0;}
 .cancel--btn { background: rgba(0, 0, 0, 0) url(/assets/1/0/bundles/sitetheorycore/images/media/close_red.png) repeat scroll 0 0 / 34px auto; border: medium none; color: #ff0000; cursor: pointer; font-size: 14px; font-weight: 600; height: 34px; margin: 0 auto; padding: 5px 8px; position: relative; right: 16px; top: -6px; width: 34px; z-index: 99; }

@@ -2,13 +2,12 @@
     <div class="layout_bx">
         <!-- Gallery header Ends -->
         <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || model.exists(property)"
-           ng-click="toggleGallery();">
-            <i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Layout</a>
+           ng-click="toggleGallery();">Select Layout</a>
         <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
         
          <!-- ng-repeat="sel in model.get(property)" -->
          
-        <div class="lt_box">
+        <div class="lt_box positionAnchor">
             <!-- FIXME: This was broken on the following div: -->
             <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
             <!-- <button class="cancel--btn" ng-click="model.toggle(property, sel.data.id, toggleOptions);"></button> -->
@@ -43,28 +42,53 @@
 
     <div class="layout_bx" ng-show="showGallery || $ctrl.layoutOption === 'expanded'">
 
-        <div class="lt-header">
-            <h3><span><i class="fa fa-question" aria-hidden="true"></i></span> Choose From Layout</h3>
-        </div><!-- Gallery header Ends -->
+        <!--  TODO: This header should only show up in situations where users are manually required to open the selector. It should be open by default in most situations. Users are going to go to the Layout tab to change or compare layouts. They need to all be visible. Also make the page look not empty. -->
+
+        <!-- <p class="instructions">Available designs for your [profile].</p> -->
+
+
         <div class="search--gallery" ng-if="$ctrl.search === true">
             <stratus-search flex="40"></stratus-search>
         </div>
+
+
+
         <div class="lt_box">
-            <ul class="layout_gallery">
-                <li ng-repeat="target in collection.models">
-               
-					<span class="galleryimg-cont" ng-class="{'select-highlight': model.exists(property, target.data.id)}">
-                        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt=""/>
-						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(target.data);">
-                            <i class="fa fa-search" aria-hidden="true"></i>
-                        </a>
-						<a href="#" ng-hide="model.exists(property, target.data.id)"
-                           ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images});"
-                           class="bl_btn">Choose Layout </a>
-					</span>
-                    <h5>{{target.data.name}}</h5>
-                </li>
-            </ul><!-- Layout Gallery Ends -->
+
+            <md-grid-list
+                    md-cols-xs="1" md-cols-gt-xs="2"
+                    md-row-height="3:4"
+                    md-gutter-gt-md="50px" md-gutter-md="40px" md-gutter-sm="30px" md-gutter-gt-xs="0" >
+
+                <md-grid-tile ng-repeat="target in collection.models">
+
+
+                    <div class="selectorListItem positionAnchor" ng-class="{'select-highlight': model.exists(property, target.data.id)}">
+                        <h4 class="smallLabel">{{target.data.name}}</h4>
+                        <div class="checkIcon colorPrimary easyTransition">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                        </div>
+                        <div class="backgroundDark positionAnchor">
+                            <div class="selectorListImage defaultShadow easyTransition">
+                                <div class="selectedBorder positionAll easyTransition"></div>
+                                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/2columnMinimal.jpg" alt=""/>
+                            </div>
+
+                            <a href="#" ng-show="$ctrl.details === true" class="infoIcon easyTransition" ng-click="zoomView(target.data);">
+                                <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                            </a>
+                            <div class="btnContainer positionCenter">
+                                <a href="#" ng-hide="model.exists(property, target.data.id)"
+                                   ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images});"
+                                   class="btn">Choose Layout </a>
+                            </div>
+                        </div>
+					</div>
+
+                </md-grid-tile>
+
+            </md-grid-list>
+
         </div><!-- Layout box Inner ends -->
         <stratus-pagination class="visual-pag"></stratus-pagination>
     </div><!-- Layout Box Ends -->
@@ -83,7 +107,7 @@
             </div>
             <div class="ltpop-right">
                 <a href="javascript:void(0)">
-                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
+                    <img src="/assets/1/0/bundles/sitetheorycore/images/visual/2columnMinimal.jpg" alt=""/>
                 </a>
             </div>
             <a href="javascript:void(0)" class="lt-close" ng-click="closeDialog();">X</a>
