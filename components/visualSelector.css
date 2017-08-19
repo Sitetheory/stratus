@@ -25,13 +25,14 @@ ul.lt-pagination li a.active{color:#000;}
 ul.lt-pagination li:first-child{margin-right:20px;}
 ul.lt-pagination li:last-child{margin-left:20px;}
 
-@media (min-width: 900px) {
+@media (min-width: 1000px) {
     .media-dialog {
-        width: 1000px;
+        width: 900px;
     }
 }
 
 .lt-popup {
+    position: relative;
     max-width: 900px;
     margin: 0 auto;
     padding: 7%;
@@ -39,7 +40,7 @@ ul.lt-pagination li:last-child{margin-left:20px;}
     width: 100%;
 }
 .lt-popup  .btnClose {
-    position:absolute;
+    position: absolute;
     top: 20px;
     right: 20px;
 }
