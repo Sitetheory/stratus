@@ -1,3 +1,5 @@
+/* !importants can be removed when css has the right hierarchy. right now the selector css is outranked by the site.css which is outranked by the common.css */
+
 .lt-header{float:left; width:100%; margin:0 0 20px 0;}
 .lt-header h3{font-size:22px; color:#000;}
 .lt-header span{ display:inline-block; text-align:center; width:24px; height:24px; border-radius:50%; border:1px solid #aeaeae; line-height:19px; background:#f5f5f5; margin:0 10px 0 0px;}
@@ -22,16 +24,86 @@ ul.lt-pagination li a{color:#747474; text-decoration:none; font-size:17px; font-
 ul.lt-pagination li a.active{color:#000;}
 ul.lt-pagination li:first-child{margin-right:20px;}
 ul.lt-pagination li:last-child{margin-left:20px;}
-.lt-popup{position:absolute; max-width:800px; padding:40px 40px; background:#ededed; width:100%; top:20%; }
-.ltpop-left{float:left; width:30%; margin:0 5% 0 0;}
-.ltpop-left h3{font-size:18px; color:#000; margin:0 0 15px 0;}
-.ltpop-left p{font-size:14px; color:#888; line-height:22px;}
-.ltpop-left .bl_btn{display:inline-block; margin:15px 0 0 0; clear:both;}
-.ltpop-right{float:left; width:65%;}
-.ltpop-right img{width:100%;}
-.lt-close{position:absolute; top:10px; right:15px; text-decoration:none; color:#999999;}
-.media-dialog{ width:100%;top:10% !important;}
-/*.layout-dialog{ max-width:800px; margin:0 auto; width:100%; background:rgba(0,0,0,0.70); padding:40px; display:inline-block; position:relative;}*/
+
+@media (min-width: 900px) {
+    .media-dialog {
+        width: 1000px;
+    }
+}
+
+.lt-popup {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 7%;
+    background: rgba(255,255,255,.9);
+    width: 100%;
+}
+.lt-popup  .btnClose {
+    position:absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.lt-popup hr {
+    background: none;
+    border-top: 1px solid #777;
+}
+.lt-popup .smallLabel {
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+.lt-popup .btn {
+    display: table;
+    margin-top: 26px;
+}
+.btnChoose {
+    margin-bottom: 34px !important;
+}
+.popupQuickInfo {
+    margin:  34px 0 40px;
+}
+
+.popupDescription {
+    margin-bottom: 50px;
+}
+.popupForm {
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+.popupForm input {
+    margin-right: 10px;
+}
+.popupImage {
+    padding-right: 7%;
+}
+.popupImage img {
+    display: block;
+}
+
+@media (max-width:899px) {
+    .lt-popup {
+        padding: 40px;
+        overflow: scroll;
+    }
+    .lt-popup  .btnClose {
+        top: 10px;
+        right: 10px;
+    }
+    .popupImage {
+        padding-right: 0;
+        max-width: 400px;
+        margin: 0 auto 30px;
+    }
+}
+
+
+
+
+
+
+
+
+
 .search--gallery{width:60%;}
 
 
@@ -39,7 +111,10 @@ ul.lt-pagination li:last-child{margin-left:20px;}
     display: block;
 }
 .selectorListItem:hover .selectorListImage {
-    opacity: .3;
+    opacity: .2;
+}
+.selectorListItem.select-highlight:hover .selectorListImage {
+    opacity: 1;
 }
 .selectorListItem .btn {
     transition: all .1s ease-out !important;
@@ -60,6 +135,12 @@ ul.lt-pagination li:last-child{margin-left:20px;}
 }
 .select-highlight .selectorListImage .selectedBorder {
     opacity: 1;
+}
+.select-highlight .btn {
+    display: none;
+}
+.select-highlight .btn {
+    display: none;
 }
 .checkIcon.easyTransition {
     transition-delay: .15s;
@@ -104,8 +185,6 @@ ul.lt-pagination li:last-child{margin-left:20px;}
 }
 
 
-
-.layout-dialog{max-width:800px; margin: 0 auto; width: 100%; background: rgba(0, 0, 0, .7); padding: 40px; display: inline-block;position: absolute; left: 0; right: 0; margin: auto; top: 0; bottom: 0;}
 .cancel--btn { background: rgba(0, 0, 0, 0) url(/assets/1/0/bundles/sitetheorycore/images/media/close_red.png) repeat scroll 0 0 / 34px auto; border: medium none; color: #ff0000; cursor: pointer; font-size: 14px; font-weight: 600; height: 34px; margin: 0 auto; padding: 5px 8px; position: relative; right: 16px; top: -6px; width: 34px; z-index: 99; }
 .galleryimg-cont::after { background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0; bottom: 0; content: ""; height: 0; left: 0; margin: auto; position: absolute; right: 0; top: 0; transition: all 0.3s ease 0s; width: 0 }
 .galleryimg-cont.select-highlight {  max-height: 281px; }
