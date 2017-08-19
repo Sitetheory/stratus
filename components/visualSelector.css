@@ -61,11 +61,11 @@ ul.lt-pagination li:last-child{margin-left:20px;}
     margin-bottom: 34px !important;
 }
 .popupQuickInfo {
-    margin:  34px 0 40px;
+    margin:  34px 0;
 }
 
 .popupDescription {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
 }
 .popupForm {
     margin-bottom: 8px;
