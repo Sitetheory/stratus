@@ -20,13 +20,6 @@
 .description {
     margin-bottom: 40px;
 }
-@media (max-width:899px) {
-    .imageColumn {
-        padding-right: 0;
-        max-width: 400px;
-        margin: 0 auto 30px;
-    }
-}
 
 
 /* Selected layout area */
@@ -48,6 +41,7 @@
 }
 .selectedLayout h2 {
     margin-top: 16px;
+    line-height: 1.2;
 }
 .selectedLayout h4 {
     margin-bottom: 0;
@@ -170,9 +164,6 @@
 .gallerySelected .btn {
     display: none;
 }
-.gallerySelected .btn {
-    display: none;
-}
 .checkIcon.easyTransition {
     transition-delay: .15s;
     -webkit-transition-delay: .15s;
@@ -192,3 +183,45 @@
     opacity: 1;
 }
 
+@media (max-width:767px) {
+    .galleryList {
+        padding: 0 6%;
+    }
+    .galleryItem .backgroundDark {
+        background: none;
+    }
+    .galleryItem h4 {
+        padding: 0 50px 0 0;
+    }
+    .galleryItem .btnContainer {
+        transform: none;
+        position: relative;
+        top: inherit;
+        right: inherit;
+        bottom: inherit;
+        left: inherit;
+    }
+    .galleryItem .btn {
+        transform: none;
+        opacity: 1;
+        margin-top: 20px;
+    }
+    .infoIcon {
+        z-index: 100;
+        transform: scale(1.25);
+        margin-bottom: 16px;
+        position: relative;
+        top: inherit;
+        right: inherit;
+        bottom: inherit;
+        left: inherit;
+        opacity: 1;
+    }
+    .infoIcon md-icon svg g {
+        fill: #222;
+    }
+    .checkIcon {
+        top: 3px;
+        right: 44px;
+    }
+}

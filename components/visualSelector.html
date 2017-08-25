@@ -18,7 +18,7 @@
 
 
         <div class="selectedLayout clearfix"> <!-- Selected layout info -->
-            <div class="imageColumn stGrid column50">
+            <div class="imageColumn stGrid stGridMobile column50">
 
                 <div class="selectedImage positionAnchor backgroundDark">
 
@@ -49,7 +49,7 @@
                 </div>
 
             </div>
-            <div class="selectedInfo infoColumn stGrid column50">
+            <div class="selectedInfo infoColumn stGrid stGridTablet column50">
 
                 <h4>You are currently using</h4>
                 <!-- FIXME: This only works right now once the gallery is uncollapsed. Well, actually it will probably automatically work once there is always a default layout? Can delete hard coded text.-->
@@ -98,6 +98,7 @@
             <md-grid-list
                     md-cols-xs="1" md-cols-gt-xs="2"
                     md-row-height="3:4"
+                    md-row-height-xs="5:9"
                     md-gutter-gt-md="50px" md-gutter-md="40px" md-gutter-sm="30px" md-gutter-gt-xs="0" >
 
                 <md-grid-tile ng-repeat="target in collection.models">
@@ -109,6 +110,11 @@
                             <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
                         </div>
                         <div class="backgroundDark positionAnchor">
+
+                            <a href="#" ng-show="$ctrl.details === true" class="infoIcon easyTransition" ng-click="zoomView(target.data);">
+                                <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                            </a>
+
                             <div class="galleryImage defaultShadow easyTransition">
                                 <div class="selectedBorder positionAll easyTransition">
 
@@ -116,9 +122,9 @@
                                 <img src="/assets/1/0/bundles/sitetheorycore/images/visual/2columnMinimal.jpg" alt=""/>
                             </div>
 
-                            <a href="#" ng-show="$ctrl.details === true" class="infoIcon easyTransition" ng-click="zoomView(target.data);">
-                                <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                            </a>
+
+
+                            <!-- FIXME: On mobile when you click this, it shoots you to the top of the page -->
                             <div class="btnContainer positionCenter">
                                 <a href="#" ng-hide="model.exists(property, target.data.id)"
                                    ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images});"
@@ -141,7 +147,7 @@
     <!-- Detail Page starts from here -->
     <div class="layoutDialog" role="dialog">
         <div class="popup clearfix defaultBorderRadius">
-            <div class="popupImage imageColumn stGrid column50">
+            <div class="popupImage imageColumn stGrid stGridTablet column50">
                 <div class="defaultShadow">
 
                     <!-- FIXME: Not sure why there is an href on this image? Probably delete. -->
@@ -150,7 +156,7 @@
                     </a>
                 </div>
             </div>
-            <div class="popupInfo infoColumn stGrid column50">
+            <div class="popupInfo infoColumn stGrid stGridTablet column50">
                 <h2>{{layoutDetail.name}}</h2>
                 <hr>
 
