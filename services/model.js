@@ -4,7 +4,12 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular', 'angular-material'], factory);
+        define([
+            'stratus',
+            'underscore',
+            'angular',
+            'angular-material'
+        ], factory);
     } else {
         factory(root.Stratus, root._);
     }
@@ -487,6 +492,7 @@
                  * @type {Function}
                  */
                 this.destroy = function () {
+                    // TODO: Add a confirmation option here
                     if (that.collection) {
                         that.collection.remove(that);
                     }
