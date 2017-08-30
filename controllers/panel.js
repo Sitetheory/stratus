@@ -22,7 +22,7 @@
         '$mdPanel',
         function ($scope, $element, $parse, $mdPanel) {
             // Store Instance
-            Stratus.Instances[_.uniqueId('dialog_')] = $scope;
+            Stratus.Instances[_.uniqueId('panel_')] = $scope;
 
             // Digest Template
             $scope.template = $element.attr('template') || null;
