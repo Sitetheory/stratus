@@ -48,7 +48,6 @@ var location = {
             'models/*.js',
             'collections/*.js',
             'routers/*.js',
-            'controllers/*.js',
             'services/*.js',
             'bower_components/requirejs/require.js',
             'bower_components/ng-sortable/angular-legacy-sortable.js'
@@ -57,7 +56,6 @@ var location = {
             'stratus.min.js',
             'normalizers/*.min.js',
             'models/*.min.js',
-            'collections/*.min.js',
             'routers/*.min.js',
             'controllers/*.min.js',
             'services/*.min.js',
@@ -69,12 +67,14 @@ var location = {
         core: [
             'boot/*.js',
             'components/*.js',
+            'controllers/*.js',
             'directives/*.js',
             'filters/*.js'
         ],
         min: [
             'boot/*.min.js',
             'components/*.min.js',
+            'collections/*.min.js',
             'directives/*.min.js',
             'filters/*.min.js'
         ]
