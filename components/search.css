@@ -5,12 +5,10 @@
 }
 
 .search input {
-    padding: 10px 30px 10px 31px;
-    border: 1px solid #ccc;
+    padding: 15px 30px 14px 58px;
     color: black;
-    font-family: arial, sans-serif;
-    font-size: 16px;
     width: 100%;
+    font-size: 15px;
 }
 
 .search input:focus {
@@ -22,28 +20,57 @@
     display: none;
 }
 
+.search md-icon {
+    transition: all .2s ease-out;
+    position: absolute;
+}
+.search .left-icon:hover {
+    opacity: .6;
+}
+.search md-icon g {
+    fill: rgba(0,0,0,.8);
+}
 .search .left-icon {
-    position: absolute;
-    left: 10px;
     top: 11px;
+    left: 12px;
+    padding-right: 8px;
+    width: 32px;
+    height: 26px;
+    min-width: 32px;
+    min-height: 26px;
+    border-right: 1px solid rgba(33,33,33,.4);
 }
-
 .search .right-icon {
-    position: absolute;
-    right: 10px;
-    top: 11px;
+    top: 0px;
+    right: 0;
+    padding: 13px;
     cursor: pointer;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    background: #222;
 }
-
-.search .active {
-    color: #555;
+.search .right-icon:hover {
+    background: #555;
 }
-
-.search .fa {
-    color: #444;
-    font-size: 16px;
+.search .right-icon g {
+    fill: #FFF;
 }
-
 .search .fa-times {
     color: #999;
+}
+@media (max-width:959px) {
+    .search input {
+        padding-left: 46px;
+    }
+    .search .left-icon {
+        padding-right: 0;
+        width: 26px;
+        min-width: 26px;
+        border-right: none;
+    }
+    .search .right-icon {
+        display: none;
+    }
 }
