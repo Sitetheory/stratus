@@ -123,9 +123,11 @@
     border: 5px solid #333;
 }
 .infoIcon {
+    transition: all .2s ease-out;
     position: absolute;
     top: 20px;
     right: 20px;
+    z-index: 100;
     display: block;
     opacity: 0;
     width: 32px;
@@ -207,7 +209,6 @@
         margin-top: 20px;
     }
     .infoIcon {
-        z-index: 100;
         transform: scale(1.25);
         margin-bottom: 16px;
         position: relative;
