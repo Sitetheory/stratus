@@ -889,6 +889,24 @@
     };
 
     /**
+     * TODO: Merge with prepend
+     *
+     * @param child
+     * @returns {*}
+     */
+    Stratus.Selector.append = function (child) {
+        var that = this;
+        if (that.selection instanceof NodeList) {
+            if (!Stratus.Environment.get('production')) console.log('List:', that);
+        } else if (child) {
+            that.selection.insertBefore(child, that.selection.lastChild);
+        }
+        return that;
+    };
+
+    /**
+     * TODO: Merge with append
+     *
      * @param child
      * @returns {*}
      */
@@ -2260,7 +2278,8 @@
                 }
 
                 /* Inject Link into Head */
-                Stratus('head').prepend(link);
+                //Stratus('head').prepend(link);
+                Stratus('head').append(link);
             }
         });
     };
