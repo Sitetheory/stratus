@@ -1,7 +1,6 @@
 @import "../stratus";
-/* TODO: make publish svg a sprite and reset position (not rotation like it currently does for testing only) */
 
-.btn.btnPublish {
+.btn.btnPublishFull {
   padding: 14px 20px 0 20px !important;
   width: inherit;
   height: 55px;
@@ -10,14 +9,14 @@
   background: #FF5B3A;
 }
 
-.btn.btnPublish svg {
+.btn.btnPublishFull svg {
   position: relative;
   margin-right: 8px;
   width: 28px;
   vertical-align: middle;
 }
 
-.btn.btnPublish svg .actionButton {
+.btn.btnPublishFull svg .actionButton {
   transition: transform .3s ease-out;
   -webkit-transition: transform .3s ease-out;
   transform: translateX(0);
@@ -25,59 +24,59 @@
   fill: #FFF;
 }
 
-.btn.btnPublish:hover {
+.btn.btnPublishFull:hover {
   background: #FF7550;
 }
 
 /* Published */
 
-.published.btnPublish svg .actionButton {
+.published.btnPublishFull svg .actionButton {
   transform: translateX(-25%);
   -webkit-transform: translateX(-25%);
 }
 
-.published.md-button.btnPublish,
-.published.btnPublish {
+.published.md-button.btnPublishFull,
+.published.btnPublishFull {
   background: #56995E;
 }
 
-.published.md-button.btnPublish:not([disabled]):hover,
-.published.btnPublish:not([disabled]):hover {
+.published.md-button.btnPublishFull:not([disabled]):hover,
+.published.btnPublishFull:not([disabled]):hover {
   background: #7CB27D;
 }
 
 /* Unpublished */
 
-.unpublished.md-button.btnPublish,
-.unpublished.btnPublish {
+.unpublished.md-button.btnPublishFull,
+.unpublished.btnPublishFull {
   background: #D96236;
 }
 
-.unpublished.md-button.btnPublish:not([disabled]):hover,
-.unpublished.btnPublish:not([disabled]):hover {
+.unpublished.md-button.btnPublishFull:not([disabled]):hover,
+.unpublished.btnPublishFull:not([disabled]):hover {
   background: #FF7B55;
 }
 
 /* Delayed */
 
-.delayed.md-button.btnPublish,
-.delayed.btnPublish {
+.delayed.md-button.btnPublishFull,
+.delayed.btnPublishFull {
   background: #734564;
 }
 
-.delayed.md-button.btnPublish:not([disabled]):hover,
-.delayed.btnPublish:not([disabled]):hover {
+.delayed.md-button.btnPublishFull:not([disabled]):hover,
+.delayed.btnPublishFull:not([disabled]):hover {
   background: #A47594;
 }
 
-.delayed.btnPublish svg .actionButton {
+.delayed.btnPublishFull svg .actionButton {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
 
-.btnPublish:hover .publishIcon svg,
-.published.btnPublish:hover .publishIcon svg,
-.delayed.btnPublish:hover .publishIcon svg {
+.btnPublishFull:hover .publishIconFull svg,
+.published.btnPublishFull:hover .publishIconFull svg,
+.delayed.btnPublishFull:hover .publishIconFull svg {
   animation: btnIconGrow .3s ease-out both;
   -webkit-animation: btnIconGrow .3s ease-out both;
 }
@@ -99,40 +98,12 @@
   border-left: 1px solid rgba(255, 255, 255, .4);
 }
 
-#header .btnPublish .caret {
+#header .btnPublishFull .caret {
   opacity: .7;
   border-width: 5px;
   border-top-color: #FFF;
 }
 
-#header .btnPublish:hover .caret {
+#header .btnPublishFull:hover .caret {
   opacity: 1;
 }
-
-/* Bootstrap polishes to timepicker clock */
-/**
-.bootstrap-datetimepicker-widget table td,
-.bootstrap-datetimepicker-widget table td span {
-    width: 46px;
-    height: 36px;
-    line-height: 36px;
-}
-.bootstrap-datetimepicker-widget .timepicker-hour,
-.bootstrap-datetimepicker-widget .timepicker-minute,
-.bootstrap-datetimepicker-widget .timepicker-second {
-    padding: 0;
-}
-.bootstrap-datetimepicker-widget table td.today:before {
-    border-bottom-color: #FF7552;
-}
-.bootstrap-datetimepicker-widget table td.hover,
-.bootstrap-datetimepicker-widget table td.active,
-.bootstrap-datetimepicker-widget table td.active.today,
-.bootstrap-datetimepicker-widget table td.active:hover {
-    text-shadow: none;
-    background-color: #FF7552;
-}
-.bootstrap-datetimepicker-widget table td span:hover {
-    background: none ;
-}
-/**/
