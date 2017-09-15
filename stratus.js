@@ -210,6 +210,11 @@
                 namespace: 'angular-',
                 module: true,
                 suffix: 'Module'
+            },
+            uiTree: {
+                selector: '[ui-tree]',
+                require: ['angular-ui-tree'],
+                module: 'ui.tree'
             }
         },
 
@@ -2278,7 +2283,9 @@
                 }
 
                 /* Inject Link into Head */
-                //Stratus('head').prepend(link);
+
+                // TODO: Add the ability to prepend or append by a flagged option
+                // Stratus('head').prepend(link);
                 Stratus('head').append(link);
             }
         });

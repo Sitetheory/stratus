@@ -34,6 +34,7 @@ boot.config({
         'angular-file-upload': { deps: ['angular'] },
         'angular-icons': { deps: ['angular'] },
         'angular-scrollSpy': { deps: ['angular'] },
+        'angular-ui-tree': { deps: ['angular'] },
 
         // Charts
         'chart.js': {
@@ -42,12 +43,6 @@ boot.config({
 
         /* Backbone */
         'backbone.relational': { deps: ['backbone'] },
-
-        /* jQuery */
-        selectize: { deps: ['zepto'] },
-        timeago: { deps: ['zepto'] },
-        watch: { deps: ['zepto'] },
-        masonry: { deps: ['zepto'] },
 
         /* Froala */
         'froala-align': { deps: ['froala'] },
@@ -277,20 +272,13 @@ boot.config({
         /* Common Libraries */
         bowser: boot.bundle + 'stratus/bower_components/bowser/src/bowser',
         chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart',
-        chartist: '//cdnjs.cloudflare.com/ajax/libs/chartist/0.9.5/chartist' + boot.suffix,
-        d3: '//cdnjs.cloudflare.com/ajax/libs/d3/3.5.10/d3' + boot.suffix,
         dropzone: '//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/' + boot.directory + 'dropzone-amd-module' + boot.suffix,
         fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
-        highlight: '//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight' + boot.suffix,
-        less: boot.bundle + 'stratus/bower_components/less/dist/less' + boot.suffix,
-        masonry: boot.bundle + 'stratus/bower_components/masonry/dist/masonry.pkgd' + boot.suffix,
-        math: boot.bundle + 'stratus/bower_components/mathjs/dist/math' + boot.suffix,
         md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
         moment: boot.bundle + 'stratus/bower_components/moment/' + boot.directory + 'moment' + boot.suffix,
         'moment-timezone': boot.bundle + 'stratus/bower_components/moment-timezone/builds/moment-timezone-with-data' + boot.suffix,
         'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
         promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
-        sortablejs: boot.bundle + 'stratus/bower_components/Sortable/Sortable' + boot.suffix,
         zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
 
         /* Angular */
@@ -305,6 +293,7 @@ boot.config({
         'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
         'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
         'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
+        'angular-ui-tree': boot.bundle + 'stratus/bower_components/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
 
         /* Backbone */
         underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
@@ -314,15 +303,6 @@ boot.config({
 
         /* jQuery */
         'jquery-sandbox': boot.bundle + 'stratus/normalizers/jquery.sandbox' + boot.suffix,
-        jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
-        'jquery-ui': boot.bundle + 'stratus/bower_components/jquery-ui/jquery-ui' + boot.suffix,
-        selectize: boot.bundle + 'stratus/bower_components/selectize/dist/js/standalone/selectize' + boot.suffix,
-        watch: '//cdnjs.cloudflare.com/ajax/libs/watch/2.0.4/jquery.watch' + boot.suffix,
-
-        /* Tether */
-        tether: boot.bundle + 'stratus/bower_components/tether/dist/js/tether' + boot.suffix,
-        'tether-drop': boot.bundle + 'stratus/bower_components/tether-drop/dist/js/drop' + boot.suffix,
-        'tether-shepherd': boot.bundle + 'stratus/bower_components/tether-shepherd/dist/js/shepherd' + boot.suffix,
-        'tether-tooltip': boot.bundle + 'stratus/bower_components/tether-tooltip/dist/js/tooltip' + boot.suffix
+        jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix
     }
 });

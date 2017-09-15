@@ -31,18 +31,10 @@
     "moment-range": "^2.*",
     "moment-timezone": "^0.*",
     "angular-material-datetimepicker": "^1.5",
-    "tether": "^1.*",
-    "Sortable": "^1.*",
-    "ng-sortable": "https://github.com/SortableJS/angular-legacy-sortablejs.git",
-    "masonry": "^4.*",
     "text": "^2.*",
-    "jquery-ui": "^1.*",
-    "jquery.toaster": "^1.*",
     "dropzone": "^4.*",
-    "d3": "^4.*",
     "fullcalendar": "^2.*",
-    "mathjs": "^3.*",
-    "angular": "^1.*",
+    "angular": "^1.6.*",
     "angular-sanitize": "^1.*",
     "angular-material": "^1.*",
     "angular-chart.js": "^1.*",
@@ -54,10 +46,7 @@
     "angular-scroll-spy": "https://github.com/inorganik/angular-scroll-spy.git",
     "zepto": "^1.2.0",
     "ng-file-upload": "^12.2.13",
-    "tether-shepherd": "^1.8.1",
-    "tether-drop": "^1.4.2",
-    "tether-tooltip": "^1.2.0",
-    "interactjs": "^1.2.8"
+    "angular-ui-tree": "^2.22.6"
   },
   "private": false
 }
