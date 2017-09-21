@@ -26,20 +26,29 @@ var nullify = function (proto) {
 
 // Locations
 var location = {
-    dist: {
-        core: [
+    boot: {
+        source: [
             'boot/env.js',
-            'bower_components/requirejs/require.js',
             'boot/config.js',
             'boot/init.js'
         ],
-        min: [
-            'boot/env.min.js',
-            'bower_components/requirejs/require.min.js',
-            'boot/config.min.js',
-            'boot/init.min.js'
-        ],
         output: 'dist/boot.js'
+    },
+    stratus: {
+        source: [
+            'umd/header.js',
+            'source/prototype.js',
+            'source/external.js',
+            'source/selector.js',
+            'source/event.js',
+            'source/prototypes.js',
+            'source/internals.js',
+            'loaders/backbone.bind.js',
+            'loaders/angular.bind.js',
+            'source/core.js',
+            'umd/footer.js'
+        ],
+        output: 'dist/stratus.js'
     },
     mangle: {
         core: [
@@ -106,9 +115,16 @@ var location = {
     }
 };
 
+// Test
+gulp.task('build', function () {
+    return gulp.src('./lib/*.js')
+        .pipe(concat('all.js'))
+        .pipe(gulp.dest('./dist/'));
+});
+
 // Code Styling
 gulp.task('jscs', function () {
-    return gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min)))
+    return gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min), 'source/*.js'))
         .pipe(debug({ title: 'Verify:' }))
         .pipe(jscs())
         .pipe(jscs.reporter())
@@ -119,16 +135,21 @@ gulp.task('jscs', function () {
 gulp.task('compile', ['compile:less']);
 gulp.task('compress', ['compress:mangle', 'compress:preserve', 'compress:css', 'compress:template']);
 gulp.task('clean', ['clean:mangle', 'clean:preserve', 'clean:less', 'clean:css', 'clean:template']);
-gulp.task('dist', ['dist:compile', 'dist:compress']);
+gulp.task('dist', ['dist:boot', 'dist:stratus', 'dist:compress']);
 
 // Distribution Functions
-gulp.task('dist:compile', function () {
-    return gulp.src(_.union(location.dist.core, nullify(location.dist.min)), { base: '.' })
-        .pipe(concat(location.dist.output))
+gulp.task('dist:boot', function () {
+    return gulp.src(location.boot.source, { base: '.' })
+        .pipe(concat(location.boot.output))
+        .pipe(gulp.dest('.'));
+});
+gulp.task('dist:stratus', function () {
+    return gulp.src(location.stratus.source, { base: '.' })
+        .pipe(concat(location.stratus.output))
         .pipe(gulp.dest('.'));
 });
 gulp.task('dist:compress', function () {
-    return gulp.src([location.dist.output], { base: '.' })
+    return gulp.src([location.boot.output, location.stratus.output], { base: '.' })
         .pipe(debug({ title: 'Mangle:' }))
         .pipe(uglify({
             // preserveComments: 'license',
