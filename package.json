@@ -7,6 +7,7 @@
     "test": "test"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
@@ -27,8 +28,8 @@
     "karma-firefox-launcher": "~1.0.*",
     "karma-opera-launcher": "~1.0.*",
     "karma-safari-launcher": "~1.0.*",
-    "underscore": "~1.8.*",
     "uglify": "~0.1.*",
+    "underscore": "~1.8.*",
     "vinyl-paths": "^2.1.0"
   },
   "scripts": {
