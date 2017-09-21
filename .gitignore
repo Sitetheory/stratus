@@ -18,3 +18,4 @@ bower_components/
 
 # Node.js
 node_modules/
+package-lock.json
