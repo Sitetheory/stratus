@@ -1,14 +1,33 @@
 {% if (scope === 'container') { %}
-    <div data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-iteration="{{ globals.iteration }}" data-id="{{ model.id }}" class="collectionOptionContainer"></div>
+<div data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-iteration="{{ globals.iteration }}"
+     data-id="{{ model.id }}" class="collectionOptionContainer"></div>
 {% } else if (scope === 'entity') { %}
-    {% var image = (_.has(model, globals.meta.modelImageAttribute) && _.size(model[globals.meta.modelImageAttribute])) ? _.first(model[globals.meta.modelImageAttribute]) : (_.has(model, 'url') ? model : null); %}
-    <div class="optionContainer {% if (image) { %}hasImage{% } else { %}noImage{% } %}">
-        {% if (image) { %}<div class="image"><img src="//{{ image.url }}-xs.{{ image.extension }}" data-src="lazy"></div>{% } %}
-        <div class="actions">
-            <button data-value="{{ model.id }}" class="icon delete">
-                <svg viewBox="0 0 50 50" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-icon-{{ globals.meta.elementId }}"><stop class="stop1" stop-color="#666666" offset="0%"></stop><stop class="stop2" stop-color="#666666" offset="100%"></stop></linearGradient></defs><g id="Icon-{{ globals.meta.elementId }}" class="actionButton" fill="url(#linearGradient-icon-{{ globals.meta.elementId }})"><path d="M9.98721875,42 C9.98721875,44.209 11.736676,45.99 13.8951228,45.99 L36.092096,45.99 C38.2564134,45.99 40,44.204 40,42 L40,17 L10,17 L9.98721875,42 Z M16.9936094,23.904 L18.9872188,23.904 L18.9872188,40.0891113 L16.9936094,40.0891113 L16.9936094,23.904 Z M23.9286042,23.904 L25.9872188,23.904 L25.9872188,40.0891113 L23.9286042,40.0891113 L23.9286042,23.904 Z M30.9936094,23.904 L32.9872188,23.904 L32.9872188,40.0891113 L30.9936094,40.0891113 L30.9936094,23.904 Z" id="trashBase"></path><path d="M29.2875402,9.05695537 L29.2875402,5 L20.7124598,5 L20.7124598,9.05695537 L13.20584,9.05695537 C11.4407276,9.05695537 9.99360938,10.4185299 9.99360938,12.0985149 L9.98721875,15 L40,15 L40.0063906,12.0985149 C40.0063906,10.4222324 38.5680784,9.05695537 36.79416,9.05695537 L29.2875402,9.05695537 Z M22.8562299,7.02801488 L27.1437701,7.02801488 L27.1437701,9.05602976 L22.8562299,9.05602976 L22.8562299,7.02801488 Z" id="trashLid"></path></g></svg>
-            </button>
-        </div>
-        <div class="title">{{ model[globals.meta.modelLabelAttribute] }}</div>
-    </div>
+{% var image = (_.has(model, globals.meta.modelImageAttribute) && _.size(model[globals.meta.modelImageAttribute])) ? _.first(model[globals.meta.modelImageAttribute]) : (_.has(model, 'url') ? model : null); %}
+<div class="optionContainer {% if (image) { %}hasImage{% } else { %}noImage{% } %}">
+  {% if (image) { %}
+  <div class="image"><img src="//{{ image.url }}-xs.{{ image.extension }}" data-src="lazy"></div>
+  {% } %}
+  <div class="actions">
+    <button data-value="{{ model.id }}" class="icon delete">
+      <svg viewBox="0 0 50 50" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+          <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-icon-{{ globals.meta.elementId }}">
+            <stop class="stop1" stop-color="#666666" offset="0%"></stop>
+            <stop class="stop2" stop-color="#666666" offset="100%"></stop>
+          </linearGradient>
+        </defs>
+        <g id="Icon-{{ globals.meta.elementId }}" class="actionButton"
+           fill="url(#linearGradient-icon-{{ globals.meta.elementId }})">
+          <path
+              d="M9.98721875,42 C9.98721875,44.209 11.736676,45.99 13.8951228,45.99 L36.092096,45.99 C38.2564134,45.99 40,44.204 40,42 L40,17 L10,17 L9.98721875,42 Z M16.9936094,23.904 L18.9872188,23.904 L18.9872188,40.0891113 L16.9936094,40.0891113 L16.9936094,23.904 Z M23.9286042,23.904 L25.9872188,23.904 L25.9872188,40.0891113 L23.9286042,40.0891113 L23.9286042,23.904 Z M30.9936094,23.904 L32.9872188,23.904 L32.9872188,40.0891113 L30.9936094,40.0891113 L30.9936094,23.904 Z"
+              id="trashBase"></path>
+          <path
+              d="M29.2875402,9.05695537 L29.2875402,5 L20.7124598,5 L20.7124598,9.05695537 L13.20584,9.05695537 C11.4407276,9.05695537 9.99360938,10.4185299 9.99360938,12.0985149 L9.98721875,15 L40,15 L40.0063906,12.0985149 C40.0063906,10.4222324 38.5680784,9.05695537 36.79416,9.05695537 L29.2875402,9.05695537 Z M22.8562299,7.02801488 L27.1437701,7.02801488 L27.1437701,9.05602976 L22.8562299,9.05602976 L22.8562299,7.02801488 Z"
+              id="trashLid"></path>
+        </g>
+      </svg>
+    </button>
+  </div>
+  <div class="title">{{ model[globals.meta.modelLabelAttribute] }}</div>
+</div>
 {% } %}

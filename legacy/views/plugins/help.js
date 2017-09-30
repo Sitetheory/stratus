@@ -27,21 +27,21 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'bootstrap', 'stratus.views.plugins.base', 'stratus.views.plugins.popover'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'bootstrap', 'stratus.views.plugins.base', 'stratus.views.plugins.popover'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _) {
 
-    // Help Popover
-    // ------------
+  // Help Popover
+  // ------------
 
-    // The Popover view is very simple and extends the Backbone View (not the base view like many other widgets)
-    Stratus.Views.Plugins.Help = Stratus.Views.Plugins.Popover.extend({
-        style: function () {
-            this.$el.addClass('btn-help glyphicon glyphicon-question-sign');
-        }
-    });
+  // The Popover view is very simple and extends the Backbone View (not the base view like many other widgets)
+  Stratus.Views.Plugins.Help = Stratus.Views.Plugins.Popover.extend({
+    style: function () {
+      this.$el.addClass('btn-help glyphicon glyphicon-question-sign');
+    }
+  });
 
 }));

@@ -30,70 +30,70 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'text!templates-pagination', 'stratus.views.widgets.base'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'text!templates-pagination', 'stratus.views.widgets.base'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _, Template) {
 
-    // Views
-    // -------------
+  // Views
+  // -------------
 
-    // This Backbone View intends to handle Generic rendering for a single Model.
-    Stratus.Views.Widgets.Pagination = Stratus.Views.Widgets.Base.extend({
+  // This Backbone View intends to handle Generic rendering for a single Model.
+  Stratus.Views.Widgets.Pagination = Stratus.Views.Widgets.Base.extend({
 
-        collection: Stratus.Collections.Generic,
-        template: _.template('<div>Pagination Template Here!</div>'),
-        url: '/Api/',
+    collection: Stratus.Collections.Generic,
+    template: _.template('<div>Pagination Template Here!</div>'),
+    url: '/Api/',
 
-        options: {
-            private: {
-                paginate: {
-                    persist: false
-                },
-                api: {
-                    limit: null
-                }
-            },
-            public: {
-                target: null
-            }
+    options: {
+      private: {
+        paginate: {
+          persist: false
         },
-
-        /**
-         * @param options
-         */
-        preOptions: function (options) {
-            if (typeof Template === 'string') this.template = _.template(Template);
-        },
-
-        /**
-         * @returns {boolean}
-         */
-        onRegister: function () {
-            this.collection.on('reset', this.render, this);
-            this.collection.on('change', this.render, this);
-            return true;
-        },
-
-        /**
-         * @returns {boolean}
-         */
-        render: function () {
-            this.$el.html(this.template({
-                paginator: {
-                    countCurrent: this.collection.meta.get('countCurrent'),
-                    countTotal: this.collection.meta.get('countTotal'),
-                    pageCurrent: this.collection.meta.get('pageCurrent'),
-                    pageTotal: this.collection.meta.get('pageTotal')
-                },
-                entity: this.collection.entity
-            }));
-            this.renderEvent();
-            return true;
+        api: {
+          limit: null
         }
+      },
+      public: {
+        target: null
+      }
+    },
 
-    });
+    /**
+     * @param options
+     */
+    preOptions: function (options) {
+      if (typeof Template === 'string') this.template = _.template(Template);
+    },
+
+    /**
+     * @returns {boolean}
+     */
+    onRegister: function () {
+      this.collection.on('reset', this.render, this);
+      this.collection.on('change', this.render, this);
+      return true;
+    },
+
+    /**
+     * @returns {boolean}
+     */
+    render: function () {
+      this.$el.html(this.template({
+        paginator: {
+          countCurrent: this.collection.meta.get('countCurrent'),
+          countTotal: this.collection.meta.get('countTotal'),
+          pageCurrent: this.collection.meta.get('pageCurrent'),
+          pageTotal: this.collection.meta.get('pageTotal')
+        },
+        entity: this.collection.entity
+      }));
+      this.renderEvent();
+      return true;
+    }
+
+  });
 
 }));

@@ -20,28 +20,28 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _) {
 
-    // Dim
-    // -------------
+  // Dim
+  // -------------
 
-    // Add a dim class to the body so that the body can be styled to be black background and the
-    // app can be styled to be opacity .2 (as defined in the site CSS)
-    Stratus.Views.Plugins.Dim = Stratus.Views.Plugins.Base.extend({
-        events: {
-            click: 'toggle'
-        },
-        initialize: function (options) {
-            this.prepare(options);
-        },
-        toggle: function (event) {
-            $('body').toggleClass('dim');
-        }
-    });
+  // Add a dim class to the body so that the body can be styled to be black background and the
+  // app can be styled to be opacity .2 (as defined in the site CSS)
+  Stratus.Views.Plugins.Dim = Stratus.Views.Plugins.Base.extend({
+    events: {
+      click: 'toggle'
+    },
+    initialize: function (options) {
+      this.prepare(options);
+    },
+    toggle: function (event) {
+      $('body').toggleClass('dim');
+    }
+  });
 
 }));

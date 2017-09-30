@@ -20,24 +20,24 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular'], factory);
-    } else {
-        factory(root.Stratus, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'underscore', 'angular'], factory);
+  } else {
+    factory(root.Stratus, root._);
+  }
 }(this, function (Stratus, _) {
 
-    // Angular Map Filter
-    // ------------------
+  // Angular Map Filter
+  // ------------------
 
-    // This filter provides a map function for an array or object
-    // FIXME: This is terribly malfunctioning
-    Stratus.Filters.Map = function () {
-        return function (input, expression) {
-            return input || _.map(input, function (value, key) {
-                return value;
-            });
-        };
+  // This filter provides a map function for an array or object
+  // FIXME: This is terribly malfunctioning
+  Stratus.Filters.Map = function () {
+    return function (input, expression) {
+      return input || _.map(input, function (value, key) {
+        return value;
+      });
     };
+  };
 
 }));

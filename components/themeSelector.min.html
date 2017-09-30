@@ -1,31 +1,31 @@
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js"></script><div id="comp"><div class="layout_bx"><a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || model.exists(property)" ng-click="toggleGallery();"><i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Theme</a><div class="lt_box"><div class="lt-image" ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]"><img ng-if="model.get(property).images" ng-src="{{model.get(property).images[0].url}}" alt="{{model.get(property).name}}"> <img ng-if="!model.get(property).images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt="{{model.get(property).name}}"> <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery" ng-click="displayGallery();" class="blck_btn"><span>Change</span></a> <a href="javascript:void(0)" ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery" class="blck_btn" ng-click="displayGallery();"><span>Choose Theme</span></a></div><div class="lt-content"><h4>{{selectedName}}</h4><div class="name fontSecondary" ng-bind-html="themeRawDesc(selectedDesc) | truncate:{limit:300}"></div></div></div><div ng-show="!model.get(property).id"><span>No Items selected</span></div></div><div class="theme-select" ng-show="showGallery || $ctrl.layoutOption === 'expanded'"><div class="theme-select-right theme-window-full"><div class="search--gallery" ng-if="$ctrl.search === true"><stratus-search flex="3"></stratus-search></div><ul><li ng-repeat="target in collection.models"><span class="galleryimg-cont" ng-class="{'select-highlight': model.exists(property, target.data.id)}"><img ng-if="target.data.images" ng-src="{{target.data.images[0].url}}" alt="{{target.data.name}}"> <img ng-if="!target.data.images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt="{{target.data.name}}"> <a href="#" ng-click="zoomView(target.data)" class="sr_ico"><i class="fa fa-search" aria-hidden="true"></i></a> <a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)" ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images})" class="bl_btn">Choose Theme </a></span><span class="theme-description"><span class="theme-des-header"><h4>{{target.data.name}}</h4><i class="fa fa-heart-o" aria-hidden="true"></i></span><div class="name fontSecondary" ng-bind-html="themeRawDesc(target.data.description) | truncate:{limit:300}"></div><a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)" ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images})" class="bl_btn">Choose Theme</a></span></li></ul></div><div class="theme-pagination"><stratus-pagination class="theme-pag"></stratus-pagination></div></div></div><script type="text/ng-template" id="themeDetail.html"><!-- Detail Page starts from here -->
 
-    <div class="lt-popup theme-preview" role="dialog">
-        <div class="ltpop-left">
-            <h3>{{themeDetail.name}}
-                <i aria-hidden="true" class="fa fa-heart-o"></i>
-                <i aria-hidden="true" class="fa fa-heart"></i>
-            </h3>
-            <div class="name fontSecondary"
-                 ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
+  <div class="lt-popup theme-preview" role="dialog">
+    <div class="ltpop-left">
+      <h3>{{themeDetail.name}}
+        <i aria-hidden="true" class="fa fa-heart-o"></i>
+        <i aria-hidden="true" class="fa fa-heart"></i>
+      </h3>
+      <div class="name fontSecondary"
+           ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
 
-            <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
-               ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
-               class="bl_btn">Choose Theme </a>
+      <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
+         ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
+         class="bl_btn">Choose Theme </a>
 
 
-            <a href="#" class="bl_btn_border">View Demo </a>
-        </div>
-        <div class="ltpop-right">
-            <div class="theme-view-list">
-                <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
-            </div><!-- View list Ends -->
-            <a href="#">
-                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
-            </a>
-        </div>
-        <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
-    </div><!-- Layout popup ends --></script>
+      <a href="#" class="bl_btn_border">View Demo </a>
+    </div>
+    <div class="ltpop-right">
+      <div class="theme-view-list">
+        <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
+      </div><!-- View list Ends -->
+      <a href="#">
+        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
+      </a>
+    </div>
+    <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
+  </div><!-- Layout popup ends --></script>

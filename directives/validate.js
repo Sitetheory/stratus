@@ -26,62 +26,62 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular'], factory);
-    } else {
-        factory(root.Stratus, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'underscore', 'angular'], factory);
+  } else {
+    factory(root.Stratus, root._);
+  }
 }(this, function (Stratus, _) {
 
-    Stratus.Directives.Validate = function ($parse) {
-        return {
-            restrict: 'A',
-            require: 'ngModel',
-            scope: {
-                validateValid: '=validateValid',
-                validateInvalid: '=validateInvalid',
-                validateComparison: '=validateComparison'
-            },
-            link: function ($scope, $element, $attrs, $ctrl) {
-                Stratus.Instances[_.uniqueId('validate_')] = $scope;
+  Stratus.Directives.Validate = function ($parse) {
+    return {
+      restrict: 'A',
+      require: 'ngModel',
+      scope: {
+        validateValid: '=validateValid',
+        validateInvalid: '=validateInvalid',
+        validateComparison: '=validateComparison'
+      },
+      link: function ($scope, $element, $attrs, $ctrl) {
+        Stratus.Instances[_.uniqueId('validate_')] = $scope;
 
-                // Check Allowed Values
-                function checkValues(ngModelValue) {
+        // Check Allowed Values
+        function checkValues (ngModelValue) {
 
-                    $scope.checks = {};
+          $scope.checks = {};
 
-                    // Evaluate a comparison function
-                    // NOTE: if the comparison value evaluates the current model value, e.g. model.data.myField
-                    // this is evaluates after the viewValue is updated but BEFORE the model is updated.
-                    if ($attrs.validateComparison) {
-                        $scope.checks.validateComparison = !$scope.validateComparison;
-                    }
+          // Evaluate a comparison function
+          // NOTE: if the comparison value evaluates the current model value, e.g. model.data.myField
+          // this is evaluates after the viewValue is updated but BEFORE the model is updated.
+          if ($attrs.validateComparison) {
+            $scope.checks.validateComparison = !$scope.validateComparison;
+          }
 
-                    // Check valid and invalid values
-                    if ($scope.validateInvalid) {
-                        $scope.checks.validateInvalid = !_.contains(_.isArray($scope.validateInvalid) ? $scope.validateInvalid : [$scope.validateInvalid], ngModelValue);
-                    } else if ($scope.validateValid) {
-                        $scope.checks.validateValid = _.contains(_.isArray($scope.validateValid) ? $scope.validateValid : [$scope.validateValid], ngModelValue);
-                    }
+          // Check valid and invalid values
+          if ($scope.validateInvalid) {
+            $scope.checks.validateInvalid = !_.contains(_.isArray($scope.validateInvalid) ? $scope.validateInvalid : [$scope.validateInvalid], ngModelValue);
+          } else if ($scope.validateValid) {
+            $scope.checks.validateValid = _.contains(_.isArray($scope.validateValid) ? $scope.validateValid : [$scope.validateValid], ngModelValue);
+          }
 
-                    _.each($scope.checks, function (el, key) {
-                        if ($ctrl && $ctrl.$setValidity) {
-                            $ctrl.$setValidity(key, el);
-                        }
-                    });
-                    if ($ctrl && $ctrl.$setValidity) {
-                        $ctrl.$setValidity('validateAny', _.every($scope.checks));
-                    }
-
-                    // return a value to display to user
-                    return ngModelValue;
-                }
-
-                $ctrl.$parsers.push(checkValues);
-
+          _.each($scope.checks, function (el, key) {
+            if ($ctrl && $ctrl.$setValidity) {
+              $ctrl.$setValidity(key, el);
             }
-        };
+          });
+          if ($ctrl && $ctrl.$setValidity) {
+            $ctrl.$setValidity('validateAny', _.every($scope.checks));
+          }
+
+          // return a value to display to user
+          return ngModelValue;
+        }
+
+        $ctrl.$parsers.push(checkValues);
+
+      }
     };
+  };
 
 }));
 

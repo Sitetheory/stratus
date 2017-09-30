@@ -37,67 +37,68 @@ data-placement: The location of the popover, e.g. "auto top", "right", "bottom" 
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'bootstrap', 'stratus.views.plugins.base'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'bootstrap', 'stratus.views.plugins.base'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _) {
 
-    // Popover
-    // -------------
+  // Popover
+  // -------------
 
-    // The Popover view is very simple and extends the Backbone View (not the base view like many other widgets)
-    Stratus.Views.Plugins.Popover = Stratus.Views.Plugins.Base.extend({
+  // The Popover view is very simple and extends the Backbone View (not the base view like many other widgets)
+  Stratus.Views.Plugins.Popover = Stratus.Views.Plugins.Base.extend({
 
-        events: {
-            mouseenter: 'show',
-            mouseleave: 'hide'
+    events: {
+      mouseenter: 'show',
+      mouseleave: 'hide'
+    },
+
+    // Custom Actions for View
+    initialize: function (options) {
+      this.prepare(options);
+      this.render();
+    },
+
+    render: function () {
+      // Add Extra Styles (if this is extended, e.g. help)
+      this.style();
+
+      // Popover
+      this.$el.popover({
+        html: true,
+        trigger: 'manual',
+        placement: this.$el.data('placement') ? this.$el.data('placement') : 'auto top',
+        delay: this.$el.data('delay') ? this.$el.data('delay').toJSON() : {
+          show: 50,
+          hide: 400
         },
+        container: 'body',
+        content: function () {
+          return this.$el.data('content') ? this.$el.data('content') : $(this.$el.data('target')).html();
+        }.bind(this)
+      });
+    },
 
-        // Custom Actions for View
-        initialize: function (options) {
-            this.prepare(options);
-            this.render();
-        },
+    style: function () {
+    },
 
-        render: function () {
-            // Add Extra Styles (if this is extended, e.g. help)
-            this.style();
+    show: function () {
+      this.$el.popover('show');
+      $('.popover').on('mouseleave', function () {
+        this.$el.popover('hide');
+      }.bind(this));
+    },
 
-            // Popover
-            this.$el.popover({
-                html: true,
-                trigger: 'manual',
-                placement: this.$el.data('placement') ? this.$el.data('placement') : 'auto top',
-                delay: this.$el.data('delay') ? this.$el.data('delay').toJSON() : {
-                    show: 50,
-                    hide: 400
-                },
-                container: 'body',
-                content: function () {
-                    return this.$el.data('content') ? this.$el.data('content') : $(this.$el.data('target')).html();
-                }.bind(this)
-            });
-        },
-
-        style: function () {},
-
-        show: function () {
-            this.$el.popover('show');
-            $('.popover').on('mouseleave', function () {
-                this.$el.popover('hide');
-            }.bind(this));
-        },
-
-        hide: function () {
-            setTimeout((function () {
-                if (!$('.popover:hover').length) {
-                    this.$el.popover('hide');
-                }
-            }.bind(this)), 100);
+    hide: function () {
+      setTimeout((function () {
+        if (!$('.popover:hover').length) {
+          this.$el.popover('hide');
         }
+      }.bind(this)), 100);
+    }
 
-    });
+  });
 
 }));

@@ -20,34 +20,34 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'backbone'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._, root.Backbone);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'backbone'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._, root.Backbone);
+  }
 }(this, function (Stratus, $, _, Backbone) {
 
-    // View Base
-    // -------------
+  // View Base
+  // -------------
 
-    // This Backbone View intends to handle Generic rendering for a single plugin or widget.
-    Stratus.Views.Base = Backbone.View.extend({
+  // This Backbone View intends to handle Generic rendering for a single plugin or widget.
+  Stratus.Views.Base = Backbone.View.extend({
 
-        /**
-         * @param options
-         * @returns {boolean}
-         */
-        initialize: function (options) {
-            return true;
-        }
+    /**
+     * @param options
+     * @returns {boolean}
+     */
+    initialize: function (options) {
+      return true;
+    }
 
-    });
+  });
 
-    // Require.js
-    // -------------
+  // Require.js
+  // -------------
 
-    // We are not returning this module because it should be
-    // able to add its objects to the Stratus object reference,
-    // passed by sharing.
+  // We are not returning this module because it should be
+  // able to add its objects to the Stratus object reference,
+  // passed by sharing.
 
 }));

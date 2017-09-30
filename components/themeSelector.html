@@ -1,77 +1,77 @@
 <!-- FIXME: Please remove this weird script below -->
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-sanitize.js"></script>
 <div id="comp">
-    <div class="layout_bx">
-        <!-- Gallery header Ends -->
-        <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || model.exists(property)"
-           ng-click="toggleGallery();">
-            <i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Theme</a>
-        <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
+  <div class="layout_bx">
+    <!-- Gallery header Ends -->
+    <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || model.exists(property)"
+       ng-click="toggleGallery();">
+      <i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Theme</a>
+    <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
 
-        <!-- ng-repeat="sel in model.get(property)" -->
-        <div class="lt_box">
-            <!-- FIXME: This was broken on the following div: -->
-            <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
-            <!-- <button class="cancel--btn" ng-click="model.toggle(property, sel.id, toggleOptions);"></button> -->
-            <div class="lt-image"
-                 ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
+    <!-- ng-repeat="sel in model.get(property)" -->
+    <div class="lt_box">
+      <!-- FIXME: This was broken on the following div: -->
+      <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
+      <!-- <button class="cancel--btn" ng-click="model.toggle(property, sel.id, toggleOptions);"></button> -->
+      <div class="lt-image"
+           ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
 
-                <img ng-if="model.get(property).images"
-                     ng-src="{{model.get(property).images[0].url}}"
-                     alt="{{model.get(property).name}}"/>
+        <img ng-if="model.get(property).images"
+             ng-src="{{model.get(property).images[0].url}}"
+             alt="{{model.get(property).name}}"/>
 
-                <img ng-if="!model.get(property).images"
-                     src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg"
-                     alt="{{model.get(property).name}}"/>
+        <img ng-if="!model.get(property).images"
+             src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg"
+             alt="{{model.get(property).name}}"/>
 
-                <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
-                <a href="javascript:void(0)"
-                   ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
-                   ng-click="displayGallery();" class="blck_btn">
-                    <span>Change</span></a>
-                <a href="javascript:void(0)"
-                   ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
-                   class="blck_btn"
-                   ng-click="displayGallery();">
-                    <span>Choose Theme</span></a>
-                <!--</div>-->
-            </div>
-            <div class="lt-content">
-                <h4> {{selectedName}} </h4>
-                <div class="name fontSecondary" ng-bind-html="themeRawDesc(selectedDesc) | truncate:{limit:300}"></div>
+        <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
+        <a href="javascript:void(0)"
+           ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
+           ng-click="displayGallery();" class="blck_btn">
+          <span>Change</span></a>
+        <a href="javascript:void(0)"
+           ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
+           class="blck_btn"
+           ng-click="displayGallery();">
+          <span>Choose Theme</span></a>
+        <!--</div>-->
+      </div>
+      <div class="lt-content">
+        <h4> {{selectedName}} </h4>
+        <div class="name fontSecondary" ng-bind-html="themeRawDesc(selectedDesc) | truncate:{limit:300}"></div>
 
 
-            </div>
-        </div><!-- Layout box Inner ends -->
-        <div ng-show="!model.get(property).id">
-            <span>No Items selected</span>
-        </div>
-    </div><!-- Layout Box Ends -->
-    <div class="theme-select" ng-show="showGallery || $ctrl.layoutOption === 'expanded'">
-        <!-- <div class="theme-select-nav">
-            <h4>Categories</h4>
-            <ul>
-                <li><a href="#">Real Estate</a></li>
-                <li><a href="#">Church</a></li>
-                <li><a href="#">Small Business</a></li>
-                <li><a href="#">Corporate</a></li>
-                <li><a href="#">Artist</a></li>
-                <li><a href="#">Health and Fitness</a></li>
-            </ul>
-            <h4>Sort By</h4>
-            <ul>
-                <li><a href="#">Latest</a></li>
-                <li><a href="#">Popular</a></li>
-                <li><a href="#">Favorite (2)</a></li>
-            </ul>
-        </div> -->
+      </div>
+    </div><!-- Layout box Inner ends -->
+    <div ng-show="!model.get(property).id">
+      <span>No Items selected</span>
+    </div>
+  </div><!-- Layout Box Ends -->
+  <div class="theme-select" ng-show="showGallery || $ctrl.layoutOption === 'expanded'">
+    <!-- <div class="theme-select-nav">
+        <h4>Categories</h4>
+        <ul>
+            <li><a href="#">Real Estate</a></li>
+            <li><a href="#">Church</a></li>
+            <li><a href="#">Small Business</a></li>
+            <li><a href="#">Corporate</a></li>
+            <li><a href="#">Artist</a></li>
+            <li><a href="#">Health and Fitness</a></li>
+        </ul>
+        <h4>Sort By</h4>
+        <ul>
+            <li><a href="#">Latest</a></li>
+            <li><a href="#">Popular</a></li>
+            <li><a href="#">Favorite (2)</a></li>
+        </ul>
+    </div> -->
 
-        <div class="theme-select-right theme-window-full">
-            <div class="search--gallery" ng-if="$ctrl.search === true">
-                <stratus-search flex="3"></stratus-search>
-            </div>
-            <ul>
-                <li ng-repeat="target in collection.models">
+    <div class="theme-select-right theme-window-full">
+      <div class="search--gallery" ng-if="$ctrl.search === true">
+        <stratus-search flex="3"></stratus-search>
+      </div>
+      <ul>
+        <li ng-repeat="target in collection.models">
                     <span class="galleryimg-cont"
                           ng-class="{'select-highlight': model.exists(property, target.data.id)}">
 
@@ -88,7 +88,7 @@
                            ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images})"
                            class="bl_btn">Choose Theme </a>
                     </span>
-                    <span class="theme-description">
+          <span class="theme-description">
                         <span class="theme-des-header">
                             <h4>{{target.data.name}}</h4>
                             <i class="fa fa-heart-o" aria-hidden="true"></i>
@@ -103,48 +103,48 @@
 
                         
                     </span>
-                </li>
+        </li>
 
-            </ul>
+      </ul>
 
-        </div><!-- Theme Select Right Ends -->
+    </div><!-- Theme Select Right Ends -->
 
-        <div class="theme-pagination">
-            <stratus-pagination class="theme-pag"></stratus-pagination>
-        </div>
-    </div><!-- Theme Selector Ends -->
+    <div class="theme-pagination">
+      <stratus-pagination class="theme-pag"></stratus-pagination>
+    </div>
+  </div><!-- Theme Selector Ends -->
 </div>
 <script type="text/ng-template" id="themeDetail.html">
-    <!-- Detail Page starts from here -->
+  <!-- Detail Page starts from here -->
 
-    <div class="lt-popup theme-preview" role="dialog">
-        <div class="ltpop-left">
-            <h3>{{themeDetail.name}}
-                <i aria-hidden="true" class="fa fa-heart-o"></i>
-                <i aria-hidden="true" class="fa fa-heart"></i>
-            </h3>
-            <div class="name fontSecondary"
-                 ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
+  <div class="lt-popup theme-preview" role="dialog">
+    <div class="ltpop-left">
+      <h3>{{themeDetail.name}}
+        <i aria-hidden="true" class="fa fa-heart-o"></i>
+        <i aria-hidden="true" class="fa fa-heart"></i>
+      </h3>
+      <div class="name fontSecondary"
+           ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
 
-            <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
-               ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
-               class="bl_btn">Choose Theme </a>
+      <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
+         ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
+         class="bl_btn">Choose Theme </a>
 
 
-            <a href="#" class="bl_btn_border">View Demo </a>
-        </div>
-        <div class="ltpop-right">
-            <div class="theme-view-list">
-                <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
-            </div><!-- View list Ends -->
-            <a href="#">
-                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
-            </a>
-        </div>
-        <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
-    </div><!-- Layout popup ends -->
+      <a href="#" class="bl_btn_border">View Demo </a>
+    </div>
+    <div class="ltpop-right">
+      <div class="theme-view-list">
+        <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
+      </div><!-- View list Ends -->
+      <a href="#">
+        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
+      </a>
+    </div>
+    <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
+  </div><!-- Layout popup ends -->
 
 </script>

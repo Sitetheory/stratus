@@ -20,21 +20,21 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'angular', 'md5'], factory);
-    } else {
-        factory(root.Stratus);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'angular', 'md5'], factory);
+  } else {
+    factory(root.Stratus);
+  }
 }(this, function (Stratus) {
 
-    // Angular Gravatar Filter
-    // ------------------------
+  // Angular Gravatar Filter
+  // ------------------------
 
-    // This filter allows a display of time since the given date
-    Stratus.Filters.Gravatar = function () {
-        return function (input) {
-            return '//www.gravatar.com/avatar/' + md5(input.trim().toLowerCase());
-        };
+  // This filter allows a display of time since the given date
+  Stratus.Filters.Gravatar = function () {
+    return function (input) {
+      return '//www.gravatar.com/avatar/' + md5(input.trim().toLowerCase());
     };
+  };
 
 }));

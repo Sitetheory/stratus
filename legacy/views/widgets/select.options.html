@@ -1,32 +1,34 @@
 {% if (scope === 'list') { %}
-    {% if(!options.meta.ui) { %}
-    <select data-hook="containers">
-        <option>{{ options.meta.placeholder }}</option>
-    </select>
-    {% } %}
+{% if(!options.meta.ui) { %}
+<select data-hook="containers">
+  <option>{{ options.meta.placeholder }}</option>
+</select>
+{% } %}
 {% } else if (scope === 'container') { %}
-    {% var containerTag = (!globals.meta.ui) ? 'option' : 'div'; %}
-    {% var optionValue = (!globals.meta.ui) ? 'value="'+model[globals.meta.modelIdAttribute]+'"' : ''; %}
-    <{{ containerTag }} data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-iteration="{{ globals.iteration }}" data-id="{{ model.id }}" class="collectionOptionContainer" {{ optionValue }}></{{ containerTag }}>
+{% var containerTag = (!globals.meta.ui) ? 'option' : 'div'; %}
+{% var optionValue = (!globals.meta.ui) ? 'value="'+model[globals.meta.modelIdAttribute]+'"' : ''; %}
+<{{ containerTag }} data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-iteration="{{ globals.iteration }}" data-id="{{ model.id }}" class="collectionOptionContainer" {{ optionValue }}></{{ containerTag }}>
 {% } else if (scope === 'entity') { %}
-    {% if(!globals.meta.ui) { %}
-        {{ model[globals.meta.modelLabelAttribute] }}
-    {% } else { %}
-        {% var image = (_.has(model, globals.meta.modelImageAttribute) && _.size(model[globals.meta.modelImageAttribute])) ? _.first(model[globals.meta.modelImageAttribute]) : null; %}
-        <div class="optionContainer{% if(image) { %} hasImage{% } else { %} noImage{% } %} clearfix">
-            <input id="option-{{ globals.meta.inputName }}-{{ model.id }}" class="form-control option" type="{{ globals.meta.inputType }}" name="{{ globals.meta.inputName }}" value="{{ model[globals.meta.modelIdAttribute] }}">
-            <label class="control-label" for="option-{{ globals.meta.inputName }}-{{ model.id }}">
-                {% if (image) { %}
-                    <div class="image">
-                        <img src="//{{ image.url }}-xs.{{ image.extension }}" data-src="lazy">
-                    </div>
-                {% } else if (_.has(model, 'url') && _.has(model, 'extension')) { %}
-                    <div class="image">
-                        <img src="//{{ model.url }}-xs.{{ model.extension }}" data-src="lazy">
-                    </div>
-                {% } %}
-                <div class="title">{{ model[globals.meta.modelLabelAttribute] }}</div>
-            </label>
-        </div>
+{% if(!globals.meta.ui) { %}
+{{ model[globals.meta.modelLabelAttribute] }}
+{% } else { %}
+{% var image = (_.has(model, globals.meta.modelImageAttribute) && _.size(model[globals.meta.modelImageAttribute])) ? _.first(model[globals.meta.modelImageAttribute]) : null; %}
+<div class="optionContainer{% if(image) { %} hasImage{% } else { %} noImage{% } %} clearfix">
+  <input id="option-{{ globals.meta.inputName }}-{{ model.id }}" class="form-control option"
+         type="{{ globals.meta.inputType }}" name="{{ globals.meta.inputName }}"
+         value="{{ model[globals.meta.modelIdAttribute] }}">
+  <label class="control-label" for="option-{{ globals.meta.inputName }}-{{ model.id }}">
+    {% if (image) { %}
+    <div class="image">
+      <img src="//{{ image.url }}-xs.{{ image.extension }}" data-src="lazy">
+    </div>
+    {% } else if (_.has(model, 'url') && _.has(model, 'extension')) { %}
+    <div class="image">
+      <img src="//{{ model.url }}-xs.{{ model.extension }}" data-src="lazy">
+    </div>
     {% } %}
+    <div class="title">{{ model[globals.meta.modelLabelAttribute] }}</div>
+  </label>
+</div>
+{% } %}
 {% } %}

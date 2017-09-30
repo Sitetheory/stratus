@@ -20,44 +20,44 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _) {
 
-    // MoreBox
-    // -------------
+  // MoreBox
+  // -------------
 
-    // A consistent way to reuse the AddClass plugin to add a moreBox that pops up when you interact with
-    // a button.
-    Stratus.Views.Plugins.MoreBox = Stratus.Views.Plugins.Base.extend({
+  // A consistent way to reuse the AddClass plugin to add a moreBox that pops up when you interact with
+  // a button.
+  Stratus.Views.Plugins.MoreBox = Stratus.Views.Plugins.Base.extend({
 
-        // Custom Actions for View
-        initialize: function (options) {
-            // Add Default Plugin Values
-            // Use the element's ID as the default base for the moreBox target.
-            if (!this.$el.attr('data-target')) {
-                this.$el.attr('data-target', '#' + this.$el.attr('id') + '-moreBox');
-            }
-            if (!this.$el.attr('data-event')) {
-                this.$el.attr('data-event', 'click');
-            }
-            if (!this.$el.attr('data-class')) {
-                this.$el.attr('data-class', 'show');
-            }
-            this.$el.attr('data-classremove', 'hidden');
+    // Custom Actions for View
+    initialize: function (options) {
+      // Add Default Plugin Values
+      // Use the element's ID as the default base for the moreBox target.
+      if (!this.$el.attr('data-target')) {
+        this.$el.attr('data-target', '#' + this.$el.attr('id') + '-moreBox');
+      }
+      if (!this.$el.attr('data-event')) {
+        this.$el.attr('data-event', 'click');
+      }
+      if (!this.$el.attr('data-class')) {
+        this.$el.attr('data-class', 'show');
+      }
+      this.$el.attr('data-classremove', 'hidden');
 
-            // Add Default Classes
-            var $moreBox = $(this.$el.data('target'));
-            $moreBox.addClass('moreBox');
-            $moreBox.attr('aria-labelledby', this.$el.attr('id'));
+      // Add Default Classes
+      var $moreBox = $(this.$el.data('target'));
+      $moreBox.addClass('moreBox');
+      $moreBox.attr('aria-labelledby', this.$el.attr('id'));
 
-            // Utilize Standard AddClass Plugin
-            new Stratus.Views.Plugins.AddClass({ el: this.el });
-        }
+      // Utilize Standard AddClass Plugin
+      new Stratus.Views.Plugins.AddClass({ el: this.el });
+    }
 
-    });
+  });
 
 }));

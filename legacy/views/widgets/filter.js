@@ -30,96 +30,96 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'stratus.views.widgets.base'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'stratus.views.widgets.base'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _) {
 
-    // Views
-    // -------------
+  // Views
+  // -------------
 
-    // This Backbone View intends to handle Generic rendering for a single Model.
-    Stratus.Views.Widgets.Filter = Stratus.Views.Widgets.Base.extend({
+  // This Backbone View intends to handle Generic rendering for a single Model.
+  Stratus.Views.Widgets.Filter = Stratus.Views.Widgets.Base.extend({
 
-        // Properties
-        template: _.template('<div>Filter Template Here!</div>'),
-        url: '/Api/',
-        events: {
-            'keypress input[type="text"]': 'enter',
-            'keydown input[type="text"]': 'escape',
-            'click button[type="submit"]': 'submit'
+    // Properties
+    template: _.template('<div>Filter Template Here!</div>'),
+    url: '/Api/',
+    events: {
+      'keypress input[type="text"]': 'enter',
+      'keydown input[type="text"]': 'escape',
+      'click button[type="submit"]': 'submit'
+    },
+
+    options: {
+      private: {
+        paginate: {
+          persist: false
         },
-
-        options: {
-            private: {
-                paginate: {
-                    persist: false
-                },
-                api: {
-                    limit: null
-                },
-                forceType: 'collection'
-            },
-            public: {
-                target: null
-            }
+        api: {
+          limit: null
         },
+        forceType: 'collection'
+      },
+      public: {
+        target: null
+      }
+    },
 
-        /**
-         * @param views
-         * @returns {boolean}
-         */
-        onRender: function (views) {
-            this.input = this.$el.find('input[type="text"]');
-            return true;
-        },
+    /**
+     * @param views
+     * @returns {boolean}
+     */
+    onRender: function (views) {
+      this.input = this.$el.find('input[type="text"]');
+      return true;
+    },
 
-        /**
-         * @returns {boolean}
-         */
-        onRegister: function () {
-            this.collection.on('reset', this.rerender, this);
-            this.collection.on('change', this.rerender, this);
-            return true;
-        },
+    /**
+     * @returns {boolean}
+     */
+    onRegister: function () {
+      this.collection.on('reset', this.rerender, this);
+      this.collection.on('change', this.rerender, this);
+      return true;
+    },
 
-        /**
-         * @param event
-         * @returns {boolean}
-         */
-        submit: function (event) {
-            this.search(this.input.val());
-        },
+    /**
+     * @param event
+     * @returns {boolean}
+     */
+    submit: function (event) {
+      this.search(this.input.val());
+    },
 
-        /**
-         * @param event
-         */
-        enter: function (event) {
-            if (event.keyCode === Stratus.Key.Enter) {
-                this.search(this.input.val());
-            }
-        },
+    /**
+     * @param event
+     */
+    enter: function (event) {
+      if (event.keyCode === Stratus.Key.Enter) {
+        this.search(this.input.val());
+      }
+    },
 
-        /**
-         * @param event
-         */
-        escape: function (event) {
-            if (event.keyCode === Stratus.Key.Escape) {
-                this.search();
-            }
-        },
+    /**
+     * @param event
+     */
+    escape: function (event) {
+      if (event.keyCode === Stratus.Key.Escape) {
+        this.search();
+      }
+    },
 
-        // search
-        /**
-         * @param query
-         */
-        search: function (query) {
-            if (!this.collection.isHydrated()) return false;
-            Backbone.history.navigate('filter/' + this.collection.entity + (typeof query === 'undefined' ? '' : '/' + query), true);
-        }
+    // search
+    /**
+     * @param query
+     */
+    search: function (query) {
+      if (!this.collection.isHydrated()) return false;
+      Backbone.history.navigate('filter/' + this.collection.entity + (typeof query === 'undefined' ? '' : '/' + query), true);
+    }
 
-    });
+  });
 
 }));

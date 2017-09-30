@@ -20,76 +20,78 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass', 'stratus.views.plugins.addclose'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass', 'stratus.views.plugins.addclose'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _) {
 
-    // Drawer
-    // -------------
+  // Drawer
+  // -------------
 
-    // Like a MoreBox but attached to the side and pushes the app body over. Will only allow one drawer to
-    // be open at a time.
-    Stratus.Views.Plugins.Drawer = Stratus.Views.Plugins.Base.extend({
+  // Like a MoreBox but attached to the side and pushes the app body over. Will only allow one drawer to
+  // be open at a time.
+  Stratus.Views.Plugins.Drawer = Stratus.Views.Plugins.Base.extend({
 
-        events: {
-            click: 'toggle'
-        },
+    events: {
+      click: 'toggle'
+    },
 
-        initialize: function (options) {
-            this.prepare(options);
+    initialize: function (options) {
+      this.prepare(options);
 
-            if (!this.$el.attr('id')) {
-                console.warn('No ID supplied for data-plugin="Drawer" button.', this.$el);
-                return false;
-            }
+      if (!this.$el.attr('id')) {
+        console.warn('No ID supplied for data-plugin="Drawer" button.', this.$el);
+        return false;
+      }
 
-            // If a second element needs to toggle the drawer, you would need to give it the identical id with a
-            // suffix "-*" (dash anything). Everything after the dash gets removed.
+      // If a second element needs to toggle the drawer, you would need to give it the identical id with a
+      // suffix "-*" (dash anything). Everything after the dash gets removed.
 
-            // get base id
-            var toggleId = this.$el.attr('id').replace(/-.*$/, '');
-            var drawer = this.$el.data('target') ? $(this.$el.data('target')) : $('#' + toggleId + '-drawer');
-            if (!drawer) {
-                console.warn('No ID supplied for data-plugin="Drawer" targetted drawer.', this.$el);
-                return false;
-            }
+      // get base id
+      var toggleId = this.$el.attr('id').replace(/-.*$/, '');
+      var drawer = this.$el.data('target') ? $(this.$el.data('target')) : $('#' + toggleId + '-drawer');
+      if (!drawer) {
+        console.warn('No ID supplied for data-plugin="Drawer" targetted drawer.', this.$el);
+        return false;
+      }
 
-            // Determine if this is a drawer that only shows up for mobile
-            this.drawerClass = this.$el.data('mobileonly') ? 'mobileDrawer' : 'drawer';
+      // Determine if this is a drawer that only shows up for mobile
+      this.drawerClass = this.$el.data('mobileonly') ? 'mobileDrawer' : 'drawer';
 
-            // Add Default Classes
-            drawer.addClass(this.drawerClass);
+      // Add Default Classes
+      drawer.addClass(this.drawerClass);
 
-            // Only add the label if it's not there yet (in case there are multiple drawer buttons acting on the same
-            // drawer
-            if (!drawer.attr('aria-labelledby')) {
-                drawer.attr('aria-labelledby', toggleId);
-            }
+      // Only add the label if it's not there yet (in case there are multiple drawer buttons acting on the same
+      // drawer
+      if (!drawer.attr('aria-labelledby')) {
+        drawer.attr('aria-labelledby', toggleId);
+      }
 
-            // Add a close button
-            var close = drawer.find('.btnClose');
-            if (!close.length) {
-                new Stratus.Views.Plugins.AddClose({ el: drawer });
-                close = drawer.find('.btnClose');
-            }
-            close.unbind('click');
-            close.on('click', function () { this.toggle();}.bind(this));
-        },
+      // Add a close button
+      var close = drawer.find('.btnClose');
+      if (!close.length) {
+        new Stratus.Views.Plugins.AddClose({ el: drawer });
+        close = drawer.find('.btnClose');
+      }
+      close.unbind('click');
+      close.on('click', function () {
+        this.toggle();
+      }.bind(this));
+    },
 
-        // NOTE: with this method only one drawer can be open at a time
-        toggle: function () {
+    // NOTE: with this method only one drawer can be open at a time
+    toggle: function () {
 
-            var toggleId = this.$el.attr('id').replace(/-.*$/, '');
+      var toggleId = this.$el.attr('id').replace(/-.*$/, '');
 
-            $('#' + toggleId + '-drawer').removeClass('hidden');
-            var drawerVar = this.drawerClass.toLowerCase();
-            var $body = $('body');
-            ($body.attr('data-' + drawerVar + 'open') !== toggleId) ? $body.attr('data-' + drawerVar + 'open', toggleId) : $body.attr('data-' + drawerVar + 'open', null);
-        }
+      $('#' + toggleId + '-drawer').removeClass('hidden');
+      var drawerVar = this.drawerClass.toLowerCase();
+      var $body = $('body');
+      ($body.attr('data-' + drawerVar + 'open') !== toggleId) ? $body.attr('data-' + drawerVar + 'open', toggleId) : $body.attr('data-' + drawerVar + 'open', null);
+    }
 
-    });
+  });
 
 }));

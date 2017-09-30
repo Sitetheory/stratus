@@ -30,163 +30,163 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'moment', 'stratus.views.widgets.base'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._, root.moment);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'moment', 'stratus.views.widgets.base'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._, root.moment);
+  }
 }(this, function (Stratus, $, _, moment) {
 
-    // Display Widget
-    // -------------
+  // Display Widget
+  // -------------
 
-    // Display view which extends the base view.
-    Stratus.Views.Widgets.Display = Stratus.Views.Widgets.Base.extend({
+  // Display view which extends the base view.
+  Stratus.Views.Widgets.Display = Stratus.Views.Widgets.Base.extend({
 
-        template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widgetText"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
+    template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widgetText"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
 
-        options: {
-            private: {
-                autoSave: false,
-                forceType: 'model'
-            },
-            public: {
-                editable: false,
+    options: {
+      private: {
+        autoSave: false,
+        forceType: 'model'
+      },
+      public: {
+        editable: false,
 
-                // The type of data which determines how the value should be formatted, e.g. date, timeSince, timeSinceDate
-                formatType: null,
+        // The type of data which determines how the value should be formatted, e.g. date, timeSince, timeSinceDate
+        formatType: null,
 
-                // The format that should be applied, e.g. when used in conjunction with date this should be a valid Moment format.
-                format: 'MMM D, YYYY @h:mm a',
+        // The format that should be applied, e.g. when used in conjunction with date this should be a valid Moment format.
+        format: 'MMM D, YYYY @h:mm a',
 
-                // A way to flag the element for initiating a refresh at a set interval (milliseconds to lapse between refreshes).
-                interval: null,
+        // A way to flag the element for initiating a refresh at a set interval (milliseconds to lapse between refreshes).
+        interval: null,
 
-                // text prepended before value
-                before: null,
+        // text prepended before value
+        before: null,
 
-                // text appended after value
-                after: null,
+        // text appended after value
+        after: null,
 
-                // Option used with format=timeSincedate. This is the amount of seconds to show "timeSince" formatting,
-                // after which the simple date will display
-                timeSinceLimit: 86400 // OLD: 3600
-            }
-        },
+        // Option used with format=timeSincedate. This is the amount of seconds to show "timeSince" formatting,
+        // after which the simple date will display
+        timeSinceLimit: 86400 // OLD: 3600
+      }
+    },
 
-        // validate()
-        // -----------
-        // Custom validate to check that the element contains the minimum required data attributes
-        /**
-         * @returns {boolean}
-         */
-        validate: function () {
-            if (!this.$el.dataAttr('property')) {
-                Stratus.Events.trigger('toast', new Stratus.Prototypes.Toast({
-                    priority: 'danger',
-                    title: 'Missing Data Attribute',
-                    message: 'The data-property attribute is missing.'
-                }));
-                return false;
-            }
-            return true;
-        },
+    // validate()
+    // -----------
+    // Custom validate to check that the element contains the minimum required data attributes
+    /**
+     * @returns {boolean}
+     */
+    validate: function () {
+      if (!this.$el.dataAttr('property')) {
+        Stratus.Events.trigger('toast', new Stratus.Prototypes.Toast({
+          priority: 'danger',
+          title: 'Missing Data Attribute',
+          message: 'The data-property attribute is missing.'
+        }));
+        return false;
+      }
+      return true;
+    },
 
-        // postOptions()
-        // -----------------
-        // Set combination of default options contingent on other options
-        /**
-         * @param options
-         * @returns {boolean}
-         */
-        postOptions: function (options) {
-            if (this.options.formatType === 'timeSinceDate' && !this.options.interval) {
-                this.options.interval = 60000;
-            }
-            return true;
-        },
+    // postOptions()
+    // -----------------
+    // Set combination of default options contingent on other options
+    /**
+     * @param options
+     * @returns {boolean}
+     */
+    postOptions: function (options) {
+      if (this.options.formatType === 'timeSinceDate' && !this.options.interval) {
+        this.options.interval = 60000;
+      }
+      return true;
+    },
 
-        // setValue()
-        // -----------
-        // Set the processed value on the DOM element
-        /**
-         * @param value
-         * @returns {*}
-         */
-        setValue: function (value) {
-            this.propertyValue = this.processValue(value);
-            this.$element.html(this.propertyValue);
-            return this.propertyValue;
-        },
+    // setValue()
+    // -----------
+    // Set the processed value on the DOM element
+    /**
+     * @param value
+     * @returns {*}
+     */
+    setValue: function (value) {
+      this.propertyValue = this.processValue(value);
+      this.$element.html(this.propertyValue);
+      return this.propertyValue;
+    },
 
-        // processValue()
-        // ---------------
-        // Process the value based on predefined types, e.g. date, timesince, etc
-        /**
-         * @param value
-         * @returns {*}
-         */
-        processValue: function (value) {
-            value = (typeof value !== 'undefined' && value) ? value : '';
+    // processValue()
+    // ---------------
+    // Process the value based on predefined types, e.g. date, timesince, etc
+    /**
+     * @param value
+     * @returns {*}
+     */
+    processValue: function (value) {
+      value = (typeof value !== 'undefined' && value) ? value : '';
 
-            if (this.options.formatType === 'date') {
-                value = this.formatDate(value);
-            } else if (this.options.formatType === 'timeSince') {
-                value = this.formatTimeSince(value);
-            } else if (this.options.formatType === 'timeSinceDate') {
-                value = this.formatTimeSinceDate(value);
-            }
+      if (this.options.formatType === 'date') {
+        value = this.formatDate(value);
+      } else if (this.options.formatType === 'timeSince') {
+        value = this.formatTimeSince(value);
+      } else if (this.options.formatType === 'timeSinceDate') {
+        value = this.formatTimeSinceDate(value);
+      }
 
-            /*
-            value = this.options.before ? this.options.before.toString() + value.toString() : value;
-            value = this.options.after ? value.toString() + this.options.after.toString() : value;
-            */
+      /*
+      value = this.options.before ? this.options.before.toString() + value.toString() : value;
+      value = this.options.after ? value.toString() + this.options.after.toString() : value;
+      */
 
-            return value;
-        },
+      return value;
+    },
 
-        // TODO: we may want to move these into Stratus as a basic underscore mixin that we can reuse: date(time, format), timeSince(date)
-        // formatDate()
-        // ---------------
-        // Format: Show the specific date
-        /**
-         * @param value
-         * @returns {*}
-         */
-        formatDate: function (value) {
-            value = parseInt(value);
-            value = moment.unix(value).format(this.options.format);
-            return value;
-        },
+    // TODO: we may want to move these into Stratus as a basic underscore mixin that we can reuse: date(time, format), timeSince(date)
+    // formatDate()
+    // ---------------
+    // Format: Show the specific date
+    /**
+     * @param value
+     * @returns {*}
+     */
+    formatDate: function (value) {
+      value = parseInt(value);
+      value = moment.unix(value).format(this.options.format);
+      return value;
+    },
 
-        // formatTimeSince()
-        // ---------------
-        // Format: Show the time since now
-        /**
-         * @param value
-         * @returns {*}
-         */
-        formatTimeSince: function (value) {
-            value = parseInt(value);
-            return moment.unix(value).fromNow();
-        },
+    // formatTimeSince()
+    // ---------------
+    // Format: Show the time since now
+    /**
+     * @param value
+     * @returns {*}
+     */
+    formatTimeSince: function (value) {
+      value = parseInt(value);
+      return moment.unix(value).fromNow();
+    },
 
-        // formatTimeSinceDate()
-        // ---------------
-        // Format: show the time since now, if it's less than the timeSinceLimit (default 1 hour), otherwise show the date
-        /**
-         * @param value
-         * @returns {*}
-         */
-        formatTimeSinceDate: function (value) {
-            value = parseInt(value);
-            if ((moment().unix() - value) < this.options.timeSinceLimit) {
-                value = this.formatTimeSince(value);
-            } else {
-                value = this.formatDate(value);
-            }
-            return value;
-        }
+    // formatTimeSinceDate()
+    // ---------------
+    // Format: show the time since now, if it's less than the timeSinceLimit (default 1 hour), otherwise show the date
+    /**
+     * @param value
+     * @returns {*}
+     */
+    formatTimeSinceDate: function (value) {
+      value = parseInt(value);
+      if ((moment().unix() - value) < this.options.timeSinceLimit) {
+        value = this.formatTimeSince(value);
+      } else {
+        value = this.formatDate(value);
+      }
+      return value;
+    }
 
-    });
+  });
 }));

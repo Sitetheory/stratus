@@ -63,77 +63,77 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'zepto', 'underscore', 'stratus.views.widgets.base'], factory);
-    } else {
-        factory(root.Stratus, root.$, root._);
-    }
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'zepto', 'underscore', 'stratus.views.widgets.base'], factory);
+  } else {
+    factory(root.Stratus, root.$, root._);
+  }
 }(this, function (Stratus, $, _) {
 
-    // Text Widget
-    // -------------
+  // Text Widget
+  // -------------
 
-    // This is the base view for all text widgets, which extends the base view.
-    Stratus.Views.Widgets.Text = Stratus.Views.Widgets.Base.extend({
+  // This is the base view for all text widgets, which extends the base view.
+  Stratus.Views.Widgets.Text = Stratus.Views.Widgets.Base.extend({
 
-        // Properties
-        model: Stratus.Models.Generic,
+    // Properties
+    model: Stratus.Models.Generic,
 
-        // The template MUST add the id = elementId
-        template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widgetText" contenteditable="true"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
+    // The template MUST add the id = elementId
+    template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widgetText" contenteditable="true"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
 
-        // Standard Options for View
-        options: {
-            private: {
-                autoSave: true,
-                forceType: 'model'
-            },
-            public: {
-                editable: true
-            }
-        },
+    // Standard Options for View
+    options: {
+      private: {
+        autoSave: true,
+        forceType: 'model'
+      },
+      public: {
+        editable: true
+      }
+    },
 
-        // validate()
-        // -----------
-        // Custom validate to check that the element contains the minimum required data attributes
-        /**
-         * @returns {boolean}
-         */
-        validate: function () {
-            if (!this.$el.dataAttr('property')) {
-                Stratus.Events.trigger('toast', new Stratus.Prototypes.Toast({
-                    priority: 'danger',
-                    title: 'Missing Data Attribute',
-                    message: 'The data-property attribute is missing.'
-                }));
-                return false;
-            }
-            return true;
-        },
+    // validate()
+    // -----------
+    // Custom validate to check that the element contains the minimum required data attributes
+    /**
+     * @returns {boolean}
+     */
+    validate: function () {
+      if (!this.$el.dataAttr('property')) {
+        Stratus.Events.trigger('toast', new Stratus.Prototypes.Toast({
+          priority: 'danger',
+          title: 'Missing Data Attribute',
+          message: 'The data-property attribute is missing.'
+        }));
+        return false;
+      }
+      return true;
+    },
 
-        // getValue()
-        // -----------
-        // Get the value for this widget
-        /**
-         * @returns {*}
-         */
-        getValue: function () {
-            return (!this.$element || !this.$element.length) ? false : this.$element.text();
-        },
+    // getValue()
+    // -----------
+    // Get the value for this widget
+    /**
+     * @returns {*}
+     */
+    getValue: function () {
+      return (!this.$element || !this.$element.length) ? false : this.$element.text();
+    },
 
-        // setValue()
-        // -----------
-        // Set the value on this widget
-        /**
-         * @param value
-         * @returns {boolean}
-         */
-        setValue: function (value) {
-            if (!this.$element || !this.$element.length) return false;
-            this.$element.text(value);
-            return true;
-        }
+    // setValue()
+    // -----------
+    // Set the value on this widget
+    /**
+     * @param value
+     * @returns {boolean}
+     */
+    setValue: function (value) {
+      if (!this.$element || !this.$element.length) return false;
+      this.$element.text(value);
+      return true;
+    }
 
-    });
+  });
 
 }));
