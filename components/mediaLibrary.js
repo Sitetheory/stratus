@@ -291,14 +291,14 @@
       });
 
       // close mdPanel when all images are uploaded
-      function DialogController (mdPanelRef) {
+      function DialogController(mdPanelRef) {
         $scope.closeDialog = function () {
           $scope.infoId = null;
           mdPanelRef.close();
         };
       }
 
-      function updateFilesModel (files) {
+      function updateFilesModel(files) {
         if (files !== null) {
           // make files array for not multiple to be able to be used in ng-repeat in the ui
           if (!angular.isArray(files)) {
@@ -418,7 +418,7 @@
       };
 
       // controller for zoom panel
-      function ZoomController (mdPanelRef) {
+      function ZoomController(mdPanelRef) {
         // delete media from library
         $scope.deleteMediaFromLibrary = function (fileId) {
           mdPanelRef.close();

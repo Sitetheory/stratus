@@ -33,7 +33,7 @@
       var loadJob;
 
       // Functions
-      function resizePlugin () {
+      function resizePlugin() {
         // Manually resize Facebook Plugin's span and iframe to be 100%
         var plugin = document.querySelector('.fb-page');
         var containerSpan = plugin.querySelector('span');
@@ -52,7 +52,7 @@
         }
       }
 
-      function loadPlugin () {
+      function loadPlugin() {
         // Get height of the related Container (e.g. in another column)
         var height = relatedContainer.offsetHeight;
         height = height > 0 ? (height + relatedContainerOffset) : height;

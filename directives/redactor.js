@@ -30,7 +30,7 @@
           // Expose scope var with loaded state of Redactor
           scope.redactorLoaded = false;
 
-          var updateModel = function updateModel (value) {
+          var updateModel = function updateModel(value) {
             // $timeout to avoid $digest collision
             $timeout(function () {
               scope.$apply(function () {

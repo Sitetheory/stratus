@@ -46,7 +46,7 @@
         Stratus.Instances[_.uniqueId('validate_')] = $scope;
 
         // Check Allowed Values
-        function checkValues (ngModelValue) {
+        function checkValues(ngModelValue) {
 
           $scope.checks = {};
 

@@ -150,7 +150,7 @@
         $mdPanel.open(config);
       };
 
-      function ZoomController (mdPanelRef) {
+      function ZoomController(mdPanelRef) {
 
         $scope.closeDialog = function () {
 
