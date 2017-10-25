@@ -73,6 +73,7 @@
           }, function (newData, priorData) {
             that.changed = true;
             var patch = _.patch(newData, priorData);
+            console.log(patch);
             if (patch) {
               if (newData.id && newData.id !== priorData.id) {
                 window.location.replace(

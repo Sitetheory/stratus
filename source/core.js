@@ -206,7 +206,7 @@ Stratus.Events.on('initialize', function () {
   Stratus.Internals.TrackLocation();
 
   // Load Angular
-  Stratus.Internals.AngularLoader();
+  Stratus.Loaders.Angular();
 
   // Load Views
   Stratus.Internals.Loader().then(function (views) {

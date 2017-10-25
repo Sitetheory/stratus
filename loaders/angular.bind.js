@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-Stratus.Internals.AngularLoader = function () {
+Stratus.Loaders.Angular = function () {
   var requirement;
   var nodes;
   var injection;

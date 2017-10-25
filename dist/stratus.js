@@ -132,6 +132,7 @@ var Stratus = {
   History: {},
   Instances: {},
   Internals: {},
+  Loaders: {},
   Prototypes: {},
   Resources: {},
   Roster: {
@@ -3072,7 +3073,7 @@ Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) 
 /**
  * @constructor
  */
-Stratus.Internals.AngularLoader = function () {
+Stratus.Loaders.Angular = function () {
   var requirement;
   var nodes;
   var injection;
@@ -3586,7 +3587,7 @@ Stratus.Events.on('initialize', function () {
   Stratus.Internals.TrackLocation();
 
   // Load Angular
-  Stratus.Internals.AngularLoader();
+  Stratus.Loaders.Angular();
 
   // Load Views
   Stratus.Internals.Loader().then(function (views) {

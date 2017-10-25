@@ -108,6 +108,7 @@ var Stratus = {
   History: {},
   Instances: {},
   Internals: {},
+  Loaders: {},
   Prototypes: {},
   Resources: {},
   Roster: {
