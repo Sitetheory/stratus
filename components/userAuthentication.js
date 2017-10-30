@@ -2,8 +2,8 @@
 // ------------------
 
 // Define AMD, Require.js, or Contextual Scope
-(function(root, factory) {
-  console.log('hell yearh');
+(function (root, factory) {
+  console.log('hell yeah');
   if (typeof define === 'function' && define.amd) {
     define([
 
@@ -13,22 +13,26 @@
       'angular',
 
       // Modules
-      'angular-material',
+      'angular-material'
     ], factory);
   } else {
     factory(root.Stratus, root._);
   }
-}(this, function(Stratus, _) {
+}(this, function (Stratus, _) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
     bindings: {},
-    controller: function($scope, $attrs) {
+    controller: function ($scope, $attrs, $log) {
       // Initialize
       this.uid = _.uniqueId('user_authentication_');
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
       Stratus.Instances[this.uid] = $scope;
       $scope.elementId = $attrs.elementId || this.uid;
 
+      // Check if Component is Available
+      $log.log('UserAuthentication Initialization', this.uid, $scope);
+
+      // Configure Controller
       var $ctrl = this;
       $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
       $ctrl.passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/i;
@@ -44,28 +48,25 @@
         $ctrl.enabledForgotPassForm = !$ctrl.enabledForgotPassForm;
       }
 
-      //API/Login
+      // API/Login
       function doSignIn(signinData) {
-        console.log(signinData);
-        //
+        $log.log('doSignIn', signinData);
       }
 
-      //[POST]API/User
+      // [POST]API/User
       function doSignUp(signupData) {
-        console.log(signupData.email);
-        console.log(validatePhoneNumber(signupData.phone));
+        $log.log('doSignUp', signupData.email, validatePhoneNumber(signupData.phone));
       }
 
       function doResetPass(resetPassData) {
-        console.log(resetPassData.email);
-        console.log(resetPassData.phone);
+        $log.log('doResetPass', resetPassData.email, resetPassData.phone);
       }
 
       // Helpers
-      var validatePhoneNumber = function(phone) {
+      var validatePhoneNumber = function (phone) {
         var phoneRegex = /^[0-9().+-]*/g;
         return phone.match(phoneRegex)[0];
-      }
+      };
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
