@@ -1,0 +1,65 @@
+md-content#hello-world {
+    background-color: #FFFFFF;
+    box-shadow: 0 5px 1px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    max-width: 350px;
+  }
+
+  md-content#hello-world md-tabs {
+    background: #f6f6f6;
+    border: 1px solid #e1e1e1;
+  }
+
+  input:-webkit-autofill {
+    -webkit-text-fill-color: black;
+    background-color: #ddd;
+  }
+  input:-webkit-autofill:hover {
+    -webkit-text-fill-color: black;
+  }
+
+  md-content#hello-world h1:first-child {
+    margin-top: 0;
+  }
+
+  md-content#hello-world md-tabs md-tab-content {
+    padding-top: 10px;
+  }
+
+  .user-authentication {
+    margin: auto;
+    margin-top: 10%;
+    max-height: 610px;
+    max-width: 430px;
+  }
+
+  .md-block{
+    margin-top: 20px;
+  }
+
+  .center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .md-raised{
+    margin: auto;
+  }
+
+  .link-button{
+    color: rgb(63,81,181);
+    border: none;
+    background: none;
+    font-size: 12px;
+    line-height: 14px;
+    overflow: hidden;
+    margin: 1em 0em 1em 0em;
+  }
+
+  .link-button:hover {
+    background-color: none;
+    cursor: pointer;
+    border-bottom: 1px solid rgb(63,81,181););
+    color: #FFF;
+  }
