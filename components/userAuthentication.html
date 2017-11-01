@@ -35,6 +35,7 @@
                         <div class="center">
                             <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(true)" capitalize-first>{{ $ctrl.forgotPasstext }}</a>
                         </div>
+
                     </form>
 
                     <form class="form-forgot" name="forgotPassForm" ng-submit="forgotPassForm.$valid && $ctrl.doResetPass(resetPassData)" ng-if="$ctrl.enabledForgotPassForm">
