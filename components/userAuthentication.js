@@ -2,11 +2,9 @@
 // ------------------
 
 // Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  console.log('hell yeah');
+(function(root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
-
       // Libraries
       'stratus',
       'underscore',
@@ -18,14 +16,14 @@
   } else {
     factory(root.Stratus, root._);
   }
-}(this, function (Stratus, _) {
+}(this, function(Stratus, _) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
     bindings: {},
-    controller: function ($scope, $attrs, $log) {
+    controller: function($scope, $attrs, $log) {
       // Initialize
       this.uid = _.uniqueId('user_authentication_');
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.less');
       Stratus.Instances[this.uid] = $scope;
       $scope.elementId = $attrs.elementId || this.uid;
 
@@ -35,7 +33,7 @@
       // Configure Controller
       var $ctrl = this;
       $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
-      $ctrl.passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/i;
+      $ctrl.passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/;
       $ctrl.enabledForgotPassForm = false;
       $ctrl.forgotPasstext = 'Forgot Password ?';
       $ctrl.showForgotPassForm = showForgotPassForm;
@@ -44,7 +42,7 @@
       $ctrl.doResetPass = doResetPass;
 
       function showForgotPassForm() {
-        $ctrl.forgotPasstext = $ctrl.enabledForgotPassForm ? 'Forgot Password ?' : 'Back to login';
+        $ctrl.forgotPasstext = $ctrl.enabledForgotPassForm ? 'Forgot Password?' : 'Back to login';
         $ctrl.enabledForgotPassForm = !$ctrl.enabledForgotPassForm;
       }
 
@@ -63,7 +61,7 @@
       }
 
       // Helpers
-      var validatePhoneNumber = function (phone) {
+      var validatePhoneNumber = function(phone) {
         var phoneRegex = /^[0-9().+-]*/g;
         return phone.match(phoneRegex)[0];
       };

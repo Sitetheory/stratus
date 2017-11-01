@@ -1,7 +1,7 @@
 <div ng-cloak>
-    <md-content id="hello-world">
+    <md-content id="user-authentication">
         <md-tabs md-dynamic-height md-border-bottom>
-            <md-tab label="Sign In" class="sign-in">
+            <md-tab label="Sign In" class="sign-in" ng-click="$ctrl.showForgotPassForm(false)">
                 <md-content class="md-padding">
                     <form class="form-sign-in" name="signInForm" ng-submit="signInForm.$valid && $ctrl.doSignIn(signinData)" ng-if="!$ctrl.enabledForgotPassForm">
                         <md-input-container class="md-block" flex-gt-sm>
@@ -27,45 +27,21 @@
                         <div class="center">
                             <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid">Sign In</md-button>
                         </div>
+
+                        <div class="center">
+                            <label for="">-or-</label>
+                        </div>
+
+                        <div class="center">
+                            <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(true)" capitalize-first>{{ $ctrl.forgotPasstext }}</a>
+                        </div>
                     </form>
 
-                    <div class="center">
-                        <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm()" capitalize-first>{{ $ctrl.forgotPasstext }}</a>
-                    </div>
-                    <!--
-                    <div> <label class="center" for="">-or-</label> </div>
-
-                    <div class="">
-                        <ul class="listInline">
-                            <li>
-                                <a class="btn useFacebook" href="#">
-                                    <div class="buttonGradientLight"></div>
-                                    <span class="fa fa-2x fa-facebook"></span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="btn useTwitter" href="#">
-                                    <div class="buttonGradientLight"></div>
-                                    <span class="fa fa-2x fa-twitter"></span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="btn useGithub" href="#">
-                                    <div class="buttonGradientLight"></div>
-                                    <span class="fa fa-2x fa-github"></span>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="btn useGoogle" href="#">
-                                    <div class="buttonGradientLight"></div>
-                                    <span class="fa fa-2x fa-google-plus"></span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div> -->
-
                     <form class="form-forgot" name="forgotPassForm" ng-submit="forgotPassForm.$valid && $ctrl.doResetPass(resetPassData)" ng-if="$ctrl.enabledForgotPassForm">
-                        <h3>Password Reset Request</h3>
+                        <div class="center">
+                            <h3>Password Reset Request</h3>
+                        </div>
+
                         <md-input-container class="md-block" flex-gt-sm>
                             <label>Email Address</label>
                             <input name="email" type="email" ng-model="resetPassData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
@@ -83,8 +59,13 @@
                                 <ng-message when="pattern">Please enter a valid phone number.</ng-message>
                             </ng-messages>
                         </md-input-container>
+                        <div class="center">
+                            <md-button type="submit" class="md-raised" ng-disabled="forgotPassForm.$invalid">Send Password Reset Link</md-button>
+                        </div>
 
-                        <md-button type="submit" class="md-raised" ng-disabled="forgotPassForm.$invalid">Send Password Reset Link</md-button>
+                        <div class="center">
+                            <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(false)" capitalize-first>{{ $ctrl.forgotPasstext }}</a>
+                        </div>
                     </form>
                 </md-content>
             </md-tab>
@@ -109,8 +90,9 @@
                                 <ng-message when="pattern">Please enter a valid phone number that can be used for account recovery.</ng-message>
                             </ng-messages>
                         </md-input-container>
-
-                        <md-button type="submit" class="md-raised" ng-disabled="registrationForm.$invalid">Create New Account</md-button>
+                        <div class="center">
+                            <md-button type="submit" class="md-raised" ng-disabled="registrationForm.$invalid">Create New Account</md-button>
+                        </div>
                     </form>
                 </md-content>
             </md-tab>
