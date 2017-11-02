@@ -20,7 +20,7 @@
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
     bindings: {},
-    controller: function($scope ,$window, $attrs, $log, $http) {
+    controller: function($scope ,$window, $attrs, $log, $http, $mdDialog) {
       // Initialize
       this.uid = _.uniqueId('user_authentication_');
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.less');
@@ -39,6 +39,7 @@
       $ctrl.doSignUp = doSignUp;
       $ctrl.doResetPass = doResetPass;
       $ctrl.onTabSelected = onTabSelected;
+      $ctrl.showAlert = showAlert;
       $ctrl.errorMsg = null;
       $ctrl.selectedIndex = $ctrl.signInIndex;
       var url = '/Api/User';
@@ -48,7 +49,7 @@
           $ctrl.forgotPasstext = isShow ? 'Back to login' : 'Forgot Password?';
           $ctrl.enabledForgotPassForm = isShow;
           if(!isShow){
-            $ctrl.selectedIndex = $ctrl.signInIndex;
+            onTabSelected($ctrl.signInIndex);
           }
       }
 
@@ -76,9 +77,10 @@
             }else {
               $ctrl.errorMsg = message;
             }
-          }
-        )
-      }
+          }, function(error) {
+              console.log(error);
+          })
+        }
 
       //[POST]API/User
       function doSignUp(signupData) {
@@ -99,24 +101,40 @@
             }else {
               $ctrl.errorMsg = message;
             }
+          }, function(error) {
+              console.log(error);
           });
         }
 
-      function doResetPass(resetPassData) {
+        function doResetPass(resetPassData) {
           var data = {
-              'type': 'reset-password-request',
-              'email': resetPassData.email,
-              'phone': validatePhoneNumber(resetPassData.phone)
+            'type': 'reset-password-request',
+            'email': resetPassData.email,
+            'phone': validatePhoneNumber(resetPassData.phone)
           }
 
-          $http({
-              method: 'POST',
-              url: url,
-              data: data
-          }).then(function(response) {
+          $http({ method: 'POST', url: url, data: data}).then(
+            function(response) {
               console.log(response);
-          }, function(response) {
-              console.log(response);
+              showAlert(getStatus(response));
+            }, function(error) {
+              console.log(error);
+            }
+          );
+        }
+
+        // Internal method
+      function showAlert(data) {
+        alert = $mdDialog.alert({
+          title: data.code,
+          textContent: data.message,
+          ok: 'OK'
+        });
+
+        $mdDialog
+          .show( alert )
+          .finally(function() {
+            alert = undefined;
           });
       }
 
