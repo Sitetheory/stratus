@@ -54,7 +54,7 @@
 
                         <md-input-container class="md-block" flex-gt-sm>
                             <label>Recovery Phone</label>
-                            <input name="phone" type="number" ng-model="resetPassData.phone" required placeholder="Recovery Phone">
+                            <input name="phone" type="text" ng-model="resetPassData.phone" required placeholder="Recovery Phone">
                             <ng-messages for="forgotPassForm.phone.$error" ng-if="forgotPassForm.phone.$dirty">
                                 <ng-message when="required">This is required!</ng-message>
                                 <ng-message when="pattern">Please enter a valid phone number.</ng-message>
@@ -85,7 +85,7 @@
 
                         <md-input-container class="md-block" flex-gt-sm>
                             <label>Recovery Phone</label>
-                            <input name="phone" type="number" ng-model="signupData.phone" required placeholder="Recovery Phone">
+                            <input name="phone" type="text" ng-model="signupData.phone" required placeholder="Recovery Phone">
                             <ng-messages for="registrationForm.phone.$error" ng-if="registrationForm.phone.$dirty">
                                 <ng-message when="required">This is required!</ng-message>
                                 <ng-message when="pattern">Please enter a valid phone number that can be used for account recovery.</ng-message>
