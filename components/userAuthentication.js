@@ -20,7 +20,7 @@
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
     bindings: {},
-    controller: function($scope, $attrs, $log) {
+    controller: function($scope, $attrs, $log, $http) {
       // Initialize
       this.uid = _.uniqueId('user_authentication_');
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.less');
@@ -36,6 +36,7 @@
       $ctrl.doSignIn = doSignIn;
       $ctrl.doSignUp = doSignUp;
       $ctrl.doResetPass = doResetPass;
+      var url = '/Api/User';
 
       function showForgotPassForm(isShow) {
           $ctrl.forgotPasstext = isShow ? 'Back to login' : 'Forgot Password ?';
@@ -50,17 +51,35 @@
 
       //[POST]API/User
       function doSignUp(signupData) {
-          console.log(signupData.email);
-          console.log(validatePhoneNumber(signupData.phone));
+          var data = {
+              'email': signupData.email,
+              'phone': validatePhoneNumber(signupData.phone)
+          }
+
+          $http({ method: 'POST',  url: url,  data: data}).then(
+              function(response) {
+                  console.log(response);
+              }, function(error) {
+                  console.log(error);
+              });
       }
 
       function doResetPass(resetPassData) {
-          console.log(resetPassData.email);
-          console.log(resetPassData.phone);
-      }
+          var data = {
+              'type': 'reset-password-request',
+              'email': resetPassData.email,
+              'phone': validatePhoneNumber(resetPassData.phone)
+          }
 
-      function doResetPass(resetPassData) {
-        $log.log('doResetPass', resetPassData.email, resetPassData.phone);
+          $http({
+              method: 'POST',
+              url: url,
+              data: data
+          }).then(function(response) {
+              console.log(response);
+          }, function(response) {
+              console.log(response);
+          });
       }
 
       // Helpers
