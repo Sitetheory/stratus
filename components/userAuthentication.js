@@ -38,7 +38,9 @@
       $ctrl.passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/;
       $ctrl.phoneRegex = /^[\d+\-()]+$/;
       $ctrl.enabledForgotPassForm = false;
+      $ctrl.isHandlingUrl = getUrlParams().type !== null ? true : false;
       $ctrl.enabledResetPassForm = getUrlParams().type === 'reset-password' ? true : false;
+      $ctrl.enabledVerifyForm = getUrlParams().type === 'verify' ? true : false;
       $ctrl.forgotPasstext = 'Forgot Password?';
       $ctrl.errorMsg = null;
 
@@ -49,15 +51,47 @@
       $ctrl.doRequestResetPass = doRequestResetPass;
       $ctrl.doResetPass = doResetPass;
       $ctrl.onTabSelected = onTabSelected;
-      $ctrl.showAlert = showAlert;
       $ctrl.selectedIndex = $ctrl.signInIndex;
+      $ctrl.backToLogin = backToLogin;
+      $ctrl.verifyAccount = verifyAccount;
 
+      // Define functional methods
       function showForgotPassForm(isShow) {
+        $ctrl.errorMsg = null;
         $ctrl.forgotPasstext = isShow ? 'Back to login' : 'Forgot Password?';
         $ctrl.enabledForgotPassForm = isShow;
         if (!isShow) {
           onTabSelected($ctrl.signInIndex);
         }
+      }
+
+      function backToLogin() {
+        $ctrl.errorMsg = null;
+        $ctrl.isHandlingUrl = false;
+      }
+
+      function verifyAccount() {
+        var data = {
+          type: 'verify',
+          email: getUrlParams().email,
+          token: getUrlParams().token
+        }
+
+        $http({
+          method: 'POST',
+          url: url,
+          data: data
+        }).then(
+          function(response) {
+            onTabSelected($ctrl.signInIndex);
+            var code = getStatus(response).code;
+            var message = getStatus(response).message;
+            $ctrl.isHandlingUrl = false;
+            $ctrl.errorMsg = message;
+          },
+          function(error) {
+            console.log(error);
+          });
       }
 
       function onTabSelected(index) {
@@ -88,7 +122,7 @@
           },
           function(error) {
             console.log(error);
-          })
+          });
       }
 
       function doSignUp(signupData) {
@@ -119,6 +153,7 @@
       }
 
       function doRequestResetPass(resetPassData) {
+        $ctrl.errorMsg = null;
         var data = {
           type: 'reset-password-request',
           email: resetPassData.email,
@@ -131,7 +166,7 @@
           data: data
         }).then(
           function(response) {
-            showAlert(getStatus(response));
+            $ctrl.errorMsg = getStatus(response).message
           },
           function(error) {
             console.log(error);
@@ -140,6 +175,7 @@
       }
 
       function doResetPass(resetPassData) {
+        $ctrl.errorMsg = null;
         if (resetPassData.password !== resetPassData.confirm_password) {
           $ctrl.errorMsg = 'Password and Confirm password must be identical';
           return;
@@ -167,21 +203,6 @@
         }, function(error) {
           console.log(error);
         });
-      }
-
-      // Helpers method
-      function showAlert(data) {
-        alert = $mdDialog.alert({
-          title: data.code,
-          textContent: data.message,
-          ok: 'OK'
-        });
-
-        $mdDialog
-          .show(alert)
-          .finally(function() {
-            alert = undefined;
-          });
       }
 
       function cleanedPhoneNumber(phone) {

@@ -5,18 +5,26 @@
   max-width: 100%;
 }
 
+#user-authentication h1:first-child {
+  margin-top: 0;
+}
 
 #user-authentication md-tabs {
   background: #f6f6f6;
   border: 1px solid #e1e1e1;
 }
 
+#user-authentication md-tabs md-tab-content {
+  padding-top: 10px;
+}
+
+#user-authentication md-tabs md-tab-content md-content {
+  min-height: 240px;
+}
+
 .error-message {
   color: #dd2c00;
-  font-size: 13px;
-  line-height: 15px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  text-align: justify;
+  font-size: 15px;
 }
 
 input:-webkit-autofill {
@@ -31,14 +39,6 @@ input:-webkit-autofill:hover {
 input:-webkit-autofill:focus {
   -webkit-text-fill-color: black !important;
   background-color: #ddd;
-}
-
-#user-authentication h1:first-child {
-  margin-top: 0;
-}
-
-#user-authentication md-tabs md-tab-content {
-  padding-top: 10px;
 }
 
 .md-block{
@@ -71,10 +71,14 @@ input:-webkit-autofill:focus {
 .link-button:hover {
   background-color: none;
   cursor: pointer;
-  border-bottom: 1px solid rgb(63,81,181););
+  border-bottom: 1px solid rgb(63,81,181);
   color: #FFF;
 }
 
 form{
   margin: 1em .5em 1em .5em;
+}
+
+.verify {
+  margin-top: 50px;
 }
