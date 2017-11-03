@@ -38,7 +38,7 @@
                             </div>
 
                             <div class="center">
-                                <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(true)" capitalize-first>{{ $ctrl.forgotPasstext }}</a>
+                                <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(true)" capitalize-first>{{ $ctrl.forgotPassText }}</a>
                             </div>
 
                         </form>
@@ -70,7 +70,7 @@
                             </div>
 
                             <div class="center">
-                                <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(false)" capitalize-first>{{ $ctrl.forgotPasstext }}</a>
+                                <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(false)" capitalize-first>{{ $ctrl.forgotPassText }}</a>
                             </div>
                         </form>
                     </div>
@@ -78,7 +78,7 @@
                     <div ng-if="$ctrl.isHandlingUrl">
                         <form class="form-reset-pass" name="resetPassForm" ng-submit="resetPassForm.$valid && $ctrl.doResetPass(resetPassData)" ng-if="$ctrl.enabledResetPassForm">
                             <div class="center">
-                                <h3>Reset your account password</h3>
+                                <h3>{{ $ctrl.resetPassHeaderText }}</h3>
                             </div>
 
                             <md-input-container class="md-block" flex-gt-sm>
@@ -104,7 +104,7 @@
                             </md-input-container>
 
                             <div class="center">
-                                <md-button type="submit" class="md-raised" ng-disabled="resetPassForm.$invalid">Reset Password</md-button>
+                                <md-button type="submit" class="md-raised" ng-disabled="resetPassForm.$invalid">{{ $ctrl.changePassBtnText }} </md-button>
                             </div>
 
                             <div class="center">

@@ -38,7 +38,10 @@
       $ctrl.isHandlingUrl = getUrlParams().type !== null ? true : false;
       $ctrl.enabledResetPassForm = getUrlParams().type === 'reset-password' ? true : false;
       $ctrl.enabledVerifyForm = getUrlParams().type === 'verify' ? true : false;
-      $ctrl.forgotPasstext = 'Forgot Password?';
+      $ctrl.forgotPassText = 'Forgot Password?';
+      $ctrl.resetPassHeaderText = 'Reset your account password';
+      $ctrl.changePassBtnText = 'Reset Password';
+      $ctrl.selectedIndex = $ctrl.signInIndex;
       $ctrl.errorMsg = null;
 
       // methods
@@ -48,14 +51,13 @@
       $ctrl.doRequestResetPass = doRequestResetPass;
       $ctrl.doResetPass = doResetPass;
       $ctrl.onTabSelected = onTabSelected;
-      $ctrl.selectedIndex = $ctrl.signInIndex;
       $ctrl.backToLogin = backToLogin;
       $ctrl.verifyAccount = verifyAccount;
 
       // Define functional methods
       function showForgotPassForm(isShow) {
         $ctrl.errorMsg = null;
-        $ctrl.forgotPasstext = isShow ? 'Back to login' : 'Forgot Password?';
+        $ctrl.forgotPassText = isShow ? 'Back to login' : 'Forgot Password?';
         $ctrl.enabledForgotPassForm = isShow;
         if (!isShow) {
           onTabSelected($ctrl.signInIndex);
@@ -80,11 +82,13 @@
           data: data
         }).then(
           function (response) {
-            onTabSelected($ctrl.signInIndex);
             var code = getStatus(response).code;
             var message = getStatus(response).message;
-            $ctrl.isHandlingUrl = false;
             $ctrl.errorMsg = message;
+            $ctrl.enabledVerifyForm = false;
+            $ctrl.enabledResetPassForm = true;
+            $ctrl.resetPassHeaderText = 'Please set your password';
+            $ctrl.changePassBtnText = 'Update password';
           },
           function (error) {
             console.log(error);
@@ -178,8 +182,9 @@
           return;
         }
 
+        var requestType = getUrlParams().type === 'verify' ? 'update-password' : getUrlParams().type;
         var data = {
-          type: getUrlParams().type,
+          type: requestType,
           email: getUrlParams().email,
           token: getUrlParams().token,
           password: resetPassData.password
@@ -193,6 +198,7 @@
           var code = getStatus(response).code;
           var message = getStatus(response).message;
           if (code == 'SUCCESS') {
+            $ctrl.isHandlingUrl = false;
             return $window.location.href = '/';
           } else {
             $ctrl.errorMsg = message;
