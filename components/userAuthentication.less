@@ -1,81 +1,84 @@
+@white-color: #FFFFFF;
+@red-error: #DD2C00;
+@blue-link: #3F51B5;
+@gray-ss: #FAFAFA;
+@gray-s: #E1E1E1;
+@gray-m: rgba(0, 0, 0, 0.2);
+@gray-l: rgba(0, 0, 0, 0.55);
+@gray-xl: #636262;
+
 #user-authentication {
-  background-color: #FFFFFF;
-  box-shadow: 0 5px 1px 0 rgba(0, 0, 0, 0.2);
+  background-color: @white-color;
+  box-shadow: 0 5px 1px 0 @gray-m;
   border-radius: 5px;
   max-width: 100%;
-}
-
-#user-authentication h1:first-child {
-  margin-top: 0;
-}
-
-#user-authentication md-tabs {
-  background: #f6f6f6;
-  border: 1px solid #e1e1e1;
-}
-
-#user-authentication md-tabs md-tab-content {
-  padding-top: 10px;
-}
-
-#user-authentication md-tabs md-tab-content md-content {
-  min-height: 240px;
+  h1:first-child {
+    margin-top: 0;
+  }
+  md-tabs {
+    background: @white-color;
+    border: 1px solid @gray-s;
+    md-tab-content {
+      padding-top: 10px;
+      background-color: @gray-ss;
+      md-content {
+        min-height: 240px;
+      }
+    }
+  }
 }
 
 .error-message {
-  color: #dd2c00;
+  color: @red-error;
   font-size: 15px;
 }
 
 input:-webkit-autofill {
-  -webkit-text-fill-color: black !important;
-  background-color: #ddd;
-}
-
-input:-webkit-autofill:hover {
-  -webkit-text-fill-color: black;
-}
-
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: black !important;
-  background-color: #ddd;
-}
-
-.md-block{
-  margin-top: 20px;
-}
-
-.center{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  h3{
-    color: #636262;
+  -webkit-text-fill-color: @gray-l !important;
+  background-color: @gray-s;
+  &:hover {
+    -webkit-text-fill-color: @gray-l;
+  }
+  &:focus {
+    -webkit-text-fill-color: @gray-l !important;
+    background-color: @gray-s;
   }
 }
 
-.md-raised{
+.md-block {
+  margin-top: 20px;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  h3 {
+    color: @gray-xl;
+  }
+}
+
+.md-raised {
   margin: auto;
 }
 
-.link-button{
-  color: rgb(63,81,181);
+.link-button {
+  color: @blue-link;
   border: none;
   background: none;
   font-size: 12px;
   line-height: 14px;
   overflow: hidden;
-  margin: 1em 0em 1em 0em;
+  margin: 1em 0 1em 0;
+  &:hover {
+    background-color: none;
+    cursor: pointer;
+    border-bottom: 1px solid @blue-link;
+    color: @white-color;
+  }
 }
 
-.link-button:hover {
-  background-color: none;
-  cursor: pointer;
-  border-bottom: 1px solid rgb(63,81,181);
-  color: #FFF;
-}
-
-form{
+form {
   margin: 1em .5em 1em .5em;
 }
 

@@ -1,10 +1,8 @@
-// Selector Component
-// ------------------
-
 // Define AMD, Require.js, or Contextual Scope
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
+
       // Libraries
       'stratus',
       'underscore',
@@ -16,14 +14,13 @@
   } else {
     factory(root.Stratus, root._);
   }
-}(this, function(Stratus, _) {
+}(this, function (Stratus, _) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
-    bindings: {},
-    controller: function($scope, $window, $attrs, $log, $http, $mdDialog) {
+    controller: function ($scope, $window, $attrs, $log, $http, $mdDialog) {
       // Initialize
       this.uid = _.uniqueId('user_authentication_');
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.less');
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
       Stratus.Instances[this.uid] = $scope;
       $scope.elementId = $attrs.elementId || this.uid;
 
@@ -75,21 +72,21 @@
           type: 'verify',
           email: getUrlParams().email,
           token: getUrlParams().token
-        }
+        };
 
         $http({
           method: 'POST',
           url: url,
           data: data
         }).then(
-          function(response) {
+          function (response) {
             onTabSelected($ctrl.signInIndex);
             var code = getStatus(response).code;
             var message = getStatus(response).message;
             $ctrl.isHandlingUrl = false;
             $ctrl.errorMsg = message;
           },
-          function(error) {
+          function (error) {
             console.log(error);
           });
       }
@@ -104,14 +101,14 @@
         var data = {
           email: signinData.email,
           password: signinData.password
-        }
+        };
 
         $http({
           method: 'POST',
           url: loginUrl,
           data: data
         }).then(
-          function(response) {
+          function (response) {
             var code = getStatus(response).code;
             var message = getStatus(response).message;
             if (code == 'SUCCESS') {
@@ -120,7 +117,7 @@
               $ctrl.errorMsg = message;
             }
           },
-          function(error) {
+          function (error) {
             console.log(error);
           });
       }
@@ -130,14 +127,14 @@
         var data = {
           email: signupData.email,
           phone: cleanedPhoneNumber(signupData.phone)
-        }
+        };
 
         $http({
           method: 'POST',
           url: url,
           data: data
         }).then(
-          function(response) {
+          function (response) {
             var code = getStatus(response).code;
             var message = getStatus(response).message;
 
@@ -147,7 +144,7 @@
               $ctrl.errorMsg = message;
             }
           },
-          function(error) {
+          function (error) {
             console.log(error);
           });
       }
@@ -158,17 +155,17 @@
           type: 'reset-password-request',
           email: resetPassData.email,
           phone: cleanedPhoneNumber(resetPassData.phone)
-        }
+        };
 
         $http({
           method: 'POST',
           url: url,
           data: data
         }).then(
-          function(response) {
-            $ctrl.errorMsg = getStatus(response).message
+          function (response) {
+            $ctrl.errorMsg = getStatus(response).message;
           },
-          function(error) {
+          function (error) {
             console.log(error);
           }
         );
@@ -186,13 +183,13 @@
           email: getUrlParams().email,
           token: getUrlParams().token,
           password: resetPassData.password
-        }
+        };
 
         $http({
           method: 'POST',
           url: url,
           data: data
-        }).then(function(response) {
+        }).then(function (response) {
           var code = getStatus(response).code;
           var message = getStatus(response).message;
           if (code == 'SUCCESS') {
@@ -200,7 +197,7 @@
           } else {
             $ctrl.errorMsg = message;
           }
-        }, function(error) {
+        }, function (error) {
           console.log(error);
         });
       }
@@ -213,9 +210,9 @@
       function getUrlParams() {
         var url = new URL($window.location.href);
         return {
-          'type': url.searchParams.get('type'),
-          'email': url.searchParams.get('email'),
-          'token': url.searchParams.get('token')
+          type: url.searchParams.get('type'),
+          email: url.searchParams.get('email'),
+          token: url.searchParams.get('token')
         };
       };
 
