@@ -98,7 +98,10 @@
   "requirePaddingNewLinesAfterBlocks": null,
   "requireSemicolons": true,
   "requireShorthandArrowFunctions": true,
-  "safeContextKeyword": "that",
+  "safeContextKeyword": [
+    "that",
+    "$ctrl"
+  ],
   "validateLineBreaks": "LF",
   "validateQuoteMarks": {
     "mark": "'",

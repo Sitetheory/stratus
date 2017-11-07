@@ -1,0 +1,70 @@
+#user-authentication {
+  background-color: #FFFFFF;
+  box-shadow: 0 5px 1px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  max-width: 100%;
+}
+#user-authentication h1:first-child {
+  margin-top: 0;
+}
+#user-authentication md-tabs {
+  background: #FFFFFF;
+  border: 1px solid #E1E1E1;
+}
+#user-authentication md-tabs md-tab-content {
+  padding-top: 10px;
+  background-color: #FAFAFA;
+}
+#user-authentication md-tabs md-tab-content md-content {
+  min-height: 240px;
+}
+.error-message {
+  color: #DD2C00;
+  font-size: 15px;
+}
+input:-webkit-autofill {
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
+  background-color: #E1E1E1;
+}
+input:-webkit-autofill:hover {
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.55);
+}
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
+  background-color: #E1E1E1;
+}
+.md-block {
+  margin-top: 20px;
+}
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.center h3 {
+  color: #636262;
+}
+.md-raised {
+  margin: auto;
+}
+.link-button {
+  color: #3F51B5;
+  border: none;
+  background: none;
+  font-size: 12px;
+  line-height: 14px;
+  overflow: hidden;
+  margin: 1em 0 1em 0;
+}
+.link-button:hover {
+  background-color: none;
+  cursor: pointer;
+  border-bottom: 1px solid #3F51B5;
+  color: #FFFFFF;
+}
+form {
+  margin: 1em .5em 1em .5em;
+}
+.verify {
+  margin-top: 50px;
+}

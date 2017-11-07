@@ -7,14 +7,12 @@
   font-size: 14px;
   background: #FF5B3A;
 }
-
 .btn.btnPublish svg {
   position: relative;
   margin-right: 8px;
   width: 28px;
   vertical-align: middle;
 }
-
 .btn.btnPublish svg .actionButton {
   transition: transform 0.3s ease-out;
   -webkit-transition: transform 0.3s ease-out;
@@ -22,66 +20,54 @@
   -webkit-transform: translateX(0);
   fill: #FFFFFF;
 }
-
 .btn.btnPublish:hover {
   background: #FF7550;
 }
-
 /* Published */
 .published.btnPublish svg .actionButton {
   transform: translateX(-25%);
   -webkit-transform: translateX(-25%);
 }
-
 .published.md-button.btnPublish,
 .published.btnPublish {
   background: #56995E;
 }
-
 .published.md-button.btnPublish:not([disabled]):hover,
 .published.btnPublish:not([disabled]):hover {
   background: #7CB27D;
 }
-
 /* Unpublished */
 .unpublished.md-button.btnPublish,
 .unpublished.btnPublish {
   background: #D96236;
 }
-
 .unpublished.md-button.btnPublish:not([disabled]):hover,
 .unpublished.btnPublish:not([disabled]):hover {
   background: #FF7B55;
 }
-
 /* Delayed */
 .delayed.md-button.btnPublish,
 .delayed.btnPublish {
   background: #734564;
 }
-
 .delayed.md-button.btnPublish:not([disabled]):hover,
 .delayed.btnPublish:not([disabled]):hover {
   background: #A47594;
 }
-
 .delayed.btnPublish svg .actionButton {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
-
 .btnPublish:hover .publishIcon svg,
 .published.btnPublish:hover .publishIcon svg,
 .delayed.btnPublish:hover .publishIcon svg {
   animation: btnIconGrow 0.3s ease-out both;
   -webkit-animation: btnIconGrow 0.3s ease-out both;
 }
-
 .btn.btnPublishDropdown {
   width: 245px;
   padding: 15px;
 }
-
 /* hide unpublish button if not published */
 /**
 .btn.unpublished [data-action="unpublish"] {
@@ -92,17 +78,14 @@
   padding: 17px 13px 0 13px !important;
   border-left: 1px solid rgba(255, 255, 255, 0.4);
 }
-
 #header .btnPublish .caret {
   opacity: .7;
   border-width: 5px;
   border-top-color: #FFFFFF;
 }
-
 #header .btnPublish:hover .caret {
   opacity: 1;
 }
-
 /* Bootstrap polishes to timepicker clock */
 /**
 .bootstrap-datetimepicker-widget table td,
