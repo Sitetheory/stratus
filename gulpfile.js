@@ -52,26 +52,28 @@ var location = {
   },
   mangle: {
     core: [
-      //'stratus.js',
+
+      // 'stratus.js',
       'normalizers/*.js',
       'models/*.js',
       'collections/*.js',
       'routers/*.js',
       'services/*.js',
-      'bower_components/requirejs/require.js',
-      'bower_components/zxcvbn/dist/zxcvbn.js'
-      //'bower_components/ng-sortable/angular-legacy-sortable.js'
+      'bower_components/requirejs/require.js'
+
+      // 'bower_components/ng-sortable/angular-legacy-sortable.js'
     ],
     min: [
-      //'stratus.min.js',
+
+      // 'stratus.min.js',
       'normalizers/*.min.js',
       'models/*.min.js',
       'routers/*.min.js',
       'controllers/*.min.js',
       'services/*.min.js',
-      'bower_components/requirejs/require.min.js',
-      'bower_components/zxcvbn/dist/zxcvbn.min.js'
-      //'bower_components/ng-sortable/angular-legacy-sortable.min.js'
+      'bower_components/requirejs/require.min.js'
+
+      // 'bower_components/ng-sortable/angular-legacy-sortable.min.js'
     ]
   },
   preserve: {
