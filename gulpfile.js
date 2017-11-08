@@ -58,7 +58,8 @@ var location = {
       'collections/*.js',
       'routers/*.js',
       'services/*.js',
-      'bower_components/requirejs/require.js'
+      'bower_components/requirejs/require.js',
+      'bower_components/zxcvbn/dist/zxcvbn.js'
       //'bower_components/ng-sortable/angular-legacy-sortable.js'
     ],
     min: [
@@ -68,7 +69,8 @@ var location = {
       'routers/*.min.js',
       'controllers/*.min.js',
       'services/*.min.js',
-      'bower_components/requirejs/require.min.js'
+      'bower_components/requirejs/require.min.js',
+      'bower_components/zxcvbn/dist/zxcvbn.min.js'
       //'bower_components/ng-sortable/angular-legacy-sortable.min.js'
     ]
   },
