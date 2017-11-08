@@ -1,12 +1,15 @@
 @white-color: #FFFFFF;
-@red-error: #DD2C00;
+@red-error: #F44336;
+@purple: #9C27B0;
+@orange: #FF9800;
+@light-green: #8BC34A;
+@green: #4CAF50;
 @blue-link: #3F51B5;
 @gray-ss: #FAFAFA;
 @gray-s: #E1E1E1;
 @gray-m: rgba(0, 0, 0, 0.2);
 @gray-l: rgba(0, 0, 0, 0.55);
 @gray-xl: #636262;
-
 #user-authentication {
   background-color: @white-color;
   box-shadow: 0 5px 1px 0 @gray-m;
@@ -23,14 +26,50 @@
       background-color: @gray-ss;
       md-content {
         min-height: 240px;
+        .form-reset-pass {
+          .first-password {
+            margin-top: 35px;
+            margin-bottom: 35px;
+          }
+        }
+        md-progress-linear {
+          &.risky {
+            .md-bar {
+              background-color: @red-error;
+            }
+          }
+          &.guessable {
+            .md-bar {
+              background-color: @purple;
+            }
+          }
+          &.safely {
+            .md-bar {
+              background-color: @orange;
+            }
+          }
+          &.moderate {
+            .md-bar {
+              background-color: @light-green;
+            }
+          }
+          &.strong {
+            .md-bar {
+              background-color: @green;
+            }
+          }
+        }
       }
     }
   }
 }
 
 .error-message {
-  color: @red-error;
   font-size: 15px;
+  color: @red-error;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
 }
 
 input:-webkit-autofill {
@@ -55,6 +94,20 @@ input:-webkit-autofill {
   justify-content: center;
   h3 {
     color: @gray-xl;
+  }
+  h4 {
+    color: @gray-l;
+  }
+  &.show-error {
+    display: block;
+    text-align: center;
+    h3 {
+      margin-bottom: 3px;
+    }
+    h4 {
+      margin-top: 0;
+      text-transform: none;
+    }
   }
 }
 

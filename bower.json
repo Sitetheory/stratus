@@ -46,7 +46,8 @@
     "angular-scroll-spy": "https://github.com/inorganik/angular-scroll-spy.git",
     "zepto": "^1.2.0",
     "ng-file-upload": "^12.2.13",
-    "angular-ui-tree": "^2.22.6"
+    "angular-ui-tree": "^2.22.6",
+    "zxcvbn": "^4.4.2"
   },
   "private": false
 }
