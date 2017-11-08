@@ -8,29 +8,27 @@
                     </div>
 
                     <div ng-if="!$ctrl.isHandlingUrl">
-                        <form class="form-sign-in" name="signInForm" ng-submit="signInForm.$valid && $ctrl.doSignIn(signinData)" ng-if="!$ctrl.enabledForgotPassForm">
+                        <form class="form-sign-in" name="signInForm" ng-submit="signInForm.$valid && $ctrl.doSignIn($ctrl.signinData)" ng-if="!$ctrl.enabledForgotPassForm">
                             <md-input-container class="md-block" flex-gt-sm>
                                 <label>Email Address</label>
-                                <input name="email" type="email" ng-model="signinData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
+                                <input name="email" type="email" ng-model="$ctrl.signinData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                                 <ng-messages for="signInForm.email.$error" ng-if="signInForm.email.$dirty || signInForm.email.pattern">
-                                    <ng-message when="required">This is required!</ng-message>
+                                    <ng-message when="required">This field is required!</ng-message>
                                     <ng-message when="pattern">Please enter a valid email address.</ng-message>
                                 </ng-messages>
                             </md-input-container>
 
                             <md-input-container class="md-block" flex-gt-sm>
                                 <label>Password</label>
-                                <input name="password" type="password" ng-model="signinData.password" ng-minlength="8" ng-maxlength="20" required placeholder="Password" ng-pattern="$ctrl.passwordRegex">
+                                <input name="password" type="password" ng-model="$ctrl.signinData.password" required placeholder="Password">
+                                <md-progress-linear ng-if="$ctrl.signinData.password" class="{{$ctrl.progressBarClass}}" md-mode="determinate" value="{{$ctrl.progressBarValue}}"></md-progress-linear>
                                 <ng-messages for="signInForm.password.$error" ng-if="signInForm.password.$dirty">
-                                    <ng-message when="required">This is required!</ng-message>
-                                    <ng-message when="minlength">Password must be longer than 8 characters</ng-message>
-                                    <ng-message when="maxlength">Password must be shorter than 20 characters</ng-message>
-                                    <ng-message when="pattern">Password must contain at least one lower and one uppercase letter and one number.</ng-message>
+                                    <ng-message when="required">This field is required!</ng-message>
                                 </ng-messages>
                             </md-input-container>
 
                             <div class="center">
-                                <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid">Sign In</md-button>
+                                <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid || !$ctrl.allowSubmit">Sign In</md-button>
                             </div>
 
                             <div class="center">
@@ -52,7 +50,7 @@
                                 <label>Email Address</label>
                                 <input name="email" type="email" ng-model="resetPassData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                                 <ng-messages for="forgotPassForm.email.$error" ng-if="forgotPassForm.email.$dirty || forgotPassForm.email.pattern">
-                                    <ng-message when="required">This is required!</ng-message>
+                                    <ng-message when="required">This field is required!</ng-message>
                                     <ng-message when="pattern">Please enter a valid email address.</ng-message>
                                 </ng-messages>
                             </md-input-container>
@@ -61,7 +59,7 @@
                                 <label>Recovery Phone</label>
                                 <input name="phone" type="text" ng-model="resetPassData.phone" required placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
                                 <ng-messages for="forgotPassForm.phone.$error" ng-if="forgotPassForm.phone.$dirty">
-                                    <ng-message when="required">This is required!</ng-message>
+                                    <ng-message when="required">This field is required!</ng-message>
                                     <ng-message when="pattern">Please enter a valid phone number.</ng-message>
                                 </ng-messages>
                             </md-input-container>
@@ -76,35 +74,31 @@
                     </div>
 
                     <div ng-if="$ctrl.isHandlingUrl">
-                        <form class="form-reset-pass" name="resetPassForm" ng-submit="resetPassForm.$valid && $ctrl.doResetPass(resetPassData)" ng-if="$ctrl.enabledResetPassForm">
-                            <div class="center">
+                        <form class="form-reset-pass" name="resetPassForm" ng-submit="resetPassForm.$valid && $ctrl.doResetPass($ctrl.resetPassData)" ng-if="$ctrl.enabledResetPassForm">
+                            <div class="center show-error">
                                 <h3>{{ $ctrl.resetPassHeaderText }}</h3>
+                                <h4>{{ $ctrl.resetPassHeaderEmail }}</h4>
                             </div>
 
-                            <md-input-container class="md-block" flex-gt-sm>
+                            <md-input-container class="md-block first-password" flex-gt-sm>
                                 <label>Password phrase</label>
-                                <input name="password" type="password" ng-model="resetPassData.password" ng-minlength="8" ng-maxlength="20" required placeholder="Password" ng-pattern="$ctrl.passwordRegex">
+                                <input name="password" type="password" ng-model="$ctrl.resetPassData.password" required placeholder="Password">
+                                <md-progress-linear ng-if="$ctrl.resetPassData.password" class="{{$ctrl.progressBarClass}}" md-mode="determinate" value="{{$ctrl.progressBarValue}}"></md-progress-linear>
                                 <ng-messages for="resetPassForm.password.$error" ng-if="resetPassForm.password.$dirty">
-                                    <ng-message when="required">This is required!</ng-message>
-                                    <ng-message when="minlength">Password must be longer than 8 characters</ng-message>
-                                    <ng-message when="maxlength">Password must be shorter than 20 characters</ng-message>
-                                    <ng-message when="pattern">Password must contain at least one lower and one uppercase letter and one number.</ng-message>
+                                    <ng-message when="required">This field is required!</ng-message>
                                 </ng-messages>
                             </md-input-container>
 
                             <md-input-container class="md-block" flex-gt-sm>
                                 <label>Confirm password phrase</label>
-                                <input name="confirm_password" type="password" ng-model="resetPassData.confirm_password" ng-minlength="8" ng-maxlength="20" required placeholder="Confirm password" ng-pattern="$ctrl.passwordRegex">
+                                <input name="confirm_password" type="password" ng-model="$ctrl.resetPassData.confirm_password" required placeholder="Confirm password">
                                 <ng-messages for="resetPassForm.confirm_password.$error" ng-if="resetPassForm.confirm_password.$dirty">
-                                    <ng-message when="required">This is required!</ng-message>
-                                    <ng-message when="minlength">Password must be longer than 8 characters</ng-message>
-                                    <ng-message when="maxlength">Password must be shorter than 20 characters</ng-message>
-                                    <ng-message when="pattern">Password must contain at least one lower and one uppercase letter and one number.</ng-message>
+                                    <ng-message when="required">This field is required!</ng-message>
                                 </ng-messages>
                             </md-input-container>
 
                             <div class="center">
-                                <md-button type="submit" class="md-raised" ng-disabled="resetPassForm.$invalid">{{ $ctrl.changePassBtnText }} </md-button>
+                                <md-button type="submit" class="md-raised" ng-disabled="resetPassForm.$invalid || !$ctrl.allowSubmit">{{ $ctrl.changePassBtnText }} </md-button>
                             </div>
 
                             <div class="center">
@@ -137,7 +131,7 @@
                             <label>Email Address</label>
                             <input name="email" type="email" ng-model="signupData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                             <ng-messages for="registrationForm.email.$error" ng-if="registrationForm.email.$dirty || registrationForm.email.pattern">
-                                <ng-message when="required">This is required!</ng-message>
+                                <ng-message when="required">This field is required!</ng-message>
                                 <ng-message when="pattern">Please enter a valid email address.</ng-message>
                             </ng-messages>
                         </md-input-container>
@@ -146,7 +140,7 @@
                             <label>Recovery Phone</label>
                             <input name="phone" type="text" ng-model="signupData.phone" required placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
                             <ng-messages for="registrationForm.phone.$error" ng-if="registrationForm.phone.$dirty">
-                                <ng-message when="required">This is required!</ng-message>
+                                <ng-message when="required">This field is required!</ng-message>
                                 <ng-message when="pattern">Please enter a valid phone number that can be used for account recovery.</ng-message>
                             </ng-messages>
                         </md-input-container>

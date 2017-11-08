@@ -281,6 +281,7 @@ boot.config({
     'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
     promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
+    zxcvbn: boot.bundle + 'stratus/bower_components/zxcvbn/dist/zxcvbn' + boot.suffix,
 
     /* Angular */
     angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
@@ -307,3 +308,4 @@ boot.config({
     jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix
   }
 });
+
