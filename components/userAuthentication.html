@@ -8,10 +8,10 @@
                     </div>
 
                     <div ng-if="!$ctrl.isHandlingUrl">
-                        <form class="form-sign-in" name="signInForm" ng-submit="signInForm.$valid && $ctrl.doSignIn($ctrl.signinData)" ng-if="!$ctrl.enabledForgotPassForm">
+                        <form class="form-sign-in" name="signInForm" ng-submit="signInForm.$valid && $ctrl.doSignIn(signinData)" ng-if="!$ctrl.enabledForgotPassForm">
                             <md-input-container class="md-block" flex-gt-sm>
                                 <label>Email Address</label>
-                                <input name="email" type="email" ng-model="$ctrl.signinData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
+                                <input name="email" type="email" ng-model="signinData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                                 <ng-messages for="signInForm.email.$error" ng-if="signInForm.email.$dirty || signInForm.email.pattern">
                                     <ng-message when="required">This field is required!</ng-message>
                                     <ng-message when="pattern">Please enter a valid email address.</ng-message>
@@ -20,15 +20,14 @@
 
                             <md-input-container class="md-block" flex-gt-sm>
                                 <label>Password</label>
-                                <input name="password" type="password" ng-model="$ctrl.signinData.password" required placeholder="Password">
-                                <md-progress-linear ng-if="$ctrl.signinData.password" class="{{$ctrl.progressBarClass}}" md-mode="determinate" value="{{$ctrl.progressBarValue}}"></md-progress-linear>
+                                <input name="password" type="password" ng-model="signinData.password" required placeholder="Password">
                                 <ng-messages for="signInForm.password.$error" ng-if="signInForm.password.$dirty">
                                     <ng-message when="required">This field is required!</ng-message>
                                 </ng-messages>
                             </md-input-container>
 
                             <div class="center">
-                                <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid || !$ctrl.allowSubmit">Sign In</md-button>
+                                <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid">Sign In</md-button>
                             </div>
 
                             <div class="center">
