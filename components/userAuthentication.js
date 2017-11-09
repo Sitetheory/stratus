@@ -9,6 +9,7 @@
 
       // Modules
       'zxcvbn',
+      'stratus.services.userAuthentication'
     ], factory);
   } else {
     // Browser globals
@@ -17,7 +18,7 @@
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular, zxcvbn) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
-    controller: function ($scope, $window, $attrs, $log, $http, $mdDialog) {
+    controller: function ($scope, $window, $attrs, userAuthentication) {
       // Initialize
       this.uid = _.uniqueId('user_authentication_');
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
@@ -27,8 +28,6 @@
       var $ctrl = this;
 
       // variables
-      var url = '/Api/User';
-      var loginUrl = '/Api/Login';
       $ctrl.signinData = {};
       $ctrl.resetPassData = {};
       $ctrl.allowSubmit = false;
@@ -46,6 +45,7 @@
       $ctrl.changePassBtnText = 'Reset Password';
       $ctrl.selectedIndex = $ctrl.signInIndex;
       $ctrl.errorMsg = null;
+      var RESPONSE_CODE = { verify: 'VERIFY', success: 'SUCCESS' };
 
       // methods
       $ctrl.showForgotPassForm = showForgotPassForm;
@@ -63,7 +63,18 @@
           return this.signinData.password;
         }
         if (!_.isEmpty(this.resetPassData)) {
-          return this.resetPassData.password;
+          var password = this.resetPassData.password;
+          var confirmPassword = this.resetPassData.confirm_password;
+
+          if (password && validPassword(password) && $ctrl.progressBarValue >= 40) {
+            if (password !== confirmPassword) {
+              $ctrl.errorMsg = 'Your passwords did not match.';
+            } else {
+              $ctrl.errorMsg = '';
+            }
+          }
+
+          return password;
         }
       }), function (newValue, oldValue) {
         if (newValue !== undefined && newValue !== oldValue) {
@@ -73,7 +84,7 @@
           generateProgressBar(newValue);
 
           if (!validPassword(newValue)) {
-            $ctrl.errorMsg = 'Password must contain at least 8 characters, 1 lower and uppercase letter and 1 number.';
+            $ctrl.errorMsg = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.';
           } else if ($ctrl.progressBarValue <= 40) {
             $ctrl.errorMsg = 'Your password is not strong.';
             $ctrl.allowSubmit = true;
@@ -85,20 +96,6 @@
       });
 
       // Define functional methods
-      function showForgotPassForm(isShow) {
-        $ctrl.errorMsg = null;
-        $ctrl.forgotPassText = isShow ? 'Back to login' : 'Forgot Password?';
-        $ctrl.enabledForgotPassForm = isShow;
-        if (!isShow) {
-          onTabSelected($ctrl.signInIndex);
-        }
-      }
-
-      function backToLogin() {
-        $ctrl.errorMsg = null;
-        $ctrl.isHandlingUrl = false;
-      }
-
       function verifyAccount() {
         var data = {
           type: 'verify',
@@ -106,28 +103,17 @@
           token: getUrlParams().token
         };
 
-        $http({
-          method: 'POST',
-          url: url,
-          data: data
-        }).then(
-          function (response) {
-            var code = getStatus(response).code;
-            var message = getStatus(response).message;
-            $ctrl.errorMsg = message;
+        userAuthentication.verifyAccount(data).then(function (response) {
+          if (getStatus(response).code == RESPONSE_CODE.verify) {
+            $ctrl.errorMsg = getStatus(response).message;
             $ctrl.enabledVerifyForm = false;
             $ctrl.enabledResetPassForm = true;
             $ctrl.resetPassHeaderText = 'Please set your password';
             $ctrl.changePassBtnText = 'Update password';
-          },
-          function (error) {
-            console.log(error);
-          });
-      }
-
-      function onTabSelected(index) {
-        $ctrl.selectedIndex = index;
-        $ctrl.errorMsg = null;
+          } else {
+            $ctrl.errorMsg = getStatus(response).message;
+          }
+        });
       }
 
       function doSignIn(signinData) {
@@ -137,23 +123,13 @@
           password: signinData.password
         };
 
-        $http({
-          method: 'POST',
-          url: loginUrl,
-          data: data
-        }).then(
-          function (response) {
-            var code = getStatus(response).code;
-            var message = getStatus(response).message;
-            if (code == 'SUCCESS') {
-              return $window.location.href = '/';
-            } else {
-              $ctrl.errorMsg = message;
-            }
-          },
-          function (error) {
-            console.log(error);
-          });
+        userAuthentication.signIn(data).then(function (response) {
+          if (getStatus(response).code == RESPONSE_CODE.success) {
+            return $window.location.href = '/';
+          } else {
+            $ctrl.errorMsg = getStatus(response).message;
+          }
+        });
       }
 
       function doSignUp(signupData) {
@@ -163,24 +139,13 @@
           phone: cleanedPhoneNumber(signupData.phone)
         };
 
-        $http({
-          method: 'POST',
-          url: url,
-          data: data
-        }).then(
-          function (response) {
-            var code = getStatus(response).code;
-            var message = getStatus(response).message;
-
-            if (code == 'SUCCESS') {
-              return $window.location.href = '/';
-            } else {
-              $ctrl.errorMsg = message;
-            }
-          },
-          function (error) {
-            console.log(error);
-          });
+        userAuthentication.signUp(data).then(function (response) {
+          if (getStatus(response).code == RESPONSE_CODE.success) {
+            return $window.location.href = '/';
+          } else {
+            $ctrl.errorMsg = getStatus(response).message;
+          }
+        });
       }
 
       function doRequestResetPass(resetPassData) {
@@ -191,27 +156,13 @@
           phone: cleanedPhoneNumber(resetPassData.phone)
         };
 
-        $http({
-          method: 'POST',
-          url: url,
-          data: data
-        }).then(
-          function (response) {
-            $ctrl.errorMsg = getStatus(response).message;
-          },
-          function (error) {
-            console.log(error);
-          }
-        );
+        userAuthentication.requestResetPass(data).then(function (response) {
+          $ctrl.errorMsg = getStatus(response).message;
+        });
       }
 
       function doResetPass(resetPassData) {
         $ctrl.errorMsg = null;
-        if (resetPassData.password !== resetPassData.confirm_password) {
-          $ctrl.errorMsg = 'Password and Confirm password must be identical';
-          return;
-        }
-
         var requestType = getUrlParams().type === 'verify' ? 'update-password' : getUrlParams().type;
         var data = {
           type: requestType,
@@ -220,25 +171,36 @@
           password: resetPassData.password
         };
 
-        $http({
-          method: 'POST',
-          url: url,
-          data: data
-        }).then(function (response) {
-          var code = getStatus(response).code;
-          var message = getStatus(response).message;
-          if (code == 'SUCCESS') {
+        userAuthentication.resetPass(data).then(function (response) {
+          if (getStatus(response).code == RESPONSE_CODE.success) {
             $ctrl.isHandlingUrl = false;
-            return $window.location.href = '/Member/Sign-In';
+            $window.history.replaceState({}, document.title, '/Member/Sign-In');
           } else {
-            $ctrl.errorMsg = message;
+            $ctrl.errorMsg = getStatus(response).message;
           }
-        }, function (error) {
-          console.log(error);
         });
       }
 
       // Helpers
+      function showForgotPassForm(isShow) {
+        $ctrl.errorMsg = null;
+        $ctrl.forgotPassText = isShow ? 'Back to login' : 'Forgot Password?';
+        $ctrl.enabledForgotPassForm = isShow;
+        if (!isShow) {
+          onTabSelected($ctrl.signInIndex);
+        }
+      };
+
+      function backToLogin() {
+        $ctrl.errorMsg = null;
+        $ctrl.isHandlingUrl = false;
+      };
+
+      function onTabSelected(index) {
+        $ctrl.selectedIndex = index;
+        $ctrl.errorMsg = null;
+      };
+
       function validPassword(password) {
         var passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/;
         return password.length >= 8 && passwordRegex.test(password);
@@ -260,7 +222,7 @@
 
       function getStatus(response) {
         return response.data.meta.status['0'];
-      }
+      };
 
       function generateProgressBar(password) {
         switch (zxcvbn(password).score) {
@@ -285,7 +247,7 @@
             $ctrl.progressBarValue = 100;
             break;
         }
-      }
+      };
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
