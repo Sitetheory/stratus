@@ -1,6 +1,9 @@
-<div class="container">
+<div class="container" ng-init="$ctrl.initialize()">
   <div class="theme">
-    <p class="inline">Theme</p>
+    <p class="inline">
+      <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+      <label for="">Theme</label>
+    </p>
 
     <div class="selector">
       <div class="top">
@@ -14,7 +17,6 @@
           <div flex="50">
             <div class="content">
               <p><b>Fantome</b></p>
-
               <p class="text">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
               </p>
@@ -43,7 +45,7 @@
                 <ul>
                   <li><a href="#">Lastest</a></li>
                   <li><a href="#">Populate</a></li>
-                  <li><a href="#">Favorites(2)</a></li>
+                  <li><a href="#">Favorites({{$ctrl.favorites.length}})</a></li>
                 </ul>
               </div>
             </div>
@@ -51,69 +53,29 @@
 
           <div flex="80">
             <div class="templates">
-              <div class="template">
+              <div ng-repeat="theme in $ctrl.themes" class="template">
                 <div layout="row">
                   <div flex="50">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnv_D5_jnvPtjEZEUlktLN5HIBOSB5vvngm0ms8fUnT_-_ueLVA" alt="">
                   </div>
 
                   <div flex="45">
-                    <p><b>Kurage</b></p>
+                    <p>
+                      <div layout="row">
+                        <div flex="85"><b>{{theme.title}}</b></div>
+                        <div flex="15" ng-click="$ctrl.setFavorite(theme.id)"><i class="point" ng-class="$ctrl.getHeartColor(theme.id)"  aria-hidden="true"></i></div>
+                      </div>
+                    </p>
+
                     <div class="description">
-                      <p class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                      <p class="text">{{theme.content}}</p>
                     </div>
+
                     <md-button class="button">Choose Theme</md-button>
                   </div>
                 </div>
               </div>
 
-              <div class="template">
-                <div layout="row">
-                  <div flex="50">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnv_D5_jnvPtjEZEUlktLN5HIBOSB5vvngm0ms8fUnT_-_ueLVA" alt="">
-                  </div>
-
-                  <div flex="45">
-                    <p><b>Kurage</b></p>
-                    <div class="description">
-                      <p class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                    </div>
-                    <md-button class="button">Choose Theme</md-button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="template">
-                <div layout="row">
-                  <div flex="50">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnv_D5_jnvPtjEZEUlktLN5HIBOSB5vvngm0ms8fUnT_-_ueLVA" alt="">
-                  </div>
-
-                  <div flex="45">
-                    <p><b>Kurage</b></p>
-                    <div class="description">
-                      <p class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                    </div>
-                    <md-button class="button">Choose Theme</md-button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="template">
-                <div layout="row">
-                  <div flex="50">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnv_D5_jnvPtjEZEUlktLN5HIBOSB5vvngm0ms8fUnT_-_ueLVA" alt="">
-                  </div>
-
-                  <div flex="45">
-                    <p><b>Kurage</b></p>
-                    <div class="description">
-                      <p class="text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                    </div>
-                    <md-button class="button">Choose Theme</md-button>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
