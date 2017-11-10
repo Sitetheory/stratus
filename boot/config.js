@@ -150,6 +150,7 @@ boot.config({
     'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
     'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
     'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
+    'stratus.components.adminThemeSelector': boot.bundle + 'stratus/components/adminThemeSelector' + boot.suffix,
 
     /* Stratus Core Directives */
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
@@ -296,6 +297,7 @@ boot.config({
     'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
     'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
     'angular-ui-tree': boot.bundle + 'stratus/bower_components/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
+    'angular-paging': boot.bundle + 'stratus/bower_components/angular-paging/dist/paging' + boot.suffix,
 
     /* Backbone */
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
@@ -308,4 +310,3 @@ boot.config({
     jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix
   }
 });
-
