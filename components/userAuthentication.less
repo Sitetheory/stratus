@@ -1,8 +1,10 @@
 @white-color: #FFFFFF;
-@red-error: #F44336;
+@red-s: #fde1df;
+@red-xxl: #F44336;
 @purple: #9C27B0;
 @orange: #FF9800;
 @light-green: #8BC34A;
+@green-s: #c7e7c8;
 @green: #4CAF50;
 @blue-link: #3F51B5;
 @gray-ss: #FAFAFA;
@@ -15,6 +17,11 @@
   box-shadow: 0 5px 1px 0 @gray-m;
   border-radius: 5px;
   max-width: 100%;
+  md-progress-linear {
+    .md-bar {
+      background-color: @green;
+    }
+  }
   h1:first-child {
     margin-top: 0;
   }
@@ -22,9 +29,10 @@
     background: @white-color;
     border: 1px solid @gray-s;
     md-tab-content {
-      padding-top: 10px;
+      padding-top: 0;
       background-color: @gray-ss;
       md-content {
+        padding: 0;
         min-height: 240px;
         .form-reset-pass {
           .first-password {
@@ -35,7 +43,7 @@
         md-progress-linear {
           &.risky {
             .md-bar {
-              background-color: @red-error;
+              background-color: @red-xxl;
             }
           }
           &.guessable {
@@ -62,14 +70,32 @@
       }
     }
   }
+  md-input-container {
+    &.email-field {
+      margin-top: 40px;
+    }
+  }
 }
 
-.error-message {
-  font-size: 15px;
-  color: @red-error;
-  padding-left: 10px;
-  padding-right: 10px;
+.message {
+  padding: 10px;
   text-align: center;
+  p {
+    font-size: 15px;
+    margin-bottom: 0;
+  }
+  &.error {
+    background-color: @red-s;
+    p {
+      color: @red-xxl;
+    }
+  }
+  &.success {
+    background-color: @green-s;
+    p {
+      color: @green;
+    }
+  }
 }
 
 input:-webkit-autofill {
