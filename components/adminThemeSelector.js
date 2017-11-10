@@ -61,13 +61,23 @@
           created_at: '2017-11-10'
         }
       ];
-      $ctrl.currentTheme = $ctrl.themes;
+      $ctrl.currentThemes = $ctrl.themes;
+
+      $ctrl.categories = ['Real Estale', 'Churche', 'Small Business', 'Corporate', 'Artist', 'Health & Fitness'];
 
       // define methods
       $ctrl.sortBy = sortBy;
       $ctrl.setFavorite = setFavorite;
       $ctrl.getHeartColor = getHeartColor;
       $ctrl.showCategory = showCategory;
+
+      // methods
+      function showCategory(index) {
+        $ctrl.currentThemes = $ctrl.themes.filter(theme => theme.category == $ctrl.categories[index]);
+        if (index < 0) {
+          $ctrl.currentThemes = $ctrl.themes;
+        }
+      }
 
       function setFavorite(id) {
         $ctrl.favorites.includes(id) ? $ctrl.favorites.splice($ctrl.favorites.indexOf(id, 1)) : $ctrl.favorites.push(id);
@@ -79,33 +89,32 @@
       };
 
       function sortBy(type) {
-        switch (type) {
-          case 'lastest':
-            $ctrl.currentTheme = lastest();
-            break;
-          case 'populate':
-            $ctrl.currentTheme = populate();
-            break;
-          case 'favorite':
-            $ctrl.currentTheme = favorite();
-            break;
-        }
+        $ctrl.currentThemes = (function (type) {
+          switch (type) {
+            case 'lastest':
+              return lastest();
+            case 'populate':
+              return populate();
+            case 'favorite':
+              return favorite();
+          }
+        })(type);
       };
 
       function lastest() {
-        return $ctrl.currentTheme.sort(function (a, b) {
+        return $ctrl.currentThemes.sort(function (a, b) {
           return parseFloat(new Date(b.created_at).getTime()) - parseFloat(new Date(a.created_at).getTime());
         });
       }
 
       function populate() {
-        return $ctrl.currentTheme.sort(function (a, b) {
+        return $ctrl.currentThemes.sort(function (a, b) {
           return parseFloat(b.populate) - parseFloat(a.populate);
         });
       }
 
       function favorite() {
-        return $ctrl.currentTheme.sort(function (a) {
+        return $ctrl.currentThemes.sort(function (a) {
           return $ctrl.favorites.includes(a.id) ? -1 : 1;
         });
       }

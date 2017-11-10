@@ -30,7 +30,7 @@
           <div flex="20" class="menus">
             <div layout="column">
               <div flex>
-                <p class="text"><b>Categories</b></p>
+                <p class="text"><b class="point" ng-click="$ctrl.showCategory(-1)">Categories</b></p>
                 <ul>
                   <li ng-repeat="category in $ctrl.categories"><a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a></li>
                 </ul>
@@ -48,7 +48,7 @@
 
           <div flex="80">
             <div class="templates">
-              <div ng-repeat="theme in $ctrl.currentTheme" class="template">
+              <div ng-repeat="theme in $ctrl.currentThemes" class="template">
                 <div layout="row">
                   <div flex="50">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnv_D5_jnvPtjEZEUlktLN5HIBOSB5vvngm0ms8fUnT_-_ueLVA" alt="">
