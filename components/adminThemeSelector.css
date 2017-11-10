@@ -1,0 +1,89 @@
+.container {
+  background-color: white;
+}
+.container .theme {
+  width: 80%;
+  margin: auto;
+  margin-top: 1em;
+  font-size: 18px;
+  font-weight: normal;
+  color: rgba(101, 98, 98, 0.68);
+  font-family: serif;
+}
+.container .theme p {
+  font-weight: bold;
+  font-family: serif;
+  font-size: 25px;
+  margin-bottom: .5em;
+}
+.container .theme .selector {
+  margin: 1em 0 5em 2em;
+}
+.container .theme .selector .top {
+  box-shadow: inset 0 -1px 0 0 rgba(54, 54, 54, 0.1);
+  display: block;
+  margin-bottom: 1em;
+  padding-bottom: 2em;
+}
+.container .theme .selector .top .image {
+  display: block;
+  height: 180px;
+}
+.container .theme .selector .top .image img {
+  width: 150px;
+  height: -webkit-fill-available;
+}
+.container .theme .selector .top .content {
+  height: 100%;
+  width: -webkit-fill-available;
+  display: block;
+  overflow: hidden;
+  width: 75%;
+}
+.container .theme .selector .top .content .text {
+  font-size: 18px;
+  font-weight: normal;
+}
+.container .theme .selector .bottom .menus .text {
+  font-size: 18px;
+  font-weight: normal;
+}
+.container .theme .selector .bottom .menus ul {
+  padding-left: 0px;
+}
+.container .theme .selector .bottom .menus ul li {
+  list-style-type: none;
+  margin: 0.5em 0 0.5em 0;
+}
+.container .theme .selector .bottom .templates .template {
+  display: -webkit-inline-box;
+  max-width: 425px;
+  height: 265px;
+  margin: 1em;
+  margin-bottom: 3em;
+}
+.container .theme .selector .bottom .templates .template ul {
+  padding-left: 10px;
+}
+.container .theme .selector .bottom .templates .template .description {
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.container .theme .selector .bottom .templates .template .description .text {
+  height: 162px;
+  font-size: 16px;
+  font-weight: normal;
+  color: #3e3737;
+  font-family: serif;
+}
+.container .theme .selector .bottom .templates .template .button {
+  font-family: Lato;
+  color: #FFFFFF;
+  width: 80%;
+  background-color: #0066CC;
+  border-radius: 3px;
+  text-transform: inherit;
+}
+.container .inline {
+  display: inline-block;
+}

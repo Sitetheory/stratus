@@ -1,0 +1,103 @@
+.container {
+  background-color: white;
+  .theme{
+    width: 80%;
+    margin: auto;
+    margin-top: 1em;
+    font-size: 18px;
+    font-weight: normal;
+    color: rgba(101, 98, 98, 0.68);
+    font-family: serif;
+    p{
+      font-weight: bold;
+      font-family: serif;
+      font-size: 25px;
+      margin-bottom: .5em;
+    }
+
+    .selector{
+      margin: 1em 0 5em 2em;
+      .top{
+        box-shadow: inset 0 -1px 0 0 rgba(54, 54, 54, 0.1);
+        display: block;
+        margin-bottom: 1em;
+        padding-bottom: 2em;
+
+        .image{
+          display: block;
+          height: 180px;
+          img{
+            width: 150px;
+            height: -webkit-fill-available;
+          }
+        }
+
+        .content{
+          height: 100%;
+          width: -webkit-fill-available;
+          display: block;
+          overflow: hidden;
+          width: 75%;
+          .text{
+            font-size: 18px;
+            font-weight: normal;
+          }
+        }
+      }
+
+      .bottom{
+        .menus{
+          .text{
+            font-size: 18px;
+            font-weight: normal;
+          }
+
+          ul{
+            padding-left: 0px;
+            li{
+              list-style-type: none;
+              margin: 0.5em 0 0.5em 0;
+            }
+          }
+        }
+
+        .templates{
+          .template{
+            display: -webkit-inline-box;
+            max-width: 425px;
+            height: 265px;
+            margin: 1em;
+            margin-bottom: 3em;
+            ul{
+              padding-left: 10px;
+            }
+
+            .description{
+              overflow: hidden;
+              margin-bottom: 10px;
+              .text{
+                height: 162px;
+                font-size: 16px;
+                font-weight: normal;
+                color: rgb(62, 55, 55);
+                font-family: serif;
+              }
+            }
+
+            .button{
+              font-family: Lato;
+              color: #FFFFFF;
+              width: 80%;
+              background-color: #0066CC;
+              border-radius: 3px;
+              text-transform: inherit;
+            }
+          }
+        }
+      }
+    }
+  }
+  .inline{
+    display: inline-block;
+  }
+}
