@@ -1,3 +1,4 @@
+@import "../bower_components/font-awesome/css/font-awesome.min.css";
 .container {
   background-color: white;
 }
@@ -18,6 +19,12 @@
 }
 .container .theme .selector {
   margin: 1em 0 5em 2em;
+}
+.container .theme .selector .right {
+  float: right;
+}
+.container .theme .selector .point {
+  cursor: pointer;
 }
 .container .theme .selector .top {
   box-shadow: inset 0 -1px 0 0 rgba(54, 54, 54, 0.1);
@@ -64,6 +71,12 @@
 }
 .container .theme .selector .bottom .templates .template ul {
   padding-left: 10px;
+}
+.container .theme .selector .bottom .templates .template b {
+  color: #060606;
+}
+.container .theme .selector .bottom .templates .template .heart-color {
+  color: red;
 }
 .container .theme .selector .bottom .templates .template .description {
   overflow: hidden;
