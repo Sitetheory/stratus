@@ -32,20 +32,15 @@
               <div flex>
                 <p class="text"><b>Categories</b></p>
                 <ul>
-                  <li><a href="#">Real Estale</a></li>
-                  <li><a href="#">Churche</a></li>
-                  <li><a href="#">Small Business</a></li>
-                  <li><a href="#">Corporate</a></li>
-                  <li><a href="#">Artist</a></li>
-                  <li><a href="#">Health & Fitness</a></li>
+                  <li ng-repeat="category in $ctrl.categories"><a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a></li>
                 </ul>
               </div>
               <div flex>
                 <p class="text"><b>Sort By</b></p>
                 <ul>
-                  <li><a href="#">Lastest</a></li>
-                  <li><a href="#">Populate</a></li>
-                  <li><a href="#">Favorites({{$ctrl.favorites.length}})</a></li>
+                  <li><a ng-click="$ctrl.sortBy('lastest')" class="point">Lastest</a></li>
+                  <li><a ng-click="$ctrl.sortBy('populate')" class="point">Populate</a></li>
+                  <li><a ng-click="$ctrl.sortBy('favorite')" class="point">Favorites({{$ctrl.favorites.length}})</a></li>
                 </ul>
               </div>
             </div>
@@ -53,7 +48,7 @@
 
           <div flex="80">
             <div class="templates">
-              <div ng-repeat="theme in $ctrl.themes" class="template">
+              <div ng-repeat="theme in $ctrl.currentTheme" class="template">
                 <div layout="row">
                   <div flex="50">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnv_D5_jnvPtjEZEUlktLN5HIBOSB5vvngm0ms8fUnT_-_ueLVA" alt="">

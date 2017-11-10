@@ -31,33 +31,84 @@
         {
           id: 1,
           title: 'Kurage',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
+          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
+          populate: 1,
+          category: 'Real Estale',
+          created_at: '2017-11-13'
         },
         {
           id: 2,
-          title: 'Kurage',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
+          title: 'Kurage 2',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
+          populate: 5,
+          category: 'Real Estale',
+          created_at: '2017-11-12'
         },
         {
           id: 3,
-          title: 'Kurage',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
+          title: 'Kurage 3',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
+          populate: 4,
+          category: 'Churche',
+          created_at: '2017-11-15'
         },
         {
           id: 4,
-          title: 'Kurage',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
+          title: 'Kurage 4',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
+          populate: 3,
+          category: 'Artist',
+          created_at: '2017-11-10'
         }
       ];
+      $ctrl.currentTheme = $ctrl.themes;
 
-      // methods
-      $ctrl.setFavorite = function (id) {
+      // define methods
+      $ctrl.sortBy = sortBy;
+      $ctrl.setFavorite = setFavorite;
+      $ctrl.getHeartColor = getHeartColor;
+      $ctrl.showCategory = showCategory;
+
+      function setFavorite(id) {
         $ctrl.favorites.includes(id) ? $ctrl.favorites.splice($ctrl.favorites.indexOf(id, 1)) : $ctrl.favorites.push(id);
       };
 
-      $ctrl.getHeartColor = function (id) {
+      // return the color for the heart.
+      function getHeartColor(id) {
         return $ctrl.favorites.includes(id) ? 'fa fa-heart heart-color' : 'fa fa-heart-o';
       };
+
+      function sortBy(type) {
+        switch (type) {
+          case 'lastest':
+            $ctrl.currentTheme = lastest();
+            break;
+          case 'populate':
+            $ctrl.currentTheme = populate();
+            break;
+          case 'favorite':
+            $ctrl.currentTheme = favorite();
+            break;
+        }
+      };
+
+      function lastest() {
+        return $ctrl.currentTheme.sort(function (a, b) {
+          return parseFloat(new Date(b.created_at).getTime()) - parseFloat(new Date(a.created_at).getTime());
+        });
+      }
+
+      function populate() {
+        return $ctrl.currentTheme.sort(function (a, b) {
+          return parseFloat(b.populate) - parseFloat(a.populate);
+        });
+      }
+
+      function favorite() {
+        return $ctrl.currentTheme.sort(function (a) {
+          return $ctrl.favorites.includes(a.id) ? -1 : 1;
+        });
+      }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/adminThemeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
