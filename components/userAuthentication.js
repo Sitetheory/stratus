@@ -31,6 +31,7 @@
       $ctrl.signinData = {};
       $ctrl.resetPassData = {};
       $ctrl.allowSubmit = false;
+      $ctrl.loading = false;
       $ctrl.signInIndex = 0;
       $ctrl.signUpIndex = 1;
       $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
@@ -44,7 +45,8 @@
       $ctrl.resetPassHeaderText = 'Reset your account password';
       $ctrl.changePassBtnText = 'Reset Password';
       $ctrl.selectedIndex = $ctrl.signInIndex;
-      $ctrl.errorMsg = null;
+      $ctrl.message = null;
+      $ctrl.isRequestSuccess = false;
       var RESPONSE_CODE = { verify: 'VERIFY', success: 'SUCCESS' };
 
       // methods
@@ -57,20 +59,21 @@
       $ctrl.backToLogin = backToLogin;
       $ctrl.verifyAccount = verifyAccount;
 
-      // Watcher
+      // Watcher for changing password
       $scope.$watch(angular.bind(this, function () {
         if (!_.isEmpty(this.signinData)) {
           return this.signinData.password;
         }
         if (!_.isEmpty(this.resetPassData)) {
+          $ctrl.isRequestSuccess = false;
           var password = this.resetPassData.password;
           var confirmPassword = this.resetPassData.confirm_password;
 
           if (password && validPassword(password) && $ctrl.progressBarValue >= 40) {
             if (password !== confirmPassword) {
-              $ctrl.errorMsg = 'Your passwords did not match.';
+              $ctrl.message = 'Your passwords did not match.';
             } else {
-              $ctrl.errorMsg = '';
+              $ctrl.message = null;
             }
           }
 
@@ -84,12 +87,12 @@
           generateProgressBar(newValue);
 
           if (!validPassword(newValue)) {
-            $ctrl.errorMsg = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.';
+            $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.';
           } else if ($ctrl.progressBarValue <= 40) {
-            $ctrl.errorMsg = 'Your password is not strong.';
+            $ctrl.message = 'Your password is not strong.';
             $ctrl.allowSubmit = true;
           } else {
-            $ctrl.errorMsg = '';
+            $ctrl.message = null;
             $ctrl.allowSubmit = true;
           }
         }
@@ -97,6 +100,7 @@
 
       // Define functional methods
       function verifyAccount() {
+        $ctrl.loading = true;
         var data = {
           type: 'verify',
           email: getUrlParams().email,
@@ -104,52 +108,62 @@
         };
 
         userAuthentication.verifyAccount(data).then(function (response) {
+          $ctrl.loading = false;
           if (getStatus(response).code == RESPONSE_CODE.verify) {
-            $ctrl.errorMsg = getStatus(response).message;
+            $ctrl.message = getStatus(response).message;
+            $ctrl.isRequestSuccess = true;
             $ctrl.enabledVerifyForm = false;
             $ctrl.enabledResetPassForm = true;
             $ctrl.resetPassHeaderText = 'Please set your password';
             $ctrl.changePassBtnText = 'Update password';
           } else {
-            $ctrl.errorMsg = getStatus(response).message;
+            $ctrl.isRequestSuccess = false;
+            $ctrl.message = getStatus(response).message;
           }
         });
       }
 
       function doSignIn(signinData) {
-        $ctrl.errorMsg = null;
+        $ctrl.loading = true;
+        $ctrl.message = null;
         var data = {
           email: signinData.email,
           password: signinData.password
         };
 
         userAuthentication.signIn(data).then(function (response) {
+          $ctrl.loading = false;
           if (getStatus(response).code == RESPONSE_CODE.success) {
             return $window.location.href = '/';
           } else {
-            $ctrl.errorMsg = getStatus(response).message;
+            $ctrl.isRequestSuccess = false;
+            $ctrl.message = getStatus(response).message;
           }
         });
       }
 
       function doSignUp(signupData) {
-        $ctrl.errorMsg = null;
+        $ctrl.loading = true;
+        $ctrl.message = null;
         var data = {
           email: signupData.email,
           phone: cleanedPhoneNumber(signupData.phone)
         };
 
         userAuthentication.signUp(data).then(function (response) {
+          $ctrl.loading = false;
           if (getStatus(response).code == RESPONSE_CODE.success) {
             return $window.location.href = '/';
           } else {
-            $ctrl.errorMsg = getStatus(response).message;
+            $ctrl.isRequestSuccess = false;
+            $ctrl.message = getStatus(response).message;
           }
         });
       }
 
       function doRequestResetPass(resetPassData) {
-        $ctrl.errorMsg = null;
+        $ctrl.loading = true;
+        $ctrl.message = null;
         var data = {
           type: 'reset-password-request',
           email: resetPassData.email,
@@ -157,12 +171,19 @@
         };
 
         userAuthentication.requestResetPass(data).then(function (response) {
-          $ctrl.errorMsg = getStatus(response).message;
+          $ctrl.loading = false;
+          if (getStatus(response).code == RESPONSE_CODE.success) {
+            $ctrl.isRequestSuccess = true;
+          } else {
+            $ctrl.isRequestSuccess = false;
+          }
+          $ctrl.message = getStatus(response).message;
         });
       }
 
       function doResetPass(resetPassData) {
-        $ctrl.errorMsg = null;
+        $ctrl.loading = true;
+        $ctrl.message = null;
         var requestType = getUrlParams().type === 'verify' ? 'update-password' : getUrlParams().type;
         var data = {
           type: requestType,
@@ -172,18 +193,19 @@
         };
 
         userAuthentication.resetPass(data).then(function (response) {
+          $ctrl.loading = false;
           if (getStatus(response).code == RESPONSE_CODE.success) {
-            $ctrl.isHandlingUrl = false;
-            $window.history.replaceState({}, document.title, '/Member/Sign-In');
+            $window.location.href = $window.location.origin + '/Member/Sign-In';
           } else {
-            $ctrl.errorMsg = getStatus(response).message;
+            $ctrl.isRequestSuccess = false;
+            $ctrl.message = getStatus(response).message;
           }
         });
       }
 
       // Helpers
       function showForgotPassForm(isShow) {
-        $ctrl.errorMsg = null;
+        $ctrl.message = null;
         $ctrl.forgotPassText = isShow ? 'Back to login' : 'Forgot Password?';
         $ctrl.enabledForgotPassForm = isShow;
         if (!isShow) {
@@ -192,13 +214,13 @@
       };
 
       function backToLogin() {
-        $ctrl.errorMsg = null;
+        $ctrl.message = null;
         $ctrl.isHandlingUrl = false;
       };
 
       function onTabSelected(index) {
         $ctrl.selectedIndex = index;
-        $ctrl.errorMsg = null;
+        $ctrl.message = null;
       };
 
       function validPassword(password) {

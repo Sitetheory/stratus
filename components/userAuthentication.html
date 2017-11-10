@@ -1,16 +1,16 @@
 <div ng-cloak>
     <md-content id="user-authentication">
+        <md-progress-linear ng-if="$ctrl.loading" md-mode="indeterminate"></md-progress-linear>
         <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex">
             <md-tab label="Sign In" class="sign-in" ng-click="$ctrl.showForgotPassForm(false)">
                 <md-content class="md-padding">
-                    <div class="center" ng-if="$ctrl.errorMsg != null">
-                        <p class="error-message">{{ $ctrl.errorMsg }}</p>
+                    <div class="message center" ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}" ng-if="$ctrl.message != null">
+                        <p>{{ $ctrl.message }}</p>
                     </div>
 
                     <div ng-if="!$ctrl.isHandlingUrl">
                         <form class="form-sign-in" name="signInForm" ng-submit="signInForm.$valid && $ctrl.doSignIn(signinData)" ng-if="!$ctrl.enabledForgotPassForm">
-                            <md-input-container class="md-block" flex-gt-sm>
-                                <label>Email Address</label>
+                            <md-input-container class="md-block email-field" flex-gt-sm>
                                 <input name="email" type="email" ng-model="signinData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                                 <ng-messages for="signInForm.email.$error" ng-if="signInForm.email.$dirty || signInForm.email.pattern">
                                     <ng-message when="required">This field is required!</ng-message>
@@ -19,7 +19,6 @@
                             </md-input-container>
 
                             <md-input-container class="md-block" flex-gt-sm>
-                                <label>Password</label>
                                 <input name="password" type="password" ng-model="signinData.password" required placeholder="Password">
                                 <ng-messages for="signInForm.password.$error" ng-if="signInForm.password.$dirty">
                                     <ng-message when="required">This field is required!</ng-message>
@@ -27,7 +26,7 @@
                             </md-input-container>
 
                             <div class="center">
-                                <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid">Sign In</md-button>
+                                <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid || $ctrl.loading">Sign In</md-button>
                             </div>
 
                             <div class="center">
@@ -46,7 +45,6 @@
                             </div>
 
                             <md-input-container class="md-block" flex-gt-sm>
-                                <label>Email Address</label>
                                 <input name="email" type="email" ng-model="resetPassData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                                 <ng-messages for="forgotPassForm.email.$error" ng-if="forgotPassForm.email.$dirty || forgotPassForm.email.pattern">
                                     <ng-message when="required">This field is required!</ng-message>
@@ -55,7 +53,6 @@
                             </md-input-container>
 
                             <md-input-container class="md-block" flex-gt-sm>
-                                <label>Recovery Phone</label>
                                 <input name="phone" type="text" ng-model="resetPassData.phone" required placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
                                 <ng-messages for="forgotPassForm.phone.$error" ng-if="forgotPassForm.phone.$dirty">
                                     <ng-message when="required">This field is required!</ng-message>
@@ -63,7 +60,7 @@
                                 </ng-messages>
                             </md-input-container>
                             <div class="center">
-                                <md-button type="submit" class="md-raised" ng-disabled="forgotPassForm.$invalid">Send Password Reset Link</md-button>
+                                <md-button type="submit" class="md-raised" ng-disabled="forgotPassForm.$invalid || $ctrl.loading">Send Password Reset Link</md-button>
                             </div>
 
                             <div class="center">
@@ -80,8 +77,7 @@
                             </div>
 
                             <md-input-container class="md-block first-password" flex-gt-sm>
-                                <label>Password phrase</label>
-                                <input name="password" type="password" ng-model="$ctrl.resetPassData.password" required placeholder="Password">
+                                <input name="password" type="password" ng-model="$ctrl.resetPassData.password" required placeholder="Password phrase">
                                 <md-progress-linear ng-if="$ctrl.resetPassData.password" class="{{$ctrl.progressBarClass}}" md-mode="determinate" value="{{$ctrl.progressBarValue}}"></md-progress-linear>
                                 <ng-messages for="resetPassForm.password.$error" ng-if="resetPassForm.password.$dirty">
                                     <ng-message when="required">This field is required!</ng-message>
@@ -89,15 +85,14 @@
                             </md-input-container>
 
                             <md-input-container class="md-block" flex-gt-sm>
-                                <label>Confirm password phrase</label>
-                                <input name="confirm_password" type="password" ng-model="$ctrl.resetPassData.confirm_password" required placeholder="Confirm password">
+                                <input name="confirm_password" type="password" ng-model="$ctrl.resetPassData.confirm_password" required placeholder="Confirm password phrase">
                                 <ng-messages for="resetPassForm.confirm_password.$error" ng-if="resetPassForm.confirm_password.$dirty">
                                     <ng-message when="required">This field is required!</ng-message>
                                 </ng-messages>
                             </md-input-container>
 
                             <div class="center">
-                                <md-button type="submit" class="md-raised" ng-disabled="resetPassForm.$invalid || !$ctrl.allowSubmit">{{ $ctrl.changePassBtnText }} </md-button>
+                                <md-button type="submit" class="md-raised" ng-disabled="resetPassForm.$invalid || !$ctrl.allowSubmit || $ctrl.loading">{{ $ctrl.changePassBtnText }} </md-button>
                             </div>
 
                             <div class="center">
@@ -119,15 +114,14 @@
 
             <md-tab label="Create New Account" class="sign-up" md-on-select="$ctrl.onTabSelected($ctrl.signUpIndex)" ng-disabled="$ctrl.isHandlingUrl">
                 <md-content class="md-padding">
-                    <div ng-if="$ctrl.errorMsg != null">
-                        <p class="error-message">
+                    <div class="message error" ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}" ng-if="$ctrl.message != null">
+                        <p>
                             There is already an account registered to this email, please
-                            <a id="error-signin" href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)" data-email="pdkitf@gmail.com">Sign In</a> and then create a new site from the control panel.
+                            <a id="error-signin" href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">Sign In</a> and then create a new site from the control panel.
                         </p>
                     </div>
                     <form name="registrationForm" ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)">
-                        <md-input-container class="md-block" flex-gt-sm>
-                            <label>Email Address</label>
+                        <md-input-container class="md-block email-field" flex-gt-sm>
                             <input name="email" type="email" ng-model="signupData.email" required placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                             <ng-messages for="registrationForm.email.$error" ng-if="registrationForm.email.$dirty || registrationForm.email.pattern">
                                 <ng-message when="required">This field is required!</ng-message>
@@ -136,7 +130,6 @@
                         </md-input-container>
 
                         <md-input-container class="md-block" flex-gt-sm>
-                            <label>Recovery Phone</label>
                             <input name="phone" type="text" ng-model="signupData.phone" required placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
                             <ng-messages for="registrationForm.phone.$error" ng-if="registrationForm.phone.$dirty">
                                 <ng-message when="required">This field is required!</ng-message>
@@ -144,7 +137,7 @@
                             </ng-messages>
                         </md-input-container>
                         <div class="center">
-                            <md-button type="submit" class="md-raised" ng-disabled="registrationForm.$invalid">Create New Account</md-button>
+                            <md-button type="submit" class="md-raised" ng-disabled="registrationForm.$invalid || $ctrl.loading" stratus-clicked-disable>Create New Account</md-button>
                         </div>
                     </form>
                 </md-content>
