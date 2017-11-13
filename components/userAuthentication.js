@@ -35,7 +35,7 @@
       $ctrl.signInIndex = 0;
       $ctrl.signUpIndex = 1;
       $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
-      $ctrl.phoneRegex = /^[\d+\-()]+$/;
+      $ctrl.phoneRegex = /^[\d+\-().]+$/;
       $ctrl.enabledForgotPassForm = false;
       $ctrl.isHandlingUrl = getUrlParams().type !== null ? true : false;
       $ctrl.enabledResetPassForm = getUrlParams().type === 'reset-password' ? true : false;
