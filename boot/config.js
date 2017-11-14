@@ -145,6 +145,7 @@ boot.config({
     'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
     'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
     'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
+    'stratus.components.signleSignOn': boot.bundle + 'stratus/components/signleSignOn' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
@@ -310,4 +311,3 @@ boot.config({
     jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix
   }
 });
-

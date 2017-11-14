@@ -1,3 +1,11 @@
+<head>
+  <meta name="google-signin-client_id" content="878138862061-hsql5u9tcoonjrr99r9f5phcdrao2r8i.apps.googleusercontent.com">
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+<script src="https://apis.google.com/js/api:client.js"></script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+</head>
+
 <div ng-cloak>
     <md-content id="user-authentication">
         <md-progress-linear ng-if="$ctrl.loading" md-mode="indeterminate"></md-progress-linear>
@@ -29,8 +37,16 @@
                                 <md-button type="submit" class="md-raised" ng-disabled="signInForm.$invalid || $ctrl.loading">Sign In</md-button>
                             </div>
 
+<<<<<<< c2a27e3b06dda03d449fd8962f273f01b2565309
                             <div class="center">
                                 <label for="">-or-</label>
+=======
+                            <div class="social-signin">
+                              <div class="row">
+                                <div flex="100"><label for="">-or-</label></div>
+                                <div flex="100"><stratus-signle-sign-on></stratus-signle-sign-on></div>
+                              </div>
+>>>>>>> login google
                             </div>
 
                             <div class="center">
@@ -144,4 +160,8 @@
             </md-tab>
         </md-tabs>
     </md-content>
+<<<<<<< c2a27e3b06dda03d449fd8962f273f01b2565309
 </div>
+=======
+</div
+>>>>>>> login google
