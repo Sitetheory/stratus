@@ -2,37 +2,28 @@
 .fa {
   cursor: pointer;
 }
-#customBtn {
-  display: inline-block;
-  background: white;
-  color: #444;
-  width: 190px;
-  border-radius: 5px;
-  border: thin solid #888;
-  box-shadow: 1px 1px 1px grey;
-  white-space: nowrap;
+.fa-google-plus-official {
+  color: #DC252C;
 }
-#customBtn:hover {
-  cursor: pointer;
+.fa-facebook-square {
+  color: #385994;
 }
-span.label {
-  font-family: serif;
-  font-weight: normal;
+.fa-twitter-square {
+  color: #00AAE9;
 }
-span.icon {
-  background: url('/identity/sign-in/g-normal.png') transparent 5px 50% no-repeat;
-  display: inline-block;
-  vertical-align: middle;
-  width: 42px;
-  height: 42px;
+.fa-github {
+  color: #643151;
 }
-span.buttonText {
-  display: inline-block;
-  vertical-align: middle;
-  padding-left: 42px;
-  padding-right: 42px;
-  font-size: 14px;
-  font-weight: bold;
-  /* Use the Roboto font that is loaded in the <head> */
-  font-family: 'Roboto', sans-serif;
+.useSocial .listInline {
+  text-align: -webkit-center;
+}
+.abcRioButtonLightBlue {
+  height: 40px !important;
+  width: 40px !important;
+  border-radius: 20px !important;
+}
+.abcRioButtonLightBlue .abcRioButtonContentWrapper .abcRioButtonIcon {
+  text-align: -webkit-center !important;
+  margin-top: 3px !important;
+  float: none;
 }

@@ -1,8 +1,6 @@
-<div  ng-init="$ctrl.constructor()" class="signle-sign-on">
-  <button type="button" name="button" ng-click="$ctrl.FBLogin()">Hello</button>
-  <i class="fa fa-facebook-official fa-3x" aria-hidden="true" ng-click="$ctrl.FBLogin()"></i>
-  <i class="fa fa-google-plus-official fa-3x" aria-hidden="true" ng-click="$ctrl.FBLogin()" ></i>
-  <i class="fa fa-github fa-3x" aria-hidden="true" ng-click="$ctrl.GithubLogin()"></i>
-  <i class="fa fa-twitter-square fa-3x" aria-hidden="true" ng-click="$ctrl.TwitterLogin()"></i>
+<div class="social-signin" ng-init="$ctrl.constructor()">
+  <ul class="listInline">
+    <li><i class="fa fa-facebook-square fa-3x" aria-hidden="true" ng-click="$ctrl.FBStatus()" ></i></li>
+    <li><i class="g-signin2" data-onsuccess="GGLogin"></i></li>
+  </ul>
 </div>
-<div class="g-signin2" data-onsuccess="GGLogin"></div>
