@@ -8,7 +8,8 @@
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.registry'
+      'stratus.services.registry',
+      'stratus.services.createNewSite'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -23,7 +24,8 @@
     '$log',
     '$parse',
     'registry',
-    function ($scope, $element, $mdToast, $log, $parse, registry) {
+    'createNewSite',
+    function ($scope, $element, $mdToast, $log, $parse, registry, createNewSite) {
       // Store Instance
       Stratus.Instances[_.uniqueId('generic_')] = $scope;
 
@@ -63,6 +65,16 @@
       $scope.isObject = angular.isObject;
       $scope.isString = angular.isString;
       $scope.isUndefined = angular.isUndefined;
+
+      $scope.createSite = function (siteTitle, siteGenreId) {
+        var data = {
+          name: siteTitle,
+          genre: siteGenreId
+        };
+        createNewSite.create(data).then(function (res) {
+          console.log(res);
+        });
+      };
 
       // Handle Selected
       if ($scope.collection) {
