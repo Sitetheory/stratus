@@ -49,7 +49,7 @@
 
       <div flex class="templates">
         <div ng-repeat="target in $ctrl.currentThemes" class="template" layout="row">
-          <div class="image" flex="45" ng-click="zoomView(target.data)">
+          <div class="image" flex="45" ng-click="$ctrl.zoomView(target.data)">
             <img src="{{ target.data.images[0].url }}" alt="">
             <div class="overlay"><i class="fa fa-search" aria-hidden="true"></i></div>
           </div>
@@ -71,7 +71,6 @@
 
 <script type="text/ng-template" id="themeDetail.html">
   <!-- Detail Page starts from here -->
-
   <div class="lt-popup theme-preview" role="dialog">
     <div class="ltpop-left">
       <h3>{{themeDetail.name}}
@@ -79,10 +78,10 @@
         <i aria-hidden="true" class="fa fa-heart"></i>
       </h3>
       <div class="name fontSecondary"
-           ng-bind-html="themeRawDesc(themeDetail.data.description) | truncate:{limit:300}"></div>
+           ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
 
-      <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.data.id)"
-         ng-click="model.toggle(property, {'id': themeDetail.data.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
+      <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
+         ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
          class="bl_btn">Choose Theme </a>
 
 
@@ -96,10 +95,9 @@
         <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
       </div><!-- View list Ends -->
       <a href="#">
-        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
+        <img class="zoom-view" src="{{ themeDetail.images[0].url }}" alt="">
       </a>
     </div>
     <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
   </div><!-- Layout popup ends -->
-
 </script>

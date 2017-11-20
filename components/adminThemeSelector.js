@@ -61,6 +61,7 @@
       $ctrl.heartCollor = [];
       $ctrl.themes = [];
       $ctrl.currentThemes = $ctrl.themes;
+      $ctrl.zoomView = zoomView;
 
       $ctrl.categories = ['Real Estale', 'Churche', 'Small Business', 'Corporate', 'Artist', 'Health & Fitness'];
 
@@ -120,32 +121,28 @@
       };
 
       // display expanded view if clicked on change button
-      $scope.zoomView = function (themeDetail) {
+      function zoomView(themeDetail, $event) {
         console.log('themeDetail', themeDetail);
         $scope.themeDetail = themeDetail;
         var position = $mdPanel.newPanelPosition()
-          .center();
+        .absolute()
+        .center();
+
         var config = {
           attachTo: angular.element(document.body),
           scope: $scope,
           controllerAs: 'ctrl',
           controller: ZoomController,
-          animation: panelAnimation,
           templateUrl: 'themeDetail.html',
           hasBackdrop: true,
           panelClass: 'media-dialog',
           position: position,
           trapFocus: true,
-          zIndex: 150,
           clickOutsideToClose: true,
           escapeToClose: false,
-          focusOnOpen: true
+          focusOnOpen: true,
+          zIndex: 2
         };
-
-        var panelAnimation = $mdPanel.newPanelAnimation()
-        .targetEvent($event)
-        .defaultAnimation('md-panel-animate-fly')
-        .closeTo('.show-button');
 
         $mdPanel.open(config);
       };
