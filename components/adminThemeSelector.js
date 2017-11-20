@@ -4,8 +4,8 @@
 
       // Libraries
       'stratus',
-      'jquery',
       'underscore',
+      'jquery',
       'angular',
 
       // Modules
@@ -23,9 +23,9 @@
     ], factory);
   } else {
     // Browser globals
-    factory(root.Stratus, root._, root.angular);
+    factory(root.Stratus, root._, root.$, root.angular);
   }
-}(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular) {
+}(typeof self !== 'undefined' ? self : this, function (Stratus, _, $, angular) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.AdminThemeSelector = {
     bindings: {
@@ -43,17 +43,23 @@
       details: '<',
       search: '<'
     },
-    controller: function ($scope, $window, $attrs, $log, $http, $mdDialog) {
+    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $sce, collection, $window, $log, $http, $mdDialog) {
       // Initialize
       this.uid = _.uniqueId('admin_theme_selector_');
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/adminThemeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
       Stratus.Instances[this.uid] = $scope;
       $scope.elementId = $attrs.elementId || this.uid;
+
+      // load css
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/adminThemeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+
+      // Hydrate Settings
+      $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
+
       var $ctrl = this;
 
       // mock DB
-      $ctrl.favorites = [];
       $ctrl.heartCollor = [];
+      $ctrl.themes = [];
       $ctrl.currentThemes = $ctrl.themes;
 
       $ctrl.categories = ['Real Estale', 'Churche', 'Small Business', 'Corporate', 'Artist', 'Health & Fitness'];
@@ -61,8 +67,96 @@
       // define methods
       $ctrl.sortBy = sortBy;
       $ctrl.setFavorite = setFavorite;
-      $ctrl.getHeartColor = getHeartColor;
+      $ctrl.getFavoriteStatus = getFavoriteStatus;
       $ctrl.showCategory = showCategory;
+
+      $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
+
+      // Asset Collection
+      if ($attrs.type) {
+        $scope.registry = new registry();
+        var request = {
+          target: $attrs.type || 'Template',
+          id: null,
+          manifest: false,
+          decouple: true,
+          selectedid: $attrs.selectedid,
+          property: $attrs.property,
+          api: {
+            options: {},
+            limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 3
+          }
+        };
+        if ($scope.api && angular.isObject($scope.api)) {
+          request.api = _.extendDeep(request.api, $scope.api);
+        }
+        $scope.registry.fetch(request, $scope);
+
+        // Get Details of selected template by attribute selectedid
+        $scope.selectedDetails = new details();
+        $scope.selectedDetails.fetch(request, $scope);
+      }
+
+      // console.log($scope);
+      // Store Asset Property for Verification
+      $scope.property = $attrs.property || null;
+
+      // Store Toggle Options for Custom Actions
+      $scope.toggleOptions = {
+        multiple: _.isJSON($attrs.multiple) ? JSON.parse($attrs.multiple) : false
+      };
+
+      // Data Connectivity
+      $scope.$watch('collection.models', function (models) {
+        if (models.length > 0) {
+          $ctrl.themes = models;
+          $ctrl.currentThemes = models;
+        }
+      });
+
+      // automatically run security check the result of html
+      $scope.themeRawDesc = function (plainText) {
+        return $sce.trustAsHtml(plainText);
+      };
+
+      // display expanded view if clicked on change button
+      $scope.zoomView = function (themeDetail) {
+        console.log('themeDetail', themeDetail);
+        $scope.themeDetail = themeDetail;
+        var position = $mdPanel.newPanelPosition()
+          .center();
+        var config = {
+          attachTo: angular.element(document.body),
+          scope: $scope,
+          controllerAs: 'ctrl',
+          controller: ZoomController,
+          animation: panelAnimation,
+          templateUrl: 'themeDetail.html',
+          hasBackdrop: true,
+          panelClass: 'media-dialog',
+          position: position,
+          trapFocus: true,
+          zIndex: 150,
+          clickOutsideToClose: true,
+          escapeToClose: false,
+          focusOnOpen: true
+        };
+
+        var panelAnimation = $mdPanel.newPanelAnimation()
+        .targetEvent($event)
+        .defaultAnimation('md-panel-animate-fly')
+        .closeTo('.show-button');
+
+        $mdPanel.open(config);
+      };
+
+      function ZoomController(mdPanelRef) {
+
+        $scope.closeDialog = function () {
+
+          mdPanelRef.close();
+        };
+      }
 
       // Functionality methods
       function showCategory(index) {
@@ -73,31 +167,37 @@
       }
 
       function setFavorite(id) {
-        $ctrl.favorites.includes(id) ? $ctrl.favorites.splice($ctrl.favorites.indexOf(id, 1)) : $ctrl.favorites.push(id);
+        var index = $ctrl.themes.findIndex(x=>x.data.id == id);
+        return $ctrl.themes[index].preferred = !$ctrl.themes[index].preferred;
       };
 
-      // return the color for the heart.
-      function getHeartColor(id) {
-        return $ctrl.favorites.includes(id) ? 'fa fa-heart heart-color' : 'fa fa-heart-o';
+      function getFavoriteStatus(id) {
+        var index = $ctrl.themes.findIndex(x=>x.data.id == id);
+        return $ctrl.themes[index].preferred ? 'fa fa-heart favorite' : 'fa fa-heart-o';
       };
+
+      function chooseTheme(id) {
+      }
 
       function sortBy(type) {
         $ctrl.currentThemes = (function (type) {
           switch (type) {
-            case 'lastest':
-              return lastest();
+            case 'latest':
+              return latest();
             case 'populate':
               return populate();
             case 'favorite':
               return favorite();
+            default:
+              return $ctrl.currentThemes;
           }
         })(type);
       };
 
       // Helpers
-      function lastest() {
+      function latest() {
         return $ctrl.currentThemes.sort(function (a, b) {
-          return parseFloat(new Date(b.created_at).getTime()) - parseFloat(new Date(a.created_at).getTime());
+          return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit);
         });
       }
 

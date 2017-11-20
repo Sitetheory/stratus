@@ -12,6 +12,7 @@
   font-size: 14px;
   font-weight: 600;
   background-color: #2196F3;
+  width: -webkit-fill-available;
 }
 .theme-selector h2 {
   text-transform: none;
@@ -28,21 +29,24 @@
 }
 .theme-selector .list-theme .templates .template {
   height: 200px;
+  width: 370px;
   margin-bottom: 20px;
+  margin-right: 2em;
+  margin-bottom: 3em;
+  float: left;
 }
 .theme-selector .list-theme .templates .template .image {
-  width: 150px;
   position: relative;
-  margin-right: 30px;
   margin-left: 0;
+  margin-right: 1.5em;
 }
 .theme-selector .list-theme .templates .template .image:hover .overlay {
   bottom: 0;
   height: 100%;
 }
 .theme-selector .list-theme .templates .template .image img {
-  width: 100%;
-  height: auto;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
 }
 .theme-selector .list-theme .templates .template .image .overlay {
   position: absolute;
@@ -72,6 +76,9 @@
 }
 .theme-selector .list-theme .templates .template .content .title a {
   float: right;
+}
+.theme-selector .list-theme .templates .template .content .title .favorite {
+  color: #D30000;
 }
 .theme-selector .list-theme .templates .template .content .description p {
   color: rgba(0, 0, 0, 0.2);

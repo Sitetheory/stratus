@@ -42,28 +42,64 @@
           <ul>
             <li><a href="#" ng-click="$ctrl.sortBy('latest')" class="point">Latest</a></li>
             <li><a href="#" ng-click="$ctrl.sortBy('populate')" class="point">Populate</a></li>
-            <li><a href="#" ng-click="$ctrl.sortBy('favorite')" class="point">Favorites({{$ctrl.favorites.length}})</a></li>
+            <li><a href="#" ng-click="$ctrl.sortBy('favorite')" class="point">Favorites(0)</a></li>
           </ul>
         </div>
       </div>
 
-      <div flex="80" class="templates">
-        <div ng-repeat="target in collection.models" class="template" layout>
-          <div class="image" flex="30" flex-offset="5">
+      <div flex class="templates">
+        <div ng-repeat="target in $ctrl.currentThemes" class="template" layout="row">
+          <div class="image" flex="45" ng-click="zoomView(target.data)">
             <img src="{{ target.data.images[0].url }}" alt="">
             <div class="overlay"><i class="fa fa-search" aria-hidden="true"></i></div>
           </div>
 
-          <div class="content" flex="65">
+          <div class="content" flex="45">
             <div class="title">
               <h3>{{target.data.name}}</h3>
-              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)"><i ng-class="$ctrl.getHeartColor(target.data.id)" class="fa fa-heart-o"></i></a>
+              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)"><i ng-class="$ctrl.getFavoriteStatus(target.data.id)"></i></a>
             </div>
             <div class="description" ng-bind-html="themeRawDesc(target.data.description) | truncate:{limit:300}"></div>
-            <md-button class="md-primary" id="btn-primary">Choose Theme</md-button>
+            <md-button class="md-primary" id="btn-primary" ng-click="$ctrl.chooseTheme(target.data.id)">Choose Theme</md-button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </md-content>
+
+
+<script type="text/ng-template" id="themeDetail.html">
+  <!-- Detail Page starts from here -->
+
+  <div class="lt-popup theme-preview" role="dialog">
+    <div class="ltpop-left">
+      <h3>{{themeDetail.name}}
+        <i aria-hidden="true" class="fa fa-heart-o"></i>
+        <i aria-hidden="true" class="fa fa-heart"></i>
+      </h3>
+      <div class="name fontSecondary"
+           ng-bind-html="themeRawDesc(themeDetail.data.description) | truncate:{limit:300}"></div>
+
+      <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.data.id)"
+         ng-click="model.toggle(property, {'id': themeDetail.data.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
+         class="bl_btn">Choose Theme </a>
+
+
+      <a href="#" class="bl_btn_border">View Demo </a>
+    </div>
+    <div class="ltpop-right">
+      <div class="theme-view-list">
+        <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
+        <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
+      </div><!-- View list Ends -->
+      <a href="#">
+        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/template.jpg" alt=""/>
+      </a>
+    </div>
+    <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
+  </div><!-- Layout popup ends -->
+
+</script>

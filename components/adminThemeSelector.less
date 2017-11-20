@@ -25,6 +25,8 @@
 @fontsize-xxl: 20px;
 @fontsize-xxxl: 30px;
 @fontsize-xxxxl: 75px;
+@red-heart: #D30000;
+
 .theme-selector {
   color: @gray-xl;
   font-weight: @fontweight-l;
@@ -37,6 +39,7 @@
     font-size: @fontsize-s;
     font-weight: @fontweight-l;
     background-color: @primary-color;
+    width: -webkit-fill-available;
   }
   h2 {
     text-transform: none;
@@ -59,12 +62,15 @@
     .templates {
       .template {
         height: 200px;
+        width: 370px;
         margin-bottom: 20px;
+        margin-right: 2em;
+        margin-bottom: 3em;
+        float: left;
         .image {
-          width: 150px;
           position: relative;
-          margin-right: 30px;
           margin-left: 0;
+          margin-right: 1.5em;
           &:hover {
             .overlay {
               bottom: 0;
@@ -72,8 +78,8 @@
             }
           }
           img {
-            width: 100%;
-            height: auto;
+            width: -webkit-fill-available;
+            height: -webkit-fill-available;
           }
           .overlay {
             position: absolute;
@@ -104,6 +110,9 @@
             }
             a {
               float: right;
+            }
+            .favorite{
+              color: @red-heart;
             }
           }
           .description {
