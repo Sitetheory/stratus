@@ -4,10 +4,22 @@
 
       // Libraries
       'stratus',
+      'jquery',
       'underscore',
       'angular',
 
       // Modules
+      'angular-material',
+
+      // Services
+      'stratus.services.registry',
+      'stratus.services.collection',
+      'stratus.services.model',
+      'stratus.services.details',
+
+      // Components
+      'stratus.components.search',
+      'stratus.components.pagination'
     ], factory);
   } else {
     // Browser globals
@@ -16,6 +28,21 @@
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.AdminThemeSelector = {
+    bindings: {
+      // Basic
+      elementId: '@',
+      ngModel: '=',
+      property: '@',
+
+      // Selector
+      type: '@',
+      limit: '@',
+      multiple: '<',
+
+      // Custom
+      details: '<',
+      search: '<'
+    },
     controller: function ($scope, $window, $attrs, $log, $http, $mdDialog) {
       // Initialize
       this.uid = _.uniqueId('admin_theme_selector_');
@@ -27,40 +54,6 @@
       // mock DB
       $ctrl.favorites = [];
       $ctrl.heartCollor = [];
-      $ctrl.themes = [
-        {
-          id: 1,
-          title: 'Kurage',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
-          populate: 1,
-          category: 'Real Estale',
-          created_at: '2017-11-13'
-        },
-        {
-          id: 2,
-          title: 'Kurage 2',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
-          populate: 5,
-          category: 'Real Estale',
-          created_at: '2017-11-12'
-        },
-        {
-          id: 3,
-          title: 'Kurage 3',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
-          populate: 4,
-          category: 'Churche',
-          created_at: '2017-11-15'
-        },
-        {
-          id: 4,
-          title: 'Kurage 4',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea',
-          populate: 3,
-          category: 'Artist',
-          created_at: '2017-11-10'
-        }
-      ];
       $ctrl.currentThemes = $ctrl.themes;
 
       $ctrl.categories = ['Real Estale', 'Churche', 'Small Business', 'Corporate', 'Artist', 'Health & Fitness'];
@@ -71,7 +64,7 @@
       $ctrl.getHeartColor = getHeartColor;
       $ctrl.showCategory = showCategory;
 
-      // methods
+      // Functionality methods
       function showCategory(index) {
         $ctrl.currentThemes = $ctrl.themes.filter(theme => theme.category == $ctrl.categories[index]);
         if (index < 0) {
@@ -101,6 +94,7 @@
         })(type);
       };
 
+      // Helpers
       function lastest() {
         return $ctrl.currentThemes.sort(function (a, b) {
           return parseFloat(new Date(b.created_at).getTime()) - parseFloat(new Date(a.created_at).getTime());

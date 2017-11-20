@@ -1,80 +1,69 @@
-<div class="container" ng-init="$ctrl.initialize()">
-  <div class="theme">
-    <p class="inline">
-      <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-      <label for="">Theme</label>
-    </p>
+<md-content class="theme-selector">
+  <div class="selected-theme" layout="column">
+    <h2>
+      <span>
+        <md-tooltip md-direction="top">Reprehenderit duis ad aliqua proident proident exercitation laborum consequat cupidatat.</md-tooltip>
+        <md-icon md-font-icon="fa-question-circle" class="fa"></md-icon>
+      </span> Theme
+    </h2>
 
-    <div class="selector">
-      <div class="top">
-        <div layout="row">
-          <div flex="20">
-            <div class="image inline">
-              <img src="http://dynamic.websimages.com/s/themes/refined/v1.24/screenshots/thumb-red.png" charset="utf-8"></img>
-            </div>
-          </div>
+    <div class="description" layout="row">
+      <div flex="20">
+        <img src="http://lorempixel.com/300/400/food/" charset="utf-8"></img>
+      </div>
 
-          <div flex="50">
-            <div class="content">
-              <p><b>Fantome</b></p>
-              <p class="text">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-              </p>
-            </div>
-          </div>
+      <div flex="50" flex-offset="5">
+        <h3>Fantome</h3>
+        <p class="text">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="list-theme" layout="column">
+    <div layout="row">
+      <div flex="20" class="menus">
+        <div flex>
+          <h2>Categories</h2>
+          <ul>
+            <li><a href="#" ng-click="$ctrl.showCategory(-1)">Sint ad</a></li>
+            <li><a href="#" ng-click="$ctrl.showCategory(-1)">Occaecat</a></li>
+            <li><a href="#" ng-click="$ctrl.showCategory(-1)">Deserunt</a></li>
+            <li ng-repeat="category in $ctrl.categories">
+              <a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a>
+            </li>
+          </ul>
+        </div>
+        <div flex>
+          <h2>Sort By</h2>
+          <ul>
+            <li><a href="#" ng-click="$ctrl.sortBy('latest')" class="point">Latest</a></li>
+            <li><a href="#" ng-click="$ctrl.sortBy('populate')" class="point">Populate</a></li>
+            <li><a href="#" ng-click="$ctrl.sortBy('favorite')" class="point">Favorites({{$ctrl.favorites.length}})</a></li>
+          </ul>
         </div>
       </div>
 
-      <div class="bottom">
-        <div layout="row">
-          <div flex="20" class="menus">
-            <div layout="column">
-              <div flex>
-                <p class="text"><b class="point" ng-click="$ctrl.showCategory(-1)">Categories</b></p>
-                <ul>
-                  <li ng-repeat="category in $ctrl.categories"><a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a></li>
-                </ul>
-              </div>
-              <div flex>
-                <p class="text"><b>Sort By</b></p>
-                <ul>
-                  <li><a ng-click="$ctrl.sortBy('lastest')" class="point">Lastest</a></li>
-                  <li><a ng-click="$ctrl.sortBy('populate')" class="point">Populate</a></li>
-                  <li><a ng-click="$ctrl.sortBy('favorite')" class="point">Favorites({{$ctrl.favorites.length}})</a></li>
-                </ul>
-              </div>
-            </div>
+      <div flex="80" class="templates">
+        <div ng-repeat="target in collection.models" class="template" layout>
+          <div class="image" flex="30" flex-offset="5">
+            <img src="{{ target.data.images[0].url }}" alt="">
+            <div class="overlay"><i class="fa fa-search" aria-hidden="true"></i></div>
           </div>
 
-          <div flex="80">
-            <div class="templates">
-              <div ng-repeat="theme in $ctrl.currentThemes" class="template">
-                <div layout="row">
-                  <div flex="50">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJnv_D5_jnvPtjEZEUlktLN5HIBOSB5vvngm0ms8fUnT_-_ueLVA" alt="">
-                  </div>
-
-                  <div flex="45">
-                    <p>
-                      <div layout="row">
-                        <div flex="85"><b>{{theme.title}}</b></div>
-                        <div flex="15" ng-click="$ctrl.setFavorite(theme.id)"><i class="point" ng-class="$ctrl.getHeartColor(theme.id)"  aria-hidden="true"></i></div>
-                      </div>
-                    </p>
-
-                    <div class="description">
-                      <p class="text">{{theme.content}}</p>
-                    </div>
-
-                    <md-button class="button">Choose Theme</md-button>
-                  </div>
-                </div>
-              </div>
-
+          <div class="content" flex="65">
+            <div class="title">
+              <h3>{{target.data.name}}</h3>
+              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)"><i ng-class="$ctrl.getHeartColor(target.data.id)" class="fa fa-heart-o"></i></a>
             </div>
+            <div class="description" ng-bind-html="themeRawDesc(target.data.description) | truncate:{limit:300}"></div>
+            <md-button class="md-primary" id="btn-primary">Choose Theme</md-button>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</md-content>

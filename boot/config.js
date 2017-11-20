@@ -124,6 +124,7 @@ boot.config({
     'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
     'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
     'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
+    'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,

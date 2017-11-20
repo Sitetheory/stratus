@@ -45,12 +45,10 @@
       multiple: '<',
 
       // Custom
-      layoutOption: '@',
       details: '<',
       search: '<'
     },
-    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $sce) {
-
+    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $sce, collection) {
       $scope.themeRawDesc = function (plainText) {
         return $sce.trustAsHtml(plainText);
       };
@@ -59,10 +57,8 @@
       Stratus.Instances[this.uid] = $scope;
       $scope.elementId = $attrs.elementId || this.uid;
 
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
-
-      $scope.showGallery = false;
-      $scope.galleryClass = 'fa fa-plus';
+      // Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/adminThemeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
@@ -123,10 +119,6 @@
       };
 
       // display expanded view if clicked on change button
-      $scope.displayGallery = function () {
-        $scope.showGallery = true;
-        $scope.galleryClass = 'fa fa-minus';
-      };
       $scope.zoomView = function (themeDetail) {
         $scope.themeDetail = themeDetail;
         var position = $mdPanel.newPanelPosition()
@@ -157,18 +149,9 @@
           mdPanelRef.close();
         };
       }
-
-      $scope.toggleGallery = function () {
-        if ($scope.showGallery === true) {
-          $scope.galleryClass = 'fa fa-plus';
-          $scope.showGallery = false;
-        } else if ($scope.showGallery === false) {
-          $scope.galleryClass = 'fa fa-minus';
-          $scope.showGallery = true;
-        }
-      };
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    // templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/adminThemeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
 
 }));

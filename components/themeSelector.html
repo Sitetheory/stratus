@@ -3,9 +3,6 @@
 <div id="comp">
   <div class="layout_bx">
     <!-- Gallery header Ends -->
-    <a href="javascript:void(0);" ng-show="$ctrl.layoutOption === 'collapsed' || model.exists(property)"
-       ng-click="toggleGallery();">
-      <i ng-class="galleryClass" class="fa fa-plus" aria-hidden="true"></i>Select Theme</a>
     <!--  <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>-->
 
     <!-- ng-repeat="sel in model.get(property)" -->
@@ -13,41 +10,29 @@
       <!-- FIXME: This was broken on the following div: -->
       <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
       <!-- <button class="cancel--btn" ng-click="model.toggle(property, sel.id, toggleOptions);"></button> -->
-      <div class="lt-image"
-           ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
+      <div class="lt-image" ng-class="{'galleryimg-active': true}">
 
-        <img ng-if="model.get(property).images"
-             ng-src="{{model.get(property).images[0].url}}"
-             alt="{{model.get(property).name}}"/>
+        <img ng-if="model.get(property).images" ng-src="{{model.get(property).images[0].url}}" alt="{{model.get(property).name}}"/>
 
-        <img ng-if="!model.get(property).images"
-             src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg"
-             alt="{{model.get(property).name}}"/>
+        <img ng-if="!model.get(property).images" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt="{{model.get(property).name}}"/>
 
-        <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
-        <a href="javascript:void(0)"
-           ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
-           ng-click="displayGallery();" class="blck_btn">
-          <span>Change</span></a>
-        <a href="javascript:void(0)"
-           ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
-           class="blck_btn"
-           ng-click="displayGallery();">
-          <span>Choose Theme</span></a>
-        <!--</div>-->
+        <a href="javascript:void(0)" ng-click="displayGallery();" class="blck_btn">
+          <span>Change</span>
+        </a>
+        <a href="javascript:void(0)" class="blck_btn" ng-click="displayGallery();">
+          <span>Choose Theme</span>
+        </a>
       </div>
       <div class="lt-content">
         <h4> {{selectedName}} </h4>
         <div class="name fontSecondary" ng-bind-html="themeRawDesc(selectedDesc) | truncate:{limit:300}"></div>
-
-
       </div>
     </div><!-- Layout box Inner ends -->
     <div ng-show="!model.get(property).id">
       <span>No Items selected</span>
     </div>
   </div><!-- Layout Box Ends -->
-  <div class="theme-select" ng-show="showGallery || $ctrl.layoutOption === 'expanded'">
+  <div class="theme-select">
     <!-- <div class="theme-select-nav">
         <h4>Categories</h4>
         <ul>
@@ -93,15 +78,15 @@
                             <h4>{{target.data.name}}</h4>
                             <i class="fa fa-heart-o" aria-hidden="true"></i>
                         </span><!-- Theme Description Header Ends -->
-                    
+
                         <div class="name fontSecondary"
                              ng-bind-html="themeRawDesc(target.data.description) | truncate:{limit:300}"></div>
-                         
+
                         <a href="javascript:void(0)" ng-hide="model.exists(property, target.data.id)"
                            ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images})"
                            class="bl_btn">Choose Theme </a>
 
-                        
+
                     </span>
         </li>
 

@@ -1,102 +1,82 @@
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
-.container {
-  background-color: white;
+.theme-selector {
+  color: #636262;
+  font-weight: 600;
+  background-color: whitesmoke;
 }
-.container .theme {
-  width: 80%;
-  margin: auto;
-  margin-top: 1em;
-  font-size: 18px;
-  font-weight: normal;
-  color: rgba(101, 98, 98, 0.68);
-  font-family: serif;
+.theme-selector #btn-primary.md-primary {
+  color: white;
+  margin: 0;
+  padding: 3px 50px;
+  text-transform: none;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #2196F3;
 }
-.container .theme p {
-  font-weight: bold;
-  font-family: serif;
-  font-size: 25px;
-  margin-bottom: .5em;
+.theme-selector h2 {
+  text-transform: none;
 }
-.container .theme .selector {
-  margin: 1em 0 5em 2em;
+.theme-selector .selected-theme p {
+  color: rgba(0, 0, 0, 0.2);
 }
-.container .theme .selector .right {
-  float: right;
-}
-.container .theme .selector .point {
-  cursor: pointer;
-}
-.container .theme .selector .top {
-  box-shadow: inset 0 -1px 0 0 rgba(54, 54, 54, 0.1);
-  display: block;
-  margin-bottom: 1em;
-  padding-bottom: 2em;
-}
-.container .theme .selector .top .image {
-  display: block;
-  height: 180px;
-}
-.container .theme .selector .top .image img {
-  width: 150px;
-  height: -webkit-fill-available;
-}
-.container .theme .selector .top .content {
-  height: 100%;
-  width: -webkit-fill-available;
-  display: block;
-  overflow: hidden;
-  width: 75%;
-}
-.container .theme .selector .top .content .text {
-  font-size: 18px;
-  font-weight: normal;
-}
-.container .theme .selector .bottom .menus .text {
-  font-size: 18px;
-  font-weight: normal;
-}
-.container .theme .selector .bottom .menus ul {
+.theme-selector .list-theme .menus ul {
   padding-left: 0px;
 }
-.container .theme .selector .bottom .menus ul li {
+.theme-selector .list-theme .menus ul li {
   list-style-type: none;
   margin: 0.5em 0 0.5em 0;
 }
-.container .theme .selector .bottom .templates .template {
-  display: -webkit-inline-box;
-  max-width: 425px;
-  height: 265px;
-  margin: 1em;
-  margin-bottom: 3em;
+.theme-selector .list-theme .templates .template {
+  height: 200px;
+  margin-bottom: 20px;
 }
-.container .theme .selector .bottom .templates .template ul {
-  padding-left: 10px;
+.theme-selector .list-theme .templates .template .image {
+  width: 150px;
+  position: relative;
+  margin-right: 30px;
+  margin-left: 0;
 }
-.container .theme .selector .bottom .templates .template b {
-  color: #060606;
+.theme-selector .list-theme .templates .template .image:hover .overlay {
+  bottom: 0;
+  height: 100%;
 }
-.container .theme .selector .bottom .templates .template .heart-color {
-  color: red;
+.theme-selector .list-theme .templates .template .image img {
+  width: 100%;
+  height: auto;
 }
-.container .theme .selector .bottom .templates .template .description {
+.theme-selector .list-theme .templates .template .image .overlay {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  background-color: rgba(99, 98, 98, 0.5);
   overflow: hidden;
-  margin-bottom: 10px;
+  width: 100%;
+  height: 0;
+  transition: .5s ease;
 }
-.container .theme .selector .bottom .templates .template .description .text {
-  height: 162px;
-  font-size: 16px;
-  font-weight: normal;
-  color: #3e3737;
-  font-family: serif;
-}
-.container .theme .selector .bottom .templates .template .button {
-  font-family: Lato;
+.theme-selector .list-theme .templates .template .image .overlay i {
   color: #FFFFFF;
-  width: 80%;
-  background-color: #0066CC;
-  border-radius: 3px;
-  text-transform: inherit;
+  font-size: 30px;
+  position: absolute;
+  overflow: hidden;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
-.container .inline {
+.theme-selector .list-theme .templates .template .content {
+  position: relative;
+}
+.theme-selector .list-theme .templates .template .content .title h3 {
   display: inline-block;
+}
+.theme-selector .list-theme .templates .template .content .title a {
+  float: right;
+}
+.theme-selector .list-theme .templates .template .content .description p {
+  color: rgba(0, 0, 0, 0.2);
+}
+.theme-selector .list-theme .templates .template .content button {
+  position: absolute;
+  bottom: 0;
 }

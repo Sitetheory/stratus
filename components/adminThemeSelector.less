@@ -1,119 +1,122 @@
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
-.container {
-  background-color: white;
-  .theme{
-    width: 80%;
-    margin: auto;
-    margin-top: 1em;
-    font-size: 18px;
-    font-weight: normal;
-    color: rgba(101, 98, 98, 0.68);
-    font-family: serif;
-    p{
-      font-weight: bold;
-      font-family: serif;
-      font-size: 25px;
-      margin-bottom: .5em;
-    }
-
-    .selector{
-      margin: 1em 0 5em 2em;
-
-      .right{
-        float: right;
-      }
-      .point{
-        cursor: pointer;
-      }
-
-      .top{
-        box-shadow: inset 0 -1px 0 0 rgba(54, 54, 54, 0.1);
-        display: block;
-        margin-bottom: 1em;
-        padding-bottom: 2em;
-
-        .image{
-          display: block;
-          height: 180px;
-          img{
-            width: 150px;
-            height: -webkit-fill-available;
-          }
-        }
-
-        .content{
-          height: 100%;
-          width: -webkit-fill-available;
-          display: block;
-          overflow: hidden;
-          width: 75%;
-          .text{
-            font-size: 18px;
-            font-weight: normal;
-          }
-        }
-      }
-
-      .bottom{
-        .menus{
-          .text{
-            font-size: 18px;
-            font-weight: normal;
-          }
-
-          ul{
-            padding-left: 0px;
-            li{
-              list-style-type: none;
-              margin: 0.5em 0 0.5em 0;
-            }
-          }
-        }
-
-        .templates{
-          .template{
-            display: -webkit-inline-box;
-            max-width: 425px;
-            height: 265px;
-            margin: 1em;
-            margin-bottom: 3em;
-            ul{
-              padding-left: 10px;
-            }
-
-            b{
-              color: #060606;
-            }
-            .heart-color{
-              color: red;
-            }
-
-            .description{
-              overflow: hidden;
-              margin-bottom: 10px;
-              .text{
-                height: 162px;
-                font-size: 16px;
-                font-weight: normal;
-                color: rgb(62, 55, 55);
-                font-family: serif;
-              }
-            }
-
-            .button{
-              font-family: Lato;
-              color: #FFFFFF;
-              width: 80%;
-              background-color: #0066CC;
-              border-radius: 3px;
-              text-transform: inherit;
-            }
-          }
-        }
-      }
+@white-color: #FFFFFF;
+@primary-color: #2196F3;
+@red-s: #fde1df;
+@red-xxl: #F44336;
+@purple: #9C27B0;
+@orange: #FF9800;
+@light-green: #8BC34A;
+@green-s: #c7e7c8;
+@green: #4CAF50;
+@blue-link: #3F51B5;
+@gray-ss: #FAFAFA;
+@gray-s: #E1E1E1;
+@gray-m: rgba(0, 0, 0, 0.2);
+@gray-l: rgba(0, 0, 0, 0.55);
+@gray-xl: #636262;
+@gray-xxl: #333333;
+@yellow-light: rgba(255, 255, 0, 0.25);
+@fontweight-l: 600;
+@fontweight-xl: 700;
+@fontsize-s: 14px;
+@fontsize-m: 15px;
+@fontsize-l: 16px;
+@fontsize-xl: 17px;
+@fontsize-xxl: 20px;
+@fontsize-xxxl: 30px;
+@fontsize-xxxxl: 75px;
+.theme-selector {
+  color: @gray-xl;
+  font-weight: @fontweight-l;
+  background-color: whitesmoke;
+  #btn-primary.md-primary {
+    color: white;
+    margin: 0;
+    padding: 3px 50px;
+    text-transform: none;
+    font-size: @fontsize-s;
+    font-weight: @fontweight-l;
+    background-color: @primary-color;
+  }
+  h2 {
+    text-transform: none;
+  }
+  .selected-theme {
+    p {
+      color: @gray-m;
     }
   }
-  .inline{
-    display: inline-block;
+  .list-theme {
+    .menus {
+      ul {
+        padding-left: 0px;
+        li {
+          list-style-type: none;
+          margin: 0.5em 0 0.5em 0;
+        }
+      }
+    }
+    .templates {
+      .template {
+        height: 200px;
+        margin-bottom: 20px;
+        .image {
+          width: 150px;
+          position: relative;
+          margin-right: 30px;
+          margin-left: 0;
+          &:hover {
+            .overlay {
+              bottom: 0;
+              height: 100%;
+            }
+          }
+          img {
+            width: 100%;
+            height: auto;
+          }
+          .overlay {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background-color: fade(@gray-xl, 50%);
+            overflow: hidden;
+            width: 100%;
+            height: 0;
+            transition: .5s ease;
+            i {
+              color: @white-color;
+              font-size: @fontsize-xxxl;
+              position: absolute;
+              overflow: hidden;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            }
+          }
+        }
+        .content {
+          position: relative;
+          .title {
+            h3 {
+              display: inline-block;
+            }
+            a {
+              float: right;
+            }
+          }
+          .description {
+            p {
+              color: @gray-m;
+            }
+          }
+          button {
+            position: absolute;
+            bottom: 0;
+          }
+        }
+      }
+    }
   }
 }
