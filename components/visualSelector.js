@@ -23,7 +23,8 @@
 
       // Components
       'stratus.components.search',
-      'stratus.components.pagination'
+      'stratus.components.pagination',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root.$, root._);
@@ -50,14 +51,9 @@
       details: '<',
       search: '<'
     },
-    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $http, $sce) {
+    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $http, $sce, commonMethods) {
       // Initialize
-      this.uid = _.uniqueId('visual_selector_');
-      Stratus.Instances[this.uid] = $scope;
-      $scope.elementId = $attrs.elementId || this.uid;
-
-      // CSS
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/visualSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+      commonMethods.componentInitializer(this, $scope, $attrs, 'visual_selector', true);
 
       // Settings
       $scope.showGallery = false;

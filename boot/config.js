@@ -188,6 +188,8 @@ boot.config({
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
+    'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,
+    'stratus.services.commonMethods': boot.bundle + 'stratus/services/commonMethods' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,

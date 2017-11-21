@@ -4,7 +4,14 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular', 'angular-material', 'stratus.services.collection'], factory);
+    define([
+      'stratus',
+      'underscore',
+      'angular',
+      'angular-material',
+      'stratus.services.collection',
+      'stratus.services.commonMethods'
+    ], factory);
   } else {
     factory(root.Stratus, root._);
   }
@@ -12,11 +19,9 @@
   // This component intends to handle binding and
   // full pagination for the scope's collection.
   Stratus.Components.Pagination = {
-    controller: function ($scope, collection) {
-      Stratus.Instances[_.uniqueId('pagination_')] = $scope;
-
-      // Load Component CSS
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/pagination' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+    controller: function ($scope, collection, commonMethods) {
+      // Initialize
+      commonMethods.componentInitializer(this, $scope, $attrs, 'pagination', true);
 
       // Settings
       $scope.pages = [];
