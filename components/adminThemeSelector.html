@@ -29,10 +29,7 @@
         <div flex>
           <h2>Categories</h2>
           <ul>
-            <li><a href="#" ng-click="$ctrl.showCategory(-1)">Sint ad</a></li>
-            <li><a href="#" ng-click="$ctrl.showCategory(-1)">Occaecat</a></li>
-            <li><a href="#" ng-click="$ctrl.showCategory(-1)">Deserunt</a></li>
-            <li ng-repeat="category in $ctrl.categories">
+            <li ng-repeat="category in $ctrl.categories track by $index">
               <a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a>
             </li>
           </ul>

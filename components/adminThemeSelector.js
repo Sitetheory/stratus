@@ -19,7 +19,8 @@
 
       // Components
       'stratus.components.search',
-      'stratus.components.pagination'
+      'stratus.components.pagination',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     // Browser globals
@@ -43,14 +44,23 @@
       details: '<',
       search: '<'
     },
-    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $sce, collection, $window, $log, $http, $mdDialog) {
+    controller: function (
+      $scope,
+      $mdPanel,
+      $attrs,
+      registry,
+      details,
+      model,
+      $sce,
+      collection,
+      $window,
+      $log,
+      $http,
+      $mdDialog,
+      commonMethods
+    ) {
       // Initialize
-      this.uid = _.uniqueId('admin_theme_selector_');
-      Stratus.Instances[this.uid] = $scope;
-      $scope.elementId = $attrs.elementId || this.uid;
-
-      // load css
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/adminThemeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+      commonMethods.componentInitializer(this, $scope, $attrs, 'admin_theme_selector', true);
 
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
@@ -63,7 +73,7 @@
       $ctrl.currentThemes = $ctrl.themes;
       $ctrl.zoomView = zoomView;
 
-      $ctrl.categories = ['Real Estale', 'Churche', 'Small Business', 'Corporate', 'Artist', 'Health & Fitness'];
+      $ctrl.categories = ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'];
 
       // define methods
       $ctrl.sortBy = sortBy;
@@ -124,6 +134,7 @@
       // display expanded view if clicked on change button
       function zoomView(themeDetail, $event) {
         $scope.themeDetail = themeDetail;
+
         var position = $mdPanel.newPanelPosition()
         .absolute()
         .center();

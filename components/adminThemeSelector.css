@@ -47,8 +47,8 @@
   height: 100%;
 }
 .theme-selector .list-theme .templates .template .image img {
-  width: -webkit-fill-available;
-  height: -webkit-fill-available;
+  height: 100%;
+  object-fit: cover;
 }
 .theme-selector .list-theme .templates .template .image .overlay {
   position: absolute;
@@ -80,7 +80,7 @@
   float: right;
 }
 .theme-selector .list-theme .templates .template .content .title .favorite {
-  color: #D30000;
+  color: #F44336;
 }
 .theme-selector .list-theme .templates .template .content .description p {
   color: rgba(0, 0, 0, 0.2);
@@ -118,5 +118,5 @@
   float: right;
 }
 #zoom-view .pannel-header .favorite {
-  color: #D30000;
+  color: #F44336;
 }
