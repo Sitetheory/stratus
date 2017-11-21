@@ -40,6 +40,8 @@
     font-weight: @fontweight-l;
     background-color: @primary-color;
     width: -webkit-fill-available;
+    text-align: left;
+    padding-left: 20%;
   }
   h2 {
     text-transform: none;
@@ -62,7 +64,7 @@
     .templates {
       .template {
         height: 200px;
-        width: 370px;
+        width: 340px;
         margin-bottom: 20px;
         margin-right: 2em;
         margin-bottom: 3em;
@@ -126,6 +128,41 @@
           }
         }
       }
+    }
+  }
+}
+
+#zoom-view {
+  .pannel-content{
+    background: white;
+    padding: 1em;
+    .ltpop-bottom {
+      text-align: center;
+      margin-top: 1em;
+      .theme-view-list {
+        text-align: -webkit-left;
+        margin-bottom: .5em;
+      }
+      img {
+        // width: -webkit-fill-available;
+        width: 500px;
+        height: 500px;
+      }
+    }
+  }
+  .pannel-header {
+    background: #006CC3;
+    padding: 1em;
+    padding-bottom: 0.5em;
+    h3 {
+      color: white;
+    }
+    i {
+      color: white;
+      float: right;
+    }
+    .favorite{
+      color: @red-heart;
     }
   }
 }

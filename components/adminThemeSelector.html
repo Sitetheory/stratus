@@ -68,36 +68,37 @@
   </div>
 </md-content>
 
-
 <script type="text/ng-template" id="themeDetail.html">
   <!-- Detail Page starts from here -->
-  <div class="lt-popup theme-preview" role="dialog">
-    <div class="ltpop-left">
+  <div id="zoom-view" class="lt-popup theme-preview" role="dialog">
+    <div class="pannel-header">
       <h3>{{themeDetail.name}}
-        <i aria-hidden="true" class="fa fa-heart-o"></i>
-        <i aria-hidden="true" class="fa fa-heart"></i>
+        <a href="#" ng-click="$ctrl.setFavorite(themeDetail.id)"><i ng-class="$ctrl.getFavoriteStatus(themeDetail.id)"></i></a>
       </h3>
-      <div class="name fontSecondary"
-           ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
-
-      <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
-         ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
-         class="bl_btn">Choose Theme </a>
-
-
-      <a href="#" class="bl_btn_border">View Demo </a>
     </div>
-    <div class="ltpop-right">
-      <div class="theme-view-list">
-        <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
-        <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
-        <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
-        <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
-      </div><!-- View list Ends -->
-      <a href="#">
-        <img class="zoom-view" src="{{ themeDetail.images[0].url }}" alt="">
-      </a>
-    </div>
-    <a href="#" class="lt-close" ng-click="closeDialog();">X</a>
-  </div><!-- Layout popup ends -->
+
+    <div class="pannel-content">
+      <div class="ltpop-top">
+        <div class="name fontSecondary"
+        ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
+        <a href="javascript:void(0)" ng-hide="model.exists(property, themeDetail.id)"
+        ng-click="model.toggle(property, {'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}, toggleOptions); updateDetails({'id': themeDetail.id,'name':themeDetail.name,'description':themeDetail.description,'images':themeDetail.images}); closeDialog();"
+        class="bl_btn">Choose Theme </a>
+        <a href="#" class="bl_btn_border">View Demo </a>
+      </div>
+
+      <div class="ltpop-bottom">
+        <div class="theme-view-list">
+          <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
+        </div><!-- View list Ends -->
+        <a href="#">
+          <img src="{{ themeDetail.images[0].url }}" alt="">
+        </a>
+      </div>
+      <!-- <a href="#" class="lt-close" ng-click="closeDialog();">X</a> -->
+    </div><!-- Layout popup ends -->
+  </div>
 </script>

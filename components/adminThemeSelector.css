@@ -13,6 +13,8 @@
   font-weight: 600;
   background-color: #2196F3;
   width: -webkit-fill-available;
+  text-align: left;
+  padding-left: 20%;
 }
 .theme-selector h2 {
   text-transform: none;
@@ -29,7 +31,7 @@
 }
 .theme-selector .list-theme .templates .template {
   height: 200px;
-  width: 370px;
+  width: 340px;
   margin-bottom: 20px;
   margin-right: 2em;
   margin-bottom: 3em;
@@ -86,4 +88,35 @@
 .theme-selector .list-theme .templates .template .content button {
   position: absolute;
   bottom: 0;
+}
+#zoom-view .pannel-content {
+  background: white;
+  padding: 1em;
+}
+#zoom-view .pannel-content .ltpop-bottom {
+  text-align: center;
+  margin-top: 1em;
+}
+#zoom-view .pannel-content .ltpop-bottom .theme-view-list {
+  text-align: -webkit-left;
+  margin-bottom: .5em;
+}
+#zoom-view .pannel-content .ltpop-bottom img {
+  width: 500px;
+  height: 500px;
+}
+#zoom-view .pannel-header {
+  background: #006CC3;
+  padding: 1em;
+  padding-bottom: 0.5em;
+}
+#zoom-view .pannel-header h3 {
+  color: white;
+}
+#zoom-view .pannel-header i {
+  color: white;
+  float: right;
+}
+#zoom-view .pannel-header .favorite {
+  color: #D30000;
 }

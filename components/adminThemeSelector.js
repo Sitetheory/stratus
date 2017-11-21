@@ -132,6 +132,8 @@
           attachTo: angular.element(document.body),
           scope: $scope,
           controllerAs: 'ctrl',
+          parent: angular.element(document.body),
+          fullscreen: false,
           controller: ZoomController,
           templateUrl: 'themeDetail.html',
           hasBackdrop: true,
