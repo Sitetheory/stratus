@@ -36,7 +36,6 @@
       $scope.Stratus = Stratus;
       $scope._ = _;
       $scope.setUrlParams = function (options) {
-        console.log('options', options);
         if (angular.isObject(options)) {
           var substance = false;
           angular.forEach(options, function (value) {
@@ -95,15 +94,11 @@
       };
 
       $scope.createSite = function (siteTitle, siteGenreId) {
-        return $scope.stepFinish('Welcome');
-        console.log('siteTitle', siteTitle);
-        console.log('siteGenreId', siteGenreId);
         var data = {
           name: siteTitle,
           genre: siteGenreId
         };
         createNewSite.create(data).then(function (res) {
-          console.log('res', res);
           _.each($scope.steps, function (value, key) {
             if (key === 'isWelcome') {
               $scope.steps.isWelcome = !value;
