@@ -70,6 +70,7 @@
       $ctrl.setFavorite = setFavorite;
       $ctrl.getFavoriteStatus = getFavoriteStatus;
       $ctrl.showCategory = showCategory;
+      $ctrl.chooseTheme = chooseTheme;
 
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
 
@@ -122,7 +123,6 @@
 
       // display expanded view if clicked on change button
       function zoomView(themeDetail, $event) {
-        console.log('themeDetail', themeDetail);
         $scope.themeDetail = themeDetail;
         var position = $mdPanel.newPanelPosition()
         .absolute()
@@ -176,6 +176,7 @@
       };
 
       function chooseTheme(id) {
+        $scope.$parent.stepFinish('ThemeSelecting');
       }
 
       function sortBy(type) {

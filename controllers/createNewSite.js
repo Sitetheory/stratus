@@ -36,6 +36,7 @@
       $scope.Stratus = Stratus;
       $scope._ = _;
       $scope.setUrlParams = function (options) {
+        console.log('options', options);
         if (angular.isObject(options)) {
           var substance = false;
           angular.forEach(options, function (value) {
@@ -56,10 +57,10 @@
 
       // Variables
       $scope.steps = {
-        isWelcome: false,
-        isThemeSelecting: true,
-        isBillingPackage: false,
-        isSuccess: false
+        isWelcome: true,
+        isThemeSelecting: false,
+        isSuccess: false,
+        isBillingPackage: false
       };
 
       // Type Checks
@@ -73,12 +74,36 @@
       $scope.isString = angular.isString;
       $scope.isUndefined = angular.isUndefined;
 
+      // cause the create new site api have not yet finish so I assume it success to call another follow.
+      $scope.stepFinish = function (name) {
+        switch (name) {
+          case 'Welcome':
+            $scope.steps.isWelcome = false;
+            $scope.steps.isThemeSelecting = true;
+            break;
+          case 'ThemeSelecting':
+            $scope.steps.isThemeSelecting = false;
+            $scope.steps.isSuccess = true;
+            break;
+          case 'Success':
+            $scope.steps.isSuccess = false;
+            $scope.steps.isBillingPackage = true;
+            break;
+          default:
+            console.log('step create new site done');
+        }
+      };
+
       $scope.createSite = function (siteTitle, siteGenreId) {
+        return $scope.stepFinish('Welcome');
+        console.log('siteTitle', siteTitle);
+        console.log('siteGenreId', siteGenreId);
         var data = {
           name: siteTitle,
           genre: siteGenreId
         };
         createNewSite.create(data).then(function (res) {
+          console.log('res', res);
           _.each($scope.steps, function (value, key) {
             if (key === 'isWelcome') {
               $scope.steps.isWelcome = !value;
