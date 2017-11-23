@@ -10,7 +10,7 @@
       // Modules
       'zxcvbn',
       'stratus.services.userAuthentication',
-      'stratus.components.signleSignOn'
+      'stratus.components.singleSignOn'
     ], factory);
   } else {
     // Browser globals

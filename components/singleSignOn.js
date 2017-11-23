@@ -19,12 +19,12 @@
   }
 }(this, function (Stratus, _) {
   // This component intends to allow editing of various selections depending on context.
-  Stratus.Components.signleSignOn = {
+  Stratus.Components.singleSignOn = {
     bindings: {},
     controller: function ($scope, $window, $attrs, $log, $http, $mdDialog) {
       // Initialize
       this.uid = _.uniqueId('signle_sign_on_');
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/signleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
       Stratus.Instances[this.uid] = $scope;
       $scope.elementId = $attrs.elementId || this.uid;
 
@@ -118,7 +118,7 @@
           });
       }
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/signleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
 }));
 
