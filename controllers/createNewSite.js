@@ -9,7 +9,8 @@
       'underscore',
       'angular',
       'stratus.services.registry',
-      'stratus.services.createNewSite'
+      'stratus.services.createNewSite',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -24,7 +25,8 @@
     '$parse',
     'registry',
     'createNewSite',
-    function ($scope, $element, $log, $parse, registry, createNewSite) {
+    'commonMethods',
+    function ($scope, $element, $log, $parse, registry, createNewSite, commonMethods) {
       // Store Instance
       Stratus.Instances[_.uniqueId('createNewSite_')] = $scope;
 
@@ -55,9 +57,9 @@
       $scope.$log = $log;
 
       // Variables
+      $scope.errorMsg = null;
       $scope.steps = {
-        isWelcome: true,
-        isThemeSelecting: false,
+        isThemeSelecting: true,
         isSuccess: false,
         isBillingPackage: false
       };
@@ -76,10 +78,6 @@
       // cause the create new site api have not yet finish so I assume it success to call another follow.
       $scope.stepFinish = function (name) {
         switch (name) {
-          case 'Welcome':
-            $scope.steps.isWelcome = false;
-            $scope.steps.isThemeSelecting = true;
-            break;
           case 'ThemeSelecting':
             $scope.steps.isThemeSelecting = false;
             $scope.steps.isSuccess = true;
@@ -88,8 +86,6 @@
             $scope.steps.isSuccess = false;
             $scope.steps.isBillingPackage = true;
             break;
-          default:
-            console.log('step create new site done');
         }
       };
 
@@ -99,17 +95,25 @@
           genre: siteGenreId
         };
         createNewSite.create(data).then(function (res) {
-          _.each($scope.steps, function (value, key) {
-            if (key === 'isWelcome') {
-              $scope.steps.isWelcome = !value;
-            };
-            if (key === 'isThemeSelecting') {
-              $scope.steps.isThemeSelecting = !value;
-            };
-          });
+          if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
+            $scope.errorMsg = null;
+            $scope.steps.isWelcome = false;
+            $scope.steps.isThemeSelecting = true;
+          } else {
+            $scope.errorMsg = commonMethods.getStatus(res).message;
+          }
         });
       };
 
+      $scope.choosePackage = function () {
+        $scope.steps.isSuccess = false;
+        $scope.steps.isBillingPackage = true;
+      };
+
+      $scope.goBack = function () {
+        $scope.steps.isThemeSelecting = true;
+        $scope.steps.isSuccess = false;
+      };
     }
   ];
 }));

@@ -186,7 +186,7 @@
         return $ctrl.themes[index].preferred ? 'fa fa-heart favorite' : 'fa fa-heart-o';
       };
 
-      function chooseTheme(id) {
+      function chooseTheme() {
         $scope.$parent.stepFinish('ThemeSelecting');
       }
 
