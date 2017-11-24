@@ -32,7 +32,10 @@
       // functional methods
 
       function RESPONSE_CODE() {
-        return { verify: 'VERIFY', success: 'SUCCESS' };
+        return {
+          verify: 'VERIFY',
+          success: 'SUCCESS'
+        };
       }
 
       function componentInitializer(element, scope, attrs, componentName, loadCss) {
@@ -98,9 +101,10 @@
 
       function getUrlParams() {
         var url = new URL($window.location.href);
+        console.log($window.location.search);
         return {
           type: url.searchParams.get('type'),
-          email: url.searchParams.get('email'),
+          email: $window.location.search.split('&')[1].replace('?', '').split('=')[1],
           token: url.searchParams.get('token')
         };
       };
