@@ -40,6 +40,7 @@
 
       // methods
       function init() {
+        loadGGLibrary();
         loadFacebookSDK();
       }
 
@@ -81,9 +82,10 @@
       };
 
       function FbGetBasicProfile() {
-        FB.api('/me', { fields: 'email, name' }, function (response) {
+        FB.api('/me?fields=email,name', { fields: 'name,email' }, function (response) {
+          console.log('response', response);
           doSignIn(response.email, response.id, response.name, 'facebook');
-        });
+        }, { scope: 'email' });
       }
 
       // GOOGLE LOGIN
@@ -91,13 +93,32 @@
         gapi.auth2.getAuthInstance().signOut();
       };
 
-      window.GGLogin = function (googleUser) {
+      function loadGGLibrary() {
+        // load javascrip
+        var js = document.createElement('script'); // use global document since Angular's $document is weak
+        js.src = 'https://apis.google.com/js/platform.js';
+        document.body.appendChild(js);
+
+        // load google api key
+        var meta = document.createElement('meta');
+        meta.name = 'google-signin-client_id';
+        meta.content = '878138862061-hsql5u9tcoonjrr99r9f5phcdrao2r8i.apps.googleusercontent.com';
+        document.head.append(meta);
+      };
+
+      // Useful data for your client-side scripts:
+      window.onSignIn = function onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
         doSignIn(profile.getEmail(), profile.getId(), profile.getName(), 'google');
       };
 
       // SignIn url: /User/Login
       function doSignIn(email, id, name, service) {
+        console.log('email');
+        if (!email || !service || !id) {
+          alert("We couldn't find your email. Seemly your email is guaranteed or you haven't the email yet.");
+          return;
+        }
         var data = {
           email: email,
           service: service,
