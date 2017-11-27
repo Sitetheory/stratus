@@ -36,7 +36,8 @@
 
       // variables
       var loginUrl = '/Api/Login';
-      var fbId = '753913441463877';
+      var fbAppId = '753913441463877';
+      var ggAppId = '878138862061-hsql5u9tcoonjrr99r9f5phcdrao2r8i.apps.googleusercontent.com';
 
       // methods
       function init() {
@@ -48,7 +49,7 @@
       function loadFacebookSDK() {
         window.fbAsyncInit = function () {
           FB.init({
-            appId: fbId,
+            appId: fbAppId,
             cookie: true,
             xfbml: true,
             version: 'v2.9'
@@ -76,15 +77,15 @@
             default:
               FB.login(function (response) {
                 (response.authResponse != null) ? FbGetBasicProfile() : FB.login();
-              });
+              }, { scope: 'email' });
           }
-        });
+        }, { scope: 'email' });
       };
 
       function FbGetBasicProfile() {
-        FB.api('/me?fields=email,name', { fields: 'name,email' }, function (response) {
+        FB.api('/me?fields=email,name,gender,locale,link,picture', function (response) {
           console.log('response', response);
-          doSignIn(response.email, response.id, response.name, 'facebook');
+          doSignIn(response, 'facebook');
         }, { scope: 'email' });
       }
 
@@ -102,34 +103,33 @@
         // load google api key
         var meta = document.createElement('meta');
         meta.name = 'google-signin-client_id';
-        meta.content = '878138862061-hsql5u9tcoonjrr99r9f5phcdrao2r8i.apps.googleusercontent.com';
+        meta.content = ggAppId;
         document.head.append(meta);
       };
 
       // Useful data for your client-side scripts:
       window.onSignIn = function onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
-        doSignIn(profile.getEmail(), profile.getId(), profile.getName(), 'google');
+        var data = {
+          email: profile.getEmail(),
+          name: profile.getName(),
+          id: profile.getId(),
+          picture: profile.getImageUrl()
+        };
+        doSignIn(data, 'google');
       };
 
       // SignIn url: /User/Login
-      function doSignIn(email, id, name, service) {
-        console.log('email');
-        if (!email || !service || !id) {
-          alert("We couldn't find your email. Seemly your email is guaranteed or you haven't the email yet.");
+      function doSignIn(data, service) {
+        if (!data.email) {
+          alert('In order to complete registration you must provide a verified email for account recovery.');
           return;
         }
-        var data = {
-          email: email,
-          service: service,
-          name: name,
-          socialId: id,
-        };
 
         $http({
           method: 'POST',
           url: loginUrl,
-          data: data
+          data: { service: service, data: data }
         }).then(
           function (response) {
             $window.location.href = '/';
