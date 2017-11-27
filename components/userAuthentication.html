@@ -128,12 +128,10 @@
                             </md-input-container>
 
                             <md-input-container class="md-block" flex-gt-sm>
-                                <input name="confirm_password" type="password"
-                                       ng-model="$ctrl.resetPassData.confirm_password" required
-                                       placeholder="Confirm password phrase">
-                                <ng-messages for="resetPassForm.confirm_password.$error"
-                                             ng-if="resetPassForm.confirm_password.$dirty">
+                                <input name="confirm_password" type="password" ng-model="$ctrl.resetPassData.confirm_password" required placeholder="Confirm password phrase" stratus-password-check password="{{$ctrl.resetPassData.password}}">
+                                <ng-messages for="resetPassForm.confirm_password.$error" ng-if="resetPassForm.confirm_password.$dirty">
                                     <ng-message when="required">This field is required!</ng-message>
+                                    <ng-message when="passwordCheck">Your passwords did not match.</ng-message>
                                 </ng-messages>
                             </md-input-container>
 
