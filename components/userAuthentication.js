@@ -10,7 +10,8 @@
       // Modules
       'zxcvbn',
       'stratus.services.userAuthentication',
-      'stratus.components.singleSignOn'
+      'stratus.components.singleSignOn',
+      'stratus.directives.passwordCheck'
     ], factory);
   } else {
     // Browser globals
@@ -67,18 +68,7 @@
         }
         if (!_.isEmpty(this.resetPassData)) {
           $ctrl.isRequestSuccess = false;
-          var password = this.resetPassData.password;
-          var confirmPassword = this.resetPassData.confirm_password;
-
-          if (password && validPassword(password) && $ctrl.progressBarValue >= 40) {
-            if (password !== confirmPassword) {
-              $ctrl.message = 'Your passwords did not match.';
-            } else {
-              $ctrl.message = null;
-            }
-          }
-
-          return password;
+          return this.resetPassData.password;
         }
       }), function (newValue, oldValue) {
         if (newValue !== undefined && newValue !== oldValue) {
@@ -87,11 +77,8 @@
 
           generateProgressBar(newValue);
 
-          if (!validPassword(newValue)) {
+          if (newValue.length >= 8 && !validPassword(newValue)) {
             $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.';
-          } else if ($ctrl.progressBarValue <= 40) {
-            $ctrl.message = 'Your password is not strong.';
-            $ctrl.allowSubmit = true;
           } else {
             $ctrl.message = null;
             $ctrl.allowSubmit = true;
