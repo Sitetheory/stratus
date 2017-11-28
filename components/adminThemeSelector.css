@@ -1,6 +1,7 @@
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
 .theme-selector {
   color: #636262;
+  overflow-y: hidden;
   font-weight: 600;
   background-color: whitesmoke;
 }
@@ -21,6 +22,10 @@
 }
 .theme-selector .selected-theme p {
   color: rgba(0, 0, 0, 0.2);
+}
+.theme-selector .selected-theme .description img {
+  height: 100%;
+  object-fit: cover;
 }
 .theme-selector .list-theme .menus ul {
   padding-left: 0px;
@@ -88,6 +93,30 @@
 .theme-selector .list-theme .templates .template .content button {
   position: absolute;
   bottom: 0;
+}
+.theme-selector .nav-button {
+  display: block;
+  position: relative;
+}
+.theme-selector .nav-button stratus-pagination {
+  position: absolute;
+  right: 2px;
+  top: 3px;
+}
+.theme-selector .nav-button stratus-pagination .paginator {
+  padding-top: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.theme-selector .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular {
+  width: 20px !important;
+  height: 20px !important;
+}
+.theme-selector .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular svg {
+  width: 100% !important;
+  height: 100% !important;
+  transform-origin: unset !important;
 }
 #zoom-view .pannel-content {
   background: white;

@@ -27,6 +27,7 @@
 @fontsize-xxxxl: 75px;
 .theme-selector {
   color: @gray-xl;
+  overflow-y: hidden;
   font-weight: @fontweight-l;
   background-color: whitesmoke;
   #btn-primary.md-primary {
@@ -47,6 +48,12 @@
   .selected-theme {
     p {
       color: @gray-m;
+    }
+    .description {
+      img {
+        height: 100%;
+        object-fit: cover;
+      }
     }
   }
   .list-theme {
@@ -123,6 +130,32 @@
           button {
             position: absolute;
             bottom: 0;
+          }
+        }
+      }
+    }
+  }
+  .nav-button {
+    display: block;
+    position: relative;
+    stratus-pagination {
+      position: absolute;
+      right: 2px;
+      top: 3px;
+      .paginator {
+        padding-top: 0;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
+        .paginatorProgress {
+          md-progress-circular {
+            width: 20px !important;
+            height: 20px !important;
+            svg {
+              width: 100% !important;
+              height: 100% !important;
+              transform-origin: unset !important;
+            }
           }
         }
       }

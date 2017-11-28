@@ -20,7 +20,8 @@
       // Components
       'stratus.components.search',
       'stratus.components.pagination',
-      'stratus.services.commonMethods'
+      'stratus.services.commonMethods',
+      'stratus.services.adminThemeSelector'
     ], factory);
   } else {
     // Browser globals
@@ -57,7 +58,8 @@
       $log,
       $http,
       $mdDialog,
-      commonMethods
+      commonMethods,
+      adminThemeSelector
     ) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'admin_theme_selector', true);
@@ -67,12 +69,14 @@
 
       var $ctrl = this;
 
-      // mock DB
+      $ctrl.errorMsg = null;
       $ctrl.heartCollor = [];
       $ctrl.themes = [];
       $ctrl.currentThemes = $ctrl.themes;
       $ctrl.zoomView = zoomView;
+      $ctrl.selectedTheme = {};
 
+      // mock DB
       $ctrl.categories = ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'];
 
       // define methods
@@ -81,6 +85,7 @@
       $ctrl.getFavoriteStatus = getFavoriteStatus;
       $ctrl.showCategory = showCategory;
       $ctrl.chooseTheme = chooseTheme;
+      $ctrl.nextStep = nextStep;
 
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
 
@@ -133,11 +138,11 @@
 
       // display expanded view if clicked on change button
       function zoomView(themeDetail, $event) {
-        $scope.themeDetail = themeDetail;
+        $scope.themeDetail = themeDetail.data;
 
         var position = $mdPanel.newPanelPosition()
-        .absolute()
-        .center();
+          .absolute()
+          .center();
 
         var config = {
           attachTo: angular.element(document.body),
@@ -161,9 +166,7 @@
       };
 
       function ZoomController(mdPanelRef) {
-
         $scope.closeDialog = function () {
-
           mdPanelRef.close();
         };
       }
@@ -177,16 +180,30 @@
       }
 
       function setFavorite(id) {
-        var index = $ctrl.themes.findIndex(x=>x.data.id == id);
+        var index = $ctrl.themes.findIndex(x => x.data.id == id);
         return $ctrl.themes[index].preferred = !$ctrl.themes[index].preferred;
       };
 
       function getFavoriteStatus(id) {
-        var index = $ctrl.themes.findIndex(x=>x.data.id == id);
+        var index = $ctrl.themes.findIndex(x => x.data.id == id);
         return $ctrl.themes[index].preferred ? 'fa fa-heart favorite' : 'fa fa-heart-o';
       };
 
-      function chooseTheme() {
+      function chooseTheme(themeData) {
+        var data = {
+          templateId: themeData.data.id
+        };
+        $ctrl.selectedTheme = themeData;
+        adminThemeSelector.selectTheme(data).then(function (res) {
+          if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
+            nextStep();
+          } else {
+            $ctrl.errorMsg = commonMethods.getStatus(res).message;
+          }
+        });
+      }
+
+      function nextStep() {
         $scope.$parent.stepFinish('ThemeSelecting');
       }
 

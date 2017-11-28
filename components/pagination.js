@@ -19,7 +19,7 @@
   // This component intends to handle binding and
   // full pagination for the scope's collection.
   Stratus.Components.Pagination = {
-    controller: function ($scope, collection, commonMethods) {
+    controller: function ($scope, $attrs, collection, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'pagination', true);
 

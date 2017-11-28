@@ -101,10 +101,13 @@
 
       function getUrlParams() {
         var url = new URL($window.location.href);
-        console.log($window.location.search);
+        var emailUrl = '';
+        if ($window.location.search !== '') {
+          emailUrl = $window.location.search.split('&')[1].replace('?', '').split('=')[1];
+        }
         return {
           type: url.searchParams.get('type'),
-          email: $window.location.search.split('&')[1].replace('?', '').split('=')[1],
+          email: emailUrl,
           token: url.searchParams.get('token')
         };
       };
