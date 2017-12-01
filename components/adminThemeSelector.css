@@ -6,16 +6,13 @@
   background-color: whitesmoke;
 }
 .theme-selector #btn-primary.md-primary {
-  color: white;
+  color: #FFFFFF;
   margin: 0;
-  padding: 3px 50px;
+  padding: 3px 30px;
   text-transform: none;
   font-size: 14px;
   font-weight: 600;
   background-color: #2196F3;
-  width: -webkit-fill-available;
-  text-align: left;
-  padding-left: 20%;
 }
 .theme-selector h2 {
   text-transform: none;
@@ -23,9 +20,20 @@
 .theme-selector .selected-theme p {
   color: rgba(0, 0, 0, 0.2);
 }
-.theme-selector .selected-theme .description img {
+.theme-selector .selected-theme .info {
+  position: relative;
+}
+.theme-selector .selected-theme .info img {
   height: 100%;
   object-fit: cover;
+}
+.theme-selector .selected-theme .info button {
+  text-align: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: inherit;
+  position: absolute;
+  bottom: 0;
 }
 .theme-selector .list-theme .menus ul {
   padding-left: 0px;

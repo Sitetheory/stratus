@@ -2,7 +2,7 @@
   <p>{{ $ctrl.errorMsg }}</p>
 </div>
 <md-content class="theme-selector">
-  <div class="selected-theme" layout="column">
+  <div ng-if="$ctrl.selectedTheme" class="selected-theme" layout="column">
     <h2>
       <span>
         <md-tooltip md-direction="top">Reprehenderit duis ad aliqua proident proident exercitation laborum consequat cupidatat.</md-tooltip>
@@ -10,16 +10,15 @@
       </span> Theme
     </h2>
 
-    <div class="description" layout="row">
+    <div class="info" layout="row">
       <div flex="20">
-        <img ng-src="{{ $ctrl.selectedTheme.data.images[0].url }}" charset="utf-8"></img>
+        <img ng-if="$ctrl.selectedTheme.data.images" ng-src="{{ $ctrl.selectedTheme.data.images[0].url }}" charset="utf-8"></img>
       </div>
 
       <div flex="50" flex-offset="5">
         <h3>{{ $ctrl.selectedTheme.data.name }}</h3>
-        <p class="text">
-          {{ $ctrl.selectedTheme.data.description }}
-        </p>
+        <div class="description" ng-bind-html="themeRawDesc($ctrl.selectedTheme.data.description) | truncate:{limit:300}"></div>
+        <md-button class="md-primary" id="btn-primary" ng-click="$ctrl.finishChoosingTheme($ctrl.selectedTheme)">Select this theme</md-button>
       </div>
     </div>
   </div>
@@ -67,7 +66,6 @@
     </div>
   </div>
   <div class="nav-button">
-    <md-button class="md-raised md-primary" ng-click="$ctrl.nextStep()">Next</md-button>
     <stratus-pagination></stratus-pagination>
   </div>
 </md-content>

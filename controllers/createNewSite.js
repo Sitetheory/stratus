@@ -59,7 +59,8 @@
       // Variables
       $scope.errorMsg = null;
       $scope.steps = {
-        isThemeSelecting: true,
+        isWelcome: true,
+        isThemeSelecting: false,
         isSuccess: false,
         isBillingPackage: false
       };
@@ -108,11 +109,6 @@
       $scope.choosePackage = function () {
         $scope.steps.isSuccess = false;
         $scope.steps.isBillingPackage = true;
-      };
-
-      $scope.goBack = function () {
-        $scope.steps.isThemeSelecting = true;
-        $scope.steps.isSuccess = false;
       };
     }
   ];

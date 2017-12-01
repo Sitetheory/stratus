@@ -74,7 +74,7 @@
       $ctrl.themes = [];
       $ctrl.currentThemes = $ctrl.themes;
       $ctrl.zoomView = zoomView;
-      $ctrl.selectedTheme = {};
+      $ctrl.selectedTheme = null;
 
       // mock DB
       $ctrl.categories = ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'];
@@ -85,7 +85,7 @@
       $ctrl.getFavoriteStatus = getFavoriteStatus;
       $ctrl.showCategory = showCategory;
       $ctrl.chooseTheme = chooseTheme;
-      $ctrl.nextStep = nextStep;
+      $ctrl.finishChoosingTheme = finishChoosingTheme;
 
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
 
@@ -190,21 +190,20 @@
       };
 
       function chooseTheme(themeData) {
+        $ctrl.selectedTheme = themeData;
+      }
+
+      function finishChoosingTheme(themeData) {
         var data = {
           templateId: themeData.data.id
         };
-        $ctrl.selectedTheme = themeData;
         adminThemeSelector.selectTheme(data).then(function (res) {
           if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
-            nextStep();
+            $window.location.href = '/Site/Edit?id=' + res.data.payload[0];
           } else {
             $ctrl.errorMsg = commonMethods.getStatus(res).message;
           }
         });
-      }
-
-      function nextStep() {
-        $scope.$parent.stepFinish('ThemeSelecting');
       }
 
       function sortBy(type) {

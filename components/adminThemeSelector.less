@@ -31,16 +31,13 @@
   font-weight: @fontweight-l;
   background-color: whitesmoke;
   #btn-primary.md-primary {
-    color: white;
+    color: @white-color;
     margin: 0;
-    padding: 3px 50px;
+    padding: 3px 30px;
     text-transform: none;
     font-size: @fontsize-s;
     font-weight: @fontweight-l;
     background-color: @primary-color;
-    width: -webkit-fill-available;
-    text-align: left;
-    padding-left: 20%;
   }
   h2 {
     text-transform: none;
@@ -49,10 +46,19 @@
     p {
       color: @gray-m;
     }
-    .description {
+    .info {
+      position: relative;
       img {
         height: 100%;
         object-fit: cover;
+      }
+      button {
+        text-align: center;
+        padding-left: 20px;
+        padding-right: 20px;
+        width: inherit;
+        position: absolute;
+        bottom: 0;
       }
     }
   }
