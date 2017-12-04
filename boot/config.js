@@ -146,6 +146,8 @@ boot.config({
     'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
     'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
     'stratus.components.singleSignOn': boot.bundle + 'stratus/components/singleSignOn' + boot.suffix,
+    'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
+    'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
