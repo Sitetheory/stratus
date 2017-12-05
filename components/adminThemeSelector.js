@@ -199,7 +199,7 @@
         };
         adminThemeSelector.selectTheme(data).then(function (res) {
           if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
-            $window.location.href = '/Site/Edit?id=' + res.data.payload[0];
+            $window.location.href = '/Site/Edit/Success';
           } else {
             $ctrl.errorMsg = commonMethods.getStatus(res).message;
           }
