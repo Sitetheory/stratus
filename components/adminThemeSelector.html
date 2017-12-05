@@ -1,0 +1,104 @@
+<div class="error" ng-if="$ctrl.errorMsg">
+  <p>{{ $ctrl.errorMsg }}</p>
+</div>
+<md-content class="theme-selector">
+  <div ng-if="$ctrl.selectedTheme" class="selected-theme" layout="column">
+    <h2>
+      <span>
+        <md-tooltip md-direction="top">Reprehenderit duis ad aliqua proident proident exercitation laborum consequat cupidatat.</md-tooltip>
+        <md-icon md-font-icon="fa-question-circle" class="fa"></md-icon>
+      </span> Theme
+    </h2>
+
+    <div class="info" layout="row">
+      <div flex="20">
+        <img ng-if="$ctrl.selectedTheme.data.images" ng-src="{{ $ctrl.selectedTheme.data.images[0].url }}" charset="utf-8"></img>
+      </div>
+
+      <div flex="50" flex-offset="5">
+        <h3>{{ $ctrl.selectedTheme.data.name }}</h3>
+        <div class="description" ng-bind-html="themeRawDesc($ctrl.selectedTheme.data.description) | truncate:{limit:300}"></div>
+        <md-button class="md-primary" id="btn-primary" ng-click="$ctrl.finishChoosingTheme($ctrl.selectedTheme)">Select this theme</md-button>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="list-theme" layout="column">
+    <div layout="row">
+      <div flex="20" class="menus">
+        <div flex>
+          <h2>Categories</h2>
+          <ul>
+            <li ng-repeat="category in $ctrl.categories track by $index">
+              <a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a>
+            </li>
+          </ul>
+        </div>
+        <div flex>
+          <h2>Sort By</h2>
+          <ul>
+            <li><a href="#" ng-click="$ctrl.sortBy('latest')" class="point">Latest</a></li>
+            <li><a href="#" ng-click="$ctrl.sortBy('populate')" class="point">Populate</a></li>
+            <li><a href="#" ng-click="$ctrl.sortBy('favorite')" class="point">Favorites(0)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div flex class="templates">
+        <div ng-repeat="target in $ctrl.currentThemes" class="template" layout="row">
+          <div class="image" flex="45" ng-click="$ctrl.zoomView(target)">
+            <img src="{{ target.data.images[0].url }}" alt="">
+            <div class="overlay"><i class="fa fa-search" aria-hidden="true"></i></div>
+          </div>
+
+          <div class="content" flex="45">
+            <div class="title">
+              <h3>{{target.data.name}}</h3>
+              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)"><i ng-class="$ctrl.getFavoriteStatus(target.data.id)"></i></a>
+            </div>
+            <div class="description" ng-bind-html="themeRawDesc(target.data.description) | truncate:{limit:300}"></div>
+            <md-button class="md-primary" id="btn-primary" ng-click="$ctrl.chooseTheme(target)">Choose Theme</md-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-button">
+    <stratus-pagination></stratus-pagination>
+  </div>
+</md-content>
+
+<script type="text/ng-template" id="themeDetail.html">
+  <!-- Detail Page starts from here -->
+  <div id="zoom-view" class="lt-popup theme-preview" role="dialog">
+    <div class="pannel-header">
+      <h3>{{themeDetail.name}}
+        <a href="#" ng-click="$ctrl.setFavorite(themeDetail.id)"><i ng-class="$ctrl.getFavoriteStatus(themeDetail.id)"></i></a>
+      </h3>
+    </div>
+
+    <div class="pannel-content">
+      <div class="ltpop-top">
+        <div class="name fontSecondary"
+        ng-bind-html="themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
+        <a href="#" class="bl_btn" ng-click="$ctrl.chooseTheme(themeDetail)">Choose Theme </a>
+        <a href="#" class="bl_btn_border">View Demo </a>
+      </div>
+
+      <div class="ltpop-bottom">
+        <div class="theme-view-list">
+          <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
+          <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
+        </div><!-- View list Ends -->
+        <a href="#">
+          <img src="{{ themeDetail.images[0].url }}" alt="">
+        </a>
+      </div>
+      <!-- <a href="#" class="lt-close" ng-click="closeDialog();">X</a> -->
+    </div><!-- Layout popup ends -->
+  </div>
+</script>

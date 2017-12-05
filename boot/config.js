@@ -124,6 +124,7 @@ boot.config({
     'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
     'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
     'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
+    'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
@@ -154,6 +155,7 @@ boot.config({
     'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
     'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
     'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
+    'stratus.components.adminThemeSelector': boot.bundle + 'stratus/components/adminThemeSelector' + boot.suffix,
 
     /* Stratus Core Directives */
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
@@ -185,6 +187,10 @@ boot.config({
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
+    'stratus.services.adminThemeSelector': boot.bundle + 'stratus/services/adminThemeSelector' + boot.suffix,
+    'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
+    'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,
+    'stratus.services.commonMethods': boot.bundle + 'stratus/services/commonMethods' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
@@ -302,6 +308,7 @@ boot.config({
     'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
     'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
     'angular-ui-tree': boot.bundle + 'stratus/bower_components/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
+    'angular-paging': boot.bundle + 'stratus/bower_components/angular-paging/dist/paging' + boot.suffix,
 
     /* Backbone */
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,

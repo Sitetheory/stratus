@@ -26,7 +26,9 @@
       'stratus.directives.src',
 
       // Services
-      'stratus.services.registry'
+      'stratus.services.registry',
+      'stratus.services.commonMethods',
+      'stratus.services.selectors'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -44,11 +46,23 @@
       target: '@',
       limit: '@'
     },
-    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog) {
-      Stratus.Instances[_.uniqueId('media_selector_')] = $scope;
-
-      // load component css
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+    controller: function (
+      $scope,
+      $http,
+      $attrs,
+      $parse,
+      $element,
+      Upload,
+      $compile,
+      registry,
+      $mdPanel,
+      $q,
+      $mdDialog,
+      commonMethods,
+      selectors
+    ) {
+      // Initialize
+      commonMethods.componentInitializer(this, $scope, $attrs, 'media_selector', true);
 
       // fetch media collection and hydrate to $scope.collection
       $scope.registry = new registry();
@@ -93,9 +107,7 @@
 
       // done button when uploading is finished
       $scope.uploadComp = false;
-
       $scope.movedFileId = '';
-
       $scope.errorUpload = false;
 
       // UI Settings
@@ -112,29 +124,12 @@
           editing: false
         };
 
-        var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          disableParentScroll: this.disableParentScroll,
-          controller: ZoomController,
-          templateUrl: 'mediaDetail.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          zIndex: 150,
-          clickOutsideToClose: false,
-          escapeToClose: true,
-          focusOnOpen: true
-        };
-        $mdPanel.open(config);
+        $mdPanel.open(configData('zoom'));
         $scope.tagsModel.tags = $scope.mediaDetail.tags;
         $scope.infoId = $scope.mediaDetail.id;
         $scope.imageSrc = $scope.mediaDetail.url;
       };
+
       $scope.draggedFileId = '';
 
       // track drag event on selected list
@@ -153,10 +148,7 @@
 
       $scope.beforeChange = function (file, $event) {
         if ($event.dataTransfer.dropEffect === 'move') {
-          $http({
-            method: 'GET',
-            url: '/Api/Media/' + $scope.movedFileId
-          }).then(function (response) {
+          selectors.beforeChange($scope.movedFileId).then(function (response) {
             $scope.draggedFiles.push(response.data.payload);
             for (var i = 0; i < $scope.collection.models.length; i++) {
               if ($scope.collection.models[i].data.id === $scope.movedFileId) {
@@ -165,11 +157,6 @@
               }
             }
             $scope.movedFileId = '';
-
-          }, function (rejection) {
-            if (!Stratus.Environment.get('production')) {
-              console.log(rejection.data);
-            }
           });
         } else {
           // FIXME: There is a random comparison below
@@ -199,34 +186,11 @@
         $scope.uploadComp = false;
 
         $scope.draggedDivChanged = true;
-
-        var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          controller: DialogController,
-          controllerAs: 'ctrl',
-          id: 'uploadPanel',
-          disableParentScroll: this.disableParentScroll,
-          templateUrl: 'uploadedFiles.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          zIndex: 150,
-          clickOutsideToClose: false,
-          escapeToClose: false,
-          focusOnOpen: true
-        };
-        $mdPanel.open(config);
-
+        $mdPanel.open(configData('upload_file'));
       };
 
       // remove media file from selected list
       $scope.removeFromSelected = function (fileId) {
-
         for (var i = $scope.draggedFiles.length - 1; i >= 0; i--) {
           // used double precision because id uis passed as string in event
           if ($scope.draggedFiles[i].id === fileId) {
@@ -240,7 +204,6 @@
             $scope.collection.models[j].data.selectedClass = false;
           }
         }
-
       };
 
       $scope.deleteFromMedia = function (fileId) {
@@ -259,10 +222,7 @@
           .cancel('No');
 
         $mdDialog.show(confirmMedia).then(function () {
-          $http({
-            method: 'DELETE',
-            url: '/Api/Media/' + fileId
-          }).then(function (response) {
+          selectors.confirmMedia(fileId).then(function (response) {
             // check if deleted media is dragged above,then remove from selected list
             if ($scope.draggedFiles.length > 0) {
               for (var k = 0; k < $scope.draggedFiles.length; k++) {
@@ -274,13 +234,8 @@
 
             // fetch media library list
             $scope.uploadMedia();
-          }, function (rejection) {
-            if (!Stratus.Environment.get('production')) {
-              console.log(rejection.data);
-            }
           });
         });
-
       };
 
       // upload directly to media library
@@ -292,28 +247,8 @@
         // set this variable to false,when media is dragged to media library
         $scope.draggedDivChanged = false;
 
-        var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          controller: DialogController,
-          controllerAs: 'ctrl',
-          disableParentScroll: this.disableParentScroll,
-          templateUrl: 'uploadedFiles.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          zIndex: 150,
-          clickOutsideToClose: false,
-          escapeToClose: false,
-          focusOnOpen: true
-        };
-        $mdPanel.open(config);
+        $mdPanel.open(configData('upload_to_lib'));
         $scope.files = files;
-
       };
 
       // open library div when clicked on upper browse div
@@ -347,17 +282,8 @@
       };
 
       $scope.updateMedia = function (fileId, data) {
-        $http({
-          method: 'PUT',
-          url: '/Api/Media/' + fileId,
-          data: data
-        }).then(function (response) {
-          // fetch media library list
+        selectors.updateMedia(fileId, data).then(function (response) {
           $scope.uploadMedia();
-        }, function (rejection) {
-          if (!Stratus.Environment.get('production')) {
-            console.log(rejection.data);
-          }
         });
       };
 
@@ -469,11 +395,10 @@
       }
 
       $scope.createTag = function (query, fileId, tags) {
-        $http({
-          method: 'POST',
-          url: '/Api/Tag',
-          data: { name: query }
-        }).then(function (response) {
+        var data = {
+          name: query
+        };
+        selectors.createTag(data).then(function (response) {
           if (fileId !== undefined) {
             if (tags !== undefined) {
               var dataRes = {};
@@ -481,22 +406,12 @@
               dataRes.tags = $scope.tagsModel.tags;
               $scope.updateMedia(fileId, dataRes);
             }
-
-          }
-
-          // fetch media library list
-          // $scope.uploadMedia();
-
-        }, function (rejection) {
-          if (!Stratus.Environment.get('production')) {
-            console.log(rejection.data);
           }
         });
       };
 
       // common function to save media to server
       $scope.saveMedia = function (file) {
-
         if (!Stratus.Environment.get('production')) {
           console.log(['savemedia'], file);
         }
@@ -554,7 +469,6 @@
       };
 
       // Add Class on Popup Image
-
       $scope.addClassOnPopup = function (event) {
         var myEl = angular.element(document.querySelector($(event.target).attr('data-target')));
         myEl.addClass($(event.target).attr('data-class'));
@@ -569,10 +483,8 @@
         };
 
         $scope.closeZoom = function () {
-
           $scope.infoId = null;
           mdPanelRef.close();
-
         };
       }
 
@@ -594,10 +506,7 @@
             }
           }
         } else if (selectedStatus === false || selectedStatus === undefined) { // show plus icon,move to draggedFiles and add selectedClass
-          $http({
-            method: 'GET',
-            url: '/Api/Media/' + fileId
-          }).then(function (response) {
+          selectors.beforeChange(fileId).then(function (response) {
             $scope.draggedFiles.push(response.data.payload);
             for (var j = 0; j < $scope.collection.models.length; j++) {
               if ($scope.collection.models[j].data.id === fileId) {
@@ -608,10 +517,46 @@
             }
           });
         }
-
       };
+
+      function configData(type) {
+        var config = {
+          attachTo: angular.element(document.body),
+          scope: $scope,
+          disableParentScroll: this.disableParentScroll,
+          hasBackdrop: true,
+          panelClass: 'media-dialog',
+          position: $mdPanel.newPanelPosition().absolute().center(),
+          trapFocus: true,
+          zIndex: 150,
+          clickOutsideToClose: false,
+          escapeToClose: true,
+          focusOnOpen: true
+        };
+
+        switch (type) {
+          case 'zoom':
+            config.controller = ZoomController;
+            config.templateUrl = 'mediaDetail.html';
+            break;
+
+          case 'upload_file':
+            config.controller = DialogController;
+            config.controllerAs = 'ctrl';
+            config.id = 'uploadPanel';
+            config.templateUrl = 'uploadedFiles.html';
+            break;
+        }
+
+        if (type === 'upload_to_lib') {
+          config.controller = DialogController;
+          config.controllerAs = 'ctrl';
+          config.templateUrl = 'uploadedFiles.html';
+        };
+
+        return config;
+      }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
-
 }));
