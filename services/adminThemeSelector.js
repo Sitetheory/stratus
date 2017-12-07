@@ -15,10 +15,6 @@
     $provide.factory('adminThemeSelector', ['$q', '$http', function ($q, $http) {
       var urlApi = '/Api/Template';
 
-      return {
-        selectTheme: selectTheme
-      };
-
       function selectTheme(data) {
         return $http({
           url: urlApi,
@@ -33,6 +29,10 @@
             // something went wrong
             return $q.reject(response);
           });
+      }
+
+      return {
+        selectTheme: selectTheme
       };
     }]);
   }];

@@ -163,7 +163,7 @@
         };
 
         $mdPanel.open(config);
-      };
+      }
 
       function ZoomController(mdPanelRef) {
         $scope.closeDialog = function () {
@@ -173,21 +173,31 @@
 
       // Functionality methods
       function showCategory(index) {
-        $ctrl.currentThemes = $ctrl.themes.filter(theme => theme.category == $ctrl.categories[index]);
+        $ctrl.currentThemes = $ctrl.themes.filter(
+          function (theme) {
+            return (theme.category === $ctrl.categories[index]);
+          }
+        );
         if (index < 0) {
           $ctrl.currentThemes = $ctrl.themes;
         }
       }
 
       function setFavorite(id) {
-        var index = $ctrl.themes.findIndex(x => x.data.id == id);
+        var index = $ctrl.themes.findIndex(function (x) {
+          return (x.data.id === id);
+        });
+
+        // The return value is setting, so is this intended to be a chained return?
         return $ctrl.themes[index].preferred = !$ctrl.themes[index].preferred;
-      };
+      }
 
       function getFavoriteStatus(id) {
-        var index = $ctrl.themes.findIndex(x => x.data.id == id);
+        var index = $ctrl.themes.findIndex(function (x) {
+          return (x.data.id === id);
+        });
         return $ctrl.themes[index].preferred ? 'fa fa-heart favorite' : 'fa fa-heart-o';
-      };
+      }
 
       function chooseTheme(themeData) {
         $ctrl.selectedTheme = themeData;
@@ -198,7 +208,7 @@
           templateId: themeData.data.id
         };
         adminThemeSelector.selectTheme(data).then(function (res) {
-          if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(res).code === commonMethods.RESPONSE_CODE().success) {
             $window.location.href = '/Site/Edit/Success';
           } else {
             $ctrl.errorMsg = commonMethods.getStatus(res).message;
@@ -219,7 +229,7 @@
               return $ctrl.currentThemes;
           }
         })(type);
-      };
+      }
 
       // Helpers
       function latest() {

@@ -178,6 +178,7 @@ boot.config({
     'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
     'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
     'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
+    'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
@@ -197,12 +198,18 @@ boot.config({
     'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
     'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
     'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
+    'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
+    'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
+    'stratus.components.singleSignOn': boot.bundle + 'stratus/components/singleSignOn' + boot.suffix,
+    'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
+    'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
     'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
     'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
     'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
+    'stratus.components.adminThemeSelector': boot.bundle + 'stratus/components/adminThemeSelector' + boot.suffix,
 
     /* Stratus Core Directives */
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
@@ -215,6 +222,7 @@ boot.config({
     'stratus.directives.src': boot.bundle + 'stratus/directives/src' + boot.suffix,
     'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
     'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
+    'stratus.directives.passwordCheck': boot.bundle + 'stratus/directives/passwordCheck' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.directives.froala': boot.bundle + 'stratus/directives/froala' + boot.suffix,
@@ -232,6 +240,11 @@ boot.config({
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
+    'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
+    'stratus.services.adminThemeSelector': boot.bundle + 'stratus/services/adminThemeSelector' + boot.suffix,
+    'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
+    'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,
+    'stratus.services.commonMethods': boot.bundle + 'stratus/services/commonMethods' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
@@ -334,6 +347,7 @@ boot.config({
     'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
     promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
+    zxcvbn: boot.bundle + 'stratus/bower_components/zxcvbn/dist/zxcvbn',
 
     /* Angular */
     angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
@@ -348,6 +362,7 @@ boot.config({
     'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
     'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
     'angular-ui-tree': boot.bundle + 'stratus/bower_components/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
+    'angular-paging': boot.bundle + 'stratus/bower_components/angular-paging/dist/paging' + boot.suffix,
 
     /* Backbone */
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
