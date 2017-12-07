@@ -9,25 +9,50 @@
     factory(root.Stratus, root._);
   }
 }(this, function (Stratus, _) {
-
-  // This Collection Service handles data binding for multiple objects with the $http Service
-  Stratus.Services.UserAuthentication = ['$provide', function ($provide) {
-    $provide.factory('userAuthentication', ['$q', '$http', function ($q, $http) {
-      var commonUrl = '/Api/User';
-      var loginUrl = '/Api/Login';
-
+  Stratus.Services.Selectors = ['$provide', function ($provide) {
+    $provide.factory('selectors', ['$q', '$http', function ($q, $http) {
+      var apiUrl = '/Api/Media/';
       return {
-        signIn: signIn,
-        signUp: signUp,
-        requestResetPass: requestResetPass,
-        resetPass: resetPass,
-        verifyAccount: verifyAccount
+        beforeChange: beforeChange,
+        confirmMedia: confirmMedia,
+        updateMedia: updateMedia,
+        createTag: createTag
       };
 
-      function signIn(data) {
+      function beforeChange(fileId) {
         return $http({
-          url: loginUrl,
-          method: 'POST',
+          url: apiUrl + fileId,
+          method: 'GET'
+        }).then(
+          function (response) {
+            // success
+            return $q.resolve(response);
+          },
+          function (response) {
+            // something went wrong
+            return $q.reject(response);
+          });
+      }
+
+      function confirmMedia(fileId) {
+        return $http({
+          url: apiUrl + fileId,
+          method: 'DELETE',
+        }).then(
+          function (response) {
+            // success
+            return $q.resolve(response);
+          },
+          function (response) {
+            // something went wrong
+            return $q.reject(response);
+          });
+      }
+
+      function updateMedia(fileId, data) {
+        return $http({
+          method: 'PUT',
+          url: apiUrl + fileId,
           data: data
         }).then(
           function (response) {
@@ -38,12 +63,13 @@
             // something went wrong
             return $q.reject(response);
           });
-      };
+      }
 
-      function signUp(data) {
+      function createTag(data) {
+        var apiTag = '/Api/Tag';
         return $http({
-          url: commonUrl,
           method: 'POST',
+          url: apiTag,
           data: data
         }).then(
           function (response) {
@@ -54,55 +80,7 @@
             // something went wrong
             return $q.reject(response);
           });
-      };
-
-      function requestResetPass(data) {
-        return $http({
-          method: 'POST',
-          url: commonUrl,
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
-      };
-
-      function resetPass(data) {
-        return $http({
-          method: 'POST',
-          url: commonUrl,
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
-      };
-
-      function verifyAccount(data) {
-        return $http({
-          method: 'POST',
-          url: commonUrl,
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
-      };
+      }
     }]);
   }];
 

@@ -26,7 +26,8 @@
       'stratus.directives.src',
 
       // Services
-      'stratus.services.registry'
+      'stratus.services.registry',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -44,11 +45,9 @@
       target: '@',
       limit: '@'
     },
-    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog) {
-      Stratus.Instances[_.uniqueId('media_library_')] = $scope;
-
-      // load component css
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaLibrary' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods) {
+      // Initialize
+      commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
       // fetch media collection and hydrate to $scope.collection
       $scope.registry = new registry();

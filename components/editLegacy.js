@@ -10,7 +10,8 @@
       'angular',
       'angular-material',
       'stratus.services.model',
-      'froala'
+      'froala',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -28,12 +29,10 @@
       property: '@',
       autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
     },
-    controller: function ($scope, $element, $attrs, $timeout, model) {
+    controller: function ($scope, $element, $attrs, $timeout, model, commonMethods) {
 
       // Initialize
-      this.uid = _.uniqueId('edit_');
-      Stratus.Instances[this.uid] = $scope;
-      $scope.elementId = $attrs.elementId || this.uid;
+      commonMethods.componentInitializer(this, $scope, $attrs, 'edit');
       $scope.edit_input_container = $element[0].getElementsByClassName('stratus_edit_input_container')[0];
 
       // TODO make a option to select the livEditStatus option

@@ -1,0 +1,205 @@
+@import "../bower_components/font-awesome/css/font-awesome.min.css";
+@white-color: #FFFFFF;
+@primary-color: #2196F3;
+@red-s: #fde1df;
+@red-xxl: #F44336;
+@purple: #9C27B0;
+@orange: #FF9800;
+@light-green: #8BC34A;
+@green-s: #c7e7c8;
+@green: #4CAF50;
+@blue-link: #3F51B5;
+@gray-ss: #FAFAFA;
+@gray-s: #E1E1E1;
+@gray-m: rgba(0, 0, 0, 0.2);
+@gray-l: rgba(0, 0, 0, 0.55);
+@gray-xl: #636262;
+@gray-xxl: #333333;
+@yellow-light: rgba(255, 255, 0, 0.25);
+@fontweight-l: 600;
+@fontweight-xl: 700;
+@fontsize-s: 14px;
+@fontsize-m: 15px;
+@fontsize-l: 16px;
+@fontsize-xl: 17px;
+@fontsize-xxl: 20px;
+@fontsize-xxxl: 30px;
+@fontsize-xxxxl: 75px;
+.theme-selector {
+  color: @gray-xl;
+  overflow-y: hidden;
+  font-weight: @fontweight-l;
+  background-color: whitesmoke;
+  #btn-primary.md-primary {
+    color: @white-color;
+    margin: 0;
+    padding: 3px 30px;
+    text-transform: none;
+    font-size: @fontsize-s;
+    font-weight: @fontweight-l;
+    background-color: @primary-color;
+  }
+  h2 {
+    text-transform: none;
+  }
+  .selected-theme {
+    p {
+      color: @gray-m;
+    }
+    .info {
+      position: relative;
+      img {
+        height: 100%;
+        object-fit: cover;
+      }
+      button {
+        text-align: center;
+        padding-left: 20px;
+        padding-right: 20px;
+        width: inherit;
+        position: absolute;
+        bottom: 0;
+      }
+    }
+  }
+  .list-theme {
+    .menus {
+      ul {
+        padding-left: 0px;
+        li {
+          list-style-type: none;
+          margin: 0.5em 0 0.5em 0;
+        }
+      }
+    }
+    .templates {
+      .template {
+        height: 200px;
+        width: 340px;
+        margin-bottom: 20px;
+        margin-right: 2em;
+        margin-bottom: 3em;
+        float: left;
+        .image {
+          position: relative;
+          margin-left: 0;
+          margin-right: 1.5em;
+          &:hover {
+            .overlay {
+              bottom: 0;
+              height: 100%;
+            }
+          }
+          img {
+            height: 100%;
+            object-fit: cover;
+          }
+          .overlay {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background-color: fade(@gray-xl, 50%);
+            overflow: hidden;
+            width: 100%;
+            height: 0;
+            transition: .5s ease;
+            i {
+              color: @white-color;
+              font-size: @fontsize-xxxl;
+              position: absolute;
+              overflow: hidden;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            }
+          }
+        }
+        .content {
+          position: relative;
+          .title {
+            h3 {
+              display: inline-block;
+            }
+            a {
+              float: right;
+            }
+            .favorite {
+              color: @red-xxl;
+            }
+          }
+          .description {
+            p {
+              color: @gray-m;
+            }
+          }
+          button {
+            position: absolute;
+            bottom: 0;
+          }
+        }
+      }
+    }
+  }
+  .nav-button {
+    display: block;
+    position: relative;
+    stratus-pagination {
+      position: absolute;
+      right: 2px;
+      top: 3px;
+      .paginator {
+        padding-top: 0;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
+        .paginatorProgress {
+          md-progress-circular {
+            width: 20px !important;
+            height: 20px !important;
+            svg {
+              width: 100% !important;
+              height: 100% !important;
+              transform-origin: unset !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+#zoom-view {
+  .pannel-content {
+    background: white;
+    padding: 1em;
+    .ltpop-bottom {
+      text-align: center;
+      margin-top: 1em;
+      .theme-view-list {
+        text-align: -webkit-left;
+        margin-bottom: .5em;
+      }
+      img {
+        // width: -webkit-fill-available;
+        width: 500px;
+        height: 500px;
+      }
+    }
+  }
+  .pannel-header {
+    background: #006CC3;
+    padding: 1em;
+    padding-bottom: 0.5em;
+    h3 {
+      color: white;
+    }
+    i {
+      color: white;
+      float: right;
+    }
+    .favorite {
+      color: @red-xxl;
+    }
+  }
+}

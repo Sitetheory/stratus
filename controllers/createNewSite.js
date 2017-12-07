@@ -9,7 +9,8 @@
       'underscore',
       'angular',
       'stratus.services.registry',
-      'stratus.services.createNewSite'
+      'stratus.services.createNewSite',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -17,16 +18,17 @@
 }(this, function (Stratus, _) {
   // This Controller handles simple element binding
   // for a single scope to an API Object Reference.
-  Stratus.Controllers.Generic = [
+  Stratus.Controllers.CreateNewSite = [
     '$scope',
     '$element',
     '$log',
     '$parse',
     'registry',
     'createNewSite',
-    function ($scope, $element, $log, $parse, registry, createNewSite) {
+    'commonMethods',
+    function ($scope, $element, $log, $parse, registry, createNewSite, commonMethods) {
       // Store Instance
-      Stratus.Instances[_.uniqueId('generic_')] = $scope;
+      Stratus.Instances[_.uniqueId('createNewSite_')] = $scope;
 
       // Registry
       $scope.registry = new registry();
@@ -54,6 +56,15 @@
       };
       $scope.$log = $log;
 
+      // Variables
+      $scope.errorMsg = null;
+      $scope.steps = {
+        isWelcome: true,
+        isThemeSelecting: false,
+        isSuccess: false,
+        isBillingPackage: false
+      };
+
       // Type Checks
       $scope.isArray = angular.isArray;
       $scope.isDate = angular.isDate;
@@ -65,51 +76,40 @@
       $scope.isString = angular.isString;
       $scope.isUndefined = angular.isUndefined;
 
+      // cause the create new site api have not yet finish so I assume it success to call another follow.
+      $scope.stepFinish = function (name) {
+        switch (name) {
+          case 'ThemeSelecting':
+            $scope.steps.isThemeSelecting = false;
+            $scope.steps.isSuccess = true;
+            break;
+          case 'Success':
+            $scope.steps.isSuccess = false;
+            $scope.steps.isBillingPackage = true;
+            break;
+        }
+      };
+
       $scope.createSite = function (siteTitle, siteGenreId) {
         var data = {
           name: siteTitle,
           genre: siteGenreId
         };
         createNewSite.create(data).then(function (res) {
-          console.log(res);
+          if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
+            $scope.errorMsg = null;
+            $scope.steps.isWelcome = false;
+            $scope.steps.isThemeSelecting = true;
+          } else {
+            $scope.errorMsg = commonMethods.getStatus(res).message;
+          }
         });
       };
 
-      // Handle Selected
-      if ($scope.collection) {
-        var selected = {
-          id: $element.attr('data-selected'),
-          raw: $element.attr('data-raw')
-        };
-        if (selected.id) {
-          if (angular.isString(selected.id)) {
-            if (_.isJSON(selected.id)) {
-              selected.id = JSON.parse(selected.id);
-              $scope.$watch('collection.models', function (models) {
-                if (!$scope.selected && !$scope.selectedInit) {
-                  angular.forEach(models, function (model) {
-                    if (selected.id === model.get('id')) {
-                      $scope.selected = selected.raw ? model.data : model;
-                      $scope.selectedInit = true;
-                    }
-                  });
-                }
-              });
-            } else {
-              selected.model = $parse(selected.id);
-              selected.value = selected.model($scope.$parent);
-              if (angular.isArray(selected.value)) {
-                selected.value = selected.value.filter(function (n) {
-                  return n;
-                });
-                if (selected.value.length) {
-                  $scope.selected = _.first(selected.value);
-                }
-              }
-            }
-          }
-        }
-      }
-    }];
-
+      $scope.choosePackage = function () {
+        $scope.steps.isSuccess = false;
+        $scope.steps.isBillingPackage = true;
+      };
+    }
+  ];
 }));

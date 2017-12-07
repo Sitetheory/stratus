@@ -20,7 +20,8 @@
 
       // Services
       'stratus.services.registry',
-      'stratus.services.model'
+      'stratus.services.model',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -43,11 +44,9 @@
       api: '@',
       limit: '@'
     },
-    controller: function ($scope, $attrs, $log, registry, model) {
+    controller: function ($scope, $attrs, $log, registry, model, commonMethods) {
       // Initialize
-      this.uid = _.uniqueId('selector_');
-      Stratus.Instances[this.uid] = $scope;
-      $scope.elementId = $attrs.elementId || this.uid;
+      commonMethods.componentInitializer(this, $scope, $attrs, 'selector');
 
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
