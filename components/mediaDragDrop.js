@@ -27,8 +27,8 @@
       var isShowDialog = angular.element(document.body).hasClass('md-dialog-is-showing');
       $scope.files = [];
 
-      document.addEventListener('dragenter', dragenter, false);
-      document.addEventListener('dragleave', dragleave, false);
+      document.addEventListener('dragenter', media.dragenter, false);
+      document.addEventListener('dragleave', media.dragleave, false);
       document.addEventListener('drop', drop, false);
 
       $(window).focus(function () {
@@ -37,22 +37,11 @@
         $('.drag-drop').addClass('show-overlay');
       });
 
-      function dragenter(event) {
-        console.log('dragenter');
-        $('#main').addClass('blurred');
-      }
-
-      function dragleave(event) {
-        console.log('dragleave');
-        $('#main').removeClass('blurred');
-      }
-
       function drop(event) {
-        console.log(event.dataTransfer.files);
         if (!angular.element(document.body).hasClass('md-dialog-is-showing')) {
           $scope.files = $scope.files.concat(Array.from(event.dataTransfer.files));
           $mdDialog.show({
-            controller: DialogController,
+            controller: media.DialogController,
             locals: {
               files: event.dataTransfer.files
             },
@@ -66,32 +55,6 @@
           });
         };
       }
-
-      function DialogController($scope, files) {
-        // Do upload stuffs
-        $scope.files = files;
-
-        $scope.done = function () {
-          console.log('Done');
-          dragleave();
-        };
-
-        $scope.cancel = function () {
-          $mdDialog.cancel();
-          dragleave();
-        };
-
-        $scope.addFiles = function (newFiles) {
-          if (newFiles.length > 0) {
-            $scope.files = Array.from($scope.files).concat(newFiles);
-          }
-        };
-
-        $scope.removeFiles = function (file) {
-          $scope.files = _.without($scope.files, file);
-        };
-      };
-
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDragDrop' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };

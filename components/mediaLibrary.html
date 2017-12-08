@@ -1,6 +1,6 @@
 <div id="openLibrary" ng-show="libraryVisible">
   <div class="sectionContainer mediaLibrary borderRadiusDefault">
-    <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-select="uploadToLibrary($files)">browse</a>
+    <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-multiple="true" ngf-select="uploadToLibrary($files)">browse</a>
     </p>
     <div class="available-images">
       <ul>
@@ -14,7 +14,6 @@
             <md-progress-linear md-mode="indeterminate"></md-progress-linear>
           </div>
         </li>
-        <li class="add-more"><a href="#" ngf-select="addFiles($files)" ngf-multiple="true">+</a></li>
       </ul>
     </div>
     <p class="smallLabel">&nbsp;</p>

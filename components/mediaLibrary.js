@@ -27,7 +27,8 @@
 
       // Services
       'stratus.services.registry',
-      'stratus.services.commonMethods'
+      'stratus.services.commonMethods',
+      'stratus.services.media'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -45,7 +46,7 @@
       target: '@',
       limit: '@'
     },
-    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods) {
+    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods, media) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
@@ -127,35 +128,6 @@
 
       $scope.dragClass = false;
 
-      // function called when is uploaded or drag/dropped
-      $scope.uploadFiles = function (files) {
-        // hide if media library is opened on click
-        $scope.showLibrary = false;
-        $scope.uploadComp = false;
-
-        var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          controller: DialogController,
-          controllerAs: 'ctrl',
-          id: 'uploadPanel',
-          disableParentScroll: this.disableParentScroll,
-          templateUrl: 'uploadedFiles.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          zIndex: 150,
-          clickOutsideToClose: false,
-          escapeToClose: false,
-          focusOnOpen: true
-        };
-        $mdPanel.open(config);
-      };
-
       $scope.deleteFromMedia = function (fileId) {
         if (!Stratus.Environment.get('production')) {
           console.log(fileId);
@@ -187,30 +159,49 @@
       // upload directly to media library
       $scope.uploadToLibrary = function (files) {
         // update scope of files for watch
-        $scope.uploadComp = false;
-        $scope.imageMoved = false;
+        // $scope.uploadComp = false;
+        // $scope.imageMoved = false;
 
-        var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          controller: DialogController,
-          controllerAs: 'ctrl',
-          disableParentScroll: this.disableParentScroll,
-          templateUrl: 'uploadedFiles.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          zIndex: 150,
-          clickOutsideToClose: false,
-          escapeToClose: false,
-          focusOnOpen: true
-        };
-        $mdPanel.open(config);
-        $scope.files = files;
+        // var position = $mdPanel.newPanelPosition()
+        //   .absolute()
+        //   .center();
+        // var config = {
+        //   attachTo: angular.element(document.body),
+        //   scope: $scope,
+        //   controller: DialogController,
+        //   controllerAs: 'ctrl',
+        //   disableParentScroll: this.disableParentScroll,
+        //   templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDragDropDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
+        //   hasBackdrop: true,
+        //   panelClass: 'media-dialog',
+        //   position: position,
+        //   trapFocus: true,
+        //   zIndex: 150,
+        //   clickOutsideToClose: false,
+        //   escapeToClose: false,
+        //   focusOnOpen: true
+        // };
+        // $mdPanel.open(config);
+        // $scope.files = files;
+
+        if (files.length > 0) {
+          $('#main').addClass('blurred');
+          $('.drag-drop').addClass('show-overlay');
+
+          $mdDialog.show({
+            controller: media.DialogController,
+            locals: {
+              files: files
+            },
+            templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDragDropDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose: false
+          }).then(function (answer) {
+            $scope.files = $scope.files.concat(files);
+          }, function () {
+
+          });
+        }
       };
 
       $scope.editItem = function (item) {
@@ -247,13 +238,11 @@
       // common function to load media library from collection
       $scope.uploadMedia = function () {
         // switch to registry controls
-        $scope.collection.fetch().then(function (response) {
-        });
+        $scope.collection.fetch().then(function (response) {});
       };
 
       // check if ng-model value changes
       $scope.$watch('files', function (files) {
-
         if (files !== null) {
           $scope.dragClass = false;
 
@@ -272,9 +261,7 @@
               if ($scope.imageMoved === false) {
                 promises.push($scope.saveMedia(f));
               }
-
             })(files[i]);
-
           }
 
           // show done button when all promises are completed
@@ -290,11 +277,11 @@
       });
 
       // close mdPanel when all images are uploaded
-      function DialogController(mdPanelRef) {
-        $scope.closeDialog = function () {
-          $scope.infoId = null;
-          mdPanelRef.close();
-        };
+      function DialogController() {
+        // $scope.closeDialog = function () {
+        //   $scope.infoId = null;
+        //   mdPanelRef.close();
+        // };
       }
 
       function updateFilesModel(files) {
@@ -328,44 +315,44 @@
       }
 
       $scope.createTag = function (query, fileId, tags) {
-        $http({
-          method: 'POST',
-          url: '/Api/Tag',
-          data: { name: query }
-        }).then(function (response) {
-          if (fileId !== undefined) {
-            if (tags !== undefined) {
-              var dataRes = {};
-              $scope.tagsModel.tags.push(response.data.payload);
-              dataRes.tags = $scope.tagsModel.tags;
-              $scope.updateMedia(fileId, dataRes);
+        var data = {
+          name: query
+        };
+        media.createTag(data).then(
+          function (response) {
+            if (fileId !== undefined) {
+              if (tags !== undefined) {
+                var dataRes = {};
+                $scope.tagsModel.tags.push(response.data.payload);
+                dataRes.tags = $scope.tagsModel.tags;
+                $scope.updateMedia(fileId, dataRes);
+              }
             }
-
+          },
+          function (rejection) {
+            if (!Stratus.Environment.get('production')) {
+              console.log(rejection.data);
+            }
           }
-
-        }, function (rejection) {
-          if (!Stratus.Environment.get('production')) {
-            console.log(rejection.data);
-          }
-        });
+        );
       };
 
       // common function to save media to server
       $scope.saveMedia = function (file) {
-
         if (!Stratus.Environment.get('production')) {
           console.log(['savemedia'], file);
         }
+
         file.errorMsg = null;
         file.uploadStatus = false;
         file.errorUpload = false;
-
         file.upload = Upload.upload({
           url: '//app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY') + ($scope.infoId ? ('&id=' + $scope.infoId) : ''),
           data: {
             file: file
           }
         });
+
         file.upload.then(function (response) {
           file.result = response.data;
 
@@ -406,11 +393,9 @@
          xhr.upload.addEventListener('abort', function(){console.log('abort complete')}, false);
          });*/
         return file.upload;
-
       };
 
       // Add Class on Popup Image
-
       $scope.addClassOnPopup = function (event) {
         var myEl = angular.element(document.querySelector($(event.target).attr('data-target')));
         myEl.addClass($(event.target).attr('data-class'));
@@ -434,5 +419,4 @@
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaLibrary' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
-
 }));
