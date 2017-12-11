@@ -87,6 +87,21 @@
       // UI Settings
       $scope.libraryVisible = true;
 
+      $scope.showDetails = function (media) {
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'dialog1.tmpl.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: true
+        })
+        .then(function (answer) {
+          $scope.status = 'You said the information was "' + answer + '".';
+        }, function () {
+          $scope.status = 'You cancelled the dialog.';
+        });
+      };
+
       $scope.zoomView = function (event) {
         $scope.mediaDetail = event;
         $scope.selectedName = {
@@ -99,8 +114,8 @@
         };
 
         var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
+        .absolute()
+        .center();
         var config = {
           attachTo: angular.element(document.body),
           scope: $scope,
@@ -135,10 +150,10 @@
 
         // mdPanelRef.close();
         var confirmMedia = $mdDialog.confirm()
-          .title('DELETE MEDIA')
-          .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
-          .ok('Yes')
-          .cancel('No');
+        .title('DELETE MEDIA')
+        .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+        .ok('Yes')
+        .cancel('No');
 
         $mdDialog.show(confirmMedia).then(function () {
           $http({
