@@ -178,6 +178,7 @@ boot.config({
     'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
     'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
     'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
+    'stratus.controllers.filterContentType': boot.bundle + 'stratus/controllers/filterContentType' + boot.suffix,
     'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
 
     /* Stratus Core Components */
@@ -241,6 +242,7 @@ boot.config({
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
+    'stratus.services.filterContentType': boot.bundle + 'stratus/services/filterContentType' + boot.suffix,
     'stratus.services.adminThemeSelector': boot.bundle + 'stratus/services/adminThemeSelector' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
     'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,

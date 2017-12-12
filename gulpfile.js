@@ -1,5 +1,6 @@
 // Dependencies
 var gulp = require('gulp');
+var pump = require('pump');
 var concat = require('gulp-concat');
 var debug = require('gulp-debug');
 var dest = require('gulp-dest');
@@ -120,47 +121,96 @@ var location = {
 };
 
 // Test
-gulp.task('build', function () {
-  return gulp.src('./lib/*.js')
-    .pipe(concat('all.js'))
-    .pipe(gulp.dest('./dist/'));
+gulp.task('build', function (callback) {
+  pump([
+      gulp.src('./lib/*.js'),
+      concat('all.js'),
+      gulp.dest('./dist/')
+    ],
+    callback
+  );
 });
 
 // Code Styling
-gulp.task('jscs', function () {
-  return gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min), 'source/*.js'))
-    .pipe(debug({ title: 'Verify:' }))
-    .pipe(jscs())
-    .pipe(jscs.reporter())
-    .pipe(jscs.reporter('fail'));
+gulp.task('jscs', function (callback) {
+  pump([
+      gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min), 'source/*.js')),
+      debug({
+        title: 'Verify:'
+      }),
+      jscs(),
+      jscs.reporter(),
+      jscs.reporter('fail')
+    ],
+    callback
+  );
 });
 
 // Blanket Functions
-gulp.task('compile', ['compile:less']);
-gulp.task('compress', ['compress:mangle', 'compress:preserve', 'compress:css', 'compress:template']);
-gulp.task('clean', ['clean:mangle', 'clean:preserve', 'clean:less', 'clean:css', 'clean:template']);
-gulp.task('dist', ['dist:boot', 'dist:stratus', 'dist:compress']);
+gulp.task('compile', [
+  'compile:less'
+]);
+gulp.task('compress', [
+  'compress:mangle',
+  'compress:preserve',
+  'compress:css',
+  'compress:template'
+]);
+gulp.task('clean', [
+  'clean:mangle',
+  'clean:preserve',
+  'clean:less',
+  'clean:css',
+  'clean:template'
+]);
+gulp.task('dist', [
+  'dist:boot',
+  'dist:stratus',
+  'dist:compress'
+]);
 
 // Distribution Functions
-gulp.task('dist:boot', function () {
-  return gulp.src(location.boot.source, { base: '.' })
-    .pipe(concat(location.boot.output))
-    .pipe(gulp.dest('.'));
+gulp.task('dist:boot', function (callback) {
+  pump([
+      gulp.src(location.boot.source, {
+        base: '.'
+      }),
+      concat(location.boot.output),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
-gulp.task('dist:stratus', function () {
-  return gulp.src(location.stratus.source, { base: '.' })
-    .pipe(concat(location.stratus.output))
-    .pipe(gulp.dest('.'));
+gulp.task('dist:stratus', function (callback) {
+  pump([
+      gulp.src(location.stratus.source, {
+        base: '.'
+      }),
+      concat(location.stratus.output),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
-gulp.task('dist:compress', function () {
-  return gulp.src([location.boot.output, location.stratus.output], { base: '.' })
-    .pipe(debug({ title: 'Mangle:' }))
-    .pipe(uglify({
-      // preserveComments: 'license',
-      mangle: true
-    }))
-    .pipe(dest('.', { ext: '.min.js' }))
-    .pipe(gulp.dest('.'));
+gulp.task('dist:compress', function (callback) {
+  pump([
+      gulp.src([location.boot.output, location.stratus.output], {
+        base: '.'
+      }),
+      debug({
+        title: 'Mangle:'
+      }),
+      uglify({
+        // preserveComments: 'license',
+        mangle: true
+      }),
+      dest('.', {
+        ext: '.min.js'
+      }),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
 
 // Mangle Functions
@@ -169,15 +219,25 @@ gulp.task('clean:mangle', function () {
     .pipe(debug({ title: 'Clean:' }))
     .pipe(vinylPaths(del));
 });
-gulp.task('compress:mangle', ['clean:mangle'], function () {
-  return gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), { base: '.' })
-    .pipe(debug({ title: 'Mangle:' }))
-    .pipe(uglify({
-      // preserveComments: 'license',
-      mangle: true
-    }))
-    .pipe(dest('.', { ext: '.min.js' }))
-    .pipe(gulp.dest('.'));
+gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
+  pump([
+      gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), {
+        base: '.'
+      }),
+      debug({
+        title: 'Mangle:'
+      }),
+      uglify({
+        // preserveComments: 'license',
+        mangle: true
+      }),
+      dest('.', {
+        ext: '.min.js'
+      }),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
 
 // Preserve Functions
@@ -186,15 +246,25 @@ gulp.task('clean:preserve', function () {
     .pipe(debug({ title: 'Clean:' }))
     .pipe(vinylPaths(del));
 });
-gulp.task('compress:preserve', ['clean:preserve'], function () {
-  return gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), { base: '.' })
-    .pipe(debug({ title: 'Compress:' }))
-    .pipe(uglify({
-      // preserveComments: 'license',
-      mangle: false
-    }))
-    .pipe(dest('.', { ext: '.min.js' }))
-    .pipe(gulp.dest('.'));
+gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
+  pump([
+      gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), {
+        base: '.'
+      }),
+      debug({
+        title: 'Compress:'
+      }),
+      uglify({
+        // preserveComments: 'license',
+        mangle: false
+      }),
+      dest('.', {
+        ext: '.min.js'
+      }),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
 
 // LESS Functions
@@ -203,12 +273,22 @@ gulp.task('clean:less', function () {
     .pipe(debug({ title: 'Clean:' }))
     .pipe(vinylPaths(del));
 });
-gulp.task('compile:less', ['clean:less'], function () {
-  return gulp.src(_.union(location.less.core, nullify(location.less.compile)), { base: '.' })
-    .pipe(debug({ title: 'LESS:' }))
-    .pipe(less({}))
-    .pipe(dest('.', { ext: '.css' }))
-    .pipe(gulp.dest('.'));
+gulp.task('compile:less', ['clean:less'], function (callback) {
+  pump([
+      gulp.src(_.union(location.less.core, nullify(location.less.compile)), {
+        base: '.'
+      }),
+      debug({
+        title: 'LESS:'
+      }),
+      less({}),
+      dest('.', {
+        ext: '.css'
+      }),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
 
 // CSS Functions
@@ -217,14 +297,24 @@ gulp.task('clean:css', function () {
     .pipe(debug({ title: 'Clean:' }))
     .pipe(vinylPaths(del));
 });
-gulp.task('compress:css', ['clean:css'], function () {
-  return gulp.src(_.union(location.css.core, nullify(location.css.min)), { base: '.' })
-    .pipe(debug({ title: 'CSS:' }))
-    .pipe(cleanCSS({
-      compatibility: '*'
-    }))
-    .pipe(dest('.', { ext: '.min.css' }))
-    .pipe(gulp.dest('.'));
+gulp.task('compress:css', ['clean:css'], function (callback) {
+  pump([
+      gulp.src(_.union(location.css.core, nullify(location.css.min)), {
+        base: '.'
+      }),
+      debug({
+        title: 'CSS:'
+      }),
+      cleanCSS({
+        compatibility: '*'
+      }),
+      dest('.', {
+        ext: '.min.css'
+      }),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
 
 // Template Functions
@@ -233,14 +323,24 @@ gulp.task('clean:template', function () {
     .pipe(debug({ title: 'Clean:' }))
     .pipe(vinylPaths(del));
 });
-gulp.task('compress:template', ['clean:template'], function () {
-  return gulp.src(_.union(location.template.core, nullify(location.template.min)), { base: '.' })
-    .pipe(debug({ title: 'Template:' }))
-    .pipe(htmlmin({
-      collapseWhitespace: true,
-      removeComments: true,
-      removeEmptyAttributes: true
-    }))
-    .pipe(dest('.', { ext: '.min.html' }))
-    .pipe(gulp.dest('.'));
+gulp.task('compress:template', ['clean:template'], function (callback) {
+  pump([
+      gulp.src(_.union(location.template.core, nullify(location.template.min)), {
+        base: '.'
+      }),
+      debug({
+        title: 'Template:'
+      }),
+      htmlmin({
+        collapseWhitespace: true,
+        removeComments: true,
+        removeEmptyAttributes: true
+      }),
+      dest('.', {
+        ext: '.min.html'
+      }),
+      gulp.dest('.')
+    ],
+    callback
+  );
 });
