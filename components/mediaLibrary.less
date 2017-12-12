@@ -2,7 +2,7 @@
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
 
 @white-color: #FFFFFF;
-@list-media-color: #2E2E2E;
+@list-media-background: #2E2E2E;
 @primary-color: #2196F3;
 @red-s: #fde1df;
 @red-xxl: #F44336;
@@ -66,7 +66,7 @@
 }
 
 .mediaLibraryContent {
-  background: @list-media-color;
+  background: @list-media-background;
   border-radius: 3px;
   padding: 1em;
   .library-header {
@@ -199,4 +199,10 @@
       }
     }
   }
+}
+.md-dialog-container {
+  z-index: 999;
+}
+md-dialog {
+  width: 60% !important;
 }

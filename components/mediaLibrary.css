@@ -166,3 +166,9 @@
   height: 100% !important;
   transform-origin: unset !important;
 }
+.md-dialog-container {
+  z-index: 999;
+}
+md-dialog {
+  width: 60% !important;
+}
