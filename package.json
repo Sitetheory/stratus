@@ -34,7 +34,7 @@
     "vinyl-paths": "^2.1.0"
   },
   "scripts": {
-    "test": "gulp jscs",
+    "test": "gulp compress;gulp jscs",
     "karma": "karma start --single-run"
   },
   "repository": {
