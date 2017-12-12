@@ -195,13 +195,13 @@
             },
             templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDragDropDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
             parent: angular.element(document.body),
-            clickOutsideToClose: false
+            clickOutsideToClose: false,
+            escapeToClose: false,
+            focusOnOpen: true
           }).then(function (answer) {
             $scope.files = $scope.files.concat(files);
-          }, function () {
-
-          });
-        }
+          }, function () {});
+        };
       };
 
       $scope.editItem = function (item) {
@@ -233,12 +233,6 @@
             console.log(rejection.data);
           }
         });
-      };
-
-      // common function to load media library from collection
-      $scope.uploadMedia = function () {
-        // switch to registry controls
-        $scope.collection.fetch().then(function (response) {});
       };
 
       // check if ng-model value changes
@@ -276,13 +270,11 @@
         }
       });
 
-      // close mdPanel when all images are uploaded
-      function DialogController() {
-        // $scope.closeDialog = function () {
-        //   $scope.infoId = null;
-        //   mdPanelRef.close();
-        // };
-      }
+      // common function to load media library from collection
+      $scope.uploadMedia = function () {
+        // switch to registry controls
+        $scope.collection.fetch().then(function (response) {});
+      };
 
       function updateFilesModel(files) {
         if (files !== null) {
@@ -346,52 +338,48 @@
         file.errorMsg = null;
         file.uploadStatus = false;
         file.errorUpload = false;
-        file.upload = Upload.upload({
-          url: '//app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY') + ($scope.infoId ? ('&id=' + $scope.infoId) : ''),
-          data: {
-            file: file
+        file.upload = media.uploadToS3(file);
+
+        file.upload.then(
+          function (response) {
+            file.result = response.data;
+
+            // set status of upload to success
+            file.uploadStatus = true;
+            file.errorUpload = false;
+            $scope.infoId = null;
+            $scope.imageSrc = file.result.url;
+          },
+          function (rejection) {
+
+            // if file is aborted handle error messages
+            if (rejection.config.data.file.upload.aborted === true) {
+              file.uploadStatus = false;
+
+              // show cross icon if upload failed
+              file.errorUpload = true;
+              file.errorMsg = 'Aborted';
+            }
+
+            // if file not uploaded due to server error
+            // else if (rejection.status > 0)
+            else {
+              // hide progress bar
+              file.uploadStatus = false;
+
+              // show cross icon if upload failed
+              file.errorUpload = true;
+
+              // $scope.errorMsg = rejection.status + ': ' + rejection.data;
+              file.errorMsg = 'Server Error! Please try again';
+            }
           }
-        });
+        );
 
-        file.upload.then(function (response) {
-          file.result = response.data;
-
-          // set status of upload to success
-          file.uploadStatus = true;
-          file.errorUpload = false;
-          $scope.infoId = null;
-          $scope.imageSrc = file.result.url;
-        }, function (response) {
-
-          // if file is aborted handle error messages
-          if (response.config.data.file.upload.aborted === true) {
-            file.uploadStatus = false;
-
-            // show cross icon if upload failed
-            file.errorUpload = true;
-            file.errorMsg = 'Aborted';
-          }
-
-          // if file not uploaded due to server error
-          // else if (response.status > 0)
-          else {
-            // hide progress bar
-            file.uploadStatus = false;
-
-            // show cross icon if upload failed
-            file.errorUpload = true;
-
-            // $scope.errorMsg = response.status + ': ' + response.data;
-            file.errorMsg = 'Server Error! Please try again';
-          }
-        });
         file.upload.progress(function (evt) {
-          // setTimeout(function(){ file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total)); }, 5000);
           file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
         });
-        /* file.upload.xhr(function (xhr) {
-         xhr.upload.addEventListener('abort', function(){console.log('abort complete')}, false);
-         });*/
+
         return file.upload;
       };
 

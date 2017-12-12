@@ -11,7 +11,7 @@
               <a href="#" ng-click="removeFiles(file)">
                 <i class="fa fa-times" aria-hidden="true"></i>
               </a>
-              <i class="fa fa-check-circle" aria-hidden="true"></i>
+              <i class="fa fa-check-circle" aria-hidden="true" ng-if="file.uploadStatus == true"></i>
               <img ngf-thumbnail="!file.$error && file">
               <md-progress-linear md-mode="indeterminate"></md-progress-linear>
             </div>

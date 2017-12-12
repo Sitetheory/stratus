@@ -1,21 +1,8 @@
 <div id="openLibrary" ng-show="libraryVisible">
   <div class="sectionContainer mediaLibrary borderRadiusDefault">
-    <p class="instructions">To upload images to your library, drag &amp; drop or <a href="#" ngf-multiple="true" ngf-select="uploadToLibrary($files)">browse</a>
+    <p class="instructions">
+      To upload images to your library, drag &amp; drop or <a href="#" ngf-multiple="true" ngf-select="uploadToLibrary($files)">browse</a>
     </p>
-    <div class="available-images">
-      <ul>
-        <li ng-repeat="file in files track by $index">
-          <div md-whiteframe="4" class="wrapper">
-            <a href="#" ng-click="removeFiles(file)">
-              <i class="fa fa-times" aria-hidden="true"></i>
-            </a>
-            <i class="fa fa-check-circle" aria-hidden="true"></i>
-            <img ngf-thumbnail="!file.$error && file">
-            <md-progress-linear md-mode="indeterminate"></md-progress-linear>
-          </div>
-        </li>
-      </ul>
-    </div>
     <p class="smallLabel">&nbsp;</p>
     <div class="mediaLibraryContent" ng-class="{'layerBlack':dragClass}">
       <div class="searchBar">
