@@ -20,6 +20,7 @@
       // Components
       'stratus.components.search',
       'stratus.components.pagination',
+      'stratus.components.mediaDetails',
 
       // Directives
       'stratus.directives.singleClick',
@@ -44,9 +45,10 @@
     bindings: {
       ngModel: '=',
       target: '@',
-      limit: '@'
+      limit: '@',
+      data: '&'
     },
-    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods, media) {
+    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods, media, $rootElement) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
@@ -89,17 +91,24 @@
 
       $scope.showDetails = function (media) {
         $mdDialog.show({
-          controller: DialogController,
-          templateUrl: 'dialog1.tmpl.html',
-          parent: angular.element(document.body),
-          targetEvent: ev,
-          clickOutsideToClose: true
-        })
-        .then(function (answer) {
-          $scope.status = 'You said the information was "' + answer + '".';
-        }, function () {
-          $scope.status = 'You cancelled the dialog.';
+          attachTo: angular.element(document.querySelector('#listContainer')),
+          controller: DialogShowDetails,
+          template: '<stratus-media-details media="data"></stratus-media-details>',
+          clickOutsideToClose: true,
+          focusOnOpen: true,
+          autoWrap: true,
+          locals: {
+            data: media
+          }
         });
+      };
+
+      var DialogShowDetails = function ($scope, data) {
+        $scope.data = data;
+
+        $scope.close = function () {
+          $mdDialog.cancel();
+        };
       };
 
       $scope.zoomView = function (event) {
