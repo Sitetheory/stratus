@@ -53,13 +53,13 @@
   margin-bottom: 0;
 }
 .message.error {
-  background-color: #fde1df;
+  background-color: #FDE1DF;
 }
 .message.error p {
   color: #F44336;
 }
 .message.success {
-  background-color: #c7e7c8;
+  background-color: #C7E7C8;
 }
 .message.success p {
   color: #4CAF50;

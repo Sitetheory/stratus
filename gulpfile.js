@@ -306,7 +306,9 @@ gulp.task('compress:css', ['clean:css'], function (callback) {
         title: 'CSS:'
       }),
       cleanCSS({
-        compatibility: '*'
+        compatibility: '*',
+        inline: ['none'],
+        rebaseTo: 'none' // FIXME: This is a temporary hack I created by breaking some code in CleanCSS to get back relative urls
       }),
       dest('.', {
         ext: '.min.css'

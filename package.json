@@ -7,31 +7,31 @@
     "test": "test"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
-    "gulp-clean-css": "^3.0.*",
-    "gulp-cli": "~1.2.*",
-    "gulp-concat": "^2.6.1",
-    "gulp-debug": "^3.0.0",
-    "gulp-dest": "~0.2.*",
+    "babel-core": "^6.26.*",
+    "babel-preset-env": "^1.6.*",
+    "del": "^3.0.*",
+    "gulp": "^3.9.*",
+    "gulp-babel": "^7.0.*",
+    "gulp-clean-css": "^3.9.*",
+    "gulp-cli": "^1.4.*",
+    "gulp-concat": "^2.6.*",
+    "gulp-debug": "^3.1.*",
+    "gulp-dest": "^0.2.*",
     "gulp-htmlmin": "^3.0.*",
-    "gulp-jscs": "~3.0.*",
+    "gulp-jscs": "^4.0.*",
     "gulp-less": "^3.3.*",
-    "gulp-sourcemaps": "^2.6.1",
-    "gulp-uglify": "~3.0.*",
-    "jshint": "~2.9.*",
-    "karma": "~0.13.*",
-    "karma-chrome-launcher": "~1.0.*",
-    "karma-firefox-launcher": "~1.0.*",
-    "karma-opera-launcher": "~1.0.*",
-    "karma-safari-launcher": "~1.0.*",
-    "pump": "^2.0.0",
-    "uglify-js": "^2.*",
-    "underscore": "~1.8.*",
-    "vinyl-paths": "^2.1.0"
+    "gulp-sourcemaps": "^2.6.*",
+    "gulp-uglify": "^3.0.*",
+    "jshint": "^2.9.*",
+    "karma": "^1.7.*",
+    "karma-chrome-launcher": "^2.2.*",
+    "karma-firefox-launcher": "^1.1.*",
+    "karma-opera-launcher": "^1.0.*",
+    "karma-safari-launcher": "^1.0.*",
+    "pump": "^2.0.*",
+    "uglify-js": "^3.2.*",
+    "underscore": "^1.8.*",
+    "vinyl-paths": "^2.1.*"
   },
   "scripts": {
     "test": "gulp compress;gulp jscs",
@@ -54,8 +54,5 @@
     "angular",
     "backbone",
     "underscore"
-  ],
-  "dependencies": {
-    "angular-paging": "^2.2.2"
-  }
+  ]
 }

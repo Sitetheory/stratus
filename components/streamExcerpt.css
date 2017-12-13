@@ -1,9 +1,9 @@
 #excerpt {
-  background: #222;
+  background: #222222;
 }
 #excerpt .background-picture {
   padding-bottom: 2em;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #333333;
   border-bottom-style: dashed;
 }
 #excerpt .layout-content {
