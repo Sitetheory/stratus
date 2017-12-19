@@ -10,12 +10,12 @@
     return {
       restrict: 'A',
       link: function (scope, element, attr) {
-          attr.$observe('ngBindHtml', function () {
-              if (attr.ngBindHtml) {
-                $compile(element[0].children)(scope);
-              }
-            });
-        }
+        attr.$observe('ngBindHtml', function () {
+          if (attr.ngBindHtml) {
+            $compile(element[0].children)(scope);
+          }
+        });
+      }
     };
   };
 }));

@@ -10,7 +10,8 @@
       // Modules
       'angular-material',
       'stratus.services.socialLibraries',
-      'stratus.services.commonMethods'
+      'stratus.services.commonMethods',
+      'stratus.services.singleSignOn'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -19,20 +20,16 @@
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.SingleSignOn = {
     bindings: {},
-    controller: function ($rootScope, $scope, $window, $attrs, $log, $http, $mdDialog, socialLibraries, commonMethods) {
+    controller: function ($rootScope, $scope, $window, $attrs, $log, $http, $mdDialog, socialLibraries, commonMethods, singleSignOn) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'single_sign_on', true);
 
       socialLibraries.loadFacebookSDK();
       socialLibraries.loadGGLibrary();
 
-      // the data get from social api.
-      var data;
-
+      // The data get from social api.
+      var data = null;
       var $ctrl = this;
-
-      // variables
-      var loginUrl = '/Api/Login';
 
       // FACEBOOK LOGIN
       window.checkLoginState = function () {
@@ -58,7 +55,7 @@
 
       // HANDLE ERROR LOGIN
       // emit to userAuthentication to show error message when cannot retrieve the email and give an email from input.
-      function emitParrent(socialName, response) {
+      function requireEmail(socialName, response) {
         data = response;
         $scope.$parent.requireEmail(socialName, data);
       }
@@ -85,22 +82,15 @@
         doSignIn(data, 'google', true);
       };
 
-      // SignIn url: /User/Login
+      // Call HTTP REQUEST
       function doSignIn(data, service, truthData) {
-        $http({
-          method: 'POST',
-          url: loginUrl,
-          data: { service: service, data: data, truthData: truthData },
-          headers: { 'Content-Type': 'application/json' }
-        }).then(
+        singleSignOn.signIn(data, service, truthData).then(
           function (response) {
-            console.log('response', response);
-            switch (response.data.meta.status[0].code) {
-              case 'CREDENTIALS': // social login without email, we need to let user input email manually
-                data.message = response.data.meta.status[0].message;
-                emitParrent(service, data);
-                break;
-              default: $window.location.href = '/';
+            if (commonMethods.getStatus(response).code == 'CREDENTIALS') {
+              data.message = commonMethods.getStatus(response).message;
+              requireEmail(service, data);
+            } else {
+              $window.location.href = '/';
             }
           },
           function (error) {

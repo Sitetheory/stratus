@@ -126,7 +126,6 @@ boot.config({
     'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
     'stratus.controllers.filterContentType': boot.bundle + 'stratus/controllers/filterContentType' + boot.suffix,
     'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
-    'stratus.controllers.singleSignOut': boot.bundle + 'stratus/controllers/singleSignOut' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
@@ -196,6 +195,7 @@ boot.config({
     'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,
     'stratus.services.commonMethods': boot.bundle + 'stratus/services/commonMethods' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
+    'stratus.services.singleSignOn': boot.bundle + 'stratus/services/singleSignOn' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
