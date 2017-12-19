@@ -143,7 +143,7 @@
                     <div class="message error"
                          ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}"
                          ng-if="$ctrl.message != null">
-                        <p ng-bind-html="$ctrl.safeMessage()"></p>
+                        <p ng-bind-html="$ctrl.safeMessage()" stratus-compile-template></p>
                     </div>
                     <form name="registrationForm" ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)">
                         <md-input-container class="md-block email-field" flex-gt-sm>

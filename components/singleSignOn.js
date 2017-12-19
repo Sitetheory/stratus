@@ -87,7 +87,6 @@
 
       function FbGetBasicProfile() {
         FB.api('/me?fields=name,email,gender,locale,link,picture', function (response) {
-          console.log('response', response);
           doSignIn(response, 'facebook', true);
         }, { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] });
       }

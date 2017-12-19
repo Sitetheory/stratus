@@ -13,6 +13,7 @@
       'stratus.services.userAuthentication',
       'stratus.services.commonMethods',
       'stratus.directives.passwordCheck',
+      'stratus.directives.compileTemplate',
     ], factory);
   } else {
     // Browser globals
@@ -48,7 +49,7 @@
       $ctrl.message = null;
       $ctrl.isRequestSuccess = false;
       $ctrl.duplicateMessge = '<span>There is already an account registered to this email, ' +
-                                                'please <a id="error-signin" href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
+                                                'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
                                                 'Sign In</a> and then create a new site from the control panel.</span>';
 
       // methods
@@ -135,9 +136,9 @@
 
         // social sign up
         if ($ctrl.socialMode) return doSocialSignup(signupData.email);
-        resetDefaultSetting();
 
         // nomal sign up
+        resetDefaultSetting();
         var data = {
           email: signupData.email,
           phone: commonMethods.cleanedPhoneNumber(signupData.phone)
@@ -197,14 +198,18 @@
         });
       }
 
-      // Social
+      // Trigger request from Social sign on
       $scope.requireEmail = function (socialName, data) {
-        $ctrl.selectedIndex = $ctrl.signUpIndex;
-        $ctrl.isRequestSucces = false;
+        onTabSelected($ctrl.signUpIndex);
         $ctrl.socialMode = true;
-        $ctrl.message = data.message;
+        $ctrl.isRequestSucces = false;
+        setTimeout(function () {
+          $ctrl.message = data.message;
+          $scope.$apply();
+        }, 100);
       };
 
+      // emit requet to social sign on
       function doSocialSignup(email) {
         $ctrl.loading = false;
         $scope.$broadcast('doSocialSignup', email);
@@ -227,8 +232,10 @@
 
       function onTabSelected(index) {
         $ctrl.selectedIndex = index;
+        $ctrl.message = null;
       };
 
+      // reset socialMode and message after submit.
       function resetDefaultSetting() {
         $ctrl.socialMode = false;
         $ctrl.message = null;

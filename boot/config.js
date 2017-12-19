@@ -170,6 +170,7 @@ boot.config({
     'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
     'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
     'stratus.directives.passwordCheck': boot.bundle + 'stratus/directives/passwordCheck' + boot.suffix,
+    'stratus.directives.compileTemplate': boot.bundle + 'stratus/directives/compileTemplate' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.directives.froala': boot.bundle + 'stratus/directives/froala' + boot.suffix,
