@@ -21,18 +21,20 @@
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.singleSignOn = {
     bindings: {},
-    controller: function ($scope, $window, $attrs, $log, $http, $mdDialog) {
+    controller: function ($rootScope, $scope, $window, $attrs, $log, $http, $mdDialog) {
       // Initialize
       this.uid = _.uniqueId('signle_sign_on_');
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
       Stratus.Instances[this.uid] = $scope;
       $scope.elementId = $attrs.elementId || this.uid;
 
+      // the data get from social api.
+      var data;
+
       var $ctrl = this;
 
       // define functions which html able to call.
       $ctrl.constructor = init;
-      $ctrl.FBStatus = FBStatus;
 
       // variables
       var loginUrl = '/Api/Login';
@@ -41,8 +43,8 @@
 
       // methods
       function init() {
-        loadGGLibrary();
         loadFacebookSDK();
+        loadGGLibrary();
       }
 
       // FACEBOOK LOGIN
@@ -50,9 +52,9 @@
         window.fbAsyncInit = function () {
           FB.init({
             appId: fbAppId,
-            cookie: true,
-            xfbml: true,
-            version: 'v2.9'
+            cookie: true, // enable cookies to allow the server to access the session
+            xfbml: true,  // parse XFBML
+            version: 'v2.10'
           });
 
           FB.AppEvents.logPageView();
@@ -60,14 +62,15 @@
 
         (function (d, s, id) {
           var fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) {return;}
-          var js = d.createElement(s); js.id = id;
-          js.src = 'https://connect.facebook.net/en_US/sdk.js';
+          var js = null;
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10';
           fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
       };
 
-      function FBStatus() {
+      window.checkLoginState = function () {
         FB.getLoginStatus(function (response) {
           switch (response.status) {
             case 'connected':
@@ -77,21 +80,34 @@
             default:
               FB.login(function (response) {
                 (response.authResponse != null) ? FbGetBasicProfile() : FB.login();
-              }, { scope: 'email' });
+              }, { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] });
           }
-        }, { scope: 'email' });
+        });
       };
 
       function FbGetBasicProfile() {
-        FB.api('/me?fields=email,name,gender,locale,link,picture', function (response) {
+        FB.api('/me?fields=name,email,gender,locale,link,picture', function (response) {
           console.log('response', response);
-          doSignIn(response, 'facebook');
-        }, { scope: 'email' });
+          doSignIn(response, 'facebook', true);
+        }, { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] });
       }
+
+      // ERROR LOGIN
+      // emit to userAuthentication to show error message when cannot retrieve the email and give an email from input.
+      function emitParrent(socialName, response) {
+        data = response;
+        $scope.$parent.requireEmail(socialName, data);
+      }
+
+      $scope.$on('doSocialSignup', function (event, email) {
+        data.email = email;
+        doSignIn(data, 'facebook', false);
+      });
 
       // GOOGLE LOGIN
       window.onbeforeunload = function (e) {
-        gapi.auth2.getAuthInstance().signOut();
+
+        // gapi.auth2.getAuthInstance().signOut();
       };
 
       function loadGGLibrary() {
@@ -116,23 +132,26 @@
           id: profile.getId(),
           picture: profile.getImageUrl()
         };
-        doSignIn(data, 'google');
+        doSignIn(data, 'google', true);
       };
 
       // SignIn url: /User/Login
-      function doSignIn(data, service) {
-        if (!data.email) {
-          alert('In order to complete registration you must provide a verified email for account recovery.');
-          return;
-        }
-
+      function doSignIn(data, service, truthData) {
         $http({
           method: 'POST',
           url: loginUrl,
-          data: { service: service, data: data }
+          data: { service: service, data: data, truthData: truthData },
+          headers: { 'Content-Type': 'application/json' }
         }).then(
           function (response) {
-            $window.location.href = '/';
+            console.log('response', response);
+            switch (response.data.meta.status[0].code) {
+              case 'CREDENTIALS': // social login without email, we need to let user input email manually
+                data.message = response.data.meta.status[0].message;
+                emitParrent(service, data);
+                break;
+              default: $window.location.href = '/';
+            }
           },
           function (error) {
             console.log(error);
@@ -142,5 +161,3 @@
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
 }));
-
-// 878138862061-hsql5u9tcoonjrr99r9f5phcdrao2r8i.apps.googleusercontent.com

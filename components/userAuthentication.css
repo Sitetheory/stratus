@@ -12,14 +12,14 @@
 }
 #user-authentication md-tabs {
   background: #FFFFFF;
-  border: 1px solid #E1E1E1;
 }
 #user-authentication md-tabs md-tab-content {
   padding-top: 0;
-  background-color: #FAFAFA;
+  background-color: #FFFFFF;
 }
 #user-authentication md-tabs md-tab-content md-content {
   padding: 0;
+  background-color: #FFFFFF !important;
   min-height: 240px;
 }
 #user-authentication md-tabs md-tab-content md-content .form-reset-pass .first-password {
@@ -119,8 +119,11 @@ input:-webkit-autofill:focus {
   color: #FFFFFF;
 }
 form {
-  margin: 1em .5em 1em .5em;
+  margin: 1em .5em 0em .5em;
 }
 .verify {
   margin-top: 50px;
+}
+.social-signin {
+  margin-bottom: 0.5em;
 }

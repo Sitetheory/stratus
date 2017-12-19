@@ -7,7 +7,7 @@
                     <div class="message center"
                          ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}"
                          ng-if="$ctrl.message != null">
-                        <p>{{ $ctrl.message }}</p>
+                        <p ng-bind-html="$ctrl.safeMessage()"></p>
                     </div>
 
                     <div ng-if="!$ctrl.isHandlingUrl">
@@ -36,23 +36,6 @@
                                 <md-button type="submit" class="md-raised"
                                            ng-disabled="signInForm.$invalid || $ctrl.loading">Sign In
                                 </md-button>
-                            </div>
-
-                            <div class="social-signin">
-                                <div class="row">
-                                    <div flex="100">
-                                        <div class="useSocial">
-                                            <div class="divTable useSocialTable">
-                                                <div class="divTableRow">
-                                                    <div class="divTableCell useSocialLabel customFontSignIn">Or Sign In
-                                                        With
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <stratus-single-sign-on></stratus-single-sign-on>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="center">
@@ -160,11 +143,7 @@
                     <div class="message error"
                          ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}"
                          ng-if="$ctrl.message != null">
-                        <p>
-                            There is already an account registered to this email, please
-                            <a id="error-signin" href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">Sign In</a>
-                            and then create a new site from the control panel.
-                        </p>
+                        <p ng-bind-html="$ctrl.safeMessage()"></p>
                     </div>
                     <form name="registrationForm" ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)">
                         <md-input-container class="md-block email-field" flex-gt-sm>
@@ -177,7 +156,7 @@
                             </ng-messages>
                         </md-input-container>
 
-                        <md-input-container class="md-block" flex-gt-sm>
+                        <md-input-container class="md-block" flex-gt-sm ng-if="!$ctrl.socialMode">
                             <input name="phone" type="text" ng-model="signupData.phone" required
                                    placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
                             <ng-messages for="registrationForm.phone.$error" ng-if="registrationForm.phone.$dirty">
@@ -197,5 +176,22 @@
                 </md-content>
             </md-tab>
         </md-tabs>
+
+        <div class="social-signin">
+            <div class="row">
+                <div flex="100">
+                    <div class="useSocial">
+                        <div class="divTable useSocialTable">
+                            <div class="divTableRow">
+                                <div class="divTableCell useSocialLabel customFontSignIn">Or Sign In
+                                    With
+                                </div>
+                            </div>
+                        </div>
+                        <stratus-single-sign-on></stratus-single-sign-on>
+                    </div>
+                </div>
+            </div>
+        </div>
     </md-content>
 </div>
