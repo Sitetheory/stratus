@@ -1,7 +1,3 @@
-// Selector Component
-// ------------------
-
-// Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -12,64 +8,33 @@
       'angular',
 
       // Modules
-      'angular-material'
+      'angular-material',
+      'stratus.services.socialLibraries',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
   }
 }(this, function (Stratus, _) {
   // This component intends to allow editing of various selections depending on context.
-  Stratus.Components.singleSignOn = {
+  Stratus.Components.SingleSignOn = {
     bindings: {},
-    controller: function ($rootScope, $scope, $window, $attrs, $log, $http, $mdDialog) {
+    controller: function ($rootScope, $scope, $window, $attrs, $log, $http, $mdDialog, socialLibraries, commonMethods) {
       // Initialize
-      this.uid = _.uniqueId('signle_sign_on_');
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
-      Stratus.Instances[this.uid] = $scope;
-      $scope.elementId = $attrs.elementId || this.uid;
+      commonMethods.componentInitializer(this, $scope, $attrs, 'single_sign_on', true);
+
+      socialLibraries.loadFacebookSDK();
+      socialLibraries.loadGGLibrary();
 
       // the data get from social api.
       var data;
 
       var $ctrl = this;
 
-      // define functions which html able to call.
-      $ctrl.constructor = init;
-
       // variables
       var loginUrl = '/Api/Login';
-      var fbAppId = '753913441463877';
-      var ggAppId = '878138862061-hsql5u9tcoonjrr99r9f5phcdrao2r8i.apps.googleusercontent.com';
-
-      // methods
-      function init() {
-        loadFacebookSDK();
-        loadGGLibrary();
-      }
 
       // FACEBOOK LOGIN
-      function loadFacebookSDK() {
-        window.fbAsyncInit = function () {
-          FB.init({
-            appId: fbAppId,
-            cookie: true, // enable cookies to allow the server to access the session
-            xfbml: true,  // parse XFBML
-            version: 'v2.10'
-          });
-
-          FB.AppEvents.logPageView();
-        };
-
-        (function (d, s, id) {
-          var fjs = d.getElementsByTagName(s)[0];
-          var js = null;
-          if (d.getElementById(id)) return;
-          js = d.createElement(s); js.id = id;
-          js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10';
-          fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-      };
-
       window.checkLoginState = function () {
         FB.getLoginStatus(function (response) {
           switch (response.status) {
@@ -91,7 +56,7 @@
         }, { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] });
       }
 
-      // ERROR LOGIN
+      // HANDLE ERROR LOGIN
       // emit to userAuthentication to show error message when cannot retrieve the email and give an email from input.
       function emitParrent(socialName, response) {
         data = response;
@@ -105,21 +70,7 @@
 
       // GOOGLE LOGIN
       window.onbeforeunload = function (e) {
-
-        // gapi.auth2.getAuthInstance().signOut();
-      };
-
-      function loadGGLibrary() {
-        // load javascrip
-        var js = document.createElement('script'); // use global document since Angular's $document is weak
-        js.src = 'https://apis.google.com/js/platform.js';
-        document.body.appendChild(js);
-
-        // load google api key
-        var meta = document.createElement('meta');
-        meta.name = 'google-signin-client_id';
-        meta.content = ggAppId;
-        document.head.append(meta);
+        gapi.auth2.getAuthInstance().signOut();
       };
 
       // Useful data for your client-side scripts:
