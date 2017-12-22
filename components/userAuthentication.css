@@ -20,7 +20,7 @@
 #user-authentication md-tabs md-tab-content md-content {
   padding: 0;
   background-color: #FFFFFF !important;
-  min-height: 240px;
+  min-height: 200px;
 }
 #user-authentication md-tabs md-tab-content md-content .form-reset-pass .first-password {
   margin-top: 35px;
