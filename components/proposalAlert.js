@@ -27,7 +27,7 @@
 
       // variables
       var $ctrl = this;
-      $ctrl.proposals =  $attrs.proposals || [];
+      $ctrl.proposals = $attrs.proposals || [];
 
       // class for icon;
       var iconCss = {
