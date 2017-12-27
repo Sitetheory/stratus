@@ -148,8 +148,10 @@ boot.config({
     'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
     'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
     'stratus.components.singleSignOn': boot.bundle + 'stratus/components/singleSignOn' + boot.suffix,
+    'stratus.components.socialMedia': boot.bundle + 'stratus/components/socialMedia' + boot.suffix,
     'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
     'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
+    'stratus.components.proposalAlert': boot.bundle + 'stratus/components/proposalAlert' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
@@ -170,6 +172,7 @@ boot.config({
     'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
     'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
     'stratus.directives.passwordCheck': boot.bundle + 'stratus/directives/passwordCheck' + boot.suffix,
+    'stratus.directives.compileTemplate': boot.bundle + 'stratus/directives/compileTemplate' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.directives.froala': boot.bundle + 'stratus/directives/froala' + boot.suffix,
@@ -193,6 +196,8 @@ boot.config({
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
     'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,
     'stratus.services.commonMethods': boot.bundle + 'stratus/services/commonMethods' + boot.suffix,
+    'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
+    'stratus.services.singleSignOn': boot.bundle + 'stratus/services/singleSignOn' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,

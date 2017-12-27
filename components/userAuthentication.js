@@ -12,7 +12,8 @@
       'stratus.components.singleSignOn',
       'stratus.services.userAuthentication',
       'stratus.services.commonMethods',
-      'stratus.directives.passwordCheck'
+      'stratus.directives.passwordCheck',
+      'stratus.directives.compileTemplate',
     ], factory);
   } else {
     // Browser globals
@@ -21,7 +22,7 @@
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular, zxcvbn) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
-    controller: function ($scope, $window, $attrs, userAuthentication, commonMethods) {
+    controller: function ($scope, $window, $attrs, $sce, $compile, userAuthentication, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'user_authentication', true);
 
@@ -30,6 +31,7 @@
       $ctrl.signinData = {};
       $ctrl.resetPassData = {};
       $ctrl.allowSubmit = false;
+      $ctrl.socialMode = false; // in this mode, the user just need to input email and submit to singleSignOn components
       $ctrl.loading = false;
       $ctrl.signInIndex = 0;
       $ctrl.signUpIndex = 1;
@@ -46,6 +48,9 @@
       $ctrl.selectedIndex = $ctrl.signInIndex;
       $ctrl.message = null;
       $ctrl.isRequestSuccess = false;
+      $ctrl.duplicateMessge = '<span>There is already an account registered to this email, ' +
+                                                'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
+                                                'Sign In</a> and then create a new site from the control panel.</span>';
 
       // methods
       $ctrl.showForgotPassForm = showForgotPassForm;
@@ -56,6 +61,7 @@
       $ctrl.onTabSelected = onTabSelected;
       $ctrl.backToLogin = backToLogin;
       $ctrl.verifyAccount = verifyAccount;
+      $ctrl.safeMessage = safeMessage;
 
       // Watcher for changing password
       $scope.$watch(angular.bind(this, function () {
@@ -82,6 +88,7 @@
 
       // Define functional methods
       function verifyAccount() {
+        resetDefaultSetting();
         $ctrl.loading = true;
         var data = {
           type: 'verify',
@@ -107,7 +114,7 @@
 
       function doSignIn(signinData) {
         $ctrl.loading = true;
-        $ctrl.message = null;
+        resetDefaultSetting();
         var data = {
           email: signinData.email,
           password: signinData.password
@@ -126,7 +133,12 @@
 
       function doSignUp(signupData) {
         $ctrl.loading = true;
-        $ctrl.message = null;
+
+        // social sign up
+        if ($ctrl.socialMode) return doSocialSignup(signupData.email);
+
+        // nomal sign up
+        resetDefaultSetting();
         var data = {
           email: signupData.email,
           phone: commonMethods.cleanedPhoneNumber(signupData.phone)
@@ -138,14 +150,15 @@
             return $window.location.href = '/';
           } else {
             $ctrl.isRequestSuccess = false;
-            $ctrl.message = commonMethods.getStatus(response).message;
+            var status = commonMethods.getStatus(response);
+            $ctrl.message = (status.code == 'DUPLICATE') ? $ctrl.duplicateMessge : status.message;
           }
         });
       }
 
       function doRequestResetPass(resetPassData) {
         $ctrl.loading = true;
-        $ctrl.message = null;
+        resetDefaultSetting();
         var data = {
           type: 'reset-password-request',
           email: resetPassData.email,
@@ -165,7 +178,7 @@
 
       function doResetPass(resetPassData) {
         $ctrl.loading = true;
-        $ctrl.message = null;
+        resetDefaultSetting();
         var requestType = commonMethods.getUrlParams().type === 'verify' ? 'update-password' : commonMethods.getUrlParams().type;
         var data = {
           type: requestType,
@@ -184,6 +197,23 @@
           }
         });
       }
+
+      // Trigger request from Social sign on
+      $scope.requireEmail = function (socialName, data) {
+        onTabSelected($ctrl.signUpIndex);
+        $ctrl.socialMode = true;
+        $ctrl.isRequestSucces = false;
+        setTimeout(function () {
+          $ctrl.message = data.message;
+          $scope.$apply();
+        }, 100);
+      };
+
+      // emit requet to social sign on
+      function doSocialSignup(email) {
+        $ctrl.loading = false;
+        $scope.$broadcast('doSocialSignup', email);
+      };
 
       // Helpers
       function showForgotPassForm(isShow) {
@@ -204,6 +234,16 @@
         $ctrl.selectedIndex = index;
         $ctrl.message = null;
       };
+
+      // reset socialMode and message after submit.
+      function resetDefaultSetting() {
+        $ctrl.socialMode = false;
+        $ctrl.message = null;
+      }
+
+      function safeMessage() {
+        return $sce.trustAsHtml($ctrl.message);
+      }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };

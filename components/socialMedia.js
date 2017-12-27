@@ -18,17 +18,17 @@
   }
 }(this, function (Stratus, _) {
   // This component intends to allow editing of various selections depending on context.
-  Stratus.Components.SingleSignOn = {
+  Stratus.Components.SocialMedia = {
     bindings: {},
     controller: function ($rootScope, $scope, $window, $attrs, $log, $http, $mdDialog, socialLibraries, commonMethods, singleSignOn) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'single_sign_on', true);
+      commonMethods.componentInitializer(this, $scope, $attrs, 'social_media', true);
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
-      socialLibraries.loadGGLibrary();
       socialLibraries.loadFacebookSDK();
+      socialLibraries.loadGGLibrary();
 
       // The data get from social api.
-      var data = null;
       var $ctrl = this;
 
       // FACEBOOK LOGIN
@@ -53,24 +53,7 @@
         }, { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] });
       }
 
-      // HANDLE ERROR LOGIN
-      // emit to userAuthentication to show error message when cannot retrieve the email and give an email from input.
-      function requireEmail(socialName, response) {
-        data = response;
-        $scope.$parent.requireEmail(socialName, data);
-      }
-
-      $scope.$on('doSocialSignup', function (event, email) {
-        data.email = email;
-        doSignIn(data, 'facebook', false);
-      });
-
       // GOOGLE LOGIN
-      window.onbeforeunload = function (e) {
-        gapi.auth2.getAuthInstance().signOut();
-      };
-
-      // Useful data for your client-side scripts:
       window.onSignIn = function onSignIn(googleUser) {
         var profile = googleUser.getBasicProfile();
         var data = {
@@ -86,12 +69,7 @@
       function doSignIn(data, service, truthData) {
         singleSignOn.signIn(data, service, truthData).then(
           function (response) {
-            if (commonMethods.getStatus(response).code == 'CREDENTIALS') {
-              data.message = commonMethods.getStatus(response).message;
-              requireEmail(service, data);
-            } else {
-              $window.location.href = '/';
-            }
+            console.log('response');
           },
           function (error) {
             console.log(error);

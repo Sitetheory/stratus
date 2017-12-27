@@ -27,3 +27,11 @@
   margin-top: 3px !important;
   float: none;
 }
+.fb-login-button.fb_iframe_widget span {
+  width: 40px !important;
+}
+.fb-login-button.fb_iframe_widget iframe {
+  max-width: 40px !important;
+  height: 40px !important;
+  border-radius: 20px !important;
+}
