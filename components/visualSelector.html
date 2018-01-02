@@ -14,8 +14,8 @@
       <!-- <button class="cancel--btn" ng-click="model.toggle(property, sel.data.id, toggleOptions);"></button> -->
       <div class="lt-image"
            ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
-        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
-        <!--<div ng-if="$ctrl.layoutOption === 'collapsed'">-->
+        <img ng-if="target.data.images === null || $ctrl.selectedLayoutData.images.length <= 0" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-left.jpg" alt=""/>
+        <img ng-if="$ctrl.selectedLayoutData.images.length > 0" src="{{ $ctrl.selectedLayoutData.images[0].url }}" alt="">
         <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && model.exists(property) && !showGallery"
            ng-click="displayGallery();" class="blck_btn">
           <span>Change</span></a>
@@ -26,13 +26,9 @@
         <!--</div>-->
       </div>
 
-
       <div class="lt-content">
         <h4>{{selectedName}}</h4>
-
         <div class="name fontSecondary" ng-bind-html="layoutRawDesc(selectedDesc) | truncate:{limit:300}"></div>
-
-
       </div>
     </div><!-- Layout box Inner ends -->
     <div ng-show="!model.get(property).id">
@@ -51,9 +47,9 @@
     <div class="lt_box">
       <ul class="layout_gallery">
         <li ng-repeat="target in collection.models">
-               
 					<span class="galleryimg-cont" ng-class="{'select-highlight': model.exists(property, target.data.id)}">
-                        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt=""/>
+                        <img ng-if="target.data.images === null || target.data.images.length <= 0" src="/assets/1/0/bundles/sitetheorycore/images/visual/lt-gallery.jpg" alt=""/>
+                        <img ng-if="target.data.images.length > 0" src="{{ target.data.images[0].url }}" alt=""/>
 						<a href="#" ng-show="$ctrl.details === true" class="sr_ico" ng-click="zoomView(target.data);">
                             <i class="fa fa-search" aria-hidden="true"></i>
                         </a>
