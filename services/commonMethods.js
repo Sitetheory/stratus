@@ -100,15 +100,11 @@
       };
 
       function getUrlParams() {
-        var url = new URL($window.location.href);
-        var emailUrl = '';
-        if ($window.location.search !== '') {
-          emailUrl = $window.location.search.split('&')[1].replace('?', '').split('=')[1];
-        }
+        var params = _.getUrlParams();
         return {
-          type: url.searchParams.get('type'),
-          email: emailUrl,
-          token: url.searchParams.get('token')
+          type: _.has(params, 'type') ? params.type : null,
+          email: _.has(params, 'email') ? params.email : null,
+          token: _.has(params, 'token') ? params.token : null
         };
       };
 
