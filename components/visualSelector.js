@@ -51,9 +51,14 @@
       details: '<',
       search: '<'
     },
-    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $http, $sce, commonMethods) {
+    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $http, $sce, commonMethods, $filter) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'visual_selector', true);
+
+      // Variables
+      var $ctrl = this;
+      $ctrl.layoutData = null;
+      $ctrl.selectedLayoutData = null;
 
       // Settings
       $scope.showGallery = false;
@@ -61,6 +66,15 @@
 
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
+
+      $scope.$watch('[model.data.version.layout.id, collection.models]', function (layout) {
+        if (layout[0] && layout[1] && layout[1].length > 0) {
+          $ctrl.layoutData = layout[1].map(obj => obj.data);
+          $ctrl.selectedLayoutData = $filter('filter')($ctrl.layoutData, { id: layout[0] })[0];
+          $scope.selectedName = $ctrl.selectedLayoutData.name;
+          $scope.selectedDesc = $ctrl.selectedLayoutData.description;
+        }
+      });
 
       // Asset Collection
       if ($attrs.type) {
