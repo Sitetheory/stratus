@@ -9,7 +9,7 @@
 
       // Modules
       'angular-material',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -55,7 +55,7 @@
 
       // prepare data before add into list;
       $ctrl.transformChip = function (chip) {
-        if ((typeof (chip) == 'object')) {
+        if (typeof (chip) === 'object') {
           return chip.name;
         }
       };
@@ -65,7 +65,7 @@
           function (response) {
             if (_.isEmpty(response)) {
               chip = { name: chip };
-            }else {
+            } else {
               chip = response[0];
             }
             $ctrl.bindingList.push(chip);
@@ -74,7 +74,9 @@
       };
 
       $ctrl.removeFromParent = function (chip) {
-        var index = $ctrl.bindingList.findIndex(x => x.name == chip);
+        var index = $ctrl.bindingList.findIndex(function (x) {
+          return x.name === chip;
+        });
         $ctrl.bindingList.splice(index, 1);
       };
     },

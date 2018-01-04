@@ -69,7 +69,9 @@
 
       $scope.$watch('[model.data.version.layout.id, collection.models]', function (layout) {
         if (layout[0] && layout[1] && layout[1].length > 0) {
-          $ctrl.layoutData = layout[1].map(obj => obj.data);
+          $ctrl.layoutData = layout[1].map(function (obj) {
+            return obj.data;
+          });
           $ctrl.selectedLayoutData = $filter('filter')($ctrl.layoutData, { id: layout[0] })[0];
           $scope.selectedName = $ctrl.selectedLayoutData.name;
           $scope.selectedDesc = $ctrl.selectedLayoutData.description;
@@ -84,7 +86,7 @@
           id: null,
           manifest: false,
           decouple: true,
-          selectedid: $attrs.selectedid,
+          selectedId: $attrs.selectedId,
           property: $attrs.property,
           api: {
             options: {},
