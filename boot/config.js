@@ -152,6 +152,7 @@ boot.config({
     'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
     'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
     'stratus.components.proposalAlert': boot.bundle + 'stratus/components/proposalAlert' + boot.suffix,
+    'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
