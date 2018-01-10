@@ -41,6 +41,12 @@
         }
       });
 
+      // TODO: Build Workflow
+      // User or Role (switch)
+      // Content Type AutoComplete
+      // Dynamic Content AutoComplete
+      // Sentinel Editor
+
       // Handle Complete Requests
       $scope.$watch('collection.completed', function (completed) {
         // Handle empty collections

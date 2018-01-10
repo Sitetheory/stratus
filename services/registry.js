@@ -20,6 +20,7 @@
   Stratus.Services.Registry = ['$provide', function ($provide) {
     $provide.factory('registry', ['collection', 'model', '$interpolate', '$q', function (collection, model, $interpolate, $q) {
       return function () {
+        // TODO: Handle Version Routing through Angular
         // Maintain all models in Namespace
         // Inverse the parent and child objects the same way Doctrine does
         /**
