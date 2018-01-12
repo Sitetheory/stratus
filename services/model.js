@@ -14,7 +14,6 @@
     factory(root.Stratus, root._);
   }
 }(this, function (Stratus, _) {
-
   // This Model Service handles data binding for a single object with the $http Service
   Stratus.Services.Model = ['$provide', function ($provide) {
     $provide.factory('model', ['$q', '$http', '$mdToast', '$rootScope', function ($q, $http, $mdToast, $rootScope) {
@@ -133,12 +132,18 @@
               if (action === 'GET') {
                 if (angular.isObject(data) && Object.keys(data).length) {
                   prototype.url += '?' + that.serialize(data);
+                  if (that.futherParams()) {
+                    angular.forEach(that.futherParams(), function (value, key) {
+                      prototype.url += '&' + 'options[' + key + ']=' + value;
+                    });
+                  }
                 }
               } else {
                 prototype.headers['Content-Type'] = 'application/json';
                 prototype.data = JSON.stringify(data);
               }
             }
+
             $http(prototype).then(function (response) {
               if (response.status === 200 && angular.isObject(response.data)) {
                 // TODO: Make this into an over-writable function
@@ -343,6 +348,22 @@
               return attrs && attrs[link];
             }, that.data);
           }
+        };
+
+        /**
+         * Get more params which is shown after '#' symbol in url.
+         * @return {*}
+         */
+        this.futherParams = function () {
+          var params = {};
+          angular.forEach(location.hash.split('#'), function (param) {
+            if (param) {
+              var key = param.split('/')[0];
+              var value = param.split('/')[1];
+              params[key] = value;
+            }
+          });
+          return params;
         };
 
         /**
