@@ -58,6 +58,7 @@ a {
   z-index: 100;
   padding: 3%;
   background: #FFFFFF;
+  overflow: hidden;
 }
 .sectionContainer .selectedMediaLabel {
   margin-bottom: 18px;
@@ -583,6 +584,8 @@ md-input-container label {
 }
 .droppedImageInfo {
   margin-bottom: 8px;
+  word-wrap: break-word;
+  text-align: center;
 }
 .hoverItems md-icon {
   height: inherit;

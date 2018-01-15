@@ -27,9 +27,9 @@
       var isShowDialog = angular.element(document.body).hasClass('md-dialog-is-showing');
       $scope.files = [];
 
-      document.addEventListener('dragenter', media.dragenter, false);
-      document.addEventListener('dragleave', media.dragleave, false);
-      document.addEventListener('drop', drop, false);
+      // document.addEventListener('dragenter', media.dragenter, false);
+      // document.addEventListener('dragleave', media.dragleave, false);
+      // document.addEventListener('drop', drop, false);
 
       $(window).focus(function () {
         $('.drag-drop').removeClass('show-overlay');
@@ -58,12 +58,12 @@
 
         $scope.done = function () {
           $mdDialog.hide();
-          dragleave();
+          media.dragleave();
         };
 
         $scope.cancel = function () {
           $mdDialog.cancel();
-          dragleave();
+          media.dragleave();
         };
 
         $scope.addFiles = function (newFiles) {

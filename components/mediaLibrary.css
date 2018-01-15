@@ -59,6 +59,7 @@ a {
   z-index: 100;
   padding: 3%;
   background: #FFFFFF;
+  overflow: hidden;
 }
 .sectionContainer .selectedMediaLabel {
   margin-bottom: 18px;
@@ -584,6 +585,8 @@ md-input-container label {
 }
 .droppedImageInfo {
   margin-bottom: 8px;
+  word-wrap: break-word;
+  text-align: center;
 }
 .hoverItems md-icon {
   height: inherit;
@@ -665,6 +668,7 @@ md-input-container label {
   border: 2px solid #636262;
 }
 #openLibrary .instructions {
+  width: 100%;
   padding: 10px;
   color: rgba(0, 0, 0, 0.55);
   font-size: 200%;
@@ -676,6 +680,9 @@ md-input-container label {
   background: #2E2E2E;
   border-radius: 3px;
   padding: 1em;
+}
+.mediaLibraryContent ul li {
+  width: 15%;
 }
 .mediaLibraryContent .library-header {
   height: 40px;
@@ -791,6 +798,7 @@ md-input-container label {
   margin-top: 10px;
   margin-bottom: 10px;
   display: inline-block;
+  text-align: center;
 }
 .mediaLibraryContent .nav-button stratus-pagination .paginator .paginatorPrevious a,
 .mediaLibraryContent .nav-button stratus-pagination .paginator .paginatorNext a,

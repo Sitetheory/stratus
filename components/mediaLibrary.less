@@ -56,6 +56,7 @@
 
 #openLibrary {
   .instructions {
+    width: 100%;
     padding: 10px;
     color: @gray-l;
     font-size: 200%;
@@ -69,6 +70,11 @@
   background: @list-media-background;
   border-radius: 3px;
   padding: 1em;
+  ul {
+    li {
+      width: 15%;
+    }
+  }
   .library-header {
     height: 40px;
     box-shadow: 0 1px rgba(214, 211, 211, 0.4);
@@ -180,6 +186,7 @@
         margin-top: 10px;
         margin-bottom: 10px;
         display: inline-block;
+        text-align: center;
         .paginatorPrevious a,
         .paginatorNext a,
         .paginatorPages a {

@@ -25,13 +25,10 @@
   padding: 0;
   display: inline-flex;
 }
-.media-details .header .header-right div .tags li {
-  display: inline-block;
-  float: left;
-}
-.media-details .header .header-right div .tag {
-  background: #eee;
+.media-details .header .header-right div .tags .tag {
+  background: #eeeeee;
   border-radius: 3px 0 0 3px;
+  border-color: #2E2E2E;
   color: #999;
   display: inline-block;
   height: 26px;
@@ -40,9 +37,10 @@
   position: relative;
   margin: 0 10px 10px 0;
   text-decoration: none;
+  transition: color 0.2s;
   -webkit-transition: color 0.2s;
 }
-.media-details .header .header-right div .tag::before {
+.media-details .header .header-right div .tags .tag::before {
   background: #fff;
   border-radius: 10px;
   box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
@@ -53,21 +51,21 @@
   width: 6px;
   top: 10px;
 }
-.media-details .header .header-right div .tag::after {
+.media-details .header .header-right div .tags .tag::after {
   background: #fff;
-  border-bottom: 13px solid transparent;
+  border-bottom: 13px solid #2f2f2f;
   border-left: 10px solid #eee;
-  border-top: 13px solid transparent;
+  border-top: 13px solid #2f2f2f;
   content: '';
   position: absolute;
   right: 0;
   top: 0;
 }
-.media-details .header .header-right div .tag:hover {
+.media-details .header .header-right div .tags .tag:hover {
   background-color: crimson;
   color: white;
 }
-.media-details .header .header-right div .tag:hover::after {
+.media-details .header .header-right div .tags .tag:hover::after {
   border-left-color: crimson;
 }
 .media-details .header .header-right div .fa {

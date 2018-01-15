@@ -52,9 +52,15 @@
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
+      // Variables
+      var $ctrl = this;
+      $ctrl.uploadToLibrary = uploadToLibrary;
+      $ctrl.showDetails = showDetails;
+      $ctrl.deleteFromMedia = deleteFromMedia;
+
       // fetch media collection and hydrate to $scope.collection
-      $scope.registry = new registry();
-      $scope.registry.fetch({
+      $ctrl.registry = new registry();
+      $ctrl.registry.fetch({
         target: $attrs.target || 'Media',
         id: null,
         manifest: false,
@@ -65,31 +71,38 @@
       }, $scope);
 
       // set media library to false
-      $scope.showLibrary = false;
-      $scope.files = [];
-      $scope.tagsModel = {};
-      $scope.infoId = null;
+      $ctrl.files = [];
+      $ctrl.tagsModel = {};
+      $ctrl.infoId = null;
 
       // Data Connectivity
       $scope.$watch('tagsModel', function (data) {
-        if ($scope.infoId !== undefined) {
+        if ($ctrl.infoId !== undefined) {
           var dataRes = {};
-          dataRes.tags = $scope.tagsModel.tags;
-          $scope.updateMedia($scope.infoId, dataRes);
+          dataRes.tags = $ctrl.tagsModel.tags;
+          media.updateMedia($ctrl.infoId, dataRes).then(
+            function (response) {
+              // fetch media library list
+              getMedia();
+            },
+            function (rejection) {
+              if (!Stratus.Environment.get('production')) {
+                console.log(rejection.data);
+              }
+            });
         }
       }, true);
 
+      $scope.$watch('files', function (newFiles, oldFiles) {
+        if (newFiles !== null && newFiles != oldFiles) {
+          preProcessOfSavingMedia(_.difference(newFiles, oldFiles));
+        }
+      });
+
       // done button when uploading is finished
-      $scope.uploadComp = false;
+      $ctrl.uploadComp = false;
 
-      $scope.movedFileId = '';
-
-      $scope.errorUpload = false;
-
-      // UI Settings
-      $scope.libraryVisible = true;
-
-      $scope.showDetails = function (media) {
+      function showDetails(media) {
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: DialogShowDetails,
@@ -101,119 +114,50 @@
             data: media
           }
         });
-      };
 
-      var DialogShowDetails = function ($scope, data) {
-        $scope.data = data;
-
-        $scope.close = function () {
-          $mdDialog.cancel();
+        function DialogShowDetails($scope, data) {
+          $scope.data = data;
+          $scope.close = function () {
+            $mdDialog.cancel();
+          };
         };
       };
 
-      $scope.zoomView = function (event) {
-        $scope.mediaDetail = event;
-        $scope.selectedName = {
-          name: $scope.mediaDetail.name,
-          editing: false
-        };
-        $scope.selectedDesc = {
-          description: $scope.mediaDetail.description,
-          editing: false
-        };
-
-        var position = $mdPanel.newPanelPosition()
-        .absolute()
-        .center();
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          disableParentScroll: this.disableParentScroll,
-          controller: ZoomController,
-          templateUrl: 'mediaDetail.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          zIndex: 150,
-          clickOutsideToClose: false,
-          escapeToClose: true,
-          focusOnOpen: true
-        };
-        $mdPanel.open(config);
-        $scope.tagsModel.tags = $scope.mediaDetail.tags;
-        $scope.infoId = $scope.mediaDetail.id;
-        $scope.imageSrc = $scope.mediaDetail.url;
-      };
-
-      $scope.draggedFileId = '';
-
-      $scope.imageMoved = false;
-
-      $scope.dragClass = false;
-
-      $scope.deleteFromMedia = function (fileId) {
+      function deleteFromMedia(fileId) {
         if (!Stratus.Environment.get('production')) {
           console.log(fileId);
         }
 
         // mdPanelRef.close();
         var confirmMedia = $mdDialog.confirm()
-        .title('DELETE MEDIA')
-        .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
-        .ok('Yes')
-        .cancel('No');
+          .title('DELETE MEDIA')
+          .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+          .ok('Yes')
+          .cancel('No');
 
         $mdDialog.show(confirmMedia).then(function () {
-          $http({
-            method: 'DELETE',
-            url: '/Api/Media/' + fileId
-          }).then(function (response) {
-            // fetch media library list
-            $scope.uploadMedia();
-          }, function (rejection) {
-            if (!Stratus.Environment.get('production')) {
-              console.log(rejection.data);
-            }
-          });
+          media.deleteMedia(fileId).then(
+            function (response) {
+              // fetch media library list
+              getMedia();
+            },
+            function (rejection) {
+              if (!Stratus.Environment.get('production')) {
+                console.log(rejection.data);
+              }
+            });
         });
-
       };
 
       // upload directly to media library
-      $scope.uploadToLibrary = function (files) {
-        // update scope of files for watch
-        // $scope.uploadComp = false;
-        // $scope.imageMoved = false;
-
-        // var position = $mdPanel.newPanelPosition()
-        //   .absolute()
-        //   .center();
-        // var config = {
-        //   attachTo: angular.element(document.body),
-        //   scope: $scope,
-        //   controller: DialogController,
-        //   controllerAs: 'ctrl',
-        //   disableParentScroll: this.disableParentScroll,
-        //   templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDragDropDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
-        //   hasBackdrop: true,
-        //   panelClass: 'media-dialog',
-        //   position: position,
-        //   trapFocus: true,
-        //   zIndex: 150,
-        //   clickOutsideToClose: false,
-        //   escapeToClose: false,
-        //   focusOnOpen: true
-        // };
-        // $mdPanel.open(config);
-        // $scope.files = files;
-
+      function uploadToLibrary(files) {
         if (files.length > 0) {
           $('#main').addClass('blurred');
           $('.drag-drop').addClass('show-overlay');
+          $scope.files = files;
 
           $mdDialog.show({
-            controller: media.DialogController,
+            controller: DialogController,
             locals: {
               files: files
             },
@@ -223,147 +167,89 @@
             escapeToClose: false,
             focusOnOpen: true
           }).then(function (answer) {
-            $scope.files = $scope.files.concat(files);
+            $ctrl.files = $ctrl.files.concat(files);
           }, function () {});
+
+          // controller for media upload dialog
+          function DialogController($scope, files) {
+            // Do upload stuffs
+            $scope.files = files;
+            $scope.uploadComp = false;
+
+            $scope.done = function () {
+              $mdDialog.hide();
+              media.dragleave();
+            };
+
+            $scope.cancel = function () {
+              $mdDialog.cancel();
+              media.dragleave();
+            };
+
+            $scope.abort = function () {
+              console.log('aborted');
+            };
+
+            $scope.addFiles = function (newFiles) {
+              if (newFiles.length > 0) {
+                $scope.files = Array.from($scope.files).concat(newFiles);
+              }
+            };
+
+            $scope.removeFiles = function (file) {
+              $scope.files = _.without($scope.files, file);
+            };
+
+            $scope.$watch('files', function (newFiles, oldFiles) {
+              if (newFiles !== null && newFiles != oldFiles) {
+                preProcessOfSavingMedia(_.difference(newFiles, oldFiles));
+              }
+            });
+          };
         };
       };
 
-      $scope.editItem = function (item) {
-        item.editing = true;
-      };
-
-      $scope.doneEditing = function (fileId, item) {
-        var data = {};
-        if (item.description) {
-          data.description = item.description;
+      function preProcessOfSavingMedia(files) {
+        // make files array for not multiple to be able to be used in ng-repeat in the ui
+        if (!angular.isArray(files)) {
+          $timeout(function () {
+            $scope.files = files = [files];
+          });
+          return;
         }
-        if (item.name) {
-          data.name = item.name;
+        var promises = [];
+        for (var i = 0; i < files.length; i++) {
+          $scope.errorMsg = null;
+          promises.push(saveMedia(files[i]));
         }
-        $scope.updateMedia(fileId, data);
-        item.editing = false;
-      };
 
-      $scope.updateMedia = function (fileId, data) {
-        $http({
-          method: 'PUT',
-          url: '/Api/Media/' + fileId,
-          data: data
-        }).then(function (response) {
-          // fetch media library list
-          $scope.uploadMedia();
-        }, function (rejection) {
-          if (!Stratus.Environment.get('production')) {
-            console.log(rejection.data);
-          }
-        });
-      };
-
-      // check if ng-model value changes
-      $scope.$watch('files', function (files) {
-        if (files !== null) {
-          $scope.dragClass = false;
-
-          // make files array for not multiple to be able to be used in ng-repeat in the ui
-          if (!angular.isArray(files)) {
-            $timeout(function () {
-              $scope.files = files = [files];
+        // show done button when all promises are completed
+        if (promises.length > 0) {
+          $q.all(promises).then(
+            function (response) {
+              getMedia();
+            },
+            function (error) {
+              console.log(error);
             });
-            return;
-          }
-          var promises = [];
-          for (var i = 0; i < files.length; i++) {
-            $scope.errorMsg = null;
-            (function (f) {
-              // setTimeout(function(){ promises.push($scope.saveMedia(f)); }, 3000);
-              if ($scope.imageMoved === false) {
-                promises.push($scope.saveMedia(f));
-              }
-            })(files[i]);
-          }
-
-          // show done button when all promises are completed
-          if (promises.length > 0) {
-            $q.all(promises).then(function (data) {
-              $scope.uploadComp = true;
-              $scope.uploadMedia();
-            }).catch(function (error) {
-              $scope.uploadComp = true;
-            });
-          }
+          $ctrl.uploadComp = true;
         }
-      });
+      }
 
       // common function to load media library from collection
-      $scope.uploadMedia = function () {
+      function getMedia() {
         // switch to registry controls
         $scope.collection.fetch().then(function (response) {});
       };
 
-      function updateFilesModel(files) {
-        if (files !== null) {
-          // make files array for not multiple to be able to be used in ng-repeat in the ui
-          if (!angular.isArray(files)) {
-            $timeout(function () {
-              $scope.files = files = [files];
-            });
-            return;
-          }
-          var promises = [];
-          for (var i = 0; i < files.length; i++) {
-            $scope.errorMsg = null;
-            (function (f) {
-              promises.push($scope.saveMedia(f));
-            })(files[i]);
-          }
-
-          // show done button when all promises are completed
-          if (promises.length > 0) {
-            $q.all(promises).then(function (data) {
-              $scope.uploadComp = true;
-              $scope.uploadMedia();
-            }).catch(function (error) {
-              $scope.uploadComp = true;
-            });
-
-          }
-        }
-      }
-
-      $scope.createTag = function (query, fileId, tags) {
-        var data = {
-          name: query
-        };
-        media.createTag(data).then(
-          function (response) {
-            if (fileId !== undefined) {
-              if (tags !== undefined) {
-                var dataRes = {};
-                $scope.tagsModel.tags.push(response.data.payload);
-                dataRes.tags = $scope.tagsModel.tags;
-                $scope.updateMedia(fileId, dataRes);
-              }
-            }
-          },
-          function (rejection) {
-            if (!Stratus.Environment.get('production')) {
-              console.log(rejection.data);
-            }
-          }
-        );
-      };
-
       // common function to save media to server
-      $scope.saveMedia = function (file) {
-        if (!Stratus.Environment.get('production')) {
-          console.log(['savemedia'], file);
-        }
-
+      function saveMedia(file) {
         file.errorMsg = null;
         file.uploadStatus = false;
         file.errorUpload = false;
-        file.upload = media.uploadToS3(file);
+        file.progress = 1;
 
+        file.upload = media.uploadToS3(file, $ctrl.infoId);
         file.upload.then(
           function (response) {
             file.result = response.data;
@@ -371,11 +257,10 @@
             // set status of upload to success
             file.uploadStatus = true;
             file.errorUpload = false;
-            $scope.infoId = null;
-            $scope.imageSrc = file.result.url;
+            $ctrl.infoId = null;
+            $ctrl.imageSrc = file.result.url;
           },
           function (rejection) {
-
             // if file is aborted handle error messages
             if (rejection.config.data.file.upload.aborted === true) {
               file.uploadStatus = false;
@@ -406,28 +291,6 @@
 
         return file.upload;
       };
-
-      // Add Class on Popup Image
-      $scope.addClassOnPopup = function (event) {
-        var myEl = angular.element(document.querySelector($(event.target).attr('data-target')));
-        myEl.addClass($(event.target).attr('data-class'));
-      };
-
-      // controller for zoom panel
-      function ZoomController(mdPanelRef) {
-        // delete media from library
-        $scope.deleteMediaFromLibrary = function (fileId) {
-          mdPanelRef.close();
-          $scope.deleteFromMedia(fileId);
-        };
-
-        $scope.closeZoom = function () {
-
-          $scope.infoId = null;
-          mdPanelRef.close();
-
-        };
-      }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaLibrary' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
