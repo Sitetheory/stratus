@@ -14,7 +14,7 @@
 
       // Modules
       'angular-material',
-
+      'stratus.services.media'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -26,77 +26,88 @@
   Stratus.Components.MediaDetails = {
     bindings: {
       ngModel: '=',
-      target: '@',
-      limit: '@',
       media: '<',
+      collection: '<'
     },
     controller: function ($scope, $mdDialog, $attrs, commonMethods, media) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_details', true);
       var $ctrl = this;
 
-      $ctrl.delete = function () {
-        // var fileId = $ctrl.media.data.id;
-        // if (!Stratus.Environment.get('production')) {
-        //   console.log(fileId);
-        // }
+      $ctrl.$onInit = function () {
+        $ctrl.mediaUrl = 'http://' + $ctrl.media.data.prefix + '.' + $ctrl.media.data.extension;
 
-        // var confirmMedia = $mdDialog.confirm()
-        //   .title('DELETE MEDIA')
-        //   .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
-        //   .ok('Yes')
-        //   .cancel('No');
+        $ctrl.deleteMedia = deleteMedia;
+        $ctrl.dowloadMedia = dowloadMedia;
+        $ctrl.getLinkMedia = getLinkMedia;
+        $ctrl.changeMedia = changeMedia;
+        $ctrl.closeDialog = closeDialog;
+        $ctrl.uploadToLibrary = uploadToLibrary;
+      };
 
-        // $mdDialog.show(confirmMedia).then(function () {
-        //   media.deleteMedia(fileId).then(
-        //     function (response) {
-        //       // fetch media library list
-        //       getMedia();
-        //     },
-        //     function (rejection) {
-        //       if (!Stratus.Environment.get('production')) {
-        //         console.log(rejection.data);
-        //       }
-        //     });
-        // });
+      function deleteMedia() {
+        var fileId = $ctrl.media.data.id;
+        if (!Stratus.Environment.get('production')) {
+          console.log(fileId);
+        }
 
-        $mdDialog.show({
-          controllerAs: 'dialogCtrl',
-          clickOutsideToClose: true,
-          bindToController: true,
-          controller: function ($mdDialog) {
-            this.click = function click() {
-              $mdDialog.show({
-                controllerAs: 'dialogCtrl',
-                controller: function ($mdDialog) {
-                  this.click = function () {
-                    $mdDialog.hide();
-                  }
-                },
-                preserveScope: true,
-                autoWrap: true,
-                skipHide: true,
-                template: '<md-dialog class="confirm"><md-conent><md-button ng-click="dialogCtrl.click()">I am in a 2nd dialog!</md-button></md-conent></md-dialog>'
-              })
-            }
-          },
-          autoWrap: false,
-          template: '<md-dialog class="stickyDialog" data-type="{{::dialogCtrl.thing.title}}"><md-conent><md-button ng-click="dialogCtrl.click()">I am in a dialog!</md-button></md-conent></md-dialog>'
+        $mdDialog.show(
+          $mdDialog.confirm()
+          .title('DELETE MEDIA')
+          .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+          .multiple(true)
+          .ok('Yes')
+          .cancel('No')
+        ).then(function () {
+          media.deleteMedia(fileId).then(
+            function (response) {
+              if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+                // fetch media library list
+                $mdDialog.cancel();
+                $ctrl.collection.fetch();
+              } else {
+                $mdDialog.show(
+                  $mdDialog.alert()
+                  .parent(angular.element(document.querySelector('#popupContainer')))
+                  .clickOutsideToClose(false)
+                  .title('Error')
+                  .multiple(true)
+                  .textContent(commonMethods.getStatus(response).message)
+                  .ok('Ok')
+                );
+              }
+            },
+            function (rejection) {
+              if (!Stratus.Environment.get('production')) {
+                console.log(rejection.data);
+              }
+            });
         });
       };
 
-      $ctrl.dowload = function () {
+      function dowloadMedia() {
         console.log('handle dowload event');
       };
 
-      $ctrl.getLink = function () {
+      function getLinkMedia() {
         console.log('handle getLink event');
       };
 
-      $ctrl.close = function () {
-        $scope.$parent.close();
+      function changeMedia() {
+        console.log($ctrl.media);
+      }
+
+      function closeDialog() {
+        $mdDialog.cancel();
       };
 
+      function uploadToLibrary(files) {
+        $scope.$parent.uploadToLibrary(files);
+      }
+
+      $scope.$watch('collection.models', function (models) {
+        console.log(models);
+      })
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDetails' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };

@@ -7,9 +7,6 @@
       <div class="images">
         <ul>
           <li ng-repeat="file in files track by $index">
-            <div class="droppedImageInfo smallLabel">
-              {{ file.name }} | {{ file.size }}
-            </div>
             <div md-whiteframe="4" class="wrapper">
               <a href="#" ng-click="removeFiles(file)">
                 <i class="fa fa-times" aria-hidden="true"></i>

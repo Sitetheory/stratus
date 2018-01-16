@@ -13,33 +13,37 @@
       </div>
 
     </div>
-    <div ng-click="$ctrl.close()"><i class="fa fa-times-circle fa-2x" aria-hidden="true"></i></div>
+    <div ng-click="$ctrl.closeDialog()"><i class="fa fa-times-circle fa-2x" aria-hidden="true"></i></div>
   </div>
 
   <div class="content" layout="row" layout-align="space-between">
     <div flex="30" class="inform" layout="column" layout-align="space-between">
       <div class="controls-function" flex>
-        <div class="icon" ng-click="$ctrl.dowload()"><i class="fa fa-download fa-2x" aria-hidden="true"></i></div>
-        <div class="icon" ng-click="$ctrl.getLink()"><i class="fa fa-link fa-2x" aria-hidden="true"></i></div>
-        <div class="icon" ng-click="$ctrl.delete()"><i class="fa fa-trash fa-2x" aria-hidden="true"></i></div>
+        <div class="icon" ng-click="$ctrl.dowloadMedia()"><i class="fa fa-download fa-2x" aria-hidden="true"></i></div>
+        <div class="icon" ng-click="$ctrl.getLinkMedia()"><i class="fa fa-link fa-2x" aria-hidden="true"></i></div>
+        <div class="icon" ng-click="$ctrl.deleteMedia()"><i class="fa fa-trash fa-2x" aria-hidden="true"></i></div>
+        <div class="icon" ngf-multiple="true" ngf-select="$ctrl.uploadToLibrary($files)"><i class="fa fa-pencil fa-2x" aria-hidden="true"></i></div>
       </div>
 
       <div class="image-inform" flex>
         <p>
           <span><i>{{$ctrl.media.data.time | date: 'dd/MM/yyyy @ h:mma'}}</i></span>
-          <span>TYPE:   <label>{{$ctrl.media.data.extension}}</label></span>
-          <span>SIZE:   <label>{{$ctrl.media.data.bytesHuman}}</label></span>
-          <span>RATIO:  <label>{{$ctrl.media.data.dimensions}}</label></span>
+          <span>TYPE: <label>{{$ctrl.media.data.extension}}</label></span>
+          <span>SIZE: <label>{{$ctrl.media.data.bytesHuman}}</label></span>
+          <span>RATIO: <label>{{$ctrl.media.data.ratio}}</label></span>
+          <span>DIMENSIONS: <label>{{$ctrl.media.data.dimensions}}</label></span>
         </p>
       </div>
 
       <div class="description" flex>
-        {{$ctrl.media.data.description || 'No description'}}
+        <p>
+          {{$ctrl.media.data.description || 'No description'}}
+        </p>
       </div>
     </div>
 
     <div flex="65" class="image">
-      <img src="{{$ctrl.media.data.url}}" alt="(^.^)">
+      <img src="{{$ctrl.mediaUrl}}" alt="{{$ctrl.media.data.name}}">
     </div>
   </div>
 </div>

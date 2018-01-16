@@ -83,7 +83,7 @@
           media.updateMedia($ctrl.infoId, dataRes).then(
             function (response) {
               // fetch media library list
-              getMedia();
+              media.getMedia($scope);
             },
             function (rejection) {
               if (!Stratus.Environment.get('production')) {
@@ -106,19 +106,21 @@
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: DialogShowDetails,
-          template: '<stratus-media-details media="data"></stratus-media-details>',
+          template: '<stratus-media-details media="media" collection="collection"></stratus-media-details>',
           clickOutsideToClose: true,
           focusOnOpen: true,
           autoWrap: true,
           locals: {
-            data: media
+            media: media,
+            collection: $scope.collection
           }
         });
 
-        function DialogShowDetails($scope, data) {
-          $scope.data = data;
-          $scope.close = function () {
-            $mdDialog.cancel();
+        function DialogShowDetails($scope, media, collection) {
+          $scope.media = media;
+          $scope.collection = collection;
+          $scope.uploadToLibrary = function (files) {
+            uploadToLibrary(files);
           };
         };
       };
@@ -128,18 +130,30 @@
           console.log(fileId);
         }
 
-        // mdPanelRef.close();
-        var confirmMedia = $mdDialog.confirm()
+        $mdDialog.show(
+          $mdDialog.confirm()
           .title('DELETE MEDIA')
           .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+          .multiple(true)
           .ok('Yes')
-          .cancel('No');
-
-        $mdDialog.show(confirmMedia).then(function () {
+          .cancel('No')
+        ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
-              // fetch media library list
-              getMedia();
+              if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+                // fetch media library list
+                media.getMedia($scope);
+              } else {
+                $mdDialog.show(
+                  $mdDialog.alert()
+                  .parent(angular.element(document.querySelector('#popupContainer')))
+                  .clickOutsideToClose(false)
+                  .title('Error')
+                  .multiple(true)
+                  .textContent(commonMethods.getStatus(response).message)
+                  .ok('Ok')
+                );
+              }
             },
             function (rejection) {
               if (!Stratus.Environment.get('production')) {
@@ -165,7 +179,8 @@
             parent: angular.element(document.body),
             clickOutsideToClose: false,
             escapeToClose: false,
-            focusOnOpen: true
+            focusOnOpen: true,
+            multiple: true
           }).then(function (answer) {
             $ctrl.files = $ctrl.files.concat(files);
           }, function () {});
@@ -227,7 +242,7 @@
         if (promises.length > 0) {
           $q.all(promises).then(
             function (response) {
-              getMedia();
+              media.getMedia($scope);
             },
             function (error) {
               console.log(error);
@@ -235,12 +250,6 @@
           $ctrl.uploadComp = true;
         }
       }
-
-      // common function to load media library from collection
-      function getMedia() {
-        // switch to registry controls
-        $scope.collection.fetch().then(function (response) {});
-      };
 
       // common function to save media to server
       function saveMedia(file) {

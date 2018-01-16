@@ -25,7 +25,7 @@
       ) {
         var urlApi = '/Api/Template';
         var tagApi = '/Api/Tag';
-        var mediaApi = '/Api/Media/'
+        var mediaApi = '/Api/Media/';
 
         return {
           dragenter: dragenter,
@@ -33,7 +33,8 @@
           createTag: createTag,
           uploadToS3: uploadToS3,
           deleteMedia: deleteMedia,
-          updateMedia: updateMedia
+          updateMedia: updateMedia,
+          getMedia: getMedia
         };
 
         function dragenter(event) {
@@ -42,6 +43,10 @@
 
         function dragleave(event) {
           $('#main').removeClass('blurred');
+        }
+
+        function getMedia(scope) {
+          return scope.collection.fetch();
         }
 
         function createTag(data) {
