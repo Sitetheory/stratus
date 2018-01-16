@@ -4,6 +4,7 @@
       'stratus',
       'underscore',
       'angular',
+      'stratus.services.commonMethods',
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -13,7 +14,8 @@
   Stratus.Controllers.Utilities = [
     '$scope',
     '$element',
-    function ($scope, $element) {
+    'commonMethods',
+    function ($scope, $element, commonMethods) {
       // Store Instance
       Stratus.Instances[_.uniqueId('utilities_')] = $scope;
 
@@ -42,30 +44,14 @@
       */
       $scope.linkToSidebar = function (link) {
         link = compileString(link);
-        if ((link.indexOf('Versions') == -1) && !_.isEmpty(futherParams())) {
+        if ((link.indexOf('Versions') == -1) && !_.isEmpty(commonMethods.moreParams())) {
           link += '#';
-          angular.forEach(futherParams(), function (value, key) {
+          angular.forEach(commonMethods.moreParams(), function (value, key) {
             link += key + '/' + value;
           });
         };
 
         window.location.replace(window.location.origin + link);
-      };
-
-      /**
-      * Get more params which is shown after '#' symbol in url.
-      * @return {*}
-      */
-      function futherParams() {
-        var params = {};
-        angular.forEach(location.hash.split('#'), function (param) {
-          if (param) {
-            var key = param.split('/')[0];
-            var value = param.split('/')[1];
-            params[key] = value;
-          }
-        });
-        return params;
       };
 
       /**

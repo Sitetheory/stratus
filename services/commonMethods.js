@@ -26,6 +26,7 @@
         generateProgressBar: generateProgressBar,
         getUrlParams: getUrlParams,
         cleanedPhoneNumber: cleanedPhoneNumber,
+        moreParams: moreParams,
         RESPONSE_CODE: RESPONSE_CODE
       };
 
@@ -111,6 +112,22 @@
       function cleanedPhoneNumber(phoneNumber) {
         var keepNumberOnlyRegex = /\D+/g;
         return phoneNumber.replace(keepNumberOnlyRegex, '');
+      };
+
+      /**
+      * Get more params which is shown after '#' symbol in url.
+      * @return {*}
+      */
+      function moreParams() {
+        var params = {};
+        angular.forEach(location.hash.split('#'), function (param) {
+          if (param) {
+            var key = param.split('/')[0];
+            var value = param.split('/')[1];
+            params[key] = value;
+          }
+        });
+        return params;
       };
     }]);
   }];
