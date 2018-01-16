@@ -8,7 +8,8 @@
       'stratus',
       'underscore',
       'angular',
-      'angular-material'
+      'angular-material',
+      'stratus.services.commonMethods',
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -16,7 +17,7 @@
 }(this, function (Stratus, _) {
   // This Model Service handles data binding for a single object with the $http Service
   Stratus.Services.Model = ['$provide', function ($provide) {
-    $provide.factory('model', ['$q', '$http', '$mdToast', '$rootScope', function ($q, $http, $mdToast, $rootScope) {
+    $provide.factory('model', ['$q', '$http', '$mdToast', '$rootScope', 'commonMethods', function ($q, $http, $mdToast, $rootScope, commonMethods) {
       return function (options, attributes) {
 
         // Environment
@@ -74,7 +75,7 @@
             var patch = _.patch(newData, priorData);
             console.log(patch);
             if (patch) {
-              if (newData.id && newData.id !== priorData.id) {
+              if ((newData.id && newData.id !== priorData.id) || that.isNewVersion(newData)) {
                 window.location.replace(
                   Stratus.Internals.SetUrlParams({ id: newData.id })
                 );
@@ -85,17 +86,17 @@
         };
 
         /**
-         * @returns {*}
-         */
+        * @returns {*}
+        */
         this.url = function () {
           return that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
         };
 
         /**
-         * @param obj
-         * @param chain
-         * @returns {string}
-         */
+        * @param obj
+        * @param chain
+        * @returns {string}
+        */
         this.serialize = function (obj, chain) {
           var str = [];
           obj = obj || {};
@@ -115,106 +116,106 @@
 
         // TODO: Abstract this deeper
         /**
-         * @param action
-         * @param data
-         * @returns {*}
-         */
+        * @param action
+        * @param data
+        * @returns {*}
+        */
         this.sync = function (action, data) {
-          this.pending = true;
-          return $q(function (resolve, reject) {
-            action = action || 'GET';
-            var prototype = {
-              method: action,
-              url: that.url(),
-              headers: {}
-            };
-            if (angular.isDefined(data)) {
-              if (action === 'GET') {
-                if (angular.isObject(data) && Object.keys(data).length) {
-                  prototype.url += '?' + that.serialize(data);
-                  if (that.futherParams()) {
-                    angular.forEach(that.futherParams(), function (value, key) {
-                      prototype.url += '&' + 'options[' + key + ']=' + value;
-                    });
+            this.pending = true;
+            return $q(function (resolve, reject) {
+                action = action || 'GET';
+                var prototype = {
+                  method: action,
+                  url: that.url(),
+                  headers: {}
+                };
+                if (angular.isDefined(data)) {
+                  if (action === 'GET') {
+                    if (angular.isObject(data) && Object.keys(data).length) {
+                      prototype.url += '?' + that.serialize(data);
+                      if (commonMethods.moreParams()) {
+                        angular.forEach(commonMethods.moreParams(), function (value, key) {
+                          prototype.url += '&' + 'options[' + key + ']=' + value;
+                        });
+                      }
+                    }
+                  } else {
+                    prototype.headers['Content-Type'] = 'application/json';
+                    prototype.data = JSON.stringify(data);
                   }
                 }
-              } else {
-                prototype.headers['Content-Type'] = 'application/json';
-                prototype.data = JSON.stringify(data);
-              }
-            }
 
-            $http(prototype).then(function (response) {
-              if (response.status === 200 && angular.isObject(response.data)) {
-                // TODO: Make this into an over-writable function
-                // Data
-                that.meta.set(response.data.meta || {});
-                var convoy = response.data.payload || response.data;
-                if (angular.isArray(convoy) && convoy.length) {
-                  that.data = _.first(that.data);
-                  that.error = false;
-                } else if (angular.isObject(convoy)) {
-                  that.data = convoy;
-                  that.error = false;
-                } else {
-                  that.error = true;
-                }
+                $http(prototype).then(function (response) {
+                    if (response.status === 200 && angular.isObject(response.data)) {
+                      // TODO: Make this into an over-writable function
+                      // Data
+                      that.meta.set(response.data.meta || {});
+                      var convoy = response.data.payload || response.data;
+                      if (angular.isArray(convoy) && convoy.length) {
+                        that.data = _.first(that.data);
+                        that.error = false;
+                      } else if (angular.isObject(convoy)) {
+                        that.data = convoy;
+                        that.error = false;
+                      } else {
+                        that.error = true;
+                      }
 
-                if (!that.error) {
-                  // XHR Flags
-                  that.pending = false;
-                  that.completed = true;
+                      if (!that.error) {
+                        // XHR Flags
+                        that.pending = false;
+                        that.completed = true;
 
-                  // Auto-Saving Settings
-                  that.saving = false;
-                  that.changed = false;
-                  that.patch = {};
+                        // Auto-Saving Settings
+                        that.saving = false;
+                        that.changed = false;
+                        that.patch = {};
 
-                  // Begin Watching
-                  that.watcher();
-                }
+                        // Begin Watching
+                        that.watcher();
+                      }
 
-                // Promise
-                resolve(that.data);
-              } else {
-                // XHR Flags
-                that.pending = false;
-                that.error = true;
+                      // Promise
+                      resolve(that.data);
+                    } else {
+                      // XHR Flags
+                      that.pending = false;
+                      that.error = true;
 
-                // Promise
-                reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
-                  angular.isObject(response.data) ? response.data : (
-                    'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
-                ));
-              }
-            }).catch(function () {
-              // (/(.*)\sReceived/i).exec(error.message)[1]
-              reject('XHR: ' + prototype.method + ' ' + prototype.url);
-            });
-          });
-        };
+                      // Promise
+                      reject((response.statusText && response.statusText !== 'OK') ? response.statusText : (
+                        angular.isObject(response.data) ? response.data : (
+                          'Invalid Payload: ' + prototype.method + ' ' + prototype.url)
+                        ));
+                    }
+                  }).catch(function () {
+                    // (/(.*)\sReceived/i).exec(error.message)[1]
+                    reject('XHR: ' + prototype.method + ' ' + prototype.url);
+                  });
+              });
+          };
 
         /**
-         * @param action
-         * @param data
-         * @returns {*}
-         */
+        * @param action
+        * @param data
+        * @returns {*}
+        */
         this.fetch = function (action, data) {
           return that.sync(action, data || that.meta.get('api')).catch(function (message) {
             $mdToast.show(
               $mdToast.simple()
-                .textContent('Failure to Fetch!')
-                .toastClass('errorMessage')
-                .position('top right')
-                .hideDelay(3000)
+              .textContent('Failure to Fetch!')
+              .toastClass('errorMessage')
+              .position('top right')
+              .hideDelay(3000)
             );
             console.error('FETCH:', message);
           });
         };
 
         /**
-         * @returns {*}
-         */
+        * @returns {*}
+        */
         this.save = function () {
           that.saving = true;
           return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON({
@@ -222,23 +223,23 @@
           })).catch(function (message) {
             $mdToast.show(
               $mdToast.simple()
-                .textContent('Failure to Save!')
-                .toastClass('errorMessage')
-                .position('top right')
-                .hideDelay(3000)
+              .textContent('Failure to Save!')
+              .toastClass('errorMessage')
+              .position('top right')
+              .hideDelay(3000)
             );
             console.error('SAVE:', message);
           });
         };
 
         /**
-         * @type {Function}
-         */
+        * @type {Function}
+        */
         this.throttle = _.throttle(this.save, 2000);
 
         /**
-         * @returns {*}
-         */
+        * @returns {*}
+        */
         this.throttleSave = function () {
           return $q(function (resolve, reject) {
             var request = that.throttle();
@@ -253,15 +254,15 @@
         // Attribute Functions
 
         /**
-         * @param options
-         * @returns {{meta, payload}}
-         */
+        * @param options
+        * @returns {{meta, payload}}
+        */
         this.toJSON = function (options) {
           /* *
           options = _.extend(options || {}, {
-              patch: false
-          });
-          /* */
+          patch: false
+        });
+        /* */
           var data;
 
           // options.patch ? that.toPatch() :
@@ -277,15 +278,15 @@
         };
 
         /**
-         * @returns {null}
-         */
+        * @returns {null}
+        */
         that.toPatch = function () {
           return that.patch;
         };
 
         /**
-         * @type {{match: RegExp, search: RegExp, attr: RegExp}}
-         */
+        * @type {{match: RegExp, search: RegExp, attr: RegExp}}
+        */
         this.bracket = {
           match: /\[[\d+]]/,
           search: /\[([\d+])]/g,
@@ -293,9 +294,9 @@
         };
 
         /**
-         * @param path
-         * @returns {Array}
-         */
+        * @param path
+        * @returns {Array}
+        */
         this.buildPath = function (path) {
           var acc = [];
           if (!_.isString(path)) {
@@ -337,9 +338,9 @@
         };
 
         /**
-         * @param attr
-         * @returns {*}
-         */
+        * @param attr
+        * @returns {*}
+        */
         this.get = function (attr) {
           if (typeof attr !== 'string' || !that.data || typeof that.data !== 'object') {
             return undefined;
@@ -351,25 +352,18 @@
         };
 
         /**
-         * Get more params which is shown after '#' symbol in url.
-         * @return {*}
-         */
-        this.futherParams = function () {
-          var params = {};
-          angular.forEach(location.hash.split('#'), function (param) {
-            if (param) {
-              var key = param.split('/')[0];
-              var value = param.split('/')[1];
-              params[key] = value;
-            }
-          });
-          return params;
+        * Check response is a new version. In the case, current url represent the specific version.
+        * we need to check the version after submit, if it is a new one, we'll redirect to the newest version page
+        * @return boolean
+        */
+        this.isNewVersion = function (newData) {
+          return (!_.isEmpty(commonMethods.moreParams()) && newData.version && commonMethods.moreParams().version != newData.version.id);
         };
 
         /**
-         * @param attr
-         * @param value
-         */
+        * @param attr
+        * @param value
+        */
         this.set = function (attr, value) {
           if (attr && typeof attr === 'object') {
             _.each(attr, function (value, attr) {
@@ -381,9 +375,9 @@
         };
 
         /**
-         * @param attr
-         * @param value
-         */
+        * @param attr
+        * @param value
+        */
         this.setAttribute = function (attr, value) {
           if (typeof attr === 'string' && (_.contains(attr, '.') || _.contains(attr, '['))) {
             var future;
@@ -404,11 +398,11 @@
         };
 
         /**
-         * @param attribute
-         * @param item
-         * @param options
-         * @returns {*}
-         */
+        * @param attribute
+        * @param item
+        * @param options
+        * @returns {*}
+        */
         this.toggle = function (attribute, item, options) {
           if (angular.isObject(options) && angular.isDefined(options.multiple) && angular.isUndefined(options.strict)) {
             options.strict = true;
@@ -431,11 +425,11 @@
             /* This is disabled, since hydration should not be forced by default *
             var hydrate = {};
             if (request.length > 1) {
-                hydrate[request[1]] = { id: item };
-            } else {
-                hydrate.id = item;
-            }
-            /* */
+            hydrate[request[1]] = { id: item };
+          } else {
+          hydrate.id = item;
+        }
+        /* */
             if (!that.exists(attribute, item)) {
               target.push(item);
             } else {
@@ -456,9 +450,9 @@
         };
 
         /**
-         * @param attribute
-         * @returns {*}
-         */
+        * @param attribute
+        * @returns {*}
+        */
         this.pluck = function (attribute) {
           if (typeof attribute === 'string' && attribute.indexOf('[].') > -1) {
             var request = attribute.split('[].');
@@ -483,10 +477,10 @@
         };
 
         /**
-         * @param attribute
-         * @param item
-         * @returns {boolean}
-         */
+        * @param attribute
+        * @param item
+        * @returns {boolean}
+        */
         this.exists = function (attribute, item) {
           if (!item) {
             attribute = that.get(attribute);
@@ -511,8 +505,8 @@
         };
 
         /**
-         * @type {Function}
-         */
+        * @type {Function}
+        */
         this.destroy = function () {
           // TODO: Add a confirmation option here
           if (that.collection) {
@@ -522,10 +516,10 @@
             that.sync('DELETE', {}).catch(function (message) {
               $mdToast.show(
                 $mdToast.simple()
-                  .textContent('Failure to Delete!')
-                  .toastClass('errorMessage')
-                  .position('top right')
-                  .hideDelay(3000)
+                .textContent('Failure to Delete!')
+                .toastClass('errorMessage')
+                .position('top right')
+                .hideDelay(3000)
               );
               console.error('DESTROY:', message);
             });
@@ -533,8 +527,8 @@
         };
 
         /**
-         * @type {Function}
-         */
+        * @type {Function}
+        */
         this.initialize = _.once(this.initialize || function () {
           if (that.manifest && !that.get('id')) {
             that.sync('POST', that.meta.has('api') ? {
@@ -543,10 +537,10 @@
             } : {}).catch(function (message) {
               $mdToast.show(
                 $mdToast.simple()
-                  .textContent('Failure to Manifest!')
-                  .toastClass('errorMessage')
-                  .position('top right')
-                  .hideDelay(3000)
+                .textContent('Failure to Manifest!')
+                .toastClass('errorMessage')
+                .position('top right')
+                .hideDelay(3000)
               );
               console.error('MANIFEST:', message);
             });
