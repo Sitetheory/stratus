@@ -1,7 +1,5 @@
 #user-authentication {
-  background-color: #FFFFFF;
-  box-shadow: 0 5px 1px 0 rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
+  background: none;
   max-width: 100%;
 }
 #user-authentication md-progress-linear .md-bar {
@@ -11,15 +9,15 @@
   margin-top: 0;
 }
 #user-authentication md-tabs {
-  background: #FFFFFF;
+  background: none;
 }
 #user-authentication md-tabs md-tab-content {
   padding-top: 0;
-  background-color: #FFFFFF;
+  background: none;
 }
 #user-authentication md-tabs md-tab-content md-content {
   padding: 0;
-  background-color: #FFFFFF !important;
+  background: none !important;
   min-height: 200px;
 }
 #user-authentication md-tabs md-tab-content md-content .form-reset-pass .first-password {
@@ -41,8 +39,10 @@
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.strong .md-bar {
   background-color: #4CAF50;
 }
-#user-authentication md-input-container.email-field {
-  margin-top: 40px;
+md-input-container .md-input {
+  border-radius: 2px;
+  background: rgba(255,255,255,.3) !important;
+  border: 1px solid rgba(0,0,0,.3) !important;
 }
 .message {
   padding: 10px;
@@ -117,9 +117,6 @@ input:-webkit-autofill:focus {
   cursor: pointer;
   border-bottom: 1px solid #3F51B5;
   color: #FFFFFF;
-}
-form {
-  margin: 1em .5em 0em .5em;
 }
 .verify {
   margin-top: 50px;

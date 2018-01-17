@@ -14,28 +14,34 @@
                         <form class="form-sign-in" name="signInForm"
                               ng-submit="signInForm.$valid && $ctrl.doSignIn(signinData)"
                               ng-if="!$ctrl.enabledForgotPassForm">
-                            <md-input-container class="md-block email-field" flex-gt-sm>
-                                <input name="email" type="email" ng-model="signinData.email" required
-                                       placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
-                                <ng-messages for="signInForm.email.$error"
-                                             ng-if="signInForm.email.$dirty || signInForm.email.pattern">
-                                    <ng-message when="required">This field is required!</ng-message>
-                                    <ng-message when="pattern">Please enter a valid email address.</ng-message>
-                                </ng-messages>
-                            </md-input-container>
 
-                            <md-input-container class="md-block" flex-gt-sm>
-                                <input name="password" type="password" ng-model="signinData.password" required
-                                       placeholder="Password">
-                                <ng-messages for="signInForm.password.$error" ng-if="signInForm.password.$dirty">
-                                    <ng-message when="required">This field is required!</ng-message>
-                                </ng-messages>
-                            </md-input-container>
-
-                            <div class="center">
-                                <md-button type="submit" class="md-raised"
-                                           ng-disabled="signInForm.$invalid || $ctrl.loading">Sign In
-                                </md-button>
+                            <div class="clearfix">
+                                <div class="formColumn usernameColumn">
+                                    <md-input-container class="md-block email-field">
+                                        <input name="email" type="email" ng-model="signinData.email" required
+                                               placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
+                                        <ng-messages for="signInForm.email.$error"
+                                                     ng-if="signInForm.email.$dirty || signInForm.email.pattern">
+                                            <ng-message when="required">This field is required!</ng-message>
+                                            <ng-message when="pattern">Please enter a valid email address.</ng-message>
+                                        </ng-messages>
+                                    </md-input-container>
+                                </div>
+                                <div class="formColumn passwordColumn">
+                                    <md-input-container class="md-block">
+                                        <input name="password" type="password" ng-model="signinData.password" required
+                                               placeholder="Password">
+                                        <ng-messages for="signInForm.password.$error" ng-if="signInForm.password.$dirty">
+                                            <ng-message when="required">This field is required!</ng-message>
+                                        </ng-messages>
+                                    </md-input-container>
+                                </div>
+                                <div class="formColumn submitColumn">
+                                    <md-button type="submit" class="btn btnSignIn customFontSignIn gradientAnchor" ng-disabled="signInForm.$invalid || $ctrl.loading">
+                                        <div class="btnGradientLight"></div>
+                                        Sign In
+                                    </md-button>
+                                </div>
                             </div>
 
                             <div class="center">
