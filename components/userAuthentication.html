@@ -1,6 +1,7 @@
 <div ng-cloak>
     <md-content id="user-authentication">
         <md-progress-linear ng-if="$ctrl.loading" md-mode="indeterminate"></md-progress-linear>
+        <div class="tab-toggle-background"></div>
         <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex">
             <md-tab label="Sign In" class="sign-in" ng-click="$ctrl.showForgotPassForm(false)">
                 <md-content class="md-padding">
@@ -16,7 +17,7 @@
                               ng-if="!$ctrl.enabledForgotPassForm">
 
                             <div class="clearfix">
-                                <div class="formColumn usernameColumn">
+                                <div class="formColumn column1">
                                     <md-input-container class="md-block email-field">
                                         <input name="email" type="email" ng-model="signinData.email" required
                                                placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
@@ -27,7 +28,7 @@
                                         </ng-messages>
                                     </md-input-container>
                                 </div>
-                                <div class="formColumn passwordColumn">
+                                <div class="formColumn column2">
                                     <md-input-container class="md-block">
                                         <input name="password" type="password" ng-model="signinData.password" required
                                                placeholder="Password">
@@ -44,9 +45,11 @@
                                 </div>
                             </div>
 
-                            <div class="center">
-                                <a class="md-primary" ng-click="$ctrl.showForgotPassForm(true)"
-                                   capitalize-first>{{ $ctrl.forgotPassText }}</a>
+                            <div class="linkForgot">
+                                <a class="fontSignIn" ng-click="$ctrl.showForgotPassForm(true)"
+                                   capitalize-first>{{ $ctrl.forgotPassText }}
+                                    <div class="animatedUnderline"></div>
+                                </a>
                             </div>
 
                         </form>
@@ -143,7 +146,7 @@
                 </md-content>
             </md-tab>
 
-            <md-tab label="Create New Account" class="sign-up" md-on-select="$ctrl.onTabSelected($ctrl.signUpIndex)"
+            <md-tab label="Sign Up" class="sign-up" md-on-select="$ctrl.onTabSelected($ctrl.signUpIndex)"
                     ng-disabled="$ctrl.isHandlingUrl">
                 <md-content class="md-padding">
                     <div class="message error"
@@ -152,52 +155,58 @@
                         <p ng-bind-html="$ctrl.safeMessage()" stratus-compile-template></p>
                     </div>
                     <form name="registrationForm" ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)">
-                        <md-input-container class="md-block email-field" flex-gt-sm>
-                            <input name="email" type="email" ng-model="signupData.email" required
-                                   placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
-                            <ng-messages for="registrationForm.email.$error"
-                                         ng-if="registrationForm.email.$dirty || registrationForm.email.pattern">
-                                <ng-message when="required">This field is required!</ng-message>
-                                <ng-message when="pattern">Please enter a valid email address.</ng-message>
-                            </ng-messages>
-                        </md-input-container>
-
-                        <md-input-container class="md-block" flex-gt-sm ng-if="!$ctrl.socialMode">
-                            <input name="phone" type="text" ng-model="signupData.phone" required
-                                   placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
-                            <ng-messages for="registrationForm.phone.$error" ng-if="registrationForm.phone.$dirty">
-                                <ng-message when="required">This field is required!</ng-message>
-                                <ng-message when="pattern">Please enter a valid phone number that can be used for
-                                    account recovery.
-                                </ng-message>
-                            </ng-messages>
-                        </md-input-container>
-                        <div class="center">
-                            <md-button type="submit" class="md-raised"
-                                       ng-disabled="registrationForm.$invalid || $ctrl.loading" stratus-clicked-disable>
-                                Create New Account
-                            </md-button>
+                        <div class="clearfix">
+                            <div class="formColumn column1">
+                                <md-input-container class="md-block email-field" flex-gt-sm>
+                                    <input name="email" type="email" ng-model="signupData.email" required
+                                           placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
+                                    <ng-messages for="registrationForm.email.$error"
+                                                 ng-if="registrationForm.email.$dirty || registrationForm.email.pattern">
+                                        <ng-message when="required">This field is required!</ng-message>
+                                        <ng-message when="pattern">Please enter a valid email address.</ng-message>
+                                    </ng-messages>
+                                </md-input-container>
+                            </div>
+                            <div class="formColumn column2">
+                                <md-input-container class="md-block" flex-gt-sm ng-if="!$ctrl.socialMode">
+                                    <input name="phone" type="text" ng-model="signupData.phone" required
+                                           placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
+                                    <ng-messages for="registrationForm.phone.$error" ng-if="registrationForm.phone.$dirty">
+                                        <ng-message when="required">This field is required!</ng-message>
+                                        <ng-message when="pattern">Please enter a valid phone number that can be used for
+                                            account recovery.
+                                        </ng-message>
+                                    </ng-messages>
+                                </md-input-container>
+                            </div>
+                            <div class="formColumn sumbitColumn">
+                                <md-button type="submit" class="btn btnSignIn gradientAnchor"
+                                           ng-disabled="registrationForm.$invalid || $ctrl.loading" stratus-clicked-disable>
+                                    Create Account
+                                    <div class="btnGradientLight"></div>
+                                </md-button>
+                            </div>
                         </div>
                     </form>
                 </md-content>
             </md-tab>
         </md-tabs>
 
-        <div class="social-signin">
-            <div class="row">
-                <div flex="100">
-                    <div class="useSocial">
-                        <div class="divTable useSocialTable">
-                            <div class="divTableRow">
-                                <div class="divTableCell useSocialLabel customFontSignIn">Or Sign In
-                                    With
-                                </div>
-                            </div>
-                        </div>
-                        <stratus-single-sign-on></stratus-single-sign-on>
+        <div class="useSocial">
+            <div class="divTable useSocialTable">
+                <div class="divTableRow">
+                    <div class="divTableCell labelBorderColumn">
+                        <div class="labelBorder"></div>
+                    </div>
+                    <div class="divTableCell useSocialLabel customFontSignIn">
+                        Or Sign In With
+                    </div>
+                    <div class="divTableCell labelBorderColumn">
+                        <div class="labelBorder"></div>
                     </div>
                 </div>
             </div>
+            <stratus-single-sign-on></stratus-single-sign-on>
         </div>
     </md-content>
 </div>

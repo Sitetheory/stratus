@@ -7,8 +7,15 @@
             data-use-continue-as="false"
             class="customFbSignIn"
             data-scope="public_profile,email"
-            onlogin="checkLoginState();"></div>
+            onlogin="checkLoginState();">
+
+      </div>
     </li>
-    <li><i class="g-signin2" data-onsuccess="onSignIn"></i></li>
+    <li>
+      <div class="btnSocial useGoogle easyTransition" data-onsuccess="onSignIn">
+        <md-icon class="positionCenter" md-svg-src="@SitetheoryCoreBundle/Resources/public/images/icons/social/googlePlus.svg">
+        </md-icon>
+      </div>
+    </li>
   </ul>
 </div>

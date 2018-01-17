@@ -117,5 +117,6 @@ input:-webkit-autofill:focus {
   margin-top: 50px;
 }
 .social-signin {
-  margin-bottom: 0.5em;
+  display: table;
+  margin: 0 auto;
 }

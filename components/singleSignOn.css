@@ -1,5 +1,5 @@
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
-.fa {
+.btnSocial {
   cursor: pointer;
 }
 .fa-google-plus-official {
@@ -14,13 +14,9 @@
 .fa-github {
   color: #643151;
 }
-.useSocial .listInline {
-  text-align: -webkit-center;
-}
 .abcRioButtonLightBlue {
   height: 40px !important;
   width: 40px !important;
-  border-radius: 20px !important;
 }
 .abcRioButtonLightBlue .abcRioButtonContentWrapper .abcRioButtonIcon {
   text-align: -webkit-center !important;
@@ -33,5 +29,4 @@
 .fb-login-button.fb_iframe_widget iframe {
   max-width: 40px !important;
   height: 40px !important;
-  border-radius: 20px !important;
 }
