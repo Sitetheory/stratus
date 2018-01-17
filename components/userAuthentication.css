@@ -39,11 +39,6 @@
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.strong .md-bar {
   background-color: #4CAF50;
 }
-md-input-container .md-input {
-  border-radius: 2px;
-  background: rgba(255,255,255,.3) !important;
-  border: 1px solid rgba(0,0,0,.3) !important;
-}
 .message {
   padding: 10px;
   text-align: center;
@@ -65,14 +60,14 @@ md-input-container .md-input {
   color: #4CAF50;
 }
 input:-webkit-autofill {
-  -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
+  -webkit-text-fill-color: #FFF;
   background-color: #E1E1E1;
 }
 input:-webkit-autofill:hover {
-  -webkit-text-fill-color: rgba(0, 0, 0, 0.55);
+  -webkit-text-fill-color: #FFF;
 }
 input:-webkit-autofill:focus {
-  -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
+  -webkit-text-fill-color: #FFF;
   background-color: #E1E1E1;
 }
 .md-block {

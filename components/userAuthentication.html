@@ -37,7 +37,7 @@
                                     </md-input-container>
                                 </div>
                                 <div class="formColumn submitColumn">
-                                    <md-button type="submit" class="btn btnSignIn customFontSignIn gradientAnchor" ng-disabled="signInForm.$invalid || $ctrl.loading">
+                                    <md-button type="submit" class="btn btnSignIn gradientAnchor" ng-disabled="signInForm.$invalid || $ctrl.loading">
                                         <div class="btnGradientLight"></div>
                                         Sign In
                                     </md-button>
@@ -45,7 +45,7 @@
                             </div>
 
                             <div class="center">
-                                <a class="md-primary link-button" ng-click="$ctrl.showForgotPassForm(true)"
+                                <a class="md-primary" ng-click="$ctrl.showForgotPassForm(true)"
                                    capitalize-first>{{ $ctrl.forgotPassText }}</a>
                             </div>
 
