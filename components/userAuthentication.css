@@ -70,6 +70,16 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: #FFF;
   background-color: #E1E1E1;
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  -webkit-text-fill-color: #FFF;
+  background: rgba(255,255,255,.3);
+  transition: background-color 5000s ease-in-out 0s !important;
+}
 .md-block {
   margin-top: 20px;
 }

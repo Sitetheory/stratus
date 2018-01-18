@@ -154,10 +154,10 @@
                          ng-if="$ctrl.message != null">
                         <p ng-bind-html="$ctrl.safeMessage()" stratus-compile-template></p>
                     </div>
-                    <form name="registrationForm" ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)">
+                    <form class="form-sign-up" name="registrationForm" ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)" >
                         <div class="clearfix">
                             <div class="formColumn column1">
-                                <md-input-container class="md-block email-field" flex-gt-sm>
+                                <md-input-container class="md-block email-field">
                                     <input name="email" type="email" ng-model="signupData.email" required
                                            placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
                                     <ng-messages for="registrationForm.email.$error"
@@ -168,7 +168,7 @@
                                 </md-input-container>
                             </div>
                             <div class="formColumn column2">
-                                <md-input-container class="md-block" flex-gt-sm ng-if="!$ctrl.socialMode">
+                                <md-input-container class="md-block" ng-if="!$ctrl.socialMode">
                                     <input name="phone" type="text" ng-model="signupData.phone" required
                                            placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
                                     <ng-messages for="registrationForm.phone.$error" ng-if="registrationForm.phone.$dirty">
@@ -199,7 +199,7 @@
                         <div class="labelBorder"></div>
                     </div>
                     <div class="divTableCell useSocialLabel customFontSignIn">
-                        Or Sign In With
+                        Or Sign In Using
                     </div>
                     <div class="divTableCell labelBorderColumn">
                         <div class="labelBorder"></div>
