@@ -815,3 +815,49 @@ md-input-container label {
 .md-dialog-container {
   z-index: 999;
 }
+.drag-drop-dialog {
+  min-width: 1000px;
+}
+.drag-drop-dialog .dropContainer {
+  max-width: unset;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem {
+  width: 20%;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .errorMessage {
+  position: relative;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image {
+  height: 100%;
+  position: relative;
+  background-color: #5C5C5C;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .hoverItems {
+  display: none;
+  margin-top: 0;
+  width: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .hoverItems .fa-times-circle {
+  font-size: 60px;
+  color: #F44336;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image:hover .hoverItems {
+  display: inherit;
+}

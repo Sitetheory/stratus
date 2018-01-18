@@ -18,6 +18,7 @@
 @gray-l: rgba(0, 0, 0, 0.55);
 @gray-xl: #636262;
 @gray-xxl: #333333;
+@white-gray: #5C5C5C;
 @yellow-light: rgba(255, 255, 0, 0.25);
 @fontweight-l: 600;
 @fontweight-xl: 700;
@@ -209,4 +210,57 @@
 }
 .md-dialog-container {
   z-index: 999;
+}
+
+.drag-drop-dialog {
+  min-width: 1000px;
+  .dropContainer {
+    max-width: unset;
+    ul {
+      .droppedItem {
+        width: 20%;
+        .errorMessage {
+          position: relative;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+        }
+        .image--cn {
+          .image {
+            height: 100%;
+            position: relative;
+            background-color: @white-gray;
+            img {
+              height: 100%;
+              width: 100%;
+              object-fit: contain;
+            }
+            .hoverItems {
+              display: none;
+              margin-top: 0;
+              width: auto;
+              top: 0;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              position: absolute;
+              background-color: fade(@white-color, 30%);
+              .fa-times-circle {
+                font-size: 60px;
+                color: @red-xxl;
+                top: 50%;
+                left: 50%;
+                position: absolute;
+                transform: translate(-50%, -50%);
+              }
+            }
+            &:hover {
+              .hoverItems {
+                display: inherit;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

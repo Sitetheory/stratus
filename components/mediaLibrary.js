@@ -48,7 +48,7 @@
       limit: '@',
       data: '&'
     },
-    controller: function ($scope, $http, $attrs, $parse, $element, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods, media, $rootElement) {
+    controller: function ($scope, $http, $attrs, $parse, $element, $timeout, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods, media, $rootElement) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
@@ -100,7 +100,7 @@
       });
 
       // done button when uploading is finished
-      $ctrl.uploadComp = false;
+      $scope.uploadComp = false;
 
       function showDetails(media) {
         $mdDialog.show({
@@ -187,7 +187,6 @@
 
           // controller for media upload dialog
           function DialogController($scope, files) {
-            // Do upload stuffs
             $scope.files = files;
             $scope.uploadComp = false;
 
@@ -247,7 +246,7 @@
             function (error) {
               console.log(error);
             });
-          $ctrl.uploadComp = true;
+          $scope.uploadComp = true;
         }
       }
 
@@ -256,7 +255,7 @@
         file.errorMsg = null;
         file.uploadStatus = false;
         file.errorUpload = false;
-        file.progress = 1;
+        file.progress = 0;
 
         file.upload = media.uploadToS3(file, $ctrl.infoId);
         file.upload.then(
