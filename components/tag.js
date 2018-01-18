@@ -25,17 +25,13 @@
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'tag', true);
       var $ctrl = this;
-      $ctrl.bindingList = [];
       $ctrl.selectedChips = [];
       $ctrl.collection = [];
+      $ctrl.queryText = '' ;
 
       // init model for md-chips
       $scope.$watch('$ctrl.ngModel', function (items) {
-        $ctrl.bindingList = items;
-        $ctrl.selectedChips = [];
-        angular.forEach(items, function (item) {
-          $ctrl.selectedChips.push(item.name);
-        });
+        $ctrl.selectedChips = items || [];
       });
 
       // init model for autocomplete
@@ -43,9 +39,11 @@
         $ctrl.collection = data;
       });
 
-      // init search value
-      $ctrl.searchData = function (query) {
-        var results = $ctrl.collection.filter(query);
+      /**
+      * Init value for search list
+      */
+      $ctrl.queryData = function () {
+        var results = $ctrl.collection.filter($ctrl.queryText);
         return Promise.resolve(results).then(function (value) {
           return value.filter(function (item) {
             return $ctrl.selectedChips.indexOf(item.name) === -1;
@@ -53,31 +51,27 @@
         });
       };
 
-      // prepare data before add into list;
+      /**
+      * Return the proper object when the append is called.
+      * @return {name: 'value'}
+      */
       $ctrl.transformChip = function (chip) {
-        if (typeof (chip) === 'object') {
-          return chip.name;
+        // If it is an object, it's already a known chip
+        if (angular.isObject(chip)) {
+          return chip;
         }
+
+        // Otherwise, create a new one
+        return { name: chip };
       };
 
-      $ctrl.addToParent = function (chip) {
-        $ctrl.collection.filter(chip).then(
-          function (response) {
-            if (_.isEmpty(response)) {
-              chip = { name: chip };
-            } else {
-              chip = response[0];
-            }
-            $ctrl.bindingList.push(chip);
-          }
-        );
-      };
-
-      $ctrl.removeFromParent = function (chip) {
-        var index = $ctrl.bindingList.findIndex(function (x) {
-          return x.name === chip;
-        });
-        $ctrl.bindingList.splice(index, 1);
+      /**
+      * Add an object when it isn't match with the exists list;
+      */
+      $ctrl.createTag = function () {
+        $ctrl.selectedChips.push($ctrl.transformChip($ctrl.queryText));
+        $ctrl.queryText = null;
+        $('input').blur();
       };
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/tag' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
