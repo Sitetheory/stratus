@@ -2,7 +2,6 @@
   background: #2E2E2E;
   border-radius: 5px;
   padding: 2em;
-  min-width: 1000px;
 }
 .media-details .header {
   margin-bottom: 1.5em;
@@ -79,15 +78,21 @@
 .media-details .content {
   color: #FFFFFF;
 }
+.media-details .content .inform textarea {
+  resize: none;
+}
 .media-details .content .inform .controls-function {
+  padding: 0;
   display: flex;
 }
 .media-details .content .inform .controls-function .icon {
   display: inline-block;
   margin-right: 0.5em;
   border: 1px solid;
-  border-color: rgba(214, 211, 211, 0.4);
+  border-radius: 2px;
   height: fit-content;
+  border-color: rgba(214, 211, 211, 0.4);
+  transition: .3s all;
 }
 .media-details .content .inform .controls-function .icon .fa {
   cursor: pointer;
@@ -96,12 +101,22 @@
   line-height: inherit !important;
   text-align: center;
 }
+.media-details .content .inform .controls-function li {
+  padding-top: 3px;
+}
+.media-details .content .inform .controls-function li:hover {
+  box-sizing: content-box;
+  border-color: #FFFFFF;
+}
+.media-details .content .inform .controls-function li a {
+  color: #FFFFFF;
+}
 .media-details .content .inform .image-inform {
   margin-top: 1em;
 }
 .media-details .content .inform .image-inform p span {
   display: block;
-  color: #bbadad87;
+  color: #BBADAD;
 }
 .media-details .content .inform .image-inform p span label {
   color: #FFFFFF;
@@ -109,11 +124,29 @@
 .media-details .content .inform .description {
   margin-top: 1em;
   font-size: 14px;
-  color: #bbadad87;
+  color: #BBADAD;
 }
 .media-details .content .image img {
   width: 100%;
   max-height: 530px;
   max-width: 625px;
   object-fit: contain;
+}
+.media-details .titleContainer .tagContainer {
+  padding-right: 0;
+}
+.media-details .titleContainer .tagContainer md-chips {
+  float: right;
+  margin-right: 50px;
+  border-radius: 3px;
+}
+.media-details .titleContainer .tagContainer md-chips .md-chips.md-focused {
+  box-shadow: 0 2px #FFFFFF;
+}
+.media-details .titleContainer .tagContainer md-chips md-autocomplete label {
+  color: #FFFFFF;
+}
+.media-details .titleContainer .tagContainer md-chips md-autocomplete input {
+  bottom: 10px;
+  color: #FFFFFF;
 }

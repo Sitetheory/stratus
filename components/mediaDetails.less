@@ -1,11 +1,10 @@
 @list-media-background: #2E2E2E;
 @white-color: #FFFFFF;
-@gray-color: #bbadad87;
+@gray-color: #BBADAD;
 .media-details {
   background: @list-media-background;
   border-radius: 5px;
   padding: 2em;
-  min-width: 1000px;
   .header {
     margin-bottom: 1.5em;
     box-shadow: 0 1px rgba(214, 211, 211, 0.4);
@@ -83,14 +82,20 @@
   .content {
     color: @white-color;
     .inform {
+      textarea {
+        resize: none;
+      }
       .controls-function {
+        padding: 0;
         display: flex;
         .icon {
           display: inline-block;
           margin-right: 0.5em;
           border: 1px solid;
-          border-color: rgba(214, 211, 211, 0.4);
+          border-radius: 2px;
           height: fit-content;
+          border-color: rgba(214, 211, 211, 0.4);
+          transition: .3s all;
           .fa {
             cursor: pointer;
             width: 40px;
@@ -99,13 +104,23 @@
             text-align: center;
           }
         }
+        li {
+          padding-top: 3px;
+          &:hover {
+            box-sizing: content-box;
+            border-color: @white-color;
+          }
+          a {
+            color: @white-color;
+          }
+        }
       }
       .image-inform {
         margin-top: 1em;
         p {
           span {
             display: block;
-            color: #bbadad87;
+            color: @gray-color;
             label {
               color: @white-color;
             }
@@ -116,7 +131,7 @@
       .description {
         margin-top: 1em;
         font-size: 14px;
-        color: #bbadad87;
+        color: @gray-color;
       }
     }
     .image img {
@@ -124,6 +139,30 @@
       max-height: 530px;
       max-width: 625px;
       object-fit: contain;
+    }
+  }
+  .titleContainer {
+    .tagContainer {
+      padding-right: 0;
+      md-chips {
+        float: right;
+        margin-right: 50px;
+        border-radius: 3px;
+        .md-chips {
+          &.md-focused {
+            box-shadow: 0 2px @white-color;
+          }
+        }
+        md-autocomplete {
+          label {
+            color: @white-color;
+          }
+          input {
+            bottom: 10px;
+            color: @white-color;
+          }
+        }
+      }
     }
   }
 }

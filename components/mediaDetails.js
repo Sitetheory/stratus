@@ -35,14 +35,31 @@
       var $ctrl = this;
 
       $ctrl.$onInit = function () {
+        // Variables
         $ctrl.mediaUrl = 'http://' + $ctrl.media.data.prefix + '.' + $ctrl.media.data.extension;
+        $ctrl.tags = $ctrl.media.data.tags.map(function (tag) {
+          return tag.name;
+        });
+        $ctrl.selectedName = {
+          name: $ctrl.media.data.name,
+          editing: false
+        };
+        $ctrl.selectedDesc = {
+          description: $ctrl.media.data.description,
+          editing: false
+        };
 
+        // Methods
         $ctrl.deleteMedia = deleteMedia;
         $ctrl.dowloadMedia = dowloadMedia;
         $ctrl.getLinkMedia = getLinkMedia;
         $ctrl.changeMedia = changeMedia;
         $ctrl.closeDialog = closeDialog;
         $ctrl.uploadToLibrary = uploadToLibrary;
+        $ctrl.createTag = createTag;
+        $ctrl.editItem = editItem;
+        $ctrl.doneEditing = doneEditing;
+        $ctrl.searchFilter = searchFilter;
       };
 
       function deleteMedia() {
@@ -105,24 +122,49 @@
         $scope.$parent.uploadToLibrary(files);
       }
 
-      $scope.$watch('collection.models', function (models) {
-        console.log(models);
-      })
+      function createTag(query, fileId, tags) {
+        var data = { name: query };
+        media.createTag(data).then(function (response) {
+          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+            if (fileId !== undefined && tags !== undefined) {
+              var dataRes = {};
+              $ctrl.tags.push(response.data.payload.name);
+              dataRes.tags = $ctrl.tags;
+              updateMedia(fileId, dataRes);
+            }
+          }
+        });
+      };
+
+      function updateMedia(fileId, data) {
+        media.updateMedia(fileId, data).then(function (response) {
+          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+            $ctrl.collection.fetch();
+          }
+        });
+      };
+
+      function editItem(item) {
+        item.editing = true;
+      };
+
+      function doneEditing(fileId, item) {
+        var data = {};
+        if (item.description) {
+          data.description = item.description;
+        }
+        if (item.name) {
+          data.name = item.name;
+        }
+
+        item.editing = false;
+        updateMedia(fileId, data);
+      };
+
+      function searchFilter(query) {
+        return $ctrl.collection.filter(query);
+      }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDetails' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
 }));
-
-// ('Media', function () {
-//   const state  = {
-//     data: null
-//   };
-//   return {
-//     get() {
-//       return state.data;
-//     },
-//     set(data) {
-//       Object.assign(state.data, data);
-//     }
-//   };
-// })
