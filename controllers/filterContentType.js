@@ -37,6 +37,9 @@
         $scope.showOnly = [];
         $scope.meta = [];
 
+        // show more
+        $scope.more = false;
+
         // Data Connectivity
         $scope.$watch('collection.models', function (models) {
           if (models && models.length > 0) {
