@@ -1,4 +1,6 @@
 <div class="social-signin">
+
+
   <ul class="listInline">
     <li>
       <div  class="fb-login-button"
@@ -12,10 +14,24 @@
       </div>
     </li>
     <li>
+      <i class="g-signin2" data-onsuccess="onSignIn"></i>
+    </li>
+  </ul>
+
+  <!-- TODO: Use these styles and clean out any css for fontawesome in the singleSignOn.css -->
+  <ul class="listInline">
+    <li>
+      <div class="btnSocial useFacebook easyTransition" data-onsuccess="onSignIn">
+        <md-icon class="positionCenter" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle/Resources/public/images/icons/social/facebook.svg">
+        </md-icon>
+      </div>
+    </li>
+    <li>
       <div class="btnSocial useGoogle easyTransition" data-onsuccess="onSignIn">
-        <md-icon class="positionCenter" md-svg-src="@SitetheoryCoreBundle/Resources/public/images/icons/social/googlePlus.svg">
+        <md-icon class="positionCenter" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle/Resources/public/images/icons/social/googlePlus.svg">
         </md-icon>
       </div>
     </li>
   </ul>
+
 </div>

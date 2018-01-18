@@ -1,4 +1,5 @@
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
+.fa,
 .btnSocial {
   cursor: pointer;
 }
@@ -17,6 +18,7 @@
 .abcRioButtonLightBlue {
   height: 40px !important;
   width: 40px !important;
+  border-radius: 20px !important;
 }
 .abcRioButtonLightBlue .abcRioButtonContentWrapper .abcRioButtonIcon {
   text-align: -webkit-center !important;
@@ -29,4 +31,5 @@
 .fb-login-button.fb_iframe_widget iframe {
   max-width: 40px !important;
   height: 40px !important;
+  border-radius: 20px !important;
 }
