@@ -5,81 +5,78 @@
       'underscore',
       'angular',
 
-      'stratus.services.filterContentType',
+      'stratus.services.filterContentType'
     ], factory);
   } else {
     factory(root.Stratus, root._);
   }
 }(this, function (Stratus, _) {
-  // This Controller handles simple element binding
-  // for a single scope to an API Object Reference.
-  Stratus.Controllers.FilterContentType = [
-    '$scope',
-    '$element',
-    '$mdToast',
-    '$log',
-    '$parse',
-    'filterContentType',
-    function ($scope, $element, $mdToast, $log, $parse, filterContentType) {
-      // Store Instance
-      Stratus.Instances[_.uniqueId('filter_content_type_')] = $scope;
+    // This Controller handles simple element binding
+    // for a single scope to an API Object Reference.
+    Stratus.Controllers.FilterContentType = [
+      '$scope',
+      '$element',
+      '$mdToast',
+      '$log',
+      '$http',
+      '$parse',
+      'filterContentType',
+      function ($scope, $element, $mdToast, $log, $http, $parse, filterContentType) {
+        // Store Instance
+        Stratus.Instances[_.uniqueId('filter_content_type_')] = $scope;
 
-      // Wrappers
-      $scope.Stratus = Stratus;
-      $scope._ = _;
+        // Wrappers
+        $scope.Stratus = Stratus;
+        $scope._ = _;
 
-      // get data from filterContentType services, this data is used for show in html.
-      $scope.data = filterContentType;
+        // get data from filterContentType services, this data is used for show in html.
+        $scope.data = filterContentType;
 
-      // the contents get from collection
-      $scope.contents = [];
+        // the contents get from collection
+        $scope.contents = [];
 
-      // the contents type used for filter list.
-      $scope.contentTypes = [];
+        // the contents type used for filter list.
+        $scope.contentTypes = [];
 
-      // constraint the contentType is choosed in showOnly
-      $scope.showOnly = [];
+        // constraint the contentType is choosed in showOnly
+        $scope.showOnly = [];
+        $scope.meta = [];
 
-      // Data Connectivity
-      $scope.$watch('collection.models', function (models) {
-        if (models && models.length > 0) {
-          $scope.contents = $scope.data.contents = models;
-        }
-      });
-
-      $scope.$watch('collection.meta.attributes.usedContentTypes', function (contentType) {
-        if (contentType) {
-          $scope.contentTypes = contentType;
-        }
-      });
-
-      //  Handle showOnly check
-      $scope.toggle = function (contentType) {
-        var index = $scope.showOnly.findIndex(function (x) {
-          return x.value === contentType.value;
+        // Data Connectivity
+        $scope.$watch('collection.models', function (models) {
+          if (models && models.length > 0) {
+            $scope.contents = $scope.data.contents = models;
+          }
         });
-        (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(contentType);
-        reloadContents();
-      };
 
-      $scope.moreFilter = function () {
-        $scope.more = !$scope.more;
-      };
+        $scope.$watch('collection.meta.attributes.usedContentTypes', function (contentType) {
+          if (contentType && contentType.length > 0) {
+            $scope.contentTypes = contentType;
+          }
+        });
 
-      // reload contents
-      function reloadContents() {
-        if ($scope.showOnly.length > 0) {
-          $scope.data.contents = [];
-          angular.forEach($scope.contents, function (content) {
-            if ($scope.showOnly.findIndex(function (x) {
-                return x.prompt === content.data.contentType.name;
-              }) !== -1) {
-              $scope.data.contents.push(content);
-            }
-          });
-        } else {
-          $scope.data.contents = $scope.contents;
+        $scope.$watch('collection.meta', function (meta) {
+          if (meta) $scope.meta = meta;
+        });
+
+        /*
+        * Handle showOnly check
+        */
+        $scope.toggle = function (contentType) {
+          var index = $scope.showOnly.findIndex(function (x) { return x.value === contentType.value; });
+          (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(contentType);
+          reloadContents();
+        };
+
+        $scope.moreFilter = function () {
+          $scope.more = !$scope.more;
+        };
+
+        /*
+        * Recall api to get contents
+        */
+        function reloadContents() {
+          $scope.collection. fetch().then(function (response) {});
         }
-      }
-    }];
-}));
+      }];
+  }));
