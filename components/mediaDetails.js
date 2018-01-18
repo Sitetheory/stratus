@@ -37,9 +37,7 @@
       $ctrl.$onInit = function () {
         // Variables
         $ctrl.mediaUrl = 'http://' + $ctrl.media.data.prefix + '.' + $ctrl.media.data.extension;
-        $ctrl.tags = $ctrl.media.data.tags.map(function (tag) {
-          return tag.name;
-        });
+        $ctrl.tags = $ctrl.media.data.tags;
         $ctrl.selectedName = {
           name: $ctrl.media.data.name,
           editing: false
@@ -128,7 +126,7 @@
           if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
             if (fileId !== undefined && tags !== undefined) {
               var dataRes = {};
-              $ctrl.tags.push(response.data.payload.name);
+              $ctrl.tags.push(response.data.payload);
               dataRes.tags = $ctrl.tags;
               updateMedia(fileId, dataRes);
             }

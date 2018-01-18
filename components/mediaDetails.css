@@ -132,8 +132,12 @@
   max-width: 625px;
   object-fit: contain;
 }
+.media-details .titleContainer .image-name input {
+  width: 100%;
+}
 .media-details .titleContainer .tagContainer {
   padding-right: 0;
+  margin-left: 15px;
 }
 .media-details .titleContainer .tagContainer md-chips {
   float: right;
