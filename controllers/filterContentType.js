@@ -5,7 +5,6 @@
       'underscore',
       'angular',
 
-      'stratus.services.filterContentType'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -20,17 +19,13 @@
       '$log',
       '$http',
       '$parse',
-      'filterContentType',
-      function ($scope, $element, $mdToast, $log, $http, $parse, filterContentType) {
+      function ($scope, $element, $mdToast, $log, $http, $parse) {
         // Store Instance
         Stratus.Instances[_.uniqueId('filter_content_type_')] = $scope;
 
         // Wrappers
         $scope.Stratus = Stratus;
         $scope._ = _;
-
-        // get data from filterContentType services, this data is used for show in html.
-        $scope.data = filterContentType;
 
         // the contents get from collection
         $scope.contents = [];
@@ -76,7 +71,8 @@
         * Recall api to get contents
         */
         function reloadContents() {
-          $scope.collection. fetch().then(function (response) {});
+          $scope.meta.set('api.options.contentType', $scope.showOnly.map(x => x.value));
+          $scope.collection. fetch().then(function (response) { console.log('response', response); });
         }
       }];
   }));
