@@ -38,6 +38,7 @@
         // Variables
         $ctrl.mediaUrl = 'http://' + $ctrl.media.data.prefix + '.' + $ctrl.media.data.extension;
         $ctrl.tags = $ctrl.media.data.tags;
+        $ctrl.infoId = $ctrl.media.data.id;
         $ctrl.selectedName = {
           name: $ctrl.media.data.name,
           editing: false
@@ -49,9 +50,7 @@
 
         // Methods
         $ctrl.deleteMedia = deleteMedia;
-        $ctrl.dowloadMedia = dowloadMedia;
         $ctrl.getLinkMedia = getLinkMedia;
-        $ctrl.changeMedia = changeMedia;
         $ctrl.closeDialog = closeDialog;
         $ctrl.uploadToLibrary = uploadToLibrary;
         $ctrl.createTag = createTag;
@@ -77,9 +76,8 @@
           media.deleteMedia(fileId).then(
             function (response) {
               if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
-                // fetch media library list
                 $mdDialog.cancel();
-                $ctrl.collection.fetch();
+                media.getMedia($ctrl);
               } else {
                 $mdDialog.show(
                   $mdDialog.alert()
@@ -94,23 +92,15 @@
             },
             function (rejection) {
               if (!Stratus.Environment.get('production')) {
-                console.log(rejection.data);
+                console.log(rejection);
               }
             });
         });
       };
 
-      function dowloadMedia() {
-        console.log('handle dowload event');
-      };
-
       function getLinkMedia() {
         console.log('handle getLink event');
       };
-
-      function changeMedia() {
-        console.log($ctrl.media);
-      }
 
       function closeDialog() {
         $mdDialog.cancel();
@@ -137,7 +127,7 @@
       function updateMedia(fileId, data) {
         media.updateMedia(fileId, data).then(function (response) {
           if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
-            $ctrl.collection.fetch();
+            media.getMedia($ctrl);
           }
         });
       };
@@ -162,6 +152,22 @@
       function searchFilter(query) {
         return $ctrl.collection.filter(query);
       }
+
+      $scope.$watch('$ctrl.tags', function (data) {
+        if ($ctrl.infoId !== undefined) {
+          var dataRes = {};
+          dataRes.tags = $ctrl.tags;
+          media.updateMedia($ctrl.infoId, dataRes).then(
+            function (response) {
+              media.getMedia($ctrl);
+            },
+            function (rejection) {
+              if (!Stratus.Environment.get('production')) {
+                console.log(rejection);
+              }
+            });
+        }
+      }, true);
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDetails' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };

@@ -72,26 +72,6 @@
 
       // set media library to false
       $ctrl.files = [];
-      $ctrl.tagsModel = {};
-      $ctrl.infoId = null;
-
-      // Data Connectivity
-      $scope.$watch('tagsModel', function (data) {
-        if ($ctrl.infoId !== undefined) {
-          var dataRes = {};
-          dataRes.tags = $ctrl.tagsModel.tags;
-          media.updateMedia($ctrl.infoId, dataRes).then(
-            function (response) {
-              // fetch media library list
-              media.getMedia($scope);
-            },
-            function (rejection) {
-              if (!Stratus.Environment.get('production')) {
-                console.log(rejection.data);
-              }
-            });
-        }
-      }, true);
 
       $scope.$watch('files', function (newFiles, oldFiles) {
         if (newFiles !== null && newFiles != oldFiles) {

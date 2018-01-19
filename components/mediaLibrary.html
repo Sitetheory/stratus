@@ -1,7 +1,13 @@
 <div id="openLibrary">
   <div class="sectionContainer mediaLibrary borderRadiusDefault">
     <div class="instructions">
-      To upload images to your library, drag &amp; drop or <a href="#" ngf-multiple="true" ngf-select="$ctrl.uploadToLibrary($files)">browse</a>
+      To upload images to your library, drag &amp; drop or
+      <a  href="#"
+          ngf-multiple="true"
+          ngf-select="$ctrl.uploadToLibrary($files)"
+          ngf-max-files="20"
+          ngf-model-invalid="invalidFiles"
+          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.pdf,.png'}">browse</a>
     </div>
   </div>
 
