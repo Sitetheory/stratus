@@ -74,7 +74,9 @@
         * Recall api to get contents
         */
         function reloadContents() {
-          $scope.meta.set('api.options.contentType', $scope.showOnly.map(x => x.value));
+          $scope.meta.set('api.options.contentType', $scope.showOnly.map(function (item) {
+            return item.value;
+          }));
           $scope.collection. fetch().then(function (response) { console.log('response', response); });
         }
       }];
