@@ -58,15 +58,15 @@
                               ng-submit="forgotPassForm.$valid && $ctrl.doRequestResetPass(resetPassData)"
                               ng-if="$ctrl.enabledForgotPassForm">
 
-                            <div class="divTable">
+                            <div class="divTable forgotTitle">
                                 <div class="divTableRow">
-                                    <div class="divTableCell labelBorderColumn">
+                                    <div class="divTableCell borderColumn">
                                         <div class="labelBorder"></div>
                                     </div>
-                                    <div class="divTableCell">
+                                    <div class="divTableCell titleColumn">
                                         <h3>Password Reset Request</h3>
                                     </div>
-                                    <div class="divTableCell labelBorderColumn">
+                                    <div class="divTableCell borderColumn">
                                         <div class="labelBorder"></div>
                                     </div>
                                 </div>
@@ -104,7 +104,7 @@
                             </div>
                             <div class="textRight linkForgot">
                                 <a ng-click="$ctrl.showForgotPassForm(false)"
-                                   capitalize-first>{{ $ctrl.forgotPassText }}
+                                   capitalize-first>{{ $ctrl.forgotPassText }} >
                                     <div class="animatedUnderline"></div>
                                 </a>
                             </div>
@@ -144,7 +144,7 @@
                                     </md-input-container>
                                 </div>
                                 <div class="formColumn sumbitColumn">
-                                    <md-button type="submit" class="md-raised btn"
+                                    <md-button type="submit" class="btn"
                                                ng-disabled="resetPassForm.$invalid || !$ctrl.allowSubmit || $ctrl.loading">
                                         {{ $ctrl.changePassBtnText }}
                                     </md-button>
@@ -152,7 +152,7 @@
                             </div>
                             <div class="textRight">
                                 <a class="md-primary link-button" ng-click="$ctrl.backToLogin()" capitalize-first>Back
-                                    to login</a>
+                                    to login ></a>
                             </div>
                         </form>
 
@@ -214,16 +214,16 @@
             </md-tab>
         </md-tabs>
 
-        <div class="useSocial">
-            <div class="divTable useSocialTable">
+        <div class="social-signin">
+            <div class="divTable social-signin-table">
                 <div class="divTableRow">
-                    <div class="divTableCell labelBorderColumn">
+                    <div class="divTableCell borderColumn">
                         <div class="labelBorder"></div>
                     </div>
-                    <div class="divTableCell useSocialLabel customFontSignIn">
-                        Or Sign In Using
+                    <div class="divTableCell titleColumn">
+                        <h4 class="use-social-label">Or Sign In Using</h4>
                     </div>
-                    <div class="divTableCell labelBorderColumn">
+                    <div class="divTableCell borderColumn">
                         <div class="labelBorder"></div>
                     </div>
                 </div>
