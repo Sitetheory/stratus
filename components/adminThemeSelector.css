@@ -6,13 +6,13 @@
   background-color: whitesmoke;
 }
 .theme-selector #btn-primary.md-primary {
-  color: #FFFFFF;
+  color: #fff;
   margin: 0;
   padding: 3px 30px;
   text-transform: none;
   font-size: 14px;
   font-weight: 600;
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 .theme-selector h2 {
   text-transform: none;
@@ -36,7 +36,7 @@
   bottom: 0;
 }
 .theme-selector .list-theme .menus ul {
-  padding-left: 0px;
+  padding-left: 0;
 }
 .theme-selector .list-theme .menus ul li {
   list-style-type: none;
@@ -72,10 +72,10 @@
   overflow: hidden;
   width: 100%;
   height: 0;
-  transition: .5s ease;
+  transition: 0.5s ease;
 }
 .theme-selector .list-theme .templates .template .image .overlay i {
-  color: #FFFFFF;
+  color: #fff;
   font-size: 30px;
   position: absolute;
   overflow: hidden;
@@ -93,7 +93,7 @@
   float: right;
 }
 .theme-selector .list-theme .templates .template .content .title .favorite {
-  color: #F44336;
+  color: #f44336;
 }
 .theme-selector .list-theme .templates .template .content .description p {
   color: rgba(0, 0, 0, 0.2);
@@ -136,14 +136,14 @@
 }
 #zoom-view .pannel-content .ltpop-bottom .theme-view-list {
   text-align: -webkit-left;
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
 }
 #zoom-view .pannel-content .ltpop-bottom img {
   width: 500px;
   height: 500px;
 }
 #zoom-view .pannel-header {
-  background: #006CC3;
+  background: #006cc3;
   padding: 1em;
   padding-bottom: 0.5em;
 }
@@ -155,5 +155,5 @@
   float: right;
 }
 #zoom-view .pannel-header .favorite {
-  color: #F44336;
+  color: #f44336;
 }

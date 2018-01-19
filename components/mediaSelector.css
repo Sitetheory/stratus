@@ -22,13 +22,13 @@ a {
   font-size: 13px;
 }
 .mediaSelector .backgroundDark .smallLabel {
-  color: #CBCBCB;
+  color: #cbcbcb;
 }
 /* Action buttons */
 .actionBtns a {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
-  opacity: .8;
+  opacity: 0.8;
 }
 .actionBtns a:hover {
   opacity: 1;
@@ -42,10 +42,10 @@ a {
   -webkit-transform: scale(1.1);
 }
 .actionBtns svg g {
-  fill: #CCCCCC;
+  fill: #ccc;
 }
 .actionBtns a:hover svg g {
-  fill: #FFFFFF;
+  fill: #fff;
 }
 /* Draggable image */
 .imageDraggable {
@@ -57,14 +57,14 @@ a {
   position: relative;
   z-index: 100;
   padding: 3%;
-  background: #FFFFFF;
+  background: #fff;
   overflow: hidden;
 }
 .sectionContainer .selectedMediaLabel {
   margin-bottom: 18px;
   padding-bottom: 18px;
-  color: #111111;
-  border-bottom: 1px solid #DDDDDD;
+  color: #111;
+  border-bottom: 1px solid #ddd;
 }
 .sectionContainer ul {
   animation: itemsGrow 0.2s ease-out both;
@@ -105,7 +105,7 @@ a {
   -webkit-transition: all 0.2s ease-out;
 }
 .selectedContainer .libraryToggle a:hover svg g {
-  fill: #111111;
+  fill: #111;
 }
 /* Media Library */
 .mediaLibrary.backgroundDark {
@@ -128,7 +128,7 @@ a {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
 .libraryItem:hover .imageDraggable {
-  opacity: .5;
+  opacity: 0.5;
 }
 .libraryItem {
   animation: itemsGrow 0.2s ease-out both;
@@ -186,12 +186,12 @@ a.minus_icon .addIcon {
 .checkIcon md-icon svg {
   transform-origin: center center;
   -webkit-transform-origin: center center;
-  fill: #FFFFFF;
+  fill: #fff;
 }
 .addIcon md-icon svg g,
 .minusIcon md-icon svg g,
 .checkIcon md-icon svg g {
-  fill: #FFFFFF;
+  fill: #fff;
 }
 /* Mini info hover */
 .imageInfoContainer {
@@ -211,7 +211,7 @@ a.minus_icon .addIcon {
   padding: 0;
   width: 150px;
   text-align: center;
-  color: #FFFFFF;
+  color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 .libraryItem:hover .imageInfoContainer {
@@ -225,13 +225,13 @@ a.minus_icon .addIcon {
   position: relative;
   z-index: 99;
   padding: 12px 12px 40px;
-  background: #222222;
+  background: #222;
   margin: 0;
-  color: #FFFFFF;
+  color: #fff;
   height: 120px;
 }
 .imageHoverInfo .fileType {
-  color: #DDDDDD;
+  color: #ddd;
 }
 .imageHoverInfo .delimiter {
   padding-right: 6px;
@@ -239,7 +239,7 @@ a.minus_icon .addIcon {
   border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
 .imageHoverInfo .fileSize {
-  color: #AAAAAA;
+  color: #aaa;
 }
 .imageHoverInfo .imgTitle {
   overflow: hidden;
@@ -247,7 +247,7 @@ a.minus_icon .addIcon {
   margin: 5px 0 0;
   max-height: 36px;
   font-size: 13px;
-  color: #CCCCCC;
+  color: #ccc;
 }
 .imageHoverInfo .positionActionArea {
   position: absolute;
@@ -272,7 +272,7 @@ a.minus_icon .addIcon {
   left: 50%;
   width: 0;
   height: 0;
-  border-top: 8px solid #222222;
+  border-top: 8px solid #222;
   border-right: 8px solid transparent;
   border-left: 8px solid transparent;
 }
@@ -313,7 +313,7 @@ a.minus_icon .addIcon {
 }
 .mediaDialogue .titleContainer h2 {
   margin: 0;
-  color: #DDDDDD;
+  color: #ddd;
 }
 /* Full info window */
 .mediaInfoFull {
@@ -330,7 +330,7 @@ a.minus_icon .addIcon {
   top: 20px;
 }
 .mediaInfoFull .btnClose svg g {
-  stroke: #FFFFFF;
+  stroke: #fff;
 }
 .mediaInfoFull .tagContainer {
   /* Make room for close button */
@@ -363,7 +363,7 @@ a.minus_icon .addIcon {
 .mediaInfoFull .description {
   margin-top: 30px;
   line-height: 1.3;
-  color: #BBBBBB;
+  color: #bbb;
 }
 .mediaSpecs .smallLabel {
   margin: 0 0 6px;
@@ -371,7 +371,7 @@ a.minus_icon .addIcon {
   letter-spacing: 1px;
 }
 .mediaSpecs .smallLabel span {
-  color: #FFFFFF;
+  color: #fff;
   font-weight: bold;
 }
 .mediaInfoFull .actionBtns {
@@ -383,10 +383,10 @@ a.minus_icon .addIcon {
   border: 1px solid rgba(200, 200, 200, 0.3);
 }
 .mediaInfoFull .actionBtns a:hover {
-  border-color: #FFFFFF;
+  border-color: #fff;
 }
 .mediaInfoFull .actionBtns a svg g {
-  fill: #FFFFFF;
+  fill: #fff;
 }
 .infoFullImage {
   margin-left: 20px;
@@ -430,21 +430,21 @@ a.minus_icon .addIcon {
   min-width: inherit;
   font-size: 11px;
   font-weight: bold;
-  color: #222222;
-  background: #E2E2E2;
+  color: #222;
+  background: #e2e2e2;
 }
 .dropContainer .btnDone:hover,
 .dropContainer .md-button.md-default-theme:not([disabled]):hover,
 .dropContainer .md-button:not([disabled]):hover {
-  color: #FFFFFF;
-  background: #FE7C57;
+  color: #fff;
+  background: #fe7c57;
 }
 .dropContainer .btnDone .btnGradientLight {
   background: -webkit-linear-gradient(#ffffff, rgba(255, 255, 255, 0));
   background: linear-gradient(#ffffff, rgba(255, 255, 255, 0));
 }
 .dropContainer .btnDone:hover .btnGradientLight {
-  opacity: .2;
+  opacity: 0.2;
 }
 .dropContainer .btnDone .btnText {
   position: relative;
@@ -463,20 +463,20 @@ a.minus_icon .addIcon {
   margin-top: 1px;
   height: 12px;
   opacity: 0;
-  background: #FFFFFF;
+  background: #fff;
 }
 .dropContainer .progressVisible .progressPercentage,
 .dropContainer .progressVisible .progress {
   opacity: 1;
 }
 .dropContainer .progressColorBar {
-  background: #FE7C57 none repeat scroll 0 0;
+  background: #fe7c57 none repeat scroll 0 0;
   height: 12px;
 }
 .dropContainer .droppedImage {
   transition: all 0.2s ease-out;
   position: relative;
-  opacity: .8;
+  opacity: 0.8;
   background: rgba(202, 202, 202, 0.12);
 }
 .droppedImage img {
@@ -485,7 +485,7 @@ a.minus_icon .addIcon {
   margin: 0 auto;
   max-width: 100%;
   max-height: 125px;
-  opacity: .8;
+  opacity: 0.8;
 }
 .progressVisible .droppedImage img {
   opacity: 1;
@@ -524,12 +524,12 @@ md-input-container label {
   height: inherit;
 }
 .droppedUnknown #linearGradient-iconDocument .stop1 {
-  stop-color: #FFFFFF;
-  stop-opacity: .7;
+  stop-color: #fff;
+  stop-opacity: 0.7;
 }
 .droppedUnknown #linearGradient-iconDocument .stop2 {
-  stop-color: #FFFFFF;
-  stop-opacity: .5;
+  stop-color: #fff;
+  stop-opacity: 0.5;
 }
 .dropContainer {
   min-height: 150px;
@@ -549,7 +549,7 @@ md-input-container label {
   }
 }
 .droppedItem:hover .progressVisible .droppedImage {
-  opacity: .2;
+  opacity: 0.2;
 }
 @-webkit-keyframes animateCheck {
   from {
@@ -566,7 +566,7 @@ md-input-container label {
   margin-top: 24px;
   padding: 2px 10%;
   width: 100%;
-  color: #FFFFFF;
+  color: #fff;
   text-align: center;
 }
 .hoverItems .actionBtns {
@@ -594,10 +594,10 @@ md-input-container label {
   max-width: 70px;
 }
 .hoverItems svg g {
-  fill: #FFFFFF;
+  fill: #fff;
 }
 .dragBorder {
-  border: 2px solid #FFFFFF;
+  border: 2px solid #fff;
 }
 .dragCursor li {
   cursor: pointer;
@@ -616,10 +616,10 @@ md-input-container label {
   margin: 0 auto;
   padding: 8px;
   width: 100%;
-  color: #FFFFFF;
+  color: #fff;
   text-align: center;
   border-radius: 2px;
-  background: #BE2626;
+  background: #be2626;
 }
 .droppedItem:hover .errorMessage {
   display: block;

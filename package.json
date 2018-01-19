@@ -9,6 +9,7 @@
   "devDependencies": {
     "babel-core": "^6.26.*",
     "babel-preset-env": "^1.6.*",
+    "csscomb": "^4.2.0",
     "del": "^3.0.*",
     "gulp": "^3.9.*",
     "gulp-babel": "^7.0.*",
@@ -21,6 +22,7 @@
     "gulp-jscs": "^4.0.*",
     "gulp-less": "^3.3.*",
     "gulp-sourcemaps": "^2.6.*",
+    "gulp-stylelint": "^6.0.0",
     "gulp-uglify": "^3.0.*",
     "jshint": "^2.9.*",
     "karma": "^1.7.*",
@@ -29,12 +31,14 @@
     "karma-opera-launcher": "^1.0.*",
     "karma-safari-launcher": "^1.0.*",
     "pump": "^2.0.*",
+    "stylelint": "^8.4.0",
+    "stylelint-config-standard": "^18.0.0",
     "uglify-js": "^3.2.*",
     "underscore": "^1.8.*",
     "vinyl-paths": "^2.1.*"
   },
   "scripts": {
-    "test": "gulp compress;gulp jscs",
+    "test": "gulp compress;gulp lint",
     "karma": "karma start --single-run"
   },
   "repository": {

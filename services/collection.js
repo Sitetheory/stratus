@@ -69,9 +69,13 @@
               str.push(that.serialize(value, key));
             } else {
               var encoded = '';
-              if (chain) encoded += chain + '[';
+              if (chain) {
+                encoded += chain + '[';
+              }
               encoded += key;
-              if (chain) encoded += ']';
+              if (chain) {
+                encoded += ']';
+              }
               str.push(encoded + '=' + value);
             }
           });

@@ -1,5 +1,5 @@
 .media-details {
-  background: #2E2E2E;
+  background: #2e2e2e;
   border-radius: 5px;
   padding: 2em;
 }
@@ -9,10 +9,10 @@
 }
 .media-details .header div {
   display: inline-block;
-  color: #FFFFFF;
+  color: #fff;
 }
 .media-details .header .header-left {
-  color: #FFFFFF;
+  color: #fff;
   font-weight: bold;
 }
 .media-details .header .header-right {
@@ -26,9 +26,9 @@
   display: inline-flex;
 }
 .media-details .header .header-right div .tags .tag {
-  background: #eeeeee;
+  background: #eee;
   border-radius: 3px 0 0 3px;
-  border-color: #2E2E2E;
+  border-color: #2e2e2e;
   color: #999;
   display: inline-block;
   height: 26px;
@@ -72,11 +72,11 @@
   cursor: pointer;
 }
 .media-details .header .header-right div .fa-times-circle {
-  color: #FFFFFF;
-  background: #2E2E2E;
+  color: #fff;
+  background: #2e2e2e;
 }
 .media-details .content {
-  color: #FFFFFF;
+  color: #fff;
 }
 .media-details .content .inform textarea {
   resize: none;
@@ -92,7 +92,7 @@
   border-radius: 2px;
   height: fit-content;
   border-color: rgba(214, 211, 211, 0.4);
-  transition: .3s all;
+  transition: 0.3s all;
 }
 .media-details .content .inform .controls-function .icon .fa {
   cursor: pointer;
@@ -106,25 +106,25 @@
 }
 .media-details .content .inform .controls-function li:hover {
   box-sizing: content-box;
-  border-color: #FFFFFF;
+  border-color: #fff;
 }
 .media-details .content .inform .controls-function li a {
-  color: #FFFFFF;
+  color: #fff;
 }
 .media-details .content .inform .image-inform {
   margin-top: 1em;
 }
 .media-details .content .inform .image-inform p span {
   display: block;
-  color: #BBADAD;
+  color: #bbadad;
 }
 .media-details .content .inform .image-inform p span label {
-  color: #FFFFFF;
+  color: #fff;
 }
 .media-details .content .inform .description {
   margin-top: 1em;
   font-size: 14px;
-  color: #BBADAD;
+  color: #bbadad;
 }
 .media-details .content .image img {
   width: 100%;
@@ -145,12 +145,12 @@
   border-radius: 3px;
 }
 .media-details .titleContainer .tagContainer md-chips .md-chips.md-focused {
-  box-shadow: 0 2px #FFFFFF;
+  box-shadow: 0 2px #fff;
 }
 .media-details .titleContainer .tagContainer md-chips md-autocomplete label {
-  color: #FFFFFF;
+  color: #fff;
 }
 .media-details .titleContainer .tagContainer md-chips md-autocomplete input {
   bottom: 10px;
-  color: #FFFFFF;
+  color: #fff;
 }

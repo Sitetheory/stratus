@@ -1,25 +1,25 @@
 #user-authentication {
-  background-color: #FFFFFF;
+  background-color: #fff;
   box-shadow: 0 5px 1px 0 rgba(0, 0, 0, 0.2);
   border-radius: 5px;
   max-width: 100%;
 }
 #user-authentication md-progress-linear .md-bar {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 #user-authentication h1:first-child {
   margin-top: 0;
 }
 #user-authentication md-tabs {
-  background: #FFFFFF;
+  background: #fff;
 }
 #user-authentication md-tabs md-tab-content {
   padding-top: 0;
-  background-color: #FFFFFF;
+  background-color: #fff;
 }
 #user-authentication md-tabs md-tab-content md-content {
   padding: 0;
-  background-color: #FFFFFF !important;
+  background-color: #fff !important;
   min-height: 200px;
 }
 #user-authentication md-tabs md-tab-content md-content .form-reset-pass .first-password {
@@ -27,19 +27,19 @@
   margin-bottom: 35px;
 }
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.risky .md-bar {
-  background-color: #F44336;
+  background-color: #f44336;
 }
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.guessable .md-bar {
-  background-color: #9C27B0;
+  background-color: #9c27b0;
 }
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.safely .md-bar {
-  background-color: #FF9800;
+  background-color: #ff9800;
 }
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.moderate .md-bar {
-  background-color: #8BC34A;
+  background-color: #8bc34a;
 }
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.strong .md-bar {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 #user-authentication md-input-container.email-field {
   margin-top: 40px;
@@ -53,27 +53,27 @@
   margin-bottom: 0;
 }
 .message.error {
-  background-color: #FDE1DF;
+  background-color: #fde1df;
 }
 .message.error p {
-  color: #F44336;
+  color: #f44336;
 }
 .message.success {
-  background-color: #C7E7C8;
+  background-color: #c7e7c8;
 }
 .message.success p {
-  color: #4CAF50;
+  color: #4caf50;
 }
 input:-webkit-autofill {
   -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
-  background-color: #E1E1E1;
+  background-color: #e1e1e1;
 }
 input:-webkit-autofill:hover {
   -webkit-text-fill-color: rgba(0, 0, 0, 0.55);
 }
 input:-webkit-autofill:focus {
   -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
-  background-color: #E1E1E1;
+  background-color: #e1e1e1;
 }
 .md-block {
   margin-top: 20px;
@@ -104,7 +104,7 @@ input:-webkit-autofill:focus {
   margin: auto;
 }
 .link-button {
-  color: #3F51B5;
+  color: #3f51b5;
   border: none;
   background: none;
   font-size: 12px;
@@ -115,11 +115,11 @@ input:-webkit-autofill:focus {
 .link-button:hover {
   background-color: none;
   cursor: pointer;
-  border-bottom: 1px solid #3F51B5;
-  color: #FFFFFF;
+  border-bottom: 1px solid #3f51b5;
+  color: #fff;
 }
 form {
-  margin: 1em .5em 0em .5em;
+  margin: 1em 0.5em 0 0.5em;
 }
 .verify {
   margin-top: 50px;
