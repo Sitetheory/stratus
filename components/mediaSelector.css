@@ -58,6 +58,7 @@ a {
   z-index: 100;
   padding: 3%;
   background: #FFFFFF;
+  overflow: hidden;
 }
 .sectionContainer .selectedMediaLabel {
   margin-bottom: 18px;
@@ -316,7 +317,7 @@ a.minus_icon .addIcon {
 }
 /* Full info window */
 .mediaInfoFull {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   width: 100%;
   padding: 28px;
@@ -334,13 +335,11 @@ a.minus_icon .addIcon {
 .mediaInfoFull .tagContainer {
   /* Make room for close button */
   padding-right: 50px;
-  text-align: right;
 }
 /* Full info window tags */
 .mediaInfoFull .tagContainer .smallLabel,
 .mediaInfoFull .tagContainer .btnAdd,
 .mediaInfoFull .tagContainer md-chips,
-.mediaInfoFull .tagContainer md-chips-wrap,
 .mediaInfoFull .tagContainer md-chip {
   display: inline-block;
   vertical-align: top;
@@ -583,6 +582,8 @@ md-input-container label {
 }
 .droppedImageInfo {
   margin-bottom: 8px;
+  word-wrap: break-word;
+  text-align: center;
 }
 .hoverItems md-icon {
   height: inherit;

@@ -12,7 +12,7 @@
     <div id="selectedDropArea" ng-class="{'dragBorder':dragClass}" ng-model="files" name="files" ngf-multiple="true"
          ngf-before-model-change="beforeChange($files,$event)"
          ngf-drop ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}"
-         ngf-drag-over-class="dragover" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
+         ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
 
 
       <ul class="listInline" stratus-sortable ng-sortable="draggedFiles" ng-sortable-item-selector=".draggableImg">
@@ -176,7 +176,7 @@
 </div>
 
 
-<!--- Info dialogue (Angular panel) --->
+<!-- Info dialogue (Angular panel) -->
 
 <script type="text/ng-template" id="uploadedFiles.html">
   <div class="dropContainer mediaDialogue backgroundDark borderRadiusDefault" role="dialog">
@@ -238,7 +238,7 @@
 
           <span ng-show="f.uploadStatus == true && f.errorUpload == false" class="hover-tick hover-tick-run"></span>
         </div>
-        <!-- show error message if uploading fails--->
+        <!-- show error message if uploading fails -->
         <div ng-show="f.errorUpload == true && f.uploadStatus == false" class="errorMessage fontBody verticalCenter">
           {{f.errorMsg}}
         </div>
@@ -254,7 +254,7 @@
 </script>
 
 
-<!--- Full info window (Angular panel)--->
+<!-- Full info window (Angular panel) -->
 <script type="text/ng-template" id="mediaDetail.html">
   <div class="mediaInfoFull mediaDialogue backgroundDark clearfix borderRadiusDefault" role="dialog">
 
