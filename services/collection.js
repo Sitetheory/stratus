@@ -65,6 +65,7 @@
           obj = obj || {};
           angular.forEach(obj, function (value, key) {
             if (angular.isObject(value)) {
+              if (chain) key = chain + '[' + key + ']';
               str.push(that.serialize(value, key));
             } else {
               var encoded = '';
