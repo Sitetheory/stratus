@@ -19,7 +19,6 @@
 }
 #user-authentication md-tabs md-tab-content md-content {
   padding: 0;
-  background-color: #fff !important;
   min-height: 200px;
 }
 #user-authentication md-tabs md-tab-content md-content .form-reset-pass .first-password {
@@ -41,9 +40,10 @@
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.strong .md-bar {
   background-color: #4caf50;
 }
+/*
 #user-authentication md-input-container.email-field {
   margin-top: 40px;
-}
+}*/
 .message {
   padding: 10px;
   text-align: center;
@@ -64,17 +64,7 @@
 .message.success p {
   color: #4caf50;
 }
-input:-webkit-autofill {
-  -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
-  background-color: #e1e1e1;
-}
-input:-webkit-autofill:hover {
-  -webkit-text-fill-color: rgba(0, 0, 0, 0.55);
-}
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: rgba(0, 0, 0, 0.55) !important;
-  background-color: #e1e1e1;
-}
+
 .md-block {
   margin-top: 20px;
 }

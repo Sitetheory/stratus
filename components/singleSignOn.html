@@ -1,7 +1,24 @@
 <div class="social-signin">
 
 
-  <!-- TODO: Use these styles and clean out any css for fontawesome in the singleSignOn.css -->
+  <ul class="listInline">
+    <li>
+      <div  class="fb-login-button"
+            data-max-rows="1" data-size="large"
+            data-show-faces="false"
+            data-use-continue-as="false"
+            class="customFbSignIn"
+            data-scope="public_profile,email"
+            onlogin="checkLoginState();">
+
+      </div>
+    </li>
+    <li>
+      <i class="g-signin2" data-onsuccess="onSignIn"></i>
+    </li>
+  </ul>
+
+  <!-- TODO: Use these styles and clean out any css for fontawesome in the singleSignOn.css. Also Firefox is not loading the SVGs using the md-svg-src so that will need to be debugged. -->
   <ul class="listInline">
     <li>
       <div class="btnSocial useFacebook easyTransition" data-onsuccess="onSignIn">
