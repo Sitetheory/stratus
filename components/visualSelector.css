@@ -3,35 +3,30 @@
   width: 100%;
   margin: 0 0 20px 0;
 }
-
 .lt-header h3 {
   font-size: 22px;
-  color: #000000;
+  color: #000;
 }
-
 .lt-header span {
   display: inline-block;
   text-align: center;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 1px solid #AEAEAE;
+  border: 1px solid #aeaeae;
   line-height: 19px;
-  background: #F5F5F5;
-  margin: 0 10px 0 0px;
+  background: #f5f5f5;
+  margin: 0 10px 0 0;
 }
-
 .lt-header span i {
   font-size: 18px;
-  color: #AEAEAE;
+  color: #aeaeae;
 }
-
 .layout_bx {
   float: left;
   width: 100%;
   margin: 0 0 50px 0;
 }
-
 .lt_box {
   float: left;
   margin: 0;
@@ -39,7 +34,6 @@
   width: 100%;
   min-width: 600px;
 }
-
 .lt-image {
   float: left;
   overflow: hidden;
@@ -48,7 +42,18 @@
   min-width: 100px;
 }
 
-/*.lt-image:after{content:""; position:absolute; top:100%; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); transition:all ease 0.3s;}*/
+/* *
+.lt-image:after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  transition: all ease 0.3s;
+}
+/* */
 .galleryimg-active:after {
   content: "";
   position: absolute;
@@ -59,41 +64,35 @@
   background: rgba(0, 0, 0, 0.5);
   transition: all ease 0.3s;
 }
-
 .lt-image:hover:after {
   top: 0;
 }
-
 .lt-content {
   float: right;
   margin: 0;
   padding: 0;
   width: 79%;
 }
-
 .lt-content h4 {
   font-size: 16px;
-  color: #000000;
+  color: #000;
   margin: 0 0 15px 0;
 }
-
 .lt-content p {
   font-size: 14px;
   color: #747474;
   line-height: 22px;
 }
-
 .blck_btn {
   min-width: 80px;
   padding: 7px 15px;
-  color: #FFFFFF !important;
-  background: #000000;
+  color: #fff !important;
+  background: #000;
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
   z-index: 99;
 }
-
 .lt-image a.blck_btn {
   width: 80px;
   height: 35px;
@@ -105,11 +104,9 @@
   bottom: 0;
   transition: all ease 0.3s 0.1s;
 }
-
 .lt-image:hover a.blck_btn {
   left: 0;
 }
-
 ul.layout_gallery {
   list-style-type: none;
   margin: 0;
@@ -117,7 +114,6 @@ ul.layout_gallery {
   text-align: left;
   width: 100%;
 }
-
 ul.layout_gallery li {
   border: 2px solid transparent;
   display: inline-block;
@@ -125,7 +121,6 @@ ul.layout_gallery li {
   overflow: hidden;
   position: relative;
 }
-
 ul.layout_gallery li:nth-child(3n) {
   margin-right: 0;
 }
@@ -139,18 +134,15 @@ ul.layout_gallery li:nth-child(3n) {
   width: 100%;
   position: relative;
 }
-
 ul.layout_gallery li h5 {
   font-size: 15px;
-  color: #000000;
+  color: #000;
   text-align: center;
 }
-
 .sr_ico i {
-  color: #FFFFFF;
+  color: #fff;
   font-size: 40px;
 }
-
 .sr_ico {
   position: absolute;
   left: 0;
@@ -161,20 +153,18 @@ ul.layout_gallery li h5 {
   z-index: 99;
   width: 40px;
   height: 42px;
-  transition: all ease 0.2s .2s !important;
+  transition: all ease 0.2s 0.2s !important;
 }
-
 .bl_btn {
   min-width: 80px;
   padding: 10px 15px;
-  color: #FFFFFF !important;
-  background: #4A90E2;
+  color: #fff !important;
+  background: #4a90e2;
   text-decoration: none;
   font-size: 13px;
   font-weight: 600;
   z-index: 99;
 }
-
 .galleryimg-cont .bl_btn {
   width: 130px;
   position: absolute;
@@ -183,103 +173,85 @@ ul.layout_gallery li h5 {
   right: 0;
   margin: 0 auto;
   text-align: center;
-  transition: all ease 0.2s .2s;
+  transition: all ease 0.2s 0.2s;
 }
-
 ul.layout_gallery li:hover .galleryimg-cont:after {
   width: 100%;
   height: 100%;
 }
-
 ul.layout_gallery li:hover .sr_ico {
   top: -30%;
 }
-
 ul.layout_gallery li:hover .galleryimg-cont .bl_btn {
   bottom: 30%;
 }
-
 ul.lt-pagination {
   float: right;
   clear: both;
   border-top: 1px solid #979797;
   padding: 10px 0 0 0;
 }
-
 ul.lt-pagination li {
   display: inline-block;
   margin: 0 8px;
 }
-
 ul.lt-pagination li a {
   color: #747474;
   text-decoration: none;
   font-size: 17px;
   font-weight: 600;
 }
-
 ul.lt-pagination li a.active {
-  color: #000000;
+  color: #000;
 }
-
 ul.lt-pagination li:first-child {
   margin-right: 20px;
 }
-
 ul.lt-pagination li:last-child {
   margin-left: 20px;
 }
-
 .lt-popup {
   position: absolute;
   max-width: 800px;
   padding: 40px 40px;
-  background: #EDEDED;
+  background: #ededed;
   width: 100%;
   top: 20%;
 }
-
 .ltpop-left {
   float: left;
   width: 30%;
   margin: 0 5% 0 0;
 }
-
 .ltpop-left h3 {
   font-size: 18px;
-  color: #000000;
+  color: #000;
   margin: 0 0 15px 0;
 }
-
 .ltpop-left p {
   font-size: 14px;
-  color: #888888;
+  color: #888;
   line-height: 22px;
 }
-
 .ltpop-left .bl_btn {
   display: inline-block;
   margin: 15px 0 0 0;
   clear: both;
 }
-
 .ltpop-right {
   float: left;
   width: 65%;
 }
-
 .ltpop-right img {
   width: 100%;
 }
-
 .lt-close {
   position: absolute;
   top: 10px;
   right: 15px;
   text-decoration: none;
-  color: #999999;
+  color: #999;
 }
-
 .media-dialog {
   width: 100%;
   top: 10% !important;
@@ -289,16 +261,14 @@ ul.lt-pagination li:last-child {
 .search--gallery {
   width: 60%;
 }
-
 .select-highlight {
   border: 3px solid red;
 }
-
 .layout-dialog {
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
-  background: rgba(0, 0, 0, .7);
+  background: rgba(0, 0, 0, 0.7);
   padding: 40px;
   display: inline-block;
   position: absolute;
@@ -308,11 +278,10 @@ ul.lt-pagination li:last-child {
   top: 0;
   bottom: 0;
 }
-
 .cancel--btn {
   background: rgba(0, 0, 0, 0) url(/assets/1/0/bundles/sitetheorycore/images/media/close_red.png) repeat scroll 0 0 / 34px auto;
   border: medium none;
-  color: #FF0000;
+  color: #f00;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
@@ -325,7 +294,6 @@ ul.lt-pagination li:last-child {
   width: 34px;
   z-index: 99;
 }
-
 .galleryimg-cont::after {
   background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
   bottom: 0;
@@ -339,16 +307,13 @@ ul.lt-pagination li:last-child {
   transition: all 0.3s ease 0s;
   width: 0
 }
-
 .galleryimg-cont.select-highlight {
   max-height: 281px;
 }
-
 .visual-pag {
   float: left !important;
   margin: 0 0 0 60% !important;
 }
-
 .lt-image::after {
   background: rgba(0, 0, 0, 0.5) none repeat scroll 0 0;
   content: "";
@@ -365,25 +330,21 @@ ul.lt-pagination li:last-child {
     right: -60%;
     top: 20px;
   }
-
   .lt-content {
     padding: 10px 0 0;
     text-align: center;
   }
-
   .lt-image {
     display: block;
     float: none;
     text-align: center;
     width: 100%;
   }
-
   .lt-content {
     float: left;
     width: 100%;
     text-align: center;
   }
-
   .lt_box {
     min-width: 100%;
   }

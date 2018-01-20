@@ -1,24 +1,24 @@
 @import "mediaSelector.less";
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
 
-@white-color: #FFFFFF;
-@list-media-background: #2E2E2E;
-@primary-color: #2196F3;
+@white-color: #fff;
+@list-media-background: #2e2e2e;
+@primary-color: #2196f3;
 @red-s: #fde1df;
-@red-xxl: #F44336;
-@purple: #9C27B0;
-@orange: #FF9800;
-@light-green: #8BC34A;
+@red-xxl: #f44336;
+@purple: #9c27b0;
+@orange: #ff9800;
+@light-green: #8bc34a;
 @green-s: #c7e7c8;
-@green: #4CAF50;
-@blue-link: #3F51B5;
-@gray-ss: #FAFAFA;
-@gray-s: #E1E1E1;
+@green: #4caf50;
+@blue-link: #3f51b5;
+@gray-ss: #fafafa;
+@gray-s: #e1e1e1;
 @gray-m: rgba(0, 0, 0, 0.2);
 @gray-l: rgba(0, 0, 0, 0.55);
 @gray-xl: #636262;
-@gray-xxl: #333333;
-@white-gray: #5C5C5C;
+@gray-xxl: #333;
+@white-gray: #5c5c5c;
 @yellow-light: rgba(255, 255, 0, 0.25);
 @fontweight-l: 600;
 @fontweight-xl: 700;
@@ -54,7 +54,6 @@
     }
   }
 }
-
 #openLibrary {
   .instructions {
     width: 100%;
@@ -66,7 +65,6 @@
     border: 3px dashed @gray-m;
   }
 }
-
 .mediaLibraryContent {
   background: @list-media-background;
   border-radius: 3px;
@@ -100,7 +98,6 @@
       margin: 2em auto;
       column-width: 200px;
       box-shadow: 0 1px rgba(214, 211, 211, 0.4);
-
       .media-item {
         display: inline-block;
         margin-bottom: 0.4em;
@@ -110,7 +107,7 @@
           width: 100%; height: auto;
           box-shadow: 0 1px 1px rgba(214, 211, 211, 0.4);
           opacity: 1;
-          transition: .5s ease;
+          transition: 0.5s ease;
           backface-visibility: hidden;
         }
         .middle-details {
@@ -119,7 +116,7 @@
           top: 50%;
           left: 50%;
           width: 100%;
-          transition: .5s ease;
+          transition: 0.5s ease;
           -ms-transform: translate(-50%, -50%); /* IE 9 */
           -webkit-transform: translate(-50%, -50%); /* Safari */
           transform: translate(-50%, -50%);
@@ -164,17 +161,15 @@
     }
 
     @media screen and (max-width: 750px) {
-      .medias { column-gap: 0px; }
+      .medias { column-gap: 0; }
       .medias .media-item  { width: 100%; }
     }
   }
-
   .library-footer {
     height: 40px;
     display: block;
     position: relative;
   }
-
   .nav-button {
     display: block;
     position: relative;
@@ -211,7 +206,6 @@
 .md-dialog-container {
   z-index: 999;
 }
-
 .drag-drop-dialog {
   min-width: 1000px;
   .dropContainer {

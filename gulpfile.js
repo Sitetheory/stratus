@@ -4,11 +4,7 @@ var pump = require('pump');
 var concat = require('gulp-concat');
 var debug = require('gulp-debug');
 var dest = require('gulp-dest');
-var jscs = require('gulp-jscs');
 var uglify = require('gulp-uglify');
-var less = require('gulp-less');
-var cleanCSS = require('gulp-clean-css');
-var htmlmin = require('gulp-htmlmin');
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
 var _ = require('underscore');
@@ -95,19 +91,21 @@ var location = {
   },
   less: {
     core: [
-      'stratus.less',
+      //'stratus.less',
       'components/*.less'
     ],
     compile: []
   },
   css: {
     core: [
-      'stratus.css',
-      'components/*.css'
+      //'stratus.css',
+      'components/*.css',
+      'directives/*.css'
     ],
     min: [
-      'stratus.min.css',
-      'components/*.min.css'
+      //'stratus.min.css',
+      'components/*.min.css',
+      'directives/*.min.css'
     ]
   },
   template: {
@@ -131,20 +129,41 @@ gulp.task('build', function (callback) {
   );
 });
 
-// Code Styling
-gulp.task('jscs', function (callback) {
+// Code Linters
+gulp.task('lint:js', function (callback) {
+  const jscs = require('gulp-jscs');
+
   pump([
       gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min), 'source/*.js')),
       debug({
         title: 'Verify:'
       }),
-      jscs(),
+      jscs({
+        //fix: true
+      }),
       jscs.reporter(),
       jscs.reporter('fail')
     ],
     callback
   );
 });
+
+gulp.task('lint:css', function lintCssTask() {
+  const gulpStylelint = require('gulp-stylelint');
+
+  return gulp
+    .src(_.union(location.css.core, nullify(location.css.min)))
+    .pipe(gulpStylelint({
+      //fix: true,
+      reporters: [
+        {
+          formatter: 'string',
+          console: true
+        }
+      ]
+    }));
+});
+
 
 // Blanket Functions
 gulp.task('compile', [
@@ -167,6 +186,10 @@ gulp.task('dist', [
   'dist:boot',
   'dist:stratus',
   'dist:compress'
+]);
+gulp.task('lint', [
+  'lint:js'
+  //'lint:css'
 ]);
 
 // Distribution Functions
@@ -274,6 +297,7 @@ gulp.task('clean:less', function () {
     .pipe(vinylPaths(del));
 });
 gulp.task('compile:less', ['clean:less'], function (callback) {
+  const less = require('gulp-less');
   pump([
       gulp.src(_.union(location.less.core, nullify(location.less.compile)), {
         base: '.'
@@ -298,6 +322,7 @@ gulp.task('clean:css', function () {
     .pipe(vinylPaths(del));
 });
 gulp.task('compress:css', ['clean:css'], function (callback) {
+  const cleanCSS = require('gulp-clean-css');
   pump([
       gulp.src(_.union(location.css.core, nullify(location.css.min)), {
         base: '.'
@@ -326,6 +351,7 @@ gulp.task('clean:template', function () {
     .pipe(vinylPaths(del));
 });
 gulp.task('compress:template', ['clean:template'], function (callback) {
+  const htmlmin = require('gulp-htmlmin');
   pump([
       gulp.src(_.union(location.template.core, nullify(location.template.min)), {
         base: '.'

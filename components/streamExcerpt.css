@@ -1,13 +1,13 @@
 #excerpt {
-  background: #222222;
+  background: #222;
 }
 #excerpt .background-picture {
   padding-bottom: 2em;
-  border-bottom: 1px solid #333333;
+  border-bottom: 1px solid #333;
   border-bottom-style: dashed;
 }
 #excerpt .layout-content {
-  margin: 2em 0em 2em 0em;
+  margin: 2em 0 2em 0;
 }
 #excerpt .layout-content .levels li {
   padding: 5px;
@@ -27,11 +27,11 @@
   font-family: Roboto, sans-serif;
   font-size: 40px;
   line-height: 40px;
-  color: #666666;
+  color: #666;
   font-weight: 100;
 }
 #excerpt .layout-content .details .profile {
-  margin: 2em 0em 2em 0em;
+  margin: 2em 0 2em 0;
   padding-bottom: 2em;
 }
 #excerpt .layout-content .details .profile .profile-image img {
@@ -46,11 +46,11 @@
   margin-bottom: 2em;
 }
 #excerpt .layout-content .details .profile .profile-inform .title h2 {
-  color: #FFFFFF;
+  color: #fff;
   font-weight: 100;
 }
 #excerpt .layout-content .details .profile .profile-inform .title h4 {
-  color: #FFFFFF;
+  color: #fff;
 }
 #excerpt .layout-content .details .profile .profile-inform .contact {
   text-align: center;
