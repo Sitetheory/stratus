@@ -1,11 +1,11 @@
 <div ng-cloak>
-    <md-content id="user-authentication">
+    <md-content id="user-authentication" class="defaultShadow defaultBorderRadius">
         <md-progress-linear ng-if="$ctrl.loading" md-mode="indeterminate"></md-progress-linear>
         <div class="tab-toggle-background"></div>
         <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex">
             <md-tab label="Sign In" class="sign-in" ng-click="$ctrl.showForgotPassForm(false)">
                 <md-content class="md-padding">
-                    <div class="message center"
+                    <div class="message"
                          ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}"
                          ng-if="$ctrl.message != null">
                         <p ng-bind-html="$ctrl.safeMessage()"></p>
@@ -17,7 +17,7 @@
                               ng-if="!$ctrl.enabledForgotPassForm">
 
                             <div class="clearfix">
-                                <div class="formColumn column1">
+                                <div class="form-column column1">
                                     <md-input-container class="md-block email-field">
                                         <input name="email" type="email" ng-model="signinData.email" required
                                                placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
@@ -28,7 +28,7 @@
                                         </ng-messages>
                                     </md-input-container>
                                 </div>
-                                <div class="formColumn column2">
+                                <div class="form-column column2">
                                     <md-input-container class="md-block">
                                         <input name="password" type="password" ng-model="signinData.password" required
                                                placeholder="Password">
@@ -37,7 +37,7 @@
                                         </ng-messages>
                                     </md-input-container>
                                 </div>
-                                <div class="formColumn submitColumn">
+                                <div class="form-column submit-column">
                                     <md-button type="submit" class="btn btnSignIn gradientAnchor" ng-disabled="signInForm.$invalid || $ctrl.loading">
                                         <div class="btnGradientLight"></div>
                                         Sign In
@@ -45,7 +45,7 @@
                                 </div>
                             </div>
 
-                            <div class="linkForgot">
+                            <div class="link-forgot">
                                 <a ng-click="$ctrl.showForgotPassForm(true)"
                                    capitalize-first>{{ $ctrl.forgotPassText }}
                                     <div class="animatedUnderline"></div>
@@ -60,20 +60,20 @@
 
                             <div class="divTable forgotTitle">
                                 <div class="divTableRow">
-                                    <div class="divTableCell borderColumn">
-                                        <div class="labelBorder"></div>
+                                    <div class="divTableCell border-column">
+                                        <div class="label-border"></div>
                                     </div>
                                     <div class="divTableCell titleColumn">
                                         <h3>Password Reset Request</h3>
                                     </div>
-                                    <div class="divTableCell borderColumn">
-                                        <div class="labelBorder"></div>
+                                    <div class="divTableCell border-column">
+                                        <div class="label-border"></div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="clearfix">
-                                <div class="formColumn column1">
+                                <div class="form-column column1">
                                     <md-input-container class="md-block" flex-gt-sm>
                                         <input name="email" type="email" ng-model="resetPassData.email" required
                                                placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
@@ -84,7 +84,7 @@
                                         </ng-messages>
                                     </md-input-container>
                                 </div>
-                                <div class="formColumn column2">
+                                <div class="form-column column2">
                                     <md-input-container class="md-block" flex-gt-sm>
                                         <input name="phone" type="text" ng-model="resetPassData.phone" required
                                                placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
@@ -94,7 +94,7 @@
                                         </ng-messages>
                                     </md-input-container>
                                 </div>
-                                <div class="formColumn submitColumn">
+                                <div class="form-column submit-column">
                                     <md-button type="submit" class="btn btnSignIn gradientAnchor"
                                                ng-disabled="forgotPassForm.$invalid || $ctrl.loading">Send Reset
                                         Link
@@ -102,10 +102,10 @@
                                     </md-button>
                                 </div>
                             </div>
-                            <div class="textRight linkForgot">
+                            <div class="textRight link-forgot">
                                 <a ng-click="$ctrl.showForgotPassForm(false)"
                                    capitalize-first>{{ $ctrl.forgotPassText }} >
-                                    <div class="animatedUnderline"></div>
+                                    <div class="animated-underline"></div>
                                 </a>
                             </div>
                         </form>
@@ -115,13 +115,13 @@
                         <form class="form-reset-pass" name="resetPassForm"
                               ng-submit="resetPassForm.$valid && $ctrl.doResetPass($ctrl.resetPassData)"
                               ng-if="$ctrl.enabledResetPassForm">
-                            <div class="center show-error">
+                            <div class="show-error">
                                 <h3>{{ $ctrl.resetPassHeaderText }}</h3>
                                 <h4>{{ $ctrl.resetPassHeaderEmail }}</h4>
                             </div>
 
                             <div class="clearfix">
-                                <div class="formColumn column1">
+                                <div class="form-column column1">
                                     <md-input-container class="md-block first-password" flex-gt-sm>
                                         <input name="password" type="password" ng-model="$ctrl.resetPassData.password" required
                                                placeholder="Password phrase">
@@ -134,7 +134,7 @@
                                     </md-input-container>
                                 </div>
 
-                                <div class="formColumn column2">
+                                <div class="form-column column2">
                                     <md-input-container class="md-block" flex-gt-sm>
                                         <input name="confirm_password" type="password" ng-model="$ctrl.resetPassData.confirm_password" required placeholder="Confirm password phrase" stratus-password-check password="{{$ctrl.resetPassData.password}}">
                                         <ng-messages for="resetPassForm.confirm_password.$error" ng-if="resetPassForm.confirm_password.$dirty">
@@ -143,7 +143,7 @@
                                         </ng-messages>
                                     </md-input-container>
                                 </div>
-                                <div class="formColumn submitColumn">
+                                <div class="form-column submit-column">
                                     <md-button type="submit" class="btn"
                                                ng-disabled="resetPassForm.$invalid || !$ctrl.allowSubmit || $ctrl.loading">
                                         {{ $ctrl.changePassBtnText }}
@@ -157,10 +157,8 @@
                         </form>
 
                         <div class="verify" ng-if="$ctrl.enabledVerifyForm">
-                            <div class="center">
-                                <h3>Verifying your account...</h3>
-                            </div>
-                            <div class="center" ng-init="$ctrl.verifyAccount()">
+                            <h3>Verifying your account...</h3>
+                            <div class="textCenter" ng-init="$ctrl.verifyAccount()">
                                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
                             </div>
                         </div>
@@ -178,7 +176,7 @@
                     </div>
                     <form class="form-sign-up" name="registrationForm" ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)" >
                         <div class="clearfix">
-                            <div class="formColumn column1">
+                            <div class="form-column column1">
                                 <md-input-container class="md-block email-field">
                                     <input name="email" type="email" ng-model="signupData.email" required
                                            placeholder="Email Address" ng-pattern="$ctrl.emailRegex">
@@ -189,7 +187,7 @@
                                     </ng-messages>
                                 </md-input-container>
                             </div>
-                            <div class="formColumn column2">
+                            <div class="form-column column2">
                                 <md-input-container class="md-block" ng-if="!$ctrl.socialMode">
                                     <input name="phone" type="text" ng-model="signupData.phone" required
                                            placeholder="Recovery Phone" ng-pattern="$ctrl.phoneRegex">
@@ -201,7 +199,7 @@
                                     </ng-messages>
                                 </md-input-container>
                             </div>
-                            <div class="formColumn submitColumn">
+                            <div class="form-column submit-column">
                                 <md-button type="submit" class="btn btnSignIn gradientAnchor"
                                            ng-disabled="registrationForm.$invalid || $ctrl.loading" stratus-clicked-disable>
                                     Create Account
@@ -215,16 +213,16 @@
         </md-tabs>
 
         <div class="social-signin">
-            <div class="divTable social-signin-table">
+            <div class="divTable social-title-table">
                 <div class="divTableRow">
-                    <div class="divTableCell borderColumn">
-                        <div class="labelBorder"></div>
+                    <div class="divTableCell border-column">
+                        <div class="label-border"></div>
                     </div>
                     <div class="divTableCell titleColumn">
                         <h4 class="use-social-label">Or Sign In Using</h4>
                     </div>
-                    <div class="divTableCell borderColumn">
-                        <div class="labelBorder"></div>
+                    <div class="divTableCell border-column">
+                        <div class="label-border"></div>
                     </div>
                 </div>
             </div>

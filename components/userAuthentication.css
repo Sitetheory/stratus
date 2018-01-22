@@ -1,30 +1,5 @@
-#user-authentication {
-  background-color: #fff;
-  box-shadow: 0 5px 1px 0 rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  max-width: 100%;
-}
-#user-authentication md-progress-linear .md-bar {
-  background-color: #4caf50;
-}
-#user-authentication h1:first-child {
-  margin-top: 0;
-}
-#user-authentication md-tabs {
-  background: #fff;
-}
-#user-authentication md-tabs md-tab-content {
-  padding-top: 0;
-  background-color: #fff;
-}
-#user-authentication md-tabs md-tab-content md-content {
-  padding: 0;
-  min-height: 200px;
-}
-#user-authentication md-tabs md-tab-content md-content .form-reset-pass .first-password {
-  margin-top: 35px;
-  margin-bottom: 35px;
-}
+/* Does angular have default colors for these elements already? If so, we need to delete these. If there are no angular defaults, we need to move these into a central css sheet, so they can be re-used. We don't want one-off styling of these in lots of places
+
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.risky .md-bar {
   background-color: #f44336;
 }
@@ -39,81 +14,89 @@
 }
 #user-authentication md-tabs md-tab-content md-content md-progress-linear.strong .md-bar {
   background-color: #4caf50;
-}
-/*
-#user-authentication md-input-container.email-field {
-  margin-top: 40px;
-}*/
-.message {
-  padding: 10px;
-  text-align: center;
-}
-.message p {
-  font-size: 15px;
-  margin-bottom: 0;
-}
-.message.error {
-  background-color: #fde1df;
-}
-.message.error p {
-  color: #f44336;
-}
-.message.success {
-  background-color: #c7e7c8;
-}
-.message.success p {
-  color: #4caf50;
+} */
+
+
+/* Do we have to add cursor: pointer to all the button & link elements? It seems odd to rely on CSS to make the cursor function normally. */
+a {
+  cursor: pointer;
 }
 
-.md-block {
-  margin-top: 20px;
+
+
+.user-form {
+  max-width: 360px;
 }
-.center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.message p {
+  padding: 10px;
 }
-.center h3 {
-  color: #636262;
-}
-.center h4 {
-  color: rgba(0, 0, 0, 0.55);
-}
-.center.show-error {
-  display: block;
-  text-align: center;
-}
-.center.show-error h3 {
+.show-error h3 {
   margin-bottom: 3px;
 }
-.center.show-error h4 {
+.show-error h4 {
   margin-top: 0;
-  text-transform: none;
-}
-.md-raised {
-  margin: auto;
-}
-.link-button {
-  color: #3f51b5;
-  border: none;
-  background: none;
-  font-size: 12px;
-  line-height: 14px;
-  overflow: hidden;
-  margin: 1em 0 1em 0;
-}
-.link-button:hover {
-  background-color: none;
-  cursor: pointer;
-  border-bottom: 1px solid #3f51b5;
-  color: #fff;
-}
-form {
-  margin: 1em 0.5em 0 0.5em;
 }
 .verify {
   margin-top: 50px;
+  text-align: center;
 }
+
+
+#user-authentication md-tabs md-tab-content {
+  padding-top: 0;
+}
+#user-authentication md-tabs md-tab-content md-content {
+  padding: 0;
+  min-height: 200px;
+}
+#user-authentication md-tabs md-tab-content md-content .form-reset-pass .first-password {
+  margin-top: 35px;
+  margin-bottom: 35px;
+}
+#user-authentication form {
+  margin: 2.5em 1.5em;
+}
+.submit-column {
+  text-align: center;
+}
+.btn.md-button {
+  margin-top: 0;
+  padding: 15px 20px;
+  min-width: 180px;
+}
+.link-forgot {
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* Social Sign-In Title */
 .social-signin {
-  margin-bottom: 0.5em;
+  margin-bottom: 2.5em;
+}
+.social-title-table {
+  margin: 0 0 1.5em;
+  width: 100%;
+}
+.border-column {
+  width: 40%;
+}
+.use-social-label {
+  margin: 0;
+  padding: 0 12px;
+  text-align: center;
+  white-space: nowrap;
+}
+.label-border {
+  height: 2px;
+  border-top: 1px solid rgba(216,216,216,.6);
+}
+
+/* Social Sign-In Buttons */
+.social-signin ul {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+.social-signin ul li {
+  margin: 0 4px;
 }
