@@ -1,5 +1,9 @@
+/* TODO: Remove all font-awesome references after the html is using SVGs instead */
+
 @import "../bower_components/font-awesome/css/font-awesome.min.css";
-.fa {
+
+.fa,
+.btnSocial {
   cursor: pointer;
 }
 .fa-google-plus-official {
@@ -43,4 +47,37 @@
       border-radius: 20px !important;
     }
   }
+}
+
+
+
+.btn-social {
+  cursor: pointer;
+  width: 52px;
+  height: 52px;
+  position: relative;
+  text-align: center;
+  background: rgba(255,255,255,.3);
+  border-radius: 2px;
+  -webkit-backface-visibility: hidden;
+}
+.btn-social svg,
+.btn-social md-icon {
+  width: 30px;
+  height: 30px;
+}
+.btn-social svg g {
+  fill: #FFF;
+}
+.btn-social.use-facebook {
+  background: linear-gradient(#4375BD, #3B5998);
+  background: -webkit-linear-gradient(#4375BD, #3B5998);
+}
+.btn-social.use-google {
+  background: linear-gradient(#77B368, #468D41);
+  background: -webkit-linear-gradient(#77B368, #468D41);
+}
+.btn-social.use-facebook:hover,
+.btn-social.use-google:hover {
+  opacity: .8;
 }

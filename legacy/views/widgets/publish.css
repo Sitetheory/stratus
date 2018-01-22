@@ -1,118 +1,136 @@
-/* TODO: make publish svg a sprite and reset position (not rotation like it currently does for testing only) */
-[data-type="publish"] .btnPublish {
+
+.btn.btnPublishFull {
   padding: 14px 20px 0 20px !important;
   width: inherit;
   height: 55px;
-  color: #FFFFFF;
+  color: #FFF;
   font-size: 14px;
   background: #FF5B3A;
 }
 
-[data-type="publish"] .btnPublish svg {
+.btn.btnPublishFull svg {
   position: relative;
   margin-right: 8px;
   width: 28px;
   vertical-align: middle;
 }
 
-[data-type="publish"] .btnPublish svg .actionButton {
-  transition: transform 0.3s ease-out;
-  -webkit-transition: transform 0.3s ease-out;
+.btn.btnPublishFull svg .actionButton {
+  transition: transform .3s ease-out;
+  -webkit-transition: transform .3s ease-out;
   transform: translateX(0);
   -webkit-transform: translateX(0);
-  fill: #FFFFFF;
+  fill: #FFF;
 }
 
-[data-type="publish"] .btnPublish:hover {
+.btn.btnPublishFull:hover {
   background: #FF7550;
 }
 
 /* Published */
-[data-type="publish"].published .btnPublish svg .actionButton {
+
+.published.btnPublishFull svg .actionButton {
   transform: translateX(-25%);
   -webkit-transform: translateX(-25%);
 }
 
-[data-type="publish"].published .btnPublish {
+.published.md-button.btnPublishFull,
+.published.btnPublishFull {
   background: #56995E;
 }
 
-[data-type="publish"].published .btnPublish:hover {
+.published.md-button.btnPublishFull:not([disabled]):hover,
+.published.btnPublishFull:not([disabled]):hover {
   background: #7CB27D;
 }
 
+/* Unpublished */
+
+.unpublished.md-button.btnPublishFull,
+.unpublished.btnPublishFull {
+  background: #D96236;
+}
+
+.unpublished.md-button.btnPublishFull:not([disabled]):hover,
+.unpublished.btnPublishFull:not([disabled]):hover {
+  background: #FF7B55;
+}
+
 /* Delayed */
-[data-type="publish"].delayed .btnPublish {
+
+.delayed.md-button.btnPublishFull,
+.delayed.btnPublishFull {
   background: #734564;
 }
 
-[data-type="publish"].delayed .btnPublish:hover {
+.delayed.md-button.btnPublishFull:not([disabled]):hover,
+.delayed.btnPublishFull:not([disabled]):hover {
   background: #A47594;
 }
 
-[data-type="publish"].delayed .btnPublish svg .actionButton {
+.delayed.btnPublishFull svg .actionButton {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
 
-[data-type="publish"] .btnPublish:hover .publishIcon svg,
-[data-type="publish"].published .btnPublish:hover .publishIcon svg,
-[data-type="publish"].delayed .btnPublish:hover .publishIcon svg {
-  animation: btnIconGrow 0.3s ease-out both;
-  -webkit-animation: btnIconGrow 0.3s ease-out both;
+.btnPublishFull:hover .publishIconFull svg,
+.published.btnPublishFull:hover .publishIconFull svg,
+.delayed.btnPublishFull:hover .publishIconFull svg {
+  animation: btnIconGrow .3s ease-out both;
+  -webkit-animation: btnIconGrow .3s ease-out both;
 }
 
-[data-type="publish"] .btnPublishDropdown {
+.btn.btnPublishDropdown {
   width: 245px;
   padding: 15px;
 }
 
 /* hide unpublish button if not published */
-[data-type="publish"].unpublished [data-action="unpublish"] {
+/**
+.btn.unpublished [data-action="unpublish"] {
   display: none;
 }
+/**/
 
-[data-type="publish"] .btnPublishMore {
+.btn.btnPublishMore {
   padding: 17px 13px 0 13px !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.4);
+  border-left: 1px solid rgba(255, 255, 255, .4);
 }
 
-#header .btnPublish .caret {
+#header .btnPublishFull .caret {
   opacity: .7;
   border-width: 5px;
-  border-top-color: #FFFFFF;
+  border-top-color: #FFF;
 }
 
-#header .btnPublish:hover .caret {
+#header .btnPublishFull:hover .caret {
   opacity: 1;
 }
 
 /* Bootstrap polishes to timepicker clock */
+/**
 .bootstrap-datetimepicker-widget table td,
 .bootstrap-datetimepicker-widget table td span {
-  width: 46px;
-  height: 36px;
-  line-height: 36px;
+    width: 46px;
+    height: 36px;
+    line-height: 36px;
 }
-
 .bootstrap-datetimepicker-widget .timepicker-hour,
 .bootstrap-datetimepicker-widget .timepicker-minute,
 .bootstrap-datetimepicker-widget .timepicker-second {
-  padding: 0;
+    padding: 0;
 }
-
 .bootstrap-datetimepicker-widget table td.today:before {
-  border-bottom-color: #FF7552;
+    border-bottom-color: #FF7552;
 }
-
 .bootstrap-datetimepicker-widget table td.hover,
 .bootstrap-datetimepicker-widget table td.active,
 .bootstrap-datetimepicker-widget table td.active.today,
 .bootstrap-datetimepicker-widget table td.active:hover {
-  text-shadow: none;
-  background-color: #FF7552;
+    text-shadow: none;
+    background-color: #FF7552;
 }
-
 .bootstrap-datetimepicker-widget table td span:hover {
-  background: none;
+    background: none ;
 }
+/**/
