@@ -267,14 +267,13 @@
               // show cross icon if upload failed
               file.errorUpload = true;
 
-              // $scope.errorMsg = rejection.status + ': ' + rejection.data;
               file.errorMsg = 'Server Error! Please try again';
             }
           }
         );
 
         file.upload.progress(function (evt) {
-          file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+          file.progress = evt.total === 0 ? 0 : Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
         });
 
         return file.upload;
