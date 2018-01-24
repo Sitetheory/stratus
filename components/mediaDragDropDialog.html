@@ -51,11 +51,8 @@
   </md-dialog-content>
 
   <md-dialog-actions layout="row" class="backgroundDark">
-    <md-button ng-disabled="!uploadComp" class="md-raised md-primary" ng-click="done()" >
-      Done
-    </md-button>
-    <md-button class="md-raised md-primary" ng-click="cancel()">
-      Cancel
+    <md-button ng-disabled="uploadingFiles" class="md-raised md-primary" ng-click="cancel()" >
+      Close
     </md-button>
   </md-dialog-actions>
 </md-dialog>
