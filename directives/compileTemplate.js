@@ -10,6 +10,7 @@
     return {
       restrict: 'A',
       link: function (scope, element, attr) {
+        Stratus.Instances[_.uniqueId('compile_template_')] = $scope;
         attr.$observe('ngBindHtml', function () {
           if (attr.ngBindHtml) {
             $compile(element[0].children)(scope);

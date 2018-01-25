@@ -65,13 +65,13 @@
         */
         $scope.getStatus = function (invoiceProduct) {
           invoiceProduct = invoiceProduct.data;
-          var currentTime = new Date().getTime();
-          var timeEnd = invoiceProduct.timeEnd || currentTime;
-          var timeStart = invoiceProduct.timeStart;
-          console.log('current TIme', currentTime);
-          if (invoiceProduct.timeEnd <= currentTime) return 'cancelled';
-          if (currentTime < invoiceProduct.timeStart) return 'pendingActivation';
-          if (invoiceProduct.timeStart <= currentTime && currentTime <= invoiceProduct.timeEnd) return 'active';
+          var currentTime = Math.floor(Date.now());
+          var timeEnd = invoiceProduct.timeEnd || currentTime + 1000;
+          var timeStart = invoiceProduct.timeStart || currentTime + 1000;
+          console.log('currentTime', currentTime);
+          if (timeEnd <= currentTime) return 'cancelled';
+          if (currentTime < timeStart) return 'pendingActivation';
+          if (timeStart <= currentTime && currentTime <= timeEnd) return 'active';
         };
 
         /*
