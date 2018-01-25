@@ -30,10 +30,12 @@
         $scope.models = [];
 
         // the content is showing
-        $scope.contents = [];
+        $scope.subscriptions = [];
 
         // status
-        $scope.status = [{ desc: 'Active', value: 1 }, { desc: 'Inactive', value: 0 }, { desc: 'Deleted', value: -1 }];
+        $scope.status = [{ desc: 'Cancelled', value: -1 }, { desc: 'Active', value: 1 }, { desc: 'Pending Activatioin', value: 0 }];
+        $scope.status = [{ desc: 'Cancelled', value: -1 }, { desc: 'Active', value: 1 }, { desc: 'Pending Activatioin', value: 0 }];
+        $scope.status = [{ desc: 'Cancelled', value: -1 }, { desc: 'Active', value: 1 }, { desc: 'Pending Activatioin', value: 0 }];
         $scope.showOnly = [];
 
         /**
@@ -44,7 +46,7 @@
         // Data Connectivity
         $scope.$watch('collection.models', function (models) {
           if (models && models.length > 0) {
-            $scope.models = $scope.contents = models;
+            $scope.models = $scope.subscriptions = models;
           }
         });
 
@@ -53,6 +55,23 @@
           var index = $scope.showOnly.indexOf(value);
           (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(value);
           filterStatus();
+        };
+
+        /**
+        * Get status of invoice_product
+        * Active: timeStart <= currentTime <= timeEnd
+        * Pending Activation: currentTime < timeStart
+        * Cancelled: timeEnd <= currentTime
+        */
+        $scope.getStatus = function (invoiceProduct) {
+          invoiceProduct = invoiceProduct.data;
+          var currentTime = new Date().getTime();
+          var timeEnd = invoiceProduct.timeEnd || currentTime;
+          var timeStart = invoiceProduct.timeStart;
+          console.log('current TIme', currentTime);
+          if (invoiceProduct.timeEnd <= currentTime) return 'cancelled';
+          if (currentTime < invoiceProduct.timeStart) return 'pendingActivation';
+          if (invoiceProduct.timeStart <= currentTime && currentTime <= invoiceProduct.timeEnd) return 'active';
         };
 
         /*
