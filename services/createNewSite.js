@@ -16,6 +16,8 @@
         var createNewSiteServices = {};
         var url = '/Api/Site';
 
+        // TODO: This can use collections from the registry
+
         createNewSiteServices.create = function (data) {
           return $http({
             url: url,

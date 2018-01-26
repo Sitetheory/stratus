@@ -24,9 +24,13 @@
         verifyAccount: verifyAccount
       };
 
-      function signIn(data) {
+      /**
+       * @param data
+       * @param url
+       */
+      function sendPost(data, url) {
         return $http({
-          url: loginUrl,
+          url: url || commonUrl,
           method: 'POST',
           data: data
         }).then(
@@ -38,70 +42,26 @@
             // something went wrong
             return $q.reject(response);
           });
+      };
+
+      function signIn(data) {
+        return sendPost(data, loginUrl);
       };
 
       function signUp(data) {
-        return $http({
-          url: commonUrl,
-          method: 'POST',
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
+        return sendPost(data);
       };
 
       function requestResetPass(data) {
-        return $http({
-          method: 'POST',
-          url: commonUrl,
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
+        return sendPost(data);
       };
 
       function resetPass(data) {
-        return $http({
-          method: 'POST',
-          url: commonUrl,
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
+        return sendPost(data);
       };
 
       function verifyAccount(data) {
-        return $http({
-          method: 'POST',
-          url: commonUrl,
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
+        return sendPost(data);
       };
     }]);
   }];

@@ -13,7 +13,7 @@
       'stratus.services.userAuthentication',
       'stratus.services.commonMethods',
       'stratus.directives.passwordCheck',
-      'stratus.directives.compileTemplate',
+      'stratus.directives.compileTemplate'
     ], factory);
   } else {
     // Browser globals
@@ -38,10 +38,10 @@
       $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
       $ctrl.phoneRegex = /^[\d+\-().]+$/;
       $ctrl.enabledForgotPassForm = false;
-      $ctrl.isHandlingUrl = commonMethods.getUrlParams().type !== null ? true : false;
-      $ctrl.enabledResetPassForm = commonMethods.getUrlParams().type === 'reset-password' ? true : false;
+      $ctrl.isHandlingUrl = commonMethods.getUrlParams().type !== null;
+      $ctrl.enabledResetPassForm = commonMethods.getUrlParams().type === 'reset-password';
       $ctrl.resetPassHeaderEmail = commonMethods.getUrlParams().type === 'reset-password' ? commonMethods.getUrlParams().email : null;
-      $ctrl.enabledVerifyForm = commonMethods.getUrlParams().type === 'verify' ? true : false;
+      $ctrl.enabledVerifyForm = commonMethods.getUrlParams().type === 'verify';
       $ctrl.forgotPassText = 'Forgot Password?';
       $ctrl.resetPassHeaderText = 'Reset your account password';
       $ctrl.changePassBtnText = 'Reset Password';
@@ -98,7 +98,7 @@
 
         userAuthentication.verifyAccount(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().verify) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().verify) {
             $ctrl.message = commonMethods.getStatus(response).message;
             $ctrl.isRequestSuccess = true;
             $ctrl.enabledVerifyForm = false;
@@ -122,7 +122,7 @@
 
         userAuthentication.signIn(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
             return $window.location.href = '/';
           } else {
             $ctrl.isRequestSuccess = false;
@@ -146,12 +146,12 @@
 
         userAuthentication.signUp(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
             return $window.location.href = '/';
           } else {
             $ctrl.isRequestSuccess = false;
             var status = commonMethods.getStatus(response);
-            $ctrl.message = (status.code == 'DUPLICATE') ? $ctrl.duplicateMessge : status.message;
+            $ctrl.message = (status.code === 'DUPLICATE') ? $ctrl.duplicateMessge : status.message;
           }
         });
       }
@@ -167,7 +167,7 @@
 
         userAuthentication.requestResetPass(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
             $ctrl.isRequestSuccess = true;
           } else {
             $ctrl.isRequestSuccess = false;
@@ -189,7 +189,7 @@
 
         userAuthentication.resetPass(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
             $window.location.href = $window.location.origin + '/Member/Sign-In';
           } else {
             $ctrl.isRequestSuccess = false;

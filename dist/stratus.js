@@ -3119,8 +3119,8 @@ Stratus.Loaders.Angular = function () {
           nodes = document.querySelectorAll(selector);
           element.length += nodes.length;
           if (nodes.length) {
-            var name = selector.replace('[', '').replace(']', '');
-            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('stratus', '').replace('ng', '')));
+            var name = selector.replace(/^\[/, '').replace(/]$/, '');
+            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')));
             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
               injection = {
                 requirement: requirement
@@ -3136,7 +3136,7 @@ Stratus.Loaders.Angular = function () {
         nodes = document.querySelectorAll(element.selector);
         element.length = nodes.length;
         if (nodes.length) {
-          var attribute = element.selector.replace('[', '').replace(']', '');
+          var attribute = element.selector.replace(/^\[/, '').replace(/]$/, '');
           if (element.namespace) {
             _.each(nodes, function (node) {
               var name = node.getAttribute(attribute);

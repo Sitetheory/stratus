@@ -81,10 +81,10 @@
       display: inline-block;
       color: @white-color;
     }
-    .title{
+    .title {
       font-weight: bold;
     }
-    .instructions{
+    .instructions {
       float: right;
     }
   }
@@ -104,7 +104,8 @@
         position: relative;
         img {
           object-fit: cover;
-          width: 100%; height: auto;
+          width: 100%;
+          height: auto;
           box-shadow: 0 1px 1px rgba(214, 211, 211, 0.4);
           opacity: 1;
           transition: 0.5s ease;
@@ -121,14 +122,14 @@
           -webkit-transform: translate(-50%, -50%); /* Safari */
           transform: translate(-50%, -50%);
           text-align: center;
-          .name p{
+          .name p {
             font-weight: bold;
             color: whitesmoke;
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
           }
-          .time p{
+          .time p {
             color: whitesmoke;
             font-size: 14px;
           }
@@ -161,8 +162,12 @@
     }
 
     @media screen and (max-width: 750px) {
-      .medias { column-gap: 0; }
-      .medias .media-item  { width: 100%; }
+      .medias {
+        column-gap: 0;
+      }
+      .medias .media-item {
+        width: 100%;
+      }
     }
   }
   .library-footer {
