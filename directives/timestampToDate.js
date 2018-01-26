@@ -34,18 +34,22 @@
     factory(root.Stratus, root._);
   }
 }(this, function (Stratus, _) {
-  // This directive intends to handle binding of a model to convert value string to number
-  Stratus.Directives.StringToNumber = function ($parse, $log) {
+  // This directive intends to handle binding of a model to convert value as timestap to date
+  Stratus.Directives.TimestampToDate = function ($parse, $log) {
     return {
       restrict: 'A',
       require: 'ngModel',
+      scope: {
+        format: '<'
+      },
       link: function ($scope, $element, $attrs, ngModel) {
-        Stratus.Instances[_.uniqueId('string_to_number_')] = $scope;
+        Stratus.Instances[_.uniqueId('timestamp_to_date_')] = $scope;
+        $scope.format |= 'yyyy/MM/dd';
         ngModel.$parsers.push(function (value) {
           return '' + value;
         });
         ngModel.$formatters.push(function (value) {
-          return parseFloat(value);
+          return new Date(value);
         });
       }
     };
