@@ -180,6 +180,10 @@ boot.config({
     'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
     'stratus.controllers.filterContentType': boot.bundle + 'stratus/controllers/filterContentType' + boot.suffix,
     'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
+    'stratus.controllers.selectMainRoute': boot.bundle + 'stratus/controllers/selectMainRoute' + boot.suffix,
+    'stratus.controllers.utilities': boot.bundle + 'stratus/controllers/utilities' + boot.suffix,
+    'stratus.controllers.productFilter': boot.bundle + 'stratus/controllers/productFilter' + boot.suffix,
+    'stratus.controllers.invoiceProductFilter': boot.bundle + 'stratus/controllers/invoiceProductFilter' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
@@ -246,7 +250,6 @@ boot.config({
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
-    'stratus.services.filterContentType': boot.bundle + 'stratus/services/filterContentType' + boot.suffix,
     'stratus.services.adminThemeSelector': boot.bundle + 'stratus/services/adminThemeSelector' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
     'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,

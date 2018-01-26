@@ -87,7 +87,7 @@
 
           userAuthentication.resetPass(data).then(function (response) {
             $ctrl.loading = false;
-            if (getStatus(response).code == RESPONSE_CODE.success) {
+            if (getStatus(response).code === RESPONSE_CODE.success) {
               $ctrl.isRequestSuccess = true;
             } else {
               $ctrl.isRequestSuccess = false;

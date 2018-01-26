@@ -53,17 +53,17 @@
   height: 30px;
 }
 .btn-social svg g {
-  fill: #FFF;
+  fill: #fff;
 }
 .btn-social.use-facebook {
-  background: linear-gradient(#4375BD, #3B5998);
-  background: -webkit-linear-gradient(#4375BD, #3B5998);
+  background: linear-gradient(#4375bd, #3b5998);
+  background: -webkit-linear-gradient(#4375bd, #3b5998);
 }
 .btn-social.use-google {
-  background: linear-gradient(#77B368, #468D41);
-  background: -webkit-linear-gradient(#77B368, #468D41);
+  background: linear-gradient(#77b368, #468d41);
+  background: -webkit-linear-gradient(#77b368, #468d41);
 }
 .btn-social.use-facebook:hover,
 .btn-social.use-google:hover {
-  opacity: .8;
+  opacity: 0.8;
 }

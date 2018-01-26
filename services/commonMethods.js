@@ -1,3 +1,4 @@
+// TODO: Separate these functions out, into more narrow services
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -95,7 +96,7 @@
             data.progressBarClass = 'strong';
             data.progressBarValue = 100;
             break;
-        };
+        }
 
         return data;
       };
@@ -115,16 +116,15 @@
       };
 
       /**
-      * Get more params which is shown after '#' symbol in url.
-      * @return {*}
-      */
+       * Get more params which is shown after '#' symbol in url.
+       * @return {*}
+       */
       function moreParams() {
         var params = {};
         angular.forEach(location.hash.split('#'), function (param) {
           if (param) {
-            var key = param.split('/')[0];
-            var value = param.split('/')[1];
-            params[key] = value;
+            var digest = param.split('/');
+            params[digest[0]] = digest[1];
           }
         });
         return params;

@@ -79,9 +79,6 @@
         }
       });
 
-      // done button when uploading is finished
-      $scope.uploadComp = false;
-
       function showDetails(media) {
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
@@ -168,12 +165,7 @@
           // controller for media upload dialog
           function DialogController($scope, files) {
             $scope.files = files;
-            $scope.uploadComp = false;
-
-            $scope.done = function () {
-              $mdDialog.hide();
-              media.dragleave();
-            };
+            $scope.uploadingFiles = true;
 
             $scope.cancel = function () {
               $mdDialog.cancel();
@@ -226,7 +218,7 @@
             function (error) {
               console.log(error);
             });
-          $scope.uploadComp = true;
+          $scope.uploadingFiles = false;
         }
       }
 
@@ -267,14 +259,13 @@
               // show cross icon if upload failed
               file.errorUpload = true;
 
-              // $scope.errorMsg = rejection.status + ': ' + rejection.data;
               file.errorMsg = 'Server Error! Please try again';
             }
           }
         );
 
         file.upload.progress(function (evt) {
-          file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+          file.progress = evt.total === 0 ? 0 : Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
         });
 
         return file.upload;

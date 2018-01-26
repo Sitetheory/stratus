@@ -16,10 +16,10 @@
 
     <ul class="listInline response clearfix">
       <li class="droppedItem" ng-repeat="file in files track by $index" ng-class="file.uploadStatus == true ? 'uploadComplete' : '' ">
-        <div class="image--cn" ng-class="file.progress >= 0 && file.uploadStatus == false ? 'progressVisible' : 'progressInvisible' ">
+        <div class="image--cn" ng-class="file.progress >= 0 && file.uploadStatus === false ? 'progressVisible' : 'progressInvisible' ">
           <div class="progressPercentage fontBody">{{file.progress}}%</div>
           <div class="progress">
-            <div ng-if="file.progress >= 0 && file.uploadStatus = false && file.errorUpload === false" class="progressColorBar" style="width:{{file.progress}}%"></div>
+            <div ng-if="file.progress >= 0 && file.uploadStatus === false && file.errorUpload === false" class="progressColorBar" style="width:{{file.progress}}%"></div>
             <span ng-if="file.uploadStatus === true && file.errorUpload === false" class="hover-tick hover-tick-run"></span>
           </div>
           <div class="image">
@@ -32,9 +32,9 @@
                 <md-tooltip>Abort upload</md-tooltip>
                 <i class="fa fa-times-circle" aria-hidden="true"></i>
               </button>
-              <div ng-if="file.uploadStatus == true" class="successCheck">
-                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
-              </div>
+            </div>
+            <div ng-if="file.uploadStatus === true" class="successCheck">
+              <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
             </div>
           </div>
         </div>
@@ -51,11 +51,8 @@
   </md-dialog-content>
 
   <md-dialog-actions layout="row" class="backgroundDark">
-    <md-button ng-disabled="!uploadComp" class="md-raised md-primary" ng-click="done()" >
-      Done
-    </md-button>
-    <md-button class="md-raised md-primary" ng-click="cancel()">
-      Cancel
+    <md-button ng-disabled="uploadingFiles" class="md-raised md-primary" ng-click="cancel()" >
+      Close
     </md-button>
   </md-dialog-actions>
 </md-dialog>

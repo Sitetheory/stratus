@@ -1,109 +1,93 @@
 @import "../stratus";
-
 .btn.btnPublishFull {
   padding: 14px 20px 0 20px !important;
   width: inherit;
   height: 55px;
-  color: #FFF;
+  color: #fff;
   font-size: 14px;
-  background: #FF5B3A;
+  background: #ff5b3a;
 }
-
 .btn.btnPublishFull svg {
   position: relative;
   margin-right: 8px;
   width: 28px;
   vertical-align: middle;
 }
-
 .btn.btnPublishFull svg .actionButton {
-  transition: transform .3s ease-out;
-  -webkit-transition: transform .3s ease-out;
+  transition: transform 0.3s ease-out;
+  -webkit-transition: transform 0.3s ease-out;
   transform: translateX(0);
   -webkit-transform: translateX(0);
-  fill: #FFF;
+  fill: #fff;
 }
-
 .btn.btnPublishFull:hover {
-  background: #FF7550;
+  background: #ff7550;
 }
 
 /* Published */
-
 .published.btnPublishFull svg .actionButton {
   transform: translateX(-25%);
   -webkit-transform: translateX(-25%);
 }
-
 .published.md-button.btnPublishFull,
 .published.btnPublishFull {
-  background: #56995E;
+  background: #56995e;
 }
-
 .published.md-button.btnPublishFull:not([disabled]):hover,
 .published.btnPublishFull:not([disabled]):hover {
-  background: #7CB27D;
+  background: #7cb27d;
 }
 
 /* Unpublished */
-
 .unpublished.md-button.btnPublishFull,
 .unpublished.btnPublishFull {
-  background: #D96236;
+  background: #d96236;
 }
-
 .unpublished.md-button.btnPublishFull:not([disabled]):hover,
 .unpublished.btnPublishFull:not([disabled]):hover {
-  background: #FF7B55;
+  background: #ff7b55;
 }
 
 /* Delayed */
-
 .delayed.md-button.btnPublishFull,
 .delayed.btnPublishFull {
   background: #734564;
 }
-
 .delayed.md-button.btnPublishFull:not([disabled]):hover,
 .delayed.btnPublishFull:not([disabled]):hover {
-  background: #A47594;
+  background: #a47594;
 }
-
 .delayed.btnPublishFull svg .actionButton {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
-
 .btnPublishFull:hover .publishIconFull svg,
 .published.btnPublishFull:hover .publishIconFull svg,
 .delayed.btnPublishFull:hover .publishIconFull svg {
-  animation: btnIconGrow .3s ease-out both;
-  -webkit-animation: btnIconGrow .3s ease-out both;
+  animation: btnIconGrow 0.3s ease-out both;
+  -webkit-animation: btnIconGrow 0.3s ease-out both;
 }
-
 .btn.btnPublishDropdown {
   width: 245px;
   padding: 15px;
 }
 
 /* hide unpublish button if not published */
+
 /**
 .btn.unpublished [data-action="unpublish"] {
   display: none;
 }
 /**/
-
 .btn.btnPublishMore {
   padding: 17px 13px 0 13px !important;
-  border-left: 1px solid rgba(255, 255, 255, .4);
+  border-left: 1px solid rgba(255, 255, 255, 0.4);
 }
-
 #header .btnPublishFull .caret {
-  opacity: .7;
+  opacity: 0.7;
   border-width: 5px;
-  border-top-color: #FFF;
+  border-top-color: #fff;
 }
-
 #header .btnPublishFull:hover .caret {
   opacity: 1;
 }

@@ -15,6 +15,8 @@
     $provide.factory('adminThemeSelector', ['$q', '$http', function ($q, $http) {
       var urlApi = '/Api/Template';
 
+      // TODO: This can use collections from the registry
+
       function selectTheme(data) {
         return $http({
           url: urlApi,
