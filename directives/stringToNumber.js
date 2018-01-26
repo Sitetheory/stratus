@@ -41,7 +41,12 @@
       require: 'ngModel',
       link: function ($scope, $element, $attrs, ngModel) {
         Stratus.Instances[_.uniqueId('string_to_number_')] = $scope;
-        console.log('here');
+        ngModel.$parsers.push(function (value) {
+          return '' + value;
+        });
+        ngModel.$formatters.push(function (value) {
+          return parseFloat(value);
+        });
       }
     };
   };
