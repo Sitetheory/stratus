@@ -1,74 +1,128 @@
+// Invoice Product Filter Controller
+// -----------------
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
       'underscore',
-      'angular',
-
+      'angular'
     ], factory);
   } else {
     factory(root.Stratus, root._);
   }
 }(this, function (Stratus, _) {
-    // This Controller handles simple element binding
-    // for a single scope to an API Object Reference.
-    Stratus.Controllers.InvoiceProductFilter = [
-      '$scope',
-      '$element',
-      '$log',
-      '$http',
-      '$parse',
-      function ($scope, $element, $log, $http, $parse) {
-        // Store Instance
-        Stratus.Instances[_.uniqueId('invoice_product_filter_')] = $scope;
+  // This Controller handles simple element binding
+  // for a single scope to an API Object Reference.
+  Stratus.Controllers.InvoiceProductFilter = [
+    '$scope',
+    '$log',
+    function ($scope, $log) {
+      // Store Instance
+      Stratus.Instances[_.uniqueId('invoice_product_filter_')] = $scope;
 
-        // Wrappers
-        $scope.Stratus = Stratus;
-        $scope._ = _;
+      // Wrappers
+      $scope.Stratus = Stratus;
+      $scope._ = _;
 
-        // the models get from collection
-        $scope.models = [];
+      // the models get from collection
+      $scope.timeStart = null;
+      $scope.timeEnd = null;
 
-        // the content is showing
-        $scope.contents = [];
+      // status
+      $scope.status = [
+        {
+          desc: 'Cancelled',
+          value: -1
+        },
+        {
+          desc: 'Active',
+          value: 1
+        },
+        {
+          desc: 'Pending Activation',
+          value: 0
+        }
+      ];
 
-        // status
-        $scope.status = [{ desc: 'Active', value: 1 }, { desc: 'Inactive', value: 0 }, { desc: 'Deleted', value: -1 }];
-        $scope.showOnly = [];
+      // status selected
+      $scope.showOnly = [];
 
-        /**
-        * Default Billing Increment Options for Product
-        */
-        $scope.billingIncrementOptions = { i: 'Minutely', h: 'Hourly', d: 'Daily', w: 'Weekly', m: 'Monthly', q: 'Quarterly', y: 'Yearly' };
+      /**
+       * Default Billing Increment Options for Product
+       */
+      $scope.billingIncrementOptions = {
+        i: 'Minutely',
+        h: 'Hourly',
+        d: 'Daily',
+        w: 'Weekly',
+        m: 'Monthly',
+        q: 'Quarterly',
+        y: 'Yearly'
+      };
 
-        // Data Connectivity
-        $scope.$watch('collection.models', function (models) {
-          if (models && models.length > 0) {
-            $scope.models = $scope.contents = models;
-          }
+      // handle click action
+      $scope.toggle = function (value) {
+        var index = $scope.showOnly.indexOf(value);
+        (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(value);
+        filterStatus();
+      };
+
+      /**
+       * Get status of invoice_product
+       * Active: timeStart <= currentTime <= timeEnd
+       * Pending Activation: currentTime < timeStart
+       * Cancelled: timeEnd <= currentTime
+       */
+      $scope.getStatus = function (invoiceProduct) {
+        invoiceProduct = invoiceProduct.data;
+        var currentTime = Math.floor(Date.now());
+        var timeEnd = (invoiceProduct.timeEnd) ? invoiceProduct.timeEnd : currentTime + 1000;
+        var timeStart = invoiceProduct.timeStart || currentTime + 1000;
+        if (timeEnd <= currentTime) {
+          return 'cancelled';
+        }
+        if (currentTime < timeStart) {
+          return 'pendingActivation';
+        }
+        if (timeStart <= currentTime && currentTime <= timeEnd) {
+          return 'active';
+        }
+      };
+
+      /*
+      * Filter by status: active: 1, inactive: 0, deleted: -1
+      */
+      function filterStatus() {
+        filter('api.options.invoiceStatus', $scope.showOnly);
+      };
+
+      $scope.filterSite = function (siteId) {
+        filter('api.options.siteId', siteId);
+      };
+
+      $scope.filterProduct = function (productContentId) {
+        filter('api.options.productContentId', productContentId);
+      };
+
+      function filter(type, data) {
+        $scope.collection.meta.set(type, data);
+        $scope.collection.fetch().then(function (response) {
+          $log.log('response:', response);
         });
+      }
 
-        // handle click action
-        $scope.toggle = function (value) {
-          var index = $scope.showOnly.indexOf(value);
-          (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(value);
-          filterStatus();
-        };
-
-        /*
-        * Filter by status: active: 1, inactive: 0, deleted: -1
-        */
-        function filterStatus() {
-          $scope.contents = [];
-          if ($scope.showOnly.length == 0) {
-            $scope.contents = $scope.models;
-            return;
-          }
-          angular.forEach($scope.models, function (model) {
-            if ($scope.showOnly.indexOf(model.data.status)  != -1) {
-              $scope.contents.push(model);
-            }
+      $scope.filterDateRanger = function () {
+        if ($scope.timeStart && $scope.timeEnd && angular.isDate($scope.timeStart) && angular.isDate($scope.timeEnd)) {
+          $scope.timeStart = new Date($scope.timeStart);
+          $scope.timeEnd = new Date($scope.timeEnd);
+          $scope.collection.meta.set('api.options.timeStart', $scope.timeStart.getTime() / 1000);
+          $scope.collection.meta.set('api.options.timeEnd', $scope.timeEnd.getTime() / 1000);
+          $scope.collection.fetch().then(function (response) {
+            $log.log('response:', response);
           });
-        };
-      }];
-  }));
+        }
+      };
+
+    }];
+}));
