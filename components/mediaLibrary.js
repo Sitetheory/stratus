@@ -21,6 +21,7 @@
       'stratus.components.search',
       'stratus.components.pagination',
       'stratus.components.mediaDetails',
+      'stratus.components.mediaUploader',
 
       // Directives
       'stratus.directives.singleClick',
@@ -57,6 +58,7 @@
       $ctrl.uploadToLibrary = uploadToLibrary;
       $ctrl.showDetails = showDetails;
       $ctrl.deleteFromMedia = deleteFromMedia;
+      $ctrl.openUploader = openUploader;
 
       // fetch media collection and hydrate to $scope.collection
       $ctrl.registry = new registry();
@@ -78,6 +80,23 @@
           preProcessOfSavingMedia(_.difference(newFiles, oldFiles));
         }
       });
+
+      function openUploader() {
+        $mdDialog.show({
+          attachTo: angular.element(document.querySelector('#listContainer')),
+          controller: OpenUploaderController,
+          template: '<stratus-media-uploader></stratus-media-uploader>',
+          clickOutsideToClose: false,
+          focusOnOpen: true,
+          autoWrap: true
+        });
+
+        function OpenUploaderController($scope) {
+          $scope.uploadToLibrary = function (files) {
+            uploadToLibrary(files);
+          };
+        };
+      }
 
       function showDetails(media) {
         $mdDialog.show({
@@ -152,7 +171,7 @@
             locals: {
               files: files
             },
-            templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDragDropDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
+            templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaUploaderDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
             parent: angular.element(document.body),
             clickOutsideToClose: false,
             escapeToClose: false,

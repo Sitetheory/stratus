@@ -1,21 +1,11 @@
-<div id="openLibrary">
-  <div class="sectionContainer mediaLibrary borderRadiusDefault">
-    <div class="instructions">
-      To upload images to your library, drag &amp; drop or
-      <a  href="#"
-          ngf-multiple="true"
-          ngf-select="$ctrl.uploadToLibrary($files)"
-          ngf-max-files="20"
-          ngf-model-invalid="invalidFiles"
-          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.pdf,.png'}">browse</a>
-    </div>
-  </div>
-
-  <!-- show list media library -->
-  <div class="mediaLibraryContent">
+<div id="open-library">
+  <div class="media-library-content">
     <div class="library-content">
-      <stratus-search></stratus-search>
-
+      <div layout-gt-sm="row">
+        <button class="stGrid column15 btn gradientAnchor md-button md-ink-ripple open-uploader" ng-click="$ctrl.openUploader()">Add +</button>
+        <div class="stGrid column5"></div>
+        <stratus-search class="stGrid column80"></stratus-search>
+      </div>
       <div class="medias">
         <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url">
           <img src="{{media.data.url}}">
@@ -34,5 +24,4 @@
       <stratus-pagination></stratus-pagination>
     </div>
   </div>
-  <!-- end show list media library -->
 </div>

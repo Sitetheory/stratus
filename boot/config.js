@@ -158,6 +158,7 @@ boot.config({
     'stratus.components.proposalAlert': boot.bundle + 'stratus/components/proposalAlert' + boot.suffix,
     'stratus.components.mediaDragDrop': boot.bundle + 'stratus/components/mediaDragDrop' + boot.suffix,
     'stratus.components.mediaDetails': boot.bundle + 'stratus/components/mediaDetails' + boot.suffix,
+    'stratus.components.mediaUploader': boot.bundle + 'stratus/components/mediaUploader' + boot.suffix,
     'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory

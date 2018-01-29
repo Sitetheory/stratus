@@ -665,7 +665,7 @@ md-input-container label {
   border-radius: 3px;
   border: 2px solid #636262;
 }
-#openLibrary .instructions {
+#open-library .instructions {
   width: 100%;
   padding: 10px;
   color: rgba(0, 0, 0, 0.55);
@@ -674,46 +674,51 @@ md-input-container label {
   border-radius: 3px;
   border: 3px dashed rgba(0, 0, 0, 0.2);
 }
-.mediaLibraryContent {
+#open-library .media-library-content {
   background: #2e2e2e;
   border-radius: 3px;
   padding: 1em;
 }
-.mediaLibraryContent ul li {
+#open-library .media-library-content ul li {
   width: 15%;
 }
-.mediaLibraryContent .library-header {
+#open-library .media-library-content .library-header {
   height: 40px;
   box-shadow: 0 1px rgba(214, 211, 211, 0.4);
 }
-.mediaLibraryContent .library-header p {
+#open-library .media-library-content .library-header p {
   display: inline-block;
   color: #fff;
 }
-.mediaLibraryContent .library-header .title {
+#open-library .media-library-content .library-header .title {
   font-weight: bold;
 }
-.mediaLibraryContent .library-header .instructions {
+#open-library .media-library-content .library-header .instructions {
   float: right;
 }
-.mediaLibraryContent .library-content {
+#open-library .media-library-content .library-content {
   margin-top: 1em;
 }
-.mediaLibraryContent .library-content stratus-search {
+#open-library .media-library-content .library-content stratus-search {
   margin-bottom: 0.5em;
 }
-.mediaLibraryContent .library-content .medias {
+#open-library .media-library-content .library-content .open-uploader {
+  margin-top: 0;
+  margin-right: 0;
+  margin-left: 0;
+}
+#open-library .media-library-content .library-content .medias {
   max-width: 900px;
   margin: 2em auto;
   column-width: 200px;
   box-shadow: 0 1px rgba(214, 211, 211, 0.4);
 }
-.mediaLibraryContent .library-content .medias .media-item {
+#open-library .media-library-content .library-content .medias .media-item {
   display: inline-block;
   margin-bottom: 0.4em;
   position: relative;
 }
-.mediaLibraryContent .library-content .medias .media-item img {
+#open-library .media-library-content .library-content .medias .media-item img {
   object-fit: cover;
   width: 100%;
   height: auto;
@@ -722,7 +727,7 @@ md-input-container label {
   transition: 0.5s ease;
   backface-visibility: hidden;
 }
-.mediaLibraryContent .library-content .medias .media-item .middle-details {
+#open-library .media-library-content .library-content .medias .media-item .middle-details {
   opacity: 0;
   position: absolute;
   top: 50%;
@@ -736,78 +741,78 @@ md-input-container label {
   transform: translate(-50%, -50%);
   text-align: center;
 }
-.mediaLibraryContent .library-content .medias .media-item .middle-details .name p {
+#open-library .media-library-content .library-content .medias .media-item .middle-details .name p {
   font-weight: bold;
   color: whitesmoke;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
-.mediaLibraryContent .library-content .medias .media-item .middle-details .time p {
+#open-library .media-library-content .library-content .medias .media-item .middle-details .time p {
   color: whitesmoke;
   font-size: 14px;
 }
-.mediaLibraryContent .library-content .medias .media-item .middle-details .controls .fa {
+#open-library .media-library-content .library-content .medias .media-item .middle-details .controls .fa {
   cursor: pointer;
   width: 40px;
   height: 40px;
   line-height: inherit !important;
   background: #e6e5e561;
 }
-.mediaLibraryContent .library-content .medias .media-item .middle-details .controls .fa-info-circle {
+#open-library .media-library-content .library-content .medias .media-item .middle-details .controls .fa-info-circle {
   color: #fff;
 }
-.mediaLibraryContent .library-content .medias .media-item .middle-details .controls .fa-trash-o {
+#open-library .media-library-content .library-content .medias .media-item .middle-details .controls .fa-trash-o {
   color: #fff;
 }
-.mediaLibraryContent .library-content .medias .media-item:hover {
+#open-library .media-library-content .library-content .medias .media-item:hover {
   background-color: black;
 }
-.mediaLibraryContent .library-content .medias .media-item:hover img {
+#open-library .media-library-content .library-content .medias .media-item:hover img {
   opacity: 0.4;
 }
-.mediaLibraryContent .library-content .medias .media-item:hover .middle-details {
+#open-library .media-library-content .library-content .medias .media-item:hover .middle-details {
   opacity: 1;
 }
 @media screen and (max-width: 750px) {
-  .mediaLibraryContent .library-content .medias {
+  #open-library .media-library-content .library-content .medias {
     column-gap: 0;
   }
-  .mediaLibraryContent .library-content .medias .media-item {
+  #open-library .media-library-content .library-content .medias .media-item {
     width: 100%;
   }
 }
-.mediaLibraryContent .library-footer {
+#open-library .media-library-content .library-footer {
   height: 40px;
   display: block;
   position: relative;
 }
-.mediaLibraryContent .nav-button {
+#open-library .media-library-content .nav-button {
   display: block;
   position: relative;
 }
-.mediaLibraryContent .nav-button stratus-pagination {
+#open-library .media-library-content .nav-button stratus-pagination {
   position: absolute;
   right: 2px;
   top: 3px;
 }
-.mediaLibraryContent .nav-button stratus-pagination .paginator {
+#open-library .media-library-content .nav-button stratus-pagination .paginator {
   padding-top: 0;
   margin-top: 10px;
   margin-bottom: 10px;
   display: inline-block;
   text-align: center;
 }
-.mediaLibraryContent .nav-button stratus-pagination .paginator .paginatorPrevious a,
-.mediaLibraryContent .nav-button stratus-pagination .paginator .paginatorNext a,
-.mediaLibraryContent .nav-button stratus-pagination .paginator .paginatorPages a {
+#open-library .media-library-content .nav-button stratus-pagination .paginator .paginatorPrevious a,
+#open-library .media-library-content .nav-button stratus-pagination .paginator .paginatorNext a,
+#open-library .media-library-content .nav-button stratus-pagination .paginator .paginatorPages a {
   color: white !important;
 }
-.mediaLibraryContent .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular {
+#open-library .media-library-content .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular {
   width: 20px !important;
   height: 20px !important;
 }
-.mediaLibraryContent .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular svg {
+#open-library .media-library-content .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular svg {
   width: 100% !important;
   height: 100% !important;
   transform-origin: unset !important;

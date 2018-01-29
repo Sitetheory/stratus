@@ -1,0 +1,130 @@
+<div class="media-uploader">
+  <div class="toolbar">
+    <div class="md-toolbar-tools">
+      <h2>Add Media To Library</h2>
+      <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.done()">Done</md-button>
+    </div>
+  </div>
+  <div class="content">
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Upload">
+        <md-content class="dropContainer md-padding file">
+          <p class="description">The files you upload here will be saved on redundant file servers and delivered over a high speed, cached CDN (Content Delivery Network)</p>
+          <div class="upload-zone md-padding">
+            <h2>Drag and drop files below, or <span>
+              <a  href="#"
+                  ngf-select="$ctrl.uploadFiles($files)"
+                  ngf-multiple="true"
+                  ngf-max-files="20"
+                  ngf-model-invalid="invalidFiles"
+                  ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.pdf,.png'}">browse
+              </a></span> your local computer</h2>
+            <div class="file-list">
+              <ul class="listInline response clearfix">
+                <li class="droppedItem" ng-repeat="file in $ctrl.files track by $index" ng-class="file.uploadStatus == true ? 'uploadComplete' : '' ">
+                  <div class="image--cn" ng-class="file.progress >= 0 && file.uploadStatus === false ? 'progressVisible' : 'progressInvisible' ">
+                    <div class="progressPercentage fontBody">{{file.progress}}%</div>
+                    <div class="progress">
+                      <div ng-if="file.progress >= 0 && file.uploadStatus === false && file.errorUpload === false" class="progressColorBar" style="width:{{file.progress}}%"></div>
+                      <span ng-if="file.uploadStatus === true && file.errorUpload === false" class="hover-tick hover-tick-run"></span>
+                    </div>
+                    <div class="image">
+                      <div ng-if="file.type == 'application/x-unknown'" class="droppedUnknown positionCenter">
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
+                      </div>
+                      <img ngf-thumbnail="!file.$error && file">
+                      <div class="hoverItems" ng-if="file.upload !== null && file.progress < 100 && !file.upload.aborted">
+                        <button title="Abort" ng-click="file.upload.abort();file.upload.aborted=true" >
+                          <md-tooltip>Abort upload</md-tooltip>
+                          <i class="fa fa-times-circle" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                      <div ng-if="file.uploadStatus === true" class="successCheck">
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                      </div>
+                    </div>
+                  </div>
+                  <div ng-if="file.errorUpload === true && file.uploadStatus === false" class="errorMessage fontBody">
+                    {{ file.errorMsg }}
+                  </div>
+                </li>
+                <li class="errorMessage fontBody" ng-repeat="file in invalidFiles">
+                  <div ng-if="file.$error === 'maxFiles'">Maximum number of files allowed up to {{file.$errorParam}}.</div>
+                  <div ng-if="file.$error === 'pattern'">Sitetheory only allow file with types {{file.$errorParam}}.</div>
+                  <div ng-if="file.$error === 'maxSize'">Looks like your file ({{file.name}}) is too large. You can upload files up to {{file.$errorParam}}.</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </md-content>
+      </md-tab>
+
+      <md-tab label="Video">
+        <md-content class="md-padding video">
+          <p class="description">The best way to share videos is to upload to professional video services that offer free storage and bandwidth, as well as sophisticated, browser-compatible video players that vary the quality and formatting based on device. They also have a popular network to widely promote your video. Simply paste the URL to your video and we'll add it to your site as if it's a native video.</p>
+          <form name="video" ng-submit="$ctrl.uploadVideo()">
+            <md-input-container class="md-block">
+              <md-select name="video.services" ng-model="$ctrl.videoServices">
+                <md-option ng-value="service.value" ng-repeat="service in $ctrl.video.services" placeholder="Services">{{service.label}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label for="video.url">Full URL</label>
+              <input type="url" name="video.url">
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label for="video.title">Title</label>
+              <input type="text" name="video.title">
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label for="video.description">Description</label>
+              <textarea name="video.description" rows="5"></textarea>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label for="video.tags">Tags</label>
+            </md-input-container>
+
+            <md-button class="btn gradientAnchor md-button md-ink-ripple" type="submit">Save</md-button>
+          </form>
+          <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addVideo()">Add video +</md-button>
+        </md-content>
+      </md-tab>
+
+      <md-tab label="Link">
+        <md-content class="md-padding link">
+          <p class="description">If you already have files stored on some other cloud storage, you can add them to your library by just pasting in the URL to the file (or public folder), e.g. Google Drive, Drop Box. Permissions will be set on your third party service, and if you delete the file you will have to manually update your media library.</p>
+          <form name="link" ng-submit="$ctrl.uploadByUrl()">
+            <md-input-container class="md-block">
+              <md-select name="link.services" ng-model="$ctrl.linkServices">
+                <md-option ng-value="service.value" ng-repeat="service in $ctrl.link.services" placeholder="Services">{{service.label}}</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <input type="url" name="link.url" placeholder="Full URL">
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <input type="text" name="link.title" placeholder="Title">
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <textarea name="link.description" rows="5" placeholder="Description"></textarea>
+            </md-input-container>
+
+            <md-input-container class="md-block">
+              <label for="link.tags">Tags</label>
+            </md-input-container>
+
+            <md-button class="btn gradientAnchor md-button md-ink-ripple" type="submit">Save</md-button>
+          </form>
+          <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addUrl()">Add link +</md-button>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </div>
+</div>
