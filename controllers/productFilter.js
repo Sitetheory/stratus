@@ -55,20 +55,29 @@
           filterStatus();
         };
 
-        /*
-        * Filter by status: active: 1, inactive: 0, deleted: -1
-        */
         function filterStatus() {
-          $scope.contents = [];
-          if ($scope.showOnly.length == 0) {
-            $scope.contents = $scope.models;
-            return;
-          }
-          angular.forEach($scope.models, function (model) {
-            if ($scope.showOnly.indexOf(model.data.status)  != -1) {
-              $scope.contents.push(model);
-            }
-          });
+          filter('api.options.status', $scope.showOnly);
         };
+
+        function filter(type, data) {
+          $scope.collection.meta.set(type, data);
+          $scope.collection.fetch().then(function (response) { $scope.contents = response; });
+        }
+
+        // /*
+        // * Filter by status: active: 1, inactive: 0, deleted: -1
+        // */
+        // function filterStatus() {
+        //   $scope.contents = [];
+        //   if ($scope.showOnly.length == 0) {
+        //     $scope.contents = $scope.models;
+        //     return;
+        //   }
+        //   angular.forEach($scope.models, function (model) {
+        //     if ($scope.showOnly.indexOf(model.data.status)  != -1) {
+        //       $scope.contents.push(model);
+        //     }
+        //   });
+        // };
       }];
   }));
