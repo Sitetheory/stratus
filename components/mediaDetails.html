@@ -87,8 +87,8 @@
           <p class="smallLabel">Size: <span>{{$ctrl.media.data.bytesHuman}}</span></p>
           <p class="smallLabel">Ratio: <span>{{$ctrl.media.data.ratio}}</span></p>
         </div>
-        <div class="description" ng-hide="$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{ $ctrl.selectedDesc.description || 'No description' }}</div>
-        <textarea rows="10" class="stGrid column100" ng-show="$ctrl.selectedDesc.editing" ng-model="$ctrl.selectedDesc.description" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedDesc)" autofocus></textarea>
+        <div class="description" ng-if="!$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{ $ctrl.selectedDesc.description || 'No description' }}</div>
+        <textarea rows="10" class="stGrid column100" ng-if="$ctrl.selectedDesc.editing" ng-model="$ctrl.selectedDesc.description" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedDesc)" autofocus></textarea>
       </div>
     </div>
   </div>
