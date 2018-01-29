@@ -28,6 +28,7 @@
 
         // the models get from collection
         $scope.models = [];
+        $scope.siteId = null;
 
         // the content is showing
         $scope.subscriptions = [];
@@ -66,9 +67,8 @@
         $scope.getStatus = function (invoiceProduct) {
           invoiceProduct = invoiceProduct.data;
           var currentTime = Math.floor(Date.now());
-          var timeEnd = invoiceProduct.timeEnd || currentTime + 1000;
+          var timeEnd = (invoiceProduct.timeEnd) ? invoiceProduct.timeEnd : currentTime + 1000;
           var timeStart = invoiceProduct.timeStart || currentTime + 1000;
-          console.log('currentTime', currentTime);
           if (timeEnd <= currentTime) return 'cancelled';
           if (currentTime < timeStart) return 'pendingActivation';
           if (timeStart <= currentTime && currentTime <= timeEnd) return 'active';
@@ -78,16 +78,13 @@
         * Filter by status: active: 1, inactive: 0, deleted: -1
         */
         function filterStatus() {
-          $scope.contents = [];
-          if ($scope.showOnly.length == 0) {
-            $scope.contents = $scope.models;
-            return;
-          }
-          angular.forEach($scope.models, function (model) {
-            if ($scope.showOnly.indexOf(model.data.status)  != -1) {
-              $scope.contents.push(model);
-            }
-          });
+          $scope.collection.meta.set('api.invoiceStatus', $scope.showOnly);
+          $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
+        };
+
+        $scope.filterSite = function (siteId) {
+          $scope.collection.meta.set('api.options.siteId', siteId);
+          $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
         };
       }];
   }));
