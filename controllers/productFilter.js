@@ -26,27 +26,18 @@
         $scope.Stratus = Stratus;
         $scope._ = _;
 
-        // the models get from collection
-        $scope.models = [];
-
-        // the content is showing
-        $scope.contents = [];
+        // status selected
+        $scope.showOnly = [];
 
         // status
         $scope.status = [{ desc: 'Active', value: 1 }, { desc: 'Inactive', value: 0 }, { desc: 'Deleted', value: -1 }];
-        $scope.showOnly = [];
+        $scope.minPrice = 0.00;
+        $scope.maxPrice = 0.00;
 
         /**
         * Default Billing Increment Options for Product
         */
         $scope.billingIncrementOptions = { i: 'Minutely', h: 'Hourly', d: 'Daily', w: 'Weekly', m: 'Monthly', q: 'Quarterly', y: 'Yearly' };
-
-        // Data Connectivity
-        $scope.$watch('collection.models', function (models) {
-          if (models && models.length > 0) {
-            $scope.models = $scope.contents = models;
-          }
-        });
 
         // handle click action
         $scope.toggle = function (value) {
@@ -61,23 +52,15 @@
 
         function filter(type, data) {
           $scope.collection.meta.set(type, data);
-          $scope.collection.fetch().then(function (response) { $scope.contents = response; });
+          $scope.collection.fetch().then(function (response) { console.log('response', response); });
         }
 
-        // /*
-        // * Filter by status: active: 1, inactive: 0, deleted: -1
-        // */
-        // function filterStatus() {
-        //   $scope.contents = [];
-        //   if ($scope.showOnly.length == 0) {
-        //     $scope.contents = $scope.models;
-        //     return;
-        //   }
-        //   angular.forEach($scope.models, function (model) {
-        //     if ($scope.showOnly.indexOf(model.data.status)  != -1) {
-        //       $scope.contents.push(model);
-        //     }
-        //   });
-        // };
+        $scope.$watchCollection('[minPrice, maxPrice]', function (newVal, oldVal) {
+          if ($scope.minPrice >= 0 && $scope.maxPrice >= 0) {
+            $scope.collection.meta.set('api.options.minPrice', $scope.minPrice);
+            $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice);
+            $scope.collection.fetch().then(function (response) { console.log('response', response); });
+          }
+        });
       }];
   }));

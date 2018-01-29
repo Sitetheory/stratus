@@ -27,34 +27,19 @@
         $scope._ = _;
 
         // the models get from collection
-        $scope.models = [];
-        $scope.siteId = null;
-        $scope.productContentId = null;
         $scope.timeStart = null;
         $scope.timeEnd = null;
 
-        // the content is showing
-        $scope.subscriptions = [];
-        $scope.subscriptions = [];
-        $scope.subscriptions = [];
-
         // status
         $scope.status = [{ desc: 'Cancelled', value: -1 }, { desc: 'Active', value: 1 }, { desc: 'Pending Activatioin', value: 0 }];
-        $scope.status = [{ desc: 'Cancelled', value: -1 }, { desc: 'Active', value: 1 }, { desc: 'Pending Activatioin', value: 0 }];
-        $scope.status = [{ desc: 'Cancelled', value: -1 }, { desc: 'Active', value: 1 }, { desc: 'Pending Activatioin', value: 0 }];
+
+        // status selected
         $scope.showOnly = [];
 
         /**
         * Default Billing Increment Options for Product
         */
         $scope.billingIncrementOptions = { i: 'Minutely', h: 'Hourly', d: 'Daily', w: 'Weekly', m: 'Monthly', q: 'Quarterly', y: 'Yearly' };
-
-        // Data Connectivity
-        $scope.$watch('collection.models', function (models) {
-          if (models && models.length > 0) {
-            $scope.models = $scope.subscriptions = models;
-          }
-        });
 
         // handle click action
         $scope.toggle = function (value) {
@@ -86,17 +71,17 @@
           filter('api.options.invoiceStatus', $scope.showOnly);
         };
 
-        $scope.filterSite = function () {
-          filter('api.options.siteId', $scope.siteId);
+        $scope.filterSite = function (siteId) {
+          filter('api.options.siteId', siteId);
         };
 
-        $scope.filterProduct = function () {
-          filter('api.options.productContentId', $scope.productContentId);
+        $scope.filterProduct = function (productContentId) {
+          filter('api.options.productContentId', productContentId);
         };
 
         function filter(type, data) {
           $scope.collection.meta.set(type, data);
-          $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
+          $scope.collection.fetch().then(function (response) { console.log('response', response); });
         }
 
         $scope.filterDateRanger = function () {
@@ -105,7 +90,7 @@
             $scope.timeEnd = new Date($scope.timeEnd);
             $scope.collection.meta.set('api.options.timeStart', $scope.timeStart.getTime() / 1000);;
             $scope.collection.meta.set('api.options.timeEnd', $scope.timeEnd.getTime() / 1000);
-            $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
+            $scope.collection.fetch().then(function (response) { console.log('response', response); });
           }
         };
 
