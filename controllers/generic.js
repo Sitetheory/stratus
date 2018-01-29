@@ -65,10 +65,12 @@
       $scope.isString = angular.isString;
       $scope.isUndefined = angular.isUndefined;
 
-      $scope.createSite = function (siteTitle, siteGenreId) {
+      $scope.createSite = function (siteTitle, siteGenreId, masterSite, masterContentMethod) {
         var data = {
-          name: siteTitle,
-          genre: siteGenreId
+            name: siteTitle,
+            genre: siteGenreId,
+            masterSite: masterSite,
+            masterContentMethod: masterContentMethod
         };
         createNewSite.create(data).then(function (res) {
           console.log(res);

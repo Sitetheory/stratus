@@ -90,10 +90,12 @@
         }
       };
 
-      $scope.createSite = function (siteTitle, siteGenreId) {
+      $scope.createSite = function (siteTitle, siteGenreId, masterSite, masterContentMethod) {
         var data = {
           name: siteTitle,
-          genre: siteGenreId
+          genre: siteGenreId,
+          masterSite: masterSite,
+          masterContentMethod: masterContentMethod
         };
         createNewSite.create(data).then(function (res) {
           if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
