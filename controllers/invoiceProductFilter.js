@@ -30,8 +30,12 @@
         $scope.models = [];
         $scope.siteId = null;
         $scope.productContentId = null;
+        $scope.timeStart = null;
+        $scope.timeEnd = null;
 
         // the content is showing
+        $scope.subscriptions = [];
+        $scope.subscriptions = [];
         $scope.subscriptions = [];
 
         // status
@@ -82,18 +86,28 @@
           filter('api.options.invoiceStatus', $scope.showOnly);
         };
 
-        $scope.filterSite = function (siteId) {
-          filter('api.options.siteId', siteId);
+        $scope.filterSite = function () {
+          filter('api.options.siteId', $scope.siteId);
         };
 
-        $scope.filterProduct = function (productContentId) {
-          filter('api.options.productContentId', productContentId);
+        $scope.filterProduct = function () {
+          filter('api.options.productContentId', $scope.productContentId);
         };
 
         function filter(type, data) {
           $scope.collection.meta.set(type, data);
           $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
         }
+
+        $scope.filterDateRanger = function () {
+          if ($scope.timeStart && $scope.timeEnd && angular.isDate($scope.timeStart) && angular.isDate($scope.timeEnd)) {
+            $scope.timeStart = new Date($scope.timeStart);
+            $scope.timeEnd = new Date($scope.timeEnd);
+            $scope.collection.meta.set('api.options.timeStart', $scope.timeStart.getTime() / 1000);;
+            $scope.collection.meta.set('api.options.timeEnd', $scope.timeEnd.getTime() / 1000);
+            $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
+          }
+        };
 
       }];
   }));
