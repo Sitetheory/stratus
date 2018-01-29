@@ -29,6 +29,7 @@
         // the models get from collection
         $scope.models = [];
         $scope.siteId = null;
+        $scope.productContentId = null;
 
         // the content is showing
         $scope.subscriptions = [];
@@ -78,13 +79,21 @@
         * Filter by status: active: 1, inactive: 0, deleted: -1
         */
         function filterStatus() {
-          $scope.collection.meta.set('api.invoiceStatus', $scope.showOnly);
-          $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
+          filter('api.options.invoiceStatus', $scope.showOnly);
         };
 
         $scope.filterSite = function (siteId) {
-          $scope.collection.meta.set('api.options.siteId', siteId);
-          $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
+          filter('api.options.siteId', siteId);
         };
+
+        $scope.filterProduct = function (productContentId) {
+          filter('api.options.productContentId', productContentId);
+        };
+
+        function filter(type, data) {
+          $scope.collection.meta.set(type, data);
+          $scope.collection.fetch().then(function (response) { $scope.subscriptions = response; });
+        }
+
       }];
   }));
