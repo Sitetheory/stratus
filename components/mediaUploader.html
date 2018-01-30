@@ -2,7 +2,7 @@
   <div class="toolbar">
     <div class="md-toolbar-tools">
       <h2>Add Media To Library</h2>
-      <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.done()">Done</md-button>
+      <md-button ng-disabled="$ctrl.uploadingFiles" class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.done()">Done</md-button>
     </div>
   </div>
   <div class="content">
@@ -13,45 +13,43 @@
           <div class="upload-zone md-padding">
             <h2>Drag and drop files below, or <span>
               <a  href="#"
-                  ngf-select="$ctrl.uploadFiles($files)"
+                  ngf-select="$ctrl.uploadFiles($files, $invalidFiles)"
                   ngf-multiple="true"
-                  ngf-max-files="20"
+                  ngf-max-files="3"
                   ngf-model-invalid="invalidFiles"
                   ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.pdf,.png'}">browse
               </a></span> your local computer</h2>
             <div class="file-list">
               <ul class="listInline response clearfix">
-                <li class="droppedItem" ng-repeat="file in $ctrl.files track by $index" ng-class="file.uploadStatus == true ? 'uploadComplete' : '' ">
-                  <div class="image--cn" ng-class="file.progress >= 0 && file.uploadStatus === false ? 'progressVisible' : 'progressInvisible' ">
+                <li class="droppedItem" ng-repeat="file in $ctrl.files track by $index" ng-class="!file.errorUpload ? 'uploadComplete' : '' ">
+                  <div class="image--cn" ng-class="file.progress >= 0 && !file.errorUpload ? 'progressVisible' : 'progressInvisible' ">
                     <div class="progressPercentage fontBody">{{file.progress}}%</div>
                     <div class="progress">
-                      <div ng-if="file.progress >= 0 && file.uploadStatus === false && file.errorUpload === false" class="progressColorBar" style="width:{{file.progress}}%"></div>
-                      <span ng-if="file.uploadStatus === true && file.errorUpload === false" class="hover-tick hover-tick-run"></span>
+                      <div ng-if="file.progress >= 0 && !file.errorUpload" class="progressColorBar" style="width:{{file.progress}}%"></div>
+                      <span ng-if="!file.errorUpload" class="hover-tick hover-tick-run"></span>
                     </div>
                     <div class="image">
                       <div ng-if="file.type == 'application/x-unknown'" class="droppedUnknown positionCenter">
                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
                       </div>
                       <img ngf-thumbnail="!file.$error && file">
-                      <div class="hoverItems" ng-if="file.upload !== null && file.progress < 100 && !file.upload.aborted">
-                        <button title="Abort" ng-click="file.upload.abort();file.upload.aborted=true" >
+                      <div class="hoverItems" ng-if="!file.errorUpload && file.upload !== null && file.progress < 100 && !file.upload.aborted">
+                        <button title="Abort" ng-click="file.upload.abort(); file.upload.aborted=true" >
                           <md-tooltip>Abort upload</md-tooltip>
                           <i class="fa fa-times-circle" aria-hidden="true"></i>
                         </button>
                       </div>
-                      <div ng-if="file.uploadStatus === true" class="successCheck">
+                      <div ng-if="!file.errorUpload && file.progress === 100" class="successCheck">
                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
                       </div>
                     </div>
                   </div>
-                  <div ng-if="file.errorUpload === true && file.uploadStatus === false" class="errorMessage fontBody">
+                  <div ng-if="file.errorUpload" class="errorMessage fontBody">
                     {{ file.errorMsg }}
                   </div>
                 </li>
-                <li class="errorMessage fontBody" ng-repeat="file in invalidFiles">
-                  <div ng-if="file.$error === 'maxFiles'">Maximum number of files allowed up to {{file.$errorParam}}.</div>
-                  <div ng-if="file.$error === 'pattern'">Sitetheory only allow file with types {{file.$errorParam}}.</div>
-                  <div ng-if="file.$error === 'maxSize'">Looks like your file ({{file.name}}) is too large. You can upload files up to {{file.$errorParam}}.</div>
+                <li class="errorMessage fontBody" ng-repeat="msg in $ctrl.invalidFilesMsg">
+                  <div>{{msg}}</div>
                 </li>
               </ul>
             </div>
@@ -59,7 +57,7 @@
         </md-content>
       </md-tab>
 
-      <md-tab label="Video">
+      <!-- <md-tab label="Video">
         <md-content class="md-padding video">
           <p class="description">The best way to share videos is to upload to professional video services that offer free storage and bandwidth, as well as sophisticated, browser-compatible video players that vary the quality and formatting based on device. They also have a popular network to widely promote your video. Simply paste the URL to your video and we'll add it to your site as if it's a native video.</p>
           <form name="video" ng-submit="$ctrl.uploadVideo()">
@@ -124,7 +122,7 @@
           </form>
           <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addUrl()">Add link +</md-button>
         </md-content>
-      </md-tab>
+      </md-tab> -->
     </md-tabs>
   </div>
 </div>

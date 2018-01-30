@@ -23,7 +23,6 @@
         $mdDialog,
         Upload
       ) {
-        var urlApi = '/Api/Template';
         var tagApi = '/Api/Tag';
         var mediaApi = '/Api/Media/';
 
@@ -34,7 +33,8 @@
           uploadToS3: uploadToS3,
           deleteMedia: deleteMedia,
           updateMedia: updateMedia,
-          getMedia: getMedia
+          getMedia: getMedia,
+          fileUploader: fileUploader
         };
 
         function dragenter(event) {
@@ -50,48 +50,27 @@
         }
 
         function createTag(data) {
-          return $http({
-            url: tagApi,
-            method: 'POST',
-            data: data
-          }).then(
-            function (response) {
-              // success
-              return $q.resolve(response);
-            },
-            function (response) {
-              // something went wrong
-              return $q.reject(response);
-            });
+          return sendRequest(data, 'POST', tagApi);
         }
 
         function deleteMedia(fileId) {
-          return $http({
-            method: 'DELETE',
-            url: mediaApi + fileId
-          }).then(
-            function (response) {
-              // success
-              return $q.resolve(response);
-            },
-            function (response) {
-              // something went wrong
-              return $q.reject(response);
-            });
+          return sendRequest(null, 'DELETE', mediaApi + fileId);
         }
 
         function updateMedia(fileId, data) {
+          return sendRequest(data, 'PUT', mediaApi + fileId);
+        }
+
+        function sendRequest(data, method, url) {
           return $http({
-            method: 'PUT',
-            url: mediaApi + fileId,
+            url: url,
+            method: method,
             data: data
           }).then(
-            function (response) {
-              // success
+            function (response) { // success
               return $q.resolve(response);
             },
-            function (response) {
-              // something went wrong
+            function (response) { // something went wrong
               return $q.reject(response);
             });
         }
@@ -110,8 +89,8 @@
               AWSAccessKeyId: ACCESS_KEY,
               key: file.name, // the key to store the file on S3, could be file name or customized
               acl: 'private', // sets the access to the uploaded file in the bucket: private, public-read, ...
-              policy: POLICY, // base64-encoded json policy (see article below)
-              signature: SIGNATURE, // base64-encoded signature based on policy string (see article below)
+              policy: POLICY, // base64-encoded json policy
+              signature: SIGNATURE, // base64-encoded signature based on policy string
               'Content-Type': file.type != '' ? file.type : 'application/octet-stream', // content type of the file (NotEmpty)
               filename: file.name, // this is needed for Flash polyfill IE8-9
               file: file
@@ -119,11 +98,56 @@
           });
         }
 
-        function loadMedia() {
-          $scope.collection.fetch().then(function (response) {
-            console.log(response);
+        function fileUploader(file, infoId) {
+          file.errorMsg = null;
+          file.errorUpload = false;
+          file.progress = 0;
+
+          file.upload = uploadToS3(file, infoId);
+          file.upload.then(
+            function (res) {
+              file.result = res.data;
+              file.errorUpload = false;
+            },
+            function (rej) {
+              file.errorUpload = true;
+              if (rej.config.data.file.upload.aborted === true) {
+                file.errorMsg = 'Aborted';
+              } else {
+                file.errorMsg = 'Server Error! Please try again';
+              }
+            }
+          );
+
+          file.upload.progress(function (evt) {
+            file.progress = evt.total === 0 ? 0 : Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
           });
-        };
+
+          return file;
+        }
+
+        function preProcessOfSavingMedia(files, infoId) {
+          var returnedResult = {
+            uploadingFiles: false
+          };
+
+          var filePromises = [];
+          for (let i = 0; i < files.length; i++) {
+            filePromises.push(fileUploader(file[i], infoId));
+          }
+
+          if (filePromises.length > 0) {
+            $q.all(filePromises).then(
+              function (success) {
+                getMedia($scope.$parent);
+              },
+              function (error) {
+                console.log(error);
+              }
+            );
+            uploadingFiles = false;
+          }
+        }
       }
     ]);
   }];

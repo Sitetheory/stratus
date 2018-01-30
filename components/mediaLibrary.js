@@ -44,18 +44,30 @@
   // item array into a particular attribute.
   Stratus.Components.MediaLibrary = {
     bindings: {
-      ngModel: '=',
-      target: '@',
-      limit: '@',
-      data: '&'
+      ngModel: '='
     },
-    controller: function ($scope, $http, $attrs, $parse, $element, $timeout, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods, media, $rootElement) {
+    controller: function (
+      $scope,
+      $http,
+      $attrs,
+      $parse,
+      $element,
+      $timeout,
+      Upload,
+      $compile,
+      registry,
+      $mdPanel,
+      $q,
+      $mdDialog,
+      commonMethods,
+      media,
+      $rootElement
+    ) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
       // Variables
       var $ctrl = this;
-      $ctrl.uploadToLibrary = uploadToLibrary;
       $ctrl.showDetails = showDetails;
       $ctrl.deleteFromMedia = deleteFromMedia;
       $ctrl.openUploader = openUploader;
@@ -91,11 +103,7 @@
           autoWrap: true
         });
 
-        function OpenUploaderController($scope) {
-          $scope.uploadToLibrary = function (files) {
-            uploadToLibrary(files);
-          };
-        };
+        function OpenUploaderController($scope) {};
       }
 
       function showDetails(media) {

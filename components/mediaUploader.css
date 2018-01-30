@@ -37,6 +37,8 @@
 .media-uploader .content .file.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image {
   height: 100%;
   position: relative;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 .media-uploader .content .file.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .successCheck {
   top: 0;
