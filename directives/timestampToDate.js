@@ -1,7 +1,4 @@
 // Timestamp to Date Directive
-// -----------------
-
-// Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -13,8 +10,8 @@
     factory(root.Stratus, root._);
   }
 }(this, function (Stratus, _) {
-  // This directive intends to handle binding of a model to convert value as timestamp to date
-  Stratus.Directives.TimestampToDate = function () {
+  // This directive intends to handle binding of a model to convert value as timestap to date, the value is persisted into ng-model still timestamp type.
+  Stratus.Directives.TimestampToDate = function ($parse, $log) {
     return {
       restrict: 'A',
       require: 'ngModel',
@@ -25,7 +22,7 @@
         Stratus.Instances[_.uniqueId('timestamp_to_date_')] = $scope;
         $scope.format |= 'yyyy/MM/dd';
         ngModel.$parsers.push(function (value) {
-          return '' + value;
+          return new Date(value).getTime() / 1000;
         });
         ngModel.$formatters.push(function (value) {
           return new Date(value);
