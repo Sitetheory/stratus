@@ -73,7 +73,7 @@
               <md-tooltip>Delete image</md-tooltip>
               <i class="fa fa-trash fa-2x" aria-hidden="true"></i>
             </li>
-            <li class="icon" ngf-select="$ctrl.uploadToLibrary($files)">
+            <li class="icon" ng-click="$ctrl.openUploader(false, $ctrl.media.data.id)">
               <md-tooltip>Replace image</md-tooltip>
               <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
             </li>
@@ -85,7 +85,7 @@
           <p class="smallLabel">Size: <span>{{$ctrl.media.data.bytesHuman}}</span></p>
           <p class="smallLabel">Ratio: <span>{{$ctrl.media.data.ratio}}</span></p>
         </div>
-        <div class="description" ng-hide="$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{ $ctrl.media.data.description || 'No description' }}</div>
+        <div class="description" ng-hide="$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{ $ctrl.selectedDesc.description || 'No description' }}</div>
         <textarea rows="10" class="stGrid column100" ng-show="$ctrl.selectedDesc.editing" ng-model="$ctrl.selectedDesc.description" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedDesc)" autofocus></textarea>
       </div>
     </div>

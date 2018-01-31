@@ -14,8 +14,8 @@
             <h2>Drag and drop files below, or <span>
               <a  href="#"
                   ngf-select="$ctrl.uploadFiles($files, $invalidFiles)"
-                  ngf-multiple="true"
-                  ngf-max-files="3"
+                  ngf-multiple="$ctrl.ngfMultiple"
+                  ngf-max-files="10"
                   ngf-model-invalid="invalidFiles"
                   ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.pdf,.png'}">browse
               </a></span> your local computer</h2>

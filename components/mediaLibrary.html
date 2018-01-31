@@ -2,7 +2,7 @@
   <div class="media-library-content">
     <div class="library-content">
       <div layout-gt-sm="row">
-        <button class="stGrid column15 btn gradientAnchor md-button md-ink-ripple open-uploader" ng-click="$ctrl.openUploader()">Add +</button>
+        <button class="stGrid column15 btn gradientAnchor md-button md-ink-ripple open-uploader" ng-click="$ctrl.openUploader(true)">Add +</button>
         <div class="stGrid column5"></div>
         <stratus-search class="stGrid column80"></stratus-search>
       </div>
@@ -14,7 +14,7 @@
             <div class="time"><p>{{media.data.time | date: 'MMM dd, yyyy h:mma'}}</p></div>
             <div class="controls">
               <i class="fa fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media)"></i>
-              <i class="fa fa-trash-o fa-2x" aria-hidden="true" ng-click="$ctrl.deleteFromMedia(media.data.id)"></i>
+              <i class="fa fa-trash-o fa-2x" aria-hidden="true" ng-click="$ctrl.deleteMedia(media.data.id)"></i>
             </div>
           </div>
         </div>

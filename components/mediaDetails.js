@@ -52,7 +52,7 @@
         $ctrl.deleteMedia = deleteMedia;
         $ctrl.getLinkMedia = getLinkMedia;
         $ctrl.closeDialog = closeDialog;
-        $ctrl.uploadToLibrary = uploadToLibrary;
+        $ctrl.openUploader = openUploader;
         $ctrl.createTag = createTag;
         $ctrl.editItem = editItem;
         $ctrl.doneEditing = doneEditing;
@@ -106,8 +106,9 @@
         $mdDialog.cancel();
       };
 
-      function uploadToLibrary(files) {
-        $scope.$parent.uploadToLibrary(files);
+      // Open the uploader to replace image
+      function openUploader(ngfMultiple, fileId) {
+        media.openUploader($scope, ngfMultiple, fileId);
       }
 
       function createTag(query, fileId, tags) {
@@ -124,6 +125,7 @@
         });
       };
 
+      // Update title, description, tags of a file
       function updateMedia(fileId, data) {
         media.updateMedia(fileId, data).then(function (response) {
           if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
@@ -132,10 +134,12 @@
         });
       };
 
+      // Handle click event for editing title & description
       function editItem(item) {
         item.editing = true;
       };
 
+      // Handle updating title & description
       function doneEditing(fileId, item) {
         var data = {};
         if (item.description) {
@@ -153,6 +157,7 @@
         return $ctrl.collection.filter(query);
       }
 
+      // Handle saving tags after updating
       $scope.$watch('$ctrl.tags', function (data) {
         if ($ctrl.infoId !== undefined) {
           var dataRes = {};

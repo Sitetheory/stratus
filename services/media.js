@@ -34,7 +34,8 @@
           deleteMedia: deleteMedia,
           updateMedia: updateMedia,
           getMedia: getMedia,
-          fileUploader: fileUploader
+          fileUploader: fileUploader,
+          openUploader: openUploader
         };
 
         function dragenter(event) {
@@ -57,6 +58,7 @@
           return sendRequest(null, 'DELETE', mediaApi + fileId);
         }
 
+        // Update title, description, tags of a file
         function updateMedia(fileId, data) {
           return sendRequest(data, 'PUT', mediaApi + fileId);
         }
@@ -126,27 +128,27 @@
           return file;
         }
 
-        function preProcessOfSavingMedia(files, infoId) {
-          var returnedResult = {
-            uploadingFiles: false
+        function openUploader(scope, ngfMultiple, fileId) {
+          $mdDialog.show({
+            attachTo: angular.element(document.querySelector('#listContainer')),
+            controller: OpenUploaderController,
+            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId"></stratus-media-uploader>',
+            clickOutsideToClose: false,
+            focusOnOpen: true,
+            autoWrap: true,
+            multiple: true,
+            locals: {
+              collection: scope.collection,
+              ngfMultiple: ngfMultiple,
+              fileId: fileId
+            }
+          });
+
+          function OpenUploaderController(scope, collection, ngfMultiple, fileId) {
+            scope.collection = collection;
+            scope.ngfMultiple = ngfMultiple;
+            scope.fileId = fileId;
           };
-
-          var filePromises = [];
-          for (let i = 0; i < files.length; i++) {
-            filePromises.push(fileUploader(file[i], infoId));
-          }
-
-          if (filePromises.length > 0) {
-            $q.all(filePromises).then(
-              function (success) {
-                getMedia($scope.$parent);
-              },
-              function (error) {
-                console.log(error);
-              }
-            );
-            uploadingFiles = false;
-          }
         }
       }
     ]);
