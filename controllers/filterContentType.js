@@ -4,7 +4,6 @@
       'stratus',
       'underscore',
       'angular',
-
     ], factory);
   } else {
     factory(root.Stratus, root._);

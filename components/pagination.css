@@ -42,7 +42,7 @@
 }
 .paginator .paginatorPages.active a,
 .paginator .paginatorPages.active:hover a {
-  color: #333;
+  color: red;
   background: none;
 }
 /* On dark backgrounds */
