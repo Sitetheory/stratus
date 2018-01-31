@@ -67,7 +67,7 @@
       };
 
       function filterStatus() {
-        filter('api.options.status', $scope.showOnly);
+        filter('api.options.filterStatus', $scope.showOnly);
       };
 
       function filter(type, data) {
