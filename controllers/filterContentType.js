@@ -5,6 +5,8 @@
       'underscore',
       'angular',
 
+      // service
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -19,7 +21,8 @@
       '$log',
       '$http',
       '$parse',
-      function ($scope, $element, $mdToast, $log, $http, $parse) {
+      'commonMethods',
+      function ($scope, $element, $mdToast, $log, $http, $parse, commonMethods) {
         // Store Instance
         Stratus.Instances[_.uniqueId('filter_content_type_')] = $scope;
 
@@ -78,6 +81,7 @@
             return item.value;
           }));
           $scope.collection.fetch().then(function (response) { console.log('response', response); });
+          commonMethods.scrollTop('content');
         }
       }];
   }));

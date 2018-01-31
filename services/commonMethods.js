@@ -17,7 +17,7 @@
   }
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular, zxcvbn) {
   Stratus.Services.CommonMethods = ['$provide', function ($provide) {
-    $provide.factory('commonMethods', ['$q', '$http', '$window', function ($q, $http, $window) {
+    $provide.factory('commonMethods', ['$q', '$http', '$window', '$location', '$anchorScroll', function ($q, $http, $window, $location, $anchorScroll) {
       return {
         componentInitializer: componentInitializer,
         getStatus: getStatus,
@@ -28,6 +28,7 @@
         getUrlParams: getUrlParams,
         cleanedPhoneNumber: cleanedPhoneNumber,
         moreParams: moreParams,
+        scrollTop: scrollTop,
         RESPONSE_CODE: RESPONSE_CODE
       };
 
@@ -128,6 +129,14 @@
           }
         });
         return params;
+      };
+
+      /*
+      * scroll to top of page with specific name of html element.
+      */
+      function scrollTop(element) {
+        $location.hash(element);
+        $anchorScroll();
       };
     }]);
   }];
