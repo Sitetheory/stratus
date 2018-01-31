@@ -96,7 +96,10 @@
          * @returns {*}
          */
         this.sync = function (action, data) {
-          this.pending = true;
+          // Internals
+          that.pending = true;
+          that.completed = false;
+
           return $q(function (resolve, reject) {
             action = action || 'GET';
             var prototype = {
