@@ -37,7 +37,8 @@
       });
 
       // Handle Page Changes
-      $scope.$watch('collection.meta.data.pagination.pageCurrent', function (pageCurrent) {
+      $scope.$watchCollection('[collection.meta.data.pagination.pageCurrent, collection.meta.data.pagination.pageTotal]', function (newValue, oldValue) {
+        var pageCurrent = newValue[0];
         if (!pageCurrent) return true;
         if ($scope.collection.meta.get('pagination.pageTotal') <= 10) {
           // less than 10 total pages so show all
@@ -56,6 +57,7 @@
             $scope.endPage = $scope.collection.meta.get('pagination.pageCurrent') + 4;
           }
         }
+
         if (!isNaN($scope.startPage) && !isNaN($scope.endPage)) {
           $scope.pages = _.range($scope.startPage, $scope.endPage + 1);
         }

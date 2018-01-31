@@ -220,7 +220,8 @@
         this.page = function (page) {
           that.paginate = true;
           that.meta.set('api.p', page);
-          return that.fetch();
+          that.fetch();
+          delete that.meta.get('api').p;
         };
 
         /**
