@@ -19,7 +19,7 @@
   // This component intends to handle binding and
   // full pagination for the scope's collection.
   Stratus.Components.Pagination = {
-    controller: function ($scope, $attrs, collection, commonMethods) {
+    controller: function ($scope, $attrs, $location, $anchorScroll, collection, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'pagination', true);
 
@@ -35,6 +35,11 @@
           $scope.collection = data;
         }
       });
+
+      $scope.scrollTop = function () {
+        $location.hash('content');
+        $anchorScroll();
+      };
 
       // Handle Page Changes
       $scope.$watchCollection('[collection.meta.data.pagination.pageCurrent, collection.meta.data.pagination.pageTotal]', function (newValue, oldValue) {

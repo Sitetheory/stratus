@@ -11,7 +11,7 @@
   </li>
   <li class="paginatorPages" ng-repeat="page in pages"
       ng-class="{active:collection.meta.data.pagination.pageCurrent == page}">
-    <a ng-click="collection.page(page)">{{ page }}</a>
+    <a ng-click="collection.page(page); scrollTop();">{{ page }}</a>
   </li>
   <li class="paginatorNext"
       ng-class="{disabled:collection.meta.data.pagination.pageCurrent == collection.meta.data.pagination.pageTotal}">
