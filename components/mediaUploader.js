@@ -15,6 +15,7 @@
 
       // Directives
       'stratus.directives.singleClick',
+      'stratus.directives.validateUrl',
       'stratus.directives.src',
 
       // Services
@@ -40,8 +41,9 @@
         $ctrl.files = [];
         $ctrl.uploadingFiles = false;
         $ctrl.invalidFilesMsg = [];
-        $ctrl.video = {
-          services: [{
+        $ctrl.services = {
+          video: [
+            {
               label: 'Youtube',
               value: 'youtube'
             },
@@ -49,10 +51,9 @@
               label: 'Vimeo',
               value: 'vimeo'
             }
-          ]
-        };
-        $ctrl.link = {
-          services: [{
+          ],
+          link: [
+            {
               label: 'Google Drive',
               value: 'googledrive'
             },
@@ -62,13 +63,48 @@
             }
           ]
         };
+        $ctrl.linkServices = $ctrl.services.link[0].value;
+        $ctrl.videos = [
+          {
+            service: $ctrl.services.video[0],
+            url: '',
+            title: '',
+            description: '',
+            tags: []
+          }
+        ];
 
         $ctrl.uploadFiles = uploadFiles;
         $ctrl.done = done;
+        $ctrl.addVideo = addVideo;
+        $ctrl.removeVideo = removeVideo;
+        $ctrl.uploadVideos = uploadVideos;
+        $ctrl.isValidUrl = isValidUrl;
       };
 
       function done() {
         $mdDialog.cancel();
+      }
+
+      function addVideo() {
+        var newVideo = {
+          service: $ctrl.services.video[0].value,
+          url: '',
+          title: '',
+          description: '',
+          tags: []
+        };
+        $ctrl.videos.push(newVideo);
+      }
+
+      function removeVideo(index) {
+        // Remove in UI
+        $ctrl.videos.splice(index, 1);
+        // TODO: remove in our S3 server
+      }
+
+      function uploadVideos() {
+        console.log($ctrl.videos);
       }
 
       function uploadFiles(files, invalidFiles) {
@@ -107,6 +143,16 @@
           // Refresh the library
           media.getMedia($ctrl);
         }
+      }
+
+      function isValidUrl(service, url) {
+        var urlRegex;
+        if (service === 'youtube') {
+          urlRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
+        } else {
+          urlRegex = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|)\/(video\/)?([A-Za-z0-9._%-]*)/gm;
+        }
+        return url.match(urlRegex);
       }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaUploader' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
