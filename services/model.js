@@ -71,10 +71,10 @@
           $rootScope.$watch(function () {
             return that.data;
           }, function (newData, priorData) {
-            that.changed = true;
             var patch = _.patch(newData, priorData);
             console.log(patch);
             if (patch) {
+              that.changed = true;
               if ((newData.id && newData.id !== priorData.id) || that.isNewVersion(newData)) {
                 window.location.replace(
                   Stratus.Internals.SetUrlParams({ id: newData.id })
@@ -168,11 +168,16 @@
 
                         // Auto-Saving Settings
                         that.saving = false;
-                        that.changed = false;
+
                         that.patch = {};
 
                         // Begin Watching
                         that.watcher();
+
+                        // Reset status model
+                        setTimeout(function () {
+                          that.changed = false;
+                        }, 100);
                       }
 
                       // Promise
