@@ -179,7 +179,7 @@
       function doResetPass(resetPassData) {
         $ctrl.loading = true;
         resetDefaultSetting();
-        var requestType = commonMethods.getUrlParams().type === 'verify' ? 'reset-password' : commonMethods.getUrlParams().type;
+        var requestType = commonMethods.getUrlParams().type === 'verify' ? 'change-password' : commonMethods.getUrlParams().type;
         var data = {
           type: requestType,
           email: commonMethods.getUrlParams().email,
