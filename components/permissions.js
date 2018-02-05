@@ -28,7 +28,7 @@
     bindings: {
       ngModel: '='
     },
-    controller: function ($scope, $timeout, $attrs, registry) {
+    controller: function ($scope, $timeout, $attrs, registry, $http) {
 
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
@@ -102,8 +102,27 @@
           $scope.permissionSelected = [$scope.permissions[$scope.permissions.length - 1].value];
         }
       };
+
+      //
+      $scope.submit = function () {
+        console.log('$scope.permissionSelected', $scope.permissionSelected);
+        return $http({
+          method: 'PUT',
+          url: '/Api/Permission',
+          data: { identity: { user: 1 }, asset: { asset: 'SitetheoryUserBundle:User', id: 2 }, permissions: $scope.permissionSelected },
+          headers: { 'Content-Type': 'application/json' }
+        }).then(
+          function (response) {
+            // success
+            console.log('response', response);
+          },
+          function (response) {
+            // something went wrong
+            console.log('response error', response);
+
+          });
+      };
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
-
 }));
