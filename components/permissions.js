@@ -28,42 +28,80 @@
     bindings: {
       ngModel: '='
     },
-    controller: function ($scope, $mdPanel, $attrs, registry) {
+    controller: function ($scope, $timeout, $attrs, registry) {
 
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
-      $('ul.be-select').on('click', '.init', function () {
-        $(this).closest('ul.be-select').children('li:not(.init)').toggle();
-      });
+      // mock up list permissions
+      $scope.permissions = [];
+      $scope.permissionSelected = [];
+      $scope.permissionSearchTerm = null;
 
-      $scope.showRoleHeading = false;
-      $scope.showContentHeading = false;
+      // mock up list roles
+      $scope.userRoles = [];
+      $scope.userRoleSelected = null;
 
-      $scope.showSelRole = function ($event, selValue) {
+      // mock up list contents
+      $scope.contents = [];
+      $scope.contentSelected = null;
 
-        console.log('show selected');
-        $scope.roleSelected = selValue;
-        $scope.showRoleHeading = true;
-        console.log(selValue);
+      /**
+      * Load data demo.
+      */
+      $scope.loadPermissions = function () {
+        // Use timeout to simulate a 400ms request.
+        return $timeout(function () {
+          $scope.permissions = [
+            { value: 1, name: 'View' },
+            { value: 2, name: 'Create' },
+            { value: 4, name: 'Edit' },
+            { value: 8, name: 'Delete' },
+            { value: 16, name: 'Publish' },
+            { value: 32, name: 'Design' },
+            { value: 64, name: 'Dev' },
+            { value: 128, name: 'Master' }
+          ];
+        }, 400);
       };
-      $scope.showSelContent = function ($event, selValue) {
 
-        $scope.contentSelected = selValue;
-        $scope.showContentHeading = true;
-        console.log(selValue);
+      /**
+      * Load data demo.
+      */
+      $scope.loadContents = function () {
+        // Use timeout to simulate a 400ms request.
+        return $timeout(function () {
+          $scope.contents = [
+            { id: 1, name: 'Art Bundle' },
+            { id: 2, name: 'Articles' },
+            { id: 3, name: 'The Art of being' }
+          ];
+        }, 400);
       };
 
-      /* *
-      var allOptions = $('ul.be-select').children('li:not(.init)');
-      $('ul.be-select').on('click', 'li:not(.init)', function () {
-          allOptions.removeClass('selected');  // TODO: use ngClass since this edits the DOM
-          $(this).addClass('selected');
-          $(this).children('.init').html(
-              $(this).html()
-          );
-          allOptions.toggle();
-      });
-      /* */
+      /**
+      * Load data demo.
+      */
+      $scope.loadUserRoles = function () {
+        // Use timeout to simulate a 400ms request.
+        return $timeout(function () {
+          $scope.userRoles = [
+            { id: 1, name: 'Daniela' },
+            { id: 2, name: 'Desmond' },
+            { id: 3, name: 'Desiree' }
+          ];
+        }, 400);
+      };
+
+      /**
+      * If user selected the master Action, the other action selected will be ignored.
+      * If user selected all of actions except the master action, the action Selected will be converted to only contain master.
+      */
+      $scope.processSelectAction = function () {
+        var masterIndex = $scope.permissionSelected.indexOf(128);
+        if ((masterIndex != -1) || ($scope.permissionSelected.length == $scope.permissions.length - 1)) {
+          $scope.permissionSelected = [$scope.permissions[$scope.permissions.length - 1].value];
+        }
+      };
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
