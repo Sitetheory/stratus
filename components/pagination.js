@@ -37,7 +37,7 @@
       });
 
       $scope.scrollTop = function () {
-        commonMethods.scrollTop('content');
+        document.getElementById('content').scrollIntoView();
       };
 
       // Handle Page Changes

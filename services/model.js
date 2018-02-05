@@ -93,10 +93,19 @@
           };
 
           /**
-           * @returns {*}
-           */
+          * @returns {*}
+          */
           this.url = function () {
-            return that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
+            var url = that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
+            url += '?';
+
+            // add futher param to specific version
+            if (commonMethods.moreParams()) {
+              angular.forEach(commonMethods.moreParams(), function (value, key) {
+                url += 'options[' + key + ']=' + value;
+              });
+            }
+            return url;
           };
 
           /**
@@ -139,12 +148,7 @@
               if (angular.isDefined(data)) {
                 if (action === 'GET') {
                   if (angular.isObject(data) && Object.keys(data).length) {
-                    prototype.url += '?' + that.serialize(data);
-                    if (commonMethods.moreParams()) {
-                      angular.forEach(commonMethods.moreParams(), function (value, key) {
-                        prototype.url += '&' + 'options[' + key + ']=' + value;
-                      });
-                    }
+                    prototype.url += '&' + that.serialize(data);
                   }
                 } else {
                   prototype.headers['Content-Type'] = 'application/json';
@@ -369,7 +373,7 @@
            * @return boolean
            */
           this.isNewVersion = function (newData) {
-            return (!_.isEmpty(commonMethods.moreParams()) && newData.version && commonMethods.moreParams().version != newData.version.id);
+            return (!_.isEmpty(commonMethods.moreParams()) && newData.version && parseInt(commonMethods.moreParams().version) != newData.version.id);
           };
 
           /**
