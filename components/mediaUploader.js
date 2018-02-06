@@ -54,57 +54,116 @@
           ],
           link: [
             {
-              label: 'Google Drive',
-              value: 'googledrive'
+              label: 'Direct Link',
+              value: 'directlink'
             },
-            {
-              label: 'Drop Box',
-              value: 'dropbox'
-            }
+            // {
+            //   label: 'Google Drive',
+            //   value: 'googledrive'
+            // },
+            // {
+            //   label: 'Drop Box',
+            //   value: 'dropbox'
+            // }
           ]
         };
-        $ctrl.linkServices = $ctrl.services.link[0].value;
         $ctrl.videos = [
           {
             service: $ctrl.services.video[0],
-            url: '',
-            title: '',
-            description: '',
-            tags: []
+            url: null,
+            title: null,
+            tags: [],
+            mime: 'video',
+            description: null,
+            isUploaded: false
+          }
+        ];
+        $ctrl.links = [
+          {
+            service: $ctrl.services.link[0],
+            url: null,
+            title: null,
+            tags: [],
+            description: null,
+            isUploaded: false
           }
         ];
 
-        $ctrl.uploadFiles = uploadFiles;
         $ctrl.done = done;
-        $ctrl.addVideo = addVideo;
-        $ctrl.removeVideo = removeVideo;
-        $ctrl.uploadVideos = uploadVideos;
-        $ctrl.isValidUrl = isValidUrl;
+        $ctrl.uploadFiles = uploadFiles;
+        $ctrl.createTag = createTag;
+        $ctrl.addExternalFile = addExternalFile;
+        $ctrl.removeExternalFile = removeExternalFile;
+        $ctrl.saveOneFile = saveOneFile;
+        $ctrl.saveAllFiles = saveAllFiles;
       };
 
       function done() {
         $mdDialog.cancel();
       }
 
-      function addVideo() {
-        var newVideo = {
-          service: $ctrl.services.video[0].value,
-          url: '',
-          title: '',
-          description: '',
-          tags: []
+      function addExternalFile(fileType) {
+        var newFile = {
+          url: null,
+          name: null,
+          tags: [],
+          description: null,
+          isUploaded: false
         };
-        $ctrl.videos.push(newVideo);
+
+        if (fileType === 'video') {
+          newFile.service = $ctrl.services.video[0];
+          $ctrl.videos.push(newFile);
+        } else {
+          newFile.service = $ctrl.services.link[0];
+          $ctrl.links.push(newFile);
+        }
       }
 
-      function removeVideo(index) {
-        // Remove in UI
-        $ctrl.videos.splice(index, 1);
-        // TODO: remove in our S3 server
+      function removeExternalFile(index, fileType) {
+        if (fileType && fileType === 'video') {
+          $ctrl.videos.splice(index, 1);
+        } else {
+          $ctrl.links.splice(index, 1);
+        }
       }
 
-      function uploadVideos() {
-        console.log($ctrl.videos);
+      function saveOneFile(file, fileType) {
+        data = {
+          service: file.service.value,
+          file: file.url,
+          name: file.title,
+          tags: file.tags,
+          description: file.description
+        };
+
+        if (fileType && fileType === 'video') {
+          data.mime = 'video';
+        } else {
+          data.mime = 'image/' + file.url.split('.').pop();
+        }
+
+        media.saveMediaUrl(data).then(function (response) {
+          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+            if (fileType && fileType === 'video') {
+              var index = $ctrl.videos.indexOf(file);
+              $ctrl.videos[index].isUploaded = true;
+            } else {
+              var index = $ctrl.links.indexOf(file);
+              $ctrl.links[index].isUploaded = true;
+            }
+          } else {
+            console.error(commonMethods.getStatus(response).code + ' - ' + commonMethods.getStatus(response).message);
+          }
+        });
+      }
+
+      function saveAllFiles(files, fileType) {
+        files.forEach(file => {
+          if (!file.isUploaded) {
+            saveOneFile(file, fileType);
+          }
+        });
       }
 
       function uploadFiles(files, invalidFiles) {
@@ -145,14 +204,19 @@
         }
       }
 
-      function isValidUrl(service, url) {
-        var urlRegex;
-        if (service === 'youtube') {
-          urlRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/g;
-        } else {
-          urlRegex = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|)\/(video\/)?([A-Za-z0-9._%-]*)/gm;
-        }
-        return url.match(urlRegex);
+      function createTag(file, query) {
+        var data = { name: query };
+        media.createTag(data).then(function (response) {
+          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+            if (file.mime === 'video') {
+              var index = $ctrl.videos.indexOf(file);
+              $ctrl.videos[index].tags.push(response.data.payload);
+            } else {
+              var index = $ctrl.links.indexOf(file);
+              $ctrl.links[index].tags.push(response.data.payload);
+            }
+          }
+        });
       }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaUploader' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'

@@ -83,7 +83,14 @@
 .media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image:hover .hoverItems {
   display: inherit;
 }
-.media-uploader .content .videos .video-list .video {
+.media-uploader .content .videos .video-list .video,
+.media-uploader .content .links .video-list .video,
+.media-uploader .content .videos .link-list .video,
+.media-uploader .content .links .link-list .video,
+.media-uploader .content .videos .video-list .link,
+.media-uploader .content .links .video-list .link,
+.media-uploader .content .videos .link-list .link,
+.media-uploader .content .links .link-list .link {
   border-radius: 3px;
   background-color: #fafafa;
   border: 1px solid #e1e1e1;

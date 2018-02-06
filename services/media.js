@@ -24,7 +24,7 @@
         Upload
       ) {
         var tagApi = '/Api/Tag';
-        var mediaApi = '/Api/Media/';
+        var mediaApi = '/Api/Media';
 
         return {
           dragenter: dragenter,
@@ -35,7 +35,8 @@
           updateMedia: updateMedia,
           getMedia: getMedia,
           fileUploader: fileUploader,
-          openUploader: openUploader
+          openUploader: openUploader,
+          saveMediaUrl: saveMediaUrl
         };
 
         function dragenter(event) {
@@ -55,12 +56,16 @@
         }
 
         function deleteMedia(fileId) {
-          return sendRequest(null, 'DELETE', mediaApi + fileId);
+          return sendRequest(null, 'DELETE', mediaApi + '/' + fileId);
+        }
+
+        function saveMediaUrl(data) {
+          return sendRequest(data, 'POST', mediaApi);
         }
 
         // Update title, description, tags of a file
         function updateMedia(fileId, data) {
-          return sendRequest(data, 'PUT', mediaApi + fileId);
+          return sendRequest(data, 'PUT', mediaApi + '/' + fileId);
         }
 
         function sendRequest(data, method, url) {
@@ -77,7 +82,6 @@
             });
         }
 
-        // =================== Ultilities =================== //
         function uploadToS3(file, infoId) {
           var POLICY = 'ewogICJleHBpcmF0aW9uIjogIjIwMjAtMDEtMDFUMDA6MDA6MDBaIiwKICAiY29uZGl0aW9ucyI6IFsKICAgIHsiYnVja2V0IjogInNpdGV0aGVvcnljb3JlIn0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAiIl0sCiAgICB7ImFjbCI6ICJwcml2YXRlIn0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRDb250ZW50LVR5cGUiLCAiIl0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRmaWxlbmFtZSIsICIiXSwKICAgIFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLCAwLCA1MjQyODgwMDBdCiAgXQp9';
           var SIGNATURE = '5bz7ETqEC0Gxj1vJP/a6t3DRMJc=';
