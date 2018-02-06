@@ -63,28 +63,43 @@
       $scope.toggle = function (value) {
         var index = $scope.showOnly.indexOf(value);
         (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(value);
-        filterStatus();
+        filter();
       };
 
       function filterStatus() {
-        filter('api.options.status', $scope.showOnly);
+        $scope.collection.meta.set('api.options.filterStatus', $scope.showOnly);
       };
 
       function filter(type, data) {
-        $scope.collection.meta.set(type, data);
-        $scope.collection.fetch().then(function (response) {
-          $log.log('response', response);
-        });
+        filterPrice();
+        filterStatus();
+        $scope.collection.fetch().then(function (response) { $log.log('response', response); });
+        removeFilter();
+      }
+
+      /**
+      * set filter price values
+      */
+      function filterPrice() {
+        if ($scope.minPrice > $scope.maxPrice) return;
+        if ($scope.minPrice > 0 && $scope.maxPrice > 0 && ($scope.maxPrice >= $scope.minPrice)) {
+          $scope.collection.meta.set('api.options.minPrice', $scope.minPrice);
+          $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice);
+        }else if ($scope.minPrice > 0) {
+          $scope.collection.meta.set('api.options.minPrice', $scope.minPrice);
+        } else if ($scope.maxPrice > 0) {
+          $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice);
+        }
       }
 
       $scope.$watchCollection('[minPrice, maxPrice]', function (newVal, oldVal) {
-        if ($scope.minPrice >= 0 && $scope.maxPrice >= 0) {
-          $scope.collection.meta.set('api.options.minPrice', $scope.minPrice);
-          $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice);
-          $scope.collection.fetch().then(function (response) {
-            $log.log('response', response);
-          });
-        }
+        if ($scope.minPrice > $scope.maxPrice) return;
+        filter();
       });
+
+      // remove the filter after filter request
+      function removeFilter() {
+        delete $scope.collection.meta.get('api').options;
+      }
     }];
 }));
