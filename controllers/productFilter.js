@@ -67,7 +67,7 @@
       };
 
       function filterStatus() {
-        $scope.collection.meta.set('api.options.filterStatus', $scope.showOnly);
+        filter('api.options.filterStatus', $scope.showOnly);
       };
 
       function filter(type, data) {
