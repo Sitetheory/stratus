@@ -34,6 +34,22 @@
             });
         };
 
+        createNewSiteServices.checkMaster = function (data) {
+            return $http({
+                url: '/Api/SiteGenre',
+                method: 'GET',
+                params: data
+            }).then(
+                function (response) {
+                    // success
+                    return $q.resolve(response);
+                },
+                function (response) {
+                    // something went wrong
+                    return $q.reject(response);
+                });
+        };
+
         return createNewSiteServices;
       }]);
     }];
