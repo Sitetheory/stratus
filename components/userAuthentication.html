@@ -1,8 +1,8 @@
 <div ng-cloak>
-    <md-content id="user-authentication" class="defaultShadow defaultBorderRadius">
+    <md-content ng-if="!$ctrl.passwordReset" id="user-authentication" class="defaultShadow defaultBorderRadius">
         <md-progress-linear ng-if="$ctrl.loading" md-mode="indeterminate"></md-progress-linear>
         <div class="tab-toggle-background"></div>
-        <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex">
+        <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex" ng-class="{ 'hide-tab': $ctrl.isLoggedIn }">
             <md-tab label="Sign In" class="sign-in" ng-click="$ctrl.showForgotPassForm(false)">
                 <md-content class="md-padding">
                     <div class="message"
@@ -212,7 +212,7 @@
             </md-tab>
         </md-tabs>
 
-        <div class="social-signin">
+        <div class="social-signin" ng-if="!$ctrl.isLoggedIn">
             <div class="divTable social-title-table">
                 <div class="divTableRow">
                     <div class="divTableCell border-column">
@@ -228,5 +228,45 @@
             </div>
             <stratus-single-sign-on></stratus-single-sign-on>
         </div>
+    </md-content>
+
+    <md-content class="md-padding" ng-if="$ctrl.passwordReset">
+        <form class="form-reset-pass" name="resetPassForm"
+                ng-submit="resetPassForm.$valid && $ctrl.doResetPass($ctrl.resetPassData)">
+            <div class="show-error">
+                <h3>{{ $ctrl.resetPassHeaderText }}</h3>
+                <h4>{{ $ctrl.resetPassHeaderEmail }}</h4>
+            </div>
+
+            <div class="clearfix">
+                <div class="form-column column1">
+                    <md-input-container class="md-block first-password" flex-gt-sm>
+                        <input name="password" type="password" ng-model="$ctrl.resetPassData.password" required placeholder="Password phrase" autocomplete="new-password">
+                        <md-progress-linear ng-if="$ctrl.resetPassData.password"
+                                            class="{{$ctrl.progressBarClass}}" md-mode="determinate"
+                                            value="{{$ctrl.progressBarValue}}"></md-progress-linear>
+                        <ng-messages for="resetPassForm.password.$error" ng-if="resetPassForm.password.$dirty">
+                            <ng-message when="required">This field is required!</ng-message>
+                        </ng-messages>
+                    </md-input-container>
+                </div>
+
+                <div class="form-column column2">
+                    <md-input-container class="md-block" flex-gt-sm>
+                        <input name="confirm_password" type="password" ng-model="$ctrl.resetPassData.confirm_password" required placeholder="Confirm password phrase" stratus-password-check password="{{$ctrl.resetPassData.password}}" autocomplete="new-password">
+                        <ng-messages for="resetPassForm.confirm_password.$error" ng-if="resetPassForm.confirm_password.$dirty">
+                            <ng-message when="required">This field is required!</ng-message>
+                            <ng-message when="passwordCheck">Your passwords did not match.</ng-message>
+                        </ng-messages>
+                    </md-input-container>
+                </div>
+                <div class="form-column submit-column">
+                    <md-button type="submit" class="btn"
+                                ng-disabled="resetPassForm.$invalid || !$ctrl.allowSubmit || $ctrl.loading">
+                        {{ $ctrl.changePassBtnText }}
+                    </md-button>
+                </div>
+            </div>
+        </form>
     </md-content>
 </div>
