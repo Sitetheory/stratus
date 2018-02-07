@@ -159,7 +159,7 @@
       }
 
       function saveAllFiles(files, fileType) {
-        files.forEach(file => {
+        files.forEach(function (file) {
           if (!file.isUploaded) {
             saveOneFile(file, fileType);
           }
@@ -170,7 +170,7 @@
         // Handle error messages for invalid files
         $ctrl.invalidFilesMsg = [];
         if (invalidFiles.length > 0) {
-          invalidFiles.forEach(file => {
+          invalidFiles.forEach(function (file) {
             var msg;
             switch (file.$error) {
               case 'maxSize':
@@ -191,7 +191,7 @@
         if (files.length > 0) {
           if ($ctrl.ngfMultiple) {
             // Upload new files
-            for (let i = 0; i < files.length; i++) {
+            for (i = 0; i < files.length; i++) {
               $ctrl.files.push(media.fileUploader(files[i]));
             }
           } else {

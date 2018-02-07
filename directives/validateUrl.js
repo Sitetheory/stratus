@@ -17,7 +17,7 @@
       },
       link: function (scope, element, attr, ngModel) {
         element.keyup(function (event) {
-          setTimeout(() => {
+          setTimeout(function () {
             ngModel.$validators.validateUrl = function (modelValue) {
               var urlRegex;
               switch (scope.service) {
