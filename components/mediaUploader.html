@@ -17,7 +17,7 @@
                   ngf-multiple="$ctrl.ngfMultiple"
                   ngf-max-files="10"
                   ngf-model-invalid="invalidFiles"
-                  ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.pdf,.png'}">browse
+                  ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">browse
               </a></span> your local computer</h2>
             <div class="file-list">
               <ul class="listInline response clearfix">
@@ -29,8 +29,11 @@
                       <span ng-if="!file.errorUpload" class="hover-tick hover-tick-run"></span>
                     </div>
                     <div class="image">
-                      <div ng-if="file.type == 'application/x-unknown'" class="droppedUnknown positionCenter">
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
+                      <div ng-if="file.type == 'application/pdf'" class="document">
+                        <i class="fa fa-5x fa-file-pdf-o" aria-hidden="true"></i>
+                      </div>
+                      <div ng-if="file.type == 'application/msword'" class="document">
+                        <i class="fa fa-5x fa-file-word-o" aria-hidden="true"></i>
                       </div>
                       <img ngf-thumbnail="!file.$error && file">
                       <div class="hoverItems" ng-if="!file.errorUpload && file.upload !== null && file.progress < 100 && !file.upload.aborted">
