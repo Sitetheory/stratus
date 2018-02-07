@@ -22,46 +22,58 @@
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular, zxcvbn) {
   // This component intends to allow editing of various selections depending on context.
   Stratus.Components.UserAuthentication = {
+    bindings: {
+      isLoggedIn: '<',
+      email: '<'
+    },
     controller: function ($scope, $window, $attrs, $sce, $compile, userAuthentication, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'user_authentication', true);
-
-      // variables
       var $ctrl = this;
-      $ctrl.signinData = {};
-      $ctrl.resetPassData = {};
-      $ctrl.allowSubmit = false;
-      $ctrl.socialMode = false; // in this mode, the user just need to input email and submit to singleSignOn components
-      $ctrl.loading = false;
-      $ctrl.signInIndex = 0;
-      $ctrl.signUpIndex = 1;
-      $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
-      $ctrl.phoneRegex = /^[\d+\-().]+$/;
-      $ctrl.enabledForgotPassForm = false;
-      $ctrl.isHandlingUrl = commonMethods.getUrlParams().type !== null;
-      $ctrl.enabledResetPassForm = commonMethods.getUrlParams().type === 'reset-password';
-      $ctrl.resetPassHeaderEmail = commonMethods.getUrlParams().type === 'reset-password' ? commonMethods.getUrlParams().email : null;
-      $ctrl.enabledVerifyForm = commonMethods.getUrlParams().type === 'verify';
-      $ctrl.forgotPassText = 'Forgot Password?';
-      $ctrl.resetPassHeaderText = 'Reset your account password';
-      $ctrl.changePassBtnText = 'Reset Password';
-      $ctrl.selectedIndex = $ctrl.signInIndex;
-      $ctrl.message = null;
-      $ctrl.isRequestSuccess = false;
-      $ctrl.duplicateMessge = '<span>There is already an account registered to this email, ' +
-                                                'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
-                                                'Sign In</a> and then create a new site from the control panel.</span>';
+      $ctrl.$onInit = function () {
+        // variables
+        $ctrl.signinData = {};
+        $ctrl.resetPassData = {};
+        $ctrl.allowSubmit = false;
+        $ctrl.socialMode = false; // in this mode, the user just need to input email and submit to singleSignOn components
+        $ctrl.loading = false;
+        $ctrl.signInIndex = 0;
+        $ctrl.signUpIndex = 1;
+        $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i;
+        $ctrl.phoneRegex = /^[\d+\-().]+$/;
+        $ctrl.enabledForgotPassForm = false;
+        $ctrl.isHandlingUrl = commonMethods.getUrlParams().type !== null;
+        $ctrl.passwordReset = $ctrl.isLoggedIn ? !$ctrl.isHandlingUrl : false;
+        $ctrl.enabledResetPassForm = commonMethods.getUrlParams().type === 'reset-password';
+        $ctrl.enabledVerifyForm = commonMethods.getUrlParams().type === 'verify';
+        $ctrl.forgotPassText = 'Forgot Password?';
+        $ctrl.resetPassHeaderText = 'Reset your account password';
+        $ctrl.changePassBtnText = 'Reset Password';
+        $ctrl.selectedIndex = $ctrl.signInIndex;
+        $ctrl.message = null;
+        $ctrl.isRequestSuccess = false;
+        if ($ctrl.passwordReset) {
+          $ctrl.resetPassHeaderEmail = $ctrl.email;
+        } else if (commonMethods.getUrlParams().type === 'reset-password') {
+          $ctrl.resetPassHeaderEmail = commonMethods.getUrlParams().email;
+        } else {
+          $ctrl.resetPassHeaderEmail = null;
+        }
+        $ctrl.duplicateMessge = '<span>There is already an account registered to this email, ' +
+                                'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
+                                'Sign In</a> and then create a new site from the control panel.</span>';
 
-      // methods
-      $ctrl.showForgotPassForm = showForgotPassForm;
-      $ctrl.doSignIn = doSignIn;
-      $ctrl.doSignUp = doSignUp;
-      $ctrl.doRequestResetPass = doRequestResetPass;
-      $ctrl.doResetPass = doResetPass;
-      $ctrl.onTabSelected = onTabSelected;
-      $ctrl.backToLogin = backToLogin;
-      $ctrl.verifyAccount = verifyAccount;
-      $ctrl.safeMessage = safeMessage;
+        // methods
+        $ctrl.showForgotPassForm = showForgotPassForm;
+        $ctrl.doSignIn = doSignIn;
+        $ctrl.doSignUp = doSignUp;
+        $ctrl.doRequestResetPass = doRequestResetPass;
+        $ctrl.doResetPass = doResetPass;
+        $ctrl.onTabSelected = onTabSelected;
+        $ctrl.backToLogin = backToLogin;
+        $ctrl.verifyAccount = verifyAccount;
+        $ctrl.safeMessage = safeMessage;
+      };
 
       // Watcher for changing password
       $scope.$watch(angular.bind(this, function () {
@@ -186,6 +198,11 @@
           token: commonMethods.getUrlParams().token,
           password: resetPassData.password
         };
+
+        if ($ctrl.passwordReset) {
+          data.email = $ctrl.email;
+          data.type = 'update-password';
+        }
 
         userAuthentication.resetPass(data).then(function (response) {
           $ctrl.loading = false;
