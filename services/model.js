@@ -107,10 +107,8 @@
             url += '?';
 
             // add futher param to specific version
-            if (commonMethods.moreParams()) {
-              angular.forEach(commonMethods.moreParams(), function (value, key) {
-                url += 'options[' + key + ']=' + value;
-              });
+            if (_.getUrlParams('version')) {
+              url += 'options[version]=' + _.getUrlParams('version');
             }
             return url;
           };
