@@ -132,7 +132,7 @@
           return file;
         }
 
-        function openUploader(scope, ngfMultiple, fileId) {
+        function openUploader(ctrl, ngfMultiple, fileId, parentScope) {
           $mdDialog.show({
             attachTo: angular.element(document.querySelector('#listContainer')),
             controller: OpenUploaderController,
@@ -142,9 +142,13 @@
             autoWrap: true,
             multiple: true,
             locals: {
-              collection: scope.collection,
+              collection: ctrl.collection,
               ngfMultiple: ngfMultiple,
               fileId: fileId
+            }
+          }).then(function (res) {
+            if (fileId && !_.isEmpty(res)) {
+              parentScope.$emit('uploadSuccess', res);
             }
           });
 

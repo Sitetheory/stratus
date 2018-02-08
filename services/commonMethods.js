@@ -28,7 +28,8 @@
         getUrlParams: getUrlParams,
         cleanedPhoneNumber: cleanedPhoneNumber,
         moreParams: moreParams,
-        RESPONSE_CODE: RESPONSE_CODE
+        RESPONSE_CODE: RESPONSE_CODE,
+        copyToClipboard: copyToClipboard
       };
 
       // functional methods
@@ -129,6 +130,16 @@
         });
         return params;
       };
+
+      function copyToClipboard(value) {
+        var temp = document.createElement('input');
+        document.body.appendChild(temp);
+        temp.setAttribute('value', value);
+        temp.select();
+        var result = document.execCommand('copy');
+        document.body.removeChild(temp);
+        return result;
+      }
     }]);
   }];
 }));

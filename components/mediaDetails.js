@@ -99,7 +99,14 @@
       };
 
       function getLinkMedia() {
-        console.log('handle getLink event');
+        if (commonMethods.copyToClipboard($ctrl.mediaUrl)) {
+          $mdDialog.show(
+            $mdDialog.confirm()
+            .textContent('Link is copied to clipboard')
+            .multiple(true)
+            .ok('OK')
+          );
+        }
       };
 
       function closeDialog() {
@@ -108,8 +115,15 @@
 
       // Open the uploader to replace image
       function openUploader(ngfMultiple, fileId) {
-        media.openUploader($scope, ngfMultiple, fileId);
+        media.openUploader($ctrl, ngfMultiple, fileId, $scope);
       }
+
+      $scope.$on('uploadSuccess', function (event, files) {
+        console.log(files);
+        if (!files[0].errorUpload) {
+          $ctrl.mediaUrl = files[0].result.url;
+        }
+      });
 
       function createTag(query, fileId, tags) {
         var data = { name: query };

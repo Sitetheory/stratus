@@ -60,7 +60,7 @@
         </md-content>
       </md-tab>
 
-      <md-tab label="Video">
+      <md-tab label="Video" ng-if="!$ctrl.fileId">
         <md-content class="md-padding videos">
           <p class="description">The best way to share videos is to upload to professional video services that offer free storage and bandwidth, as well as sophisticated, browser-compatible video players that vary the quality and formatting based on device. They also have a popular network to widely promote your video. Simply paste the URL to your video and we'll add it to your site as if it's a native video.</p>
           <div class="video-list">
@@ -144,7 +144,7 @@
         </md-content>
       </md-tab>
 
-      <md-tab label="Link">
+      <md-tab label="Link" ng-if="!$ctrl.fileId">
         <md-content class="md-padding links">
           <p class="description">If you already have files stored on some other cloud storage, you can add them to your library by just pasting in the URL to the file (or public folder), e.g. Google Drive, Drop Box. Permissions will be set on your third party service, and if you delete the file you will have to manually update your media library.</p>
           <div class="video-list">

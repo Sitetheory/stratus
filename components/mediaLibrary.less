@@ -106,11 +106,19 @@
           display: inline-block;
           margin-bottom: 0.4em;
           position: relative;
+          width: 100%;
+          text-align: center;
+          box-shadow: 0 1px 1px rgba(214, 211, 211, 0.4);
+          .document {
+            transition: 0.5s ease;
+            font-size: 7em;
+            padding: 20px 40px;
+            color: @red-xxl;
+          }
           img {
             object-fit: cover;
             width: 100%;
             height: auto;
-            box-shadow: 0 1px 1px rgba(214, 211, 211, 0.4);
             opacity: 1;
             transition: 0.5s ease;
             backface-visibility: hidden;

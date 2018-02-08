@@ -99,7 +99,7 @@
       };
 
       function done() {
-        $mdDialog.cancel();
+        $mdDialog.hide($ctrl.files);
       }
 
       function addExternalFile(fileType) {

@@ -68,8 +68,8 @@
         }
       }, $scope);
 
-      function openUploader(ngfMultiple, fileId) {
-        media.openUploader($scope, ngfMultiple, fileId);
+      function openUploader(ngfMultiple) {
+        media.openUploader($scope, ngfMultiple);
       }
 
       function showDetails(media) {

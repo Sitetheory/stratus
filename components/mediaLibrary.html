@@ -8,7 +8,9 @@
       </div>
       <div class="medias">
         <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url">
-          <img src="{{media.data.url}}">
+          <i ng-if="media.data.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
+          <i ng-if="media.data.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
+          <img ng-if="media.data.mime.indexOf('image') > -1" src="{{media.data.url}}">
           <div class="middle-details">
             <div class="name"><p>{{media.data.name | uppercase}}</p></div>
             <div class="time"><p>{{media.data.time | date: 'MMM dd, yyyy h:mma'}}</p></div>
