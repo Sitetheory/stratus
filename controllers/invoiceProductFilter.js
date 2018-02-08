@@ -75,7 +75,6 @@
        * Cancelled: timeEnd <= currentTime
        */
       $scope.getStatus = function (invoiceProduct) {
-        invoiceProduct = invoiceProduct.data;
         var currentTime = Math.floor(Date.now());
         var timeEnd = (invoiceProduct.timeEnd) ? invoiceProduct.timeEnd : currentTime + 1000;
         var timeStart = invoiceProduct.timeStart || currentTime + 1000;
@@ -123,6 +122,36 @@
           });
         }
       };
+    $scope.getSiteName = function (siteId, siteList) {
+        var siteName;
+        if (siteList.length > 0) {
+            siteList.forEach(function (site) {
+                if (site.id === siteId) {
+                  siteName = site.name
+                }
+            });
+            return siteName;
+        }
+        return 'Site Name';
+    };
 
+    $scope.getTags = function (contentId, tagList) {
+      var tags = [];
+      if (tagList.length > 0) {
+          tagList.forEach(function (tag) {
+            if(contentId === tag.assets[0].id) {
+              if (tags.indexOf($scope.upperFirst(tag.name)) == -1) {
+                tags.push($scope.upperFirst(tag.name));
+              }
+            }
+          });
+          return '(' + tags.toString() + ')';
+      }
+      return '';
+    };
+
+    $scope.upperFirst = function (string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
     }];
 }));

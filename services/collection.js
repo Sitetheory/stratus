@@ -131,8 +131,9 @@
                     // TODO: Add references to the Catalog when creating these models
                     that.models.push(new model({ collection: that }, target));
                   });
+                } else {
+                    that.models = data;
                 }
-
                 // Internals
                 that.pending = false;
                 that.completed = true;
