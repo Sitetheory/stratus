@@ -158,6 +158,7 @@ boot.config({
     'stratus.components.proposalAlert': boot.bundle + 'stratus/components/proposalAlert' + boot.suffix,
     'stratus.components.mediaDragDrop': boot.bundle + 'stratus/components/mediaDragDrop' + boot.suffix,
     'stratus.components.mediaDetails': boot.bundle + 'stratus/components/mediaDetails' + boot.suffix,
+    'stratus.components.mediaUploader': boot.bundle + 'stratus/components/mediaUploader' + boot.suffix,
     'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
@@ -178,6 +179,7 @@ boot.config({
     'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
     'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
     'stratus.directives.passwordCheck': boot.bundle + 'stratus/directives/passwordCheck' + boot.suffix,
+    'stratus.directives.validateUrl': boot.bundle + 'stratus/directives/validateUrl' + boot.suffix,
     'stratus.directives.compileTemplate': boot.bundle + 'stratus/directives/compileTemplate' + boot.suffix,
     'stratus.directives.stringToNumber': boot.bundle + 'stratus/directives/stringToNumber' + boot.suffix,
     'stratus.directives.timestampToDate': boot.bundle + 'stratus/directives/timestampToDate' + boot.suffix,

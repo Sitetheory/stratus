@@ -20,7 +20,7 @@
   </div>
   <div class="titleContainer" layout-wrap layout-gt-sm="row">
     <div class="stGrid column45 image-name">
-      <h2 ng-hide="$ctrl.selectedName.editing" ng-click="$ctrl.editItem($ctrl.selectedName)">{{ $ctrl.media.data.name }}</h2>
+      <h2 ng-hide="$ctrl.selectedName.editing" ng-click="$ctrl.editItem($ctrl.selectedName)">{{ $ctrl.selectedName.name }}</h2>
       <input ng-show="$ctrl.selectedName.editing" ng-model="$ctrl.selectedName.name" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedName)" autofocus/>
     </div>
     <div class="tagContainer stGrid column50">
@@ -53,7 +53,9 @@
   <div class="content clearfix" layout-wrap layout-gt-sm="row">
     <div flex-gt-sm="70" flex-order="1" flex-order-gt-sm="2">
       <div id="popupImage" class="infoFullImage">
-        <img ng-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.data.name }}">
+        <i ng-if="$ctrl.media.data.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
+        <i ng-if="$ctrl.media.data.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
+        <img ng-if="$ctrl.media.data.mime.indexOf('image') > -1" ng-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.data.name }}">
       </div>
     </div>
     <div flex-gt-sm="30" flex-order="2" flex-order-gt-sm="1">
@@ -65,15 +67,15 @@
                 <i class="fa fa-download fa-2x" aria-hidden="true"></i>
               </a>
             </li>
-            <!-- <li class="icon" ng-click="$ctrl.getLinkMedia()">
+            <li class="icon" ng-click="$ctrl.getLinkMedia()">
               <md-tooltip>Share image</md-tooltip>
               <i class="fa fa-link fa-2x" aria-hidden="true"></i>
-            </li> -->
+            </li>
             <li class="icon" ng-click="$ctrl.deleteMedia()">
               <md-tooltip>Delete image</md-tooltip>
               <i class="fa fa-trash fa-2x" aria-hidden="true"></i>
             </li>
-            <li class="icon" ngf-select="$ctrl.uploadToLibrary($files)">
+            <li class="icon" ng-click="$ctrl.openUploader(false, $ctrl.media.data.id)">
               <md-tooltip>Replace image</md-tooltip>
               <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
             </li>
@@ -85,7 +87,7 @@
           <p class="smallLabel">Size: <span>{{$ctrl.media.data.bytesHuman}}</span></p>
           <p class="smallLabel">Ratio: <span>{{$ctrl.media.data.ratio}}</span></p>
         </div>
-        <div class="description" ng-hide="$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{ $ctrl.media.data.description || 'No description' }}</div>
+        <div class="description" ng-hide="$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{ $ctrl.selectedDesc.description || 'No description' }}</div>
         <textarea rows="10" class="stGrid column100" ng-show="$ctrl.selectedDesc.editing" ng-model="$ctrl.selectedDesc.description" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedDesc)" autofocus></textarea>
       </div>
     </div>

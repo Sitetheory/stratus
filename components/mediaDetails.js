@@ -52,7 +52,7 @@
         $ctrl.deleteMedia = deleteMedia;
         $ctrl.getLinkMedia = getLinkMedia;
         $ctrl.closeDialog = closeDialog;
-        $ctrl.uploadToLibrary = uploadToLibrary;
+        $ctrl.openUploader = openUploader;
         $ctrl.createTag = createTag;
         $ctrl.editItem = editItem;
         $ctrl.doneEditing = doneEditing;
@@ -99,16 +99,31 @@
       };
 
       function getLinkMedia() {
-        console.log('handle getLink event');
+        if (commonMethods.copyToClipboard($ctrl.mediaUrl)) {
+          $mdDialog.show(
+            $mdDialog.confirm()
+            .textContent('Link is copied to clipboard')
+            .multiple(true)
+            .ok('OK')
+          );
+        }
       };
 
       function closeDialog() {
         $mdDialog.cancel();
       };
 
-      function uploadToLibrary(files) {
-        $scope.$parent.uploadToLibrary(files);
+      // Open the uploader to replace image
+      function openUploader(ngfMultiple, fileId) {
+        media.openUploader($ctrl, ngfMultiple, fileId, $scope);
       }
+
+      $scope.$on('uploadSuccess', function (event, files) {
+        console.log(files);
+        if (!files[0].errorUpload) {
+          $ctrl.mediaUrl = files[0].result.url;
+        }
+      });
 
       function createTag(query, fileId, tags) {
         var data = { name: query };
@@ -124,6 +139,7 @@
         });
       };
 
+      // Update title, description, tags of a file
       function updateMedia(fileId, data) {
         media.updateMedia(fileId, data).then(function (response) {
           if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
@@ -132,10 +148,12 @@
         });
       };
 
+      // Handle click event for editing title & description
       function editItem(item) {
         item.editing = true;
       };
 
+      // Handle updating title & description
       function doneEditing(fileId, item) {
         var data = {};
         if (item.description) {
@@ -153,6 +171,7 @@
         return $ctrl.collection.filter(query);
       }
 
+      // Handle saving tags after updating
       $scope.$watch('$ctrl.tags', function (data) {
         if ($ctrl.infoId !== undefined) {
           var dataRes = {};

@@ -27,7 +27,9 @@
         generateProgressBar: generateProgressBar,
         getUrlParams: getUrlParams,
         cleanedPhoneNumber: cleanedPhoneNumber,
-        RESPONSE_CODE: RESPONSE_CODE
+        moreParams: moreParams,
+        RESPONSE_CODE: RESPONSE_CODE,
+        copyToClipboard: copyToClipboard
       };
 
       // functional methods
@@ -113,6 +115,31 @@
         var keepNumberOnlyRegex = /\D+/g;
         return phoneNumber.replace(keepNumberOnlyRegex, '');
       };
+
+      /**
+       * Get more params which is shown after '#' symbol in url.
+       * @return {*}
+       */
+      function moreParams() {
+        var params = {};
+        angular.forEach(location.hash.split('#'), function (param) {
+          if (param) {
+            var digest = param.split('/');
+            params[digest[0]] = digest[1];
+          }
+        });
+        return params;
+      };
+
+      function copyToClipboard(value) {
+        var temp = document.createElement('input');
+        document.body.appendChild(temp);
+        temp.setAttribute('value', value);
+        temp.select();
+        var result = document.execCommand('copy');
+        document.body.removeChild(temp);
+        return result;
+      }
     }]);
   }];
 }));

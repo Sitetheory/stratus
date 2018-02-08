@@ -21,6 +21,7 @@
       'stratus.components.search',
       'stratus.components.pagination',
       'stratus.components.mediaDetails',
+      'stratus.components.mediaUploader',
 
       // Directives
       'stratus.directives.singleClick',
@@ -43,20 +44,17 @@
   // item array into a particular attribute.
   Stratus.Components.MediaLibrary = {
     bindings: {
-      ngModel: '=',
-      target: '@',
-      limit: '@',
-      data: '&'
+      ngModel: '='
     },
-    controller: function ($scope, $http, $attrs, $parse, $element, $timeout, Upload, $compile, registry, $mdPanel, $q, $mdDialog, commonMethods, media, $rootElement) {
+    controller: function ($scope, $attrs, registry, $mdDialog, commonMethods, media) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
       // Variables
       var $ctrl = this;
-      $ctrl.uploadToLibrary = uploadToLibrary;
       $ctrl.showDetails = showDetails;
-      $ctrl.deleteFromMedia = deleteFromMedia;
+      $ctrl.deleteMedia = deleteMedia;
+      $ctrl.openUploader = openUploader;
 
       // fetch media collection and hydrate to $scope.collection
       $ctrl.registry = new registry();
@@ -70,14 +68,9 @@
         }
       }, $scope);
 
-      // set media library to false
-      $ctrl.files = [];
-
-      $scope.$watch('files', function (newFiles, oldFiles) {
-        if (newFiles !== null && newFiles != oldFiles) {
-          preProcessOfSavingMedia(_.difference(newFiles, oldFiles));
-        }
-      });
+      function openUploader(ngfMultiple) {
+        media.openUploader($scope, ngfMultiple);
+      }
 
       function showDetails(media) {
         $mdDialog.show({
@@ -96,13 +89,10 @@
         function DialogShowDetails($scope, media, collection) {
           $scope.media = media;
           $scope.collection = collection;
-          $scope.uploadToLibrary = function (files) {
-            uploadToLibrary(files);
-          };
-        };
+        }
       };
 
-      function deleteFromMedia(fileId) {
+      function deleteMedia(fileId) {
         if (!Stratus.Environment.get('production')) {
           console.log(fileId);
         }
@@ -138,137 +128,6 @@
               }
             });
         });
-      };
-
-      // upload directly to media library
-      function uploadToLibrary(files) {
-        if (files.length > 0) {
-          $('#main').addClass('blurred');
-          $('.drag-drop').addClass('show-overlay');
-          $scope.files = files;
-
-          $mdDialog.show({
-            controller: DialogController,
-            locals: {
-              files: files
-            },
-            templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDragDropDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
-            parent: angular.element(document.body),
-            clickOutsideToClose: false,
-            escapeToClose: false,
-            focusOnOpen: true,
-            multiple: true
-          }).then(function (answer) {
-            $ctrl.files = $ctrl.files.concat(files);
-          }, function () {});
-
-          // controller for media upload dialog
-          function DialogController($scope, files) {
-            $scope.files = files;
-            $scope.uploadingFiles = true;
-
-            $scope.cancel = function () {
-              $mdDialog.cancel();
-              media.dragleave();
-            };
-
-            $scope.abort = function () {
-              console.log('aborted');
-            };
-
-            $scope.addFiles = function (newFiles) {
-              if (newFiles.length > 0) {
-                $scope.files = Array.from($scope.files).concat(newFiles);
-              }
-            };
-
-            $scope.removeFiles = function (file) {
-              $scope.files = _.without($scope.files, file);
-            };
-
-            $scope.$watch('files', function (newFiles, oldFiles) {
-              if (newFiles !== null && newFiles != oldFiles) {
-                preProcessOfSavingMedia(_.difference(newFiles, oldFiles));
-              }
-            });
-          };
-        };
-      };
-
-      function preProcessOfSavingMedia(files) {
-        // make files array for not multiple to be able to be used in ng-repeat in the ui
-        if (!angular.isArray(files)) {
-          $timeout(function () {
-            $scope.files = files = [files];
-          });
-          return;
-        }
-        var promises = [];
-        for (var i = 0; i < files.length; i++) {
-          $scope.errorMsg = null;
-          promises.push(saveMedia(files[i]));
-        }
-
-        // show done button when all promises are completed
-        if (promises.length > 0) {
-          $q.all(promises).then(
-            function (response) {
-              media.getMedia($scope);
-            },
-            function (error) {
-              console.log(error);
-            });
-          $scope.uploadingFiles = false;
-        }
-      }
-
-      // common function to save media to server
-      function saveMedia(file) {
-        file.errorMsg = null;
-        file.uploadStatus = false;
-        file.errorUpload = false;
-        file.progress = 0;
-
-        file.upload = media.uploadToS3(file, $ctrl.infoId);
-        file.upload.then(
-          function (response) {
-            file.result = response.data;
-
-            // set status of upload to success
-            file.uploadStatus = true;
-            file.errorUpload = false;
-            $ctrl.infoId = null;
-            $ctrl.imageSrc = file.result.url;
-          },
-          function (rejection) {
-            // if file is aborted handle error messages
-            if (rejection.config.data.file.upload.aborted === true) {
-              file.uploadStatus = false;
-
-              // show cross icon if upload failed
-              file.errorUpload = true;
-              file.errorMsg = 'Aborted';
-            }
-
-            // if file not uploaded due to server error
-            // else if (rejection.status > 0)
-            else {
-              // hide progress bar
-              file.uploadStatus = false;
-
-              // show cross icon if upload failed
-              file.errorUpload = true;
-
-              file.errorMsg = 'Server Error! Please try again';
-            }
-          }
-        );
-
-        file.upload.progress(function (evt) {
-          file.progress = evt.total === 0 ? 0 : Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-        });
-
-        return file.upload;
       };
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaLibrary' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
