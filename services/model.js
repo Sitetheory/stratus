@@ -38,6 +38,9 @@
           this.urlRoot = '/Api';
           this.data = {};
 
+          // The data used to detect the data is changed.
+          this.initData = {};
+
           // Handle Collections & Meta
           this.meta = new Stratus.Prototypes.Model();
           if (_.has(this, 'collection')) {
@@ -80,8 +83,12 @@
             }, function (newData, priorData) {
               var patch = _.patch(newData, priorData);
               $log.log('patch:', patch);
+
+              // Set the origin data
+              if (_.isEmpty(that.initData)) angular.copy(that.data, that.initData);
+
               if (patch) {
-                that.changed = true;
+                that.changed = !angular.equals(newData, that.initData);
                 if ((newData.id && newData.id !== priorData.id) || that.isNewVersion(newData)) {
                   window.location.replace(
                     Stratus.Internals.SetUrlParams({ id: newData.id })
@@ -93,10 +100,19 @@
           };
 
           /**
-           * @returns {*}
-           */
+          * @returns {*}
+          */
           this.url = function () {
-            return that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
+            var url = that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
+            url += '?';
+
+            // add futher param to specific version
+            if (commonMethods.moreParams()) {
+              angular.forEach(commonMethods.moreParams(), function (value, key) {
+                url += 'options[' + key + ']=' + value;
+              });
+            }
+            return url;
           };
 
           /**
@@ -139,12 +155,7 @@
               if (angular.isDefined(data)) {
                 if (action === 'GET') {
                   if (angular.isObject(data) && Object.keys(data).length) {
-                    prototype.url += '?' + that.serialize(data);
-                    if (commonMethods.moreParams()) {
-                      angular.forEach(commonMethods.moreParams(), function (value, key) {
-                        prototype.url += '&' + 'options[' + key + ']=' + value;
-                      });
-                    }
+                    prototype.url += '&' + that.serialize(data);
                   }
                 } else {
                   prototype.headers['Content-Type'] = 'application/json';
@@ -180,14 +191,10 @@
 
                     // Begin Watching
                     that.watcher();
-
-                    // Reset status model
-                    setTimeout(function () {
-                      that.changed = false;
-                    }, 100);
                   }
 
                   // Promise
+                  angular.copy(that.data, that.initData);
                   resolve(that.data);
                 } else {
                   // XHR Flags
@@ -369,7 +376,7 @@
            * @return boolean
            */
           this.isNewVersion = function (newData) {
-            return (!_.isEmpty(commonMethods.moreParams()) && newData.version && commonMethods.moreParams().version != newData.version.id);
+            return (!_.isEmpty(commonMethods.moreParams()) && newData.version && parseInt(commonMethods.moreParams().version) != newData.version.id);
           };
 
           /**

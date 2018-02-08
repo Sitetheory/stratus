@@ -24,7 +24,7 @@
   color: #666;
 }
 .paginator .paginatorPages:hover a {
-  color: #333;
+  color: #ff0000;
   background: rgba(66, 66, 66, 0.1);
 }
 .paginator .paginatorPrevious a,
@@ -42,7 +42,7 @@
 }
 .paginator .paginatorPages.active a,
 .paginator .paginatorPages.active:hover a {
-  color: red;
+  color: #333;
   background: none;
 }
 /* On dark backgrounds */
