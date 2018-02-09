@@ -233,6 +233,7 @@ boot.config({
     'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
     'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
     'stratus.directives.passwordCheck': boot.bundle + 'stratus/directives/passwordCheck' + boot.suffix,
+    'stratus.directives.validateUrl': boot.bundle + 'stratus/directives/validateUrl' + boot.suffix,
     'stratus.directives.compileTemplate': boot.bundle + 'stratus/directives/compileTemplate' + boot.suffix,
     'stratus.directives.stringToNumber': boot.bundle + 'stratus/directives/stringToNumber' + boot.suffix,
     'stratus.directives.timestampToDate': boot.bundle + 'stratus/directives/timestampToDate' + boot.suffix,
