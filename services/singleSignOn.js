@@ -12,7 +12,7 @@
 
   // This Collection Service handles data binding for multiple objects with the $http Service
   Stratus.Services.SingleSignOn = ['$provide', function ($provide) {
-    $provide.factory('singleSignOn', ['$q', '$http', function ($q, $http, $window) {
+    $provide.factory('singleSignOn', ['$q', '$http', '$window', function ($q, $http, $window) {
       // variables
       var loginUrl = '/Api/Login';
 

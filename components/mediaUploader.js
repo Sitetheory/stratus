@@ -71,7 +71,7 @@
           {
             service: $ctrl.services.video[0],
             url: null,
-            title: null,
+            name: null,
             tags: [],
             mime: 'video',
             description: null,
@@ -82,7 +82,7 @@
           {
             service: $ctrl.services.link[0],
             url: null,
-            title: null,
+            name: null,
             tags: [],
             description: null,
             isUploaded: false
@@ -132,7 +132,7 @@
         data = {
           service: file.service.value,
           file: file.url,
-          name: file.title,
+          name: file.name,
           tags: file.tags,
           description: file.description
         };
@@ -145,6 +145,9 @@
 
         media.saveMediaUrl(data).then(function (response) {
           if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+            // Refresh the library
+            media.getMedia($ctrl);
+
             if (fileType && fileType === 'video') {
               var index = $ctrl.videos.indexOf(file);
               $ctrl.videos[index].isUploaded = true;
