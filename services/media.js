@@ -35,7 +35,6 @@
           updateMedia: updateMedia,
           getMedia: getMedia,
           fileUploader: fileUploader,
-          openUploader: openUploader,
           saveMediaUrl: saveMediaUrl
         };
 
@@ -130,33 +129,6 @@
           });
 
           return file;
-        }
-
-        function openUploader(ctrl, ngfMultiple, fileId, parentScope) {
-          $mdDialog.show({
-            attachTo: angular.element(document.querySelector('#listContainer')),
-            controller: OpenUploaderController,
-            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId"></stratus-media-uploader>',
-            clickOutsideToClose: false,
-            focusOnOpen: true,
-            autoWrap: true,
-            multiple: true,
-            locals: {
-              collection: ctrl.collection,
-              ngfMultiple: ngfMultiple,
-              fileId: fileId
-            }
-          }).then(function (res) {
-            if (fileId && !_.isEmpty(res)) {
-              parentScope.$emit('uploadSuccess', res);
-            }
-          });
-
-          function OpenUploaderController(scope, collection, ngfMultiple, fileId) {
-            scope.collection = collection;
-            scope.ngfMultiple = ngfMultiple;
-            scope.fileId = fileId;
-          };
         }
       }
     ]);

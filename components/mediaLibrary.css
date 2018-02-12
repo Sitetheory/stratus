@@ -718,6 +718,7 @@ md-input-container label {
   margin-bottom: 0.4em;
   position: relative;
   width: 100%;
+  min-height: 170px;
   text-align: center;
   box-shadow: 0 1px 1px rgba(214, 211, 211, 0.4);
 }
@@ -766,11 +767,6 @@ md-input-container label {
   height: 40px;
   line-height: inherit !important;
   background: #e6e5e561;
-}
-#open-library .media-library-content .library-content .medias .media-item .middle-details .controls .fa-info-circle {
-  color: #fff;
-}
-#open-library .media-library-content .library-content .medias .media-item .middle-details .controls .fa-trash-o {
   color: #fff;
 }
 #open-library .media-library-content .library-content .medias .media-item:hover {

@@ -20,7 +20,7 @@
   </div>
   <div class="titleContainer" layout-wrap layout-gt-sm="row">
     <div class="stGrid column45 image-name">
-      <h2 ng-hide="$ctrl.selectedName.editing" ng-click="$ctrl.editItem($ctrl.selectedName)">{{ $ctrl.selectedName.name }}</h2>
+      <h2 ng-hide="$ctrl.selectedName.editing" ng-click="$ctrl.editItem($ctrl.selectedName)">{{ $ctrl.selectedName.name || 'No title' }}</h2>
       <input ng-show="$ctrl.selectedName.editing" ng-model="$ctrl.selectedName.name" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedName)" autofocus/>
     </div>
     <div class="tagContainer stGrid column50">
@@ -53,6 +53,9 @@
   <div class="content clearfix" layout-wrap layout-gt-sm="row">
     <div flex-gt-sm="70" flex-order="1" flex-order-gt-sm="2">
       <div id="popupImage" class="infoFullImage">
+        <div ng-if="$ctrl.media.data.mime == 'video'">
+          <iframe width="560" height="315" ng-src="{{ $ctrl.mediaUrl }}" frameborder="0" allowfullscreen></iframe>
+        </div>
         <i ng-if="$ctrl.media.data.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
         <i ng-if="$ctrl.media.data.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
         <img ng-if="$ctrl.media.data.mime.indexOf('image') > -1" ng-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.data.name }}">
@@ -62,21 +65,21 @@
       <div class="inform">
         <div>
           <ul class="controls-function">
-            <li class="icon">
+            <li class="icon" ng-if="$ctrl.media.data.mime != 'video'">
               <a href="//{{ $ctrl.media.data.prefix }}.{{ $ctrl.media.data.extension }}">
                 <i class="fa fa-download fa-2x" aria-hidden="true"></i>
               </a>
             </li>
             <li class="icon" ng-click="$ctrl.getLinkMedia()">
-              <md-tooltip>Share image</md-tooltip>
+              <md-tooltip>Share link</md-tooltip>
               <i class="fa fa-link fa-2x" aria-hidden="true"></i>
             </li>
             <li class="icon" ng-click="$ctrl.deleteMedia()">
-              <md-tooltip>Delete image</md-tooltip>
+              <md-tooltip>Delete file</md-tooltip>
               <i class="fa fa-trash fa-2x" aria-hidden="true"></i>
             </li>
             <li class="icon" ng-click="$ctrl.openUploader(false, $ctrl.media.data.id)">
-              <md-tooltip>Replace image</md-tooltip>
+              <md-tooltip>Replace file</md-tooltip>
               <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
             </li>
           </ul>

@@ -44,7 +44,8 @@
   // item array into a particular attribute.
   Stratus.Components.MediaLibrary = {
     bindings: {
-      ngModel: '='
+      ngModel: '=',
+      isSelector: '<'
     },
     controller: function ($scope, $attrs, registry, $mdDialog, commonMethods, media) {
       // Initialize
@@ -52,25 +53,59 @@
 
       // Variables
       var $ctrl = this;
-      $ctrl.showDetails = showDetails;
-      $ctrl.deleteMedia = deleteMedia;
-      $ctrl.openUploader = openUploader;
 
-      // fetch media collection and hydrate to $scope.collection
-      $ctrl.registry = new registry();
-      $ctrl.registry.fetch({
-        target: $attrs.target || 'Media',
-        id: null,
-        manifest: false,
-        decouple: true,
-        api: {
-          limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 30
+      $ctrl.$onInit = function () {
+        $ctrl.showLibrary = !$ctrl.isSelector;
+        $ctrl.showPlusIcon = true;
+
+        $ctrl.showDetails = showDetails;
+        $ctrl.deleteMedia = deleteMedia;
+        $ctrl.openUploader = openUploader;
+        $ctrl.toggleLibrary = toggleLibrary;
+        $ctrl.addOrRemoveFile = addOrRemoveFile;
+
+        // fetch media collection and hydrate to $scope.collection
+        $ctrl.registry = new registry();
+        $ctrl.registry.fetch({
+          target: $attrs.target || 'Media',
+          id: null,
+          manifest: false,
+          decouple: true,
+          api: {
+            limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 30
+          }
+        }, $scope);
+      };
+
+      function toggleLibrary() {
+        if (!$ctrl.showLibrary) {
+          $ctrl.showLibrary = true;
+        } else {
+          $ctrl.showLibrary = false;
         }
-      }, $scope);
+      };
 
       function openUploader(ngfMultiple) {
-        media.openUploader($scope, ngfMultiple);
-      }
+        // media.openUploader($scope, ngfMultiple);
+        $mdDialog.show({
+          attachTo: angular.element(document.querySelector('#listContainer')),
+          controller: OpenUploaderController,
+          template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId"></stratus-media-uploader>',
+          clickOutsideToClose: false,
+          focusOnOpen: true,
+          autoWrap: true,
+          multiple: true,
+          locals: {
+            collection: $scope.collection,
+            ngfMultiple: ngfMultiple
+          }
+        });
+
+        function OpenUploaderController(scope, collection, ngfMultiple) {
+          scope.collection = collection;
+          scope.ngfMultiple = ngfMultiple;
+        };
+      };
 
       function showDetails(media) {
         $mdDialog.show({
@@ -129,6 +164,11 @@
             });
         });
       };
+
+      function addOrRemoveFile(fileId) {
+        $ctrl.showPlusIcon = !$ctrl.showPlusIcon;
+        console.log(fileId);
+      }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaLibrary' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };

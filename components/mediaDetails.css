@@ -2,6 +2,7 @@
   background: #2e2e2e;
   border-radius: 5px;
   padding: 2em;
+  min-width: 700px;
 }
 .media-details .header {
   margin-bottom: 1.5em;
