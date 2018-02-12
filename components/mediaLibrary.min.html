@@ -16,7 +16,7 @@
           </div>
           <div ng-if="df.mime != 'application/x-unknown'" class="libraryItem">
             <a href="#" ng-dblclick="zoomView(df)">
-              <div class="imageDraggable" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover">
+              <div class="imageDraggable" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
                 <img id="{{df.id}}" class="shapeholder selectImgDrag" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
               </div>
             </a>
@@ -81,8 +81,8 @@
             <div class="controls">
               <i class="fa fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media)"></i>
               <i class="fa fa-trash-o fa-2x" aria-hidden="true" ng-click="$ctrl.deleteMedia(media.data.id)"></i>
-              <i ng-if="$ctrl.showPlusIcon" class="fa fa-plus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.id)"></i>
-              <i ng-if="!$ctrl.showPlusIcon" class="fa fa-minus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.id)"></i>
+              <i ng-if="$ctrl.isSelector && $ctrl.showPlusIcon" class="fa fa-plus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.id)"></i>
+              <i ng-if="$ctrl.isSelector && !$ctrl.showPlusIcon" class="fa fa-minus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.id)"></i>
             </div>
           </div>
         </div>
