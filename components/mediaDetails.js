@@ -50,9 +50,9 @@
 
         $ctrl.$onInit = function () {
           // Variables
-          initFile($ctrl.media.data);
-          $ctrl.tags = $ctrl.media.data.tags;
-          $ctrl.infoId = $ctrl.media.data.id;
+          initFile($ctrl.media);
+          $ctrl.tags = $ctrl.media.tags;
+          $ctrl.infoId = $ctrl.media.id;
 
           // Methods
           $ctrl.deleteMedia = deleteMedia;
@@ -91,7 +91,7 @@
         }
 
         function deleteMedia() {
-          var fileId = $ctrl.media.data.id;
+          var fileId = $ctrl.media.id;
           if (!Stratus.Environment.get('production')) {
             console.log(fileId);
           }

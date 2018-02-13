@@ -51,18 +51,20 @@
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library', true);
 
-      // Variables
       var $ctrl = this;
-
       $ctrl.$onInit = function () {
+        // Variables
         $ctrl.showLibrary = !$ctrl.isSelector;
         $ctrl.showPlusIcon = true;
+        $ctrl.draggedFiles = [];
 
+        // Methods
         $ctrl.showDetails = showDetails;
         $ctrl.deleteMedia = deleteMedia;
         $ctrl.openUploader = openUploader;
         $ctrl.toggleLibrary = toggleLibrary;
         $ctrl.addOrRemoveFile = addOrRemoveFile;
+        $ctrl.removeFromSelected = removeFromSelected;
 
         // fetch media collection and hydrate to $scope.collection
         $ctrl.registry = new registry();
@@ -165,10 +167,55 @@
         });
       };
 
-      function addOrRemoveFile(fileId) {
+      function addOrRemoveFile(selectedStatus, fileId) {
         $ctrl.showPlusIcon = !$ctrl.showPlusIcon;
-        console.log(fileId);
+
+        if (selectedStatus === true) {
+          for (i = 0; i < $ctrl.draggedFiles.length; i++) {
+            if ($ctrl.draggedFiles[i].id === fileId) {
+              $ctrl.draggedFiles.splice(i, 1);
+              for (i = 0; i < $scope.collection.models.length; i++) {
+                if ($scope.collection.models[i].data.id === fileId) {
+                  $scope.collection.models[i].data.selectedClass = false;
+                }
+              }
+            }
+          }
+        } else if (selectedStatus === false || selectedStatus === undefined) {
+          // show plus icon,move to draggedFiles and add selectedClass
+          media.fetchOneMedia(fileId).then(function (response) {
+            $ctrl.draggedFiles.push(response.data.payload);
+            for (let i = 0; i < $scope.collection.models.length; i++) {
+              if ($scope.collection.models[i].data.id === fileId) {
+                $scope.collection.models[i].data.selectedClass = true;
+              }
+            }
+          });
+        }
+      };
+
+      function removeFromSelected(fileId) {
+        $ctrl.showPlusIcon = !$ctrl.showPlusIcon;
+
+        for (i = 0; i < $ctrl.draggedFiles.length; i++) {
+          if ($ctrl.draggedFiles[i].id === fileId) {
+            $ctrl.draggedFiles.splice(i, 1);
+          }
+        }
+
+        for (let i = 0; i < $scope.collection.models.length; i++) {
+          if ($scope.collection.models[i].data.id === fileId) {
+            $scope.collection.models[i].data.selectedClass = false;
+          }
+        }
       }
+
+      $scope.$watch('$ctrl.ngModel', function (data) {
+        console.log(data);
+        if (!_.isUndefined(data) && !_.isEqual($scope.draggedFiles, data)) {
+          $ctrl.draggedFiles = data || [];
+        }
+      });
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaLibrary' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };

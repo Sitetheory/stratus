@@ -21,7 +21,7 @@
   <div class="titleContainer" layout-wrap layout-gt-sm="row">
     <div class="stGrid column45 image-name">
       <h2 ng-hide="$ctrl.selectedName.editing" ng-click="$ctrl.editItem($ctrl.selectedName)">{{ $ctrl.selectedName.name || 'No title' }}</h2>
-      <input ng-show="$ctrl.selectedName.editing" ng-model="$ctrl.selectedName.name" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedName)" autofocus/>
+      <input ng-show="$ctrl.selectedName.editing" ng-model="$ctrl.selectedName.name" ng-blur="$ctrl.doneEditing($ctrl.media.id, $ctrl.selectedName)" autofocus/>
     </div>
     <div class="tagContainer stGrid column50">
       <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak>
@@ -41,7 +41,7 @@
               <span md-highlight-text="query">{{ model.name || model.data.name }}</span>
             </md-chip-template>
             <md-not-found>
-              <div ng-click="$ctrl.createTag(query, $ctrl.media.data.id, $ctrl.media.data.tags);">
+              <div ng-click="$ctrl.createTag(query, $ctrl.media.id, $ctrl.media.tags);">
                 Create New Tag for "{{ query }}" ?
               </div>
             </md-not-found>
@@ -53,20 +53,20 @@
   <div class="content clearfix" layout-wrap layout-gt-sm="row">
     <div flex-gt-sm="70" flex-order="1" flex-order-gt-sm="2">
       <div id="popupImage" class="infoFullImage">
-        <div ng-if="$ctrl.media.data.mime == 'video'">
+        <div ng-if="$ctrl.media.mime == 'video'">
           <iframe width="560" height="315" ng-src="{{ $ctrl.mediaUrl }}" frameborder="0" allowfullscreen></iframe>
         </div>
-        <i ng-if="$ctrl.media.data.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
-        <i ng-if="$ctrl.media.data.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
-        <img ng-if="$ctrl.media.data.mime.indexOf('image') > -1" ng-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.data.name }}">
+        <i ng-if="$ctrl.media.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
+        <i ng-if="$ctrl.media.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
+        <img ng-if="$ctrl.media.mime.indexOf('image') > -1" ng-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.name }}">
       </div>
     </div>
     <div flex-gt-sm="30" flex-order="2" flex-order-gt-sm="1">
       <div class="inform">
         <div>
           <ul class="controls-function">
-            <li class="icon" ng-if="$ctrl.media.data.mime != 'video'">
-              <a href="//{{ $ctrl.media.data.prefix }}.{{ $ctrl.media.data.extension }}">
+            <li class="icon" ng-if="$ctrl.media.mime != 'video'">
+              <a href="//{{ $ctrl.media.prefix }}.{{ $ctrl.media.extension }}">
                 <i class="fa fa-download fa-2x" aria-hidden="true"></i>
               </a>
             </li>
@@ -78,20 +78,20 @@
               <md-tooltip>Delete file</md-tooltip>
               <i class="fa fa-trash fa-2x" aria-hidden="true"></i>
             </li>
-            <li class="icon" ng-click="$ctrl.openUploader(false, $ctrl.media.data.id)">
+            <li class="icon" ng-click="$ctrl.openUploader(false, $ctrl.media.id)">
               <md-tooltip>Replace file</md-tooltip>
               <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
             </li>
           </ul>
         </div>
         <div class="mediaSpecs">
-          <p class="smallLabel">{{ $ctrl.media.data.time | date:'dd/MM/yyyy @HH:mm a' }}</p>
-          <p class="smallLabel">Type: <span>{{$ctrl.media.data.extension}}</p>
-          <p class="smallLabel">Size: <span>{{$ctrl.media.data.bytesHuman}}</span></p>
-          <p class="smallLabel">Ratio: <span>{{$ctrl.media.data.ratio}}</span></p>
+          <p class="smallLabel">{{ $ctrl.media.time | date:'dd/MM/yyyy @HH:mm a' }}</p>
+          <p class="smallLabel">Type: <span>{{$ctrl.media.extension}}</p>
+          <p class="smallLabel">Size: <span>{{$ctrl.media.bytesHuman}}</span></p>
+          <p class="smallLabel">Ratio: <span>{{$ctrl.media.ratio}}</span></p>
         </div>
         <div class="description" ng-if="!$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{ $ctrl.selectedDesc.description || 'No description' }}</div>
-        <textarea rows="10" class="stGrid column100" ng-if="$ctrl.selectedDesc.editing" ng-model="$ctrl.selectedDesc.description" ng-blur="$ctrl.doneEditing($ctrl.media.data.id, $ctrl.selectedDesc)" autofocus></textarea>
+        <textarea rows="10" class="stGrid column100" ng-if="$ctrl.selectedDesc.editing" ng-model="$ctrl.selectedDesc.description" ng-blur="$ctrl.doneEditing($ctrl.media.id, $ctrl.selectedDesc)" autofocus></textarea>
       </div>
     </div>
   </div>
