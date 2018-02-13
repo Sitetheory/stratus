@@ -50,25 +50,9 @@
 
         $ctrl.$onInit = function () {
           // Variables
-          if ($ctrl.media.data.url) {
-            $ctrl.mediaUrl = 'http://' + $ctrl.media.data.prefix + '.' + $ctrl.media.data.extension;
-          } else {
-            $ctrl.mediaUrl = $ctrl.media.data.file;
-          }
-          if ($ctrl.media.data.mime === 'video') {
-            var videoId = $ctrl.media.data.file.split('v=')[1].split('&')[0];
-            $ctrl.mediaUrl = $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + videoId);
-          }
-          $ctrl.tags = $ctrl.media.data.tags;
-          $ctrl.infoId = $ctrl.media.data.id;
-          $ctrl.selectedName = {
-            name: $ctrl.media.data.name,
-            editing: false
-          };
-          $ctrl.selectedDesc = {
-            description: $ctrl.media.data.description,
-            editing: false
-          };
+          initFile($ctrl.media);
+          $ctrl.tags = $ctrl.media.tags;
+          $ctrl.infoId = $ctrl.media.id;
 
           // Methods
           $ctrl.deleteMedia = deleteMedia;
@@ -81,8 +65,33 @@
           $ctrl.searchFilter = searchFilter;
         };
 
+        function initFile(fileData) {
+          if (fileData.url) {
+            $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' + fileData.extension;
+          } else {
+            $ctrl.mediaUrl = fileData.file;
+          }
+          if (fileData.mime === 'video') {
+            var videoUrl;
+            if (fileData.service === 'youtube') {
+              videoUrl = 'https://www.youtube.com/embed/' + fileData.file.split('v=')[1].split('&')[0];
+            } else if (fileData.service === 'vimeo') {
+              videoUrl = 'https://player.vimeo.com/video/' + fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0];
+            }
+            $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl);
+          }
+          $ctrl.selectedName = {
+            name: fileData.name,
+            editing: false
+          };
+          $ctrl.selectedDesc = {
+            description: fileData.description,
+            editing: false
+          };
+        }
+
         function deleteMedia() {
-          var fileId = $ctrl.media.data.id;
+          var fileId = $ctrl.media.id;
           if (!Stratus.Environment.get('production')) {
             console.log(fileId);
           }
@@ -146,15 +155,15 @@
             autoWrap: true,
             multiple: true,
             locals: {
-              collection: $scope.collection,
+              collection: $ctrl.collection,
               ngfMultiple: ngfMultiple,
               fileId: fileId
             }
           }).then(function (response) {
             console.log(response);
-            if (fileId && !_.isEmpty(response)) {
+            if (fileId && !_.isEmptyObject(response)) {
               if (!response[0].errorUpload) {
-                $ctrl.mediaUrl = response[0].result.url;
+                initFile(response[0].result);
               }
             }
           });

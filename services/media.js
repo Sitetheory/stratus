@@ -35,7 +35,8 @@
           updateMedia: updateMedia,
           getMedia: getMedia,
           fileUploader: fileUploader,
-          saveMediaUrl: saveMediaUrl
+          saveMediaUrl: saveMediaUrl,
+          fetchOneMedia: fetchOneMedia
         };
 
         function dragenter(event) {
@@ -56,6 +57,10 @@
 
         function deleteMedia(fileId) {
           return sendRequest(null, 'DELETE', mediaApi + '/' + fileId);
+        }
+
+        function fetchOneMedia(fileId) {
+          return sendRequest(null, 'GET', mediaApi + '/' + fileId);
         }
 
         function saveMediaUrl(data) {

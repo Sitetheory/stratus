@@ -129,6 +129,8 @@
       }
 
       function saveOneFile(file, fileType) {
+        if (file.isUploaded) return;
+
         data = {
           service: file.service.value,
           file: file.url,
