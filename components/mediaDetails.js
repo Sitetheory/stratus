@@ -72,11 +72,10 @@
             $ctrl.mediaUrl = fileData.file;
           }
           if (fileData.mime === 'video') {
-            var videoUrl;
             if (fileData.service === 'youtube') {
-              videoUrl = 'https://www.youtube.com/embed/' + fileData.file.split('v=')[1].split('&')[0];
+              var videoUrl = 'https://www.youtube.com/embed/' + fileData.file.split('v=')[1].split('&')[0];
             } else if (fileData.service === 'vimeo') {
-              videoUrl = 'https://player.vimeo.com/video/' + fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0];
+              var videoUrl = 'https://player.vimeo.com/video/' + fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0];
             }
             $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl);
           }
