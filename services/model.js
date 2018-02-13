@@ -9,7 +9,7 @@
       'underscore',
       'angular',
       'angular-material',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -100,8 +100,8 @@
           };
 
           /**
-          * @returns {*}
-          */
+           * @returns {*}
+           */
           this.url = function () {
             var url = that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
             url += '?';
