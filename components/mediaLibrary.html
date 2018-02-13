@@ -1,54 +1,49 @@
-<div id="open-library">
+<div id="media-library">
   <!-- Media Selector -->
-  <div ng-if="$ctrl.isSelector" class="sectionContainer selectedContainer borderDefault borderDefaultAll borderRadiusDefault">
+  <div ng-if="$ctrl.isSelector" class="media-selector sectionContainer selectedContainer borderDefault borderDefaultAll borderRadiusDefault">
     <p class="instructions fontBody clearfix">
       <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select images.</a>
     </p>
     <p class="smallLabel selectedMediaLabel">Media</p>
     <div id="selectedDropArea" ng-class="{'dragBorder':dragClass}" ng-model="files" name="files" ngf-multiple="true" ngf-before-model-change="beforeChange($files,$event)" ngf-drop ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}" ngf-drag-over-class="dragover" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
       <ul class="listInline" stratus-sortable ng-sortable="$ctrl.draggedFiles" ng-sortable-item-selector=".draggableImg">
-        <li class="draggableImg" ng-if="$ctrl.draggedFiles.length" ng-repeat="df in $ctrl.draggedFiles">
-          <div ng-if="df.mime == 'video'" class="droppedUnknown positionCenter">
-            <i class="fa fa-5x fa-video-camera document" aria-hidden="true"></i>
-          </div>
-          <div ng-if="df.mime == 'application/pdf'" class="droppedUnknown positionCenter">
-            <i class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
-          </div>
-          <div ng-if="df.mime == 'application/msword'" class="droppedUnknown positionCenter">
-            <i class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
-          </div>
-          <div ng-if="df.mime.indexOf('image') > -1" class="libraryItem">
-            <a href="#" ng-dblclick="zoomView(df)">
-              <div class="imageDraggable" id="libb_{{media.data.id}}" style="background: url('{{df.url || df.file}}') no-repeat center center; background-size: cover;">
-                <img id="{{df.id}}" class="shapeholder selectImgDrag" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-              </div>
-            </a>
-            <div class="imageInfoContainer">
-              <div class="imageHoverInfo borderRadiusDefault">
-                <div class="format-size">
-                  <div class="smallLabel fileDetails">
-                    <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}</span>
-                  </div>
-                </div>
-                <p class="fontBody imgTitle">{{ df.name }}</p>
-                <div class="positionActionArea">
-                  <div class="clearfix actionBtns">
-                    <a href="#" ng-click="$ctrl.showDetails(df)" class="infoIcon">
-                      <md-tooltip>Image details</md-tooltip>
-                      <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                    </a>
-                    <a href="#" class="deleteIcon">
-                      <md-tooltip>Remove selection</md-tooltip>
-                      <md-icon aria-hidden="true" ng-click="$ctrl.removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <!-- Image Info Ends -->
+        <li class="draggableImg libraryItem" ng-if="$ctrl.draggedFiles.length" ng-repeat="df in $ctrl.draggedFiles">
+          <a href="#">
+            <div ng-if="df.mime.indexOf('image') > -1" class="imageDraggable" id="libb_{{media.data.id}}">
+              <img id="{{df.id}}" class="selectImgDrag" ng-src="{{df.url || df.file}}">
             </div>
-            <!-- Media Selector Image Container Ends -->
+            <div ng-if="df.mime == 'video'" class="positionCenter">
+              <i class="fa fa-5x fa-video-camera document" aria-hidden="true"></i>
+            </div>
+            <div ng-if="df.mime == 'application/pdf'" class="positionCenter">
+              <i class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
+            </div>
+            <div ng-if="df.mime == 'application/msword'" class="positionCenter">
+              <i class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
+            </div>
+          </a>
+          <div class="imageInfoContainer">
+            <div class="imageHoverInfo borderRadiusDefault">
+              <div class="format-size">
+                <div class="smallLabel fileDetails">
+                  <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span class="fileSize">{{media.data.bytesHuman}}</span>
+                </div>
+              </div>
+              <p class="fontBody imgTitle">{{ df.name || 'No title' }}</p>
+              <div class="positionActionArea">
+                <div class="clearfix actionBtns">
+                  <a href="#" ng-click="$ctrl.showDetails(df)" class="infoIcon">
+                    <md-tooltip>Image details</md-tooltip>
+                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                  </a>
+                  <a href="#" class="deleteIcon">
+                    <md-tooltip>Remove selection</md-tooltip>
+                    <md-icon aria-hidden="true" ng-click="$ctrl.removeFromSelected(df.id);" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-          <!-- Image Info Container Ends -->
         </li>
         <li class="libraryToggle">
           <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="$ctrl.toggleLibrary()">
@@ -79,7 +74,7 @@
           <i ng-if="media.data.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
           <img ng-if="media.data.mime.indexOf('image') > -1" src="{{media.data.url || media.data.file}}">
           <div class="middle-details">
-            <div class="name"><p>{{media.data.name | uppercase}}</p></div>
+            <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
             <div class="time"><p>{{media.data.time | date: 'MMM dd, yyyy h:mma'}}</p></div>
             <div class="controls">
               <i class="fa fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media.data)"></i>
