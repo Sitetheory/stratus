@@ -31,10 +31,13 @@
           this.target = null;
           this.manifest = false;
           this.stagger = false;
-          if (!options || typeof options !== 'object') options = {};
+          if (!options || typeof options !== 'object') {
+            options = {};
+          }
           angular.extend(this, options);
 
           // Infrastructure
+          this.identifier = null;
           this.urlRoot = '/Api';
           this.data = {};
 
@@ -44,8 +47,12 @@
           // Handle Collections & Meta
           this.meta = new Stratus.Prototypes.Model();
           if (_.has(this, 'collection')) {
-            if (this.collection.target) this.target = this.collection.target;
-            if (this.collection.meta.has('api')) this.meta.set('api', this.collection.meta.get('api'));
+            if (this.collection.target) {
+              this.target = this.collection.target;
+            }
+            if (this.collection.meta.has('api')) {
+              this.meta.set('api', this.collection.meta.get('api'));
+            }
           }
 
           // Handle Attributes (Typically from Collection Hydration)
@@ -76,7 +83,9 @@
 
           // Watch for Data Changes
           this.watcher = function () {
-            if (that.watching) return true;
+            if (that.watching) {
+              return true;
+            }
             that.watching = true;
             $rootScope.$watch(function () {
               return that.data;
@@ -85,7 +94,9 @@
               $log.log('patch:', patch);
 
               // Set the origin data
-              if (_.isEmpty(that.initData)) angular.copy(that.data, that.initData);
+              if (_.isEmpty(that.initData)) {
+                angular.copy(that.data, that.initData);
+              }
 
               if (patch) {
                 that.changed = !angular.equals(newData, that.initData);
@@ -102,8 +113,15 @@
           /**
            * @returns {*}
            */
+          this.getIdentifier = function () {
+            return this.identifier = that.get('id') || that.identifier;
+          };
+
+          /**
+           * @returns {*}
+           */
           this.url = function () {
-            var url = that.get('id') ? that.urlRoot + '/' + that.get('id') : that.urlRoot;
+            var url = that.getIdentifier() ? that.urlRoot + '/' + that.getIdentifier() : that.urlRoot;
             url += '?';
 
             // add futher param to specific version
@@ -126,9 +144,13 @@
                 str.push(that.serialize(value, key));
               } else {
                 var encoded = '';
-                if (chain) encoded += chain + '[';
+                if (chain) {
+                  encoded += chain + '[';
+                }
                 encoded += key;
-                if (chain) encoded += ']';
+                if (chain) {
+                  encoded += ']';
+                }
                 str.push(encoded + '=' + value);
               }
             });
@@ -235,7 +257,7 @@
            */
           this.save = function () {
             that.saving = true;
-            return that.sync(that.get('id') ? 'PUT' : 'POST', that.toJSON({
+            return that.sync(that.getIdentifier() ? 'PUT' : 'POST', that.toJSON({
               patch: true
             })).catch(function (message) {
               $mdToast.show(
@@ -529,7 +551,7 @@
             if (that.collection) {
               that.collection.remove(that);
             }
-            if (that.get('id')) {
+            if (that.getIdentifier()) {
               that.sync('DELETE', {}).catch(function (message) {
                 $mdToast.show(
                   $mdToast.simple()
@@ -547,7 +569,7 @@
            * @type {Function}
            */
           this.initialize = _.once(this.initialize || function () {
-            if (that.manifest && !that.get('id')) {
+            if (that.manifest && !that.getIdentifier()) {
               that.sync('POST', that.meta.has('api') ? {
                 meta: that.meta.get('api'),
                 payload: {}

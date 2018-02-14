@@ -62,18 +62,24 @@
           if (model.exists('id') && model.exists('sentinel')) {
             var sentinel = new Stratus.Prototypes.Sentinel();
             sentinel.permissions(model.get('permissions'));
-            $scope.sentinel[model.get('id')] = sentinel;
+            $scope.sentinel[model.getIdentifier()] = sentinel;
           }
         });
       });
 
       // Permission Calculations
       $scope.$watch('sentinel', function (sentinels) {
-        if (!angular.isObject(sentinels)) return;
+        if (!angular.isObject(sentinels)) {
+          return;
+        }
         _.each(sentinels, function (sentinel, id) {
-          if (!angular.isObject($scope.collection) || !angular.isObject(sentinel)) return;
+          if (!angular.isObject($scope.collection) || !angular.isObject(sentinel)) {
+            return;
+          }
           _.each($scope.collection.models || [], function (model) {
-            if (!angular.isObject(model) || model.get('id') !== parseInt(id)) return;
+            if (!angular.isObject(model) || model.getIdentifier() !== parseInt(id)) {
+              return;
+            }
             model.set('permissions', sentinel.permissions());
           });
         });

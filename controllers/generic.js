@@ -67,10 +67,10 @@
 
       $scope.createSite = function (siteTitle, siteGenreId, masterSite, masterContentMethod) {
         var data = {
-            name: siteTitle,
-            genre: siteGenreId,
-            masterSite: masterSite,
-            masterContentMethod: masterContentMethod
+          name: siteTitle,
+          genre: siteGenreId,
+          masterSite: masterSite,
+          masterContentMethod: masterContentMethod
         };
         createNewSite.create(data).then(function (res) {
           console.log(res);
@@ -90,7 +90,7 @@
               $scope.$watch('collection.models', function (models) {
                 if (!$scope.selected && !$scope.selectedInit) {
                   angular.forEach(models, function (model) {
-                    if (selected.id === model.get('id')) {
+                    if (selected.id === model.getIdentifier()) {
                       $scope.selected = selected.raw ? model.data : model;
                       $scope.selectedInit = true;
                     }

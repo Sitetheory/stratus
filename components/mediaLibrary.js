@@ -136,11 +136,11 @@
 
         $mdDialog.show(
           $mdDialog.confirm()
-          .title('DELETE MEDIA')
-          .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
-          .multiple(true)
-          .ok('Yes')
-          .cancel('No')
+            .title('DELETE MEDIA')
+            .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+            .multiple(true)
+            .ok('Yes')
+            .cancel('No')
         ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
@@ -150,12 +150,12 @@
               } else {
                 $mdDialog.show(
                   $mdDialog.alert()
-                  .parent(angular.element(document.querySelector('#popupContainer')))
-                  .clickOutsideToClose(false)
-                  .title('Error')
-                  .multiple(true)
-                  .textContent(commonMethods.getStatus(response).message)
-                  .ok('Ok')
+                    .parent(angular.element(document.querySelector('#popupContainer')))
+                    .clickOutsideToClose(false)
+                    .title('Error')
+                    .multiple(true)
+                    .textContent(commonMethods.getStatus(response).message)
+                    .ok('Ok')
                 );
               }
             },
@@ -185,7 +185,7 @@
           // show plus icon,move to draggedFiles and add selectedClass
           media.fetchOneMedia(fileId).then(function (response) {
             $ctrl.draggedFiles.push(response.data.payload);
-            for (let i = 0; i < $scope.collection.models.length; i++) {
+            for (var i = 0; i < $scope.collection.models.length; i++) {
               if ($scope.collection.models[i].data.id === fileId) {
                 $scope.collection.models[i].data.selectedClass = true;
               }
@@ -203,7 +203,7 @@
           }
         }
 
-        for (let i = 0; i < $scope.collection.models.length; i++) {
+        for (var i = 0; i < $scope.collection.models.length; i++) {
           if ($scope.collection.models[i].data.id === fileId) {
             $scope.collection.models[i].data.selectedClass = false;
           }

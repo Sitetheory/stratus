@@ -56,7 +56,8 @@
             {
               label: 'Direct Link',
               value: 'directlink'
-            },
+            }
+
             // {
             //   label: 'Google Drive',
             //   value: 'googledrive'
@@ -129,7 +130,9 @@
       }
 
       function saveOneFile(file, fileType) {
-        if (file.isUploaded) return;
+        if (file.isUploaded) {
+          return;
+        }
 
         data = {
           service: file.service.value,

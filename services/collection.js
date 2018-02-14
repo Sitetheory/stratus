@@ -65,7 +65,9 @@
           obj = obj || {};
           angular.forEach(obj, function (value, key) {
             if (angular.isObject(value)) {
-              if (chain) key = chain + '[' + key + ']';
+              if (chain) {
+                key = chain + '[' + key + ']';
+              }
               str.push(that.serialize(value, key));
             } else {
               var encoded = '';
@@ -132,8 +134,9 @@
                     that.models.push(new model({ collection: that }, target));
                   });
                 } else {
-                    that.models = data;
+                  that.models = data;
                 }
+
                 // Internals
                 that.pending = false;
                 that.completed = true;
@@ -246,13 +249,17 @@
          * @param options
          */
         this.add = function (target, options) {
-          if (!options || typeof options !== 'object') options = {};
+          if (!options || typeof options !== 'object') {
+            options = {};
+          }
           if (angular.isObject(target)) {
             target = (target instanceof model) ? target : new model({
               collection: that
             }, target);
             that.models.push(target);
-            if (options.save) target.save();
+            if (options.save) {
+              target.save();
+            }
           }
         };
 
