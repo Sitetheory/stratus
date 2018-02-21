@@ -7,7 +7,7 @@
     define([
       'stratus',
       'underscore',
-      'angular',
+      'angular'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -35,14 +35,7 @@
           });
         };
 
-        (function (d, s, id) {
-          var fjs = d.getElementsByTagName(s)[0];
-          var js;
-          if (d.getElementById(id)) {return;}
-          js = d.createElement(s); js.id = id;
-          js.src = 'https://connect.facebook.net/en_US/sdk.js';
-          fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
+        require(['https://connect.facebook.net/en_US/sdk.js']);
 
         // window.fbAsyncInit = function () {
         //   FB.init({
@@ -66,10 +59,9 @@
       };
 
       function loadGGLibrary() {
-        // load javascrip
-        var js = document.createElement('script'); // use global document since Angular's $document is weak
-        js.src = 'https://apis.google.com/js/platform.js';
-        document.body.appendChild(js);
+        if (!_.cookie('disableGoogle')) {
+          require(['https://apis.google.com/js/platform.js']);
+        }
 
         // load google api key
         var meta = document.createElement('meta');
