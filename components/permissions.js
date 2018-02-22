@@ -55,53 +55,53 @@
 
       $scope.$watch('$ctrl.permissionId', function (permissionId) {
           if (typeof permissionId !== 'undefined') {
-              $scope.getPermission(permissionId);
+            $scope.getPermission(permissionId);
           }
-      });
+        });
 
       $scope.getPermission = function (permissionId) {
           return $http({
               method: 'GET',
               url: '/Api/Permission/' + permissionId,
               headers: { 'Content-Type': 'application/json' }
-          }).then(
+            }).then(
           function (response) {
               // success
               if (response) {
-                  var data = response.data.payload;
+                var data = response.data.payload;
 
-                  //Set permission selected
-                  permissions = data.summary;
-                  angular.forEach(permissions, function (permission, index) {
-                      index = $scope.permissions.findIndex(function(x) {
-                          return x.name === permission;
+                //Set permission selected
+                permissions = data.summary;
+                angular.forEach(permissions, function (permission, index) {
+                    index = $scope.permissions.findIndex(function (x) {
+                        return x.name === permission;
                       });
 
-                        if (index > -1) {
-                            $scope.permissionSelected.push($scope.permissions[index].value);
-                        }
+                    if (index > -1) {
+                      $scope.permissionSelected.push($scope.permissions[index].value);
+                    }
                   });
 
-                  $ctrl.ngModel.data.permissions = $scope.permissionSelected;
+                $ctrl.ngModel.data.permissions = $scope.permissionSelected;
 
-                  //Set identity name
-                  $scope.userRoleSelected = data.identityRole ? data.identityRole : data.identityUser;
-                  $scope.updateUserRole = data.identityRole ? data.identityRole : data.identityUser;
+                //Set identity name
+                $scope.userRoleSelected = data.identityRole ? data.identityRole : data.identityUser;
+                $scope.updateUserRole = data.identityRole ? data.identityRole : data.identityUser;
 
-                  //Set asset name
-                  $scope.updateContent = {
-                      name: data.asset + " - " + data.assetId,
-                      assetType : data.asset,
-                      id: data.assetId
+                //Set asset name
+                $scope.updateContent = {
+                    name: data.asset + ' - ' + data.assetId,
+                    assetType: data.asset,
+                    id: data.assetId
                   };
               }
-          },
+            },
           function (response) {
               // something went wrong
               console.log('response error', response);
 
-          });
-      };
+            });
+        };
 
       /**
       * Retrieve data from server
@@ -111,18 +111,18 @@
           return Promise.resolve(results).then(function (value) {
               var response = [];
               if (value.User) {
-                  response = response.concat(value.User);
+                response = response.concat(value.User);
               }
               if (value.Role) {
-                  response = response.concat(value.Role);
+                response = response.concat(value.Role);
               }
               if (!(value.User) && !(value.Role)) {
-                  response = response.concat(value);
+                response = response.concat(value);
               }
 
               return response;
-          });
-      };
+            });
+        };
 
       $scope.contentQuery = function (collection, query) {
           var results = collection.filter(query);
@@ -130,58 +130,58 @@
               var response = [];
 
               if (value.Bundle) {
-                  angular.forEach(value.Bundle, function (bundle, index) {
-                        value.Bundle[index].assetType = "SitetheoryContentBundle:Bundle"
-                  });
+                angular.forEach(value.Bundle, function (bundle, index) {
+                      value.Bundle[index].assetType = 'SitetheoryContentBundle:Bundle';
+                    });
 
-                  response = response.concat(value.Bundle);
+                response = response.concat(value.Bundle);
               }
               if (value.Content) {
-                  angular.forEach(value.Content, function (content, index) {
-                      value.Content[index].assetType = "Sitetheory" + content.contentType.bundle.name + "Bundle:" + content.contentType.entity;
+                angular.forEach(value.Content, function (content, index) {
+                    value.Content[index].assetType = 'Sitetheory' + content.contentType.bundle.name + 'Bundle:' + content.contentType.entity;
                   });
-                  response = response.concat(value.Content);
+                response = response.concat(value.Content);
               }
               if (value.ContentType) {
-                  angular.forEach(value.ContentType, function (contentType, index) {
-                      value.ContentType[index].assetType = "SitetheoryContentBundle:ContentType"
+                angular.forEach(value.ContentType, function (contentType, index) {
+                    value.ContentType[index].assetType = 'SitetheoryContentBundle:ContentType';
                   });
-                  response = response.concat(value.ContentType);
+                response = response.concat(value.ContentType);
               }
 
               if (!value.Bundle && !value.Content && !value.ContentType) {
-                  response = response.concat(value);
+                response = response.concat(value);
               }
 
               return response;
-          });
-      };
+            });
+        };
 
       $scope.selectedUserRoleChange = function (item) {
           $scope.userRoleSelected = item;
           if ($scope.userRoleSelected && $scope.userRoleSelected.name) {
-              $ctrl.ngModel.data.identityRole = item;
-              $ctrl.ngModel.data.identityUser = null;
+            $ctrl.ngModel.data.identityRole = item;
+            $ctrl.ngModel.data.identityUser = null;
           } else {
-              $ctrl.ngModel.data.identityRole = null;
-              $ctrl.ngModel.data.identityUser = item;
+            $ctrl.ngModel.data.identityRole = null;
+            $ctrl.ngModel.data.identityUser = item;
           }
-      };
+        };
 
       $scope.selectedContentChange = function (content) {
           $scope.contentSelected = content;
           $ctrl.ngModel.data.asset = $scope.contentSelected.assetType;
           $ctrl.ngModel.data.assetId = $scope.contentSelected.id;
-      };
+        };
 
-        /**
-         * If user selected the master Action, the other action selected will be ignored.
-         * If user selected all of actions except the master action, the action Selected will be converted to only contain master.
-         */
+      /**
+       * If user selected the master Action, the other action selected will be ignored.
+       * If user selected all of actions except the master action, the action Selected will be converted to only contain master.
+       */
       $scope.processSelectAction = function () {
         var masterIndex = $scope.permissionSelected.indexOf(128);
         if ((masterIndex != -1) || ($scope.permissionSelected.length == $scope.permissions.length - 1)) {
-            $scope.permissionSelected = [$scope.permissions[$scope.permissions.length - 1].value];
+          $scope.permissionSelected = [$scope.permissions[$scope.permissions.length - 1].value];
         }
         $ctrl.ngModel.data.permissions = $scope.permissionSelected;
       };
@@ -203,8 +203,8 @@
         var method = 'POST';
 
         if ($ctrl.permissionId) {
-            url += '/' + $ctrl.permissionId;
-            method = 'PUT';
+          url += '/' + $ctrl.permissionId;
+          method = 'PUT';
         }
         return $http({
           method: method,

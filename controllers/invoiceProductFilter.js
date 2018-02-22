@@ -122,36 +122,41 @@
           });
         }
       };
-    $scope.getSiteName = function (siteId, siteList) {
-        var siteName;
-        if (siteList.length > 0) {
+
+      /**
+      * Return site name
+      * (String)
+      */
+      $scope.getSiteName = function (siteId, siteList) {
+          var siteName;
+          if (siteList.length > 0) {
             siteList.forEach(function (site) {
                 if (site.id === siteId) {
-                  siteName = site.name
+                  siteName = site.name;
                 }
-            });
+              });
             return siteName;
-        }
-        return 'Site Name';
-    };
+          }
+          return 'Site Name';
+        };
 
-    $scope.getTags = function (contentId, tagList) {
-      var tags = [];
-      if (tagList.length > 0) {
+      $scope.getTags = function (contentId, tagList) {
+        var tags = [];
+        if (tagList.length > 0) {
           tagList.forEach(function (tag) {
-            if(contentId === tag.assets[0].id) {
+            if (contentId === tag.assets[0].id) {
               if (tags.indexOf($scope.upperFirst(tag.name)) == -1) {
                 tags.push($scope.upperFirst(tag.name));
               }
             }
           });
           return '(' + tags.toString() + ')';
-      }
-      return '';
-    };
+        }
+        return '';
+      };
 
-    $scope.upperFirst = function (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
+      $scope.upperFirst = function (string) {
+          return string.charAt(0).toUpperCase() + string.slice(1);
+        };
     }];
 }));

@@ -194,6 +194,7 @@ boot.config({
     'stratus.filters.moment': boot.bundle + 'stratus/filters/moment' + boot.suffix,
     'stratus.filters.reduce': boot.bundle + 'stratus/filters/reduce' + boot.suffix,
     'stratus.filters.truncate': boot.bundle + 'stratus/filters/truncate' + boot.suffix,
+    'stratus.filters.age': boot.bundle + 'stratus/filters/age' + boot.suffix,
 
     /* Stratus Core Services */
     'stratus.services.model': boot.bundle + 'stratus/services/model' + boot.suffix,
