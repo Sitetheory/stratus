@@ -13,11 +13,7 @@
       'angular',
 
       // Modules
-      'angular-material',
-
-      // Services
-      'stratus.services.collection'
-
+      'angular-material'
     ], factory);
   } else {
     factory(root.Stratus, root.$, root._);
@@ -25,11 +21,7 @@
 }(this, function (Stratus, $, _) {
   // Permissions
   Stratus.Components.Permissions = {
-    bindings: {
-      ngModel: '='
-    },
-    controller: function ($scope, $timeout, $attrs, registry, $http) {
-
+    controller: function ($scope, $timeout, $attrs, $http) {
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
       // mock up list permissions
@@ -46,8 +38,8 @@
       $scope.contentSelected = null;
 
       /**
-      * Load data demo.
-      */
+            * Load data demo.
+            */
       $scope.loadPermissions = function () {
         // Use timeout to simulate a 400ms request.
         return $timeout(function () {
@@ -65,34 +57,6 @@
       };
 
       /**
-      * Load data demo.
-      */
-      $scope.loadContents = function () {
-        // Use timeout to simulate a 400ms request.
-        return $timeout(function () {
-          $scope.contents = [
-            { id: 1, name: 'Art Bundle' },
-            { id: 2, name: 'Articles' },
-            { id: 3, name: 'The Art of being' }
-          ];
-        }, 400);
-      };
-
-      /**
-      * Load data demo.
-      */
-      $scope.loadUserRoles = function () {
-        // Use timeout to simulate a 400ms request.
-        return $timeout(function () {
-          $scope.userRoles = [
-            { id: 1, name: 'Daniela' },
-            { id: 2, name: 'Desmond' },
-            { id: 3, name: 'Desiree' }
-          ];
-        }, 400);
-      };
-
-      /**
       * If user selected the master Action, the other action selected will be ignored.
       * If user selected all of actions except the master action, the action Selected will be converted to only contain master.
       */
@@ -103,9 +67,30 @@
         }
       };
 
+      /**
+      * Retrieve data from server
+      */
+      $scope.permissionQuery = function (collection, query) {
+        var results = collection.filter(query);
+        return Promise.resolve(results).then(function (value) {
+          console.log('value', value);
+          var response = [];
+          if (value.User) {
+            console.log('co user', value.User);
+            response = response.concat(value.User);
+          }
+
+          if (value.Role) {
+            console.log('co Role', value.Role);
+            response = response.concat(value.Role);
+          }
+          console.log('response', response);
+          return response;
+        });
+      };
+
       //
       $scope.submit = function () {
-        console.log('$scope.permissionSelected', $scope.permissionSelected);
         return $http({
           method: 'PUT',
           url: '/Api/Permission',

@@ -10,31 +10,31 @@
         md-menu-class="autocomplete-custom-template"
         md-selected-item="permission.identityUser"
         md-search-text="query"
-        md-items="user in collection.filter(query)"
-        md-item-text="user.username"
+        md-items="item in permissionQuery(collection, query)"
+        md-item-text="item.name || item.bestName"
         md-no-cache="true"
         md-autoselect="true"
-        md-floating-label="User"
+        md-floating-label="User and Role *"
         placeholder="Choose an Identity">
 
-        <div layout="row" layout-align="space-between center">
+      <md-item-template>
+        <div layout="row" layout-wrap layout-align="space-between center">
           <div class="contact-item">
-            <img ng-src="{{ user.email | gravatar }}" class="md-avatar" alt="{{ user.bestName }}"/>
+            <img src="http://pluspng.com/img-png/png-user-icon-male-user-icon-512.png" alt="">
           </div>
-          <div >
-            <p class="md-contact-name" md-highlight-text="true" md-highlight-flags="i">
-              {{ user.bestName }}
-            </p>
-          </div>
+          <p class="md-contact-name" md-highlight-text="true" md-highlight-flags="i" flex="60">
+            {{ item.bestName || item.name }}
+          </p>
         </div>
       </md-item-template>
     </md-autocomplete>
+
   </div>
 
   <div class="select-options"
     ng-controller="Generic"
     data-raw="true"
-    data-target="Content"
+    data-target="Content *"
     data-api='{"options":{"type":"collection"}}'>
     <md-autocomplete
         md-min-length="0"
@@ -49,9 +49,9 @@
         md-floating-label="Content"
         placeholder="Choose an Identity">
 
+      <md-item-template>
         <div layout="row" layout-align="space-between center">
           <div class="contact-item">
-            <!-- <img src="https://cdn.sitetheory.io/nest001/2415/018-eddy-asf_poster_950x5000.png" class="md-avatar" alt="(>:<)"/> -->
             <img ng-src="{{content.version.images[0] ? 'http://' + content.version.images[0].prefix + '.' + content.version.images[0].extension : null}}" class="md-avatar" alt="(>:<)"/>
           </div>
           <div >
@@ -67,7 +67,7 @@
   <div class="select-options">
     <md-input-container>
       <label>Actions</label>
-      <md-select ng-model="permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" md-on-open="loadPermissions()" multiple="">
+      <md-select ng-model="permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()" md-on-open="loadPermissions()" data-md-container-class="selectdemoSelectHeader" multiple="">
         <md-select-header class="demo-select-header">
           <input ng-model="permissionSearchTerm" type="search" placeholder="Search for a action.." class="demo-header-searchbox md-text">
         </md-select-header>
