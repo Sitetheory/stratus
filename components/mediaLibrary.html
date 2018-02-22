@@ -72,7 +72,7 @@
           <i ng-if="media.data.mime == 'video'" class="fa fa-5x fa-video-camera document" aria-hidden="true"></i>
           <i ng-if="media.data.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
           <i ng-if="media.data.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
-          <img ng-if="media.data.mime.indexOf('image') > -1" src="{{media.data.url || media.data.file}}">
+          <img data-plugin="lazy" ng-if="media.data.mime.indexOf('image') > -1" src="{{media.data.url || media.data.file}}">
           <div class="middle-details">
             <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
             <div class="time"><p>{{media.data.time | date: 'MMM dd, yyyy h:mma'}}</p></div>
