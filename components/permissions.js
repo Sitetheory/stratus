@@ -27,14 +27,11 @@
       // mock up list permissions
       $scope.permissions = [];
       $scope.permissionSelected = [];
-      $scope.permissionSearchTerm = null;
 
       // mock up list roles
-      $scope.userRoles = [];
       $scope.userRoleSelected = null;
 
       // mock up list contents
-      $scope.contents = [];
       $scope.contentSelected = null;
 
       /**
@@ -76,17 +73,34 @@
           console.log('value', value);
           var response = [];
           if (value.User) {
-            console.log('co user', value.User);
             response = response.concat(value.User);
-          }
-
-          if (value.Role) {
-            console.log('co Role', value.Role);
+          }else if (value.Role) {
             response = response.concat(value.Role);
+          }else {
+            response = response.concat(value);
           }
           console.log('response', response);
           return response;
         });
+      };
+
+      $scope.selectedUserRoleChange = function (item) {
+        $scope.userRoleSelected = item;
+      };
+
+      $scope.selectedContentChange = function (content) {
+        $scope.contentSelected = content;
+      };
+
+      /**
+      * process data for submit
+      * return {*}
+      */
+      $scope.processDataSubmit = function () {
+        if ($scope.userRoleSelected && $scope.userRoleSelected.name) {
+          return { identity: { role: $scope.userRoleSelected.id }, asset: { asset: 'SitetheoryUserBundle:User', id: $scope.contentSelected.id }, permissions: $scope.permissionSelected };
+        }
+        return { identity: { user: $scope.userRoleSelected.id }, asset: { asset: 'SitetheoryUserBundle:User', id: $scope.contentSelected.id }, permissions: $scope.permissionSelected };
       };
 
       //
@@ -94,7 +108,7 @@
         return $http({
           method: 'PUT',
           url: '/Api/Permission',
-          data: { identity: { user: 1 }, asset: { asset: 'SitetheoryUserBundle:User', id: 2 }, permissions: $scope.permissionSelected },
+          data: processDataSubmit(),
           headers: { 'Content-Type': 'application/json' }
         }).then(
           function (response) {

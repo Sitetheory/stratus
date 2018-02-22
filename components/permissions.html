@@ -8,12 +8,11 @@
         md-min-length="0"
         md-delay="500"
         md-menu-class="autocomplete-custom-template"
-        md-selected-item="permission.identityUser"
         md-search-text="query"
         md-items="item in permissionQuery(collection, query)"
+        md-selected-item-change="selectedUserRoleChange(item)"
         md-item-text="item.name || item.bestName"
         md-no-cache="true"
-        md-autoselect="true"
         md-floating-label="User and Role *"
         placeholder="Choose an Identity">
 
@@ -40,12 +39,11 @@
         md-min-length="0"
         md-delay="500"
         md-menu-class="autocomplete-custom-template"
-        md-selected-item="permission.identityUser"
         md-search-text="query"
         md-items="content in collection.filter(query)"
+        md-selected-item-change="selectedContentChange(content)"
         md-item-text="content.version.title"
         md-no-cache="true"
-        md-autoselect="true"
         md-floating-label="Content"
         placeholder="Choose an Identity">
 
@@ -79,6 +77,6 @@
   </div>
 </div>
 
-<div class="submit">
+<div class="submit" ng-show="(userRoleSelected && contentSelected && permissionSelected)">
   <md-button class="md-raised" ng-click=submit()> Submit </md-button>
 </div>
