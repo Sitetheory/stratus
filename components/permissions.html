@@ -13,6 +13,7 @@
         md-selected-item-change="selectedUserRoleChange(item)"
         md-item-text="item.name || item.bestName"
         md-no-cache="true"
+        md-selected-item="updateUserRole"
         md-floating-label="User and Role *"
         placeholder="Choose an Identity">
 
@@ -44,6 +45,7 @@
         md-selected-item-change="selectedContentChange(item)"
         md-item-text="item.version.title || item.name"
         md-no-cache="true"
+        md-selected-item="updateContent"
         md-floating-label="Content"
         placeholder="Choose an Identity">
 
@@ -65,7 +67,7 @@
   <div class="select-options">
     <md-input-container>
       <label>Actions</label>
-      <md-select ng-model="permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()" md-on-open="loadPermissions()" data-md-container-class="selectdemoSelectHeader" multiple="">
+      <md-select ng-model="permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" multiple="">
         <md-select-header class="demo-select-header">
           <input ng-model="permissionSearchTerm" type="search" placeholder="Search for a action.." class="demo-header-searchbox md-text">
         </md-select-header>
@@ -77,6 +79,6 @@
   </div>
 </div>
 
-<div class="submit" ng-show="(userRoleSelected && contentSelected && permissionSelected)">
-  <md-button class="md-raised" ng-click=submit()> Submit </md-button>
-</div>
+<!--<div class="submit" ng-show="(userRoleSelected && contentSelected && permissionSelected.length > 0)">-->
+  <!--<md-button class="md-raised" ng-click=submit()> Submit </md-button>-->
+<!--</div>-->
