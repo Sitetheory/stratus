@@ -216,6 +216,7 @@ boot.config({
     'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
+    'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
     'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
     'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
     'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
