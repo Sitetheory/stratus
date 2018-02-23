@@ -13,11 +13,7 @@
       'angular',
 
       // Modules
-      'angular-material',
-
-      // Services
-      'stratus.services.collection'
-
+      'angular-material'
     ], factory);
   } else {
     factory(root.Stratus, root.$, root._);
@@ -26,28 +22,26 @@
   // Permissions
   Stratus.Components.Permissions = {
     bindings: {
-      ngModel: '='
+      permissionId: '='
     },
-    controller: function ($scope, $timeout, $attrs, registry, $http) {
+    controller: function ($scope, $timeout, $attrs, $http) {
 
+      var $ctrl = this;
       Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
 
       // mock up list permissions
       $scope.permissions = [];
       $scope.permissionSelected = [];
-      $scope.permissionSearchTerm = null;
 
       // mock up list roles
-      $scope.userRoles = [];
       $scope.userRoleSelected = null;
 
       // mock up list contents
-      $scope.contents = [];
       $scope.contentSelected = null;
 
       /**
-      * Load data demo.
-      */
+            * Load data demo.
+            */
       $scope.loadPermissions = function () {
         // Use timeout to simulate a 400ms request.
         return $timeout(function () {
@@ -65,34 +59,6 @@
       };
 
       /**
-      * Load data demo.
-      */
-      $scope.loadContents = function () {
-        // Use timeout to simulate a 400ms request.
-        return $timeout(function () {
-          $scope.contents = [
-            { id: 1, name: 'Art Bundle' },
-            { id: 2, name: 'Articles' },
-            { id: 3, name: 'The Art of being' }
-          ];
-        }, 400);
-      };
-
-      /**
-      * Load data demo.
-      */
-      $scope.loadUserRoles = function () {
-        // Use timeout to simulate a 400ms request.
-        return $timeout(function () {
-          $scope.userRoles = [
-            { id: 1, name: 'Daniela' },
-            { id: 2, name: 'Desmond' },
-            { id: 3, name: 'Desiree' }
-          ];
-        }, 400);
-      };
-
-      /**
       * If user selected the master Action, the other action selected will be ignored.
       * If user selected all of actions except the master action, the action Selected will be converted to only contain master.
       */
@@ -103,13 +69,85 @@
         }
       };
 
+      /**
+      * Retrieve data from server
+      */
+      $scope.identityQuery = function (collection, query) {
+          var results = collection.filter(query);
+          return Promise.resolve(results).then(function (value) {
+              var response = [];
+              if (value.User) {
+                  response = response.concat(value.User);
+              }
+              if (value.Role) {
+                  response = response.concat(value.Role);
+              }
+              if (!(value.User) && !(value.Role)) {
+                  response = response.concat(value);
+              }
+
+              return response;
+          });
+      };
+
+      $scope.contentQuery = function (collection, query) {
+          var results = collection.filter(query);
+          return Promise.resolve(results).then(function (value) {
+              var response = [];
+
+              if (value.Bundle) {
+                  angular.forEach(value.Bundle, function (bundle, index) {
+                        value.Bundle[index].assetType = "SitetheoryContentBundle:Bundle"
+                  });
+
+                  response = response.concat(value.Bundle);
+              }
+              if (value.Content) {
+                  angular.forEach(value.Content, function (content, index) {
+                      value.Content[index].assetType = "Sitetheory" + content.contentType.bundle.name + "Bundle:" + content.contentType.entity;
+                  });
+                  response = response.concat(value.Content);
+              }
+              if (value.ContentType) {
+                  angular.forEach(value.ContentType, function (contentType, index) {
+                      value.ContentType[index].assetType = "SitetheoryContentBundle:ContentType"
+                  });
+                  response = response.concat(value.ContentType);
+              }
+
+              if (!value.Bundle && !value.Content && !value.ContentType) {
+                  response = response.concat(value);
+              }
+
+              return response;
+          });
+      };
+
+      $scope.selectedUserRoleChange = function (item) {
+        $scope.userRoleSelected = item;
+      };
+
+      $scope.selectedContentChange = function (content) {
+        $scope.contentSelected = content;
+      };
+
+      /**
+      * process data for submit
+      * return {*}
+      */
+      $scope.processDataSubmit = function () {
+        if ($scope.userRoleSelected && $scope.userRoleSelected.name) {
+          return { identity: { role: $scope.userRoleSelected.id }, asset: { asset: 'SitetheoryUserBundle:User', id: $scope.contentSelected.id }, permissions: $scope.permissionSelected };
+        }
+        return { identity: { user: $scope.userRoleSelected.id }, asset: { asset: $scope.contentSelected.assetType, id: $scope.contentSelected.id }, permissions: $scope.permissionSelected };
+      };
+
       //
       $scope.submit = function () {
-        console.log('$scope.permissionSelected', $scope.permissionSelected);
         return $http({
-          method: 'PUT',
+          method: $ctrl.permissionId ? 'PUT' : 'POST',
           url: '/Api/Permission',
-          data: { identity: { user: 1 }, asset: { asset: 'SitetheoryUserBundle:User', id: 2 }, permissions: $scope.permissionSelected },
+          data: $scope.processDataSubmit(),
           headers: { 'Content-Type': 'application/json' }
         }).then(
           function (response) {
