@@ -366,6 +366,10 @@ boot.config({
     zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
     zxcvbn: boot.bundle + 'stratus/bower_components/zxcvbn/dist/zxcvbn',
 
+    /* Interpreters */
+    coffee: boot.bundle + 'stratus/bower_components/coffeescript/docs/v2/browser-compiler/coffeescript',
+    less: boot.bundle + 'stratus/bower_components/less/dist/less' + boot.suffix,
+
     /* Angular */
     angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
     'angular-animate': boot.bundle + 'stratus/bower_components/angular-animate/angular-animate' + boot.suffix,

@@ -313,7 +313,7 @@ boot.config({
     zxcvbn: boot.bundle + 'stratus/bower_components/zxcvbn/dist/zxcvbn',
 
     /* Interpreters */
-    coffeescript: boot.bundle + 'stratus/bower_components/coffeescript/docs/v2/browser-compiler/coffeescript',
+    coffee: boot.bundle + 'stratus/bower_components/coffeescript/docs/v2/browser-compiler/coffeescript',
     less: boot.bundle + 'stratus/bower_components/less/dist/less' + boot.suffix,
 
     /* Angular */

@@ -219,9 +219,9 @@
 
       $scope.$watch('collection.models', function (data) {
         if (!_.isUndefined(data) && $ctrl.draggedFiles.length > 0) {
-          for (i = 0; i < $ctrl.draggedFiles.length; i++) {
+          for (var i = 0; i < $ctrl.draggedFiles.length; i++) {
             var addedFile = $ctrl.draggedFiles[i];
-            for (let j = 0; j < $scope.collection.models.length; j++) {
+            for (var j = 0; j < $scope.collection.models.length; j++) {
               var media = $scope.collection.models[j];
               if (addedFile.id === media.data.id) {
                 media.data.selectedClass = true;
