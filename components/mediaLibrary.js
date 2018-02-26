@@ -144,7 +144,7 @@
         ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
-              if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+              if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
                 // fetch media library list
                 media.getMedia($scope);
               } else {

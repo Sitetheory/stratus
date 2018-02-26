@@ -18,29 +18,12 @@
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular, zxcvbn) {
   Stratus.Services.CommonMethods = ['$provide', function ($provide) {
     $provide.factory('commonMethods', ['$q', '$http', '$window', function ($q, $http, $window) {
-      return {
-        componentInitializer: componentInitializer,
-        getStatus: getStatus,
-        buildCssUrl: buildCssUrl,
-        underscoreToCamel: underscoreToCamel,
-        validPassword: validPassword,
-        generateProgressBar: generateProgressBar,
-        getUrlParams: getUrlParams,
-        cleanedPhoneNumber: cleanedPhoneNumber,
-        moreParams: moreParams,
-        RESPONSE_CODE: RESPONSE_CODE,
-        copyToClipboard: copyToClipboard
+      var RESPONSE_CODE = {
+        verify: 'VERIFY',
+        success: 'SUCCESS'
       };
 
       // functional methods
-
-      function RESPONSE_CODE() {
-        return {
-          verify: 'VERIFY',
-          success: 'SUCCESS'
-        };
-      }
-
       function componentInitializer(element, scope, attrs, componentName, loadCss) {
         element.uid = _.uniqueId(componentName + '_');
         Stratus.Instances[element.uid] = scope;
@@ -140,6 +123,36 @@
         document.body.removeChild(temp);
         return result;
       }
+
+      function sendRequest(data, method, url, headers) {
+        return $http({
+          url: url,
+          method: method,
+          data: data,
+          headers: headers
+        }).then(
+          function (response) { // success
+            return $q.resolve(response);
+          },
+          function (response) { // something went wrong
+            return $q.reject(response);
+          });
+      }
+
+      return {
+        componentInitializer:   componentInitializer,
+        getStatus:              getStatus,
+        buildCssUrl:            buildCssUrl,
+        underscoreToCamel:      underscoreToCamel,
+        validPassword:          validPassword,
+        generateProgressBar:    generateProgressBar,
+        getUrlParams:           getUrlParams,
+        cleanedPhoneNumber:     cleanedPhoneNumber,
+        moreParams:             moreParams,
+        RESPONSE_CODE:          RESPONSE_CODE,
+        copyToClipboard:        copyToClipboard,
+        sendRequest:            sendRequest
+      };
     }]);
   }];
 }));

@@ -18,10 +18,9 @@
       'stratus.services.details',
 
       // Components
-      'stratus.components.search',
       'stratus.components.pagination',
       'stratus.services.commonMethods',
-      'stratus.services.adminThemeSelector'
+      'stratus.services.visualSelector'
     ], factory);
   } else {
     // Browser globals
@@ -29,7 +28,7 @@
   }
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, $, angular) {
   // This component intends to allow editing of various selections depending on context.
-  Stratus.Components.AdminThemeSelector = {
+  Stratus.Components.ThemeSelector = {
     bindings: {
       // Basic
       elementId: '@',
@@ -39,11 +38,9 @@
       // Selector
       type: '@',
       limit: '@',
-      multiple: '<',
 
       // Custom
-      details: '<',
-      search: '<'
+      details: '<'
     },
     controller: function (
       $scope,
@@ -55,66 +52,43 @@
       $sce,
       collection,
       $window,
-      $log,
-      $http,
-      $mdDialog,
       commonMethods,
-      adminThemeSelector
+      visualSelector
     ) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'admin_theme_selector', true);
-
-      // Hydrate Settings
-      $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
+      commonMethods.componentInitializer(this, $scope, $attrs, 'theme_selector', true);
 
       var $ctrl = this;
 
-      $ctrl.errorMsg = null;
-      $ctrl.heartCollor = [];
-      $ctrl.themes = [];
-      $ctrl.currentThemes = $ctrl.themes;
-      $ctrl.zoomView = zoomView;
-      $ctrl.selectedTheme = null;
+      $ctrl.$onInit = function () {
+        // Hydrate Settings
+        $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
 
-      // mock DB
-      $ctrl.categories = ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'];
+        $ctrl.errorMsg = null;
+        $ctrl.heartCollor = [];
+        $ctrl.themes = [];
+        $ctrl.currentThemes = $ctrl.themes;
+        $ctrl.zoomView = zoomView;
+        $ctrl.selectedTheme = null;
 
-      // define methods
-      $ctrl.sortBy = sortBy;
-      $ctrl.setFavorite = setFavorite;
-      $ctrl.getFavoriteStatus = getFavoriteStatus;
-      $ctrl.showCategory = showCategory;
-      $ctrl.chooseTheme = chooseTheme;
-      $ctrl.finishChoosingTheme = finishChoosingTheme;
+        // mock DB
+        $ctrl.categories = ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'];
 
-      $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
+        // define methods
+        $ctrl.sortBy = sortBy;
+        $ctrl.setFavorite = setFavorite;
+        $ctrl.getFavoriteStatus = getFavoriteStatus;
+        $ctrl.showCategory = showCategory;
+        $ctrl.chooseTheme = chooseTheme;
+        $ctrl.themeRawDesc = themeRawDesc;
+        $ctrl.finishChoosingTheme = finishChoosingTheme;
 
-      // Asset Collection
-      if ($attrs.type) {
-        $scope.registry = new registry();
-        var request = {
-          target: $attrs.type || 'Template',
-          id: null,
-          manifest: false,
-          decouple: true,
-          selectedid: $attrs.selectedid,
-          property: $attrs.property,
-          api: {
-            options: {},
-            limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 3
-          }
-        };
-        if ($scope.api && angular.isObject($scope.api)) {
-          request.api = _.extendDeep(request.api, $scope.api);
+        // Asset Collection
+        if ($attrs.type) {
+          $scope = visualSelector.fetchCollection($scope, $attrs, 3, 'Template');
         }
-        $scope.registry.fetch(request, $scope);
+      };
 
-        // Get Details of selected template by attribute selectedid
-        $scope.selectedDetails = new details();
-        $scope.selectedDetails.fetch(request, $scope);
-      }
-
-      // console.log($scope);
       // Store Asset Property for Verification
       $scope.property = $attrs.property || null;
 
@@ -125,59 +99,27 @@
 
       // Data Connectivity
       $scope.$watch('collection.models', function (models) {
-        if (models.length > 0) {
+        if (models && models.length > 0) {
           $ctrl.themes = models;
           $ctrl.currentThemes = models;
         }
       });
 
       // automatically run security check the result of html
-      $scope.themeRawDesc = function (plainText) {
+      function themeRawDesc(plainText) {
         return $sce.trustAsHtml(plainText);
       };
 
       // display expanded view if clicked on change button
-      function zoomView(themeDetail, $event) {
-        $scope.themeDetail = themeDetail.data;
-
-        var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
-
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          controllerAs: 'ctrl',
-          parent: angular.element(document.body),
-          fullscreen: false,
-          controller: ZoomController,
-          templateUrl: 'themeDetail.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          clickOutsideToClose: true,
-          escapeToClose: false,
-          focusOnOpen: true,
-          zIndex: 2
-        };
-
-        $mdPanel.open(config);
-      }
-
-      function ZoomController(mdPanelRef) {
-        $scope.closeDialog = function () {
-          mdPanelRef.close();
-        };
+      function zoomView(themeDetail) {
+        visualSelector.zoomviewDialog($scope, themeDetail.data, 'themeDetail');
       }
 
       // Functionality methods
       function showCategory(index) {
-        $ctrl.currentThemes = $ctrl.themes.filter(
-          function (theme) {
-            return (theme.category === $ctrl.categories[index]);
-          }
-        );
+        $ctrl.currentThemes = $ctrl.themes.filter(function (theme) {
+          return (theme.category === $ctrl.categories[index]);
+        });
         if (index < 0) {
           $ctrl.currentThemes = $ctrl.themes;
         }
@@ -205,10 +147,10 @@
 
       function finishChoosingTheme(themeData) {
         var data = {
-          templateId: themeData.data.id
+          templateId: themeData.id
         };
-        adminThemeSelector.selectTheme(data).then(function (res) {
-          if (commonMethods.getStatus(res).code === commonMethods.RESPONSE_CODE().success) {
+        visualSelector.selectTheme(data).then(function (res) {
+          if (commonMethods.getStatus(res).code === commonMethods.RESPONSE_CODE.success) {
             $window.location.href = '/Site/Edit/Success';
           } else {
             $ctrl.errorMsg = commonMethods.getStatus(res).message;
@@ -250,6 +192,6 @@
         });
       }
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/adminThemeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
 }));

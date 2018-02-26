@@ -1,0 +1,259 @@
+#visualSelector {
+  hr {
+    background: none;
+    border-top: 1px solid #777;
+  }
+}
+
+
+/* Info areas */
+
+.imageColumn {
+  padding-right: 7%;
+  img {
+    display: block;
+  }
+}
+
+.quickInfo {
+  margin: 34px 0;
+}
+
+.description {
+  margin-bottom: 40px;
+}
+
+
+/* Selected layout area */
+
+.selectedLayout {
+  margin-bottom: 60px;
+  h2 {
+    margin-top: 16px;
+    line-height: 1.2;
+  }
+  h4 {
+    margin-bottom: 0;
+  }
+}
+
+.selectedImage {
+  .btn {
+    display: block;
+    transition: all 0.1s ease-out !important;
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  &:hover {
+    .btn {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .imageContainer {
+      opacity: 0.2;
+    }
+  }
+}
+
+
+/* Info popup */
+
+@media (min-width: 1000px) {
+  .media-dialog {
+    width: 900px;
+  }
+}
+
+.popup {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 7%;
+  background: rgba(255, 255, 255, 0.9);
+  width: 100%;
+  .btnClose {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+  .smallLabel {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .btn {
+    display: table;
+    margin-top: 26px;
+  }
+}
+
+.btnChoose {
+  margin-bottom: 34px !important;
+}
+
+.popupForm {
+  margin-bottom: 8px;
+  font-size: 13px;
+  input {
+    margin-right: 10px;
+  }
+}
+
+@media (max-width: 899px) {
+  .popup {
+    padding: 40px;
+    overflow: scroll;
+    .btnClose {
+      top: 10px;
+      right: 10px;
+    }
+  }
+}
+
+
+/* Selector Gallery */
+
+.galleryTitle {
+  margin: 0 0 60px;
+}
+
+.galleryImage {
+  img {
+    display: block;
+  }
+  .selectedBorder {
+    opacity: 0;
+    border: 5px solid #333;
+  }
+}
+
+.galleryItem {
+  .btn {
+    transition: all 0.1s ease-out !important;
+    transform: scale(0.8);
+    display: block;
+    opacity: 0;
+    white-space: nowrap;
+  }
+  &:hover {
+    .galleryImage {
+      opacity: 0.2;
+    }
+    .btn {
+      transform: scale(1, 1);
+      opacity: 1;
+    }
+    .infoIcon {
+      opacity: 0.8;
+      &:hover {
+        transform: scale(1.25);
+        opacity: 1;
+      }
+    }
+  }
+  .gallerySelected {
+    &:hover {
+      .galleryImage {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.infoIcon {
+  transition: all 0.2s ease-out;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  display: block;
+  opacity: 0;
+  width: 32px;
+  height: 32px;
+  md-icon {
+    width: 100%;
+    height: inherit;
+    svg {
+      g {
+        fill: #fff;
+      }
+    }
+  }
+}
+
+.gallerySelected {
+  .galleryImage {
+    .selectedBorder {
+      opacity: 1;
+    }
+  }
+  .btn {
+    display: none;
+  }
+  .checkIcon {
+    opacity: 1;
+  }
+}
+
+.checkIcon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  width: 20px;
+  &.easyTransition {
+    transition-delay: 0.15s;
+    -webkit-transition-delay: 0.15s;
+  }
+  md-icon {
+    width: 100%;
+    height: inherit;
+  }
+}
+
+@media (max-width: 767px) {
+  .galleryList {
+    padding: 0 6%;
+  }
+  .galleryItem {
+    .backgroundDark {
+      background: none;
+    }
+    h4 {
+      padding: 0 50px 0 0;
+    }
+    .btnContainer {
+      transform: none;
+      position: relative;
+      top: inherit;
+      right: inherit;
+      bottom: inherit;
+      left: inherit;
+    }
+    .btn {
+      transform: none;
+      opacity: 1;
+      margin-top: 20px;
+    }
+  }
+  .infoIcon {
+    transform: scale(1.25);
+    margin-bottom: 16px;
+    position: relative;
+    top: inherit;
+    right: inherit;
+    bottom: inherit;
+    left: inherit;
+    opacity: 1;
+    md-icon {
+      svg {
+        g {
+          fill: #222;
+        }
+      }
+    }
+  }
+  .checkIcon {
+    top: 3px;
+    right: 44px;
+  }
+}

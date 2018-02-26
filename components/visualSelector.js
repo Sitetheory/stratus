@@ -24,7 +24,8 @@
       // Components
       'stratus.components.search',
       'stratus.components.pagination',
-      'stratus.services.commonMethods'
+      'stratus.services.commonMethods',
+      'stratus.services.visualSelector'
     ], factory);
   } else {
     factory(root.Stratus, root.$, root._);
@@ -51,14 +52,34 @@
       details: '<',
       search: '<'
     },
-    controller: function ($scope, $mdPanel, $attrs, registry, details, model, $http, $sce, commonMethods, $filter) {
+    controller: function (
+      $scope,
+      $mdPanel,
+      $attrs,
+      registry,
+      details,
+      model,
+      $http,
+      $sce,
+      commonMethods,
+      $filter,
+      visualSelector
+    ) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'visual_selector', true);
 
       // Variables
       var $ctrl = this;
-      $ctrl.layoutData = null;
-      $ctrl.selectedLayoutData = null;
+
+      $ctrl.$onInit = function () {
+        $ctrl.layoutData = null;
+        $ctrl.selectedLayoutData = null;
+
+        // Asset Collection
+        if ($attrs.type) {
+          $scope = visualSelector.fetchCollection($scope, $attrs, 40, 'Layout');
+        }
+      };
 
       // Settings
       $scope.showGallery = false;
@@ -77,31 +98,6 @@
           $scope.selectedDesc = $ctrl.selectedLayoutData.description;
         }
       });
-
-      // Asset Collection
-      if ($attrs.type) {
-        $scope.registry = new registry();
-        var request = {
-          target: $attrs.type || 'Layout',
-          id: null,
-          manifest: false,
-          decouple: true,
-          selectedId: $attrs.selectedId,
-          property: $attrs.property,
-          api: {
-            options: {},
-            limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
-          }
-        };
-        if ($scope.api && angular.isObject($scope.api)) {
-          request.api = _.extendDeep(request.api, $scope.api);
-        }
-        $scope.registry.fetch(request, $scope);
-
-        $scope.selectedDetails = new details();
-        $scope.selectedDetails.fetch(request, $scope);
-
-      }
 
       // Store Asset Property for Verification
       $scope.property = $attrs.property || null;
@@ -143,33 +139,9 @@
 
       // zoom view for chosen  layout
       $scope.zoomView = function (layoutDetail) {
-        $scope.layoutDetail = layoutDetail;
-        var position = $mdPanel.newPanelPosition()
-          .absolute()
-          .center();
-        var config = {
-          attachTo: angular.element(document.body),
-          scope: $scope,
-          controller: ZoomController,
-          templateUrl: 'layoutDetail.html',
-          hasBackdrop: true,
-          panelClass: 'media-dialog',
-          position: position,
-          trapFocus: true,
-          zIndex: 150,
-          clickOutsideToClose: true,
-          escapeToClose: false,
-          focusOnOpen: true
-        };
-
-        $mdPanel.open(config);
+        console.log(layoutDetail);
+        visualSelector.zoomviewDialog($scope, layoutDetail, 'layoutDetail');
       };
-
-      function ZoomController(mdPanelRef) {
-        $scope.closeDialog = function () {
-          mdPanelRef.close();
-        };
-      }
 
       $scope.toggleGallery = function () {
         if ($scope.showGallery === true) {

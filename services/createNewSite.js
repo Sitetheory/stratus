@@ -3,7 +3,8 @@
     define([
       'stratus',
       'underscore',
-      'angular'
+      'angular',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -12,45 +13,21 @@
 
   // This Collection Service handles data binding for multiple objects with the $http Service
   Stratus.Services.CreateNewSite = ['$provide', function ($provide) {
-    $provide.factory('createNewSite', ['$q', '$http', function ($q, $http) {
-      var createNewSiteServices = {};
-      var url = '/Api/Site';
-
+    $provide.factory('createNewSite', ['$q', '$http', 'commonMethods', function ($q, $http, commonMethods) {
       // TODO: This can use collections from the registry
 
-      createNewSiteServices.create = function (data) {
-        return $http({
-          url: url,
-          method: 'POST',
-          data: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
+      function create(data) {
+        return commonMethods.sendRequest(data, 'POST', '/Api/Site');
       };
 
-      createNewSiteServices.checkMaster = function (data) {
-        return $http({
-          url: '/Api/SiteGenre',
-          method: 'GET',
-          params: data
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
+      function checkMaster(data) {
+        return commonMethods.sendRequest(data, 'GET', '/Api/SiteGenre');
       };
 
-      return createNewSiteServices;
+      return {
+        create: create,
+        checkMaster: checkMaster
+      };
     }]);
   }];
 

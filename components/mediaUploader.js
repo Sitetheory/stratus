@@ -149,7 +149,7 @@
         }
 
         media.saveMediaUrl(data).then(function (response) {
-          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
             // Refresh the library
             media.getMedia($ctrl);
 
@@ -215,7 +215,7 @@
       function createTag(file, query) {
         var data = { name: query };
         media.createTag(data).then(function (response) {
-          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
             if (file.mime === 'video') {
               var index = $ctrl.videos.indexOf(file);
               $ctrl.videos[index].tags.push(response.data.payload);

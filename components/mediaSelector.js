@@ -28,7 +28,7 @@
       // Services
       'stratus.services.registry',
       'stratus.services.commonMethods',
-      'stratus.services.selectors'
+      'stratus.services.media'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -59,7 +59,7 @@
       $q,
       $mdDialog,
       commonMethods,
-      selectors
+      media
     ) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_selector', true);
@@ -148,7 +148,7 @@
 
       $scope.beforeChange = function (file, $event) {
         if ($event.dataTransfer.dropEffect === 'move') {
-          selectors.beforeChange($scope.movedFileId).then(function (response) {
+          media.fetchOneMedia($scope.movedFileId).then(function (response) {
             $scope.draggedFiles.push(response.data.payload);
             for (var i = 0; i < $scope.collection.models.length; i++) {
               if ($scope.collection.models[i].data.id === $scope.movedFileId) {
@@ -212,7 +212,7 @@
         }
 
         // mdPanelRef.close();
-        var confirmMedia = $mdDialog.confirm()
+        var deleteMedia = $mdDialog.confirm()
           .title('DELETE MEDIA')
           .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
 
@@ -221,8 +221,8 @@
           .ok('Yes')
           .cancel('No');
 
-        $mdDialog.show(confirmMedia).then(function () {
-          selectors.confirmMedia(fileId).then(function (response) {
+        $mdDialog.show(deleteMedia).then(function () {
+          media.deleteMedia(fileId).then(function (response) {
             // check if deleted media is dragged above,then remove from selected list
             if ($scope.draggedFiles.length > 0) {
               for (var k = 0; k < $scope.draggedFiles.length; k++) {
@@ -282,7 +282,7 @@
       };
 
       $scope.updateMedia = function (fileId, data) {
-        selectors.updateMedia(fileId, data).then(function (response) {
+        media.updateMedia(fileId, data).then(function (response) {
           $scope.uploadMedia();
         });
       };
@@ -398,7 +398,7 @@
         var data = {
           name: query
         };
-        selectors.createTag(data).then(function (response) {
+        media.createTag(data).then(function (response) {
           if (fileId !== undefined) {
             if (tags !== undefined) {
               var dataRes = {};
@@ -506,7 +506,7 @@
             }
           }
         } else if (selectedStatus === false || selectedStatus === undefined) { // show plus icon,move to draggedFiles and add selectedClass
-          selectors.beforeChange(fileId).then(function (response) {
+          media.fetchOneMedia(fileId).then(function (response) {
             $scope.draggedFiles.push(response.data.payload);
             for (var j = 0; j < $scope.collection.models.length; j++) {
               if ($scope.collection.models[j].data.id === fileId) {

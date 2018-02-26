@@ -110,7 +110,7 @@
 
         userAuthentication.verifyAccount(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().verify) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.verify) {
             $ctrl.message = commonMethods.getStatus(response).message;
             $ctrl.isRequestSuccess = true;
             $ctrl.enabledVerifyForm = false;
@@ -134,7 +134,7 @@
 
         userAuthentication.signIn(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
             return $window.location.href = '/';
           } else {
             $ctrl.isRequestSuccess = false;
@@ -158,7 +158,7 @@
 
         userAuthentication.signUp(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
             return $window.location.href = '/';
           } else {
             $ctrl.isRequestSuccess = false;
@@ -179,7 +179,7 @@
 
         userAuthentication.requestResetPass(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
             $ctrl.isRequestSuccess = true;
           } else {
             $ctrl.isRequestSuccess = false;
@@ -206,7 +206,7 @@
 
         userAuthentication.resetPass(data).then(function (response) {
           $ctrl.loading = false;
-          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
             $window.location.href = $window.location.origin + '/Member/Sign-In';
           } else {
             $ctrl.isRequestSuccess = false;
