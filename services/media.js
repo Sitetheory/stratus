@@ -3,7 +3,8 @@
     define([
       'stratus',
       'underscore',
-      'angular'
+      'angular',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -17,11 +18,13 @@
       '$http',
       '$mdDialog',
       'Upload',
+      'commonMethods',
       function (
         $q,
         $http,
         $mdDialog,
-        Upload
+        Upload,
+        commonMethods
       ) {
         var tagApi = '/Api/Tag';
         var mediaApi = '/Api/Media';
@@ -52,38 +55,24 @@
         }
 
         function createTag(data) {
-          return sendRequest(data, 'POST', tagApi);
+          return commonMethods.sendRequest(data, 'POST', tagApi);
         }
 
         function deleteMedia(fileId) {
-          return sendRequest(null, 'DELETE', mediaApi + '/' + fileId);
+          return commonMethods.sendRequest(null, 'DELETE', mediaApi + '/' + fileId);
         }
 
         function fetchOneMedia(fileId) {
-          return sendRequest(null, 'GET', mediaApi + '/' + fileId);
+          return commonMethods.sendRequest(null, 'GET', mediaApi + '/' + fileId);
         }
 
         function saveMediaUrl(data) {
-          return sendRequest(data, 'POST', mediaApi);
+          return commonMethods.sendRequest(data, 'POST', mediaApi);
         }
 
         // Update title, description, tags of a file
         function updateMedia(fileId, data) {
-          return sendRequest(data, 'PUT', mediaApi + '/' + fileId);
-        }
-
-        function sendRequest(data, method, url) {
-          return $http({
-            url: url,
-            method: method,
-            data: data
-          }).then(
-            function (response) { // success
-              return $q.resolve(response);
-            },
-            function (response) { // something went wrong
-              return $q.reject(response);
-            });
+          return commonMethods.sendRequest(data, 'PUT', mediaApi + '/' + fileId);
         }
 
         function uploadToS3(file, infoId) {

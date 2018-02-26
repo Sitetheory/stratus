@@ -105,7 +105,7 @@
           ).then(function () {
             media.deleteMedia(fileId).then(
               function (response) {
-                if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+                if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
                   $mdDialog.cancel();
                   media.getMedia($ctrl);
                 } else {
@@ -179,7 +179,7 @@
             name: query
           };
           media.createTag(data).then(function (response) {
-            if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+            if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
               if (fileId !== undefined && tags !== undefined) {
                 var dataRes = {};
                 $ctrl.tags.push(response.data.payload);
@@ -193,7 +193,7 @@
         // Update title, description, tags of a file
         function updateMedia(fileId, data) {
           media.updateMedia(fileId, data).then(function (response) {
-            if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE().success) {
+            if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
               media.getMedia($ctrl);
             }
           });

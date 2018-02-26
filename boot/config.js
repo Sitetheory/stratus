@@ -166,7 +166,6 @@ boot.config({
     'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
     'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
     'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
-    'stratus.components.adminThemeSelector': boot.bundle + 'stratus/components/adminThemeSelector' + boot.suffix,
 
     /* Stratus Core Directives */
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
@@ -202,9 +201,8 @@ boot.config({
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
-    'stratus.services.adminThemeSelector': boot.bundle + 'stratus/services/adminThemeSelector' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
-    'stratus.services.selectors': boot.bundle + 'stratus/services/selectors' + boot.suffix,
+    'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
     'stratus.services.commonMethods': boot.bundle + 'stratus/services/commonMethods' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
     'stratus.services.singleSignOn': boot.bundle + 'stratus/services/singleSignOn' + boot.suffix,

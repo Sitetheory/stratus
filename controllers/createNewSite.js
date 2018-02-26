@@ -98,7 +98,7 @@
           masterContentMethod: masterContentMethod
         };
         createNewSite.create(data).then(function (res) {
-          if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
+          if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE.success) {
             $scope.errorMsg = null;
             $scope.steps.isWelcome = false;
             $scope.steps.isThemeSelecting = true;
@@ -109,21 +109,21 @@
       };
 
       $scope.checkMasterSite = function (genreId, masterSite) {
-          if (masterSite && genreId) {
-              var data = {
-                genreId : genreId,
-                isMasterSite: masterSite
-              };
-              createNewSite.checkMaster(data).then(function (res) {
-                  if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE().success) {
-                      $scope.errorMsg = commonMethods.getStatus(res).message;
-                  } else {
-                      $scope.errorMsg = null;
-                  }
-              })
-          } else {
+        if (masterSite && genreId) {
+          var data = {
+            genreId: genreId,
+            isMasterSite: masterSite
+          };
+          createNewSite.checkMaster(data).then(function (res) {
+            if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE.success) {
+              $scope.errorMsg = commonMethods.getStatus(res).message;
+            } else {
               $scope.errorMsg = null;
-          }
+            }
+          })
+        } else {
+          $scope.errorMsg = null;
+        }
       };
 
       $scope.choosePackage = function () {

@@ -3,7 +3,8 @@
     define([
       'stratus',
       'underscore',
-      'angular'
+      'angular',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -12,31 +13,22 @@
 
   // This Collection Service handles data binding for multiple objects with the $http Service
   Stratus.Services.SingleSignOn = ['$provide', function ($provide) {
-    $provide.factory('singleSignOn', ['$q', '$http', '$window', function ($q, $http, $window) {
-      // variables
-      var loginUrl = '/Api/Login';
+    $provide.factory('singleSignOn', ['$q', '$http', '$window', 'commonMethods', function ($q, $http, $window, commonMethods) {
+      function doSignIn(data, service, truthData) {
+        var requestData = {
+          service: service,
+          data: data,
+          truthData: truthData
+        };
+        var headers = {
+          'Content-Type': 'application/json'
+        };
+        return commonMethods.sendRequest(requestData, 'POST', '/Api/Login', headers);
+      }
 
       return {
         signIn: doSignIn
       };
-
-      // SignIn url: /User/Login
-      function doSignIn(data, service, truthData) {
-        return $http({
-          method: 'POST',
-          url: loginUrl,
-          data: { service: service, data: data, truthData: truthData },
-          headers: { 'Content-Type': 'application/json' }
-        }).then(
-          function (response) {
-            // success
-            return $q.resolve(response);
-          },
-          function (response) {
-            // something went wrong
-            return $q.reject(response);
-          });
-      }
     }]);
   }];
 }));
