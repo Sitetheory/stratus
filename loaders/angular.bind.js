@@ -138,13 +138,9 @@ Stratus.Loaders.Angular = function () {
         }*/
 
     // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
-    [
-      'stratus.filters.map',
-      'stratus.filters.moment',
-      'stratus.filters.reduce',
-      'stratus.filters.truncate',
-      'stratus.filters.gravatar'
-    ].forEach(function (requirement) {
+    Object.keys(requirejs.s.contexts._.config.paths).filter(function (path) {
+      return _.startsWith(path, 'stratus.filters.');
+    }).forEach(function (requirement) {
       container.requirement.push(requirement);
     });
 
@@ -262,11 +258,6 @@ Stratus.Loaders.Angular = function () {
           Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
         );
       }
-      /**
-       if (Stratus('stratus-help').length) {
-                    css.push(Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/font-awesome/css/font-awesome.min.css');
-                }
-       /**/
       if (Stratus('[froala]').length || Stratus.Directives.Froala) {
         [
           Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
