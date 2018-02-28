@@ -87,25 +87,28 @@
         }
       };
 
-      function openUploader(ngfMultiple) {
-        // media.openUploader($scope, ngfMultiple);
+      function openUploader(ngfMultiple, files, invalidFiles) {
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: OpenUploaderController,
-          template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId"></stratus-media-uploader>',
+          template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId" dragged-files="draggedFiles" invalid-files="invalidFiles"></stratus-media-uploader>',
           clickOutsideToClose: false,
           focusOnOpen: true,
           autoWrap: true,
           multiple: true,
           locals: {
             collection: $scope.collection,
-            ngfMultiple: ngfMultiple
+            ngfMultiple: ngfMultiple,
+            draggedFiles: files,
+            invalidFiles: invalidFiles
           }
         });
 
-        function OpenUploaderController(scope, collection, ngfMultiple) {
+        function OpenUploaderController(scope, collection, ngfMultiple, draggedFiles, invalidFiles) {
           scope.collection = collection;
           scope.ngfMultiple = ngfMultiple;
+          scope.draggedFiles = draggedFiles;
+          scope.invalidFiles = invalidFiles;
         };
       };
 

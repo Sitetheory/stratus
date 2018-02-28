@@ -31,9 +31,11 @@
       ngModel: '=',
       collection: '<',
       ngfMultiple: '<',
-      fileId: '<'
+      fileId: '<',
+      draggedFiles: '<',
+      invalidFiles: '<'
     },
-    controller: function ($scope, $attrs, $mdDialog, commonMethods, media) {
+    controller: function ($q, $scope, $attrs, $mdDialog, commonMethods, media) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_uploader', true);
       var $ctrl = this;
@@ -97,6 +99,8 @@
         $ctrl.removeExternalFile = removeExternalFile;
         $ctrl.saveOneFile = saveOneFile;
         $ctrl.saveAllFiles = saveAllFiles;
+
+        uploadFiles($ctrl.draggedFiles, $ctrl.invalidFiles);
       };
 
       function done() {
@@ -197,6 +201,7 @@
 
         // Handle uploading status for valid files
         if (files.length > 0) {
+          console.log(files);
           if ($ctrl.ngfMultiple) {
             // Upload new files
             for (i = 0; i < files.length; i++) {
