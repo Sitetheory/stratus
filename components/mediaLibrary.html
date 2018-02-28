@@ -1,11 +1,22 @@
 <div id="media-library">
   <!-- Media Selector -->
   <div ng-if="$ctrl.isSelector" class="media-selector sectionContainer selectedContainer borderDefault borderDefaultAll borderRadiusDefault">
-    <p class="instructions fontBody clearfix">
+    <p ng-if="!$ctrl.isSelector" class="instructions fontBody clearfix">
       <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select images.</a>
     </p>
     <p class="smallLabel selectedMediaLabel">Media</p>
-    <div id="selectedDropArea" ng-class="{'dragBorder':dragClass}" ng-model="files" name="files" ngf-multiple="true" ngf-before-model-change="beforeChange($files,$event)" ngf-drop ngf-max-files="20" ngf-model-invalid="invalidFiles" ngf-validate="{size: {max: '10MB'}}" ngf-drag-over-class="dragover" ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
+    <div  id="selectedDropArea"
+          ng-class="{'dragBorder':dragClass}"
+          ng-model="files"
+          name="files"
+          ngf-multiple="true"
+          ngf-before-model-change="beforeChange($files,$event)"
+          ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
+          ngf-max-files="10"
+          ngf-model-invalid="invalidFiles"
+          ngf-validate="{size: {max: '10MB'}}"
+          ngf-drag-over-class="dragover"
+          ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
       <ul class="listInline" stratus-sortable ng-sortable="$ctrl.draggedFiles" ng-sortable-item-selector=".draggableImg">
         <li class="draggableImg libraryItem" ng-if="$ctrl.draggedFiles.length" ng-repeat="df in $ctrl.draggedFiles">
           <a href="#">
@@ -48,6 +59,7 @@
         <li class="libraryToggle">
           <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="$ctrl.toggleLibrary()">
             <md-tooltip>Open Media Library</md-tooltip>
+            <!-- <i class="positionCenter fa fa-plus fa-4x" aria-hidden="true"></i> -->
             <div ng-class="dragDropClass" aria-hidden="true">
               <md-icon class="positionCenter" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
               <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
@@ -67,7 +79,12 @@
         <div class="stGrid column5"></div>
         <stratus-search class="stGrid column80"></stratus-search>
       </div>
-      <div class="medias">
+      <div  class="medias"
+            ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
+            ngf-multiple="true"
+            ngf-max-files="10"
+            ngf-model-invalid="invalidFiles"
+            ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
         <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file">
           <i ng-if="media.data.mime == 'video'" class="fa fa-5x fa-video-camera document" aria-hidden="true"></i>
           <i ng-if="media.data.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>

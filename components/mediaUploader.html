@@ -10,7 +10,12 @@
       <md-tab label="Upload">
         <md-content class="dropContainer md-padding files">
           <p class="description">The files you upload here will be saved on redundant file servers and delivered over a high speed, cached CDN (Content Delivery Network)</p>
-          <div class="upload-zone md-padding">
+          <div  class="upload-zone md-padding"
+                ngf-drop="$ctrl.uploadFiles($files, $invalidFiles)"
+                ngf-multiple="$ctrl.ngfMultiple"
+                ngf-max-files="10"
+                ngf-model-invalid="invalidFiles"
+                ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
             <h2>Drag and drop files below, or <span>
               <a  href="#"
                   ngf-select="$ctrl.uploadFiles($files, $invalidFiles)"
