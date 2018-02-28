@@ -32,7 +32,7 @@
   // This filter allows a display of age since the given date
   Stratus.Filters.Age = function () {
     return function (birthday) {
-      birthday = new Date(birthday);
+      birthday = new Date(new Date(birthday).getTime() * 1000);
       var today = new Date();
       var age = (today - birthday) / 31557600000;
       age = Math.floor(age);
