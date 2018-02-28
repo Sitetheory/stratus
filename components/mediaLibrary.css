@@ -822,10 +822,6 @@ md-input-container label {
   height: 100% !important;
   transform-origin: unset !important;
 }
-#media-library .media-selector #selectedDropArea .libraryItem {
-  width: 100px;
-  height: 100px;
-}
 #media-library .media-selector #selectedDropArea .libraryItem a {
   height: 100%;
 }
@@ -836,6 +832,24 @@ md-input-container label {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+#media-library .media-selector #selectedDropArea ul li {
+  width: 100px;
+  height: 100px;
+}
+#media-library .media-selector #selectedDropArea ul li.libraryToggle {
+  padding: 2px;
+  margin-right: 2px;
+}
+#media-library .media-selector #selectedDropArea ul li.libraryToggle a {
+  width: 100%;
+  height: 100%;
+}
+#media-library .media-selector.sectionContainer {
+  overflow: unset;
+}
+#media-library .media-selector.sectionContainer .shapeholder {
+  width: 95%;
 }
 .md-dialog-container {
   z-index: 999;

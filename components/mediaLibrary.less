@@ -221,8 +221,6 @@
   .media-selector {
     #selectedDropArea {
       .libraryItem {
-        width: 100px;
-        height: 100px;
         a {
           height: 100%;
           .imageDraggable {
@@ -234,6 +232,26 @@
             }
           }
         }
+      }
+      ul {
+        li {
+          width: 100px;
+          height: 100px;
+          &.libraryToggle {
+            padding: 2px;
+            margin-right: 2px;
+            a {
+              width: 100%;
+              height: 100%;
+            }
+          }
+        }
+      }
+    }
+    &.sectionContainer {
+      overflow: unset;
+      .shapeholder {
+        width: 95%;
       }
     }
   }
