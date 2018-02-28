@@ -45,6 +45,7 @@
         { value: 64, name: 'Dev' },
         { value: 128, name: 'Master' }
       ];
+
       // mock up list roles
       $scope.userRoleSelected = null;
       $scope.updateUserRole = null;
@@ -70,7 +71,7 @@
             if (response) {
               var data = response.data.payload;
 
-              //Set permission selected
+              // Set permission selected
               permissions = data.summary;
               angular.forEach(permissions, function (permission, index) {
                 index = $scope.permissions.findIndex(function (x) {
@@ -84,13 +85,13 @@
 
               $ctrl.ngModel.data.permissions = $scope.permissionSelected;
 
-              //Set identity name
+              // Set identity name
               $scope.userRoleSelected = data.identityRole ? data.identityRole : data.identityUser;
               $scope.updateUserRole = data.identityRole ? data.identityRole : data.identityUser;
 
-              //Set asset name
+              // Set asset name
               $scope.updateContent = {
-                name: data.asset + " - " + data.assetId,
+                name: data.asset + ' - ' + data.assetId,
                 assetType: data.asset,
                 id: data.assetId
               };
@@ -131,20 +132,20 @@
 
           if (value.Bundle) {
             angular.forEach(value.Bundle, function (bundle, index) {
-              value.Bundle[index].assetType = "SitetheoryContentBundle:Bundle"
+              value.Bundle[index].assetType = 'SitetheoryContentBundle:Bundle';
             });
 
             response = response.concat(value.Bundle);
           }
           if (value.Content) {
             angular.forEach(value.Content, function (content, index) {
-              value.Content[index].assetType = "Sitetheory" + content.contentType.bundle.name + "Bundle:" + content.contentType.entity;
+              value.Content[index].assetType = 'Sitetheory' + content.contentType.bundle.name + 'Bundle:' + content.contentType.entity;
             });
             response = response.concat(value.Content);
           }
           if (value.ContentType) {
             angular.forEach(value.ContentType, function (contentType, index) {
-              value.ContentType[index].assetType = "SitetheoryContentBundle:ContentType"
+              value.ContentType[index].assetType = 'SitetheoryContentBundle:ContentType';
             });
             response = response.concat(value.ContentType);
           }
