@@ -66,10 +66,9 @@
         filter();
       };
 
-      function filterStatus() {
-        filter('api.options.filterStatus', $scope.showOnly);
-      };
-
+      /**
+      * Add filter and Request to api.
+      */
       function filter(type, data) {
         filterPrice();
         filterStatus();
@@ -78,7 +77,14 @@
       }
 
       /**
-      * set filter price values
+      * Set filter price values
+      */
+      function filterStatus() {
+        $scope.collection.meta.set('api.options.filterStatus', $scope.showOnly);
+      };
+
+      /**
+      * Set filter price values
       */
       function filterPrice() {
         if ($scope.minPrice > $scope.maxPrice) return;
@@ -92,12 +98,17 @@
         }
       }
 
+      /**
+      * Handle data change and Set filter price values
+      */
       $scope.$watchCollection('[minPrice, maxPrice]', function (newVal, oldVal) {
         if ($scope.minPrice > $scope.maxPrice) return;
         filter();
       });
 
-      // remove the filter after filter request
+      /**
+      * Remove the filter condition after filter request
+      */
       function removeFilter() {
         delete $scope.collection.meta.get('api').options;
       }
