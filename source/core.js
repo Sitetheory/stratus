@@ -38,7 +38,9 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @param options
    */
   initialize: function (options) {
-    if (!Stratus.Environment.get('production')) console.info('Chronos Invoked!');
+    if (!Stratus.Environment.get('production')) {
+      console.info('Chronos Invoked!');
+    }
     this.on('change', this.synchronize, this);
   },
   synchronize: function () {
@@ -79,7 +81,9 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    */
   enable: function (uid) {
     var success = this.has(uid);
-    if (success) this.set(uid + '.enabled', true);
+    if (success) {
+      this.set(uid + '.enabled', true);
+    }
     return success;
   },
   /**
@@ -88,7 +92,9 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    */
   disable: function (uid) {
     var success = this.has(uid);
-    if (success) this.set(uid + '.enabled', false);
+    if (success) {
+      this.set(uid + '.enabled', false);
+    }
     return success;
   },
   /**
@@ -98,7 +104,9 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    */
   toggle: function (uid, value) {
     var success = this.has(uid);
-    if (success) this.set(uid + '.enabled', (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'));
+    if (success) {
+      this.set(uid + '.enabled', (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'));
+    }
     return success;
   }
 });
@@ -116,7 +124,9 @@ Stratus.Chronos.reinitialize();
  */
 Stratus.PostMessage.Convoy = function (fn) {
   window.addEventListener('message', function (event) {
-    if (event.origin !== 'https://auth.sitetheory.io') return false;
+    if (event.origin !== 'https://auth.sitetheory.io') {
+      return false;
+    }
     fn(_.isJSON(event.data) ? JSON.parse(event.data) : {});
   }, false);
 };
@@ -210,7 +220,9 @@ Stratus.Events.on('initialize', function () {
 
   // Load Views
   Stratus.Internals.Loader().then(function (views) {
-    if (!Stratus.Environment.get('production')) console.info('Views:', views);
+    if (!Stratus.Environment.get('production')) {
+      console.info('Views:', views);
+    }
     window.views = views;
     Stratus.Events.on('finalize', function (views) {
       if (typeof Backbone !== 'undefined' && !Backbone.History.started) {
@@ -312,6 +324,20 @@ Stratus.Events.on('notification', function (message, title) {
         });
       }
     });
+  }
+});
+
+// This event only supports Toaster styling to generate a message
+// with either a Bootbox or Native Alert as a fallback, respectively.
+Stratus.Events.on('toast', function (message, title, priority, settings) {
+  if (!(message instanceof Stratus.Prototypes.Toast)) {
+    message = new Stratus.Prototypes.Toast(message, title, priority, settings);
+  }
+  console.log('Toast:', message);
+  if (typeof $ !== 'undefined' && $.toaster) {
+    $.toaster(message);
+  } else {
+    Stratus.Events.trigger('alert', message.message);
   }
 });
 

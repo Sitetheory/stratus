@@ -1,9 +1,9 @@
 <div class="option-row">
   <div class="select-options"
-    ng-controller="Generic"
-    data-raw="true"
-    data-target="User"
-    data-api='{"options":{"type":"collection"}}'>
+       ng-controller="Generic"
+       data-raw="true"
+       data-target="User"
+       data-api='{"options":{"type":"collection"}}'>
     <md-autocomplete
         md-min-length="0"
         md-delay="500"
@@ -20,7 +20,7 @@
       <md-item-template>
         <div layout="row" layout-wrap layout-align="space-between center">
           <div class="contact-item">
-            <img src="http://pluspng.com/img-png/png-user-icon-male-user-icon-512.png" alt="">
+            <img src="//pluspng.com/img-png/png-user-icon-male-user-icon-512.png" alt="">
           </div>
           <p class="md-contact-name" md-highlight-text="true" md-highlight-flags="i" flex="60">
             {{ item.bestName || item.name }}
@@ -32,10 +32,10 @@
   </div>
 
   <div class="select-options"
-    ng-controller="Generic"
-    data-raw="true"
-    data-target="Content *"
-    data-api='{"options":{"type":"collection"}}'>
+       ng-controller="Generic"
+       data-raw="true"
+       data-target="Content *"
+       data-api='{"options":{"type":"collection"}}'>
     <md-autocomplete
         md-min-length="0"
         md-delay="500"
@@ -52,9 +52,11 @@
       <md-item-template>
         <div layout="row" layout-align="space-between center">
           <div class="contact-item">
-            <img ng-src="{{ item.version.images[0] ? 'http://' + item.version.images[0].prefix + '.' + item.version.images[0].extension : null }}" class="md-avatar" alt="(>:<)"/>
+            <img
+                ng-src="{{ item.version.images[0] ? 'http://' + item.version.images[0].prefix + '.' + item.version.images[0].extension : null }}"
+                class="md-avatar" alt="(>:<)"/>
           </div>
-          <div >
+          <div>
             <p class="md-contact-name" md-highlight-text="true" md-highlight-flags="i">
               {{ item.version.title || item.name | limitTo:20 }}
             </p>
@@ -67,12 +69,16 @@
   <div class="select-options">
     <md-input-container>
       <label>Actions</label>
-      <md-select ng-model="permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" multiple="">
+      <md-select ng-model="permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()"
+                 data-md-container-class="selectdemoSelectHeader" multiple="">
         <md-select-header class="demo-select-header">
-          <input ng-model="permissionSearchTerm" type="search" placeholder="Search for a action.." class="demo-header-searchbox md-text">
+          <input ng-model="permissionSearchTerm" type="search" placeholder="Search for a action.."
+                 class="demo-header-searchbox md-text">
         </md-select-header>
         <md-optgroup label="vegetables">
-          <md-option ng-value="permission.value" ng-repeat="permission in permissions" ng-selected="permissionSelected.indexOf(permission.value) != -1">{{permission.name}}</md-option>
+          <md-option ng-value="permission.value" ng-repeat="permission in permissions"
+                     ng-selected="permissionSelected.indexOf(permission.value) != -1">{{permission.name}}
+          </md-option>
         </md-optgroup>
       </md-select>
     </md-input-container>
@@ -80,5 +86,5 @@
 </div>
 
 <!--<div class="submit" ng-show="(userRoleSelected && contentSelected && permissionSelected.length > 0)">-->
-  <!--<md-button class="md-raised" ng-click=submit()> Submit </md-button>-->
+<!--<md-button class="md-raised" ng-click=submit()> Submit </md-button>-->
 <!--</div>-->

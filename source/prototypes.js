@@ -144,7 +144,9 @@ Stratus.Prototypes.Model = function (data) {
         var reference = this.data;
         var chain = attr.split('.');
         _.find(_.initial(chain), function (link) {
-          if (!_.has(reference, link) || !reference[link]) reference[link] = {};
+          if (!_.has(reference, link) || !reference[link]) {
+            reference[link] = {};
+          }
           if (typeof reference !== 'undefined' && reference && typeof reference === 'object') {
             reference = reference[link];
           } else {
@@ -186,7 +188,9 @@ Stratus.Prototypes.Model = function (data) {
    */
   this.add = function (attr, value) {
     // Ensure a placeholder exists
-    if (!this.has(attr)) this.set(attr, []);
+    if (!this.has(attr)) {
+      this.set(attr, []);
+    }
 
     // only add value if it's supplied (sometimes we want to create an empty placeholder first)
     if (typeof value !== 'undefined' && !_.contains(this.data[attr], value)) {
@@ -213,7 +217,9 @@ Stratus.Prototypes.Model = function (data) {
    * @returns {number}
    */
   this.iterate = function (attr) {
-    if (!this.has(attr)) this.set(attr, 0);
+    if (!this.has(attr)) {
+      this.set(attr, 0);
+    }
     return ++this.data[attr];
   };
   /**
@@ -358,7 +364,9 @@ Stratus.Prototypes.Sentinel = function () {
   this.summary = function () {
     var output = [];
     _.each(this, function (value, key) {
-      if (typeof value === 'boolean' && value) output.push(_.ucfirst(key));
+      if (typeof value === 'boolean' && value) {
+        output.push(_.ucfirst(key));
+      }
     });
     return output;
   };
@@ -386,4 +394,30 @@ Stratus.Prototypes.Bootbox = function (message, handler) {
       console.info('Client ' + (result === undefined ? 'closed' : (result ? 'confirmed' : 'cancelled')) + ' dialog.');
     };
   }
+};
+
+// This is the prototype for the toaster, in which one could be supplied
+// for a toast message, or one will automatically be created at runtime
+// using current arguments.
+/**
+ * @param message
+ * @param title
+ * @param priority
+ * @param settings
+ * @constructor
+ */
+Stratus.Prototypes.Toast = function (message, title, priority, settings) {
+  if (message && typeof message === 'object') {
+    _.extend(this, message);
+    this.message = this.message || 'Message';
+  } else {
+    this.message = message || 'Message';
+  }
+  this.title = this.title || title || 'Toast';
+  this.priority = this.priority || priority || 'danger';
+  this.settings = this.settings || settings;
+  if (!this.settings || typeof this.settings !== 'object') {
+    this.settings = {};
+  }
+  this.settings.timeout = this.settings.timeout || 10000;
 };
