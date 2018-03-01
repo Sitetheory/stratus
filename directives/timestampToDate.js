@@ -25,7 +25,7 @@
           return new Date(value).getTime() / 1000;
         });
         ngModel.$formatters.push(function (value) {
-          return new Date(value);
+          return new Date(value * 1000);
         });
       }
     };
