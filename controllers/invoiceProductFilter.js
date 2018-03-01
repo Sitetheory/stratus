@@ -122,25 +122,22 @@
           });
         }
       };
+
       $scope.getSiteName = function (siteId, siteList) {
-        var siteName;
-        if (Array.isArray(siteList) && siteList.length > 0) {
-          siteList.forEach(function (site) {
-            if (site.id === siteId) {
-              siteName = site.name
-            }
-          });
-        } else {
-          if (!Stratus.Environment.get('production') && !Array.isArray(siteList)) {
-            console.warn('siteList is not an array');
+          var siteName = 'Site Not Found';
+          if (siteList.length > 0) {
+            siteList.forEach(function (site) {
+                if (site.id === siteId) {
+                  siteName = site.name;
+                }
+              });
           }
-        }
-        return siteName || 'Site Name';
-      };
+          return siteName;
+        };
 
       $scope.getTags = function (contentId, tagList) {
         var tags = [];
-        if (Array.isArray(tagList) && tagList.length > 0) {
+        if (tagList && tagList.length > 0) {
           tagList.forEach(function (tag) {
             if (contentId === tag.assets[0].id) {
               if (tags.indexOf($scope.upperFirst(tag.name)) === -1) {
@@ -159,6 +156,6 @@
 
       $scope.upperFirst = function (string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
-      }
+      };
     }];
 }));
