@@ -155,7 +155,18 @@
       };
 
       $scope.upperFirst = function (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+          return string.charAt(0).toUpperCase() + string.slice(1);
+        };
+
+      $scope.search = function (collection, query) {
+        var results = collection.filter(query);
+        return Promise.resolve(results).then(function (value) {
+            var response = [];
+            if (value.InvoiceProduct) {
+              response = response.concat(value.InvoiceProduct);
+            }
+            return response;
+          });;
       };
     }];
 }));
