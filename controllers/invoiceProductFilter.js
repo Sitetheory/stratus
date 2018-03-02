@@ -97,11 +97,11 @@
       };
 
       $scope.filterSite = function (siteId) {
-        filter('api.options.siteId', siteId);
+        filter('api.options.siteId', siteId |= null);
       };
 
       $scope.filterProduct = function (productContentId) {
-        filter('api.options.productContentId', productContentId);
+        filter('api.options.productContentId', productContentId |= null);
       };
 
       function filter(type, data) {
