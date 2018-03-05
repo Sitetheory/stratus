@@ -129,6 +129,7 @@ boot.config({
     'stratus.controllers.selectMainRoute': boot.bundle + 'stratus/controllers/selectMainRoute' + boot.suffix,
     'stratus.controllers.productFilter': boot.bundle + 'stratus/controllers/productFilter' + boot.suffix,
     'stratus.controllers.invoiceProductFilter': boot.bundle + 'stratus/controllers/invoiceProductFilter' + boot.suffix,
+    'stratus.controllers.invoiceProduct': boot.bundle + 'stratus/controllers/invoiceProduct' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
