@@ -33,6 +33,9 @@
   // This filter allows a display of time since the given date
   Stratus.Filters.Gravatar = function () {
     return function (input) {
+      if (!input) {
+        return '//www.gravatar.com/avatar/';
+      }
       return '//www.gravatar.com/avatar/' + md5(input.trim().toLowerCase());
     };
   };
