@@ -88,6 +88,11 @@
                             $scope.userRoleSelected = data.identityRole ? data.identityRole : data.identityUser;
                             $scope.updateUserRole = data.identityRole ? data.identityRole : data.identityUser;
 
+                            if ($scope.userRoleSelected.name) {
+                                $scope.userRoleSelected.name += ' - ' + $scope.userRoleSelected.id;
+                            } else if ($scope.userRoleSelected.bestName) {
+                                $scope.userRoleSelected.bestName += ' - ' + $scope.userRoleSelected.id;
+                            }
                             //Set asset name
                             $scope.updateContent = {
                                 name: data.assetContent,
@@ -111,15 +116,22 @@
                 return Promise.resolve(results).then(function (value) {
                     var response = [];
                     if (value.User) {
+                        value.User.name += " - " + value.User.id;
                         response = response.concat(value.User);
                     }
                     if (value.Role) {
+                        value.Role.bestName += " - " + value.Role.id;
                         response = response.concat(value.Role);
                     }
                     if (!(value.User) && !(value.Role)) {
+                        if (value.name) {
+                            value.name += " - " + value.id;
+                        } else if (value.bestName) {
+                            value.bestName += " - " + value.id;
+                        }
                         response = response.concat(value);
                     }
-
+                    console.log(response);
                     return response;
                 });
             };
@@ -178,6 +190,11 @@
                     $ctrl.ngModel.data.assetId = $scope.contentSelected.version.meta.id;
                 } else {
                     $ctrl.ngModel.data.assetId = $scope.contentSelected.id;
+                }
+                if ($scope.contentSelected.version) {
+                    $scope.contentSelected.version.title += " - " + $ctrl.ngModel.data.assetId
+                } else if ($scope.contentSelected.name) {
+                    $scope.contentSelected.name += " - " + $ctrl.ngModel.data.assetId
                 }
                 $ctrl.ngModel.data.asset = $scope.contentSelected.assetType;
             };
