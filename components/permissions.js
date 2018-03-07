@@ -191,11 +191,7 @@
                 } else {
                     $ctrl.ngModel.data.assetId = $scope.contentSelected.id;
                 }
-                if ($scope.contentSelected.version) {
-                    $scope.contentSelected.version.title += " - " + $ctrl.ngModel.data.assetId
-                } else if ($scope.contentSelected.name) {
-                    $scope.contentSelected.name += " - " + $ctrl.ngModel.data.assetId
-                }
+
                 $ctrl.ngModel.data.asset = $scope.contentSelected.assetType;
             };
 
@@ -210,6 +206,21 @@
                 }
 
                 $ctrl.ngModel.data.permissions = $scope.permissionSelected;
+            };
+            $scope.selectedIdentify = function (item) {
+                if (item.name) {
+                    return item.name + " - " + item.id;
+                } else {
+                    return item.bestName + " - " + item.id;
+                }
+            };
+
+            $scope.selectedContent = function (item) {
+                if (item.version) {
+                    return item.version + " - " + item.verision.meta.id;
+                } else if (item.name) {
+                    return item.name + " - " + item.id;
+                }
             };
             /**
              * process data for submit
