@@ -75,6 +75,14 @@
       $scope.isObject = angular.isObject;
       $scope.isString = angular.isString;
       $scope.isUndefined = angular.isUndefined;
+      $scope.currentMethod = false;
+
+      $scope.$watch('model.data', function (modelData) {
+          if (angular.isObject(modelData)) {
+              $scope.currentMethod = modelData.masterContentMethod;
+          }
+      });
+
 
       // cause the create new site api have not yet finish so I assume it success to call another follow.
       $scope.stepFinish = function (name) {
