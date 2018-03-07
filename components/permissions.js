@@ -90,7 +90,7 @@
 
                   //Set asset name
                   $scope.updateContent = {
-                      name: data.asset + " - " + data.assetId,
+                      name: data.assetContent,
                       assetType : data.asset,
                       id: data.assetId
                   };
@@ -131,6 +131,7 @@
 
               if (value.Bundle) {
                   angular.forEach(value.Bundle, function (bundle, index) {
+                        value.Bundle[index].type = "Bundle";
                         value.Bundle[index].assetType = "SitetheoryContentBundle:Bundle"
                   });
 
@@ -138,12 +139,14 @@
               }
               if (value.Content) {
                   angular.forEach(value.Content, function (content, index) {
+                      value.Content[index].type = "Content";
                       value.Content[index].assetType = "Sitetheory" + content.contentType.bundle.name + "Bundle:" + content.contentType.entity;
                   });
                   response = response.concat(value.Content);
               }
               if (value.ContentType) {
                   angular.forEach(value.ContentType, function (contentType, index) {
+                      value.ContentType[index].type = "ContentType";
                       value.ContentType[index].assetType = "SitetheoryContentBundle:ContentType"
                   });
                   response = response.concat(value.ContentType);
@@ -170,8 +173,13 @@
 
       $scope.selectedContentChange = function (content) {
           $scope.contentSelected = content;
+
+          if ($scope.contentSelected.type === 'Content') {
+              $ctrl.ngModel.data.assetId = $scope.contentSelected.version.meta.id;
+          } else {
+              $ctrl.ngModel.data.assetId = $scope.contentSelected.id;
+          }
           $ctrl.ngModel.data.asset = $scope.contentSelected.assetType;
-          $ctrl.ngModel.data.assetId = $scope.contentSelected.id;
       };
 
         /**
@@ -183,6 +191,7 @@
         if ((masterIndex != -1) || ($scope.permissionSelected.length == $scope.permissions.length - 1)) {
             $scope.permissionSelected = [$scope.permissions[$scope.permissions.length - 1].value];
         }
+
         $ctrl.ngModel.data.permissions = $scope.permissionSelected;
       };
       /**
