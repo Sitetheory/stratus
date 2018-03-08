@@ -88,11 +88,6 @@
                             $scope.userRoleSelected = data.identityRole ? data.identityRole : data.identityUser;
                             $scope.updateUserRole = data.identityRole ? data.identityRole : data.identityUser;
 
-                            if ($scope.userRoleSelected.name) {
-                                $scope.userRoleSelected.name += ' - ' + $scope.userRoleSelected.id;
-                            } else if ($scope.userRoleSelected.bestName) {
-                                $scope.userRoleSelected.bestName += ' - ' + $scope.userRoleSelected.id;
-                            }
                             //Set asset name
                             $scope.updateContent = {
                                 name: data.assetContent,
@@ -131,7 +126,7 @@
                         }
                         response = response.concat(value);
                     }
-                    console.log(response);
+
                     return response;
                 });
             };
