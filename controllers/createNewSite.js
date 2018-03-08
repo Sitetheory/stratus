@@ -109,7 +109,9 @@
                     if (commonMethods.getStatus(res).code == commonMethods.RESPONSE_CODE.success) {
                         $scope.errorMsg = null;
                         $scope.steps.isWelcome = false;
-                        $scope.steps.isThemeSelecting = true;
+                        if (res.data.payload) {
+                            window.location.href = "/Site/Edit?id=" + res.data.payload.id;
+                        }
                     } else {
                         $scope.errorMsg = commonMethods.getStatus(res).message;
                     }
