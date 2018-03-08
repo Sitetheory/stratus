@@ -108,7 +108,9 @@
         angular.forEach(location.hash.split('#'), function (param) {
           if (param) {
             var digest = param.split('/');
-            params[digest[0]] = digest[1];
+            if (digest.length > 1) {
+              params[digest[0]] = digest[1];
+            }
           }
         });
         return params;

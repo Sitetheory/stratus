@@ -88,14 +88,13 @@
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false;
 
-      $scope.$watch('[model.data.version.layout.id, collection.models]', function (layout) {
+      $scope.$watch('[model.data.version.layout, collection.models]', function (layout) {
         if (layout[0] && layout[1] && layout[1].length > 0) {
           $ctrl.layoutData = layout[1].map(function (obj) {
             return obj.data;
           });
-          $ctrl.selectedLayoutData = $filter('filter')($ctrl.layoutData, { id: layout[0] })[0];
-          $scope.selectedName = $ctrl.selectedLayoutData.name;
-          $scope.selectedDesc = $ctrl.selectedLayoutData.description;
+          $ctrl.selectedLayoutData = $filter('filter')($ctrl.layoutData, { id: layout[0].id })[0];
+          $scope.selectedLayout = $ctrl.selectedLayoutData;
         }
       });
 
@@ -120,15 +119,18 @@
       };
 
       // Update the Selected Layout Details
-      $scope.selectedName = null;
-      $scope.selectedDesc = null;
+      $scope.selectedLayout = null;
 
-      $scope.updateDetails = function (options) {
+      $scope.chooseLayout = function (property, data) {
+        $scope.updateDetails(data);
+        $scope.model.data.version.layout = data;
+      };
+
+      $scope.updateDetails = function (layoutData) {
         if (!Stratus.Environment.get('production')) {
-          console.log(options.description);
+          console.log(layoutData);
         }
-        $scope.selectedName = options.name;
-        $scope.selectedDesc = options.description;
+        $scope.selectedLayout = layoutData;
       };
 
       // display expanded view if clicked on change button

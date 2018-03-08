@@ -1,179 +1,121 @@
-
 <!-- TODO: The selector should be not-collapsed by default. Having to open it is just an extra click for users in most situations. Also it's somehow ranking the common.css above the site.css and the selector.css. Which is why the buttons on hover are not the right color and the info icon jumps on hover.
  -->
-
 <div id="visualSelector">
-
-
-        <!-- TODO: Decide if these should be deleted. I don't know why they are commented out
+  <!-- TODO: Decide if these should be deleted. I don't know why they are commented out
 
           <span ng-show="$ctrl.ngModel.data.version.layout === null">Please select from options below</span>
              ng-repeat="sel in model.get(property)" -->
-
-        <!-- TODO: Decide if we actually need this? I can't imagine a scenerio where there isn't a default layout selected. We need stratus to always use a default layout so visitors never arrive to "no layout selected". And the default layout should be in the list of possible layouts to choose from as well.
+  <!-- TODO: Decide if we actually need this? I can't imagine a scenerio where there isn't a default layout selected. We need stratus to always use a default layout so visitors never arrive to "no layout selected". And the default layout should be in the list of possible layouts to choose from as well.
             <div ng-show="!model.get(property).id">
                 <span>No Items selected</span>
             </div>
         -->
-
-
-        <div class="selectedLayout clearfix"> <!-- Selected layout info -->
-            <div class="imageColumn stGrid stGridMobile column50">
-
-                <div class="selectedImage positionAnchor backgroundDark">
-
-                    <!-- FIXME: This was broken on the following div (AG comment ?): -->
-                    <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
-                    <!-- <button class="btn btnCancel" ng-click="model.toggle(property, sel.data.id, toggleOptions);"></button> -->
-
-                    <div class="imageContainer defaultShadow easyTransition"
-                         ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
-                        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/magazineStyleWithPullout.jpg" alt=""/>
-
-                        <!-- FIXME: Reactivate or delete depending on fix above -->
-                        <!--<div ng-if="$ctrl.layoutOption === 'collapsed'"> -->
-
-                        <!-- FIXME: Remove. This is the layout they already using right?
+  <div class="selectedLayout clearfix">
+    <!-- Selected layout info -->
+    <div class="imageColumn stGrid stGridMobile column50">
+      <div class="selectedImage positionAnchor backgroundDark">
+        <!-- FIXME: This was broken on the following div (AG comment ?): -->
+        <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
+        <!-- <button class="btn btnCancel" ng-click="model.toggle(property, sel.data.id, toggleOptions);"></button> -->
+        <div class="imageContainer defaultShadow easyTransition" ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
+          <img data-plugin="lazy" src="//{{selectedLayout.images[0].prefix}}.{{selectedLayout.images[0].extension}}" alt="" />
+          <!-- FIXME: Reactivate or delete depending on fix above -->
+          <!--<div ng-if="$ctrl.layoutOption === 'collapsed'"> -->
+          <!-- FIXME: Remove. This is the layout they already using right?
                         <a href="#" ng-show="$ctrl.layoutOption === 'collapsed' && !model.exists(property) && !showGallery"
                            class="blck_btn"
                            ng-click="displayGallery();">Choose Layout</a>
                          -->
-
-                        <!--</div>-->
-                    </div>
-
-                    <div class="positionCenter">
-                        <a href="#gallery" class="btn" ng-click="displayGallery();">Change Layout</a>
-                    </div>
-
-                </div>
-
-            </div>
-            <div class="selectedInfo infoColumn stGrid stGridTablet column50">
-
-                <h4>You are currently using</h4>
-                <!-- FIXME: This only works right now once the gallery is uncollapsed. Well, actually it will probably automatically work once there is always a default layout? Can delete hard coded text.-->
-                <h2>{{selectedName}} Magazine Style With Pullout</h2>
-                <hr>
-
-                <!-- TODO: Install quickinfo later. Would like two fields: good for and not as good for. Same as popup below-->
-                <div class="quickInfo">
-
-                    <p class="smallLabel"><strong>Good for:</strong>&nbsp;&nbsp;Profiles with contact info, lengthy bios and possibly a quote or highlight</p>
-
-                </div>
-
-                <!-- FIXME: Make description work and delete hard coded version
-                <p class="description" ng-bind-html="layoutRawDesc(layoutDetail.description) | truncate:{limit:300}"></p>-->
-                <p class="description">Sed porta nunc maximus, consequat mi in, pulvinar libero. Pellentesque luctus mollis dignissim. Morbi ultrices orci a rhoncus pulvinar. Mauris sed arcu eget libero commodo.</p>
-
-                <!-- FIXME: Make button scroll to gallery if already open or open gallery if gallery collapsed. Do we already have a way to gently scroll? -->
-                <a href="#gallery" class="btn" ng-click="displayGallery();">Change Layout</a>
-
-            </div>
-        </div><!-- Selected layout info ends -->
-
-
-
-    <a name="gallery"></a>
-    <div id="layoutGallery" class="positionAnchor" ng-show="showGallery || $ctrl.layoutOption === 'expanded'">
-
-        <!-- FIXME: This needs to collapse the gallery :) Also can we pull the svg file in here from sitetheory instead of having it all spelled out every time? or does that not work? I'm worried if we ever want to change the look of it, we are going to have to do a massive search and replace -->
-        <button type="button" class="btnClose" href="javascript:;" ng-click="closeDialog();">
-            <span class="sr-only">Close Gallery</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg>
-        </button>
-
-
-        <!-- TODO: make content type dynamic -->
-        <h2 class="galleryTitle sectionHeader">Profile Layout Gallery</h2>
-
-        <div class="search--gallery" ng-if="$ctrl.search === true">
-            <stratus-search flex="40"></stratus-search>
+          <!--</div>-->
         </div>
-
-
-
-        <div class="galleryList">
-
-            <md-grid-list
-                    md-cols-xs="1" md-cols-gt-xs="2"
-                    md-row-height="3:4"
-                    md-row-height-xs="5:9"
-                    md-gutter-gt-md="50px" md-gutter-md="40px" md-gutter-sm="30px" md-gutter-gt-xs="0" >
-
-                <md-grid-tile ng-repeat="target in collection.models">
-
-
-                    <div class="galleryItem positionAnchor" ng-class="{'gallerySelected': model.exists(property, target.data.id)}">
-                        <h4 class="smallLabel">{{target.data.name}}</h4>
-                        <div class="checkIcon colorPrimary easyTransition">
-                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
-                        </div>
-                        <div class="backgroundDark positionAnchor">
-
-                            <a href="#" ng-show="$ctrl.details === true" class="infoIcon easyTransition" ng-click="zoomView(target.data);">
-                                <md-icon  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                            </a>
-
-                            <div class="galleryImage defaultShadow easyTransition">
-                                <div class="selectedBorder positionAll easyTransition">
-
-                                </div>
-                                <img src="/assets/1/0/bundles/sitetheorycore/images/visual/2columnMinimal.jpg" alt=""/>
-                            </div>
-
-
-
-                            <!-- FIXME: On mobile when you click this, it shoots you to the top of the page -->
-                            <div class="btnContainer positionCenter">
-                                <a href="#" ng-hide="model.exists(property, target.data.id)"
-                                   ng-click="model.toggle(property, {'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images}, toggleOptions); updateDetails({'id': target.data.id,'name':target.data.name,'description':target.data.description,'images':target.data.images});"
-                                   class="btn">Choose Layout </a>
-                            </div>
-                        </div>
-					</div>
-
-                </md-grid-tile>
-
-            </md-grid-list>
-
-        </div><!-- Layout box Inner ends -->
-        <stratus-pagination class="visual-pag"></stratus-pagination>
-    </div><!-- Layout Box Ends -->
-    <!-- Detail Page ends here -->
-</div>
-
-<script type="text/ng-template" id="layoutDetail.html">
-    <!-- Detail Page starts from here -->
-    <div class="layoutDialog" role="dialog">
-        <div class="popup clearfix defaultBorderRadius">
-            <div class="popupImage imageColumn stGrid stGridTablet column50">
-                <div class="defaultShadow">
-
-                    <!-- FIXME: Not sure why there is an href on this image? Probably delete. -->
-                    <a href="javascript:void(0)">
-                        <img src="/assets/1/0/bundles/sitetheorycore/images/visual/2columnMinimal.jpg" alt=""/>
-                    </a>
-                </div>
+        <div ng-if="selectedLayout" class="positionCenter">
+          <a href="#" class="btn" ng-click="displayGallery();">Change Layout</a>
+        </div>
+      </div>
+    </div>
+    <div class="selectedInfo infoColumn stGrid stGridTablet column50">
+      <h4>You are currently using</h4>
+      <!-- FIXME: This only works right now once the gallery is uncollapsed. Well, actually it will probably automatically work once there is always a default layout? Can delete hard coded text.-->
+      <h2>{{selectedLayout.name}}</h2>
+      <hr>
+      <!-- TODO: Install quickinfo later. Would like two fields: good for and not as good for. Same as popup below-->
+      <!-- <div class="quickInfo">
+        <p class="smallLabel"><strong>Good for:</strong>&nbsp;&nbsp;Profiles with contact info, lengthy bios and possibly a quote or highlight</p>
+      </div> -->
+      <!-- FIXME: Make description work and delete hard coded version
+                <p class="description" ng-bind-html="layoutRawDesc(layoutDetail.description) | truncate:{limit:300}"></p>-->
+      <p class="description" ng-bind-html="layoutRawDesc(selectedLayout.description) | truncate:{limit:300}"></p>
+      <!-- FIXME: Make button scroll to gallery if already open or open gallery if gallery collapsed. Do we already have a way to gently scroll? -->
+      <a href="#" class="btn" ng-click="displayGallery();">Change Layout</a>
+    </div>
+  </div>
+  <!-- Selected layout info ends -->
+    <div id="layoutGallery" class="positionAnchor" ng-if="showGallery || $ctrl.layoutOption === 'expanded'">
+    <!-- FIXME: This needs to collapse the gallery :) Also can we pull the svg file in here from sitetheory instead of having it all spelled out every time? or does that not work? I'm worried if we ever want to change the look of it, we are going to have to do a massive search and replace -->
+    <button type="button" class="btnClose" href="javascript:;" ng-click="closeDialog();">
+      <span class="sr-only">Close Gallery</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg>
+    </button>
+    <!-- TODO: make content type dynamic -->
+    <h2 class="galleryTitle sectionHeader">Profile Layout Gallery</h2>
+    <div class="search--gallery" ng-if="$ctrl.search === true">
+      <stratus-search flex="40"></stratus-search>
+    </div>
+    <div class="galleryList">
+      <md-grid-list md-cols-xs="1" md-cols-gt-xs="2" md-row-height="3:4" md-row-height-xs="5:9" md-gutter-gt-md="50px" md-gutter-md="40px" md-gutter-sm="30px" md-gutter-gt-xs="0">
+        <md-grid-tile ng-repeat="target in collection.models">
+          <div class="galleryItem positionAnchor" ng-class="{'gallerySelected': model.exists(property, target.data.id)}">
+            <h4 class="smallLabel">{{target.data.name}}</h4>
+            <div class="checkIcon colorPrimary easyTransition">
+              <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
             </div>
-            <div class="popupInfo infoColumn stGrid stGridTablet column50">
-                <h2>{{layoutDetail.name}}</h2>
-                <hr>
-
-                <!-- TODO: Install quickinfo later. Would like two fields: good for and not as good for
+            <div class="backgroundDark positionAnchor">
+              <a href="#" ng-show="$ctrl.details === true" class="infoIcon easyTransition" ng-click="zoomView(target.data);">
+                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+              </a>
+              <div class="galleryImage defaultShadow easyTransition">
+                <div class="selectedBorder positionAll easyTransition"></div>
+                <img data-plugin="lazy" src="//{{target.data.images[0].prefix}}.{{target.data.images[0].extension}}" alt="" />
+              </div>
+              <!-- FIXME: On mobile when you click this, it shoots you to the top of the page -->
+              <div class="btnContainer positionCenter">
+                <a href="#" ng-hide="model.exists(property, target.data.id)" ng-click="chooseLayout(property, target.data)" class="btn">Choose Layout</a>
+              </div>
+            </div>
+          </div>
+        </md-grid-tile>
+      </md-grid-list>
+    </div>
+    <!-- Layout box Inner ends -->
+    <stratus-pagination class="visual-pag"></stratus-pagination>
+  </div>
+  <!-- Layout Box Ends -->
+  <!-- Detail Page ends here -->
+</div>
+<script type="text/ng-template" id="layoutDetail.html">
+  <!-- Detail Page starts from here -->
+  <div class="layoutDialog" role="dialog">
+    <div class="popup clearfix defaultBorderRadius">
+      <div class="popupImage imageColumn stGrid stGridTablet column50">
+        <div class="defaultShadow">
+          <a href="javascript:void(0)">
+            <img data-plugin="lazy" src="//{{layoutDetail.images[0].prefix}}.{{layoutDetail.images[0].extension}}" alt=""/>
+          </a>
+        </div>
+      </div>
+      <div class="popupInfo infoColumn stGrid stGridTablet column50">
+        <h2>{{layoutDetail.name}}</h2>
+        <hr>
+        <!-- TODO: Install quickinfo later. Would like two fields: good for and not as good for
                 <div class="quickInfo">
 
                     <p class="smallLabel"><strong>Good for:</strong>&nbsp;&nbsp;Profiles with contact info, lengthy bios and possibly a quote or highlight</p> -->
-                    <!-- this should show up only if exists. can get cluttered
+        <!-- this should show up only if exists. can get cluttered
                     <p class="smallLabel"><strong>Not so Good for:</strong>&nbsp;&nbsp;Lorem ipsum dolor sit amet</p>
                 </div>
                 -->
-
-                <p class="description" ng-bind-html="layoutRawDesc(layoutDetail.description) | truncate:{limit:300}"></p>
-                <a href="javascript:void(0)" ng-hide="model.exists(property,layoutDetail.id)"
-                   ng-click="model.toggle(property, {'id': layoutDetail.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}, toggleOptions); ; updateDetails({'id': target.data.id,'name':layoutDetail.name,'description':layoutDetail.description,'images':layoutDetail.images}); closeDialog();" class="btn btnChoose">Choose Layout </a>
-
-                <!-- TODO: Install later.
+        <p class="description" ng-bind-html="layoutRawDesc(layoutDetail.description) | truncate:{limit:300}"></p>
+        <a href="javascript:void(0)" ng-hide="model.exists(property,layoutDetail.id)" ng-click="chooseLayout(property, layoutDetail); closeDialog();" class="btn btnChoose">Choose Layout </a>
+        <!-- TODO: Install later.
                 <hr>
                 <p class="smallLabel"><strong>Other Options</strong></p>
 
@@ -187,15 +129,13 @@
                 </div>
 
                 <a class="btn" href="">Apply Layout</a> -->
-
-            </div>
-            <div>
-                <button type="button" class="btnClose" href="javascript:;" ng-click="closeDialog();">
-                    <span class="sr-only">Toggle Navigation</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg>
-                </button>
-            </div>
-
-
-        </div><!-- Layout popup ends -->
+      </div>
+      <div>
+        <button type="button" class="btnClose" href="javascript:;" ng-click="closeDialog();">
+          <span class="sr-only">Toggle Navigation</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg>
+        </button>
+      </div>
     </div>
+    <!-- Layout popup ends -->
+  </div>
 </script>
