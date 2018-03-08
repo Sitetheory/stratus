@@ -3,7 +3,7 @@
     define([
       'stratus',
       'underscore',
-      'angular',
+      'angular'
     ], factory);
   } else {
     factory(root.Stratus, root._);

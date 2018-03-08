@@ -67,11 +67,11 @@
         var config = {
           attachTo: angular.element(document.body),
           scope: scope,
-          controller: function (mdPanelRef) {
+          controller: ['mdPanelRef', function (mdPanelRef) {
             scope.closeDialog = function () {
               mdPanelRef.close();
             };
-          },
+          }],
           templateUrl: template + '.html',
           hasBackdrop: true,
           panelClass: 'media-dialog',
