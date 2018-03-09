@@ -8,6 +8,7 @@
   <div class="content">
     <md-tabs md-dynamic-height md-border-bottom>
       <md-tab label="Upload">
+        <md-progress-linear ng-if="$ctrl.uploadingFiles" md-mode="indeterminate"></md-progress-linear>
         <md-content class="dropContainer md-padding files">
           <p class="description">The files you upload here will be saved on redundant file servers and delivered over a high speed, cached CDN (Content Delivery Network)</p>
           <div  class="upload-zone md-padding"

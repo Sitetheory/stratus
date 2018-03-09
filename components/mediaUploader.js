@@ -181,7 +181,8 @@
       function uploadFiles(files, invalidFiles) {
         // Handle error messages for invalid files
         $ctrl.invalidFilesMsg = [];
-        if (invalidFiles.length > 0) {
+        if (invalidFiles && invalidFiles.length > 0) {
+          $ctrl.uploadingFiles = true;
           invalidFiles.forEach(function (file) {
             var msg;
             switch (file.$error) {
@@ -200,20 +201,29 @@
         }
 
         // Handle uploading status for valid files
-        if (files.length > 0) {
+        if (files && files.length > 0) {
           console.log(files);
+          $ctrl.uploadingFiles = true;
+          var uploadFilePromise = [];
           if ($ctrl.ngfMultiple) {
             // Upload new files
             for (i = 0; i < files.length; i++) {
-              $ctrl.files.push(media.fileUploader(files[i]));
+              var singleFile = media.fileUploader(files[i]);
+              uploadFilePromise.push(singleFile.upload);
+              $ctrl.files.push(singleFile);
             }
           } else {
             // Replace old file with new file
             $ctrl.files = [media.fileUploader(files[0], $ctrl.fileId)];
           }
 
-          // Refresh the library
-          media.getMedia($ctrl);
+          $q.all(uploadFilePromise).then(function (response) {
+            console.log(response);
+            $ctrl.uploadingFiles = false;
+
+            // Refresh the library
+            media.getMedia($ctrl);
+          });
         }
       }
 
