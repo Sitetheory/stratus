@@ -35,7 +35,7 @@
     "coffeescript": "^2.2.2",
     "countUp.js": "1.8.3",
     "dropzone": "^4.*",
-    "font-awesome": "^4.7.*",
+    "font-awesome": "^5.0.0",
     "froala-wysiwyg-editor": "^2.5.*",
     "fullcalendar": "^2.*",
     "jquery": "^2.*",
