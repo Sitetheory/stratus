@@ -75,7 +75,8 @@
        * Cancelled: timeEnd <= currentTime
        */
       $scope.getStatus = function (invoiceProduct) {
-        var currentTime = Math.floor(Date.now());
+        var currentTime = new Date().getTime() / 1000;
+        if (!invoiceProduct) return;
         var timeEnd = (invoiceProduct.timeEnd) ? invoiceProduct.timeEnd : currentTime + 1000;
         var timeStart = invoiceProduct.timeStart || currentTime + 1000;
         if (timeEnd <= currentTime) {
@@ -123,11 +124,13 @@
         }
       };
 
-      $scope.getSiteName = function (siteId, siteList) {
+      $scope.getSiteOrVendorName = function (invoice, siteList, vendorList) {
           var siteName = 'Site Not Found';
-          if (siteList.length > 0) {
-            siteList.forEach(function (site) {
-                if (site.id === siteId) {
+          sites = (invoice.owningIdentity === 'SitetheoryHostingBundle:Site') ? siteList : vendorList;
+          sites = sites ? sites : [];
+          if (sites.length > 0) {
+            sites.forEach(function (site) {
+                if (site.id == invoice.owningIdentityId) {
                   siteName = site.name;
                 }
               });
