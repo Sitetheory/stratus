@@ -1,31 +1,34 @@
+<div id="toppage"></div>
+
 <div class="error" ng-if="$ctrl.errorMsg">
   <p>{{ $ctrl.errorMsg }}</p>
 </div>
 <md-content class="theme-selector">
-  <div ng-if="$ctrl.selectedTheme" class="selected-theme" layout="column">
-    <h2>
-      <span>
-        <md-tooltip md-direction="top">Reprehenderit duis ad aliqua proident proident exercitation laborum consequat cupidatat.</md-tooltip>
-        <md-icon md-font-icon="fa-question-circle" class="fa"></md-icon>
-      </span> Theme
-    </h2>
-
-    <div class="info" layout="row">
-      <div flex="20" class="image">
-        <img ng-if="$ctrl.selectedTheme.images" src="{{ $ctrl.selectedTheme.images[0].url }}" alt="">
+  <div class="selectedLayout clearfix">
+    <div ng-if="$ctrl.selectedTheme" class="imageColumn stGrid stGridMobile">
+      <div class="selectedImage positionAnchor backgroundDark">
+        <div class="imageContainer defaultShadow easyTransition">
+          <img data-plugin="lazy" src="{{ $ctrl.selectedTheme.images[0].url }}" alt="" />
+        </div>
+        <div ng-if="selectedLayout" class="positionCenter">
+          <a href="#" class="btn" ng-click="$ctrl.toggleGallery();">Change Theme</a>
+        </div>
       </div>
-
-      <div flex="50" flex-offset="5">
-        <h3>{{ $ctrl.selectedTheme.name }}</h3>
+    </div>
+    <div class="selectedInfo infoColumn stGrid stGridTablet column50">
+      <div ng-if="$ctrl.selectedTheme">
+        <h4>You are currently using</h4>
+        <h2>{{ $ctrl.selectedTheme.name }}</h2>
         <div class="description" ng-bind-html="$ctrl.themeRawDesc($ctrl.selectedTheme.description) | truncate:{limit:300}"></div>
-        <md-button class="md-primary" id="btn-primary" ng-click="$ctrl.finishChoosingTheme($ctrl.selectedTheme)">Select this theme</md-button>
+        <a href="#" class="btn" ng-if="$ctrl.isNewTheme" ng-click="$ctrl.finishChoosingTheme($ctrl.selectedTheme)">Select this theme</a>
       </div>
+      <a href="#" class="btn" ng-if="!$ctrl.isNewTheme" ng-click="$ctrl.toggleGallery();">Change Theme</a>
     </div>
   </div>
 
   <hr>
 
-  <div class="list-theme" layout="column">
+  <div class="list-theme" ng-if="$ctrl.showGallery" layout="column">
     <div layout="row">
       <div flex="20" class="menus">
         <div flex>
@@ -47,7 +50,7 @@
       </div>
 
       <div flex class="templates">
-        <div ng-repeat="target in $ctrl.currentThemes" class="template" layout="row">
+        <div ng-repeat="target in collection.models" class="template" layout="row">
           <div class="image" flex="45" ng-click="$ctrl.zoomView(target)">
             <img src="{{ target.data.images[0].url }}" alt="">
             <div class="overlay"><i class="fas fa-search" aria-hidden="true"></i></div>
@@ -56,10 +59,10 @@
           <div class="content" flex="45">
             <div class="title">
               <h3>{{target.data.name}}</h3>
-              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)"><i ng-class="$ctrl.getFavoriteStatus(target.data.id)"></i></a>
+              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)"><i ng-if="target.data.preferred" class="fa fa-heart favorite"></i></a>
             </div>
             <div class="description" ng-bind-html="$ctrl.themeRawDesc(target.data.description) | truncate:{limit:300}"></div>
-            <md-button class="md-primary" id="btn-primary" ng-click="$ctrl.chooseTheme(target.data)">Choose Theme</md-button>
+            <a href="#toppage" class="btn" ng-click="$ctrl.chooseTheme(target.data);">Choose Theme</a>
           </div>
         </div>
       </div>
@@ -76,7 +79,7 @@
     <div class="pannel-header">
       <div class="">
         <h3>{{ themeDetail.name }}</h3>
-        <a href="#" ng-click="$ctrl.setFavorite(themeDetail.id)"><i ng-class="$ctrl.getFavoriteStatus(themeDetail.id)"></i></a>
+        <a href="#" ng-click="$ctrl.setFavorite(themeDetail.id)"><i ng-if="themeDetail.preferred" class="fa fa-heart favorite"></i></a>
         <button type="button" class="btnClose" href="javascript:;" ng-click="closeDialog();">
           <span class="sr-only">Toggle Navigation</span><svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs></defs><g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)"><g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666"><g id="lineLeft"><path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path></g><g id="lineRight"><path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path></g></g><circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle></g></svg>
         </button>
@@ -87,8 +90,8 @@
       <div class="ltpop-top">
         <div class="name fontSecondary"
         ng-bind-html="$ctrl.themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
-        <a href="#" class="bl_btn" ng-click="$ctrl.chooseTheme(themeDetail)">Choose Theme </a>
-        <a href="#" class="bl_btn_border">View Demo </a>
+        <a href="#" class="btn" ng-click="$ctrl.chooseTheme(themeDetail); closeDialog();">Choose Theme </a>
+        <a href="#" class="btn">View Demo </a>
       </div>
 
       <div class="ltpop-bottom">
