@@ -40,7 +40,8 @@
       limit: '@',
 
       // Custom
-      details: '<'
+      details: '<',
+      isNewTheme: '@'
     },
     controller: function (
       $scope,
@@ -53,7 +54,8 @@
       collection,
       $window,
       commonMethods,
-      visualSelector
+      visualSelector,
+      $filter
     ) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'theme_selector', true);
@@ -66,10 +68,10 @@
 
         $ctrl.errorMsg = null;
         $ctrl.heartCollor = [];
-        $ctrl.themes = [];
-        $ctrl.currentThemes = $ctrl.themes;
         $ctrl.zoomView = zoomView;
         $ctrl.selectedTheme = null;
+        $ctrl.showGallery = $ctrl.isNewTheme;
+        var currentThemes = [];
 
         // mock DB
         $ctrl.categories = ['Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum', 'Lorem ipsum'];
@@ -77,11 +79,10 @@
         // define methods
         $ctrl.sortBy = sortBy;
         $ctrl.setFavorite = setFavorite;
-        $ctrl.getFavoriteStatus = getFavoriteStatus;
         $ctrl.showCategory = showCategory;
         $ctrl.chooseTheme = chooseTheme;
         $ctrl.themeRawDesc = themeRawDesc;
-        $ctrl.finishChoosingTheme = finishChoosingTheme;
+        $ctrl.toggleGallery = toggleGallery;
 
         // Asset Collection
         if ($attrs.type) {
@@ -98,10 +99,18 @@
       };
 
       // Data Connectivity
-      $scope.$watch('collection.models', function (models) {
-        if (models && models.length > 0) {
-          $ctrl.themes = models;
-          $ctrl.currentThemes = models;
+      $scope.$watch('[model.data.version.template, collection.models]', function (theme) {
+        if (theme[0] && theme[1] && theme[1].length > 0) {
+          currentThemes = theme[1];
+
+          if (!$ctrl.selectedTheme) {
+            var themeData = currentThemes.map(function (obj) {
+              return obj.data;
+            });
+            $ctrl.selectedTheme = $filter('filter')(themeData, {
+              id: theme[0].id
+            })[0];
+          }
         }
       });
 
@@ -117,32 +126,20 @@
 
       // Functionality methods
       function showCategory(index) {
-        $ctrl.currentThemes = $ctrl.themes.filter(function (theme) {
-          return (theme.category === $ctrl.categories[index]);
-        });
-        if (index < 0) {
-          $ctrl.currentThemes = $ctrl.themes;
-        }
+        console.log('Not implement yet');
       }
+
+      function toggleGallery() {
+        $ctrl.showGallery = $ctrl.showGallery ? false : true;
+      };
 
       function setFavorite(id) {
-        var index = $ctrl.themes.findIndex(function (x) {
-          return (x.data.id === id);
-        });
-
-        // The return value is setting, so is this intended to be a chained return?
-        return $ctrl.themes[index].preferred = !$ctrl.themes[index].preferred;
-      }
-
-      function getFavoriteStatus(id) {
-        var index = $ctrl.themes.findIndex(function (x) {
-          return (x.data.id === id);
-        });
-        return $ctrl.themes[index].preferred ? 'fa fa-heart favorite' : 'fa fa-heart-o';
+        console.log('Not implement yet');
       }
 
       function chooseTheme(themeData) {
         $ctrl.selectedTheme = themeData;
+        $scope.model.data.version.template = themeData;
       }
 
       function finishChoosingTheme(themeData) {
@@ -159,38 +156,46 @@
       }
 
       function sortBy(type) {
-        $ctrl.currentThemes = (function (type) {
-          switch (type) {
-            case 'latest':
-              return latest();
-            case 'populate':
-              return populate();
-            case 'favorite':
-              return favorite();
-            default:
-              return $ctrl.currentThemes;
-          }
-        })(type);
+        console.log('Not implement yet');
+        // currentThemes = (function (type) {
+        //   switch (type) {
+        //     case 'latest':
+        //       return latest();
+        //     case 'populate':
+        //       return populate();
+        //     case 'favorite':
+        //       return favorite();
+        //     default:
+        //       return currentThemes;
+        //   }
+        // })(type);
       }
 
       // Helpers
-      function latest() {
-        return $ctrl.currentThemes.sort(function (a, b) {
-          return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit);
-        });
-      }
+      // function latest() {
+      //   return currentThemes.sort(function (a, b) {
+      //     return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit);
+      //   });
+      // }
 
-      function populate() {
-        return $ctrl.currentThemes.sort(function (a, b) {
-          return parseFloat(b.populate) - parseFloat(a.populate);
-        });
-      }
+      // function populate() {
+      //   return currentThemes.sort(function (a, b) {
+      //     return parseFloat(b.populate) - parseFloat(a.populate);
+      //   });
+      // }
 
-      function favorite() {
-        return $ctrl.currentThemes.sort(function (a) {
-          return $ctrl.favorites.includes(a.id) ? -1 : 1;
-        });
-      }
+      // function favorite() {
+      //   return currentThemes.sort(function (a) {
+      //     return $ctrl.favorites.includes(a.id) ? -1 : 1;
+      //   });
+      // }
+
+      $scope.model = null;
+      $scope.$watch('$ctrl.ngModel', function (data) {
+        if (data instanceof model && data !== $scope.model) {
+          $scope.model = data;
+        }
+      });
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/themeSelector' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   };
