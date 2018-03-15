@@ -8,7 +8,7 @@
     <div ng-if="$ctrl.selectedTheme" class="imageColumn stGrid stGridMobile">
       <div class="selectedImage positionAnchor backgroundDark">
         <div class="imageContainer defaultShadow easyTransition">
-          <img data-plugin="lazy" src="{{ $ctrl.selectedTheme.images[0].url }}" alt="" />
+          <img stratus-src="{{ $ctrl.selectedTheme.images[0].url }}" alt="" />
         </div>
         <div ng-if="selectedLayout" class="positionCenter">
           <a href="#" class="btn" ng-click="$ctrl.toggleGallery();">Change Theme</a>
@@ -52,8 +52,8 @@
       <div flex class="templates">
         <div ng-repeat="target in collection.models" class="template" layout="row">
           <div class="image" flex="45" ng-click="$ctrl.zoomView(target)">
-            <img src="{{ target.data.images[0].url }}" alt="">
-            <div class="overlay"><i class="fas fa-search" aria-hidden="true"></i></div>
+            <img stratus-src="{{ target.data.images[0].url }}" alt="">
+            <div class="overlay"><i class="fa fa-search" aria-hidden="true"></i></div>
           </div>
 
           <div class="content" flex="45">
@@ -102,7 +102,7 @@
           <a href="#"><i class="fas fa-mobile-alt" aria-hidden="true"></i></a>
         </div><!-- View list Ends -->
         <a href="#">
-          <img data-plugin="lazy" src="{{ '//' + themeDetail.images[0].file + '.' + themeDetail.images[0].extension }}" alt="">
+          <img stratus-src="{{ '//' + themeDetail.images[0].file + '.' + themeDetail.images[0].extension }}" alt="">
         </a>
       </div>
     </div><!-- Layout popup ends -->
