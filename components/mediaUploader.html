@@ -36,16 +36,16 @@
                     </div>
                     <div class="image">
                       <div ng-if="file.type == 'application/pdf'" class="document">
-                        <i class="fa fa-5x fa-file-pdf-o" aria-hidden="true"></i>
+                        <i class="fas fa-5x fa-file-pdf" aria-hidden="true"></i>
                       </div>
                       <div ng-if="file.type == 'application/msword'" class="document">
-                        <i class="fa fa-5x fa-file-word-o" aria-hidden="true"></i>
+                        <i class="fas fa-5x fa-file-word" aria-hidden="true"></i>
                       </div>
                       <img ngf-thumbnail="!file.$error && file">
                       <div class="hoverItems" ng-if="!file.errorUpload && file.upload !== null && file.progress < 100 && !file.upload.aborted">
                         <button title="Abort" ng-click="file.upload.abort(); file.upload.aborted=true" >
                           <md-tooltip>Abort upload</md-tooltip>
-                          <i class="fa fa-times-circle" aria-hidden="true"></i>
+                          <i class="fas fa-times-circle" aria-hidden="true"></i>
                         </button>
                       </div>
                       <div ng-if="!file.errorUpload && file.progress === 100" class="successCheck">

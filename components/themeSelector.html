@@ -50,7 +50,7 @@
         <div ng-repeat="target in $ctrl.currentThemes" class="template" layout="row">
           <div class="image" flex="45" ng-click="$ctrl.zoomView(target)">
             <img src="{{ target.data.images[0].url }}" alt="">
-            <div class="overlay"><i class="fa fa-search" aria-hidden="true"></i></div>
+            <div class="overlay"><i class="fas fa-search" aria-hidden="true"></i></div>
           </div>
 
           <div class="content" flex="45">
@@ -93,10 +93,10 @@
 
       <div class="ltpop-bottom">
         <div class="theme-view-list">
-          <a href="#" class="active"><i class="fa fa-play-circle-o" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-desktop" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-tablet" aria-hidden="true"></i></a>
-          <a href="#"><i class="fa fa-mobile" aria-hidden="true"></i></a>
+          <a href="#" class="active"><i class="fas fa-play-circle" aria-hidden="true"></i></a>
+          <a href="#"><i class="fas fa-desktop" aria-hidden="true"></i></a>
+          <a href="#"><i class="fas fa-tablet-alt" aria-hidden="true"></i></a>
+          <a href="#"><i class="fas fa-mobile-alt" aria-hidden="true"></i></a>
         </div><!-- View list Ends -->
         <a href="#">
           <img data-plugin="lazy" src="{{ '//' + themeDetail.images[0].file + '.' + themeDetail.images[0].extension }}" alt="">
