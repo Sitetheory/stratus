@@ -18,7 +18,7 @@
         <!--ng-class="{true:'galleryimg-active'}[$ctrl.layoutOption === 'collapsed']"-->
         <!-- <button class="btn btnCancel" ng-click="model.toggle(property, sel.data.id, toggleOptions);"></button> -->
         <div class="imageContainer defaultShadow easyTransition" ng-class="{'galleryimg-active': true}[$ctrl.layoutOption === 'collapsed' && !showGallery]">
-          <img data-plugin="lazy" src="//{{selectedLayout.images[0].prefix}}.{{selectedLayout.images[0].extension}}" alt="" />
+          <img stratus-src="//{{selectedLayout.images[0].prefix}}.{{selectedLayout.images[0].extension}}" alt="" />
           <!-- FIXME: Reactivate or delete depending on fix above -->
           <!--<div ng-if="$ctrl.layoutOption === 'collapsed'"> -->
           <!-- FIXME: Remove. This is the layout they already using right?
@@ -74,7 +74,7 @@
               </a>
               <div class="galleryImage defaultShadow easyTransition">
                 <div class="selectedBorder positionAll easyTransition"></div>
-                <img data-plugin="lazy" src="//{{target.data.images[0].prefix}}.{{target.data.images[0].extension}}" alt="" />
+                <img stratus-src="//{{target.data.images[0].prefix}}.{{target.data.images[0].extension}}" alt="" />
               </div>
               <!-- FIXME: On mobile when you click this, it shoots you to the top of the page -->
               <div class="btnContainer positionCenter">
@@ -98,7 +98,7 @@
       <div class="popupImage imageColumn stGrid stGridTablet column50">
         <div class="defaultShadow">
           <a href="javascript:void(0)">
-            <img data-plugin="lazy" src="//{{layoutDetail.images[0].prefix}}.{{layoutDetail.images[0].extension}}" alt=""/>
+            <img stratus-src="//{{layoutDetail.images[0].prefix}}.{{layoutDetail.images[0].extension}}" alt=""/>
           </a>
         </div>
       </div>

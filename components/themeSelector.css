@@ -16,27 +16,21 @@
 .theme-selector h2 {
   text-transform: none;
 }
-.theme-selector .selected-theme p {
-  color: rgba(0, 0, 0, 0.2);
-}
-.theme-selector .selected-theme .info {
-  position: relative;
-  height: 200px;
-}
-.theme-selector .selected-theme .info .image {
+.theme-selector .selectedLayout .imageContainer {
+  width: 200px;
+  height: 250px;
   background-color: #e1e1e1;
 }
-.theme-selector .selected-theme .info .image img {
+.theme-selector .selectedLayout .imageContainer img {
   height: 100%;
   object-fit: cover;
 }
-.theme-selector .selected-theme .info button {
-  text-align: center;
-  padding-left: 20px;
-  padding-right: 20px;
-  width: inherit;
-  position: absolute;
-  bottom: 0;
+.theme-selector .selectedLayout .selectedInfo {
+  min-height: 50px;
+  margin-left: 20px;
+}
+.theme-selector .selectedLayout .selectedInfo .description {
+  color: rgba(0, 0, 0, 0.2);
 }
 .theme-selector .list-theme .menus ul {
   padding-left: 0;
@@ -64,6 +58,7 @@
 .theme-selector .list-theme .templates .template .image:hover .overlay {
   bottom: 0;
   height: 100%;
+  cursor: pointer;
 }
 .theme-selector .list-theme .templates .template .image img {
   height: 100%;
@@ -104,7 +99,7 @@
 .theme-selector .list-theme .templates .template .content .description p {
   color: rgba(0, 0, 0, 0.2);
 }
-.theme-selector .list-theme .templates .template .content button {
+.theme-selector .list-theme .templates .template .content .btn {
   position: absolute;
   bottom: 0;
 }
@@ -137,6 +132,9 @@
   padding: 1em;
   min-width: 500px;
   min-height: 500px;
+}
+#zoom-view .pannel-content .ltpop-top .btn {
+  margin-right: 10px;
 }
 #zoom-view .pannel-content .ltpop-bottom {
   text-align: center;
