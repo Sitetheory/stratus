@@ -1,5 +1,4 @@
 /*-------media selector-----*/
-@import "../bower_components/font-awesome/css/font-awesome.min.css";
 a {
   transition: all 0.2s ease-out;
 }
@@ -762,7 +761,7 @@ md-input-container label {
   color: whitesmoke;
   font-size: 14px;
 }
-#media-library .media-library-content .library-content .medias .media-item .middle-details .controls .fa {
+#media-library .media-library-content .library-content .medias .media-item .middle-details .controls .fas {
   cursor: pointer;
   width: 40px;
   height: 40px;
