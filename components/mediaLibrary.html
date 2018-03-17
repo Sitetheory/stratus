@@ -59,7 +59,6 @@
         <li class="libraryToggle">
           <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#" ng-click="$ctrl.toggleLibrary()">
             <md-tooltip>Open Media Library</md-tooltip>
-            <!-- <i class="positionCenter fa fa-plus fa-4x" aria-hidden="true"></i> -->
             <div ng-class="dragDropClass" aria-hidden="true">
               <md-icon class="positionCenter" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
               <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
@@ -86,9 +85,9 @@
             ngf-model-invalid="invalidFiles"
             ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
         <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file">
-          <i ng-if="media.data.mime == 'video'" class="fa fa-5x fa-video-camera document" aria-hidden="true"></i>
-          <i ng-if="media.data.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
-          <i ng-if="media.data.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
+          <i ng-if="media.data.mime == 'video'" class="fas fa-5x fa-video-camera document" aria-hidden="true"></i>
+          <i ng-if="media.data.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
+          <i ng-if="media.data.mime == 'application/msword'" class="fas fa-5x fa-file-word document" aria-hidden="true"></i>
           <img ng-if="media.data.mime.indexOf('image') > -1" stratus-src="{{media.data.url || media.data.file}}">
           <div class="middle-details">
             <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
@@ -96,8 +95,8 @@
             <div class="controls">
               <i class="fas fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media.data)"></i>
               <i class="fas fa-trash-alt fa-2x" aria-hidden="true" ng-click="$ctrl.deleteMedia(media.data.id)"></i>
-              <i ng-if="$ctrl.isSelector && !media.data.selectedClass" class="fa fa-plus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
-              <i ng-if="$ctrl.isSelector && media.data.selectedClass" class="fa fa-minus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
+              <i ng-if="$ctrl.isSelector && !media.data.selectedClass" class="fas fa-plus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
+              <i ng-if="$ctrl.isSelector && media.data.selectedClass" class="fas fa-minus fa-2x" aria-hidden="true" ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
             </div>
           </div>
         </div>

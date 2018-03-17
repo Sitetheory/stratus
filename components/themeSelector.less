@@ -1,4 +1,3 @@
-@import "../bower_components/font-awesome/css/font-awesome.min.css";
 @white-color: #fff;
 @primary-color: #2196f3;
 @red-xxl: #f44336;
@@ -31,27 +30,21 @@
   h2 {
     text-transform: none;
   }
-  .selected-theme {
-    p {
-      color: @gray-m;
-    }
-    .info {
-      position: relative;
-      height: 200px;
-      .image {
-        background-color: @gray-s;
-        img {
-          height: 100%;
-          object-fit: cover;
-        }
+  .selectedLayout {
+    .imageContainer {
+      width: 200px;
+      height: 250px;
+      background-color: @gray-s;
+      img {
+        height: 100%;
+        object-fit: cover;
       }
-      button {
-        text-align: center;
-        padding-left: 20px;
-        padding-right: 20px;
-        width: inherit;
-        position: absolute;
-        bottom: 0;
+    }
+    .selectedInfo {
+      min-height: 50px;
+      margin-left: 20px;
+      .description {
+        color: @gray-m;
       }
     }
   }
@@ -84,6 +77,7 @@
             .overlay {
               bottom: 0;
               height: 100%;
+              cursor: pointer;
             }
           }
           img {
@@ -129,7 +123,7 @@
               color: @gray-m;
             }
           }
-          button {
+          .btn {
             position: absolute;
             bottom: 0;
           }
@@ -171,6 +165,11 @@
     padding: 1em;
     min-width: 500px;
     min-height: 500px;
+    .ltpop-top {
+      .btn {
+        margin-right: 10px;
+      }
+    }
     .ltpop-bottom {
       text-align: center;
       margin-top: 1em;

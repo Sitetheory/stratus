@@ -20,6 +20,7 @@
       'stratus.services.collection',
       'stratus.services.model',
       'stratus.services.details',
+      'stratus.directives.src',
 
       // Components
       'stratus.components.search',

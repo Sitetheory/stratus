@@ -56,8 +56,8 @@
         <div ng-if="$ctrl.media.mime == 'video'">
           <iframe width="560" height="315" ng-src="{{ $ctrl.mediaUrl }}" frameborder="0" allowfullscreen></iframe>
         </div>
-        <i ng-if="$ctrl.media.mime == 'application/pdf'" class="fa fa-5x fa-file-pdf-o document" aria-hidden="true"></i>
-        <i ng-if="$ctrl.media.mime == 'application/msword'" class="fa fa-5x fa-file-word-o document" aria-hidden="true"></i>
+        <i ng-if="$ctrl.media.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
+        <i ng-if="$ctrl.media.mime == 'application/msword'" class="fas fa-5x fa-file-word document" aria-hidden="true"></i>
         <img ng-if="$ctrl.media.mime.indexOf('image') > -1" stratus-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.name }}">
       </div>
     </div>
