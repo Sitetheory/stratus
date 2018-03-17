@@ -58,7 +58,7 @@
         </div>
         <i ng-if="$ctrl.media.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
         <i ng-if="$ctrl.media.mime == 'application/msword'" class="fas fa-5x fa-file-word document" aria-hidden="true"></i>
-        <img data-plugin="lazy" ng-if="$ctrl.media.mime.indexOf('image') > -1" ng-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.name }}">
+        <img ng-if="$ctrl.media.mime.indexOf('image') > -1" stratus-src="{{ $ctrl.mediaUrl }}" alt="{{ $ctrl.media.name }}">
       </div>
     </div>
     <div flex-gt-sm="30" flex-order="2" flex-order-gt-sm="1">
