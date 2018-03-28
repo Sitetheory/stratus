@@ -19,26 +19,30 @@
 // ----------------
 
 // Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular'], factory);
-  } else {
-    factory(root.Stratus, root._);
-  }
-}(this, function (Stratus, _) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(['stratus', 'underscore', 'angular'], factory);
+    } else {
+        factory(root.Stratus, root._);
+    }
+}(this, function(Stratus, _) {
 
-  // Angular Truncate Filter
-  // ---------------------
+    // Angular Truncate Filter
+    // ---------------------
 
-  // This filter truncates a sentence
-  Stratus.Filters.Truncate = function () {
-    return function (input, options) {
-      if (!angular.isString(input)) return input;
-      this.limit = null;
-      this.suffix = null;
-      if (angular.isObject(options)) angular.extend(this, options);
-      return _.truncate(input, this.limit, this.suffix);
+    // This filter truncates a sentence
+    Stratus.Filters.Truncate = function() {
+        return function(input, options) {
+            if (!angular.isString(input)) {
+                return input;
+            }
+            this.limit = null;
+            this.suffix = null;
+            if (angular.isObject(options)) {
+                angular.extend(this, options);
+            }
+            return _.truncate(input, this.limit, this.suffix);
+        };
     };
-  };
 
 }));

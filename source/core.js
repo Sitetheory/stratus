@@ -333,7 +333,9 @@ Stratus.Events.on('toast', function (message, title, priority, settings) {
   if (!(message instanceof Stratus.Prototypes.Toast)) {
     message = new Stratus.Prototypes.Toast(message, title, priority, settings);
   }
-  console.log('Toast:', message);
+  if (!Stratus.Environment.get('production')) {
+    console.log('Toast:', message);
+  }
   if (typeof $ !== 'undefined' && $.toaster) {
     $.toaster(message);
   } else {

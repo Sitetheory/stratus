@@ -107,7 +107,7 @@
     "mark": "'",
     "escape": true
   },
-  "validateIndentation": 2,
+  "validateIndentation": 4,
   "maximumLineLength": null,
   "excludeFiles": [
     "bower_components/**",
