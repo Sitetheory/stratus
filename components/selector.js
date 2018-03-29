@@ -42,7 +42,8 @@
       property: '@',
       multiple: '@',
       api: '@',
-      limit: '@'
+      limit: '@',
+      isSelling: '<'
     },
     controller: function ($scope, $attrs, $log, registry, model, commonMethods) {
       // Initialize
@@ -59,11 +60,17 @@
           decouple: true,
           api: {
             options: {
-              // paging: false
             },
             limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
           }
         };
+
+        if ($attrs.isSelling != null) {
+          request.api.options = {
+            isSelling: $attrs.isSelling
+          };
+        }
+
         if ($scope.api && angular.isObject($scope.api)) {
           request.api = _.extendDeep(request.api, $scope.api);
         }
