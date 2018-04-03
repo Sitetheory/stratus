@@ -6,7 +6,8 @@
     define([
       'stratus',
       'underscore',
-      'angular'
+      'angular',
+      'stratus.services.commonMethods'
     ], factory);
   } else {
     factory(root.Stratus, root._);
@@ -17,7 +18,8 @@
   Stratus.Controllers.ProductFilter = [
     '$scope',
     '$log',
-    function ($scope, $log) {
+    'commonMethods',
+    function ($scope, $log, commonMethods) {
       // Store Instance
       Stratus.Instances[_.uniqueId('product_filter_')] = $scope;
 
@@ -118,5 +120,10 @@
       function removeFilter() {
         delete $scope.collection.meta.get('api').options;
       }
+
+      $scope.safeMessage = function (message) {
+        console.log('message', message);
+        return commonMethods.safeMessage(message);
+      };
     }];
 }));
