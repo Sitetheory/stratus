@@ -65,6 +65,14 @@
       $scope.isString = angular.isString;
       $scope.isUndefined = angular.isUndefined;
 
+      $scope.getContentForMenu = function(query) {
+        return $scope.collection.filter(query).then(function(res){
+          return res.map(function(item) {
+            return item.data;
+          });
+        });
+      }
+
       $scope.createSite = function (siteTitle, siteGenreId, masterSite, masterContentMethod) {
         var data = {
           name: siteTitle,
