@@ -54,6 +54,12 @@
       };
       $scope.$log = $log;
 
+      $scope.$watch('model.data', function(oldVal, newVal) {
+        if (newVal) {
+          $scope.linkTo = newVal.content || newVal.url;
+        }
+      });
+
       // Type Checks
       $scope.isArray = angular.isArray;
       $scope.isDate = angular.isDate;
@@ -71,6 +77,19 @@
             return item.data;
           });
         });
+      }
+
+      $scope.handleSelection = function (content, type) {
+        switch (type) {
+          case 'content':
+            $scope.model.data.url = null;
+            $scope.model.data.content = content;
+            break;
+          case 'url':
+            $scope.model.data.content = null;
+            $scope.model.data.url = url;
+            break;
+        }
       }
 
       $scope.createSite = function (siteTitle, siteGenreId, masterSite, masterContentMethod) {
