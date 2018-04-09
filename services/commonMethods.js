@@ -17,7 +17,7 @@
   }
 }(typeof self !== 'undefined' ? self : this, function (Stratus, _, angular, zxcvbn) {
   Stratus.Services.CommonMethods = ['$provide', function ($provide) {
-    $provide.factory('commonMethods', ['$q', '$http', '$window', function ($q, $http, $window) {
+    $provide.factory('commonMethods', ['$q', '$http', '$window', '$sce', function ($q, $http, $window, $sce) {
       var RESPONSE_CODE = {
         verify: 'VERIFY',
         success: 'SUCCESS'
@@ -141,6 +141,10 @@
           });
       }
 
+      function safeMessage(message) {
+        return $sce.trustAsHtml(message);
+      }
+
       return {
         componentInitializer:   componentInitializer,
         getStatus:              getStatus,
@@ -153,7 +157,8 @@
         moreParams:             moreParams,
         RESPONSE_CODE:          RESPONSE_CODE,
         copyToClipboard:        copyToClipboard,
-        sendRequest:            sendRequest
+        sendRequest:            sendRequest,
+        safeMessage:            safeMessage
       };
     }]);
   }];

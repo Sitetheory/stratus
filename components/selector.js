@@ -42,7 +42,8 @@
       property: '@',
       multiple: '@',
       api: '@',
-      limit: '@'
+      limit: '@',
+      options: '<',
     },
     controller: function ($scope, $attrs, $log, registry, model, commonMethods) {
       // Initialize
@@ -58,9 +59,7 @@
           target: $attrs.type,
           decouple: true,
           api: {
-            options: {
-              // paging: false
-            },
+            options: this.options ? this.options : {},
             limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
           }
         };

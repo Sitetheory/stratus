@@ -26,7 +26,7 @@
       isLoggedIn: '<',
       email: '<'
     },
-    controller: function ($scope, $window, $attrs, $sce, $compile, userAuthentication, commonMethods) {
+    controller: function ($scope, $window, $attrs,  $compile, userAuthentication, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'user_authentication', true);
       var $ctrl = this;
@@ -259,7 +259,7 @@
       }
 
       function safeMessage() {
-        return $sce.trustAsHtml($ctrl.message);
+        return commonMethods.safeMessage($ctrl.message);
       }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
