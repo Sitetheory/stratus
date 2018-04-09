@@ -23,3 +23,6 @@ stratus-help .md-button.md-icon-button svg {
 stratus-help .md-button.md-icon-button svg g {
   fill: #fff;
 }
+.help-tooltip {
+  height: auto;
+}

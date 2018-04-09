@@ -4,7 +4,8 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus',
+    define([
+      'stratus',
       'underscore',
       'angular',
       'moment',
@@ -36,7 +37,7 @@
         type: '@', // Editor / DateTime
         prefix: '@', // A value to prepend to the front of the value
         suffix: '@', // A value to append to the back of the value
-        stratusEdit: '=', // A value to define if the element can currently be editable
+        stratusEditable: '@', // A value to define if the element can currently be editable
         alwaysEdit: '@', // A bool/string to define if the element will always be in editable mode
         autoSave: '@', // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
         froalaOptions: '=' // Expects JSON. Options pushed to froala need to be initialized, so it will be a one time push
@@ -56,7 +57,7 @@
         $scope.model = null;
         $scope.value = null;
 
-        if (!ngModel || !$scope.property) {
+        if (!$scope.ngModel || !$scope.property) {
           console.warn($scope.uid + ' has no model or property!');
           return;
         }
@@ -70,12 +71,12 @@
 
         $scope.liveEditStatus = function () {
           if ($scope.ctrl.initialized) {
-            if ($scope.stratusEdit !== undefined) {
-              return $scope.stratusEdit;
+            if ($scope.stratusEditable !== undefined) {
+              return $scope.stratusEditable;
             } else if (Stratus.Environment.data.liveEdit !== undefined) {
               return Stratus.Environment.data.liveEdit;
             }
-            console.warn($scope.uid + ' has no variable to track edit toggle! ($scope.stratusEdit)');
+            console.warn($scope.uid + ' has no variable to track edit toggle! ($scope.stratusEditable)');
           }
           return false;
         };
@@ -143,7 +144,9 @@
           // WATCHERS
 
           $scope.$watch('model.data.' + $scope.property, function (data) {
-            $scope.value = data;
+            if (data) {
+              $scope.value = data;
+            }
           });
 
           // TRIGGERS
@@ -153,9 +156,9 @@
           $($scope.edit_input_container).on('keydown keypress', function (event) {
             switch (event.which) {
               case Stratus.Key.Enter:
-                if ($scope.autoSave !== false
-                  && $scope.autoSave !== 'false'
-                  && $scope.type !== 'Editor' // a quick fix. Stratus-Froala handles it's own auto saving
+                if ($scope.autoSave !== false &&
+                  $scope.autoSave !== 'false' &&
+                  $scope.type !== 'Editor' // a quick fix. Stratus-Froala handles it's own auto saving
                 ) {
                   $scope.$apply($scope.accept);
                 }
