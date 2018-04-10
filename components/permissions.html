@@ -3,7 +3,8 @@
        ng-controller="Generic"
        data-raw="true"
        data-target="User"
-       data-api='{"options":{"type":"collection"}}'>
+       data-api='{"options":{"type":"collection"}}'
+       ng-show="allowSelectUser">
     <md-autocomplete
             md-min-length="0"
             md-delay="500"
@@ -16,7 +17,6 @@
             md-selected-item="updateUserRole"
             md-floating-label="User and Role *"
             placeholder="Choose an Identity">
-
       <md-item-template>
         <div layout="row" layout-wrap layout-align="space-between center">
           <div class="contact-item">
@@ -27,14 +27,17 @@
           </p>
         </div>
       </md-item-template>
-    </md-autocomplete>
 
+      <md-not-found>
+        No matches found.
+      </md-not-found>
+    </md-autocomplete>
   </div>
 
   <div class="select-options"
        ng-controller="Generic"
        data-raw="true"
-       data-target="Content *"
+       data-target="Content"
        data-api='{"options":{"type":"collection"}}'>
     <md-autocomplete
             md-min-length="0"
@@ -48,7 +51,6 @@
             md-selected-item="updateContent"
             md-floating-label="Content"
             placeholder="Choose an Identity">
-
       <md-item-template>
         <div layout="row" layout-align="space-between center">
           <div class="contact-item">
@@ -61,6 +63,10 @@
           </div>
         </div>
       </md-item-template>
+
+      <md-not-found>
+        No matches found.
+      </md-not-found>
     </md-autocomplete>
   </div>
 
@@ -78,7 +84,3 @@
     </md-input-container>
   </div>
 </div>
-
-<!--<div class="submit" ng-show="(userRoleSelected && contentSelected && permissionSelected.length > 0)">-->
-<!--<md-button class="md-raised" ng-click=submit()> Submit </md-button>-->
-<!--</div>-->
