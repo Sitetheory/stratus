@@ -2,7 +2,7 @@
 // ------------------
 
 // Define AMD, Require.js, or Contextual Scope
-(function(root, factory) {
+(function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([
             'stratus',
@@ -14,18 +14,18 @@
     } else {
         factory(root.Stratus, root._);
     }
-}(this, function(Stratus, _) {
+}(this, function (Stratus, _) {
 
     // This Collection Service handles data binding for multiple objects with the $http Service
-    Stratus.Services.Collection = ['$provide', function($provide) {
+    Stratus.Services.Collection = ['$provide', function ($provide) {
         $provide.factory('collection', [
             '$q',
             '$http',
             '$mdToast',
             '$timeout',
             'model',
-            function($q, $http, $mdToast, $timeout, model) {
-                return function(options) {
+            function ($q, $http, $mdToast, $timeout, model) {
+                return function (options) {
 
                     // Environment
                     this.target = null;
@@ -66,10 +66,10 @@
                      * @param chain
                      * @returns {string}
                      */
-                    this.serialize = function(obj, chain) {
+                    this.serialize = function (obj, chain) {
                         var str = [];
                         obj = obj || {};
-                        angular.forEach(obj, function(value, key) {
+                        angular.forEach(obj, function (value, key) {
                             if (angular.isObject(value)) {
                                 if (chain) {
                                     key = chain + '[' + key + ']';
@@ -93,17 +93,17 @@
                     /**
                      * @returns {*}
                      */
-                    this.url = function() {
+                    this.url = function () {
                         return that.urlRoot;
                     };
 
                     /**
                      * @param data
                      */
-                    this.inject = function(data, type) {
+                    this.inject = function (data, type) {
                         if (_.isArray(data)) {
                             // TODO: Make this able to be flagged as direct entities
-                            data.forEach(function(target) {
+                            data.forEach(function (target) {
                                 // TODO: Add references to the Catalog when creating these models
                                 that.models.push(new model({
                                     collection: that,
@@ -111,7 +111,7 @@
                                 }, target));
                             });
                         }
-                    }
+                    };
 
                     // TODO: Abstract this deeper
                     /**
@@ -119,12 +119,12 @@
                      * @param data
                      * @returns {*}
                      */
-                    this.sync = function(action, data) {
+                    this.sync = function (action, data) {
                         // Internals
                         that.pending = true;
                         that.completed = false;
 
-                        return $q(function(resolve, reject) {
+                        return $q(function (resolve, reject) {
                             action = action || 'GET';
                             var prototype = {
                                 method: action,
@@ -141,7 +141,7 @@
                                     prototype.data = JSON.stringify(data);
                                 }
                             }
-                            $http(prototype).then(function(response) {
+                            $http(prototype).then(function (response) {
                                 if (response.status === 200 && angular.isObject(response.data)) {
                                     // TODO: Make this into an over-writable function
 
@@ -166,7 +166,7 @@
                                     that.paginate = false;
 
                                     // Promise
-                                    resolve(that.models);
+                                    resolve(response.data.payload);
                                 } else {
                                     // Internals
                                     that.pending = false;
@@ -179,7 +179,7 @@
                                         )
                                     ));
                                 }
-                            }).catch(function() {
+                            }).catch(function () {
                                 // (/(.*)\sReceived/i).exec(error.message)[1]
                                 reject('XHR: ' + prototype.method + ' ' + prototype.url);
                             });
@@ -191,9 +191,9 @@
                      * @param data
                      * @returns {*}
                      */
-                    this.fetch = function(action, data) {
+                    this.fetch = function (action, data) {
                         return that.sync(action, data || that.meta.get('api')).catch(
-                            function(message) {
+                            function (message) {
                                 $mdToast.show(
                                     $mdToast.simple()
                                     .textContent('Failure to Fetch!')
@@ -210,7 +210,7 @@
                      * @param query
                      * @returns {*}
                      */
-                    this.filter = function(query) {
+                    this.filter = function (query) {
                         that.filtering = true;
                         that.meta.set('api.q', angular.isDefined(query) ? query : '');
                         that.meta.set('api.p', 1);
@@ -226,16 +226,16 @@
                      * @param query
                      * @returns {*}
                      */
-                    this.throttleFilter = function(query) {
+                    this.throttleFilter = function (query) {
                         that.meta.set('api.q', angular.isDefined(query) ? query : '');
-                        return $q(function(resolve, reject) {
+                        return $q(function (resolve, reject) {
                             var request = that.throttle();
                             if (!Stratus.Environment.get('production')) {
                                 console.log('request:', request);
                             }
-                            request.then(function(models) {
+                            request.then(function (models) {
                                 if (!Stratus.Environment.get('production')) {
-                                    console.log('throttled:', _.map(models, function(model) {
+                                    console.log('throttled:', _.map(models, function (model) {
                                         return model.domainPrimary;
                                     }));
                                 }
@@ -248,7 +248,7 @@
                      * @param page
                      * @returns {*}
                      */
-                    this.page = function(page) {
+                    this.page = function (page) {
                         that.paginate = true;
                         that.meta.set('api.p', page);
                         that.fetch();
@@ -258,9 +258,9 @@
                     /**
                      * @returns {Array}
                      */
-                    this.toJSON = function() {
+                    this.toJSON = function () {
                         var sanitized = [];
-                        that.models.forEach(function(model) {
+                        that.models.forEach(function (model) {
                             if (typeof model.toJSON === 'function') {
                                 sanitized.push(model.toJSON());
                             }
@@ -272,7 +272,7 @@
                      * @param target
                      * @param options
                      */
-                    this.add = function(target, options) {
+                    this.add = function (target, options) {
                         if (!options || typeof options !== 'object') {
                             options = {};
                         }
@@ -290,7 +290,7 @@
                     /**
                      * @param target
                      */
-                    this.remove = function(target) {
+                    this.remove = function (target) {
                         that.models.splice(that.models.indexOf(target), 1);
                     };
 
@@ -298,8 +298,8 @@
                      * @param attribute
                      * @returns {Array}
                      */
-                    this.pluck = function(attribute) {
-                        return _.map(that.models, function(element) {
+                    this.pluck = function (attribute) {
+                        return _.map(that.models, function (element) {
                             return element instanceof model ? element.pluck(attribute) : null;
                         });
                     };
@@ -308,8 +308,8 @@
                      * @param attribute
                      * @returns {boolean}
                      */
-                    this.exists = function(attribute) {
-                        return !!_.reduce(that.pluck(attribute) || [], function(memo, data) {
+                    this.exists = function (attribute) {
+                        return !!_.reduce(that.pluck(attribute) || [], function (memo, data) {
                             return memo || angular.isDefined(data);
                         });
                     };
