@@ -92,43 +92,52 @@ if (typeof define === 'function' && define.amd) {
             // Call HTTP REQUEST
             function doSignIn(data, service, truthData) {
                 if ($ctrl.ngModel) {
-                    if (data.hasOwnProperty('id')) {
-                        (service == 'google') ? $ctrl.ngModel.googleId = data.id : $ctrl.ngModel.facebookId = data.id;
-                    }
-                    if ($ctrl.ngModel.hasOwnProperty('profile')) {
-                        if ($ctrl.ngModel.profile.hasOwnProperty('publicName')) {
-                            $ctrl.ngModel.profile.publicName = data.name;
-                        }
-
-                        if ($ctrl.ngModel.profile.hasOwnProperty('gender') && data.hasOwnProperty('gender')) {
-                            $ctrl.ngModel.profile.gender = (data.gender == 'male') ? 2 : 1;
-                        }
-
-                        if ($ctrl.ngModel.profile.hasOwnProperty('locale') && data.hasOwnProperty('locale')) {
-                            $ctrl.ngModel.profile.locale = data.locale;
-                        }
-
-                        if ($ctrl.ngModel.profile.hasOwnProperty('phones') && data.hasOwnProperty('phone')) {
-                            if (!$ctrl.ngModel.profile.phones) $ctrl.ngModel.profile.phones = [];
-                            $ctrl.ngModel.profile.phones.push(data.phone);
-                        }
-
-                        if ($ctrl.ngModel.profile.hasOwnProperty('emails') && data.hasOwnProperty('email')) {
-                            if (!$ctrl.ngModel.profile.emails) $ctrl.ngModel.profile.emails = [];
-                            $ctrl.ngModel.profile.emails.push(data.email);
-                        }
-                    }
+                    updateExistData(data, service);
                 } else {
                     singleSignOn.signIn(data, service, truthData).then(
-                      function (response) {
-                        console.log('response');
-                    },
-                      function (error) {
-                        console.log(error);
-                    });
+                      function (response) { console.log('response'); },
+                      function (error) { console.log(error);}
+                    );
                 }
             }
+
+            // update data into model
+            function updateExistData(data, service) {
+                if (data.hasOwnProperty('id')) {
+                    if (service == 'google') {
+                        $ctrl.ngModel.googleId = null;
+                        $ctrl.ngModel.googleId = data.id;
+                    }else {
+                        $ctrl.ngModel.facebookId = null;
+                        $ctrl.ngModel.facebookId = data.id;
+                    }
+                }
+                if ($ctrl.ngModel.hasOwnProperty('profile')) {
+                    if ($ctrl.ngModel.profile.hasOwnProperty('publicName')) {
+                        $ctrl.ngModel.profile.publicName = data.name;
+                    }
+
+                    if ($ctrl.ngModel.profile.hasOwnProperty('gender') && data.hasOwnProperty('gender')) {
+                        $ctrl.ngModel.profile.gender = (data.gender == 'male') ? 2 : 1;
+                    }
+
+                    if ($ctrl.ngModel.profile.hasOwnProperty('locale') && data.hasOwnProperty('locale')) {
+                        $ctrl.ngModel.profile.locale = data.locale;
+                    }
+
+                    if ($ctrl.ngModel.profile.hasOwnProperty('phones') && data.hasOwnProperty('phone')) {
+                        if (!$ctrl.ngModel.profile.phones) $ctrl.ngModel.profile.phones = [];
+                        $ctrl.ngModel.profile.phones.push(data.phone);
+                    }
+
+                    if ($ctrl.ngModel.profile.hasOwnProperty('emails') && data.hasOwnProperty('email')) {
+                        if (!$ctrl.ngModel.profile.emails) $ctrl.ngModel.profile.emails = [];
+                        $ctrl.ngModel.profile.emails.push(data.email);
+                    }
+                }
+                $scope.$digest();
+            }
         },
-        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/socialMedia' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+        templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     };
 }));
