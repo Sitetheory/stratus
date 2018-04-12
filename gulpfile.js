@@ -110,10 +110,12 @@ var location = {
   },
   template: {
     core: [
-      'components/*.html'
+      'components/*.html',
+      'directives/*.html'
     ],
     min: [
-      'components/*.min.html'
+      'components/*.min.html',
+      'directives/*.min.html'
     ]
   }
 };
