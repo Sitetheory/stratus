@@ -208,9 +208,10 @@ var Stratus = {
 };
 
 // Declare Warm Up
-if (!Stratus.Environment.production) {
+if (!Stratus.Environment.get('production')) {
   console.group('Stratus Warm Up');
 }
+
 // Underscore Settings
 // -------------------
 
@@ -879,7 +880,9 @@ Stratus.Selector.each = function (callable) {
 Stratus.Selector.find = function (selector) {
   var that = this;
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) console.log('List:', that);
+    if (!Stratus.Environment.get('production')) {
+      console.log('List:', that);
+    }
   } else if (selector) {
     return Stratus(selector, that.selection);
   }
@@ -912,7 +915,9 @@ Stratus.Selector.map = function (callable) {
 Stratus.Selector.append = function (child) {
   var that = this;
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) console.log('List:', that);
+    if (!Stratus.Environment.get('production')) {
+      console.log('List:', that);
+    }
   } else if (child) {
     that.selection.insertBefore(child, that.selection.lastChild);
   }
@@ -928,7 +933,9 @@ Stratus.Selector.append = function (child) {
 Stratus.Selector.prepend = function (child) {
   var that = this;
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) console.log('List:', that);
+    if (!Stratus.Environment.get('production')) {
+      console.log('List:', that);
+    }
   } else if (child) {
     that.selection.insertBefore(child, that.selection.firstChild);
   }
@@ -944,7 +951,9 @@ Stratus.Selector.prepend = function (child) {
 Stratus.Selector.addClass = function (className) {
   var that = this;
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) console.log('List:', that);
+    if (!Stratus.Environment.get('production')) {
+      console.log('List:', that);
+    }
   } else {
     _.each(className.split(' '), function (name) {
       if (that.selection.classList) {
@@ -986,7 +995,9 @@ Stratus.Selector.removeClass = function (className) {
 Stratus.Selector.style = function () {
   var that = this;
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) console.log('List:', that);
+    if (!Stratus.Environment.get('production')) {
+      console.log('List:', that);
+    }
   } else if (that.selection instanceof Node) {
     return getComputedStyle(that.selection);
   }
@@ -1049,6 +1060,7 @@ Stratus.Selector.parent = function () {
   }
   return that;
 };
+
 // Stratus Event System
 // --------------------
 
@@ -3741,7 +3753,9 @@ Stratus.Events.on('toast', function (message, title, priority, settings) {
   if (!(message instanceof Stratus.Prototypes.Toast)) {
     message = new Stratus.Prototypes.Toast(message, title, priority, settings);
   }
-  console.log('Toast:', message);
+  if (!Stratus.Environment.get('production')) {
+    console.log('Toast:', message);
+  }
   if (typeof $ !== 'undefined' && $.toaster) {
     $.toaster(message);
   } else {
@@ -3785,6 +3799,7 @@ Stratus.DOM.unload(function (event) {
   }
   /* */
 });
+
 // Handle Scope
 // ------------
 
