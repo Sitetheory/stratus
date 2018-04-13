@@ -1,16 +1,12 @@
 <div class="option-row">
   <div class="select-options"
-       ng-controller="Generic"
-       data-raw="true"
-       data-target="User"
-       data-api='{"options":{"type":"collection"}}'
        ng-show="allowSelectUser">
     <md-autocomplete
             md-min-length="0"
             md-delay="500"
             md-menu-class="autocomplete-custom-template"
-            md-search-text="query"
-            md-items="item in identityQuery(collection, query)"
+            md-search-text="userQuery"
+            md-items="item in identityQuery(userQuery)"
             md-selected-item-change="selectedUserRoleChange(item)"
             md-item-text="selectedIdentify(item)"
             md-no-cache="true"
@@ -34,17 +30,13 @@
     </md-autocomplete>
   </div>
 
-  <div class="select-options"
-       ng-controller="Generic"
-       data-raw="true"
-       data-target="Content"
-       data-api='{"options":{"type":"collection"}}'>
+  <div class="select-options">
     <md-autocomplete
             md-min-length="0"
             md-delay="500"
             md-menu-class="autocomplete-custom-template"
             md-search-text="query"
-            md-items="item in contentQuery(collection, query)"
+            md-items="item in contentQuery(query)"
             md-selected-item-change="selectedContentChange(item)"
             md-item-text="selectedContent(item)"
             md-no-cache="true"

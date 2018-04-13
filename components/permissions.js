@@ -13,7 +13,8 @@ if (typeof define === 'function' && define.amd) {
       'angular',
 
       // Modules
-      'angular-material'
+      'angular-material',
+      'stratus.services.commonMethods'
     ], factory);
 } else {
     factory(root.Stratus, root.$, root._);
@@ -26,7 +27,7 @@ if (typeof define === 'function' && define.amd) {
             ngModel: '=',
             identityUser: '='
         },
-        controller: function ($scope, $timeout, $attrs, $http) {
+        controller: function ($scope, $timeout, $attrs, $http, commonMethods) {
 
             var $ctrl = this;
 
@@ -89,11 +90,7 @@ if (typeof define === 'function' && define.amd) {
             });
 
             $scope.getPermission = function (permissionId) {
-                return $http({
-                    method: 'GET',
-                    url: '/Api/Permission/' + permissionId,
-                    headers: { 'Content-Type': 'application/json' }
-                }).then(
+                return commonMethods.sendRequest(null, 'GET', '/Api/Permission/' + permissionId).then(
                   function (response) {
                     // success
                     if (response) {
@@ -135,63 +132,81 @@ if (typeof define === 'function' && define.amd) {
             /**
             * Retrieve data from server
             */
-            $scope.identityQuery = function (collection, query) {
-                return collection.filter(query).then(function (value) {
-                    var response = [];
-                    if (value.User) {
-                        value.User.name += ' - ' + value.User.id;
-                        response = response.concat(value.User);
-                    }
-                    if (value.Role) {
-                        value.Role.bestName += ' - ' + value.Role.id;
-                        response = response.concat(value.Role);
-                    }
-                    if (!(value.User) && !(value.Role)) {
-                        if (value.name) {
-                            value.name += ' - ' + value.id;
-                        } else if (value.bestName) {
-                            value.bestName += ' - ' + value.id;
-                        }
-                        response = response.concat(value);
-                    }
+            $scope.identityQuery = function (query) {
+                return commonMethods.sendRequest(null, 'GET', '/Api/User?options[type]=collection&p=1&q=' + query).then(
+                  function (response) {
+                    if (response.hasOwnProperty('data') && response.data.hasOwnProperty('payload')) {
+                        var value = response.data.payload;
+                        var results = [];
 
-                    return response;
+                        // Prepare data
+                        if (value.User) {
+                            value.User.name += ' - ' + value.User.id;
+                            results = results.concat(value.User);
+                        }
+                        if (value.Role) {
+                            value.Role.bestName += ' - ' + value.Role.id;
+                            results = results.concat(value.Role);
+                        }
+                        if (!(value.User) && !(value.Role)) {
+                            if (value.name) {
+                                value.name += ' - ' + value.id;
+                            } else if (value.bestName) {
+                                value.bestName += ' - ' + value.id;
+                            }
+                            results = results.concat(value);
+                        }
+
+                        console.log('results', results);
+                        return results;
+                    }
+                },
+                  function (error) {
+                    console.error(error);
                 });
             };
 
-            $scope.contentQuery = function (collection, query) {
-                var response = [];
-                return collection.filter(query).then(function (value) {
-                    if (value.Bundle) {
-                        angular.forEach(value.Bundle, function (bundle, index) {
-                            value.Bundle[index].type = 'Bundle';
-                            value.Bundle[index].assetType = 'SitetheoryContentBundle:Bundle';
-                        });
+            $scope.contentQuery = function (query) {
+                return commonMethods.sendRequest(null, 'GET', '/Api/Content?options[type]=collection&p=1&q=' + query).then(
+                  function (response) {
+                    if (response.hasOwnProperty('data') && response.data.hasOwnProperty('payload')) {
+                        var value = response.data.payload;
+                        var results = [];
 
-                        response = response.concat(value.Bundle);
-                    }
-                    if (value.Content) {
-                        angular.forEach(value.Content, function (content, index) {
-                            value.Content[index].type = 'Content';
-                            if (content.hasOwnProperty('contentType') && content.contentType.hasOwnProperty('bundle') && content.contentType.bundle.hasOwnProperty('name')) {
-                                value.Content[index].assetType = 'Sitetheory' + content.contentType.bundle.name + 'Bundle:' + content.contentType.entity;
-                            }
-                        });
-                        response = response.concat(value.Content);
-                    }
-                    if (value.ContentType) {
-                        angular.forEach(value.ContentType, function (contentType, index) {
-                            value.ContentType[index].type = 'ContentType';
-                            value.ContentType[index].assetType = 'SitetheoryContentBundle:ContentType';
-                        });
-                        response = response.concat(value.ContentType);
-                    }
+                        if (value.Bundle) {
+                            angular.forEach(value.Bundle, function (bundle, index) {
+                                value.Bundle[index].type = 'Bundle';
+                                value.Bundle[index].assetType = 'SitetheoryContentBundle:Bundle';
+                            });
 
-                    if (!value.Bundle && !value.Content && !value.ContentType) {
-                        response = response.concat(value);
-                    }
+                            results = results.concat(value.Bundle);
+                        }
+                        if (value.Content) {
+                            angular.forEach(value.Content, function (content, index) {
+                                value.Content[index].type = 'Content';
+                                if (content.hasOwnProperty('contentType') && content.contentType.hasOwnProperty('bundle') && content.contentType.bundle.hasOwnProperty('name')) {
+                                    value.Content[index].assetType = 'Sitetheory' + content.contentType.bundle.name + 'Bundle:' + content.contentType.entity;
+                                }
+                            });
+                            results = results.concat(value.Content);
+                        }
+                        if (value.ContentType) {
+                            angular.forEach(value.ContentType, function (contentType, index) {
+                                value.ContentType[index].type = 'ContentType';
+                                value.ContentType[index].assetType = 'SitetheoryContentBundle:ContentType';
+                            });
+                            results = results.concat(value.ContentType);
+                        }
 
-                    return response;
+                        if (!value.Bundle && !value.Content && !value.ContentType) {
+                            results = results.concat(value);
+                        }
+                        console.log('results', results);
+                        return results;
+                    }
+                },
+                  function (error) {
+                    console.error(error);
                 });
             };
 

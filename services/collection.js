@@ -166,7 +166,7 @@
                                     that.paginate = false;
 
                                     // Promise
-                                    resolve(response.data.payload);
+                                    resolve(that, models);
                                 } else {
                                     // Internals
                                     that.pending = false;
