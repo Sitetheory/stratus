@@ -1,6 +1,6 @@
 #visualSelector hr {
   background: none;
-  border-top: 1px solid #777;
+  border-top: 1px solid #777777;
 }
 /* Info areas */
 .imageColumn {
@@ -95,7 +95,7 @@
 }
 .galleryImage .selectedBorder {
   opacity: 0;
-  border: 5px solid #333;
+  border: 5px solid #333333;
 }
 .galleryItem .btn {
   transition: all 0.1s ease-out !important;
@@ -137,7 +137,7 @@
   height: inherit;
 }
 .infoIcon md-icon svg g {
-  fill: #fff;
+  fill: #FFFFFF;
 }
 .gallerySelected .galleryImage .selectedBorder {
   opacity: 1;
@@ -197,7 +197,7 @@
     opacity: 1;
   }
   .infoIcon md-icon svg g {
-    fill: #222;
+    fill: #222222;
   }
   .checkIcon {
     top: 3px;

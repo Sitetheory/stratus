@@ -21,9 +21,9 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular'], factory);
+    define(['stratus', 'underscore', 'angular'], factory)
   } else {
-    factory(root.Stratus);
+    factory(root.Stratus)
   }
 }(this, function (Stratus) {
   // Angular Age Filter
@@ -32,12 +32,11 @@
   // This filter allows a display of age since the given date
   Stratus.Filters.Age = function () {
     return function (birthday) {
-      birthday = new Date(new Date(birthday).getTime() * 1000);
-      var today = new Date();
-      var age = (today - birthday) / 31557600000;
-      age = Math.floor(age);
-      return age;
-    };
-  };
-
-}));
+      birthday = new Date(new Date(birthday).getTime() * 1000)
+      var today = new Date()
+      var age = (today - birthday) / 31557600000
+      age = Math.floor(age)
+      return age
+    }
+  }
+}))

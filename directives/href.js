@@ -4,9 +4,9 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular'], factory);
+    define(['stratus', 'underscore', 'angular'], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
   // This directive intends to handle binding of a dynamic variable to
@@ -14,25 +14,25 @@
     return {
       restrict: 'A',
       link: function ($scope, $element, $attrs) {
-        Stratus.Instances[_.uniqueId('href_')] = $scope;
-        $scope.href = null;
+        Stratus.Instances[_.uniqueId('href_')] = $scope
+        $scope.href = null
         if ($attrs.stratusHref) {
-          var href = $parse($attrs.stratusHref);
+          var href = $parse($attrs.stratusHref)
           $scope.$watch('$parent', function (newValue) {
             if (typeof newValue !== 'undefined') {
-              $scope.href = href($scope.$parent);
-              $log.log('stratus-href:', href($scope.href));
+              $scope.href = href($scope.$parent)
+              $log.log('stratus-href:', href($scope.href))
             }
-          });
+          })
           $element.bind('click', function () {
             $scope.$apply(function () {
               if ($scope.href) {
-                $location.path($scope.href);
+                $location.path($scope.href)
               }
-            });
-          });
+            })
+          })
         }
       }
-    };
-  };
-}));
+    }
+  }
+}))

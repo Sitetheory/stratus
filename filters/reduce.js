@@ -19,21 +19,20 @@
 // ----------------
 
 // Define AMD, Require.js, or Contextual Scope
-(function(root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define(['stratus', 'underscore', 'angular'], factory);
-    } else {
-        factory(root.Stratus, root._, root.angular);
-    }
-}(this, function(Stratus, _, angular) {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['stratus', 'underscore', 'angular'], factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
+  }
+}(this, function (Stratus, _, angular) {
+  // Angular Reduce Filter
+  // ---------------------
 
-    // Angular Reduce Filter
-    // ---------------------
-
-    // This filter applies a reduce to an array or object
-    // FIXME: This is terribly malfunctioning
-    Stratus.Filters.Reduce = ['$interpolate', function($interpolate) {
-        /* *
+  // This filter applies a reduce to an array or object
+  // FIXME: This is terribly malfunctioning
+  Stratus.Filters.Reduce = ['$interpolate', function ($interpolate) {
+    /* *
         function reduceFilter(input, expression) {
             console.log(expression, $interpolate(expression));
             return input;
@@ -41,13 +40,12 @@
         reduceFilter.$stateful = true;
         return reduceFilter;
         /* */
-        /* */
-        return function(input, expression) {
-            return input || _.reduce(input, function(value) {
-                return ($interpolate(expression))(value);
-            });
-        };
-        /* */
-    }];
-
-}));
+    /* */
+    return function (input, expression) {
+      return input || _.reduce(input, function (value) {
+        return ($interpolate(expression))(value)
+      })
+    }
+    /* */
+  }]
+}))

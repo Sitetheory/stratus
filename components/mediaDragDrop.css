@@ -56,10 +56,10 @@
   position: absolute;
   font-size: 60px;
   background-color: rgba(245, 245, 245, 0.7);
-  color: #4ac8de;
+  color: #4AC8DE;
   border-bottom-left-radius: 3px;
-  border-left: 1px solid #d8d8d8;
-  border-bottom: 1px solid #d8d8d8;
+  border-left: 1px solid #D8D8D8;
+  border-bottom: 1px solid #D8D8D8;
 }
 .drag-drop-dialog .images ul li .wrapper i.fa-check-circle::before,
 .drag-drop-dialog .images ul li .wrapper i.fa-times-circle::before,
@@ -116,10 +116,10 @@
   position: relative;
   padding: 0 40px;
   font-size: 700%;
-  color: #d4d4d4;
+  color: #D4D4D4;
   text-align: center;
   border-radius: 3px;
-  border: 3px solid #d4d4d4;
+  border: 3px solid #D4D4D4;
 }
 .drag-drop-dialog .images ul li.add-more a {
   top: 50%;

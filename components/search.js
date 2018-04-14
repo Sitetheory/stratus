@@ -16,12 +16,11 @@
       // Services
       'stratus.services.registry',
       'stratus.services.collection'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus);
+    factory(root.Stratus)
   }
 }(this, function (Stratus) {
-
   // This component handles searching to filter a collection
   Stratus.Components.Search = {
     bindings: {
@@ -30,24 +29,28 @@
       display: '@'
     },
     controller: function ($scope, $attrs, registry, collection) {
-      Stratus.Instances[_.uniqueId('search_')] = $scope;
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + 'sitetheorystratus/stratus/components/search' + (Stratus.Environment.get('production') ? '.min' : '') + '.css');
+      Stratus.Instances[_.uniqueId('search_')] = $scope
+      Stratus.Internals.CssLoader(Stratus.BaseUrl +
+        'sitetheorystratus/stratus/components/search' +
+        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       // Settings
-      $scope.display = $attrs.display && _.isJSON($attrs.display) ? JSON.parse($attrs.display) : false;
+      $scope.display = $attrs.display && _.isJSON($attrs.display) ? JSON.parse(
+        $attrs.display) : false
 
       // Localize Collection
-      $scope.collection = null;
+      $scope.collection = null
       $scope.$watch('$parent.collection', function (data) {
         if (data && data instanceof collection) {
-          $scope.collection = data;
+          $scope.collection = data
         }
-      });
+      })
 
       // Initial Query
-      $scope.query = '';
+      $scope.query = ''
 
-      // TODO: Add the ability to use either its own collection or hoist the parent's
+      // TODO: Add the ability to use either its own collection or hoist the
+      // parent's
 
       /* *
       $scope.$watch('query', function (query) {
@@ -58,6 +61,8 @@
       $scope.registry.fetch('Media', $scope);
       /* */
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/search' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
-  };
-}));
+    templateUrl: Stratus.BaseUrl +
+    'sitetheorystratus/stratus/components/search' +
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+  }
+}))

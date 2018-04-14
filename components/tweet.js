@@ -4,9 +4,13 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular', 'https://platform.twitter.com/widgets.js'], factory);
+    define([
+      'stratus',
+      'underscore',
+      'angular',
+      'https://platform.twitter.com/widgets.js'], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
   // This component is just a simple base.
@@ -15,10 +19,10 @@
       ngModel: '='
     },
     controller: function ($scope, $element, $attrs, $parse, $window, $log) {
-      this.uid = _.uniqueId('tweet_');
-      Stratus.Instances[this.uid] = $scope;
-      $scope.model = $parse($attrs.ngModel);
-      $scope.tweet = $scope.model($scope.$parent);
+      this.uid = _.uniqueId('tweet_')
+      Stratus.Instances[this.uid] = $scope
+      $scope.model = $parse($attrs.ngModel)
+      $scope.tweet = $scope.model($scope.$parent)
       $scope.render = function () {
         if (typeof $scope.tweet === 'string' && $scope.tweet.length) {
           $window.twttr.widgets.createTweet($scope.tweet, $element[0], {
@@ -26,18 +30,18 @@
             cards: 'visible', // or hidden
             linkColor: '#cc0000', // default is blue
             theme: 'light' // or dark
-          });
+          })
         }
-      };
+      }
       if ($scope.tweet) {
-        $scope.render();
+        $scope.render()
       }
       $scope.$parent.$watch($attrs.ngModel, function (tweet) {
         if (tweet && _.strcmp(tweet, $scope.tweet) !== 0) {
-          $scope.tweet = tweet;
-          $scope.render();
+          $scope.tweet = tweet
+          $scope.render()
         }
-      });
+      })
     }
-  };
-}));
+  }
+}))

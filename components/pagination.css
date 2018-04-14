@@ -21,15 +21,15 @@
   padding: 10px 14px;
 }
 .paginator .paginatorPages a {
-  color: #666;
+  color: #666666;
 }
 .paginator .paginatorPages:hover a {
-  color: #ff0000;
+  color: #FF0000;
   background: rgba(66, 66, 66, 0.1);
 }
 .paginator .paginatorPrevious a,
 .paginator .paginatorNext a {
-  color: #333;
+  color: #333333;
 }
 .paginator .paginatorPrevious:hover a,
 .paginator .paginatorNext:hover a {
@@ -42,22 +42,22 @@
 }
 .paginator .paginatorPages.active a,
 .paginator .paginatorPages.active:hover a {
-  color: #333;
+  color: #333333;
   background: none;
 }
 /* On dark backgrounds */
 .backgroundDark .paginator .paginatorPages a {
-  color: #888;
+  color: #888888;
 }
 .backgroundDark .paginator .paginatorPrevious a,
 .backgroundDark .paginator .paginatorNext a,
 .backgroundDark .paginator .paginatorPages.active a,
 .backgroundDark .paginator .paginatorPages.active:hover a {
-  color: #ccc;
+  color: #CCCCCC;
 }
 .backgroundDark .paginator .paginatorPages:hover a,
 .backgroundDark .paginator .paginatorPrevious:hover a,
 .backgroundDark .paginator .paginatorNext:hover a {
-  color: #fff;
+  color: #FFFFFF;
   background: rgba(66, 66, 66, 0.4);
 }

@@ -2,7 +2,9 @@
   <div class="toolbar">
     <div class="md-toolbar-tools">
       <h2>Add Media To Library</h2>
-      <md-button ng-disabled="$ctrl.uploadingFiles" class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.done()">Done</md-button>
+      <md-button ng-disabled="$ctrl.uploadingFiles" class="btn gradientAnchor md-button md-ink-ripple"
+                 ng-click="$ctrl.done()">Done
+      </md-button>
     </div>
   </div>
   <div class="content">
@@ -10,28 +12,32 @@
       <md-tab label="Upload">
         <md-progress-linear ng-if="$ctrl.uploadingFiles" md-mode="indeterminate"></md-progress-linear>
         <md-content class="dropContainer md-padding files">
-          <p class="description">The files you upload here will be saved on redundant file servers and delivered over a high speed, cached CDN (Content Delivery Network)</p>
-          <div  class="upload-zone md-padding"
-                ngf-drop="$ctrl.uploadFiles($files, $invalidFiles)"
-                ngf-multiple="$ctrl.ngfMultiple"
-                ngf-max-files="10"
-                ngf-model-invalid="invalidFiles"
-                ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
+          <p class="description">The files you upload here will be saved on redundant file servers and delivered over a
+            high speed, cached CDN (Content Delivery Network)</p>
+          <div class="upload-zone md-padding"
+               ngf-drop="$ctrl.uploadFiles($files, $invalidFiles)"
+               ngf-multiple="$ctrl.ngfMultiple"
+               ngf-max-files="10"
+               ngf-model-invalid="invalidFiles"
+               ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
             <h2>Drag and drop files below, or <span>
-              <a  href="#"
-                  ngf-select="$ctrl.uploadFiles($files, $invalidFiles)"
-                  ngf-multiple="$ctrl.ngfMultiple"
-                  ngf-max-files="10"
-                  ngf-model-invalid="invalidFiles"
-                  ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">browse
+              <a href="#"
+                 ngf-select="$ctrl.uploadFiles($files, $invalidFiles)"
+                 ngf-multiple="$ctrl.ngfMultiple"
+                 ngf-max-files="10"
+                 ngf-model-invalid="invalidFiles"
+                 ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">browse
               </a></span> your local computer</h2>
             <div class="file-list">
               <ul class="listInline response clearfix">
-                <li class="droppedItem" ng-repeat="file in $ctrl.files track by $index" ng-class="!file.errorUpload ? 'uploadComplete' : '' ">
-                  <div class="image--cn" ng-class="file.progress >= 0 && !file.errorUpload ? 'progressVisible' : 'progressInvisible' ">
+                <li class="droppedItem" ng-repeat="file in $ctrl.files track by $index"
+                    ng-class="!file.errorUpload ? 'uploadComplete' : '' ">
+                  <div class="image--cn"
+                       ng-class="file.progress >= 0 && !file.errorUpload ? 'progressVisible' : 'progressInvisible' ">
                     <div class="progressPercentage fontBody">{{file.progress}}%</div>
                     <div class="progress">
-                      <div ng-if="file.progress >= 0 && !file.errorUpload" class="progressColorBar" style="width:{{file.progress}}%"></div>
+                      <div ng-if="file.progress >= 0 && !file.errorUpload" class="progressColorBar"
+                           style="width:{{file.progress}}%"></div>
                       <span ng-if="!file.errorUpload" class="hover-tick hover-tick-run"></span>
                     </div>
                     <div class="image">
@@ -42,14 +48,16 @@
                         <i class="fas fa-5x fa-file-word" aria-hidden="true"></i>
                       </div>
                       <img ngf-thumbnail="!file.$error && file">
-                      <div class="hoverItems" ng-if="!file.errorUpload && file.upload !== null && file.progress < 100 && !file.upload.aborted">
-                        <button title="Abort" ng-click="file.upload.abort(); file.upload.aborted=true" >
+                      <div class="hoverItems"
+                           ng-if="!file.errorUpload && file.upload !== null && file.progress < 100 && !file.upload.aborted">
+                        <button title="Abort" ng-click="file.upload.abort(); file.upload.aborted=true">
                           <md-tooltip>Abort upload</md-tooltip>
                           <i class="fas fa-times-circle" aria-hidden="true"></i>
                         </button>
                       </div>
                       <div ng-if="!file.errorUpload && file.progress === 100" class="successCheck">
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                        <md-icon
+                            md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
                       </div>
                     </div>
                   </div>
@@ -68,7 +76,10 @@
 
       <md-tab label="Video" ng-if="!$ctrl.fileId">
         <md-content class="md-padding videos">
-          <p class="description">The best way to share videos is to upload to professional video services that offer free storage and bandwidth, as well as sophisticated, browser-compatible video players that vary the quality and formatting based on device. They also have a popular network to widely promote your video. Simply paste the URL to your video and we'll add it to your site as if it's a native video.</p>
+          <p class="description">The best way to share videos is to upload to professional video services that offer
+            free storage and bandwidth, as well as sophisticated, browser-compatible video players that vary the quality
+            and formatting based on device. They also have a popular network to widely promote your video. Simply paste
+            the URL to your video and we'll add it to your site as if it's a native video.</p>
           <div class="video-list">
             <div class="md-padding video" ng-repeat="video in $ctrl.videos track by $index">
               <form novalidate name="videoForm" ng-submit="videoForm.$valid && $ctrl.saveOneFile(video, 'video')">
@@ -85,7 +96,8 @@
 
                   <md-input-container class="stGrid column75 md-block">
                     <label for="url">Full URL</label>
-                    <input type="text" name="url" ng-model="video.url" stratus-validate-url service="{{video.service.value}}" required>
+                    <input type="text" name="url" ng-model="video.url" stratus-validate-url
+                           service="{{video.service.value}}" required>
                     <ng-messages for="videoForm.url.$error" ng-if="videoForm.url.$dirty || videoForm.$submitted">
                       <ng-message when="required">This field is required!</ng-message>
                       <ng-message when="validateUrl">Your URL is not a valid {{video.service.label}} link.</ng-message>
@@ -107,12 +119,12 @@
                             <span md-highlight-text="query">{{ $chip.name }}</span>
                           </md-chip-template>
                           <md-autocomplete
-                            flex md-min-length="0"
-                            md-delay="500"
-                            md-search-text="query"
-                            md-items="model in collection.filter(query)"
-                            md-item-text="model.name"
-                            md-floating-label="Add Tags">
+                              flex md-min-length="0"
+                              md-delay="500"
+                              md-search-text="query"
+                              md-items="model in collection.filter(query)"
+                              md-item-text="model.name"
+                              md-floating-label="Add Tags">
                             <md-chip-template>
                               <span md-highlight-text="query">{{ model.name }}</span>
                             </md-chip-template>
@@ -139,20 +151,33 @@
 
                 <div layout-gt-sm="row">
                   <md-button type="submit" class="btn gradientAnchor md-button md-ink-ripple">Save</md-button>
-                  <md-button ng-if="$ctrl.videos.length > 1" class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.removeExternalFile($index, 'video')">Remove video -</md-button>
-                  <div ng-if="video.isUploaded"><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon> Saved</div>
+                  <md-button ng-if="$ctrl.videos.length > 1" class="btn gradientAnchor md-button md-ink-ripple"
+                             ng-click="$ctrl.removeExternalFile($index, 'video')">Remove video -
+                  </md-button>
+                  <div ng-if="video.isUploaded">
+                    <md-icon
+                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                    Saved
+                  </div>
                 </div>
               </form>
             </div>
           </div>
-          <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addExternalFile('video')">Add video +</md-button>
-          <md-button ng-if="$ctrl.videos.length > 1" class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.saveAllFiles($ctrl.videos, 'video')">Save all</md-button>
+          <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addExternalFile('video')">Add
+            video +
+          </md-button>
+          <md-button ng-if="$ctrl.videos.length > 1" class="btn gradientAnchor md-button md-ink-ripple"
+                     ng-click="$ctrl.saveAllFiles($ctrl.videos, 'video')">Save all
+          </md-button>
         </md-content>
       </md-tab>
 
       <md-tab label="Link" ng-if="!$ctrl.fileId">
         <md-content class="md-padding links">
-          <p class="description">If you already have files stored on some other cloud storage, you can add them to your library by just pasting in the URL to the file (or public folder), e.g. Google Drive, Drop Box. Permissions will be set on your third party service, and if you delete the file you will have to manually update your media library.</p>
+          <p class="description">If you already have files stored on some other cloud storage, you can add them to your
+            library by just pasting in the URL to the file (or public folder), e.g. Google Drive, Drop Box. Permissions
+            will be set on your third party service, and if you delete the file you will have to manually update your
+            media library.</p>
           <div class="video-list">
             <div class="md-padding link" ng-repeat="link in $ctrl.links track by $index">
               <form novalidate name="linkForm" ng-submit="linkForm.$valid && $ctrl.saveOneFile(link)">
@@ -169,7 +194,8 @@
 
                   <md-input-container class="stGrid column75 md-block">
                     <label for="url">Full URL</label>
-                    <input type="text" name="url" ng-model="link.url" stratus-validate-url service="{{link.service.value}}" required>
+                    <input type="text" name="url" ng-model="link.url" stratus-validate-url
+                           service="{{link.service.value}}" required>
                     <ng-messages for="linkForm.url.$error" ng-if="linkForm.url.$dirty || linkForm.$submitted">
                       <ng-message when="required">This field is required!</ng-message>
                       <ng-message when="validateUrl">Your URL is not a valid {{link.service.label}} link.</ng-message>
@@ -191,12 +217,12 @@
                             <span md-highlight-text="query">{{ $chip.name }}</span>
                           </md-chip-template>
                           <md-autocomplete
-                            flex md-min-length="0"
-                            md-delay="500"
-                            md-search-text="query"
-                            md-items="model in collection.filter(query)"
-                            md-item-text="model.name"
-                            md-floating-label="Add Tags">
+                              flex md-min-length="0"
+                              md-delay="500"
+                              md-search-text="query"
+                              md-items="model in collection.filter(query)"
+                              md-item-text="model.name"
+                              md-floating-label="Add Tags">
                             <md-chip-template>
                               <span md-highlight-text="query">{{ model.name }}</span>
                             </md-chip-template>
@@ -223,14 +249,23 @@
 
                 <div layout-gt-sm="row">
                   <md-button type="submit" class="btn gradientAnchor md-button md-ink-ripple">Save</md-button>
-                  <md-button ng-if="$ctrl.links.length > 1" class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.removeExternalFile($index)">Remove link -</md-button>
-                  <div ng-if="link.isUploaded"><md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon> Saved</div>
+                  <md-button ng-if="$ctrl.links.length > 1" class="btn gradientAnchor md-button md-ink-ripple"
+                             ng-click="$ctrl.removeExternalFile($index)">Remove link -
+                  </md-button>
+                  <div ng-if="link.isUploaded">
+                    <md-icon
+                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
+                    Saved
+                  </div>
                 </div>
               </form>
             </div>
           </div>
-          <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addExternalFile()">Add link +</md-button>
-          <md-button ng-if="$ctrl.links.length > 1" class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.saveAllFiles($ctrl.links)">Save all</md-button>
+          <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addExternalFile()">Add link +
+          </md-button>
+          <md-button ng-if="$ctrl.links.length > 1" class="btn gradientAnchor md-button md-ink-ripple"
+                     ng-click="$ctrl.saveAllFiles($ctrl.links)">Save all
+          </md-button>
         </md-content>
       </md-tab>
     </md-tabs>

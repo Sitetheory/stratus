@@ -8,9 +8,9 @@
       'stratus',
       'underscore',
       'angular'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
   // This Controller handles simple dialogue display
@@ -22,21 +22,22 @@
     '$mdDialog',
     function ($scope, $element, $parse, $mdDialog) {
       // Store Instance
-      var uid = _.uniqueId('dialogue_');
-      Stratus.Instances[uid] = $scope;
+      var uid = _.uniqueId('dialogue_')
+      Stratus.Instances[uid] = $scope
 
       // Digest Template
-      $scope.template = $element.attr('template') || null;
-      $scope.template = $scope.template ? document.querySelector($scope.template) : null;
-      $scope.template = $scope.template ? $scope.template.innerHTML : null;
+      $scope.template = $element.attr('template') || null
+      $scope.template = $scope.template ? document.querySelector(
+        $scope.template) : null
+      $scope.template = $scope.template ? $scope.template.innerHTML : null
 
       // Digest Model Bindings
-      $scope.model = null;
+      $scope.model = null
       $scope.$parent.$watch($element.attr('ng-model'), function (model) {
         if (model && typeof model === 'object') {
-          $scope.model = model;
+          $scope.model = model
         }
-      });
+      })
 
       // Handle Dialogue
       $scope.show = function ($event) {
@@ -49,14 +50,13 @@
             ngModel: $scope.model
           },
           controller: function ($scope, $mdDialog, ngModel) {
-            Stratus.Instances[uid + '_mdDialog'] = $scope;
-            $scope.model = ngModel;
+            Stratus.Instances[uid + '_mdDialog'] = $scope
+            $scope.model = ngModel
             $scope.hide = function () {
-              $mdDialog.hide();
-            };
+              $mdDialog.hide()
+            }
           }
-        });
-      };
-    }];
-
-}));
+        })
+      }
+    }]
+}))

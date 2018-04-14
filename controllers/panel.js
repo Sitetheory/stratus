@@ -8,9 +8,9 @@
       'stratus',
       'underscore',
       'angular'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
   // This Controller handles simple panel display
@@ -22,38 +22,41 @@
     '$mdPanel',
     function ($scope, $element, $parse, $mdPanel) {
       // Store Instance
-      Stratus.Instances[_.uniqueId('panel_')] = $scope;
+      Stratus.Instances[_.uniqueId('panel_')] = $scope
 
       // Digest Template
-      $scope.template = $element.attr('template') || null;
-      $scope.template = $scope.template ? document.querySelector($scope.template) : null;
-      $scope.template = $scope.template ? $scope.template.innerHTML : null;
+      $scope.template = $element.attr('template') || null
+      $scope.template = $scope.template ? document.querySelector(
+        $scope.template) : null
+      $scope.template = $scope.template ? $scope.template.innerHTML : null
 
       // Digest Model Bindings
-      $scope.model = null;
+      $scope.model = null
       if ($element.attr('ng-model')) {
         $scope.$parent.$watch($element.attr('ng-model'), function (model) {
           if (model && typeof model === 'object') {
-            $scope.model = model;
+            $scope.model = model
           }
-        });
+        })
       }
 
       // Digest Collection Bindings
-      $scope.collection = null;
+      $scope.collection = null
       if ($element.attr('ng-collection')) {
-        $scope.$parent.$watch($element.attr('ng-collection'), function (collection) {
-          if (collection && typeof collection === 'object') {
-            $scope.collection = collection;
-          }
-        });
+        $scope.$parent.$watch($element.attr('ng-collection'),
+          function (collection) {
+            if (collection && typeof collection === 'object') {
+              $scope.collection = collection
+            }
+          })
       }
 
       // Handle Panel
       $scope.show = function ($event) {
         var position = $mdPanel.newPanelPosition()
           .relativeTo($element)
-          .addPanelPosition($mdPanel.xPosition.OFFSET_END, $mdPanel.yPosition.ALIGN_TOPS);
+          .addPanelPosition($mdPanel.xPosition.OFFSET_END,
+            $mdPanel.yPosition.ALIGN_TOPS)
         $mdPanel.open({
           attachTo: angular.element(document.body),
           template: $scope.template || 'Template Not Found!',
@@ -68,14 +71,15 @@
             ngCollection: $scope.collection
           },
           controller: function ($scope, mdPanelRef, ngModel, ngCollection) {
-            $scope.model = ngModel;
-            $scope.collection = ngCollection;
+            $scope.model = ngModel
+            $scope.collection = ngCollection
             $scope.close = function () {
-              if (mdPanelRef) mdPanelRef.close();
-            };
+              if (mdPanelRef) {
+                mdPanelRef.close()
+              }
+            }
           }
-        });
-      };
-    }];
-
-}));
+        })
+      }
+    }]
+}))

@@ -4,9 +4,9 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'moment', 'angular'], factory);
+    define(['stratus', 'moment', 'angular'], factory)
   } else {
-    factory(root.Stratus, root.moment);
+    factory(root.Stratus, root.moment)
   }
 }(this, function (Stratus, moment) {
   // This component intends to handle binding of
@@ -18,24 +18,26 @@
     },
     controller: function ($scope, $attrs) {
       // Basic Instantiation
-      var uid = _.uniqueId('date_time_');
-      Stratus.Instances[uid] = $scope;
-      $scope.elementId = $attrs.elementId || uid;
+      var uid = _.uniqueId('date_time_')
+      Stratus.Instances[uid] = $scope
+      $scope.elementId = $attrs.elementId || uid
 
       // Data Connectivity
       $scope.$watch('property', function (property) {
-        $scope.$ctrl.ngModel = moment(property).unix();
-      }, true);
+        $scope.$ctrl.ngModel = moment(property).unix()
+      }, true)
       $scope.$watch(function () {
-        return $scope.$ctrl.ngModel;
+        return $scope.$ctrl.ngModel
       }, function (property) {
         if (property) {
-          var momentTime = property ? moment.unix(parseInt(property)) : moment();
-          $scope.property = new Date(momentTime.year(), momentTime.month(), momentTime.date(), momentTime.hour(), momentTime.minute());
+          var momentTime = property
+            ? moment.unix(parseInt(property))
+            : moment()
+          $scope.property = new Date(momentTime.year(), momentTime.month(),
+            momentTime.date(), momentTime.hour(), momentTime.minute())
         }
-      }, true);
-
+      }, true)
     },
     template: '<input id="{{ elementId }}" type="datetime-local" ng-model="property" aria-label="datetime"/>'
-  };
-}));
+  }
+}))

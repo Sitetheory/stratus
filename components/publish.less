@@ -1,27 +1,31 @@
 @import "../stratus";
+
 .btn.btnPublishFull {
   padding: 14px 20px 0 20px !important;
   width: inherit;
   height: 55px;
-  color: #fff;
+  color: #FFFFFF;
   font-size: 14px;
-  background: #ff5b3a;
+  background: #FF5B3A;
 }
+
 .btn.btnPublishFull svg {
   position: relative;
   margin-right: 8px;
   width: 28px;
   vertical-align: middle;
 }
+
 .btn.btnPublishFull svg .actionButton {
   transition: transform 0.3s ease-out;
   -webkit-transition: transform 0.3s ease-out;
   transform: translateX(0);
   -webkit-transform: translateX(0);
-  fill: #fff;
+  fill: #FFFFFF;
 }
+
 .btn.btnPublishFull:hover {
-  background: #ff7550;
+  background: #FF7550;
 }
 
 /* Published */
@@ -29,23 +33,26 @@
   transform: translateX(-25%);
   -webkit-transform: translateX(-25%);
 }
+
 .published.md-button.btnPublishFull,
 .published.btnPublishFull {
-  background: #56995e;
+  background: #56995E;
 }
+
 .published.md-button.btnPublishFull:not([disabled]):hover,
 .published.btnPublishFull:not([disabled]):hover {
-  background: #7cb27d;
+  background: #7CB27D;
 }
 
 /* Unpublished */
 .unpublished.md-button.btnPublishFull,
 .unpublished.btnPublishFull {
-  background: #d96236;
+  background: #D96236;
 }
+
 .unpublished.md-button.btnPublishFull:not([disabled]):hover,
 .unpublished.btnPublishFull:not([disabled]):hover {
-  background: #ff7b55;
+  background: #FF7B55;
 }
 
 /* Delayed */
@@ -53,20 +60,24 @@
 .delayed.btnPublishFull {
   background: #734564;
 }
+
 .delayed.md-button.btnPublishFull:not([disabled]):hover,
 .delayed.btnPublishFull:not([disabled]):hover {
-  background: #a47594;
+  background: #A47594;
 }
+
 .delayed.btnPublishFull svg .actionButton {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
+
 .btnPublishFull:hover .publishIconFull svg,
 .published.btnPublishFull:hover .publishIconFull svg,
 .delayed.btnPublishFull:hover .publishIconFull svg {
   animation: btnIconGrow 0.3s ease-out both;
   -webkit-animation: btnIconGrow 0.3s ease-out both;
 }
+
 .btn.btnPublishDropdown {
   width: 245px;
   padding: 15px;
@@ -83,11 +94,13 @@
   padding: 17px 13px 0 13px !important;
   border-left: 1px solid rgba(255, 255, 255, 0.4);
 }
+
 #header .btnPublishFull .caret {
   opacity: 0.7;
   border-width: 5px;
-  border-top-color: #fff;
+  border-top-color: #FFFFFF;
 }
+
 #header .btnPublishFull:hover .caret {
   opacity: 1;
 }

@@ -5,12 +5,14 @@
       'stratus',
       'underscore',
       'angular'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
-  // This directive intends to handle binding of a model to convert value as timestamp to date, the value is persisted into ng-model still timestamp type.
+  // This directive intends to handle binding of a model to convert value as
+  // timestamp to date, the value is persisted into ng-model still timestamp
+  // type.
   Stratus.Directives.TimestampToDate = function () {
     return {
       restrict: 'A',
@@ -19,15 +21,15 @@
         format: '<'
       },
       link: function ($scope, $element, $attrs, ngModel) {
-        Stratus.Instances[_.uniqueId('timestamp_to_date_')] = $scope;
-        $scope.format |= 'yyyy/MM/dd';
+        Stratus.Instances[_.uniqueId('timestamp_to_date_')] = $scope
+        $scope.format |= 'yyyy/MM/dd'
         ngModel.$parsers.push(function (value) {
-          return new Date(value).getTime() / 1000;
-        });
+          return new Date(value).getTime() / 1000
+        })
         ngModel.$formatters.push(function (value) {
-          return new Date(value * 1000);
-        });
+          return new Date(value * 1000)
+        })
       }
-    };
-  };
-}));
+    }
+  }
+}))

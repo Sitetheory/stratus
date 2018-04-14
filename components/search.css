@@ -3,30 +3,36 @@
   display: table;
   width: 100%;
 }
+
 .search input {
   padding: 15px 30px 14px 58px;
   color: black;
   width: 100%;
   font-size: 15px;
 }
+
 .search input:focus {
-  border: 1px solid #4d90fe;
+  border: 1px solid #4D90FE;
 }
 
 /* Remove IE10's “clear field” X button */
 .search input::-ms-clear {
   display: none;
 }
+
 .search md-icon {
   transition: all 0.2s ease-out;
   position: absolute;
 }
+
 .search .left-icon:hover {
   opacity: 0.6;
 }
+
 .search md-icon g {
   fill: rgba(0, 0, 0, 0.8);
 }
+
 .search .left-icon {
   top: 11px;
   left: 12px;
@@ -37,6 +43,7 @@
   min-height: 26px;
   border-right: 1px solid rgba(33, 33, 33, 0.4);
 }
+
 .search .right-icon {
   top: 0;
   right: 0;
@@ -46,28 +53,33 @@
   height: 48px;
   min-width: 48px;
   min-height: 48px;
-  background: #222;
+  background: #222222;
 }
+
 .search .right-icon:hover {
-  background: #555;
+  background: #555555;
 }
+
 .search .right-icon g {
-  fill: #fff;
+  fill: #FFFFFF;
 }
+
 .search .fa-times {
-  color: #999;
+  color: #999999;
 }
 
 @media (max-width: 959px) {
   .search input {
     padding-left: 46px;
   }
+
   .search .left-icon {
     padding-right: 0;
     width: 26px;
     min-width: 26px;
     border-right: none;
   }
+
   .search .right-icon {
     display: none;
   }

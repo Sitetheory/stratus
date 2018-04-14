@@ -7,9 +7,9 @@
       'stratus',
       'underscore',
       'angular'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
   // This directive intends to handle binding of a dynamic variable to
@@ -17,13 +17,13 @@
     return {
       restrict: 'A',
       link: function (scope, element, attr) {
-        Stratus.Instances[_.uniqueId('compile_template_')] = scope;
+        Stratus.Instances[_.uniqueId('compile_template_')] = scope
         attr.$observe('ngBindHtml', function () {
           if (attr.ngBindHtml) {
-            $compile(element[0].children)(scope);
+            $compile(element[0].children)(scope)
           }
-        });
+        })
       }
-    };
-  };
-}));
+    }
+  }
+}))

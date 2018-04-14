@@ -4,9 +4,9 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'angular'], factory);
+    define(['stratus', 'angular'], factory)
   } else {
-    factory(root.Stratus);
+    factory(root.Stratus)
   }
 }(this, function (Stratus) {
   // This component intends to handle binding of an
@@ -19,29 +19,31 @@
       type: '@'
     },
     controller: function ($scope) {
-      Stratus.Instances[_.uniqueId('option_value_')] = $scope;
-      $scope.items = [];
+      Stratus.Instances[_.uniqueId('option_value_')] = $scope
+      $scope.items = []
       var normalize = function () {
         if (!angular.isArray($scope.items)) {
-          $scope.items = [];
+          $scope.items = []
         }
         if (!$scope.items.length) {
-          $scope.items.push({});
+          $scope.items.push({})
         }
-      };
-      normalize();
+      }
+      normalize()
       $scope.$parent.$watch(function () {
-        return $scope.$ctrl.ngModel;
+        return $scope.$ctrl.ngModel
       }, function (items) {
         if (items !== $scope.items) {
-          $scope.items = items;
-          normalize();
+          $scope.items = items
+          normalize()
         }
-      }, true);
+      }, true)
       $scope.$watch('items', function (items) {
-        $scope.$ctrl.ngModel = items;
-      }, true);
+        $scope.$ctrl.ngModel = items
+      }, true)
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/optionValue' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
-  };
-}));
+    templateUrl: Stratus.BaseUrl +
+    'sitetheorystratus/stratus/components/optionValue' +
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+  }
+}))

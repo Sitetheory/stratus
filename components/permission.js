@@ -10,12 +10,13 @@
       'angular',
       'angular-material',
       'stratus.services.collection'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
-  // This component intends to allow editing of various permissions depending on context.
+  // This component intends to allow editing of various permissions depending
+  // on context.
   Stratus.Components.Permission = {
     bindings: {
       elementId: '@',
@@ -29,17 +30,17 @@
     },
     controller: function ($scope, $attrs, $log, collection) {
       // Initialize
-      this.uid = _.uniqueId('permission_');
-      Stratus.Instances[this.uid] = $scope;
-      $scope.elementId = $attrs.elementId || this.uid;
+      this.uid = _.uniqueId('permission_')
+      Stratus.Instances[this.uid] = $scope
+      $scope.elementId = $attrs.elementId || this.uid
 
       // Permission Collection
-      $scope.collection = null;
+      $scope.collection = null
       $scope.$watch('$ctrl.ngModel', function (data) {
         if (data instanceof collection) {
-          $scope.collection = data;
+          $scope.collection = data
         }
-      });
+      })
 
       // TODO: Build Workflow
       // User or Role (switch)
@@ -51,40 +52,45 @@
       $scope.$watch('collection.completed', function (completed) {
         // Handle empty collections
         if (completed && !$scope.collection.models.length) {
-          $scope.collection.add({});
+          $scope.collection.add({})
         }
-      });
+      })
 
       // Sentinel Objects
-      $scope.sentinel = {};
+      $scope.sentinel = {}
       $scope.$watch('collection.models.length', function () {
-        _.each($scope.collection ? $scope.collection.models : [], function (model) {
-          if (model.exists('id') && model.exists('sentinel')) {
-            var sentinel = new Stratus.Prototypes.Sentinel();
-            sentinel.permissions(model.get('permissions'));
-            $scope.sentinel[model.getIdentifier()] = sentinel;
-          }
-        });
-      });
+        _.each($scope.collection ? $scope.collection.models : [],
+          function (model) {
+            if (model.exists('id') && model.exists('sentinel')) {
+              var sentinel = new Stratus.Prototypes.Sentinel()
+              sentinel.permissions(model.get('permissions'))
+              $scope.sentinel[model.getIdentifier()] = sentinel
+            }
+          })
+      })
 
       // Permission Calculations
       $scope.$watch('sentinel', function (sentinels) {
         if (!angular.isObject(sentinels)) {
-          return;
+          return
         }
         _.each(sentinels, function (sentinel, id) {
-          if (!angular.isObject($scope.collection) || !angular.isObject(sentinel)) {
-            return;
+          if (!angular.isObject($scope.collection) ||
+            !angular.isObject(sentinel)) {
+            return
           }
           _.each($scope.collection.models || [], function (model) {
-            if (!angular.isObject(model) || model.getIdentifier() !== parseInt(id)) {
-              return;
+            if (!angular.isObject(model) ||
+              model.getIdentifier() !== parseInt(id)) {
+              return
             }
-            model.set('permissions', sentinel.permissions());
-          });
-        });
-      }, true);
+            model.set('permissions', sentinel.permissions())
+          })
+        })
+      }, true)
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/permission' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
-  };
-}));
+    templateUrl: Stratus.BaseUrl +
+    'sitetheorystratus/stratus/components/permission' +
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+  }
+}))

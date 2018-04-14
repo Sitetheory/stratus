@@ -15,12 +15,11 @@
       // Modules
       'angular-material',
       'stratus.services.media'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus, root._);
+    factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
-
   // This component intends to handle binding of an
   // item array into a particular attribute.
   Stratus.Components.MediaDetails = {
@@ -45,106 +44,114 @@
         $sce
       ) {
         // Initialize
-        commonMethods.componentInitializer(this, $scope, $attrs, 'media_details', true);
-        var $ctrl = this;
+        commonMethods.componentInitializer(this, $scope, $attrs,
+          'media_details', true)
+        var $ctrl = this
 
         $ctrl.$onInit = function () {
           // Variables
-          initFile($ctrl.media);
-          $ctrl.tags = $ctrl.media.tags;
-          $ctrl.infoId = $ctrl.media.id;
+          initFile($ctrl.media)
+          $ctrl.tags = $ctrl.media.tags
+          $ctrl.infoId = $ctrl.media.id
 
           // Methods
-          $ctrl.deleteMedia = deleteMedia;
-          $ctrl.getLinkMedia = getLinkMedia;
-          $ctrl.closeDialog = closeDialog;
-          $ctrl.openUploader = openUploader;
-          $ctrl.createTag = createTag;
-          $ctrl.editItem = editItem;
-          $ctrl.doneEditing = doneEditing;
-          $ctrl.searchFilter = searchFilter;
-        };
+          $ctrl.deleteMedia = deleteMedia
+          $ctrl.getLinkMedia = getLinkMedia
+          $ctrl.closeDialog = closeDialog
+          $ctrl.openUploader = openUploader
+          $ctrl.createTag = createTag
+          $ctrl.editItem = editItem
+          $ctrl.doneEditing = doneEditing
+          $ctrl.searchFilter = searchFilter
+        }
 
-        function initFile(fileData) {
+        function initFile (fileData) {
           if (fileData.url) {
-            $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' + fileData.extension;
+            $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' +
+              fileData.extension
           } else {
-            $ctrl.mediaUrl = fileData.file;
+            $ctrl.mediaUrl = fileData.file
           }
           if (fileData.mime === 'video') {
             if (fileData.service === 'youtube') {
-              var videoUrl = 'https://www.youtube.com/embed/' + fileData.file.split('v=')[1].split('&')[0];
+              var videoUrl = 'https://www.youtube.com/embed/' +
+                fileData.file.split('v=')[1].split('&')[0]
             } else if (fileData.service === 'vimeo') {
-              var videoUrl = 'https://player.vimeo.com/video/' + fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0];
+              var videoUrl = 'https://player.vimeo.com/video/' +
+                fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(
+                  /[?&]/)[0]
             }
-            $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl);
+            $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl)
           }
           $ctrl.selectedName = {
             name: fileData.name,
             editing: false
-          };
+          }
           $ctrl.selectedDesc = {
             description: fileData.description,
             editing: false
-          };
+          }
         }
 
-        function deleteMedia() {
-          var fileId = $ctrl.media.id;
+        function deleteMedia () {
+          var fileId = $ctrl.media.id
           if (!Stratus.Environment.get('production')) {
-            console.log(fileId);
+            console.log(fileId)
           }
 
           $mdDialog.show(
             $mdDialog.confirm()
-            .title('DELETE MEDIA')
-            .textContent('Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
-            .multiple(true)
-            .ok('Yes')
-            .cancel('No')
+              .title('DELETE MEDIA')
+              .textContent(
+                'Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+              .multiple(true)
+              .ok('Yes')
+              .cancel('No')
           ).then(function () {
             media.deleteMedia(fileId).then(
               function (response) {
-                if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
-                  $mdDialog.cancel();
-                  media.getMedia($ctrl);
+                if (commonMethods.getStatus(response).code ==
+                  commonMethods.RESPONSE_CODE.success) {
+                  $mdDialog.cancel()
+                  media.getMedia($ctrl)
                 } else {
                   $mdDialog.show(
                     $mdDialog.alert()
-                    .parent(angular.element(document.querySelector('#popupContainer')))
-                    .clickOutsideToClose(false)
-                    .title('Error')
-                    .multiple(true)
-                    .textContent(commonMethods.getStatus(response).message)
-                    .ok('Ok')
-                  );
+                      .parent(angular.element(
+                        document.querySelector('#popupContainer')))
+                      .clickOutsideToClose(false)
+                      .title('Error')
+                      .multiple(true)
+                      .textContent(commonMethods.getStatus(response).message)
+                      .ok('Ok')
+                  )
                 }
               },
               function (rejection) {
                 if (!Stratus.Environment.get('production')) {
-                  console.log(rejection);
+                  console.log(rejection)
                 }
-              });
-          });
-        };
+              })
+          })
+        }
 
-        function getLinkMedia() {
+        function getLinkMedia () {
           if (commonMethods.copyToClipboard($ctrl.mediaUrl)) {
             $mdDialog.show(
               $mdDialog.confirm()
-              .textContent('Link is copied to clipboard')
-              .multiple(true)
-              .ok('OK')
-            );
+                .textContent('Link is copied to clipboard')
+                .multiple(true)
+                .ok('OK')
+            )
           }
-        };
+        }
 
-        function closeDialog() {
-          $mdDialog.cancel();
-        };
+        function closeDialog () {
+          $mdDialog.cancel()
+        }
 
         // Open the uploader to replace image
-        function openUploader(ngfMultiple, fileId) {
+        function openUploader (ngfMultiple, fileId) {
           $mdDialog.show({
             attachTo: angular.element(document.querySelector('#listContainer')),
             controller: OpenUploaderController,
@@ -159,87 +166,92 @@
               fileId: fileId
             }
           }).then(function (response) {
-            console.log(response);
+            console.log(response)
             if (fileId && !_.isEmptyObject(response)) {
               if (!response[0].errorUpload) {
-                initFile(response[0].result);
+                initFile(response[0].result)
               }
             }
-          });
+          })
 
-          function OpenUploaderController(scope, collection, ngfMultiple, fileId) {
-            scope.collection = collection;
-            scope.ngfMultiple = ngfMultiple;
-            scope.fileId = fileId;
-          };
+          function OpenUploaderController (
+            scope, collection, ngfMultiple, fileId) {
+            scope.collection = collection
+            scope.ngfMultiple = ngfMultiple
+            scope.fileId = fileId
+          }
         }
 
-        function createTag(query, fileId, tags) {
+        function createTag (query, fileId, tags) {
           var data = {
             name: query
-          };
+          }
           media.createTag(data).then(function (response) {
-            if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
+            if (commonMethods.getStatus(response).code ==
+              commonMethods.RESPONSE_CODE.success) {
               if (fileId !== undefined && tags !== undefined) {
-                var dataRes = {};
-                $ctrl.tags.push(response.data.payload);
-                dataRes.tags = $ctrl.tags;
-                updateMedia(fileId, dataRes);
+                var dataRes = {}
+                $ctrl.tags.push(response.data.payload)
+                dataRes.tags = $ctrl.tags
+                updateMedia(fileId, dataRes)
               }
             }
-          });
-        };
+          })
+        }
 
         // Update title, description, tags of a file
-        function updateMedia(fileId, data) {
+        function updateMedia (fileId, data) {
           media.updateMedia(fileId, data).then(function (response) {
-            if (commonMethods.getStatus(response).code == commonMethods.RESPONSE_CODE.success) {
-              media.getMedia($ctrl);
+            if (commonMethods.getStatus(response).code ==
+              commonMethods.RESPONSE_CODE.success) {
+              media.getMedia($ctrl)
             }
-          });
-        };
+          })
+        }
 
         // Handle click event for editing title & description
-        function editItem(item) {
-          item.editing = true;
-        };
+        function editItem (item) {
+          item.editing = true
+        }
 
         // Handle updating title & description
-        function doneEditing(fileId, item) {
-          var data = {};
+        function doneEditing (fileId, item) {
+          var data = {}
           if (item.description) {
-            data.description = item.description;
+            data.description = item.description
           }
           if (item.name) {
-            data.name = item.name;
+            data.name = item.name
           }
 
-          item.editing = false;
-          updateMedia(fileId, data);
-        };
+          item.editing = false
+          updateMedia(fileId, data)
+        }
 
-        function searchFilter(query) {
-          return $ctrl.collection.filter(query);
+        function searchFilter (query) {
+          return $ctrl.collection.filter(query)
         }
 
         // Handle saving tags after updating
         $scope.$watch('$ctrl.tags', function (data) {
           if ($ctrl.infoId !== undefined) {
-            var dataRes = {};
-            dataRes.tags = $ctrl.tags;
+            var dataRes = {}
+            dataRes.tags = $ctrl.tags
             media.updateMedia($ctrl.infoId, dataRes).then(
               function (response) {
-                media.getMedia($ctrl);
+                media.getMedia($ctrl)
               },
               function (rejection) {
                 if (!Stratus.Environment.get('production')) {
-                  console.log(rejection);
+                  console.log(rejection)
                 }
-              });
+              })
           }
-        }, true);
+        }, true)
       }
     ],
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/mediaDetails' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
-  };
-}));
+    templateUrl: Stratus.BaseUrl +
+    'sitetheorystratus/stratus/components/mediaDetails' +
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+  }
+}))

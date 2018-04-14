@@ -2,9 +2,9 @@
 // -----------------------
 
 // This prototype is the only Global Object that will ever be used within the
-// Stratus layer.  Each individual instantiated reference from a constructor gets
-// stored in the Instances property, and every Data Set is maintained in the
-// Catalog, for efficient access and debugging purposes.  Further down this
+// Stratus layer.  Each individual instantiated reference from a constructor
+// gets stored in the Instances property, and every Data Set is maintained in
+// the Catalog, for efficient access and debugging purposes.  Further down this
 // initialization routine, this Global Object gets mixed with a function that
 // allows for Native DOM Selectors with added functionality to ensure the core
 // Stratus files never require external DOM Libraries, such as jQuery.
@@ -18,19 +18,19 @@ var Stratus = {
   /* Settings */
   Settings: {
     image: {
-      size: { xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600 }
+      size: {xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600},
     },
     status: {
       reset: -2,
       deleted: -1,
       inactive: 0,
-      active: 1
+      active: 1,
     },
     consent: {
       reject: -1,
       pending: 0,
-      accept: 1
-    }
+      accept: 1,
+    },
   },
 
   /* Native */
@@ -43,13 +43,16 @@ var Stratus = {
   Select: null,
 
   /* Boot */
-  BaseUrl: (requirejs && _.has(requirejs.s.contexts._, 'config') ? requirejs.s.contexts._.config.baseUrl : null) || '/',
+  BaseUrl: (requirejs && _.has(requirejs.s.contexts._, 'config')
+    ? requirejs.s.contexts._.config.baseUrl
+    : null) || '/',
 
-  // TODO: Change each of these "namespaces" into Backbone.Models references so that we can easily
-  // use the events of type changes to hook different initialization routines to wait for the type
-  // to be created before continuing with view creation.  This will take a little finesse for the
-  // initial writing of a view, since they actually are created as "Stratus.Collections.Generic"
-  // inside the individual modules at runtime.
+  // TODO: Change each of these "namespaces" into Backbone.Models references so
+  // that we can easily use the events of type changes to hook different
+  // initialization routines to wait for the type to be created before
+  // continuing with view creation.  This will take a little finesse for the
+  // initial writing of a view, since they actually are created as
+  // "Stratus.Collections.Generic" inside the individual modules at runtime.
 
   /* Backbone */
   Collections: null,
@@ -57,7 +60,7 @@ var Stratus = {
   Routers: null,
   Views: {
     Plugins: {},
-    Widgets: {}
+    Widgets: {},
   },
   Events: {},
   Relations: {},
@@ -71,7 +74,7 @@ var Stratus = {
   Filters: {},
   Modules: {
     ngMaterial: true,
-    ngMessages: true
+    ngMessages: true,
     /* ngMdIcons: true */
   },
   Services: {},
@@ -84,7 +87,8 @@ var Stratus = {
   Chronos: null,
   Environment: {
     ip: null,
-    production: !(typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1),
+    production: !(typeof document.cookie === 'string' &&
+      document.cookie.indexOf('env=') !== -1),
     context: null,
     contextId: null,
     contextMasterSiteId: null,
@@ -103,7 +107,7 @@ var Stratus = {
     debugNest: false,
     liveEdit: false,
     viewPortChange: false,
-    lastScroll: false
+    lastScroll: false,
   },
   History: {},
   Instances: {},
@@ -116,20 +120,20 @@ var Stratus = {
     // dynamic
     controller: {
       selector: '[ng-controller]',
-      namespace: 'stratus.controllers.'
+      namespace: 'stratus.controllers.',
     },
     components: {
-      namespace: 'stratus.components.'
+      namespace: 'stratus.components.',
     },
     directives: {
       namespace: 'stratus.directives.',
-      type: 'attribute'
+      type: 'attribute',
     },
 
     // angular material
     flex: {
       selector: '[flex]',
-      require: ['angular', 'angular-material']
+      require: ['angular', 'angular-material'],
     },
 
     // TODO: Find a more scalable ideology
@@ -138,37 +142,37 @@ var Stratus = {
       selector: '[chart]',
       require: ['angular', 'angular-chart'],
       module: true,
-      suffix: '.js'
+      suffix: '.js',
     },
     sortable: {
       selector: '[ng-sortable]',
       require: ['angular-sortable'],
-      module: 'ng-sortable'
+      module: 'ng-sortable',
     },
 
     // TODO: Move Froala to Sitetheory since it is specific to Sitetheory
     modules: {
       selector: [
-        '[ng-sanitize]', '[froala]'
+        '[ng-sanitize]', '[froala]',
       ],
       namespace: 'angular-',
-      module: true
+      module: true,
     },
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     countUp: {
       selector: [
-        '[count-up]', '[scroll-spy]'
+        '[count-up]', '[scroll-spy]',
       ],
       namespace: 'angular-',
       module: true,
-      suffix: 'Module'
+      suffix: 'Module',
     },
     uiTree: {
       selector: '[ui-tree]',
       require: ['angular-ui-tree'],
-      module: 'ui.tree'
-    }
+      module: 'ui.tree',
+    },
   },
 
   // Plugins */
@@ -179,11 +183,11 @@ var Stratus = {
   // TODO: Turn this into a Dynamic Object loaded from the DOM in Sitetheory
   Api: {
     GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA',
-    Froala: 'KybxhzguB-7j1jC3A-16y=='
-  }
-};
+    Froala: 'KybxhzguB-7j1jC3A-16y==',
+  },
+}
 
 // Declare Warm Up
 if (!Stratus.Environment.get('production')) {
-  console.group('Stratus Warm Up');
+  console.group('Stratus Warm Up')
 }

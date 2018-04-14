@@ -1,5 +1,5 @@
 .media-details {
-  background: #2e2e2e;
+  background: #2E2E2E;
   border-radius: 5px;
   padding: 2em;
   min-width: 700px;
@@ -10,10 +10,10 @@
 }
 .media-details .header div {
   display: inline-block;
-  color: #fff;
+  color: #FFFFFF;
 }
 .media-details .header .header-left {
-  color: #fff;
+  color: #FFFFFF;
   font-weight: bold;
 }
 .media-details .header .header-right {
@@ -27,10 +27,10 @@
   display: inline-flex;
 }
 .media-details .header .header-right div .tags .tag {
-  background: #eee;
+  background: #EEEEEE;
   border-radius: 3px 0 0 3px;
-  border-color: #2e2e2e;
-  color: #999;
+  border-color: #2E2E2E;
+  color: #999999;
   display: inline-block;
   height: 26px;
   line-height: 26px;
@@ -42,7 +42,7 @@
   -webkit-transition: color 0.2s;
 }
 .media-details .header .header-right div .tags .tag::before {
-  background: #fff;
+  background: #FFFFFF;
   border-radius: 10px;
   box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
   content: '';
@@ -53,10 +53,10 @@
   top: 10px;
 }
 .media-details .header .header-right div .tags .tag::after {
-  background: #fff;
-  border-bottom: 13px solid #2f2f2f;
-  border-left: 10px solid #eee;
-  border-top: 13px solid #2f2f2f;
+  background: #FFFFFF;
+  border-bottom: 13px solid #2F2F2F;
+  border-left: 10px solid #EEEEEE;
+  border-top: 13px solid #2F2F2F;
   content: '';
   position: absolute;
   right: 0;
@@ -73,11 +73,11 @@
   cursor: pointer;
 }
 .media-details .header .header-right div .fa-times-circle {
-  color: #fff;
-  background: #2e2e2e;
+  color: #FFFFFF;
+  background: #2E2E2E;
 }
 .media-details .content {
-  color: #fff;
+  color: #FFFFFF;
 }
 .media-details .content .inform textarea {
   resize: none;
@@ -107,25 +107,25 @@
 }
 .media-details .content .inform .controls-function li:hover {
   box-sizing: content-box;
-  border-color: #fff;
+  border-color: #FFFFFF;
 }
 .media-details .content .inform .controls-function li a {
-  color: #fff;
+  color: #FFFFFF;
 }
 .media-details .content .inform .image-inform {
   margin-top: 1em;
 }
 .media-details .content .inform .image-inform p span {
   display: block;
-  color: #bbadad;
+  color: #BBADAD;
 }
 .media-details .content .inform .image-inform p span label {
-  color: #fff;
+  color: #FFFFFF;
 }
 .media-details .content .inform .description {
   margin-top: 1em;
   font-size: 14px;
-  color: #bbadad;
+  color: #BBADAD;
 }
 .media-details .content .image img {
   width: 100%;
@@ -153,12 +153,12 @@
   border-radius: 3px;
 }
 .media-details .titleContainer .tagContainer md-chips .md-chips.md-focused {
-  box-shadow: 0 2px #fff;
+  box-shadow: 0 2px #FFFFFF;
 }
 .media-details .titleContainer .tagContainer md-chips md-autocomplete label {
-  color: #fff;
+  color: #FFFFFF;
 }
 .media-details .titleContainer .tagContainer md-chips md-autocomplete input {
   bottom: 10px;
-  color: #fff;
+  color: #FFFFFF;
 }
