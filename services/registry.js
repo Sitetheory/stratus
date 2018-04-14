@@ -21,11 +21,11 @@
   Stratus.Services.Registry = [
     '$provide', function ($provide) {
       $provide.factory('Registry', [
-        'collection',
-        'model',
+        'Collection',
+        'Model',
         '$interpolate',
         '$q',
-        function (collection, model, $interpolate, $q) {
+        function (Collection, Model, $interpolate, $q) {
           return function () {
             // TODO: Handle Version Routing through Angular
             // Maintain all models in Namespace
@@ -106,7 +106,7 @@
                   var id = options.id || 'manifest'
                   if (options.decouple ||
                     !Stratus.Catalog[options.target][id]) {
-                    data = new model({
+                    data = new Model({
                       target: options.target,
                       manifest: options.manifest,
                       stagger: true,
@@ -127,7 +127,7 @@
                   }
                   if (options.decouple ||
                     !Stratus.Catalog[options.target].collection) {
-                    data = new collection({
+                    data = new Collection({
                       target: options.target,
                     })
                     if (!options.decouple) {
@@ -156,10 +156,10 @@
               if (angular.isObject(data)) {
                 if (typeof $scope !== 'undefined') {
                   $scope.data = data
-                  if (data instanceof model) {
+                  if (data instanceof Model) {
                     $scope.model = data
                   }
-                  else if (data instanceof collection) {
+                  else if (data instanceof Collection) {
                     $scope.collection = data
                   }
                 }

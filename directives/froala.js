@@ -43,7 +43,7 @@
 }(this, function (Stratus, $) {
   // This directive intends to provide basic froala capabilities.
   Stratus.Directives.Froala = [
-    'froalaConfig', 'model', function (froalaConfig, model) {
+    'froalaConfig', 'Model', function (froalaConfig, Model) {
       'use strict' // Scope strict mode to only this directive
       var generatedIds = 0
       var defaultConfig = {
@@ -73,7 +73,7 @@
           // instances where the data cannot
           // be bound
           initFunction: '&froalaInit',
-          autoSave: '@' // A bool/string to define if the model will auto save
+          autoSave: '@' // A bool/string to define if the Model will auto save
           // on focus out or Enter presses. Defaults to true
         },
         link: function (scope, element, attrs, ngModel) {
@@ -85,7 +85,7 @@
           scope.model = null
 
           if (!ngModel || !scope.property) {
-            console.warn(scope.uid + ' has no model or property!')
+            console.warn(scope.uid + ' has no Model or property!')
             return
           }
 
@@ -111,7 +111,7 @@
 
           scope.settle = function () {
             if (ctrl.editorInitialized &&
-              scope.model instanceof model &&
+              scope.model instanceof Model &&
               scope.property &&
               scope.model.get(scope.property) !== scope.value
             ) {
@@ -124,11 +124,11 @@
 
           scope.accept = function () {
             if (ctrl.editorInitialized &&
-              scope.model instanceof model &&
+              scope.model instanceof Model &&
               scope.property &&
               scope.model.changed === true
             ) {
-              // scope.model.set(scope.property, scope.value);
+              // scope.Model.set(scope.property, scope.value);
               scope.model.throttleSave()
             }
           }
@@ -136,10 +136,10 @@
           // We may not be using a cancel function
           /* scope.cancel = function () {
               if (ctrl.editorInitialized
-                  && scope.model instanceof model
+                  && scope.Model instanceof Model
                   && scope.property)
               {
-                  scope.value = scope.model.get(scope.property);
+                  scope.value = scope.Model.get(scope.property);
                   ngModel.$render();
               }
           }; */
@@ -150,7 +150,7 @@
               attrs.$set('id', 'froala-' + generatedIds++)
             }
 
-            scope.$watch('model.data.' + scope.property, function (data) {
+            scope.$watch('Model.data.' + scope.property, function (data) {
               scope.value = data
               ngModel.$render() // if the value changes, show the new change
               // (since rendering doesn't always happen)
@@ -181,7 +181,7 @@
                 } else if (element.froalaEditor('html.get') !== scope.value) { // only rerender if there is a change
                   element.froalaEditor('html.set', scope.value || '', true)
 
-                  // This will reset the undo stack everytime the model changes
+                  // This will reset the undo stack everytime the Model changes
                   // externally. Can we fix this?
                   element.froalaEditor('undo.reset')
                   element.froalaEditor('undo.saveStep')
@@ -210,7 +210,7 @@
                 ctrl.listeningEvents.push('keyup')
               }
 
-              // flush means to load ng-model into editor
+              // flush means to load ng-Model into editor
               var flushNgModel = function () {
                 ctrl.editorInitialized = true
                 ngModel.$render()
@@ -349,13 +349,13 @@
           }
 
           scope.$watch('ngModel', function (data) {
-            if (data instanceof model && !_.isEqual(data, scope.model)) {
+            if (data instanceof Model && !_.isEqual(data, scope.model)) {
               scope.model = data
               if (ctrl.initialized !== true) {
-                var unwatch = scope.$watch('model.data', function (dataCheck) {
+                var unwatch = scope.$watch('Model.data', function (dataCheck) {
                   if (dataCheck !== undefined) {
                     unwatch() // Remove this watch as soon as it's run once
-                    ctrl.init() // Initialize only after there is a model to
+                    ctrl.init() // Initialize only after there is a Model to
                     // work with
                   }
                 })

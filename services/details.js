@@ -15,10 +15,10 @@
     '$provide', function ($provide) {
       $provide.factory('details', [
         '$http',
-        'model',
+        'Model',
         '$interpolate',
         '$q',
-        function ($http, model, $interpolate, $q) {
+        function ($http, Model, $interpolate, $q) {
           return function () {
             this.fetch = function ($element, $scope) {
               var that = this

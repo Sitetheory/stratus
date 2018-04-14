@@ -24,12 +24,12 @@
     '$parse',
     'Registry',
     'createNewSite',
-    function ($scope, $element, $log, $parse, registry, createNewSite) {
+    function ($scope, $element, $log, $parse, Registry, createNewSite) {
       // Store Instance
       Stratus.Instances[_.uniqueId('generic_')] = $scope
 
       // Registry
-      $scope.registry = new registry()
+      $scope.registry = new Registry()
       $scope.registry.fetch($element, $scope)
 
       // Wrappers

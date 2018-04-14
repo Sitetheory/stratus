@@ -18,9 +18,9 @@
   Stratus.Controllers.UserFilter = [
     '$scope',
     '$log',
-    'collection',
+    'Collection',
     'commonMethods',
-    function ($scope, $log, collection, commonMethods) {
+    function ($scope, $log, Collection, commonMethods) {
       // Store Instance
       Stratus.Instances[_.uniqueId('user_filter_')] = $scope
 
@@ -66,10 +66,10 @@
        * Load the roles for filter
        */
       $scope.init = function () {
-        collection = new collection()
-        collection.target = 'Role'
-        collection.urlRoot = '/Api/Role'
-        collection.fetch().then(function (response) {
+        Collection = new Collection()
+        Collection.target = 'Role'
+        Collection.urlRoot = '/Api/Role'
+        Collection.fetch().then(function (response) {
           $scope.userRoles = response
         })
       }
