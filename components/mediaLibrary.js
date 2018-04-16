@@ -135,7 +135,7 @@
       }
 
       function deleteMedia (fileId) {
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.log(fileId)
         }
 
@@ -168,7 +168,7 @@
               }
             },
             function (rejection) {
-              if (!Stratus.Environment.get('production')) {
+              if (!Stratus.Environment.production) {
                 console.log(rejection.data)
               }
             })
@@ -241,6 +241,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/mediaLibrary' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

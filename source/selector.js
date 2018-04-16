@@ -58,7 +58,7 @@ Stratus = _.extend(function (selector, context) {
 Stratus.Selector.attr = function (attr, value) {
   var that = this
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) {
+    if (!Stratus.Environment.production) {
       console.log('List:', that)
     }
   }
@@ -99,7 +99,7 @@ Stratus.Selector.each = function (callable) {
 Stratus.Selector.find = function (selector) {
   var that = this
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) {
+    if (!Stratus.Environment.production) {
       console.log('List:', that)
     }
   }
@@ -135,7 +135,7 @@ Stratus.Selector.map = function (callable) {
 Stratus.Selector.append = function (child) {
   var that = this
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) {
+    if (!Stratus.Environment.production) {
       console.log('List:', that)
     }
   }
@@ -154,7 +154,7 @@ Stratus.Selector.append = function (child) {
 Stratus.Selector.prepend = function (child) {
   var that = this
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) {
+    if (!Stratus.Environment.production) {
       console.log('List:', that)
     }
   }
@@ -173,7 +173,7 @@ Stratus.Selector.prepend = function (child) {
 Stratus.Selector.addClass = function (className) {
   var that = this
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) {
+    if (!Stratus.Environment.production) {
       console.log('List:', that)
     }
   }
@@ -198,7 +198,7 @@ Stratus.Selector.addClass = function (className) {
 Stratus.Selector.removeClass = function (className) {
   var that = this
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) {
+    if (!Stratus.Environment.production) {
       console.log('List:', that)
     }
   }
@@ -223,7 +223,7 @@ Stratus.Selector.removeClass = function (className) {
 Stratus.Selector.style = function () {
   var that = this
   if (that.selection instanceof NodeList) {
-    if (!Stratus.Environment.get('production')) {
+    if (!Stratus.Environment.production) {
       console.log('List:', that)
     }
   }

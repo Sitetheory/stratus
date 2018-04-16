@@ -138,6 +138,6 @@
       })
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

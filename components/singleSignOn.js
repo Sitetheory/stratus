@@ -121,6 +121,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/singleSignOn' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

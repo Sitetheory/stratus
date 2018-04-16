@@ -50,7 +50,7 @@
             },
             templateUrl: Stratus.BaseUrl +
             'sitetheorystratus/stratus/components/mediaDragDropDialog' +
-            (Stratus.Environment.get('production') ? '.min' : '') + '.html',
+            (Stratus.Environment.production ? '.min' : '') + '.html',
             parent: angular.element(document.body),
             clickOutsideToClose: false
           })
@@ -88,7 +88,7 @@
       }
 
       function saveMedia (file) {
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.log(['savemedia'], file)
         }
 
@@ -142,6 +142,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/mediaDragDrop' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

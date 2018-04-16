@@ -18,9 +18,9 @@
       Stratus.Instances[_.uniqueId('help_')] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
         'sitetheorystratus/stratus/components/help' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+        (Stratus.Environment.production ? '.min' : '') + '.css')
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/help' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

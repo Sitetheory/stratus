@@ -242,11 +242,11 @@
               that.meta.set('api.q', angular.isDefined(query) ? query : '')
               return $q(function (resolve, reject) {
                 var request = that.throttle()
-                if (!Stratus.Environment.get('production')) {
+                if (!Stratus.Environment.production) {
                   console.log('request:', request)
                 }
                 request.then(function (models) {
-                  if (!Stratus.Environment.get('production')) {
+                  if (!Stratus.Environment.production) {
                     console.log('throttled:', _.map(models, function (model) {
                       return model.domainPrimary
                     }))

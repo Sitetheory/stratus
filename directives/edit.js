@@ -197,7 +197,7 @@
       templateUrl: function (elements, $scope) {
         var template = $scope.type || ''
         return Stratus.BaseUrl + 'sitetheorystratus/stratus/directives/edit' +
-          template + (Stratus.Environment.get('production') ? '.min' : '') +
+          template + (Stratus.Environment.production ? '.min' : '') +
           '.html'
       }
     }

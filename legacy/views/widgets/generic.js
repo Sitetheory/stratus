@@ -180,23 +180,23 @@
       }
     },
     dragOver: function (event) {
-      if (!Stratus.Environment.get('production')) console.log('Over:', event);
+      if (!Stratus.Environment.production) console.log('Over:', event);
       return this;
     },
     dragEnter: function (event) {
-      if (!Stratus.Environment.get('production')) console.log('Enter:', event);
+      if (!Stratus.Environment.production) console.log('Enter:', event);
       var $dropContainer = $(event.currentTarget);
       $dropContainer.animate({ opacity: 1 }, 'fast');
       return this;
     },
     dragLeave: function (event) {
-      if (!Stratus.Environment.get('production')) console.log('Leave:', event);
+      if (!Stratus.Environment.production) console.log('Leave:', event);
       var $dropContainer = $(event.currentTarget);
       $dropContainer.animate({ opacity: 0.5 }, 'fast');
       return this;
     },
     drop: function (event) {
-      // if (!Stratus.Environment.get('production')) console.log('Drop:', event);
+      // if (!Stratus.Environment.production) console.log('Drop:', event);
       return this;
     }
   });

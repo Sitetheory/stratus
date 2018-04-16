@@ -166,7 +166,7 @@
       }
       $scope.imageMoved = false
       $scope.dragFromLib = function ($isDragging, $class, $event, fileId) {
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.log('isDragging', $isDragging)
           console.log('event', $event)
           console.log('fileId', fileId)
@@ -205,7 +205,7 @@
       }
 
       $scope.deleteFromMedia = function (fileId) {
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.log(fileId)
         }
 
@@ -409,7 +409,7 @@
 
       // common function to save media to server
       $scope.saveMedia = function (file) {
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.log(['savemedia'], file)
         }
         file.errorMsg = null
@@ -559,6 +559,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/mediaSelector' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

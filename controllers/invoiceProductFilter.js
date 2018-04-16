@@ -161,7 +161,7 @@
           })
           return '(' + tags.toString() + ')'
         } else {
-          if (!Stratus.Environment.get('production') &&
+          if (!Stratus.Environment.production &&
             !Array.isArray(tagList)) {
             console.warn('tagList is not an array')
           }

@@ -188,6 +188,6 @@ var Stratus = {
 }
 
 // Declare Warm Up
-if (!Stratus.Environment.get('production')) {
+if (!Stratus.Environment.production) {
   console.group('Stratus Warm Up')
 }

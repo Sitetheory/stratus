@@ -44,7 +44,7 @@
      * @param options
      */
     initialize: function (options) {
-      if (!Stratus.Environment.get('production')) {
+      if (!Stratus.Environment.production) {
         console.info('Generic Router Invoked!')
       }
     },
@@ -52,7 +52,7 @@
      * @param bubble
      */
     change: function (bubble) {
-      if (!Stratus.Environment.get('production')) {
+      if (!Stratus.Environment.production) {
         console.log('Model(s):', arguments)
       }
     },
@@ -60,7 +60,7 @@
      * @param entity
      */
     new: function (entity) {
-      if (!Stratus.Environment.get('production')) {
+      if (!Stratus.Environment.production) {
         console.log('Route New:', arguments)
       }
       var collection = Stratus.Collections.get(_.ucfirst(entity))
@@ -86,7 +86,7 @@
           filter = filter.substring(2)
           filter = filter.split(',[]')
         }
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.info('Route Filter:', filter)
         }
         collection.meta.set('api.q', filter)
@@ -104,7 +104,7 @@
       if (page === undefined) {
         page = '1'
       }
-      if (!Stratus.Environment.get('production')) {
+      if (!Stratus.Environment.production) {
         console.log('Entity:', entity, 'Page:', page)
       }
       var collection = Stratus.Collections.get(_.ucfirst(entity))
@@ -117,7 +117,7 @@
               collection.meta.set('api.p', page)
               collection.refresh({reset: true})
             } else {
-              if (!Stratus.Environment.get('production')) {
+              if (!Stratus.Environment.production) {
                 console.log('Page', page, 'of entity', entity,
                   'does not exist.')
               }
