@@ -4,20 +4,23 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(
-      ['stratus', 'angular', 'stratus.services.registry', 'angular-material'],
+    define([
+      'stratus',
+      'angular',
+      'angular-material'
+    ],
       factory)
   } else {
-    factory(root.Stratus)
+    factory(root.Stratus, root._)
   }
-}(this, function (Stratus) {
+}(this, function (Stratus, _) {
   // This component handles filtering for a collection
   Stratus.Components.Filter = {
     bindings: {
       ngModel: '=',
       target: '@'
     },
-    controller: function ($scope, $attrs, registry) {
+    controller: function ($scope, $attrs) {
       Stratus.Instances[_.uniqueId('filter')] = $scope
       $scope.collection = ($scope.$parent && $scope.$parent.collection)
         ? $scope.$parent.collection
@@ -25,7 +28,7 @@
       $scope.query = ''
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/filter' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/filter' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

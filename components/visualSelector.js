@@ -56,9 +56,9 @@
       $scope,
       $mdPanel,
       $attrs,
-      registry,
+      Registry,
       details,
-      model,
+      Model,
       $http,
       $sce,
       commonMethods,
@@ -114,7 +114,7 @@
       // Data Connectivity
       $scope.model = null
       $scope.$watch('$ctrl.ngModel', function (data) {
-        if (data instanceof model && data !== $scope.model) {
+        if (data instanceof Model && data !== $scope.model) {
           $scope.model = data
         }
       })

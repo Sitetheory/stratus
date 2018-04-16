@@ -47,7 +47,7 @@
       options: '<'
     },
     controller: function (
-      $scope, $attrs, $log, registry, model, commonMethods) {
+      $scope, $attrs, $log, Registry, model, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'selector')
 
@@ -56,7 +56,7 @@
 
       // Asset Collection
       if ($attrs.type) {
-        $scope.registry = new registry()
+        $scope.registry = new Registry()
         var request = {
           target: $attrs.type,
           decouple: true,
@@ -90,7 +90,7 @@
       })
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/selector' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/selector' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

@@ -53,7 +53,7 @@
       $element,
       Upload,
       $compile,
-      registry,
+      Registry,
       $mdPanel,
       $q,
       $mdDialog,
@@ -65,7 +65,7 @@
         true)
 
       // fetch media collection and hydrate to $scope.collection
-      $scope.registry = new registry()
+      $scope.registry = new Registry()
       $scope.registry.fetch({
         target: $attrs.target || 'Media',
         id: null,
@@ -418,7 +418,7 @@
 
         file.upload = Upload.upload({
           url: '//app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY') +
-          ($scope.infoId ? ('&id=' + $scope.infoId) : ''),
+            ($scope.infoId ? ('&id=' + $scope.infoId) : ''),
           data: {
             file: file
           }
@@ -558,7 +558,7 @@
       }
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/mediaSelector' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/mediaSelector' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

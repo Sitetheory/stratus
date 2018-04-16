@@ -28,7 +28,7 @@
       target: '@',
       display: '@'
     },
-    controller: function ($scope, $attrs, registry, collection) {
+    controller: function ($scope, $attrs, Registry, Collection) {
       Stratus.Instances[_.uniqueId('search_')] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
         'sitetheorystratus/stratus/components/search' +
@@ -41,7 +41,7 @@
       // Localize Collection
       $scope.collection = null
       $scope.$watch('$parent.collection', function (data) {
-        if (data && data instanceof collection) {
+        if (data && data instanceof Collection) {
           $scope.collection = data
         }
       })
@@ -62,7 +62,7 @@
       /* */
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/search' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/search' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

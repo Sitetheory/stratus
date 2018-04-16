@@ -9,17 +9,17 @@
       'underscore',
       'angular',
       'angular-material',
-      'stratus.services.model',
+      'stratus.services.model'
     ], factory)
-  }
-  else {
+  } else {
     factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
   // This Collection Service handles data binding for multiple objects with the
   // $http Service
   Stratus.Services.Collection = [
-    '$provide', function ($provide) {
+    '$provide',
+    function ($provide) {
       $provide.factory('Collection', [
         '$q',
         '$http',
@@ -76,8 +76,7 @@
                     key = chain + '[' + key + ']'
                   }
                   str.push(that.serialize(value, key))
-                }
-                else {
+                } else {
                   var encoded = ''
                   if (chain) {
                     encoded += chain + '['
@@ -111,7 +110,7 @@
                   // models
                   that.models.push(new Model({
                     collection: that,
-                    type: type || null,
+                    type: type || null
                   }, target))
                 })
               }
@@ -133,15 +132,14 @@
                 var prototype = {
                   method: action,
                   url: that.url(),
-                  headers: {},
+                  headers: {}
                 }
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
                       prototype.url += '?' + that.serialize(data)
                     }
-                  }
-                  else {
+                  } else {
                     prototype.headers['Content-Type'] = 'application/json'
                     prototype.data = JSON.stringify(data)
                   }
@@ -157,11 +155,9 @@
                     var data = response.data.payload || response.data
                     if (_.isArray(data)) {
                       that.inject(data)
-                    }
-                    else if (_.isObject(data)) {
+                    } else if (_.isObject(data)) {
                       _.each(data, that.inject)
-                    }
-                    else {
+                    } else {
                       console.error('malformatted payload:', data)
                     }
 
@@ -174,9 +170,8 @@
                     that.paginate = false
 
                     // Promise
-                    resolve(that, models)
-                  }
-                  else {
+                    resolve(that.models)
+                  } else {
                     // Internals
                     that.pending = false
                     that.error = true
@@ -207,11 +202,7 @@
               return that.sync(action, data || that.meta.get('api')).catch(
                 function (message) {
                   $mdToast.show(
-                    $mdToast.simple().
-                      textContent('Failure to Fetch!').
-                      toastClass('errorMessage').
-                      position('top right').
-                      hideDelay(3000)
+                    $mdToast.simple().textContent('Failure to Fetch!').toastClass('errorMessage').position('top right').hideDelay(3000)
                   )
                   console.error('FETCH:', message)
                 }
@@ -290,7 +281,7 @@
               }
               if (angular.isObject(target)) {
                 target = (target instanceof Model) ? target : new Model({
-                  collection: that,
+                  collection: that
                 }, target)
                 that.models.push(target)
                 if (options.save) {
@@ -367,7 +358,8 @@
             }
             /* */
           }
-        },
+        }
       ])
-    }]
+    }
+  ]
 }))

@@ -21,12 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'zepto', 'underscore', 'masonry', 'sortable', 'stratus.views.widgets.base', 'stratus.views.widgets.generic'], factory);
+    define(['stratus', 'zepto', 'underscore', 'masonry', 'sortable', 'stratus.views.widgets.base', 'stratus.views.widgets.generic'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.Masonry, root.Sortable);
+    factory(root.Stratus, root.$, root._, root.Masonry, root.Sortable)
   }
 }(this, function (Stratus, $, _, Masonry, Sortable) {
-
   // Generic Collection View
   // -------------
 
@@ -119,21 +118,20 @@
      * @param reject
      */
     promise: function (options, resolve, reject) {
-
       /*
        if (typeof options.template === 'function') {}
        */
 
       // Handle Render Triggers
       if (_.has(this.options, 'rerender')) {
-        var events = ['success', 'error', 'add', 'change', 'destroy'];
-        var triggers = (_.isArray(this.options.rerender) || _.isObject(this.options.rerender)) ? _.clone(this.options.rerender) : null;
-        var massAction = (triggers) ? 'none' : this.options.rerender;
+        var events = ['success', 'error', 'add', 'change', 'destroy']
+        var triggers = (_.isArray(this.options.rerender) || _.isObject(this.options.rerender)) ? _.clone(this.options.rerender) : null
+        var massAction = (triggers) ? 'none' : this.options.rerender
 
         // Set Chosen Events
         _.each(events, function (event) {
-          this.options[event] = massAction;
-        }, this);
+          this.options[event] = massAction
+        }, this)
 
         // Set Triggers
         if (triggers) {
@@ -141,41 +139,41 @@
             if (value) {
               if (_.isObject(value)) {
                 _.each(value, function (action, event) {
-                  this.options[event] = action;
-                }, this);
+                  this.options[event] = action
+                }, this)
               } else if (_.isString(key)) {
-                this.options[key] = value;
+                this.options[key] = value
               } else {
-                this.options[value] = 'all';
+                this.options[value] = 'all'
               }
             }
-          }, this);
+          }, this)
         }
 
         if (this.options.rerender === 'none') {
           /*
            _.each(optionsList, changeOptions, this);
            */
-          this.options.success = 'none';
-          this.options.error = 'none';
+          this.options.success = 'none'
+          this.options.error = 'none'
 
-          this.options.add = 'none';
-          this.options.change = 'none';
-          this.options.destroy = 'none';
+          this.options.add = 'none'
+          this.options.change = 'none'
+          this.options.destroy = 'none'
         }
       }
 
       if (this.collection && typeof this.collection === 'object') {
-        this.handleCollection();
+        this.handleCollection()
       } else if (this.model && typeof this.model === 'object') {
-        this.handleProperty();
+        this.handleProperty()
       }
 
-      this.views = {};
+      this.views = {}
 
       this.once('render', function (widget) {
-        resolve(widget);
-      });
+        resolve(widget)
+      })
     },
 
     // postOptions()
@@ -183,7 +181,7 @@
     // Some values must trigger other conditional default values
     postOptions: function (options) {
       // allow data-limit attribute to set the limit.
-      if (this.options.limit) this.options.api.limit = this.options.limit;
+      if (this.options.limit) this.options.api.limit = this.options.limit
     },
 
     // Priming
@@ -199,18 +197,18 @@
        console.trace('Adding:', this.options.add, model, xhr);
        */
       if (!this.options.add || this.options.add === 'all') {
-        this.addAll();
+        this.addAll()
       } else if (this.options.add === 'one' || this.options.add === 'none') {
         if (this.collection.size() > 1) {
           // this.clearGlobals();
           // this.collection.models.forEach(this.buildGlobals, this);
-          this.buildGlobals(model);
-          this.addOne(model);
+          this.buildGlobals(model)
+          this.addOne(model)
         } else {
-          this.addAll();
+          this.addAll()
         }
       } else {
-        console.warn('Add Event contains unknown option:', this.options.add);
+        console.warn('Add Event contains unknown option:', this.options.add)
       }
     },
 
@@ -220,7 +218,7 @@
      * @param xhr
      */
     primeReset: function (collection, xhr) {
-      this.addAll();
+      this.addAll()
     },
 
     // primeSuccess
@@ -230,9 +228,9 @@
      */
     primeSuccess: function (scope, xhr) {
       if (!this.options.success || this.options.success === 'all') {
-        this.addAll();
+        this.addAll()
       } else if ((scope instanceof Stratus.Collections.Generic && this.options.success === 'collection') || (scope instanceof Stratus.Models.Generic && this.options.success === 'model')) {
-        this.addAll();
+        this.addAll()
       }
     },
 
@@ -253,7 +251,7 @@
      */
     primeChange: function (model, options) {
       if (!this.options.change || this.options.change === 'all' || (_.has(options, 'xhr') && (!this.options.success || this.options.success === 'all'))) {
-        this.addAll();
+        this.addAll()
       }
     },
 
@@ -265,7 +263,7 @@
      * @param xhr
      */
     primeDestroy: function (model, collection, xhr) {
-      if (!this.options.destroy) this.addAll();
+      if (!this.options.destroy) this.addAll()
     },
 
     /* TODO: Bring Targeting over to the Stratus Loader so we can use this continuously for models. */
@@ -277,19 +275,19 @@
       var target = {
         entity: this.model.entity,
         id: 'id'
-      };
+      }
       if (typeof this.propertyName === 'string' && this.propertyName.indexOf('.') !== -1) {
-        target.entity = _.first(this.propertyName.split('.'));
+        target.entity = _.first(this.propertyName.split('.'))
         if (this.model.has(target.entity + '.id')) {
-          target.id = target.entity + '.id';
+          target.id = target.entity + '.id'
         } else {
-          target.entity = this.model.entity;
+          target.entity = this.model.entity
         }
       }
       return {
         entity: _.ucfirst(target.entity),
         id: this.model.get(target.id)
-      };
+      }
     },
 
     // handleProperty
@@ -302,12 +300,12 @@
           // create collection inside parent (i.e. streams->versions associations)
       } else {
       */
-      var target = this.model.get(this.propertyName);
+      var target = this.model.get(this.propertyName)
       if (_.isArray(target)) {
         this.collection = new Stratus.Collections.Generic({
           initialize: true
-        });
-        this.collection.set(target);
+        })
+        this.collection.set(target)
       } else {
         this.collection = new Stratus.Collections.Generic({
           entity: _.ucfirst(this.options.source),
@@ -316,39 +314,40 @@
           api: {
             property: this.propertyName
           }
-        });
+        })
       }
-      Stratus.Instances[this.collection.globals.get('uid')] = this.collection;
+      Stratus.Instances[this.collection.globals.get('uid')] = this.collection
       if (typeof this.propertyName === 'string') {
         this.model.on('change:' + this.propertyName, function () {
           this.model.once('success', function () {
             this.model.once('change', function () {
-              this.collection.target = this.modelTarget();
-              this.collection.refresh({ reset: true });
-            }, this);
-          }, this);
-        }, this);
+              this.collection.target = this.modelTarget()
+              this.collection.refresh({
+                reset: true
+              })
+            }, this)
+          }, this)
+        }, this)
       }
       /* } */
-      this.handleCollection();
+      this.handleCollection()
     },
 
     // handleCollection
     handleCollection: function () {
-
       // Ensure this function only runs once
-      if (this.handled) return false;
-      this.handled = true;
+      if (this.handled) return false
+      this.handled = true
 
       // XHR Events
-      this.collection.on('reset', this.primeReset, this);
-      this.collection.on('success', this.primeSuccess, this);
-      this.collection.on('error', this.primeError, this);
+      this.collection.on('reset', this.primeReset, this)
+      this.collection.on('success', this.primeSuccess, this)
+      this.collection.on('error', this.primeError, this)
 
       // Model Events
-      this.collection.on('add', this.primeAdd, this);
-      this.collection.on('change', this.primeChange, this);
-      this.collection.on('destroy', this.primeDestroy, this);
+      this.collection.on('add', this.primeAdd, this)
+      this.collection.on('change', this.primeChange, this)
+      this.collection.on('destroy', this.primeDestroy, this)
     },
 
     // TODO: End Move
@@ -359,14 +358,14 @@
      */
     clearGlobals: function (model) {
       _.each(this.collection.globals.get('levels'), function (level, iteration, levelList) {
-        this.collection.globals.set('level' + level, 0);
-        this.collection.globals.set('total' + level, 0);
-      }, this);
+        this.collection.globals.set('level' + level, 0)
+        this.collection.globals.set('total' + level, 0)
+      }, this)
 
       _.each(this.collection.globals.get('parents'), function (level, iteration, levelList) {
-        this.collection.globals.set('parent' + level, 0);
-        this.collection.globals.set('parentTotal' + level, 0);
-      }, this);
+        this.collection.globals.set('parent' + level, 0)
+        this.collection.globals.set('parentTotal' + level, 0)
+      }, this)
     },
 
     // If a global is added in Build Globals, it also needs to be in Clear Globals
@@ -374,11 +373,11 @@
      * @param model
      */
     buildGlobals: function (model) {
-      var currentLevel = (model.has('level')) ? model.get('level') : 1;
-      this.collection.globals.iterate('total' + currentLevel);
+      var currentLevel = (model.has('level')) ? model.get('level') : 1
+      this.collection.globals.iterate('total' + currentLevel)
 
       if (model.has('parent') && Stratus.Relations.Sanitize(model, 'parent', 'id') !== null) {
-        this.collection.globals.iterate('parentTotal' + Stratus.Relations.Sanitize(model, 'parent', 'id'));
+        this.collection.globals.iterate('parentTotal' + Stratus.Relations.Sanitize(model, 'parent', 'id'))
       }
 
       // TODO: Transverse through all children in nest and add level to array, then display this data for each parent
@@ -413,9 +412,9 @@
           collection: this.collection,
           options: this.options,
           code: response.status.toString()
-        }));
+        }))
       }
-      return true;
+      return true
     },
 
     // addOne
@@ -425,10 +424,9 @@
      * @param model
      */
     addOne: function (model) {
-
       // Detect Child
-      var isChild = (model.has('parent') && Stratus.Relations.Sanitize(model, 'parent', 'id') !== null);
-      var phantoms = 0;
+      var isChild = (model.has('parent') && Stratus.Relations.Sanitize(model, 'parent', 'id') !== null)
+      var phantoms = 0
 
       // Create Globals
       var globals = {
@@ -452,73 +450,73 @@
         compound: 0,
 
         options: this.options
-      };
+      }
 
       // TODO: If batch exists, then we need to create a fake "parent" in which (iteration % batch === 1)
 
       // Iterate for Level
-      globals.iteration = this.collection.globals.iterate('level' + globals.level);
-      globals.total = this.collection.globals.get('total' + globals.level);
-      globals.last = (globals.iteration === globals.total);
+      globals.iteration = this.collection.globals.iterate('level' + globals.level)
+      globals.total = this.collection.globals.get('total' + globals.level)
+      globals.last = (globals.iteration === globals.total)
 
       // Handle Dynamic Hook
       if (_.has(this.templates, 'combined') || _.has(this.templates, 'list')) {
-        var containers = this.$el.find('[data-hook="containers"]');
-        if (containers.length > 0) globals.hook = containers;
+        var containers = this.$el.find('[data-hook="containers"]')
+        if (containers.length > 0) globals.hook = containers
       }
 
       // Handle Batches
       if (this.options.batch) {
         // Determine Placement
-        var tile = globals.iteration % this.options.batch;
+        var tile = globals.iteration % this.options.batch
 
         // Determine Order
         if (tile === 1) {
           /* First Tile */
-          globals.iteration = 1;
-          this.collection.globals.set('batchParent', model.get('id'));
-          this.collection.globals.set('parent' + model.get('id'), 1);
+          globals.iteration = 1
+          this.collection.globals.set('batchParent', model.get('id'))
+          this.collection.globals.set('parent' + model.get('id'), 1)
         } else {
           /* Middle & Last Tiles */
-          globals.parent = this.collection.globals.get('batchParent');
-          globals.child = true;
+          globals.parent = this.collection.globals.get('batchParent')
+          globals.child = true
         }
 
         // Mark Last of Batch
         if (tile === 0) {
           /* Last Tiles */
-          globals.last = true;
+          globals.last = true
         }
 
         // Count Phantoms
         if (tile !== 0 && globals.last) {
-          phantoms = this.options.batch - tile;
-          globals.last = false;
+          phantoms = this.options.batch - tile
+          globals.last = false
         }
       }
 
       // Register Parents and Levels
-      this.collection.globals.add('levels', globals.level);
-      this.collection.globals.add('parents', globals.parent);
+      this.collection.globals.add('levels', globals.level)
+      this.collection.globals.add('parents', globals.parent)
 
       // Handle Children
       if (globals.child) {
-        globals.iteration = this.collection.globals.iterate('parent' + globals.parent);
-        globals.total = this.collection.globals.get('parentTotal' + globals.parent);
-        globals.last = (globals.iteration === globals.total);
+        globals.iteration = this.collection.globals.iterate('parent' + globals.parent)
+        globals.total = this.collection.globals.get('parentTotal' + globals.parent)
+        globals.last = (globals.iteration === globals.total)
 
-        var parent = '[data-collection="' + globals.uid + '"]';
+        var parent = '[data-collection="' + globals.uid + '"]'
         if (globals.entity) {
-          parent += '[data-entity="' + globals.entity + '"]';
+          parent += '[data-entity="' + globals.entity + '"]'
         }
-        parent += '[data-hook="parent' + globals.parent + '"]';
-        if ($(parent).length > 0) globals.hook = parent;
+        parent += '[data-hook="parent' + globals.parent + '"]'
+        if ($(parent).length > 0) globals.hook = parent
       }
 
       // Calculate Weight
-      globals.weight = 1 / globals.total;
-      globals.gravity = globals.weight * globals.iteration;
-      globals.compound = (1 / (globals.total - 1)) * (globals.iteration - 1);
+      globals.weight = 1 / globals.total
+      globals.gravity = globals.weight * globals.iteration
+      globals.compound = (1 / (globals.total - 1)) * (globals.iteration - 1)
 
       // Inject Container into DOM
       $(globals.hook).append(this.template({
@@ -526,15 +524,15 @@
         globals: globals,
         meta: this.collection.meta.toObject(),
         model: model.attributes
-      }));
+      }))
 
       // Iterate Model Number and create GUID for this View
-      this.collection.globals.iterate('modelNumber');
-      var uid = (model.has('id')) ? model.get('id') : this.collection.globals.get('modelNumber');
+      this.collection.globals.iterate('modelNumber')
+      var uid = (model.has('id')) ? model.get('id') : this.collection.globals.get('modelNumber')
 
       // Create Generic View and store in Collection View
       if (_.has(this.views, uid)) {
-        this.views[uid].onDestroy();
+        this.views[uid].onDestroy()
       }
       var view = new Stratus.Internals.View(_.extend({}, this.view.nest(), {
         uid: globals.uid,
@@ -542,7 +540,7 @@
         scope: 'model',
         model: model,
         collection: this.collection
-      }));
+      }))
       var options = _.extend({}, view.toObject(), {
         uid: _.uniqueId('generic_'),
         collectionView: this,
@@ -554,41 +552,44 @@
         },
         view: view,
         style: this.options.style
-      });
-      this.views[uid] = Stratus.Instances[options.uid] = new Stratus.Views.Widgets.Generic(options);
+      })
+      this.views[uid] = Stratus.Instances[options.uid] = new Stratus.Views.Widgets.Generic(options)
 
       // Sortable Children
       if (globals.child && globals.last) {
         Sortable.create(_.first($(globals.hook)), {
           draggable: '.draggable',
           group: this.entity
-        });
+        })
       }
 
       // Build Phantoms
       if (phantoms && _.has(this.templates, 'entity')) {
-        var phantom = _.clone(globals);
-        phantom.iteration = this.options.batch - phantom.iteration;
-        phantom.model = null;
-        phantom.phantom = true;
-        phantom.parent = this.collection.globals.get('batchParent');
-        phantom.child = true;
-        phantom.hook = '[data-collection="' + globals.uid + '"][data-entity="' + phantom.entity + '"][data-hook="parent' + phantom.parent + '"]';
-        var phantomTemplate = this.templates.combined || this.templates.entity;
+        var phantom = _.clone(globals)
+        phantom.iteration = this.options.batch - phantom.iteration
+        phantom.model = null
+        phantom.phantom = true
+        phantom.parent = this.collection.globals.get('batchParent')
+        phantom.child = true
+        phantom.hook = '[data-collection="' + globals.uid + '"][data-entity="' + phantom.entity + '"][data-hook="parent' + phantom.parent + '"]'
+        var phantomTemplate = this.templates.combined || this.templates.entity
         for (var i = 0; i < phantoms; i++) {
-          phantom.iteration++;
+          phantom.iteration++
           if (i === (phantoms - 1)) {
-            phantom.last = true;
-          }
-          $(phantom.hook).append(phantomTemplate({ scope: 'entity', globals: phantom }));
+              phantom.last = true
+            }
+          $(phantom.hook).append(phantomTemplate({
+            scope: 'entity',
+            globals: phantom
+          }))
         }
       }
 
       // TODO: make this attached to parent iteration, which takes precedence if it exists in the model
       if (this.collection.globals.get('lastLevel') > globals.level) {
-        this.collection.globals.set('level' + this.collection.globals.get('lastLevel'), 0);
+        this.collection.globals.set('level' + this.collection.globals.get('lastLevel'), 0)
       }
-      this.collection.globals.set('lastLevel', globals.level);
+      this.collection.globals.set('lastLevel', globals.level)
     },
 
     // addAll
@@ -597,38 +598,43 @@
         scope: 'list',
         collection: this.collection,
         options: this.options
-      };
-      this.$el.html(_.has(this.templates, 'combined') ? this.templates.combined(list) : (_.has(this.templates, 'list') ? this.templates.list(list) : ''));
+      }
+      this.$el.html(_.has(this.templates, 'combined') ? this.templates.combined(list) : (_.has(this.templates, 'list') ? this.templates.list(list) : ''))
       if ((!this.$el.html() || !this.$el.html().trim().length) && !this.collection.size()) {
-        this.$el.html(this.errorTemplate({ collection: this.collection, options: this.options }));
+        this.$el.html(this.errorTemplate({
+          collection: this.collection,
+          options: this.options
+        }))
       }
       if (this.$el.html() && this.$el.html().trim().length) {
         Stratus.Internals.Loader(this.el || this.$el, this.view).then(function (nest) {
           /* Second Loader for Parent-Children */
           Stratus.Internals.Loader(this.$el.find('[data-entity]')).then(function (parent) {
             // this.loaderCallback(nest, parent);
-          }.bind(this));
+          })
         }.bind(this), function (error) {
-          console.error('List Views:', error);
-        });
+          console.error('List Views:', error)
+        })
       }
       if (this.options.autosort) {
-        this.collection.sort();
+        this.collection.sort()
       }
-      this.clearGlobals();
-      this.collection.models.forEach(this.buildGlobals, this);
-      this.collection.models.forEach(this.addOne, this);
+      this.clearGlobals()
+      this.collection.models.forEach(this.buildGlobals, this)
+      this.collection.models.forEach(this.addOne, this)
       if (this.options.masonry) {
         new Masonry(this.el, {
           itemSelector: '.grid-item',
           columnWidth: 160,
           percentPosition: true
-        });
+        })
       }
       if (this.options.sortable) {
-        Sortable.create(this.el, { group: this.entity });
+        Sortable.create(this.el, {
+          group: this.entity
+        })
       }
-      this.trigger('render', this);
+      this.trigger('render', this)
     },
 
     /**
@@ -643,8 +649,8 @@
      */
     dragEnd: function (e) {
       // find qualifying hook
-      var $el = $(e.originalEvent.item);
-      $el = ($el.dataAttr('id')) ? $el : $el.find('[data-id]');
+      var $el = $(e.originalEvent.item)
+      $el = ($el.dataAttr('id')) ? $el : $el.find('[data-id]')
 
       // store information
       var proto = {
@@ -653,11 +659,11 @@
         entity: $el.data('entity'),
         priority: _.size(this.collection.models) - e.originalEvent.newIndex,
         reference: Stratus.Models.Generic
-      };
+      }
 
       // save priority calculation
       if (proto.entity && proto.id) {
-        proto.reference = Stratus.Models.get(proto.entity).findOrCreate(proto.id);
+        proto.reference = Stratus.Models.get(proto.entity).findOrCreate(proto.id)
         /*
         this.collection.each(function (model) {
             var newPriority = model.get('priority');
@@ -666,13 +672,14 @@
         });
         */
         proto.reference.once('success', function (scope, xhr) {
-          this.collection.refresh({ reset: true });
-        }, this);
-        proto.reference.save('priority', proto.priority);
+          this.collection.refresh({
+            reset: true
+          })
+        }, this)
+        proto.reference.save('priority', proto.priority)
       }
 
       // console.log('End:', e.originalEvent.newIndex, proto);
     }
-  });
-
-}));
+  })
+}))

@@ -19,7 +19,7 @@
   // This component intends to handle binding and
   // full pagination for the scope's collection.
   Stratus.Components.Pagination = {
-    controller: function ($scope, $attrs, collection, commonMethods) {
+    controller: function ($scope, $attrs, Collection, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'pagination',
         true)
@@ -32,7 +32,7 @@
       // Localize Collection
       $scope.collection = null
       $scope.$watch('$parent.collection', function (data) {
-        if (data && data instanceof collection) {
+        if (data && data instanceof Collection) {
           $scope.collection = data
         }
       })
@@ -78,7 +78,7 @@
         })
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/pagination' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/pagination' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

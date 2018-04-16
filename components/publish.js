@@ -22,7 +22,8 @@
       'underscore',
       'angular',
       'stratus.services.model',
-      'stratus.components.dateTime'], factory)
+      'stratus.components.dateTime'
+    ], factory)
   } else {
     factory(root.Stratus, root.moment, root.$, root._)
   }
@@ -41,7 +42,7 @@
       showVersionHistory: '@',
       redirect: '@'
     },
-    controller: function ($scope, $element, $parse, $attrs, $log, model) {
+    controller: function ($scope, $element, $parse, $attrs, $log, Model) {
       var uid = _.uniqueId('publish_')
       Stratus.Instances[uid] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
@@ -71,7 +72,7 @@
       // Model Handling
       $scope.model = null
       $scope.$watch('$ctrl.ngModel', function (data) {
-        if (data instanceof model && data !== $scope.model) {
+        if (data instanceof Model && data !== $scope.model) {
           $scope.model = data
         }
       })
@@ -96,47 +97,45 @@
 
       return true
 
-      var $dateTimeComponent = null
-      if ($scope.showDateTime) {
-        $dateTimeComponent = $('#' + $scope.elementId + ' stratus-date-time')
-      }
+      // var $dateTimeComponent = null
+      // if ($scope.showDateTime) {
+      //   $dateTimeComponent = $('#' + $scope.elementId + ' stratus-date-time')
+      // }
 
-      if ($scope.action === 'unpublish') {
-        // TODO: Set the dateTime component date to current time (so when they
-        // open it again it's at today) and then clear
-        /* *
-        if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
-            this.dateTimePickerView.dateTimePicker.date(moment());
-            this.dateTimePickerView.dateTimePicker.clear();
-        }
-        /* */
-      } else {
-        // If expired (published in the past) treat as if it's unpublished (and
-        // publish the current time if none specified). Problem is... there is
-        // a date specified. So we need to clear the date somehow if it's
-        // expired.
+      // if ($scope.action === 'unpublish') {
+      //   // TODO: Set the dateTime component date to current time (so when they
+      //   // open it again it's at today) and then clear
+      //   if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
+      //     this.dateTimePickerView.dateTimePicker.date(moment())
+      //     this.dateTimePickerView.dateTimePicker.clear()
+      //   }
+      // } else {
+      //   // If expired (published in the past) treat as if it's unpublished (and
+      //   // publish the current time if none specified). Problem is... there is
+      //   // a date specified. So we need to clear the date somehow if it's
+      //   // expired.
 
-        // TODO: if timePublish is set, make sure the date picker uses the
-        // correct time
+      //   // TODO: if timePublish is set, make sure the date picker uses the
+      //   // correct time
 
-        if ($dateTimeComponent && typeof $dateTimeComponent === 'object' &&
-          $dateTimeComponent.length) {
-          // If expired publish (published for past date and superceded by new
-          // version) and publish is clicked without changing the date (the
-          // dates are identical) then use the now date like they just want to
-          // publish at this moment.
-          if (this.isPublished === 3 && timePublish &&
-            timePublish.unix() === this.timePublish) {
+      //   if ($dateTimeComponent && typeof $dateTimeComponent === 'object' &&
+      //     $dateTimeComponent.length) {
+      //     // If expired publish (published for past date and superceded by new
+      //     // version) and publish is clicked without changing the date (the
+      //     // dates are identical) then use the now date like they just want to
+      //     // publish at this moment.
+      //     if (this.isPublished === 3 && timePublish &&
+      //       timePublish.unix() === this.timePublish) {
 
-          } else {
-            // convert moment object to unix milliseconds
-            $scope.timePublish = $scope.version.get(propertyTimePublish)
-          }
-        }
-      }
+      //     } else {
+      //       // convert moment object to unix milliseconds
+      //       $scope.timePublish = $scope.version.get(propertyTimePublish)
+      //     }
+      //   }
+      // }
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/publish' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/publish' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

@@ -41,7 +41,7 @@
             getMedia: getMedia,
             fileUploader: fileUploader,
             saveMediaUrl: saveMediaUrl,
-            fetchOneMedia: fetchOneMedia,
+            fetchOneMedia: fetchOneMedia
           }
 
           function dragenter (event) {

@@ -17,7 +17,7 @@
       ngModel: '=',
       target: '@'
     },
-    controller: function ($scope, $attrs, registry) {
+    controller: function ($scope, $attrs, Registry) {
       Stratus.Instances[_.uniqueId('sort')] = $scope
       $scope.collection = ($scope.$parent && $scope.$parent.collection)
         ? $scope.$parent.collection
