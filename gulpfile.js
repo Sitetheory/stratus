@@ -27,9 +27,9 @@ var location = {
     source: [
       'boot/env.js',
       'boot/config.js',
-      'boot/init.js',
+      'boot/init.js'
     ],
-    output: 'dist/boot.js',
+    output: 'dist/boot.js'
   },
   stratus: {
     source: [
@@ -43,19 +43,19 @@ var location = {
       'loaders/backbone.bind.js',
       'loaders/angular.bind.js',
       'source/core.js',
-      'umd/footer.js',
+      'umd/footer.js'
     ],
-    output: 'dist/stratus.js',
+    output: 'dist/stratus.js'
   },
   external: {
     core: [
-      'bower_components/requirejs/require.js',
-      //'bower_components/ng-sortable/angular-legacy-sortable.js'
+      'bower_components/requirejs/require.js'
+      // 'bower_components/ng-sortable/angular-legacy-sortable.js'
     ],
     min: [
-      'bower_components/requirejs/require.min.js',
-      //'bower_components/ng-sortable/angular-legacy-sortable.min.js'
-    ],
+      'bower_components/requirejs/require.min.js'
+      // 'bower_components/ng-sortable/angular-legacy-sortable.min.js'
+    ]
   },
   mangle: {
     core: [
@@ -64,7 +64,7 @@ var location = {
       'models/*.js',
       'collections/*.js',
       'routers/*.js',
-      'services/*.js',
+      'services/*.js'
     ],
     min: [
       // 'stratus.min.js',
@@ -72,8 +72,8 @@ var location = {
       'models/*.min.js',
       'routers/*.min.js',
       'controllers/*.min.js',
-      'services/*.min.js',
-    ],
+      'services/*.min.js'
+    ]
   },
   preserve: {
     core: [
@@ -81,84 +81,84 @@ var location = {
       'components/*.js',
       'controllers/*.js',
       'directives/*.js',
-      'filters/*.js',
+      'filters/*.js'
     ],
     min: [
       'boot/*.min.js',
       'components/*.min.js',
       'collections/*.min.js',
       'directives/*.min.js',
-      'filters/*.min.js',
-    ],
+      'filters/*.min.js'
+    ]
   },
   less: {
     core: [
-      //'stratus.less',
-      'components/*.less',
+      // 'stratus.less',
+      'components/*.less'
     ],
-    compile: [],
+    compile: []
   },
   css: {
     core: [
-      //'stratus.css',
+      // 'stratus.css',
       'components/*.css',
-      'directives/*.css',
+      'directives/*.css'
     ],
     min: [
-      //'stratus.min.css',
+      // 'stratus.min.css',
       'components/*.min.css',
-      'directives/*.min.css',
-    ],
+      'directives/*.min.css'
+    ]
   },
   template: {
     core: [
       'components/*.html',
-      'directives/*.html',
+      'directives/*.html'
     ],
     min: [
       'components/*.min.html',
-      'directives/*.min.html',
-    ],
-  },
+      'directives/*.min.html'
+    ]
+  }
 }
 
 // Test
 gulp.task('build', function (callback) {
   pump([
-      gulp.src('./lib/*.js'),
-      concat('all.js'),
-      gulp.dest('./dist/'),
-    ],
+    gulp.src('./lib/*.js'),
+    concat('all.js'),
+    gulp.dest('./dist/')
+  ],
     callback
   )
 })
 
 // Code Linters
 gulp.task('lint:js', function (callback) {
-  //const jscs = require('gulp-jscs');
+  // const jscs = require('gulp-jscs');
   const standard = require('gulp-standard')
 
   pump([
-      gulp.src(_.union(location.mangle.core, location.preserve.core,
-        nullify(location.mangle.min), nullify(location.preserve.min),
-        'source/*.js')),
-      debug({
-        title: 'Standardize:',
-      }),
-      standard(),
+    gulp.src(_.union(location.mangle.core, location.preserve.core, nullify(location.mangle.min), nullify(location.preserve.min), 'source/*.js')),
+    debug({
+      title: 'Standardize:'
+    }),
+    standard(),
       /* */
-      standard.reporter('default', {
-        breakOnError: true,
-        quiet: true,
-      }),
-      /* *
-      jscs({
-        //fix: true
-      }),
-      jscs.reporter(),
-      jscs.reporter('fail'),
-      /* */
-    ],
+    standard.reporter('default', {
+      breakOnError: true,
+      showFilePath: true,
+      showRuleNames: true,
+      quiet: true
+    })
+    /* *
+    jscs({
+      //fix: true
+    }),
+    jscs.reporter(),
+    jscs.reporter('fail'),
+    /* */
+  ],
     callback
   )
 })
@@ -166,28 +166,26 @@ gulp.task('lint:js', function (callback) {
 gulp.task('lint:css', function lintCssTask () {
   const gulpStylelint = require('gulp-stylelint')
 
-  return gulp.src(_.union(location.css.core, nullify(location.css.min))).
-    pipe(gulpStylelint({
-      //fix: true,
-      reporters: [
-        {
-          formatter: 'string',
-          console: true,
-        },
-      ],
+  return gulp.src(_.union(location.css.core, nullify(location.css.min)))
+    .pipe(gulpStylelint({
+      // fix: true,
+      reporters: [{
+        formatter: 'string',
+        console: true
+      }]
     }))
 })
 
 // Blanket Functions
 gulp.task('compile', [
-  'compile:less',
+  'compile:less'
 ])
 gulp.task('compress', [
   'compress:mangle',
   'compress:preserve',
   'compress:css',
   'compress:template',
-  'compress:external',
+  'compress:external'
 ])
 gulp.task('clean', [
   'clean:mangle',
@@ -195,224 +193,254 @@ gulp.task('clean', [
   'clean:less',
   'clean:css',
   'clean:template',
-  'clean:external',
+  'clean:external'
 ])
 gulp.task('dist', [
   'dist:boot',
   'dist:stratus',
-  'dist:compress',
+  'dist:compress'
 ])
 gulp.task('lint', [
   'lint:js',
-  //'lint:css'
+  'lint:css'
 ])
 
 // Distribution Functions
 gulp.task('dist:boot', function (callback) {
   pump([
-      gulp.src(location.boot.source, {
-        base: '.',
-      }),
-      concat(location.boot.output),
-      gulp.dest('.'),
-    ],
+    gulp.src(location.boot.source, {
+      base: '.'
+    }),
+    concat(location.boot.output),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 gulp.task('dist:stratus', function (callback) {
   pump([
-      gulp.src(location.stratus.source, {
-        base: '.',
-      }),
-      concat(location.stratus.output),
-      gulp.dest('.'),
-    ],
+    gulp.src(location.stratus.source, {
+      base: '.'
+    }),
+    concat(location.stratus.output),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 gulp.task('dist:compress', function (callback) {
   pump([
-      gulp.src([location.boot.output, location.stratus.output], {
-        base: '.',
-      }),
-      debug({
-        title: 'Mangle:',
-      }),
-      uglify({
-        // preserveComments: 'license',
-        mangle: true,
-      }),
-      dest('.', {
-        ext: '.min.js',
-      }),
-      gulp.dest('.'),
-    ],
+    gulp.src([location.boot.output, location.stratus.output], {
+      base: '.'
+    }),
+    debug({
+      title: 'Mangle:'
+    }),
+    uglify({
+      // preserveComments: 'license',
+      mangle: true
+    }),
+    dest('.', {
+      ext: '.min.js'
+    }),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 
 // Mangle Functions
 gulp.task('clean:mangle', function () {
-  return gulp.src(location.mangle.min, {base: '.', read: false}).
-    pipe(debug({title: 'Clean:'})).
-    pipe(vinylPaths(del))
+  return gulp.src(location.mangle.min, {
+    base: '.',
+    read: false
+  })
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
   pump([
-      gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), {
-        base: '.',
-      }),
-      debug({
-        title: 'Mangle:',
-      }),
-      uglify({
-        // preserveComments: 'license',
-        mangle: true,
-      }),
-      dest('.', {
-        ext: '.min.js',
-      }),
-      gulp.dest('.'),
-    ],
+    gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), {
+      base: '.'
+    }),
+    debug({
+      title: 'Mangle:'
+    }),
+    uglify({
+      // preserveComments: 'license',
+      mangle: true
+    }),
+    dest('.', {
+      ext: '.min.js'
+    }),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 
 // External Functions
 gulp.task('clean:external', function () {
-  return gulp.src(location.external.min, {base: '.', read: false}).
-    pipe(debug({title: 'Clean:'})).
-    pipe(vinylPaths(del))
+  return gulp.src(location.external.min, {
+    base: '.',
+    read: false
+  })
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:external', ['clean:external'], function (callback) {
   pump([
-      gulp.src(_.union(location.external.core, nullify(location.external.min)), {
-        base: '.',
-      }),
-      debug({
-        title: 'External:',
-      }),
-      uglify({
-        // preserveComments: 'license',
-        mangle: true,
-      }),
-      dest('.', {
-        ext: '.min.js',
-      }),
-      gulp.dest('.'),
-    ],
+    gulp.src(_.union(location.external.core, nullify(location.external.min)), {
+      base: '.'
+    }),
+    debug({
+      title: 'External:'
+    }),
+    uglify({
+      // preserveComments: 'license',
+      mangle: true
+    }),
+    dest('.', {
+      ext: '.min.js'
+    }),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 
 // Preserve Functions
 gulp.task('clean:preserve', function () {
-  return gulp.src(location.preserve.min, {base: '.', read: false}).
-    pipe(debug({title: 'Clean:'})).
-    pipe(vinylPaths(del))
+  return gulp.src(location.preserve.min, {
+    base: '.',
+    read: false
+  })
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
   pump([
-      gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), {
-        base: '.',
-      }),
-      debug({
-        title: 'Compress:',
-      }),
-      uglify({
-        // preserveComments: 'license',
-        mangle: false,
-      }),
-      dest('.', {
-        ext: '.min.js',
-      }),
-      gulp.dest('.'),
-    ],
+    gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), {
+      base: '.'
+    }),
+    debug({
+      title: 'Compress:'
+    }),
+    uglify({
+      // preserveComments: 'license',
+      mangle: false
+    }),
+    dest('.', {
+      ext: '.min.js'
+    }),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 
 // LESS Functions
 gulp.task('clean:less', function () {
-  return gulp.src(location.less.compile, {base: '.', read: false}).
-    pipe(debug({title: 'Clean:'})).
-    pipe(vinylPaths(del))
+  return gulp.src(location.less.compile, {
+    base: '.',
+    read: false
+  })
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    .pipe(vinylPaths(del))
 })
 gulp.task('compile:less', ['clean:less'], function (callback) {
   const less = require('gulp-less')
   pump([
-      gulp.src(_.union(location.less.core, nullify(location.less.compile)), {
-        base: '.',
-      }),
-      debug({
-        title: 'LESS:',
-      }),
-      less({}),
-      dest('.', {
-        ext: '.css',
-      }),
-      gulp.dest('.'),
-    ],
+    gulp.src(_.union(location.less.core, nullify(location.less.compile)), {
+      base: '.'
+    }),
+    debug({
+      title: 'LESS:'
+    }),
+    less({}),
+    dest('.', {
+      ext: '.css'
+    }),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 
 // CSS Functions
 gulp.task('clean:css', function () {
-  return gulp.src(location.css.min, {base: '.', read: false}).
-    pipe(debug({title: 'Clean:'})).
-    pipe(vinylPaths(del))
+  return gulp.src(location.css.min, {
+    base: '.',
+    read: false
+  })
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:css', ['clean:css'], function (callback) {
   const cleanCSS = require('gulp-clean-css')
   pump([
-      gulp.src(_.union(location.css.core, nullify(location.css.min)), {
-        base: '.',
-      }),
-      debug({
-        title: 'CSS:',
-      }),
-      cleanCSS({
-        compatibility: '*',
-        inline: ['none'],
-        rebaseTo: 'none' // FIXME: This is a temporary hack I created by
-                         // breaking some code in CleanCSS to get back relative
-                         // urls
-      }),
-      dest('.', {
-        ext: '.min.css',
-      }),
-      gulp.dest('.'),
-    ],
+    gulp.src(_.union(location.css.core, nullify(location.css.min)), {
+      base: '.'
+    }),
+    debug({
+      title: 'CSS:'
+    }),
+    cleanCSS({
+      compatibility: '*',
+      inline: ['none'],
+      rebaseTo: 'none' // FIXME: This is a temporary hack I created by
+      // breaking some code in CleanCSS to get back relative
+      // urls
+    }),
+    dest('.', {
+      ext: '.min.css'
+    }),
+    gulp.dest('.')
+  ],
     callback
   )
 })
 
 // Template Functions
 gulp.task('clean:template', function () {
-  return gulp.src(location.template.min, {base: '.', read: false}).
-    pipe(debug({title: 'Clean:'})).
-    pipe(vinylPaths(del))
+  return gulp.src(location.template.min, {
+    base: '.',
+    read: false
+  })
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:template', ['clean:template'], function (callback) {
   const htmlmin = require('gulp-htmlmin')
   pump([
-      gulp.src(_.union(location.template.core, nullify(location.template.min)), {
-        base: '.',
-      }),
-      debug({
-        title: 'Template:',
-      }),
-      htmlmin({
-        collapseWhitespace: true,
-        removeComments: true,
-        removeEmptyAttributes: true,
-      }),
-      dest('.', {
-        ext: '.min.html',
-      }),
-      gulp.dest('.'),
-    ],
+    gulp.src(_.union(location.template.core, nullify(location.template.min)), {
+      base: '.'
+    }),
+    debug({
+      title: 'Template:'
+    }),
+    htmlmin({
+      collapseWhitespace: true,
+      removeComments: true,
+      removeEmptyAttributes: true
+    }),
+    dest('.', {
+      ext: '.min.html'
+    }),
+    gulp.dest('.')
+  ],
     callback
   )
 })
