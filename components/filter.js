@@ -29,6 +29,6 @@
     },
     templateUrl: Stratus.BaseUrl +
       'sitetheorystratus/stratus/components/filter' +
-      (Stratus.Environment.production ? '.min' : '') + '.html'
+      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

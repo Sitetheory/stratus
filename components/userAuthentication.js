@@ -287,6 +287,6 @@
       },
       templateUrl: Stratus.BaseUrl +
       'sitetheorystratus/stratus/components/userAuthentication' +
-      (Stratus.Environment.production ? '.min' : '') + '.html'
+      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     }
   }))

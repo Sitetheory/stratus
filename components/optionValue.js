@@ -44,6 +44,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/optionValue' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

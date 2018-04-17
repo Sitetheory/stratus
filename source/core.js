@@ -41,7 +41,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @param options
    */
   initialize: function (options) {
-    if (!Stratus.Environment.production) {
+    if (!Stratus.Environment.get('production')) {
       console.info('Chronos Invoked!')
     }
     this.on('change', this.synchronize, this)
@@ -204,7 +204,7 @@ Stratus.Key.Escape = 27
 // and custom script(s) progressively add Objects within the Stratus Layer.
 
 Stratus.Events.on('initialize', function () {
-  if (!Stratus.Environment.production) {
+  if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Initialize')
   }
@@ -228,7 +228,7 @@ Stratus.Events.on('initialize', function () {
 
   // Load Views
   Stratus.Internals.Loader().then(function (views) {
-    if (!Stratus.Environment.production) {
+    if (!Stratus.Environment.get('production')) {
       console.info('Views:', views)
     }
     window.views = views
@@ -245,7 +245,7 @@ Stratus.Events.on('initialize', function () {
 
 })
 Stratus.Events.on('finalize', function () {
-  if (!Stratus.Environment.production) {
+  if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Finalize')
   }
@@ -270,7 +270,7 @@ Stratus.Events.on('finalize', function () {
   }
 })
 Stratus.Events.on('terminate', function () {
-  if (!Stratus.Environment.production) {
+  if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Terminate')
   }
@@ -348,7 +348,7 @@ Stratus.Events.on('toast', function (message, title, priority, settings) {
   if (!(message instanceof Stratus.Prototypes.Toast)) {
     message = new Stratus.Prototypes.Toast(message, title, priority, settings)
   }
-  if (!Stratus.Environment.production) {
+  if (!Stratus.Environment.get('production')) {
     console.log('Toast:', message)
   }
   if (typeof $ !== 'undefined' && $.toaster) {

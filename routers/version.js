@@ -69,7 +69,7 @@
         if (this.model.has(this.versionEntityId) &&
           this.versionId !== this.model.get(this.versionEntityId)) {
           this.versionId = this.model.get(this.versionEntityId)
-          if (!Stratus.Environment.production) {
+          if (!Stratus.Environment.get('production')) {
             console.info('Navigate:', 'version/' + this.versionId)
           }
           this.navigate('version/' + this.versionId, {replace: true})

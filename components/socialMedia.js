@@ -32,7 +32,7 @@
         true)
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
         'sitetheorystratus/stratus/components/singleSignOn' +
-        (Stratus.Environment.production ? '.min' : '') + '.css')
+        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       socialLibraries.loadFacebookSDK()
       socialLibraries.loadGGLibrary()
@@ -167,6 +167,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/singleSignOn' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

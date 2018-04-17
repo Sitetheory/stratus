@@ -33,10 +33,10 @@
 
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
         'sitetheorystratus/stratus/components/stream' +
-        (Stratus.Environment.production ? '.min' : '') + '.css')
+        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/stream' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

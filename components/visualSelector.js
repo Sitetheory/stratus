@@ -132,7 +132,7 @@
       }
 
       $scope.updateDetails = function (layoutData) {
-        if (!Stratus.Environment.production) {
+        if (!Stratus.Environment.get('production')) {
           console.log(layoutData)
         }
         $scope.selectedLayout = layoutData
@@ -162,6 +162,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/visualSelector' +
-    (Stratus.Environment.production ? '.min' : '') + '.html'
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

@@ -32,7 +32,7 @@
       Stratus.Instances[_.uniqueId('search_')] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
         'sitetheorystratus/stratus/components/search' +
-        (Stratus.Environment.production ? '.min' : '') + '.css')
+        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       // Settings
       $scope.display = $attrs.display && _.isJSON($attrs.display) ? JSON.parse(
@@ -63,6 +63,6 @@
     },
     templateUrl: Stratus.BaseUrl +
       'sitetheorystratus/stratus/components/search' +
-      (Stratus.Environment.production ? '.min' : '') + '.html'
+      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

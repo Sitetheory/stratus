@@ -309,17 +309,17 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
 
   return new Promise(function (resolve, reject) {
     if (view.get('guid')) {
-      if (!Stratus.Environment.production) console.warn('View hydration halted on', view.get('guid'), 'due to repeat calls on the same element.', view.toObject())
+      if (!Stratus.Environment.get('production')) console.warn('View hydration halted on', view.get('guid'), 'due to repeat calls on the same element.', view.toObject())
       resolve(true)
       return true
     }
     if (parentChild) {
-      /* if (!Stratus.Environment.production) console.warn('Parent Child Detected:', view.toObject()); */
+      /* if (!Stratus.Environment.get('production')) console.warn('Parent Child Detected:', view.toObject()); */
       resolve(true)
       return true
     }
     require(requirements, function (Stratus) {
-      if (!Stratus.Environment.production && Stratus.Environment.get('nestDebug')) console.group('Stratus View')
+      if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.group('Stratus View')
       var hydrationKey = 0
       if (templates && templateMap.length > 0) {
         for (var i = 0; i < arguments.length; i++) {
@@ -352,7 +352,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
               while (match !== null) {
                 var subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
                 if (subRequirement && !_.has(requirejs.s.contexts._.config.paths, subRequirement)) {
-                  if (!Stratus.Environment.production) console.warn('Sub Type:', subRequirement, 'not configured in require.js')
+                  if (!Stratus.Environment.get('production')) console.warn('Sub Type:', subRequirement, 'not configured in require.js')
                 }
                 subRequirements.push(subRequirement)
                 match = re.exec(value)
@@ -476,7 +476,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
   if (view.get('type') !== null) {
     var type = _.ucfirst(view.get('type'))
     if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
-      // if (!Stratus.Environment.production) console.info('View:', view.toObject());
+      // if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
       var options = view.toObject()
       options.view = view
       Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options)
@@ -487,25 +487,25 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
         resolve(Stratus.Instances[view.get('uid')])
       }
     } else {
-      if (!Stratus.Environment.production) console.warn('Stratus.Views.Widgets.' + type + ' is not correctly configured.')
+      if (!Stratus.Environment.get('production')) console.warn('Stratus.Views.Widgets.' + type + ' is not correctly configured.')
       reject(new Stratus.Prototypes.Error({
         code: 'WidgetLoader',
         message: 'Stratus.Views.Widgets.' + type + ' is not correctly configured.'
       }, view.toObject()))
     }
-    if (!Stratus.Environment.production && Stratus.Environment.get('nestDebug')) console.groupEnd()
+    if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
   } else {
     var nest = view.get('el').find('[data-type],[data-plugin]')
     if (nest.length > 0) {
       Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (resolution) {
-        if (!Stratus.Environment.production && Stratus.Environment.get('nestDebug')) console.groupEnd()
+        if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
         resolve(resolution)
       }, function (rejection) {
-        if (!Stratus.Environment.production && Stratus.Environment.get('nestDebug')) console.groupEnd()
+        if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
         reject(new Stratus.Prototypes.Error(rejection, nest))
       })
     } else {
-      if (!Stratus.Environment.production && Stratus.Environment.get('nestDebug')) {
+      if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) {
         console.warn('No Innate or Nested Type Found:', view.toObject())
         resolve(view.toObject())
         console.groupEnd()
@@ -539,7 +539,7 @@ Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) 
         resolve(Stratus.Instances[view.get('uid')])
       }
     } else {
-      if (!Stratus.Environment.production) console.warn('Stratus.Views.Plugins.' + type + ' is not correctly configured.')
+      if (!Stratus.Environment.get('production')) console.warn('Stratus.Views.Plugins.' + type + ' is not correctly configured.')
       reject(new Stratus.Prototypes.Error({
         code: 'PluginLoader',
         message: 'Stratus.Views.Plugins.' + type + ' is not correctly configured.'

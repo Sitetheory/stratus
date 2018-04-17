@@ -202,10 +202,10 @@
       var status = _.first(resp.meta.status);
       if (status.code !== 'SUCCESS' && status.code !== 'NOTFOUND') {
         Stratus.Events.trigger('toast', status.message, status.code, 'danger');
-        if (!Stratus.Environment.production) console.trace('Error:', resp);
+        if (!Stratus.Environment.get('production')) console.trace('Error:', resp);
         this.trigger('error', this, resp, options);
       } else {
-        if (!Stratus.Environment.production) console.info('Success:', resp);
+        if (!Stratus.Environment.get('production')) console.info('Success:', resp);
         this.trigger('success', this, resp, options);
       }
 
