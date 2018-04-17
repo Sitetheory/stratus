@@ -28,7 +28,7 @@
       target: '@',
       sentinel: '@'
     },
-    controller: function ($scope, $attrs, $log, collection) {
+    controller: function ($scope, $attrs, $log, Collection) {
       // Initialize
       this.uid = _.uniqueId('permission_')
       Stratus.Instances[this.uid] = $scope
@@ -37,7 +37,7 @@
       // Permission Collection
       $scope.collection = null
       $scope.$watch('$ctrl.ngModel', function (data) {
-        if (data instanceof collection) {
+        if (data instanceof Collection) {
           $scope.collection = data
         }
       })
@@ -90,7 +90,7 @@
       }, true)
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/permission' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/permission' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

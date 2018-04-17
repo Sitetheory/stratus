@@ -50,7 +50,7 @@
               var componentUrl = 'sitetheorystratus/stratus/components/' +
                 underscoreToCamel(componentName)
               return Stratus.BaseUrl + componentUrl +
-                (Stratus.Environment.get('production') ? '.min' : '') + '.css'
+                (Stratus.Environment.production ? '.min' : '') + '.css'
             }
 
             function underscoreToCamel (inputString) {

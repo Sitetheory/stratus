@@ -57,6 +57,6 @@
       },
       templateUrl: Stratus.BaseUrl +
       'sitetheorystratus/stratus/components/proposalAlert' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      (Stratus.Environment.production ? '.min' : '') + '.html'
     }
   }))

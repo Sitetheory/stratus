@@ -9,17 +9,17 @@
       'underscore',
       'angular',
       'stratus.services.collection',
-      'stratus.services.model',
+      'stratus.services.model'
     ], factory)
-  }
-  else {
+  } else {
     factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
   // This Collection Service handles data binding for multiple objects with the
   // $http Service
   Stratus.Services.Registry = [
-    '$provide', function ($provide) {
+    '$provide',
+    function ($provide) {
       $provide.factory('Registry', [
         'Collection',
         'Model',
@@ -40,7 +40,7 @@
               return new $q(function (resolve, reject) {
                 if (angular.isString($element)) {
                   $element = {
-                    target: $element,
+                    target: $element
                   }
                 }
                 var options = {
@@ -54,7 +54,7 @@
                   decouple: $element.attr
                     ? $element.attr('data-decouple')
                     : $element.decouple,
-                  api: $element.attr ? $element.attr('data-api') : $element.api,
+                  api: $element.attr ? $element.attr('data-api') : $element.api
                 }
                 var completed = 0
                 $scope.$watch(function () {
@@ -72,8 +72,7 @@
                     if (angular.isDefined(initial)) {
                       options[key] = initial
                       completed++
-                    }
-                    else {
+                    } else {
                       $scope.$watch(function () {
                         return interpreter($scope.$parent)
                       }, function (value) {
@@ -83,8 +82,7 @@
                         }
                       })
                     }
-                  }
-                  else {
+                  } else {
                     completed++
                   }
                 })
@@ -109,32 +107,29 @@
                     data = new Model({
                       target: options.target,
                       manifest: options.manifest,
-                      stagger: true,
+                      stagger: true
                     }, {
-                      id: options.id,
+                      id: options.id
                     })
                     if (!options.decouple) {
                       Stratus.Catalog[options.target][id] = data
                     }
-                  }
-                  else if (Stratus.Catalog[options.target][id]) {
+                  } else if (Stratus.Catalog[options.target][id]) {
                     data = Stratus.Catalog[options.target][id]
                   }
-                }
-                else {
+                } else {
                   if (!Stratus.Catalog[options.target]) {
                     Stratus.Catalog[options.target] = {}
                   }
                   if (options.decouple ||
                     !Stratus.Catalog[options.target].collection) {
                     data = new Collection({
-                      target: options.target,
+                      target: options.target
                     })
                     if (!options.decouple) {
                       Stratus.Catalog[options.target].collection = data
                     }
-                  }
-                  else if (Stratus.Catalog[options.target].collection) {
+                  } else if (Stratus.Catalog[options.target].collection) {
                     data = Stratus.Catalog[options.target].collection
                   }
                 }
@@ -158,8 +153,7 @@
                   $scope.data = data
                   if (data instanceof Model) {
                     $scope.model = data
-                  }
-                  else if (data instanceof Collection) {
+                  } else if (data instanceof Collection) {
                     $scope.collection = data
                   }
                 }
@@ -170,6 +164,8 @@
               return data
             }
           }
-        }])
-    }]
+        }
+      ])
+    }
+  ]
 }))

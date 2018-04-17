@@ -23,16 +23,16 @@
     '$element',
     '$log',
     '$parse',
-    'registry',
+    'Registry',
     'createNewSite',
     'commonMethods',
     function (
-      $scope, $element, $log, $parse, registry, createNewSite, commonMethods) {
+      $scope, $element, $log, $parse, Registry, createNewSite, commonMethods) {
       // Store Instance
       Stratus.Instances[_.uniqueId('createNewSite_')] = $scope
 
       // Registry
-      $scope.registry = new registry()
+      $scope.registry = new Registry()
       $scope.registry.fetch($element, $scope)
 
       // Wrappers

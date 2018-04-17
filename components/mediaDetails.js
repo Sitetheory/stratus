@@ -95,7 +95,7 @@
 
         function deleteMedia () {
           var fileId = $ctrl.media.id
-          if (!Stratus.Environment.get('production')) {
+          if (!Stratus.Environment.production) {
             console.log(fileId)
           }
 
@@ -128,7 +128,7 @@
                 }
               },
               function (rejection) {
-                if (!Stratus.Environment.get('production')) {
+                if (!Stratus.Environment.production) {
                   console.log(rejection)
                 }
               })
@@ -242,7 +242,7 @@
                 media.getMedia($ctrl)
               },
               function (rejection) {
-                if (!Stratus.Environment.get('production')) {
+                if (!Stratus.Environment.production) {
                   console.log(rejection)
                 }
               })
@@ -252,6 +252,6 @@
     ],
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/mediaDetails' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

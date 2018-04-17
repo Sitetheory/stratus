@@ -11,7 +11,7 @@
   }
 }(this, function (Stratus, _) {
   // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.EditInline = function ($parse, $log, model) {
+  Stratus.Directives.EditInline = function ($parse, $log, Model) {
     return {
       restrict: 'A',
       require: 'ngModel',
@@ -146,7 +146,7 @@
 
         $scope.accept = function () {
           if (ctrl.initialized &&
-            $scope.model instanceof model &&
+            $scope.model instanceof Model &&
             $scope.property &&
             $scope.model.get($scope.property) !== $scope.value
           ) {
@@ -159,7 +159,7 @@
         }
         $scope.cancel = function () {
           if (ctrl.initialized &&
-            $scope.model instanceof model &&
+            $scope.model instanceof Model &&
             $scope.property) {
             $scope.value = $scope.model.get($scope.property)
           }
@@ -168,7 +168,7 @@
         // WATCHERS
 
         $scope.$watch('ngModel', function (data) {
-          if (data instanceof model && !_.isEqual(data, $scope.model)) {
+          if (data instanceof Model && !_.isEqual(data, $scope.model)) {
             $scope.model = data
             if (ctrl.initialized !== true) {
               var unwatch = $scope.$watch('model.data', function (dataCheck) {

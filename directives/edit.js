@@ -22,7 +22,7 @@
   }
 }(this, function (Stratus, _) {
   // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.Edit = function ($parse, $log, $timeout, model) {
+  Stratus.Directives.Edit = function ($parse, $log, $timeout, Model) {
     return {
       restrict: 'AE', // Element is required to transclude inner elements
       require: 'ngModel',
@@ -116,14 +116,14 @@
         }
 
         $scope.accept = function () {
-          if ($scope.model instanceof model && $scope.property) {
+          if ($scope.model instanceof Model && $scope.property) {
             $scope.model.set($scope.property, $scope.value)
             $scope.model.save()
           }
         }
 
         $scope.cancel = function () {
-          if ($scope.model instanceof model && $scope.property) {
+          if ($scope.model instanceof Model && $scope.property) {
             $scope.value = $scope.model.get($scope.property)
           }
           $scope.setEdit(false)
@@ -133,7 +133,7 @@
         // --------
 
         $scope.$watch('ngModel', function (data) {
-          if (data instanceof model && !_.isEqual(data, $scope.model)) {
+          if (data instanceof Model && !_.isEqual(data, $scope.model)) {
             $scope.model = data
             var unwatch = $scope.$watch('model.data', function (dataCheck) {
               if (dataCheck !== undefined) {
@@ -197,7 +197,7 @@
       templateUrl: function (elements, $scope) {
         var template = $scope.type || ''
         return Stratus.BaseUrl + 'sitetheorystratus/stratus/directives/edit' +
-          template + (Stratus.Environment.get('production') ? '.min' : '') +
+          template + (Stratus.Environment.production ? '.min' : '') +
           '.html'
       }
     }

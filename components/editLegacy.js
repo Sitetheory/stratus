@@ -32,7 +32,7 @@
       // focus out or Enter presses. Defaults to true
     },
     controller: function (
-      $scope, $element, $attrs, $timeout, model, commonMethods) {
+      $scope, $element, $attrs, $timeout, Model, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'edit')
       $scope.edit_input_container = $element[0].getElementsByClassName(
@@ -49,7 +49,7 @@
       $scope.model = null
       $scope.value = null
 
-      if (!model || !$scope.property) {
+      if (!Model || !$scope.property) {
         console.warn($scope.uid + ' has no model or property!')
         return
       }
@@ -85,14 +85,14 @@
       }
 
       $scope.accept = function () {
-        if ($scope.model instanceof model && $scope.property) {
+        if ($scope.model instanceof Model && $scope.property) {
           $scope.model.set($scope.property, $scope.value)
           $scope.model.save()
         }
       }
 
       $scope.cancel = function () {
-        if ($scope.model instanceof model && $scope.property) {
+        if ($scope.model instanceof Model && $scope.property) {
           $scope.value = $scope.model.get($scope.property)
         }
         $scope.setEdit(false)
@@ -101,7 +101,7 @@
       // WATCHERS
 
       $scope.$watch('$ctrl.ngModel', function (data) {
-        if (data instanceof model && !_.isEqual(data, $scope.model)) {
+        if (data instanceof Model && !_.isEqual(data, $scope.model)) {
           $scope.model = data
         }
       })
@@ -138,6 +138,6 @@
       })
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

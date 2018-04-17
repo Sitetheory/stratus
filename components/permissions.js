@@ -32,7 +32,7 @@
 
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
         'sitetheorystratus/stratus/components/permissions' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+        (Stratus.Environment.production ? '.min' : '') + '.css')
 
       // mock up list permissions
       $scope.permissionSelected = []
@@ -314,6 +314,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/permissions' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

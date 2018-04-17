@@ -48,11 +48,11 @@
       $scope,
       $mdPanel,
       $attrs,
-      registry,
+      Registry,
       details,
-      model,
+      Model,
       $sce,
-      collection,
+      Collection,
       $window,
       commonMethods,
       visualSelector,
@@ -82,7 +82,8 @@
           'Lorem ipsum',
           'Lorem ipsum',
           'Lorem ipsum',
-          'Lorem ipsum']
+          'Lorem ipsum'
+        ]
 
         // define methods
         $ctrl.sortBy = sortBy
@@ -205,13 +206,13 @@
 
       $scope.model = null
       $scope.$watch('$ctrl.ngModel', function (data) {
-        if (data instanceof model && data !== $scope.model) {
+        if (data instanceof Model && data !== $scope.model) {
           $scope.model = data
         }
       })
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/themeSelector' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/themeSelector' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

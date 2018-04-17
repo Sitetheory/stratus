@@ -28,7 +28,7 @@
         this.uid = _.uniqueId('password_reset_')
         Stratus.Internals.CssLoader(Stratus.BaseUrl +
           'sitetheorystratus/stratus/components/passwordReset' +
-          (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+          (Stratus.Environment.production ? '.min' : '') + '.css')
         Stratus.Instances[this.uid] = $scope
         $scope.elementId = $attrs.elementId || this.uid
 
@@ -149,6 +149,6 @@
       },
       templateUrl: Stratus.BaseUrl +
       'sitetheorystratus/stratus/components/passwordReset' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      (Stratus.Environment.production ? '.min' : '') + '.html'
     }
   }))

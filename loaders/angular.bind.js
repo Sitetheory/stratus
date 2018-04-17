@@ -257,7 +257,7 @@ Stratus.Loaders.Angular = function () {
       })
       if (!_.contains(cssLoaded, 'angular-material.css')) {
         css.push(
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
+          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.production ? '.min' : '') + '.css'
         )
       }
       if (Stratus('[froala]').length || Stratus.Directives.Froala) {

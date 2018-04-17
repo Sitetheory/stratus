@@ -17,7 +17,7 @@
       ngModel: '=',
       target: '@'
     },
-    controller: function ($scope, $attrs, registry) {
+    controller: function ($scope, $attrs, Registry) {
       Stratus.Instances[_.uniqueId('sort')] = $scope
       $scope.collection = ($scope.$parent && $scope.$parent.collection)
         ? $scope.$parent.collection
@@ -25,6 +25,6 @@
       $scope.query = ''
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/sort' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

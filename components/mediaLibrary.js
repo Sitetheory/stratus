@@ -47,7 +47,7 @@
       isSelector: '<'
     },
     controller: function (
-      $scope, $attrs, registry, $mdDialog, commonMethods, media) {
+      $scope, $attrs, Registry, $mdDialog, commonMethods, media) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'media_library',
         true)
@@ -68,7 +68,7 @@
         $ctrl.removeFromSelected = removeFromSelected
 
         // fetch media collection and hydrate to $scope.collection
-        $ctrl.registry = new registry()
+        $ctrl.registry = new Registry()
         $ctrl.registry.fetch({
           target: $attrs.target || 'Media',
           id: null,
@@ -135,18 +135,18 @@
       }
 
       function deleteMedia (fileId) {
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.log(fileId)
         }
 
         $mdDialog.show(
           $mdDialog.confirm()
-            .title('DELETE MEDIA')
-            .textContent(
-              'Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
-            .multiple(true)
-            .ok('Yes')
-            .cancel('No')
+          .title('DELETE MEDIA')
+          .textContent(
+            'Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+          .multiple(true)
+          .ok('Yes')
+          .cancel('No')
         ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
@@ -157,18 +157,18 @@
               } else {
                 $mdDialog.show(
                   $mdDialog.alert()
-                    .parent(angular.element(
-                      document.querySelector('#popupContainer')))
-                    .clickOutsideToClose(false)
-                    .title('Error')
-                    .multiple(true)
-                    .textContent(commonMethods.getStatus(response).message)
-                    .ok('Ok')
+                  .parent(angular.element(
+                    document.querySelector('#popupContainer')))
+                  .clickOutsideToClose(false)
+                  .title('Error')
+                  .multiple(true)
+                  .textContent(commonMethods.getStatus(response).message)
+                  .ok('Ok')
                 )
               }
             },
             function (rejection) {
-              if (!Stratus.Environment.get('production')) {
+              if (!Stratus.Environment.production) {
                 console.log(rejection.data)
               }
             })
@@ -240,7 +240,7 @@
       })
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/mediaLibrary' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      'sitetheorystratus/stratus/components/mediaLibrary' +
+      (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))

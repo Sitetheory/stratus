@@ -56,9 +56,9 @@
       $scope,
       $mdPanel,
       $attrs,
-      registry,
+      Registry,
       details,
-      model,
+      Model,
       $http,
       $sce,
       commonMethods,
@@ -114,7 +114,7 @@
       // Data Connectivity
       $scope.model = null
       $scope.$watch('$ctrl.ngModel', function (data) {
-        if (data instanceof model && data !== $scope.model) {
+        if (data instanceof Model && data !== $scope.model) {
           $scope.model = data
         }
       })
@@ -132,7 +132,7 @@
       }
 
       $scope.updateDetails = function (layoutData) {
-        if (!Stratus.Environment.get('production')) {
+        if (!Stratus.Environment.production) {
           console.log(layoutData)
         }
         $scope.selectedLayout = layoutData
@@ -162,6 +162,6 @@
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/visualSelector' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    (Stratus.Environment.production ? '.min' : '') + '.html'
   }
 }))
