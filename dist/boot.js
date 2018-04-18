@@ -600,7 +600,7 @@ boot.config({
     /* Common Libraries */
     bowser: boot.bundle + 'stratus/bower_components/bowser/src/bowser',
     chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart',
-    dropzone: '//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/' +
+    dropzone: boot.bundle + 'stratus/bower_components/dropzone/dist/' +
       boot.directory + 'dropzone-amd-module' + boot.suffix,
     fullcalendar: boot.bundle +
       'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
