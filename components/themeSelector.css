@@ -5,13 +5,13 @@
   background-color: whitesmoke;
 }
 .theme-selector #btn-primary.md-primary {
-  color: #FFFFFF;
+  color: #fff;
   margin: 0;
   padding: 3px 30px;
   text-transform: none;
   font-size: 14px;
   font-weight: 600;
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 .theme-selector h2 {
   text-transform: none;
@@ -19,7 +19,7 @@
 .theme-selector .selectedLayout .imageContainer {
   width: 200px;
   height: 250px;
-  background-color: #E1E1E1;
+  background-color: #e1e1e1;
 }
 .theme-selector .selectedLayout .imageContainer img {
   height: 100%;
@@ -53,7 +53,7 @@
   position: relative;
   margin-left: 0;
   margin-right: 1.5em;
-  background-color: #E1E1E1;
+  background-color: #e1e1e1;
 }
 .theme-selector .list-theme .templates .template .image:hover .overlay {
   bottom: 0;
@@ -76,7 +76,7 @@
   transition: 0.5s ease;
 }
 .theme-selector .list-theme .templates .template .image .overlay i {
-  color: #FFFFFF;
+  color: #fff;
   font-size: 30px;
   position: absolute;
   overflow: hidden;
@@ -94,7 +94,7 @@
   float: right;
 }
 .theme-selector .list-theme .templates .template .content .title .favorite {
-  color: #F44336;
+  color: #f44336;
 }
 .theme-selector .list-theme .templates .template .content .description p {
   color: rgba(0, 0, 0, 0.2);
@@ -128,7 +128,7 @@
   transform-origin: unset !important;
 }
 #zoom-view .pannel-content {
-  background: #FFFFFF;
+  background: #fff;
   padding: 1em;
   min-width: 500px;
   min-height: 500px;
@@ -149,25 +149,25 @@
   height: 500px;
 }
 #zoom-view .pannel-header {
-  background: #006CC3;
+  background: #006cc3;
   padding: 1em;
   padding-bottom: 0.5em;
 }
 #zoom-view .pannel-header h3 {
-  color: #FFFFFF;
+  color: #fff;
   display: inline-block;
 }
 #zoom-view .pannel-header i {
-  color: #FFFFFF;
+  color: #fff;
 }
 #zoom-view .pannel-header .favorite {
-  color: #F44336;
+  color: #f44336;
 }
 #zoom-view .pannel-header .btnClose svg g,
 #zoom-view .pannel-header .btnClose svg .oval {
-  stroke: #FFFFFF;
+  stroke: #fff;
 }
 #zoom-view .pannel-header .btnClose:hover svg g,
 #zoom-view .pannel-header .btnClose:hover svg .oval {
-  stroke: #FAFAFA;
+  stroke: #fafafa;
 }

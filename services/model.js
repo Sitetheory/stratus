@@ -438,10 +438,10 @@
              * @return boolean
              */
             this.isNewVersion = function (newData) {
-              return (!_.isEmpty(commonMethods.moreParams()) &&
+              return !_.isEmpty(commonMethods.moreParams()) &&
                 newData.version &&
-                parseInt(commonMethods.moreParams().version) !=
-                newData.version.id)
+                parseInt(commonMethods.moreParams().version) !==
+                newData.version.id
             }
 
             /**

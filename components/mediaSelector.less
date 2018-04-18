@@ -8,7 +8,6 @@ a {
   float: right;
   font-size: 13px;
 }
-
 .instructions a,
 .instructions a:link,
 .instructions a:visited,
@@ -16,18 +15,17 @@ a {
   text-decoration: underline;
   font-weight: bold;
 }
-
 .instructions a:hover {
   text-decoration: none;
 }
-
-.mediaSelector .smallLabel {
-  font-weight: bold;
-  font-size: 13px;
-}
-
-.mediaSelector .backgroundDark .smallLabel {
-  color: #CBCBCB;
+.mediaSelector {
+  .smallLabel {
+    font-weight: bold;
+    font-size: 13px;
+  }
+  .backgroundDark .smallLabel {
+    color: #CBCBCB;
+  }
 }
 
 /* Action buttons */
@@ -36,27 +34,22 @@ a {
   -webkit-transition: all 0.2s ease-out;
   opacity: 0.8;
 }
-
 .actionBtns a:hover {
   opacity: 1;
 }
-
 .actionBtns svg {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
-
 .actionBtns a:hover svg {
   transform: scale(1.1);
   -webkit-transform: scale(1.1);
 }
-
 .actionBtns svg g {
-  fill: #CCCCCC;
+  fill: #ccc;
 }
-
 .actionBtns a:hover svg g {
-  fill: #FFFFFF;
+  fill: #fff;
 }
 
 /* Draggable image */
@@ -70,17 +63,15 @@ a {
   position: relative;
   z-index: 100;
   padding: 3%;
-  background: #FFFFFF;
+  background: #fff;
   overflow: hidden;
 }
-
 .sectionContainer .selectedMediaLabel {
   margin-bottom: 18px;
   padding-bottom: 18px;
-  color: #111111;
-  border-bottom: 1px solid #DDDDDD;
+  color: #111;
+  border-bottom: 1px solid #ddd;
 }
-
 .sectionContainer ul {
   animation: itemsGrow 0.2s ease-out both;
   -webkit-animation: itemsGrow 0.2s ease-out both;
@@ -89,7 +80,6 @@ a {
   display: block;
   margin: 0 -2px;
 }
-
 .sectionContainer .shapeholder {
   width: 100%;
 }
@@ -100,35 +90,29 @@ a {
   width: 16.5%;
   padding: 2px;
 }
-
 .selectedContainer li.libraryToggle {
   padding: 0;
 }
-
 .selectedContainer li.libraryToggle a {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
   display: block;
 }
-
 .selectedContainer li.libraryToggle a:hover {
   border-color: rgba(0, 0, 0, 0.5);
 }
-
 .selectedContainer .libraryToggle md-icon {
   height: inherit;
   min-width: inherit;
   min-height: inherit;
   width: 50%;
 }
-
 .selectedContainer .libraryToggle svg g {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
-
 .selectedContainer .libraryToggle a:hover svg g {
-  fill: #111111;
+  fill: #111;
 }
 
 /* Media Library */
@@ -136,64 +120,52 @@ a {
   margin-top: 30px;
   background: rgba(0, 0, 0, 0.85);
 }
-
 .mediaLibrary .searchBar {
   margin: 0 0 20px;
 }
-
 .mediaLibraryContent {
   margin: 18px 0 10px;
   padding-top: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
-
 .mediaLibraryContent ul li {
   width: 10%;
   padding: 2px;
 }
-
 .mediaLibrary .imageDraggable {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
-
 .libraryItem:hover .imageDraggable {
   opacity: 0.5;
 }
-
 .libraryItem {
   animation: itemsGrow 0.2s ease-out both;
   -webkit-animation: itemsGrow 0.2s ease-out both;
   transform-origin: top left;
   -webkit-transform-origin: top left;
 }
-
 .libraryItem a {
   display: block;
 }
-
 .checkIcon {
   visibility: hidden;
   z-index: 20;
   width: 50%;
 }
-
 .checkIcon svg {
   transition: all 0.05s ease-out;
   -wekbit-transition: all 0.05s ease-out;
 }
-
 .addIcon,
 .minusIcon {
   visibility: hidden;
   z-index: 100;
   width: 65%;
 }
-
 a:hover .addIcon,
 a.minus_icon:hover .minusIcon {
   visibility: visible;
 }
-
 .addIcon svg,
 .minusIcon svg {
   transition: all 0.1s ease-out;
@@ -202,38 +174,33 @@ a.minus_icon:hover .minusIcon {
   -webkit-transform: scale(0.3);
   opacity: 0;
 }
-
 a:hover .addIcon svg,
 a.minus_icon:hover .minusIcon svg {
   transform: scale(1);
   -webkit-transform: scale(1);
   opacity: 1;
 }
-
 a.minus_icon .addIcon {
   visibility: hidden;
 }
-
 .addIcon md-icon,
 .minusIcon md-icon,
 .checkIcon md-icon {
   width: 100%;
   height: inherit;
 }
-
 .addIcon md-icon svg,
 .minusIcon md-icon svg,
 .checkIcon md-icon svg {
   transform-origin: center center;
   -webkit-transform-origin: center center;
-  fill: #FFFFFF;
+  fill: #fff;
 
 }
-
 .addIcon md-icon svg g,
 .minusIcon md-icon svg g,
 .checkIcon md-icon svg g {
-  fill: #FFFFFF;
+  fill: #fff;
 
 }
 
@@ -255,51 +222,44 @@ a.minus_icon .addIcon {
   padding: 0;
   width: 150px;
   text-align: center;
-  color: #FFFFFF;
+  color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-
 .libraryItem:hover .imageInfoContainer {
   transform: translate(-50%, -94%) scale(1);
   -wekbit-transform: translate(-50%, -94%) scale(1);
   visibility: visible;
   opacity: 1;
 }
-
 .imageHoverInfo {
   overflow: hidden;
   position: relative;
   z-index: 99;
   padding: 12px 12px 40px;
-  background: #222222;
+  background: #222;
   margin: 0;
-  color: #FFFFFF;
+  color: #fff;
   height: 120px;
 }
-
 .imageHoverInfo .fileType {
-  color: #DDDDDD;
+  color: #ddd;
 }
-
 .imageHoverInfo .delimiter {
   padding-right: 6px;
   margin-right: 8px;
   border-right: 1px solid rgba(255, 255, 255, 0.3);
 }
-
 .imageHoverInfo .fileSize {
-  color: #AAAAAA;
+  color: #aaa;
 }
-
 .imageHoverInfo .imgTitle {
   overflow: hidden;
   padding-bottom: 5px;
   margin: 5px 0 0;
   max-height: 36px;
   font-size: 13px;
-  color: #CCCCCC;
+  color: #ccc;
 }
-
 .imageHoverInfo .positionActionArea {
   position: absolute;
   left: 12px;
@@ -308,15 +268,12 @@ a.minus_icon .addIcon {
   padding-top: 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
-
 .imageHoverInfo .actionBtns {
   margin: 0 auto;
 }
-
 .imageHoverInfo .actionBtns a {
   display: inline-block;
 }
-
 .imageInfoContainer::after {
   content: '';
   transform: translateX(-50%);
@@ -326,7 +283,7 @@ a.minus_icon .addIcon {
   left: 50%;
   width: 0;
   height: 0;
-  border-top: 8px solid #222222;
+  border-top: 8px solid #222;
   border-right: 8px solid transparent;
   border-left: 8px solid transparent;
 }
@@ -335,7 +292,6 @@ a.minus_icon .addIcon {
 .mediaLibrary .paginator {
   margin-top: 18px;
 }
-
 .mediaLibrary .paginator .paginatorPages a {
   display: inline-block;
   margin: 0 3px;
@@ -343,7 +299,6 @@ a.minus_icon .addIcon {
   font-weight: bold;
   border: 1px solid rgba(200, 200, 200, 0.1);
 }
-
 .mediaLibrary .paginator .paginatorPrevious a,
 .mediaLibrary .paginator .paginatorNext a {
   display: inline-block;
@@ -351,7 +306,6 @@ a.minus_icon .addIcon {
   border: 1px solid rgba(200, 200, 200, 0.1);
   background: rgba(66, 66, 66, 0.2);
 }
-
 .mediaLibrary .paginator .paginatorPrevious a:hover,
 .mediaLibrary .paginator .paginatorNext a:hover {
   background: rgba(66, 66, 66, 0.7);
@@ -362,20 +316,17 @@ a.minus_icon .addIcon {
   padding: 6%;
   width: 100%;
 }
-
 .mediaDialogue.backgroundDark {
   background: rgba(30, 30, 30, 0.95);
 }
-
 .mediaDialogue .titleContainer {
   margin-bottom: 22px;
   padding-bottom: 22px;
   border-bottom: 1px solid rgba(200, 200, 200, 0.3);
 }
-
 .mediaDialogue .titleContainer h2 {
   margin: 0;
-  color: #DDDDDD;
+  color: #ddd;
 }
 
 /* Full info window */
@@ -386,18 +337,15 @@ a.minus_icon .addIcon {
   padding: 28px;
   position: relative;
 }
-
 .mediaInfoFull .btnClose {
   float: none;
   position: absolute;
   right: 20px;
   top: 20px;
 }
-
 .mediaInfoFull .btnClose svg g {
-  stroke: #FFFFFF;
+  stroke: #fff;
 }
-
 .mediaInfoFull .tagContainer {
   /* Make room for close button */
   padding-right: 50px;
@@ -416,18 +364,15 @@ a.minus_icon .addIcon {
   padding-top: 0;
   padding-bottom: 0;
 }
-
 .mediaInfoFull .tagContainer .btn.btnAdd {
   padding: 4px;
   height: 32px;
   border-radius: 4px;
 }
-
 .mediaInfoFull .tagContainer .smallLabel {
   margin: 9px 6px 0 0;
   font-weight: bold;
 }
-
 .mediaInfoFull .tagContainer md-chip {
   margin: 0 7px 0 0;
 }
@@ -436,43 +381,35 @@ a.minus_icon .addIcon {
 .mediaInfoFull .description {
   margin-top: 30px;
   line-height: 1.3;
-  color: #BBBBBB;
+  color: #bbb;
 }
-
 .mediaSpecs .smallLabel {
   margin: 0 0 6px;
   font-size: 12px;
   letter-spacing: 1px;
 }
-
 .mediaSpecs .smallLabel span {
-  color: #FFFFFF;
+  color: #fff;
   font-weight: bold;
 }
-
 .mediaInfoFull .actionBtns {
   margin-bottom: 30px;
 }
-
 .mediaInfoFull .actionBtns a {
   display: block;
   padding: 10px;
   border: 1px solid rgba(200, 200, 200, 0.3);
 }
-
 .mediaInfoFull .actionBtns a:hover {
-  border-color: #FFFFFF;
+  border-color: #fff;
 }
-
 .mediaInfoFull .actionBtns a svg g {
-  fill: #FFFFFF;
+  fill: #fff;
 }
-
 .infoFullImage {
   margin-left: 20px;
   background: rgba(200, 200, 200, 0.06);
 }
-
 .infoFullImage img {
   display: block;
   margin: 0 auto;
@@ -485,7 +422,6 @@ a.minus_icon .addIcon {
     padding-right: 0;
     text-align: left;
   }
-
   .infoFullImage {
     margin: 0 0 20px 0;
   }
@@ -498,11 +434,9 @@ a.minus_icon .addIcon {
   width: 100%;
   max-width: 640px;
 }
-
 .dropContainer .titleContainer h2 {
   margin-top: 6px;
 }
-
 .dropContainer .btnDone,
 .dropContainer .btnDone:link,
 .dropContainer .btnDone:visited,
@@ -516,66 +450,55 @@ a.minus_icon .addIcon {
   min-width: inherit;
   font-size: 11px;
   font-weight: bold;
-  color: #222222;
-  background: #E2E2E2;
+  color: #222;
+  background: #e2e2e2;
 }
-
 .dropContainer .btnDone:hover,
 .dropContainer .md-button.md-default-theme:not([disabled]):hover,
 .dropContainer .md-button:not([disabled]):hover {
-  color: #FFFFFF;
-  background: #FE7C57;
+  color: #fff;
+  background: #fe7c57;
 }
-
 .dropContainer .btnDone .btnGradientLight {
   background: -webkit-linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
   background: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
-
 .dropContainer .btnDone:hover .btnGradientLight {
   opacity: 0.2;
 }
-
 .dropContainer .btnDone .btnText {
   position: relative;
   z-index: 20;
 }
-
 .dropContainer .instructions {
   margin-top: 10px;
 }
-
 .dropContainer .progressPercentage {
   margin-bottom: 3px;
   font-size: 12px;
   opacity: 0;
 }
-
 .dropContainer .progress {
   transition: all 0.2s ease-out;
   margin-top: 1px;
   height: 12px;
   opacity: 0;
-  background: #FFFFFF;
+  background: #fff;
 }
-
 .dropContainer .progressVisible .progressPercentage,
 .dropContainer .progressVisible .progress {
   opacity: 1;
 }
-
 .dropContainer .progressColorBar {
-  background: #FE7C57 none repeat scroll 0 0;
+  background: #fe7c57 none repeat scroll 0 0;
   height: 12px;
 }
-
 .dropContainer .droppedImage {
   transition: all 0.2s ease-out;
   position: relative;
   opacity: 0.8;
   background: rgba(202, 202, 202, 0.12);
 }
-
 .droppedImage img {
   transition: all 0.2s ease-out;
   display: block;
@@ -584,7 +507,6 @@ a.minus_icon .addIcon {
   max-height: 125px;
   opacity: 0.8;
 }
-
 .progressVisible .droppedImage img {
   opacity: 1;
 }
@@ -610,7 +532,6 @@ md-input-container label {
   .droppedImage img {
     height: 125px;
   }
-
   .droppedImage img {
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
@@ -619,36 +540,34 @@ md-input-container label {
     top: 50%;
   }
 }
-
-.droppedUnknown md-icon {
-  display: block;
-  margin: 0 auto;
-  width: 80%;
-  height: inherit;
+.droppedUnknown {
+  md-icon {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: inherit;
+  }
+  #linearGradient-iconDocument {
+    .stop1 {
+      stop-color: #FFFFFF;
+      stop-opacity: 0.7;
+    }
+    .stop2 {
+      stop-color: #FFFFFF;
+      stop-opacity: 0.5;
+    }
+  }
 }
-
-.droppedUnknown #linearGradient-iconDocument .stop1 {
-  stop-color: #FFFFFF;
-  stop-opacity: 0.7;
-}
-
-.droppedUnknown #linearGradient-iconDocument .stop2 {
-  stop-color: #FFFFFF;
-  stop-opacity: 0.5;
-}
-
 .dropContainer {
   min-height: 150px;
   padding: 28px;
-}
-
-.dropContainer ul {
-  margin: 0 -4px;
-}
-
-.dropContainer ul li {
-  position: relative;
-  margin-bottom: 60px;
+  ul {
+    margin: 0 -4px;
+    li {
+      position: relative;
+      margin-bottom: 60px;
+    }
+  }
 }
 
 @media (min-width: 480px) {
@@ -657,7 +576,6 @@ md-input-container label {
     width: 32.3%;
   }
 }
-
 .droppedItem:hover .progressVisible .droppedImage {
   opacity: 0.2;
 }
@@ -670,57 +588,46 @@ md-input-container label {
     opacity: 1;
   }
 }
-
 .uploadComplete .successCheck {
   animation: animateCheck ease-out 1.5s 0s;
 }
-
-.hoverItems {
-  margin-top: 24px;
-  padding: 2px 10%;
-  width: 100%;
-  color: #FFFFFF;
-  text-align: center;
-}
-
-.hoverItems .actionBtns {
-  transition: all 0.2s ease-out;
-  display: none;
-}
-
 .droppedItem:hover .hoverItems .actionBtns {
   display: block;
 }
-
-.hoverItems button {
-  background: none;
-  border: none;
-}
-
 .droppedImageInfo {
   margin-bottom: 8px;
   word-wrap: break-word;
   text-align: center;
 }
-
-.hoverItems md-icon {
-  height: inherit;
-  width: 60%;
+.hoverItems {
+  margin-top: 24px;
+  padding: 2px 10%;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  .actionBtns {
+    transition: all 0.2s ease-out;
+    display: none;
+  }
+  button {
+    background: none;
+    border: none;
+  }
+  md-icon {
+    height: inherit;
+    width: 60%;
+  }
+  .hover-tick md-icon {
+    width: 36%;
+    max-width: 70px;
+  }
+  svg g {
+    fill: #FFFFFF;
+  }
 }
-
-.hoverItems .hover-tick md-icon {
-  width: 36%;
-  max-width: 70px;
-}
-
-.hoverItems svg g {
-  fill: #FFFFFF;
-}
-
 .dragBorder {
-  border: 2px solid #FFFFFF;
+  border: 2px solid #fff;
 }
-
 .dragCursor li {
   cursor: pointer;
 }
@@ -729,7 +636,6 @@ md-input-container label {
   .dropContainer ul li {
     display: block;
   }
-
   .optional {
     display: none;
   }
@@ -741,12 +647,11 @@ md-input-container label {
   margin: 0 auto;
   padding: 8px;
   width: 100%;
-  color: #FFFFFF;
+  color: #fff;
   text-align: center;
   border-radius: 2px;
-  background: #BE2626;
+  background: #be2626;
 }
-
 .droppedItem:hover .errorMessage {
   display: block;
 }
@@ -762,7 +667,6 @@ md-input-container label {
   width: 100%;
   z-index: 9;
 }
-
 .layerBlack {
   position: relative;
   float: left;

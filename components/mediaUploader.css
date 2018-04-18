@@ -23,7 +23,7 @@
   text-transform: none;
 }
 .media-uploader .content .files.dropContainer .upload-zone h2 a {
-  color: #FF9800;
+  color: #ff9800;
 }
 .media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem {
   width: 20%;
@@ -84,7 +84,7 @@
 }
 .media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .hoverItems .fa-times-circle {
   font-size: 60px;
-  color: #F44336;
+  color: #f44336;
   top: 50%;
   left: 50%;
   position: absolute;
@@ -102,7 +102,7 @@
 .media-uploader .content .videos .link-list .link,
 .media-uploader .content .links .link-list .link {
   border-radius: 3px;
-  background-color: #FAFAFA;
-  border: 1px solid #E1E1E1;
+  background-color: #fafafa;
+  border: 1px solid #e1e1e1;
   margin-bottom: 20px;
 }
