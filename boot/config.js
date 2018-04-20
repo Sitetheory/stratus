@@ -224,8 +224,6 @@ boot.config({
       'stratus/controllers/invoiceProductFilter' + boot.suffix,
     'stratus.controllers.userFilter': boot.bundle +
       'stratus/controllers/userFilter' + boot.suffix,
-    'stratus.controllers.invoiceProduct': boot.bundle +
-      'stratus/controllers/invoiceProduct' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' +
