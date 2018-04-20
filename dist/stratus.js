@@ -92,6 +92,7 @@ var Stratus = {
   /* Angular */
   Apps: {},
   Catalog: {},
+  Compendium: {},
   Components: {},
   Controllers: {},
   Directives: {},
