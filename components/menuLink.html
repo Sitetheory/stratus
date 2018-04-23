@@ -2,5 +2,5 @@
   {{ $ctrl.value }}
 </span>
 <span class="stratus_edit_input_container" ng-cloak ng-show="$ctrl.allowEdit" tabindex="-1">
-  <input id="edit-menulink" type="text" ng-model="$ctrl.value" ng-blur="$ctrl.accept()" ng-keyup="$ctrl.handleKeyup($event)">
+  <input id="edit-menulink" type="text" ng-model="$ctrl.value" ng-blur="$ctrl.finishEdit()" ng-keyup="$ctrl.handleKeyup($event)">
 </span>

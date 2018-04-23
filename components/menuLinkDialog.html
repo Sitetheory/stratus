@@ -20,7 +20,7 @@
             <i class="fas fa-trash-alt" aria-hidden="true"></i>
           </a>
         </li>
-        <li class="linkEditButton button3 addChild" ng-click="addChild(); collection.add({name:'Untitled Child', parent: model.data.parent, nestParent: model.data.id},{save: true});">
+        <li class="linkEditButton button3 addChild" ng-click="addChild()">
           <a href="">
             <md-tooltip>Add link</md-tooltip>
             <i class="fas fa-plus" aria-hidden="true"></i>
@@ -73,10 +73,11 @@
       <!-- Priority Control -->
       <h4 class="smallLabel fontBody linkageListLabel">Priority</h4>
       <div class="fontBody">
-        <a ng-click="model.data.priority = (model.data.priority || 0) + 1;" aria-label="Increase Priority">
+        <a ng-click="changePriority(1)" aria-label="Increase Priority">
           <i class="fa fa-chevron-up" aria-hidden="true"></i>
-        </a> {{ model.data.priority || 0 }}
-        <a ng-click="model.data.priority = (model.data.priority || 0) - 1;" aria-label="Decrease Priority">
+        </a>
+        {{ menuLink.priority || 0 }}
+        <a ng-click="changePriority(-1)" aria-label="Decrease Priority">
           <i class="fa fa-chevron-down" aria-hidden="true"></i>
         </a>
       </div>

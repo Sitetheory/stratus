@@ -49,17 +49,21 @@
         $ctrl.showDialog = false
         $ctrl.allowEdit = false
         $ctrl.value = $ctrl.menuLink.name
-        $ctrl.edit_input_container = $element[0].getElementsByClassName('stratus_edit_view_container')[0]
 
         // Methods
         $ctrl.setEdit = setEdit
         $ctrl.accept = accept
         $ctrl.handleKeyup = handleKeyup
         $ctrl.show = show
+        $ctrl.finishEdit = finishEdit
+      }
+
+      function finishEdit () {
+        accept()
+        setEdit(false)
       }
 
       function setEdit (bool) {
-        $ctrl.edit_input_container.focus()
         if (bool) {
           $ctrl.allowEdit = bool
         } else {
@@ -115,6 +119,8 @@
               versionData: $ctrl.versionData.meta.links
             },
             controller: function ($scope, mdPanelRef, menuLink, versionData) {
+              $scope.menuLink = menuLink
+
               $scope.close = function () {
                 if (mdPanelRef) {
                   accept()
@@ -140,7 +146,18 @@
               }
 
               $scope.addChild = function () {
-                console.log('add child')
+                var childLink = {
+                  name: 'Untitled Child',
+                  parent: menuLink.parent,
+                  nestParent: {
+                    id: menuLink.id
+                  }
+                }
+                versionData.push(childLink)
+              }
+
+              $scope.changePriority = function (priority) {
+                $scope.menuLink.priority = ($scope.menuLink.priority || 0) + priority
               }
             }
           })
