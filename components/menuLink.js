@@ -11,6 +11,7 @@
       'angular-material',
 
       // Services
+      'stratus.services.collection',
       'stratus.services.commonMethods'
     ], factory)
   } else {
@@ -39,7 +40,7 @@
       autoSave: '@', // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
       froalaOptions: '=' // Expects JSON. Options pushed to froala need to be initialized, so it will be a one time push
     },
-    controller: function ($q, $scope, $attrs, $element, $mdPanel, commonMethods, $timeout, $window) {
+    controller: function ($q, $scope, $attrs, $element, $mdPanel, Collection, commonMethods, $timeout, $window) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'menu_link', true)
 
@@ -106,7 +107,6 @@
 
           $mdPanel.open({
             attachTo: angular.element(document.body),
-            // template: $scope.template || 'Template Not Found!',
             templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/menuLinkDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
             panelClass: 'dialogueContainer',
             position: position,
@@ -119,20 +119,30 @@
               versionData: $ctrl.versionData.meta.links
             },
             controller: function ($scope, mdPanelRef, menuLink, versionData) {
-              $scope.menuLink = menuLink
+              var dc = this
 
-              $scope.close = function () {
+              dc.$onInit = function () {
+                dc.menuLink = menuLink
+
+                if (menuLink.content) {
+                  dc.linkTo = menuLink.content.version
+                } else if (menuLink.url) {
+                  dc.linkTo = menuLink.url
+                }
+              }
+
+              dc.close = function () {
                 if (mdPanelRef) {
                   accept()
                   mdPanelRef.close()
                 }
               }
 
-              $scope.toggle = function () {
+              dc.toggle = function () {
                 console.log('toggle')
               }
 
-              $scope.destroy = function () {
+              dc.destroy = function () {
                 // remove child menu link
                 for (var i = 0; i < versionData.length; i++) {
                   var elem = versionData[i]
@@ -145,7 +155,7 @@
                 versionData.splice(versionData.indexOf(menuLink), 1)
               }
 
-              $scope.addChild = function () {
+              dc.addChild = function () {
                 var childLink = {
                   name: 'Untitled Child',
                   parent: menuLink.parent,
@@ -156,10 +166,38 @@
                 versionData.push(childLink)
               }
 
-              $scope.changePriority = function (priority) {
-                $scope.menuLink.priority = ($scope.menuLink.priority || 0) + priority
+              dc.changePriority = function (priority) {
+                dc.menuLink.priority = (dc.menuLink.priority || 0) + priority
               }
-            }
+
+              dc.getContentForMenu = function (query, target, urlRoot) {
+                var collection = new Collection()
+                collection.target = target
+                collection.urlRoot = urlRoot
+                return collection.filter(query).then(function (response) {
+                  return response
+                })
+              }
+
+              dc.handleSelection = function (query, type) {
+                switch (type) {
+                  case 'content':
+                    dc.menuLink.url = null
+                    dc.menuLink.content = query.data
+                    break
+                  case 'url':
+                    dc.menuLink.url = query
+                    dc.menuLink.content = null
+                    break
+                  case 'menulink':
+                    if (query.data) {
+                      dc.menuLink.nestParent = query.data
+                    }
+                    break
+                }
+              }
+            },
+            controllerAs: 'ctrl'
           })
         }
       }

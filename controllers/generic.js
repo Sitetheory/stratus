@@ -56,12 +56,6 @@
       }
       $scope.$log = $log
 
-      $scope.$watch('model.data', function (oldVal, newVal) {
-        if (newVal) {
-          $scope.linkTo = newVal.content || newVal.url
-        }
-      })
-
       // Type Checks
       $scope.isArray = angular.isArray
       $scope.isDate = angular.isDate
@@ -72,27 +66,6 @@
       $scope.isObject = angular.isObject
       $scope.isString = angular.isString
       $scope.isUndefined = angular.isUndefined
-
-      $scope.getContentForMenu = function (query) {
-        return $scope.collection.filter(query).then(function (res) {
-          return res.map(function (item) {
-            return item.data
-          })
-        })
-      }
-
-      $scope.handleSelection = function (change, type) {
-        switch (type) {
-          case 'content':
-            $scope.model.data.url = null
-            $scope.model.data.content = change
-            break
-          case 'url':
-            $scope.model.data.content = null
-            $scope.model.data.url = change
-            break
-        }
-      }
 
       $scope.createSite = function (
         siteTitle, siteGenreId, masterSite, masterContentMethod) {
