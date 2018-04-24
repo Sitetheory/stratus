@@ -9,10 +9,9 @@
       'underscore',
       'angular',
       'angular-material',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory)
-  }
-  else {
+  } else {
     factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
@@ -108,7 +107,7 @@
                     that.isNewVersion(newData)) {
                     window.location.replace(
                       Stratus.Internals.SetUrlParams({
-                        id: newData.id,
+                        id: newData.id
                       })
                     )
                   }
@@ -136,8 +135,8 @@
              */
             this.getHash = function () {
               return this.getType() +
-                (_.isNumber(this.getIdentifier()) ? this.getIdentifier().
-                  toString() : this.getIdentifier())
+                (_.isNumber(this.getIdentifier()) ? this.getIdentifier()
+                  .toString() : this.getIdentifier())
             }
 
             /**
@@ -166,8 +165,7 @@
               angular.forEach(obj, function (value, key) {
                 if (angular.isObject(value)) {
                   str.push(that.serialize(value, key))
-                }
-                else {
+                } else {
                   var encoded = ''
                   if (chain) {
                     encoded += chain + '['
@@ -195,15 +193,14 @@
                 var prototype = {
                   method: action,
                   url: that.url(),
-                  headers: {},
+                  headers: {}
                 }
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
                       prototype.url += '&' + that.serialize(data)
                     }
-                  }
-                  else {
+                  } else {
                     prototype.headers['Content-Type'] = 'application/json'
                     prototype.data = JSON.stringify(data)
                   }
@@ -219,12 +216,10 @@
                     if (angular.isArray(convoy) && convoy.length) {
                       that.data = _.first(that.data)
                       that.error = false
-                    }
-                    else if (angular.isObject(convoy)) {
+                    } else if (angular.isObject(convoy)) {
                       that.data = convoy
                       that.error = false
-                    }
-                    else {
+                    } else {
                       that.error = true
                     }
 
@@ -245,8 +240,7 @@
                     // Promise
                     angular.copy(that.data, that.initData)
                     resolve(that.data)
-                  }
-                  else {
+                  } else {
                     // XHR Flags
                     that.pending = false
                     that.error = true
@@ -273,14 +267,14 @@
              * @returns {*}
              */
             this.fetch = function (action, data) {
-              return that.sync(action, data || that.meta.get('api')).
-                catch(function (message) {
+              return that.sync(action, data || that.meta.get('api'))
+                .catch(function (message) {
                   $mdToast.show(
-                    $mdToast.simple().
-                      textContent('Failure to Fetch!').
-                      toastClass('errorMessage').
-                      position('top right').
-                      hideDelay(3000)
+                    $mdToast.simple()
+                      .textContent('Failure to Fetch!')
+                      .toastClass('errorMessage')
+                      .position('top right')
+                      .hideDelay(3000)
                   )
                   $log.error('FETCH:', message)
                 })
@@ -293,17 +287,28 @@
               that.saving = true
               return that.sync(that.getIdentifier() ? 'PUT' : 'POST',
                 that.toJSON({
-                  patch: true,
+                  patch: true
                 })).catch(function (message) {
-                $mdToast.show(
-                  $mdToast.simple().
-                    textContent('Failure to Save!').
-                    toastClass('errorMessage').
-                    position('top right').
-                    hideDelay(3000)
+                  $mdToast.show(
+                  $mdToast.simple()
+                    .textContent('Failure to Save!')
+                    .toastClass('errorMessage')
+                    .position('top right')
+                    .hideDelay(3000)
                 )
-                $log.error('SAVE:', message)
-              })
+                  $log.error('SAVE:', message)
+                })
+            }
+
+            /**
+             * @returns {*}
+             */
+            this.specialAction = function (action) {
+              this.meta.temp('api.options.apiSpecialAction', action)
+              this.save()
+              if (this.meta.get('api') && this.meta.get('api').hasOwnProperty('options') && this.meta.get('api').options.hasOwnProperty('apiSpecialAction')) {
+                delete this.meta.get('api').options.apiSpecialAction
+              }
             }
 
             /**
@@ -343,7 +348,7 @@
               data = that.data
               data = that.meta.has('api') ? {
                 meta: that.meta.get('api'),
-                payload: data,
+                payload: data
               } : data
               if (that.meta.size() > 0) {
                 that.meta.clearTemp()
@@ -364,7 +369,7 @@
             this.bracket = {
               match: /\[[\d+]]/,
               search: /\[([\d+])]/g,
-              attr: /(^[^\[]+)/,
+              attr: /(^[^\[]+)/
             }
 
             /**
@@ -386,8 +391,7 @@
                   if (cur !== null) {
                     acc.push(cur[1])
                     cur = null
-                  }
-                  else {
+                  } else {
                     cur = false
                   }
 
@@ -398,15 +402,13 @@
                       cur = parseInt(search[1])
                       if (!isNaN(cur)) {
                         acc.push(cur)
-                      }
-                      else {
+                      } else {
                         cur = false
                       }
                     }
                     search = that.bracket.search.exec(link)
                   }
-                }
-                else {
+                } else {
                   // normal attributes
                   acc.push(link)
                 }
@@ -422,8 +424,7 @@
               if (typeof attr !== 'string' || !that.data ||
                 typeof that.data !== 'object') {
                 return undefined
-              }
-              else {
+              } else {
                 return that.buildPath(attr).reduce(function (attrs, link) {
                   return attrs && attrs[link]
                 }, that.data)
@@ -453,8 +454,7 @@
                 _.each(attr, function (value, attr) {
                   that.setAttribute(attr, value)
                 }, this)
-              }
-              else {
+              } else {
                 that.setAttribute(attr, value)
               }
             }
@@ -467,8 +467,8 @@
               if (typeof attr === 'string' &&
                 (_.contains(attr, '.') || _.contains(attr, '['))) {
                 var future
-                that.buildPath(attr).
-                  reduce(function (attrs, link, index, chain) {
+                that.buildPath(attr)
+                  .reduce(function (attrs, link, index, chain) {
                     future = index + 1
                     if (!_.has(attrs, link)) {
                       attrs[link] = _.has(chain, future) &&
@@ -479,8 +479,7 @@
                     }
                     return attrs && attrs[link]
                   }, that.data)
-              }
-              else {
+              } else {
                 that.data[attr] = value
               }
               /* TODO: that.trigger('change:' + attr, value); */
@@ -499,7 +498,7 @@
                 options.strict = true
               }
               options = _.extend({
-                multiple: true,
+                multiple: true
               }, angular.isObject(options) ? options : {})
               /* TODO: After plucking has been tested, remove this log *
               $log.log('toggle:', attribute, item, options);
@@ -515,8 +514,7 @@
               }
               if (angular.isUndefined(item)) {
                 that.set(attribute, !target)
-              }
-              else if (angular.isArray(target)) {
+              } else if (angular.isArray(target)) {
                 /* This is disabled, since hydration should not be forced by default *
                 var hydrate = {};
                 if (request.length > 1) {
@@ -529,8 +527,7 @@
                 /* */
                 if (!that.exists(attribute, item)) {
                   target.push(item)
-                }
-                else {
+                } else {
                   _.each(target, function (element, key) {
                     var child = (request.length > 1 &&
                       angular.isObject(element) && request[1] in element)
@@ -549,8 +546,7 @@
                     }
                   })
                 }
-              }
-              else if (typeof target === 'object' ||
+              } else if (typeof target === 'object' ||
                 typeof target === 'number') {
                 // (item && typeof item !== 'object') ? { id: item } : item
                 that.set(attribute,
@@ -581,8 +577,7 @@
                     }
                   }
                 }
-              }
-              else {
+              } else {
                 return that.get(attribute)
               }
               return undefined
@@ -597,8 +592,7 @@
               if (!item) {
                 attribute = that.get(attribute)
                 return typeof attribute !== 'undefined' && attribute
-              }
-              else if (typeof attribute === 'string' && item) {
+              } else if (typeof attribute === 'string' && item) {
                 attribute = that.pluck(attribute)
                 if (angular.isArray(attribute)) {
                   return typeof attribute.find(function (element) {
@@ -607,8 +601,7 @@
                       element.id === item || _.isEqual(element, item)
                     )
                   }) !== 'undefined'
-                }
-                else {
+                } else {
                   return attribute === item || (
                     angular.isObject(attribute) && attribute.id && (
                       _.isEqual(attribute, item) || attribute.id === item
@@ -630,11 +623,11 @@
               if (that.getIdentifier()) {
                 that.sync('DELETE', {}).catch(function (message) {
                   $mdToast.show(
-                    $mdToast.simple().
-                      textContent('Failure to Delete!').
-                      toastClass('errorMessage').
-                      position('top right').
-                      hideDelay(3000)
+                    $mdToast.simple()
+                      .textContent('Failure to Delete!')
+                      .toastClass('errorMessage')
+                      .position('top right')
+                      .hideDelay(3000)
                   )
                   $log.error('DESTROY:', message)
                 })
@@ -648,14 +641,14 @@
               if (that.manifest && !that.getIdentifier()) {
                 that.sync('POST', that.meta.has('api') ? {
                   meta: that.meta.get('api'),
-                  payload: {},
+                  payload: {}
                 } : {}).catch(function (message) {
                   $mdToast.show(
-                    $mdToast.simple().
-                      textContent('Failure to Manifest!').
-                      toastClass('errorMessage').
-                      position('top right').
-                      hideDelay(3000)
+                    $mdToast.simple()
+                      .textContent('Failure to Manifest!')
+                      .toastClass('errorMessage')
+                      .position('top right')
+                      .hideDelay(3000)
                   )
                   $log.error('MANIFEST:', message)
                 })
@@ -665,7 +658,7 @@
               this.initialize()
             }
           }
-        },
+        }
       ])
     }]
 }))
