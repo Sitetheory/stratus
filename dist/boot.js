@@ -1,6 +1,8 @@
 // Environment
 // -----------
 
+/* global cacheTime, config */
+
 var boot = {
   // Environment
   dev: (typeof document.cookie === 'string' &&
@@ -8,7 +10,7 @@ var boot = {
   local: (typeof document.cookie === 'string' &&
     // we are disabling the CDN until it is ready.
     document.cookie.indexOf('local=') !== -1) || true,
-  cacheTime: (typeof cacheTime !== 'undefined') ? cacheTime : '2',
+  cacheTime: typeof cacheTime !== 'undefined' ? cacheTime : '2',
 
   // Locations
   host: '',
@@ -53,16 +55,16 @@ boot.config = function (configuration, options) {
     !configuration.paths ? {paths: configuration} : configuration)
 }
 if (typeof config !== 'undefined') {
-  if (typeof config === 'function') {
-    config = config(boot)
-  }
-  if (typeof config === 'object' && config) {
-    boot.config(config)
+  var localConfig = typeof config === 'function' ? config(boot) : config
+  if (typeof localConfig === 'object' && localConfig) {
+    boot.config(localConfig)
   }
 }
 
 // Configuration
 // -------------
+
+/* global boot */
 
 boot.config({
 
@@ -287,8 +289,6 @@ boot.config({
       'stratus/controllers/invoiceProductFilter' + boot.suffix,
     'stratus.controllers.userFilter': boot.bundle +
       'stratus/controllers/userFilter' + boot.suffix,
-    'stratus.controllers.invoiceProduct': boot.bundle +
-      'stratus/controllers/invoiceProduct' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' +
@@ -673,6 +673,8 @@ boot.config({
 
 // Initializer
 // -----------
+
+/* global boot, requirejs, require */
 
 // TODO: We need to clone the boot configuration because Require.js will change
 // the reference directly

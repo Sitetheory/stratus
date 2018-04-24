@@ -1,16 +1,17 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
   }
-  else {
-    factory(root.Stratus, root._)
-  }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Collection Service handles data binding for multiple objects with the
   // $http Service
   Stratus.Services.UserAuthentication = [
@@ -45,7 +46,7 @@
             signUp: signUp,
             requestResetPass: requestResetPass,
             resetPass: resetPass,
-            verifyAccount: verifyAccount,
+            verifyAccount: verifyAccount
           }
         }])
     }]

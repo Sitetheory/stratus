@@ -1,6 +1,8 @@
 // Upload Component
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -17,9 +19,9 @@
       'angular-material'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.$, root.Dropzone)
+    factory(root.Stratus, root._, root.jQuery, root.Dropzone)
   }
-}(this, function (Stratus, _, $, Dropzone) {
+}(this, function (Stratus, _, jQuery, Dropzone) {
   // This component is for simple upload to the Stratus S3 service.
   Stratus.Components.Upload = {
     transclude: true,
@@ -46,7 +48,7 @@
       // DropZone Builder
       $scope.dropzone = null
       $scope.interval = $window.setInterval(function () {
-        var $target = $('#' + $scope.elementId)
+        var $target = jQuery('#' + $scope.elementId)
         if ($target.length && !$scope.dropzone &&
           (!$scope.mediaId || typeof $scope.mediaId === 'number')) {
           $scope.dropzone = new Dropzone($target[0], {

@@ -1,16 +1,18 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
       'underscore',
+      'jquery',
       'angular',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory)
+  } else {
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-  else {
-    factory(root.Stratus, root._)
-  }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, jQuery, angular) {
   // This Collection Service handles data binding for multiple objects with the
   // $http Service
   Stratus.Services.Media = [
@@ -45,11 +47,11 @@
           }
 
           function dragenter (event) {
-            $('#main').addClass('blurred')
+            jQuery('#main').addClass('blurred')
           }
 
           function dragleave (event) {
-            $('#main').removeClass('blurred')
+            jQuery('#main').removeClass('blurred')
           }
 
           function getMedia (scope) {
@@ -99,13 +101,13 @@
                 policy: POLICY, // base64-encoded json policy
                 signature: SIGNATURE, // base64-encoded signature based on
                 // policy string
-                'Content-Type': file.type != ''
+                'Content-Type': file.type !== ''
                   ? file.type
                   : 'application/octet-stream', // content type of the file
                 // (NotEmpty)
                 filename: file.name, // this is needed for Flash polyfill IE8-9
-                file: file,
-              },
+                file: file
+              }
             })
           }
 
@@ -124,8 +126,7 @@
                 file.errorUpload = true
                 if (rej.config.data.file.upload.aborted === true) {
                   file.errorMsg = 'Aborted'
-                }
-                else {
+                } else {
                   file.errorMsg = 'Server Error! Please try again'
                 }
               }
@@ -138,7 +139,7 @@
 
             return file
           }
-        },
+        }
       ])
     }]
 }))

@@ -13,7 +13,7 @@
 _.templateSettings = {
   evaluate: /\{%(.+?)%\}/g,
   interpolate: /\{\{(.+?)\}\}/g,
-  escape: /\{#(.+?)#\}/g,
+  escape: /\{#(.+?)#\}/g
 }
 
 // Underscore Mixins
@@ -78,8 +78,8 @@ _.mixin({
         value: subClass,
         enumerable: false,
         writable: true,
-        configurable: true,
-      },
+        configurable: true
+      }
     })
     if (superClass) {
       Object.setPrototypeOf ? Object.setPrototypeOf(subClass,
@@ -121,8 +121,8 @@ _.mixin({
    * @returns {*}
    */
   ucfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0).
-      toUpperCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0)
+      .toUpperCase() + string.substring(1) : null
   },
 
   // This function simply changes the first letter of a string to a lower case.
@@ -131,8 +131,8 @@ _.mixin({
    * @returns {*}
    */
   lcfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0).
-      toLowerCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0)
+      .toLowerCase() + string.substring(1) : null
   },
 
   // This function allows creation, edit, retrieval and deletion of cookies.
@@ -151,7 +151,7 @@ _.mixin({
       value: value,
       expires: expires,
       path: path || '/',
-      domain: domain,
+      domain: domain
     }
     if (name && typeof name === 'object') {
       _.extend(request, name)
@@ -161,16 +161,14 @@ _.mixin({
         ')=(.*?)(?:;|$)', 'g')
       var data = search.exec(document.cookie)
       return (data === null) ? null : data[1]
-    }
-    else {
+    } else {
       var cookie = request.name + '=' + escape(request.value) + ';'
       if (request.expires) {
         if (request.expires instanceof Date) {
           if (isNaN(request.expires.getTime())) {
             request.expires = new Date()
           }
-        }
-        else {
+        } else {
           request.expires = new Date(new Date().getTime() +
             _.seconds(request.expires) * 1000)
         }
@@ -201,17 +199,14 @@ _.mixin({
       return _.findKey(list, function (element) {
         return (element === lowest)
       })
-    }
-    else if (method === 'radial') {
+    } else if (method === 'radial') {
       // Eccentricity
       // Radians
       // Diameter
       // Focal Point
-    }
-    else if (method === 'gauss') {
+    } else if (method === 'gauss') {
       // Usage: Node Connection or Initialization
-    }
-    else {
+    } else {
       return list
     }
   },
@@ -227,8 +222,7 @@ _.mixin({
       for (i = 0; i < times; i++) {
         fn()
       }
-    }
-    else {
+    } else {
       console.warn('Underscore cannot repeat function:', fn,
         'with number of times:', times)
     }
@@ -284,8 +278,7 @@ _.mixin({
             merger[key]) : merger[key]
         }
       })
-    }
-    else {
+    } else {
       shallow = merger
     }
     return shallow
@@ -327,8 +320,7 @@ _.mixin({
   isJSON: function (str) {
     try {
       JSON.parse(str)
-    }
-    catch (e) {
+    } catch (e) {
       return false
     }
     return true
@@ -397,15 +389,12 @@ _.mixin({
             seconds += value * unit
           }
         }, this)
-      }
-      else {
+      } else {
         seconds = null
       }
-    }
-    else if (typeof str === 'number') {
+    } else if (typeof str === 'number') {
       seconds = str
-    }
-    else {
+    } else {
       seconds = null
     }
     return seconds
@@ -455,12 +444,11 @@ _.mixin({
       eax: undefined,
       ebx: undefined,
       ecx: undefined,
-      edx: undefined,
+      edx: undefined
     }
     if (!_.isObject(priorData) || !_.size(priorData)) {
       console.error('bad prior:', priorData)
-    }
-    else {
+    } else {
       var detect = function (value, key) {
         processor.eax = processor.ecx ? processor.ecx + '.' + key : key
         if (_.isObject(value)) {
@@ -469,8 +457,7 @@ _.mixin({
           processor.ecx = processor.ecx === key
             ? undefined
             : processor.ecx.substring(0, processor.ecx.lastIndexOf('.'))
-        }
-        else {
+        } else {
           processor.ebx = _.reduce(processor.eax.split('.'),
             function (data, a) {
               return data && data[a]
@@ -499,7 +486,7 @@ _.mixin({
     b = b.toString()
     for (var i = 0, n = Math.max(a.length, b.length); i < n &&
     a.charAt(i) === b.charAt(i); ++i) {
-      
+
     }
     if (i === n) {
       return 0
@@ -516,12 +503,12 @@ _.mixin({
     limit = limit || 100
     suffix = suffix || '...'
 
-    var arr = target.replace(/</g, '\n<').
-      replace(/>/g, '>\n').
-      replace(/\n\n/g, '\n').
-      replace(/^\n/g, '').
-      replace(/\n$/g, '').
-      split('\n')
+    var arr = target.replace(/</g, '\n<')
+      .replace(/>/g, '>\n')
+      .replace(/\n\n/g, '\n')
+      .replace(/^\n/g, '')
+      .replace(/\n$/g, '')
+      .split('\n')
 
     var sum = 0
     var row
@@ -533,7 +520,6 @@ _.mixin({
     var more = false
 
     for (var i = 0; i < arr.length; i++) {
-
       row = arr[i]
 
       // count multiple spaces as one character
@@ -544,12 +530,9 @@ _.mixin({
       }
 
       if (row[0] !== '<') {
-
         if (sum >= limit) {
           row = ''
-        }
-        else if ((sum + rowCut.length) >= limit) {
-
+        } else if ((sum + rowCut.length) >= limit) {
           cut = limit - sum
 
           if (row[cut - 1] === ' ') {
@@ -559,14 +542,11 @@ _.mixin({
                 break
               }
             }
-          }
-          else {
-
+          } else {
             add = row.substring(cut).split('').indexOf(' ')
             if (add !== -1) {
               cut += add
-            }
-            else {
+            } else {
               cut = row.length
             }
           }
@@ -581,24 +561,18 @@ _.mixin({
 
           sum = limit
           more = true
-        }
-        else {
+        } else {
           sum += rowCut.length
         }
-      }
-      else if (sum >= limit) {
-
+      } else if (sum >= limit) {
         tagMatch = row.match(/[a-zA-Z]+/)
         tagName = tagMatch ? tagMatch[0] : ''
 
         if (tagName) {
           if (row.substring(0, 2) !== '</') {
-
             tagStack.push(tagName)
             row = ''
-          }
-          else {
-
+          } else {
             while (tagStack[tagStack.length - 1] !== tagName &&
             tagStack.length) {
               tagStack.pop()
@@ -610,8 +584,7 @@ _.mixin({
 
             tagStack.pop()
           }
-        }
-        else {
+        } else {
           row = ''
         }
       }
@@ -620,7 +593,7 @@ _.mixin({
     }
 
     return arr.join('\n').replace(/\n/g, '')
-  },
+  }
 })
 
 // jQuery Plugins
@@ -636,9 +609,9 @@ if (typeof $ === 'function' && $.fn) {
   $.fn.notClicked = function (event) {
     if (!this.selector && !this.context) {
       console.error(
-        'No Selector or Context:', this);
+        'No Selector or Context:', this)
     }
     return (!$(event.target).closest(this.selector || this.context).length &&
-      !$(event.target).parents(this.selector || this.context).length);
-  };
+      !$(event.target).parents(this.selector || this.context).length)
+  }
 }

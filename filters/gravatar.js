@@ -18,14 +18,16 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'angular', 'md5'], factory)
+    define(['stratus', 'underscore', 'angular', 'md5'], factory)
   } else {
-    factory(root.Stratus)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus) {
+}(this, function (Stratus, _, angular) {
   // Angular Gravatar Filter
   // ------------------------
 

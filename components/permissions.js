@@ -1,6 +1,8 @@
 // Permissions Component
 // ----------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -8,8 +10,8 @@
 
       // Libraries
       'stratus',
-      'jquery',
       'underscore',
+      'jquery',
       'angular',
 
       // Modules
@@ -17,9 +19,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root.$, root._)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, $, _) {
+}(this, function (Stratus, _, jQuery, angular) {
   // Permissions
   Stratus.Components.Permissions = {
     bindings: {

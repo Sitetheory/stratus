@@ -1,6 +1,8 @@
 // Edit Component (Legacy)
 // ----------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -14,9 +16,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This component intends to allow editing of various attributes depending on
   // context.
   Stratus.Components.EditLegacy = {

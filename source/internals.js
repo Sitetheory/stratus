@@ -3,7 +3,6 @@
  * @constructor
  */
 Stratus.Internals.Ajax = function (request) {
-
   // Defaults
   this.method = 'GET'
   this.url = '/Api'
@@ -44,8 +43,7 @@ Stratus.Internals.Ajax = function (request) {
           response = JSON.parse(response)
         }
         resolve(response)
-      }
-      else {
+      } else {
         reject(that.xhr)
       }
     }
@@ -56,8 +54,7 @@ Stratus.Internals.Ajax = function (request) {
 
     if (Object.keys(that.data).length) {
       that.xhr.send(JSON.stringify(that.data))
-    }
-    else {
+    } else {
       that.xhr.send()
     }
   })
@@ -77,7 +74,7 @@ Stratus.Internals.Anchor = (function Anchor () {
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
     el: 'a[href*=\\#]:not([href=\\#]):not([data-scroll="false"])',
     events: {
-      click: 'clickAction',
+      click: 'clickAction'
     },
     clickAction: function (event) {
       if (location.pathname.replace(/^\//, '') ===
@@ -95,7 +92,7 @@ Stratus.Internals.Anchor = (function Anchor () {
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
               $('html,body').animate({
-                scrollTop: $target.offset().top,
+                scrollTop: $target.offset().top
               }, 1000, function () {
                 Backbone.history.navigate(anchor)
               })
@@ -104,7 +101,7 @@ Stratus.Internals.Anchor = (function Anchor () {
           }
         }
       }
-    },
+    }
   })
 })()
 
@@ -139,10 +136,10 @@ Stratus.Internals.Api = function (route, meta, payload) {
 
   return Stratus.Internals.Convoy({
     route: {
-      controller: route,
+      controller: route
     },
     meta: meta,
-    payload: payload,
+    payload: payload
   })
 }
 
@@ -160,43 +157,32 @@ Stratus.Internals.Compatibility = function () {
   // Operating System
   if (Stratus.Client.android) {
     profile.push('android')
-  }
-  else if (Stratus.Client.ios) {
+  } else if (Stratus.Client.ios) {
     profile.push('ios')
-  }
-  else if (Stratus.Client.mac) {
+  } else if (Stratus.Client.mac) {
     profile.push('mac')
-  }
-  else if (Stratus.Client.windows) {
+  } else if (Stratus.Client.windows) {
     profile.push('windows')
-  }
-  else if (Stratus.Client.linux) {
+  } else if (Stratus.Client.linux) {
     profile.push('linux')
-  }
-  else {
+  } else {
     profile.push('os')
   }
 
   // Browser Type
   if (Stratus.Client.chrome) {
     profile.push('chrome')
-  }
-  else if (Stratus.Client.firefox) {
+  } else if (Stratus.Client.firefox) {
     profile.push('firefox')
-  }
-  else if (Stratus.Client.safari) {
+  } else if (Stratus.Client.safari) {
     profile.push('safari')
-  }
-  else if (Stratus.Client.opera) {
+  } else if (Stratus.Client.opera) {
     profile.push('opera')
-  }
-  else if (Stratus.Client.msie) {
+  } else if (Stratus.Client.msie) {
     profile.push('msie')
-  }
-  else if (Stratus.Client.iphone) {
+  } else if (Stratus.Client.iphone) {
     profile.push('iphone')
-  }
-  else {
+  } else {
     profile.push('browser')
   }
 
@@ -208,15 +194,13 @@ Stratus.Internals.Compatibility = function () {
   // Platform
   if (Stratus.Client.mobile) {
     profile.push('mobile')
-  }
-  else if (Stratus.Client.tablet) {
+  } else if (Stratus.Client.tablet) {
     profile.push('tablet')
-  }
-  else {
+  } else {
     profile.push('desktop')
   }
 
-  /*Stratus.Events.trigger('alert', profile + JSON.stringify(Stratus.Client));*/
+  /* Stratus.Events.trigger('alert', profile + JSON.stringify(Stratus.Client)); */
   Stratus('body').addClass(profile.join(' '))
 }
 
@@ -236,7 +220,7 @@ Stratus.Internals.Convoy = function (convoy, query) {
     if (convoy === undefined) {
       reject(new Stratus.Prototypes.Error({
         code: 'Convoy',
-        message: 'No Convoy defined for dispatch.',
+        message: 'No Convoy defined for dispatch.'
       }, this))
     }
     if (typeof $ === 'function' && $.ajax) {
@@ -244,17 +228,17 @@ Stratus.Internals.Convoy = function (convoy, query) {
         type: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
-          convoy: JSON.stringify(convoy),
+          convoy: JSON.stringify(convoy)
         },
         dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType'))
           ? convoy.meta.dataType
           : 'json',
         xhrFields: {
-          withCredentials: true,
+          withCredentials: true
         },
         crossDomain: true,
         headers: {
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': '*'
         },
         success: function (response) {
           resolve(response)
@@ -265,15 +249,14 @@ Stratus.Internals.Convoy = function (convoy, query) {
             new Stratus.Prototypes.Error({code: 'Convoy', message: response},
               this))
           return response
-        },
+        }
       })
-    }
-    else {
+    } else {
       Stratus.Internals.Ajax({
         method: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
-          convoy: JSON.stringify(convoy),
+          convoy: JSON.stringify(convoy)
         },
         type: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType'))
           ? convoy.meta.dataType
@@ -286,10 +269,10 @@ Stratus.Internals.Convoy = function (convoy, query) {
         error: function (response) {
           reject(new Stratus.Prototypes.Error({
             code: 'Convoy',
-            message: response,
+            message: response
           }, this))
           return response
-        },
+        }
       })
     }
   })
@@ -312,12 +295,10 @@ Stratus.Internals.CssLoader = function (url) {
     if (url in Stratus.CSS) {
       if (Stratus.CSS[url]) {
         resolve()
-      }
-      else {
+      } else {
         Stratus.Events.once('onload:' + url, resolve)
       }
-    }
-    else {
+    } else {
       /* Set CSS State */
       Stratus.CSS[url] = false
 
@@ -338,8 +319,7 @@ Stratus.Internals.CssLoader = function (url) {
         link.onload = function () {
           Stratus.Events.trigger('onload:' + url)
         }
-      }
-      else {
+      } else {
         Stratus.CSS[url] = true
         Stratus.Events.trigger('onload:' + url)
       }
@@ -399,7 +379,7 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
   offset = offset || 0
   var position = {
     wt: document.body.scrollTop,
-    et: el.offset().top || null,
+    et: el.offset().top || null
   }
   position.wb = position.wt + document.body.offsetHeight
   position.eb = el.height() + (position.et || 0)
@@ -425,7 +405,7 @@ Stratus.Internals.LoadCss = function (urls) {
     if (typeof urls === 'undefined' || typeof urls === 'function') {
       reject(new Stratus.Prototypes.Error({
         code: 'LoadCSS',
-        message: 'CSS Resource URLs must be defined as a String, Array, or Object.',
+        message: 'CSS Resource URLs must be defined as a String, Array, or Object.'
       }, this))
     }
     if (typeof urls === 'string') {
@@ -433,7 +413,7 @@ Stratus.Internals.LoadCss = function (urls) {
     }
     var cssEntries = {
       total: urls.length,
-      iteration: 0,
+      iteration: 0
     }
     if (cssEntries.total > 0) {
       _.each(urls.reverse(), function (url) {
@@ -446,8 +426,7 @@ Stratus.Internals.LoadCss = function (urls) {
             _.allTrue(cssEntries)) {
             resolve(cssEntries)
           }
-        }
-        else {
+        } else {
           Stratus.Internals.CssLoader(url).then(function (entry) {
             cssEntries[cssEntry] = true
             if (cssEntries.total === cssEntries.iteration &&
@@ -457,8 +436,7 @@ Stratus.Internals.LoadCss = function (urls) {
           }, reject)
         }
       })
-    }
-    else {
+    } else {
       reject(new Stratus.Prototypes.Error(
         {code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
     }
@@ -492,7 +470,6 @@ Stratus.Internals.LoadImage = function (obj) {
   if (Stratus.Internals.IsOnScreen(obj.spy) && !el.attr('data-loading')) {
     el.attr('data-loading', true)
     Stratus.DOM.complete(function () {
-
       // By default we'll load larger versions of an image to look good on HD
       // displays, but if you don't want that, you can bypass it with
       // data-hd="false"
@@ -517,8 +494,7 @@ Stratus.Internals.LoadImage = function (obj) {
       if (el.attr('data-size') &&
         size.indexOf(el.attr('data-size')) !== false) {
         size = el.attr('data-size')
-      }
-      else {
+      } else {
         var width = null
         var unit = null
         var percentage = null
@@ -526,8 +502,7 @@ Stratus.Internals.LoadImage = function (obj) {
         if (el.width()) {
           // Check if there is CSS width hard coded on the element
           width = el.width()
-        }
-        else if (el.attr('width')) {
+        } else if (el.attr('width')) {
           width = el.attr('width')
         }
 
@@ -593,7 +568,7 @@ Stratus.Internals.LoadImage = function (obj) {
         // Return the first size that is bigger than container width
         size = _.findKey(Stratus.Settings.image.size, function (s) {
           var ratio = s / width
-          return ((0.85 < ratio && ratio < 1.15) || s > width)
+          return ((ratio > 0.85 && ratio < 1.15) || s > width)
         })
 
         // default to largest size if the container is larger and it didn't
@@ -614,14 +589,12 @@ Stratus.Internals.LoadImage = function (obj) {
         obj.el.load(function () {
           el.addClass('loaded').removeClass('placeholder loading')
         })
-      }
-      else {
+      } else {
         el.addClass('loaded').removeClass('placeholder loading')
       }
 
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
-
     })
   }
 }
@@ -635,14 +608,13 @@ Stratus.Internals.Location = function (options) {
     if (!('geolocation' in navigator)) {
       reject(new Stratus.Prototypes.Error({
         code: 'Location',
-        message: 'HTML5 Geo-Location isn\'t supported on this browser.',
+        message: 'HTML5 Geo-Location isn\'t supported on this browser.'
       }, this))
-    }
-    else {
+    } else {
       options = _.extend({
         enableHighAccuracy: true,
         timeout: 20000,
-        maximumAge: 50000,
+        maximumAge: 50000
       }, options || {})
       navigator.geolocation.getCurrentPosition(resolve, reject, options)
     }
@@ -662,7 +634,6 @@ Stratus.Internals.Location = function (options) {
  * @constructor
  */
 Stratus.Internals.OnScroll = _.once(function (elements) {
-
   // Reset Elements:
   // if (!elements || elements.length === 0) return false;
 
@@ -723,21 +694,19 @@ Stratus.Internals.Resource = function (path, elementId) {
     if (typeof path === 'undefined') {
       reject(new Stratus.Prototypes.Error({
         code: 'Resource',
-        message: 'Resource path is not defined.',
+        message: 'Resource path is not defined.'
       }, this))
     }
     if (_.has(Stratus.Resources, path)) {
       if (Stratus.Resources[path].success) {
         resolve(Stratus.Resources[path].data)
-      }
-      else {
+      } else {
         Stratus.Events.once('resource:' + path, resolve)
       }
-    }
-    else {
+    } else {
       Stratus.Resources[path] = {
         success: false,
-        data: null,
+        data: null
       }
       Stratus.Events.once('resource:' + path, resolve)
       var meta = {path: path, dataType: 'text'}
@@ -806,8 +775,7 @@ Stratus.Internals.TrackLocation = function () {
       }, function (error) {
         console.error('Stratus Location:', error)
       })
-    }
-    else {
+    } else {
       Stratus.Internals.Ajax({
         url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
         success: function (data) {
@@ -824,11 +792,10 @@ Stratus.Internals.TrackLocation = function () {
             envData.country = data.country
             Stratus.Internals.UpdateEnvironment(envData)
           }
-        },
+        }
       })
     }
-  }
-  else {
+  } else {
     Stratus.Internals.UpdateEnvironment(envData)
   }
 }
@@ -863,12 +830,12 @@ Stratus.Internals.UpdateEnvironment = function (request) {
         if (typeof settings === 'object') {
           _.each(Object.keys(settings), function (key) {
             Stratus.Environment.set(key, settings[key])
-          });
+          })
         }
       },
       error: function (error) {
-        console.error('error:', error);
+        console.error('error:', error)
       }
-    });
+    })
   }
-};
+}

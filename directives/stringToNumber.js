@@ -1,6 +1,8 @@
 // String to Number Directive
 // -----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -10,9 +12,9 @@
       'angular'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This directive intends to handle binding of a model to convert value
   // string to number
   Stratus.Directives.StringToNumber = function ($parse, $log) {

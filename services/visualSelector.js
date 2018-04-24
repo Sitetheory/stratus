@@ -1,3 +1,5 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -6,13 +8,12 @@
       'angular',
       'stratus.services.registry',
       'stratus.services.details',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
   }
-  else {
-    factory(root.Stratus, root._)
-  }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   Stratus.Services.VisualSelector = [
     '$provide', function ($provide) {
       $provide.factory('visualSelector', [
@@ -49,8 +50,8 @@
                 options: {},
                 limit: _.isJSON(attrs.limit)
                   ? JSON.parse(attrs.limit)
-                  : defaultLimit,
-              },
+                  : defaultLimit
+              }
             }
             if (scope.api && angular.isObject(scope.api)) {
               request.api = _.extendDeep(request.api, scope.api)
@@ -83,7 +84,7 @@
               zIndex: 150,
               clickOutsideToClose: true,
               escapeToClose: false,
-              focusOnOpen: true,
+              focusOnOpen: true
             }
 
             $mdPanel.open(config)
@@ -92,7 +93,7 @@
           return {
             zoomviewDialog: zoomviewDialog,
             selectTheme: selectTheme,
-            fetchCollection: fetchCollection,
+            fetchCollection: fetchCollection
           }
         }])
     }]

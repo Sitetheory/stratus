@@ -1,6 +1,8 @@
 // Sort Component
 // --------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -8,9 +10,9 @@
       ['stratus', 'angular', 'stratus.services.registry', 'angular-material'],
       factory)
   } else {
-    factory(root.Stratus)
+    factory(root.Stratus, root.angular)
   }
-}(this, function (Stratus) {
+}(this, function (Stratus, angular) {
   // This component handles sorting for a collection
   Stratus.Components.Sort = {
     bindings: {

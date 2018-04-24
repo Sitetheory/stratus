@@ -1,6 +1,8 @@
 // Validate Directive
 // ------------------
 
+/* global define */
+
 // Usage: The Validate directive enhances Angular's validation and ng-messages
 // system to allow custom validation in addition to the defaults like
 // `required`, `min`, `max`, `email`, etc. This validate adds several new
@@ -39,9 +41,9 @@
   if (typeof define === 'function' && define.amd) {
     define(['stratus', 'underscore', 'angular'], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   Stratus.Directives.Validate = function ($parse) {
     return {
       restrict: 'A',

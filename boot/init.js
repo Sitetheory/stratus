@@ -1,6 +1,8 @@
 // Initializer
 // -----------
 
+/* global boot, requirejs, require */
+
 // TODO: We need to clone the boot configuration because Require.js will change
 // the reference directly
 

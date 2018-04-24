@@ -18,6 +18,8 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -81,8 +83,9 @@
       }
     },
     version: function (id) {
-      if (!this.model.isHydrated() || this.model.has(this.versionEntityId) &&
-        this.versionId !== parseInt(id)) {
+      if (!this.model.isHydrated() ||
+        (this.model.has(this.versionEntityId) && this.versionId !==
+          parseInt(id))) {
         this.model.versionId = id
         this.model._isEvaluated = true
         this.model.trigger('refresh')

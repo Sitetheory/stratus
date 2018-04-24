@@ -1,6 +1,8 @@
 // Delete Component
 // ----------------
 
+/* global define */
+
 // TODO: this component needs to be finished
 
 // Define AMD, Require.js, or Contextual Scope
@@ -8,9 +10,9 @@
   if (typeof define === 'function' && define.amd) {
     define(['stratus', 'moment', 'angular'], factory)
   } else {
-    factory(root.Stratus, root.moment)
+    factory(root.Stratus, root.moment, root.angular)
   }
-}(this, function (Stratus, moment) {
+}(this, function (Stratus, moment, angular) {
   // This component intends to allow publishing a versionable entity with
   // additional advanced options
   Stratus.Components.Delete = {

@@ -1,6 +1,8 @@
 // Media Library Component
 // -----------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -33,9 +35,9 @@
       'stratus.services.media'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // We need to ensure the ng-file-upload and ng-cookies are registered
   Stratus.Modules.ngFileUpload = true
 
@@ -141,12 +143,12 @@
 
         $mdDialog.show(
           $mdDialog.confirm()
-          .title('DELETE MEDIA')
-          .textContent(
-            'Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
-          .multiple(true)
-          .ok('Yes')
-          .cancel('No')
+            .title('DELETE MEDIA')
+            .textContent(
+              'Are you sure you want to permanently delete this from your library? You may get broken images if any content still uses this image.')
+            .multiple(true)
+            .ok('Yes')
+            .cancel('No')
         ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
@@ -157,13 +159,13 @@
               } else {
                 $mdDialog.show(
                   $mdDialog.alert()
-                  .parent(angular.element(
-                    document.querySelector('#popupContainer')))
-                  .clickOutsideToClose(false)
-                  .title('Error')
-                  .multiple(true)
-                  .textContent(commonMethods.getStatus(response).message)
-                  .ok('Ok')
+                    .parent(angular.element(
+                      document.querySelector('#popupContainer')))
+                    .clickOutsideToClose(false)
+                    .title('Error')
+                    .multiple(true)
+                    .textContent(commonMethods.getStatus(response).message)
+                    .ok('Ok')
                 )
               }
             },

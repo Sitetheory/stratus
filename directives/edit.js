@@ -1,6 +1,8 @@
 // Edit Directive
 // --------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -18,9 +20,9 @@
       'stratus.components.mediaSelector'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular, root.moment)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular, moment) {
   // This directive intends to handle binding of a dynamic variable to
   Stratus.Directives.Edit = function ($parse, $log, $timeout, Model) {
     return {

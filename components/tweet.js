@@ -1,6 +1,8 @@
 // Tweet Component
 // ---------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -10,9 +12,9 @@
       'angular',
       'https://platform.twitter.com/widgets.js'], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This component is just a simple base.
   Stratus.Components.Tweet = {
     bindings: {

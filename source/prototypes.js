@@ -13,8 +13,7 @@ Stratus.Prototypes.Error = function (error, chain) {
 
   if (typeof error === 'string') {
     this.message = error
-  }
-  else if (error && typeof error === 'object') {
+  } else if (error && typeof error === 'object') {
     _.extend(this, error)
   }
 
@@ -47,8 +46,7 @@ Stratus.Prototypes.Job = function (time, method, scope) {
   this.enabled = false
   if (time && typeof time === 'object') {
     _.extend(this, time)
-  }
-  else {
+  } else {
     this.time = time
     this.method = method
     this.scope = scope
@@ -135,8 +133,7 @@ Stratus.Prototypes.Model = function (data) {
       _.each(attr, function (value, attr) {
         this.setAttribute(attr, value)
       }, this)
-    }
-    else {
+    } else {
       this.setAttribute(attr, value)
     }
   }
@@ -156,8 +153,7 @@ Stratus.Prototypes.Model = function (data) {
           if (typeof reference !== 'undefined' && reference &&
             typeof reference === 'object') {
             reference = reference[link]
-          }
-          else {
+          } else {
             reference = this.data
             return true
           }
@@ -170,8 +166,7 @@ Stratus.Prototypes.Model = function (data) {
             this.trigger('change:' + attr, this)
           }
         }
-      }
-      else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
+      } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
         this.data[attr] = value
         this.trigger('change:' + attr, this)
       }
@@ -187,8 +182,7 @@ Stratus.Prototypes.Model = function (data) {
       _.each(attr, function (value, attr) {
         this.temps[attr] = value
       }, this)
-    }
-    else {
+    } else {
       this.temps[attr] = value
     }
   }
@@ -218,8 +212,7 @@ Stratus.Prototypes.Model = function (data) {
   this.remove = function (attr, value) {
     if (value === undefined) {
       // delete this.data[attr];
-    }
-    else {
+    } else {
       // TODO: use dot notation for nested removal or _.without for array
       // values (these should be separate functions)
       this.data[attr] = _.without(this.data[attr], value)
@@ -320,7 +313,7 @@ Stratus.Prototypes.Sentinel = function () {
       publish: false,
       design: false,
       dev: false,
-      master: false,
+      master: false
     })
   }
   this.permissions = function (value) {
@@ -362,8 +355,7 @@ Stratus.Prototypes.Sentinel = function () {
           }
         }
       }, this)
-    }
-    else {
+    } else {
       var decimal = 0
       decimal += (this.view) ? (1 << 0) : (0 << 0)
       decimal += (this.create) ? (1 << 1) : (0 << 1)
@@ -400,8 +392,7 @@ Stratus.Prototypes.Bootbox = function (message, handler) {
   if (message && typeof message === 'object') {
     _.extend(this, message)
     this.message = this.message || 'Message'
-  }
-  else {
+  } else {
     this.message = message || 'Message'
   }
   this.handler = this.handler || handler
@@ -428,8 +419,7 @@ Stratus.Prototypes.Toast = function (message, title, priority, settings) {
   if (message && typeof message === 'object') {
     _.extend(this, message)
     this.message = this.message || 'Message'
-  }
-  else {
+  } else {
     this.message = message || 'Message'
   }
   this.title = this.title || title || 'Toast'

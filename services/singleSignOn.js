@@ -1,16 +1,17 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
   }
-  else {
-    factory(root.Stratus, root._)
-  }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Collection Service handles data binding for multiple objects with the
   // $http Service
   Stratus.Services.SingleSignOn = [
@@ -25,17 +26,17 @@
             var requestData = {
               service: service,
               data: data,
-              truthData: truthData,
+              truthData: truthData
             }
             var headers = {
-              'Content-Type': 'application/json',
+              'Content-Type': 'application/json'
             }
             return commonMethods.sendRequest(requestData, 'POST', '/Api/Login',
               headers)
           }
 
           return {
-            signIn: doSignIn,
+            signIn: doSignIn
           }
         }])
     }]

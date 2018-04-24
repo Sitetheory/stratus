@@ -1,11 +1,13 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
 
       // Libraries
       'stratus',
-      'jquery',
       'underscore',
+      'jquery',
       'angular',
 
       // Modules
@@ -18,9 +20,9 @@
       // Components
     ], factory)
   } else {
-    factory(root.Stratus, root.$, root._)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, $, _) {
+}(this, function (Stratus, _, jQuery, angular) {
   // This component intends to handle binding of an
   // item array into a particular attribute.
   Stratus.Components.StreamExcerpt = {

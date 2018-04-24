@@ -1,14 +1,21 @@
 // Help Component
 // --------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'angular', 'angular-material'], factory)
+    define([
+      'stratus',
+      'underscore',
+      'angular',
+      'angular-material'
+    ], factory)
   } else {
-    factory(root.Stratus)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus) {
+}(this, function (Stratus, _, angular) {
   // TODO: Possibly Convert to Tether-Tooltip
   // This component intends to display help information
   // in an widely accessible tooltip icon standard.

@@ -1,3 +1,5 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -14,9 +16,9 @@
       'stratus.services.singleSignOn'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This component intends to allow editing of various selections depending on
   // context.
   Stratus.Components.SocialMedia = {

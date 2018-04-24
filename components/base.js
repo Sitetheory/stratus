@@ -1,14 +1,16 @@
 // Base Component
 // --------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['stratus', 'underscore', 'angular', 'angular-material'], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This component is just a simple base.
   Stratus.Components.Base = {
     transclude: true,
@@ -22,8 +24,6 @@
       $scope.elementId = $attrs.elementId || this.uid
       $log.log('component:', this)
     },
-    template: '<div id="{{ elementId }}">\
-            hello: {{ hello }}\
-        </div>'
+    template: '<div id="{{ elementId }}">hello: {{ hello }}</div>'
   }
 }))

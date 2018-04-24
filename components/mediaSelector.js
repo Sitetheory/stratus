@@ -1,6 +1,8 @@
 // Stratus Media Selector Component
 // ----------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -31,9 +33,9 @@
       'stratus.services.media'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // We need to ensure the ng-file-upload and ng-cookies are registered
   Stratus.Modules.ngFileUpload = true
 

@@ -1,6 +1,8 @@
 // Require.js
 // ----------
 
+/* global define */
+
 // We use this function factory to ensure the Stratus Layer can work outside of a
 // Require.js environment.  This function needs to exist on every module defined
 // within the Stratus environment to ensure its acceptance regardless of the
@@ -15,10 +17,10 @@
       'backbone', // TODO: Remove once phased out appropriately
       'jquery' // TODO: Remove once phased out appropriately
     ], function (text, _, bowser) {
-      return (root.Stratus = factory(text, _, bowser));
-    });
+      return (root.Stratus = factory(text, _, bowser))
+    })
   } else {
-    root.Stratus = factory(root.text, root._, root.bowser);
+    root.Stratus = factory(root.text, root._, root.bowser)
   }
 }(this, function (text, _, bowser) {
 
@@ -42,19 +44,19 @@ var Stratus = {
   /* Settings */
   Settings: {
     image: {
-      size: {xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600},
+      size: {xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600}
     },
     status: {
       reset: -2,
       deleted: -1,
       inactive: 0,
-      active: 1,
+      active: 1
     },
     consent: {
       reject: -1,
       pending: 0,
-      accept: 1,
-    },
+      accept: 1
+    }
   },
 
   /* Native */
@@ -84,7 +86,7 @@ var Stratus = {
   Routers: null,
   Views: {
     Plugins: {},
-    Widgets: {},
+    Widgets: {}
   },
   Events: {},
   Relations: {},
@@ -99,7 +101,7 @@ var Stratus = {
   Filters: {},
   Modules: {
     ngMaterial: true,
-    ngMessages: true,
+    ngMessages: true
     /* ngMdIcons: true */
   },
   Services: {},
@@ -132,7 +134,7 @@ var Stratus = {
     debugNest: false,
     liveEdit: false,
     viewPortChange: false,
-    lastScroll: false,
+    lastScroll: false
   },
   History: {},
   Instances: {},
@@ -145,20 +147,20 @@ var Stratus = {
     // dynamic
     controller: {
       selector: '[ng-controller]',
-      namespace: 'stratus.controllers.',
+      namespace: 'stratus.controllers.'
     },
     components: {
-      namespace: 'stratus.components.',
+      namespace: 'stratus.components.'
     },
     directives: {
       namespace: 'stratus.directives.',
-      type: 'attribute',
+      type: 'attribute'
     },
 
     // angular material
     flex: {
       selector: '[flex]',
-      require: ['angular', 'angular-material'],
+      require: ['angular', 'angular-material']
     },
 
     // TODO: Find a more scalable ideology
@@ -167,37 +169,37 @@ var Stratus = {
       selector: '[chart]',
       require: ['angular', 'angular-chart'],
       module: true,
-      suffix: '.js',
+      suffix: '.js'
     },
     sortable: {
       selector: '[ng-sortable]',
       require: ['angular-sortable'],
-      module: 'ng-sortable',
+      module: 'ng-sortable'
     },
 
     // TODO: Move Froala to Sitetheory since it is specific to Sitetheory
     modules: {
       selector: [
-        '[ng-sanitize]', '[froala]',
+        '[ng-sanitize]', '[froala]'
       ],
       namespace: 'angular-',
-      module: true,
+      module: true
     },
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     countUp: {
       selector: [
-        '[count-up]', '[scroll-spy]',
+        '[count-up]', '[scroll-spy]'
       ],
       namespace: 'angular-',
       module: true,
-      suffix: 'Module',
+      suffix: 'Module'
     },
     uiTree: {
       selector: '[ui-tree]',
       require: ['angular-ui-tree'],
-      module: 'ui.tree',
-    },
+      module: 'ui.tree'
+    }
   },
 
   // Plugins */
@@ -208,8 +210,8 @@ var Stratus = {
   // TODO: Turn this into a Dynamic Object loaded from the DOM in Sitetheory
   Api: {
     GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA',
-    Froala: 'KybxhzguB-7j1jC3A-16y==',
-  },
+    Froala: 'KybxhzguB-7j1jC3A-16y=='
+  }
 }
 
 // Declare Warm Up
@@ -232,7 +234,7 @@ if (!Stratus.Environment.production) {
 _.templateSettings = {
   evaluate: /\{%(.+?)%\}/g,
   interpolate: /\{\{(.+?)\}\}/g,
-  escape: /\{#(.+?)#\}/g,
+  escape: /\{#(.+?)#\}/g
 }
 
 // Underscore Mixins
@@ -297,8 +299,8 @@ _.mixin({
         value: subClass,
         enumerable: false,
         writable: true,
-        configurable: true,
-      },
+        configurable: true
+      }
     })
     if (superClass) {
       Object.setPrototypeOf ? Object.setPrototypeOf(subClass,
@@ -340,8 +342,8 @@ _.mixin({
    * @returns {*}
    */
   ucfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0).
-      toUpperCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0)
+      .toUpperCase() + string.substring(1) : null
   },
 
   // This function simply changes the first letter of a string to a lower case.
@@ -350,8 +352,8 @@ _.mixin({
    * @returns {*}
    */
   lcfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0).
-      toLowerCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0)
+      .toLowerCase() + string.substring(1) : null
   },
 
   // This function allows creation, edit, retrieval and deletion of cookies.
@@ -370,7 +372,7 @@ _.mixin({
       value: value,
       expires: expires,
       path: path || '/',
-      domain: domain,
+      domain: domain
     }
     if (name && typeof name === 'object') {
       _.extend(request, name)
@@ -380,16 +382,14 @@ _.mixin({
         ')=(.*?)(?:;|$)', 'g')
       var data = search.exec(document.cookie)
       return (data === null) ? null : data[1]
-    }
-    else {
+    } else {
       var cookie = request.name + '=' + escape(request.value) + ';'
       if (request.expires) {
         if (request.expires instanceof Date) {
           if (isNaN(request.expires.getTime())) {
             request.expires = new Date()
           }
-        }
-        else {
+        } else {
           request.expires = new Date(new Date().getTime() +
             _.seconds(request.expires) * 1000)
         }
@@ -420,17 +420,14 @@ _.mixin({
       return _.findKey(list, function (element) {
         return (element === lowest)
       })
-    }
-    else if (method === 'radial') {
+    } else if (method === 'radial') {
       // Eccentricity
       // Radians
       // Diameter
       // Focal Point
-    }
-    else if (method === 'gauss') {
+    } else if (method === 'gauss') {
       // Usage: Node Connection or Initialization
-    }
-    else {
+    } else {
       return list
     }
   },
@@ -446,8 +443,7 @@ _.mixin({
       for (i = 0; i < times; i++) {
         fn()
       }
-    }
-    else {
+    } else {
       console.warn('Underscore cannot repeat function:', fn,
         'with number of times:', times)
     }
@@ -503,8 +499,7 @@ _.mixin({
             merger[key]) : merger[key]
         }
       })
-    }
-    else {
+    } else {
       shallow = merger
     }
     return shallow
@@ -546,8 +541,7 @@ _.mixin({
   isJSON: function (str) {
     try {
       JSON.parse(str)
-    }
-    catch (e) {
+    } catch (e) {
       return false
     }
     return true
@@ -616,15 +610,12 @@ _.mixin({
             seconds += value * unit
           }
         }, this)
-      }
-      else {
+      } else {
         seconds = null
       }
-    }
-    else if (typeof str === 'number') {
+    } else if (typeof str === 'number') {
       seconds = str
-    }
-    else {
+    } else {
       seconds = null
     }
     return seconds
@@ -674,12 +665,11 @@ _.mixin({
       eax: undefined,
       ebx: undefined,
       ecx: undefined,
-      edx: undefined,
+      edx: undefined
     }
     if (!_.isObject(priorData) || !_.size(priorData)) {
       console.error('bad prior:', priorData)
-    }
-    else {
+    } else {
       var detect = function (value, key) {
         processor.eax = processor.ecx ? processor.ecx + '.' + key : key
         if (_.isObject(value)) {
@@ -688,8 +678,7 @@ _.mixin({
           processor.ecx = processor.ecx === key
             ? undefined
             : processor.ecx.substring(0, processor.ecx.lastIndexOf('.'))
-        }
-        else {
+        } else {
           processor.ebx = _.reduce(processor.eax.split('.'),
             function (data, a) {
               return data && data[a]
@@ -718,7 +707,7 @@ _.mixin({
     b = b.toString()
     for (var i = 0, n = Math.max(a.length, b.length); i < n &&
     a.charAt(i) === b.charAt(i); ++i) {
-      
+
     }
     if (i === n) {
       return 0
@@ -735,12 +724,12 @@ _.mixin({
     limit = limit || 100
     suffix = suffix || '...'
 
-    var arr = target.replace(/</g, '\n<').
-      replace(/>/g, '>\n').
-      replace(/\n\n/g, '\n').
-      replace(/^\n/g, '').
-      replace(/\n$/g, '').
-      split('\n')
+    var arr = target.replace(/</g, '\n<')
+      .replace(/>/g, '>\n')
+      .replace(/\n\n/g, '\n')
+      .replace(/^\n/g, '')
+      .replace(/\n$/g, '')
+      .split('\n')
 
     var sum = 0
     var row
@@ -752,7 +741,6 @@ _.mixin({
     var more = false
 
     for (var i = 0; i < arr.length; i++) {
-
       row = arr[i]
 
       // count multiple spaces as one character
@@ -763,12 +751,9 @@ _.mixin({
       }
 
       if (row[0] !== '<') {
-
         if (sum >= limit) {
           row = ''
-        }
-        else if ((sum + rowCut.length) >= limit) {
-
+        } else if ((sum + rowCut.length) >= limit) {
           cut = limit - sum
 
           if (row[cut - 1] === ' ') {
@@ -778,14 +763,11 @@ _.mixin({
                 break
               }
             }
-          }
-          else {
-
+          } else {
             add = row.substring(cut).split('').indexOf(' ')
             if (add !== -1) {
               cut += add
-            }
-            else {
+            } else {
               cut = row.length
             }
           }
@@ -800,24 +782,18 @@ _.mixin({
 
           sum = limit
           more = true
-        }
-        else {
+        } else {
           sum += rowCut.length
         }
-      }
-      else if (sum >= limit) {
-
+      } else if (sum >= limit) {
         tagMatch = row.match(/[a-zA-Z]+/)
         tagName = tagMatch ? tagMatch[0] : ''
 
         if (tagName) {
           if (row.substring(0, 2) !== '</') {
-
             tagStack.push(tagName)
             row = ''
-          }
-          else {
-
+          } else {
             while (tagStack[tagStack.length - 1] !== tagName &&
             tagStack.length) {
               tagStack.pop()
@@ -829,8 +805,7 @@ _.mixin({
 
             tagStack.pop()
           }
-        }
-        else {
+        } else {
           row = ''
         }
       }
@@ -839,7 +814,7 @@ _.mixin({
     }
 
     return arr.join('\n').replace(/\n/g, '')
-  },
+  }
 })
 
 // jQuery Plugins
@@ -855,11 +830,11 @@ if (typeof $ === 'function' && $.fn) {
   $.fn.notClicked = function (event) {
     if (!this.selector && !this.context) {
       console.error(
-        'No Selector or Context:', this);
+        'No Selector or Context:', this)
     }
     return (!$(event.target).closest(this.selector || this.context).length &&
-      !$(event.target).parents(this.selector || this.context).length);
-  };
+      !$(event.target).parents(this.selector || this.context).length)
+  }
 }
 
 // Stratus Event System
@@ -887,14 +862,12 @@ var eventsApi = function (iteratee, events, name, callback, opts) {
     for (names = _.keys(name); i < names.length; i++) {
       events = eventsApi(iteratee, events, names[i], name[names[i]], opts)
     }
-  }
-  else if (name && eventSplitter.test(name)) {
+  } else if (name && eventSplitter.test(name)) {
     // Handle space-separated event names by delegating them individually.
     for (names = name.split(eventSplitter); i < names.length; i++) {
       events = iteratee(events, names[i], callback, opts)
     }
-  }
-  else {
+  } else {
     // Finally, standard events.
     events = iteratee(events, name, callback, opts)
   }
@@ -912,7 +885,7 @@ var internalOn = function (obj, name, callback, context, listening) {
   obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
     context: context,
     ctx: obj,
-    listening: listening,
+    listening: listening
   })
 
   if (listening) {
@@ -943,7 +916,7 @@ Stratus.Events.listenTo = function (obj, name, callback) {
       objId: id,
       id: thisId,
       listeningTo: listeningTo,
-      count: 0,
+      count: 0
     }
   }
 
@@ -967,7 +940,7 @@ var onApi = function (events, name, callback, options) {
       callback: callback,
       context: context,
       ctx: context || ctx,
-      listening: listening,
+      listening: listening
     })
   }
   return events
@@ -983,7 +956,7 @@ Stratus.Events.off = function (name, callback, context) {
   }
   this._events = eventsApi(offApi, this._events, name, callback, {
     context: context,
-    listeners: this._listeners,
+    listeners: this._listeners
   })
   return this
 }
@@ -1055,8 +1028,7 @@ var offApi = function (events, name, callback, options) {
         context && context !== handler.context
       ) {
         remaining.push(handler)
-      }
-      else {
+      } else {
         listening = handler.listening
         if (listening && --listening.count === 0) {
           delete listeners[listening.id]
@@ -1068,8 +1040,7 @@ var offApi = function (events, name, callback, options) {
     // Update tail event if the list has any events.  Otherwise, clean up.
     if (remaining.length) {
       events[name] = remaining
-    }
-    else {
+    } else {
       delete events[name]
     }
   }
@@ -1180,15 +1151,14 @@ var triggerEvents = function (events, args) {
       return
     default:
       while (++i < l) {
-        (ev = events[i]).callback.apply(ev.ctx, args);
+        (ev = events[i]).callback.apply(ev.ctx, args)
       }
-      return;
   }
-};
+}
 
 // Aliases for backwards compatibility.
-Stratus.Events.bind = Stratus.Events.on;
-Stratus.Events.unbind = Stratus.Events.off;
+Stratus.Events.bind = Stratus.Events.on
+Stratus.Events.unbind = Stratus.Events.off
 
 // Error Prototype
 // ---------------
@@ -1205,8 +1175,7 @@ Stratus.Prototypes.Error = function (error, chain) {
 
   if (typeof error === 'string') {
     this.message = error
-  }
-  else if (error && typeof error === 'object') {
+  } else if (error && typeof error === 'object') {
     _.extend(this, error)
   }
 
@@ -1239,8 +1208,7 @@ Stratus.Prototypes.Job = function (time, method, scope) {
   this.enabled = false
   if (time && typeof time === 'object') {
     _.extend(this, time)
-  }
-  else {
+  } else {
     this.time = time
     this.method = method
     this.scope = scope
@@ -1327,8 +1295,7 @@ Stratus.Prototypes.Model = function (data) {
       _.each(attr, function (value, attr) {
         this.setAttribute(attr, value)
       }, this)
-    }
-    else {
+    } else {
       this.setAttribute(attr, value)
     }
   }
@@ -1348,8 +1315,7 @@ Stratus.Prototypes.Model = function (data) {
           if (typeof reference !== 'undefined' && reference &&
             typeof reference === 'object') {
             reference = reference[link]
-          }
-          else {
+          } else {
             reference = this.data
             return true
           }
@@ -1362,8 +1328,7 @@ Stratus.Prototypes.Model = function (data) {
             this.trigger('change:' + attr, this)
           }
         }
-      }
-      else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
+      } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
         this.data[attr] = value
         this.trigger('change:' + attr, this)
       }
@@ -1379,8 +1344,7 @@ Stratus.Prototypes.Model = function (data) {
       _.each(attr, function (value, attr) {
         this.temps[attr] = value
       }, this)
-    }
-    else {
+    } else {
       this.temps[attr] = value
     }
   }
@@ -1410,8 +1374,7 @@ Stratus.Prototypes.Model = function (data) {
   this.remove = function (attr, value) {
     if (value === undefined) {
       // delete this.data[attr];
-    }
-    else {
+    } else {
       // TODO: use dot notation for nested removal or _.without for array
       // values (these should be separate functions)
       this.data[attr] = _.without(this.data[attr], value)
@@ -1512,7 +1475,7 @@ Stratus.Prototypes.Sentinel = function () {
       publish: false,
       design: false,
       dev: false,
-      master: false,
+      master: false
     })
   }
   this.permissions = function (value) {
@@ -1554,8 +1517,7 @@ Stratus.Prototypes.Sentinel = function () {
           }
         }
       }, this)
-    }
-    else {
+    } else {
       var decimal = 0
       decimal += (this.view) ? (1 << 0) : (0 << 0)
       decimal += (this.create) ? (1 << 1) : (0 << 1)
@@ -1592,8 +1554,7 @@ Stratus.Prototypes.Bootbox = function (message, handler) {
   if (message && typeof message === 'object') {
     _.extend(this, message)
     this.message = this.message || 'Message'
-  }
-  else {
+  } else {
     this.message = message || 'Message'
   }
   this.handler = this.handler || handler
@@ -1620,8 +1581,7 @@ Stratus.Prototypes.Toast = function (message, title, priority, settings) {
   if (message && typeof message === 'object') {
     _.extend(this, message)
     this.message = this.message || 'Message'
-  }
-  else {
+  } else {
     this.message = message || 'Message'
   }
   this.title = this.title || title || 'Toast'
@@ -1638,7 +1598,6 @@ Stratus.Prototypes.Toast = function (message, title, priority, settings) {
  * @constructor
  */
 Stratus.Internals.Ajax = function (request) {
-
   // Defaults
   this.method = 'GET'
   this.url = '/Api'
@@ -1679,8 +1638,7 @@ Stratus.Internals.Ajax = function (request) {
           response = JSON.parse(response)
         }
         resolve(response)
-      }
-      else {
+      } else {
         reject(that.xhr)
       }
     }
@@ -1691,8 +1649,7 @@ Stratus.Internals.Ajax = function (request) {
 
     if (Object.keys(that.data).length) {
       that.xhr.send(JSON.stringify(that.data))
-    }
-    else {
+    } else {
       that.xhr.send()
     }
   })
@@ -1712,7 +1669,7 @@ Stratus.Internals.Anchor = (function Anchor () {
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
     el: 'a[href*=\\#]:not([href=\\#]):not([data-scroll="false"])',
     events: {
-      click: 'clickAction',
+      click: 'clickAction'
     },
     clickAction: function (event) {
       if (location.pathname.replace(/^\//, '') ===
@@ -1730,7 +1687,7 @@ Stratus.Internals.Anchor = (function Anchor () {
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
               $('html,body').animate({
-                scrollTop: $target.offset().top,
+                scrollTop: $target.offset().top
               }, 1000, function () {
                 Backbone.history.navigate(anchor)
               })
@@ -1739,7 +1696,7 @@ Stratus.Internals.Anchor = (function Anchor () {
           }
         }
       }
-    },
+    }
   })
 })()
 
@@ -1774,10 +1731,10 @@ Stratus.Internals.Api = function (route, meta, payload) {
 
   return Stratus.Internals.Convoy({
     route: {
-      controller: route,
+      controller: route
     },
     meta: meta,
-    payload: payload,
+    payload: payload
   })
 }
 
@@ -1795,43 +1752,32 @@ Stratus.Internals.Compatibility = function () {
   // Operating System
   if (Stratus.Client.android) {
     profile.push('android')
-  }
-  else if (Stratus.Client.ios) {
+  } else if (Stratus.Client.ios) {
     profile.push('ios')
-  }
-  else if (Stratus.Client.mac) {
+  } else if (Stratus.Client.mac) {
     profile.push('mac')
-  }
-  else if (Stratus.Client.windows) {
+  } else if (Stratus.Client.windows) {
     profile.push('windows')
-  }
-  else if (Stratus.Client.linux) {
+  } else if (Stratus.Client.linux) {
     profile.push('linux')
-  }
-  else {
+  } else {
     profile.push('os')
   }
 
   // Browser Type
   if (Stratus.Client.chrome) {
     profile.push('chrome')
-  }
-  else if (Stratus.Client.firefox) {
+  } else if (Stratus.Client.firefox) {
     profile.push('firefox')
-  }
-  else if (Stratus.Client.safari) {
+  } else if (Stratus.Client.safari) {
     profile.push('safari')
-  }
-  else if (Stratus.Client.opera) {
+  } else if (Stratus.Client.opera) {
     profile.push('opera')
-  }
-  else if (Stratus.Client.msie) {
+  } else if (Stratus.Client.msie) {
     profile.push('msie')
-  }
-  else if (Stratus.Client.iphone) {
+  } else if (Stratus.Client.iphone) {
     profile.push('iphone')
-  }
-  else {
+  } else {
     profile.push('browser')
   }
 
@@ -1843,15 +1789,13 @@ Stratus.Internals.Compatibility = function () {
   // Platform
   if (Stratus.Client.mobile) {
     profile.push('mobile')
-  }
-  else if (Stratus.Client.tablet) {
+  } else if (Stratus.Client.tablet) {
     profile.push('tablet')
-  }
-  else {
+  } else {
     profile.push('desktop')
   }
 
-  /*Stratus.Events.trigger('alert', profile + JSON.stringify(Stratus.Client));*/
+  /* Stratus.Events.trigger('alert', profile + JSON.stringify(Stratus.Client)); */
   Stratus('body').addClass(profile.join(' '))
 }
 
@@ -1871,7 +1815,7 @@ Stratus.Internals.Convoy = function (convoy, query) {
     if (convoy === undefined) {
       reject(new Stratus.Prototypes.Error({
         code: 'Convoy',
-        message: 'No Convoy defined for dispatch.',
+        message: 'No Convoy defined for dispatch.'
       }, this))
     }
     if (typeof $ === 'function' && $.ajax) {
@@ -1879,17 +1823,17 @@ Stratus.Internals.Convoy = function (convoy, query) {
         type: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
-          convoy: JSON.stringify(convoy),
+          convoy: JSON.stringify(convoy)
         },
         dataType: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType'))
           ? convoy.meta.dataType
           : 'json',
         xhrFields: {
-          withCredentials: true,
+          withCredentials: true
         },
         crossDomain: true,
         headers: {
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': '*'
         },
         success: function (response) {
           resolve(response)
@@ -1900,15 +1844,14 @@ Stratus.Internals.Convoy = function (convoy, query) {
             new Stratus.Prototypes.Error({code: 'Convoy', message: response},
               this))
           return response
-        },
+        }
       })
-    }
-    else {
+    } else {
       Stratus.Internals.Ajax({
         method: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
-          convoy: JSON.stringify(convoy),
+          convoy: JSON.stringify(convoy)
         },
         type: (_.has(convoy, 'meta') && _.has(convoy.meta, 'dataType'))
           ? convoy.meta.dataType
@@ -1921,10 +1864,10 @@ Stratus.Internals.Convoy = function (convoy, query) {
         error: function (response) {
           reject(new Stratus.Prototypes.Error({
             code: 'Convoy',
-            message: response,
+            message: response
           }, this))
           return response
-        },
+        }
       })
     }
   })
@@ -1947,12 +1890,10 @@ Stratus.Internals.CssLoader = function (url) {
     if (url in Stratus.CSS) {
       if (Stratus.CSS[url]) {
         resolve()
-      }
-      else {
+      } else {
         Stratus.Events.once('onload:' + url, resolve)
       }
-    }
-    else {
+    } else {
       /* Set CSS State */
       Stratus.CSS[url] = false
 
@@ -1973,8 +1914,7 @@ Stratus.Internals.CssLoader = function (url) {
         link.onload = function () {
           Stratus.Events.trigger('onload:' + url)
         }
-      }
-      else {
+      } else {
         Stratus.CSS[url] = true
         Stratus.Events.trigger('onload:' + url)
       }
@@ -2034,7 +1974,7 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
   offset = offset || 0
   var position = {
     wt: document.body.scrollTop,
-    et: el.offset().top || null,
+    et: el.offset().top || null
   }
   position.wb = position.wt + document.body.offsetHeight
   position.eb = el.height() + (position.et || 0)
@@ -2060,7 +2000,7 @@ Stratus.Internals.LoadCss = function (urls) {
     if (typeof urls === 'undefined' || typeof urls === 'function') {
       reject(new Stratus.Prototypes.Error({
         code: 'LoadCSS',
-        message: 'CSS Resource URLs must be defined as a String, Array, or Object.',
+        message: 'CSS Resource URLs must be defined as a String, Array, or Object.'
       }, this))
     }
     if (typeof urls === 'string') {
@@ -2068,7 +2008,7 @@ Stratus.Internals.LoadCss = function (urls) {
     }
     var cssEntries = {
       total: urls.length,
-      iteration: 0,
+      iteration: 0
     }
     if (cssEntries.total > 0) {
       _.each(urls.reverse(), function (url) {
@@ -2081,8 +2021,7 @@ Stratus.Internals.LoadCss = function (urls) {
             _.allTrue(cssEntries)) {
             resolve(cssEntries)
           }
-        }
-        else {
+        } else {
           Stratus.Internals.CssLoader(url).then(function (entry) {
             cssEntries[cssEntry] = true
             if (cssEntries.total === cssEntries.iteration &&
@@ -2092,8 +2031,7 @@ Stratus.Internals.LoadCss = function (urls) {
           }, reject)
         }
       })
-    }
-    else {
+    } else {
       reject(new Stratus.Prototypes.Error(
         {code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
     }
@@ -2127,7 +2065,6 @@ Stratus.Internals.LoadImage = function (obj) {
   if (Stratus.Internals.IsOnScreen(obj.spy) && !el.attr('data-loading')) {
     el.attr('data-loading', true)
     Stratus.DOM.complete(function () {
-
       // By default we'll load larger versions of an image to look good on HD
       // displays, but if you don't want that, you can bypass it with
       // data-hd="false"
@@ -2152,8 +2089,7 @@ Stratus.Internals.LoadImage = function (obj) {
       if (el.attr('data-size') &&
         size.indexOf(el.attr('data-size')) !== false) {
         size = el.attr('data-size')
-      }
-      else {
+      } else {
         var width = null
         var unit = null
         var percentage = null
@@ -2161,8 +2097,7 @@ Stratus.Internals.LoadImage = function (obj) {
         if (el.width()) {
           // Check if there is CSS width hard coded on the element
           width = el.width()
-        }
-        else if (el.attr('width')) {
+        } else if (el.attr('width')) {
           width = el.attr('width')
         }
 
@@ -2228,7 +2163,7 @@ Stratus.Internals.LoadImage = function (obj) {
         // Return the first size that is bigger than container width
         size = _.findKey(Stratus.Settings.image.size, function (s) {
           var ratio = s / width
-          return ((0.85 < ratio && ratio < 1.15) || s > width)
+          return ((ratio > 0.85 && ratio < 1.15) || s > width)
         })
 
         // default to largest size if the container is larger and it didn't
@@ -2249,14 +2184,12 @@ Stratus.Internals.LoadImage = function (obj) {
         obj.el.load(function () {
           el.addClass('loaded').removeClass('placeholder loading')
         })
-      }
-      else {
+      } else {
         el.addClass('loaded').removeClass('placeholder loading')
       }
 
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
-
     })
   }
 }
@@ -2270,14 +2203,13 @@ Stratus.Internals.Location = function (options) {
     if (!('geolocation' in navigator)) {
       reject(new Stratus.Prototypes.Error({
         code: 'Location',
-        message: 'HTML5 Geo-Location isn\'t supported on this browser.',
+        message: 'HTML5 Geo-Location isn\'t supported on this browser.'
       }, this))
-    }
-    else {
+    } else {
       options = _.extend({
         enableHighAccuracy: true,
         timeout: 20000,
-        maximumAge: 50000,
+        maximumAge: 50000
       }, options || {})
       navigator.geolocation.getCurrentPosition(resolve, reject, options)
     }
@@ -2297,7 +2229,6 @@ Stratus.Internals.Location = function (options) {
  * @constructor
  */
 Stratus.Internals.OnScroll = _.once(function (elements) {
-
   // Reset Elements:
   // if (!elements || elements.length === 0) return false;
 
@@ -2358,21 +2289,19 @@ Stratus.Internals.Resource = function (path, elementId) {
     if (typeof path === 'undefined') {
       reject(new Stratus.Prototypes.Error({
         code: 'Resource',
-        message: 'Resource path is not defined.',
+        message: 'Resource path is not defined.'
       }, this))
     }
     if (_.has(Stratus.Resources, path)) {
       if (Stratus.Resources[path].success) {
         resolve(Stratus.Resources[path].data)
-      }
-      else {
+      } else {
         Stratus.Events.once('resource:' + path, resolve)
       }
-    }
-    else {
+    } else {
       Stratus.Resources[path] = {
         success: false,
-        data: null,
+        data: null
       }
       Stratus.Events.once('resource:' + path, resolve)
       var meta = {path: path, dataType: 'text'}
@@ -2441,8 +2370,7 @@ Stratus.Internals.TrackLocation = function () {
       }, function (error) {
         console.error('Stratus Location:', error)
       })
-    }
-    else {
+    } else {
       Stratus.Internals.Ajax({
         url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
         success: function (data) {
@@ -2459,11 +2387,10 @@ Stratus.Internals.TrackLocation = function () {
             envData.country = data.country
             Stratus.Internals.UpdateEnvironment(envData)
           }
-        },
+        }
       })
     }
-  }
-  else {
+  } else {
     Stratus.Internals.UpdateEnvironment(envData)
   }
 }
@@ -2498,15 +2425,16 @@ Stratus.Internals.UpdateEnvironment = function (request) {
         if (typeof settings === 'object') {
           _.each(Object.keys(settings), function (key) {
             Stratus.Environment.set(key, settings[key])
-          });
+          })
         }
       },
       error: function (error) {
-        console.error('error:', error);
+        console.error('error:', error)
       }
-    });
+    })
   }
-};
+}
+
 // Native Selector
 // ---------------
 
@@ -2526,12 +2454,10 @@ Stratus.Select = function (selector, context) {
     var target
     if (_.startsWith(selector, '.') || _.contains(selector, '[')) {
       target = 'querySelectorAll'
-    }
-    else if (_.contains(['html', 'head', 'body'], selector) ||
+    } else if (_.contains(['html', 'head', 'body'], selector) ||
       _.startsWith(selector, '#')) {
       target = 'querySelector'
-    }
-    else {
+    } else {
       target = 'querySelectorAll'
     }
     selection = context[target](selector)
@@ -2544,7 +2470,7 @@ Stratus.Select = function (selector, context) {
       context: this,
       length: _.size(selection),
       selection: selection,
-      selector: selector,
+      selector: selector
     })
   }
   return selection
@@ -2570,13 +2496,11 @@ Stratus.Selector.attr = function (attr, value) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  }
-  else if (attr) {
+  } else if (attr) {
     if (typeof value === 'undefined') {
       value = that.selection.getAttribute(attr)
       return _.isJSON(value) ? JSON.parse(value) : value
-    }
-    else {
+    } else {
       that.selection.setAttribute(attr,
         typeof value === 'string' ? value : JSON.stringify(value))
     }
@@ -2611,8 +2535,7 @@ Stratus.Selector.find = function (selector) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  }
-  else if (selector) {
+  } else if (selector) {
     return Stratus(selector, that.selection)
   }
   return that
@@ -2647,8 +2570,7 @@ Stratus.Selector.append = function (child) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  }
-  else if (child) {
+  } else if (child) {
     that.selection.insertBefore(child, that.selection.lastChild)
   }
   return that
@@ -2666,8 +2588,7 @@ Stratus.Selector.prepend = function (child) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  }
-  else if (child) {
+  } else if (child) {
     that.selection.insertBefore(child, that.selection.firstChild)
   }
   return that
@@ -2685,13 +2606,11 @@ Stratus.Selector.addClass = function (className) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  }
-  else {
+  } else {
     _.each(className.split(' '), function (name) {
       if (that.selection.classList) {
         that.selection.classList.add(name)
-      }
-      else {
+      } else {
         that.selection.className += ' ' + name
       }
     })
@@ -2710,14 +2629,12 @@ Stratus.Selector.removeClass = function (className) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  }
-  else {
+  } else {
     if (that.selection.classList) {
       _.each(className.split(' '), function (name) {
         that.selection.classList.remove(name)
       })
-    }
-    else {
+    } else {
       that.selection.className = that.selection.className.replace(
         new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)',
           'gi'), ' ')
@@ -2735,8 +2652,7 @@ Stratus.Selector.style = function () {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  }
-  else if (that.selection instanceof Node) {
+  } else if (that.selection instanceof Node) {
     return getComputedStyle(that.selection)
   }
   return that
@@ -2750,8 +2666,7 @@ Stratus.Selector.height = function () {
   var that = this
   if (that.selection instanceof NodeList) {
     console.error('Unable to find height for element:', that.selection)
-  }
-  else {
+  } else {
     return that.selection.offsetHeight || 0
   }
   return that
@@ -2764,8 +2679,7 @@ Stratus.Selector.width = function () {
   var that = this
   if (that.selection instanceof NodeList) {
     console.error('Unable to find width for element:', that.selection)
-  }
-  else {
+  } else {
     return that.selection.offsetWidth || 0
   }
   return that
@@ -2778,12 +2692,11 @@ Stratus.Selector.offset = function () {
   var that = this
   if (that.selection instanceof NodeList) {
     console.error('Unable to find offset for element:', that.selection)
-  }
-  else if (that.selection.getBoundingClientRect) {
+  } else if (that.selection.getBoundingClientRect) {
     var rect = that.selection.getBoundingClientRect()
     return {
       top: rect.top + document.body.scrollTop,
-      left: rect.left + document.body.scrollLeft,
+      left: rect.left + document.body.scrollLeft
     }
   }
   return that
@@ -2796,12 +2709,11 @@ Stratus.Selector.parent = function () {
   var that = this
   if (that.selection instanceof NodeList) {
     console.error('Unable to find offset for element:', that.selection)
-  }
-  else {
+  } else {
     return Stratus(that.selection.parentNode)
   }
-  return that;
-};
+  return that
+}
 
 // Backbone Bindings
 // ----------------------
@@ -3669,8 +3581,7 @@ Stratus.Instances.Clean = function (instances) {
   if (typeof instances === 'undefined') {
     console.error(
       'Stratus.Instances.Clean() requires a string or array containing Unique ID(s).')
-  }
-  else if (typeof instances === 'string') {
+  } else if (typeof instances === 'string') {
     instances = [instances]
   }
 
@@ -3683,8 +3594,7 @@ Stratus.Instances.Clean = function (instances) {
         delete Stratus.Instances[value]
       }
     })
-  }
-  else {
+  } else {
     return false
   }
 }
@@ -3713,8 +3623,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         job.code = setInterval(function (job) {
           job.method.call(job.scope)
         }, job.time * 1000, job)
-      }
-      else if (job.code && !job.enabled) {
+      } else if (job.code && !job.enabled) {
         clearInterval(job.code)
         job.code = 0
       }
@@ -3770,7 +3679,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'))
     }
     return success
-  },
+  }
 })
 Stratus.Chronos.reinitialize()
 
@@ -3803,7 +3712,7 @@ Stratus.PostMessage.Convoy(_.once(function (convoy) {
     _.cookie({
       name: 'SITETHEORY',
       value: convoy.meta.session,
-      expires: '1w',
+      expires: '1w'
     })
     if (!Stratus.Client.safari) {
       location.reload(true)
@@ -3899,7 +3808,6 @@ Stratus.Events.on('initialize', function () {
   }, function (error) {
     console.error('Stratus Loader:', error)
   })
-
 })
 Stratus.Events.on('finalize', function () {
   if (!Stratus.Environment.get('production')) {
@@ -3939,11 +3847,10 @@ Stratus.Events.on('alert', function (message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
-  /*if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') {*/
+  /* if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') { */
   if (typeof bootbox !== 'undefined') {
     bootbox.alert(message.message, message.handler)
-  }
-  else {
+  } else {
     alert(message.message)
     message.handler()
   }
@@ -3955,11 +3862,10 @@ Stratus.Events.on('confirm', function (message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
-  /*if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') {*/
+  /* if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') { */
   if (typeof bootbox !== 'undefined') {
     bootbox.confirm(message.message, message.handler)
-  }
-  else {
+  } else {
     handler(confirm(message.message))
   }
 })
@@ -3970,8 +3876,7 @@ Stratus.Events.on('notification', function (message, title) {
   if (message && typeof message === 'object') {
     _.extend(options, message)
     options.message = options.message || 'Message'
-  }
-  else {
+  } else {
     options.message = message || 'Message'
   }
   options.title = options.title || title || 'Stratus'
@@ -3980,19 +3885,17 @@ Stratus.Events.on('notification', function (message, title) {
   if (!('Notification' in window)) {
     console.info(
       'This browser does not support desktop notifications.  You should switch to a modern browser.')
-  }
-  else if (Notification.permission === 'granted') {
+  } else if (Notification.permission === 'granted') {
     var notification = new Notification(options.title, {
       body: options.message,
-      icon: options.icon,
+      icon: options.icon
     })
-  }
-  else if (Notification.permission !== 'denied') {
+  } else if (Notification.permission !== 'denied') {
     Notification.requestPermission(function (permission) {
       if (permission === 'granted') {
         var notification = new Notification(options.title, {
           body: options.message,
-          icon: options.icon,
+          icon: options.icon
         })
       }
     })
@@ -4010,8 +3913,7 @@ Stratus.Events.on('toast', function (message, title, priority, settings) {
   }
   if (typeof $ !== 'undefined' && $.toaster) {
     $.toaster(message)
-  }
-  else {
+  } else {
     Stratus.Events.trigger('alert', message.message)
   }
 })
@@ -4059,7 +3961,5 @@ Stratus.DOM.unload(function (event) {
 // ------------
 
 // Return the Stratus Object so it can be attached in the correct context as either a Global Variable or Object Reference
-return Stratus;
-
+  return Stratus
 }))
-;

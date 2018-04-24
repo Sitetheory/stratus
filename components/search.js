@@ -1,6 +1,8 @@
 // Search Component
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -18,9 +20,9 @@
       'stratus.services.collection'
     ], factory)
   } else {
-    factory(root.Stratus)
+    factory(root.Stratus, root.angular)
   }
-}(this, function (Stratus) {
+}(this, function (Stratus, angular) {
   // This component handles searching to filter a collection
   Stratus.Components.Search = {
     bindings: {

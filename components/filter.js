@@ -1,19 +1,22 @@
 // Filter Component
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
+      'underscore',
       'angular',
       'angular-material'
     ],
-      factory)
+    factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This component handles filtering for a collection
   Stratus.Components.Filter = {
     bindings: {

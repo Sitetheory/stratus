@@ -1,6 +1,8 @@
 // Publish Component
 // -----------------
 
+/* global define */
+
 // TODO: this component has not been finished. It needs to do everything that
 // the previous widgets/publish.js did and some of that code has been ported
 // over, some hasn't, and some needs to be slightly changed based on how
@@ -17,17 +19,17 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      'moment',
-      'zepto',
       'underscore',
+      'jquery',
       'angular',
+      'moment',
       'stratus.services.model',
       'stratus.components.dateTime'
     ], factory)
   } else {
-    factory(root.Stratus, root.moment, root.$, root._)
+    factory(root.Stratus, root._, root.jQuery, root.angular, root.moment)
   }
-}(this, function (Stratus, moment, $, _) {
+}(this, function (Stratus, _, jQuery, angular, moment) {
   // This component intends to allow publishing a versionable entity with
   // additional advanced options TODO: port over the extensive logic from the
   // old widgets/publish.js (read all comments)
@@ -99,7 +101,7 @@
 
       // var $dateTimeComponent = null
       // if ($scope.showDateTime) {
-      //   $dateTimeComponent = $('#' + $scope.elementId + ' stratus-date-time')
+      //   $dateTimeComponent = jQuery('#' + $scope.elementId + ' stratus-date-time')
       // }
 
       // if ($scope.action === 'unpublish') {

@@ -1,19 +1,20 @@
 // Registry Service
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
       'underscore',
-      'angular',
+      'angular'
     ], factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
   }
-  else {
-    factory(root.Stratus, root._)
-  }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Collection Service handles data binding for multiple objects with the
   // $http Service
   Stratus.Services.SocialLibraries = [
@@ -25,7 +26,7 @@
 
           return {
             loadFacebookSDK: loadFacebookSDK,
-            loadGGLibrary: loadGGLibrary,
+            loadGGLibrary: loadGGLibrary
           }
 
           function loadFacebookSDK () {
@@ -34,7 +35,7 @@
                 appId: fbAppId,
                 autoLogAppEvents: true,
                 xfbml: true,
-                version: 'v2.11',
+                version: 'v2.11'
               })
             }
 

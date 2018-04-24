@@ -18,14 +18,16 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'moment', 'angular'], factory)
+    define(['stratus', 'underscore', 'angular', 'moment'], factory)
   } else {
-    factory(root.Stratus, root.moment)
+    factory(root.Stratus, root._, root.angular, root.moment)
   }
-}(this, function (Stratus, moment) {
+}(this, function (Stratus, _, angular, moment) {
   // Angular Moment Filter
   // ---------------------
 

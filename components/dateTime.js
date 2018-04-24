@@ -1,14 +1,16 @@
 // DateTime Component
 // ------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'moment', 'angular'], factory)
+    define(['stratus', 'underscore', 'angular', 'moment'], factory)
   } else {
-    factory(root.Stratus, root.moment)
+    factory(root.Stratus, root._, root.angular, root.moment)
   }
-}(this, function (Stratus, moment) {
+}(this, function (Stratus, _, angular, moment) {
   // This component intends to handle binding of
   // Date and Time into a simple unix timestamp
   Stratus.Components.DateTime = {

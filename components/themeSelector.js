@@ -1,3 +1,5 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -24,9 +26,9 @@
     ], factory)
   } else {
     // Browser globals
-    factory(root.Stratus, root._, root.$, root.angular)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(typeof self !== 'undefined' ? self : this, function (Stratus, _, $, angular) {
+}(typeof self !== 'undefined' ? self : this, function (Stratus, _, jQuery, angular) {
   // This component intends to allow editing of various selections depending on
   // context.
   Stratus.Components.ThemeSelector = {

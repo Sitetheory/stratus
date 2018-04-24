@@ -1,13 +1,14 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.commonMethods',
+      'stratus.services.commonMethods'
     ], factory)
-  }
-  else {
+  } else {
     factory(root.Stratus, root._)
   }
 }(this, function (Stratus, _) {
@@ -29,7 +30,7 @@
 
           return {
             create: create,
-            checkMaster: checkMaster,
+            checkMaster: checkMaster
           }
         }])
     }]

@@ -12,8 +12,7 @@ Stratus.Instances.Clean = function (instances) {
   if (typeof instances === 'undefined') {
     console.error(
       'Stratus.Instances.Clean() requires a string or array containing Unique ID(s).')
-  }
-  else if (typeof instances === 'string') {
+  } else if (typeof instances === 'string') {
     instances = [instances]
   }
 
@@ -26,8 +25,7 @@ Stratus.Instances.Clean = function (instances) {
         delete Stratus.Instances[value]
       }
     })
-  }
-  else {
+  } else {
     return false
   }
 }
@@ -56,8 +54,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         job.code = setInterval(function (job) {
           job.method.call(job.scope)
         }, job.time * 1000, job)
-      }
-      else if (job.code && !job.enabled) {
+      } else if (job.code && !job.enabled) {
         clearInterval(job.code)
         job.code = 0
       }
@@ -113,7 +110,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'))
     }
     return success
-  },
+  }
 })
 Stratus.Chronos.reinitialize()
 
@@ -146,7 +143,7 @@ Stratus.PostMessage.Convoy(_.once(function (convoy) {
     _.cookie({
       name: 'SITETHEORY',
       value: convoy.meta.session,
-      expires: '1w',
+      expires: '1w'
     })
     if (!Stratus.Client.safari) {
       location.reload(true)
@@ -242,7 +239,6 @@ Stratus.Events.on('initialize', function () {
   }, function (error) {
     console.error('Stratus Loader:', error)
   })
-
 })
 Stratus.Events.on('finalize', function () {
   if (!Stratus.Environment.get('production')) {
@@ -282,11 +278,10 @@ Stratus.Events.on('alert', function (message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
-  /*if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') {*/
+  /* if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') { */
   if (typeof bootbox !== 'undefined') {
     bootbox.alert(message.message, message.handler)
-  }
-  else {
+  } else {
     alert(message.message)
     message.handler()
   }
@@ -298,11 +293,10 @@ Stratus.Events.on('confirm', function (message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
-  /*if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') {*/
+  /* if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') { */
   if (typeof bootbox !== 'undefined') {
     bootbox.confirm(message.message, message.handler)
-  }
-  else {
+  } else {
     handler(confirm(message.message))
   }
 })
@@ -313,8 +307,7 @@ Stratus.Events.on('notification', function (message, title) {
   if (message && typeof message === 'object') {
     _.extend(options, message)
     options.message = options.message || 'Message'
-  }
-  else {
+  } else {
     options.message = message || 'Message'
   }
   options.title = options.title || title || 'Stratus'
@@ -323,19 +316,17 @@ Stratus.Events.on('notification', function (message, title) {
   if (!('Notification' in window)) {
     console.info(
       'This browser does not support desktop notifications.  You should switch to a modern browser.')
-  }
-  else if (Notification.permission === 'granted') {
+  } else if (Notification.permission === 'granted') {
     var notification = new Notification(options.title, {
       body: options.message,
-      icon: options.icon,
+      icon: options.icon
     })
-  }
-  else if (Notification.permission !== 'denied') {
+  } else if (Notification.permission !== 'denied') {
     Notification.requestPermission(function (permission) {
       if (permission === 'granted') {
         var notification = new Notification(options.title, {
           body: options.message,
-          icon: options.icon,
+          icon: options.icon
         })
       }
     })
@@ -353,8 +344,7 @@ Stratus.Events.on('toast', function (message, title, priority, settings) {
   }
   if (typeof $ !== 'undefined' && $.toaster) {
     $.toaster(message)
-  }
-  else {
+  } else {
     Stratus.Events.trigger('alert', message.message)
   }
 })

@@ -1,6 +1,8 @@
 // Environment
 // -----------
 
+/* global cacheTime, config */
+
 var boot = {
   // Environment
   dev: (typeof document.cookie === 'string' &&
@@ -8,7 +10,7 @@ var boot = {
   local: (typeof document.cookie === 'string' &&
     // we are disabling the CDN until it is ready.
     document.cookie.indexOf('local=') !== -1) || true,
-  cacheTime: (typeof cacheTime !== 'undefined') ? cacheTime : '2',
+  cacheTime: typeof cacheTime !== 'undefined' ? cacheTime : '2',
 
   // Locations
   host: '',
@@ -53,10 +55,8 @@ boot.config = function (configuration, options) {
     !configuration.paths ? {paths: configuration} : configuration)
 }
 if (typeof config !== 'undefined') {
-  if (typeof config === 'function') {
-    config = config(boot)
-  }
-  if (typeof config === 'object' && config) {
-    boot.config(config)
+  var localConfig = typeof config === 'function' ? config(boot) : config
+  if (typeof localConfig === 'object' && localConfig) {
+    boot.config(localConfig)
   }
 }

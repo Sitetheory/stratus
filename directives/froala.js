@@ -1,15 +1,17 @@
 // Froala Directive
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
       'jquery',
-      'froala',
-      'angular',
       'underscore',
+      'angular',
+      'froala',
       'stratus.services.model',
       'codemirror/mode/htmlmixed/htmlmixed',
       'codemirror/addon/edit/matchbrackets',
@@ -38,9 +40,9 @@
       'froala-word-paste'
     ], factory)
   } else {
-    factory(root.Stratus, root.$)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, $) {
+}(this, function (Stratus, _, jQuery, angular) {
   // This directive intends to provide basic froala capabilities.
   Stratus.Directives.Froala = [
     'froalaConfig', 'Model', function (froalaConfig, Model) {

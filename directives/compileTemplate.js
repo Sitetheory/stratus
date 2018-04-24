@@ -1,6 +1,8 @@
 // Compile Template Directive
 // -----------------
 
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -9,9 +11,9 @@
       'angular'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This directive intends to handle binding of a dynamic variable to
   Stratus.Directives.CompileTemplate = function ($compile) {
     return {

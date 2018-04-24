@@ -1,6 +1,8 @@
 // Registry Service
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -9,13 +11,12 @@
       'underscore',
       'angular',
       'stratus.services.collection',
-      'stratus.services.model',
+      'stratus.services.model'
     ], factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
   }
-  else {
-    factory(root.Stratus, root._)
-  }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Collection Service handles data binding for multiple objects with the
   // $http Service
   // TODO: Build out the query-only structure here as a separate set of
@@ -43,7 +44,7 @@
               return new $q(function (resolve, reject) {
                 if (angular.isString($element)) {
                   $element = {
-                    target: $element,
+                    target: $element
                   }
                 }
                 var options = {
@@ -60,10 +61,7 @@
                   direct: $element.attr
                     ? $element.attr('data-direct')
                     : $element.direct,
-                  api: $element.attr ? $element.attr('data-api') : $element.api,
-                }
-                if (!Stratus.Environment.get('production')) {
-                  console.log('registry:', options, $element)
+                  api: $element.attr ? $element.attr('data-api') : $element.api
                 }
                 var completed = 0
                 $scope.$watch(function () {
@@ -81,8 +79,7 @@
                     if (angular.isDefined(initial)) {
                       options[key] = initial
                       completed++
-                    }
-                    else {
+                    } else {
                       $scope.$watch(function () {
                         return interpreter($scope.$parent)
                       }, function (value) {
@@ -92,8 +89,7 @@
                         }
                       })
                     }
-                  }
-                  else {
+                  } else {
                     completed++
                   }
                 })
@@ -118,19 +114,17 @@
                     data = new Model({
                       target: options.target,
                       manifest: options.manifest,
-                      stagger: true,
+                      stagger: true
                     }, {
-                      id: options.id,
+                      id: options.id
                     })
                     if (!options.decouple) {
                       Stratus.Catalog[options.target][id] = data
                     }
-                  }
-                  else if (Stratus.Catalog[options.target][id]) {
+                  } else if (Stratus.Catalog[options.target][id]) {
                     data = Stratus.Catalog[options.target][id]
                   }
-                }
-                else {
+                } else {
                   if (!Stratus.Catalog[options.target]) {
                     Stratus.Catalog[options.target] = {}
                   }
@@ -138,14 +132,13 @@
                     !Stratus.Catalog[options.target].collection) {
                     data = new Collection({
                       target: options.target,
-                      direct: !!options.direct,
+                      direct: !!options.direct
                     })
                     if (!options.decouple) {
                       var registry = !options.direct ? 'Catalog' : 'Compendium'
                       Stratus[registry][options.target].collection = data
                     }
-                  }
-                  else if (Stratus.Catalog[options.target].collection) {
+                  } else if (Stratus.Catalog[options.target].collection) {
                     data = Stratus.Catalog[options.target].collection
                   }
                 }
@@ -169,8 +162,7 @@
                   $scope.data = data
                   if (data instanceof Model) {
                     $scope.model = data
-                  }
-                  else if (data instanceof Collection) {
+                  } else if (data instanceof Collection) {
                     $scope.collection = data
                   }
                 }
@@ -181,8 +173,8 @@
               return data
             }
           }
-        },
+        }
       ])
-    },
+    }
   ]
 }))

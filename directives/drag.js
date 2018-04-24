@@ -1,15 +1,17 @@
 // Drag Directive
 // --------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['stratus', 'underscore', 'angular', 'stratus.directives.drop'],
       factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This directive intends to handle binding of a dynamic variable to
   Stratus.Directives.Drag = function ($parse, $log) {
     return {

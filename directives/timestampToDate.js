@@ -1,3 +1,5 @@
+/* global define */
+
 // Timestamp to Date Directive
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -7,9 +9,9 @@
       'angular'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This directive intends to handle binding of a model to convert value as
   // timestamp to date, the value is persisted into ng-model still timestamp
   // type.

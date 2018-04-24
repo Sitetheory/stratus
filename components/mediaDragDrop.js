@@ -1,11 +1,13 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
 
       // Libraries
       'stratus',
-      'jquery',
       'underscore',
+      'jquery',
       'angular',
 
       // Modules
@@ -14,9 +16,9 @@
       'stratus.services.media'
     ], factory)
   } else {
-    factory(root.Stratus, root.$, root._)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, $, _, angular) {
+}(this, function (Stratus, _, jQuery, angular) {
   Stratus.Components.MediaDragDrop = {
     controller: function ($scope, $mdDialog, $attrs, commonMethods, media) {
       // Initialize
@@ -33,10 +35,10 @@
       // document.addEventListener('dragleave', media.dragleave, false);
       // document.addEventListener('drop', drop, false);
 
-      $(window).focus(function () {
-        $('.drag-drop').removeClass('show-overlay')
+      jQuery(window).focus(function () {
+        jQuery('.drag-drop').removeClass('show-overlay')
       }).blur(function () {
-        $('.drag-drop').addClass('show-overlay')
+        jQuery('.drag-drop').addClass('show-overlay')
       })
 
       function drop (event) {

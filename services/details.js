@@ -1,16 +1,17 @@
 // Details Service
 // ---------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(['stratus', 'underscore', 'angular', 'stratus.services.model'],
       factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
   }
-  else {
-    factory(root.Stratus, root._)
-  }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   Stratus.Services.Details = [
     '$provide', function ($provide) {
       $provide.factory('details', [
@@ -32,7 +33,7 @@
                     : $element.selectedId,
                   property: $element.attr
                     ? $element.attr('data-property')
-                    : $element.property,
+                    : $element.property
                 }
 
                 var completed = 0
@@ -51,8 +52,7 @@
                     if (angular.isDefined(initial)) {
                       options[key] = initial
                       completed++
-                    }
-                    else {
+                    } else {
                       $scope.$watch(function () {
                         return interpreter($scope.$parent)
                       }, function (value) {
@@ -62,8 +62,7 @@
                         }
                       })
                     }
-                  }
-                  else {
+                  } else {
                     completed++
                   }
                 })
@@ -83,7 +82,7 @@
                 var prototype = {
                   method: action,
                   url: targetUrl,
-                  headers: {},
+                  headers: {}
                 }
                 $http(prototype).then(function (response) {
                   if (response.status === 200 &&

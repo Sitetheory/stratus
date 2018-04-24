@@ -23,14 +23,12 @@ var eventsApi = function (iteratee, events, name, callback, opts) {
     for (names = _.keys(name); i < names.length; i++) {
       events = eventsApi(iteratee, events, names[i], name[names[i]], opts)
     }
-  }
-  else if (name && eventSplitter.test(name)) {
+  } else if (name && eventSplitter.test(name)) {
     // Handle space-separated event names by delegating them individually.
     for (names = name.split(eventSplitter); i < names.length; i++) {
       events = iteratee(events, names[i], callback, opts)
     }
-  }
-  else {
+  } else {
     // Finally, standard events.
     events = iteratee(events, name, callback, opts)
   }
@@ -48,7 +46,7 @@ var internalOn = function (obj, name, callback, context, listening) {
   obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
     context: context,
     ctx: obj,
-    listening: listening,
+    listening: listening
   })
 
   if (listening) {
@@ -79,7 +77,7 @@ Stratus.Events.listenTo = function (obj, name, callback) {
       objId: id,
       id: thisId,
       listeningTo: listeningTo,
-      count: 0,
+      count: 0
     }
   }
 
@@ -103,7 +101,7 @@ var onApi = function (events, name, callback, options) {
       callback: callback,
       context: context,
       ctx: context || ctx,
-      listening: listening,
+      listening: listening
     })
   }
   return events
@@ -119,7 +117,7 @@ Stratus.Events.off = function (name, callback, context) {
   }
   this._events = eventsApi(offApi, this._events, name, callback, {
     context: context,
-    listeners: this._listeners,
+    listeners: this._listeners
   })
   return this
 }
@@ -191,8 +189,7 @@ var offApi = function (events, name, callback, options) {
         context && context !== handler.context
       ) {
         remaining.push(handler)
-      }
-      else {
+      } else {
         listening = handler.listening
         if (listening && --listening.count === 0) {
           delete listeners[listening.id]
@@ -204,8 +201,7 @@ var offApi = function (events, name, callback, options) {
     // Update tail event if the list has any events.  Otherwise, clean up.
     if (remaining.length) {
       events[name] = remaining
-    }
-    else {
+    } else {
       delete events[name]
     }
   }
@@ -316,12 +312,11 @@ var triggerEvents = function (events, args) {
       return
     default:
       while (++i < l) {
-        (ev = events[i]).callback.apply(ev.ctx, args);
+        (ev = events[i]).callback.apply(ev.ctx, args)
       }
-      return;
   }
-};
+}
 
 // Aliases for backwards compatibility.
-Stratus.Events.bind = Stratus.Events.on;
-Stratus.Events.unbind = Stratus.Events.off;
+Stratus.Events.bind = Stratus.Events.on
+Stratus.Events.unbind = Stratus.Events.off

@@ -1,6 +1,8 @@
 // Configuration
 // -------------
 
+/* global boot */
+
 boot.config({
 
   // Connection Settings

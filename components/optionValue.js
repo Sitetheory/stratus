@@ -1,14 +1,16 @@
 // OptionValue Component
 // ---------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'angular'], factory)
+    define(['stratus', 'underscore', 'angular'], factory)
   } else {
-    factory(root.Stratus)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus) {
+}(this, function (Stratus, _, angular) {
   // This component intends to handle binding of an
   // item array into a particular attribute.
   Stratus.Components.OptionValue = {
