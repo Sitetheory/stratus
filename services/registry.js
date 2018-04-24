@@ -125,21 +125,21 @@
                     data = Stratus.Catalog[options.target][id]
                   }
                 } else {
-                  if (!Stratus.Catalog[options.target]) {
-                    Stratus.Catalog[options.target] = {}
+                  var registry = !options.direct ? 'Catalog' : 'Compendium'
+                  if (!Stratus[registry][options.target]) {
+                    Stratus[registry][options.target] = {}
                   }
                   if (options.decouple ||
-                    !Stratus.Catalog[options.target].collection) {
+                    !Stratus[registry][options.target].collection) {
                     data = new Collection({
                       target: options.target,
                       direct: !!options.direct
                     })
                     if (!options.decouple) {
-                      var registry = !options.direct ? 'Catalog' : 'Compendium'
                       Stratus[registry][options.target].collection = data
                     }
-                  } else if (Stratus.Catalog[options.target].collection) {
-                    data = Stratus.Catalog[options.target].collection
+                  } else if (Stratus[registry][options.target].collection) {
+                    data = Stratus[registry][options.target].collection
                   }
                 }
 

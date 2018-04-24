@@ -145,6 +145,8 @@
             this.url = function () {
               var url = that.getIdentifier() ? that.urlRoot + '/' +
                 that.getIdentifier() : that.urlRoot
+
+              // TODO: Move the following version logic to a router
               url += '?'
 
               // add futher param to specific version
@@ -301,6 +303,8 @@
             }
 
             /**
+             * TODO: Ensure the meta temp locations get cleared appropriately before removing function
+             * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
              * @returns {*}
              */
             this.specialAction = function (action) {
