@@ -84,11 +84,13 @@
             cancel()
             break
         }
+        setTimeCustom()
       }
 
       function accept () {
         if ($ctrl.allowEdit) {
           $ctrl.menuLink.name = $ctrl.value
+          setTimeCustom()
           setEdit(false)
         }
       }
@@ -96,6 +98,10 @@
       function cancel () {
         $ctrl.value = $ctrl.menuLink.name
         setEdit(false)
+      }
+
+      function setTimeCustom () {
+        $ctrl.versionData.timeCustom = Math.round((new Date()).getTime() / 1000)
       }
 
       // FIXME: Need to click on a menu label twice to edit it
@@ -129,20 +135,33 @@
                 } else if (menuLink.url) {
                   dc.linkTo = menuLink.url
                 }
+
+                dc.close = close
+                dc.toggle = toggle
+                dc.destroy = destroy
+                dc.addChild = addChild
+                dc.changePriority = changePriority
+                dc.getContentForMenu = getContentForMenu
+                dc.handleSelection = handleSelection
               }
 
-              dc.close = function () {
+              function close () {
                 if (mdPanelRef) {
                   accept()
                   mdPanelRef.close()
                 }
               }
 
-              dc.toggle = function () {
-                console.log('toggle')
+              function toggle () {
+                if (menuLink.status === null || menuLink.status === 0) {
+                  menuLink.status = 1
+                } else {
+                  menuLink.status = 0
+                }
+                setTimeCustom()
               }
 
-              dc.destroy = function () {
+              function destroy () {
                 // remove child menu link
                 for (var i = 0; i < versionData.length; i++) {
                   var elem = versionData[i]
@@ -153,9 +172,10 @@
 
                 // remove parent
                 versionData.splice(versionData.indexOf(menuLink), 1)
+                setTimeCustom()
               }
 
-              dc.addChild = function () {
+              function addChild () {
                 var childLink = {
                   name: 'Untitled Child',
                   parent: menuLink.parent,
@@ -164,13 +184,15 @@
                   }
                 }
                 versionData.push(childLink)
+                setTimeCustom()
               }
 
-              dc.changePriority = function (priority) {
+              function changePriority (priority) {
                 dc.menuLink.priority = (dc.menuLink.priority || 0) + priority
+                setTimeCustom()
               }
 
-              dc.getContentForMenu = function (query, target, urlRoot) {
+              function getContentForMenu (query, target, urlRoot) {
                 var collection = new Collection()
                 collection.target = target
                 collection.urlRoot = urlRoot
@@ -179,7 +201,7 @@
                 })
               }
 
-              dc.handleSelection = function (query, type) {
+              function handleSelection (query, type) {
                 switch (type) {
                   case 'content':
                     dc.menuLink.url = null
@@ -190,11 +212,12 @@
                     dc.menuLink.content = null
                     break
                   case 'menulink':
-                    if (query.data) {
+                    if (query && query.data) {
                       dc.menuLink.nestParent = query.data
                     }
                     break
                 }
+                setTimeCustom()
               }
             },
             controllerAs: 'ctrl'
