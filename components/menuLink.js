@@ -173,7 +173,9 @@
               function addChild () {
                 var childLink = {
                   name: 'Untitled Child',
-                  parent: menuLink.parent,
+                  parent: {
+                    id: $ctrl.versionData.meta.id
+                  },
                   nestParent: {
                     id: menuLink.id
                   }
@@ -207,8 +209,8 @@
                     dc.menuLink.content = null
                     break
                   case 'menulink':
-                    if (query && query.data) {
-                      dc.menuLink.nestParent = query.data
+                    if (query && query.data && dc.menuLink.nestParent) {
+                      dc.menuLink.nestParent.id = query.data.id
                     }
                     break
                 }
