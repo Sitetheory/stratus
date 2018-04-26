@@ -129,6 +129,9 @@
 
               dc.$onInit = function () {
                 dc.menuLink = menuLink
+                if (menuLink.nestParent) {
+                  dc.nestParent = getParentFromId(menuLink.nestParent.id)
+                }
 
                 if (menuLink.content) {
                   dc.linkTo = menuLink.content.version
@@ -218,6 +221,17 @@
                     break
                 }
                 setTimeCustom()
+              }
+
+              function getParentFromId (parentId) {
+                if (menuLink.nestParent) {
+                  for (var i = 0; i < versionData.length; i++) {
+                    const link = versionData[i]
+                    if (menuLink.nestParent.id === link.id) {
+                      return link
+                    }
+                  }
+                }
               }
             },
             controllerAs: 'ctrl'

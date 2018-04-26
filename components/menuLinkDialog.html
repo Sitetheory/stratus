@@ -43,7 +43,7 @@
                           md-selected-item="ctrl.linkTo"
                           md-search-text="contentQuery"
                           md-items="content in ctrl.getContentForMenu(contentQuery, 'Content', '/Api/Content')"
-                          md-item-text="content.data.version.title"
+                          md-item-text="ctrl.linkTo.title || content.data.version.title"
                           md-menu-class="autocomplete-menulink"
                           md-selected-item-change="ctrl.handleSelection(content, 'content')">
           <md-item-template>
@@ -70,10 +70,10 @@
                           md-floating-label="Parent"
                           md-min-length="0"
                           md-delay="500"
-                          md-selected-item="ctrl.menuLink.nestParent"
+                          md-selected-item="ctrl.nestParent"
                           md-search-text="childQuery"
                           md-items="parent in ctrl.getContentForMenu(childQuery, 'MenuLink', '/Api/MenuLink')"
-                          md-item-text="parent.data.name"
+                          md-item-text="ctrl.nestParent.name || parent.data.name"
                           md-menu-class="autocomplete-menulink"
                           md-selected-item-change="ctrl.handleSelection(parent, 'menulink')">
           <md-item-template>
