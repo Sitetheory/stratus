@@ -1,4 +1,4 @@
-/* global define */
+/* global define, FB */
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -74,7 +74,7 @@
               break
             default:
               FB.login(function (response) {
-                (response.authResponse != null)
+                (response.authResponse !== null)
                   ? FbGetBasicProfile()
                   : FB.login()
               }, {
@@ -125,7 +125,7 @@
       // update data into model
       function updateExistData (data, service) {
         if (data.hasOwnProperty('id')) {
-          if (service == 'google') {
+          if (service === 'google') {
             $ctrl.ngModel.googleId = null
             $ctrl.ngModel.googleId = data.id
           } else {
@@ -140,7 +140,7 @@
 
           if ($ctrl.ngModel.profile.hasOwnProperty('gender') &&
             data.hasOwnProperty('gender')) {
-            $ctrl.ngModel.profile.gender = (data.gender == 'male') ? 2 : 1
+            $ctrl.ngModel.profile.gender = (data.gender === 'male') ? 2 : 1
           }
 
           if ($ctrl.ngModel.profile.hasOwnProperty('locale') &&

@@ -1,6 +1,8 @@
 // Generic Controller
 // ------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -12,9 +14,9 @@
       'stratus.services.createNewSite'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Controller handles simple element binding
   // for a single scope to an API Object Reference.
   Stratus.Controllers.Generic = [
@@ -79,15 +81,15 @@
         })
       }
 
-      $scope.handleSelection = function (content, type) {
+      $scope.handleSelection = function (change, type) {
         switch (type) {
           case 'content':
             $scope.model.data.url = null
-            $scope.model.data.content = content
+            $scope.model.data.content = change
             break
           case 'url':
             $scope.model.data.content = null
-            $scope.model.data.url = url
+            $scope.model.data.url = change
             break
         }
       }

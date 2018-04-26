@@ -7,12 +7,12 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(
-      ['stratus', 'angular', 'stratus.services.registry', 'angular-material'],
+      ['stratus', 'underscore', 'angular', 'stratus.services.registry', 'angular-material'],
       factory)
   } else {
-    factory(root.Stratus, root.angular)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, angular) {
+}(this, function (Stratus, _, angular) {
   // This component handles sorting for a collection
   Stratus.Components.Sort = {
     bindings: {

@@ -75,13 +75,11 @@
             $ctrl.mediaUrl = fileData.file
           }
           if (fileData.mime === 'video') {
+            var videoUrl
             if (fileData.service === 'youtube') {
-              var videoUrl = 'https://www.youtube.com/embed/' +
-                fileData.file.split('v=')[1].split('&')[0]
+              videoUrl = 'https://www.youtube.com/embed/' + fileData.file.split('v=')[1].split('&')[0]
             } else if (fileData.service === 'vimeo') {
-              var videoUrl = 'https://player.vimeo.com/video/' +
-                fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(
-                  /[?&]/)[0]
+              videoUrl = 'https://player.vimeo.com/video/' + fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0]
             }
             $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl)
           }
@@ -112,8 +110,7 @@
           ).then(function () {
             media.deleteMedia(fileId).then(
               function (response) {
-                if (commonMethods.getStatus(response).code ==
-                  commonMethods.RESPONSE_CODE.success) {
+                if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
                   $mdDialog.cancel()
                   media.getMedia($ctrl)
                 } else {
@@ -189,8 +186,7 @@
             name: query
           }
           media.createTag(data).then(function (response) {
-            if (commonMethods.getStatus(response).code ==
-              commonMethods.RESPONSE_CODE.success) {
+            if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
               if (fileId !== undefined && tags !== undefined) {
                 var dataRes = {}
                 $ctrl.tags.push(response.data.payload)
@@ -204,8 +200,7 @@
         // Update title, description, tags of a file
         function updateMedia (fileId, data) {
           media.updateMedia(fileId, data).then(function (response) {
-            if (commonMethods.getStatus(response).code ==
-              commonMethods.RESPONSE_CODE.success) {
+            if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
               media.getMedia($ctrl)
             }
           })

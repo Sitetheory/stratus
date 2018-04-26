@@ -7,6 +7,7 @@
       // Libraries
       'stratus',
       'underscore',
+      'jquery',
       'angular',
 
       // Modules
@@ -14,9 +15,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.angular)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, _, angular) {
+}(this, function (Stratus, _, jQuery, angular) {
   // This component intends to allow editing of various tags
   Stratus.Components.Tag = {
     bindings: {
@@ -73,7 +74,7 @@
       $ctrl.createTag = function () {
         $ctrl.selectedChips.push($ctrl.transformChip($ctrl.queryText))
         $ctrl.queryText = null
-        $('input').blur()
+        jQuery('input').blur()
       }
     },
     templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/tag' +

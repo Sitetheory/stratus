@@ -25,11 +25,11 @@
   if (typeof define === 'function' && define.amd) {
     define(['stratus', 'underscore', 'angular', 'md5'], factory)
   } else {
-    factory(root.Stratus, root._, root.angular)
+    factory(root.Stratus, root._, root.angular, root.md5)
   }
-}(this, function (Stratus, _, angular) {
+}(this, function (Stratus, _, angular, md5) {
   // Angular Gravatar Filter
-  // ------------------------
+  // -----------------------
 
   // This filter allows a display of time since the given date
   Stratus.Filters.Gravatar = function () {

@@ -1,6 +1,8 @@
 // Product Filter Controller
 // -----------------
 
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -11,9 +13,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Controller handles member role filter
   Stratus.Controllers.UserFilter = [
     '$scope',
@@ -41,7 +43,7 @@
        */
 
       $scope.getStatus = function (member) {
-        status = ''
+        var status = ''
         if (member.flags) {
           if (!$scope.isVerify(member)) {
             status = 'unverified'
@@ -57,9 +59,11 @@
         if (!member || !member.flags) {
           return false
         }
-        return member.flags.findIndex(function (x) {
-          return (x.flagType && x.flagType.title == 'verify')
-        }) != -1
+        return member.flags.findIndex(
+          function (x) {
+            return (x.flagType && x.flagType.title === 'verify')
+          }
+        ) !== -1
       }
 
       /**

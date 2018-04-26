@@ -1,6 +1,8 @@
 // Generic Controller
 // ------------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -13,9 +15,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Controller handles simple element binding
   // for a single scope to an API Object Reference.
   Stratus.Controllers.CreateNewSite = [
@@ -108,8 +110,7 @@
           masterContentMethod: masterContentMethod
         }
         createNewSite.create(data).then(function (res) {
-          if (commonMethods.getStatus(res).code ==
-            commonMethods.RESPONSE_CODE.success) {
+          if (commonMethods.getStatus(res).code === commonMethods.RESPONSE_CODE.success) {
             $scope.errorMsg = null
             $scope.steps.isWelcome = false
             if (res.data.payload) {
@@ -128,8 +129,7 @@
             isMasterSite: masterSite
           }
           createNewSite.checkMaster(data).then(function (res) {
-            if (commonMethods.getStatus(res).code ==
-              commonMethods.RESPONSE_CODE.success) {
+            if (commonMethods.getStatus(res).code === commonMethods.RESPONSE_CODE.success) {
               $scope.errorMsg = commonMethods.getStatus(res).message
             } else {
               $scope.errorMsg = null

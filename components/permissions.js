@@ -109,7 +109,7 @@
               var data = response.data.payload
 
               // Set permission selected
-              permissions = data.summary
+              var permissions = data.summary
               angular.forEach(permissions, function (permission, index) {
                 index = $scope.permissions.findIndex(function (x) {
                   return x.name === permission
@@ -277,8 +277,8 @@
        */
       $scope.processSelectAction = function () {
         var masterIndex = $scope.permissionSelected.indexOf(128)
-        if ((masterIndex != -1) ||
-          ($scope.permissionSelected.length == $scope.permissions.length - 1)) {
+        if ((masterIndex !== -1) ||
+          ($scope.permissionSelected.length === $scope.permissions.length - 1)) {
           $scope.permissionSelected = [
             $scope.permissions[$scope.permissions.length - 1].value]
         }

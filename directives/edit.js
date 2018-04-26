@@ -9,6 +9,7 @@
     define([
       'stratus',
       'underscore',
+      'jquery',
       'angular',
       'moment',
       'angular-material',
@@ -20,9 +21,9 @@
       'stratus.components.mediaSelector'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.angular, root.moment)
+    factory(root.Stratus, root._, root.jQuery, root.angular, root.moment)
   }
-}(this, function (Stratus, _, angular, moment) {
+}(this, function (Stratus, _, jQuery, angular, moment) {
   // This directive intends to handle binding of a dynamic variable to
   Stratus.Directives.Edit = function ($parse, $log, $timeout, Model) {
     return {
@@ -106,10 +107,10 @@
               // Focus on the input field
               $scope.edit_input_container.getElementsByTagName(
                 'input')[0].focus()
-            } else if ($($scope.edit_input_container)
+            } else if (jQuery($scope.edit_input_container)
               .find('[contenteditable]').length > 0) {
               // Focus on any contenteditable (including froala)
-              $($scope.edit_input_container).find('[contenteditable]').focus()
+              jQuery($scope.edit_input_container).find('[contenteditable]').focus()
             } else {
               // No known edit location, so try to focus on the entire container
               $scope.edit_input_container.focus()
@@ -167,7 +168,7 @@
           // Save / Cancel value on key press
           // FIXME: saving with key press with cause two saves (due to focus
           // out). We need a save throttle to prevent errors
-          $($scope.edit_input_container)
+          jQuery($scope.edit_input_container)
             .on('keydown keypress', function (event) {
               switch (event.which) {
                 case Stratus.Key.Enter:
@@ -188,7 +189,7 @@
 
           // FIXME: save of focus out does not work on the media selector
           // correctly Update value on change, save value on blur
-          $($scope.edit_input_container).on('focusout', function () {
+          jQuery($scope.edit_input_container).on('focusout', function () {
             if ($scope.autoSave !== false && $scope.autoSave !== 'false') {
               $scope.$apply($scope.accept)
             }

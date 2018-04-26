@@ -1,4 +1,4 @@
-/* global define */
+/* global define, location */
 
 // TODO: Separate these functions out, into more narrow services
 (function (root, factory) {

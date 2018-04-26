@@ -11,6 +11,7 @@
       // Libraries
       'stratus',
       'underscore',
+      'jquery',
       'angular',
 
       // UI Additions
@@ -33,9 +34,9 @@
       'stratus.services.media'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.angular)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, _, angular) {
+}(this, function (Stratus, _, jQuery, angular) {
   // We need to ensure the ng-file-upload and ng-cookies are registered
   Stratus.Modules.ngFileUpload = true
 
@@ -55,6 +56,7 @@
       $element,
       Upload,
       $compile,
+      $timeout,
       Registry,
       $mdPanel,
       $q,
@@ -343,8 +345,9 @@
                   $scope.draggedFiles.push(dragged.data)
                 })
               }
-            }).catch(function (error) {
+            }).catch(function (err) {
               $scope.uploadComp = true
+              if (err) throw err
             })
           }
         }
@@ -386,12 +389,15 @@
                   $scope.draggedFiles.push(dragged.data)
                 })
               }
-            }).catch(function (error) {
+            }).catch(function (err) {
               $scope.uploadComp = true
+              if (err) throw err
             })
           }
         }
       }
+
+      $scope.updateFilesModel = updateFilesModel
 
       $scope.createTag = function (query, fileId, tags) {
         var data = {
@@ -441,11 +447,10 @@
             // show cross icon if upload failed
             file.errorUpload = true
             file.errorMsg = 'Aborted'
-          }
 
-          // if file not uploaded due to server error
-          // else if (response.status > 0)
-          else {
+            // if file not uploaded due to server error
+            // else if (response.status > 0)
+          } else {
             // hide progress bar
             file.uploadStatus = false
 
@@ -471,8 +476,8 @@
       // Add Class on Popup Image
       $scope.addClassOnPopup = function (event) {
         var myEl = angular.element(
-          document.querySelector($(event.target).attr('data-target')))
-        myEl.addClass($(event.target).attr('data-class'))
+          document.querySelector(jQuery(event.target).attr('data-target')))
+        myEl.addClass(jQuery(event.target).attr('data-class'))
       }
 
       // controller for zoom panel

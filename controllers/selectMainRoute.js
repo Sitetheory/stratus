@@ -1,3 +1,5 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -6,9 +8,9 @@
       'angular'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   Stratus.Controllers.SelectMainRoute = [
     '$scope',
     function ($scope) {
@@ -39,7 +41,7 @@
 
       $scope.update = function () {
         angular.forEach($scope.routes, function (route) {
-          route.main = (route.id == $scope.mainRoute)
+          route.main = (route.id === $scope.mainRoute)
         })
         return $scope.routes
       }

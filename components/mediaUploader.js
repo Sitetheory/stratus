@@ -141,7 +141,7 @@
           return
         }
 
-        data = {
+        var data = {
           service: file.service.value,
           file: file.url,
           name: file.name,
@@ -156,18 +156,13 @@
         }
 
         media.saveMediaUrl(data).then(function (response) {
-          if (commonMethods.getStatus(response).code ==
-            commonMethods.RESPONSE_CODE.success) {
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
             // Refresh the library
             media.getMedia($ctrl)
 
-            if (fileType && fileType === 'video') {
-              var index = $ctrl.videos.indexOf(file)
-              $ctrl.videos[index].isUploaded = true
-            } else {
-              var index = $ctrl.links.indexOf(file)
-              $ctrl.links[index].isUploaded = true
-            }
+            var type = fileType && fileType === 'video' ? 'videos' : 'links'
+            var index = $ctrl[type].indexOf(file)
+            $ctrl[type][index].isUploaded = true
           } else {
             console.error(commonMethods.getStatus(response).code + ' - ' +
               commonMethods.getStatus(response).message)
@@ -213,6 +208,7 @@
           var uploadFilePromise = []
           if ($ctrl.ngfMultiple) {
             // Upload new files
+            var i
             for (i = 0; i < files.length; i++) {
               var singleFile = media.fileUploader(files[i])
               uploadFilePromise.push(singleFile.upload)
@@ -236,15 +232,10 @@
       function createTag (file, query) {
         var data = {name: query}
         media.createTag(data).then(function (response) {
-          if (commonMethods.getStatus(response).code ==
-            commonMethods.RESPONSE_CODE.success) {
-            if (file.mime === 'video') {
-              var index = $ctrl.videos.indexOf(file)
-              $ctrl.videos[index].tags.push(response.data.payload)
-            } else {
-              var index = $ctrl.links.indexOf(file)
-              $ctrl.links[index].tags.push(response.data.payload)
-            }
+          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
+            var type = file.mime === 'video' ? 'videos' : 'links'
+            var index = $ctrl[type].indexOf(file)
+            $ctrl[type][index].tags.push(response.data.payload)
           }
         })
       }

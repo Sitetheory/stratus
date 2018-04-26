@@ -1,6 +1,8 @@
 // Model Service
 // -------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -12,9 +14,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Model Service handles data binding for a single object with the $http
   // Service
   Stratus.Services.Model = [
@@ -120,14 +122,14 @@
              * @returns {*}
              */
             this.getIdentifier = function () {
-              return this.identifier = that.get('id') || that.identifier
+              return (this.identifier = that.get('id') || that.identifier)
             }
 
             /**
              * @returns {*}
              */
             this.getType = function () {
-              return this.type = that.type || that.target || 'orphan'
+              return (this.type = that.type || that.target || 'orphan')
             }
 
             /**
@@ -291,15 +293,15 @@
                 that.toJSON({
                   patch: true
                 })).catch(function (message) {
-                  $mdToast.show(
+                $mdToast.show(
                   $mdToast.simple()
                     .textContent('Failure to Save!')
                     .toastClass('errorMessage')
                     .position('top right')
                     .hideDelay(3000)
                 )
-                  $log.error('SAVE:', message)
-                })
+                $log.error('SAVE:', message)
+              })
             }
 
             /**
@@ -373,7 +375,7 @@
             this.bracket = {
               match: /\[[\d+]]/,
               search: /\[([\d+])]/g,
-              attr: /(^[^\[]+)/
+              attr: /(^[^[]+)/
             }
 
             /**
@@ -601,8 +603,7 @@
                 if (angular.isArray(attribute)) {
                   return typeof attribute.find(function (element) {
                     return element === item || (
-                      angular.isObject(element) && element.id &&
-                      element.id === item || _.isEqual(element, item)
+                      (angular.isObject(element) && element.id && element.id === item) || _.isEqual(element, item)
                     )
                   }) !== 'undefined'
                 } else {

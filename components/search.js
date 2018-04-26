@@ -10,6 +10,7 @@
 
       // Libraries
       'stratus',
+      'underscore',
       'angular',
 
       // Modules
@@ -20,9 +21,9 @@
       'stratus.services.collection'
     ], factory)
   } else {
-    factory(root.Stratus, root.angular)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, angular) {
+}(this, function (Stratus, _, angular) {
   // This component handles searching to filter a collection
   Stratus.Components.Search = {
     bindings: {

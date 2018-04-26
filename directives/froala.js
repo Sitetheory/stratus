@@ -8,8 +8,8 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      'jquery',
       'underscore',
+      'jquery',
       'angular',
       'froala',
       'stratus.services.model',
@@ -93,7 +93,7 @@
 
           // Twiddle Element to Zepto since Angular is lame and doesn't handle
           // anything other than jQuery...
-          element = element.length ? $(element[0]) : element
+          element = element.length ? jQuery(element[0]) : element
 
           var specialTag = false
           if (SPECIAL_TAGS.indexOf(element.prop('tagName').toLowerCase()) !==
@@ -197,7 +197,7 @@
               }
 
               return element.froalaEditor('node.isEmpty',
-                $('<div>' + value + '</div>').get(0))
+                jQuery('<div>' + value + '</div>').get(0))
             }
           }
 
@@ -271,7 +271,7 @@
             if (scope.autoSave !== false &&
               scope.autoSave !== 'false'
             ) {
-              element.froalaEditor('events.on', 'blur', function () {
+              element.froalaEditor('events.on', 'blur', function (event) {
                 if (ctrl.editorInitialized) {
                   switch (event.type) {
                     case 'focusout':

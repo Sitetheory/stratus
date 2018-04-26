@@ -1,4 +1,4 @@
-/* global define */
+/* global define, URL */
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -17,7 +17,7 @@
     // Browser globals
     factory(root.Stratus, root._, root.angular, root.zxcvbn)
   }
-}(typeof self !== 'undefined' ? self : this,
+}(this,
   function (Stratus, _, angular, zxcvbn) {
     // This component intends to allow editing of various selections depending
     // on context.

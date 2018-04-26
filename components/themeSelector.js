@@ -28,7 +28,7 @@
     // Browser globals
     factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(typeof self !== 'undefined' ? self : this, function (Stratus, _, jQuery, angular) {
+}(this, function (Stratus, _, jQuery, angular) {
   // This component intends to allow editing of various selections depending on
   // context.
   Stratus.Components.ThemeSelector = {
@@ -75,7 +75,7 @@
         $ctrl.zoomView = zoomView
         $ctrl.selectedTheme = null
         $ctrl.showGallery = $ctrl.isNewTheme
-        var currentThemes = []
+        $ctrl.currentThemes = []
 
         // mock DB
         $ctrl.categories = [
@@ -94,6 +94,7 @@
         $ctrl.chooseTheme = chooseTheme
         $ctrl.themeRawDesc = themeRawDesc
         $ctrl.toggleGallery = toggleGallery
+        $ctrl.finishChoosingTheme = finishChoosingTheme
 
         // Asset Collection
         if ($attrs.type) {
@@ -116,10 +117,10 @@
       $scope.$watch('[model.data.version.template, collection.models]',
         function (theme) {
           if (theme[0] && theme[1] && theme[1].length > 0) {
-            currentThemes = theme[1]
+            $ctrl.currentThemes = theme[1]
 
             if (!$ctrl.selectedTheme) {
-              var themeData = currentThemes.map(function (obj) {
+              var themeData = $ctrl.currentThemes.map(function (obj) {
                 return obj.data
               })
               $ctrl.selectedTheme = $filter('filter')(themeData, {
@@ -157,6 +158,9 @@
         $scope.model.data.version.template = themeData
       }
 
+      /**
+       * @param themeData
+       */
       function finishChoosingTheme (themeData) {
         var data = {
           templateId: themeData.id
@@ -173,7 +177,7 @@
 
       function sortBy (type) {
         console.log('Not implement yet')
-        // currentThemes = (function (type) {
+        // $ctrl.currentThemes = (function (type) {
         //   switch (type) {
         //     case 'latest':
         //       return latest();
@@ -182,26 +186,26 @@
         //     case 'favorite':
         //       return favorite();
         //     default:
-        //       return currentThemes;
+        //       return $ctrl.currentThemes;
         //   }
         // })(type);
       }
 
       // Helpers
       // function latest() {
-      //   return currentThemes.sort(function (a, b) {
+      //   return $ctrl.currentThemes.sort(function (a, b) {
       //     return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit);
       //   });
       // }
 
       // function populate() {
-      //   return currentThemes.sort(function (a, b) {
+      //   return $ctrl.currentThemes.sort(function (a, b) {
       //     return parseFloat(b.populate) - parseFloat(a.populate);
       //   });
       // }
 
       // function favorite() {
-      //   return currentThemes.sort(function (a) {
+      //   return $ctrl.currentThemes.sort(function (a) {
       //     return $ctrl.favorites.includes(a.id) ? -1 : 1;
       //   });
       // }
@@ -214,7 +218,7 @@
       })
     },
     templateUrl: Stratus.BaseUrl +
-      'sitetheorystratus/stratus/components/themeSelector' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    'sitetheorystratus/stratus/components/themeSelector' +
+    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

@@ -17,7 +17,7 @@
     // Browser globals
     factory(root.Stratus, root._, root.angular, root.zxcvbn)
   }
-}(typeof self !== 'undefined' ? self : this,
+}(this,
   function (Stratus, _, angular, zxcvbn) {
     // This component intends to allow editing of various selections depending
     // on context.
@@ -51,9 +51,9 @@
           return $sce.trustAsHtml(proposal.text)
         }
 
-        // remove element from proposols
+        // remove element from proposals
         $ctrl.hideProposal = function (proposal) {
-          var index = $ctrl.proposals.indexOf(proposal)
+          // var index = $ctrl.proposals.indexOf(proposal)
           $ctrl.proposals.splice(0, 1)
         }
       },

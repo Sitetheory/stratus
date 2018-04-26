@@ -28,11 +28,9 @@
           $http,
           $mdPanel,
           Registry,
-          details,
+          Details,
           commonMethods
         ) {
-          var apiUrl = '/Api/Media/'
-
           function selectTheme (data) {
             return commonMethods.sendRequest(data, 'POST', '/Api/Template')
           }
@@ -59,7 +57,7 @@
             scope.registry.fetch(request, scope)
 
             // Get Details of selected template by attribute selectedid
-            scope.selectedDetails = new details()
+            scope.selectedDetails = new Details()
             scope.selectedDetails.fetch(request, scope)
             return scope
           }

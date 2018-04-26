@@ -6,12 +6,12 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular', 'stratus.services.model'],
+    define(['stratus', 'underscore', 'jquery', 'angular', 'stratus.services.model'],
       factory)
   } else {
-    factory(root.Stratus, root._, root.angular)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, _, angular) {
+}(this, function (Stratus, _, jQuery, angular) {
   // This directive intends to handle binding of a dynamic variable to
   Stratus.Directives.EditInline = function ($parse, $log, Model) {
     return {
@@ -35,7 +35,7 @@
         $scope.uid = this.uid = _.uniqueId('edit_')
         Stratus.Instances[this.uid] = $scope
         $scope.value = $scope.originalValue = $element.html()
-        $scope.$value = $(document.createElement('span'))
+        $scope.$value = jQuery(document.createElement('span'))
         $scope.$value.html($scope.value || $scope.emptyValue || '')
 
         // Data Connectivity
@@ -61,7 +61,7 @@
             $element.empty()
 
             if ($scope.prefix) {
-              $scope.$prefix = $(document.createElement('span'))
+              $scope.$prefix = jQuery(document.createElement('span'))
               $scope.$prefix.html($scope.prefix)
               $scope.$prefix.attr('prefix', '')
 
@@ -71,7 +71,7 @@
             $element.append($scope.$value)
 
             if ($scope.suffix) {
-              $scope.$suffix = $(document.createElement('span'))
+              $scope.$suffix = jQuery(document.createElement('span'))
               $scope.$suffix.html($scope.suffix)
               $scope.$suffix.attr('suffix', '')
 
@@ -86,12 +86,12 @@
           // Note: $element.children(param) doesn't work the same in JQlite as
           // Jquery
           _.some($element.find('[prefix]'), function (el) {
-            $scope.prefix = $(el).html()
+            $scope.prefix = jQuery(el).html()
             return true // loop only once
           })
 
           _.some($element.find('[suffix]'), function (el) {
-            $scope.suffix = $(el).html()
+            $scope.suffix = jQuery(el).html()
             return true // loop only once
           })
         }
@@ -222,7 +222,7 @@
             })
 
             // Update value on change, save value on blur
-            $scope.$value.on('focusout keyup change', function () {
+            $scope.$value.on('focusout keyup change', function (event) {
               if (ctrl.initialized) {
                 $scope.$apply($scope.read)
                 if ($scope.autoSave !== false && $scope.autoSave !== 'false') {

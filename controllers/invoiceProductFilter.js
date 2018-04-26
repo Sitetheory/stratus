@@ -1,6 +1,8 @@
 // Invoice Product Filter Controller
 // -----------------
 
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -9,9 +11,9 @@
       'angular'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Controller handles simple element binding
   // for a single scope to an API Object Reference.
   Stratus.Controllers.InvoiceProductFilter = [
@@ -135,13 +137,10 @@
 
       $scope.getSiteOrVendorName = function (invoice, siteList, vendorList) {
         var siteName = 'Site Not Found'
-        sites = (invoice.owningIdentity === 'SitetheoryHostingBundle:Site')
-          ? siteList
-          : vendorList
-        sites = sites || []
+        var sites = (invoice.owningIdentity === 'SitetheoryHostingBundle:Site' ? siteList : vendorList) || []
         if (sites.length > 0) {
           sites.forEach(function (site) {
-            if (site.id == invoice.owningIdentityId) {
+            if (site.id === invoice.owningIdentityId) {
               siteName = site.name
             }
           })

@@ -1,6 +1,8 @@
 // Product Filter Controller
 // -----------------
 
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -10,9 +12,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   // This Controller handles simple element binding
   // for a single scope to an API Object Reference.
   Stratus.Controllers.ProductFilter = [

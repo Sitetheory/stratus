@@ -1,7 +1,7 @@
 // Registry Service
 // ----------------
 
-/* global define */
+/* global define, FB */
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {

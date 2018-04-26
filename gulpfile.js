@@ -2,7 +2,7 @@
 var gulp = require('gulp')
 var pump = require('pump')
 var concat = require('gulp-concat')
-var debug = require('gulp-debug')
+// var debug = require('gulp-debug')
 var dest = require('gulp-dest')
 var uglify = require('gulp-uglify')
 var del = require('del')
@@ -146,8 +146,8 @@ gulp.task('dist', [
   'dist:compress'
 ])
 gulp.task('lint', [
-  'lint:js',
-  'lint:css'
+  'lint:js'
+  // 'lint:css'
 ])
 
 // Code Linters
@@ -164,9 +164,11 @@ gulp.task('lint:js', function () {
     '!umd/**/*.js',
     '!**/*.min.js'
   ])
+    /* *
     .pipe(debug({
       title: 'Standardize:'
     }))
+    /* */
     .pipe(standard())
     .pipe(standard.reporter('default', {
       showRuleNames: true
@@ -213,9 +215,11 @@ gulp.task('dist:compress', function (callback) {
     gulp.src([location.boot.output, location.stratus.output], {
       base: '.'
     }),
+    /* *
     debug({
       title: 'Mangle:'
     }),
+    /* */
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -234,18 +238,24 @@ gulp.task('clean:mangle', function () {
   return gulp.src(location.mangle.min, {
     base: '.',
     read: false
-  }).pipe(debug({
-    title: 'Clean:'
-  })).pipe(vinylPaths(del))
+  })
+    /* *
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    /* */
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
   pump([
     gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), {
       base: '.'
     }),
+    /* *
     debug({
       title: 'Mangle:'
     }),
+    /* */
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -264,18 +274,24 @@ gulp.task('clean:external', function () {
   return gulp.src(location.external.min, {
     base: '.',
     read: false
-  }).pipe(debug({
-    title: 'Clean:'
-  })).pipe(vinylPaths(del))
+  })
+    /* *
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    /* */
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:external', ['clean:external'], function (callback) {
   pump([
     gulp.src(_.union(location.external.core, nullify(location.external.min)), {
       base: '.'
     }),
+    /* *
     debug({
       title: 'External:'
     }),
+    /* */
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -294,18 +310,24 @@ gulp.task('clean:preserve', function () {
   return gulp.src(location.preserve.min, {
     base: '.',
     read: false
-  }).pipe(debug({
-    title: 'Clean:'
-  })).pipe(vinylPaths(del))
+  })
+    /* *
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    /* */
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
   pump([
     gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), {
       base: '.'
     }),
+    /* *
     debug({
       title: 'Compress:'
     }),
+    /* */
     uglify({
       // preserveComments: 'license',
       mangle: false
@@ -324,18 +346,24 @@ gulp.task('clean:less', function () {
   return gulp.src(location.less.compile, {
     base: '.',
     read: false
-  }).pipe(debug({
-    title: 'Clean:'
-  })).pipe(vinylPaths(del))
+  })
+    /* *
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    /* */
+    .pipe(vinylPaths(del))
 })
 gulp.task('compile:less', ['clean:less'], function (callback) {
   pump([
     gulp.src(_.union(location.less.core, nullify(location.less.compile)), {
       base: '.'
     }),
+    /* *
     debug({
       title: 'LESS:'
     }),
+    /* */
     less({}),
     dest('.', {
       ext: '.css'
@@ -351,18 +379,24 @@ gulp.task('clean:css', function () {
   return gulp.src(location.css.min, {
     base: '.',
     read: false
-  }).pipe(debug({
-    title: 'Clean:'
-  })).pipe(vinylPaths(del))
+  })
+    /* *
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    /* */
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:css', ['clean:css'], function (callback) {
   pump([
     gulp.src(_.union(location.css.core, nullify(location.css.min)), {
       base: '.'
     }),
+    /* *
     debug({
       title: 'CSS:'
     }),
+    /* */
     cleanCSS({
       compatibility: '*',
       inline: ['none'],
@@ -384,18 +418,24 @@ gulp.task('clean:template', function () {
   return gulp.src(location.template.min, {
     base: '.',
     read: false
-  }).pipe(debug({
-    title: 'Clean:'
-  })).pipe(vinylPaths(del))
+  })
+    /* *
+    .pipe(debug({
+      title: 'Clean:'
+    }))
+    /* */
+    .pipe(vinylPaths(del))
 })
 gulp.task('compress:template', ['clean:template'], function (callback) {
   pump([
     gulp.src(_.union(location.template.core, nullify(location.template.min)), {
       base: '.'
     }),
+    /* *
     debug({
       title: 'Template:'
     }),
+    /* */
     htmlmin({
       collapseWhitespace: true,
       removeComments: true,

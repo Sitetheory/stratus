@@ -26,9 +26,8 @@
         'media_drag_drop', true)
 
       // Code
-      var $ctrl = this
-      var isShowDialog = angular.element(document.body)
-        .hasClass('md-dialog-is-showing')
+      // var $ctrl = this
+      $scope.isShowDialog = angular.element(document.body).hasClass('md-dialog-is-showing')
       $scope.files = []
 
       // document.addEventListener('dragenter', media.dragenter, false);
@@ -58,6 +57,7 @@
           })
         }
       }
+      $scope.drop = drop
 
       function DialogController ($scope, files) {
         // Do upload stuffs
@@ -117,11 +117,10 @@
               // show cross icon if upload failed
               file.errorUpload = true
               file.errorMsg = 'Aborted'
-            }
 
-            // if file not uploaded due to server error
-            // else if (rejection.status > 0)
-            else {
+              // if file not uploaded due to server error
+              // else if (rejection.status > 0)
+            } else {
               // hide progress bar
               file.uploadStatus = false
 
@@ -141,6 +140,7 @@
 
         return file.upload
       }
+      $scope.saveMedia = saveMedia
     },
     templateUrl: Stratus.BaseUrl +
     'sitetheorystratus/stratus/components/mediaDragDrop' +

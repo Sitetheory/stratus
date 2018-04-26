@@ -1,4 +1,4 @@
-/* global define */
+/* global define, FB, gapi */
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -39,7 +39,7 @@
 
       // The data get from social api.
       var data = null
-      var $ctrl = this
+      // var $ctrl = this
 
       // FACEBOOK LOGIN
       window.checkLoginState = function () {
@@ -51,7 +51,7 @@
               break
             default:
               FB.login(function (response) {
-                (response.authResponse != null)
+                (response.authResponse !== null)
                   ? FbGetBasicProfile()
                   : FB.login()
               }, {
@@ -109,7 +109,7 @@
       function doSignIn (data, service, truthData) {
         singleSignOn.signIn(data, service, truthData).then(
           function (response) {
-            if (commonMethods.getStatus(response).code == 'CREDENTIALS') {
+            if (commonMethods.getStatus(response).code === 'CREDENTIALS') {
               data.message = commonMethods.getStatus(response).message
               requireEmail(service, data)
             } else {

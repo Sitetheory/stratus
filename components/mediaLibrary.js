@@ -152,8 +152,7 @@
         ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
-              if (commonMethods.getStatus(response).code ==
-                commonMethods.RESPONSE_CODE.success) {
+              if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
                 // fetch media library list
                 media.getMedia($scope)
               } else {
@@ -181,12 +180,13 @@
         $ctrl.showPlusIcon = !$ctrl.showPlusIcon
 
         if (selectedStatus === true) {
+          var i, j
           for (i = 0; i < $ctrl.draggedFiles.length; i++) {
             if ($ctrl.draggedFiles[i].id === fileId) {
               $ctrl.draggedFiles.splice(i, 1)
-              for (i = 0; i < $scope.collection.models.length; i++) {
-                if ($scope.collection.models[i].data.id === fileId) {
-                  $scope.collection.models[i].data.selectedClass = false
+              for (j = 0; j < $scope.collection.models.length; j++) {
+                if ($scope.collection.models[j].data.id === fileId) {
+                  $scope.collection.models[j].data.selectedClass = false
                 }
               }
             }
@@ -195,7 +195,8 @@
           // show plus icon,move to draggedFiles and add selectedClass
           media.fetchOneMedia(fileId).then(function (response) {
             $ctrl.draggedFiles.push(response.data.payload)
-            for (var i = 0; i < $scope.collection.models.length; i++) {
+            var i
+            for (i = 0; i < $scope.collection.models.length; i++) {
               if ($scope.collection.models[i].data.id === fileId) {
                 $scope.collection.models[i].data.selectedClass = true
               }
@@ -207,13 +208,14 @@
       function removeFromSelected (fileId) {
         $ctrl.showPlusIcon = !$ctrl.showPlusIcon
 
+        var i
         for (i = 0; i < $ctrl.draggedFiles.length; i++) {
           if ($ctrl.draggedFiles[i].id === fileId) {
             $ctrl.draggedFiles.splice(i, 1)
           }
         }
 
-        for (var i = 0; i < $scope.collection.models.length; i++) {
+        for (i = 0; i < $scope.collection.models.length; i++) {
           if ($scope.collection.models[i].data.id === fileId) {
             $scope.collection.models[i].data.selectedClass = false
           }
