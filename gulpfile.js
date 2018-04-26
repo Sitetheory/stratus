@@ -171,6 +171,8 @@ gulp.task('lint:js', function () {
     /* */
     .pipe(standard())
     .pipe(standard.reporter('default', {
+      breakOnError: true,
+      breakOnWarning: true,
       showRuleNames: true
     }))
 })
