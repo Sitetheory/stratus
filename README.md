@@ -1,4 +1,4 @@
-# Stratus [![Build Status](https://travis-ci.org/Sitetheory/stratus.svg?branch=master)](https://travis-ci.org/Sitetheory/stratus) [![Join the chat at https://gitter.im/Sitetheory/stratus](https://badges.gitter.im/Sitetheory/stratus.svg)](https://gitter.im/Sitetheory/stratus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+# Stratus [![Build Status](https://travis-ci.org/Sitetheory/stratus.svg?branch=master)](https://travis-ci.org/Sitetheory/stratus) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![Join the chat at https://gitter.im/Sitetheory/stratus](https://badges.gitter.im/Sitetheory/stratus.svg)](https://gitter.im/Sitetheory/stratus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Thesis
 
