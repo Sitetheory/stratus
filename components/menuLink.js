@@ -165,15 +165,7 @@
               }
 
               function destroy () {
-                // remove child menu link
-                for (var i = 0; i < versionData.length; i++) {
-                  var elem = versionData[i]
-                  if (elem.nestParent && elem.nestParent.id === menuLink.id) {
-                    versionData.splice(i--, 1)
-                  }
-                }
-
-                // remove parent
+                // remove parent only, backend will remove child link
                 versionData.splice(versionData.indexOf(menuLink), 1)
                 setTimeCustom()
               }
