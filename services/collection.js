@@ -108,7 +108,7 @@
              * @param type
              */
             this.inject = function (data, type) {
-              if (that.direct || !_.isArray(data)) {
+              if (!_.isArray(data)) {
                 return
               }
               // TODO: Make this able to be flagged as direct entities
@@ -159,7 +159,9 @@
                     that.meta.set(response.data.meta || {})
                     that.models = []
                     var data = response.data.payload || response.data
-                    if (_.isArray(data)) {
+                    if (that.direct) {
+                      that.models = data
+                    } else if (_.isArray(data)) {
                       that.inject(data)
                     } else if (_.isObject(data)) {
                       _.each(data, that.inject)
@@ -176,7 +178,7 @@
                     that.paginate = false
 
                     // Promise
-                    resolve(!that.direct ? that.models : data)
+                    resolve(that.models)
                   } else {
                     // Internals
                     that.pending = false
