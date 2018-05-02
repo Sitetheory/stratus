@@ -34,8 +34,7 @@
       autoSave: '@' // A bool/string to define if the model will auto save on
       // focus out or Enter presses. Defaults to true
     },
-    controller: function (
-      $scope, $element, $attrs, $timeout, Model, commonMethods) {
+    controller: function ($scope, $element, $attrs, $timeout, Model, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'edit')
       $scope.edit_input_container = $element[0].getElementsByClassName(

@@ -48,8 +48,7 @@
       limit: '@',
       options: '<'
     },
-    controller: function (
-      $scope, $attrs, $log, Registry, model, commonMethods) {
+    controller: function ($scope, $attrs, $log, Registry, Model, commonMethods) {
       // Initialize
       commonMethods.componentInitializer(this, $scope, $attrs, 'selector')
 
@@ -86,7 +85,7 @@
       // Data Connectivity
       $scope.model = null
       $scope.$watch('$ctrl.ngModel', function (data) {
-        if (data instanceof model && data !== $scope.model) {
+        if (data instanceof Model && data !== $scope.model) {
           $scope.model = data
         }
       })

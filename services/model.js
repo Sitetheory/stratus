@@ -292,16 +292,17 @@
               return that.sync(that.getIdentifier() ? 'PUT' : 'POST',
                 that.toJSON({
                   patch: true
-                })).catch(function (message) {
-                $mdToast.show(
-                  $mdToast.simple()
-                    .textContent('Failure to Save!')
-                    .toastClass('errorMessage')
-                    .position('top right')
-                    .hideDelay(3000)
-                )
-                $log.error('SAVE:', message)
-              })
+                }))
+                .catch(function (message) {
+                  $mdToast.show(
+                    $mdToast.simple()
+                      .textContent('Failure to Save!')
+                      .toastClass('errorMessage')
+                      .position('top right')
+                      .hideDelay(3000)
+                  )
+                  $log.error('SAVE:', message)
+                })
             }
 
             /**
