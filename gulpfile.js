@@ -154,7 +154,6 @@ gulp.task('lint', [
 gulp.task('lint:js', function () {
   return gulp.src([
     '**/*.js',
-    '!services/model.js',
     '!bower_components/**/*.js',
     '!node_modules/**/*.js',
     '!dist/**/*.js',

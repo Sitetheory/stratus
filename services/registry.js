@@ -37,7 +37,7 @@
             /**
              * @param $element
              * @param $scope
-             * @returns {$q}
+             * @returns $q
              */
             this.fetch = function ($element, $scope) {
               var that = this
