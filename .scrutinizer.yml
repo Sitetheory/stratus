@@ -1,11 +1,14 @@
 filter:
     excluded_paths:
         - '*.min.js'
-        - 'legacy/*'
         - 'boot/*'
+        - 'legacy/*'
         - 'loaders/*'
         - 'source/*'
+        - 'test/*'
         - 'umd/*'
+        - 'directives/froala.js'
+        - 'directives/redactor.js'
 checks:
     javascript: true
 build:
