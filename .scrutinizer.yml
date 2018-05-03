@@ -3,6 +3,7 @@ filter:
         - '*.min.js'
         - 'legacy/*'
         - 'boot/*'
+        - 'loaders/*'
         - 'source/*'
         - 'umd/*'
 checks:
