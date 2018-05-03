@@ -1,5 +1,5 @@
-// Registry Service
-// ----------------
+// Social Library Service
+// ----------------------
 
 /* global define, FB */
 
