@@ -36,7 +36,7 @@
     "countUp.js": "1.8.3",
     "dropzone": "^4.*",
     "font-awesome": "^5.0.0",
-    "froala-wysiwyg-editor": "^2.7.*",
+    "froala-wysiwyg-editor": "^2.8.*",
     "fullcalendar": "^2.*",
     "jquery": "^2.*",
     "js-md5": "md5#^0.4.1",
@@ -51,6 +51,9 @@
     "underscore": "^1.*",
     "zepto": "^1.2.0",
     "zxcvbn": "^4.4.2"
+  },
+  "resolutions": {
+    "angular": "~1.6.*"
   },
   "private": false
 }
