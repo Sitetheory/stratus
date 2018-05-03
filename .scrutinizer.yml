@@ -1,0 +1,22 @@
+filter:
+    excluded_paths:
+        - '*.min.js'
+        - 'legacy/*'
+        - 'boot/*'
+        - 'source/*'
+        - 'umd/*'
+checks:
+    javascript: true
+build:
+    nodes:
+        analysis:
+            tests:
+                override:
+                    -
+                        command: jshint-run
+                        use_website_config: false
+                    - js-scrutinizer-run
+            environment:
+                node:
+                    version: 8.0.0
+        tests: true
