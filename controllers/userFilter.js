@@ -70,11 +70,13 @@
        * Load the roles for filter
        */
       $scope.init = function () {
-        Collection = new Collection()
-        Collection.target = 'Role'
-        Collection.urlRoot = '/Api/Role'
-        Collection.fetch().then(function (response) {
-          $scope.userRoles = response
+        $scope.initRoles()
+      }
+
+      // get roles for filter list
+      $scope.initRoles = function () {
+        Promise.resolve($scope.queryRole()).then(function (value) {
+          $scope.userRoles = value
         })
       }
 
@@ -109,7 +111,6 @@
       $scope.moreFilter = function () {
         $scope.more = !$scope.more
       }
-
       // *********************************END FOR FILTER USER IN MEMBERS PAGES
 
       // *********************************FOR EDIT MEMBER*********************
@@ -138,7 +139,10 @@
         return retrieveData('/Api/Location?p=1&q=', query)
       }
 
+      // Call API to retrieve data
       function retrieveData (url, query) {
+        query = (angular.isUndefined(query) || query == null) ? '' : query
+
         return commonMethods.sendRequest(null, 'GET', url + query).then(
           function (response) {
             if (response.hasOwnProperty('data') &&
@@ -151,7 +155,6 @@
             console.error(error)
           })
       }
-
       // ******************************END FOR EDIT MEMBER********************
     }]
 }))
