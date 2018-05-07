@@ -236,7 +236,7 @@
             dataRes.tags = $ctrl.tags
             media.updateMedia($ctrl.infoId, dataRes).then(
               function (response) {
-                media.getMedia($ctrl)
+                // media.getMedia($ctrl)
               },
               function (rejection) {
                 if (!Stratus.Environment.get('production')) {
