@@ -182,7 +182,7 @@
         // Handle error messages for invalid files
         $ctrl.invalidFilesMsg = []
         if (invalidFiles && invalidFiles.length > 0) {
-          $ctrl.uploadingFiles = true
+          $ctrl.uploadingFiles = false
           invalidFiles.forEach(function (file) {
             var msg
             switch (file.$error) {
