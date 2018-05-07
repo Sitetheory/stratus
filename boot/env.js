@@ -3,27 +3,45 @@
 
 /* global cacheTime, config */
 
-var boot = {
-  // Environment
-  dev: (typeof document.cookie === 'string' &&
-    document.cookie.indexOf('env=') !== -1),
-  local: (typeof document.cookie === 'string' &&
-    // we are disabling the CDN until it is ready.
-    document.cookie.indexOf('local=') !== -1) || true,
-  cacheTime: typeof cacheTime !== 'undefined' ? cacheTime : '2',
+// Global Tools
+var hamlet = {}
+hamlet.isCookie = function (key) {
+  return typeof document.cookie === 'string' && document.cookie.indexOf(key + '=') !== -1
+}.bind(this)
+hamlet.isUndefined = function (key) {
+  return undefined === this[key]
+}.bind(this)
 
-  // Locations
-  host: '',
-  cdn: '/',
-  relative: '',
-  bundle: '',
-
-  // Require.js
-  configuration: {}
+// Initial Setup
+if (hamlet.isUndefined('boot')) {
+  var boot = {}
 }
+
+// Backward Compatibility
+if (!hamlet.isUndefined('cacheTime')) {
+  boot.cacheTime = cacheTime
+}
+
+// Environment
+boot.dev = hamlet.isCookie('env')
+boot.local = hamlet.isCookie('local') || true // we are disabling the CDN until it is ready.
+boot.cacheTime = boot.cacheTime || '2'
+
+// Locations
+boot.host = boot.host || ''
+boot.cdn = boot.cdn || '/'
+boot.relative = boot.relative || ''
+boot.bundle = boot.bundle || ''
+
+// Require.js
+boot.configuration = {}
+
+// Min Settings
 boot.suffix = (boot.dev) ? '' : '.min'
 boot.dashSuffix = (boot.dev) ? '' : '-min'
 boot.directory = (boot.dev) ? '' : 'min/'
+
+// Merge Tool
 boot.merge = function (destination, source) {
   if (destination === null || source === null) {
     return destination
@@ -36,24 +54,27 @@ boot.merge = function (destination, source) {
   }
   return destination
 }
+
+// Config Tool
 boot.config = function (configuration, options) {
   if (typeof configuration !== 'object') {
     return false
   }
   /* *
-  if (typeof options !== 'object') options = {};
+  if (typeof options !== 'object') options = {}
   var args = [
-      boot.configuration,
-      !configuration.paths ? { paths: configuration } : configuration
-  ];
+    boot.configuration,
+    !configuration.paths ? { paths: configuration } : configuration
+  ]
   if (typeof boot.merge === 'function') {
-      boot.merge.apply(this, options.inverse ? args.reverse() : args);
+    boot.merge.apply(this, options.inverse ? args.reverse() : args)
   }
-  return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration;
+  return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration
   /* */
-  return boot.merge(boot.configuration,
-    !configuration.paths ? {paths: configuration} : configuration)
+  return boot.merge(boot.configuration, !configuration.paths ? {paths: configuration} : configuration)
 }
+
+// Initialization
 if (typeof config !== 'undefined') {
   var localConfig = typeof config === 'function' ? config(boot) : config
   if (typeof localConfig === 'object' && localConfig) {
