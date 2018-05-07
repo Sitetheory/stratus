@@ -166,7 +166,7 @@
             }
           }).then(function (response) {
             console.log(response)
-            if (fileId && !_.isEmptyObject(response)) {
+            if (fileId && !isEmpty(response)) {
               if (!response[0].errorUpload) {
                 initFile(response[0].result)
               }
@@ -227,6 +227,14 @@
 
         function searchFilter (query) {
           return $ctrl.collection.filter(query)
+        }
+
+        function isEmpty (obj) {
+          for(var prop in obj) {
+            if(obj.hasOwnProperty(prop))
+              return false;
+          }
+          return true;
         }
 
         // Handle saving tags after updating
