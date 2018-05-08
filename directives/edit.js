@@ -157,7 +157,7 @@
 
           // WATCHERS
 
-          $scope.$watch('model.' + $scope.property, function (data) {
+          $scope.$watch('model.data' + $scope.property, function (data) {
             if (data) {
               $scope.value = data
             }
