@@ -1,3 +1,53 @@
+@import "../stratus";
+
+
+.btnPublish,
+.btnPublishFull {
+  transition: all .12s ease-out;
+  transform: translateX(22px);
+
+  background: #FF5B3A;
+}
+.btnPublish svg g,
+.btnPublishFull svg g {
+  fill: #FFFFFF;
+}
+
+.btnPublish:hover,
+.btnPublishFull:hover {
+  background: #FF7150;
+}
+
+#headerControlsPublish {
+  margin-left: -12px;
+}
+
+#headerControlsBtnPublishNow .btnIcon {
+  float: left;
+  padding: 16px 0 0 20px;
+}
+
+#headerControlsBtnPublishNow .btnText {
+  float: left;
+  padding: 18px 20px 18px 10px;
+  color: #FFFFFF;
+  line-height: 1.4;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: .04em;
+}
+
+#headerControlsPublishOptions {
+  padding: 19px 16px;
+  border-left: 1px solid rgba(255, 255, 255, .5);
+}
+
+#headerControlsPublishOptions .caret {
+  border-top-color: #FFFFFF;
+}
+
+
+
 .btn.btnPublishFull {
   padding: 14px 20px 0 20px !important;
   width: inherit;
@@ -22,28 +72,31 @@
 .btn.btnPublishFull:hover {
   background: #ff7550;
 }
+
 /* Published */
 .published.btnPublishFull svg .actionButton {
-  transform: translateX(-25%);
-  -webkit-transform: translateX(-25%);
+  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
 }
-.published.md-button.btnPublishFull,
-.published.btnPublishFull {
+.published.md-button.btnPublishFull:not([disabled]),
+.published.btnPublishFull:not([disabled]) {
   background: #56995e;
 }
 .published.md-button.btnPublishFull:not([disabled]):hover,
 .published.btnPublishFull:not([disabled]):hover {
   background: #7cb27d;
 }
+
 /* Unpublished */
 .unpublished.md-button.btnPublishFull,
 .unpublished.btnPublishFull {
-  background: #d96236;
+  background: #FF5B3A;
 }
 .unpublished.md-button.btnPublishFull:not([disabled]):hover,
 .unpublished.btnPublishFull:not([disabled]):hover {
   background: #ff7b55;
 }
+
 /* Delayed */
 .delayed.md-button.btnPublishFull,
 .delayed.btnPublishFull {
@@ -67,7 +120,9 @@
   width: 245px;
   padding: 15px;
 }
+
 /* hide unpublish button if not published */
+
 /**
 .btn.unpublished [data-action="unpublish"] {
   display: none;
@@ -84,4 +139,49 @@
 }
 #header .btnPublishFull:hover .caret {
   opacity: 1;
+}
+
+
+#headerControlsBtnPublishNow,
+#headerControlsPublishOptions {
+  float: left;
+}
+
+.btnPublish {
+  transition: all .12s ease-out;
+  height: inherit;
+  width: inherit;
+  background: #FF5B3A;
+}
+.btnPublish svg g,
+.btnPublishFull svg g {
+  fill: #FFFFFF;
+}
+
+.btnPublish:hover {
+  background: #FF7150;
+}
+
+#headerControlsBtnPublishNow .btnIcon {
+  float: left;
+  padding: 16px 0 0 20px;
+}
+
+#headerControlsBtnPublishNow .btnText {
+  float: left;
+  padding: 18px 20px 18px 10px;
+  color: #FFFFFF;
+  line-height: 1.4;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: .04em;
+}
+
+#headerControlsPublishOptions {
+  padding: 19px 16px;
+  border-left: 1px solid rgba(255, 255, 255, .5);
+}
+
+#headerControlsPublishOptions .caret {
+  border-top-color: #FFFFFF;
 }
