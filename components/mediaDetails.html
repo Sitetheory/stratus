@@ -26,7 +26,7 @@
              ng-blur="$ctrl.doneEditing($ctrl.media.id, $ctrl.selectedName)" autofocus/>
     </div>
     <div class="tagContainer stGrid column50">
-      <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak>
+      <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
         <md-chips ng-model="$ctrl.tags" name="tagModel" md-autocomplete-snap>
           <md-chip-template>
             <span md-highlight-text="query">{{ $chip.name }}</span>
