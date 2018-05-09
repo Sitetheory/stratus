@@ -34,7 +34,7 @@ boot.relative = boot.relative || ''
 boot.bundle = boot.bundle || ''
 
 // Require.js
-boot.configuration = {}
+boot.configuration = boot.configuration || {}
 
 // Min Settings
 boot.suffix = (boot.dev) ? '' : '.min'
