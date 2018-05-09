@@ -94,7 +94,7 @@
            ngf-model-invalid="invalidFiles"
            ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
         <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file">
-          <img data-plugin="lazy" src="{{$ctrl.getThumnailImgOfVideo(media.data)}}" ng-if="media.data.mime == 'video'" class="fas fa-5x fa-video-camera" aria-hidden="true">
+          <img data-plugin="lazy" src="{{$ctrl.getThumbnailImgOfVideo(media.data)}}" stratus-src="{{$ctrl.getThumbnailImgOfVideo(media.data)}}" ng-if="media.data.mime == 'video'" class="fas fa-5x fa-video-camera" aria-hidden="true">
           <i ng-if="media.data.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
           <i ng-if="media.data.mime == 'application/msword'" class="fas fa-5x fa-file-word document"
              aria-hidden="true"></i>

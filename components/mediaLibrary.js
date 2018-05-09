@@ -68,7 +68,7 @@
         $ctrl.toggleLibrary = toggleLibrary
         $ctrl.addOrRemoveFile = addOrRemoveFile
         $ctrl.removeFromSelected = removeFromSelected
-        $ctrl.gethumnailImgOfVideo = gethumnailImgOfVideo
+        $ctrl.getThumbnailImgOfVideo = getThumbnailImgOfVideo
         // fetch media collection and hydrate to $scope.collection
         $ctrl.registry = new Registry()
         $ctrl.registry.fetch({
@@ -90,7 +90,7 @@
         }
       }
 
-      function gethumnailImgOfVideo (fileData) {
+      function getThumbnailImgOfVideo (fileData) {
         if (fileData.service === 'youtube') {
           return "https://img.youtube.com/vi/" + getYouTubeID(fileData.file) + "/0.jpg";
         }
