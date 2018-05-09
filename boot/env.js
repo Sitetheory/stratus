@@ -7,7 +7,7 @@
 var hamlet = {}
 hamlet.isCookie = function (key) {
   return typeof document.cookie === 'string' && document.cookie.indexOf(key + '=') !== -1
-}.bind(this)
+}
 hamlet.isUndefined = function (key) {
   return undefined === this[key]
 }.bind(this)
