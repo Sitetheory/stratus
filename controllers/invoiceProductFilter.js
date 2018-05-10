@@ -115,6 +115,7 @@
 
       function filter (type, data) {
         $scope.collection.meta.set(type, data)
+        $scope.collection.meta.set('api.options.limit', 1000)
         $scope.collection.fetch().then(function (response) {
           $log.log('response:', response)
         })
