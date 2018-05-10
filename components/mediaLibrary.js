@@ -92,37 +92,34 @@
 
       function getThumbnailImgOfVideo (fileData) {
         if (fileData.service === 'youtube') {
-          return "https://img.youtube.com/vi/" + getYouTubeID(fileData.file) + "/0.jpg";
-        }
-        else if (fileData.service === 'vimeo') {
-          return "https://i.vimeocdn.com/video/"+ getVimeoID(fileData.file) +"_150x150.jpg";
-        }
-        else {
-          //use default image
-          return 'https://img.youtube.com/vi/default.jpg';
+          return 'https://img.youtube.com/vi/' + getYouTubeID(fileData.file) + '/0.jpg'
+        } else if (fileData.service === 'vimeo') {
+          return 'https://i.vimeocdn.com/video/' + getVimeoID(fileData.file) + '_150x150.jpg'
+        } else {
+          // use default image
+          return 'https://img.youtube.com/vi/default.jpg'
         }
       }
 
       function getYouTubeID (url) {
-        var ID = '';
-        url = url.replace(/(>|<)/gi,'').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        if(url[2] !== undefined) {
-          ID = url[2].split(/[^0-9a-z_\-]/i);
-          ID = ID[0];
+        var ID = ''
+        url = url.replace(/(>|<)/gi,'').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)
+        if (url[2] !== undefined) {
+          ID = url[2].split(/[^0-9a-z_\-]/i)
+          ID = ID[0]
+        } else {
+          ID = url
         }
-        else {
-          ID = url;
-        }
-          return ID;
+        return ID
       }
 
-      function getVimeoID(url) {
-        var ID = '';
-        url = url.split('https://vimeo.com/');
+      function getVimeoID (url) {
+        var ID = ''
+        url = url.split('https://vimeo.com/')
         if (url[1] !== undefined) {
-          ID = url[1];
+          ID = url[1]
         }
-        return ID;
+        return ID
       }
 
       function openUploader (ngfMultiple, files, invalidFiles) {
