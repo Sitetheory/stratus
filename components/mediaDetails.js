@@ -166,7 +166,7 @@
             }
           }).then(function (response) {
             console.log(response)
-            if (fileId && !_.isEmptyObject(response)) {
+            if (fileId && !_.isEmpty(response)) {
               if (!response[0].errorUpload) {
                 initFile(response[0].result)
               }
@@ -233,10 +233,11 @@
         $scope.$watch('$ctrl.tags', function (data) {
           if ($ctrl.infoId !== undefined) {
             var dataRes = {}
+
             dataRes.tags = $ctrl.tags
             media.updateMedia($ctrl.infoId, dataRes).then(
               function (response) {
-                media.getMedia($ctrl)
+                media.fetchOneMedia($ctrl.media.id)
               },
               function (rejection) {
                 if (!Stratus.Environment.get('production')) {
@@ -244,7 +245,7 @@
                 }
               })
           }
-        }, true)
+        })
       }
     ],
     templateUrl: Stratus.BaseUrl +
