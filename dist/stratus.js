@@ -73,8 +73,8 @@ var Stratus = {
     ? requirejs.s.contexts._.config.baseUrl
     : null) || '/',
   BundlePath: (requirejs && _.has(requirejs.s.contexts._, 'config')
-    ? requirejs.s.contexts._.config.bundlePath
-    : null),
+    ? requirejs.s.contexts._.config.bundle
+    : '') || '',
 
   // TODO: Change each of these "namespaces" into Backbone.Models references so
   // that we can easily use the events of type changes to hook different
@@ -3527,7 +3527,7 @@ Stratus.Loaders.Angular = function () {
       })
       if (!_.contains(cssLoaded, 'angular-material.css')) {
         css.push(
-          Stratus.BaseUrl + 'before/' + Stratus.BundlePath + 'bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
         )
       }
       if (Stratus('[froala]').length || Stratus.Directives.Froala) {
