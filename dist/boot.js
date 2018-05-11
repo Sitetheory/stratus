@@ -122,6 +122,9 @@ boot.config({
         'angular-messages'
       ]
     },
+    'angular-resource': {
+      deps: ['angular']
+    },
     'angular-sanitize': {
       deps: ['angular']
     },
@@ -279,7 +282,8 @@ boot.config({
     stratus: boot.bundlePath + 'dist/stratus' + boot.suffix,
 
     /* Stratus Core Collections */
-    'stratus.collections.generic': boot.bundlePath + 'legacy/collections/generic' + boot.suffix,
+    'stratus.collections.generic': boot.bundlePath +
+      'legacy/collections/generic' + boot.suffix,
 
     /* Stratus Core Models */
     'stratus.models.generic': boot.bundlePath + 'legacy/models/generic' +
@@ -292,17 +296,24 @@ boot.config({
       boot.suffix,
 
     /* Stratus Controllers */
-    'stratus.controllers.dialogue': boot.bundlePath + 'controllers/dialogue' + boot.suffix,
+    'stratus.controllers.dialogue': boot.bundlePath +
+      'controllers/dialogue' + boot.suffix,
     'stratus.controllers.generic': boot.bundlePath + 'controllers/generic' +
       boot.suffix,
     'stratus.controllers.panel': boot.bundlePath + 'controllers/panel' +
       boot.suffix,
-    'stratus.controllers.filterContentType': boot.bundlePath + 'controllers/filterContentType' + boot.suffix,
-    'stratus.controllers.createNewSite': boot.bundlePath + 'controllers/createNewSite' + boot.suffix,
-    'stratus.controllers.selectMainRoute': boot.bundlePath + 'controllers/selectMainRoute' + boot.suffix,
-    'stratus.controllers.productFilter': boot.bundlePath + 'controllers/productFilter' + boot.suffix,
-    'stratus.controllers.invoiceProductFilter': boot.bundlePath + 'controllers/invoiceProductFilter' + boot.suffix,
-    'stratus.controllers.userFilter': boot.bundlePath + 'controllers/userFilter' + boot.suffix,
+    'stratus.controllers.filterContentType': boot.bundlePath +
+      'controllers/filterContentType' + boot.suffix,
+    'stratus.controllers.createNewSite': boot.bundlePath +
+      'controllers/createNewSite' + boot.suffix,
+    'stratus.controllers.selectMainRoute': boot.bundlePath +
+      'controllers/selectMainRoute' + boot.suffix,
+    'stratus.controllers.productFilter': boot.bundlePath +
+      'controllers/productFilter' + boot.suffix,
+    'stratus.controllers.invoiceProductFilter': boot.bundlePath +
+      'controllers/invoiceProductFilter' + boot.suffix,
+    'stratus.controllers.userFilter': boot.bundlePath +
+      'controllers/userFilter' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundlePath + 'components/base' +
@@ -311,17 +322,22 @@ boot.config({
       boot.suffix,
     'stratus.components.delete': boot.bundlePath + 'components/delete' +
       boot.suffix,
-    'stratus.components.editLegacy': boot.bundlePath + 'components/editLegacy' + boot.suffix,
+    'stratus.components.editLegacy': boot.bundlePath +
+      'components/editLegacy' + boot.suffix,
     'stratus.components.facebook': boot.bundlePath + 'components/facebook' +
       boot.suffix,
     'stratus.components.filter': boot.bundlePath + 'components/filter' +
       boot.suffix,
     'stratus.components.help': boot.bundlePath + 'components/help' +
       boot.suffix,
-    'stratus.components.mediaSelector': boot.bundlePath + 'components/mediaSelector' + boot.suffix,
-    'stratus.components.mediaLibrary': boot.bundlePath + 'components/mediaLibrary' + boot.suffix,
-    'stratus.components.optionValue': boot.bundlePath + 'components/optionValue' + boot.suffix,
-    'stratus.components.pagination': boot.bundlePath + 'components/pagination' + boot.suffix,
+    'stratus.components.mediaSelector': boot.bundlePath +
+      'components/mediaSelector' + boot.suffix,
+    'stratus.components.mediaLibrary': boot.bundlePath +
+      'components/mediaLibrary' + boot.suffix,
+    'stratus.components.optionValue': boot.bundlePath +
+      'components/optionValue' + boot.suffix,
+    'stratus.components.pagination': boot.bundlePath +
+      'components/pagination' + boot.suffix,
     'stratus.components.search': boot.bundlePath + 'components/search' +
       boot.suffix,
     'stratus.components.selector': boot.bundlePath + 'components/selector' +
@@ -332,51 +348,70 @@ boot.config({
       boot.suffix,
     'stratus.components.upload': boot.bundlePath + 'components/upload' +
       boot.suffix,
-    'stratus.components.visualSelector': boot.bundlePath + 'components/visualSelector' + boot.suffix,
-    'stratus.components.userAuthentication': boot.bundlePath + 'components/userAuthentication' + boot.suffix,
-    'stratus.components.passwordReset': boot.bundlePath + 'components/passwordReset' + boot.suffix,
-    'stratus.components.singleSignOn': boot.bundlePath + 'components/singleSignOn' + boot.suffix,
-    'stratus.components.socialMedia': boot.bundlePath + 'components/socialMedia' + boot.suffix,
+    'stratus.components.visualSelector': boot.bundlePath +
+      'components/visualSelector' + boot.suffix,
+    'stratus.components.userAuthentication': boot.bundlePath +
+      'components/userAuthentication' + boot.suffix,
+    'stratus.components.passwordReset': boot.bundlePath +
+      'components/passwordReset' + boot.suffix,
+    'stratus.components.singleSignOn': boot.bundlePath +
+      'components/singleSignOn' + boot.suffix,
+    'stratus.components.socialMedia': boot.bundlePath +
+      'components/socialMedia' + boot.suffix,
     'stratus.components.stream': boot.bundlePath + 'components/stream' +
       boot.suffix,
-    'stratus.components.streamExcerpt': boot.bundlePath + 'components/streamExcerpt' + boot.suffix,
-    'stratus.components.proposalAlert': boot.bundlePath + 'components/proposalAlert' + boot.suffix,
-    'stratus.components.mediaDragDrop': boot.bundlePath + 'components/mediaDragDrop' + boot.suffix,
-    'stratus.components.mediaDetails': boot.bundlePath + 'components/mediaDetails' + boot.suffix,
-    'stratus.components.mediaUploader': boot.bundlePath + 'components/mediaUploader' + boot.suffix,
+    'stratus.components.streamExcerpt': boot.bundlePath +
+      'components/streamExcerpt' + boot.suffix,
+    'stratus.components.proposalAlert': boot.bundlePath +
+      'components/proposalAlert' + boot.suffix,
+    'stratus.components.mediaDragDrop': boot.bundlePath +
+      'components/mediaDragDrop' + boot.suffix,
+    'stratus.components.mediaDetails': boot.bundlePath +
+      'components/mediaDetails' + boot.suffix,
+    'stratus.components.mediaUploader': boot.bundlePath +
+      'components/mediaUploader' + boot.suffix,
     'stratus.components.tag': boot.bundlePath + 'components/tag' +
       boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
-    'stratus.components.permission': boot.bundlePath + 'components/permission' + boot.suffix,
-    'stratus.components.permissions': boot.bundlePath + 'components/permissions' + boot.suffix,
+    'stratus.components.permission': boot.bundlePath +
+      'components/permission' + boot.suffix,
+    'stratus.components.permissions': boot.bundlePath +
+      'components/permissions' + boot.suffix,
     'stratus.components.publish': boot.bundlePath + 'components/publish' +
       boot.suffix,
-    'stratus.components.themeSelector': boot.bundlePath + 'components/themeSelector' + boot.suffix,
+    'stratus.components.themeSelector': boot.bundlePath +
+      'components/themeSelector' + boot.suffix,
 
     /* Stratus Core Directives */
     'stratus.directives.base': boot.bundlePath + 'directives/base' +
       boot.suffix,
     'stratus.directives.edit': boot.bundlePath + 'directives/edit' +
       boot.suffix,
-    'stratus.directives.editInline': boot.bundlePath + 'directives/editInline' + boot.suffix,
+    'stratus.directives.editInline': boot.bundlePath +
+      'directives/editInline' + boot.suffix,
     'stratus.directives.drag': boot.bundlePath + 'directives/drag' +
       boot.suffix,
     'stratus.directives.drop': boot.bundlePath + 'directives/drop' +
       boot.suffix,
     'stratus.directives.href': boot.bundlePath + 'directives/href' +
       boot.suffix,
-    'stratus.directives.singleClick': boot.bundlePath + 'directives/singleClick' + boot.suffix,
+    'stratus.directives.singleClick': boot.bundlePath +
+      'directives/singleClick' + boot.suffix,
     'stratus.directives.src': boot.bundlePath + 'directives/src' +
       boot.suffix,
     'stratus.directives.trigger': boot.bundlePath + 'directives/trigger' +
       boot.suffix,
     'stratus.directives.validate': boot.bundlePath + 'directives/validate' +
       boot.suffix,
-    'stratus.directives.passwordCheck': boot.bundlePath + 'directives/passwordCheck' + boot.suffix,
-    'stratus.directives.validateUrl': boot.bundlePath + 'directives/validateUrl' + boot.suffix,
-    'stratus.directives.compileTemplate': boot.bundlePath + 'directives/compileTemplate' + boot.suffix,
-    'stratus.directives.stringToNumber': boot.bundlePath + 'directives/stringToNumber' + boot.suffix,
+    'stratus.directives.passwordCheck': boot.bundlePath +
+      'directives/passwordCheck' + boot.suffix,
+    'stratus.directives.validateUrl': boot.bundlePath +
+      'directives/validateUrl' + boot.suffix,
+    'stratus.directives.compileTemplate': boot.bundlePath +
+      'directives/compileTemplate' + boot.suffix,
+    'stratus.directives.stringToNumber': boot.bundlePath +
+      'directives/stringToNumber' + boot.suffix,
     'stratus.directives.timestampToDate': boot.bundlePath + 'directives/timestampToDate' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
@@ -533,6 +568,7 @@ boot.config({
     'angular-aria': boot.bundlePath + 'bower_components/angular-aria/angular-aria' + boot.suffix,
     'angular-material': boot.bundlePath + 'bower_components/angular-material/angular-material' + boot.suffix,
     'angular-messages': boot.bundlePath + 'bower_components/angular-messages/angular-messages' + boot.suffix,
+    'angular-resource': boot.bundlePath + 'bower_components/angular-messages/angular-resource' + boot.suffix,
     'angular-sanitize': boot.bundlePath + 'bower_components/angular-sanitize/angular-sanitize' + boot.suffix,
     'angular-chart': boot.bundlePath + 'bower_components/angular-chart.js/dist/angular-chart' +
       boot.suffix,

@@ -3532,7 +3532,7 @@ Stratus.Loaders.Angular = function () {
       }
       if (Stratus('[froala]').length || Stratus.Directives.Froala) {
         [
-          // FIXME this is a Sitetheory only asset
+          // FIXME this is sitetheory only
           Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
           Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/codemirror/lib/codemirror.css',
           Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/froala_editor.min.css',
