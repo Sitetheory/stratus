@@ -67,7 +67,7 @@
 
         // SliderCss
         sliderCss: [
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css'
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css'
         ],
 
         // specify whether the value being toggled is 'boolean' (true|false) or 'string' (1|0, red|green)

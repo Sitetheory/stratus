@@ -163,7 +163,7 @@
       }
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/visualSelector' +
+   Stratus.BundlePath + 'components/visualSelector' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

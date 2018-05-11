@@ -77,7 +77,7 @@
         jQuery('input').blur()
       }
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/tag' +
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/tag' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

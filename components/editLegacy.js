@@ -139,7 +139,7 @@
         $scope.setEdit(false)
       })
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/edit' +
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/edit' +
       (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

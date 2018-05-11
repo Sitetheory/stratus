@@ -80,7 +80,7 @@
         })
     },
     templateUrl: Stratus.BaseUrl +
-      'sitetheorystratus/stratus/components/pagination' +
+     Stratus.BundlePath + 'components/pagination' +
       (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))
