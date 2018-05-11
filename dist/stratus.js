@@ -74,7 +74,7 @@ var Stratus = {
     : null) || '/',
   RelativePath: (requirejs && _.has(requirejs.s.contexts._, 'config')
     ? requirejs.s.contexts._.config.bundle
-    : null) + 'stratus/' || 'stratus/',
+    : '') + 'stratus/',
 
   // TODO: Change each of these "namespaces" into Backbone.Models references so
   // that we can easily use the events of type changes to hook different
