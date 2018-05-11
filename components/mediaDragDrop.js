@@ -50,7 +50,7 @@
               files: event.dataTransfer.files
             },
             templateUrl: Stratus.BaseUrl +
-            'sitetheorystratus/stratus/components/mediaDragDropDialog' +
+           Stratus.BundlePath + 'components/mediaDragDropDialog' +
             (Stratus.Environment.get('production') ? '.min' : '') + '.html',
             parent: angular.element(document.body),
             clickOutsideToClose: false
@@ -143,7 +143,7 @@
       $scope.saveMedia = saveMedia
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/mediaDragDrop' +
+   Stratus.BundlePath + 'components/mediaDragDrop' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

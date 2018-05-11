@@ -53,10 +53,10 @@
 
     options: {
       private: {
-        requiredCssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/fullcalendar/dist/fullcalendar.min.css']
+        requiredCssFile: [Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar/dist/fullcalendar.min.css']
       },
       public: {
-        cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/calendar.css'],
+        cssFile: [Stratus.BaseUrl + Stratus.BundlePath + 'views/widgets/calendar.css'],
         customButtons: null, // See http://fullcalendar.io/docs/display/customButtons/
         buttonIcons: { // object. Determines which icons are displayed in buttons of the header. See http://fullcalendar.io/docs/display/buttonIcons/
           prev: 'left-single-arrow',

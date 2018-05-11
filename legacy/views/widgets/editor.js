@@ -83,7 +83,7 @@
         requiredCssFile: [
           Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor.css',
           Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css'
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/codemirror/lib/codemirror.css'
         ],
         redactor: {
           // NOTE: callbacks don't work in this version so we do keybinding, and saving manually

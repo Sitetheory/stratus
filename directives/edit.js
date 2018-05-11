@@ -199,7 +199,7 @@
       },
       templateUrl: function (elements, $scope) {
         var template = $scope.type || ''
-        return Stratus.BaseUrl + 'sitetheorystratus/stratus/directives/edit' +
+        return Stratus.BaseUrl + Stratus.BundlePath + 'directives/edit' +
           template + (Stratus.Environment.get('production') ? '.min' : '') +
           '.html'
       }
