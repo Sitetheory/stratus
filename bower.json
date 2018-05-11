@@ -25,6 +25,7 @@
     "angular-material": "^1.*",
     "angular-material-datetimepicker": "^1.5",
     "angular-paging": "^2.2.2",
+    "angular-resource": "^1.6.*",
     "angular-sanitize": "^1.*",
     "angular-scroll-spy": "https://github.com/inorganik/angular-scroll-spy.git",
     "angular-ui-tree": "^2.22.6",

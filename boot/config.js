@@ -37,6 +37,9 @@ boot.config({
         'angular-messages'
       ]
     },
+    'angular-resource': {
+      deps: ['angular']
+    },
     'angular-sanitize': {
       deps: ['angular']
     },
@@ -570,6 +573,8 @@ boot.config({
       'stratus/bower_components/angular-material/angular-material' + boot.suffix,
     'angular-messages': boot.bundle +
       'stratus/bower_components/angular-messages/angular-messages' + boot.suffix,
+    'angular-resource': boot.bundle +
+      'stratus/bower_components/angular-messages/angular-resource' + boot.suffix,
     'angular-sanitize': boot.bundle +
       'stratus/bower_components/angular-sanitize/angular-sanitize' + boot.suffix,
     'angular-chart': boot.bundle +
