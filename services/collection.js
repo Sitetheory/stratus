@@ -39,13 +39,13 @@
             this.threshold = 0.5
             this.qualifier = '' // ng-if
             this.decay = 0
+            this.urlRoot = '/Api'
 
             if (options && typeof options === 'object') {
               angular.extend(this, options)
             }
 
             // Infrastructure
-            this.urlRoot = '/Api'
             this.models = []
             this.meta = new Stratus.Prototypes.Model()
             this.model = Model

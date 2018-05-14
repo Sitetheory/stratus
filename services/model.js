@@ -34,6 +34,7 @@
             this.target = null
             this.manifest = false
             this.stagger = false
+            this.urlRoot = '/Api'
             if (!options || typeof options !== 'object') {
               options = {}
             }
@@ -41,7 +42,6 @@
 
             // Infrastructure
             this.identifier = null
-            this.urlRoot = '/Api'
             this.data = {}
 
             // The data used to detect the data is changed.

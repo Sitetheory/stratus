@@ -61,7 +61,8 @@
                   direct: $element.attr
                     ? $element.attr('data-direct')
                     : $element.direct,
-                  api: $element.attr ? $element.attr('data-api') : $element.api
+                  api: $element.attr ? $element.attr('data-api') : $element.api,
+                  urlRoot: $element.attr ? $element.attr('data-url-root') : $element.urlRoot
                 }
                 var completed = 0
                 $scope.$watch(function () {
@@ -131,10 +132,14 @@
                   }
                   if (options.decouple ||
                     !Stratus[registry][options.target].collection) {
-                    data = new Collection({
+                    var collectionOptions = {
                       target: options.target,
                       direct: !!options.direct
-                    })
+                    }
+                    if (options.urlRoot) {
+                      collectionOptions.urlRoot = options.urlRoot
+                    }
+                    data = new Collection(collectionOptions)
                     if (!options.decouple) {
                       Stratus[registry][options.target].collection = data
                     }
