@@ -575,7 +575,7 @@ boot.config({
     'angular-messages': boot.bundle +
       'stratus/bower_components/angular-messages/angular-messages' + boot.suffix,
     'angular-resource': boot.bundle +
-      'stratus/bower_components/angular-messages/angular-resource' + boot.suffix,
+      'stratus/bower_components/angular-resource/angular-resource' + boot.suffix,
     'angular-sanitize': boot.bundle +
       'stratus/bower_components/angular-sanitize/angular-sanitize' + boot.suffix,
     'angular-chart': boot.bundle +
