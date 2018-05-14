@@ -100,8 +100,7 @@
           $ctrl.progressBarValue = commonMethods.generateProgressBar(
             newValue).progressBarValue
 
-          if (newValue.length >= 8 &&
-              !commonMethods.validPassword(newValue)) {
+          if (!commonMethods.validPassword(newValue)) {
             $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.'
           } else {
             $ctrl.message = null
