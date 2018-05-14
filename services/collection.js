@@ -100,7 +100,7 @@
              * @returns {*}
              */
             this.url = function () {
-              return that.urlRoot
+              return that.urlRoot + (that.targetSuffix || '')
             }
 
             /**

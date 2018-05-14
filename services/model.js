@@ -146,7 +146,7 @@
              */
             this.url = function () {
               var url = that.getIdentifier() ? that.urlRoot + '/' +
-                that.getIdentifier() : that.urlRoot
+                that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
 
               // TODO: Move the following version logic to a router
               url += '?'
