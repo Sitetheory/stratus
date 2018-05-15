@@ -33,7 +33,7 @@
       commonMethods.componentInitializer(this, $scope, $attrs, 'social_media',
         true)
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        'sitetheorystratus/stratus/components/singleSignOn' +
+       Stratus.BundlePath + 'components/singleSignOn' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       socialLibraries.loadFacebookSDK()
@@ -168,7 +168,7 @@
       }
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/singleSignOn' +
+   Stratus.BundlePath + 'components/singleSignOn' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

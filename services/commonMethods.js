@@ -47,7 +47,7 @@
           }
 
           function buildCssUrl (componentName) {
-            var componentUrl = 'sitetheorystratus/stratus/components/' +
+            var componentUrl = Stratus.BundlePath + 'components/' +
               underscoreToCamel(componentName)
             return Stratus.BaseUrl + componentUrl +
               (Stratus.Environment.get('production') ? '.min' : '') + '.css'

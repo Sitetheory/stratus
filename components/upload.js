@@ -67,7 +67,7 @@
       }, 500)
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/upload' +
+   Stratus.BundlePath + 'components/upload' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

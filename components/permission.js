@@ -92,7 +92,7 @@
       }, true)
     },
     templateUrl: Stratus.BaseUrl +
-      'sitetheorystratus/stratus/components/permission' +
+     Stratus.BundlePath + 'components/permission' +
       (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

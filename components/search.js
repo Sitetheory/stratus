@@ -34,7 +34,7 @@
     controller: function ($scope, $attrs, Registry, Collection) {
       Stratus.Instances[_.uniqueId('search_')] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        'sitetheorystratus/stratus/components/search' +
+       Stratus.BundlePath + 'components/search' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       // Settings
@@ -65,7 +65,7 @@
       /* */
     },
     templateUrl: Stratus.BaseUrl +
-      'sitetheorystratus/stratus/components/search' +
+     Stratus.BundlePath + 'components/search' +
       (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

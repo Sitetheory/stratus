@@ -76,7 +76,7 @@
 
         // TODO: point to the cloud server (PATH!)
         // The CSS file to load for this widget
-        cssFile: [Stratus.BaseUrl + 'sitetheorystratus/stratus/views/widgets/publish.css'],
+        cssFile: [Stratus.BaseUrl + Stratus.BundlePath + 'views/widgets/publish.css'],
 
         // Show or hide the custom dateTime picker in the "more" dropdown.
         dateTimePicker: false,

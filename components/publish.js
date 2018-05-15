@@ -48,7 +48,7 @@
       var uid = _.uniqueId('publish_')
       Stratus.Instances[uid] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        'sitetheorystratus/stratus/components/publish' +
+       Stratus.BundlePath + 'components/publish' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       // Configuration
@@ -136,7 +136,7 @@
       // }
     },
     templateUrl: Stratus.BaseUrl +
-      'sitetheorystratus/stratus/components/publish' +
+     Stratus.BundlePath + 'components/publish' +
       (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

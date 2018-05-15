@@ -24,10 +24,10 @@
     controller: function ($scope) {
       Stratus.Instances[_.uniqueId('help_')] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        'sitetheorystratus/stratus/components/help' +
+       Stratus.BundlePath + 'components/help' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
     },
-    templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/help' +
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/help' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))
