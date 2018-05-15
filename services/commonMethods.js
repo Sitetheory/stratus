@@ -60,8 +60,8 @@
           }
 
           function validPassword (password) {
-            var passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/
-            return password.length >= 8 && passwordRegex.test(password)
+            var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d$&+,:;=?@#|'<>.^*()%!-]{8,}|^.{20,}$/
+            return passwordRegex.test(password)
           }
 
           function generateProgressBar (password) {
