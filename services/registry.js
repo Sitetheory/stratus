@@ -121,7 +121,7 @@
                       stagger: true
                     }
                     if (options.urlRoot) {
-	                  modelOptions.urlRoot = options.urlRoot
+                      modelOptions.urlRoot = options.urlRoot
                     }
                     if (options.targetSuffix) {
                       modelOptions.targetSuffix = options.targetSuffix
