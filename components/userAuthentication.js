@@ -99,12 +99,16 @@
             newValue).progressBarClass
           $ctrl.progressBarValue = commonMethods.generateProgressBar(
             newValue).progressBarValue
-
           if (!commonMethods.validPassword(newValue)) {
             $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.'
+            $ctrl.allowSubmit = false
           } else {
             $ctrl.message = null
             $ctrl.allowSubmit = true
+            if ($ctrl.resetPassData.confirm_password !== undefined && $ctrl.resetPassData.confirm_password !== newValue) {
+              $ctrl.message = 'Your passwords did not match.'
+              $ctrl.allowSubmit = false
+            }
           }
         }
       })
@@ -131,6 +135,7 @@
             $ctrl.changePassBtnText = 'Update password'
           } else {
             $ctrl.isRequestSuccess = false
+            $ctrl.enabledVerifyForm = false
             $ctrl.message = commonMethods.getStatus(response).message
           }
         })
@@ -223,8 +228,8 @@
         if ($ctrl.passwordReset) {
           data.email = $ctrl.email
           data.type = 'update-password'
+          data.confirm_password = resetPassData.confirm_password
         }
-
         userAuthentication.resetPass(data).then(function (response) {
           $ctrl.loading = false
           if (commonMethods.getStatus(response).code ===

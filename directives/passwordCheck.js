@@ -19,12 +19,10 @@
         password: '@'
       },
       link: function (scope, element, attr, ngModel) {
-        element.focusout(function () {
-          ngModel.$validators.passwordCheck = function (modelValue) {
-            return modelValue === scope.password
-          }
-          ngModel.$validate()
-        })
+        ngModel.$validators.passwordCheck = function (modelValue) {
+          return modelValue === scope.password
+        }
+        ngModel.$validate()
       }
     }
   }
