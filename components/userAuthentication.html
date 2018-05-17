@@ -237,6 +237,11 @@
   </md-content>
 
   <md-content class="md-padding" ng-if="$ctrl.passwordReset">
+    <div class="message"
+         ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}"
+         ng-if="$ctrl.message != null">
+      <p ng-bind-html="$ctrl.safeMessage()"></p>
+    </div>
     <form class="form-reset-pass" name="resetPassForm"
           ng-submit="resetPassForm.$valid && $ctrl.doResetPass($ctrl.resetPassData)">
       <div class="show-error">

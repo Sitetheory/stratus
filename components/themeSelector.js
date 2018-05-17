@@ -21,6 +21,7 @@
 
       // Components
       'stratus.components.pagination',
+      'stratus.directives.src',
       'stratus.services.commonMethods',
       'stratus.services.visualSelector'
     ], factory)

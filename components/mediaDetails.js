@@ -166,7 +166,7 @@
             }
           }).then(function (response) {
             console.log(response)
-            if (fileId && !isEmpty(response)) {
+            if (fileId && !_.isEmpty(response)) {
               if (!response[0].errorUpload) {
                 initFile(response[0].result)
               }

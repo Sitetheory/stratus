@@ -34,8 +34,7 @@
           if ($scope.registered) {
             return true
           }
-          var ext = $element.attr('src') ? $element.attr('src')
-            .match(/\.([0-9a-z]+)(\?.*)?$/i) : null
+          var ext = $element.attr('src') ? $element.attr('src').match(/\.([0-9a-z]+)(\?.*)?$/i) : null
           if (ext) {
             ext = ext[1] ? ext[1].toLowerCase() : null
           }
@@ -49,8 +48,7 @@
             return true
           }
           $scope.registered = true
-          $element.attr('data-src', 'lazy') // This is here for CSS backwards
-          // compatibility
+          $element.attr('data-src', 'lazy') // This is here for CSS backwards compatibility
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,
@@ -62,28 +60,22 @@
         }
 
         // Source Interpolation
-        $scope.$watch('[src, stratusSrc]', function (newVal) {
-          var urlRegex = /([/|.|\w|\s|-])*\.(?:.){3}/g
-          if ((newVal[0] && newVal[0].match(urlRegex)) ||
-            (newVal[1] && newVal[1].match(urlRegex))) {
-            $scope.src = $scope.src || $scope.stratusSrc
-            $scope.interpreter = $interpolate($scope.src, false, null, true)
-            $scope.initial = $scope.interpreter($scope.$parent)
-            if (angular.isDefined($scope.initial)) {
-              $element.attr('src', $scope.initial)
+        $scope.src = $scope.src || $scope.stratusSrc
+        $scope.interpreter = $interpolate($scope.src, false, null, true)
+        $scope.initial = $scope.interpreter($scope.$parent)
+        if (angular.isDefined($scope.initial)) {
+          $element.attr('src', $scope.initial)
+          $scope.register()
+        } else {
+          $scope.$watch(function () {
+            return $scope.interpreter($scope.$parent)
+          }, function (value) {
+            if (angular.isDefined(value)) {
+              $element.attr('src', value)
               $scope.register()
-            } else {
-              $scope.$watch(function () {
-                return $scope.interpreter($scope.$parent)
-              }, function (value) {
-                if (angular.isDefined(value)) {
-                  $element.attr('src', value)
-                  $scope.register()
-                }
-              })
             }
-          }
-        })
+          })
+        }
       }
     }
   }
