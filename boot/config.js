@@ -14,6 +14,7 @@ boot.config({
   // Version Location (Disabled During Beta Testing)
   baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) +
     boot.relative,
+  bundlePath: (boot.bundle || '') + 'stratus/',
 
   // Dependencies
   shim: {
@@ -36,6 +37,9 @@ boot.config({
         'angular-animate',
         'angular-messages'
       ]
+    },
+    'angular-resource': {
+      deps: ['angular']
     },
     'angular-sanitize': {
       deps: ['angular']
@@ -570,6 +574,8 @@ boot.config({
       'stratus/bower_components/angular-material/angular-material' + boot.suffix,
     'angular-messages': boot.bundle +
       'stratus/bower_components/angular-messages/angular-messages' + boot.suffix,
+    'angular-resource': boot.bundle +
+      'stratus/bower_components/angular-resource/angular-resource' + boot.suffix,
     'angular-sanitize': boot.bundle +
       'stratus/bower_components/angular-sanitize/angular-sanitize' + boot.suffix,
     'angular-chart': boot.bundle +

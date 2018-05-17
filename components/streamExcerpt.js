@@ -33,11 +33,11 @@
       $scope.elementId = $attrs.elementId || this.uid
 
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        'sitetheorystratus/stratus/components/streamExcerpt' +
+       Stratus.BundlePath + 'components/streamExcerpt' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/streamExcerpt' +
+   Stratus.BundlePath + 'components/streamExcerpt' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

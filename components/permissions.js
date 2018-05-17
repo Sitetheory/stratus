@@ -33,7 +33,7 @@
       var $ctrl = this
 
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        'sitetheorystratus/stratus/components/permissions' +
+       Stratus.BundlePath + 'components/permissions' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       // mock up list permissions
@@ -315,7 +315,7 @@
       }
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/permissions' +
+   Stratus.BundlePath + 'components/permissions' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

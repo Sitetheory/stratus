@@ -51,6 +51,9 @@
                   target: $element.attr
                     ? $element.attr('data-target')
                     : $element.target,
+                  targetSuffix: $element.attr
+                    ? $element.attr('data-target-suffix')
+                    : $element.targetSuffix,
                   id: $element.attr ? $element.attr('data-id') : $element.id,
                   manifest: $element.attr
                     ? $element.attr('data-manifest')
@@ -61,7 +64,8 @@
                   direct: $element.attr
                     ? $element.attr('data-direct')
                     : $element.direct,
-                  api: $element.attr ? $element.attr('data-api') : $element.api
+                  api: $element.attr ? $element.attr('data-api') : $element.api,
+                  urlRoot: $element.attr ? $element.attr('data-url-root') : $element.urlRoot
                 }
                 var completed = 0
                 $scope.$watch(function () {
@@ -111,11 +115,18 @@
                   var id = options.id || 'manifest'
                   if (options.decouple ||
                     !Stratus.Catalog[options.target][id]) {
-                    data = new Model({
+                    var modelOptions = {
                       target: options.target,
                       manifest: options.manifest,
                       stagger: true
-                    }, {
+                    }
+                    if (options.urlRoot) {
+                      modelOptions.urlRoot = options.urlRoot
+                    }
+                    if (options.targetSuffix) {
+                      modelOptions.targetSuffix = options.targetSuffix
+                    }
+                    data = new Model(modelOptions, {
                       id: options.id
                     })
                     if (!options.decouple) {
@@ -131,10 +142,17 @@
                   }
                   if (options.decouple ||
                     !Stratus[registry][options.target].collection) {
-                    data = new Collection({
+                    var collectionOptions = {
                       target: options.target,
                       direct: !!options.direct
-                    })
+                    }
+                    if (options.urlRoot) {
+                      collectionOptions.urlRoot = options.urlRoot
+                    }
+                    if (options.targetSuffix) {
+                      collectionOptions.targetSuffix = options.targetSuffix
+                    }
+                    data = new Collection(collectionOptions)
                     if (!options.decouple) {
                       Stratus[registry][options.target].collection = data
                     }

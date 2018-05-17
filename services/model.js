@@ -34,6 +34,7 @@
             this.target = null
             this.manifest = false
             this.stagger = false
+            this.urlRoot = '/Api'
             if (!options || typeof options !== 'object') {
               options = {}
             }
@@ -41,7 +42,6 @@
 
             // Infrastructure
             this.identifier = null
-            this.urlRoot = '/Api'
             this.data = {}
 
             // The data used to detect the data is changed.
@@ -146,7 +146,7 @@
              */
             this.url = function () {
               var url = that.getIdentifier() ? that.urlRoot + '/' +
-                that.getIdentifier() : that.urlRoot
+                that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
 
               // TODO: Move the following version logic to a router
               url += '?'

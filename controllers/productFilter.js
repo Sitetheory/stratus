@@ -76,12 +76,12 @@
        * Add filter and Request to api.
        */
       function filter (type, data) {
+        removeFilter()
         filterPrice()
         filterStatus()
         $scope.collection.fetch().then(function (response) {
           $log.log('response', response)
         })
-        removeFilter()
       }
 
       /**

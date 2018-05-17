@@ -31,7 +31,7 @@
       $scope.query = ''
     },
     templateUrl: Stratus.BaseUrl +
-      'sitetheorystratus/stratus/components/filter' +
+     Stratus.BundlePath + 'components/filter' +
       (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

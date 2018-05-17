@@ -122,7 +122,7 @@
       }
     },
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/singleSignOn' +
+   Stratus.BundlePath + 'components/singleSignOn' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

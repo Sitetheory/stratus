@@ -72,6 +72,9 @@ var Stratus = {
   BaseUrl: (requirejs && _.has(requirejs.s.contexts._, 'config')
     ? requirejs.s.contexts._.config.baseUrl
     : null) || '/',
+  BundlePath: (requirejs && _.has(requirejs.s.contexts._, 'config')
+    ? requirejs.s.contexts._.config.bundlePath
+    : '') || '',
 
   // TODO: Change each of these "namespaces" into Backbone.Models references so
   // that we can easily use the events of type changes to hook different
@@ -3524,26 +3527,27 @@ Stratus.Loaders.Angular = function () {
       })
       if (!_.contains(cssLoaded, 'angular-material.css')) {
         css.push(
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
         )
       }
       if (Stratus('[froala]').length || Stratus.Directives.Froala) {
         [
+          // FIXME this is sitetheory only
           Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/codemirror/lib/codemirror.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_editor.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/froala_style.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/code_view.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/draggable.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/file.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/fullscreen.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/help.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/image_manager.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/quick_insert.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/special_characters.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/table.min.css',
-          Stratus.BaseUrl + 'sitetheorystratus/stratus/bower_components/froala-wysiwyg-editor/css/plugins/video.min.css'
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/codemirror/lib/codemirror.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/froala_editor.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/froala_style.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/code_view.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/draggable.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/file.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/fullscreen.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/help.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/image.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/image_manager.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/quick_insert.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/special_characters.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/table.min.css',
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/froala-wysiwyg-editor/css/plugins/video.min.css'
         ].forEach(function (stylesheet) {
           css.push(stylesheet)
         })

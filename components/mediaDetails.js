@@ -229,14 +229,6 @@
           return $ctrl.collection.filter(query)
         }
 
-        function isEmpty (obj) {
-          for(var prop in obj) {
-            if(obj.hasOwnProperty(prop))
-              return false;
-          }
-          return true;
-        }
-
         // Handle saving tags after updating
         $scope.$watch('$ctrl.tags', function (data) {
           if ($ctrl.infoId !== undefined) {
@@ -257,7 +249,7 @@
       }
     ],
     templateUrl: Stratus.BaseUrl +
-    'sitetheorystratus/stratus/components/mediaDetails' +
+   Stratus.BundlePath + 'components/mediaDetails' +
     (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))
