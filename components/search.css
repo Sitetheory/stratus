@@ -8,6 +8,7 @@
   color: black;
   width: 100%;
   font-size: 15px;
+  padding-right: 100px;
 }
 .search input:focus {
   border: 1px solid #4d90fe;
@@ -56,6 +57,11 @@
 }
 .search .fa-times {
   color: #999;
+}
+
+.search .reset-icon {
+  padding-right: 78px;
+  background: none !important;
 }
 
 @media (max-width: 959px) {
