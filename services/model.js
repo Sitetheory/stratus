@@ -447,14 +447,14 @@
             * @returns {*}
             */
             this.find = function (attributes, key, value) {
-              if(typeof attributes === 'string') {
+              if (typeof attributes === 'string') {
                 attributes = that.get(attributes)
               }
 
-              if (!attributes instanceof Array) {
+              if (!(attributes instanceof Array)) {
                 return attributes
               } else {
-                return attributes.find(function (obj) { return obj[key] == value } )
+                return attributes.find(function (obj) { return obj[key] === value })
               }
             }
 
