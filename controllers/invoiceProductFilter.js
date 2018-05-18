@@ -113,6 +113,9 @@
         filter('api.options.productContentId', productContentId |= null)
       }
 
+      /*
+      * call request include options to retrieve data filter
+      */
       function filter (type, data) {
         $scope.collection.meta.set(type, data)
         $scope.collection.meta.set('api.options.limit', 1000)
@@ -121,21 +124,46 @@
         })
       }
 
+      /*
+      * Filter by start date OR end date
+      */
       $scope.filterDateRanger = function () {
-        if ($scope.timeStart && $scope.timeEnd &&
-          angular.isDate($scope.timeStart) && angular.isDate($scope.timeEnd)) {
-          $scope.timeStart = new Date($scope.timeStart)
-          $scope.timeEnd = new Date($scope.timeEnd)
-          $scope.collection.meta.set(
-            'api.options.timeStart', $scope.timeStart.getTime() / 1000)
-          $scope.collection.meta.set(
-            'api.options.timeEnd', $scope.timeEnd.getTime() / 1000)
-          $scope.collection.fetch().then(function (response) {
-            $log.log('response:', response)
-          })
+        // Reset timeStart and timeEnd options
+        options = $scope.collection.meta.get('api.options')
+        if (options && options['timeStart']) delete options['timeStart']
+        if (options && options['timeEnd']) delete options['timeEnd']
+
+        // Prepare start date options
+        if ($scope.timeStart) {
+          if (angular.isDate($scope.timeStart)) {
+            $scope.timeStart = new Date($scope.timeStart).setHours(0, 0, 0, 0) / 1000
+          }
+          setAttribute('api.options.timeStart', $scope.timeStart)
         }
+
+        // Prepare end date options
+        if ($scope.timeEnd) {
+          if (angular.isDate($scope.timeEnd)) {
+            $scope.timeEnd = new Date($scope.timeEnd).setHours(23,59,59,999) / 1000
+          }
+          setAttribute('api.options.timeEnd', $scope.timeEnd)
+        }
+
+        $scope.collection.fetch().then(function (response) {})
       }
 
+      function setAttribute(attribute, value, collection) {
+        collection = collection || $scope.collection
+        collection.meta.set(attribute, value)
+      }
+
+      /**
+      * find owningIdentity name of an invoice in the siteList and vendorList
+      * @param invoice
+      * @param siteList
+      * @param vendorList
+      * @return {string}
+      */
       $scope.getSiteOrVendorName = function (invoice, siteList, vendorList) {
         var siteName = 'Site Not Found'
         var sites = (invoice.owningIdentity === 'SitetheoryHostingBundle:Site' ? siteList : vendorList) || []
@@ -149,6 +177,11 @@
         return siteName
       }
 
+      /**
+      * @param contentId
+      * @param tagList
+      * return
+      */
       $scope.getTags = function (contentId, tagList) {
         var tags = []
         if (tagList && tagList.length > 0) {

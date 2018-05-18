@@ -539,9 +539,7 @@
                 target = options.multiple ? [] : null
                 that.set(request.length > 1 ? request[0] : attribute, target)
               }
-              if (angular.isUndefined(item)) {
-                that.set(attribute, target)
-              } else if (angular.isArray(target)) {
+              if (angular.isArray(target)) {
                 /* This is disabled, since hydration should not be forced by default *
                 var hydrate = {};
                 if (request.length > 1) {
@@ -552,7 +550,9 @@
                     hydrate.id = item;
                 }
                 /* */
-                if (!that.exists(attribute, item)) {
+                if (angular.isUndefined(item)) {
+                  that.set(attribute, null)
+                } else if (!that.exists(attribute, item)) {
                   target.push(item)
                 } else {
                   _.each(target, function (element, key) {
@@ -566,19 +566,20 @@
                     var itemId = (angular.isObject(item) && item.id)
                       ? item.id
                       : item
-                    if (childId === itemId ||
-                      (angular.isString(childId) && angular.isString(itemId) &&
-                        _.strcmp(childId, itemId) === 0)) {
+                    if (childId === itemId || (
+                      angular.isString(childId) && angular.isString(itemId) && _.strcmp(childId, itemId) === 0
+                    )) {
                       target.splice(key, 1)
                     }
                   })
                 }
-              } else if (typeof target === 'object' ||
-                typeof target === 'number') {
+              } else if (typeof target === 'object' || typeof target === 'number') {
                 // (item && typeof item !== 'object') ? { id: item } : item
-                that.set(attribute,
-                  !that.exists(attribute, item) ? item : null)
+                that.set(attribute, !that.exists(attribute, item) ? item : null)
+              } else if (angular.isUndefined(item)) {
+                that.set(attribute, !target)
               }
+
               return that.get(attribute)
             }
 
