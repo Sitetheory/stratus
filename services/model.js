@@ -424,6 +424,7 @@
             }
 
             /**
+             * Use to get an attributes in the model.
              * @param attr
              * @returns {*}
              */
@@ -435,6 +436,25 @@
                 return that.buildPath(attr).reduce(function (attrs, link) {
                   return attrs && attrs[link]
                 }, that.data)
+              }
+            }
+
+            /**
+            * if the attributes is an array, the function allow to find the specific object by the condition ( key - value )
+            * @param attr
+            * @param key
+            * @param value
+            * @returns {*}
+            */
+            this.find = function (attributes, key, value) {
+              if (typeof attributes === 'string') {
+                attributes = that.get(attributes)
+              }
+
+              if (!(attributes instanceof Array)) {
+                return attributes
+              } else {
+                return attributes.find(function (obj) { return obj[key] === value })
               }
             }
 
