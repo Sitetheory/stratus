@@ -45,7 +45,7 @@
       $scope.getStatus = function (member) {
         var status = ''
         if (member.flags) {
-          if (!$scope.isVerify(member)) {
+          if (!$scope.isVerified(member)) {
             status = 'unverified'
           }
         }
@@ -55,7 +55,7 @@
       /**
        * return true if user verified
        */
-      $scope.isVerify = function (member) {
+      $scope.isVerified = function (member) {
         if (!member || !member.flags) {
           return false
         }
