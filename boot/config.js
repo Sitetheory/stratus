@@ -350,15 +350,14 @@ boot.config({
       boot.suffix,
 
     /* Stratus Core Services */
-    'stratus.services.appConfig': boot.bundle + 'stratus/services/appConfig' +
-    boot.suffix,
-    'stratus.services.model': boot.bundle + 'stratus/services/model' +
-      boot.suffix,
-    'stratus.services.collection': boot.bundle + 'stratus/services/collection' +
-      boot.suffix,
-    'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
-    'stratus.services.details': boot.bundle + 'stratus/services/details' +
-      boot.suffix,
+    'stratus.services.model': boot.bundle +
+      'stratus/services/model' + boot.suffix,
+    'stratus.services.collection': boot.bundle +
+      'stratus/services/collection' + boot.suffix,
+    'stratus.services.registry': boot.bundle +
+      'stratus/services/registry' + boot.suffix,
+    'stratus.services.details': boot.bundle +
+      'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle +
       'stratus/services/userAuthentication' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle +
@@ -371,8 +370,10 @@ boot.config({
       'stratus/services/socialLibraries' + boot.suffix,
     'stratus.services.singleSignOn': boot.bundle +
       'stratus/services/singleSignOn' + boot.suffix,
-    'stratus.services.media': boot.bundle + 'stratus/services/media' +
-      boot.suffix,
+    'stratus.services.media': boot.bundle +
+      'stratus/services/media' + boot.suffix,
+    'stratus.services.appConfig': boot.bundle +
+      'stratus/services/appConfig' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' +
