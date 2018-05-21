@@ -7,7 +7,8 @@
       'underscore',
       'jquery',
       'angular',
-      'stratus.services.commonMethods'
+      'stratus.services.commonMethods',
+      'stratus.services.appConfig'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
@@ -23,12 +24,14 @@
         '$mdDialog',
         'Upload',
         'commonMethods',
+        'appConfig',
         function (
           $q,
           $http,
           $mdDialog,
           Upload,
-          commonMethods
+          commonMethods,
+          appConfig
         ) {
           var tagApi = '/Api/Tag'
           var mediaApi = '/Api/Media'
@@ -83,9 +86,10 @@
           }
 
           function uploadToS3 (file, infoId) {
-            var POLICY = 'ewogICJleHBpcmF0aW9uIjogIjIwMjAtMDEtMDFUMDA6MDA6MDBaIiwKICAiY29uZGl0aW9ucyI6IFsKICAgIHsiYnVja2V0IjogInNpdGV0aGVvcnljb3JlIn0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAiIl0sCiAgICB7ImFjbCI6ICJwcml2YXRlIn0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRDb250ZW50LVR5cGUiLCAiIl0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRmaWxlbmFtZSIsICIiXSwKICAgIFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLCAwLCA1MjQyODgwMDBdCiAgXQp9'
-            var SIGNATURE = '5bz7ETqEC0Gxj1vJP/a6t3DRMJc='
-            var ACCESS_KEY = 'AKIAIX32Y3S7HCX4BSQA'
+            var s3Credentials = appConfig.s3Credentials();
+            var POLICY = s3Credentials.POLICY
+            var SIGNATURE = s3Credentials.SIGNATURE
+            var ACCESS_KEY = s3Credentials.ACCESS_KEY
             var url = '//app.sitetheory.io:3000/?session=' +
               _.cookie('SITETHEORY') + (infoId ? ('&id=' + infoId) : '')
 
