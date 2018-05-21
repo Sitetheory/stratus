@@ -6,9 +6,14 @@
              md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/search.svg"></md-icon>
     <input ng-model="query" placeholder="Search"
            ng-keyup="$event.keyCode == 13 && collection && collection.filter(query)" class="borderDefault fontBody"/>
-    <md-icon class="right-icon active" aria-label="Go" ng-show="query.length > 0"
+
+    <md-icon aria-label="Reset" ng-show="query.length > 0" class="right-icon active reset-icon"
+              ng-click="query = ''; collection.filter('')" md-font-icon="far fa-times-circle"></md-icon>
+
+    <md-icon aria-label="Go" ng-show="query.length > 0" class="right-icon active"
              ng-click="collection && collection.filter(query);"
-             md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/forward.svg"></md-icon>
+             md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/forward.svg">
+    </md-icon>
   </div>
   <div class="searchProgress" ng-if="collection.filtering">
     <md-progress-linear flex md-mode="indeterminate"></md-progress-linear>
