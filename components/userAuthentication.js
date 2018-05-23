@@ -131,7 +131,7 @@
             $ctrl.isRequestSuccess = true
             $ctrl.enabledVerifyForm = false
             $ctrl.enabledResetPassForm = true
-            $ctrl.resetPassHeaderText = 'Please set your password'
+            $ctrl.resetPassHeaderText = 'Please create a new secure password for your account.'
             $ctrl.changePassBtnText = 'Update password'
           } else {
             $ctrl.isRequestSuccess = false
