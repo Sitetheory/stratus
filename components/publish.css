@@ -1,8 +1,7 @@
 .btnPublish,
 .btnPublishFull {
   transition: all 0.12s ease-out;
-  height: inherit;
-  width: inherit;
+  transform: translateX(22px);
   background: #FF5B3A;
 }
 .btnPublish svg g,
@@ -13,8 +12,8 @@
 .btnPublishFull:hover {
   background: #FF7150;
 }
-#headerControlsBtnPublishNow {
-  margin-left: 12px;
+#headerControlsPublish {
+  margin-left: -12px;
 }
 #headerControlsBtnPublishNow .btnIcon {
   float: left;
@@ -62,8 +61,8 @@
 }
 /* Published */
 .published.btnPublishFull svg .actionButton {
-  transform: translateX(-25%);
-  -webkit-transform: translateX(-25%);
+  transform: translateX(-100%);
+  -webkit-transform: translateX(-100%);
 }
 .published.md-button.btnPublishFull:not([disabled]),
 .published.btnPublishFull:not([disabled]) {
@@ -122,4 +121,41 @@
 }
 #header .btnPublishFull:hover .caret {
   opacity: 1;
+}
+#headerControlsBtnPublishNow,
+#headerControlsPublishOptions {
+  float: left;
+}
+.btnPublish {
+  transition: all 0.12s ease-out;
+  height: inherit;
+  width: inherit;
+  background: #FF5B3A;
+}
+.btnPublish svg g,
+.btnPublishFull svg g {
+  fill: #FFFFFF;
+}
+.btnPublish:hover {
+  background: #FF7150;
+}
+#headerControlsBtnPublishNow .btnIcon {
+  float: left;
+  padding: 16px 0 0 20px;
+}
+#headerControlsBtnPublishNow .btnText {
+  float: left;
+  padding: 18px 20px 18px 10px;
+  color: #FFFFFF;
+  line-height: 1.4;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: .04em;
+}
+#headerControlsPublishOptions {
+  padding: 19px 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+#headerControlsPublishOptions .caret {
+  border-top-color: #FFFFFF;
 }

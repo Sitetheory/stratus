@@ -129,7 +129,7 @@
       */
       $scope.filterDateRanger = function () {
         // Reset timeStart and timeEnd options
-        options = $scope.collection.meta.get('api.options')
+        var options = $scope.collection.meta.get('api.options')
         if (options && options['timeStart']) delete options['timeStart']
         if (options && options['timeEnd']) delete options['timeEnd']
 
@@ -144,15 +144,26 @@
         // Prepare end date options
         if ($scope.timeEnd) {
           if (angular.isDate($scope.timeEnd)) {
-            $scope.timeEnd = new Date($scope.timeEnd).setHours(23,59,59,999) / 1000
+            $scope.timeEnd = new Date($scope.timeEnd).setHours(23, 59, 59, 999) / 1000
           }
           setAttribute('api.options.timeEnd', $scope.timeEnd)
+        }
+
+        // Can't filter with the time start later than the time end
+        if ($scope.timeStart && $scope.timeEnd && $scope.timeStart > $scope.timeEnd) {
+          return
         }
 
         $scope.collection.fetch().then(function (response) {})
       }
 
-      function setAttribute(attribute, value, collection) {
+      /**
+      * set an value for an attribute of a collection
+      * @param attribute
+      * @param value
+      * @param collection
+      */
+      function setAttribute (attribute, value, collection) {
         collection = collection || $scope.collection
         collection.meta.set(attribute, value)
       }

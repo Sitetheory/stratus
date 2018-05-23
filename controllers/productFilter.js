@@ -41,14 +41,14 @@
         {
           desc: 'Inactive',
           value: 0
-        },
-        {
-          desc: 'Deleted',
-          value: -1
         }
+        // ,
+        // {
+        //   desc: 'Deleted',
+        //   value: -1
+        // }
       ]
-      $scope.minPrice = 0.00
-      $scope.maxPrice = 0.00
+      $scope.minPrice = $scope.maxPrice = null
 
       /**
        * Default Billing Increment Options for Product
@@ -77,11 +77,9 @@
        */
       function filter (type, data) {
         removeFilter()
-        filterPrice()
+        filterPrices()
         filterStatus()
-        $scope.collection.fetch().then(function (response) {
-          $log.log('response', response)
-        })
+        $scope.collection.fetch()
       }
 
       /**
@@ -94,17 +92,13 @@
       /**
        * Set filter price values
        */
-      function filterPrice () {
-        if ($scope.minPrice > $scope.maxPrice) {
-          return
-        }
-        if ($scope.minPrice > 0 && $scope.maxPrice > 0 &&
-          ($scope.maxPrice >= $scope.minPrice)) {
+      function filterPrices () {
+        if ($scope.minPrice && $scope.maxPrice && $scope.minPrice <= $scope.maxPrice) {
           $scope.collection.meta.set('api.options.minPrice', $scope.minPrice)
           $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice)
-        } else if ($scope.minPrice > 0) {
+        } else if ($scope.minPrice && $scope.minPrice >= 0) {
           $scope.collection.meta.set('api.options.minPrice', $scope.minPrice)
-        } else if ($scope.maxPrice > 0) {
+        } else if ($scope.maxPrice && $scope.maxPrice >= 0) {
           $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice)
         }
       }
@@ -114,9 +108,9 @@
        */
       $scope.$watchCollection('[minPrice, maxPrice]',
         function (newVal, oldVal) {
-          if ($scope.minPrice > $scope.maxPrice) {
-            return
-          }
+          $scope.minPrice = ($scope.minPrice) ? Number($scope.minPrice) : $scope.minPrice
+          $scope.maxPrice = ($scope.maxPrice) ? Number($scope.maxPrice) : $scope.maxPrice
+          if ($scope.minPrice && $scope.maxPrice && $scope.minPrice > $scope.maxPrice) return
           filter()
         })
 
@@ -128,7 +122,6 @@
       }
 
       $scope.safeMessage = function (message) {
-        console.log('message', message)
         return commonMethods.safeMessage(message)
       }
     }]
