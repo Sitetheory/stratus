@@ -41,11 +41,12 @@
         {
           desc: 'Inactive',
           value: 0
-        },
-        {
-          desc: 'Deleted',
-          value: -1
         }
+        // ,
+        // {
+        //   desc: 'Deleted',
+        //   value: -1
+        // }
       ]
       $scope.minPrice = 0.00
       $scope.maxPrice = 0.00
