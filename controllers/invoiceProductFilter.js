@@ -149,6 +149,11 @@
           setAttribute('api.options.timeEnd', $scope.timeEnd)
         }
 
+        // Can't filter with the time start later than the time end
+        if ($scope.timeStart && $scope.timeEnd && $scope.timeStart > $scope.timeEnd) {
+          return
+        }
+
         $scope.collection.fetch().then(function (response) {})
       }
 
