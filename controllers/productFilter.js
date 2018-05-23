@@ -93,12 +93,12 @@
        * Set filter price values
        */
       function filterPrices () {
-        if ($scope.minPrice && $scope.maxPrice && $scope.minPrice <= $scope.maxPrice) {
+        if (Number.isFinite($scope.minPrice) && Number.isFinite($scope.maxPrice) && $scope.minPrice <= $scope.maxPrice) {
           $scope.collection.meta.set('api.options.minPrice', $scope.minPrice)
           $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice)
-        } else if ($scope.minPrice && $scope.minPrice >= 0) {
+        } else if (Number.isFinite($scope.minPrice) && $scope.minPrice >= 0) {
           $scope.collection.meta.set('api.options.minPrice', $scope.minPrice)
-        } else if ($scope.maxPrice && $scope.maxPrice >= 0) {
+        } else if (Number.isFinite($scope.maxPrice) && $scope.maxPrice >= 0) {
           $scope.collection.meta.set('api.options.maxPrice', $scope.maxPrice)
         }
       }
@@ -108,9 +108,7 @@
        */
       $scope.$watchCollection('[minPrice, maxPrice]',
         function (newVal, oldVal) {
-          $scope.minPrice = ($scope.minPrice) ? Number($scope.minPrice) : $scope.minPrice
-          $scope.maxPrice = ($scope.maxPrice) ? Number($scope.maxPrice) : $scope.maxPrice
-          if ($scope.minPrice && $scope.maxPrice && $scope.minPrice > $scope.maxPrice) return
+          if (Number.isFinite($scope.minPrice) && Number.isFinite($scope.maxPrice) && $scope.minPrice > $scope.maxPrice) return
           filter()
         })
 
