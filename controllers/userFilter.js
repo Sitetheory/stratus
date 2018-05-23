@@ -39,34 +39,6 @@
       $scope.more = false
 
       /**
-       * get status of member
-       */
-
-      $scope.getStatus = function (member) {
-        var status = ''
-        if (member.flags) {
-          if (!$scope.isVerified(member)) {
-            status = 'unverified'
-          }
-        }
-        return status
-      }
-
-      /**
-       * return true if user verified
-       */
-      $scope.isVerified = function (member) {
-        if (!member || !member.flags) {
-          return false
-        }
-        return member.flags.findIndex(
-          function (x) {
-            return (x.flagType && x.flagType.title === 'verify')
-          }
-        ) !== -1
-      }
-
-      /**
        * Load the roles for filter
        */
       $scope.init = function () {
