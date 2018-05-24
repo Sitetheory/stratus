@@ -85,6 +85,7 @@
               fileId)
           }
 
+          // TODO: Evaluate this functionality
           function uploadToS3 (file, infoId) {
             var s3Credentials = appConfig.s3Credentials();
             var POLICY = s3Credentials.POLICY
