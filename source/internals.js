@@ -822,7 +822,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
     // environment
     Stratus.Internals.Ajax({
       method: 'PUT',
-      url: 'Api/Session', // auth.sitetheory.io
+      url: '/Api/Session', // auth.sitetheory.io
       data: request,
       type: 'application/json',
       success: function (response) {
