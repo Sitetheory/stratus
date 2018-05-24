@@ -73,6 +73,7 @@
 
       $scope.$watch('$ctrl.ngModel', function () {
         if ($ctrl.identityUser && $ctrl.ngModel) {
+          $scope.allowSelectUser = false
           $scope.newPermission.identityUser = {
             id: $ctrl.ngModel.id,
             bestName: $ctrl.ngModel.bestName
