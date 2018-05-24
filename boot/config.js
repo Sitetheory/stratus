@@ -346,6 +346,8 @@ boot.config({
       boot.suffix,
 
     /* Stratus Core Services */
+    'stratus.services.appConfig': boot.bundle + 'stratus/services/appConfig' +
+    boot.suffix,
     'stratus.services.model': boot.bundle + 'stratus/services/model' +
       boot.suffix,
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' +

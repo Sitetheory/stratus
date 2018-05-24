@@ -9,7 +9,8 @@
     define([
       'stratus',
       'underscore',
-      'angular'
+      'angular',
+      'stratus.services.appConfig'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -20,10 +21,7 @@
   Stratus.Services.SocialLibraries = [
     '$provide', function ($provide) {
       $provide.factory('socialLibraries', [
-        '$interpolate', '$q', function ($interpolate, $q) {
-          var fbAppId = '753913441463877'
-          var ggAppId = '878138862061-hsql5u9tcoonjrr99r9f5phcdrao2r8i.apps.googleusercontent.com'
-
+        '$interpolate', '$q', 'appConfig', function ($interpolate, $q, appConfig) {
           return {
             loadFacebookSDK: loadFacebookSDK,
             loadGGLibrary: loadGGLibrary
@@ -32,7 +30,7 @@
           function loadFacebookSDK () {
             window.fbAsyncInit = function () {
               FB.init({
-                appId: fbAppId,
+                appId: appConfig.facebookAppId(),
                 autoLogAppEvents: true,
                 xfbml: true,
                 version: 'v2.11'
@@ -63,7 +61,7 @@
             // load google api key
             var meta = document.createElement('meta')
             meta.name = 'google-signin-client_id'
-            meta.content = ggAppId
+            meta.content = appConfig.googleAppId()
             document.head.append(meta)
           }
         }])
