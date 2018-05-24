@@ -78,8 +78,7 @@
 
           // Update title, description, tags of a file
           function updateMedia (fileId, data) {
-            return commonMethods.sendRequest(data, 'PUT', mediaApi + '/' +
-              fileId)
+            return commonMethods.sendRequest(data, 'PUT', mediaApi + '/' + fileId)
           }
 
           // TODO: Evaluate this functionality
