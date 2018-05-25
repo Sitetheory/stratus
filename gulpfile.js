@@ -10,6 +10,7 @@ var vinylPaths = require('vinyl-paths')
 var _ = require('underscore')
 
 // Task Specific
+var babel = require('gulp-babel');
 var standard = require('gulp-standard')
 var gulpStylelint = require('gulp-stylelint')
 var less = require('gulp-less')
@@ -122,6 +123,11 @@ var location = {
 }
 
 // Blanket Functions
+gulp.task('default', [
+  'dist',
+  'compile',
+  'compress'
+])
 gulp.task('compile', [
   'compile:less'
 ])
@@ -257,6 +263,9 @@ gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
       title: 'Mangle:'
     }),
     /* */
+    babel({
+      presets: ['env']
+    }),
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -293,6 +302,9 @@ gulp.task('compress:external', ['clean:external'], function (callback) {
       title: 'External:'
     }),
     /* */
+    babel({
+      presets: ['env']
+    }),
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -329,6 +341,9 @@ gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
       title: 'Compress:'
     }),
     /* */
+    babel({
+      presets: ['env']
+    }),
     uglify({
       // preserveComments: 'license',
       mangle: false
