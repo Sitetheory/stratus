@@ -29,6 +29,27 @@ var nullify = function (proto) {
   return clone
 }
 
+var babelSettings = {
+  /* *
+  presets: [
+    ['env', {
+      targets: {
+        // The % refers to the global coverage of users from browserslist
+        browsers: ['>0.25%']
+      }
+      // exclude: ['transform-strict-mode']
+    }]
+  ],
+  /* */
+  plugins: [
+    //'transform-runtime',
+    ['transform-es2015-modules-commonjs', {
+      allowTopLevelThis: true,
+      strictMode: false
+    }]
+  ]
+}
+
 // Locations
 var location = {
   boot: {
@@ -263,14 +284,7 @@ gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
       title: 'Mangle:'
     }),
     /* */
-    babel({
-      plugins: [
-        ['transform-es2015-modules-commonjs', {
-          allowTopLevelThis: true,
-          strictMode: false
-        }]
-      ]
-    }),
+    babel(babelSettings),
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -307,14 +321,7 @@ gulp.task('compress:external', ['clean:external'], function (callback) {
       title: 'External:'
     }),
     /* */
-    babel({
-      plugins: [
-        ['transform-es2015-modules-commonjs', {
-          allowTopLevelThis: true,
-          strictMode: false
-        }]
-      ]
-    }),
+    babel(babelSettings),
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -351,25 +358,7 @@ gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
       title: 'Compress:'
     }),
     /* */
-    babel({
-      /* *
-      presets: [
-        ['env', {
-          targets: {
-            // The % refers to the global coverage of users from browserslist
-            browsers: ['>0.25%']
-          }
-          // exclude: ['transform-strict-mode']
-        }]
-      ],
-      /* */
-      plugins: [
-        ['transform-es2015-modules-commonjs', {
-          allowTopLevelThis: true,
-          strictMode: false
-        }]
-      ]
-    }),
+    babel(babelSettings),
     uglify({
       // preserveComments: 'license',
       mangle: false
