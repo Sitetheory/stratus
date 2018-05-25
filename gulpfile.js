@@ -10,7 +10,7 @@ var vinylPaths = require('vinyl-paths')
 var _ = require('underscore')
 
 // Task Specific
-var babel = require('gulp-babel');
+var babel = require('gulp-babel')
 var standard = require('gulp-standard')
 var gulpStylelint = require('gulp-stylelint')
 var less = require('gulp-less')
@@ -264,7 +264,12 @@ gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
     }),
     /* */
     babel({
-      presets: ['env']
+      plugins: [
+        ['transform-es2015-modules-commonjs', {
+          allowTopLevelThis: true,
+          strictMode: false
+        }]
+      ]
     }),
     uglify({
       // preserveComments: 'license',
@@ -303,7 +308,12 @@ gulp.task('compress:external', ['clean:external'], function (callback) {
     }),
     /* */
     babel({
-      presets: ['env']
+      plugins: [
+        ['transform-es2015-modules-commonjs', {
+          allowTopLevelThis: true,
+          strictMode: false
+        }]
+      ]
     }),
     uglify({
       // preserveComments: 'license',
@@ -342,7 +352,23 @@ gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
     }),
     /* */
     babel({
-      presets: ['env']
+      /* *
+      presets: [
+        ['env', {
+          targets: {
+            // The % refers to the global coverage of users from browserslist
+            browsers: ['>0.25%']
+          }
+          // exclude: ['transform-strict-mode']
+        }]
+      ],
+      /* */
+      plugins: [
+        ['transform-es2015-modules-commonjs', {
+          allowTopLevelThis: true,
+          strictMode: false
+        }]
+      ]
     }),
     uglify({
       // preserveComments: 'license',
