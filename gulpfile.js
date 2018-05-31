@@ -2,7 +2,7 @@
 var gulp = require('gulp')
 var pump = require('pump')
 var concat = require('gulp-concat')
-// var debug = require('gulp-debug')
+var debug = require('gulp-debug')
 var dest = require('gulp-dest')
 var uglify = require('gulp-uglify')
 var del = require('del')
@@ -217,48 +217,36 @@ gulp.task('lint:css', function lintCssTask () {
 
 // Distribution Functions
 gulp.task('dist:boot', function (callback) {
-  pump([
-    gulp.src(location.boot.source, {
-      base: '.'
-    }),
-    concat(location.boot.output),
-    gulp.dest('.')
-  ],
-  callback
-  )
+  return gulp.src(location.boot.source, {
+    base: '.'
+  })
+    .pipe(concat(location.boot.output))
+    .pipe(gulp.dest('.'))
 })
 gulp.task('dist:stratus', function (callback) {
-  pump([
-    gulp.src(location.stratus.source, {
-      base: '.'
-    }),
-    concat(location.stratus.output),
-    gulp.dest('.')
-  ],
-  callback
-  )
+  return gulp.src(location.stratus.source, {
+    base: '.'
+  })
+    .pipe(concat(location.stratus.output))
+    .pipe(gulp.dest('.'))
 })
 gulp.task('dist:compress', function (callback) {
-  pump([
-    gulp.src([location.boot.output, location.stratus.output], {
-      base: '.'
-    }),
+  return gulp.src([location.boot.output, location.stratus.output], {
+    base: '.'
+  })
     /* *
-    debug({
+    .pipe(debug({
       title: 'Mangle:'
-    }),
+    }))
     /* */
-    uglify({
+    .pipe(uglify({
       // preserveComments: 'license',
       mangle: true
-    }),
-    dest('.', {
+    }))
+    .pipe(dest('.', {
       ext: '.min.js'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
+    }))
+    .pipe(gulp.dest('.'))
 })
 
 // Mangle Functions
