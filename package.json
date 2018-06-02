@@ -24,12 +24,19 @@
     "gulp-standard": "^10.1.2",
     "gulp-stylelint": "^6.0.0",
     "gulp-uglify": "^3.0.*",
-    "karma": "^1.7.*",
-    "karma-chrome-launcher": "^2.2.*",
-    "karma-firefox-launcher": "^1.1.*",
-    "karma-opera-launcher": "^1.0.*",
-    "karma-safari-launcher": "^1.0.*",
+    "karma": "^2.0.2",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.1.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-mocha": "^1.3.0",
+    "karma-opera-launcher": "^1.0.0",
+    "karma-requirejs": "^1.1.0",
+    "karma-safari-launcher": "^1.0.0",
+    "mocha": "^5.2.0",
+    "mochawesome": "^3.0.2",
     "pump": "^2.0.*",
+    "requirejs": "^2.3.5",
+    "sinon": "^5.0.10",
     "stylelint": "^8.4.0",
     "stylelint-config-standard": "^18.0.0",
     "uglify-js": "^3.2.*",
@@ -37,8 +44,9 @@
     "vinyl-paths": "^2.1.*"
   },
   "scripts": {
-    "test": "gulp compress;gulp lint",
-    "karma": "karma start --single-run"
+    "test": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",
+    "quality": "gulp compress;gulp lint",
+    "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run"
   },
   "repository": {
     "type": "git",
@@ -57,8 +65,5 @@
     "angular",
     "backbone",
     "underscore"
-  ],
-  "dependencies": {
-    "npm": "^6.0.0"
-  }
+  ]
 }
