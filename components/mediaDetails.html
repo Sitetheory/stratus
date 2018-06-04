@@ -1,6 +1,6 @@
 <div class="media-details mediaInfoFull mediaDialogue backgroundDark clearfix borderRadiusDefault" role="dialog">
   <div>
-    <button type="button" class="btnClose" href="javascript:;" ng-click="$ctrl.closeDialog()">
+    <button type="button" class="btnClose" href="javascript:;" ng-click="$ctrl.done()">
       <span class="sr-only">Toggle Navigation</span>
       <svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <defs></defs>
@@ -61,7 +61,7 @@
         <i ng-if="$ctrl.media.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
         <i ng-if="$ctrl.media.mime == 'application/msword'" class="fas fa-5x fa-file-word document"
            aria-hidden="true"></i>
-        <img ng-if="$ctrl.media.mime.indexOf('image') > -1" stratus-src="{{ $ctrl.mediaUrl }}"
+        <img ng-if="$ctrl.media.mime.indexOf('image') > -1" src="{{ $ctrl.mediaUrl }}"
              alt="{{ $ctrl.media.name }}">
       </div>
     </div>

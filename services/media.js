@@ -55,7 +55,9 @@
           }
 
           function getMedia (scope) {
-            return scope.collection.fetch()
+            var currentPage = scope.collection.meta.data.pagination.pageCurrent
+            if (currentPage == null) return scope.collection.fetch()
+            return scope.collection.page(currentPage)
           }
 
           function createTag (data) {
