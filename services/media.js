@@ -88,10 +88,10 @@
 
           // TODO: Evaluate this functionality
           function uploadToS3 (file, infoId) {
-            var s3Credentials = appConfig.s3Credentials();
-            var POLICY = s3Credentials.POLICY
-            var SIGNATURE = s3Credentials.SIGNATURE
-            var ACCESS_KEY = s3Credentials.ACCESS_KEY
+            // var s3Credentials = appConfig.s3Credentials();
+            // var POLICY = s3Credentials.POLICY
+            // var SIGNATURE = s3Credentials.SIGNATURE
+            // var ACCESS_KEY = s3Credentials.ACCESS_KEY
             var url = '//app.sitetheory.io:3000/?session=' +
               _.cookie('SITETHEORY') + (infoId ? ('&id=' + infoId) : '')
 
@@ -99,13 +99,13 @@
               url: url,
               method: 'POST',
               data: {
-                AWSAccessKeyId: ACCESS_KEY,
+                // AWSAccessKeyId: ACCESS_KEY,
                 key: file.name, // the key to store the file on S3, could be
                 // file name or customized
                 acl: 'private', // sets the access to the uploaded file in the
                 // bucket: private, public-read, ...
-                policy: POLICY, // base64-encoded json policy
-                signature: SIGNATURE, // base64-encoded signature based on
+                // policy: POLICY, // base64-encoded json policy
+                // signature: SIGNATURE, // base64-encoded signature based on
                 // policy string
                 'Content-Type': file.type !== ''
                   ? file.type
