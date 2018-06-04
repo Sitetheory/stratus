@@ -1,0 +1,98 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2018-06-02T02:52:59.158Z",
+    "end": "2018-06-02T02:52:59.165Z",
+    "duration": 7,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false,
+    "passPercentClass": "success",
+    "pendingPercentClass": "danger"
+  },
+  "suites": {
+    "uuid": "e2855356-97dd-4898-82ee-e006f4fc52d0",
+    "title": "",
+    "fullFile": "",
+    "file": "",
+    "beforeHooks": [],
+    "afterHooks": [],
+    "tests": [],
+    "suites": [
+      {
+        "uuid": "dd07cfd8-aeb1-4acd-9db1-e4e0b3f05716",
+        "title": "Array",
+        "fullFile": "/Users/alexgurrola/Projects/stratus/test/test.js",
+        "file": "/test/test.js",
+        "beforeHooks": [],
+        "afterHooks": [],
+        "tests": [],
+        "suites": [
+          {
+            "uuid": "9796cbd9-bc27-47e5-b4ae-554f9cdd5f36",
+            "title": "#indexOf()",
+            "fullFile": "/Users/alexgurrola/Projects/stratus/test/test.js",
+            "file": "/test/test.js",
+            "beforeHooks": [],
+            "afterHooks": [],
+            "tests": [
+              {
+                "title": "should return -1 when the value is not present",
+                "fullTitle": "Array #indexOf() should return -1 when the value is not present",
+                "timedOut": false,
+                "duration": 0,
+                "state": "passed",
+                "speed": "fast",
+                "pass": true,
+                "fail": false,
+                "pending": false,
+                "code": "assert.equal([1,2,3].indexOf(4), -1);",
+                "err": {},
+                "isRoot": false,
+                "uuid": "60a554cb-ece2-4d15-bed0-42c5700c08ab",
+                "isHook": false,
+                "skipped": false
+              }
+            ],
+            "suites": [],
+            "passes": [
+              "60a554cb-ece2-4d15-bed0-42c5700c08ab"
+            ],
+            "failures": [],
+            "pending": [],
+            "skipped": [],
+            "duration": 0,
+            "root": false,
+            "rootEmpty": false,
+            "_timeout": 2000
+          }
+        ],
+        "passes": [],
+        "failures": [],
+        "pending": [],
+        "skipped": [],
+        "duration": 0,
+        "root": false,
+        "rootEmpty": false,
+        "_timeout": 2000
+      }
+    ],
+    "passes": [],
+    "failures": [],
+    "pending": [],
+    "skipped": [],
+    "duration": 0,
+    "root": true,
+    "rootEmpty": true,
+    "_timeout": 2000
+  },
+  "copyrightYear": 2018
+}

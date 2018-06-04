@@ -735,21 +735,26 @@ Stratus.Internals.Resource = function (path, elementId) {
  * @constructor
  */
 Stratus.Internals.SetUrlParams = function (params, url) {
+  // FIXME: This can't handle anchors correctly
   if (typeof url === 'undefined') {
     url = window.location.href
+  }
+  if (typeof params === 'undefined') {
+    return url;
   }
   var vars = {}
   var glue = url.indexOf('?')
   url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+    console.log(arguments)
     vars[key] = value
   })
   vars = _.extend(vars, params)
-  return (glue >= 0 ? url.substring(0, glue) : url) + '?' +
+  return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
     _.reduce(_.map(vars, function (value, key) {
       return key + '=' + value
     }), function (memo, value) {
       return memo + '&' + value
-    })
+    })).replace(/([#][\S]*)([?][\S]*)/gi, '$2$1')
 }
 
 // Track Location
@@ -822,7 +827,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
     // environment
     Stratus.Internals.Ajax({
       method: 'PUT',
-      url: '/Api/Session',
+      url: '/Api/Session', // auth.sitetheory.io
       data: request,
       type: 'application/json',
       success: function (response) {

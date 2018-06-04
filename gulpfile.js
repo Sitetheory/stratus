@@ -2,7 +2,7 @@
 var gulp = require('gulp')
 var pump = require('pump')
 var concat = require('gulp-concat')
-// var debug = require('gulp-debug')
+var debug = require('gulp-debug')
 var dest = require('gulp-dest')
 var uglify = require('gulp-uglify')
 var del = require('del')
@@ -10,6 +10,7 @@ var vinylPaths = require('vinyl-paths')
 var _ = require('underscore')
 
 // Task Specific
+var babel = require('gulp-babel')
 var standard = require('gulp-standard')
 var gulpStylelint = require('gulp-stylelint')
 var less = require('gulp-less')
@@ -26,6 +27,27 @@ var nullify = function (proto) {
     })
   }
   return clone
+}
+
+var babelSettings = {
+  /* *
+  presets: [
+    ['env', {
+      targets: {
+        // The % refers to the global coverage of users from browserslist
+        browsers: ['>0.25%']
+      }
+      // exclude: ['transform-strict-mode']
+    }]
+  ],
+  /* */
+  plugins: [
+    //'transform-runtime',
+    ['transform-es2015-modules-commonjs', {
+      allowTopLevelThis: true,
+      strictMode: false
+    }]
+  ]
 }
 
 // Locations
@@ -122,6 +144,11 @@ var location = {
 }
 
 // Blanket Functions
+gulp.task('default', [
+  'dist',
+  'compile',
+  'compress'
+])
 gulp.task('compile', [
   'compile:less'
 ])
@@ -190,48 +217,36 @@ gulp.task('lint:css', function lintCssTask () {
 
 // Distribution Functions
 gulp.task('dist:boot', function (callback) {
-  pump([
-    gulp.src(location.boot.source, {
-      base: '.'
-    }),
-    concat(location.boot.output),
-    gulp.dest('.')
-  ],
-  callback
-  )
+  return gulp.src(location.boot.source, {
+    base: '.'
+  })
+    .pipe(concat(location.boot.output))
+    .pipe(gulp.dest('.'))
 })
 gulp.task('dist:stratus', function (callback) {
-  pump([
-    gulp.src(location.stratus.source, {
-      base: '.'
-    }),
-    concat(location.stratus.output),
-    gulp.dest('.')
-  ],
-  callback
-  )
+  return gulp.src(location.stratus.source, {
+    base: '.'
+  })
+    .pipe(concat(location.stratus.output))
+    .pipe(gulp.dest('.'))
 })
 gulp.task('dist:compress', function (callback) {
-  pump([
-    gulp.src([location.boot.output, location.stratus.output], {
-      base: '.'
-    }),
+  return gulp.src([location.boot.output, location.stratus.output], {
+    base: '.'
+  })
     /* *
-    debug({
+    .pipe(debug({
       title: 'Mangle:'
-    }),
+    }))
     /* */
-    uglify({
+    .pipe(uglify({
       // preserveComments: 'license',
       mangle: true
-    }),
-    dest('.', {
+    }))
+    .pipe(dest('.', {
       ext: '.min.js'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
+    }))
+    .pipe(gulp.dest('.'))
 })
 
 // Mangle Functions
@@ -257,6 +272,7 @@ gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
       title: 'Mangle:'
     }),
     /* */
+    babel(babelSettings),
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -293,6 +309,7 @@ gulp.task('compress:external', ['clean:external'], function (callback) {
       title: 'External:'
     }),
     /* */
+    babel(babelSettings),
     uglify({
       // preserveComments: 'license',
       mangle: true
@@ -329,6 +346,7 @@ gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
       title: 'Compress:'
     }),
     /* */
+    babel(babelSettings),
     uglify({
       // preserveComments: 'license',
       mangle: false
