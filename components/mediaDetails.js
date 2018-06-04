@@ -60,6 +60,7 @@
           $ctrl.deleteMedia = deleteMedia
           $ctrl.getLinkMedia = getLinkMedia
           $ctrl.closeDialog = closeDialog
+          $ctrl.done = done
           $ctrl.openUploader = openUploader
           $ctrl.createTag = createTag
           $ctrl.editItem = editItem
@@ -91,6 +92,11 @@
             description: fileData.description,
             editing: false
           }
+        }
+
+        function done () {
+          media.getMedia($ctrl)
+          $mdDialog.hide()
         }
 
         function deleteMedia () {

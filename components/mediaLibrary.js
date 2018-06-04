@@ -153,7 +153,7 @@
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: DialogShowDetails,
           template: '<stratus-media-details media="media" collection="collection"></stratus-media-details>',
-          clickOutsideToClose: true,
+          clickOutsideToClose: false,
           focusOnOpen: true,
           autoWrap: true,
           locals: {

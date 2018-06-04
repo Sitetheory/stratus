@@ -55,7 +55,9 @@
           }
 
           function getMedia (scope) {
-            return scope.collection.fetch()
+            var currentPage = scope.collection.meta.data.pagination.pageCurrent
+            if (currentPage == null) return scope.collection.fetch()
+            return scope.collection.page(currentPage)
           }
 
           function createTag (data) {
@@ -83,9 +85,10 @@
 
           // TODO: Evaluate this functionality
           function uploadToS3 (file, infoId) {
-            var POLICY = 'ewogICJleHBpcmF0aW9uIjogIjIwMjAtMDEtMDFUMDA6MDA6MDBaIiwKICAiY29uZGl0aW9ucyI6IFsKICAgIHsiYnVja2V0IjogInNpdGV0aGVvcnljb3JlIn0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAiIl0sCiAgICB7ImFjbCI6ICJwcml2YXRlIn0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRDb250ZW50LVR5cGUiLCAiIl0sCiAgICBbInN0YXJ0cy13aXRoIiwgIiRmaWxlbmFtZSIsICIiXSwKICAgIFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLCAwLCA1MjQyODgwMDBdCiAgXQp9'
-            var SIGNATURE = '5bz7ETqEC0Gxj1vJP/a6t3DRMJc='
-            var ACCESS_KEY = 'AKIAIX32Y3S7HCX4BSQA'
+            // var s3Credentials = appConfig.s3Credentials();
+            // var POLICY = s3Credentials.POLICY
+            // var SIGNATURE = s3Credentials.SIGNATURE
+            // var ACCESS_KEY = s3Credentials.ACCESS_KEY
             var url = '//app.sitetheory.io:3000/?session=' +
               _.cookie('SITETHEORY') + (infoId ? ('&id=' + infoId) : '')
 
@@ -93,13 +96,13 @@
               url: url,
               method: 'POST',
               data: {
-                AWSAccessKeyId: ACCESS_KEY,
+                // AWSAccessKeyId: ACCESS_KEY,
                 key: file.name, // the key to store the file on S3, could be
                 // file name or customized
                 acl: 'private', // sets the access to the uploaded file in the
                 // bucket: private, public-read, ...
-                policy: POLICY, // base64-encoded json policy
-                signature: SIGNATURE, // base64-encoded signature based on
+                // policy: POLICY, // base64-encoded json policy
+                // signature: SIGNATURE, // base64-encoded signature based on
                 // policy string
                 'Content-Type': file.type !== ''
                   ? file.type
