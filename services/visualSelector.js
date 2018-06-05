@@ -32,7 +32,7 @@
           commonMethods
         ) {
           function selectTheme (data) {
-            return commonMethods.sendRequest(data, 'POST', '/Api/Template')
+            return commonMethods.sendRequest(data, 'POST', '/Api/Site')
           }
 
           function fetchCollection (scope, attrs, defaultLimit, defaultTarget) {
