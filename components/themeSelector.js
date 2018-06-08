@@ -119,13 +119,13 @@
         function (theme) {
           if (theme[0] && theme[1] && theme[1].length > 0) {
             $ctrl.currentThemes = theme[1]
-
             if (!$ctrl.selectedTheme) {
               var themeData = $ctrl.currentThemes.map(function (obj) {
                 return obj.data
               })
-              $ctrl.selectedTheme = $filter('filter')(themeData, {
-                id: theme[0].id
+              $ctrl.selectedTheme = theme[0]
+              $ctrl.selectedTheme = themeData.filter(function (themeItem) {
+                return (themeItem.id === theme[0].id)
               })[0]
             }
           }
@@ -156,6 +156,7 @@
 
       function chooseTheme (themeData) {
         $ctrl.selectedTheme = themeData
+        $scope.model.data.version.templateId = themeData.id
         $scope.model.data.version.template = themeData
       }
 
