@@ -124,9 +124,9 @@
                 return obj.data
               })
               $ctrl.selectedTheme = theme[0]
-              // $ctrl.selectedTheme = $filter('filter')(themeData, {
-              //   id : theme[0].id
-              // })[0]
+              $ctrl.selectedTheme = $filter('filter')(themeData, {
+                id : theme[0].id
+              })[0]
             }
           }
         })
