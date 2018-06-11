@@ -221,7 +221,7 @@
                     that.meta.set(response.data.meta || {})
                     var convoy = response.data.payload || response.data
                     if (angular.isArray(convoy) && convoy.length) {
-                      that.data = _.first(that.data)
+                      that.data = _.first(convoy)
                       that.error = false
                     } else if (angular.isObject(convoy)) {
                       that.data = convoy
