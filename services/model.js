@@ -168,6 +168,9 @@
               obj = obj || {}
               angular.forEach(obj, function (value, key) {
                 if (angular.isObject(value)) {
+                  if (chain) {
+                    key = chain + '[' + key + ']'
+                  }
                   str.push(that.serialize(value, key))
                 } else {
                   var encoded = ''
@@ -218,7 +221,7 @@
                     that.meta.set(response.data.meta || {})
                     var convoy = response.data.payload || response.data
                     if (angular.isArray(convoy) && convoy.length) {
-                      that.data = _.first(that.data)
+                      that.data = _.first(convoy)
                       that.error = false
                     } else if (angular.isObject(convoy)) {
                       that.data = convoy
