@@ -54,7 +54,7 @@
     "zxcvbn": "^4.4.2"
   },
   "resolutions": {
-    "angular": "~1.6.*"
+    "angular": "~1.7.*"
   },
   "private": false
 }
