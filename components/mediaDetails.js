@@ -55,6 +55,7 @@
           initFile($ctrl.media)
           $ctrl.tags = $ctrl.media.tags
           $ctrl.infoId = $ctrl.media.id
+          $ctrl.selectedChips = []
 
           // Methods
           $ctrl.deleteMedia = deleteMedia
@@ -65,7 +66,6 @@
           $ctrl.createTag = createTag
           $ctrl.editItem = editItem
           $ctrl.doneEditing = doneEditing
-          $ctrl.searchFilter = searchFilter
         }
 
         function initFile (fileData) {
@@ -95,7 +95,10 @@
         }
 
         function done () {
-          media.getMedia($ctrl)
+          var dataRes = {}
+          var fileId = $ctrl.media.id
+          dataRes.tags = $ctrl.tags
+          updateMedia(fileId, dataRes)
           $mdDialog.hide()
         }
 
@@ -187,6 +190,20 @@
           }
         }
 
+      /**
+       * Return the proper object when the append is called.
+       * @return {name: 'value'}
+       */
+      $ctrl.transformChip = function (chip) {
+        // If it is an object, it's already a known chip
+        if (angular.isObject(chip)) {
+          return chip
+        }
+
+        // Otherwise, create a new one
+        return {name: chip}
+      }
+
         function createTag (query, fileId, tags) {
           var data = {
             name: query
@@ -197,7 +214,6 @@
                 var dataRes = {}
                 $ctrl.tags.push(response.data.payload)
                 dataRes.tags = $ctrl.tags
-                updateMedia(fileId, dataRes)
               }
             }
           })
@@ -231,27 +247,22 @@
           updateMedia(fileId, data)
         }
 
-        function searchFilter (query) {
-          return $ctrl.collection.filter(query)
+        $ctrl.searchFilter = function (collection, query) {
+          var results = collection.filter(query)
+          return Promise.resolve(results).then(function (value) {
+            return value.filter(function (item) {
+              return $ctrl.selectedChips.indexOf(item.name) === -1
+            })
+          })
         }
 
         // Handle saving tags after updating
-        $scope.$watch('$ctrl.tags', function (data) {
+        $scope.$watch('$ctrl.tags', function (items) {
           if ($ctrl.infoId !== undefined) {
-            var dataRes = {}
-
-            dataRes.tags = $ctrl.tags
-            media.updateMedia($ctrl.infoId, dataRes).then(
-              function (response) {
-                media.fetchOneMedia($ctrl.media.id)
-              },
-              function (rejection) {
-                if (!Stratus.Environment.get('production')) {
-                  console.log(rejection)
-                }
-              })
+            $ctrl.selectedChips = items || []
           }
         })
+
       }
     ],
     templateUrl: Stratus.BaseUrl +
