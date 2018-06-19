@@ -24,6 +24,7 @@
     "gulp-standard": "^10.1.2",
     "gulp-stylelint": "^6.0.0",
     "gulp-uglify": "^3.0.*",
+    "gulp-uglify-es": "^1.0.4",
     "karma": "^2.0.2",
     "karma-chrome-launcher": "^2.2.0",
     "karma-firefox-launcher": "^1.1.0",
@@ -44,9 +45,9 @@
     "vinyl-paths": "^2.1.*"
   },
   "scripts": {
-    "test": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",
-    "quality": "gulp compress;gulp lint",
-    "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run"
+    "test": "gulp compress;gulp lint",
+    "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
+    "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports"
   },
   "repository": {
     "type": "git",
