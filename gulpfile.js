@@ -2,9 +2,10 @@
 var gulp = require('gulp')
 var pump = require('pump')
 var concat = require('gulp-concat')
-var debug = require('gulp-debug')
+// var debug = require('gulp-debug')
 var dest = require('gulp-dest')
-var uglify = require('gulp-uglify-es').default
+var uglify = require('gulp-uglify')
+// var uglify = require('gulp-uglify-es').default
 var del = require('del')
 var vinylPaths = require('vinyl-paths')
 var _ = require('underscore')
@@ -42,7 +43,7 @@ var babelSettings = {
   ],
   /* */
   plugins: [
-    //'transform-runtime',
+    // 'transform-runtime',
     ['transform-es2015-modules-commonjs', {
       allowTopLevelThis: true,
       strictMode: false
