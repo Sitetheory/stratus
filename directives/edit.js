@@ -121,7 +121,7 @@
         $scope.accept = function () {
           if ($scope.model instanceof Model && $scope.property) {
             $scope.model.set($scope.property, $scope.value)
-            // $scope.model.save()
+            $scope.model.save()
           }
         }
 
@@ -136,9 +136,9 @@
         // --------
 
         $scope.$watch('ngModel', function (data) {
-          if (_.isObject(data) && !_.isEqual(data, $scope.model)) {
+          if (data instanceof Model && !_.isEqual(data, $scope.model)) {
             $scope.model = data
-            var unwatch = $scope.$watch('model', function (dataCheck) {
+            var unwatch = $scope.$watch('model.data', function (dataCheck) {
               if (dataCheck !== undefined) {
                 unwatch() // Remove this watch as soon as it's run once
                 $scope.ctrl.init() // Initialize only after there is a model
@@ -157,7 +157,7 @@
 
           // WATCHERS
 
-          $scope.$watch('model.data' + $scope.property, function (data) {
+          $scope.$watch('model.data.' + $scope.property, function (data) {
             if (data) {
               $scope.value = data
             }
