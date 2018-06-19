@@ -66,16 +66,14 @@
         if (angular.isDefined($scope.initial)) {
           $element.attr('src', $scope.initial)
           $scope.register()
-        } else {
-          $scope.$watch(function () {
-            return $scope.interpreter($scope.$parent)
-          }, function (value) {
-            if (angular.isDefined(value)) {
-              $element.attr('src', value)
-              $scope.register()
-            }
-          })
         }
+        
+        $scope.$watch('stratusSrc', function (value) {
+          if (angular.isDefined(value)) {
+            $element.attr('src', value)
+            $scope.register()
+          }
+        })
       }
     }
   }
