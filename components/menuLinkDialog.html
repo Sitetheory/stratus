@@ -1,0 +1,104 @@
+<div id="editDialogue" class="initializeDialogue dialogueContainer backgroundDark defaultBorderRadius defaultShadow">
+  <div class="dialogueContent">
+    <div class="backgroundDarkBorderMatch dialogueNotch">&nbsp;</div>
+    <div class="dialogueButtons clearfix">
+      <!-- TODO: Review whether or not we want the "Done" button to save in the process of closing the Dialogue -->
+      <a class="fontBody btn btnConfirm gradientAnchor" ng-click="ctrl.close();">
+        <div class="btnGradientLight"></div>
+        Done
+      </a>
+      <ul>
+        <li class="linkEditButton button1 visibilityStatus" ng-click="ctrl.toggle()">
+          <a href="">
+            <md-tooltip>Toggle Visibility</md-tooltip>
+            <i class="fas fa-power-off" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="linkEditButton button2 deleteLink" ng-click="ctrl.destroy(); ctrl.close();">
+          <a href="">
+            <md-tooltip>Remove link</md-tooltip>
+            <i class="fas fa-trash-alt" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="linkEditButton button3 addChild" ng-click="ctrl.addChild()">
+          <a href="">
+            <md-tooltip>Add link</md-tooltip>
+            <i class="fas fa-plus" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="linkEditButton button4 contentSettings">
+          <a href="">
+            <!-- {% embed '@SitetheoryCoreBundle/Resources/public/images/icons/actionButtons/settings.svg' %}{% block id %}actionSettings{% endblock %}{% endembed %} -->
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="linkageListContainer">
+      <h4 class="smallLabel fontBody linkageListLabel">Links to</h4>
+      <div class="linkageList backgroundLight fontBody">
+        <md-autocomplete  flex
+                          md-floating-label="Content"
+                          md-min-length="0"
+                          md-delay="500"
+                          md-selected-item="ctrl.linkTo"
+                          md-search-text="contentQuery"
+                          md-items="content in ctrl.getContentForMenu(contentQuery, 'Content', '/Api/Content')"
+                          md-item-text="ctrl.linkTo.title || content.data.version.title"
+                          md-menu-class="autocomplete-menulink"
+                          md-selected-item-change="ctrl.handleSelection(content, 'content')">
+          <md-item-template>
+            <span class="item-title">
+              <span>{{ content.data.version.title | truncate:{limit: 20} }}</span>
+            </span>
+            <span ng-show="content.data.route" class="item-metadata">
+              <span class="item-metastat">
+                {{ content.data.route }}
+              </span>
+            </span>
+          </md-item-template>
+          <md-not-found>
+            <div ng-click="ctrl.handleSelection(contentQuery, 'url')">
+              Save this URL ?
+            </div>
+          </md-not-found>
+        </md-autocomplete>
+      </div>
+      <!-- Parent AutoComplete -->
+      <h4 class="smallLabel fontBody linkageListLabel">Child of</h4>
+      <div class="linkageList backgroundLight fontBody">
+        <md-autocomplete  flex
+                          md-floating-label="Parent"
+                          md-min-length="0"
+                          md-delay="500"
+                          md-selected-item="ctrl.nestParent"
+                          md-search-text="childQuery"
+                          md-items="parent in ctrl.getContentForMenu(childQuery, 'MenuLink', '/Api/MenuLink')"
+                          md-item-text="ctrl.nestParent.name || parent.data.name"
+                          md-menu-class="autocomplete-menulink"
+                          md-selected-item-change="ctrl.handleSelection(parent, 'menulink')">
+          <md-item-template>
+            <span class="item-title">
+              <span>{{ parent.data.name | truncate:{limit: 20} }}</span>
+            </span>
+            <span ng-show="parent.data.route" class="item-metadata">
+              <span class="item-metastat">
+                {{ parent.data.route }}
+              </span>
+            </span>
+          </md-item-template>
+        </md-autocomplete>
+      </div>
+      <!-- Priority Control -->
+      <h4 class="smallLabel fontBody linkageListLabel">Priority</h4>
+      <div class="fontBody">
+        <a ng-click="ctrl.changePriority(1)" aria-label="Increase Priority">
+          <i class="fa fa-chevron-up" aria-hidden="true"></i>
+        </a>
+        {{ ctrl.menuLink.priority || 0 }}
+        <a ng-click="ctrl.changePriority(-1)" aria-label="Decrease Priority">
+          <i class="fa fa-chevron-down" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

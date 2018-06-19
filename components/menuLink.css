@@ -1,0 +1,11 @@
+.edit-content {
+  color: black;
+  padding: 0 3px;
+  background-color: white;
+}
+.linkEditButton a {
+  font-size: 20px;
+}
+.linkEditButton a i {
+  color: whitesmoke;
+}
