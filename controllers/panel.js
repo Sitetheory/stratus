@@ -53,8 +53,36 @@
           })
       }
 
+
       // Handle Panel
       $scope.show = function ($event) {
+        // default parameters
+        var outClickClose = true // close on outside click
+        var allowOnePanel = false // set to true if we need to close previous panel before opening new one
+        var escapeToClose = true // set to false if no need to close the panel on Esc key pressed
+        // overrides
+        // attached to $scope.model not just to $scope cause some objects have different scopes but share the same model
+        if ($scope.model.hasOwnProperty('outClickClose')) outClickClose = $scope.model.outClickClose
+        if ($scope.model.hasOwnProperty('allowOnePanel')) allowOnePanel = $scope.model.allowOnePanel
+        if ($scope.model.hasOwnProperty('escapeToClose')) escapeToClose = $scope.model.escapeToClose
+        console.log("$scope.model.panelRelatedToEdit: ", $scope.model.panelRelatedToEdit)
+        if ($scope.model.hasOwnProperty('panelRelatedToEdit') && $scope.model.panelRelatedToEdit === true) {
+          escapeToClose = true
+          var myOnRemoving = function (event, removePromise) {
+            Stratus.activeEdit.setEdit(false)
+            delete $scope.model.done
+          }
+        } else {
+          var myOnRemoving = function (event, removePromise) { }
+        }
+        // Disallow duplicate panels unconditionally: check if it is already open with the same model. Same model? Close!
+        if (Stratus.hasOwnProperty('openPanelKey') && Stratus.openPanelKey === $scope.model.$$hashKey) return;
+        else Stratus.openPanelKey = $scope.model.$$hashKey;
+        // do we have another panel open at the same time? do we need to close it?
+        if (allowOnePanel === true && Stratus.hasOwnProperty('openPanel') && Stratus.openPanel !== null) {
+          Stratus.openPanel.close();
+        }
+
         var position = $mdPanel.newPanelPosition()
           .relativeTo($element)
           .addPanelPosition($mdPanel.xPosition.OFFSET_END,
@@ -65,8 +93,9 @@
           panelClass: 'dialogueContainer',
           position: position,
           openFrom: $event,
-          clickOutsideToClose: true,
-          escapeToClose: true,
+          clickOutsideToClose: outClickClose,
+          escapeToClose: escapeToClose,
+          onRemoving: myOnRemoving,
           focusOnOpen: false,
           locals: {
             ngModel: $scope.model,
@@ -75,12 +104,34 @@
           controller: function ($scope, mdPanelRef, ngModel, ngCollection) {
             $scope.model = ngModel
             $scope.collection = ngCollection
-            $scope.close = function () {
+            $scope.close = function (mode) {
+              delete Stratus.openPanelKey
+              Stratus.openPanel = null;
+
+              // if this panel is attached to some Edit, we need to exit this edit
+              // when panel is closed with 'done' 'apply' or some other similar button
+              if (
+                mode === 'done' ||
+                ( $scope.model.hasOwnProperty('done') &&
+                  $scope.model.done === true &&
+                  Stratus.hasOwnProperty('activeEdit') &&
+                  Stratus.activeEdit !== null )
+              ) {
+                Stratus.activeEdit.setEdit(false)
+                delete $scope.model.done
+              }
+
               if (mdPanelRef) {
                 mdPanelRef.close()
               }
             }
+
+            Stratus.openPanel = $scope
+
+            console.log($scope)
+
           }
+
         })
       }
     }]

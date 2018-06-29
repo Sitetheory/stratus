@@ -53,6 +53,7 @@
         // Initialize
         $scope.uid = this.uid = _.uniqueId('edit_')
         Stratus.Instances[this.uid] = $scope
+        Stratus.currEditScope = $scope
         $scope.Stratus = Stratus
         $scope.elementId = $attrs.elementId || this.uid
         $scope.edit_input_container = $element[0].getElementsByClassName(
@@ -93,10 +94,24 @@
         $scope.setEdit = function (bool) {
           // Only allow Edit mode if liveedit is enabled.
           if (bool && ($scope.liveEditStatus() || $scope.alwaysEdit)) {
+
+            // allow only one active edit
+            if (Stratus.hasOwnProperty('activeEdit') && Stratus.activeEdit !== null) {
+              //console.log("Only one active Edit is allowed on the page")
+              Stratus.activeEdit.setEdit(false)
+            }
+
+            Stratus.activeEditKey = $scope.model.$$hashKey
+            Stratus.activeEdit = $scope
+
+            $scope.saveTrottle = false;
+
             $scope.edit = bool
             $scope.focusOnEditable()
           } else {
             $scope.edit = false
+            delete Stratus.activeEditKey
+            Stratus.activeEdit = null
           }
         }
 
@@ -119,9 +134,19 @@
         }
 
         $scope.accept = function () {
-          if ($scope.model instanceof Model && $scope.property) {
+          if ($scope.model instanceof Model &&
+              $scope.property &&
+              $scope.saveTrottle !== true &&
+              $scope.saveTrottle !== 'true'
+          ) {
             $scope.model.set($scope.property, $scope.value)
             $scope.model.save()
+          }
+        }
+
+        $scope.commit = function () {
+          if ($scope.model instanceof Model && $scope.property) {
+            $scope.model.set($scope.property, $scope.value)
           }
         }
 
@@ -166,18 +191,19 @@
           // TRIGGERS
 
           // Save / Cancel value on key press
-          // FIXME: saving with key press with cause two saves (due to focus
+          // FIXED: saving with key press with cause two saves (due to focus
           // out). We need a save throttle to prevent errors
           jQuery($scope.edit_input_container)
             .on('keydown keypress', function (event) {
               switch (event.which) {
                 case Stratus.Key.Enter:
                   if ($scope.autoSave !== false &&
-                    $scope.autoSave !== 'false' &&
-                    $scope.type !== 'Editor' // a quick fix. Stratus-Froala
+                      $scope.autoSave !== 'false' &&
+                      $scope.type !== 'Editor' // a quick fix. Stratus-Froala
                   // handles it's own auto saving
                   ) {
                     $scope.$apply($scope.accept)
+                    $scope.saveTrottle = true;
                   }
                   $scope.setEdit(false)
                   break
@@ -189,11 +215,50 @@
 
           // FIXME: save of focus out does not work on the media selector
           // correctly Update value on change, save value on blur
-          jQuery($scope.edit_input_container).on('focusout', function () {
-            if ($scope.autoSave !== false && $scope.autoSave !== 'false') {
+          jQuery($scope.edit_input_container).on('focusout', function (event) {
+
+            // TODO: this SiteTheory specific code may need to be moved to Sitetheory repo
+            if ($scope.model.panelRelatedToEdit === true &&
+                event.relatedTarget !== null &&
+                event.relatedTarget.classList.value.includes("panelControl")
+            ) {
+              return
+            }
+            if ($scope.model.panelRelatedToEdit === true &&
+              event.relatedTarget !== null &&
+              event.relatedTarget.tagName.toLowerCase() === "div" &&
+              event.relatedTarget.classList.value.includes("md-panel") &&
+              event.relatedTarget.classList.value.includes("dialogueContainer")
+            ) {
+              return
+            }
+            if ($scope.model.panelRelatedToEdit === true &&
+                event.relatedTarget !== null &&
+                event.relatedTarget.tagName === "INPUT" &&
+                event.relatedTarget.classList.value.includes("md-input") &&
+                event.relatedTarget.classList.value.includes("ng-pristine")
+            ) {
+              return
+            }
+            // end of todo
+
+            // if there's a panel related to this edit, close it too
+            if (
+              $scope.model.hasOwnProperty('panelRelatedToEdit')
+              && $scope.model.panelRelatedToEdit === true
+              && Stratus.hasOwnProperty('openPanel')
+              && Stratus.openPanel !== null
+            ) {
+              Stratus.openPanel.close()
+            }
+
+            if ($scope.autoSave !== false &&
+                $scope.autoSave !== 'false'
+            ) {
               $scope.$apply($scope.accept)
             }
             $scope.setEdit(false)
+
           })
         }
       },

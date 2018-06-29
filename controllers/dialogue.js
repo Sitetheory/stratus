@@ -34,12 +34,16 @@
       $scope.template = $scope.template ? $scope.template.innerHTML : null
 
       // Digest Model Bindings
+      var ownModel = $scope.model
       $scope.model = null
       $scope.$parent.$watch($element.attr('ng-model'), function (model) {
         if (model && typeof model === 'object') {
           $scope.model = model
         }
       })
+      if ($scope.model === null) {
+        $scope.model = ownModel
+      }
 
       // Handle Dialogue
       $scope.show = function ($event) {
