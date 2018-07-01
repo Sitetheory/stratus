@@ -69,7 +69,7 @@
         if ($scope.model.hasOwnProperty('panelRelatedToEdit') && $scope.model.panelRelatedToEdit === true) {
           escapeToClose = true
           var myOnRemoving = function (event, removePromise) {
-            Stratus.activeEdit.setEdit(false)
+            if (Stratus.activeEdit !== null) Stratus.activeEdit.setEdit(false)
             delete $scope.model.done
           }
         } else {
@@ -117,8 +117,10 @@
                   Stratus.hasOwnProperty('activeEdit') &&
                   Stratus.activeEdit !== null )
               ) {
+                Stratus.activeEdit.commit()
                 Stratus.activeEdit.setEdit(false)
                 delete $scope.model.done
+                $scope.model.save()
               }
 
               if (mdPanelRef) {
