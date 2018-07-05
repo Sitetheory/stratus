@@ -47,6 +47,7 @@
 
             // Infrastructure
             this.models = []
+            this.header = new Stratus.Prototypes.Model()
             this.meta = new Stratus.Prototypes.Model()
             this.model = Model
 
@@ -156,6 +157,7 @@
                     // TODO: Make this into an over-writable function
 
                     // Data
+                    that.header.set(response.headers() || {})
                     that.meta.set(response.data.meta || {})
                     that.models = []
                     var data = response.data.payload || response.data
