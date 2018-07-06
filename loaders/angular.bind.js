@@ -1,3 +1,5 @@
+/* global Stratus, _, $, angular, boot, requirejs */
+
 /**
  * @constructor
  */

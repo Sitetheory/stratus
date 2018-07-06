@@ -1,3 +1,5 @@
+/* global Stratus, _, Backbone, $, bootbox */
+
 // Instance Clean
 // --------------
 
@@ -146,10 +148,38 @@ Stratus.PostMessage.Convoy(_.once(function (convoy) {
       expires: '1w'
     })
     if (!Stratus.Client.safari) {
-      location.reload(true)
+      window.location.reload(true)
     }
   }
 }))
+
+// Local Storage Handling
+// ----------------------
+
+// This function executes when the window receives a keyed Local
+// Storage event, which can occur on any open tab within the
+// browser's session.
+/**
+ * @param key
+ * @param fn
+ * @constructor
+ */
+Stratus.LocalStorage.Listen = function (key, fn) {
+  window.addEventListener('storage', function (event) {
+    if (event.key !== key) {
+      return
+    }
+    fn(event)
+    // fn(_.isJSON(event.data) ? JSON.parse(event.data) : {})
+  }, false)
+}
+
+// When an event arrives from any source, we will handle it
+// appropriately.
+Stratus.LocalStorage.Listen('stratus-core', function (data) {
+  console.log('LocalStorage:', data)
+})
+// localStorage.setItem('stratus-core', 'foo')
 
 // DOM Listeners
 // -------------
@@ -251,7 +281,10 @@ Stratus.Events.on('finalize', function () {
     if (Stratus.Internals.Anchor.initialize) {
       Stratus.Internals.Anchor = Stratus.Internals.Anchor()
     }
-    new Stratus.Internals.Anchor()
+    var anchor = new Stratus.Internals.Anchor()
+    if (!Stratus.Environment.get('production')) {
+      console.log('anchor:', anchor)
+    }
   }
 
   // Call Any Registered Group Methods that plugins might use, e.g. OnScroll
@@ -282,7 +315,7 @@ Stratus.Events.on('alert', function (message, handler) {
   if (typeof bootbox !== 'undefined') {
     bootbox.alert(message.message, message.handler)
   } else {
-    alert(message.message)
+    window.alert(message.message)
     message.handler()
   }
 })
@@ -297,7 +330,7 @@ Stratus.Events.on('confirm', function (message, handler) {
   if (typeof bootbox !== 'undefined') {
     bootbox.confirm(message.message, message.handler)
   } else {
-    handler(confirm(message.message))
+    handler(window.confirm(message.message))
   }
 })
 
@@ -311,23 +344,29 @@ Stratus.Events.on('notification', function (message, title) {
     options.message = message || 'Message'
   }
   options.title = options.title || title || 'Stratus'
-  options.icon = options.icon ||
-    'https://avatars0.githubusercontent.com/u/15791995?v=3&s=200'
+  options.icon = options.icon || 'https://avatars0.githubusercontent.com/u/15791995?v=3&s=200'
+  var notification
   if (!('Notification' in window)) {
     console.info(
       'This browser does not support desktop notifications.  You should switch to a modern browser.')
-  } else if (Notification.permission === 'granted') {
-    var notification = new Notification(options.title, {
+  } else if (window.Notification.permission === 'granted') {
+    notification = new window.Notification(options.title, {
       body: options.message,
       icon: options.icon
     })
-  } else if (Notification.permission !== 'denied') {
-    Notification.requestPermission(function (permission) {
+    if (!Stratus.Environment.get('production')) {
+      console.log(notification)
+    }
+  } else if (window.Notification.permission !== 'denied') {
+    window.Notification.requestPermission(function (permission) {
       if (permission === 'granted') {
-        var notification = new Notification(options.title, {
+        notification = new window.Notification(options.title, {
           body: options.message,
           icon: options.icon
         })
+        if (!Stratus.Environment.get('production')) {
+          console.log(notification)
+        }
       }
     })
   }

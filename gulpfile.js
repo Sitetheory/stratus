@@ -186,8 +186,7 @@ gulp.task('lint:js', function () {
     '!node_modules/**/*.js',
     '!dist/**/*.js',
     '!legacy/**/*.js',
-    '!loaders/**/*.js',
-    '!source/**/*.js',
+    '!reports/**/*.js',
     '!umd/**/*.js',
     '!**/*.min.js'
   ])

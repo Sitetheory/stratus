@@ -1,3 +1,5 @@
+/* global Stratus, _, $, requirejs */
+
 // Backbone Bindings
 // ----------------------
 
@@ -264,7 +266,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       requirements.push(view.get('alias'))
     } else if (view.get('path')) {
       requirements.push(view.get('path'))
-      var srcRegex = /(?=[^\/]*$)([a-zA-Z]+)/i
+      var srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
       var srcMatch = srcRegex.exec(view.get('path'))
       view.set('type', _.ucfirst(srcMatch[1]))
     } else {

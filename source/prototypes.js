@@ -1,3 +1,5 @@
+/* global Stratus, _ */
+
 // Error Prototype
 // ---------------
 
@@ -291,6 +293,7 @@ Stratus.Environment = new Stratus.Prototypes.Model(Stratus.Environment)
 // ------------------
 
 // This class intends to handle typical Sentinel operations.
+// TODO: Reevaluate this.
 /**
  * @returns {Stratus.Sentinel.Prototypes}
  * @constructor
@@ -319,7 +322,7 @@ Stratus.Prototypes.Sentinel = function () {
   this.permissions = function (value) {
     if (!isNaN(value)) {
       _.each(value.toString(2).split('').reverse(), function (bit, key) {
-        if (bit == '1') {
+        if (bit === '1') {
           switch (key) {
             case 0:
               this.view = true
@@ -383,6 +386,7 @@ Stratus.Prototypes.Sentinel = function () {
 // This is the prototype for a bootbox event, in which one could be
 // supplied for any bootbox message (i.e. confirm or delete), or one
 // will automatically be created at runtime using current arguments.
+// TODO: Reevaluate this.
 /**
  * @param message
  * @param handler

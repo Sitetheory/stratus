@@ -1,3 +1,5 @@
+/* global Stratus, _ */
+
 // Stratus Event System
 // --------------------
 
@@ -184,9 +186,8 @@ var offApi = function (events, name, callback, options) {
     for (var j = 0; j < handlers.length; j++) {
       var handler = handlers[j]
       if (
-        callback && callback !== handler.callback &&
-        callback !== handler.callback._callback ||
-        context && context !== handler.context
+        (callback && callback !== handler.callback && callback !== handler.callback._callback) ||
+        (context && context !== handler.context)
       ) {
         remaining.push(handler)
       } else {

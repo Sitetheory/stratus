@@ -1,3 +1,5 @@
+/* global requirejs, _, bowser */
+
 // Stratus Layer Prototype
 // -----------------------
 
@@ -37,6 +39,7 @@ var Stratus = {
   DOM: {},
   Key: {},
   PostMessage: {},
+  LocalStorage: {},
 
   /* Selector Logic */
   Selector: {},

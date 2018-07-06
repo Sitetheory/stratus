@@ -332,9 +332,12 @@ boot.config({
     'stratus.components.mediaUploader': boot.bundle + 'stratus/components/mediaUploader' + boot.suffix,
     'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
 
-    /* Stratus Stream Components */
+    /* Sitetheory Stream Components */
     'stratus.components.calendar': boot.bundle + 'stratus/components/calendar' + boot.suffix,
     'stratus.components.map': boot.bundle + 'stratus/components/map' + boot.suffix,
+
+    /* Sitetheory Menu Components */
+    'stratus.components.menuLink': boot.bundle + 'stratus/components/menuLink' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,

@@ -1,3 +1,5 @@
+/* global Stratus, _, $, Backbone */
+
 /**
  * @param request
  * @constructor
@@ -30,7 +32,7 @@ Stratus.Internals.Ajax = function (request) {
   var that = this
 
   // Make Request
-  this.xhr = new XMLHttpRequest()
+  this.xhr = new window.XMLHttpRequest()
   var promise = new Promise(function (resolve, reject) {
     that.xhr.open(that.method, that.url, true)
     if (typeof that.type === 'string' && that.type.length) {
@@ -77,9 +79,9 @@ Stratus.Internals.Anchor = (function Anchor () {
       click: 'clickAction'
     },
     clickAction: function (event) {
-      if (location.pathname.replace(/^\//, '') ===
+      if (window.location.pathname.replace(/^\//, '') ===
         event.currentTarget.pathname.replace(/^\//, '') &&
-        location.hostname === event.currentTarget.hostname) {
+        window.location.hostname === event.currentTarget.hostname) {
         var reserved = ['new', 'filter', 'page', 'version']
         var valid = _.every(reserved, function (keyword) {
           return !_.startsWith(event.currentTarget.hash, '#' + keyword)
@@ -583,7 +585,7 @@ Stratus.Internals.LoadImage = function (obj) {
       src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
 
       // Change the Source to be the desired path
-      el.attr('src', src.startsWith('//') ? location.protocol + src : src)
+      el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       el.addClass('loading')
       if (obj.el.load) {
         obj.el.load(function () {
@@ -678,11 +680,29 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
   Stratus.Environment.set('viewPortChange', true)
 })
 
+// Internal Rebase Function
+// ------------------------
+
+// This function changes the base of an object or function and
+// extends the original target.
+/**
+ * @param target
+ * @param base
+ * @constructor
+ */
+/* *
+Stratus.Internals.Rebase = function (target, base) {
+  // TODO: Sanitize functions
+  window[target] = _.extend(base, target)
+  return target
+}
+/* */
+
 // Internal Resource Loader
 // ------------------------
 
-// This will either retrieve a resource from a URL and cache it for future
-// reference.
+// This will either retrieve a resource from a URL and cache it
+// for future reference.
 /**
  * @param path
  * @param elementId
@@ -740,12 +760,14 @@ Stratus.Internals.SetUrlParams = function (params, url) {
     url = window.location.href
   }
   if (typeof params === 'undefined') {
-    return url;
+    return url
   }
   var vars = {}
   var glue = url.indexOf('?')
   url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    console.log(arguments)
+    if (!Stratus.Environment.get('production')) {
+      console.log(arguments)
+    }
     vars[key] = value
   })
   vars = _.extend(vars, params)
@@ -766,9 +788,8 @@ Stratus.Internals.SetUrlParams = function (params, url) {
  */
 Stratus.Internals.TrackLocation = function () {
   var envData = {}
-  if (!Stratus.Environment.has('timezone') || true) {
-    envData.timezone = new Date().toString().match(/\((.*)\)/)[1]
-  }
+  // if (!Stratus.Environment.has('timezone'))
+  envData.timezone = new Date().toString().match(/\((.*)\)/)[1]
   if (Stratus.Environment.get('trackLocation')) {
     if (Stratus.Environment.get('trackLocationConsent')) {
       Stratus.Internals.Location().then(function (pos) {

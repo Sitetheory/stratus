@@ -67,7 +67,7 @@
           $element.attr('src', $scope.initial)
           $scope.register()
         }
-        
+
         $scope.$watch('stratusSrc', function (value) {
           if (angular.isDefined(value)) {
             $element.attr('src', value)

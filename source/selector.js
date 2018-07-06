@@ -1,3 +1,5 @@
+/* global Stratus, _ */
+
 // Native Selector
 // ---------------
 
@@ -5,7 +7,7 @@
 /**
  * @param selector
  * @param context
- * @returns {NodeList|Node}
+ * @returns {window.NodeList|window.Node}
  * @constructor
  */
 Stratus.Select = function (selector, context) {
@@ -38,6 +40,8 @@ Stratus.Select = function (selector, context) {
   }
   return selection
 }
+// TODO: Remove the following hack
+/* eslint no-global-assign: "off" */
 Stratus = _.extend(function (selector, context) {
   // The function is a basic shortcut to the Stratus.Select
   // function for native jQuery-like chaining and plugins.
@@ -55,7 +59,7 @@ Stratus = _.extend(function (selector, context) {
  */
 Stratus.Selector.attr = function (attr, value) {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
@@ -82,7 +86,7 @@ Stratus.Selector.each = function (callable) {
       console.warn('each running on element:', element)
     }
   }
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     _.each(that.selection, callable)
   }
   return that
@@ -94,7 +98,7 @@ Stratus.Selector.each = function (callable) {
  */
 Stratus.Selector.find = function (selector) {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
@@ -115,7 +119,7 @@ Stratus.Selector.map = function (callable) {
       console.warn('map running on element:', element)
     }
   }
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     return _.map(that.selection, callable)
   }
   return that
@@ -129,7 +133,7 @@ Stratus.Selector.map = function (callable) {
  */
 Stratus.Selector.append = function (child) {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
@@ -147,7 +151,7 @@ Stratus.Selector.append = function (child) {
  */
 Stratus.Selector.prepend = function (child) {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
@@ -165,7 +169,7 @@ Stratus.Selector.prepend = function (child) {
  */
 Stratus.Selector.addClass = function (className) {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
@@ -188,7 +192,7 @@ Stratus.Selector.addClass = function (className) {
  */
 Stratus.Selector.removeClass = function (className) {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
@@ -211,12 +215,12 @@ Stratus.Selector.removeClass = function (className) {
  */
 Stratus.Selector.style = function () {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     if (!Stratus.Environment.get('production')) {
       console.log('List:', that)
     }
-  } else if (that.selection instanceof Node) {
-    return getComputedStyle(that.selection)
+  } else if (that.selection instanceof window.Node) {
+    return window.getComputedStyle(that.selection)
   }
   return that
 }
@@ -227,7 +231,7 @@ Stratus.Selector.style = function () {
  */
 Stratus.Selector.height = function () {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     console.error('Unable to find height for element:', that.selection)
   } else {
     return that.selection.offsetHeight || 0
@@ -240,7 +244,7 @@ Stratus.Selector.height = function () {
  */
 Stratus.Selector.width = function () {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     console.error('Unable to find width for element:', that.selection)
   } else {
     return that.selection.offsetWidth || 0
@@ -253,7 +257,7 @@ Stratus.Selector.width = function () {
  */
 Stratus.Selector.offset = function () {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     console.error('Unable to find offset for element:', that.selection)
   } else if (that.selection.getBoundingClientRect) {
     var rect = that.selection.getBoundingClientRect()
@@ -270,7 +274,7 @@ Stratus.Selector.offset = function () {
  */
 Stratus.Selector.parent = function () {
   var that = this
-  if (that.selection instanceof NodeList) {
+  if (that.selection instanceof window.NodeList) {
     console.error('Unable to find offset for element:', that.selection)
   } else {
     return Stratus(that.selection.parentNode)

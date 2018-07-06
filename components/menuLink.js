@@ -1,3 +1,5 @@
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -15,9 +17,9 @@
       'stratus.services.commonMethods'
     ], factory)
   } else {
-    factory(root.Stratus, root._)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   Stratus.Components.MenuLink = {
     bindings: {
       menuLink: '=',
@@ -219,8 +221,9 @@
 
               function getParentFromId (parentId) {
                 if (menuLink.nestParent) {
-                  for (var i = 0; i < versionData.length; i++) {
-                    const link = versionData[i]
+                  var i
+                  for (i = 0; i < versionData.length; i++) {
+                    var link = versionData[i]
                     if (menuLink.nestParent.id === link.id) {
                       return link
                     }

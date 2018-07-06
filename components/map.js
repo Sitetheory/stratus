@@ -21,7 +21,9 @@
   }
 }(this, function (Stratus, _, angular) {
   // Force Google Maps for the Moment
-  require(['//maps.googleapis.com/maps/api/js?v=3&key=' + Stratus.Api.GoogleMaps])
+  require(['//maps.googleapis.com/maps/api/js?v=3&key=' + Stratus.Api.GoogleMaps], function () {
+    console.log('map loaded!')
+  })
 
   // This component is a simple map at this time.
   Stratus.Components.Map = {
@@ -81,7 +83,7 @@
         Stratus.Internals.Location().then(function (pos) {
           $scope.location = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
 
-          $scope.map = new google.maps.Map($element[0], {
+          $scope.map = new google.maps.Map(document.getElementById('#' + $scope.elementId), {
             center: $scope.location,
             zoom: 13
           })

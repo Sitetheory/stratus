@@ -1,3 +1,5 @@
+/* global _, $, jQuery, angular */
+
 // Underscore Settings
 // -------------------
 
@@ -82,8 +84,7 @@ _.mixin({
       }
     })
     if (superClass) {
-      Object.setPrototypeOf ? Object.setPrototypeOf(subClass,
-        superClass) : subClass.__proto__ = superClass
+      Object.setPrototypeOf(subClass, superClass)
     }
   },
   /**
@@ -106,7 +107,7 @@ _.mixin({
     var blob = function (length) {
       _.classCallCheck(this, blob)
       var that = _.possibleConstructorReturn(this,
-        (blob.__proto__ || Object.getPrototypeOf(blob)).call(this, length,
+        (Object.getPrototypeOf(blob)).call(this, length,
           length))
       _.extend(that, subClass)
       return that
@@ -353,9 +354,9 @@ _.mixin({
     var seconds = 0
     if (typeof str === 'string') {
       var timePairs = str.match(
-        /([\d+\.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/gi)
+        /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/gi)
       if (_.size(timePairs)) {
-        var digest = /([\d+\.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
+        var digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
         var time
         var unit
         var value
@@ -517,7 +518,7 @@ _.mixin({
     var tagMatch
     var tagName
     var tagStack = []
-    var more = false
+    // var more = false
 
     for (var i = 0; i < arr.length; i++) {
       row = arr[i]
@@ -560,7 +561,7 @@ _.mixin({
                */
 
           sum = limit
-          more = true
+          // more = true
         } else {
           sum += rowCut.length
         }
