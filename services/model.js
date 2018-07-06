@@ -48,6 +48,7 @@
             this.initData = {}
 
             // Handle Collections & Meta
+            this.header = new Stratus.Prototypes.Model()
             this.meta = new Stratus.Prototypes.Model()
             if (_.has(this, 'collection')) {
               if (this.collection.target) {
@@ -218,6 +219,7 @@
                     angular.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
                     // Data
+                    that.header.set(response.headers() || {})
                     that.meta.set(response.data.meta || {})
                     var convoy = response.data.payload || response.data
                     if (angular.isArray(convoy) && convoy.length) {
