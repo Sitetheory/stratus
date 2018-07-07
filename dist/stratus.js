@@ -3752,12 +3752,11 @@ Stratus.PostMessage.Convoy = function (fn) {
 
 // When a message arrives from another source, handle the Convoy
 // appropriately.
-Stratus.PostMessage.Convoy(_.once(function (convoy) {
+Stratus.PostMessage.Convoy(function (convoy) {
+  // Single Sign On
   var ssoEnabled = _.cookie('sso')
-  ssoEnabled = ssoEnabled === null ? true : (_.isJSON(ssoEnabled) ? JSON.parse(
-    ssoEnabled) : false)
-  if (convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY') &&
-    ssoEnabled) {
+  ssoEnabled = ssoEnabled === null ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
+  if (ssoEnabled && convoy && convoy.meta && convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY')) {
     _.cookie({
       name: 'SITETHEORY',
       value: convoy.meta.session,
@@ -3767,7 +3766,7 @@ Stratus.PostMessage.Convoy(_.once(function (convoy) {
       window.location.reload(true)
     }
   }
-}))
+})
 
 // Local Storage Handling
 // ----------------------
