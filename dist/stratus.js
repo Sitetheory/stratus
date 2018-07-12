@@ -2371,10 +2371,13 @@ Stratus.Internals.SetUrlParams = function (params, url) {
   }
   var vars = {}
   var glue = url.indexOf('?')
+  var anchor = url.indexOf('#')
+  var tail = ''
+  if (anchor >= 0) {
+    tail = url.substring(anchor, url.length)
+    url = url.substring(0, anchor)
+  }
   url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    if (!Stratus.Environment.get('production')) {
-      console.log(arguments)
-    }
     vars[key] = value
   })
   vars = _.extend(vars, params)
@@ -2383,7 +2386,7 @@ Stratus.Internals.SetUrlParams = function (params, url) {
       return key + '=' + value
     }), function (memo, value) {
       return memo + '&' + value
-    })).replace(/([#][\S]*)([?][\S]*)/gi, '$2$1')
+    }) + tail)
 }
 
 // Track Location
@@ -3806,8 +3809,7 @@ Stratus.LocalStorage.Listen('stratus-core', function (data) {
  * @param fn
  */
 Stratus.DOM.ready = function (fn) {
-  (document.readyState !== 'loading') ? fn() : document.addEventListener(
-    'DOMContentLoaded', fn)
+  (document.readyState !== 'loading') ? fn() : document.addEventListener('DOMContentLoaded', fn)
 }
 
 // This function executes when the DOM is Complete, which means

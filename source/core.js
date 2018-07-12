@@ -190,8 +190,7 @@ Stratus.LocalStorage.Listen('stratus-core', function (data) {
  * @param fn
  */
 Stratus.DOM.ready = function (fn) {
-  (document.readyState !== 'loading') ? fn() : document.addEventListener(
-    'DOMContentLoaded', fn)
+  (document.readyState !== 'loading') ? fn() : document.addEventListener('DOMContentLoaded', fn)
 }
 
 // This function executes when the DOM is Complete, which means
