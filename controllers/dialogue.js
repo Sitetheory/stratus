@@ -59,10 +59,25 @@
             Stratus.Instances[uid + '_mdDialog'] = $scope
             $scope.model = ngModel
             $scope.hide = function () {
-              $mdDialog.hide()
+              $mdDialog.hide().then(function() {
+                // TODO: Sitetheory-specific code
+                if (typeof setEditBlocksPositions !== 'undefined') setEditBlocksPositions()
+              })
             }
+            // TODO: Sitetheory-specific code
+            $scope.jsTreeRemove = function(menuLinkId) {
+              var jsTreeElId = $("#menuLine"+menuLinkId).parent().attr('id')
+              node = $("#" + jsTreeElId)
+              tree.jstree(true).delete_node([node])
+              setEditBlocksPositions()
+            }
+            // end of TODO
           }
+        }).then(function() {
+          // TODO: Sitetheory-specific code
+          if (typeof setEditBlocksPositions !== 'undefined') setEditBlocksPositions()
         })
       }
+
     }]
 }))

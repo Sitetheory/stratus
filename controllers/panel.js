@@ -65,11 +65,10 @@
         if ($scope.model.hasOwnProperty('outClickClose')) outClickClose = $scope.model.outClickClose
         if ($scope.model.hasOwnProperty('allowOnePanel')) allowOnePanel = $scope.model.allowOnePanel
         if ($scope.model.hasOwnProperty('escapeToClose')) escapeToClose = $scope.model.escapeToClose
-        console.log("$scope.model.panelRelatedToEdit: ", $scope.model.panelRelatedToEdit)
         if ($scope.model.hasOwnProperty('panelRelatedToEdit') && $scope.model.panelRelatedToEdit === true) {
           escapeToClose = true
           var myOnRemoving = function (event, removePromise) {
-            if (Stratus.activeEdit !== null) Stratus.activeEdit.setEdit(false)
+            if (typeof Stratus.activeEdit !== "undefined" && Stratus.activeEdit !== null) Stratus.activeEdit.setEdit(false)
             delete $scope.model.done
           }
         } else {
@@ -111,11 +110,19 @@
               // if this panel is attached to some Edit, we need to exit this edit
               // when panel is closed with 'done' 'apply' or some other similar button
               if (
-                mode === 'done' ||
-                ( $scope.model.hasOwnProperty('done') &&
+                (
+                  mode === 'done' &&
+                  typeof Stratus.activeEdit !== "undefined" &&
+                  Stratus.activeEdit !== null
+                )
+                ||
+                (
+                  $scope.model.hasOwnProperty('done') &&
                   $scope.model.done === true &&
                   Stratus.hasOwnProperty('activeEdit') &&
-                  Stratus.activeEdit !== null )
+                  typeof Stratus.activeEdit !== "undefined" &&
+                  Stratus.activeEdit !== null
+                )
               ) {
                 Stratus.activeEdit.commit()
                 Stratus.activeEdit.setEdit(false)
@@ -124,17 +131,27 @@
               }
 
               if (mdPanelRef) {
-                mdPanelRef.close()
+                mdPanelRef.close().then(function() {
+                  // TODO: Sitetheory-specific code
+                  if (typeof setEditBlocksPositions !== 'undefined') setEditBlocksPositions()
+                })
               }
+
             }
 
             Stratus.openPanel = $scope
 
-            console.log($scope)
-
           }
 
-        })
+        }).then(function(result) {
+
+          // TODO: Sitetheory-specific code
+          if (typeof setEditBlocksPositions !== 'undefined') {
+            console.log('panel opened')
+            setEditBlocksPositions()
+          }
+
+        });
       }
     }]
 }))
