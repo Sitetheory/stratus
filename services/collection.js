@@ -30,7 +30,7 @@
         '$mdToast',
         '$timeout',
         'Model',
-        function ($q, $http, $mdToast, $timeout, Model) {
+        function ($q, $http, $mdToast, $timeout, $log, Model) {
           return function (options) {
             // Environment
             this.target = null
@@ -171,7 +171,7 @@
                       console.error('malformed payload:', data)
                     }
 
-                    // Internals
+                    // XHR Flags
                     that.pending = false
                     that.completed = true
 
@@ -182,7 +182,7 @@
                     // Promise
                     resolve(that.models)
                   } else {
-                    // Internals
+                    // XHR Flags
                     that.pending = false
                     that.error = true
 

@@ -30,8 +30,7 @@
       socialLibraries, commonMethods, singleSignOn
     ) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'social_media',
-        true)
+      commonMethods.componentInitializer(this, $scope, $attrs, 'social_media', false)
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
        Stratus.BundlePath + 'components/singleSignOn' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')

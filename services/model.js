@@ -214,9 +214,12 @@
                   }
                 }
 
+                if (!Stratus.Environment.get('production')) {
+                  $log.log('Prototype:', prototype)
+                }
+
                 $http(prototype).then(function (response) {
-                  if (response.status === 200 &&
-                    angular.isObject(response.data)) {
+                  if (response.status === 200 && angular.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
                     // Data
                     that.header.set(response.headers() || {})
@@ -225,7 +228,7 @@
                     if (angular.isArray(convoy) && convoy.length) {
                       that.data = _.first(convoy)
                       that.error = false
-                    } else if (angular.isObject(convoy)) {
+                    } else if (angular.isObject(convoy) && !angular.isArray(convoy)) {
                       that.data = convoy
                       that.error = false
                     } else {
@@ -234,17 +237,18 @@
 
                     if (!that.error) {
                       // XHR Flags
-                      that.pending = false
                       that.completed = true
 
                       // Auto-Saving Settings
                       that.saving = false
-
                       that.patch = {}
 
                       // Begin Watching
                       that.watcher()
                     }
+
+                    // XHR Flags
+                    that.pending = false
 
                     // Promise
                     angular.copy(that.data, that.initData)
@@ -471,10 +475,8 @@
              * @return boolean
              */
             this.isNewVersion = function (newData) {
-              return !_.isEmpty(commonMethods.moreParams()) &&
-                newData.version &&
-                parseInt(commonMethods.moreParams().version) !==
-                newData.version.id
+              return !_.isEmpty(commonMethods.moreParams()) && newData.version &&
+                parseInt(commonMethods.moreParams().version) !== newData.version.id
             }
 
             /**

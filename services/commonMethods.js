@@ -32,8 +32,14 @@
           }
 
           // functional methods
-          function componentInitializer (
-            element, scope, attrs, componentName, loadCss) {
+          /**
+           * @param element
+           * @param scope
+           * @param attrs
+           * @param componentName
+           * @param loadCss
+           */
+          function componentInitializer (element, scope, attrs, componentName, loadCss) {
             element.uid = _.uniqueId(componentName + '_')
             Stratus.Instances[element.uid] = scope
             scope.elementId = attrs.elementId || element.uid
