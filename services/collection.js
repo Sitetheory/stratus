@@ -29,6 +29,7 @@
         '$http',
         '$mdToast',
         '$timeout',
+        '$log',
         'Model',
         function ($q, $http, $mdToast, $timeout, $log, Model) {
           return function (options) {
@@ -152,8 +153,7 @@
                   }
                 }
                 $http(prototype).then(function (response) {
-                  if (response.status === 200 &&
-                    angular.isObject(response.data)) {
+                  if (response.status === 200 && angular.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
 
                     // Data
@@ -168,7 +168,7 @@
                     } else if (_.isObject(data)) {
                       _.each(data, that.inject)
                     } else {
-                      console.error('malformed payload:', data)
+                      $log.error('malformed payload:', data)
                     }
 
                     // XHR Flags
@@ -218,7 +218,7 @@
                       .position('top right')
                       .hideDelay(3000)
                   )
-                  console.error('FETCH:', message)
+                  $log.error('FETCH:', message)
                 }
               )
             }
@@ -248,13 +248,13 @@
               return $q(function (resolve, reject) {
                 var request = that.throttle()
                 if (!Stratus.Environment.get('production')) {
-                  console.log('request:', request)
+                  $log.log('request:', request)
                 }
                 request.then(function (models) {
                   if (!Stratus.Environment.get('production')) {
                     // TODO: Finish handling throttled data
                     /* *
-                    console.log('throttled:', _.map(models, function (model) {
+                    $log.log('throttled:', _.map(models, function (model) {
                       return model.domainPrimary
                     }))
                     /* */
