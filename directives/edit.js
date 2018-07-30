@@ -139,13 +139,21 @@
               $scope.saveTrottle !== true &&
               $scope.saveTrottle !== 'true'
           ) {
+            // TODO: Sitetheory specific code again, need to fork this file there as there's too many bits like this
+            if ($scope.property === 'name' && $scope.value === '') return
+
             $scope.model.set($scope.property, $scope.value)
             $scope.model.save()
           }
         }
 
         $scope.commit = function () {
+          console.log("commiting1")
           if ($scope.model instanceof Model && $scope.property) {
+            console.log("property", $scope.property)
+            console.log("value", $scope.value)
+            // TODO: Sitetheory specific code again, need to fork this file there as there's too many bits like this
+            if ($scope.property === 'name' && $scope.value === '') return
             $scope.model.set($scope.property, $scope.value)
           }
         }
@@ -249,6 +257,15 @@
               && Stratus.hasOwnProperty('openPanel')
               && Stratus.openPanel !== null
             ) {
+              // TODO: Sitetheory specific
+              if ($scope.property === 'name' && $scope.value === '') {
+                if ($scope.model instanceof Model && $scope.property) {
+                  $scope.value = $scope.model.get($scope.property)
+                  Stratus.openPanel.close()
+                  $scope.cancel()
+                  return
+                }
+              }
               Stratus.openPanel.close()
             }
 

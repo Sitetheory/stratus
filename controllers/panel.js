@@ -104,6 +104,20 @@
             $scope.model = ngModel
             $scope.collection = ngCollection
             $scope.close = function (mode) {
+              // TODO: Sitetheory specific code again, need to fork this file there as there's too many bits like this
+              if (
+                  typeof Stratus.activeEdit !== "undefined" &&
+                  Stratus.activeEdit !== null
+                  ) {
+                if (Stratus.activeEdit.property === 'name' && Stratus.activeEdit.value === '') {
+                  console.log("empty name, no closing")
+                  return
+                }
+              }
+
+              $(".movable").css({cursor: 'move'})
+              // end Sitetheory-specific code
+
               delete Stratus.openPanelKey
               Stratus.openPanel = null;
 
@@ -149,6 +163,7 @@
           if (typeof setEditBlocksPositions !== 'undefined') {
             console.log('panel opened')
             setEditBlocksPositions()
+            $(".movable").css({cursor: 'default'})
           }
 
         });
