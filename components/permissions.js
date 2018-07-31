@@ -122,7 +122,7 @@
                 }
               })
 
-              $ctrl.ngModel.data.permissions = $scope.permissionSelected
+              $ctrl.ngModel.permissions = $scope.permissionSelected
 
               // Set identity name
               $scope.userRoleSelected = data.identityRole
@@ -240,11 +240,11 @@
         $scope.userRoleSelected = item
         if (!$ctrl.identityUser) {
           if ($scope.userRoleSelected && $scope.userRoleSelected.name) {
-            $ctrl.ngModel.data.identityRole = item
-            $ctrl.ngModel.data.identityUser = null
+            $ctrl.ngModel.identityRole = item
+            $ctrl.ngModel.identityUser = null
           } else {
-            $ctrl.ngModel.data.identityRole = null
-            $ctrl.ngModel.data.identityUser = item
+            $ctrl.ngModel.identityRole = null
+            $ctrl.ngModel.identityUser = item
           }
         }
       }
@@ -254,7 +254,7 @@
         if ($ctrl.identityUser) {
           persistContentData($scope.newPermission, content)
         } else {
-          persistContentData($ctrl.ngModel.data, content)
+          persistContentData($ctrl.ngModel, content)
         }
       }
 
@@ -284,8 +284,7 @@
             $scope.permissions[$scope.permissions.length - 1].value]
         }
 
-        persistActionData(
-          $ctrl.identityUser ? $scope.newPermission : $ctrl.ngModel.data)
+        persistActionData($ctrl.identityUser ? $scope.newPermission : $ctrl.ngModel)
       }
 
       /**

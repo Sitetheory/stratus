@@ -20,7 +20,7 @@
           }
 
           function googleAppId () {
-            return '560074394524-csqefvbcv1mgjjqr65vs3skabk4m1vbc.apps.googleusercontent.com'
+            return '202027898788-39l581kkvg6kqfc0bq5c4s322btkmnqb.apps.googleusercontent.com'
           }
 
           return {

@@ -16,7 +16,7 @@
       <md-item-template>
         <div layout="row" layout-wrap layout-align="space-between center">
           <div class="contact-item">
-            <img src="http://pluspng.com/img-png/png-user-icon-male-user-icon-512.png" alt="">
+            <img src="//pluspng.com/img-png/png-user-icon-male-user-icon-512.png" alt="">
           </div>
           <p class="md-contact-name" md-highlight-text="true" md-highlight-flags="i" flex="60">
             {{ item.bestName || item.name }}
@@ -47,7 +47,7 @@
         <div layout="row" layout-align="space-between center">
           <div class="contact-item">
             <img
-                ng-src="{{ item.version.images[0] ? 'http://' + item.version.images[0].prefix + '.' + item.version.images[0].extension : null }}"
+                ng-src="{{ item.version.images[0] ? '//' + item.version.images[0].prefix + '.' + item.version.images[0].extension : null }}"
                 class="md-avatar"/>
           </div>
           <div>
