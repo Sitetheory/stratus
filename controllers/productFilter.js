@@ -9,7 +9,7 @@
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -20,8 +20,8 @@
   Stratus.Controllers.ProductFilter = [
     '$scope',
     '$log',
-    'commonMethods',
-    function ($scope, $log, commonMethods) {
+    'utility',
+    function ($scope, $log, utility) {
       // Store Instance
       Stratus.Instances[_.uniqueId('product_filter_')] = $scope
 
@@ -120,7 +120,7 @@
       }
 
       $scope.safeMessage = function (message) {
-        return commonMethods.safeMessage(message)
+        return utility.safeMessage(message)
       }
     }]
 }))

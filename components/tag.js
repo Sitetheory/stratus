@@ -12,7 +12,7 @@
 
       // Modules
       'angular-material',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
@@ -24,9 +24,9 @@
       ngModel: '=',
       collection: '<'
     },
-    controller: function ($scope, $parse, $attrs, commonMethods) {
+    controller: function ($scope, $parse, $attrs, utility) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'tag', true)
+      utility.componentInitializer(this, $scope, $attrs, 'tag', true)
       var $ctrl = this
       $ctrl.selectedChips = []
       $ctrl.collection = []

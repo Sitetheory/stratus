@@ -6,7 +6,7 @@
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -20,8 +20,8 @@
         '$q',
         '$http',
         '$window',
-        'commonMethods',
-        function ($q, $http, $window, commonMethods) {
+        'utility',
+        function ($q, $http, $window, utility) {
           function doSignIn (data, service, truthData) {
             var requestData = {
               service: service,
@@ -31,7 +31,7 @@
             var headers = {
               'Content-Type': 'application/json'
             }
-            return commonMethods.sendRequest(requestData, 'POST', '/Api/Login',
+            return utility.sendRequest(requestData, 'POST', '/Api/Login',
               headers)
           }
 

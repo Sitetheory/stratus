@@ -27,7 +27,7 @@
       // Components
       'stratus.components.search',
       'stratus.components.pagination',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.visualSelector'
     ], factory)
   } else {
@@ -63,12 +63,12 @@
       Model,
       $http,
       $sce,
-      commonMethods,
+      utility,
       $filter,
       visualSelector
     ) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs,
+      utility.componentInitializer(this, $scope, $attrs,
         'visual_selector', true)
 
       // Variables

@@ -3900,7 +3900,7 @@ Stratus.Events.on('finalize', function () {
     }
     var anchor = new Stratus.Internals.Anchor()
     if (!Stratus.Environment.get('production')) {
-      console.log('anchor:', anchor)
+      console.log('Anchor:', anchor)
     }
   }
 
@@ -3964,8 +3964,7 @@ Stratus.Events.on('notification', function (message, title) {
   options.icon = options.icon || 'https://avatars0.githubusercontent.com/u/15791995?v=3&s=200'
   var notification
   if (!('Notification' in window)) {
-    console.info(
-      'This browser does not support desktop notifications.  You should switch to a modern browser.')
+    console.info('This browser does not support desktop notifications.  You should switch to a modern browser.')
   } else if (window.Notification.permission === 'granted') {
     notification = new window.Notification(options.title, {
       body: options.message,

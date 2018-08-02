@@ -6,7 +6,7 @@
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._)
@@ -17,15 +17,15 @@
   Stratus.Services.CreateNewSite = [
     '$provide', function ($provide) {
       $provide.factory('createNewSite', [
-        '$q', '$http', 'commonMethods', function ($q, $http, commonMethods) {
+        '$q', '$http', 'utility', function ($q, $http, utility) {
           // TODO: This can use collections from the registry
 
           function create (data) {
-            return commonMethods.sendRequest(data, 'POST', '/Api/Site')
+            return utility.sendRequest(data, 'POST', '/Api/Site')
           }
 
           function checkMaster (data) {
-            return commonMethods.sendRequest(data, 'GET', '/Api/SiteGenre')
+            return utility.sendRequest(data, 'GET', '/Api/SiteGenre')
           }
 
           return {

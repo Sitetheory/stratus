@@ -23,7 +23,7 @@
       // Services
       'stratus.services.registry',
       'stratus.services.model',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -48,9 +48,9 @@
       limit: '@',
       options: '<'
     },
-    controller: function ($scope, $attrs, $log, Registry, Model, commonMethods) {
+    controller: function ($scope, $attrs, $log, Registry, Model, utility) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'selector')
+      utility.componentInitializer(this, $scope, $attrs, 'selector')
 
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false

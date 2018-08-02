@@ -12,7 +12,7 @@
       // Modules
       'angular-material',
       'stratus.services.socialLibraries',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.singleSignOn'
     ], factory)
   } else {
@@ -25,10 +25,10 @@
     bindings: {},
     controller: function (
       $rootScope, $scope, $window, $attrs, $log, $http, $mdDialog,
-      socialLibraries, commonMethods, singleSignOn
+      socialLibraries, utility, singleSignOn
     ) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'single_sign_on',
+      utility.componentInitializer(this, $scope, $attrs, 'single_sign_on',
         true)
 
       // load libraries
@@ -109,8 +109,8 @@
       function doSignIn (data, service, truthData) {
         singleSignOn.signIn(data, service, truthData).then(
           function (response) {
-            if (commonMethods.getStatus(response).code === 'CREDENTIALS') {
-              data.message = commonMethods.getStatus(response).message
+            if (utility.getStatus(response).code === 'CREDENTIALS') {
+              data.message = utility.getStatus(response).message
               requireEmail(service, data)
             } else {
               $window.location.href = '/'

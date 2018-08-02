@@ -11,6 +11,7 @@
 
       // Modules
       'zxcvbn',
+      'stratus.services.utility',
       'stratus.services.userAuthentication'
     ], factory)
   } else {
@@ -25,15 +26,9 @@
       binding: {
         userEmail: '@'
       },
-      controller: function ($scope, $window, $attrs, userAuthentication) {
+      controller: function ($scope, $window, $attrs, userAuthentication, utility) {
         // Initialize
-        this.uid = _.uniqueId('password_reset_')
-        Stratus.Internals.CssLoader(Stratus.BaseUrl +
-         Stratus.BundlePath + 'components/passwordReset' +
-          (Stratus.Environment.get('production') ? '.min' : '') + '.css')
-        Stratus.Instances[this.uid] = $scope
-        $scope.elementId = $attrs.elementId || this.uid
-
+        utility.componentInitializer(this, $scope, $attrs, 'password_reset', true)
         var $ctrl = this
 
         // variables
@@ -41,7 +36,6 @@
         $ctrl.loading = false
         $ctrl.isRequestSuccess = false
         var isRequested = false
-        var RESPONSE_CODE = {verify: 'VERIFY', success: 'SUCCESS'}
 
         // methods
         $ctrl.doResetPass = doResetPass
@@ -53,23 +47,18 @@
             var password = this.resetPassData.password
             var confirmPassword = this.resetPassData.confirm_password
 
-            if (password && validPassword(password) &&
-              $ctrl.progressBarValue >= 40) {
-              if (password !== confirmPassword) {
-                $ctrl.message = 'Your password did not match.'
-              } else {
-                $ctrl.message = null
-              }
+            if (password && validPassword(password) && $ctrl.progressBarValue >= 40) {
+              $ctrl.message = password !== confirmPassword ? 'Your password did not match.' : null
             }
 
             return password
           }
         }), function (newValue, oldValue) {
           if (newValue !== undefined && newValue !== oldValue) {
-            $ctrl.progressBarClass = null
-            $ctrl.progressBarValue = null
+            var strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
 
-            generateProgressBar(newValue)
+            $ctrl.progressBarClass = strengthBar.progressBarClass
+            $ctrl.progressBarValue = strengthBar.progressBarValue
 
             if (!validPassword(newValue)) {
               $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.'
@@ -96,11 +85,7 @@
 
           userAuthentication.resetPass(data).then(function (response) {
             $ctrl.loading = false
-            if (getStatus(response).code === RESPONSE_CODE.success) {
-              $ctrl.isRequestSuccess = true
-            } else {
-              $ctrl.isRequestSuccess = false
-            }
+            $ctrl.isRequestSuccess = getStatus(response).code === utility.RESPONSE_CODE.success
             $ctrl.message = getStatus(response).message
           })
         }
@@ -121,36 +106,10 @@
         }
 
         function getStatus (response) {
+          // TODO: Clean up this function
           return response.data.meta.status['0']
         }
-
-        function generateProgressBar (password) {
-          switch (zxcvbn(password).score) {
-            case 0:
-              $ctrl.progressBarClass = 'risky'
-              $ctrl.progressBarValue = 20
-              break
-            case 1:
-              $ctrl.progressBarClass = 'guessable'
-              $ctrl.progressBarValue = 40
-              break
-            case 2:
-              $ctrl.progressBarClass = 'safely'
-              $ctrl.progressBarValue = 60
-              break
-            case 3:
-              $ctrl.progressBarClass = 'moderate'
-              $ctrl.progressBarValue = 80
-              break
-            case 4:
-              $ctrl.progressBarClass = 'strong'
-              $ctrl.progressBarValue = 100
-              break
-          }
-        }
       },
-      templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/passwordReset' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/passwordReset' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     }
   }))

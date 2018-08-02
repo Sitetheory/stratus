@@ -8,7 +8,7 @@
       'angular',
       'stratus.services.registry',
       'stratus.services.details',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -22,17 +22,17 @@
         '$mdPanel',
         'Registry',
         'details',
-        'commonMethods',
+        'utility',
         function (
           $q,
           $http,
           $mdPanel,
           Registry,
           Details,
-          commonMethods
+          utility
         ) {
           function selectTheme (data) {
-            return commonMethods.sendRequest(data, 'POST', '/Api/Site')
+            return utility.sendRequest(data, 'POST', '/Api/Site')
           }
 
           function fetchCollection (scope, attrs, defaultLimit, defaultTarget) {

@@ -13,7 +13,7 @@
       'zxcvbn',
       'stratus.components.singleSignOn',
       'stratus.services.userAuthentication',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.directives.passwordCheck',
       'stratus.directives.compileTemplate'
     ], factory)
@@ -30,9 +30,9 @@
       email: '<'
     },
     controller: function (
-      $scope, $window, $attrs, $compile, userAuthentication, commonMethods) {
+      $scope, $window, $attrs, $compile, userAuthentication, utility) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs,
+      utility.componentInitializer(this, $scope, $attrs,
         'user_authentication', true)
       var $ctrl = this
       $ctrl.$onInit = function () {
@@ -49,11 +49,11 @@
         $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i
         $ctrl.phoneRegex = /^[\d+\-().]+$/
         $ctrl.enabledForgotPassForm = false
-        $ctrl.isHandlingUrl = commonMethods.getUrlParams().type !== null
+        $ctrl.isHandlingUrl = utility.getUrlParams().type !== null
         $ctrl.passwordReset = $ctrl.isLoggedIn ? !$ctrl.isHandlingUrl : false
-        $ctrl.enabledResetPassForm = commonMethods.getUrlParams().type ===
+        $ctrl.enabledResetPassForm = utility.getUrlParams().type ===
             'reset-password'
-        $ctrl.enabledVerifyForm = commonMethods.getUrlParams().type ===
+        $ctrl.enabledVerifyForm = utility.getUrlParams().type ===
             'verify'
         $ctrl.forgotPassText = 'Forgot Password?'
         $ctrl.resetPassHeaderText = 'Reset your account password'
@@ -63,8 +63,8 @@
         $ctrl.isRequestSuccess = false
         if ($ctrl.passwordReset) {
           $ctrl.resetPassHeaderEmail = $ctrl.email
-        } else if (commonMethods.getUrlParams().type === 'reset-password') {
-          $ctrl.resetPassHeaderEmail = commonMethods.getUrlParams().email
+        } else if (utility.getUrlParams().type === 'reset-password') {
+          $ctrl.resetPassHeaderEmail = utility.getUrlParams().email
         } else {
           $ctrl.resetPassHeaderEmail = null
         }
@@ -95,11 +95,10 @@
         }
       }), function (newValue, oldValue) {
         if (newValue !== undefined && newValue !== oldValue) {
-          $ctrl.progressBarClass = commonMethods.generateProgressBar(
-            newValue).progressBarClass
-          $ctrl.progressBarValue = commonMethods.generateProgressBar(
-            newValue).progressBarValue
-          if (!commonMethods.validPassword(newValue)) {
+          var strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
+          $ctrl.progressBarClass = strengthBar.progressBarClass
+          $ctrl.progressBarValue = strengthBar.progressBarValue
+          if (!utility.validPassword(newValue)) {
             $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.'
             $ctrl.allowSubmit = false
           } else {
@@ -119,15 +118,15 @@
         $ctrl.loading = true
         var data = {
           type: 'verify',
-          email: commonMethods.getUrlParams().email,
-          token: commonMethods.getUrlParams().token
+          email: utility.getUrlParams().email,
+          token: utility.getUrlParams().token
         }
 
         userAuthentication.verifyAccount(data).then(function (response) {
           $ctrl.loading = false
-          if (commonMethods.getStatus(response).code ===
-              commonMethods.RESPONSE_CODE.verify) {
-            $ctrl.message = commonMethods.getStatus(response).message
+          if (utility.getStatus(response).code ===
+              utility.RESPONSE_CODE.verify) {
+            $ctrl.message = utility.getStatus(response).message
             $ctrl.isRequestSuccess = true
             $ctrl.enabledVerifyForm = false
             $ctrl.enabledResetPassForm = true
@@ -136,7 +135,7 @@
           } else {
             $ctrl.isRequestSuccess = false
             $ctrl.enabledVerifyForm = false
-            $ctrl.message = commonMethods.getStatus(response).message
+            $ctrl.message = utility.getStatus(response).message
           }
         })
       }
@@ -151,12 +150,12 @@
 
         userAuthentication.signIn(data).then(function (response) {
           $ctrl.loading = false
-          if (commonMethods.getStatus(response).code ===
-              commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(response).code ===
+              utility.RESPONSE_CODE.success) {
             return ($window.location.href = '/')
           } else {
             $ctrl.isRequestSuccess = false
-            $ctrl.message = commonMethods.getStatus(response).message
+            $ctrl.message = utility.getStatus(response).message
           }
         })
       }
@@ -173,17 +172,17 @@
         resetDefaultSetting()
         var data = {
           email: signupData.email,
-          phone: commonMethods.cleanedPhoneNumber(signupData.phone)
+          phone: utility.cleanedPhoneNumber(signupData.phone)
         }
 
         userAuthentication.signUp(data).then(function (response) {
           $ctrl.loading = false
-          if (commonMethods.getStatus(response).code ===
-              commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(response).code ===
+              utility.RESPONSE_CODE.success) {
             return ($window.location.href = '/')
           } else {
             $ctrl.isRequestSuccess = false
-            var status = commonMethods.getStatus(response)
+            var status = utility.getStatus(response)
             $ctrl.message = (status.code === 'DUPLICATE')
               ? $ctrl.duplicateMessge
               : status.message
@@ -197,31 +196,31 @@
         var data = {
           type: 'reset-password-request',
           email: resetPassData.email,
-          phone: commonMethods.cleanedPhoneNumber(resetPassData.phone)
+          phone: utility.cleanedPhoneNumber(resetPassData.phone)
         }
 
         userAuthentication.requestResetPass(data).then(function (response) {
           $ctrl.loading = false
-          if (commonMethods.getStatus(response).code ===
-              commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(response).code ===
+              utility.RESPONSE_CODE.success) {
             $ctrl.isRequestSuccess = true
           } else {
             $ctrl.isRequestSuccess = false
           }
-          $ctrl.message = commonMethods.getStatus(response).message
+          $ctrl.message = utility.getStatus(response).message
         })
       }
 
       function doResetPass (resetPassData) {
         $ctrl.loading = true
         resetDefaultSetting()
-        var requestType = commonMethods.getUrlParams().type === 'verify'
+        var requestType = utility.getUrlParams().type === 'verify'
           ? 'change-password'
-          : commonMethods.getUrlParams().type
+          : utility.getUrlParams().type
         var data = {
           type: requestType,
-          email: commonMethods.getUrlParams().email,
-          token: commonMethods.getUrlParams().token,
+          email: utility.getUrlParams().email,
+          token: utility.getUrlParams().token,
           password: resetPassData.password
         }
 
@@ -232,13 +231,13 @@
         }
         userAuthentication.resetPass(data).then(function (response) {
           $ctrl.loading = false
-          if (commonMethods.getStatus(response).code ===
-              commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(response).code ===
+              utility.RESPONSE_CODE.success) {
             $window.location.href = $window.location.origin +
                 '/Member/Sign-In'
           } else {
             $ctrl.isRequestSuccess = false
-            $ctrl.message = commonMethods.getStatus(response).message
+            $ctrl.message = utility.getStatus(response).message
           }
         })
       }
@@ -287,7 +286,7 @@
       }
 
       function safeMessage () {
-        return commonMethods.safeMessage($ctrl.message)
+        return utility.safeMessage($ctrl.message)
       }
     },
     templateUrl: Stratus.BaseUrl +

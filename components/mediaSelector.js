@@ -30,7 +30,7 @@
 
       // Services
       'stratus.services.registry',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.media'
     ], factory)
   } else {
@@ -61,12 +61,11 @@
       $mdPanel,
       $q,
       $mdDialog,
-      commonMethods,
+      utility,
       media
     ) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'media_selector',
-        true)
+      utility.componentInitializer(this, $scope, $attrs, 'media_selector', true)
 
       // fetch media collection and hydrate to $scope.collection
       $scope.registry = new Registry()

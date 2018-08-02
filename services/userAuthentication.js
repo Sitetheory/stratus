@@ -6,7 +6,7 @@
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -17,28 +17,28 @@
   Stratus.Services.UserAuthentication = [
     '$provide', function ($provide) {
       $provide.factory('userAuthentication', [
-        '$q', '$http', 'commonMethods', function ($q, $http, commonMethods) {
+        '$q', '$http', 'utility', function ($q, $http, utility) {
           var commonUrl = '/Api/User'
           var loginUrl = '/Api/Login'
 
           function signIn (data) {
-            return commonMethods.sendRequest(data, 'POST', loginUrl)
+            return utility.sendRequest(data, 'POST', loginUrl)
           }
 
           function signUp (data) {
-            return commonMethods.sendRequest(data, 'POST', commonUrl)
+            return utility.sendRequest(data, 'POST', commonUrl)
           }
 
           function requestResetPass (data) {
-            return commonMethods.sendRequest(data, 'POST', commonUrl)
+            return utility.sendRequest(data, 'POST', commonUrl)
           }
 
           function resetPass (data) {
-            return commonMethods.sendRequest(data, 'POST', commonUrl)
+            return utility.sendRequest(data, 'POST', commonUrl)
           }
 
           function verifyAccount (data) {
-            return commonMethods.sendRequest(data, 'POST', commonUrl)
+            return utility.sendRequest(data, 'POST', commonUrl)
           }
 
           return {

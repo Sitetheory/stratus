@@ -10,7 +10,7 @@
       'underscore',
       'angular',
       'stratus.services.collection',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -21,8 +21,8 @@
     '$scope',
     '$log',
     'Collection',
-    'commonMethods',
-    function ($scope, $log, Collection, commonMethods) {
+    'utility',
+    function ($scope, $log, Collection, utility) {
       // Store Instance
       Stratus.Instances[_.uniqueId('user_filter_')] = $scope
 
@@ -115,7 +115,7 @@
       function retrieveData (url, query) {
         query = (angular.isUndefined(query) || query == null) ? '' : query
 
-        return commonMethods.sendRequest(null, 'GET', url + query).then(
+        return utility.sendRequest(null, 'GET', url + query).then(
           function (response) {
             if (response.hasOwnProperty('data') &&
               response.data.hasOwnProperty('payload')) {

@@ -12,7 +12,7 @@
       // Modules
       'angular-material',
       'stratus.services.socialLibraries',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.singleSignOn'
     ], factory)
   } else {
@@ -26,11 +26,19 @@
       ngModel: '='
     },
     controller: function (
-      $rootScope, $scope, $window, $attrs, $log, $http, $mdDialog,
-      socialLibraries, commonMethods, singleSignOn
+      $rootScope,
+      $scope,
+      $window,
+      $attrs,
+      $log,
+      $http,
+      $mdDialog,
+      socialLibraries,
+      utility,
+      singleSignOn
     ) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'social_media', false)
+      utility.componentInitializer(this, $scope, $attrs, 'social_media', false)
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
        Stratus.BundlePath + 'components/singleSignOn' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
@@ -166,8 +174,6 @@
         $scope.$digest()
       }
     },
-    templateUrl: Stratus.BaseUrl +
-   Stratus.BundlePath + 'components/singleSignOn' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

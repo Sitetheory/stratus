@@ -383,7 +383,7 @@ boot.config({
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
     'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
-    'stratus.services.commonMethods': boot.bundle + 'stratus/services/commonMethods' + boot.suffix,
+    'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
     'stratus.services.singleSignOn': boot.bundle + 'stratus/services/singleSignOn' + boot.suffix,
     'stratus.services.media': boot.bundle + 'stratus/services/media' + boot.suffix,

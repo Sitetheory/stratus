@@ -7,7 +7,7 @@
       'underscore',
       'jquery',
       'angular',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
@@ -22,13 +22,13 @@
         '$http',
         '$mdDialog',
         'Upload',
-        'commonMethods',
+        'utility',
         function (
           $q,
           $http,
           $mdDialog,
           Upload,
-          commonMethods
+          utility
         ) {
           var tagApi = '/Api/Tag'
           var mediaApi = '/Api/Media'
@@ -61,26 +61,26 @@
           }
 
           function createTag (data) {
-            return commonMethods.sendRequest(data, 'POST', tagApi)
+            return utility.sendRequest(data, 'POST', tagApi)
           }
 
           function deleteMedia (fileId) {
-            return commonMethods.sendRequest(null, 'DELETE', mediaApi + '/' +
+            return utility.sendRequest(null, 'DELETE', mediaApi + '/' +
               fileId)
           }
 
           function fetchOneMedia (fileId) {
-            return commonMethods.sendRequest(null, 'GET', mediaApi + '/' +
+            return utility.sendRequest(null, 'GET', mediaApi + '/' +
               fileId)
           }
 
           function saveMediaUrl (data) {
-            return commonMethods.sendRequest(data, 'POST', mediaApi)
+            return utility.sendRequest(data, 'POST', mediaApi)
           }
 
           // Update title, description, tags of a file
           function updateMedia (fileId, data) {
-            return commonMethods.sendRequest(data, 'PUT', mediaApi + '/' + fileId)
+            return utility.sendRequest(data, 'PUT', mediaApi + '/' + fileId)
           }
 
           // TODO: Evaluate this functionality

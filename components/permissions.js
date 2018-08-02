@@ -16,7 +16,7 @@
 
       // Modules
       'angular-material',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
@@ -29,19 +29,19 @@
       ngModel: '=',
       identityUser: '='
     },
-    controller: function ($scope, $timeout, $attrs, $http, commonMethods) {
+    controller: function ($scope, $timeout, $attrs, $http, utility) {
+      // Initialize
+      utility.componentInitializer(this, $scope, $attrs, 'permissions', true)
       var $ctrl = this
-
-      Stratus.Internals.CssLoader(Stratus.BaseUrl +
-       Stratus.BundlePath + 'components/permissions' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
       // mock up list permissions
       $scope.permissionSelected = []
       $scope.complete = false
 
       // new permission
-      $scope.newPermission = {timeEdit: new Date().getTime()}
+      $scope.newPermission = {
+        timeEdit: new Date().getTime()
+      }
 
       // specific the identityUser who is grated permissions
       $scope.allowSelectUser = !$ctrl.identityUser
@@ -101,8 +101,12 @@
           }
         })
 
+      /**
+       * @param permissionId
+       * @returns {*}
+       */
       $scope.getPermission = function (permissionId) {
-        return commonMethods.sendRequest(null, 'GET', '/Api/Permission/' +
+        return utility.sendRequest(null, 'GET', '/Api/Permission/' +
           permissionId).then(
           function (response) {
             // success
@@ -150,7 +154,7 @@
        * Retrieve data from server
        */
       $scope.identityQuery = function (query) {
-        return commonMethods.sendRequest(null,
+        return utility.sendRequest(null,
           'GET', '/Api/User?options[type]=collection&p=1&q=' + query).then(
           function (response) {
             if (response.hasOwnProperty('data') &&
@@ -185,8 +189,12 @@
           })
       }
 
+      /**
+       * @param query
+       * @returns {*}
+       */
       $scope.contentQuery = function (query) {
-        return commonMethods.sendRequest(null,
+        return utility.sendRequest(null,
           'GET', '/Api/Content?options[type]=collection&p=1&q=' + query).then(
           function (response) {
             if (response.hasOwnProperty('data') &&
@@ -236,6 +244,9 @@
           })
       }
 
+      /**
+       * @param item
+       */
       $scope.selectedUserRoleChange = function (item) {
         $scope.userRoleSelected = item
         if (!$ctrl.identityUser) {
@@ -249,6 +260,9 @@
         }
       }
 
+      /**
+       * @param content
+       */
       $scope.selectedContentChange = function (content) {
         $scope.contentSelected = content
         if ($ctrl.identityUser) {
@@ -260,6 +274,9 @@
 
       /**
        * persist the content data into model.
+       *
+       * @param data
+       * @param contentSelected
        */
       function persistContentData (data, contentSelected) {
         if ($scope.contentSelected.type === 'Content') {
@@ -289,6 +306,8 @@
 
       /**
        * persist the action data into model.
+       *
+       * @param data
        */
       function persistActionData (data) {
         if ($scope.permissionSelected.length > 0) {
@@ -298,24 +317,28 @@
         }
       }
 
+      /**
+       * @param item
+       * @returns {string}
+       */
       $scope.selectedIdentify = function (item) {
-        if (item.name) {
-          return item.name + ' - ' + item.id
-        } else {
-          return item.bestName + ' - ' + item.id
-        }
+        return (item.name || item.bestName) + ' - ' + item.id
       }
 
+      /**
+       * @param item
+       * @returns {*}
+       */
       $scope.selectedContent = function (item) {
+        var data = null
         if (item.version) {
-          return item.version + ' - ' + item.verision.meta.id
+          data = item.version + ' - ' + item.version.meta.id
         } else if (item.name) {
-          return item.name + ' - ' + item.id
+          data = item.name + ' - ' + item.id
         }
+        return data
       }
     },
-    templateUrl: Stratus.BaseUrl +
-   Stratus.BundlePath + 'components/permissions' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

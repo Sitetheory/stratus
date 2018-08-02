@@ -31,7 +31,7 @@
 
       // Services
       'stratus.services.registry',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.media'
     ], factory)
   } else {
@@ -49,9 +49,9 @@
       isSelector: '<'
     },
     controller: function (
-      $scope, $attrs, Registry, $mdDialog, commonMethods, media) {
+      $scope, $attrs, Registry, $mdDialog, utility, media) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'media_library',
+      utility.componentInitializer(this, $scope, $attrs, 'media_library',
         true)
 
       var $ctrl = this
@@ -184,7 +184,7 @@
         ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
-              if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
+              if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
                 // fetch media library list
                 media.getMedia($scope)
               } else {
@@ -195,7 +195,7 @@
                     .clickOutsideToClose(false)
                     .title('Error')
                     .multiple(true)
-                    .textContent(commonMethods.getStatus(response).message)
+                    .textContent(utility.getStatus(response).message)
                     .ok('Ok')
                 )
               }

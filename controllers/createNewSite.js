@@ -12,7 +12,7 @@
       'angular',
       'stratus.services.registry',
       'stratus.services.createNewSite',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -27,9 +27,9 @@
     '$parse',
     'Registry',
     'createNewSite',
-    'commonMethods',
+    'utility',
     function (
-      $scope, $element, $log, $parse, Registry, createNewSite, commonMethods) {
+      $scope, $element, $log, $parse, Registry, createNewSite, utility) {
       // Store Instance
       Stratus.Instances[_.uniqueId('createNewSite_')] = $scope
 
@@ -110,14 +110,14 @@
           masterContentMethod: masterContentMethod
         }
         createNewSite.create(data).then(function (res) {
-          if (commonMethods.getStatus(res).code === commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(res).code === utility.RESPONSE_CODE.success) {
             $scope.errorMsg = null
             $scope.steps.isWelcome = false
             if (res.data.payload) {
               window.location.href = '/Site/Edit?id=' + res.data.payload.id
             }
           } else {
-            $scope.errorMsg = commonMethods.getStatus(res).message
+            $scope.errorMsg = utility.getStatus(res).message
           }
         })
       }
@@ -129,8 +129,8 @@
             isMasterSite: masterSite
           }
           createNewSite.checkMaster(data).then(function (res) {
-            if (commonMethods.getStatus(res).code === commonMethods.RESPONSE_CODE.success) {
-              $scope.errorMsg = commonMethods.getStatus(res).message
+            if (utility.getStatus(res).code === utility.RESPONSE_CODE.success) {
+              $scope.errorMsg = utility.getStatus(res).message
             } else {
               $scope.errorMsg = null
             }

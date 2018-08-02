@@ -22,7 +22,7 @@
       // Components
       'stratus.components.pagination',
       'stratus.directives.src',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.visualSelector'
     ], factory)
   } else {
@@ -57,12 +57,12 @@
       $sce,
       Collection,
       $window,
-      commonMethods,
+      utility,
       visualSelector,
       $filter
     ) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'theme_selector',
+      utility.componentInitializer(this, $scope, $attrs, 'theme_selector',
         true)
 
       var $ctrl = this
@@ -168,11 +168,11 @@
           templateId: themeData.id
         }
         visualSelector.selectTheme(data).then(function (res) {
-          if (commonMethods.getStatus(res).code ===
-            commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(res).code ===
+            utility.RESPONSE_CODE.success) {
             $window.location.href = '/Site/Edit/Success'
           } else {
-            $ctrl.errorMsg = commonMethods.getStatus(res).message
+            $ctrl.errorMsg = utility.getStatus(res).message
           }
         })
       }

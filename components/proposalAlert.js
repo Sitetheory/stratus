@@ -10,7 +10,7 @@
       'angular',
 
       // Modules
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.directives.compileTemplate'
     ], factory)
   } else {
@@ -26,9 +26,9 @@
         proposals: '<'
       },
       controller: function (
-        $scope, $window, $attrs, $sce, $compile, commonMethods) {
+        $scope, $window, $attrs, $sce, $compile, utility) {
         // Initialize
-        commonMethods.componentInitializer(this, $scope, $attrs,
+        utility.componentInitializer(this, $scope, $attrs,
           'proposal_alert', true)
 
         // variables

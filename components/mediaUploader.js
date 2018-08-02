@@ -21,7 +21,7 @@
       'stratus.directives.src',
 
       // Services
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.media'
     ], factory)
   } else {
@@ -37,9 +37,9 @@
       draggedFiles: '<',
       invalidFiles: '<'
     },
-    controller: function ($q, $scope, $attrs, $mdDialog, commonMethods, media) {
+    controller: function ($q, $scope, $attrs, $mdDialog, utility, media) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'media_uploader',
+      utility.componentInitializer(this, $scope, $attrs, 'media_uploader',
         true)
       var $ctrl = this
       $ctrl.$onInit = function () {
@@ -156,7 +156,7 @@
         }
 
         media.saveMediaUrl(data).then(function (response) {
-          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
             // Refresh the library
             media.getMedia($ctrl)
 
@@ -164,8 +164,8 @@
             var index = $ctrl[type].indexOf(file)
             $ctrl[type][index].isUploaded = true
           } else {
-            console.error(commonMethods.getStatus(response).code + ' - ' +
-              commonMethods.getStatus(response).message)
+            console.error(utility.getStatus(response).code + ' - ' +
+              utility.getStatus(response).message)
           }
         })
       }
@@ -232,7 +232,7 @@
       function createTag (file, query) {
         var data = {name: query}
         media.createTag(data).then(function (response) {
-          if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
+          if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
             var type = file.mime === 'video' ? 'videos' : 'links'
             var index = $ctrl[type].indexOf(file)
             $ctrl[type][index].tags.push(response.data.payload)

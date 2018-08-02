@@ -4,23 +4,18 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
-
-      // Libraries
       'stratus',
       'underscore',
-      'angular',
-
-      // Modules
-      'zxcvbn'
+      'angular'
     ], factory)
   } else {
     // Browser globals
-    factory(root.Stratus, root._, root.angular, root.zxcvbn)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _, angular, zxcvbn) {
-  Stratus.Services.CommonMethods = [
+}(this, function (Stratus, _, angular) {
+  Stratus.Services.utility = [
     '$provide', function ($provide) {
-      $provide.factory('commonMethods', [
+      $provide.factory('utility', [
         '$q',
         '$http',
         '$window',
@@ -31,46 +26,63 @@
             success: 'SUCCESS'
           }
 
-          // functional methods
           /**
            * @param element
            * @param scope
            * @param attrs
            * @param componentName
            * @param loadCss
+           * @returns {*}
            */
           function componentInitializer (element, scope, attrs, componentName, loadCss) {
             element.uid = _.uniqueId(componentName + '_')
             Stratus.Instances[element.uid] = scope
             scope.elementId = attrs.elementId || element.uid
-            if (loadCss) {
-              Stratus.Internals.CssLoader(buildCssUrl(componentName))
-            }
+            return loadCss ? Stratus.Internals.CssLoader(buildCssUrl(componentName)) : null
           }
 
+          /**
+           * @param response
+           * @returns {*}
+           */
           function getStatus (response) {
             return response.data.meta.status['0']
           }
 
+          /**
+           * @param componentName
+           * @returns {string}
+           */
           function buildCssUrl (componentName) {
-            var componentUrl = Stratus.BundlePath + 'components/' +
-              underscoreToCamel(componentName)
-            return Stratus.BaseUrl + componentUrl +
-              (Stratus.Environment.get('production') ? '.min' : '') + '.css'
+            var componentUrl = Stratus.BundlePath + 'components/' + underscoreToCamel(componentName)
+            return Stratus.BaseUrl + componentUrl + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
           }
 
+          /**
+           * @param inputString
+           * @returns {*}
+           */
           function underscoreToCamel (inputString) {
             return inputString.replace(/_([a-z])/g, function (g) {
               return g[1].toUpperCase()
             })
           }
 
+          /**
+           * @param password
+           * @returns {boolean}
+           */
           function validPassword (password) {
             var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d$&+,:;=?@#|'<>.^*()%!-]{8,}|^.{20,}$/
             return passwordRegex.test(password)
           }
 
-          function generateProgressBar (password) {
+          /**
+           * @param password
+           * @param zxcvbn
+           * @returns {{progressBarClass: string, progressBarValue: number}}
+           */
+          function generateStrengthBar (password, zxcvbn) {
             var data = {
               progressBarClass: '',
               progressBarValue: 0
@@ -86,7 +98,7 @@
                 data.progressBarValue = 40
                 break
               case 2:
-                data.progressBarClass = 'safely'
+                data.progressBarClass = 'safe'
                 data.progressBarValue = 60
                 break
               case 3:
@@ -102,6 +114,9 @@
             return data
           }
 
+          /**
+           * @returns {{type: null, email: null, token: null}}
+           */
           function getUrlParams () {
             var params = _.getUrlParams()
             return {
@@ -111,6 +126,10 @@
             }
           }
 
+          /**
+           * @param phoneNumber
+           * @returns {*}
+           */
           function cleanedPhoneNumber (phoneNumber) {
             var keepNumberOnlyRegex = /\D+/g
             return phoneNumber.replace(keepNumberOnlyRegex, '')
@@ -133,6 +152,10 @@
             return params
           }
 
+          /**
+           * @param value
+           * @returns {boolean}
+           */
           function copyToClipboard (value) {
             var temp = document.createElement('input')
             document.body.appendChild(temp)
@@ -143,6 +166,13 @@
             return result
           }
 
+          /**
+           * @param data
+           * @param method
+           * @param url
+           * @param headers
+           * @returns {*}
+           */
           function sendRequest (data, method, url, headers) {
             return $http({
               url: url,
@@ -158,6 +188,10 @@
               })
           }
 
+          /**
+           * @param message
+           * @returns {*}
+           */
           function safeMessage (message) {
             return $sce.trustAsHtml(message)
           }
@@ -168,7 +202,7 @@
             buildCssUrl: buildCssUrl,
             underscoreToCamel: underscoreToCamel,
             validPassword: validPassword,
-            generateProgressBar: generateProgressBar,
+            generateStrengthBar: generateStrengthBar,
             getUrlParams: getUrlParams,
             cleanedPhoneNumber: cleanedPhoneNumber,
             moreParams: moreParams,

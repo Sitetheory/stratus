@@ -11,7 +11,7 @@
       'underscore',
       'angular',
       'angular-material',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -27,13 +27,14 @@
         '$mdToast',
         '$rootScope',
         '$log',
-        'commonMethods',
-        function ($q, $http, $mdToast, $rootScope, $log, commonMethods) {
+        'utility',
+        function ($q, $http, $mdToast, $rootScope, $log, utility) {
           return function (options, attributes) {
             // Environment
             this.target = null
             this.manifest = false
             this.stagger = false
+            this.toast = false
             this.urlRoot = '/Api'
             if (!options || typeof options !== 'object') {
               options = {}
@@ -97,7 +98,7 @@
                 return that.data
               }, function (newData, priorData) {
                 var patch = _.patch(newData, priorData)
-                $log.log('patch:', patch)
+                $log.log('Patch:', patch)
 
                 // Set the origin data
                 if (_.isEmpty(that.initData)) {
@@ -225,7 +226,9 @@
                     that.header.set(response.headers() || {})
                     that.meta.set(response.data.meta || {})
                     var convoy = response.data.payload || response.data
-                    if (angular.isArray(convoy) && convoy.length) {
+                    if (that.meta.has('status') && _.first(that.meta.get('status')).code !== 'SUCCESS') {
+                      that.error = true
+                    } else if (angular.isArray(convoy) && convoy.length) {
                       that.data = _.first(convoy)
                       that.error = false
                     } else if (angular.isObject(convoy) && !angular.isArray(convoy)) {
@@ -475,8 +478,8 @@
              * @return boolean
              */
             this.isNewVersion = function (newData) {
-              return !_.isEmpty(commonMethods.moreParams()) && newData.version &&
-                parseInt(commonMethods.moreParams().version) !== newData.version.id
+              return !_.isEmpty(utility.moreParams()) && newData.version &&
+                parseInt(utility.moreParams().version) !== newData.version.id
             }
 
             /**

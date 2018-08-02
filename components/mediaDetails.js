@@ -34,19 +34,19 @@
       '$scope',
       '$mdDialog',
       '$attrs',
-      'commonMethods',
+      'utility',
       'media',
       '$sce',
       function (
         $scope,
         $mdDialog,
         $attrs,
-        commonMethods,
+        utility,
         media,
         $sce
       ) {
         // Initialize
-        commonMethods.componentInitializer(this, $scope, $attrs,
+        utility.componentInitializer(this, $scope, $attrs,
           'media_details', true)
         var $ctrl = this
 
@@ -116,7 +116,7 @@
           ).then(function () {
             media.deleteMedia(fileId).then(
               function (response) {
-                if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
+                if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
                   $mdDialog.cancel()
                   media.getMedia($ctrl)
                 } else {
@@ -127,7 +127,7 @@
                       .clickOutsideToClose(false)
                       .title('Error')
                       .multiple(true)
-                      .textContent(commonMethods.getStatus(response).message)
+                      .textContent(utility.getStatus(response).message)
                       .ok('Ok')
                   )
                 }
@@ -141,7 +141,7 @@
         }
 
         function getLinkMedia () {
-          if (commonMethods.copyToClipboard($ctrl.mediaUrl)) {
+          if (utility.copyToClipboard($ctrl.mediaUrl)) {
             $mdDialog.show(
               $mdDialog.confirm()
                 .textContent('Link is copied to clipboard')
@@ -192,7 +192,7 @@
             name: query
           }
           media.createTag(data).then(function (response) {
-            if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
+            if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
               if (fileId !== undefined && tags !== undefined) {
                 var dataRes = {}
                 $ctrl.tags.push(response.data.payload)
@@ -206,7 +206,7 @@
         // Update title, description, tags of a file
         function updateMedia (fileId, data) {
           media.updateMedia(fileId, data).then(function (response) {
-            if (commonMethods.getStatus(response).code === commonMethods.RESPONSE_CODE.success) {
+            if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
               media.getMedia($ctrl)
             }
           })

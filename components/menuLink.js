@@ -14,7 +14,7 @@
 
       // Services
       'stratus.services.collection',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -42,9 +42,9 @@
       autoSave: '@', // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
       froalaOptions: '=' // Expects JSON. Options pushed to froala need to be initialized, so it will be a one time push
     },
-    controller: function ($q, $scope, $attrs, $element, $mdPanel, Collection, commonMethods, $timeout, $window) {
+    controller: function ($q, $scope, $attrs, $element, $mdPanel, Collection, utility, $timeout, $window) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'menu_link', true)
+      utility.componentInitializer(this, $scope, $attrs, 'menu_link', true)
 
       var $ctrl = this
       $ctrl.$onInit = function () {

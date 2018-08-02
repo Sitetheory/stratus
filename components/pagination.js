@@ -12,7 +12,7 @@
       'angular',
       'angular-material',
       'stratus.services.collection',
-      'stratus.services.commonMethods'
+      'stratus.services.utility'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -21,10 +21,9 @@
   // This component intends to handle binding and
   // full pagination for the scope's collection.
   Stratus.Components.Pagination = {
-    controller: function ($scope, $attrs, Collection, commonMethods) {
+    controller: function ($scope, $attrs, Collection, utility) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs, 'pagination',
-        true)
+      utility.componentInitializer(this, $scope, $attrs, 'pagination', true)
 
       // Settings
       $scope.pages = []

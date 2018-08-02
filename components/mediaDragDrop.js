@@ -12,7 +12,7 @@
 
       // Modules
       'angular-material',
-      'stratus.services.commonMethods',
+      'stratus.services.utility',
       'stratus.services.media'
     ], factory)
   } else {
@@ -20,9 +20,9 @@
   }
 }(this, function (Stratus, _, jQuery, angular) {
   Stratus.Components.MediaDragDrop = {
-    controller: function ($scope, $mdDialog, $attrs, commonMethods, media) {
+    controller: function ($scope, $mdDialog, $attrs, utility, media) {
       // Initialize
-      commonMethods.componentInitializer(this, $scope, $attrs,
+      utility.componentInitializer(this, $scope, $attrs,
         'media_drag_drop', true)
 
       // Code
