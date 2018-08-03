@@ -113,8 +113,8 @@
                     </md-input-container>
 
                     <md-input-container class="md-block">
-                      <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak>
-                        <md-chips ng-model="video.tags" name="videoForm.tagModel">
+                      <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
+                        <md-chips ng-model="video.tags" name="videoForm.tagModel" md-autocomplete-snap>
                           <md-chip-template>
                             <span md-highlight-text="query">{{ $chip.name }}</span>
                           </md-chip-template>
@@ -123,10 +123,10 @@
                               md-delay="500"
                               md-search-text="query"
                               md-items="model in collection.filter(query)"
-                              md-item-text="model.name"
+                              md-item-text="model.name || model.data.name"
                               md-floating-label="Add Tags">
                             <md-chip-template>
-                              <span md-highlight-text="query">{{ model.name }}</span>
+                              <span md-highlight-text="query">{{ model.name || model.data.name  }}</span>
                             </md-chip-template>
                             <md-not-found ng-if="query">
                               <div ng-click="$ctrl.createTag(video, query)">
@@ -211,8 +211,8 @@
                     </md-input-container>
 
                     <md-input-container class="md-block">
-                      <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak>
-                        <md-chips ng-model="link.tags" name="linkForm.tagModel">
+                      <div id="tagLinkContainer" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
+                        <md-chips ng-model="link.tags" name="linkForm.tagModel" md-autocomplete-snap>
                           <md-chip-template>
                             <span md-highlight-text="query">{{ $chip.name }}</span>
                           </md-chip-template>
@@ -221,10 +221,10 @@
                               md-delay="500"
                               md-search-text="query"
                               md-items="model in collection.filter(query)"
-                              md-item-text="model.name"
+                              md-item-text="model.name || model.data.name"
                               md-floating-label="Add Tags">
                             <md-chip-template>
-                              <span md-highlight-text="query">{{ model.name }}</span>
+                              <span md-highlight-text="query">{{ model.name || model.data.name }}</span>
                             </md-chip-template>
                             <md-not-found ng-if="query">
                               <div ng-click="$ctrl.createTag(link, query)">
