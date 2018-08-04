@@ -40,7 +40,7 @@
               <div class="format-size">
                 <div class="smallLabel fileDetails">
                   <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span
-                    class="fileSize">{{media.data.bytesHuman}}</span>
+                        class="fileSize">{{media.data.bytesHuman}}</span>
                 </div>
               </div>
               <p class="fontBody imgTitle">{{ df.name || 'No title' }}</p>
@@ -49,7 +49,7 @@
                   <a href="#" ng-click="$ctrl.showDetails(df)" class="infoIcon">
                     <md-tooltip>Image details</md-tooltip>
                     <md-icon
-                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                            md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                   </a>
                   <a href="#" class="deleteIcon">
                     <md-tooltip>Remove selection</md-tooltip>
@@ -101,7 +101,7 @@
           <img ng-if="media.data.mime.indexOf('image') > -1" data-plugin="lazy" src="{{media.data.url || media.data.file}}" stratus-src="{{media.data.url || media.data.file}}">
           <div class="middle-details">
             <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
-            <div class="time"><p>{{media.data.time | date: 'MMM dd, yyyy h:mma'}}</p></div>
+            <div class="time"><p>{{media.data.time *1000 | date: 'MMM dd, yyyy h:mma'}}</p></div>
             <div class="controls">
               <i class="fas fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media.data)"></i>
               <i class="fas fa-trash-alt fa-2x" aria-hidden="true" ng-click="$ctrl.deleteMedia(media.data.id)"></i>
