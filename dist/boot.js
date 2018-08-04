@@ -307,6 +307,7 @@ boot.config({
     'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
     'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
     'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
+    'stratus.components.errorMessage': boot.bundle + 'stratus/components/errorMessage' + boot.suffix,
     'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
     'stratus.components.filter': boot.bundle + 'stratus/components/filter' + boot.suffix,
     'stratus.components.help': boot.bundle + 'stratus/components/help' + boot.suffix,

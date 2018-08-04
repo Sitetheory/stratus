@@ -285,13 +285,15 @@
             this.fetch = function (action, data) {
               return that.sync(action, data || that.meta.get('api'))
                 .catch(function (message) {
-                  $mdToast.show(
-                    $mdToast.simple()
-                      .textContent('Failure to Fetch!')
-                      .toastClass('errorMessage')
-                      .position('top right')
-                      .hideDelay(3000)
-                  )
+                  if (that.toast) {
+                    $mdToast.show(
+                      $mdToast.simple()
+                        .textContent('Failure to Fetch!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                    )
+                  }
                   $log.error('FETCH:', message)
                 })
             }
@@ -306,13 +308,15 @@
                   patch: true
                 }))
                 .catch(function (message) {
-                  $mdToast.show(
-                    $mdToast.simple()
-                      .textContent('Failure to Save!')
-                      .toastClass('errorMessage')
-                      .position('top right')
-                      .hideDelay(3000)
-                  )
+                  if (that.toast) {
+                    $mdToast.show(
+                      $mdToast.simple()
+                        .textContent('Failure to Save!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                    )
+                  }
                   $log.error('SAVE:', message)
                 })
             }
@@ -659,13 +663,15 @@
               }
               if (that.getIdentifier()) {
                 that.sync('DELETE', {}).catch(function (message) {
-                  $mdToast.show(
-                    $mdToast.simple()
-                      .textContent('Failure to Delete!')
-                      .toastClass('errorMessage')
-                      .position('top right')
-                      .hideDelay(3000)
-                  )
+                  if (that.toast) {
+                    $mdToast.show(
+                      $mdToast.simple()
+                        .textContent('Failure to Delete!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                    )
+                  }
                   $log.error('DESTROY:', message)
                 })
               }
@@ -680,13 +686,15 @@
                   meta: that.meta.get('api'),
                   payload: {}
                 } : {}).catch(function (message) {
-                  $mdToast.show(
-                    $mdToast.simple()
-                      .textContent('Failure to Manifest!')
-                      .toastClass('errorMessage')
-                      .position('top right')
-                      .hideDelay(3000)
-                  )
+                  if (that.toast) {
+                    $mdToast.show(
+                      $mdToast.simple()
+                        .textContent('Failure to Manifest!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                    )
+                  }
                   $log.error('MANIFEST:', message)
                 })
               }
