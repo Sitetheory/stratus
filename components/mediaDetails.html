@@ -89,7 +89,7 @@
           </ul>
         </div>
         <div class="mediaSpecs">
-          <p class="smallLabel">{{ $ctrl.media.time | date:'dd/MM/yyyy @HH:mm a' }}</p>
+          <p class="smallLabel">{{ $ctrl.media.time * 1000 | date:'MMM dd, yyyy h:mma'}}</p>
           <p class="smallLabel">Type: <span>{{$ctrl.media.extension}}</p>
           <p class="smallLabel">Size: <span>{{$ctrl.media.bytesHuman}}</span></p>
           <p class="smallLabel">Ratio: <span>{{$ctrl.media.ratio}}</span></p>
