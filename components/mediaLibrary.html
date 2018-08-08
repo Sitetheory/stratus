@@ -113,6 +113,10 @@
           </div>
         </div>
       </div>
+      <div ng-if="collection.completed && !collection.models.length">
+        <span ng-if="!collection.meta.attributes.api.q && !collection.meta.attributes.api.options " class="info">Welcome, looks like you are new here. Click the add button above to upload your first files.</span>
+        <span ng-if="collection.meta.attributes.api.q || collection.meta.attributes.api.options" class="info">Looks like your search didn't match any media items. Try again?</span>
+      </div>
     </div>
     <div class="library-footer nav-button">
       <stratus-pagination></stratus-pagination>
