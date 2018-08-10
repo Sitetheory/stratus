@@ -365,19 +365,19 @@ Stratus.Internals.GetColWidth = function (el) {
  * @constructor
  */
 Stratus.Internals.GetScrollDir = function () {
-  let windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
-  let lastWindowTop = Stratus.Environment.get('windowTop')
+  var windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
+  var lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
-  let windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
-  let documentHeight = $(document).height()
+  var windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
+  var documentHeight = $(document).height()
   /* */
 
   // return NULL if there is no scroll, otherwise up or down
-  let down = lastWindowTop ? (windowTop > lastWindowTop) : false
+  var down = lastWindowTop ? (windowTop > lastWindowTop) : false
   /* *
-  let up = lastWindowTop ? (windowTop < lastWindowTop && (windowTop + windowHeight) < documentHeight) : false
+  var up = lastWindowTop ? (windowTop < lastWindowTop && (windowTop + windowHeight) < documentHeight) : false
   /* */
-  let up = lastWindowTop ? (windowTop < lastWindowTop) : false
+  var up = lastWindowTop ? (windowTop < lastWindowTop) : false
   return down ? 'down' : (up ? 'up' : false)
 }
 
@@ -387,11 +387,10 @@ Stratus.Internals.GetScrollDir = function () {
 /**
  * @param el
  * @param offset
- * @param partial
  * @returns {boolean}
  * @constructor
  */
-Stratus.Internals.IsOnScreen = function (el, offset, partial) {
+Stratus.Internals.IsOnScreen = function (el, offset) {
   if (!el) {
     return false
   }
@@ -402,31 +401,24 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
     return false
   }
   offset = offset || 0
-  if (typeof partial !== 'boolean') {
-    partial = true
-  }
   let pageTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
   let pageBottom = pageTop + $(Stratus.Environment.get('viewPort') || window).height()
   let elementTop = el.offset().top
   let elementBottom = elementTop + el.height()
-  pageTop = pageTop + offset
-  pageBottom = pageBottom - offset
-  /* *
+  /* */
   if (!Stratus.Environment.get('production') && offset) {
-    console.log('onScreen:',
-      {
-        el: el,
-        pageTop: pageTop,
-        pageBottom: pageBottom,
-        elementTop: elementTop,
-        elementBottom: elementBottom,
-        offset: offset
-      },
-      partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
-    )
+    console.log('onScreen:', {
+      el: el,
+      pageTop: pageTop,
+      pageBottom: pageBottom,
+      elementTop: elementTop,
+      elementBottom: elementBottom,
+      offset: offset
+    },
+    elementTop <= (pageBottom - offset) && elementBottom >= (pageTop + offset))
   }
   /* */
-  return partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
+  return elementTop <= (pageBottom - offset) && elementBottom >= (pageTop + offset)
 }
 
 // Internal CSS Loader
@@ -542,7 +534,7 @@ Stratus.Internals.LoadImage = function (obj) {
       let src = _.hydrate(el.attr('data-src'))
 
       // Handle precedence
-      if (!src || src === 'lazy' || _.isEmpty(src)) {
+      if (!src || src === 'lazy') {
         src = el.attr('src')
       }
 
@@ -648,16 +640,10 @@ Stratus.Internals.LoadImage = function (obj) {
       // size)
       const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
       let srcMatch = srcRegex.exec(src)
-      if (srcMatch !== null) {
-        src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
-      } else {
-        console.error('Unable to find src for image:', el)
-      }
+      src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
 
       // Change the Source to be the desired path
-      if (!_.isEmpty(src)) {
-        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
-      }
+      el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       el.addClass('loading')
       el.on('load', function () {
         el.addClass('loaded').removeClass('loading')
