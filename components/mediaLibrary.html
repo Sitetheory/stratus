@@ -1,121 +1,139 @@
 <div id="media-library">
-  <!-- Media Selector -->
-  <div ng-if="$ctrl.isSelector"
-       class="media-selector sectionContainer selectedContainer borderDefault borderDefaultAll borderRadiusDefault">
-    <p ng-if="!$ctrl.isSelector" class="instructions fontBody clearfix">
-      <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select images.</a>
-    </p>
-    <p class="smallLabel selectedMediaLabel">Media</p>
-    <div ng-if="collection.models.length > 0 " id="selectedDropArea"
-         ng-class="{'dragBorder':dragClass}"
-         ng-model="files"
-         name="files"
-         ngf-multiple="true"
-         ngf-before-model-change="beforeChange($files,$event)"
-         ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
-         ngf-max-files="10"
-         ngf-model-invalid="invalidFiles"
-         ngf-validate="{size: {max: '10MB'}}"
-         ngf-drag-over-class="dragover"
-         ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
-      <ul class="listInline" stratus-sortable ng-sortable="$ctrl.draggedFiles"
-          ng-sortable-item-selector=".draggableImg">
-        <li class="draggableImg libraryItem" ng-if="$ctrl.draggedFiles.length" ng-repeat="df in $ctrl.draggedFiles">
-          <a href="#">
-            <div ng-if="df.mime.indexOf('image') > -1" class="imageDraggable" id="libb_{{media.data.id}}">
-              <img id="{{df.id}}" class="selectImgDrag" ng-src="{{df.url || df.file}}">
-            </div>
-            <div ng-if="df.mime == 'video'" class="positionCenter">
-              <i class="fas fa-5x fa-file-video document" aria-hidden="true"></i>
-            </div>
-            <div ng-if="df.mime == 'application/pdf'" class="positionCenter">
-              <i class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
-            </div>
-            <div ng-if="df.mime == 'application/msword'" class="positionCenter">
-              <i class="fas fa-5x fa-file-word document" aria-hidden="true"></i>
-            </div>
-          </a>
-          <div class="imageInfoContainer">
-            <div class="imageHoverInfo borderRadiusDefault">
-              <div class="format-size">
-                <div class="smallLabel fileDetails">
-                  <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span
-                        class="fileSize">{{media.data.bytesHuman}}</span>
-                </div>
-              </div>
-              <p class="fontBody imgTitle">{{ df.name || 'No title' }}</p>
-              <div class="positionActionArea">
-                <div class="clearfix actionBtns" >
-                  <a href="#" ng-click="$ctrl.showDetails(df)" class="infoIcon">
-                    <md-tooltip>Image details</md-tooltip>
-                    <md-icon
-                            md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                  </a>
-                  <a href="#" class="deleteIcon">
-                    <md-tooltip>Remove selection</md-tooltip>
-                    <md-icon aria-hidden="true" ng-click="$ctrl.removeFromSelected(df.id);"
-                             md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="libraryToggle">
-          <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#"
-             ng-click="$ctrl.toggleLibrary()">
-            <md-tooltip>Open Media Library</md-tooltip>
-            <div ng-class="dragDropClass" aria-hidden="true">
-              <md-icon class="positionCenter"
-                       md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-              <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-            </div>
-          </a>
-        </li>
-      </ul>
-    </div>
-    <!-- Gl Content Ends -->
-  </div>
-
-  <!-- Media Library -->
-  <div ng-if="$ctrl.showLibrary" class="media-library-content" ng-if="collection.models.length > 0 ">
-    <div class="library-content">
-      <div layout-gt-sm="row">
-        <button class="stGrid column15 btn gradientAnchor md-button md-ink-ripple open-uploader"
-                ng-click="$ctrl.openUploader(true)">Add +
-        </button>
-        <div class="stGrid column5"></div>
-        <stratus-search class="stGrid column80"></stratus-search>
-      </div>
-      <div class="medias"
-           ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
-           ngf-multiple="true"
-           ngf-max-files="10"
-           ngf-model-invalid="invalidFiles"
-           ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-        <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file">
-          <img src="{{$ctrl.getThumbnailImgOfVideo(media.data)}}" ng-if="media.data.mime == 'video'" class="fas fa-5x fa-video-camera" aria-hidden="true">
-          <i ng-if="media.data.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
-          <i ng-if="media.data.mime == 'application/msword'" class="fas fa-5x fa-file-word document"
-             aria-hidden="true"></i>
-          <img ng-if="media.data.mime.indexOf('image') > -1" data-plugin="lazy" src="{{media.data.url || media.data.file}}" stratus-src="{{media.data.url || media.data.file}}">
-          <div class="middle-details">
-            <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
-            <div class="time"><p>{{media.data.time *1000 | date: 'MMM dd, yyyy h:mma'}}</p></div>
-            <div class="controls">
-              <i class="fas fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media.data)"></i>
-              <i class="fas fa-trash-alt fa-2x" aria-hidden="true" ng-click="$ctrl.deleteMedia(media.data.id)"></i>
-              <i ng-if="$ctrl.isSelector && !media.data.selectedClass" class="fas fa-plus fa-2x" aria-hidden="true"
-                 ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
-              <i ng-if="$ctrl.isSelector && media.data.selectedClass" class="fas fa-minus fa-2x" aria-hidden="true"
-                 ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
-            </div>
-          </div>
+    <!-- Media Selector -->
+    <div ng-if="$ctrl.isSelector"
+         class="media-selector sectionContainer selectedContainer borderDefault borderDefaultAll borderRadiusDefault">
+        <p ng-if="!$ctrl.isSelector" class="instructions fontBody clearfix">
+            <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select
+                images.</a>
+        </p>
+        <p class="smallLabel selectedMediaLabel">Media</p>
+        <div id="selectedDropArea"
+             ng-class="{'dragBorder':dragClass}"
+             ng-model="files"
+             name="files"
+             ngf-multiple="true"
+             ngf-before-model-change="beforeChange($files,$event)"
+             ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
+             ngf-max-files="10"
+             ngf-model-invalid="invalidFiles"
+             ngf-validate="{size: {max: '10MB'}}"
+             ngf-drag-over-class="dragover"
+             ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
+            <ul class="listInline" stratus-sortable ng-sortable="$ctrl.draggedFiles"
+                ng-sortable-item-selector=".draggableImg">
+                <li class="draggableImg libraryItem" ng-if="$ctrl.draggedFiles.length"
+                    ng-repeat="df in $ctrl.draggedFiles">
+                    <a href="#">
+                        <div ng-if="df.mime.indexOf('image') > -1" class="imageDraggable" id="libb_{{media.data.id}}">
+                            <img id="{{df.id}}" class="selectImgDrag" ng-src="{{df.url || df.file}}">
+                        </div>
+                        <div ng-if="df.mime == 'video'" class="positionCenter">
+                            <i class="fas fa-5x fa-file-video document" aria-hidden="true"></i>
+                        </div>
+                        <div ng-if="df.mime == 'application/pdf'" class="positionCenter">
+                            <i class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
+                        </div>
+                        <div ng-if="df.mime == 'application/msword'" class="positionCenter">
+                            <i class="fas fa-5x fa-file-word document" aria-hidden="true"></i>
+                        </div>
+                    </a>
+                    <div class="imageInfoContainer">
+                        <div class="imageHoverInfo borderRadiusDefault">
+                            <div class="format-size">
+                                <div class="smallLabel fileDetails">
+                                    <span class="fileType">{{ df.extension | uppercase }}</span><span
+                                        class="delimiter"></span><span
+                                        class="fileSize">{{media.data.bytesHuman}}</span>
+                                </div>
+                            </div>
+                            <p class="fontBody imgTitle">{{ df.name || 'No title' }}</p>
+                            <div class="positionActionArea">
+                                <div class="clearfix actionBtns">
+                                    <a href="#" ng-click="$ctrl.showDetails(df)" class="infoIcon">
+                                        <md-tooltip>Image details</md-tooltip>
+                                        <md-icon
+                                                md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                                    </a>
+                                    <a href="#" class="deleteIcon">
+                                        <md-tooltip>Remove selection</md-tooltip>
+                                        <md-icon aria-hidden="true" ng-click="$ctrl.removeFromSelected(df.id);"
+                                                 md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="libraryToggle">
+                    <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#"
+                       ng-click="$ctrl.toggleLibrary()">
+                        <md-tooltip>Open Media Library</md-tooltip>
+                        <div ng-class="dragDropClass" aria-hidden="true">
+                            <md-icon class="positionCenter"
+                                     md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
+                            <img class="shapeholder"
+                                 src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                        </div>
+                    </a>
+                </li>
+            </ul>
         </div>
-      </div>
+        <!-- Gl Content Ends -->
     </div>
-    <div class="library-footer nav-button">
-      <stratus-pagination></stratus-pagination>
+
+    <!-- Media Library -->
+    <div ng-if="$ctrl.showLibrary" class="media-library-content">
+        <div class="library-content">
+            <div layout-gt-sm="row">
+                <button class="stGrid column15 btn gradientAnchor md-button md-ink-ripple open-uploader"
+                        ng-click="$ctrl.openUploader(true)">Add +
+                </button>
+                <div class="stGrid column5"></div>
+                <stratus-search class="stGrid column80"></stratus-search>
+            </div>
+            <div class="medias"
+                 ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
+                 ngf-multiple="true"
+                 ngf-max-files="10"
+                 ngf-model-invalid="invalidFiles"
+                 ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
+                <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file"
+                     ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}">
+                    <img ng-src="{{$ctrl.getThumbnailImgOfVideo(media.data)}}" ng-if="media.data.mime == 'video'"
+                         class="fas fa-5x fa-video-camera" aria-hidden="true">
+                    <i ng-if="media.data.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document"
+                       aria-hidden="true"></i>
+                    <i ng-if="media.data.mime == 'application/msword'" class="fas fa-5x fa-file-word document"
+                       aria-hidden="true"></i>
+                    <img ng-if="media.data.mime.indexOf('image') > -1" data-plugin="lazy"
+                         src="{{media.data.url || media.data.file}}"
+                         stratus-src="{{media.data.url || media.data.file}}">
+                    <div class="middle-details">
+                        <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
+                        <div class="time"><p>{{media.data.time *1000 | date: 'MMM dd, yyyy h:mma'}}</p></div>
+                        <div class="controls">
+                            <i class="fas fa-info-circle fa-2x" aria-hidden="true"
+                               ng-click="$ctrl.showDetails(media.data)"></i>
+                            <i class="fas fa-trash-alt fa-2x" aria-hidden="true"
+                               ng-click="$ctrl.deleteMedia(media.data.id)"></i>
+                            <i ng-if="$ctrl.isSelector && !media.data.selectedClass" class="fas fa-plus fa-2x"
+                               aria-hidden="true"
+                               ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
+                            <i ng-if="$ctrl.isSelector && media.data.selectedClass" class="fas fa-minus fa-2x"
+                               aria-hidden="true"
+                               ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="collection.completed && !collection.models.length">
+                <span ng-if="!collection.meta.attributes.api.q && !collection.meta.attributes.api.options "
+                      class="info">Welcome, looks like you are new here. Click the add button above to upload your first files.</span>
+                <span ng-if="collection.meta.attributes.api.q || collection.meta.attributes.api.options" class="info">Looks like your search didn't match any media items. Try again?</span>
+            </div>
+        </div>
+        <div class="library-footer nav-button">
+            <stratus-pagination scroll-top-element="media-library"></stratus-pagination>
+        </div>
     </div>
-  </div>
 </div>
