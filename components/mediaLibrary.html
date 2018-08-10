@@ -101,7 +101,7 @@
           <img ng-if="media.data.mime.indexOf('image') > -1" data-plugin="lazy" src="{{media.data.url || media.data.file}}" stratus-src="{{media.data.url || media.data.file}}">
           <div class="middle-details">
             <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
-            <div class="time"><p>{{media.data.time | date: 'MMM dd, yyyy h:mma'}}</p></div>
+            <div class="time"><p>{{media.data.time*1000 | date: 'MMM dd, yyyy h:mma'}}</p></div>
             <div class="controls">
               <i class="fas fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media.data)"></i>
               <i class="fas fa-trash-alt fa-2x" aria-hidden="true" ng-click="$ctrl.deleteMedia(media.data.id)"></i>
