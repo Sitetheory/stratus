@@ -51,10 +51,8 @@
         $ctrl.enabledForgotPassForm = false
         $ctrl.isHandlingUrl = utility.getUrlParams().type !== null
         $ctrl.passwordReset = $ctrl.isLoggedIn ? !$ctrl.isHandlingUrl : false
-        $ctrl.enabledResetPassForm = utility.getUrlParams().type ===
-            'reset-password'
-        $ctrl.enabledVerifyForm = utility.getUrlParams().type ===
-            'verify'
+        $ctrl.enabledResetPassForm = utility.getUrlParams().type === 'reset-password'
+        $ctrl.enabledVerificationForm = utility.getUrlParams().type === 'verify'
         $ctrl.forgotPassText = 'Forgot Password?'
         $ctrl.resetPassHeaderText = 'Reset your account password'
         $ctrl.changePassBtnText = 'Reset Password'
@@ -128,13 +126,13 @@
               utility.RESPONSE_CODE.verify) {
             $ctrl.message = utility.getStatus(response).message
             $ctrl.isRequestSuccess = true
-            $ctrl.enabledVerifyForm = false
+            $ctrl.enabledVerificationForm = false
             $ctrl.enabledResetPassForm = true
             $ctrl.resetPassHeaderText = 'Please create a new secure password for your account.'
             $ctrl.changePassBtnText = 'Update password'
           } else {
             $ctrl.isRequestSuccess = false
-            $ctrl.enabledVerifyForm = false
+            $ctrl.enabledVerificationForm = false
             $ctrl.message = utility.getStatus(response).message
           }
         })
@@ -289,8 +287,6 @@
         return utility.safeMessage($ctrl.message)
       }
     },
-    templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/userAuthentication' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))
