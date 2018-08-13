@@ -78,7 +78,7 @@
   </div>
 
   <!-- Media Library -->
-  <div ng-if="$ctrl.showLibrary" class="media-library-content" ng-if="collection.models.length > 0 ">
+  <div ng-if="$ctrl.showLibrary && collection.models.length > 0 " class="media-library-content">
     <div class="library-content">
       <div layout-gt-sm="row">
         <button class="stGrid column15 btn gradientAnchor md-button md-ink-ripple open-uploader"
