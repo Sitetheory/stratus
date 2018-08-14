@@ -39,7 +39,7 @@
       })
 
       $scope.scrollTop = function () {
-        document.getElementById('content').scrollIntoView()
+        document.getElementById($attrs.scrollTopElement || 'content').scrollIntoView()
       }
 
       // Handle Page Changes
