@@ -112,7 +112,8 @@
 
       // Define functional methods
       function verifyAccount () {
-        resetDefaultSetting()
+        // FIXME: This runs from an ng-init
+        resetDefaultSettings()
         $ctrl.loading = true
         var data = {
           type: 'verify',
@@ -122,8 +123,7 @@
 
         userAuthentication.verifyAccount(data).then(function (response) {
           $ctrl.loading = false
-          if (utility.getStatus(response).code ===
-              utility.RESPONSE_CODE.verify) {
+          if (utility.getStatus(response).code === utility.RESPONSE_CODE.verify) {
             $ctrl.message = utility.getStatus(response).message
             $ctrl.isRequestSuccess = true
             $ctrl.enabledVerificationForm = false
@@ -140,7 +140,7 @@
 
       function doSignIn (signinData) {
         $ctrl.loading = true
-        resetDefaultSetting()
+        resetDefaultSettings()
         var data = {
           email: signinData.email,
           password: signinData.password
@@ -166,8 +166,8 @@
           return doSocialSignup(signupData.email)
         }
 
-        // nomal sign up
-        resetDefaultSetting()
+        // normal sign up
+        resetDefaultSettings()
         var data = {
           email: signupData.email,
           phone: utility.cleanedPhoneNumber(signupData.phone)
@@ -190,7 +190,7 @@
 
       function doRequestResetPass (resetPassData) {
         $ctrl.loading = true
-        resetDefaultSetting()
+        resetDefaultSettings()
         var data = {
           type: 'reset-password-request',
           email: resetPassData.email,
@@ -211,7 +211,7 @@
 
       function doResetPass (resetPassData) {
         $ctrl.loading = true
-        resetDefaultSetting()
+        resetDefaultSettings()
         var requestType = utility.getUrlParams().type === 'verify'
           ? 'change-password'
           : utility.getUrlParams().type
@@ -278,7 +278,7 @@
       }
 
       // reset socialMode and message after submit.
-      function resetDefaultSetting () {
+      function resetDefaultSettings () {
         $ctrl.socialMode = false
         $ctrl.message = null
       }
