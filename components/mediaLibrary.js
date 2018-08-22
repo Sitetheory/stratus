@@ -49,7 +49,7 @@
       isSelector: '<'
     },
     controller: function (
-      $scope, $attrs, Registry, $mdDialog, utility, media) {
+      $http, $sce, $scope, $attrs, Registry, $mdDialog, utility, media) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'media_library',
         true)
@@ -68,7 +68,6 @@
         $ctrl.toggleLibrary = toggleLibrary
         $ctrl.addOrRemoveFile = addOrRemoveFile
         $ctrl.removeFromSelected = removeFromSelected
-        $ctrl.getThumbnailImgOfVideo = getThumbnailImgOfVideo
         // fetch media collection and hydrate to $scope.collection
         $ctrl.registry = new Registry()
         $ctrl.registry.fetch({
@@ -82,22 +81,33 @@
         }, $scope)
       }
 
+      $scope.getThumbnailImgOfVideo = function (media) {
+        let defaultThumbnail = 'https://img.youtube.com/vi/default.jpg';
+        if (media.data.service === 'youtube') {
+          media.thumbnail = 'https://img.youtube.com/vi/' + getYouTubeID(media.data.file) + '/0.jpg'
+        } else if (media.data.service === 'vimeo') {
+          if(media.meta.thumbnail_medium) {
+            media.thumbnail = media.meta.thumbnail_medium
+          } else {
+            var vimeoApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/v2/video/' + getVimeoID(media.data.file) + '.json')
+            $http.jsonp(vimeoApiUrl, {jsonpCallbackParam: 'callback'})
+              .then( function successCallback(response) {
+                media.thumbnail = response.data[0].thumbnail_medium 
+              }, function errorCallback(response) {
+                media.thumbnail = defaultThumbnail
+              })
+          }
+        } else {
+          // use default image
+          media.thumbnail = defaultThumbnail
+        }
+      }
+
       function toggleLibrary () {
         if (!$ctrl.showLibrary) {
           $ctrl.showLibrary = true
         } else {
           $ctrl.showLibrary = false
-        }
-      }
-
-      function getThumbnailImgOfVideo (fileData) {
-        if (fileData.service === 'youtube') {
-          return 'https://img.youtube.com/vi/' + getYouTubeID(fileData.file) + '/0.jpg'
-        } else if (fileData.service === 'vimeo') {
-          return 'https://i.vimeocdn.com/video/' + getVimeoID(fileData.file) + '_150x150.jpg'
-        } else {
-          // use default image
-          return 'https://img.youtube.com/vi/default.jpg'
         }
       }
 
