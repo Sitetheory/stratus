@@ -21,18 +21,17 @@
 // This configured Backbone Relational for Stratus
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'backbone', 'backbone.relational.core'], factory);
+    define(['stratus', 'backbone', 'backbone.relational.core'], factory)
   } else {
-    factory(root.Stratus, root.Backbone);
+    factory(root.Stratus, root.Backbone)
   }
 }(this, function (Stratus, Backbone) {
-
   // Backbone Relational Settings
   // ----------------------------
 
   // This is provides a Stratus scope for Dynamic Relations.
-  Backbone.Relational.store.addModelScope(Stratus.Models.attributes);
-  Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
+  Backbone.Relational.store.addModelScope(Stratus.Models.attributes)
+  Backbone.Relational.store.addModelScope(Stratus.Collections.attributes)
 
   /*
    Backbone.Relational.store.addModelScope(Stratus.Collections.attributes);
@@ -52,22 +51,22 @@
    * @constructor
    */
   Stratus.Relations.Sanitize = function (model, scope, property) {
-    var data = null;
+    var data = null
     if (typeof model.get(scope) !== 'undefined') {
       if (typeof model.get(scope) === 'object' && model.get(scope) !== null) {
         if (typeof model.get(scope).get(property) !== 'undefined') {
           if (model.get(scope).get(property).length === 0) {
             /* do nothing */
           } else if (model.get(scope).get(property).length === 1) {
-            data = model.get(scope).get(property)[0];
+            data = model.get(scope).get(property)[0]
           } else {
-            data = model.get(scope).get(property);
+            data = model.get(scope).get(property)
           }
         }
       } else {
-        data = model.get(scope);
+        data = model.get(scope)
       }
     }
-    return data;
-  };
-}));
+    return data
+  }
+}))

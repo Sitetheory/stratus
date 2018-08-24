@@ -20,7 +20,8 @@
         '$http',
         '$window',
         '$sce',
-        function ($q, $http, $window, $sce) {
+        '$log',
+        function ($q, $http, $window, $sce, $log) {
           var RESPONSE_CODE = {
             verify: 'VERIFY',
             success: 'SUCCESS'
@@ -174,6 +175,7 @@
            * @returns {*}
            */
           function sendRequest (data, method, url, headers) {
+            $log.warn('sendRequest is deprecated and will be removed in future versions!')
             return $http({
               url: url,
               method: method,
