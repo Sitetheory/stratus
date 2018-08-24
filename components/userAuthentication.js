@@ -12,7 +12,7 @@
       // Modules
       'zxcvbn',
       'stratus.components.singleSignOn',
-      'stratus.services.userAuthentication',
+      'stratus.services.model',
       'stratus.services.utility',
       'stratus.directives.passwordCheck',
       'stratus.directives.compileTemplate'
@@ -30,10 +30,15 @@
       email: '<'
     },
     controller: function (
-      $scope, $window, $attrs, $compile, userAuthentication, utility) {
+      $scope,
+      $window,
+      $attrs,
+      $compile,
+      Model,
+      utility
+    ) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs,
-        'user_authentication', true)
+      utility.componentInitializer(this, $scope, $attrs, 'user_authentication', true)
       var $ctrl = this
       $ctrl.$onInit = function () {
         // variables
@@ -67,8 +72,8 @@
           $ctrl.resetPassHeaderEmail = null
         }
         $ctrl.duplicateMessge = '<span>There is already an account registered to this email, ' +
-            'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
-            'Sign In</a> and then create a new site from the control panel.</span>'
+          'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
+          'Sign In</a> and then create a new site from the control panel.</span>'
 
         // methods
         $ctrl.showForgotPassForm = showForgotPassForm
@@ -80,6 +85,14 @@
         $ctrl.backToLogin = backToLogin
         $ctrl.verifyAccount = verifyAccount
         $ctrl.safeMessage = safeMessage
+
+        // data sets
+        $ctrl.login = new Model({
+          'target': 'login'
+        })
+        $ctrl.user = new Model({
+          'target': 'user'
+        })
       }
 
       // Watcher for changing password
@@ -115,25 +128,20 @@
         // FIXME: This runs from an ng-init
         resetDefaultSettings()
         $ctrl.loading = true
-        var data = {
-          type: 'verify',
-          email: utility.getUrlParams().email,
-          token: utility.getUrlParams().token
-        }
-
-        userAuthentication.verifyAccount(data).then(function (response) {
+        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'Verify')
+        $ctrl.user.set('token', utility.getUrlParams().token)
+        $ctrl.user.save().then(function () {
           $ctrl.loading = false
-          if (utility.getStatus(response).code === utility.RESPONSE_CODE.verify) {
-            $ctrl.message = utility.getStatus(response).message
+          var status = _.first($ctrl.user.meta.get('status'))
+          $ctrl.message = status.message
+          $ctrl.enabledVerificationForm = false
+          if (status.code === 'SUCCESS') {
             $ctrl.isRequestSuccess = true
-            $ctrl.enabledVerificationForm = false
             $ctrl.enabledResetPassForm = true
             $ctrl.resetPassHeaderText = 'Please create a new secure password for your account.'
             $ctrl.changePassBtnText = 'Update password'
           } else {
             $ctrl.isRequestSuccess = false
-            $ctrl.enabledVerificationForm = false
-            $ctrl.message = utility.getStatus(response).message
           }
         })
       }
@@ -146,10 +154,11 @@
           password: signinData.password
         }
 
-        userAuthentication.signIn(data).then(function (response) {
+        $ctrl.login.meta.temp('api.options.apiSpecialAction', 'SignIn')
+        $ctrl.login.save(data).then(function (response) {
           $ctrl.loading = false
           if (utility.getStatus(response).code ===
-              utility.RESPONSE_CODE.success) {
+            utility.RESPONSE_CODE.success) {
             return ($window.location.href = '/')
           } else {
             $ctrl.isRequestSuccess = false
@@ -173,10 +182,11 @@
           phone: utility.cleanedPhoneNumber(signupData.phone)
         }
 
-        userAuthentication.signUp(data).then(function (response) {
+        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'SignUp')
+        $ctrl.user.save(data).then(function (response) {
           $ctrl.loading = false
           if (utility.getStatus(response).code ===
-              utility.RESPONSE_CODE.success) {
+            utility.RESPONSE_CODE.success) {
             return ($window.location.href = '/')
           } else {
             $ctrl.isRequestSuccess = false
@@ -197,10 +207,11 @@
           phone: utility.cleanedPhoneNumber(resetPassData.phone)
         }
 
-        userAuthentication.requestResetPass(data).then(function (response) {
+        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPasswordRequest')
+        $ctrl.user.save(data).then(function (response) {
           $ctrl.loading = false
           if (utility.getStatus(response).code ===
-              utility.RESPONSE_CODE.success) {
+            utility.RESPONSE_CODE.success) {
             $ctrl.isRequestSuccess = true
           } else {
             $ctrl.isRequestSuccess = false
@@ -227,12 +238,14 @@
           data.type = 'update-password'
           data.confirm_password = resetPassData.confirm_password
         }
-        userAuthentication.resetPass(data).then(function (response) {
+
+        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPassword')
+        $ctrl.user.save(data).then(function (response) {
           $ctrl.loading = false
           if (utility.getStatus(response).code ===
-              utility.RESPONSE_CODE.success) {
+            utility.RESPONSE_CODE.success) {
             $window.location.href = $window.location.origin +
-                '/Member/Sign-In'
+              '/Member/Sign-In'
           } else {
             $ctrl.isRequestSuccess = false
             $ctrl.message = utility.getStatus(response).message

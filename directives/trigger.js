@@ -19,11 +19,19 @@
       require: 'ngModel',
       link: function ($scope, $element, $attrs, ngModel) {
         Stratus.Instances[_.uniqueId('trigger_')] = $scope
+        $scope.trigger = null
+        $scope.$watch(function () {
+          return $attrs.stratusTrigger
+        }, function (newValue) {
+          if (typeof newValue !== 'undefined') {
+            $scope.trigger = $parse($attrs.stratusTrigger)
+          }
+        })
         $scope.$watch(function () {
           return ngModel.$modelValue
         }, function (newValue) {
-          if (typeof newValue !== 'undefined' && $attrs.stratusTrigger) {
-            ($parse($attrs.stratusTrigger))($scope.$parent)
+          if (typeof newValue !== 'undefined' && $scope.trigger) {
+            $scope.trigger($scope.$parent)
           }
         })
       }

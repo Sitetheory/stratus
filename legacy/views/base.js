@@ -21,12 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'zepto', 'underscore', 'backbone'], factory);
+    define(['stratus', 'zepto', 'underscore', 'backbone'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.Backbone);
+    factory(root.Stratus, root.$, root._, root.Backbone)
   }
 }(this, function (Stratus, $, _, Backbone) {
-
   // View Base
   // -------------
 
@@ -38,10 +37,10 @@
      * @returns {boolean}
      */
     initialize: function (options) {
-      return true;
+      return true
     }
 
-  });
+  })
 
   // Require.js
   // -------------
@@ -49,5 +48,4 @@
   // We are not returning this module because it should be
   // able to add its objects to the Stratus object reference,
   // passed by sharing.
-
-}));
+}))
