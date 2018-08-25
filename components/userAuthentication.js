@@ -128,41 +128,36 @@
         // FIXME: This runs from an ng-init
         resetDefaultSettings()
         $ctrl.loading = true
-        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'Verify')
+        $ctrl.user.meta.temp('api.options.action', 'Verify')
+        // $ctrl.user.meta.temp('api.options.token', utility.getUrlParams().token)
         $ctrl.user.set('token', utility.getUrlParams().token)
         $ctrl.user.save().then(function () {
           $ctrl.loading = false
-          var status = _.first($ctrl.user.meta.get('status'))
-          $ctrl.message = status.message
+          $ctrl.message = _.first($ctrl.user.meta.get('status')).message
           $ctrl.enabledVerificationForm = false
-          if (status.code === 'SUCCESS') {
-            $ctrl.isRequestSuccess = true
+          $ctrl.isRequestSuccess = !$ctrl.user.error
+          if (!$ctrl.user.error) {
             $ctrl.enabledResetPassForm = true
             $ctrl.resetPassHeaderText = 'Please create a new secure password for your account.'
             $ctrl.changePassBtnText = 'Update password'
-          } else {
-            $ctrl.isRequestSuccess = false
           }
         })
       }
 
-      function doSignIn (signinData) {
+      function doSignIn (signInData) {
         $ctrl.loading = true
         resetDefaultSettings()
-        var data = {
-          email: signinData.email,
-          password: signinData.password
-        }
 
-        $ctrl.login.meta.temp('api.options.apiSpecialAction', 'SignIn')
-        $ctrl.login.save(data).then(function (response) {
+        $ctrl.login.set('email', signInData.email)
+        $ctrl.login.set('password', signInData.password)
+
+        $ctrl.login.save().then(function (response) {
           $ctrl.loading = false
-          if (utility.getStatus(response).code ===
-            utility.RESPONSE_CODE.success) {
+          if (!$ctrl.login.error) {
             return ($window.location.href = '/')
           } else {
             $ctrl.isRequestSuccess = false
-            $ctrl.message = utility.getStatus(response).message
+            $ctrl.message = _.first($ctrl.login.meta.get('status')).message
           }
         })
       }

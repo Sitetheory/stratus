@@ -770,6 +770,10 @@ md-input-container label {
   background: #e6e5e561;
   color: #fff;
 }
+#media-library .media-library-content .library-content .medias .media-item.selected {
+  border: 3px dashed rgba(0, 0, 0, 0.2);
+  opacity: 0.7;
+}
 #media-library .media-library-content .library-content .medias .media-item:hover {
   background-color: black;
 }
