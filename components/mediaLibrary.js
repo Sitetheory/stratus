@@ -68,6 +68,7 @@
         $ctrl.toggleLibrary = toggleLibrary
         $ctrl.addOrRemoveFile = addOrRemoveFile
         $ctrl.removeFromSelected = removeFromSelected
+        $ctrl.getThumbnailImgOfVideo = getThumbnailImgOfVideo
         // fetch media collection and hydrate to $scope.collection
         $ctrl.registry = new Registry()
         $ctrl.registry.fetch({
@@ -81,23 +82,22 @@
         }, $scope)
       }
 
-      $scope.getThumbnailImgOfVideo = function (media) {
-        let defaultThumbnail = 'https://img.youtube.com/vi/default.jpg';
-        if (media.data.service === 'youtube') {
-          media.thumbnail = 'https://img.youtube.com/vi/' + getYouTubeID(media.data.file) + '/0.jpg'
-        } else if (media.data.service === 'vimeo' && media.data.meta.thumbnail_medium) {
-            media.thumbnail = media.data.meta.thumbnail_medium
-        } else {
-          // use default image
-          media.thumbnail = defaultThumbnail
-        }
-      }
-
       function toggleLibrary () {
         if (!$ctrl.showLibrary) {
           $ctrl.showLibrary = true
         } else {
           $ctrl.showLibrary = false
+        }
+      }
+
+      function getThumbnailImgOfVideo (fileData) {
+        if (fileData.service === 'youtube') {
+          return 'https://img.youtube.com/vi/' + getYouTubeID(fileData.file) + '/0.jpg'
+        } else if (fileData.service === 'vimeo') {
+          return 'https://i.vimeocdn.com/video/' + getVimeoID(fileData.file) + '_150x150.jpg'
+        } else {
+          // use default image
+          return 'https://img.youtube.com/vi/default.jpg'
         }
       }
 
