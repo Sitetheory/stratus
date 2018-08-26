@@ -49,7 +49,7 @@
       isSelector: '<'
     },
     controller: function (
-      $http, $sce, $scope, $attrs, Registry, $mdDialog, utility, media) {
+      $scope, $attrs, Registry, $mdDialog, utility, media) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'media_library',
         true)
@@ -85,18 +85,8 @@
         let defaultThumbnail = 'https://img.youtube.com/vi/default.jpg';
         if (media.data.service === 'youtube') {
           media.thumbnail = 'https://img.youtube.com/vi/' + getYouTubeID(media.data.file) + '/0.jpg'
-        } else if (media.data.service === 'vimeo') {
-          if(media.meta.thumbnail_medium) {
-            media.thumbnail = media.meta.thumbnail_medium
-          } else {
-            var vimeoApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/v2/video/' + getVimeoID(media.data.file) + '.json')
-            $http.jsonp(vimeoApiUrl, {jsonpCallbackParam: 'callback'})
-              .then( function successCallback(response) {
-                media.thumbnail = response.data[0].thumbnail_medium 
-              }, function errorCallback(response) {
-                media.thumbnail = defaultThumbnail
-              })
-          }
+        } else if (media.data.service === 'vimeo' && media.data.meta.thumbnail_medium) {
+            media.thumbnail = media.data.meta.thumbnail_medium
         } else {
           // use default image
           media.thumbnail = defaultThumbnail
