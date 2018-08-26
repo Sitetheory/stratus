@@ -37,7 +37,7 @@
       draggedFiles: '<',
       invalidFiles: '<'
     },
-    controller: function ($q, $scope, $attrs, $mdDialog, utility, media) {
+    controller: function ($http, $sce, $q, $scope, $attrs, $mdDialog, utility, media) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'media_uploader',
         true)
@@ -146,7 +146,8 @@
           file: file.url,
           name: file.name,
           tags: file.tags,
-          description: file.description
+          description: file.description,
+          meta: []
         }
 
         if (fileType && fileType === 'video') {
@@ -155,19 +156,25 @@
           data.mime = 'image/' + file.url.split('.').pop()
         }
 
-        media.saveMediaUrl(data).then(function (response) {
-          if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
-            // Refresh the library
-            media.getMedia($ctrl)
-
-            var type = fileType && fileType === 'video' ? 'videos' : 'links'
-            var index = $ctrl[type].indexOf(file)
-            $ctrl[type][index].isUploaded = true
-          } else {
-            console.error(utility.getStatus(response).code + ' - ' +
-              utility.getStatus(response).message)
+        processMediaMeta(file).then(function (response) {
+          if(response) {
+            data.meta = response
           }
+          media.saveMediaUrl(data).then(function (response) {
+            if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
+              // Refresh the library
+              media.getMedia($ctrl)
+
+              var type = fileType && fileType === 'video' ? 'videos' : 'links'
+              var index = $ctrl[type].indexOf(file)
+              $ctrl[type][index].isUploaded = true
+            } else {
+              console.error(utility.getStatus(response).code + ' - ' +
+                utility.getStatus(response).message)
+            }
+          })  
         })
+        
       }
 
       function saveAllFiles (files, fileType) {
@@ -239,6 +246,34 @@
           }
         })
       }
+
+      function processMediaMeta(file) {
+        return $q(function(resolve, reject) {
+          if (file.service.value === 'vimeo') {
+            let vimeoApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/v2/video/' + getVimeoID(file.url) + '.json')
+            $http.jsonp(vimeoApiUrl, {jsonpCallbackParam: 'callback'})
+            .then( function successCallback(response) {
+              let meta = {}
+              meta['thumbnail_small'] = response.data[0].thumbnail_small 
+              meta['thumbnail_medium'] = response.data[0].thumbnail_medium 
+              meta['thumbnail_large'] = response.data[0].thumbnail_large 
+              resolve(meta)
+            })
+          } else {
+            resolve()
+          }
+        })
+      }
+
+      function getVimeoID (url) {
+        var ID = ''
+        url = url.split('https://vimeo.com/')
+        if (url[1] !== undefined) {
+          ID = url[1]
+        }
+        return ID
+      }
+
     },
     templateUrl: Stratus.BaseUrl +
    Stratus.BundlePath + 'components/mediaUploader' +
