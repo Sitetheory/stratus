@@ -6,7 +6,7 @@
       <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select images.</a>
     </p>
     <p class="smallLabel selectedMediaLabel">Media</p>
-    <div id="selectedDropArea"
+    <div ng-if="collection.models.length > 0 " id="selectedDropArea"
          ng-class="{'dragBorder':dragClass}"
          ng-model="files"
          name="files"
@@ -40,16 +40,16 @@
               <div class="format-size">
                 <div class="smallLabel fileDetails">
                   <span class="fileType">{{ df.extension | uppercase }}</span><span class="delimiter"></span><span
-                    class="fileSize">{{media.data.bytesHuman}}</span>
+                        class="fileSize">{{media.data.bytesHuman}}</span>
                 </div>
               </div>
               <p class="fontBody imgTitle">{{ df.name || 'No title' }}</p>
               <div class="positionActionArea">
-                <div class="clearfix actionBtns">
+                <div class="clearfix actionBtns" >
                   <a href="#" ng-click="$ctrl.showDetails(df)" class="infoIcon">
                     <md-tooltip>Image details</md-tooltip>
                     <md-icon
-                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
+                            md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                   </a>
                   <a href="#" class="deleteIcon">
                     <md-tooltip>Remove selection</md-tooltip>
@@ -78,7 +78,7 @@
   </div>
 
   <!-- Media Library -->
-  <div ng-if="$ctrl.showLibrary" class="media-library-content">
+  <div ng-if="$ctrl.showLibrary && collection.models.length > 0 " class="media-library-content">
     <div class="library-content">
       <div layout-gt-sm="row">
         <button class="stGrid column15 btn gradientAnchor md-button md-ink-ripple open-uploader"
@@ -101,7 +101,7 @@
           <img ng-if="media.data.mime.indexOf('image') > -1" data-plugin="lazy" src="{{media.data.url || media.data.file}}" stratus-src="{{media.data.url || media.data.file}}">
           <div class="middle-details">
             <div class="name"><p>{{media.data.name || 'No title'}}</p></div>
-            <div class="time"><p>{{media.data.time*1000 | date: 'MMM dd, yyyy h:mma'}}</p></div>
+            <div class="time"><p>{{media.data.time *1000 | date: 'MMM dd, yyyy h:mma'}}</p></div>
             <div class="controls">
               <i class="fas fa-info-circle fa-2x" aria-hidden="true" ng-click="$ctrl.showDetails(media.data)"></i>
               <i class="fas fa-trash-alt fa-2x" aria-hidden="true" ng-click="$ctrl.deleteMedia(media.data.id)"></i>
