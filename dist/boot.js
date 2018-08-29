@@ -24,7 +24,7 @@ if (!hamlet.isUndefined('cacheTime')) {
 
 // Environment
 boot.dev = hamlet.isCookie('env')
-boot.local = hamlet.isCookie('local') || true // we are disabling the CDN until it is ready.
+boot.local = hamlet.isCookie('local')
 boot.cacheTime = boot.cacheTime || '2'
 
 // Locations
@@ -96,8 +96,7 @@ boot.config({
   urlArgs: 'v=' + boot.cacheTime,
 
   // Version Location (Disabled During Beta Testing)
-  baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) +
-  boot.relative,
+  baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) + boot.relative,
   bundlePath: (boot.bundle || '') + 'stratus/',
 
   // Dependencies

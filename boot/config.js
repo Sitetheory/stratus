@@ -12,8 +12,7 @@ boot.config({
   urlArgs: 'v=' + boot.cacheTime,
 
   // Version Location (Disabled During Beta Testing)
-  baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) +
-  boot.relative,
+  baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) + boot.relative,
   bundlePath: (boot.bundle || '') + 'stratus/',
 
   // Dependencies
