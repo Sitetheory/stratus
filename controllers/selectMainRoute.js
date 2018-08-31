@@ -13,7 +13,8 @@
 }(this, function (Stratus, _, angular) {
   Stratus.Controllers.SelectMainRoute = [
     '$scope',
-    function ($scope) {
+      '$mdDialog',
+    function ($scope, $mdDialog) {
       // Store Instance
       Stratus.Instances[_.uniqueId('select_main_route_')] = $scope
 
@@ -25,15 +26,19 @@
       $scope.routes = []
       // the id of main route
       $scope.mainRoute = 0
-        $scope.homepage = 0
-        $scope.setAsHomePage = function (model) {
-
-            var checkstr =  confirm('Are you sure you want to set this current page as your main home page that people land on when they visit your domain ?');
-            if(checkstr == true){
+        $scope.setAsHomePage = function (model,$event) {
+            var confirm = $mdDialog.confirm()
+                .title('Set As Home Page')
+                .textContent('Are you sure you want to set this current page as your main home page that people land on when they visit your domain ?')
+                .targetEvent($event)
+                .ok('Confirm')
+                .cancel('Cancel');
+            $mdDialog.show(confirm).then(function() {
                 model.data.main = true;
-            }else{
+                console.log(model);
+            }, function() {
                 return false;
-            }
+            });
         }
       // Data Connectivity
       $scope.$watch('model.data.routing', function (routing) {
