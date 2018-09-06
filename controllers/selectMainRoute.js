@@ -35,7 +35,6 @@
                 .cancel('Cancel');
             $mdDialog.show(confirm).then(function() {
                 model.data.main = true;
-                console.log(model);
             }, function() {
                 return false;
             });
@@ -47,22 +46,18 @@
           angular.forEach($scope.routes, function (route) {
             if (route.main) {
               $scope.mainRoute = route.id
-
             }
               route.homepage = $scope.homepage;
           })
         }
-        console.log($scope.routes);
       })
 
       $scope.update = function () {
         angular.forEach($scope.routes, function (route) {
-            route.homepage = $scope.homepage;
-            console.log(route);
+          route.homepage = $scope.homepage;
           route.main = (route.id === $scope.mainRoute)
         })
 
-          console.log($scope.routes);
         return $scope.routes
       }
     }]
