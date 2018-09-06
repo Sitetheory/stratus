@@ -13,7 +13,7 @@
 }(this, function (Stratus, _, angular) {
   Stratus.Controllers.SelectMainRoute = [
     '$scope',
-      '$mdDialog',
+    '$mdDialog',
     function ($scope, $mdDialog) {
       // Store Instance
       Stratus.Instances[_.uniqueId('select_main_route_')] = $scope
@@ -26,19 +26,19 @@
       $scope.routes = []
       // the id of main route
       $scope.mainRoute = 0
-        $scope.setAsHomePage = function (model,$event) {
-            var confirm = $mdDialog.confirm()
-                .title('Set As Home Page')
-                .textContent('Are you sure you want to set this current page as your main home page that people land on when they visit your domain ?')
-                .targetEvent($event)
-                .ok('Confirm')
-                .cancel('Cancel');
-            $mdDialog.show(confirm).then(function() {
-                model.data.main = true;
-            }, function() {
-                return false;
-            });
-        }
+      $scope.setAsHomePage = function (model, $event) {
+        var confirm = $mdDialog.confirm()
+          .title('Set As Home Page')
+          .textContent('Are you sure you want to set this current page as your main home page that people land on when they visit your domain ?')
+          .targetEvent($event)
+          .ok('Confirm')
+          .cancel('Cancel')
+        $mdDialog.show(confirm).then(function () {
+          model.data.main = true
+        }, function () {
+          return false
+        })
+      }
       // Data Connectivity
       $scope.$watch('model.data.routing', function (routing) {
         if (routing) {
@@ -47,14 +47,14 @@
             if (route.main) {
               $scope.mainRoute = route.id
             }
-              route.homepage = $scope.homepage;
+            route.homepage = $scope.homepage
           })
         }
       })
 
       $scope.update = function () {
         angular.forEach($scope.routes, function (route) {
-          route.homepage = $scope.homepage;
+          route.homepage = $scope.homepage
           route.main = (route.id === $scope.mainRoute)
         })
 
