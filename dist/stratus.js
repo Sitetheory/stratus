@@ -1963,14 +1963,21 @@ Stratus.Internals.GetColWidth = function (el) {
  * @constructor
  */
 Stratus.Internals.GetScrollDir = function () {
-  var wt = $(window).scrollTop()
-  var lwt = Stratus.Environment.get('windowTop')
-  var wh = $(window).height()
-  var dh = $(document).height()
+  var app = $('#app')
+  var viewPort = app[0] !== undefined ? app : $(window)
+  var windowTop = viewPort.scrollTop()
+  var lastWindowTop = Stratus.Environment.get('windowTop')
+  /* *
+  var windowHeight = $(window).height()
+  var documentHeight = $(document).height()
+  /* */
 
   // return NULL if there is no scroll, otherwise up or down
-  var down = lwt ? (wt > lwt) : false
-  var up = lwt ? (wt < lwt && (wt + wh) < dh) : false
+  var down = lastWindowTop ? (windowTop > lastWindowTop) : false
+  /* *
+  var up = lastWindowTop ? (windowTop < lastWindowTop && (windowTop + windowHeight) < documentHeight) : false
+  /* */
+  var up = lastWindowTop ? (windowTop < lastWindowTop) : false
   return down ? 'down' : (up ? 'up' : false)
 }
 
@@ -1990,6 +1997,11 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
     wt: document.body.scrollTop,
     et: el.offset().top || null
   }
+  /* *
+  if (!Stratus.Environment.get('production')) {
+    console.log('position:', position)
+  }
+  /* */
   position.wb = position.wt + document.body.offsetHeight
   position.eb = el.height() + (position.et || 0)
   return position.eb >= (position.wt + offset) && position.et <=
@@ -2262,21 +2274,28 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
           obj.method(obj)
         }
       })
+      var app = $('#app')
+      var viewPort = app[0] !== undefined ? app : $(window)
       model.set('viewPortChange', false)
-      model.set('windowTop', $(window).scrollTop())
+      model.set('windowTop', viewPort.scrollTop())
     }
   })
 
   // jQuery Binding
   if (typeof $ === 'function' && $.fn) {
-    $(window).scroll(function () {
+    var app = $('#app')
+    var viewPort = app[0] !== undefined ? app : $(window)
+    viewPort.scroll(function () {
+      if (!Stratus.Environment.get('production')) {
+        console.log('scrolling:', Stratus.Internals.GetScrollDir())
+      }
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
     })
 
     // Resizing can change what's on screen so we need to check the scrolling
-    $(window).resize(function () {
+    viewPort.resize(function () {
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
