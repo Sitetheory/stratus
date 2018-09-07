@@ -36,6 +36,7 @@
                 $mdDialog.show(confirm).then(function () {
                     model.data.main = true;
                     model.save();
+                    model.data.routing.push({'homePage':true});
                 }, function () {
                     return false;
                 });
