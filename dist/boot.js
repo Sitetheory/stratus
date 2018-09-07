@@ -353,6 +353,7 @@ boot.config({
     'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
     'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
     'stratus.directives.singleClick': boot.bundle + 'stratus/directives/singleClick' + boot.suffix,
+    'stratus.directives.onScreen': boot.bundle + 'stratus/directives/onScreen' + boot.suffix,
     'stratus.directives.src': boot.bundle + 'stratus/directives/src' + boot.suffix,
     'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
     'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,

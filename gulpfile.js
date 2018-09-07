@@ -158,7 +158,8 @@ gulp.task('compress', [
   'compress:preserve',
   'compress:css',
   'compress:template',
-  'compress:external'
+  'compress:external',
+  'dist:compress'
 ])
 gulp.task('clean', [
   'clean:mangle',
@@ -170,8 +171,7 @@ gulp.task('clean', [
 ])
 gulp.task('dist', [
   'dist:boot',
-  'dist:stratus',
-  'dist:compress'
+  'dist:stratus'
 ])
 gulp.task('lint', [
   'lint:js'

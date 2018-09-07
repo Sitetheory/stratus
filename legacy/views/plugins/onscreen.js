@@ -18,15 +18,16 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base'], factory);
+    define(['stratus', 'zepto', 'underscore', 'stratus.views.plugins.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // OnScreen
   // --------
 
@@ -34,7 +35,7 @@
   Stratus.Views.Plugins.OnScreen = Stratus.Views.Plugins.Base.extend({
     // Custom Actions for View
     initialize: function (options) {
-      this.prepare(options);
+      this.prepare(options)
 
       // register to the single onScroll list
       Stratus.RegisterGroup.add('OnScroll', {
@@ -54,14 +55,14 @@
 
         // Custom Methods for On/Off Screen
         onScreen: function () {
-          return options.onScreen ? options.onScreen() : true;
+          return options.onScreen ? options.onScreen() : true
         },
         offScreen: function () {
-          return options.offScreen ? options.offScreen() : true;
+          return options.offScreen ? options.offScreen() : true
         }
-      });
+      })
     }
-  });
+  })
 
   // CheckOnScreen
   // --------
@@ -71,45 +72,43 @@
    * @constructor
    */
   Stratus.PluginMethods.CheckOnScreen = function (options) {
-
     // If no scrolling has occurred remain false
-    var lastScroll = Stratus.Environment.get('lastScroll');
+    var lastScroll = Stratus.Environment.get('lastScroll')
 
-    var isReset = false;
+    var isReset = false
 
     // Reset
     if (options.event.indexOf('reset') !== -1) {
       // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
       if ((options.reset > 0 && options.el.offset().top <= options.reset) || $(window).scrollTop() <= 0) {
-        isReset = true;
-        options.target.removeClass('onScreen offScreen scrollUp scrollDown reveal unreveal');
+        isReset = true
+        options.target.removeClass('onScreen offScreen scrollUp scrollDown reveal unreveal')
       }
     }
 
     // don't detect anything else if it's reset
     if (!isReset) {
-
       // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
       if (lastScroll === 'down') {
-        options.target.addClass('scrollDown');
+        options.target.addClass('scrollDown')
       } else {
-        options.target.removeClass('scrollDown');
+        options.target.removeClass('scrollDown')
       }
       if (lastScroll === 'up') {
-        options.target.addClass('scrollUp');
+        options.target.addClass('scrollUp')
       } else {
-        options.target.removeClass('scrollUp');
+        options.target.removeClass('scrollUp')
       }
 
       if (Stratus.Internals.IsOnScreen(options.spy, options.offset)) {
         // Add init class so we can know it's been on screen before
         // remove the reveal/unreveal classes that are used for elements revealed when something is offscreen
-        options.target.removeClass('offScreen reveal unreveal').addClass('onScreen onScreenInit');
+        options.target.removeClass('offScreen reveal unreveal').addClass('onScreen onScreenInit')
 
         // Execute Custom Methods
-        options.onScreen();
+        options.onScreen()
       } else {
-        options.target.removeClass('onScreen').addClass('offScreen');
+        options.target.removeClass('onScreen').addClass('offScreen')
 
         // Headers that use this to reveal when offscreen, need to know when to trigger the 'retract' which
         // should happen only when it's already open (.offScreen.scrollUp and then you are scrolling down).
@@ -118,30 +117,29 @@
         // engaged the header to begin with, which makes an odd pop open then close.
         // So we really need to add a class ONLY if the reveal class was there.
         if (lastScroll === 'down' && options.target.hasClass('reveal')) {
-          options.target.removeClass('reveal').addClass('unreveal');
+          options.target.removeClass('reveal').addClass('unreveal')
         } else if (lastScroll === 'up') {
-          options.target.removeClass('unreveal').addClass('reveal');
+          options.target.removeClass('unreveal').addClass('reveal')
         }
 
         // If you want to reveal the opposite direction (e.g. a footer)
         if (lastScroll === 'up' && options.target.hasClass('revealDown')) {
-          options.target.removeClass('revealDown').addClass('unrevealDown');
+          options.target.removeClass('revealDown').addClass('unrevealDown')
         } else if (lastScroll === 'down') {
-          options.target.removeClass('unrevealDown').addClass('revealDown');
+          options.target.removeClass('unrevealDown').addClass('revealDown')
         }
 
         // Execute Custom Methods
-        options.offScreen();
+        options.offScreen()
       }
     }
 
     /* FIXME: Native IsOnScreen is broken... *
     console.log('CheckOnScreen:', {
-        direction: lastScroll,
-        spy: options.spy,
-        offset: options.offset
-    }, Stratus.Internals.IsOnScreen(options.spy, options.offset));
+      direction: lastScroll,
+      spy: options.spy,
+      offset: options.offset
+    }, Stratus.Internals.IsOnScreen(options.spy, options.offset))
     /* */
-  };
-
-}));
+  }
+}))
