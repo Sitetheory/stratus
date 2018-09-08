@@ -1963,9 +1963,11 @@ Stratus.Internals.GetColWidth = function (el) {
  * @constructor
  */
 Stratus.Internals.GetScrollDir = function () {
+  /* *
   var app = $('#app')
   var viewPort = app[0] !== undefined ? app : $(window)
-  var windowTop = viewPort.scrollTop()
+  /* */
+  var windowTop = $(window).scrollTop()
   var lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
   var windowHeight = $(window).height()
@@ -2004,6 +2006,11 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
   /* */
   position.wb = position.wt + document.body.offsetHeight
   position.eb = el.height() + (position.et || 0)
+  /* *
+  if (!Stratus.Environment.get('production')) {
+    console.log('OnScreen:', el, position.eb >= (position.wt + offset) && position.et <= (position.wb - offset))
+  }
+  /* */
   return position.eb >= (position.wt + offset) && position.et <=
     (position.wb - offset)
 }
@@ -2274,28 +2281,34 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
           obj.method(obj)
         }
       })
+      /* *
       var app = $('#app')
       var viewPort = app[0] !== undefined ? app : $(window)
+      /* */
       model.set('viewPortChange', false)
-      model.set('windowTop', viewPort.scrollTop())
+      model.set('windowTop', $(window).scrollTop())
     }
   })
 
   // jQuery Binding
   if (typeof $ === 'function' && $.fn) {
+    /* *
     var app = $('#app')
     var viewPort = app[0] !== undefined ? app : $(window)
-    viewPort.scroll(function () {
+    /* */
+    $(window).scroll(function () {
+      /* *
       if (!Stratus.Environment.get('production')) {
         console.log('scrolling:', Stratus.Internals.GetScrollDir())
       }
+      /* */
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
     })
 
     // Resizing can change what's on screen so we need to check the scrolling
-    viewPort.resize(function () {
+    $(window).resize(function () {
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }

@@ -103,7 +103,8 @@
       if (Stratus.Internals.IsOnScreen(options.spy, options.offset)) {
         // Add init class so we can know it's been on screen before
         // remove the reveal/unreveal classes that are used for elements revealed when something is offscreen
-        options.target.removeClass('offScreen reveal unreveal').addClass('onScreen onScreenInit')
+        /*  'reveal unreveal' */
+        options.target.removeClass('offScreen').addClass('onScreen onScreenInit')
 
         // Execute Custom Methods
         options.onScreen()
