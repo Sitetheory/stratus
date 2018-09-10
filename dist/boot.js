@@ -303,6 +303,7 @@ boot.config({
 
     /* Stratus Core Components */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
+    'stratus.components.carousel': boot.bundle + 'stratus/components/carousel' + boot.suffix,
     'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
     'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
     'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
