@@ -41,16 +41,28 @@
                     return false;
                 });
             }
+
             // Data Connectivity
             $scope.$watch('model.data.routing', function (routing) {
+
                 if (routing) {
                     $scope.routes = routing
                     angular.forEach($scope.routes, function (route) {
                         if (route.main) {
                             $scope.mainRoute = route.id
-
                         }
                     })
+                    // var count=1;
+                    //     var resetRouting = [];
+                    //     for(var i=0;i < data.routing.length;i++){
+                    //         if(data.routing[i] && data.routing[i].main === true){
+                    //             resetRouting[0] = data.routing[i];
+                    //         }else{
+                    //             resetRouting[count] = data.routing[i];
+                    //             count++;
+                    //         }
+                    //     }
+                    //     data.routing = resetRouting;
                 }
             })
             $scope.update = function () {
@@ -59,6 +71,5 @@
                 })
                 return $scope.routes
             }
-
         }]
 }))
