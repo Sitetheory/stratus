@@ -25,10 +25,7 @@
       'underscore',
 
       'swiper',
-      'angular',
-
-      // Services
-      'stratus.services.commonMethods'
+      'angular'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.Swiper)
@@ -58,13 +55,13 @@
       '$attrs',
       '$window',
       '$element',
-      'commonMethods',
-      function ($scope, $attrs, $window, $element, commonMethods) {
+      'utility',
+      function ($scope, $attrs, $window, $element, utility) {
         // Initialize
         Stratus.Internals.CssLoader(Stratus.BaseUrl +
           Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' +
           (Stratus.Environment.get('production') ? '.min' : '') + '.css')
-        commonMethods.componentInitializer(this, $scope, $attrs, 'carousel', true)
+        utility.componentInitializer(this, $scope, $attrs, 'carousel', true)
         $scope.initialized = false
 
         let $ctrl = this
@@ -80,7 +77,6 @@
             $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
               if (initNow === true) {
                 if (!$scope.initialized) {
-                  console.log('initing!')
                   init()
                 }
                 $ctrl.stopWatchingInitNow()
@@ -187,9 +183,8 @@
         /**
          * Actions to be preformed when an image is clicked. Will by default open a link is one exists
          * @param {SlideImage} slideImage
-         * @param {*} $event
          */
-        $scope.imageClick = function imageClick (slideImage, $event) {
+        $scope.imageClick = function imageClick (slideImage) {
           // Clicking doesn't have to open new window. it does for now
           if (slideImage && slideImage.hasOwnProperty('link')) {
             $window.open(slideImage.link, $scope.imageLinkTarget || slideImage.target || '_self')
@@ -225,7 +220,6 @@
 
             if (processedImages.length > 0) {
               $scope.images = processedImages
-              console.log('prepped ', processedImages.length, 'images')
               // There is no extra images so remove the looping
               if ($scope.images.length < 2) {
                 $scope.loop = false
