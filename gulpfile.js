@@ -1,27 +1,26 @@
 // Dependencies
-var gulp = require('gulp')
-var pump = require('pump')
-var concat = require('gulp-concat')
-// var debug = require('gulp-debug')
-var dest = require('gulp-dest')
-var uglify = require('gulp-uglify')
-// var uglify = require('gulp-uglify-es').default
-var del = require('del')
-var vinylPaths = require('vinyl-paths')
-var _ = require('underscore')
+const gulp = require('gulp')
+const pump = require('pump')
+const concat = require('gulp-concat')
+// const debug = require('gulp-debug')
+const dest = require('gulp-dest')
+const terser = require('gulp-terser');
+const del = require('del')
+const vinylPaths = require('vinyl-paths')
+const _ = require('underscore')
 
 // Task Specific
-var babel = require('gulp-babel')
-var standard = require('gulp-standard')
-var gulpStylelint = require('gulp-stylelint')
-var less = require('gulp-less')
-var cleanCSS = require('gulp-clean-css')
-var htmlmin = require('gulp-htmlmin')
+const babel = require('gulp-babel')
+const standard = require('gulp-standard')
+const gulpStylelint = require('gulp-stylelint')
+const less = require('gulp-less')
+const cleanCSS = require('gulp-clean-css')
+const htmlmin = require('gulp-htmlmin')
 
 // Helper Functions
-var nullify = function (proto) {
+const nullify = function (proto) {
   proto = proto || []
-  var clone = _.clone(proto)
+  let clone = _.clone(proto)
   if (_.size(proto)) {
     _.each(clone, function (value, key, list) {
       list[key] = '!' + value
@@ -30,7 +29,7 @@ var nullify = function (proto) {
   return clone
 }
 
-var babelSettings = {
+const babelSettings = {
   /* *
   presets: [
     ['env', {
@@ -52,7 +51,7 @@ var babelSettings = {
 }
 
 // Locations
-var location = {
+const location = {
   boot: {
     source: [
       'boot/env.js',
@@ -239,7 +238,7 @@ gulp.task('dist:compress', function (callback) {
       title: 'Mangle:'
     }))
     /* */
-    .pipe(uglify({
+    .pipe(terser({
       // preserveComments: 'license',
       mangle: true
     }))
@@ -273,7 +272,7 @@ gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
     }),
     /* */
     babel(babelSettings),
-    uglify({
+    terser({
       // preserveComments: 'license',
       mangle: true
     }),
@@ -310,7 +309,7 @@ gulp.task('compress:external', ['clean:external'], function (callback) {
     }),
     /* */
     babel(babelSettings),
-    uglify({
+    terser({
       // preserveComments: 'license',
       mangle: true
     }),
@@ -347,7 +346,7 @@ gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
     }),
     /* */
     babel(babelSettings),
-    uglify({
+    terser({
       // preserveComments: 'license',
       mangle: false
     }),
