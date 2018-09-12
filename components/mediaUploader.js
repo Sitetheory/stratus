@@ -109,15 +109,14 @@
         uploadFiles($ctrl.draggedFiles, $ctrl.invalidFiles)
       }
 
-      $scope.$watch('$ctrl.videos', function(newValue, oldValue){
-        if(newValue != oldValue){
+      $scope.$watch('$ctrl.videos', function (newValue, oldValue) {
+        if (newValue !== oldValue) {
           $ctrl.unsavedVideos = true
         }
       }, true)
 
-
       function done () {
-        if(!$ctrl.unsavedVideos) {
+        if (!$ctrl.unsavedVideos) {
           closeDialog()
         } else {
           var confirm = $mdDialog.confirm()
@@ -126,7 +125,7 @@
             .ok('Abandon Video')
             .cancel('Cancel')
             .multiple(true)
-          $mdDialog.show(confirm).then(function() {
+          $mdDialog.show(confirm).then(function () {
             closeDialog()
           })
         }
@@ -183,13 +182,13 @@
         }
 
         processMediaMeta(file).then(function (response) {
-          if(response.meta) {
+          if (response.meta) {
             data.meta = response.meta
           }
 
-          if(file.service.value === 'youtube' && response.videoId) {
+          if (file.service.value === 'youtube' && response.videoId) {
             data.file = 'https://www.youtube.com/embed/' + response.videoId
-          } else if(file.service.value === 'vimeo' && response.videoId) {
+          } else if (file.service.value === 'vimeo' && response.videoId) {
             data.file = 'https://player.vimeo.com/video/' + response.videoId
           }
 
@@ -201,16 +200,15 @@
               var type = fileType && fileType === 'video' ? 'videos' : 'links'
               var index = $ctrl[type].indexOf(file)
               $ctrl[type][index].isUploaded = true
-              if(type=='videos') {
+              if (type === 'videos') {
                 $ctrl[type][index].thumbnailUrl = media.getThumbnailImgOfVideo(data)
               }
             } else {
               console.error(utility.getStatus(response).code + ' - ' +
                 utility.getStatus(response).message)
             }
-          })  
+          })
         })
-        
       }
 
       function saveAllFiles (files, fileType) {
@@ -283,8 +281,8 @@
         })
       }
 
-      function processMediaMeta(file) {
-        return $q(function(resolve, reject) {
+      function processMediaMeta (file) {
+        return $q(function (resolve, reject) {
           let result = {}
           if (file.service.value === 'vimeo') {
             let vimeoId = null
@@ -292,14 +290,14 @@
               result.videoId = vimeoId = response
               let vimeoApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/v2/video/' + vimeoId + '.json')
               $http.jsonp(vimeoApiUrl, {jsonpCallbackParam: 'callback'})
-              .then( function successCallback(response) {
-                meta = {}
-                meta['thumbnail_small'] = response.data[0].thumbnail_small 
-                meta['thumbnail_medium'] = response.data[0].thumbnail_medium 
-                meta['thumbnail_large'] = response.data[0].thumbnail_large 
-                result.meta = meta
-                resolve(result)
-              })
+                .then(function successCallback (response) {
+                  var meta = {}
+                  meta['thumbnail_small'] = response.data[0].thumbnail_small
+                  meta['thumbnail_medium'] = response.data[0].thumbnail_medium
+                  meta['thumbnail_large'] = response.data[0].thumbnail_large
+                  result.meta = meta
+                  resolve(result)
+                })
             })
           } else if (file.service.value === 'youtube') {
             result.videoId = media.getYouTubeID(file.url)
@@ -311,20 +309,19 @@
       }
 
       function getVimeoID (url) {
-        return $q(function(resolve, reject) {
+        return $q(function (resolve, reject) {
           let vimeoRegex = new RegExp(/(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/)
-          if ( vimeoRegex.test(url) ) {
+          if (vimeoRegex.test(url)) {
             resolve(vimeoRegex.exec(url)[5])
           } else {
-            let vimeoMetaApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/oembed.json?url='+url)
+            let vimeoMetaApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/oembed.json?url=' + url)
             $http.jsonp(vimeoMetaApiUrl, {jsonpCallbackParam: 'callback'})
-            .then ( function successCallback(response) {
-              resolve(response.data.video_id)
-            })
+              .then(function successCallback (response) {
+                resolve(response.data.video_id)
+              })
           }
         })
       }
-
     },
     templateUrl: Stratus.BaseUrl +
    Stratus.BundlePath + 'components/mediaUploader' +

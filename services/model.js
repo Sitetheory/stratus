@@ -95,7 +95,8 @@
               }
               that.watching = true
               $rootScope.$watch(function () {
-                return that.data
+
+                  return that.data
               }, function (newData, priorData) {
                 var patch = _.patch(newData, priorData)
                 $log.log('Patch:', patch)
@@ -109,11 +110,11 @@
                   that.changed = !angular.equals(newData, that.initData)
                   if ((newData.id && newData.id !== priorData.id) ||
                     that.isNewVersion(newData)) {
-                    window.location.replace(
-                      Stratus.Internals.SetUrlParams({
-                        id: newData.id
-                      })
-                    )
+                    // window.location.replace(
+                    //   Stratus.Internalsz.SetUrlParams({
+                    //     id: newData.id
+                    //   })
+                    // )
                   }
                   that.patch = _.extend(that.patch, patch)
                 }
@@ -506,7 +507,8 @@
              */
             this.setAttribute = function (attr, value) {
               if (typeof attr === 'string' &&
-                (_.contains(attr, '.') || _.contains(attr, '['))) {
+                (_.contains(attr, '.') || _.contains(attr, '['))
+              ) {
                 var future
                 that.buildPath(attr)
                   .reduce(function (attrs, link, index, chain) {

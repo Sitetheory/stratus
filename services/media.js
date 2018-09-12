@@ -106,9 +106,7 @@
                 // policy: POLICY, // base64-encoded json policy
                 // signature: SIGNATURE, // base64-encoded signature based on
                 // policy string
-                'Content-Type': file.type !== ''
-                  ? file.type
-                  : 'application/octet-stream', // content type of the file
+                'Content-Type': file.type !== '' ? file.type : 'application/octet-stream', // content type of the file
                 // (NotEmpty)
                 filename: file.name, // this is needed for Flash polyfill IE8-9
                 file: file
@@ -129,11 +127,7 @@
               },
               function (rej) {
                 file.errorUpload = true
-                if (rej.config.data.file.upload.aborted === true) {
-                  file.errorMsg = 'Aborted'
-                } else {
-                  file.errorMsg = 'Server Error! Please try again'
-                }
+                file.errorMsg = rej.config.data.file.upload.aborted ? 'Aborted' : 'Server Error! Please try again'
               }
             )
 
@@ -146,11 +140,11 @@
           }
 
           function getThumbnailImgOfVideo (data) {
-            let defaultThumbnail = 'https://img.youtube.com/vi/default.jpg';
+            let defaultThumbnail = 'https://img.youtube.com/vi/default.jpg'
             if (data.service === 'youtube') {
               return 'https://img.youtube.com/vi/' + getYouTubeID(data.file) + '/0.jpg'
             } else if (data.service === 'vimeo' && data.meta.thumbnail_medium) {
-                return data.meta.thumbnail_medium
+              return data.meta.thumbnail_medium
             } else {
               // use default image
               return defaultThumbnail
@@ -158,7 +152,7 @@
           }
 
           function getYouTubeID (url) {
-            /*var ID = ''
+            /* var ID = ''
             url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)
             if (url[2] !== undefined) {
               ID = url[2].split(/[^0-9a-z_]/i)
@@ -166,12 +160,11 @@
             } else {
               ID = url
             }
-            return ID*/
-            var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-            var match = url.match(regExp);
-            return (match && match[7].length==11)? match[7] : '';
+            return ID */
+            var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
+            var match = url.match(regExp)
+            return (match && match[7].length === 11) ? match[7] : ''
           }
-
         }
       ])
     }]
