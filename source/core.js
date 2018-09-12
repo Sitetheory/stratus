@@ -238,12 +238,12 @@ Stratus.Events.on('initialize', function () {
   Stratus.RegisterGroup = new Stratus.Prototypes.Model()
 
   /* FIXME: This breaks outside of Sitetheory *
-      // Start Generic Router
-      require(['stratus.routers.generic'], function () {
-          Stratus.Routers.set('generic', new Stratus.Routers.Generic());
-          Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic');
-      });
-      /**/
+  // Start Generic Router
+  require(['stratus.routers.generic'], function () {
+    Stratus.Routers.set('generic', new Stratus.Routers.Generic())
+    Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic')
+  })
+  /**/
 
   // Handle Location
   Stratus.Internals.TrackLocation()
