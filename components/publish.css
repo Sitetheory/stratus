@@ -26,7 +26,7 @@
   line-height: 1.4;
   font-size: 15px;
   font-weight: bold;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
 }
 #headerControlsPublishOptions {
   padding: 19px 16px;
@@ -150,7 +150,7 @@
   line-height: 1.4;
   font-size: 15px;
   font-weight: bold;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
 }
 #headerControlsPublishOptions {
   padding: 19px 16px;
