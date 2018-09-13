@@ -95,7 +95,8 @@
               }
               that.watching = true
               $rootScope.$watch(function () {
-                return that.data
+
+                  return that.data
               }, function (newData, priorData) {
                 var patch = _.patch(newData, priorData)
                 $log.log('Patch:', patch)
@@ -232,6 +233,17 @@
                       that.data = _.first(convoy)
                       that.error = false
                     } else if (angular.isObject(convoy) && !angular.isArray(convoy)) {
+                        var count=1
+                        var resetRouting = []
+                        for(var i=0;i < convoy.routing.length;i++){
+                            if(convoy.routing[i] && convoy.routing[i].main === true){
+                                resetRouting[0] = convoy.routing[i]
+                            }else{
+                                resetRouting[count] = convoy.routing[i]
+                                count++
+                            }
+                        }
+                        convoy.routing = resetRouting
                       that.data = convoy
                       that.error = false
                     } else {
