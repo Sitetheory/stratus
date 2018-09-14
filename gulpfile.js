@@ -88,12 +88,14 @@ const location = {
     core: [
       'normalizers/*.js',
       'routers/*.js',
-      'services/*.js'
+      'services/*.js',
+      'legacy/views/widgets/*.js'
     ],
     min: [
       'normalizers/*.min.js',
       'routers/*.min.js',
-      'services/*.min.js'
+      'services/*.min.js',
+      'legacy/views/widgets/*.min.js'
     ]
   },
   preserve: {
