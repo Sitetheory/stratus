@@ -40,7 +40,7 @@
     "stylelint": "^9.5.0",
     "stylelint-config-standard": "^18.0.0",
     "terser": "^3.8.2",
-    "underscore": "jashkenas/underscore#^1.*",
+    "underscore": "^1.9.1",
     "vinyl-paths": "^2.1.*"
   },
   "scripts": {
@@ -72,7 +72,7 @@
     "@bower_components/angular-animate": "angular/bower-angular-animate#^1.7.2",
     "@bower_components/angular-aria": "angular/bower-angular-aria#^1.7.2",
     "@bower_components/angular-chart.js": "jtblin/angular-chart.js#^1.*",
-    "@bower_components/angular-froala": "froala/angular-froala#^2.5.*",
+    "@bower_components/angular-froala": "froala/angular-froala#^2.8.5",
     "@bower_components/angular-material": "angular/bower-material#^1.*",
     "@bower_components/angular-material-datetimepicker": "logbon72/angular-material-datetimepicker#^1.5",
     "@bower_components/angular-messages": "angular/bower-angular-messages#^1.7.2",
@@ -103,8 +103,7 @@
     "@bower_components/requirejs": "jrburke/requirejs-bower#^2.*",
     "@bower_components/swiper": "nolimits4web/Swiper#^4.*",
     "@bower_components/text": "requirejs/text#^2.*",
-    "@bower_components/underscore": "jashkenas/underscore#^1.*",
-    "@bower_components/zepto": "components/zepto#^1.2.0",
+    "@bower_components/underscore": "jashkenas/underscore#1.9.1",
     "@bower_components/zxcvbn": "dropbox/zxcvbn#^4.4.2"
   },
   "engines": {
