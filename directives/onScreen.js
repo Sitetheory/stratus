@@ -60,8 +60,6 @@
           return attrs.offScreen && typeof attrs.offScreen === 'function' ? attrs.offScreen() : true
         }
 
-        console.log(attrs)
-
         // Ensure OnScroll is listening
         Stratus.Internals.OnScroll()
 
@@ -130,7 +128,7 @@
             }
           }
 
-          /* */
+          /* *
           console.log('OnScreen:', {
             direction: lastScroll,
             spy: spy,

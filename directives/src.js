@@ -54,9 +54,9 @@
             el: $element,
             spy: $element.data('spy') ? Stratus($element.data('spy')) : $element
           }
+          Stratus.Internals.OnScroll()
           Stratus.RegisterGroup.add('OnScroll', $scope.group)
           Stratus.Internals.LoadImage($scope.group)
-          Stratus.Internals.OnScroll()
         }
 
         // Source Interpolation
