@@ -342,10 +342,19 @@ Stratus.Internals.CssLoader = function (url) {
  * @constructor
  */
 Stratus.Internals.GetColWidth = function (el) {
+  if (typeof el === 'undefined' || !el) {
+    return false
+  }
   var classes = el.attr('class')
+  if (typeof classes === 'undefined' || !classes) {
+    return false
+  }
   var regexp = /col-.{2}-([0-9]*)/g
   var match = regexp.exec(classes)
-  return (typeof match[1] !== 'undefined') ? match[1] : false
+  if (typeof match === 'undefined' || !match) {
+    return false
+  }
+  return typeof match[1] !== 'undefined' ? match[1] : false
 }
 
 // GetScrollDir()
@@ -404,8 +413,7 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
     console.log('OnScreen:', el, position.eb >= (position.wt + offset) && position.et <= (position.wb - offset))
   }
   /* */
-  return position.eb >= (position.wt + offset) && position.et <=
-    (position.wb - offset)
+  return position.eb >= (position.wt + offset) && position.et <= (position.wb - offset)
 }
 
 // Internal CSS Loader
@@ -486,7 +494,7 @@ Stratus.Internals.LoadEnvironment = function () {
  * @constructor
  */
 Stratus.Internals.LoadImage = function (obj) {
-  var el = Stratus(obj.el)
+  let el = Stratus(obj.el)
   el.addClass('placeholder')
   if (Stratus.Internals.IsOnScreen(obj.spy) && !el.attr('data-loading')) {
     el.attr('data-loading', true)
@@ -494,21 +502,21 @@ Stratus.Internals.LoadImage = function (obj) {
       // By default we'll load larger versions of an image to look good on HD
       // displays, but if you don't want that, you can bypass it with
       // data-hd="false"
-      var hd = el.attr('data-hd')
+      let hd = el.attr('data-hd')
       if (typeof hd === 'undefined') {
         hd = true
       }
 
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
-      var src = el.attr('data-src')
+      let src = el.attr('data-src')
 
       // Handle precedence
       if (!src || src === 'lazy') {
         src = el.attr('src')
       }
 
-      var size = null
+      let size = null
 
       // if a specific valid size is requested, use that
       // FIXME: size.indexOf should never return anything useful
@@ -516,9 +524,9 @@ Stratus.Internals.LoadImage = function (obj) {
         size.indexOf(el.attr('data-size')) !== false) {
         size = el.attr('data-size')
       } else {
-        var width = null
-        var unit = null
-        var percentage = null
+        let width = null
+        let unit = null
+        let percentage = null
 
         if (el.width()) {
           // Check if there is CSS width hard coded on the element
@@ -529,7 +537,7 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // Digest Width Attribute
         if (width) {
-          var digest = /([\d]+)(.*)/
+          const digest = /([\d]+)(.*)/
           width = digest.exec(width)
           unit = width[2]
           width = parseInt(width[1])
@@ -542,16 +550,16 @@ Stratus.Internals.LoadImage = function (obj) {
           // FIXME: This is jquery and I wrote a possibly long-term solution
           // natively
           /* *
-              // If there is no CSS width, calculate the parent container's width
-              // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
-              // So we need to find the first parent that is visible and use that width
-              // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
-              // so in some cases we need to flag to find the parent regardless of invisibility.
-              var visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible';
-              var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
-              /* */
+          // If there is no CSS width, calculate the parent container's width
+          // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
+          // So we need to find the first parent that is visible and use that width
+          // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
+          // so in some cases we need to flag to find the parent regardless of invisibility.
+          var visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible';
+          var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
+          /* */
 
-          var $visibleParent = el.parent()
+          let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
           // If one of parents of the image (and child of the found parent) has
@@ -574,8 +582,8 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // If no appropriate width was found, abort
         if (width <= 0) {
-          el.attr('data-loading', false)
           setTimeout(function () {
+            el.attr('data-loading', false)
             Stratus.Internals.LoadImage(obj)
           }, 500)
           return false
@@ -588,19 +596,33 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // Return the first size that is bigger than container width
         size = _.findKey(Stratus.Settings.image.size, function (s) {
-          var ratio = s / width
-          return ((ratio > 0.85 && ratio < 1.15) || s > width)
+          let ratio = s / width
+          return (ratio > 0.85 && ratio < 1.15) || s > width
         })
 
         // default to largest size if the container is larger and it didn't
         // find a size
         size = size || 'hq'
+
+        /* *
+        if (!Stratus.Environment.get('production')) {
+          console.log('size:', size, width, el)
+        }
+        /* */
+
+        // Fail-safe for images that are sized too early
+        if (size === 'xs') {
+          setTimeout(function () {
+            el.attr('data-loading', false)
+            Stratus.Internals.LoadImage(obj)
+          }, 1500)
+        }
       }
 
       // Change Source to right size (get the base and extension and ignore
       // size)
-      var srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-      var srcMatch = srcRegex.exec(src)
+      const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+      let srcMatch = srcRegex.exec(src)
       src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
 
       // Change the Source to be the desired path
