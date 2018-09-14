@@ -21,7 +21,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'zepto', 'underscore', 'backbone'], factory)
+    define(['stratus', 'jquery', 'underscore', 'backbone'], factory)
   } else {
     factory(root.Stratus, root.$, root._, root.Backbone)
   }
