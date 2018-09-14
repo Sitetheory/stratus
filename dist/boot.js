@@ -250,7 +250,7 @@ boot.config({
     /* Calendar */
     fullcalendar: {
       deps: [
-        'zepto',
+        'jquery',
         'moment'
       ]
     }
@@ -491,7 +491,6 @@ boot.config({
     'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
     promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     swiper: boot.bundle + 'stratus/bower_components/swiper/dist/js/swiper' + boot.suffix,
-    zepto: boot.bundle + 'stratus/bower_components/zepto/zepto' + boot.suffix,
     zxcvbn: boot.bundle + 'stratus/bower_components/zxcvbn/dist/zxcvbn',
 
     /* Interpreters */
