@@ -1949,10 +1949,19 @@ Stratus.Internals.CssLoader = function (url) {
  * @constructor
  */
 Stratus.Internals.GetColWidth = function (el) {
+  if (typeof el === 'undefined' || !el) {
+    return false
+  }
   var classes = el.attr('class')
+  if (typeof classes === 'undefined' || !classes) {
+    return false
+  }
   var regexp = /col-.{2}-([0-9]*)/g
   var match = regexp.exec(classes)
-  return (typeof match[1] !== 'undefined') ? match[1] : false
+  if (typeof match === 'undefined' || !match) {
+    return false
+  }
+  return typeof match[1] !== 'undefined' ? match[1] : false
 }
 
 // GetScrollDir()
@@ -2011,8 +2020,7 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
     console.log('OnScreen:', el, position.eb >= (position.wt + offset) && position.et <= (position.wb - offset))
   }
   /* */
-  return position.eb >= (position.wt + offset) && position.et <=
-    (position.wb - offset)
+  return position.eb >= (position.wt + offset) && position.et <= (position.wb - offset)
 }
 
 // Internal CSS Loader
@@ -2093,7 +2101,7 @@ Stratus.Internals.LoadEnvironment = function () {
  * @constructor
  */
 Stratus.Internals.LoadImage = function (obj) {
-  var el = Stratus(obj.el)
+  let el = Stratus(obj.el)
   el.addClass('placeholder')
   if (Stratus.Internals.IsOnScreen(obj.spy) && !el.attr('data-loading')) {
     el.attr('data-loading', true)
@@ -2101,21 +2109,21 @@ Stratus.Internals.LoadImage = function (obj) {
       // By default we'll load larger versions of an image to look good on HD
       // displays, but if you don't want that, you can bypass it with
       // data-hd="false"
-      var hd = el.attr('data-hd')
+      let hd = el.attr('data-hd')
       if (typeof hd === 'undefined') {
         hd = true
       }
 
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
-      var src = el.attr('data-src')
+      let src = el.attr('data-src')
 
       // Handle precedence
       if (!src || src === 'lazy') {
         src = el.attr('src')
       }
 
-      var size = null
+      let size = null
 
       // if a specific valid size is requested, use that
       // FIXME: size.indexOf should never return anything useful
@@ -2123,9 +2131,9 @@ Stratus.Internals.LoadImage = function (obj) {
         size.indexOf(el.attr('data-size')) !== false) {
         size = el.attr('data-size')
       } else {
-        var width = null
-        var unit = null
-        var percentage = null
+        let width = null
+        let unit = null
+        let percentage = null
 
         if (el.width()) {
           // Check if there is CSS width hard coded on the element
@@ -2136,7 +2144,7 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // Digest Width Attribute
         if (width) {
-          var digest = /([\d]+)(.*)/
+          const digest = /([\d]+)(.*)/
           width = digest.exec(width)
           unit = width[2]
           width = parseInt(width[1])
@@ -2149,16 +2157,16 @@ Stratus.Internals.LoadImage = function (obj) {
           // FIXME: This is jquery and I wrote a possibly long-term solution
           // natively
           /* *
-              // If there is no CSS width, calculate the parent container's width
-              // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
-              // So we need to find the first parent that is visible and use that width
-              // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
-              // so in some cases we need to flag to find the parent regardless of invisibility.
-              var visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible';
-              var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
-              /* */
+          // If there is no CSS width, calculate the parent container's width
+          // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
+          // So we need to find the first parent that is visible and use that width
+          // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
+          // so in some cases we need to flag to find the parent regardless of invisibility.
+          var visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible';
+          var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
+          /* */
 
-          var $visibleParent = el.parent()
+          let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
           // If one of parents of the image (and child of the found parent) has
@@ -2181,8 +2189,8 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // If no appropriate width was found, abort
         if (width <= 0) {
-          el.attr('data-loading', false)
           setTimeout(function () {
+            el.attr('data-loading', false)
             Stratus.Internals.LoadImage(obj)
           }, 500)
           return false
@@ -2195,19 +2203,33 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // Return the first size that is bigger than container width
         size = _.findKey(Stratus.Settings.image.size, function (s) {
-          var ratio = s / width
-          return ((ratio > 0.85 && ratio < 1.15) || s > width)
+          let ratio = s / width
+          return (ratio > 0.85 && ratio < 1.15) || s > width
         })
 
         // default to largest size if the container is larger and it didn't
         // find a size
         size = size || 'hq'
+
+        /* *
+        if (!Stratus.Environment.get('production')) {
+          console.log('size:', size, width, el)
+        }
+        /* */
+
+        // Fail-safe for images that are sized too early
+        if (size === 'xs') {
+          setTimeout(function () {
+            el.attr('data-loading', false)
+            Stratus.Internals.LoadImage(obj)
+          }, 1500)
+        }
       }
 
       // Change Source to right size (get the base and extension and ignore
       // size)
-      var srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-      var srcMatch = srcRegex.exec(src)
+      const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+      let srcMatch = srcRegex.exec(src)
       src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
 
       // Change the Source to be the desired path
@@ -2524,9 +2546,9 @@ Stratus.Select = function (selector, context) {
   if (!context) {
     context = document
   }
-  var selection = selector
+  let selection = selector
   if (typeof selector === 'string') {
-    var target
+    let target
     if (_.startsWith(selector, '.') || _.contains(selector, '[')) {
       target = 'querySelectorAll'
     } else if (_.contains(['html', 'head', 'body'], selector) ||
@@ -2570,16 +2592,14 @@ Stratus = _.extend(function (selector, context) {
 Stratus.Selector.attr = function (attr, value) {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    if (!Stratus.Environment.get('production')) {
-      console.log('List:', that)
-    }
+    console.warn('Unable to find "' + attr + '" for list:', that.selection)
+    return null
   } else if (attr) {
     if (typeof value === 'undefined') {
       value = that.selection.getAttribute(attr)
       return _.isJSON(value) ? JSON.parse(value) : value
     } else {
-      that.selection.setAttribute(attr,
-        typeof value === 'string' ? value : JSON.stringify(value))
+      that.selection.setAttribute(attr, typeof value === 'string' ? value : JSON.stringify(value))
     }
   }
   return that
@@ -2609,13 +2629,11 @@ Stratus.Selector.each = function (callable) {
 Stratus.Selector.find = function (selector) {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    if (!Stratus.Environment.get('production')) {
-      console.log('List:', that)
-    }
+    console.warn('Unable to find "' + selector + '" for list:', that.selection)
   } else if (selector) {
     return Stratus(selector, that.selection)
   }
-  return that
+  return null
 }
 
 /**
@@ -2644,9 +2662,7 @@ Stratus.Selector.map = function (callable) {
 Stratus.Selector.append = function (child) {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    if (!Stratus.Environment.get('production')) {
-      console.log('List:', that)
-    }
+    console.warn('Unable to append child:', child, 'to list:', that.selection)
   } else if (child) {
     that.selection.insertBefore(child, that.selection.lastChild)
   }
@@ -2662,9 +2678,7 @@ Stratus.Selector.append = function (child) {
 Stratus.Selector.prepend = function (child) {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    if (!Stratus.Environment.get('production')) {
-      console.log('List:', that)
-    }
+    console.warn('Unable to prepend child:', child, 'to list:', that.selection)
   } else if (child) {
     that.selection.insertBefore(child, that.selection.firstChild)
   }
@@ -2680,9 +2694,7 @@ Stratus.Selector.prepend = function (child) {
 Stratus.Selector.addClass = function (className) {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    if (!Stratus.Environment.get('production')) {
-      console.log('List:', that)
-    }
+    console.warn('Unable to add class "' + className + '" to list:', that.selection)
   } else {
     _.each(className.split(' '), function (name) {
       if (that.selection.classList) {
@@ -2703,19 +2715,15 @@ Stratus.Selector.addClass = function (className) {
 Stratus.Selector.removeClass = function (className) {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    if (!Stratus.Environment.get('production')) {
-      console.log('List:', that)
-    }
+    console.warn('Unable to remove class "' + className + '" from list:', that.selection)
+  } else if (that.selection.classList) {
+    _.each(className.split(' '), function (name) {
+      that.selection.classList.remove(name)
+    })
   } else {
-    if (that.selection.classList) {
-      _.each(className.split(' '), function (name) {
-        that.selection.classList.remove(name)
-      })
-    } else {
-      that.selection.className = that.selection.className.replace(
-        new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)',
-          'gi'), ' ')
-    }
+    that.selection.className = that.selection.className.replace(
+      new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)',
+        'gi'), ' ')
   }
   return that
 }
@@ -2726,13 +2734,11 @@ Stratus.Selector.removeClass = function (className) {
 Stratus.Selector.style = function () {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    if (!Stratus.Environment.get('production')) {
-      console.log('List:', that)
-    }
+    console.warn('Unable to find style for list:', that.selection)
   } else if (that.selection instanceof window.Node) {
     return window.getComputedStyle(that.selection)
   }
-  return that
+  return null
 }
 
 // Positioning Plugins
@@ -2742,11 +2748,10 @@ Stratus.Selector.style = function () {
 Stratus.Selector.height = function () {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    console.error('Unable to find height for element:', that.selection)
-  } else {
-    return that.selection.offsetHeight || 0
+    console.warn('Unable to find height for list:', that.selection)
+    return null
   }
-  return that
+  return that.selection.offsetHeight || 0
 }
 
 /**
@@ -2755,11 +2760,11 @@ Stratus.Selector.height = function () {
 Stratus.Selector.width = function () {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    console.error('Unable to find width for element:', that.selection)
-  } else {
-    return that.selection.offsetWidth || 0
+    console.warn('Unable to find width for list:', that.selection)
+    return null
   }
-  return that
+  // console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
+  return that.selection.offsetWidth || 0
 }
 
 /**
@@ -2768,7 +2773,7 @@ Stratus.Selector.width = function () {
 Stratus.Selector.offset = function () {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    console.error('Unable to find offset for element:', that.selection)
+    console.warn('Unable to find offset for list:', that.selection)
   } else if (that.selection.getBoundingClientRect) {
     var rect = that.selection.getBoundingClientRect()
     return {
@@ -2776,7 +2781,10 @@ Stratus.Selector.offset = function () {
       left: rect.left + document.body.scrollLeft
     }
   }
-  return that
+  return {
+    top: null,
+    left: null
+  }
 }
 
 /**
@@ -2785,11 +2793,10 @@ Stratus.Selector.offset = function () {
 Stratus.Selector.parent = function () {
   var that = this
   if (that.selection instanceof window.NodeList) {
-    console.error('Unable to find offset for element:', that.selection)
-  } else {
-    return Stratus(that.selection.parentNode)
+    console.warn('Unable to find offset for list:', that.selection)
+    return null
   }
-  return that
+  return Stratus(that.selection.parentNode)
 }
 
 /* global Stratus, _, $, requirejs */
