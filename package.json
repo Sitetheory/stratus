@@ -46,8 +46,7 @@
   "scripts": {
     "test": "gulp compress;gulp lint",
     "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
-    "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports",
-    "postinstall": "node -e \"try { require('fs').symlinkSync(require('path').resolve('node_modules/@bower_components'), 'bower_components', 'junction') } catch (e) { }\""
+    "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports"
   },
   "repository": {
     "type": "git",
@@ -67,45 +66,6 @@
     "backbone",
     "underscore"
   ],
-  "dependencies": {
-    "@bower_components/angular": "angular/bower-angular#1.7.4",
-    "@bower_components/angular-animate": "angular/bower-angular-animate#^1.7.2",
-    "@bower_components/angular-aria": "angular/bower-angular-aria#^1.7.2",
-    "@bower_components/angular-chart.js": "jtblin/angular-chart.js#^1.*",
-    "@bower_components/angular-froala": "froala/angular-froala#^2.8.5",
-    "@bower_components/angular-material": "angular/bower-material#^1.*",
-    "@bower_components/angular-material-datetimepicker": "logbon72/angular-material-datetimepicker#^1.5",
-    "@bower_components/angular-messages": "angular/bower-angular-messages#^1.7.2",
-    "@bower_components/angular-paging": "brantwills/Angular-Paging#^2.2.2",
-    "@bower_components/angular-resource": "angular/bower-angular-resource#^1.6.*",
-    "@bower_components/angular-sanitize": "angular/bower-angular-sanitize#^1.*",
-    "@bower_components/angular-scroll-spy": "inorganik/angular-scroll-spy#*",
-    "@bower_components/angular-ui-tree": "JimLiu/angular-ui-tree#^2.22.6",
-    "@bower_components/backbone": "jashkenas/backbone#^1.*",
-    "@bower_components/backbone-relational": "PaulUithol/Backbone-relational#^0.*",
-    "@bower_components/bowser": "lancedikson/bowser#^1.*",
-    "@bower_components/chart.js": "chartjs/Chart.js#2.x",
-    "@bower_components/codemirror": "components/codemirror#^5.*",
-    "@bower_components/coffeescript": "jashkenas/coffeescript#^2.2.2",
-    "@bower_components/countUp.js": "inorganik/countUp.js#1.8.3",
-    "@bower_components/dropzone": "enyo/dropzone#^4.*",
-    "@bower_components/font-awesome": "FortAwesome/Font-Awesome#^5.0.0",
-    "@bower_components/froala-wysiwyg-editor": "froala/wysiwyg-editor#2.8.4",
-    "@bower_components/fullcalendar": "fullcalendar/fullcalendar#^2.*",
-    "@bower_components/jquery": "jquery/jquery-dist#^2.*",
-    "@bower_components/js-md5": "emn178/js-md5#^0.4.1",
-    "@bower_components/less": "less/less#2.7.3",
-    "@bower_components/moment": "moment/moment#^2.*",
-    "@bower_components/moment-range": "gf3/moment-range#^2.*",
-    "@bower_components/moment-timezone": "moment/moment-timezone#^0.*",
-    "@bower_components/ng-file-upload": "danialfarid/angular-file-upload-bower#^12.2.13",
-    "@bower_components/promise-polyfill": "taylorhakes/promise-polyfill#^6.*",
-    "@bower_components/requirejs": "jrburke/requirejs-bower#^2.*",
-    "@bower_components/swiper": "nolimits4web/Swiper#^4.*",
-    "@bower_components/text": "requirejs/text#^2.*",
-    "@bower_components/underscore": "jashkenas/underscore#1.9.1",
-    "@bower_components/zxcvbn": "dropbox/zxcvbn#^4.4.2"
-  },
   "engines": {
     "yarn": ">= 1.0.0"
   }

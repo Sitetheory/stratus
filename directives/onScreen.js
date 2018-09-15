@@ -73,7 +73,7 @@
           // Reset
           if (event.indexOf('reset') !== -1) {
             // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
-            if ((reset > 0 && element.offset().top <= reset) || $(window).scrollTop() <= 0) {
+            if ((reset > 0 && Stratus(element).offset().top <= reset) || $(window).scrollTop() <= 0) {
               isReset = true
               target.removeClass('onScreen offScreen scrollUp scrollDown reveal unreveal')
             }

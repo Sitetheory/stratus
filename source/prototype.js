@@ -114,6 +114,7 @@ var Stratus = {
     debugNest: false,
     liveEdit: false,
     viewPortChange: false,
+    viewPort: null,
     lastScroll: false
   },
   History: {},
