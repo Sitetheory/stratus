@@ -12,9 +12,9 @@ filter:
 checks:
     javascript: true
 build:
-    dependencies:
-        override:
-            - npm install --only=dev
+#    dependencies:
+#        override:
+#            - npm install --only=dev
     nodes:
         analysis:
             tests:

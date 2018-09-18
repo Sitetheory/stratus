@@ -2151,19 +2151,14 @@ Stratus.Internals.LoadImage = function (obj) {
         // FIXME: This should only happen if the CSS has completely loaded.
         // Gather Container (Calculated) Width
         if (!width || unit === '%') {
-          // FIXME: This is jquery and I wrote a possibly long-term solution
-          // natively
-          /* *
           // If there is no CSS width, calculate the parent container's width
           // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
           // So we need to find the first parent that is visible and use that width
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
-          var visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible';
-          var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
-          /* */
-
-          let $visibleParent = obj.spy || el.parent()
+          let visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible'
+          let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
+          // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
           // If one of parents of the image (and child of the found parent) has
@@ -2232,8 +2227,9 @@ Stratus.Internals.LoadImage = function (obj) {
       // Change the Source to be the desired path
       el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       el.addClass('loading')
-      if (obj.el.load) {
-        obj.el.load(function () {
+      if (el.load) {
+        el.load(function () {
+          console.log(el)
           el.addClass('loaded').removeClass('placeholder loading')
         })
       } else {
