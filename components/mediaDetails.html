@@ -89,11 +89,11 @@
           </ul>
         </div>
         <div class="mediaSpecs">
-          <p class="smallLabel">{{ $ctrl.media.time * 1000 | date:'MMM dd, yyyy h:mma'}}</p>
-          <p class="smallLabel">Type: <span>{{ $ctrl.media.mime=='video' ? 'Video' : $ctrl.media.extension }}</span></p>
-          <p class="smallLabel" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'">Size: <span>{{$ctrl.media.bytesHuman}}</span></p>
-          <p class="smallLabel" ng-if="$ctrl.media.ratio">Ratio: <span>{{$ctrl.media.ratio}}</span></p>
-          <p class="smallLabel" ng-if="$ctrl.media.service">Service: <span>{{ $ctrl.media.service }}</span></p>
+          <p class="smallLabel" ng-bind="$ctrl.media.time * 1000 | date:'MMM dd, yyyy h:mma'"></p>
+          <p class="smallLabel">Type: <span ng-bind="$ctrl.media.mime=='video' ? 'Video' : $ctrl.media.extension"></span></p>
+          <p class="smallLabel" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'">Size: <span ng-bind="$ctrl.media.bytesHuman"></span></p>
+          <p class="smallLabel" ng-if="$ctrl.media.ratio">Ratio: <span ng-bind="$ctrl.media.ratio"></span></p>
+          <p class="smallLabel" ng-if="$ctrl.media.service">Service: <span ng-bind="$ctrl.media.service"></span></p>
         </div>
         <div class="description" ng-if="!$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{
           $ctrl.selectedDesc.description || 'No description' }}
