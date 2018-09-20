@@ -4,7 +4,7 @@ const pump = require('pump')
 const concat = require('gulp-concat')
 // const debug = require('gulp-debug')
 const dest = require('gulp-dest')
-const terser = require('gulp-terser');
+const terser = require('gulp-terser')
 const del = require('del')
 const vinylPaths = require('vinyl-paths')
 const _ = require('underscore')
@@ -88,12 +88,14 @@ const location = {
     core: [
       'normalizers/*.js',
       'routers/*.js',
-      'services/*.js'
+      'services/*.js',
+      'legacy/**/*.js'
     ],
     min: [
       'normalizers/*.min.js',
       'routers/*.min.js',
-      'services/*.min.js'
+      'services/*.min.js',
+      'legacy/**/*.min.js'
     ]
   },
   preserve: {

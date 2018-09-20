@@ -6,11 +6,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular'], factory)
+    define(['stratus', 'underscore', 'jquery', 'angular'], factory)
   } else {
-    factory(root.Stratus, root._, root.angular)
+    factory(root.Stratus, root._, root.$, root.angular)
   }
-}(this, function (Stratus, _, angular) {
+}(this, function (Stratus, _, $, angular) {
   // This directive intends to handle binding of a dynamic variable to
   Stratus.Directives.Src = function ($parse, $interpolate) {
     return {
@@ -52,11 +52,11 @@
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,
-            spy: $element.data('spy') ? Stratus($element.data('spy')) : $element
+            spy: $element.data('spy') ? $($element.data('spy')) : $element
           }
+          Stratus.Internals.OnScroll()
           Stratus.RegisterGroup.add('OnScroll', $scope.group)
           Stratus.Internals.LoadImage($scope.group)
-          Stratus.Internals.OnScroll()
         }
 
         // Source Interpolation

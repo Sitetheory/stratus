@@ -19,9 +19,9 @@
     "url": "git://github.com/Sitetheory/stratus.git"
   },
   "dependencies": {
-    "angular": "^1.6.*",
+    "angular": "^1.7.*",
     "angular-chart.js": "^1.*",
-    "angular-froala": "^2.5.*",
+    "angular-froala": "^2.8.*",
     "angular-material": "^1.*",
     "angular-material-datetimepicker": "^1.5",
     "angular-paging": "^2.2.2",
@@ -39,7 +39,7 @@
     "font-awesome": "^5.0.0",
     "froala-wysiwyg-editor": "^2.8.*",
     "fullcalendar": "^2.*",
-    "jquery": "^2.*",
+    "jquery": "3.*",
     "js-md5": "md5#^0.4.1",
     "less": "2.7.3",
     "moment": "^2.*",
@@ -50,8 +50,7 @@
     "requirejs": "^2.*",
     "swiper": "^4.*",
     "text": "^2.*",
-    "underscore": "^1.*",
-    "zepto": "^1.2.0",
+    "underscore": "^1.9.*",
     "zxcvbn": "^4.4.2"
   },
   "resolutions": {

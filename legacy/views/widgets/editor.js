@@ -35,7 +35,7 @@
 
       // Libraries
       'stratus',
-      'zepto',
+      'jquery',
       'underscore',
       'codemirror',
 

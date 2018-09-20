@@ -229,6 +229,15 @@ _.mixin({
     }
   },
 
+  // This function dehydrates an Object, Boolean, or Null value, to a string.
+  /**
+   * @param value
+   * @returns {*}
+   */
+  dehydrate: function (value) {
+    return typeof value === 'string' ? value : JSON.stringify(value)
+  },
+
   // This function hydrates a string into an Object, Boolean, or Null value, if
   // applicable.
   /**

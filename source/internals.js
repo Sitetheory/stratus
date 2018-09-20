@@ -342,10 +342,19 @@ Stratus.Internals.CssLoader = function (url) {
  * @constructor
  */
 Stratus.Internals.GetColWidth = function (el) {
+  if (typeof el === 'undefined' || !el) {
+    return false
+  }
   var classes = el.attr('class')
+  if (typeof classes === 'undefined' || !classes) {
+    return false
+  }
   var regexp = /col-.{2}-([0-9]*)/g
   var match = regexp.exec(classes)
-  return (typeof match[1] !== 'undefined') ? match[1] : false
+  if (typeof match === 'undefined' || !match) {
+    return false
+  }
+  return typeof match[1] !== 'undefined' ? match[1] : false
 }
 
 // GetScrollDir()
@@ -356,14 +365,10 @@ Stratus.Internals.GetColWidth = function (el) {
  * @constructor
  */
 Stratus.Internals.GetScrollDir = function () {
-  /* *
-  var app = $('#app')
-  var viewPort = app[0] !== undefined ? app : $(window)
-  /* */
-  var windowTop = $(window).scrollTop()
+  var windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
   var lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
-  var windowHeight = $(window).height()
+  var windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
   var documentHeight = $(document).height()
   /* */
 
@@ -386,26 +391,34 @@ Stratus.Internals.GetScrollDir = function () {
  * @constructor
  */
 Stratus.Internals.IsOnScreen = function (el, offset) {
-  el = Stratus(el)
+  if (!el) {
+    return false
+  }
+  if (!(el instanceof $)) {
+    el = $(el)
+  }
+  if (!el.length) {
+    return false
+  }
   offset = offset || 0
-  var position = {
-    wt: document.body.scrollTop,
-    et: el.offset().top || null
-  }
-  /* *
-  if (!Stratus.Environment.get('production')) {
-    console.log('position:', position)
+  let pageTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
+  let pageBottom = pageTop + $(Stratus.Environment.get('viewPort') || window).height()
+  let elementTop = el.offset().top
+  let elementBottom = elementTop + el.height()
+  /* */
+  if (!Stratus.Environment.get('production') && offset) {
+    console.log('onScreen:', {
+      el: el,
+      pageTop: pageTop,
+      pageBottom: pageBottom,
+      elementTop: elementTop,
+      elementBottom: elementBottom,
+      offset: offset
+    },
+    elementTop <= (pageBottom - offset) && elementBottom >= (pageTop + offset))
   }
   /* */
-  position.wb = position.wt + document.body.offsetHeight
-  position.eb = el.height() + (position.et || 0)
-  /* *
-  if (!Stratus.Environment.get('production')) {
-    console.log('OnScreen:', el, position.eb >= (position.wt + offset) && position.et <= (position.wb - offset))
-  }
-  /* */
-  return position.eb >= (position.wt + offset) && position.et <=
-    (position.wb - offset)
+  return elementTop <= (pageBottom - offset) && elementBottom >= (pageTop + offset)
 }
 
 // Internal CSS Loader
@@ -486,39 +499,56 @@ Stratus.Internals.LoadEnvironment = function () {
  * @constructor
  */
 Stratus.Internals.LoadImage = function (obj) {
-  var el = Stratus(obj.el)
-  el.addClass('placeholder')
-  if (Stratus.Internals.IsOnScreen(obj.spy) && !el.attr('data-loading')) {
-    el.attr('data-loading', true)
+  if (!obj.el) {
+    setTimeout(function () {
+      Stratus.Internals.LoadImage(obj)
+    }, 500)
+    return false
+  }
+  let el = obj.el instanceof $ ? obj.el : $(obj.el)
+  if (!el.length) {
+    setTimeout(function () {
+      Stratus.Internals.LoadImage(obj)
+    }, 500)
+    return false
+  }
+  if (!el.hasClass('placeholder')) {
+    el.addClass('placeholder')
+    el.on('load', function () {
+      el.removeClass('placeholder')
+    })
+  }
+  if (Stratus.Internals.IsOnScreen(obj.spy || el) && !_.hydrate(el.attr('data-loading'))) {
+    el.attr('data-loading', _.dehydrate(true))
     Stratus.DOM.complete(function () {
       // By default we'll load larger versions of an image to look good on HD
       // displays, but if you don't want that, you can bypass it with
       // data-hd="false"
-      var hd = el.attr('data-hd')
+      let hd = _.hydrate(el.attr('data-hd'))
       if (typeof hd === 'undefined') {
         hd = true
       }
 
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
-      var src = el.attr('data-src')
+      let src = _.hydrate(el.attr('data-src'))
 
       // Handle precedence
       if (!src || src === 'lazy') {
         src = el.attr('src')
       }
 
-      var size = null
+      let size = null
 
       // if a specific valid size is requested, use that
       // FIXME: size.indexOf should never return anything useful
-      if (el.attr('data-size') &&
-        size.indexOf(el.attr('data-size')) !== false) {
-        size = el.attr('data-size')
+      if (_.hydrate(el.attr('data-size')) &&
+        size.indexOf(_.hydrate(el.attr('data-size'))) !== false) {
+        size = _.hydrate(el.attr('data-size'))
       } else {
-        var width = null
-        var unit = null
-        var percentage = null
+        let width = null
+        let unit = null
+        let percentage = null
 
         if (el.width()) {
           // Check if there is CSS width hard coded on the element
@@ -529,7 +559,7 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // Digest Width Attribute
         if (width) {
-          var digest = /([\d]+)(.*)/
+          const digest = /([\d]+)(.*)/
           width = digest.exec(width)
           unit = width[2]
           width = parseInt(width[1])
@@ -539,19 +569,14 @@ Stratus.Internals.LoadImage = function (obj) {
         // FIXME: This should only happen if the CSS has completely loaded.
         // Gather Container (Calculated) Width
         if (!width || unit === '%') {
-          // FIXME: This is jquery and I wrote a possibly long-term solution
-          // natively
-          /* *
-              // If there is no CSS width, calculate the parent container's width
-              // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
-              // So we need to find the first parent that is visible and use that width
-              // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
-              // so in some cases we need to flag to find the parent regardless of invisibility.
-              var visibilitySelector = el.attr('data-ignorevisibility') ? null : ':visible';
-              var $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)));
-              /* */
-
-          var $visibleParent = el.parent()
+          // If there is no CSS width, calculate the parent container's width
+          // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
+          // So we need to find the first parent that is visible and use that width
+          // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
+          // so in some cases we need to flag to find the parent regardless of invisibility.
+          let visibilitySelector = _.hydrate(el.attr('data-ignorevisibility')) ? null : ':visible'
+          let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
+          // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
           // If one of parents of the image (and child of the found parent) has
@@ -574,8 +599,8 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // If no appropriate width was found, abort
         if (width <= 0) {
-          el.attr('data-loading', false)
           setTimeout(function () {
+            el.attr('data-loading', _.dehydrate(false))
             Stratus.Internals.LoadImage(obj)
           }, 500)
           return false
@@ -588,31 +613,41 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // Return the first size that is bigger than container width
         size = _.findKey(Stratus.Settings.image.size, function (s) {
-          var ratio = s / width
-          return ((ratio > 0.85 && ratio < 1.15) || s > width)
+          let ratio = s / width
+          return (ratio > 0.85 && ratio < 1.15) || s > width
         })
 
         // default to largest size if the container is larger and it didn't
         // find a size
         size = size || 'hq'
+
+        /* *
+        if (!Stratus.Environment.get('production')) {
+          console.log('size:', size, width, el)
+        }
+        /* */
+
+        // Fail-safe for images that are sized too early
+        if (size === 'xs') {
+          setTimeout(function () {
+            el.attr('data-loading', _.dehydrate(false))
+            Stratus.Internals.LoadImage(obj)
+          }, 1500)
+        }
       }
 
       // Change Source to right size (get the base and extension and ignore
       // size)
-      var srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-      var srcMatch = srcRegex.exec(src)
+      const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+      let srcMatch = srcRegex.exec(src)
       src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
 
       // Change the Source to be the desired path
       el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       el.addClass('loading')
-      if (obj.el.load) {
-        obj.el.load(function () {
-          el.addClass('loaded').removeClass('placeholder loading')
-        })
-      } else {
-        el.addClass('loaded').removeClass('placeholder loading')
-      }
+      el.on('load', function () {
+        el.addClass('loaded').removeClass('loading')
+      })
 
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
@@ -674,22 +709,14 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
           obj.method(obj)
         }
       })
-      /* *
-      var app = $('#app')
-      var viewPort = app[0] !== undefined ? app : $(window)
-      /* */
       model.set('viewPortChange', false)
-      model.set('windowTop', $(window).scrollTop())
+      model.set('windowTop', $(Stratus.Environment.get('viewPort') || window).scrollTop())
     }
   })
 
   // jQuery Binding
   if (typeof $ === 'function' && $.fn) {
-    /* *
-    var app = $('#app')
-    var viewPort = app[0] !== undefined ? app : $(window)
-    /* */
-    $(window).scroll(function () {
+    $(Stratus.Environment.get('viewPort') || window).scroll(function () {
       /* *
       if (!Stratus.Environment.get('production')) {
         console.log('scrolling:', Stratus.Internals.GetScrollDir())
@@ -701,7 +728,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
     })
 
     // Resizing can change what's on screen so we need to check the scrolling
-    $(window).resize(function () {
+    $(Stratus.Environment.get('viewPort') || window).resize(function () {
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
