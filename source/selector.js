@@ -65,9 +65,9 @@ Stratus.Selector.attr = function (attr, value) {
   } else if (attr) {
     if (typeof value === 'undefined') {
       value = that.selection.getAttribute(attr)
-      return _.isJSON(value) ? JSON.parse(value) : value
+      return _.hydrate(value)
     } else {
-      that.selection.setAttribute(attr, typeof value === 'string' ? value : JSON.stringify(value))
+      that.selection.setAttribute(attr, _.dehydrate(value))
     }
   }
   return that

@@ -43,10 +43,13 @@
         // event can be multiple listeners: reset
         const event = attrs.event ? attrs.event.split(' ') : []
         const target = attrs.target ? $(attrs.target) : element
-        const spy = attrs.spy ? $(attrs.spy) : element
+        let spy = attrs.spy ? $(attrs.spy) : element
+        if (!spy.length) {
+          spy = element
+        }
 
         // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
-        const offset = attrs.offset || 0
+        const offset = _.hydrate(attrs.offset || 0)
 
         // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
         const reset = attrs.reset || 0
@@ -65,67 +68,59 @@
 
         // Bind Angular to Environment
         Stratus.Environment.on('change:viewPortChange', function (model) {
-          // If no scrolling has occurred remain false
-          let lastScroll = Stratus.Environment.get('lastScroll')
-
-          let isReset = false
-
           // Reset
           if (event.indexOf('reset') !== -1) {
             // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
-            if ((reset > 0 && Stratus(element).offset().top <= reset) || $(window).scrollTop() <= 0) {
-              isReset = true
-              target.removeClass('onScreen offScreen scrollUp scrollDown reveal unreveal')
+            if ((reset > 0 && $(element).offset().top <= reset) || $(window).scrollTop() <= 0) {
+              target.removeClass('onScreen offScreen ascend descend')
+            }
+          }
+        })
+        Stratus.Environment.on('change:lastScroll', function (model) {
+          // If no scrolling has occurred remain false
+          let lastScroll = Stratus.Environment.get('lastScroll')
+
+          // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
+          if (lastScroll === 'down') {
+            if (!target.hasClass('descend')) {
+              target.addClass('descend')
+            }
+            if (target.hasClass('ascend')) {
+              target.removeClass('ascend')
             }
           }
 
-          // don't detect anything else if it's reset
-          if (!isReset) {
-            // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
-            if (lastScroll === 'down') {
-              target.addClass('scrollDown')
-            } else {
-              target.removeClass('scrollDown')
+          if (lastScroll === 'up') {
+            if (!target.hasClass('ascend')) {
+              target.addClass('ascend')
             }
-            if (lastScroll === 'up') {
-              target.addClass('scrollUp')
-            } else {
-              target.removeClass('scrollUp')
+            if (target.hasClass('descend')) {
+              target.removeClass('descend')
             }
+          }
 
-            // Headers that use this to reveal when offscreen, need to know when to trigger the 'retract' which
-            // should happen only when it's already open (.offScreen.scrollUp and then you are scrolling down).
-            // You can't just make the retract animation happen '.offScreen.scrollDown' because that happens
-            // immediately when you scroll down from the header, which triggers a retract before the reveal has
-            // engaged the header to begin with, which makes an odd pop open then close.
-            // So we really need to add a class ONLY if the reveal class was there.
-            if (lastScroll === 'down' && target.hasClass('reveal')) {
-              target.removeClass('reveal').addClass('unreveal')
-            } else if (lastScroll === 'up') {
-              target.removeClass('unreveal').addClass('reveal')
+          if (Stratus.Internals.IsOnScreen(spy, offset)) {
+            // Add init class so we can know it's been on screen before
+            if (!target.hasClass('onScreen')) {
+              target.addClass('onScreen onScreenInit')
             }
 
-            // If you want to reveal the opposite direction (e.g. a footer)
-            if (lastScroll === 'up' && target.hasClass('revealDown')) {
-              target.removeClass('revealDown').addClass('unrevealDown')
-            } else if (lastScroll === 'down') {
-              target.removeClass('unrevealDown').addClass('revealDown')
+            if (target.hasClass('offScreen')) {
+              target.removeClass('offScreen')
             }
 
-            if (Stratus.Internals.IsOnScreen(spy, offset)) {
-              // Add init class so we can know it's been on screen before
-              // remove the reveal/unreveal classes that are used for elements revealed when something is offscreen
-              /*  'reveal unreveal' */
-              target.removeClass('offScreen').addClass('onScreen onScreenInit')
-
-              // Execute Custom Methods
-              onScreen()
-            } else {
-              target.removeClass('onScreen').addClass('offScreen')
-
-              // Execute Custom Methods
-              offScreen()
+            // Execute Custom Methods
+            onScreen()
+          } else {
+            if (target.hasClass('onScreen')) {
+              target.removeClass('onScreen')
             }
+            if (!target.hasClass('offScreen')) {
+              target.addClass('offScreen')
+            }
+
+            // Execute Custom Methods
+            offScreen()
           }
 
           /* *
