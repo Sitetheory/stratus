@@ -14,7 +14,8 @@
     Stratus.Controllers.SelectMainRoute = [
         '$scope',
         '$mdDialog',
-        function ($scope, $mdDialog) {
+        '$location',
+        function ($scope, $mdDialog,$location) {
             // Store Instance
             Stratus.Instances[_.uniqueId('select_main_route_')] = $scope
 
@@ -24,7 +25,10 @@
 
             // list route is got from server;
             $scope.routes = []
-            $scope.routeMessage = false;
+            $scope.routeEmptyMessage = false;
+            $scope.routeUniqueMessage = false;
+            $scope.routeRegularEmpMessage = false;
+            $scope.selectedId = 0;
             // the id of main route
             $scope.mainRoute = 0
             $scope.setAsHomePage = function (model, $event) {
@@ -37,49 +41,49 @@
                 $mdDialog.show(confirm).then(function () {
                     model.data.main = true;
                     model.save();
-                    model.data.routing.push({'homePage':true});
+                    model.data.routing.push({'homePage': true});
                 }, function () {
                     return false;
                 });
             }
 
             // Data Connectivity
-            $scope.$watch('model.data.routing', function (routing) {
-                if (routing) {
-                    $scope.routes = routing
+            $scope.$watch('model.data', function (routings) {
+                if (routings.routing) {
+                    var count = 1
+                    var resetRouting = []
+                    for (var i = 0; i < routings.routing.length; i++) {
+                        if (routings.routing[i] && routings.routing[i].main === true) {
+                            resetRouting[0] = routings.routing[i];
+                        } else {
+                            resetRouting[count] = routings.routing[i]
+                            count++
+                        }
+                    }
+                    routings.routing = resetRouting
+                    $scope.routes = routings.routing
                     angular.forEach($scope.routes, function (route) {
                         if (route.main) {
                             $scope.mainRoute = route.id
                         }
                     })
-                    // var count=1;
-                    //     var resetRouting = [];
-                    //     for(var i=0;i < data.routing.length;i++){
-                    //         if(data.routing[i] && data.routing[i].main === true){
-                    //             resetRouting[0] = data.routing[i];
-                    //         }else{
-                    //             resetRouting[count] = data.routing[i];
-                    //             count++;
-                    //         }
-                    //     }
-                    //     data.routing = resetRouting;
                 }
             })
-            $scope.update = function () {
-                angular.forEach($scope.routes, function (route) {
+            $scope.update = function (model) {
+                angular.forEach($scope.routes, function () {
                     route.main = (route.id === $scope.mainRoute)
                 })
                 return $scope.routes
             }
-            $scope.removeEmptyRoute = function (model,$event,$index){
-                if(model.data.routing[$index].url && model.data.routing[$index].url != undefined){
+            $scope.removeEmptyRoute = function (model, $event, $index) {
+                if (model.data.routing[$index] != undefined && model.data.routing[$index].url && model.data.routing[$index].url != undefined) {
                     var alias = model.data.routing[$index].url;
-                }else{
+                } else {
                     var alias = '';
                 }
                 var confirm = $mdDialog.confirm()
                     .title('Delete Route')
-                    .textContent("Are you sure you want to remove friendly URL alias  '/"+alias+"'  from this page ? ")
+                    .textContent("Are you sure you want to remove the friendly URL alias  '/" + alias + "'  from this page? ")
                     .targetEvent($event)
                     .ok('Confirm')
                     .cancel('Cancel');
@@ -91,13 +95,50 @@
                     return false;
                 });
             }
-            $scope.checkEmptyRoute = function (model,$event) {
-                var lastUrl = model.data.routing[(model.data.routing.length) - 1].url;
+            /*Validation of urls */
+            $scope.checkEmptyRoute = function (model, $event) {
+                var lastUrl = $event.$parent.route.url;
                 var isMain = model.data.main;
-                if(lastUrl === '' && isMain === true){
-                    $scope.routeMessage = true;
+                if (lastUrl === '' && isMain === true) {
+                    $scope.routeEmptyMessage = true;
+                } else {
+                    $scope.routeEmptyMessage = false;
+                    var uniqueValidation = $scope.checkUniqueRoute(model, $event);
+                    if(uniqueValidation === true){
+                        $scope.routeEmptyMessage = true;
+                        $scope.selectedId = $event.$parent.route.uid;
+                    }else{
+                        $scope.routeEmptyMessage = false;
+                        $scope.selectedId = $event.$parent.route.uid;
+                        var patternValidation = $scope.checkPattern($event);
+                        if(patternValidation === true){
+                            $scope.routeRegularEmpMessage = true;
+                            $scope.selectedIds = $event.$parent.route.uid;
+                        }else{
+                            $scope.routeRegularEmpMessage = false;
+                            $scope.selectedIds = $event.$parent.route.uid;
+                        }
+                    }
+                }
+
+            }
+            $scope.checkUniqueRoute = function (model, $event) {
+
+                var valueArr = model.data.routing.map(function(item){ return item.url });
+                var isDuplicate = valueArr.some(function(item, idx){
+                    if(valueArr.indexOf(item) != idx){
+                        $scope.selectedIds = $event.$parent.route.uid;
+                    }
+                    return valueArr.indexOf(item) != idx
+                });
+                return isDuplicate;
+            }
+            $scope.checkPattern = function ($event) {
+               var patt = /^([a-z0-9]+)([a-z0-9\_\/\~\.\-])*([a-z0-9]+)$/i;
+                if(patt.test($event.$parent.route.url)){
+                    return false;
                 }else{
-                    $scope.routeMessage = false;
+                    return true;
                 }
             }
         }]

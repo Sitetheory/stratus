@@ -110,11 +110,11 @@
                   that.changed = !angular.equals(newData, that.initData)
                   if ((newData.id && newData.id !== priorData.id) ||
                     that.isNewVersion(newData)) {
-                    window.location.replace(
-                      Stratus.Internals.SetUrlParams({
-                        id: newData.id
-                      })
-                    )
+                    // window.location.replace(
+                    //   Stratus.Internalsz.SetUrlParams({
+                    //     id: newData.id
+                    //   })
+                    // )
                   }
                   that.patch = _.extend(that.patch, patch)
                 }
@@ -233,17 +233,6 @@
                       that.data = _.first(convoy)
                       that.error = false
                     } else if (angular.isObject(convoy) && !angular.isArray(convoy)) {
-                        var count=1
-                        var resetRouting = []
-                        for(var i=0;i < convoy.routing.length;i++){
-                            if(convoy.routing[i] && convoy.routing[i].main === true){
-                                resetRouting[0] = convoy.routing[i]
-                            }else{
-                                resetRouting[count] = convoy.routing[i]
-                                count++
-                            }
-                        }
-                        convoy.routing = resetRouting
                       that.data = convoy
                       that.error = false
                     } else {
