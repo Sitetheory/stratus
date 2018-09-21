@@ -1982,19 +1982,19 @@ Stratus.Internals.GetColWidth = function (el) {
  * @constructor
  */
 Stratus.Internals.GetScrollDir = function () {
-  var windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
-  var lastWindowTop = Stratus.Environment.get('windowTop')
+  let windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
+  let lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
-  var windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
-  var documentHeight = $(document).height()
+  let windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
+  let documentHeight = $(document).height()
   /* */
 
   // return NULL if there is no scroll, otherwise up or down
-  var down = lastWindowTop ? (windowTop > lastWindowTop) : false
+  let down = lastWindowTop ? (windowTop > lastWindowTop) : false
   /* *
-  var up = lastWindowTop ? (windowTop < lastWindowTop && (windowTop + windowHeight) < documentHeight) : false
+  let up = lastWindowTop ? (windowTop < lastWindowTop && (windowTop + windowHeight) < documentHeight) : false
   /* */
-  var up = lastWindowTop ? (windowTop < lastWindowTop) : false
+  let up = lastWindowTop ? (windowTop < lastWindowTop) : false
   return down ? 'down' : (up ? 'up' : false)
 }
 
@@ -2004,10 +2004,11 @@ Stratus.Internals.GetScrollDir = function () {
 /**
  * @param el
  * @param offset
+ * @param partial
  * @returns {boolean}
  * @constructor
  */
-Stratus.Internals.IsOnScreen = function (el, offset) {
+Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   if (!el) {
     return false
   }
@@ -2018,11 +2019,14 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
     return false
   }
   offset = offset || 0
+  if (typeof partial !== 'boolean') {
+    partial = true
+  }
   let pageTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
   let pageBottom = pageTop + $(Stratus.Environment.get('viewPort') || window).height()
   let elementTop = el.offset().top
   let elementBottom = elementTop + el.height()
-  /* */
+  /* *
   if (!Stratus.Environment.get('production') && offset) {
     console.log('onScreen:', {
       el: el,
@@ -2035,7 +2039,9 @@ Stratus.Internals.IsOnScreen = function (el, offset) {
     elementTop <= (pageBottom - offset) && elementBottom >= (pageTop + offset))
   }
   /* */
-  return elementTop <= (pageBottom - offset) && elementBottom >= (pageTop + offset)
+  pageTop = pageTop + offset
+  pageBottom = pageBottom - offset
+  return partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
 }
 
 // Internal CSS Loader

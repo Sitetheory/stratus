@@ -72,7 +72,7 @@
           if (event.indexOf('reset') !== -1) {
             // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
             if ((reset > 0 && $(element).offset().top <= reset) || $(window).scrollTop() <= 0) {
-              target.removeClass('onScreen offScreen ascend descend')
+              target.removeClass('onScreen offScreen scrollUp scrollDown ascend descend')
             }
           }
         })
@@ -82,20 +82,20 @@
 
           // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
           if (lastScroll === 'down') {
-            if (!target.hasClass('descend')) {
-              target.addClass('descend')
+            if (!target.hasClass('scrollDown')) {
+              target.addClass('scrollDown')
             }
-            if (target.hasClass('ascend')) {
-              target.removeClass('ascend')
+            if (target.hasClass('scrollUp')) {
+              target.removeClass('scrollUp')
             }
           }
 
           if (lastScroll === 'up') {
-            if (!target.hasClass('ascend')) {
-              target.addClass('ascend')
+            if (!target.hasClass('scrollUp')) {
+              target.addClass('scrollUp')
             }
-            if (target.hasClass('descend')) {
-              target.removeClass('descend')
+            if (target.hasClass('scrollDown')) {
+              target.removeClass('scrollDown')
             }
           }
 
