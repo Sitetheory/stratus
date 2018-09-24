@@ -31,6 +31,7 @@
         offScreen: '@offScreen',
         spy: '@spy',
         target: '@target',
+        scrollChange: '@scrollChange',
         event: '@event', // event can be multiple listeners: reset
         offset: '@offset', // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
         reset: '@reset' // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
@@ -66,14 +67,45 @@
         // Ensure OnScroll is listening
         Stratus.Internals.OnScroll()
 
+        const isOnScreen = function () {
+          if (Stratus.Internals.IsOnScreen(spy, offset)) { // TODO: Move this part to a function so it can be either on scroll change or constant
+            // Add init class so we can know it's been on screen before
+            if (!target.hasClass('onScreen')) {
+              target.addClass('onScreen onScreenInit')
+            }
+
+            if (target.hasClass('offScreen')) {
+              target.removeClass('offScreen')
+            }
+
+            // Execute Custom Methods
+            onScreen()
+          } else {
+            if (target.hasClass('onScreen')) {
+              target.removeClass('onScreen')
+            }
+            if (!target.hasClass('offScreen')) {
+              target.addClass('offScreen')
+            }
+
+            // Execute Custom Methods
+            offScreen()
+          }
+        }
+
         // Bind Angular to Environment
         Stratus.Environment.on('change:viewPortChange', function (model) {
           // Reset
+          let isReset = false
           if (event.indexOf('reset') !== -1) {
             // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
             if ((reset > 0 && $(element).offset().top <= reset) || $(window).scrollTop() <= 0) {
+              isReset = true
               target.removeClass('onScreen offScreen scrollUp scrollDown ascend descend')
             }
+          }
+          if (!isReset && !_.hydrate(attrs.scrollChange)) {
+            isOnScreen()
           }
         })
         Stratus.Environment.on('change:lastScroll', function (model) {
@@ -99,28 +131,8 @@
             }
           }
 
-          if (Stratus.Internals.IsOnScreen(spy, offset)) {
-            // Add init class so we can know it's been on screen before
-            if (!target.hasClass('onScreen')) {
-              target.addClass('onScreen onScreenInit')
-            }
-
-            if (target.hasClass('offScreen')) {
-              target.removeClass('offScreen')
-            }
-
-            // Execute Custom Methods
-            onScreen()
-          } else {
-            if (target.hasClass('onScreen')) {
-              target.removeClass('onScreen')
-            }
-            if (!target.hasClass('offScreen')) {
-              target.addClass('offScreen')
-            }
-
-            // Execute Custom Methods
-            offScreen()
+          if (_.hydrate(attrs.scrollChange)) {
+            isOnScreen()
           }
 
           /* *

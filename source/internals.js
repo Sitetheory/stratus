@@ -540,7 +540,7 @@ Stratus.Internals.LoadImage = function (obj) {
       let src = _.hydrate(el.attr('data-src'))
 
       // Handle precedence
-      if (!src || src === 'lazy') {
+      if (!src || src === 'lazy' || _.isEmpty(src)) {
         src = el.attr('src')
       }
 
@@ -646,10 +646,16 @@ Stratus.Internals.LoadImage = function (obj) {
       // size)
       const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
       let srcMatch = srcRegex.exec(src)
-      src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
+      if (srcMatch !== null) {
+        src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
+      } else {
+        console.error('Unable to find src for image:', el)
+      }
 
       // Change the Source to be the desired path
-      el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
+      if (!_.isEmpty(src)) {
+        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
+      }
       el.addClass('loading')
       el.on('load', function () {
         el.addClass('loaded').removeClass('loading')
