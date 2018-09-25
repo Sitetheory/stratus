@@ -43,7 +43,9 @@
             getMedia: getMedia,
             fileUploader: fileUploader,
             saveMediaUrl: saveMediaUrl,
-            fetchOneMedia: fetchOneMedia
+            fetchOneMedia: fetchOneMedia,
+            getThumbnailImgOfVideo: getThumbnailImgOfVideo,
+            getYouTubeID: getYouTubeID
           }
 
           function dragenter (event) {
@@ -142,6 +144,34 @@
 
             return file
           }
+
+          function getThumbnailImgOfVideo (data) {
+            let defaultThumbnail = 'https://img.youtube.com/vi/default.jpg';
+            if (data.service === 'youtube') {
+              return 'https://img.youtube.com/vi/' + getYouTubeID(data.file) + '/0.jpg'
+            } else if (data.service === 'vimeo' && data.meta.thumbnail_medium) {
+                return data.meta.thumbnail_medium
+            } else {
+              // use default image
+              return defaultThumbnail
+            }
+          }
+
+          function getYouTubeID (url) {
+            /*var ID = ''
+            url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)
+            if (url[2] !== undefined) {
+              ID = url[2].split(/[^0-9a-z_]/i)
+              ID = ID[0]
+            } else {
+              ID = url
+            }
+            return ID*/
+            var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+            var match = url.match(regExp);
+            return (match && match[7].length==11)? match[7] : '';
+          }
+
         }
       ])
     }]

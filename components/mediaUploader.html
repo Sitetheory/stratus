@@ -149,6 +149,10 @@
                   </div>
                 </div>
 
+                <div layout-gt-sm="row" ng-if="video.thumbnailUrl">
+                  <img ng-src="{{video.thumbnailUrl}}">
+                </div>
+
                 <div layout-gt-sm="row">
                   <md-button type="submit" class="btn gradientAnchor md-button md-ink-ripple">Save</md-button>
                   <md-button ng-if="$ctrl.videos.length > 1" class="btn gradientAnchor md-button md-ink-ripple"
