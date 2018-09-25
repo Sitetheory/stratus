@@ -68,7 +68,6 @@
         $ctrl.toggleLibrary = toggleLibrary
         $ctrl.addOrRemoveFile = addOrRemoveFile
         $ctrl.removeFromSelected = removeFromSelected
-        $ctrl.getThumbnailImgOfVideo = getThumbnailImgOfVideo
         // fetch media collection and hydrate to $scope.collection
         $ctrl.registry = new Registry()
         $ctrl.registry.fetch({
@@ -82,35 +81,16 @@
         }, $scope)
       }
 
+      $scope.getThumbnailImgOfVideo = function (mediaData) {
+        mediaData.thumbnail = media.getThumbnailImgOfVideo(mediaData.data)
+      }
+
       function toggleLibrary () {
         if (!$ctrl.showLibrary) {
           $ctrl.showLibrary = true
         } else {
           $ctrl.showLibrary = false
         }
-      }
-
-      function getThumbnailImgOfVideo (fileData) {
-        if (fileData.service === 'youtube') {
-          return 'https://img.youtube.com/vi/' + getYouTubeID(fileData.file) + '/0.jpg'
-        } else if (fileData.service === 'vimeo') {
-          return 'https://i.vimeocdn.com/video/' + getVimeoID(fileData.file) + '_150x150.jpg'
-        } else {
-          // use default image
-          return 'https://img.youtube.com/vi/default.jpg'
-        }
-      }
-
-      function getYouTubeID (url) {
-        var ID = ''
-        url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)
-        if (url[2] !== undefined) {
-          ID = url[2].split(/[^0-9a-z_]/i)
-          ID = ID[0]
-        } else {
-          ID = url
-        }
-        return ID
       }
 
       function getVimeoID (url) {
