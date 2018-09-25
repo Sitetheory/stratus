@@ -84,6 +84,8 @@
             isUploaded: false
           }
         ]
+        $ctrl.unsavedVideos = false
+        
         $ctrl.links = [
           {
             service: $ctrl.services.link[0],
@@ -106,7 +108,30 @@
         uploadFiles($ctrl.draggedFiles, $ctrl.invalidFiles)
       }
 
+      $scope.$watch('$ctrl.videos', function(newValue, oldValue){
+        if(newValue != oldValue){
+          $ctrl.unsavedVideos = true
+        }
+      }, true)
+
+
       function done () {
+        if(!$ctrl.unsavedVideos) {
+          closeDialog()
+        } else {
+          var confirm = $mdDialog.confirm()
+            .title('You have not saved the video information you entered.')
+            .textContent('Are you sure you want to abandon this video before saving?')
+            .ok('Abandon Video')
+            .cancel('Cancel')
+            .multiple(true)
+          $mdDialog.show(confirm).then(function() {
+            closeDialog()
+          })
+        }
+      }
+
+      function closeDialog () {
         $mdDialog.hide($ctrl.files)
       }
 
