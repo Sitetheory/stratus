@@ -33,6 +33,7 @@
         target: '@target',
         partial: '@partial', // by default: true
         update: '@update', // by default: 100 ms
+        animation: '@animation', // by default: none
         event: '@event', // event can be multiple listeners: reset
         offset: '@offset', // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
         reset: '@reset' // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
@@ -58,9 +59,14 @@
         if (typeof update !== 'number') {
           update = 100
         }
+        let animation = _.hydrate(attrs.animation)
+        if (typeof animation !== 'number') {
+          animation = false
+        }
         let lastUpdate = 0
         let isWaiting = false
         let wasOnScreen = false
+        let wipeJob = false
 
         // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
         let offset = _.hydrate(attrs.offset) || 0
@@ -78,7 +84,7 @@
         }
         let isOnScreen = function () {
           if (isWaiting) {
-            return
+            return wasOnScreen
           }
           let calculation = (new Date()).getTime()
           if (calculation - lastUpdate > update) {
@@ -92,6 +98,21 @@
             }, ((lastUpdate + update) - calculation) + 1)
           }
           return wasOnScreen
+        }
+        let wipe = function (request) {
+          if (!animation) {
+            return
+          }
+          if (_.isUndefined(request)) {
+            if (wipeJob) {
+              clearTimeout(wipeJob)
+            }
+            wipeJob = setTimeout(function () {
+              wipe(true)
+            }, animation)
+          } else {
+            target.removeClass('reveal conceal')
+          }
         }
 
         // Bind Angular to Environment
@@ -139,6 +160,15 @@
             if (target.hasClass('scrollUp')) {
               target.removeClass('scrollUp')
             }
+            if (animation && Stratus.Internals.IsOnScreen(spy, offset, partial)) {
+              if (target.hasClass('reveal')) {
+                target.removeClass('reveal')
+              }
+              if (!target.hasClass('conceal')) {
+                target.addClass('conceal')
+              }
+              wipe()
+            }
           }
 
           if (lastScroll === 'up') {
@@ -150,6 +180,15 @@
             }
             if (target.hasClass('reset')) {
               target.removeClass('reset')
+            }
+            if (animation) {
+              if (!target.hasClass('reveal')) {
+                target.addClass('reveal')
+              }
+              if (target.hasClass('conceal')) {
+                target.removeClass('conceal')
+              }
+              wipe()
             }
           }
         })

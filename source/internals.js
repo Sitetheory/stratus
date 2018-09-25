@@ -409,21 +409,23 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   let pageBottom = pageTop + $(Stratus.Environment.get('viewPort') || window).height()
   let elementTop = el.offset().top
   let elementBottom = elementTop + el.height()
-  /* *
-  if (!Stratus.Environment.get('production') && offset) {
-    console.log('onScreen:', {
-      el: el,
-      pageTop: pageTop,
-      pageBottom: pageBottom,
-      elementTop: elementTop,
-      elementBottom: elementBottom,
-      offset: offset
-    },
-    elementTop <= (pageBottom - offset) && elementBottom >= (pageTop + offset))
-  }
-  /* */
   pageTop = pageTop + offset
   pageBottom = pageBottom - offset
+  /* *
+  if (!Stratus.Environment.get('production') && offset) {
+    console.log('onScreen:',
+      {
+        el: el,
+        pageTop: pageTop,
+        pageBottom: pageBottom,
+        elementTop: elementTop,
+        elementBottom: elementBottom,
+        offset: offset
+      },
+      partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
+    )
+  }
+  /* */
   return partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
 }
 
