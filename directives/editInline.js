@@ -229,7 +229,13 @@
                   switch (event.type) {
                     case 'focusout':
                     case 'blur':
-                      $scope.$apply($scope.accept)
+                      /// below code will attached stratus route main if user try to create new article route
+                        if($scope.model.target === 'Article'){
+                            $scope.model.data.routing.push({'url':$scope.value,'main':true});
+                            $scope.model.save();
+                        }else{
+                            $scope.$apply($scope.accept)
+                        }
                       break
                   }
                 }
