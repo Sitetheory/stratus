@@ -25,9 +25,11 @@
         }, function (newValue) {
           if (typeof newValue !== 'undefined') {
             $scope.trigger = $parse($attrs.stratusTrigger)
+            console.log($scope.trigger);
           }
         })
         $scope.$watch(function () {
+          console.log(ngModel.$modelValue)
           return ngModel.$modelValue
         }, function (newValue) {
           if (typeof newValue !== 'undefined' && $scope.trigger) {

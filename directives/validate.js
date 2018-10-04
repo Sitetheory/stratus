@@ -93,7 +93,7 @@
           // return a value to display to user
           return ngModelValue
         }
-
+        console.log(checkValues)
         $ctrl.$parsers.push(checkValues)
       }
     }

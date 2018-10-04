@@ -111,6 +111,8 @@
             scope.property &&
             scope.model.get(scope.property) !== scope.value
           ) {
+            console.log(scope.property)
+            console.log(scope.value)
             scope.model.set(scope.property, scope.value)
             if (!scope.$root.$$phase) {
               scope.$apply()
@@ -148,6 +150,7 @@
 
           scope.$watch('model.data.' + scope.property, function (data) {
             scope.value = data
+            console.log(scope.value)
             ngModel.$render() // if the value changes, show the new change (since rendering doesn't always happen)
           })
 
@@ -287,7 +290,7 @@
           if (specialTag) {
             var attributeNodes = element[0].attributes
             var attrs = {}
-
+            console.log(attributeNodes);
             for (var i = 0; i < attributeNodes.length; i++) {
               var attrName = attributeNodes[i].name
               if (ctrl.options.angularIgnoreAttrs && ctrl.options.angularIgnoreAttrs.indexOf(attrName) !== -1) {
@@ -299,13 +302,14 @@
               attrs[innerHtmlAttr] = element[0].innerHTML
             }
             modelContent = attrs
+            console.log(modelContent);
           } else {
             var returnedHtml = element.froalaEditor('html.get')
             if (angular.isString(returnedHtml)) {
               modelContent = returnedHtml
             }
           }
-
+          console.log('modelContent',modelContent)
           scope.value = modelContent
           scope.settle()
         }
@@ -337,6 +341,8 @@
         scope.$watch('ngModel', function (data) {
           if (data instanceof Model && !_.isEqual(data, scope.model)) {
             scope.model = data
+            console.log(scope.model)
+            console.log(ctrl.initialized)
             if (ctrl.initialized !== true) {
               var unwatch = scope.$watch('model.data', function (dataCheck) {
                 if (dataCheck !== undefined) {
