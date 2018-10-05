@@ -37,7 +37,7 @@
       draggedFiles: '<',
       invalidFiles: '<'
     },
-    controller: function ($q, $scope, $attrs, $mdDialog, utility, media) {
+    controller: function ($http, $sce, $q, $scope, $attrs, $mdDialog, utility, media) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'media_uploader',
         true)
@@ -81,9 +81,12 @@
             tags: [],
             mime: 'video',
             description: null,
-            isUploaded: false
+            isUploaded: false,
+            thumbnailUrl: ''
           }
         ]
+        $ctrl.unsavedVideos = false
+
         $ctrl.links = [
           {
             service: $ctrl.services.link[0],
@@ -106,7 +109,29 @@
         uploadFiles($ctrl.draggedFiles, $ctrl.invalidFiles)
       }
 
+      $scope.$watch('$ctrl.videos', function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+          $ctrl.unsavedVideos = true
+        }
+      }, true)
+
       function done () {
+        if (!$ctrl.unsavedVideos) {
+          closeDialog()
+        } else {
+          var confirm = $mdDialog.confirm()
+            .title('You have not saved the video information you entered.')
+            .textContent('Are you sure you want to abandon this video before saving?')
+            .ok('Abandon Video')
+            .cancel('Cancel')
+            .multiple(true)
+          $mdDialog.show(confirm).then(function () {
+            closeDialog()
+          })
+        }
+      }
+
+      function closeDialog () {
         $mdDialog.hide($ctrl.files)
       }
 
@@ -146,7 +171,8 @@
           file: file.url,
           name: file.name,
           tags: file.tags,
-          description: file.description
+          description: file.description,
+          meta: []
         }
 
         if (fileType && fileType === 'video') {
@@ -155,18 +181,33 @@
           data.mime = 'image/' + file.url.split('.').pop()
         }
 
-        media.saveMediaUrl(data).then(function (response) {
-          if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
-            // Refresh the library
-            media.getMedia($ctrl)
-
-            var type = fileType && fileType === 'video' ? 'videos' : 'links'
-            var index = $ctrl[type].indexOf(file)
-            $ctrl[type][index].isUploaded = true
-          } else {
-            console.error(utility.getStatus(response).code + ' - ' +
-              utility.getStatus(response).message)
+        processMediaMeta(file).then(function (response) {
+          if (response.meta) {
+            data.meta = response.meta
           }
+
+          if (file.service.value === 'youtube' && response.videoId) {
+            data.file = 'https://www.youtube.com/embed/' + response.videoId
+          } else if (file.service.value === 'vimeo' && response.videoId) {
+            data.file = 'https://player.vimeo.com/video/' + response.videoId
+          }
+
+          media.saveMediaUrl(data).then(function (response) {
+            if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
+              // Refresh the library
+              media.getMedia($ctrl)
+
+              var type = fileType && fileType === 'video' ? 'videos' : 'links'
+              var index = $ctrl[type].indexOf(file)
+              $ctrl[type][index].isUploaded = true
+              if (type === 'videos') {
+                $ctrl[type][index].thumbnailUrl = media.getThumbnailImgOfVideo(data)
+              }
+            } else {
+              console.error(utility.getStatus(response).code + ' - ' +
+                utility.getStatus(response).message)
+            }
+          })
         })
       }
 
@@ -236,6 +277,48 @@
             var type = file.mime === 'video' ? 'videos' : 'links'
             var index = $ctrl[type].indexOf(file)
             $ctrl[type][index].tags.push(response.data.payload)
+          }
+        })
+      }
+
+      function processMediaMeta (file) {
+        return $q(function (resolve, reject) {
+          let result = {}
+          if (file.service.value === 'vimeo') {
+            let vimeoId = null
+            getVimeoID(file.url).then(function (response) {
+              result.videoId = vimeoId = response
+              let vimeoApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/v2/video/' + vimeoId + '.json')
+              $http.jsonp(vimeoApiUrl, {jsonpCallbackParam: 'callback'})
+                .then(function successCallback (response) {
+                  var meta = {}
+                  meta['thumbnail_small'] = response.data[0].thumbnail_small
+                  meta['thumbnail_medium'] = response.data[0].thumbnail_medium
+                  meta['thumbnail_large'] = response.data[0].thumbnail_large
+                  result.meta = meta
+                  resolve(result)
+                })
+            })
+          } else if (file.service.value === 'youtube') {
+            result.videoId = media.getYouTubeID(file.url)
+            resolve(result)
+          } else {
+            resolve()
+          }
+        })
+      }
+
+      function getVimeoID (url) {
+        return $q(function (resolve, reject) {
+          let vimeoRegex = new RegExp(/(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/)
+          if (vimeoRegex.test(url)) {
+            resolve(vimeoRegex.exec(url)[5])
+          } else {
+            let vimeoMetaApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/oembed.json?url=' + url)
+            $http.jsonp(vimeoMetaApiUrl, {jsonpCallbackParam: 'callback'})
+              .then(function successCallback (response) {
+                resolve(response.data.video_id)
+              })
           }
         })
       }

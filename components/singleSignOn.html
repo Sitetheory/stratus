@@ -1,5 +1,6 @@
-<div class="social-signin" layout="{{layout}}" layout-align="space-around start">
-  <div class="social" layout="row" layout-align="space-around center">
+<div class="social-signin">
+  <ul class="social listInline">
+    <li>
     <div class="fb-login-button"
          data-max-rows="1" data-size="large"
          data-button-type="continue_with"
@@ -15,16 +16,18 @@
       <md-tooltip>Disconnect</md-tooltip>
       <md-icon md-font-icon="fa-circle" class="far fa-trash-alt"></md-icon>
     </md-button>
-  </div>
-
-  <div class="social" layout="row" layout-align="space-between center">
-    <i class="g-signin2" data-onsuccess="onSignIn"></i>
-    <md-button ng-if="$ctrl.ngModel && $ctrl.ngModel.googleId" class="md-fab md-mini md-primary"
-               ng-click="removeGoogle()" aria-label="Disconnect">
-      <md-tooltip>Disconnect</md-tooltip>
-      <md-icon md-font-icon="fa-circle" class="far fa-trash-alt"></md-icon>
-    </md-button>
-  </div>
+    </li>
+    <li>
+      <div class="social">
+        <i class="g-signin2" data-onsuccess="onSignIn"></i>
+        <md-button ng-if="$ctrl.ngModel && $ctrl.ngModel.googleId" class="md-fab md-mini md-primary"
+                   ng-click="removeGoogle()" aria-label="Disconnect">
+          <md-tooltip>Disconnect</md-tooltip>
+          <md-icon md-font-icon="fa-circle" class="far fa-trash-alt"></md-icon>
+        </md-button>
+      </div>
+    </li>
+  </ul>
 </div>
 
 <!-- TODO: Use this list instead and clean out any css for fontawesome in the singleSignOn.css. Also Firefox is not loading the SVGs using the md-svg-src so that will need to be debugged. -->
