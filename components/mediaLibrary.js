@@ -82,7 +82,7 @@
       }
 
       $scope.getThumbnailImgOfVideo = function (mediaData) {
-        mediaData.thumbnail = media.getThumbnailImgOfVideo(mediaData.data)
+        mediaData.thumbnail = media.getThumbnailImgOfVideo(mediaData)
       }
 
       function toggleLibrary () {
@@ -93,6 +93,7 @@
         }
       }
 
+      /* *
       function getVimeoID (url) {
         var ID = ''
         url = url.split('https://vimeo.com/')
@@ -101,6 +102,7 @@
         }
         return ID
       }
+      /* */
 
       function openUploader (ngfMultiple, files, invalidFiles) {
         $mdDialog.show({

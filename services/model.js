@@ -506,7 +506,8 @@
              */
             this.setAttribute = function (attr, value) {
               if (typeof attr === 'string' &&
-                (_.contains(attr, '.') || _.contains(attr, '['))) {
+                (_.contains(attr, '.') || _.contains(attr, '['))
+              ) {
                 var future
                 that.buildPath(attr)
                   .reduce(function (attrs, link, index, chain) {
