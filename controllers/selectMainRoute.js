@@ -14,8 +14,8 @@
     Stratus.Controllers.SelectMainRoute = [
         '$scope',
         '$mdDialog',
-        '$location',
-        function ($scope, $mdDialog,$location) {
+        '$rootScope',
+        function ($scope, $mdDialog, $rootScope) {
             // Store Instance
             Stratus.Instances[_.uniqueId('select_main_route_')] = $scope
 
@@ -29,6 +29,7 @@
             $scope.routeUniqueMessage = false;
             $scope.routeRegularEmpMessage = false;
             $scope.selectedId = 0;
+            $scope.duplecateArr = [];
             // the id of main route
             $scope.mainRoute = 0
             $scope.setAsHomePage = function (model, $event) {
@@ -48,6 +49,8 @@
             }
 
             // Data Connectivity
+            // following code watches any change happen to routes on the content
+            //such as route in the header, route while creating article and while changing primary, setting home page
             $scope.$watch('model.data', function (routings) {
                 if (routings.routing) {
                     var count = 1
@@ -68,10 +71,13 @@
                         }
                     })
                 }
+                $rootScope.$$childHead.data.changed = false;
+
             })
-            $scope.update = function (model) {
-                angular.forEach($scope.routes, function () {
-                    route.main = (route.id === $scope.mainRoute)
+            $scope.update = function () {
+                angular.forEach($scope.routes, function (route) {
+                    route.main = (route.id === $scope.mainRoute || route.uid === $scope.mainRoute)
+
                 })
                 return $scope.routes
             }
@@ -104,17 +110,17 @@
                 } else {
                     $scope.routeEmptyMessage = false;
                     var uniqueValidation = $scope.checkUniqueRoute(model, $event);
-                    if(uniqueValidation === true){
-                        $scope.routeEmptyMessage = true;
+                    if (uniqueValidation === true) {
+                        $scope.routeUniqueMessage = true;
                         $scope.selectedId = $event.$parent.route.uid;
-                    }else{
-                        $scope.routeEmptyMessage = false;
+                    } else {
+                        $scope.routeUniqueMessage = false;
                         $scope.selectedId = $event.$parent.route.uid;
                         var patternValidation = $scope.checkPattern($event);
-                        if(patternValidation === true){
+                        if (patternValidation === true) {
                             $scope.routeRegularEmpMessage = true;
                             $scope.selectedIds = $event.$parent.route.uid;
-                        }else{
+                        } else {
                             $scope.routeRegularEmpMessage = false;
                             $scope.selectedIds = $event.$parent.route.uid;
                         }
@@ -123,21 +129,28 @@
 
             }
             $scope.checkUniqueRoute = function (model, $event) {
-
-                var valueArr = model.data.routing.map(function(item){ return item.url });
-                var isDuplicate = valueArr.some(function(item, idx){
-                    if(valueArr.indexOf(item) != idx){
-                        $scope.selectedIds = $event.$parent.route.uid;
-                    }
-                    return valueArr.indexOf(item) != idx
+                var valueArr = [];
+                $scope.duplecateArr = [];
+                 model.data.routing.map(function (item) {
+                     valueArr.push(item.url);
                 });
-                return isDuplicate;
+                valueArr.some(function (item, idx) {
+                    if (valueArr.indexOf(item) != idx) {
+                        $scope.duplecateArr[idx]=idx;
+                        $scope.selectedIds = idx;
+                    }
+                });
+                if($scope.duplecateArr.length > 0){
+                    return true;
+                }else{
+                    return false;
+                }
             }
             $scope.checkPattern = function ($event) {
-               var patt = /^([a-z0-9]+)([a-z0-9\_\/\~\.\-])*([a-z0-9]+)$/i;
-                if(patt.test($event.$parent.route.url)){
+                var patt = /^([a-z0-9]+)([a-z0-9\_\/\~\.\-])*([a-z0-9]+)$/i;
+                if (patt.test($event.$parent.route.url)) {
                     return false;
-                }else{
+                } else {
                     return true;
                 }
             }
