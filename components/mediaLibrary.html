@@ -99,7 +99,7 @@
                  ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
                 <div ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file"
                      ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}">
-                    <img ng-src="{{$ctrl.getThumbnailImgOfVideo(media.data)}}" ng-if="media.data.mime == 'video'"
+                    <img src="{{$ctrl.getThumbnailImgOfVideo(media.data)}}" ng-if="media.data.mime == 'video'"
                          class="fas fa-5x fa-video-camera" aria-hidden="true">
                     <i ng-if="media.data.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document"
                        aria-hidden="true"></i>
