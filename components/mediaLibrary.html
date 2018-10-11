@@ -90,9 +90,12 @@
                 <div class="clearfix">
                     <div class="stGrid stGridTablet column15">
                         <md-button class="btn md-ink-ripple open-uploader"
-                                ng-click="$ctrl.openUploader(true)">Add +
+                                ng-click="$ctrl.openUploader(true)">
+                            Add +
+                            <md-tooltip>Add to your library</md-tooltip>
                         </md-button>
                     </div>
+                    <!-- TODO: Is there any way to set placeholder text from here? It would be ideal to have "Search by title, date or tag" -->
                     <stratus-search class="mediaSearch stGrid stGridTablet column55"></stratus-search>
                     <div class="stGrid stGridTablet column10">&nbsp;</div>
                     <div class="stGrid stGridTablet column20 positionAnchor">
