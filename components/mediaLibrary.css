@@ -24,6 +24,7 @@ a {
 .mediaSelector .backgroundDark .smallLabel {
   color: #CBCBCB;
 }
+
 /* Action buttons */
 .actionBtns a {
   transition: all 0.2s ease-out;
@@ -52,6 +53,8 @@ a {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
+
+
 /* Section container */
 .sectionContainer {
   position: relative;
@@ -107,24 +110,32 @@ a {
 .selectedContainer .libraryToggle a:hover svg g {
   fill: #111;
 }
+
+
+
 /* Media Library */
-.mediaLibrary.backgroundDark {
-  margin-top: 30px;
+.media-library-content .backgroundDark {
+  margin-top: 10px;
   background: rgba(0, 0, 0, 0.85);
 }
-.mediaLibrary .searchBar {
+.media-library-content button {
+  display: block;
+  margin: 0;
+  height: 48px;
+}
+.media-library-content .mediaSearch {
   margin: 0 0 20px;
 }
-.mediaLibraryContent {
+.library-content {
   margin: 18px 0 10px;
   padding-top: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
-.mediaLibraryContent ul li {
+.library-content ul li {
   width: 10%;
   padding: 2px;
 }
-.mediaLibrary .imageDraggable {
+.media-library-content .imageDraggable {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
 .libraryItem:hover .imageDraggable {
@@ -154,8 +165,8 @@ a {
   z-index: 100;
   width: 65%;
 }
-a:hover .addIcon,
-a.minus_icon:hover .minusIcon {
+.libraryItem:hover .addIcon,
+.libraryItem:hover .minusIcon {
   visibility: visible;
 }
 .addIcon svg,
@@ -166,13 +177,13 @@ a.minus_icon:hover .minusIcon {
   -webkit-transform: scale(0.3);
   opacity: 0;
 }
-a:hover .addIcon svg,
-a.minus_icon:hover .minusIcon svg {
+.libraryItem:hover .addIcon svg,
+.libraryItem:hover .minusIcon svg {
   transform: scale(1);
   -webkit-transform: scale(1);
   opacity: 1;
 }
-a.minus_icon .addIcon {
+.controls.minus_icon .addIcon {
   visibility: hidden;
 }
 .addIcon md-icon,
@@ -639,6 +650,17 @@ md-input-container label {
   position: relative;
   float: left;
 }
+
+
+
+
+
+
+
+
+
+
+/*
 .drop-box {
   background: transparent;
   border: 5px dashed #e1e1e1;
@@ -744,9 +766,9 @@ md-input-container label {
   width: 100%;
   transition: 0.5s ease;
   -ms-transform: translate(-50%, -50%);
-  /* IE 9 */
+  /* IE 9
   -webkit-transform: translate(-50%, -50%);
-  /* Safari */
+  /* Safari
   transform: translate(-50%, -50%);
   text-align: center;
 }
@@ -920,3 +942,4 @@ md-input-container label {
 .drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image:hover .hoverItems {
   display: inherit;
 }
+*/
