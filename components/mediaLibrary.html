@@ -1,10 +1,11 @@
 <div id="media-library">
+
     <!-- Media Selector -->
     <div ng-if="$ctrl.isSelector"
          class="media-selector sectionContainer selectedContainer borderDefault borderDefaultAll borderRadiusDefault">
         <p ng-if="!$ctrl.isSelector" class="instructions fontBody clearfix">
             <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select
-                images.</a>
+                media.</a>
         </p>
         <p class="smallLabel selectedMediaLabel">Media</p>
         <div id="selectedDropArea"
@@ -84,8 +85,7 @@
     <!-- Media Library -->
     <div ng-if="$ctrl.showLibrary" id="openLibrary" class="media-library-content">
         <div class="sectionContainer mediaLibrary backgroundDark borderRadiusDefault">
-            <p class="instructions">To upload images to your library, drag &amp; drop or <a ng-click="$ctrl.openUploader(true)">browse</a>
-            <p class="smallLabel">Media Library</p>
+
             <div class="library-content">
                 <div class="clearfix">
                     <div class="stGrid stGridTablet column15">
@@ -93,7 +93,31 @@
                                 ng-click="$ctrl.openUploader(true)">Add +
                         </md-button>
                     </div>
-                    <stratus-search class="mediaSearch stGrid stGridTablet column85"></stratus-search>
+                    <stratus-search class="mediaSearch stGrid stGridTablet column55"></stratus-search>
+                    <div class="stGrid stGridTablet column10">&nbsp;</div>
+                    <div class="stGrid stGridTablet column20 positionAnchor">
+                        <div class="thumb-slider">
+                            <div class="thumb-icon-large">
+                                <md-icon
+                                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
+                            </div>
+                            <div class="thumb-icon-small">
+                                <md-icon
+                                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
+                            </div>
+                            <h4 class="smallLabel">Thumb size</h4>
+
+                            <!-- TODO: Give the slider a default value and then set the high and low end further apart. The angular example set random colors but we just need one set default of 120. Here is the angular example:
+
+                            $scope.color = {
+                              red: Math.floor(Math.random() * 255),
+                              green: Math.floor(Math.random() * 255),
+                              blue: Math.floor(Math.random() * 255)
+                            }; -->
+
+                            <md-slider min="100" max="165" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
+                        </div>
+                    </div>
                 </div>
                 <ul class="listInline medias"
                      ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
@@ -102,7 +126,7 @@
                      ngf-model-invalid="invalidFiles"
                      ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
                     <li ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file"
-                         ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}">
+                         ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">
                         <div class="libraryItem positionAnchor">
 
                             <!-- Video Thumb -->
