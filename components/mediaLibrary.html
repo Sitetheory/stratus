@@ -25,9 +25,15 @@
                 <li class="draggableImg libraryItem" ng-if="$ctrl.draggedFiles.length"
                     ng-repeat="df in $ctrl.draggedFiles">
                     <a href="#">
+                        <div ng-if="df.mime.indexOf('image') > -1" class="imageDraggable" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
+                            <img id="{{df.id}}" class="shapeholder selectImgDrag"
+                                 src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                        </div>
+
+                        <!--
                         <div ng-if="df.mime.indexOf('image') > -1" class="imageDraggable" id="libb_{{media.data.id}}">
                             <img id="{{df.id}}" class="selectImgDrag" ng-src="{{df.url || df.file}}">
-                        </div>
+                        </div> -->
                         <div ng-if="df.mime == 'video'" class="positionCenter">
                             <i class="fas fa-5x fa-file-video document" aria-hidden="true"></i>
                         </div>
@@ -100,25 +106,25 @@
                     <div class="stGrid stGridTablet column10">&nbsp;</div>
                     <div class="stGrid stGridTablet column20 positionAnchor">
                         <div class="thumb-slider">
-                            <div class="thumb-icon-large">
-                                <md-icon
-                                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
-                            </div>
                             <div class="thumb-icon-small">
                                 <md-icon
                                         md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
+                            </div>
+                            <div class="thumb-icon-large">
+                                <md-icon
+                                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
                             </div>
                             <h4 class="smallLabel">Thumb size</h4>
 
                             <!-- TODO: Give the slider a default value and then set the high and low end further apart. The angular example set random colors but we just need one set default of 120. Here is the angular example:
 
+                            <md-slider ng-model="color.red"></md-slider>
+
                             $scope.color = {
-                              red: Math.floor(Math.random() * 255),
-                              green: Math.floor(Math.random() * 255),
-                              blue: Math.floor(Math.random() * 255)
+                              red: Math.floor(Math.random() * 255)
                             }; -->
 
-                            <md-slider min="100" max="165" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
+                            <md-slider min="125" max="180" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
                         </div>
                     </div>
                 </div>
@@ -130,7 +136,7 @@
                      ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
                     <li ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file"
                          ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">
-                        <div class="libraryItem positionAnchor">
+                        <div ng-class="{selectedMedia : $ctrl.isSelector && media.data.selectedClass}" class="library-item positionAnchor">
 
                             <!-- Video Thumb -->
                             <div ng-if="media.data.mime == 'video'" class="imageDraggable" style="background: url('{{$ctrl.getThumbnailImgOfVideo(media.data)}}') no-repeat center center; background-size: cover;">
@@ -172,7 +178,7 @@
                                                 <md-icon
                                                         md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
                                             </i>
-                                            <i  aria-hidden="true"
+                                            <i aria-hidden="true"
                                                 ng-click="$ctrl.deleteMedia(media.data.id)" class="deleteIcon">
                                                 <md-tooltip>Permanently delete from libary</md-tooltip>
                                                 <md-icon class="deleteIcon" aria-hidden="true" ng-click="deleteFromMedia(media.data.id);"
@@ -184,19 +190,21 @@
                             </div>
                             <!-- Info mini pop-up ends -->
 
+
                             <!-- Controls -->
-                            <div class="addIcon positionCenter">
+                            <div ng-class="{display : $ctrl.isSelector && !media.data.selectedClass}" class="icon-plus positionCenter">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg" aria-hidden="true"
                                          ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></md-icon>
                             </div>
-                            <div class="minusIcon positionCenter">
+                            <div ng-class="{display : $ctrl.isSelector && media.data.selectedClass}" class="icon-minus positionCenter">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"  aria-hidden="true"
                                          ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></md-icon>
                             </div>
-                            <div class="checkIcon positionCenter">
+                            <div ng-class="{display : $ctrl.isSelector && media.data.selectedClass}"  class="icon-check positionCenter">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg" aria-hidden="true"
                                          ng-click="$ctrl.showDetails(media.data)"></md-icon>
                             </div>
+
                             <!-- Controls End -->
 
                         </div>
