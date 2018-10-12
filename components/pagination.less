@@ -49,16 +49,34 @@
 /* On dark backgrounds */
 .backgroundDark .paginator .paginatorPages a {
   color: #888;
+  border: 1px solid rgba(200, 200, 200, 0.2);
 }
 .backgroundDark .paginator .paginatorPrevious a,
-.backgroundDark .paginator .paginatorNext a,
-.backgroundDark .paginator .paginatorPages.active a,
-.backgroundDark .paginator .paginatorPages.active:hover a {
-  color: #ccc;
+.backgroundDark .paginator .paginatorNext a {
+  color: #BBB;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 .backgroundDark .paginator .paginatorPages:hover a,
 .backgroundDark .paginator .paginatorPrevious:hover a,
+.backgroundDark .paginator .paginatorPrevious:hover a,
 .backgroundDark .paginator .paginatorNext:hover a {
   color: #fff;
-  background: rgba(66, 66, 66, 0.4);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.backgroundDark .paginator .paginatorPages.active a,
+.backgroundDark .paginator .paginatorPages.active:hover a {
+  color: #FFF;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Compact paginator */
+
+.compact-paginator .paginator .paginatorPages a,
+.compact-paginator .paginator .paginatorPrevious a,
+.compact-paginator .paginator .paginatorNext a {
+  margin: 0 2px;
+  padding: 6px 10px;
+  font-weight: bold;
 }
