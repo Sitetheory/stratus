@@ -75,14 +75,14 @@
         }
         $ctrl.videos = [
           {
-            service: $ctrl.services.video[0],
             url: null,
             name: null,
             tags: [],
             mime: 'video',
             description: null,
             isUploaded: false,
-            thumbnailUrl: ''
+            thumbnailUrl: '',
+            type: 'URL'
           }
         ]
         $ctrl.unsavedVideos = false
@@ -119,14 +119,28 @@
         if (!$ctrl.unsavedVideos) {
           closeDialog()
         } else {
-          var confirm = $mdDialog.confirm()
-            .title('You have not saved the video information you entered.')
-            .textContent('Are you sure you want to abandon this video before saving?')
-            .ok('Abandon Video')
-            .cancel('Cancel')
-            .multiple(true)
-          $mdDialog.show(confirm).then(function () {
-            closeDialog()
+          let confirmDialogPromise = $q((resolve, reject) => {
+            $ctrl.videos.forEach(function (video) {
+              if (!video.isUploaded) {
+                resolve(true)
+              }
+            })
+            resolve(false)
+          });
+          confirmDialogPromise.then(isUnsavedVideo => {
+            if(isUnsavedVideo) {
+              var confirm = $mdDialog.confirm()
+                .title('You have not saved the video information you entered.')
+                .textContent('Are you sure you want to abandon this video before saving?')
+                .ok('Abandon Video')
+                .cancel('Cancel')
+                .multiple(true)
+              $mdDialog.show(confirm).then(function() {
+                closeDialog()
+              })
+            } else {
+              closeDialog()
+            }
           })
         }
       }
@@ -145,7 +159,7 @@
         }
 
         if (fileType === 'video') {
-          newFile.service = $ctrl.services.video[0]
+          newFile.type = 'URL'
           $ctrl.videos.push(newFile)
         } else {
           newFile.service = $ctrl.services.link[0]
@@ -167,12 +181,27 @@
         }
 
         var data = {
-          service: file.service.value,
-          file: file.url,
+          service: file.service && file.service.value ? file.service.value : '',
           name: file.name,
           tags: file.tags,
           description: file.description,
           meta: []
+        }
+
+        if(fileType == 'video') {
+          file.service = {}
+          if(file.type=='URL') {
+            const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/g
+            const vimeoRegex = /(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([a-z0-9]{1,11})[?]?.*/gm
+            if(file.url.match(youtubeRegex)) {
+              file.service.value = data.service = 'youtube'
+            } else if(file.url.match(vimeoRegex)){
+              file.service.value = data.service = 'vimeo'
+            }
+            data.url = file.url
+          } else if(file.type == 'Embed') {
+            data.embed = file.embed
+          }
         }
 
         if (fileType && fileType === 'video') {
@@ -195,12 +224,12 @@
           media.saveMediaUrl(data).then(function (response) {
             if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
               // Refresh the library
-              media.getMedia($ctrl)
-
+              var newmedia = media.getMedia($ctrl)
               var type = fileType && fileType === 'video' ? 'videos' : 'links'
               var index = $ctrl[type].indexOf(file)
               $ctrl[type][index].isUploaded = true
-              if (type === 'videos') {
+              $ctrl.unsavedVideos = false
+              if(type=='videos') {
                 $ctrl[type][index].thumbnailUrl = media.getThumbnailImgOfVideo(data)
               }
             } else {
@@ -303,7 +332,7 @@
             result.videoId = media.getYouTubeID(file.url)
             resolve(result)
           } else {
-            resolve()
+            resolve('')
           }
         })
       }

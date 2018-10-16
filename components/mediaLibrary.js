@@ -82,7 +82,7 @@
       }
 
       $scope.getThumbnailImgOfVideo = function (mediaData) {
-        mediaData.thumbnail = media.getThumbnailImgOfVideo(mediaData)
+        return media.getThumbnailImgOfVideo(mediaData)
       }
 
       function toggleLibrary () {

@@ -70,20 +70,23 @@
 
         function initFile (fileData) {
           if (fileData.url) {
-            $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' +
-              fileData.extension
+            if (fileData.mime === 'video') {
+              var videoUrl
+              if (fileData.service === 'youtube') {
+                videoUrl = 'https://www.youtube.com/embed/' + media.getYouTubeID(fileData.url)
+              } else if (fileData.service === 'vimeo') {
+                videoUrl = 'https://player.vimeo.com/video/' + fileData.url.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0]
+              }
+              $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl)
+            } else {
+              $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' + fileData.extension
+            }
+          } else if(fileData.embed) {
+            $ctrl.mediaUrl = $sce.trustAsHtml(fileData.embed)
           } else {
             $ctrl.mediaUrl = fileData.file
           }
-          if (fileData.mime === 'video') {
-            var videoUrl
-            if (fileData.service === 'youtube') {
-              videoUrl = 'https://www.youtube.com/embed/' + media.getYouTubeID(fileData.file)
-            } else if (fileData.service === 'vimeo') {
-              videoUrl = 'https://player.vimeo.com/video/' + fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0]
-            }
-            $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl)
-          }
+          
           $ctrl.selectedName = {
             name: fileData.name,
             editing: false

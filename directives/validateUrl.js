@@ -22,15 +22,23 @@
           setTimeout(function () {
             ngModel.$validators.validateUrl = function (modelValue) {
               var urlRegex
+              const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/g
+              const vimeoRegex = /(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([a-z0-9]{1,11})[?]?.*/gm
               switch (scope.service) {
                 case 'youtube':
-                  urlRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/g
+                  urlRegex = youtubeRegex
                   break
                 case 'vimeo':
-                  urlRegex = /(http:|https:|)\/\/(player.|www.)?(vimeo\.com|)\/(video\/)?([A-Za-z0-9._%-]*)/gm
+                  urlRegex = vimeoRegex
                   break
                 case 'directlink':
                   urlRegex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g
+                  break
+                case 'youtube-vimeo':
+                  return modelValue.match(youtubeRegex) || modelValue.match(vimeoRegex)
+                  break
+                case 'embed':
+                  urlRegex = /<iframe(.+)<\/iframe>/g
                   break
 
                 // case 'googledrive':
