@@ -55,9 +55,10 @@
   <div class="content clearfix" layout-wrap layout-gt-sm="row">
     <div flex-gt-sm="70" flex-order="1" flex-order-gt-sm="2">
       <div id="popupImage" class="infoFullImage">
-        <div ng-if="$ctrl.media.mime == 'video'">
+        <div ng-if="$ctrl.media.mime == 'video' && !$ctrl.media.embed">
           <iframe width="560" height="315" ng-src="{{ $ctrl.mediaUrl }}" frameborder="0" allowfullscreen></iframe>
         </div>
+        <div ng-if="$ctrl.media.mime == 'video' && $ctrl.media.embed" ng-bind-html="$ctrl.mediaUrl"></div>
         <i ng-if="$ctrl.media.mime == 'application/pdf'" class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
         <i ng-if="$ctrl.media.mime == 'application/msword'" class="fas fa-5x fa-file-word document"
            aria-hidden="true"></i>

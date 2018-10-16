@@ -142,7 +142,7 @@
           function getThumbnailImgOfVideo (data) {
             let defaultThumbnail = 'https://img.youtube.com/vi/default.jpg'
             if (data.service === 'youtube') {
-              return 'https://img.youtube.com/vi/' + getYouTubeID(data.file) + '/0.jpg'
+              return 'https://img.youtube.com/vi/' + getYouTubeID(data.url) + '/0.jpg'
             } else if (data.service === 'vimeo' && data.meta.thumbnail_medium) {
               return data.meta.thumbnail_medium
             } else {

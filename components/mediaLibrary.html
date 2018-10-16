@@ -141,12 +141,12 @@
                      ngf-max-files="10"
                      ngf-model-invalid="invalidFiles"
                      ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-                    <li ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file"
+                    <li ng-repeat="media in collection.models" class="media-item" ng-if="media.data.url || media.data.file || media.data.embed"
                          ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">
                         <div ng-class="{selectedMedia : $ctrl.isSelector && media.data.selectedClass}" class="library-item positionAnchor">
 
                             <!-- Video Thumb -->
-                            <div ng-if="media.data.mime == 'video'" class="videoThumb imageDraggable positionAnchor" style="background-image: url('{{$ctrl.getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
+                            <div ng-if="media.data.mime == 'video'" class="videoThumb imageDraggable positionAnchor" style="background-image: url('{{getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
                                 <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
 
                                 <!-- TODO: Hide the video icon and thumbGradientLight if video thumbnail exists -->
