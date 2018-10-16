@@ -1,3 +1,10 @@
+.md-dialog-container {
+  z-index: 100;
+}
+
+md-dialog {
+  background: none;
+}
 .media-details {
   background: #2e2e2e;
   border-radius: 5px;
