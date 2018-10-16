@@ -20,6 +20,7 @@
       'angular-file-upload',
 
       // Components
+      'stratus.components.tag',
       'stratus.components.search',
       'stratus.components.pagination',
       'stratus.components.mediaDetails',

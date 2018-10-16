@@ -1,4 +1,5 @@
 <div class="media-uploader">
+    <script src="assets/1/0/bundles/sitetheorystratus/stratus/components/tag.js"></script>
   <div class="toolbar">
     <div class="md-toolbar-tools">
       <h2>Add Media To Library</h2>
@@ -113,28 +114,28 @@
                     </md-input-container>
 
                     <md-input-container class="md-block">
-                      <div id="tagContainer" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
-                        <md-chips ng-model="video.tags" name="videoForm.tagModel" md-autocomplete-snap>
-                          <md-chip-template>
-                            <span md-highlight-text="query">{{ $chip.name }}</span>
-                          </md-chip-template>
-                          <md-autocomplete
-                              flex md-min-length="0"
-                              md-delay="500"
-                              md-search-text="query"
-                              md-items="model in collection.filter(query)"
-                              md-item-text="model.name || model.data.name"
-                              md-floating-label="Add Tags">
-                            <md-chip-template>
-                              <span md-highlight-text="query">{{ model.name || model.data.name  }}</span>
-                            </md-chip-template>
-                            <md-not-found ng-if="query">
-                              <div ng-click="$ctrl.createTag(video, query)">
-                                Create New Tag for "{{ query }}" ?
-                              </div>
-                            </md-not-found>
-                          </md-autocomplete>
-                        </md-chips>
+                      <div id="tagContainer" ng-controller="Generic"  data-target="Tag" ng-cloak data-direct="true">
+                        <!--<md-chips ng-model="video.tags" name="videoForm.tagModel" md-autocomplete-snap>-->
+                          <!--<md-chip-template>-->
+                            <!--<span md-highlight-text="$ctrl.query">{{ $chip.name }}</span>-->
+                          <!--</md-chip-template>-->
+                          <!--<md-autocomplete-->
+                              <!--flex md-min-length="0"-->
+                              <!--md-search-text="$ctrl.query"-->
+                              <!--md-items="model in collection.filter($ctrl.query)"-->
+                              <!--md-item-text="model.name || model.data.name"-->
+                              <!--md-floating-label="Add Tags">-->
+                            <!--<md-chip-template>-->
+                              <!--<span md-highlight-text="$ctrl.query">{{ model.name || model.data.name  }}</span>-->
+                            <!--</md-chip-template>-->
+                            <!--<md-not-found ng-if="$ctrl.query">-->
+                              <!--<div ng-click="$ctrl.createTag(video, $ctrl.query)">-->
+                                  <!--create new tag for "{{ $ctrl.query }}" ?-->
+                              <!--</div>-->
+                            <!--</md-not-found>-->
+                          <!--</md-autocomplete>-->
+                        <!--</md-chips>-->
+                          <stratus-tag  class="fontSecondary" ng-model="video.tags" collection="collection"></stratus-tag>
                       </div>
                     </md-input-container>
                   </div>
@@ -216,28 +217,29 @@
 
                     <md-input-container class="md-block">
                       <div id="tagLinkContainer" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
-                        <md-chips ng-model="link.tags" name="linkForm.tagModel" md-autocomplete-snap>
-                        <md-chips ng-model="link.tags" name="linkForm.tagModel">
-                          <md-chip-template>
-                            <span md-highlight-text="query">{{ $chip.name }}</span>
-                          </md-chip-template>
-                          <md-autocomplete
-                              flex md-min-length="0"
-                              md-delay="500"
-                              md-search-text="query"
-                              md-items="model in collection.filter(query)"
-                              md-item-text="model.name || model.data.name"
-                              md-floating-label="Add Tags">
-                            <md-chip-template>
-                                <span md-highlight-text="query">{{ model.name || model.data.name }}</span>
-                            </md-chip-template>
-                            <md-not-found ng-if="query">
-                              <div ng-click="$ctrl.createTag(link, query)">
-                                Create New Tag for "{{ query }}" ?
-                              </div>
-                            </md-not-found>
-                          </md-autocomplete>
-                        </md-chips>
+                        <!--<md-chips ng-model="link.tags" name="linkForm.tagModel" md-autocomplete-snap>-->
+                        <!--<md-chips ng-model="link.tags" name="linkForm.tagModel">-->
+                          <!--<md-chip-template>-->
+                            <!--<span md-highlight-text="query">{{ $chip.name }}</span>-->
+                          <!--</md-chip-template>-->
+                          <!--<md-autocomplete-->
+                              <!--flex md-min-length="0"-->
+                              <!--md-delay="500"-->
+                              <!--md-search-text="query"-->
+                              <!--md-items="model in collection.filter(query)"-->
+                              <!--md-item-text="model.name || model.data.name"-->
+                              <!--md-floating-label="Add Tags">-->
+                            <!--<md-chip-template>-->
+                                <!--<span md-highlight-text="query">{{ model.name || model.data.name }}</span>-->
+                            <!--</md-chip-template>-->
+                            <!--<md-not-found ng-if="query">-->
+                              <!--<div ng-click="$ctrl.createTag(link, query)">-->
+                                <!--Create New Tag for "{{ query }}" ?-->
+                              <!--</div>-->
+                            <!--</md-not-found>-->
+                          <!--</md-autocomplete>-->
+                        <!--</md-chips>-->
+                          <stratus-tag  class="fontSecondary" ng-model="link.tags" collection="collection"></stratus-tag>
                       </div>
                     </md-input-container>
                   </div>
