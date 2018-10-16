@@ -15,8 +15,10 @@
 
       // Modules
       'angular-file-upload',
+
       // Components
       'stratus.components.tag',
+
       // Directives
       'stratus.directives.singleClick',
       'stratus.directives.validateUrl',
@@ -27,9 +29,9 @@
       'stratus.services.media'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.angular)
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, _, angular) {
+}(this, function (Stratus, _, $, angular) {
   Stratus.Components.MediaUploader = {
     bindings: {
       ngModel: '=',
@@ -128,16 +130,16 @@
               }
             })
             resolve(false)
-          });
+          })
           confirmDialogPromise.then(isUnsavedVideo => {
-            if(isUnsavedVideo) {
+            if (isUnsavedVideo) {
               var confirm = $mdDialog.confirm()
                 .title('You have not saved the video information you entered.')
                 .textContent('Are you sure you want to abandon this video before saving?')
                 .ok('Abandon Video')
                 .cancel('Cancel')
                 .multiple(true)
-              $mdDialog.show(confirm).then(function() {
+              $mdDialog.show(confirm).then(function () {
                 closeDialog()
               })
             } else {
@@ -190,18 +192,18 @@
           meta: []
         }
 
-        if(fileType == 'video') {
+        if (fileType === 'video') {
           file.service = {}
-          if(file.type=='URL') {
+          if (file.type === 'URL') {
             const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/g
             const vimeoRegex = /(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([a-z0-9]{1,11})[?]?.*/gm
-            if(file.url.match(youtubeRegex)) {
+            if (file.url.match(youtubeRegex)) {
               file.service.value = data.service = 'youtube'
-            } else if(file.url.match(vimeoRegex)){
+            } else if (file.url.match(vimeoRegex)) {
               file.service.value = data.service = 'vimeo'
             }
             data.url = file.url
-          } else if(file.type == 'Embed') {
+          } else if (file.type === 'Embed') {
             data.embed = file.embed
           }
         }
@@ -226,12 +228,12 @@
           media.saveMediaUrl(data).then(function (response) {
             if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
               // Refresh the library
-              var newmedia = media.getMedia($ctrl)
+              // var newMedia = media.getMedia($ctrl)
               var type = fileType && fileType === 'video' ? 'videos' : 'links'
               var index = $ctrl[type].indexOf(file)
               $ctrl[type][index].isUploaded = true
               $ctrl.unsavedVideos = false
-              if(type=='videos') {
+              if (type === 'videos') {
                 $ctrl[type][index].thumbnailUrl = media.getThumbnailImgOfVideo(data)
               }
             } else {
@@ -310,7 +312,7 @@
           }
         })
         $ctrl.query = null
-        jquery('input').blur()
+        $('input').blur()
       }
 
       function processMediaMeta (file) {

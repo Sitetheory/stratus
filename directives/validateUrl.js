@@ -36,7 +36,6 @@
                   break
                 case 'youtube-vimeo':
                   return modelValue.match(youtubeRegex) || modelValue.match(vimeoRegex)
-                  break
                 case 'embed':
                   urlRegex = /<iframe(.+)<\/iframe>/g
                   break

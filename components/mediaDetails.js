@@ -86,12 +86,12 @@
             } else {
               $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' + fileData.extension
             }
-          } else if(fileData.embed) {
+          } else if (fileData.embed) {
             $ctrl.mediaUrl = $sce.trustAsHtml(fileData.embed)
           } else {
             $ctrl.mediaUrl = fileData.file
           }
-          
+
           $ctrl.selectedName = {
             name: fileData.name,
             editing: false
