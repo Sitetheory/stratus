@@ -192,7 +192,7 @@
           file.service = {}
           if(file.type=='URL') {
             const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/g
-            const vimeoRegex = /(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([0-9]{6,11})[?]?.*/gm
+            const vimeoRegex = /(https?:\/\/)?(www.)?(player.)?vimeo.com\/([a-z]*\/)*([a-z0-9]{1,11})[?]?.*/gm
             if(file.url.match(youtubeRegex)) {
               file.service.value = data.service = 'youtube'
             } else if(file.url.match(vimeoRegex)){
