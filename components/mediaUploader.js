@@ -7,6 +7,7 @@
       // Libraries
       'stratus',
       'underscore',
+      'jquery',
       'angular',
 
       // UI Additions
@@ -14,7 +15,8 @@
 
       // Modules
       'angular-file-upload',
-
+      // Components
+      'stratus.components.tag',
       // Directives
       'stratus.directives.singleClick',
       'stratus.directives.validateUrl',
@@ -273,7 +275,6 @@
 
         // Handle uploading status for valid files
         if (files && files.length > 0) {
-          console.log(files)
           $ctrl.uploadingFiles = true
           var uploadFilePromise = []
           if ($ctrl.ngfMultiple) {
@@ -300,7 +301,7 @@
       }
 
       function createTag (file, query) {
-        var data = {name: query}
+        var data = { name: query }
         media.createTag(data).then(function (response) {
           if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
             var type = file.mime === 'video' ? 'videos' : 'links'
@@ -308,6 +309,8 @@
             $ctrl[type][index].tags.push(response.data.payload)
           }
         })
+        $ctrl.query = null
+        jquery('input').blur()
       }
 
       function processMediaMeta (file) {
@@ -318,7 +321,7 @@
             getVimeoID(file.url).then(function (response) {
               result.videoId = vimeoId = response
               let vimeoApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/v2/video/' + vimeoId + '.json')
-              $http.jsonp(vimeoApiUrl, {jsonpCallbackParam: 'callback'})
+              $http.jsonp(vimeoApiUrl, { jsonpCallbackParam: 'callback' })
                 .then(function successCallback (response) {
                   var meta = {}
                   meta['thumbnail_small'] = response.data[0].thumbnail_small
@@ -344,7 +347,7 @@
             resolve(vimeoRegex.exec(url)[5])
           } else {
             let vimeoMetaApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/oembed.json?url=' + url)
-            $http.jsonp(vimeoMetaApiUrl, {jsonpCallbackParam: 'callback'})
+            $http.jsonp(vimeoMetaApiUrl, { jsonpCallbackParam: 'callback' })
               .then(function successCallback (response) {
                 resolve(response.data.video_id)
               })
