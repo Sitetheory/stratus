@@ -16,7 +16,10 @@
 
       // Modules
       'angular-material',
-      'stratus.services.media'
+      'stratus.services.media',
+      'stratus.services.collection',
+      // Components
+      'stratus.components.tag'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
@@ -32,6 +35,7 @@
     },
     controller: [
       '$scope',
+      '$rootScope',
       '$mdDialog',
       '$attrs',
       'utility',
@@ -39,6 +43,7 @@
       '$sce',
       function (
         $scope,
+        $rootScope,
         $mdDialog,
         $attrs,
         utility,
@@ -55,7 +60,7 @@
           initFile($ctrl.media)
           $ctrl.tags = $ctrl.media.tags
           $ctrl.infoId = $ctrl.media.id
-
+          $rootScope.mediaId = $ctrl.media.id
           // Methods
           $ctrl.deleteMedia = deleteMedia
           $ctrl.getLinkMedia = getLinkMedia
@@ -70,20 +75,23 @@
 
         function initFile (fileData) {
           if (fileData.url) {
-            $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' +
-              fileData.extension
+            if (fileData.mime === 'video') {
+              var videoUrl
+              if (fileData.service === 'youtube') {
+                videoUrl = 'https://www.youtube.com/embed/' + media.getYouTubeID(fileData.url)
+              } else if (fileData.service === 'vimeo') {
+                videoUrl = 'https://player.vimeo.com/video/' + fileData.url.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0]
+              }
+              $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl)
+            } else {
+              $ctrl.mediaUrl = 'http://' + fileData.prefix + '.' + fileData.extension
+            }
+          } else if (fileData.embed) {
+            $ctrl.mediaUrl = $sce.trustAsHtml(fileData.embed)
           } else {
             $ctrl.mediaUrl = fileData.file
           }
-          if (fileData.mime === 'video') {
-            var videoUrl
-            if (fileData.service === 'youtube') {
-              videoUrl = 'https://www.youtube.com/embed/' + media.getYouTubeID(fileData.file)
-            } else if (fileData.service === 'vimeo') {
-              videoUrl = 'https://player.vimeo.com/video/' + fileData.file.split(/video\/|https?:\/\/vimeo\.com\//)[1].split(/[?&]/)[0]
-            }
-            $ctrl.mediaUrl = $sce.trustAsResourceUrl(videoUrl)
-          }
+
           $ctrl.selectedName = {
             name: fileData.name,
             editing: false
@@ -193,14 +201,18 @@
           }
           media.createTag(data).then(function (response) {
             if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
-              if (fileId !== undefined && tags !== undefined) {
+              if ((fileId !== undefined && tags !== undefined) || (response.data.payload !== undefined)) {
                 var dataRes = {}
                 $ctrl.tags.push(response.data.payload)
+                $ctrl.media.tags.push(response.data.payload)
                 dataRes.tags = $ctrl.tags
                 updateMedia(fileId, dataRes)
               }
             }
           })
+
+          $ctrl.query = null
+          jQuery('input').blur()
         }
 
         // Update title, description, tags of a file

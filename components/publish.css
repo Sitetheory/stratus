@@ -20,13 +20,10 @@
   line-height: inherit;
   border-radius: 0;
 }
-
 .btnPublishFull:hover svg {
   animation: btnIconGrow 0.3s ease-out both;
   -webkit-animation: btnIconGrow 0.3s ease-out both;
 }
-
-
 /* TWO-PART HEADER PUBLISH BUTTON */
 #headerControlsPublish {
   transform: translateX(22px);
@@ -65,9 +62,7 @@
 #headerControlsPublishOptions:hover .caret {
   opacity: 1;
 }
-
 /* MOVE SVG SPRITE TO DISPLAY CORRECT ICON */
-
 .published.btnPublishFull svg .actionButton {
   transform: translateX(-100%);
   -webkit-transform: translateX(-100%);
@@ -76,10 +71,7 @@
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
-
-
 /* CHANGE COLORS TO REFLECT PUBLISHING STATUS */
-
 .published.md-button.btnPublishFull:not([disabled]),
 .published.btnPublishFull:not([disabled]) {
   background: #56995e;
@@ -106,6 +98,3 @@
 .delayed.btnPublishFull:not([disabled]):hover {
   background: #a47594;
 }
-
-
-

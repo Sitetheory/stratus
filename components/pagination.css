@@ -45,7 +45,6 @@
   color: #333;
   background: none;
 }
-
 /* On dark backgrounds */
 .backgroundDark .paginator .paginatorPages a {
   color: #888;
@@ -70,9 +69,7 @@
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
 /* Compact paginator */
-
 .compact-paginator .paginator .paginatorPages a,
 .compact-paginator .paginator .paginatorPrevious a,
 .compact-paginator .paginator .paginatorNext a {

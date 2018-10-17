@@ -20,6 +20,7 @@
       'angular-file-upload',
 
       // Components
+      'stratus.components.tag',
       'stratus.components.search',
       'stratus.components.pagination',
       'stratus.components.mediaDetails',
@@ -82,7 +83,7 @@
       }
 
       $scope.getThumbnailImgOfVideo = function (mediaData) {
-        mediaData.thumbnail = media.getThumbnailImgOfVideo(mediaData)
+        return media.getThumbnailImgOfVideo(mediaData)
       }
 
       function toggleLibrary () {
