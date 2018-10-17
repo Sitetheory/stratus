@@ -216,9 +216,9 @@
           }
 
           if (file.service.value === 'youtube' && response.videoId) {
-            data.file = 'https://www.youtube.com/embed/' + response.videoId
+            data.url = 'https://www.youtube.com/embed/' + response.videoId
           } else if (file.service.value === 'vimeo' && response.videoId) {
-            data.file = 'https://player.vimeo.com/video/' + response.videoId
+            data.url = 'https://player.vimeo.com/video/' + response.videoId
           }
 
           media.saveMediaUrl(data).then(function (response) {
