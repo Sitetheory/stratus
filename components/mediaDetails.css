@@ -1,6 +1,9 @@
 .md-dialog-container {
   z-index: 100;
 }
+.media-search .search input::placeholder {
+  color: #CCC;
+}
 
 md-dialog {
   background: none;
