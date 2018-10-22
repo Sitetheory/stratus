@@ -169,3 +169,451 @@ md-dialog {
   bottom: 10px;
   color: #fff;
 }
+
+
+
+
+
+
+
+/* _________________________ Moved from mediaLibrary.less */
+
+
+
+/* Dialogue windows */
+.md-panel.media-dialog {
+  padding: 6%;
+  width: 100%;
+}
+.mediaDialogue.backgroundDark {
+  background: rgba(30, 30, 30, 0.95);
+}
+.mediaDialogue .titleContainer {
+  margin-bottom: 22px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(200, 200, 200, 0.3);
+}
+.mediaDialogue .titleContainer h2 {
+  margin: 0;
+  color: #ddd;
+}
+
+/* Full info window */
+.mediaInfoFull {
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 28px;
+  position: relative;
+}
+.mediaInfoFull .btnClose {
+  float: none;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+.mediaInfoFull .btnClose svg g {
+  stroke: #CCC;
+}
+.mediaInfoFull .btnClose:hover svg g {
+  stroke: #FFF;
+}
+.mediaInfoFull .tagContainer {
+  /* Make room for close button */
+  padding-right: 50px;
+}
+
+.titleContainer h2 {
+  overflow: hidden;
+}
+/* Full info window tags */
+.mediaInfoFull .tagContainer .smallLabel,
+.mediaInfoFull .tagContainer .btnAdd,
+.mediaInfoFull .tagContainer md-chips,
+.mediaInfoFull .tagContainer md-chip {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.mediaInfoFull .tagContainer .btn.btnAdd {
+  padding: 4px;
+  height: 32px;
+  border-radius: 4px;
+}
+.mediaInfoFull .tagContainer .smallLabel {
+  margin: 9px 6px 0 0;
+  font-weight: bold;
+}
+.mediaInfoFull .tagContainer md-chip {
+  margin: 0 7px 0 0;
+}
+/* Full info window specs */
+.mediaInfoFull .description {
+  margin-top: 30px;
+  line-height: 1.3;
+  color: #bbb;
+}
+.mediaSpecs .smallLabel {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.mediaSpecs .smallLabel span {
+  color: #fff;
+  font-weight: bold;
+}
+.popupInfo .action-btns ul {
+  max-width: 120px;
+}
+.popupInfo .action-btns .md-icon {
+  width: inherit;
+  height: inherit;
+}
+.popupInfo .action-btns ul li {
+  float: left;
+}
+.mediaInfoFull .action-btns {
+  margin-bottom: 26px;
+}
+.mediaInfoFull .action-btns a {
+  display: block;
+  margin: 0 4px 4px 0;
+  padding: 14px;
+  background: #444;
+}
+.mediaInfoFull .action-btns a:hover {
+  background: #FFF;
+}
+.mediaInfoFull .action-btns a svg g {
+  fill: #FFF;
+}
+.mediaInfoFull .action-btns a:hover svg g {
+  fill: #222;
+}
+.infoFullImage {
+  margin-left: 20px;
+  background: rgba(200, 200, 200, 0.06);
+}
+.infoFullImage img {
+  display: block;
+  margin: 0 auto;
+  max-height: 450px;
+}
+@media (max-width: 959px) {
+  .mediaInfoFull .tagContainer {
+    margin-top: 12px;
+    padding-right: 0;
+    text-align: left;
+  }
+  .infoFullImage {
+    margin: 0 0 20px 0;
+  }
+}
+/* Dropped file uploader */
+.dropContainer {
+  margin: 0 auto;
+  padding: 0 6%;
+  width: 100%;
+  max-width: 640px;
+}
+.dropContainer .titleContainer h2 {
+  margin-top: 6px;
+}
+.dropContainer .btnDone,
+.dropContainer .btnDone:link,
+.dropContainer .btnDone:visited,
+.dropContainer .btnDone:active,
+.dropContainer .md-button.md-default-theme:not([disabled]).md-focused,
+.dropContainer .md-button:not([disabled]).md-focused {
+  float: right;
+  margin: 0 0 0 14px;
+  padding: 12px 14px;
+  min-height: inherit;
+  min-width: inherit;
+  font-size: 11px;
+  font-weight: bold;
+  color: #222;
+  background: #e2e2e2;
+}
+.dropContainer .btnDone:hover,
+.dropContainer .md-button.md-default-theme:not([disabled]):hover,
+.dropContainer .md-button:not([disabled]):hover {
+  color: #fff;
+  background: #fe7c57;
+}
+.dropContainer .btnDone .btnGradientLight {
+  background: -webkit-linear-gradient(#ffffff, rgba(255, 255, 255, 0));
+  background: linear-gradient(#ffffff, rgba(255, 255, 255, 0));
+}
+.dropContainer .btnDone:hover .btnGradientLight {
+  opacity: 0.2;
+}
+.dropContainer .btnDone .btnText {
+  position: relative;
+  z-index: 20;
+}
+.dropContainer .instructions {
+  margin-top: 10px;
+}
+.dropContainer .progressPercentage {
+  margin-bottom: 3px;
+  font-size: 12px;
+  opacity: 0;
+}
+.dropContainer .progress {
+  transition: all 0.2s ease-out;
+  margin-top: 1px;
+  height: 12px;
+  opacity: 0;
+  background: #fff;
+}
+.dropContainer .progressVisible .progressPercentage,
+.dropContainer .progressVisible .progress {
+  opacity: 1;
+}
+.dropContainer .progressColorBar {
+  background: #fe7c57 none repeat scroll 0 0;
+  height: 12px;
+}
+.dropContainer .droppedImage {
+  transition: all 0.2s ease-out;
+  position: relative;
+  opacity: 0.8;
+  background: rgba(202, 202, 202, 0.12);
+}
+.droppedImage img {
+  transition: all 0.2s ease-out;
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 125px;
+  opacity: 0.8;
+}
+.progressVisible .droppedImage img {
+  opacity: 1;
+}
+/*CSS UPDATE*/
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+  z-index: 9999 !important;
+}
+/* FIXME: This is affecting all Input Containers *
+md-input-container.md-default-theme .md-placeholder,
+md-input-container .md-placeholder,
+md-input-container.md-default-theme label,
+md-input-container label {
+    color: #FFFFFF !important;
+}
+/* */
+/*END CSS UPDATE*/
+@media (min-width: 480px) {
+  .image--cn,
+  .droppedImage,
+  .droppedImage img {
+    height: 125px;
+  }
+  .droppedImage img {
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+}
+.droppedUnknown md-icon {
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+  height: inherit;
+}
+.droppedUnknown #linearGradient-iconDocument .stop1 {
+  stop-color: #FFFFFF;
+  stop-opacity: 0.7;
+}
+.droppedUnknown #linearGradient-iconDocument .stop2 {
+  stop-color: #FFFFFF;
+  stop-opacity: 0.5;
+}
+.dropContainer {
+  min-height: 150px;
+  padding: 28px;
+}
+.dropContainer ul {
+  margin: 0 -4px;
+}
+.dropContainer ul li {
+  position: relative;
+  margin-bottom: 60px;
+}
+@media (min-width: 480px) {
+  .dropContainer ul li {
+    padding: 0 4px;
+    width: 32.3%;
+  }
+}
+.droppedItem:hover .progressVisible .droppedImage {
+  opacity: 0.2;
+}
+@-webkit-keyframes animateCheck {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.uploadComplete .successCheck {
+  animation: animateCheck ease-out 1.5s 0s;
+}
+.droppedItem:hover .hoverItems .action-btns {
+  display: block;
+}
+.droppedImageInfo {
+  margin-bottom: 8px;
+  word-wrap: break-word;
+  text-align: center;
+}
+.hoverItems {
+  margin-top: 24px;
+  padding: 2px 10%;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+}
+.hoverItems .action-btns {
+  transition: all 0.2s ease-out;
+  display: none;
+}
+.hoverItems button {
+  background: none;
+  border: none;
+}
+.hoverItems md-icon {
+  height: inherit;
+  width: 60%;
+}
+.hoverItems .hover-tick md-icon {
+  width: 36%;
+  max-width: 70px;
+}
+.hoverItems svg g {
+  fill: #FFFFFF;
+}
+.dragBorder {
+  border: 2px solid #fff;
+}
+.dragCursor li {
+  pointer: cursor;
+}
+@media (max-width: 479px) {
+  .dropContainer ul li {
+    display: block;
+  }
+  .optional {
+    display: none;
+  }
+}
+
+
+/* Error message */
+.dropContainer .errorMessage {
+  display: block;
+  margin: 0 auto;
+  padding: 8px;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  background: #be2626;
+}
+.droppedItem:hover .errorMessage {
+  display: block;
+}
+
+/* I don't exactly know when this kicks in */
+.layerBlack::after {
+  background: rgba(0, 0, 0, 0.5);
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 9;
+}
+.layerBlack {
+  position: relative;
+  float: left;
+}
+
+
+
+
+/*
+.md-dialog-container {
+  z-index: 999;
+}
+.drag-drop-dialog {
+  min-width: 1000px;
+}
+.drag-drop-dialog .dropContainer {
+  max-width: unset;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem {
+  width: 20%;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .errorMessage {
+  position: relative;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image {
+  height: 100%;
+  position: relative;
+  background-color: #5c5c5c;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .successCheck {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .successCheck md-icon {
+  width: 70px;
+  height: 70px;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .hoverItems {
+  display: none;
+  margin-top: 0;
+  width: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .hoverItems .fa-times-circle {
+  font-size: 60px;
+  color: #f44336;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image:hover .hoverItems {
+  display: inherit;
+}
+*/
