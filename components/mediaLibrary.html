@@ -162,9 +162,7 @@
 
                             <!--
                             TODO: Discuss merits of lazy loading vs. background image
-                            <img ng-if="media.data.mime.indexOf('image') > -1" data-plugin="lazy"
-                                 src="{{media.data.url || media.data.file}}"
-                                 stratus-src="{{media.data.url || media.data.file}}">-->
+                            <img ng-if="media.data.mime.indexOf('image') > -1" stratus-src="{{media.data.url || media.data.file}}">-->
 
                             <!-- Image hover info -->
                             <div class="info-hover-container" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
