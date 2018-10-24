@@ -1,619 +1,183 @@
+
+/* These 2 dialogue classes should be wrapped in a content type class but that needs to be added to the body class dynamically */
+
 .md-dialog-container {
   z-index: 100;
 }
-
 md-dialog {
   background: none;
 }
+
+/* Dialogue window */
 .media-details {
-  background: #2e2e2e;
-  border-radius: 5px;
-  padding: 2em;
-  min-width: 700px;
-}
-.media-details .header {
-  margin-bottom: 1.5em;
-  box-shadow: 0 1px rgba(214, 211, 211, 0.4);
-}
-.media-details .header div {
-  display: inline-block;
-  color: #fff;
-}
-.media-details .header .header-left {
-  color: #fff;
-  font-weight: bold;
-}
-.media-details .header .header-right {
-  text-align: right;
-}
-.media-details .header .header-right div .tags {
-  list-style: none;
-  margin: 0;
-  overflow: hidden;
-  padding: 0;
-  display: inline-flex;
-}
-.media-details .header .header-right div .tags .tag {
-  background: #eee;
-  border-radius: 3px 0 0 3px;
-  border-color: #2e2e2e;
-  color: #999;
-  display: inline-block;
-  height: 26px;
-  line-height: 26px;
-  padding: 0 20px 0 23px;
-  position: relative;
-  margin: 0 10px 10px 0;
-  text-decoration: none;
-  transition: color 0.2s;
-  -webkit-transition: color 0.2s;
-}
-.media-details .header .header-right div .tags .tag::before {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
-  content: '';
-  height: 6px;
-  left: 10px;
-  position: absolute;
-  width: 6px;
-  top: 10px;
-}
-.media-details .header .header-right div .tags .tag::after {
-  background: #fff;
-  border-bottom: 13px solid #2f2f2f;
-  border-left: 10px solid #eee;
-  border-top: 13px solid #2f2f2f;
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.media-details .header .header-right div .tags .tag:hover {
-  background-color: crimson;
-  color: white;
-}
-.media-details .header .header-right div .tags .tag:hover::after {
-  border-left-color: crimson;
-}
-.media-details .header .header-right div .fas {
-  cursor: pointer;
-}
-.media-details .header .header-right div .fa-times-circle {
-  color: #fff;
-  background: #2e2e2e;
-}
-.media-details .content {
-  color: #fff;
-}
-.media-details .content .inform textarea {
-  resize: none;
-}
-.media-details .content .inform .controls-function {
-  padding: 0;
-  display: flex;
-}
-.media-details .content .inform .controls-function .icon {
-  display: inline-block;
-  margin-right: 0.5em;
-  border: 1px solid;
-  border-radius: 2px;
-  height: fit-content;
-  border-color: rgba(214, 211, 211, 0.4);
-  transition: 0.3s all;
-}
-.media-details .content .inform .controls-function .icon .fas {
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  line-height: inherit !important;
-  text-align: center;
-}
-.media-details .content .inform .controls-function li {
-  padding-top: 3px;
-}
-.media-details .content .inform .controls-function li:hover {
-  box-sizing: content-box;
-  border-color: #fff;
-}
-.media-details .content .inform .controls-function li a {
-  color: #fff;
-}
-.media-details .content .inform .image-inform {
-  margin-top: 1em;
-}
-.media-details .content .inform .image-inform p span {
-  display: block;
-  color: #bbadad;
-}
-.media-details .content .inform .image-inform p span label {
-  color: #fff;
-}
-.media-details .content .inform .description {
-  margin-top: 1em;
-  font-size: 14px;
-  color: #bbadad;
-}
-.media-details .content .image img {
-  width: 100%;
-  max-height: 530px;
-  max-width: 625px;
-  object-fit: contain;
-}
-.media-details .content .infoFullImage {
-  text-align: center;
-}
-.media-details .content .infoFullImage .document {
-  font-size: 10em;
-  padding: 50px 0;
-}
-.media-details .titleContainer .image-name input {
-  width: 100%;
-}
-.media-details .titleContainer .tagContainer {
-  padding-right: 0;
-  margin-left: 15px;
-}
-.media-details .titleContainer .tagContainer md-chips {
-  float: right;
-  margin-right: 50px;
-  border-radius: 3px;
-}
-.media-details .titleContainer .tagContainer md-chips .md-chips.md-focused {
-  box-shadow: 0 2px #fff;
-}
-.media-details .titleContainer .tagContainer md-chips md-autocomplete label {
-  color: #fff;
-}
-.media-details .titleContainer .tagContainer md-chips md-autocomplete input {
-  bottom: 10px;
-  color: #fff;
-}
-
-
-
-
-
-
-
-/* _________________________ Moved from mediaLibrary.less */
-
-
-
-/* Dialogue windows */
-.md-panel.media-dialog {
-  padding: 6%;
-  width: 100%;
-}
-.mediaDialogue.backgroundDark {
-  background: rgba(30, 30, 30, 0.95);
-}
-.mediaDialogue .titleContainer {
-  margin-bottom: 22px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid rgba(200, 200, 200, 0.3);
-}
-.mediaDialogue .titleContainer h2 {
-  margin: 0;
-  color: #ddd;
-}
-
-/* Full info window */
-.mediaInfoFull {
-  max-width: 1000px;
   margin: 0 auto;
   width: 100%;
+  max-width: 1000px;
   padding: 28px;
   position: relative;
 }
-.mediaInfoFull .btnClose {
+.media-details.backgroundDark {
+  background: rgba(30, 30, 30, 0.95);
+}
+
+/* Media details title */
+.media-details .title-container {
+  margin-bottom: 26px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(200, 200, 200, 0.3);
+  h2 {
+    overflow: hidden;
+    margin: 8px 0 0;
+    color: #ddd;
+  }
+}
+
+
+
+/* Close button */
+.media-details .btnClose {
   float: none;
   position: absolute;
   right: 20px;
   top: 20px;
+  svg g {
+    stroke: #CCC;
+  }
 }
-.mediaInfoFull .btnClose svg g {
-  stroke: #CCC;
-}
-.mediaInfoFull .btnClose:hover svg g {
+.media-details .btnClose:hover svg g {
   stroke: #FFF;
 }
-.mediaInfoFull .tagContainer {
+
+
+/* Action buttons */
+.media-details .action-btns {
   /* Make room for close button */
-  padding-right: 50px;
+  padding-right: 35px;
+  ul {
+    float: right;
+  }
+  ul li {
+    float: left;
+  }
+  a {
+    display: block;
+    margin: 0 4px 4px 0;
+    padding: 6px;
+    opacity: 1;
+    background: rgba(255,255,255,.26);
+  }
+  md-icon {
+    width: inherit;
+    height: inherit;
+  }
+  svg g {
+    fill: #FFF;
+  }
+
+}
+.media-details .action-btns a:hover {
+  background: #FFF;
+}
+.media-details .action-btns a:hover svg g {
+  fill: #222;
 }
 
-.titleContainer h2 {
-  overflow: hidden;
+
+/* Add tags */
+.media-details #tag-container {
+  margin-bottom: 40px;
+  .md-chips .md-chip-input-container md-autocomplete input::placeholder {
+    padding-left: 44px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #D4BF9E;
+    background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat 12px 0;
+    background-size: 18px;
+  }
+  .md-chips .md-chip-input-container md-autocomplete input:hover::placeholder {
+    color: #FFF;
+  }
+  .md-chips .md-chip-input-container md-autocomplete input {
+    transition: all .2s ease-out;
+    height: 40px;
+    line-height: 40px;
+    font-size: 15px;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.3);
+  }
+  .md-chips .md-chip-input-container md-autocomplete input:hover {
+    border-color: #FFF;
+  }
+  .md-chips .md-chip-input-container md-autocomplete input:focus {
+    border: none;
+    border-color: transparent;
+  }
+  .md-chips .md-chip-input-container md-autocomplete input:focus::placeholder {
+    padding: 0;
+    font-weight: normal;
+    color: #FFF;
+    background: none;
+  }
+  .md-chips .md-chip-input-container {
+    margin: 0 0 10px;
+  }
+  md-chips-wrap {
+    max-width: 220px;
+    overflow: hidden;
+  }
+  .md-chips {
+    padding: 0;
+  }
+  .md-chips md-chip {
+    margin: 0 8px 8px 0;
+  }
 }
-/* Full info window tags */
-.mediaInfoFull .tagContainer .smallLabel,
-.mediaInfoFull .tagContainer .btnAdd,
-.mediaInfoFull .tagContainer md-chips,
-.mediaInfoFull .tagContainer md-chip {
-  display: inline-block;
-  vertical-align: top;
-  margin: 0;
-  padding-top: 0;
-  padding-bottom: 0;
+
+
+
+/* Media specs */
+.media-specs .smallLabel {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  span {
+    color: #fff;
+    font-weight: bold;
+  }
 }
-.mediaInfoFull .tagContainer .btn.btnAdd {
-  padding: 4px;
-  height: 32px;
-  border-radius: 4px;
-}
-.mediaInfoFull .tagContainer .smallLabel {
-  margin: 9px 6px 0 0;
-  font-weight: bold;
-}
-.mediaInfoFull .tagContainer md-chip {
-  margin: 0 7px 0 0;
-}
-/* Full info window specs */
-.mediaInfoFull .description {
+
+
+/* Media description */
+.media-details .description {
   margin-top: 30px;
   line-height: 1.3;
   color: #bbb;
 }
-.mediaSpecs .smallLabel {
-  margin: 0 0 6px;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-.mediaSpecs .smallLabel span {
-  color: #fff;
-  font-weight: bold;
-}
-.popupInfo .action-btns ul {
-  max-width: 120px;
-}
-.popupInfo .action-btns .md-icon {
-  width: inherit;
-  height: inherit;
-}
-.popupInfo .action-btns ul li {
-  float: left;
-}
-.mediaInfoFull .action-btns {
-  margin-bottom: 26px;
-}
-.mediaInfoFull .action-btns a {
-  display: block;
-  margin: 0 4px 4px 0;
-  padding: 14px;
-  background: #444;
-}
-.mediaInfoFull .action-btns a:hover {
-  background: #FFF;
-}
-.mediaInfoFull .action-btns a svg g {
-  fill: #FFF;
-}
-.mediaInfoFull .action-btns a:hover svg g {
-  fill: #222;
-}
-.infoFullImage {
+
+
+/* Media image */
+.details-image {
   margin-left: 20px;
+  text-align: center;
   background: rgba(200, 200, 200, 0.06);
-}
-.infoFullImage img {
-  display: block;
-  margin: 0 auto;
-  max-height: 450px;
-}
-@media (max-width: 959px) {
-  .mediaInfoFull .tagContainer {
-    margin-top: 12px;
-    padding-right: 0;
-    text-align: left;
+  img {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 625px;
+    max-height: 450px;
+    object-fit: contain;
   }
-  .infoFullImage {
+}
+
+
+@media (max-width: 959px) {
+  .details-image {
     margin: 0 0 20px 0;
   }
 }
-/* Dropped file uploader */
-.dropContainer {
-  margin: 0 auto;
-  padding: 0 6%;
-  width: 100%;
-  max-width: 640px;
-}
-.dropContainer .titleContainer h2 {
-  margin-top: 6px;
-}
-.dropContainer .btnDone,
-.dropContainer .btnDone:link,
-.dropContainer .btnDone:visited,
-.dropContainer .btnDone:active,
-.dropContainer .md-button.md-default-theme:not([disabled]).md-focused,
-.dropContainer .md-button:not([disabled]).md-focused {
-  float: right;
-  margin: 0 0 0 14px;
-  padding: 12px 14px;
-  min-height: inherit;
-  min-width: inherit;
-  font-size: 11px;
-  font-weight: bold;
-  color: #222;
-  background: #e2e2e2;
-}
-.dropContainer .btnDone:hover,
-.dropContainer .md-button.md-default-theme:not([disabled]):hover,
-.dropContainer .md-button:not([disabled]):hover {
-  color: #fff;
-  background: #fe7c57;
-}
-.dropContainer .btnDone .btnGradientLight {
-  background: -webkit-linear-gradient(#ffffff, rgba(255, 255, 255, 0));
-  background: linear-gradient(#ffffff, rgba(255, 255, 255, 0));
-}
-.dropContainer .btnDone:hover .btnGradientLight {
-  opacity: 0.2;
-}
-.dropContainer .btnDone .btnText {
-  position: relative;
-  z-index: 20;
-}
-.dropContainer .instructions {
-  margin-top: 10px;
-}
-.dropContainer .progressPercentage {
-  margin-bottom: 3px;
-  font-size: 12px;
-  opacity: 0;
-}
-.dropContainer .progress {
-  transition: all 0.2s ease-out;
-  margin-top: 1px;
-  height: 12px;
-  opacity: 0;
-  background: #fff;
-}
-.dropContainer .progressVisible .progressPercentage,
-.dropContainer .progressVisible .progress {
-  opacity: 1;
-}
-.dropContainer .progressColorBar {
-  background: #fe7c57 none repeat scroll 0 0;
-  height: 12px;
-}
-.dropContainer .droppedImage {
-  transition: all 0.2s ease-out;
-  position: relative;
-  opacity: 0.8;
-  background: rgba(202, 202, 202, 0.12);
-}
-.droppedImage img {
-  transition: all 0.2s ease-out;
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  max-height: 125px;
-  opacity: 0.8;
-}
-.progressVisible .droppedImage img {
-  opacity: 1;
-}
-/*CSS UPDATE*/
-.md-virtual-repeat-container.md-autocomplete-suggestions-container {
-  z-index: 9999 !important;
-}
-/* FIXME: This is affecting all Input Containers *
-md-input-container.md-default-theme .md-placeholder,
-md-input-container .md-placeholder,
-md-input-container.md-default-theme label,
-md-input-container label {
-    color: #FFFFFF !important;
-}
-/* */
-/*END CSS UPDATE*/
-@media (min-width: 480px) {
-  .image--cn,
-  .droppedImage,
-  .droppedImage img {
-    height: 125px;
-  }
-  .droppedImage img {
-    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    position: absolute;
-    left: 50%;
-    top: 50%;
-  }
-}
-.droppedUnknown md-icon {
-  display: block;
-  margin: 0 auto;
-  width: 80%;
-  height: inherit;
-}
-.droppedUnknown #linearGradient-iconDocument .stop1 {
-  stop-color: #FFFFFF;
-  stop-opacity: 0.7;
-}
-.droppedUnknown #linearGradient-iconDocument .stop2 {
-  stop-color: #FFFFFF;
-  stop-opacity: 0.5;
-}
-.dropContainer {
-  min-height: 150px;
-  padding: 28px;
-}
-.dropContainer ul {
-  margin: 0 -4px;
-}
-.dropContainer ul li {
-  position: relative;
-  margin-bottom: 60px;
-}
-@media (min-width: 480px) {
-  .dropContainer ul li {
-    padding: 0 4px;
-    width: 32.3%;
-  }
-}
-.droppedItem:hover .progressVisible .droppedImage {
-  opacity: 0.2;
-}
-@-webkit-keyframes animateCheck {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-.uploadComplete .successCheck {
-  animation: animateCheck ease-out 1.5s 0s;
-}
-.droppedItem:hover .hoverItems .action-btns {
-  display: block;
-}
-.droppedImageInfo {
-  margin-bottom: 8px;
-  word-wrap: break-word;
-  text-align: center;
-}
-.hoverItems {
-  margin-top: 24px;
-  padding: 2px 10%;
-  width: 100%;
-  color: #fff;
-  text-align: center;
-}
-.hoverItems .action-btns {
-  transition: all 0.2s ease-out;
-  display: none;
-}
-.hoverItems button {
-  background: none;
-  border: none;
-}
-.hoverItems md-icon {
-  height: inherit;
-  width: 60%;
-}
-.hoverItems .hover-tick md-icon {
-  width: 36%;
-  max-width: 70px;
-}
-.hoverItems svg g {
-  fill: #FFFFFF;
-}
-.dragBorder {
-  border: 2px solid #fff;
-}
-.dragCursor li {
-  pointer: cursor;
-}
-@media (max-width: 479px) {
-  .dropContainer ul li {
-    display: block;
-  }
-  .optional {
-    display: none;
-  }
-}
-
-
-/* Error message */
-.dropContainer .errorMessage {
-  display: block;
-  margin: 0 auto;
-  padding: 8px;
-  width: 100%;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  background: #be2626;
-}
-.droppedItem:hover .errorMessage {
-  display: block;
-}
-
-/* I don't exactly know when this kicks in */
-.layerBlack::after {
-  background: rgba(0, 0, 0, 0.5);
-  content: "";
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 9;
-}
-.layerBlack {
-  position: relative;
-  float: left;
-}
 
 
 
-
-/*
-.md-dialog-container {
-  z-index: 999;
-}
-.drag-drop-dialog {
-  min-width: 1000px;
-}
-.drag-drop-dialog .dropContainer {
-  max-width: unset;
-}
-.drag-drop-dialog .dropContainer ul .droppedItem {
-  width: 20%;
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .errorMessage {
-  position: relative;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image {
-  height: 100%;
-  position: relative;
-  background-color: #5c5c5c;
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .successCheck {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .successCheck md-icon {
-  width: 70px;
-  height: 70px;
-  top: 50%;
-  left: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .hoverItems {
-  display: none;
-  margin-top: 0;
-  width: auto;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.3);
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image .hoverItems .fa-times-circle {
-  font-size: 60px;
-  color: #f44336;
-  top: 50%;
-  left: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
-}
-.drag-drop-dialog .dropContainer ul .droppedItem .image--cn .image:hover .hoverItems {
-  display: inherit;
-}
-*/

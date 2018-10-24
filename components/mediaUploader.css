@@ -1,3 +1,240 @@
+
+/* Dropped file uploader */
+.dropContainer {
+  margin: 0 auto;
+  padding: 0 6%;
+  width: 100%;
+  max-width: 640px;
+}
+.dropContainer .titleContainer h2 {
+  margin-top: 6px;
+}
+.dropContainer .btnDone,
+.dropContainer .btnDone:link,
+.dropContainer .btnDone:visited,
+.dropContainer .btnDone:active,
+.dropContainer .md-button.md-default-theme:not([disabled]).md-focused,
+.dropContainer .md-button:not([disabled]).md-focused {
+  float: right;
+  margin: 0 0 0 14px;
+  padding: 12px 14px;
+  min-height: inherit;
+  min-width: inherit;
+  font-size: 11px;
+  font-weight: bold;
+  color: #222;
+  background: #e2e2e2;
+}
+.dropContainer .btnDone:hover,
+.dropContainer .md-button.md-default-theme:not([disabled]):hover,
+.dropContainer .md-button:not([disabled]):hover {
+  color: #fff;
+  background: #fe7c57;
+}
+.dropContainer .btnDone .btnGradientLight {
+  background: -webkit-linear-gradient(#ffffff, rgba(255, 255, 255, 0));
+  background: linear-gradient(#ffffff, rgba(255, 255, 255, 0));
+}
+.dropContainer .btnDone:hover .btnGradientLight {
+  opacity: 0.2;
+}
+.dropContainer .btnDone .btnText {
+  position: relative;
+  z-index: 20;
+}
+.dropContainer .instructions {
+  margin-top: 10px;
+}
+.dropContainer .progressPercentage {
+  margin-bottom: 3px;
+  font-size: 12px;
+  opacity: 0;
+}
+.dropContainer .progress {
+  transition: all 0.2s ease-out;
+  margin-top: 1px;
+  height: 12px;
+  opacity: 0;
+  background: #fff;
+}
+.dropContainer .progressVisible .progressPercentage,
+.dropContainer .progressVisible .progress {
+  opacity: 1;
+}
+.dropContainer .progressColorBar {
+  background: #fe7c57 none repeat scroll 0 0;
+  height: 12px;
+}
+.dropContainer .droppedImage {
+  transition: all 0.2s ease-out;
+  position: relative;
+  opacity: 0.8;
+  background: rgba(202, 202, 202, 0.12);
+}
+.droppedImage img {
+  transition: all 0.2s ease-out;
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 125px;
+  opacity: 0.8;
+}
+.progressVisible .droppedImage img {
+  opacity: 1;
+}
+/*CSS UPDATE*/
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+  z-index: 9999 !important;
+}
+
+
+/*END CSS UPDATE*/
+@media (min-width: 480px) {
+  .image--cn,
+  .droppedImage,
+  .droppedImage img {
+    height: 125px;
+  }
+  .droppedImage img {
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+  }
+}
+.droppedUnknown md-icon {
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+  height: inherit;
+}
+.droppedUnknown #linearGradient-iconDocument .stop1 {
+  stop-color: #FFFFFF;
+  stop-opacity: 0.7;
+}
+.droppedUnknown #linearGradient-iconDocument .stop2 {
+  stop-color: #FFFFFF;
+  stop-opacity: 0.5;
+}
+.dropContainer {
+  min-height: 150px;
+  padding: 28px;
+}
+.dropContainer ul {
+  margin: 0 -4px;
+}
+.dropContainer ul li {
+  position: relative;
+  margin-bottom: 60px;
+}
+@media (min-width: 480px) {
+  .dropContainer ul li {
+    padding: 0 4px;
+    width: 32.3%;
+  }
+}
+.droppedItem:hover .progressVisible .droppedImage {
+  opacity: 0.2;
+}
+@-webkit-keyframes animateCheck {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.uploadComplete .successCheck {
+  animation: animateCheck ease-out 1.5s 0s;
+}
+.droppedItem:hover .hoverItems .action-btns {
+  display: block;
+}
+.droppedImageInfo {
+  margin-bottom: 8px;
+  word-wrap: break-word;
+  text-align: center;
+}
+.hoverItems {
+  margin-top: 24px;
+  padding: 2px 10%;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+}
+.hoverItems .action-btns {
+  transition: all 0.2s ease-out;
+  display: none;
+}
+.hoverItems button {
+  background: none;
+  border: none;
+}
+.hoverItems md-icon {
+  height: inherit;
+  width: 60%;
+}
+.hoverItems .hover-tick md-icon {
+  width: 36%;
+  max-width: 70px;
+}
+.hoverItems svg g {
+  fill: #FFFFFF;
+}
+.dragBorder {
+  border: 2px solid #fff;
+}
+.dragCursor li {
+  pointer: cursor;
+}
+@media (max-width: 479px) {
+  .dropContainer ul li {
+    display: block;
+  }
+  .optional {
+    display: none;
+  }
+}
+
+
+/* Error message */
+.dropContainer .errorMessage {
+  display: block;
+  margin: 0 auto;
+  padding: 8px;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  background: #be2626;
+}
+.droppedItem:hover .errorMessage {
+  display: block;
+}
+
+/* I don't exactly know when this kicks in */
+.layerBlack::after {
+  background: rgba(0, 0, 0, 0.5);
+  content: "";
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 9;
+}
+.layerBlack {
+  position: relative;
+  float: left;
+}
+
+
+/*___________ Above this line pasted from mediaLibrary.css ______________*/
+
+
+
+
 .media-uploader {
   max-width: 1000px;
 }
