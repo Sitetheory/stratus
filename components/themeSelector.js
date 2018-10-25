@@ -59,14 +59,15 @@
       $window,
       utility,
       visualSelector,
-      $filter
+      $filter,
+      $http
     ) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'theme_selector',
         true)
 
       var $ctrl = this
-
+      $scope.sort = 'oldest'
       $ctrl.$onInit = function () {
         // Hydrate Settings
         $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
@@ -79,13 +80,34 @@
         $ctrl.currentThemes = []
 
         // mock DB
-        $ctrl.categories = [
-          'Lorem ipsum',
-          'Lorem ipsum',
-          'Lorem ipsum',
-          'Lorem ipsum',
-          'Lorem ipsum',
-          'Lorem ipsum'
+        // $ctrl.categories = [
+        //   'Lorem ipsum',
+        //   'Lorem ipsum',
+        //   'Lorem ipsum',
+        //   'Lorem ipsum',
+        //   'Lorem ipsum',
+        //   'Lorem ipsum'
+        // ]
+        $ctrl.categories = []
+        listTag().then(function (response) {
+          var carData = response.data.payload
+          if (carData) {
+            carData.forEach(catName => {
+              if (catName.name) {
+                if ($ctrl.categories.indexOf(catName.name) === -1) $ctrl.categories.push({ 'catId': catName.id, 'catName': catName.name })
+              }
+            })
+          } else {
+            $ctrl.categories = []
+          }
+        })
+
+        // mock DB to this
+        $ctrl.sortingoptions = [
+          'oldest',
+          'latest',
+          'popular',
+          'favorite'
         ]
 
         // define methods
@@ -96,6 +118,7 @@
         $ctrl.themeRawDesc = themeRawDesc
         $ctrl.toggleGallery = toggleGallery
         $ctrl.finishChoosingTheme = finishChoosingTheme
+        $ctrl.sortByCategory = sortByCategory
 
         // Asset Collection
         if ($attrs.type) {
@@ -129,6 +152,19 @@
               })[0]
             }
           }
+          // $ctrl.categories = [];
+          // angular.forEach($ctrl.currentThemes, function (value, key) {
+          //     if(value.data.tags.length > 0 ){
+          //         angular.forEach(value.data.tags, function (value1, key1) {
+          //             var resultData = $ctrl.categories.find( mainArr => mainArr === value1.name );
+          //             if(resultData === undefined){
+          //                 $ctrl.categories.push(value1.name)
+          //             }
+          //         })
+          //
+          //     }
+          //
+          // })
         })
 
       // automatically run security check the result of html
@@ -176,41 +212,66 @@
           }
         })
       }
-
       function sortBy (type) {
-        console.log('Not implement yet')
-        // $ctrl.currentThemes = (function (type) {
-        //   switch (type) {
-        //     case 'latest':
-        //       return latest();
-        //     case 'populate':
-        //       return populate();
-        //     case 'favorite':
-        //       return favorite();
-        //     default:
-        //       return $ctrl.currentThemes;
-        //   }
-        // })(type);
+        $ctrl.currentThemes = (function (type) {
+          switch (type) {
+            case 'oldest':
+              return oldest()
+            case 'latest':
+              return latest()
+            case 'popular':
+              return popular()
+            case 'favorite':
+              return favorite()
+            default:
+              return $ctrl.currentThemes
+          }
+        })(type)
       }
 
+      function sortByCategory (catName) {
+        listTemplateOfSelectedTag(catName.catId).then(function (response) {
+          $scope.collection.models = response.data.payload
+          $ctrl.showGallery = true
+        })
+      }
+      function listTemplateOfSelectedTag (id) {
+        return utility.sendRequest(null, 'GET', '/Api/Asset?q=' + id + '&options[action]=templatesByTag')
+      }
+      function listTag () {
+        return utility.sendRequest(null, 'GET', '/Api/Template/Tag?&options[action]=templateTags')
+      }
       // Helpers
-      // function latest() {
-      //   return $ctrl.currentThemes.sort(function (a, b) {
-      //     return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit);
-      //   });
-      // }
+      function latest () {
+        return $ctrl.currentThemes.sort(function (a, b) {
+          if (b.timeEdit) {
+            return parseFloat(a.timeEdit) - parseFloat(b.timeEdit)
+          } else {
+            return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit)
+          }
+        })
+      }
 
-      // function populate() {
-      //   return $ctrl.currentThemes.sort(function (a, b) {
-      //     return parseFloat(b.populate) - parseFloat(a.populate);
-      //   });
-      // }
+      function oldest () {
+        return $ctrl.currentThemes.sort(function (a, b) {
+          if (a.timeEdit) {
+            return parseFloat(b.timeEdit) - parseFloat(a.timeEdit)
+          } else {
+            return parseFloat(b.data.timeEdit) - parseFloat(a.data.timeEdit)
+          }
+        })
+      }
+      function popular () {
+        return $ctrl.currentThemes.sort(function (a, b) {
+          return parseFloat(b.populate) - parseFloat(a.populate)
+        })
+      }
 
-      // function favorite() {
-      //   return $ctrl.currentThemes.sort(function (a) {
-      //     return $ctrl.favorites.includes(a.id) ? -1 : 1;
-      //   });
-      // }
+      function favorite () {
+        return $ctrl.currentThemes.sort(function (a, b) {
+          return (b.data.preferred) - (a.data.preferred)
+        })
+      }
 
       $scope.model = null
       $scope.$watch('$ctrl.ngModel', function (data) {

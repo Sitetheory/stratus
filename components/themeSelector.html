@@ -1,10 +1,9 @@
 <div id="toppage"></div>
-
 <div class="error" ng-if="$ctrl.errorMsg">
   <p>{{ $ctrl.errorMsg }}</p>
 </div>
 <md-content class="theme-selector">
-  <div class="selectedLayout clearfix">
+  <div class="selectedLayout selectLayout clearfix">
     <div ng-if="$ctrl.selectedTheme" class="imageColumn stGrid stGridMobile">
       <div class="selectedImage positionAnchor backgroundDark">
         <div class="imageContainer defaultShadow easyTransition">
@@ -27,64 +26,93 @@
       <a href="#" class="btn" ng-if="!$ctrl.isNewTheme" ng-click="$ctrl.toggleGallery();">Change Theme</a>
     </div>
   </div>
-
-  <hr>
-
+  <!--<hr>-->
   <div class="list-theme" ng-if="$ctrl.showGallery" layout="column">
-    <div layout="row">
-      <div flex="20" class="menus">
-        <div flex>
-          <h2>Categories</h2>
-          <ul>
-            <li ng-repeat="category in $ctrl.categories track by $index">
-              <a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a>
-            </li>
-          </ul>
+    <div layout="row" class="sortcate">
+      <div class="menus">
+          <input ng-model="filter.key" name="search" placeholder="Search by theme name">
+        <span class="searchPosition"><i class="fa fa-search"></i> </span>
+        <div class="categary">
+          <h2>Categories:</h2>
+          <select ng-model="sortcategory"  ng-options="category as category.catName for category in $ctrl.categories "  ng-change="$ctrl.sortByCategory(sortcategory)"></select>
+          <!--<select>-->
+            <!--<option ng-repeat="category for category in $ctrl.categories" ng-model="sortcategory" ng-change="$ctrl.sortByCategory(sortcategory)">{{category}}</option>-->
+          <!--</select>-->
+          <!--<ul>-->
+            <!--<li ng-repeat="category in $ctrl.categories track by $index">-->
+              <!--<a class="point" ng-click="$ctrl.showCategory($index)">{{category}}</a>-->
+            <!--</li>-->
+          <!--</ul>-->
         </div>
-        <div flex>
-          <h2>Sort By</h2>
-          <ul>
-            <li><a href="#" ng-click="$ctrl.sortBy('latest')" class="point">Latest</a></li>
-            <li><a href="#" ng-click="$ctrl.sortBy('populate')" class="point">Populate</a></li>
-            <li><a href="#" ng-click="$ctrl.sortBy('favorite')" class="point">Favorites(0)</a></li>
-          </ul>
+        <div class="sorting">
+          <h2>Sort By:</h2>
+          <select ng-options="sortoption for sortoption in $ctrl.sortingoptions" ng-model="sort"  ng-change="$ctrl.sortBy(sort)">
+          </select>
+          <!--<ul>-->
+            <!--<li><a href="#" ng-click="$ctrl.sortBy('latest')" class="point">Latest</a></li>-->
+            <!--<li><a href="#" ng-click="$ctrl.sortBy('populate')" class="point">Populate</a></li>-->
+            <!--<li><a href="#" ng-click="$ctrl.sortBy('favorite')" class="point">Favorites(0)</a></li>-->
+          <!--</ul>-->
         </div>
       </div>
-
-      <div flex class="templates">
-        <div ng-repeat="target in collection.models" class="template" layout="row">
-          <div class="image" flex="45" ng-click="$ctrl.zoomView(target)">
+      <div class="templates">
+        <div ng-if="collection.models[0].meta" ng-repeat="target in collection.models | filter: {data: {name: filter.key}}" class="template">
+          <div class="image">
             <img stratus-src="{{ target.data.images[0].url }}" alt="">
-            <div class="overlay"><i class="fa fa-search" aria-hidden="true"></i></div>
+            <div class="overlay">
+              <i class="fa fa-search" aria-hidden="true" ng-click="$ctrl.zoomView(target)"></i>
+              <a href="#toppage" class="btn" ng-click="$ctrl.chooseTheme(target.data);">Choose Theme</a>
+            </div>
           </div>
-
-          <div class="content" flex="45">
+          <div class="content">
             <div class="title">
-              <h3>{{target.data.name}}</h3>
-              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)"><i ng-if="target.data.preferred"
-                                                                          class="fa fa-heart favorite"></i></a>
+              <h3>{{target.data.name}}
+                <span class="freeTags">Free</span>
+              </h3>
+              <a href="#" ng-click="$ctrl.setFavorite(target.data.id)">
+                <i ng-if="target.data.preferred" class="fa fa-heart favorite"></i>
+              </a>
             </div>
             <div class="description"
                  ng-bind-html="$ctrl.themeRawDesc(target.data.description) | truncate:{limit:300}"></div>
-            <a href="#toppage" class="btn" ng-click="$ctrl.chooseTheme(target.data);">Choose Theme</a>
           </div>
         </div>
+          <div ng-if="!collection.models[0].meta" ng-repeat="target in collection.models |filter:filter.key" class="template">
+              <div class="image">
+              <img stratus-src="{{ target.images[0].url }}" alt="">
+              <div class="overlay">
+              <i class="fa fa-search" aria-hidden="true" ng-click="$ctrl.zoomView(target)"></i>
+              <a href="#toppage" class="btn" ng-click="$ctrl.chooseTheme(target);">Choose Theme</a>
+              </div>
+              </div>
+              <div class="content">
+              <div class="title">
+              <h3>{{target.name}}
+              <span class="freeTags">Free</span>
+              </h3>
+              <a href="#" ng-click="$ctrl.setFavorite(target.id)">
+              <i ng-if="target.preferred == 1" class="fa fa-heart favorite"></i>
+              </a>
+              </div>
+              <div class="description"
+              ng-bind-html="$ctrl.themeRawDesc(target.description) | truncate:{limit:300}"></div>
+              </div>
+          </div>
       </div>
+        <span ng-if="collection.models[0].meta">
+            <stratus-pagination></stratus-pagination>
+        </span>
     </div>
-  </div>
-  <div class="nav-button">
-    <stratus-pagination></stratus-pagination>
+      <!--<stratus-pagination></stratus-pagination>-->
   </div>
 </md-content>
-
 <script type="text/ng-template" id="themeDetail.html">
   <!-- Detail Page starts from here -->
   <div id="zoom-view" class="lt-popup theme-preview" role="dialog">
     <div class="pannel-header">
       <div class="">
         <h3>{{ themeDetail.name }}</h3>
-        <a href="#" ng-click="$ctrl.setFavorite(themeDetail.id)"><i ng-if="themeDetail.preferred"
-                                                                    class="fa fa-heart favorite"></i></a>
+        <a href="#" ng-click="$ctrl.setFavorite(themeDetail.id)"><i ng-if="themeDetail.preferred" class="fa fa-heart favorite"></i></a>
         <button type="button" class="btnClose" href="javascript:;" ng-click="closeDialog();">
           <span class="sr-only">Toggle Navigation</span>
           <svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -105,7 +133,6 @@
         </button>
       </div>
     </div>
-
     <div class="pannel-content">
       <div class="ltpop-top">
         <div class="name fontSecondary"
@@ -113,7 +140,6 @@
         <a href="#" class="btn" ng-click="$ctrl.chooseTheme(themeDetail); closeDialog();">Choose Theme </a>
         <a href="#" class="btn">View Demo </a>
       </div>
-
       <div class="ltpop-bottom">
         <div class="theme-view-list">
           <a href="#" class="active"><i class="fas fa-play-circle" aria-hidden="true"></i></a>
