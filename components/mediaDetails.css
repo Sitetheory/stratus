@@ -1,164 +1,175 @@
+
+/* These 2 dialogue classes should be wrapped in a content type class but that needs to be added to the body class dynamically */
+
+.md-dialog-container {
+  z-index: 100;
+}
+
+/* Dialogue window */
 .media-details {
-  background: #2e2e2e;
-  border-radius: 5px;
-  padding: 2em;
-  min-width: 700px;
+  width: 100%;
+  max-width: 1000px;
+  padding: 28px;
+  position: relative;
 }
-.media-details .header {
-  margin-bottom: 1.5em;
-  box-shadow: 0 1px rgba(214, 211, 211, 0.4);
+.media-details.backgroundDark {
+  background: rgba(30, 30, 30, 0.95);
 }
-.media-details .header div {
-  display: inline-block;
+
+/* Media details title */
+.media-details .title-container {
+  margin-bottom: 26px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(200, 200, 200, 0.3);
+}
+.media-details .title-container h2 {
+  overflow: hidden;
+  margin: 8px 0 0;
+  color: #ddd;
+}
+
+
+/* Close button */
+.media-details .btnClose {
+  float: none;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+.media-details .btnClose svg g {
+  stroke: #CCC;
+}
+.media-details .btnClose:hover svg g {
+  stroke: #FFF;
+}
+
+
+/* Action buttons */
+.media-details .action-btns {
+  /* Make room for close button */
+  padding-right: 35px;
+}
+.media-details .action-btns ul {
+  float: right;
+}
+.media-details .action-btns .md-icon {
+  width: inherit;
+  height: inherit;
+}
+.media-details .action-btns ul li {
+  float: left;
+}
+.media-details .action-btns a {
+  display: block;
+  margin: 0 4px 4px 0;
+  padding: 6px;
+  opacity: 1;
+  background: rgba(255,255,255,.26);
+}
+.media-details .action-btns a:hover {
+  background: #FFF;
+}
+.media-details .action-btns a svg g {
+  fill: #FFF;
+}
+.media-details .action-btns a:hover svg g {
+  fill: #222;
+}
+
+
+/* Add tags */
+.media-details #tag-container {
+  margin-bottom: 40px;
+}
+.media-details .md-chips .md-chip-input-container md-autocomplete input::placeholder {
+  padding-left: 44px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #D4BF9E;
+  background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat 12px 0;
+  background-size: 18px;
+}
+.media-details .md-chips .md-chip-input-container md-autocomplete input:hover::placeholder {
+  color: #FFF;
+}
+.media-details .md-chips .md-chip-input-container md-autocomplete input {
+  transition: all .2s ease-out;
+  height: 40px;
+  line-height: 40px;
+  font-size: 15px;
   color: #fff;
+  border: 1px solid rgba(255,255,255,.3);
 }
-.media-details .header .header-left {
+.media-details .md-chips .md-chip-input-container md-autocomplete input:hover {
+  border-color: #FFF;
+}
+.media-details .md-chips .md-chip-input-container md-autocomplete input:focus {
+  border: none;
+  border-color: transparent;
+}
+.media-details .md-chips .md-chip-input-container md-autocomplete input:focus::placeholder {
+  padding: 0;
+  font-weight: normal;
+  color: #FFF;
+  background: none;
+}
+.media-details .md-chips .md-chip-input-container {
+  margin: 0 0 10px;
+}
+.media-details md-chips-wrap {
+  max-width: 220px;
+  overflow: hidden;
+}
+.media-details .md-chips {
+  padding: 0;
+}
+.media-details .md-chips md-chip {
+  margin: 0 8px 8px 0;
+}
+
+
+/* Media specs */
+.media-specs .smallLabel {
+  margin: 0 0 6px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.media-specs .smallLabel span {
   color: #fff;
   font-weight: bold;
 }
-.media-details .header .header-right {
-  text-align: right;
+
+
+/* Media description */
+.media-details .description {
+  margin-top: 30px;
+  line-height: 1.3;
+  color: #bbb;
 }
-.media-details .header .header-right div .tags {
-  list-style: none;
-  margin: 0;
-  overflow: hidden;
-  padding: 0;
-  display: inline-flex;
-}
-.media-details .header .header-right div .tags .tag {
-  background: #eee;
-  border-radius: 3px 0 0 3px;
-  border-color: #2e2e2e;
-  color: #999;
-  display: inline-block;
-  height: 26px;
-  line-height: 26px;
-  padding: 0 20px 0 23px;
-  position: relative;
-  margin: 0 10px 10px 0;
-  text-decoration: none;
-  transition: color 0.2s;
-  -webkit-transition: color 0.2s;
-}
-.media-details .header .header-right div .tags .tag::before {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: inset 0 1px rgba(0, 0, 0, 0.25);
-  content: '';
-  height: 6px;
-  left: 10px;
-  position: absolute;
-  width: 6px;
-  top: 10px;
-}
-.media-details .header .header-right div .tags .tag::after {
-  background: #fff;
-  border-bottom: 13px solid #2f2f2f;
-  border-left: 10px solid #eee;
-  border-top: 13px solid #2f2f2f;
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.media-details .header .header-right div .tags .tag:hover {
-  background-color: crimson;
-  color: white;
-}
-.media-details .header .header-right div .tags .tag:hover::after {
-  border-left-color: crimson;
-}
-.media-details .header .header-right div .fas {
-  cursor: pointer;
-}
-.media-details .header .header-right div .fa-times-circle {
-  color: #fff;
-  background: #2e2e2e;
-}
-.media-details .content {
-  color: #fff;
-}
-.media-details .content .inform textarea {
-  resize: none;
-}
-.media-details .content .inform .controls-function {
-  padding: 0;
-  display: flex;
-}
-.media-details .content .inform .controls-function .icon {
-  display: inline-block;
-  margin-right: 0.5em;
-  border: 1px solid;
-  border-radius: 2px;
-  height: fit-content;
-  border-color: rgba(214, 211, 211, 0.4);
-  transition: 0.3s all;
-}
-.media-details .content .inform .controls-function .icon .fas {
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  line-height: inherit !important;
+
+
+/* Media image */
+.details-image {
+  margin-left: 20px;
   text-align: center;
+  background: rgba(200, 200, 200, 0.06);
 }
-.media-details .content .inform .controls-function li {
-  padding-top: 3px;
-}
-.media-details .content .inform .controls-function li:hover {
-  box-sizing: content-box;
-  border-color: #fff;
-}
-.media-details .content .inform .controls-function li a {
-  color: #fff;
-}
-.media-details .content .inform .image-inform {
-  margin-top: 1em;
-}
-.media-details .content .inform .image-inform p span {
+.details-image img {
   display: block;
-  color: #bbadad;
-}
-.media-details .content .inform .image-inform p span label {
-  color: #fff;
-}
-.media-details .content .inform .description {
-  margin-top: 1em;
-  font-size: 14px;
-  color: #bbadad;
-}
-.media-details .content .image img {
+  margin: 0 auto;
   width: 100%;
-  max-height: 530px;
   max-width: 625px;
+  max-height: 450px;
   object-fit: contain;
 }
-.media-details .content .infoFullImage {
-  text-align: center;
+
+@media (max-width: 959px) {
+  .details-image {
+    margin: 0 0 20px 0;
+  }
 }
-.media-details .content .infoFullImage .document {
-  font-size: 10em;
-  padding: 50px 0;
-}
-.media-details .titleContainer .image-name input {
-  width: 100%;
-}
-.media-details .titleContainer .tagContainer {
-  padding-right: 0;
-  margin-left: 15px;
-}
-.media-details .titleContainer .tagContainer md-chips {
-  float: right;
-  margin-right: 50px;
-  border-radius: 3px;
-}
-.media-details .titleContainer .tagContainer md-chips .md-chips.md-focused {
-  box-shadow: 0 2px #fff;
-}
-.media-details .titleContainer .tagContainer md-chips md-autocomplete label {
-  color: #fff;
-}
-.media-details .titleContainer .tagContainer md-chips md-autocomplete input {
-  bottom: 10px;
-  color: #fff;
-}
+
+
+

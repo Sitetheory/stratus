@@ -1,98 +1,262 @@
+
+
+md-dialog {
+    width: 80%;
+    max-width: 800px;
+}
 .media-uploader {
-  max-width: 1000px;
+    max-width: 1000px;
+    padding: 22px 28px 28px;
+}
+
+
+
+/* Uploader header */
+.media-uploader h2 {
+    padding-left: 40px;
+    font-weight: bold;
 }
 .media-uploader .toolbar {
-  color: #454545;
+    position: relative;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #999;
 }
 .media-uploader .toolbar .md-toolbar-tools {
-  justify-content: space-between;
+    justify-content: space-between;
+    padding: 0;
 }
+.media-uploader stratus-help {
+    position: absolute;
+    top: 20px;
+    left: 0;
+}
+.md-toolbar-tools > .md-button:last-child {
+    margin-right: 0;
+}
+
+
+
+/* Tabs */
 .media-uploader md-tab-content {
-  padding-top: 0;
+    padding-top: 0;
 }
-.media-uploader .content .files.dropContainer {
-  max-width: unset;
+
+
+/* Tab forms */
+.media-uploader md-tab-content form {
+    padding: 0 10px 10px;
 }
-.media-uploader .content .files.dropContainer .upload-zone {
-  min-height: 400px;
-  border-radius: 3px;
-  background-color: whitesmoke;
+.media-uploader .md-tab.md-active {
+    font-weight: bold;
 }
-.media-uploader .content .files.dropContainer .upload-zone h2 {
-  text-align: center;
-  text-transform: none;
+.media-uploader .md-padding.videos,
+.media-uploader .md-padding.links {
+    padding: 5%;
 }
-.media-uploader .content .files.dropContainer .upload-zone h2 a {
-  color: #ff9800;
+.media-uploader .video md-switch {
+    margin-top: 0;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem {
-  width: 20%;
+.media-uploader .video .md-button {
+    margin: 0 0 0 8px;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .errorMessage {
-  position: relative;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+
+.media-uploader .md-chips .md-chip-input-container md-autocomplete input::placeholder {
+    padding-left: 32px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #857255;
+    background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat;
+    background-size: 18px;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image {
-  height: 100%;
-  position: relative;
-  border-radius: 3px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+.media-uploader .md-chips .md-chip-input-container md-autocomplete input:hover::placeholder {
+    color: #222;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .document {
-  width: 100%;
-  height: 100%;
-  position: relative;
+.media-uploader .md-chips .md-chip-input-container md-autocomplete input {
+    transition: all .2s ease-out;
+    font-size: 15px;
+    color: #222;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .document i {
-  top: 50%;
-  left: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
+.media-uploader .md-chips .md-chip-input-container md-autocomplete input:focus::placeholder {
+    padding: 0;
+    font-weight: normal;
+    color: #222;
+    background: none;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .successCheck {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.5);
+
+
+
+/* Instructions */
+.uploader-instructions {
+    margin-top: 16px;
+    text-align: center;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .successCheck md-icon {
-  width: 70px;
-  height: 70px;
-  top: 50%;
-  left: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
+.uploader-instructions a {
+    text-decoration: underline;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
+.uploader-instructions a:hover {
+    text-decoration: none;
+    color: #111;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .hoverItems {
-  display: none;
-  margin-top: 0;
-  width: auto;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.3);
+
+
+/* Drop container */
+.drop-container {
+    max-width: unset;
+    min-height: 150px;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image .hoverItems .fa-times-circle {
-  font-size: 60px;
-  color: #f44336;
-  top: 50%;
-  left: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
+.drop-container .upload-zone {
+    min-height: 400px;
 }
-.media-uploader .content .files.dropContainer .upload-zone .file-list ul .droppedItem .image--cn .image:hover .hoverItems {
-  display: inherit;
+.drop-container ul {
+    margin: 0 -8px;
 }
+.drop-container ul li {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 0 6px;
+    width: 33.3%;
+}
+@media (max-width: 600px) {
+    .drop-container ul li {
+        width: 50%;
+    }
+}
+@media (max-width: 479px) {
+    .drop-container ul li {
+        display: block;
+        width: 100%;
+    }
+}
+
+
+/* Error message */
+/* TODO: Change site.css to hyphens and come back to these */
+.drop-container .errorMessage {
+    display: block;
+    margin: 0 auto;
+    padding: 8px;
+    text-align: center;
+    color: #FFF;
+    background: #FF8E6C;
+}
+.drop-container li .errorMessage {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    left: 6px;
+}
+
+
+/* Progress bar & percentage */
+.drop-container .progress-percentage {
+    transition: all 0.2s ease-out;
+    margin-bottom: 3px;
+    font-size: 12px;
+    opacity: 0;
+}
+.drop-container .progress {
+    transition: all 0.2s ease-out;
+    margin-top: 1px;
+    height: 12px;
+    opacity: 0;
+    background: #D3D3D3;
+}
+.drop-container .progress-visible .progress-percentage,
+.drop-container .progress-visible .progress {
+    opacity: 1;
+}
+.drop-container .progress-color-bar {
+    background: #fe7c57 none repeat scroll 0 0;
+    height: 12px;
+}
+.drop-container .progress-percentage {
+    margin-bottom: 3px;
+    font-size: 12px;
+    opacity: 0;
+}
+.drop-container .progress {
+    transition: all 0.2s ease-out;
+    margin-bottom: 1px;
+    height: 12px;
+    opacity: 0;
+    background: #D3D3D3;
+}
+.drop-container .progress-visible .progress-percentage,
+.drop-container .progress-visible .progress {
+    opacity: 1;
+}
+/* Hide progress & percentage when upload complete */
+.drop-container .progress-complete .progress-percentage,
+.drop-container .progress-complete .progress {
+    opacity: 0;
+    transition-delay: 1s;
+}
+
+
+
+/* Dropped items */
+.media-uploader .dropped-item {
+    transition: all 0.2s ease-out;
+    position: relative;
+    height: 148px;
+    background: #E9E9E9;
+}
+.media-uploader .dropped-item img {
+    transition: all 0.2s ease-out;
+    display: block;
+    margin: 0 auto;
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+.media-uploader .progress-visible .dropped-item img {
+    opacity: 1;
+}
+.media-uploader .dropped-item-container:hover .dropped-item img {
+    opacity: 0.2;
+}
+.media-uploader .dropped-item-container:hover .progress-complete .dropped-item img,
+.media-uploader .dropped-item-container:hover .progress-aborted .dropped-item img {
+    opacity: 1;
+}
+@media (max-width: 959px) {
+    .media-uploader .dropped-item {
+        height: 140px;
+    }
+}
+@media (max-width: 768px) {
+    .media-uploader .dropped-item {
+        height: 100px;
+    }
+}
+@media (max-width: 600px) {
+    .media-uploader .dropped-item {
+        height: 125px;
+    }
+}
+@media (max-width: 479px) {
+    .media-uploader .dropped-item {
+        height: 200px;
+    }
+}
+
+
+/* Other media types */
+.media-uploader .dropped-item .document {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+.media-uploader .dropped-item .document i {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
 .media-uploader .content .videos .video-list .video,
 .media-uploader .content .links .video-list .video,
 .media-uploader .content .videos .link-list .video,
@@ -101,25 +265,125 @@
 .media-uploader .content .links .video-list .link,
 .media-uploader .content .videos .link-list .link,
 .media-uploader .content .links .link-list .link {
-  border-radius: 3px;
-  background-color: #fafafa;
-  border: 1px solid #e1e1e1;
-  margin-bottom: 20px;
+    border-radius: 3px;
+    background-color: #fafafa;
+    border: 1px solid #e1e1e1;
+    margin-bottom: 20px;
 }
-.uploadedVideo {
-  background-color: #000;
-  opacity: 0.7;
-  position: relative;
+.uploaded-video {
+    background-color: #000;
+    opacity: 0.7;
+    position: relative;
 }
-.uploadedVideo .middle-details {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  transition: 0.5s ease;
-  -ms-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  text-align: center;
-  opacity: 1;
+.uploaded-video .middle-details {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transition: 0.5s ease;
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+    opacity: 1;
 }
+
+
+#tag-container {
+
+}
+
+
+
+
+/* TODO: Can we delete this? */
+.droppedUnknown md-icon {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: inherit;
+}
+.droppedUnknown #linearGradient-iconDocument .stop1 {
+    stop-color: #FFFFFF;
+    stop-opacity: 0.7;
+}
+.droppedUnknown #linearGradient-iconDocument .stop2 {
+    stop-color: #FFFFFF;
+    stop-opacity: 0.5;
+}
+
+
+/* Success check icon */
+@-webkit-keyframes animateCheck {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.upload-complete .success-check {
+    animation: animateCheck ease-out 1.5s 0s;
+}
+.media-uploader .dropped-item .success-check md-icon {
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 70px;
+    height: 70px;
+}
+.media-uploader .dropped-item .success-check md-icon svg {
+    -webkit-filter: drop-shadow( 0 0 4px rgba(0,0,0,.4));
+    filter: drop-shadow( 0 0 4px rgba(0,0,0,.4));
+}
+.media-uploader .dropped-item .success-check md-icon svg g {
+    fill: #FFF;
+}
+
+
+/* Abort upload icon */
+.media-uploader .abort {
+    display: none;
+    margin-top: 0;
+    width: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.abort button {
+    transform: translate(-50%, -50%);
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    height: 70%;
+    background: none;
+    border: none;
+}
+.abort button md-icon {
+    width: 100%;
+    height: 100%;
+}
+.abort svg g {
+    transition: all .1s ease-out;
+    fill: #FF7552;
+}
+.abort button:hover svg g {
+    fill: #222;
+}
+.media-uploader .dropped-item:hover .abort {
+    display: inherit;
+}
+
+
+
+
+
+
+
+
