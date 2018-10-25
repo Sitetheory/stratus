@@ -2022,14 +2022,18 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   if (typeof partial !== 'boolean') {
     partial = true
   }
-  let pageTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
-  let pageBottom = pageTop + $(Stratus.Environment.get('viewPort') || window).height()
+  let viewPort = Stratus.Environment.get('viewPort') || window
+  let pageTop = $(viewPort).scrollTop()
+  let pageBottom = pageTop + $(viewPort).height()
   let elementTop = el.offset().top
+  if (viewPort !== window) {
+    elementTop += pageTop
+  }
   let elementBottom = elementTop + el.height()
   pageTop = pageTop + offset
   pageBottom = pageBottom - offset
   /* *
-  if (!Stratus.Environment.get('production') && offset) {
+  if (!Stratus.Environment.get('production')) {
     console.log('onScreen:',
       {
         el: el,
