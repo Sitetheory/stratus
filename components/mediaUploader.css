@@ -1,262 +1,239 @@
-
-
 md-dialog {
-    width: 80%;
-    max-width: 800px;
+  width: 80%;
+  max-width: 800px;
 }
 .media-uploader {
-    max-width: 1000px;
-    padding: 22px 28px 28px;
+  max-width: 1000px;
+  padding: 22px 28px 28px;
 }
-
-
-
 /* Uploader header */
 .media-uploader h2 {
-    padding-left: 40px;
-    font-weight: bold;
+  padding-left: 40px;
+  font-weight: bold;
 }
 .media-uploader .toolbar {
-    position: relative;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #999;
+  position: relative;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #999;
 }
 .media-uploader .toolbar .md-toolbar-tools {
-    justify-content: space-between;
-    padding: 0;
+  justify-content: space-between;
+  padding: 0;
 }
-.media-uploader stratus-help {
-    position: absolute;
-    top: 20px;
-    left: 0;
+.media-uploader .toolbar .md-toolbar-tools .md-button:last-child {
+  margin-right: 0;
 }
-.md-toolbar-tools > .md-button:last-child {
-    margin-right: 0;
+.media-uploader .toolbar stratus-help {
+  position: absolute;
+  top: 20px;
+  left: 0;
 }
-
-
-
 /* Tabs */
 .media-uploader md-tab-content {
-    padding-top: 0;
+  padding-top: 0;
 }
-
-
 /* Tab forms */
 .media-uploader md-tab-content form {
-    padding: 0 10px 10px;
+  padding: 0 10px 10px;
 }
 .media-uploader .md-tab.md-active {
-    font-weight: bold;
+  font-weight: bold;
 }
 .media-uploader .md-padding.videos,
 .media-uploader .md-padding.links {
-    padding: 5%;
+  padding: 5%;
 }
 .media-uploader .video md-switch {
-    margin-top: 0;
+  margin-top: 0;
 }
 .media-uploader .video .md-button {
-    margin: 0 0 0 8px;
+  margin: 0 0 0 8px;
 }
-
+/* Add tags */
 .media-uploader .md-chips .md-chip-input-container md-autocomplete input::placeholder {
-    padding-left: 32px;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #857255;
-    background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat;
-    background-size: 18px;
+  padding-left: 32px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #857255;
+  background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat;
+  background-size: 18px;
 }
 .media-uploader .md-chips .md-chip-input-container md-autocomplete input:hover::placeholder {
-    color: #222;
+  color: #222;
 }
 .media-uploader .md-chips .md-chip-input-container md-autocomplete input {
-    transition: all .2s ease-out;
-    font-size: 15px;
-    color: #222;
+  transition: all 0.2s ease-out;
+  font-size: 15px;
+  color: #222;
 }
 .media-uploader .md-chips .md-chip-input-container md-autocomplete input:focus::placeholder {
-    padding: 0;
-    font-weight: normal;
-    color: #222;
-    background: none;
+  padding: 0;
+  font-weight: normal;
+  color: #222;
+  background: none;
 }
-
-
-
 /* Instructions */
 .uploader-instructions {
-    margin-top: 16px;
-    text-align: center;
+  margin-top: 16px;
+  text-align: center;
 }
 .uploader-instructions a {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 .uploader-instructions a:hover {
-    text-decoration: none;
-    color: #111;
+  text-decoration: none;
+  color: #111;
 }
-
-
 /* Drop container */
 .drop-container {
-    max-width: unset;
-    min-height: 150px;
+  max-width: unset;
+  min-height: 150px;
 }
 .drop-container .upload-zone {
-    min-height: 400px;
+  min-height: 400px;
 }
 .drop-container ul {
-    margin: 0 -8px;
+  margin: 0 -8px;
 }
 .drop-container ul li {
-    position: relative;
-    margin-bottom: 20px;
-    padding: 0 6px;
-    width: 33.3%;
+  position: relative;
+  margin-bottom: 20px;
+  padding: 0 6px;
+  width: 33.3%;
 }
 @media (max-width: 600px) {
-    .drop-container ul li {
-        width: 50%;
-    }
+  .drop-container ul li {
+    width: 50%;
+  }
 }
 @media (max-width: 479px) {
-    .drop-container ul li {
-        display: block;
-        width: 100%;
-    }
+  .drop-container ul li {
+    display: block;
+    width: 100%;
+  }
 }
-
-
 /* Error message */
 /* TODO: Change site.css to hyphens and come back to these */
 .drop-container .errorMessage {
-    display: block;
-    margin: 0 auto;
-    padding: 8px;
-    text-align: center;
-    color: #FFF;
-    background: #FF8E6C;
+  display: block;
+  margin: 0 auto;
+  padding: 8px;
+  text-align: center;
+  color: #FFF;
+  background: #FF8E6C;
 }
 .drop-container li .errorMessage {
-    position: absolute;
-    top: 50%;
-    right: 6px;
-    left: 6px;
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  left: 6px;
 }
-
-
 /* Progress bar & percentage */
+.drop-container {
+  /* Hide progress & percentage when upload complete */
+}
 .drop-container .progress-percentage {
-    transition: all 0.2s ease-out;
-    margin-bottom: 3px;
-    font-size: 12px;
-    opacity: 0;
+  transition: all 0.2s ease-out;
+  margin-bottom: 3px;
+  font-size: 12px;
+  opacity: 0;
 }
 .drop-container .progress {
-    transition: all 0.2s ease-out;
-    margin-top: 1px;
-    height: 12px;
-    opacity: 0;
-    background: #D3D3D3;
+  transition: all 0.2s ease-out;
+  margin-top: 1px;
+  height: 12px;
+  opacity: 0;
+  background: #D3D3D3;
 }
 .drop-container .progress-visible .progress-percentage,
 .drop-container .progress-visible .progress {
-    opacity: 1;
+  opacity: 1;
 }
 .drop-container .progress-color-bar {
-    background: #fe7c57 none repeat scroll 0 0;
-    height: 12px;
+  background: #fe7c57 none repeat scroll 0 0;
+  height: 12px;
 }
 .drop-container .progress-percentage {
-    margin-bottom: 3px;
-    font-size: 12px;
-    opacity: 0;
+  margin-bottom: 3px;
+  font-size: 12px;
+  opacity: 0;
 }
 .drop-container .progress {
-    transition: all 0.2s ease-out;
-    margin-bottom: 1px;
-    height: 12px;
-    opacity: 0;
-    background: #D3D3D3;
+  transition: all 0.2s ease-out;
+  margin-bottom: 1px;
+  height: 12px;
+  opacity: 0;
+  background: #D3D3D3;
 }
 .drop-container .progress-visible .progress-percentage,
 .drop-container .progress-visible .progress {
-    opacity: 1;
+  opacity: 1;
 }
-/* Hide progress & percentage when upload complete */
 .drop-container .progress-complete .progress-percentage,
 .drop-container .progress-complete .progress {
-    opacity: 0;
-    transition-delay: 1s;
+  opacity: 0;
+  transition-delay: 1s;
 }
-
-
-
 /* Dropped items */
-.media-uploader .dropped-item {
-    transition: all 0.2s ease-out;
-    position: relative;
-    height: 148px;
-    background: #E9E9E9;
+.dropped-item {
+  transition: all 0.2s ease-out;
+  position: relative;
+  height: 148px;
+  background: #E9E9E9;
 }
-.media-uploader .dropped-item img {
-    transition: all 0.2s ease-out;
-    display: block;
-    margin: 0 auto;
-    height: 100%;
-    width: 100%;
-    max-width: 100%;
-    object-fit: contain;
-}
-.media-uploader .progress-visible .dropped-item img {
-    opacity: 1;
-}
-.media-uploader .dropped-item-container:hover .dropped-item img {
-    opacity: 0.2;
-}
-.media-uploader .dropped-item-container:hover .progress-complete .dropped-item img,
-.media-uploader .dropped-item-container:hover .progress-aborted .dropped-item img {
-    opacity: 1;
+.dropped-item img {
+  transition: all 0.2s ease-out;
+  display: block;
+  margin: 0 auto;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  object-fit: contain;
 }
 @media (max-width: 959px) {
-    .media-uploader .dropped-item {
-        height: 140px;
-    }
+  .dropped-item {
+    height: 140px;
+  }
 }
 @media (max-width: 768px) {
-    .media-uploader .dropped-item {
-        height: 100px;
-    }
+  .dropped-item {
+    height: 100px;
+  }
 }
 @media (max-width: 600px) {
-    .media-uploader .dropped-item {
-        height: 125px;
-    }
+  .dropped-item {
+    height: 125px;
+  }
 }
 @media (max-width: 479px) {
-    .media-uploader .dropped-item {
-        height: 200px;
-    }
+  .dropped-item {
+    height: 200px;
+  }
 }
-
-
+.progress-visible .dropped-item img {
+  opacity: 1;
+}
+.dropped-item:hover img {
+  opacity: 0.2;
+}
+.progress-complete .dropped-item:hover img,
+.progress-aborted .dropped-item:hover img {
+  opacity: 1;
+}
 /* Other media types */
-.media-uploader .dropped-item .document {
-    width: 100%;
-    height: 100%;
-    position: relative;
+.dropped-item .document {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
-.media-uploader .dropped-item .document i {
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    transform: translate(-50%, -50%);
+.dropped-item .document i {
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
 }
-
 .media-uploader .content .videos .video-list .video,
 .media-uploader .content .links .video-list .video,
 .media-uploader .content .videos .link-list .video,
@@ -265,125 +242,104 @@ md-dialog {
 .media-uploader .content .links .video-list .link,
 .media-uploader .content .videos .link-list .link,
 .media-uploader .content .links .link-list .link {
-    border-radius: 3px;
-    background-color: #fafafa;
-    border: 1px solid #e1e1e1;
-    margin-bottom: 20px;
+  border-radius: 3px;
+  background-color: #fafafa;
+  border: 1px solid #e1e1e1;
+  margin-bottom: 20px;
 }
 .uploaded-video {
-    background-color: #000;
-    opacity: 0.7;
-    position: relative;
+  background-color: #000;
+  opacity: 0.7;
+  position: relative;
 }
 .uploaded-video .middle-details {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    transition: 0.5s ease;
-    -ms-transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    text-align: center;
-    opacity: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transition: 0.5s ease;
+  -ms-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+  opacity: 1;
 }
-
-
-#tag-container {
-
-}
-
-
-
-
 /* TODO: Can we delete this? */
 .droppedUnknown md-icon {
-    display: block;
-    margin: 0 auto;
-    width: 80%;
-    height: inherit;
+  display: block;
+  margin: 0 auto;
+  width: 80%;
+  height: inherit;
 }
 .droppedUnknown #linearGradient-iconDocument .stop1 {
-    stop-color: #FFFFFF;
-    stop-opacity: 0.7;
+  stop-color: #FFFFFF;
+  stop-opacity: 0.7;
 }
 .droppedUnknown #linearGradient-iconDocument .stop2 {
-    stop-color: #FFFFFF;
-    stop-opacity: 0.5;
+  stop-color: #FFFFFF;
+  stop-opacity: 0.5;
 }
-
-
 /* Success check icon */
 @-webkit-keyframes animateCheck {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 .upload-complete .success-check {
-    animation: animateCheck ease-out 1.5s 0s;
+  animation: animateCheck ease-out 1.5s 0s;
 }
-.media-uploader .dropped-item .success-check md-icon {
-    transform: translate(-50%, -50%);
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    width: 70px;
-    height: 70px;
+.upload-complete .success-check md-icon {
+  transform: translate(-50%, -50%);
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 70px;
+  height: 70px;
 }
-.media-uploader .dropped-item .success-check md-icon svg {
-    -webkit-filter: drop-shadow( 0 0 4px rgba(0,0,0,.4));
-    filter: drop-shadow( 0 0 4px rgba(0,0,0,.4));
+.upload-complete .success-check md-icon svg {
+  -webkit-filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
 }
-.media-uploader .dropped-item .success-check md-icon svg g {
-    fill: #FFF;
+.upload-complete .success-check md-icon svg g {
+  fill: #FFF;
 }
-
-
 /* Abort upload icon */
 .media-uploader .abort {
-    display: none;
-    margin-top: 0;
-    width: auto;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.8);
+  display: none;
+  margin-top: 0;
+  width: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
 }
-.abort button {
-    transform: translate(-50%, -50%);
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 70%;
-    height: 70%;
-    background: none;
-    border: none;
+.media-uploader .abort button {
+  transform: translate(-50%, -50%);
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 70%;
+  background: none;
+  border: none;
 }
-.abort button md-icon {
-    width: 100%;
-    height: 100%;
+.media-uploader .abort button md-icon {
+  width: 100%;
+  height: 100%;
 }
-.abort svg g {
-    transition: all .1s ease-out;
-    fill: #FF7552;
+.media-uploader .abort svg g {
+  transition: all 0.1s ease-out;
+  fill: #FF7552;
 }
-.abort button:hover svg g {
-    fill: #222;
+.media-uploader .abort button:hover svg g {
+  fill: #222;
 }
 .media-uploader .dropped-item:hover .abort {
-    display: inherit;
+  display: inherit;
 }
-
-
-
-
-
-
-
-
