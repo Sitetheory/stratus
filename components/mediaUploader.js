@@ -134,7 +134,7 @@
           confirmDialogPromise.then(isUnsavedVideo => {
             if (isUnsavedVideo) {
               var confirm = $mdDialog.confirm()
-                .title('You have not saved the video information you entered.')
+                .title('You have not saved your video information.')
                 .textContent('Are you sure you want to abandon this video before saving?')
                 .ok('Abandon Video')
                 .cancel('Cancel')
@@ -261,7 +261,7 @@
             var msg
             switch (file.$error) {
               case 'maxSize':
-                msg = 'Looks like some of your files is too large. You can upload files up to '
+                msg = 'Looks like one of your files is too large. You can upload files up to '
                 break
               case 'maxFiles':
                 msg = 'Maximum number of files allowed up to '
