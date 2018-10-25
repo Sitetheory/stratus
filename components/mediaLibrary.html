@@ -7,7 +7,7 @@
             <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select
                 media.</a>
         </p>
-        <p class="smallLabel selectedMediaLabel">Media</p>
+        <p class="smallLabel selectedMediaLabel">Selected Media</p>
         <div id="selectedDropArea"
              ng-class="{'dragBorder':dragClass}"
              ng-model="files"
@@ -94,8 +94,8 @@
 
     <!-- Media Library -->
     <div ng-if="$ctrl.showLibrary" id="openLibrary" class="media-library-content">
-        <div class="section-container media-library backgroundDark borderRadiusDefault">
-
+        <div class="section-container media-library borderDefault borderDefaultAll borderRadiusDefault"">
+            <p class="smallLabel selectedMediaLabel">Media Library</p>
             <div class="library-content">
                 <div class="clearfix">
                     <!-- Add Button -->
@@ -166,7 +166,7 @@
 
                             <!-- Image hover info -->
                             <div class="info-hover-container" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
-                                <div class="image-hover-info borderRadiusDefault">
+                                <div class="image-hover-info backgroundDark borderRadiusDefault">
                                     <div class="format-size">
                                         <div class="smallLabel fileDetails">
                                             <span class="file-type">{{media.data.extension|uppercase}}</span><span
