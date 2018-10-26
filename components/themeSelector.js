@@ -136,7 +136,44 @@
           ? JSON.parse($attrs.multiple)
           : false
       }
-
+      // used to show selected frame in popup
+      $scope.iframeView = function (type) {
+        switch (type) {
+          case 'desktop':
+            $scope.desktop = true
+            $scope.mobile = false
+            $scope.tablet = false
+            $scope.selecteddesktopframe = 'selected-frame'
+            $scope.selectedtabletframe = ''
+            $scope.selectedmobileframe = ''
+            break
+          case 'tablet':
+            $scope.tablet = true
+            $scope.desktop = false
+            $scope.mobile = false
+            $scope.selectedtabletframe = 'selected-frame'
+            $scope.selecteddesktopframe = ''
+            $scope.selectedmobileframe = ''
+            break
+          case 'mobile':
+            $scope.mobile = true
+            $scope.tablet = false
+            $scope.desktop = false
+            $scope.selectedmobileframe = 'selected-frame'
+            $scope.selectedtabletframe = ''
+            $scope.selecteddesktopframe = ''
+            break
+          default:
+            $scope.desktop = true
+            $scope.selecteddesktopframe = 'selected-frame'
+            $scope.selectedmobileframe = ''
+            $scope.selectedtabletframe = ''
+        }
+      }
+      $scope.desktop = true
+      $scope.selecteddesktopframe = 'selected-frame'
+      $scope.selectedmobileframe = ''
+      $scope.selectedtabletframe = ''
       // Data Connectivity
       $scope.$watch('[model.data.version.template, collection.models]',
         function (theme) {
@@ -174,6 +211,7 @@
 
       // display expanded view if clicked on change button
       function zoomView (themeDetail) {
+        console.log(themeDetail)
         visualSelector.zoomviewDialog($scope, themeDetail.data, 'themeDetail')
       }
 
