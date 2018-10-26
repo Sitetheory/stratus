@@ -4,14 +4,21 @@
   width: 100%;
 }
 .search input {
-  padding: 15px 30px 14px 58px;
+  padding: 15px 30px 14px 40px;
   color: black;
   width: 100%;
   font-size: 15px;
   padding-right: 100px;
+  background: none;
+  border:none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 }
 .search input:focus {
-  border: 1px solid #4d90fe;
+  border-bottom: 1px solid #222;
+}
+.search input::placeholder {
+  color: #444;
+  font-size: 16px;
 }
 
 /* Remove IE10's “clear field” X button */
@@ -30,13 +37,12 @@
 }
 .search .left-icon {
   top: 11px;
-  left: 12px;
-  padding-right: 8px;
+  left: 0;
+  padding-right: 4px;
   width: 32px;
   height: 26px;
   min-width: 32px;
   min-height: 26px;
-  border-right: 1px solid rgba(33, 33, 33, 0.4);
 }
 .search .right-icon {
   top: 0;
