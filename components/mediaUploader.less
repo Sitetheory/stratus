@@ -12,14 +12,15 @@ md-dialog {
 
 
 /* Uploader header */
-.media-uploader h2 {
-  padding-left: 40px;
-  font-weight: bold;
-}
+
 .media-uploader .toolbar {
   position: relative;
   padding-bottom: 8px;
   border-bottom: 1px solid #999;
+  h2 {
+    padding-left: 40px;
+    font-weight: bold;
+  }
   .md-toolbar-tools {
     justify-content: space-between;
     padding: 0;
@@ -31,6 +32,9 @@ md-dialog {
     position: absolute;
     top: 20px;
     left: 0;
+  }
+  .btnClose {
+    transform: translateY(-10px);
   }
 }
 
@@ -263,45 +267,20 @@ md-dialog {
   height: 100%;
   position: relative;
 }
-.dropped-item .document i {
-  top: 50%;
-  left: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
+.media-uploader .content .video,
+.media-uploader .content .link {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0,0,0,.3);
 }
-.media-uploader .content .videos .video-list .video,
-.media-uploader .content .links .video-list .video,
-.media-uploader .content .videos .link-list .video,
-.media-uploader .content .links .link-list .video,
-.media-uploader .content .videos .video-list .link,
-.media-uploader .content .links .video-list .link,
-.media-uploader .content .videos .link-list .link,
-.media-uploader .content .links .link-list .link {
-  border-radius: 3px;
-  background-color: #fafafa;
-  border: 1px solid #e1e1e1;
-  margin-bottom: 20px;
-}
-.uploaded-video {
-  background-color: #000;
-  opacity: 0.7;
-  position: relative;
-}
-.uploaded-video .middle-details {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 100%;
-  transition: 0.5s ease;
-  -ms-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+.media-uploader .content md-card-content {
   text-align: center;
-  opacity: 1;
+}
+.media-uploader .content .video h2 {
+  line-height: 1.3;
 }
 
-
-/* TODO: Can we delete this? */
+/* TODO: Can we delete these ?
 .droppedUnknown md-icon {
   display: block;
   margin: 0 auto;
@@ -315,7 +294,7 @@ md-dialog {
 .droppedUnknown #linearGradient-iconDocument .stop2 {
   stop-color: #FFFFFF;
   stop-opacity: 0.5;
-}
+} */
 
 
 /* Success check icon */

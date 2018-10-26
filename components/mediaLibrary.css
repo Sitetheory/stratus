@@ -223,26 +223,61 @@
   background-color: rgba(106, 89, 66, 0.5);
 }
 .library-item.selected-media {
-  background: #344A35;
+  background: #000;
 }
 .library-item.selected-media .image-draggable {
-  opacity: 0.5;
+  opacity: 0.65;
 }
 .library-item.selected-media .image-draggable.video-thumb {
   background-color: transparent;
 }
+
+/* Media type icon */
+.thumb-gradient {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 36px;
+  background: linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.65));
+}
+.thumb-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;;
+}
+.thumb-icon md-icon {
+  display: block;
+  transition: all .2s ease-out;
+  -webkit-transition: all .2s ease-out;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px
+}
+.thumb-icon md-icon svg g {
+  fill: #FFF;
+}
+.library-item:hover .thumb-icon md-icon {
+  transform: scale(0);
+  -webkit-transform: scale(0);
+  opacity: 0;
+}
+
+
+
 /* Library items hover */
 .icon-plus md-icon,
 .icon-minus md-icon,
-.icon-check md-icon,
-.icon-video md-icon {
+.icon-check md-icon {
   width: 100%;
   height: inherit;
 }
 .icon-plus md-icon svg,
 .icon-minus md-icon svg,
-.icon-check md-icon svg,
-.icon-video md-icon svg {
+.icon-check md-icon svg {
   transform-origin: center center;
   -webkit-transform-origin: center center;
   transition: all 0.1s ease-out;
@@ -250,21 +285,10 @@
 }
 .icon-plus md-icon svg g,
 .icon-minus md-icon svg g,
-.icon-check md-icon svg g,
-.icon-video md-icon svg g {
+.icon-check md-icon svg g {
   fill: #fff;
 }
-.icon-video {
-  opacity: 0.7;
-}
-.library-item:hover .icon-video svg {
-  transform: scale(0.3);
-  -webkit-transform: scale(0.3);
-  opacity: 0;
-}
-.library-item.selected-media .icon-video {
-  opacity: 0.2;
-}
+
 /* Library hover controls */
 .controls-cursor {
   pointer: cursor;

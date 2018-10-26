@@ -17,7 +17,7 @@
     <ul class="listInline response clearfix">
       <li class="droppedItem" ng-repeat="file in files track by $index"
           ng-class="file.uploadStatus == true ? 'uploadComplete' : '' ">
-        <div class="image--cn"
+        <div class="image-container"
              ng-class="file.progress >= 0 && file.uploadStatus === false ? 'progressVisible' : 'progressInvisible' ">
           <div class="progressPercentage fontBody">{{file.progress}}%</div>
           <div class="progress">
