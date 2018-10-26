@@ -51,9 +51,9 @@
                             <div class="image-hover-info borderRadiusDefault" layout="column" layout-align="space-between center">
                                 <div class="format-size">
                                     <div class="smallLabel fileDetails">
-                                        <span class="file-type">{{ df.extension | uppercase }}</span><span
-                                            class="delimiter"></span><span
-                                            class="file-size">{{media.data.bytesHuman}}</span>
+                                        <span class="fileType">{{ (df.extension || df.service || (df.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
+                                            class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span
+                                            class="fileSize" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
                                     </div>
                                 </div>
                                 <p class="fontBody image-title">{{ df.name || 'No title' }}</p>
@@ -166,8 +166,8 @@
                                 <div class="image-hover-info backgroundDark borderRadiusDefault" layout="column" layout-align="space-between center">
                                     <div class="format-size">
                                         <div class="smallLabel fileDetails">
-                                            <span class="file-type">{{media.data.extension|uppercase}}</span><span
-                                                class="delimiter"></span><span class="file-size">{{media.data.bytesHuman}}</span>
+                                            <span class="fileType">{{ (media.data.extension || media.data.service || (media.data.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
+                                                class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span class="fileSize" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
                                         </div>
                                     </div>
                                     <p class="fontBody image-title">{{media.data.name || 'No title'}}</p>

@@ -13,7 +13,7 @@
     </div>
     <div class="content">
         <md-tabs md-dynamic-height md-border-bottom>
-            <md-tab label="Upload">
+            <md-tab label="Upload" ng-if="!$ctrl.fileData || $ctrl.fileData.file">
                 <md-content class="drop-container md-padding files">
                     <p class="uploader-instructions">Drag &amp; drop files here, or <span>
                       <a href="#"
@@ -77,7 +77,7 @@
                 </md-content>
             </md-tab>
 
-            <md-tab label="Video" ng-if="!$ctrl.fileId">
+            <md-tab label="Video" ng-if="!$ctrl.fileData || $ctrl.fileData.mime === 'video' ">
                 <md-content class="md-padding videos">
                     <p class="description">The best way to share videos is to upload to professional video services that offer
                         free storage and bandwidth, as well as sophisticated, browser-compatible video players that vary the quality
