@@ -39,7 +39,8 @@
       ngfMultiple: '<',
       fileId: '<',
       draggedFiles: '<',
-      invalidFiles: '<'
+      invalidFiles: '<',
+      fileData: '<'
     },
     controller: function ($http, $sce, $q, $scope, $attrs, $mdDialog, utility, media) {
       // Initialize
@@ -77,18 +78,24 @@
             // }
           ]
         }
-        $ctrl.videos = [
-          {
-            url: null,
-            name: null,
-            tags: [],
-            mime: 'video',
-            description: null,
-            isUploaded: false,
-            thumbnailUrl: '',
-            type: 'URL'
-          }
-        ]
+        if($ctrl.fileData && $ctrl.fileData.mime === 'video') {
+          $ctrl.videos = [
+            Object.assign($ctrl.fileData, {type: $ctrl.fileData.embed ? 'Embed' : 'URL'})
+          ]
+        } else {
+          $ctrl.videos = [
+            {
+              url: null,
+              name: null,
+              tags: [],
+              mime: 'video',
+              description: null,
+              isUploaded: false,
+              thumbnailUrl: '',
+              type: 'URL'
+            }
+          ]
+        }
         $ctrl.unsavedVideos = false
 
         $ctrl.links = [
@@ -150,7 +157,13 @@
       }
 
       function closeDialog () {
-        $mdDialog.hide($ctrl.files)
+        let returnData = null;
+        if($ctrl.fileData && $ctrl.fileData.mime === 'video') {
+          returnData = $ctrl.fileData
+        } else {
+          returnData = $ctrl.files
+        }
+        $mdDialog.hide(returnData)
       }
 
       function addExternalFile (fileType) {
@@ -225,8 +238,18 @@
             data.url = 'https://player.vimeo.com/video/' + response.videoId
           }
 
-          media.saveMediaUrl(data).then(function (response) {
+          var mediaSavePromise = null;
+          if($ctrl.fileId) {
+            mediaSavePromise = media.updateMedia($ctrl.fileId, data)
+          } else {
+            mediaSavePromise = media.saveMediaUrl(data)
+          }
+
+          mediaSavePromise.then(function (response) {
             if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
+              if($ctrl.fileData) {
+                $ctrl.fileData = response.data.payload
+              }
               // Refresh the library
               // var newMedia = media.getMedia($ctrl)
               var type = fileType && fileType === 'video' ? 'videos' : 'links'
