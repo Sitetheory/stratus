@@ -312,14 +312,14 @@
   padding-left: 10px;
 }
 /*css for redesign theme selector popup*/
-.md-panel-outer-wrapper{
+#SitetheoryHostingBundle-DesignEdit-35208 .md-panel-outer-wrapper._md-panel-shown{
   z-index: 9999!important;
   background: #e8e8e8;
 }
-._md-panel-shown .md-panel{
+#SitetheoryHostingBundle-DesignEdit-35208 .md-panel-outer-wrapper._md-panel-shown .md-panel{
     width: 100%;
     top: -61px!important;
-    z-index: 999999!important;
+    z-index: 999999;
     position: relative;
     transform: initial!important;
     left: 0!important;
