@@ -8,13 +8,11 @@
 /* Dialogue window */
 .media-details {
   width: 100%;
-  max-width: 1000px;
+  max-width: 800px;
   padding: 28px;
   position: relative;
 }
-.media-details.backgroundDark {
-  background: rgba(30, 30, 30, 0.95);
-}
+
 
 /* Media details title */
 .media-details .title-container {
@@ -23,8 +21,11 @@
   border-bottom: 1px solid rgba(200, 200, 200, 0.3);
   h2 {
     overflow: hidden;
-    margin: 8px 0 0;
-    color: #ddd;
+    overflow: hidden;
+    max-width: 55%;
+  }
+  .smallLabel {
+    padding-right: 60px;
   }
 }
 
@@ -36,98 +37,95 @@
   position: absolute;
   right: 20px;
   top: 20px;
-  svg g {
-    stroke: #CCC;
-  }
 }
-.media-details .btnClose:hover svg g {
-  stroke: #FFF;
-}
+
 
 
 /* Action buttons */
 .media-details .action-btns {
-  /* Make room for close button */
-  padding-right: 35px;
+  margin-bottom: 16px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(0,0,0,.2);
   ul {
     float: right;
-  }
-  ul li {
-    float: left;
+    li {
+      float: left;
+      max-width: 25%;
+    }
   }
   a {
     display: block;
     margin: 0 4px 4px 0;
     padding: 6px;
     opacity: 1;
-    background: rgba(255,255,255,.26);
+    border: 1px solid #BCBCBC;
   }
   md-icon {
     width: inherit;
     height: inherit;
   }
   svg g {
-    fill: #FFF;
+    fill: #434343;
   }
+  &:hover {
+    background: #222;
+    border: 1px solid #222;
+    svg g {
+      fill: #FFF;
+    }
+  }
+}
 
-}
-.media-details .action-btns a:hover {
-  background: #FFF;
-}
-.media-details .action-btns a:hover svg g {
-  fill: #222;
-}
+
 
 
 /* Add tags */
 .media-details #tag-container {
-  margin-bottom: 40px;
-  .md-chips .md-chip-input-container md-autocomplete input::placeholder {
-    padding-left: 44px;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #D4BF9E;
-    background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat 12px 0;
-    background-size: 18px;
-  }
-  .md-chips .md-chip-input-container md-autocomplete input:hover::placeholder {
-    color: #FFF;
-  }
-  .md-chips .md-chip-input-container md-autocomplete input {
-    transition: all .2s ease-out;
-    height: 40px;
-    line-height: 40px;
-    font-size: 15px;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,.3);
-  }
-  .md-chips .md-chip-input-container md-autocomplete input:hover {
-    border-color: #FFF;
-  }
-  .md-chips .md-chip-input-container md-autocomplete input:focus {
-    border: none;
-    border-color: transparent;
-  }
-  .md-chips .md-chip-input-container md-autocomplete input:focus::placeholder {
-    padding: 0;
-    font-weight: normal;
-    color: #FFF;
-    background: none;
-  }
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,0,0,.2);
   .md-chips .md-chip-input-container {
     margin: 0 0 10px;
-  }
-  md-chips-wrap {
-    max-width: 220px;
-    overflow: hidden;
-  }
-  .md-chips {
-    padding: 0;
-  }
-  .md-chips md-chip {
-    margin: 0 8px 8px 0;
+    md-autocomplete {
+      .input::placeholder {
+        padding-left: 34px;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #857255;
+        background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat;
+        background-size: 18px;
+      }
+      input:hover::placeholder {
+        color: #111;
+      }
+      input {
+        transition: all .2s ease-out;
+        height: 40px;
+        line-height: 40px;
+        font-size: 15px;
+      }
+      input:hover {
+        color: #222;
+      }
+      input:focus::placeholder {
+        padding: 0;
+        font-weight: normal;
+        color: #222;
+        background: none;
+      }
+      md-chips-wrap {
+        max-width: 220px;
+        overflow: hidden;
+      }
+      .md-chips {
+        padding: 0;
+        md-chip {
+          margin: 0 8px 8px 0;
+        }
+      }
+    }
   }
 }
 
@@ -138,8 +136,9 @@
   margin: 0 0 6px;
   font-size: 12px;
   letter-spacing: 1px;
+  color: #999;
   span {
-    color: #fff;
+    color: #222;
     font-weight: bold;
   }
 }
@@ -149,7 +148,7 @@
 .media-details .description {
   margin-top: 30px;
   line-height: 1.3;
-  color: #bbb;
+  color: #666;
 }
 
 
