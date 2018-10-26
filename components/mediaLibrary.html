@@ -27,10 +27,18 @@
                     <div class="selected-media-item">
                         <!-- <a>s are included to make mouse turn to cursor on hover -->
                         <a href="#">
+
+                            <!-- Image Thumb -->
                             <div ng-if="df.mime.indexOf('image') > -1" class="image-draggable" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
                                 <img id="{{df.id}}" class="shapeholder selectImgDrag"
                                      src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                <div class="thumb-gradient">&nbsp;</div>
+                                <div class="thumb-icon icon-video">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
+                                </div>
                             </div>
+
+                            <!-- Video Thumb -->
                             <div ng-if="df.mime == 'video'" class="video-thumb image-draggable positionAnchor" style="background-image: url('{{$ctrl.getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
                                 <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
 
@@ -40,20 +48,31 @@
                                 </div>
                                 <div class="thumbGradientLight"></div>
                             </div>
-                            <div ng-if="df.mime == 'application/pdf'" class="positionCenter">
-                                <i class="fas fa-5x fa-file-pdf document" aria-hidden="true"></i>
+
+                            <!-- PDF Thumb -->
+                            <div ng-if="df.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
+                                <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                <div class="thumb-icon icon-document">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
+                                </div>
                             </div>
-                            <div ng-if="df.mime == 'application/msword'" class="positionCenter">
-                                <i class="fas fa-5x fa-file-word document" aria-hidden="true"></i>
+
+                            <!-- Word Doc Thumb -->
+                            <div ng-if="df.mime == 'application/msword'"   class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
+                                <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                <div class="thumb-icon icon-document">
+                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
+                                </div>
                             </div>
+
                         </a>
                         <div class="info-hover-container">
                             <div class="image-hover-info borderRadiusDefault" layout="column" layout-align="space-between center">
                                 <div class="format-size">
                                     <div class="smallLabel fileDetails">
-                                        <span class="fileType">{{ (df.extension || df.service || (df.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
+                                        <span class="file-type">{{ (df.extension || df.service || (df.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
                                             class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span
-                                            class="fileSize" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
+                                            class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
                                     </div>
                                 </div>
                                 <p class="fontBody image-title">{{ df.name || 'No title' }}</p>
@@ -166,8 +185,8 @@
                                 <div class="image-hover-info backgroundDark borderRadiusDefault" layout="column" layout-align="space-between center">
                                     <div class="format-size">
                                         <div class="smallLabel fileDetails">
-                                            <span class="fileType">{{ (media.data.extension || media.data.service || (media.data.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
-                                                class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span class="fileSize" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
+                                            <span class="file-type">{{ (media.data.extension || media.data.service || (media.data.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
+                                                class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
                                         </div>
                                     </div>
                                     <p class="fontBody image-title">{{media.data.name || 'No title'}}</p>
