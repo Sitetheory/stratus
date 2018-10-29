@@ -180,7 +180,7 @@
             }
           }).then(function (response) {
             if (fileId && !_.isEmpty(response)) {
-              if(fileData && fileData.mime == 'video') {
+              if (fileData && fileData.mime === 'video') {
                 initFile($ctrl.media = response)
               } else if (!response[0].errorUpload) {
                 initFile(response[0].result)

@@ -78,7 +78,7 @@
             // }
           ]
         }
-        if($ctrl.fileData && $ctrl.fileData.mime === 'video') {
+        if ($ctrl.fileData && $ctrl.fileData.mime === 'video') {
           $ctrl.videos = [
             Object.assign($ctrl.fileData, {type: $ctrl.fileData.embed ? 'Embed' : 'URL'})
           ]
@@ -157,8 +157,8 @@
       }
 
       function closeDialog () {
-        let returnData = null;
-        if($ctrl.fileData && $ctrl.fileData.mime === 'video') {
+        let returnData = null
+        if ($ctrl.fileData && $ctrl.fileData.mime === 'video') {
           returnData = $ctrl.fileData
         } else {
           returnData = $ctrl.files
@@ -238,8 +238,8 @@
             data.url = 'https://player.vimeo.com/video/' + response.videoId
           }
 
-          var mediaSavePromise = null;
-          if($ctrl.fileId) {
+          var mediaSavePromise = null
+          if ($ctrl.fileId) {
             mediaSavePromise = media.updateMedia($ctrl.fileId, data)
           } else {
             mediaSavePromise = media.saveMediaUrl(data)
@@ -247,7 +247,7 @@
 
           mediaSavePromise.then(function (response) {
             if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
-              if($ctrl.fileData) {
+              if ($ctrl.fileData) {
                 $ctrl.fileData = response.data.payload
               }
               // Refresh the library

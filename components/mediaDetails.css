@@ -9,12 +9,11 @@
   padding: 28px;
   position: relative;
 }
-
 /* Media details title */
 .media-details .title-container {
   margin-bottom: 26px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(200, 200, 200, 0.3);
 }
 .media-details .title-container h2 {
   overflow: hidden;
@@ -30,16 +29,14 @@
   right: 20px;
   top: 20px;
 }
-
 /* Action buttons */
 .media-details .action-btns {
   margin-bottom: 16px;
   padding-bottom: 22px;
-  border-bottom: 1px solid rgba(0,0,0,.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 .media-details .action-btns ul {
   float: right;
-
 }
 .media-details .action-btns ul li {
   float: left;
@@ -59,23 +56,23 @@
 .media-details .action-btns svg g {
   fill: #434343;
 }
-.media-details .action-btns a:hover {
+.media-details .action-btns:hover {
   background: #222;
   border: 1px solid #222;
 }
-.media-details .action-btns a:hover svg g {
+.media-details .action-btns:hover svg g {
   fill: #FFF;
 }
-
-
-
 /* Add tags */
 .media-details #tag-container {
   margin-bottom: 24px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0,0,0,.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
-.media-details #tag-container .md-chip-input-container md-autocomplete input::placeholder {
+.media-details #tag-container .md-chips .md-chip-input-container {
+  margin: 0 0 10px;
+}
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete .input::placeholder {
   padding-left: 34px;
   font-size: 14px;
   font-weight: bold;
@@ -85,41 +82,34 @@
   background: url('/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add-gold.png') no-repeat;
   background-size: 18px;
 }
-.md-chip-input-container md-autocomplete input:hover::placeholder {
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete input:hover::placeholder {
   color: #111;
 }
-.md-chip-input-container md-autocomplete input {
-  transition: all .2s ease-out;
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete input {
+  transition: all 0.2s ease-out;
   height: 40px;
   line-height: 40px;
   font-size: 15px;
 }
-.md-chip-input-container md-autocomplete input:hover {
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete input:hover {
   color: #222;
 }
-.md-chip-input-container md-autocomplete input:focus::placeholder {
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete input:focus::placeholder {
   padding: 0;
   font-weight: normal;
   color: #222;
   background: none;
 }
-.md-chip-input-container md-autocomplete md-chips-wrap {
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete md-chips-wrap {
   max-width: 220px;
   overflow: hidden;
 }
-.md-chip-input-container md-autocomplete .md-chips {
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete .md-chips {
   padding: 0;
 }
-.md-chip-input-container md-autocomplete .md-chips md-chip {
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete .md-chips md-chip {
   margin: 0 8px 8px 0;
 }
-
-
-
-
-
-
-
 /* Media specs */
 .media-specs .smallLabel {
   margin: 0 0 6px;

@@ -7,14 +7,14 @@ md-dialog {
   padding: 22px 28px 28px;
 }
 /* Uploader header */
-.media-uploader .toolbar h2 {
-  padding-left: 40px;
-  font-weight: bold;
-}
 .media-uploader .toolbar {
   position: relative;
   padding-bottom: 8px;
   border-bottom: 1px solid #999;
+}
+.media-uploader .toolbar h2 {
+  padding-left: 40px;
+  font-weight: bold;
 }
 .media-uploader .toolbar .md-toolbar-tools {
   justify-content: space-between;
@@ -29,9 +29,8 @@ md-dialog {
   left: 0;
 }
 .media-uploader .toolbar .btnClose {
-    transform: translateY(-10px);
+  transform: translateY(-10px);
 }
-
 /* Tabs */
 .media-uploader md-tab-content {
   padding-top: 0;
@@ -226,29 +225,25 @@ md-dialog {
 .progress-aborted .dropped-item:hover img {
   opacity: 1;
 }
-
-
 /* Other media types */
 .dropped-item .document {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 .media-uploader .content .video,
 .media-uploader .content .link {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(0,0,0,.3);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
 }
 .media-uploader .content md-card-content {
-    text-align: center;
+  text-align: center;
 }
 .media-uploader .content .video h2 {
-    line-height: 1.3;
+  line-height: 1.3;
 }
-
-
-/* TODO: Can we delete these?
+/* TODO: Can we delete these ?
 .droppedUnknown md-icon {
   display: block;
   margin: 0 auto;
@@ -262,9 +257,7 @@ md-dialog {
 .droppedUnknown #linearGradient-iconDocument .stop2 {
   stop-color: #FFFFFF;
   stop-opacity: 0.5;
-}*/
-
-
+} */
 /* Success check icon */
 @-webkit-keyframes animateCheck {
   from {
