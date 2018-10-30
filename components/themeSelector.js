@@ -88,7 +88,7 @@
         //   'Lorem ipsum',
         //   'Lorem ipsum'
         // ]
-        $ctrl.categories = []
+        $ctrl.categories = [{'catId':'all','catName':'All'}]
         listTag().then(function (response) {
           var carData = response.data.payload
           if (carData) {
