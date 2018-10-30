@@ -103,7 +103,6 @@
         }
 
         function done () {
-          media.getMedia($ctrl)
           $mdDialog.hide()
         }
 
@@ -164,11 +163,11 @@
         }
 
         // Open the uploader to replace image
-        function openUploader (ngfMultiple, fileId) {
+        function openUploader (ngfMultiple, fileId, fileData = {}) {
           $mdDialog.show({
             attachTo: angular.element(document.querySelector('#listContainer')),
             controller: OpenUploaderController,
-            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId"></stratus-media-uploader>',
+            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId" file-data="fileData"></stratus-media-uploader>',
             clickOutsideToClose: false,
             focusOnOpen: true,
             autoWrap: true,
@@ -176,22 +175,26 @@
             locals: {
               collection: $ctrl.collection,
               ngfMultiple: ngfMultiple,
-              fileId: fileId
+              fileId: fileId,
+              fileData: fileData
             }
           }).then(function (response) {
-            console.log(response)
             if (fileId && !_.isEmpty(response)) {
-              if (!response[0].errorUpload) {
+              if (fileData && fileData.mime === 'video') {
+                initFile($ctrl.media = response)
+              } else if (!response[0].errorUpload) {
                 initFile(response[0].result)
               }
+              media.getMedia($ctrl)
             }
           })
 
           function OpenUploaderController (
-            scope, collection, ngfMultiple, fileId) {
+            scope, collection, ngfMultiple, fileId, fileData) {
             scope.collection = collection
             scope.ngfMultiple = ngfMultiple
             scope.fileId = fileId
+            scope.fileData = fileData
           }
         }
 
