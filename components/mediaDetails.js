@@ -1,4 +1,4 @@
-// Media Library Component
+// Media Details Component
 // -----------------------
 
 /* global define */

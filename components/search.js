@@ -29,7 +29,8 @@
     bindings: {
       ngModel: '=',
       target: '@',
-      display: '@'
+      display: '@',
+      placeholder: '@'
     },
     controller: function ($scope, $attrs, Registry, Collection) {
       Stratus.Instances[_.uniqueId('search_')] = $scope

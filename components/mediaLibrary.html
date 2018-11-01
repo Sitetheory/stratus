@@ -1,118 +1,6 @@
 <div id="media-library">
-
-    <!-- Media Selector -->
-    <div ng-if="$ctrl.isSelector"
-         class="media-selector section-container selected-container borderDefault borderDefaultAll borderRadiusDefault">
-        <p ng-if="!$ctrl.isSelector" class="instructions fontBody clearfix">
-            <a href="#" ng-click="$ctrl.toggleLibrary()" class="nothingSelectedTextLink">Open library to select
-                media.</a>
-        </p>
-        <p class="smallLabel selected-media-label">Selected Media</p>
-        <div id="selectedDropArea"
-             ng-class="{'dragBorder':dragClass}"
-             ng-model="files"
-             name="files"
-             ngf-multiple="true"
-             ngf-before-model-change="beforeChange($files,$event)"
-             ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
-             ngf-max-files="10"
-             ngf-model-invalid="invalidFiles"
-             ngf-validate="{size: {max: '10MB'}}"
-             ngf-drag-over-class="dragover"
-             ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
-            <ul class="listInline" stratus-sortable ng-sortable="$ctrl.draggedFiles"
-                ng-sortable-item-selector=".draggableImg">
-                <li class="draggableImg libraryItem" ng-if="$ctrl.draggedFiles.length"
-                    ng-repeat="df in $ctrl.draggedFiles">
-                    <div class="selected-media-item">
-                        <!-- <a>s are included to make mouse turn to cursor on hover -->
-                        <a href="#">
-
-                            <!-- Image Thumb -->
-                            <div ng-if="df.mime.indexOf('image') > -1" class="image-draggable" id="libb_{{media.data.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
-                                <img id="{{df.id}}" class="shapeholder selectImgDrag"
-                                     src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                <div class="thumb-gradient">&nbsp;</div>
-                                <div class="thumb-icon icon-video">
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
-                                </div>
-                            </div>
-
-                            <!-- Video Thumb -->
-                            <div ng-if="df.mime == 'video'" class="video-thumb image-draggable positionAnchor" style="background-image: url('{{$ctrl.getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
-                                <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-
-                                <!-- TODO: Hide the video icon and thumbGradientLight if video thumbnail exists -->
-                                <div class="icon-video positionCenter">
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
-                                </div>
-                                <div class="thumbGradientLight"></div>
-                            </div>
-
-                            <!-- PDF Thumb -->
-                            <div ng-if="df.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
-                                <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                <div class="thumb-icon icon-document">
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
-                                </div>
-                            </div>
-
-                            <!-- Word Doc Thumb -->
-                            <div ng-if="df.mime == 'application/msword'"   class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
-                                <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                <div class="thumb-icon icon-document">
-                                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
-                                </div>
-                            </div>
-
-                        </a>
-                        <div class="info-hover-container">
-                            <div class="image-hover-info borderRadiusDefault" layout="column" layout-align="space-between center">
-                                <div class="format-size">
-                                    <div class="smallLabel fileDetails">
-                                        <span class="file-type">{{ (df.extension || df.service || (df.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
-                                            class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span
-                                            class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
-                                    </div>
-                                </div>
-                                <p class="fontBody image-title">{{ df.name || 'No title' }}</p>
-
-                                <div class="action-btns">
-                                    <a href="#" ng-click="$ctrl.showDetails(df)" class="infoIcon">
-                                        <md-tooltip>Image details</md-tooltip>
-                                        <md-icon
-                                                md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                                    </a>
-                                    <a href="#" class="deleteIcon">
-                                        <md-tooltip>Remove selection</md-tooltip>
-                                        <md-icon aria-hidden="true" ng-click="$ctrl.removeFromSelected(df.id);"
-                                                 md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
-                                    </a>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="library-toggle">
-                    <a class="positionAnchor accentBackgroundHover borderDefault borderDefaultAll colorAccent1" href="#"
-                       ng-click="$ctrl.toggleLibrary()">
-                        <md-tooltip>Open Media Library</md-tooltip>
-                        <div ng-class="dragDropClass" aria-hidden="true">
-                            <md-icon class="positionCenter"
-                                     md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-                            <img class="shapeholder"
-                                 src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <!-- Gl Content Ends -->
-    </div>
-
     <!-- Media Library -->
-    <div ng-if="$ctrl.showLibrary" id="openLibrary" class="media-library-content">
+    <div id="openLibrary" class="media-library-content">
         <div class="section-container media-library borderDefault borderDefaultAll borderRadiusDefault"">
 
             <div class="library-header" layout="row" layout-align="space-between center">
@@ -120,7 +8,7 @@
                 <p class="smallLabel selectedMediaLabel">Media Library</p>
                 <!-- Search -->
                 <!-- TODO: Is there any way to set placeholder text from here? It would be ideal to have "Search by title, date or tag" -->
-                <stratus-search class="media-search"></stratus-search>
+                <stratus-search class="media-search" placeholder="Search by title, date or tag"></stratus-search>
 
                 <!-- Add Button -->
                 <md-button class="btn md-ink-ripple open-uploader"
@@ -181,55 +69,24 @@
                             <img ng-if="media.data.mime.indexOf('image') > -1" stratus-src="{{media.data.url || media.data.file}}">-->
 
                             <!-- Image hover info -->
-                            <div class="info-hover-container" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
-                                <div class="image-hover-info backgroundDark borderRadiusDefault" layout="column" layout-align="space-between center">
-                                    <div class="format-size">
-                                        <div class="smallLabel fileDetails">
-                                            <span class="file-type">{{ (media.data.extension || media.data.service || (media.data.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
-                                                class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
-                                        </div>
-                                    </div>
-                                    <p class="fontBody image-title">{{media.data.name || 'No title'}}</p>
-                                    <!-- <div class="time"><p>{{media.data.time *1000 | date: 'MMM dd, yyyy h:mma'}}</p></div> -->
-                                    <div class="position-action-area">
-                                        <div class="action-btns">
-                                            <a href="#">
-                                                <i aria-hidden="true"
-                                                   ng-click="$ctrl.showDetails(media.data)" class="infoIcon">
-                                                    <md-tooltip>Image details</md-tooltip>
-                                                    <md-icon
-                                                            md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"></md-icon>
-                                                </i>
-                                            </a>
-                                            <a href="#">
-                                                <i aria-hidden="true"
-                                                    ng-click="$ctrl.deleteMedia(media.data.id)" class="deleteIcon">
-                                                    <md-tooltip>Permanently delete from libary</md-tooltip>
-                                                    <md-icon class="deleteIcon" aria-hidden="true" ng-click="deleteFromMedia(media.data.id);"
-                                                             md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <stratus-media-short-details media="media.data"></stratus-media-short-details>
                             <!-- Image hover info ends -->
 
 
                             <!-- Controls -->
                             <!-- <a>s are included to make mouse turn to cursor on hover -->
-                            <a class="controls-cursor" href="#">
-                                <div ng-class="{display : $ctrl.isSelector && !media.data.selectedClass}" class="icon-plus positionCenter">
+                            <a class="controls-cursor" href="#" ng-if="$ctrl.isSelector">
+                                <div ng-class="{display : !media.data.selectedClass}" class="icon-plus positionCenter">
                                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg" aria-hidden="true"
-                                             ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></md-icon>
+                                             ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
                                 </div>
-                                <div ng-class="{display : $ctrl.isSelector && media.data.selectedClass}" class="icon-minus positionCenter">
+                                <div ng-class="{display : media.data.selectedClass}" class="icon-minus positionCenter">
                                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"  aria-hidden="true"
-                                             ng-click="$ctrl.addOrRemoveFile(media.data.selectedClass, media.data.id)"></md-icon>
+                                             ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
                                 </div>
-                                <div ng-class="{display : $ctrl.isSelector && media.data.selectedClass}"  class="icon-check positionCenter">
+                                <div ng-class="{display : media.data.selectedClass}"  class="icon-check positionCenter">
                                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg" aria-hidden="true"
-                                             ng-click="$ctrl.showDetails(media.data)"></md-icon>
+                                             ng-click="showDetails(media.data)"></md-icon>
                                 </div>
                             </a>
                             <!-- Controls End -->

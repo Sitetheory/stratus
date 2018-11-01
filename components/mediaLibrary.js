@@ -24,6 +24,7 @@
       'stratus.components.search',
       'stratus.components.pagination',
       'stratus.components.mediaDetails',
+      'stratus.components.mediaShortDetails',
       'stratus.components.mediaUploader',
 
       // Directives
@@ -47,7 +48,8 @@
   Stratus.Components.MediaLibrary = {
     bindings: {
       ngModel: '=',
-      isSelector: '<'
+      isSelector: '<',
+      mediaSelectorDraggedFiles: '='
     },
     controller: function (
       $scope, $attrs, Registry, $mdDialog, utility, media) {
@@ -58,17 +60,10 @@
       var $ctrl = this
       $ctrl.$onInit = function () {
         // Variables
-        $ctrl.showLibrary = !$ctrl.isSelector
-        $ctrl.showPlusIcon = true
-        $ctrl.draggedFiles = []
 
         // Methods
-        $ctrl.showDetails = showDetails
-        $ctrl.deleteMedia = deleteMedia
         $ctrl.openUploader = openUploader
-        $ctrl.toggleLibrary = toggleLibrary
-        $ctrl.addOrRemoveFile = addOrRemoveFile
-        $ctrl.removeFromSelected = removeFromSelected
+
         // fetch media collection and hydrate to $scope.collection
         $ctrl.registry = new Registry()
         $ctrl.registry.fetch({
@@ -85,25 +80,6 @@
       $scope.getThumbnailImgOfVideo = function (mediaData) {
         return media.getThumbnailImgOfVideo(mediaData)
       }
-
-      function toggleLibrary () {
-        if (!$ctrl.showLibrary) {
-          $ctrl.showLibrary = true
-        } else {
-          $ctrl.showLibrary = false
-        }
-      }
-
-      /* *
-      function getVimeoID (url) {
-        var ID = ''
-        url = url.split('https://vimeo.com/')
-        if (url[1] !== undefined) {
-          ID = url[1]
-        }
-        return ID
-      }
-      /* */
 
       function openUploader (ngfMultiple, files, invalidFiles) {
         $mdDialog.show({
@@ -131,7 +107,7 @@
         }
       }
 
-      function showDetails (media) {
+      $scope.showDetails = function (media) {
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: DialogShowDetails,
@@ -151,7 +127,7 @@
         }
       }
 
-      function deleteMedia (fileId) {
+      $scope.deleteMedia = function (fileId) {
         if (!Stratus.Environment.get('production')) {
           console.log(fileId)
         }
@@ -191,63 +167,20 @@
         })
       }
 
-      function addOrRemoveFile (selectedStatus, fileId) {
-        $ctrl.showPlusIcon = !$ctrl.showPlusIcon
-
-        if (selectedStatus === true) {
-          var i, j
-          for (i = 0; i < $ctrl.draggedFiles.length; i++) {
-            if ($ctrl.draggedFiles[i].id === fileId) {
-              $ctrl.draggedFiles.splice(i, 1)
-              for (j = 0; j < $scope.collection.models.length; j++) {
-                if ($scope.collection.models[j].data.id === fileId) {
-                  $scope.collection.models[j].data.selectedClass = false
-                }
-              }
-            }
-          }
-        } else if (selectedStatus === false || selectedStatus === undefined) {
-          // show plus icon,move to draggedFiles and add selectedClass
-          media.fetchOneMedia(fileId).then(function (response) {
-            $ctrl.draggedFiles.push(response.data.payload)
-            var i
-            for (i = 0; i < $scope.collection.models.length; i++) {
-              if ($scope.collection.models[i].data.id === fileId) {
-                $scope.collection.models[i].data.selectedClass = true
-              }
-            }
-          })
+      $scope.mediaSelectorAddOrRemoveFile = function (media) {
+        if (media.selectedClass === true) {
+          $ctrl.mediaSelectorDraggedFiles.splice(_.findIndex($ctrl.mediaSelectorDraggedFiles, function(mediaSelectorDraggedFile) { return mediaSelectorDraggedFile.id == media.id }), 1)
+          media.selectedClass = false
+        } else {
+          $ctrl.mediaSelectorDraggedFiles.push(media)
+          media.selectedClass = true
         }
       }
-
-      function removeFromSelected (fileId) {
-        $ctrl.showPlusIcon = !$ctrl.showPlusIcon
-
-        var i
-        for (i = 0; i < $ctrl.draggedFiles.length; i++) {
-          if ($ctrl.draggedFiles[i].id === fileId) {
-            $ctrl.draggedFiles.splice(i, 1)
-          }
-        }
-
-        for (i = 0; i < $scope.collection.models.length; i++) {
-          if ($scope.collection.models[i].data.id === fileId) {
-            $scope.collection.models[i].data.selectedClass = false
-          }
-        }
-      }
-
-      $scope.$watch('$ctrl.ngModel', function (data) {
-        console.log(data)
-        if (!_.isUndefined(data) && !_.isEqual($scope.draggedFiles, data)) {
-          $ctrl.draggedFiles = data || []
-        }
-      })
 
       $scope.$watch('collection.models', function (data) {
-        if (!_.isUndefined(data) && $ctrl.draggedFiles.length > 0) {
-          for (var i = 0; i < $ctrl.draggedFiles.length; i++) {
-            var addedFile = $ctrl.draggedFiles[i]
+        if (!_.isUndefined(data) && $ctrl.mediaSelectorDraggedFiles.length > 0) {
+          for (var i = 0; i < $ctrl.mediaSelectorDraggedFiles.length; i++) {
+            var addedFile = $ctrl.mediaSelectorDraggedFiles[i]
             for (var j = 0; j < $scope.collection.models.length; j++) {
               var media = $scope.collection.models[j]
               if (addedFile.id === media.data.id) {
@@ -257,6 +190,16 @@
           }
         }
       })
+
+      $scope.$on("mediaSelectorRemoveSelectedFile", function(evt, removedFileId){ 
+        let removedFileIndex = _.findIndex($scope.collection.models, function(media) {
+          return removedFileId == media.data.id 
+        })
+        if(removedFileIndex !== -1) {
+          $scope.collection.models[removedFileIndex].data.selectedClass = false
+        }
+      })
+
     },
     templateUrl: Stratus.BaseUrl +
      Stratus.BundlePath + 'components/mediaLibrary' +
