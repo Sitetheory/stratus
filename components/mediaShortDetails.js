@@ -5,53 +5,52 @@
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-      define([
-  
-        // Libraries
-        'stratus',
-        'underscore',
-        'angular',
-  
-        // Modules
-        'angular-material',
-  
-      ], factory)
-    } else {
-      factory(root.Stratus, root._, root.angular)
-    }
-  }(this, function (Stratus, _, angular) {
-    // This component intends to show media short details
-    Stratus.Components.MediaShortDetails = {
-      bindings: {
-        ngModel: '=',
-        media: '<',
-        isSelector: '<'
-      },
-      controller: function ($scope) {
-        var $ctrl = this
-        $ctrl.$onInit = function () {
-          // Methods
-          $ctrl.showDetails = showDetails
-          $ctrl.deleteMedia = deleteMedia
-          $ctrl.removeFromSelected = removeFromSelected
-        }
+  if (typeof define === 'function' && define.amd) {
+    define([
 
-        function showDetails(media) {
-          $scope.$parent.showDetails(media)
-        }
+      // Libraries
+      'stratus',
+      'underscore',
+      'angular',
 
-        function deleteMedia(fileId) {
-          $scope.$parent.deleteMedia(fileId)
-        }
+      // Modules
+      'angular-material'
 
-        function removeFromSelected(fileId) {
-          $scope.$parent.removeFromSelected(fileId)
-        }
-      },
-      templateUrl: Stratus.BaseUrl +
-       Stratus.BundlePath + 'components/mediaShortDetails' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.html'
-    }
-  }))
-  
+    ], factory)
+  } else {
+    factory(root.Stratus, root._, root.angular)
+  }
+}(this, function (Stratus, _, angular) {
+  // This component intends to show media short details
+  Stratus.Components.MediaShortDetails = {
+    bindings: {
+      ngModel: '=',
+      media: '<',
+      isSelector: '<'
+    },
+    controller: function ($scope) {
+      var $ctrl = this
+      $ctrl.$onInit = function () {
+        // Methods
+        $ctrl.showDetails = showDetails
+        $ctrl.deleteMedia = deleteMedia
+        $ctrl.removeFromSelected = removeFromSelected
+      }
+
+      function showDetails (media) {
+        $scope.$parent.showDetails(media)
+      }
+
+      function deleteMedia (fileId) {
+        $scope.$parent.deleteMedia(fileId)
+      }
+
+      function removeFromSelected (fileId) {
+        $scope.$parent.removeFromSelected(fileId)
+      }
+    },
+    templateUrl: Stratus.BaseUrl +
+      Stratus.BundlePath + 'components/mediaShortDetails' +
+      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+  }
+}))

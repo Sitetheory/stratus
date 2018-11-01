@@ -61,7 +61,6 @@
 
       var $ctrl = this
       $ctrl.$onInit = function () {
-
         // Variables
         $ctrl.loadLibrary = false
         $ctrl.showLibrary = false
@@ -71,13 +70,13 @@
         $ctrl.openUploader = openUploader
         $ctrl.toggleLibrary = toggleLibrary
       }
-      
+
       $scope.getThumbnailImgOfVideo = function (mediaData) {
         return media.getThumbnailImgOfVideo(mediaData)
       }
 
       function toggleLibrary () {
-        if(!$ctrl.loadLibrary) {
+        if (!$ctrl.loadLibrary) {
           $ctrl.loadLibrary = true
         }
         $ctrl.showLibrary = !$ctrl.showLibrary
@@ -130,9 +129,9 @@
       }
 
       $scope.removeFromSelected = function (fileId) {
-        $ctrl.draggedFiles.splice(_.findIndex($ctrl.draggedFiles, function(draggedFile) { return draggedFile.id == fileId }), 1)
-        if($ctrl.loadLibrary) {
-          $scope.$broadcast("mediaSelectorRemoveSelectedFile", fileId)
+        $ctrl.draggedFiles.splice(_.findIndex($ctrl.draggedFiles, function (draggedFile) { return draggedFile.id === fileId }), 1)
+        if ($ctrl.loadLibrary) {
+          $scope.$broadcast('mediaSelectorRemoveSelectedFile', fileId)
         }
       }
 
@@ -141,7 +140,6 @@
           $ctrl.draggedFiles = data || []
         }
       })
-
     },
     templateUrl: Stratus.BaseUrl +
      Stratus.BundlePath + 'components/mediaSelector' +

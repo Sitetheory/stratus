@@ -169,7 +169,7 @@
 
       $scope.mediaSelectorAddOrRemoveFile = function (media) {
         if (media.selectedClass === true) {
-          $ctrl.mediaSelectorDraggedFiles.splice(_.findIndex($ctrl.mediaSelectorDraggedFiles, function(mediaSelectorDraggedFile) { return mediaSelectorDraggedFile.id == media.id }), 1)
+          $ctrl.mediaSelectorDraggedFiles.splice(_.findIndex($ctrl.mediaSelectorDraggedFiles, function (mediaSelectorDraggedFile) { return mediaSelectorDraggedFile.id === media.id }), 1)
           media.selectedClass = false
         } else {
           $ctrl.mediaSelectorDraggedFiles.push(media)
@@ -178,7 +178,7 @@
       }
 
       $scope.$watch('collection.models', function (data) {
-        if (!_.isUndefined(data) && $ctrl.mediaSelectorDraggedFiles.length > 0) {
+        if (!_.isUndefined(data) && $ctrl.mediaSelectorDraggedFiles && $ctrl.mediaSelectorDraggedFiles.length > 0) {
           for (var i = 0; i < $ctrl.mediaSelectorDraggedFiles.length; i++) {
             var addedFile = $ctrl.mediaSelectorDraggedFiles[i]
             for (var j = 0; j < $scope.collection.models.length; j++) {
@@ -191,15 +191,14 @@
         }
       })
 
-      $scope.$on("mediaSelectorRemoveSelectedFile", function(evt, removedFileId){ 
-        let removedFileIndex = _.findIndex($scope.collection.models, function(media) {
-          return removedFileId == media.data.id 
+      $scope.$on('mediaSelectorRemoveSelectedFile', function (evt, removedFileId) {
+        let removedFileIndex = _.findIndex($scope.collection.models, function (media) {
+          return removedFileId === media.data.id
         })
-        if(removedFileIndex !== -1) {
+        if (removedFileIndex !== -1) {
           $scope.collection.models[removedFileIndex].data.selectedClass = false
         }
       })
-
     },
     templateUrl: Stratus.BaseUrl +
      Stratus.BundlePath + 'components/mediaLibrary' +
