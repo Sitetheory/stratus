@@ -437,3 +437,6 @@ span.mobile-fingure{
 .selected-frame i{
   color: #AAAAAA;
 }
+.theme-selector .list-theme .templates .template .content .title .favorite.gray{
+    color:#ccc;
+}

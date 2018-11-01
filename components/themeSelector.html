@@ -34,6 +34,7 @@
         <span class="searchPosition"><i class="fa fa-search"></i> </span>
         <div class="categary">
           <h2>Categories:</h2>
+            {{categories}}
           <select ng-model="sortcategory"  ng-options="category as category.catName for category in $ctrl.categories "  ng-change="$ctrl.sortByCategory(sortcategory)"></select>
           <!--<select>-->
             <!--<option ng-repeat="category for category in $ctrl.categories" ng-model="sortcategory" ng-change="$ctrl.sortByCategory(sortcategory)">{{category}}</option>-->
@@ -71,6 +72,7 @@
               </h3>
               <a href="#" ng-click="$ctrl.setFavorite(target.data.id)">
                 <i ng-if="target.data.preferred" class="fa fa-heart favorite"></i>
+                 <i ng-if="target.data.preferred == 0" class="fa fa-heart favorite gray"></i>
               </a>
             </div>
             <div class="description"
@@ -91,7 +93,8 @@
               <span class="freeTags">Free</span>
               </h3>
               <a href="#" ng-click="$ctrl.setFavorite(target.id)">
-              <i ng-if="target.preferred == 1" class="fa fa-heart favorite"></i>
+              <i ng-if="target.preferred" class="fa fa-heart favorite"></i>
+              <i ng-if="!target.preferred" class="fa fa-heart favorite gray"></i>
               </a>
               </div>
               <div class="description"
