@@ -56,11 +56,11 @@
 .media-details .action-btns svg g {
   fill: #434343;
 }
-.media-details .action-btns:hover {
+.media-details .action-btns a:hover {
   background: #222;
   border: 1px solid #222;
 }
-.media-details .action-btns:hover svg g {
+.media-details .action-btns a:hover svg g {
   fill: #FFF;
 }
 /* Add tags */
@@ -72,7 +72,7 @@
 .media-details #tag-container .md-chips .md-chip-input-container {
   margin: 0 0 10px;
 }
-.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete .input::placeholder {
+.media-details #tag-container .md-chips .md-chip-input-container md-autocomplete input::placeholder {
   padding-left: 34px;
   font-size: 14px;
   font-weight: bold;

@@ -59,6 +59,13 @@
     padding: 6px;
     opacity: 1;
     border: 1px solid #BCBCBC;
+    &:hover {
+      background: #222;
+      border: 1px solid #222;
+      svg g {
+        fill: #FFF;
+      }
+    }
   }
   md-icon {
     width: inherit;
@@ -66,13 +73,6 @@
   }
   svg g {
     fill: #434343;
-  }
-  &:hover {
-    background: #222;
-    border: 1px solid #222;
-    svg g {
-      fill: #FFF;
-    }
   }
 }
 
@@ -87,7 +87,7 @@
   .md-chips .md-chip-input-container {
     margin: 0 0 10px;
     md-autocomplete {
-      .input::placeholder {
+      input::placeholder {
         padding-left: 34px;
         font-size: 14px;
         font-weight: bold;
