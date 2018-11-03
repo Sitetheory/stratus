@@ -218,6 +218,7 @@ boot.config({
     'stratus.controllers.userFilter': boot.bundle + 'stratus/controllers/userFilter' + boot.suffix,
 
     /* Stratus Core Components */
+    'stratus.components.address': boot.bundle + 'stratus/components/address' + boot.suffix,
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
     'stratus.components.carousel': boot.bundle + 'stratus/components/carousel' + boot.suffix,
     'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,

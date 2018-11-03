@@ -68,8 +68,7 @@
         <p class="smallLabel" ng-if="$ctrl.media.ratio">Ratio: <span ng-bind="$ctrl.media.ratio"></span></p>
         <p class="smallLabel" ng-if="$ctrl.media.service">Service: <span ng-bind="$ctrl.media.service"></span></p>
       </div>
-      <div class="description" ng-if="!$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)">{{
-        $ctrl.selectedDesc.description || 'Add description' }}
+      <div class="description" ng-if="!$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)" ng-bind="$ctrl.selectedDesc.description || 'Add description'">
       </div>
       <textarea rows="10" ng-if="$ctrl.selectedDesc.editing"
                 ng-model="$ctrl.selectedDesc.description"
