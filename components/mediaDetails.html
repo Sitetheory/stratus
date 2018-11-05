@@ -32,7 +32,7 @@
         <ul class="listUnstyled">
           <li href="#" ng-if="$ctrl.media.mime != 'video'">
             <a href="//{{ $ctrl.media.prefix }}.{{ $ctrl.media.extension }}" class="defaultBorderRadius">
-              <md-tooltip>Download image</md-tooltip>
+              <md-tooltip>Download</md-tooltip>
               <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/download.svg" aria-hidden="true"></md-icon>
             </a>
           </li>
@@ -44,7 +44,7 @@
           </li>
           <li>
             <a href="#" ng-click="$ctrl.deleteMedia()" class="defaultBorderRadius">
-              <md-tooltip>Permanently delete image from library</md-tooltip>
+              <md-tooltip>Permanently delete from library</md-tooltip>
               <md-icon
                       md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg" aria-hidden="true"></md-icon>
             </a>
