@@ -45,8 +45,7 @@
 
                                 <!-- Video Thumb -->
                                 <div ng-if="media.data.mime == 'video'" class="video-thumb image-draggable" style="background-image: url('{{getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-
+                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png" ng-dblclick="showDetails(media.data)">
                                     <div class="thumb-icon icon-video">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
                                     </div>
@@ -54,7 +53,7 @@
 
                                 <!-- PDF Thumb -->
                                 <div ng-if="media.data.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png" ng-dblclick="showDetails(media.data)">
                                     <div class="thumb-icon icon-document">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
                                     </div>
@@ -62,7 +61,7 @@
 
                                 <!-- Word Doc Thumb -->
                                 <div ng-if="media.data.mime == 'application/msword'"  class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png" ng-dblclick="showDetails(media.data)">
                                     <div class="thumb-icon icon-document">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
                                     </div>
@@ -70,7 +69,7 @@
 
                                 <!-- Image Thumb -->
                                 <div ng-if="media.data.mime.indexOf('image') > -1" class="image-draggable" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png" ng-dblclick="showDetails(media.data)">
                                     <div class="thumb-gradient">&nbsp;</div>
                                     <div class="thumb-icon icon-video">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
