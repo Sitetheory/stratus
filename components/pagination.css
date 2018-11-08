@@ -8,11 +8,11 @@
   font-weight: bold;
   color: #999;
   padding: 10px 14px;
-  border: 1px solid rgba(0,0,0,.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 .paginator a:hover {
   color: #222;
-  border: 1px solid rgba(0,0,0,.75);
+  border: 1px solid rgba(0, 0, 0, 0.75);
 }
 .paginator .active a,
 .paginator .active a:hover {
@@ -27,9 +27,6 @@
   padding-right: 20px;
   font-size: 11px;
 }
-
-
-
 /* On dark backgrounds */
 .backgroundDark .paginator a {
   color: #888;
@@ -46,9 +43,6 @@
   background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
-
-
 /* Compact paginator */
 .compact-paginator .paginator .paginatorPages a,
 .compact-paginator .paginator .paginatorPrevious a,

@@ -1,12 +1,8 @@
-/* Styles from mediaLibrary.less need to be moved back here when the library component is split from the selector */
 /* Custom text elements */
 .smallLabel {
   font-weight: bold;
   color: #383838;
 }
-
-
-
 /* Action buttons for mediaShortDetails.html */
 .action-btns a {
   transition: all 0.2s ease-out;
@@ -55,39 +51,36 @@
 .section-container .shapeholder {
   width: 100%;
 }
-/* Selected media */
-.section-container .media-content ul li {
+/* Media list */
+.media-content ul li {
   position: relative;
   width: 12.5%;
   padding: 4px;
 }
-.section-container li.library-toggle {
+.media-content li.library-toggle {
   padding: 0;
 }
-.section-container li.library-toggle a {
+.media-content li.library-toggle a {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
   display: block;
 }
-.section-container li.library-toggle a:hover {
+.media-content li.library-toggle a:hover {
   border-color: rgba(0, 0, 0, 0.5);
 }
-.section-container li.library-toggle a:hover svg g {
+.media-content li.library-toggle a:hover svg g {
   fill: #111;
 }
-.section-container li.library-toggle a md-icon {
+.media-content li.library-toggle a md-icon {
   height: inherit;
   min-width: inherit;
   min-height: inherit;
   width: 50%;
 }
-.section-container li.library-toggle a md-icon svg g {
+.media-content li.library-toggle a md-icon svg g {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
-
-
-
 /* Media type icon */
 .thumb-gradient {
   position: absolute;
@@ -116,9 +109,7 @@
 .thumb-icon svg g {
   fill: #FFF;
 }
-
-
-/* Image info hover popup */
+/* Short details hover popup */
 .info-hover-container {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;

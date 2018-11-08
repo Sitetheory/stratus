@@ -49,19 +49,19 @@
   opacity: 1;
   border: 1px solid #BCBCBC;
 }
-.media-details .action-btns md-icon {
-  width: inherit;
-  height: inherit;
-}
-.media-details .action-btns svg g {
-  fill: #434343;
-}
 .media-details .action-btns a:hover {
   background: #222;
   border: 1px solid #222;
 }
 .media-details .action-btns a:hover svg g {
   fill: #FFF;
+}
+.media-details .action-btns md-icon {
+  width: inherit;
+  height: inherit;
+}
+.media-details .action-btns svg g {
+  fill: #434343;
 }
 /* Add tags */
 .media-details #tag-container {
