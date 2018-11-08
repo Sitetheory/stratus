@@ -30,7 +30,6 @@
     factory(root.Stratus, root._, root.jQuery, root.angular)
   }
 }(this, function (Stratus, _, jQuery, angular) {
-
   // This component intends to allow editing of various selections depending on
   // context.
   Stratus.Components.ThemeSelector = {
@@ -66,20 +65,17 @@
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'theme_selector',
         true)
-
       var $ctrl = this
-        $scope.sort='oldest';
+      $scope.sort = 'oldest'
       $ctrl.$onInit = function () {
-        // Hydrate Settings
+      // Hydrate Settings
         $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
-
         $ctrl.errorMsg = null
         $ctrl.heartCollor = []
         $ctrl.zoomView = zoomView
         $ctrl.selectedTheme = null
         $ctrl.showGallery = $ctrl.isNewTheme
         $ctrl.currentThemes = []
-
         // mock DB
         // $ctrl.categories = [
         //   'Lorem ipsum',
@@ -89,27 +85,25 @@
         //   'Lorem ipsum',
         //   'Lorem ipsum'
         // ]
-          $ctrl.categories = [{'catId':'all','catName':'All'}];
-              listTag().then(function (response) {
-                   var carData = response.data.payload;
-                   if(carData){
-                      carData.forEach(catName => {
-                          if(catName.name){
-                              if ($ctrl.categories.indexOf(catName.name) === -1) $ctrl.categories.push({'catId':catName.id,'catName':catName.name});
-                          }
-                      })
-                  }else{
-                      $ctrl.categories = [];
-                  }
-              })
-
-          // mock DB to this
-          $ctrl.sortingoptions = [
-              'oldest',
-              'latest',
-              'popular',
-              'favorite'
-          ]
+        $ctrl.categories = [ { 'catId': 'all', 'catName': 'All' } ]
+        listTag().then(function (response) {
+          $scope.carData = response.data.payload
+          if ($scope.carData) {
+            $scope.carData.forEach(catName => {
+              if (catName.name) {
+                if ($ctrl.categories.indexOf(catName.name) === -1) $ctrl.categories.push({ 'catId': catName.id, 'catName': catName.name })
+              }
+            })
+          } else {
+            $ctrl.categories = []
+          }
+        })// mock DB to this
+        $ctrl.sortingoptions = [
+          'oldest',
+          'latest',
+          'popular',
+          'favorite'
+        ]
 
         // define methods
         $ctrl.sortBy = sortBy
@@ -138,43 +132,43 @@
           : false
       }
       // used to show selected frame in popup
-        $scope.iframeView = function(type){
-            switch (type) {
-                case 'desktop':
-                    $scope.desktop = true
-                    $scope.mobile = false
-                    $scope.tablet = false
-                    $scope.selecteddesktopframe = 'selected-frame'
-                    $scope.selectedtabletframe = ''
-                    $scope.selectedmobileframe = ''
-                    break;
-                case 'tablet':
-                    $scope.tablet = true
-                    $scope.desktop = false
-                    $scope.mobile = false
-                    $scope.selectedtabletframe = 'selected-frame'
-                    $scope.selecteddesktopframe = ''
-                    $scope.selectedmobileframe = ''
-                    break;
-                case 'mobile':
-                    $scope.mobile = true
-                    $scope.tablet = false
-                    $scope.desktop = false
-                    $scope.selectedmobileframe = 'selected-frame'
-                    $scope.selectedtabletframe = ''
-                    $scope.selecteddesktopframe = ''
-                    break;
-                default:
-                    $scope.desktop = true;
-                    $scope.selecteddesktopframe = 'selected-frame'
-                    $scope.selectedmobileframe = ''
-                    $scope.selectedtabletframe = ''
-            }
+      $scope.iframeView = function (type) {
+        switch (type) {
+          case 'desktop':
+            $scope.desktop = true
+            $scope.mobile = false
+            $scope.tablet = false
+            $scope.selecteddesktopframe = 'selected-frame'
+            $scope.selectedtabletframe = ''
+            $scope.selectedmobileframe = ''
+            break
+          case 'tablet':
+            $scope.tablet = true
+            $scope.desktop = false
+            $scope.mobile = false
+            $scope.selectedtabletframe = 'selected-frame'
+            $scope.selecteddesktopframe = ''
+            $scope.selectedmobileframe = ''
+            break
+          case 'mobile':
+            $scope.mobile = true
+            $scope.tablet = false
+            $scope.desktop = false
+            $scope.selectedmobileframe = 'selected-frame'
+            $scope.selectedtabletframe = ''
+            $scope.selecteddesktopframe = ''
+            break
+          default:
+            $scope.desktop = true
+            $scope.selecteddesktopframe = 'selected-frame'
+            $scope.selectedmobileframe = ''
+            $scope.selectedtabletframe = ''
         }
-        $scope.desktop = true;
-        $scope.selecteddesktopframe = 'selected-frame'
-        $scope.selectedmobileframe = ''
-        $scope.selectedtabletframe = ''
+      }
+      $scope.desktop = true
+      $scope.selecteddesktopframe = 'selected-frame'
+      $scope.selectedmobileframe = ''
+      $scope.selectedtabletframe = ''
       // Data Connectivity
       $scope.$watch('[model.data.version.template, collection.models]',
         function (theme) {
@@ -190,19 +184,19 @@
               })[0]
             }
           }
-            // $ctrl.categories = [];
-            // angular.forEach($ctrl.currentThemes, function (value, key) {
-            //     if(value.data.tags.length > 0 ){
-            //         angular.forEach(value.data.tags, function (value1, key1) {
-            //             var resultData = $ctrl.categories.find( mainArr => mainArr === value1.name );
-            //             if(resultData === undefined){
-            //                 $ctrl.categories.push(value1.name)
-            //             }
-            //         })
-            //
-            //     }
-            //
-            // })
+          // $ctrl.categories = [];
+          // angular.forEach($ctrl.currentThemes, function (value, key) {
+          //     if(value.data.tags.length > 0 ){
+          //         angular.forEach(value.data.tags, function (value1, key1) {
+          //             var resultData = $ctrl.categories.find( mainArr => mainArr === value1.name );
+          //             if(resultData === undefined){
+          //                 $ctrl.categories.push(value1.name)
+          //             }
+          //         })
+          //
+          //     }
+          //
+          // })
         })
 
       // automatically run security check the result of html
@@ -212,7 +206,7 @@
 
       // display expanded view if clicked on change button
       function zoomView (themeDetail) {
-          console.log(themeDetail);
+        console.log(themeDetail)
         visualSelector.zoomviewDialog($scope, themeDetail.data, 'themeDetail')
       }
 
@@ -259,26 +253,25 @@
       //     }).catch(function () {
       //
       //     })
-          var data = {flagEntityId: id,flagEntity:'Template',alias:'SitetheoryTemplateBundle:Template'};
-          saveFavorite(data).then(function (response) {
-              //       if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
-              //           $ctrl.selectedChips.push(response.data.payload)
-              //           $rootScope.$$childHead.data.save();
-              //       }else{
-              //           $rootScope.$$childHead.data.meta.data.status = response.data.meta.status
-              //           $rootScope.$$childHead.data.error = true
-              //       }
-          })
+        var data = { flagEntityId: id, flagEntity: 'Template', alias: 'SitetheoryTemplateBundle:Template' }
+        saveFavorite(data).then(function (response) {
+          //       if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
+          //           $ctrl.selectedChips.push(response.data.payload)
+          //           $rootScope.$$childHead.data.save();
+          //       }else{
+          //           $rootScope.$$childHead.data.meta.data.status = response.data.meta.status
+          //           $rootScope.$$childHead.data.error = true
+          //       }
+        })
       }
-      function saveFavorite(data) {
-          // var prototype = {
-          //     headers: { meta: {"options":{"action":"templatesAddFavorite"}}}
-          // }
-          //prototype.headers.set({});
-          //prototype.meta.set({"options":{"action":"templatesAddFavorite"}})
-          return utility.sendRequest(data, 'PUT', '/Api/Flag?&options[action]=addFavorite')
+      function saveFavorite (data) {
+        // var prototype = {
+        //     headers: { meta: {"options":{"action":"templatesAddFavorite"}}}
+        // }
+        // prototype.headers.set({});
+        // prototype.meta.set({"options":{"action":"templatesAddFavorite"}})
+        return utility.sendRequest(data, 'PUT', '/Api/Flag?&options[action]=addFavorite')
       }
-
 
       function chooseTheme (themeData) {
         $ctrl.selectedTheme = themeData
@@ -306,63 +299,61 @@
         $ctrl.currentThemes = (function (type) {
           switch (type) {
             case 'oldest':
-              return oldest();
+              return oldest()
             case 'latest':
-              return latest();
+              return latest()
             case 'popular':
-              return popular();
+              return popular()
             case 'favorite':
-              return favorite();
+              return favorite()
             default:
-              return $ctrl.currentThemes;
+              return $ctrl.currentThemes
           }
-        })(type);
+        })(type)
       }
 
-      function sortByCategory(catName) {
-          listTemplateOfSelectedTag(catName.catId).then(function (response) {
-              $scope.collection.models = response.data.payload;
-              $ctrl.showGallery = true;
-          })
+      function sortByCategory (catName) {
+        listTemplateOfSelectedTag(catName.catId).then(function (response) {
+          $scope.collection.models = response.data.payload
+          $ctrl.showGallery = true
+        })
       }
-        function listTemplateOfSelectedTag (id) {
-            return utility.sendRequest(null,'GET', '/Api/Asset?q='+id+'&options[action]=templatesByTag');
-        }
-          function listTag () {
-              return utility.sendRequest(null,'GET', '/Api/Template/Tag?&options[action]=templateTags');
-          }
+      function listTemplateOfSelectedTag (id) {
+        return utility.sendRequest(null, 'GET', '/Api/Asset?q=' + id + '&options[action]=templatesByTag')
+      }
+      function listTag () {
+        return utility.sendRequest(null, 'GET', '/Api/Template/Tag?&options[action]=templateTags')
+      }
       // Helpers
-      function latest() {
+      function latest () {
         return $ctrl.currentThemes.sort(function (a, b) {
-            if(b.timeEdit){
-                return parseFloat(a.timeEdit) - parseFloat(b.timeEdit);
-            }else{
-                return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit);
-            }
-
-        });
+          if (b.timeEdit) {
+            return parseFloat(a.timeEdit) - parseFloat(b.timeEdit)
+          } else {
+            return parseFloat(a.data.timeEdit) - parseFloat(b.data.timeEdit)
+          }
+        })
       }
 
-        function oldest() {
-            return $ctrl.currentThemes.sort(function (a, b) {
-                if(a.timeEdit){
-                    return parseFloat(b.timeEdit) - parseFloat(a.timeEdit);
-                }else{
-                    return parseFloat(b.data.timeEdit) - parseFloat(a.data.timeEdit);
-                }
-
-            });
-        }
-      function popular() {
+      function oldest () {
         return $ctrl.currentThemes.sort(function (a, b) {
-          return parseFloat(b.populate) - parseFloat(a.populate);
-        });
+          if (a.timeEdit) {
+            return parseFloat(b.timeEdit) - parseFloat(a.timeEdit)
+          } else {
+            return parseFloat(b.data.timeEdit) - parseFloat(a.data.timeEdit)
+          }
+        })
+      }
+      function popular () {
+        return $ctrl.currentThemes.sort(function (a, b) {
+          return parseFloat(b.populate) - parseFloat(a.populate)
+        })
       }
 
-      function favorite() {
-          return $ctrl.currentThemes.sort(function (a, b) {
-              return (b.data.preferred) - (a.data.preferred);
-          });
+      function favorite () {
+        return $ctrl.currentThemes.sort(function (a, b) {
+          return (b.data.preferred) - (a.data.preferred)
+        })
       }
 
       $scope.model = null
