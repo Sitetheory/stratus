@@ -49,10 +49,11 @@
             }
 
             // Infrastructure
-            this.models = []
             this.header = new Stratus.Prototypes.Model()
             this.meta = new Stratus.Prototypes.Model()
             this.model = Model
+            this.models = []
+            this.types = []
 
             // Internals
             this.pending = false
@@ -114,6 +115,9 @@
             this.inject = function (data, type) {
               if (!_.isArray(data)) {
                 return
+              }
+              if (that.types.indexOf(type) === -1) {
+                that.types.push(type)
               }
               // TODO: Make this able to be flagged as direct entities
               data.forEach(function (target) {

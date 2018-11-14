@@ -98,7 +98,10 @@
                 return that.data
               }, function (newData, priorData) {
                 var patch = _.patch(newData, priorData)
-                $log.log('Patch:', patch)
+
+                if (!Stratus.Environment.get('production')) {
+                  $log.log('Patch:', patch)
+                }
 
                 // Set the origin data
                 if (_.isEmpty(that.initData)) {
