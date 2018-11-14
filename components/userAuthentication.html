@@ -60,15 +60,15 @@
                   ng-submit="forgotPassForm.$valid && $ctrl.doRequestResetPass(resetPassData)"
                   ng-if="$ctrl.enabledForgotPassForm">
 
-              <div class="divTable forgotTitle">
-                <div class="divTableRow">
-                  <div class="divTableCell border-column">
+              <div class="div-table forgotTitle">
+                <div class="div-table-row">
+                  <div class="div-table-cell border-column">
                     <div class="label-border"></div>
                   </div>
-                  <div class="divTableCell titleColumn">
+                  <div class="div-table-cell titleColumn">
                     <h3>Password Reset Request</h3>
                   </div>
-                  <div class="divTableCell border-column">
+                  <div class="div-table-cell border-column">
                     <div class="label-border"></div>
                   </div>
                 </div>
@@ -104,7 +104,7 @@
                   </md-button>
                 </div>
               </div>
-              <div class="textRight link-forgot">
+              <div class="text-right link-forgot">
                 <a ng-click="$ctrl.showForgotPassForm(false)"
                    capitalize-first>{{ $ctrl.forgotPassText }} >
                   <div class="animated-underline"></div>
@@ -159,7 +159,7 @@
 
             <div class="verify" ng-if="$ctrl.enabledVerificationForm">
               <h3>Verifying your account...</h3>
-              <div class="textCenter" ng-init="$ctrl.verifyAccount()">
+              <div class="text-center" ng-init="$ctrl.verifyAccount()">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
               </div>
             </div>
@@ -215,15 +215,15 @@
     </md-tabs>
 
     <div class="social-signin" ng-if="!$ctrl.isLoggedIn">
-      <div class="divTable social-title-table">
-        <div class="divTableRow">
-          <div class="divTableCell border-column">
+      <div class="div-table social-title-table">
+        <div class="div-table-row">
+          <div class="div-table-cell border-column">
             <div class="label-border"></div>
           </div>
-          <div class="divTableCell titleColumn">
+          <div class="div-table-cell titleColumn">
             <h4 class="use-social-label">Or Sign In Using</h4>
           </div>
-          <div class="divTableCell border-column">
+          <div class="div-table-cell border-column">
             <div class="label-border"></div>
           </div>
         </div>

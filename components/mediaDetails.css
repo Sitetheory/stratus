@@ -19,11 +19,11 @@
   overflow: hidden;
   max-width: 55%;
 }
-.media-details .title-container .smallLabel {
+.media-details .title-container .small-label {
   padding-right: 60px;
 }
 /* Close button */
-.media-details .btnClose {
+.media-details .btn-close {
   float: none;
   position: absolute;
   right: 20px;
@@ -111,13 +111,13 @@
   margin: 0 8px 8px 0;
 }
 /* Media specs */
-.media-specs .smallLabel {
+.media-specs .small-label {
   margin: 0 0 6px;
   font-size: 12px;
   letter-spacing: 1px;
   color: #999;
 }
-.media-specs .smallLabel span {
+.media-specs .small-label span {
   color: #222;
   font-weight: bold;
 }

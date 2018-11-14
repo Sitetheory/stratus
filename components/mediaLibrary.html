@@ -1,15 +1,15 @@
 <!-- Media Library -->
 <div id="media-library">
-    <div class="media-library borderDefault borderDefaultAll borderRadiusDefault">
+    <div class="media-library border-default borderDefaultAll borderRadiusDefault">
 
-            <p class="section-container smallLabel selected-media-label">Media Library</p>
+            <p class="section-container small-label selected-media-label">Media Library</p>
             <div class="section-container">
                 <div class="library-header">
                     <div  layout="row" layout-align="space-between center">
                         <stratus-search class="media-search" placeholder="Search by title, date or tag"></stratus-search>
 
                         <!-- Thumb size slider -->
-                        <div class="thumb-slider positionAnchor">
+                        <div class="thumb-slider position-anchor">
                             <div class="thumb-icon-small">
                                 <md-icon
                                         md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
@@ -18,7 +18,7 @@
                                 <md-icon
                                         md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
                             </div>
-                            <h4 class="smallLabel">Thumb size</h4>
+                            <h4 class="small-label">Thumb size</h4>
 
                             <md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
                         </div>
@@ -33,15 +33,15 @@
                 </div>
 
                 <div class="media-content library-content">
-                    <ul class="listInline medias"
+                    <ul class="list-inline medias"
                          ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
                          ngf-multiple="true"
                          ngf-max-files="10"
                          ngf-model-invalid="invalidFiles"
                          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-                        <li ng-repeat="media in collection.models" class="positionAnchor" ng-if="media.data.url || media.data.file || media.data.embed"
+                        <li ng-repeat="media in collection.models" class="position-anchor" ng-if="media.data.url || media.data.file || media.data.embed"
                              ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">
-                            <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item positionAnchor">
+                            <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
 
                                 <!-- Video Thumb -->
                                 <div ng-if="media.data.mime == 'video'" class="video-thumb image-draggable" style="background-image: url('{{getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
@@ -88,15 +88,15 @@
                                 <!-- Controls -->
                                 <!-- <a>s are included to make mouse turn to cursor on hover -->
                                 <a href="#" ng-if="$ctrl.isSelector">
-                                    <div ng-class="{display : !media.data.selectedClass}" class="icon-plus positionCenter">
+                                    <div ng-class="{display : !media.data.selectedClass}" class="icon-plus position-center">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg" aria-hidden="true"
                                                  ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
                                     </div>
-                                    <div ng-class="{display : media.data.selectedClass}" class="icon-minus positionCenter">
+                                    <div ng-class="{display : media.data.selectedClass}" class="icon-minus position-center">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"  aria-hidden="true"
                                                  ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
                                     </div>
-                                    <div ng-class="{display : media.data.selectedClass}"  class="icon-check positionCenter">
+                                    <div ng-class="{display : media.data.selectedClass}"  class="icon-check position-center">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg" aria-hidden="true"
                                                  ng-click="showDetails(media.data)"></md-icon>
                                     </div>
@@ -118,7 +118,7 @@
                 <!-- Media type filter -->
                 <!-- TODO: Make these checkboxes limit media -->
                 <div class="media-type-filter" layout="row" layout-align="center center">
-                    <p class="smallLabel">Show Only</p>
+                    <p class="small-label">Show Only</p>
                     <md-checkbox>
                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
                     </md-checkbox>

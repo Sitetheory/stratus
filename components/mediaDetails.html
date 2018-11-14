@@ -1,6 +1,6 @@
 <div class="media-details clearfix borderRadiusDefault" role="dialog">
 
-  <button type="button" class="btnClose" href="javascript:;" ng-click="$ctrl.done()">
+  <button type="button" class="btn-close" href="javascript:;" ng-click="$ctrl.done()">
     <span class="sr-only">Toggle Navigation</span>
     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/close.svg" aria-hidden="true"></md-icon>
   </button>
@@ -11,7 +11,7 @@
       <input ng-show="$ctrl.selectedName.editing" ng-model="$ctrl.selectedName.name"
              ng-blur="$ctrl.doneEditing($ctrl.media.id, $ctrl.selectedName)" autofocus/>
 
-      <p class="smallLabel" ng-bind="$ctrl.media.time * 1000 | date:'MMM dd, yyyy h:mma'"></p>
+      <p class="small-label" ng-bind="$ctrl.media.time * 1000 | date:'MMM dd, yyyy h:mma'"></p>
   </div>
   <div class="details-content clearfix" layout-wrap layout-gt-sm="row">
     <div flex-gt-sm="75" flex-order="1" flex-order-gt-sm="2">
@@ -29,7 +29,7 @@
     <div flex-gt-sm="25" flex-order="2" flex-order-gt-sm="1">
 
       <div class="action-btns clearfix">
-        <ul class="listUnstyled">
+        <ul class="list-unstyled">
           <li href="#" ng-if="$ctrl.media.mime != 'video'">
             <a href="//{{ $ctrl.media.prefix }}.{{ $ctrl.media.extension }}" class="defaultBorderRadius">
               <md-tooltip>Download</md-tooltip>
@@ -59,14 +59,14 @@
       </div>
 
       <div id="tag-container" class="clearfix" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
-        <stratus-tag  class="fontSecondary" ng-model="$ctrl.media.tags" collection="collection"></stratus-tag>
+        <stratus-tag  class="font-secondary" ng-model="$ctrl.media.tags" collection="collection"></stratus-tag>
       </div>
 
       <div class="media-specs">
-        <p class="smallLabel">Type: <span ng-bind="$ctrl.media.mime=='video' ? 'Video' : $ctrl.media.extension"></span></p>
-        <p class="smallLabel" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'">Size: <span ng-bind="$ctrl.media.bytesHuman"></span></p>
-        <p class="smallLabel" ng-if="$ctrl.media.ratio">Ratio: <span ng-bind="$ctrl.media.ratio"></span></p>
-        <p class="smallLabel" ng-if="$ctrl.media.service">Service: <span ng-bind="$ctrl.media.service"></span></p>
+        <p class="small-label">Type: <span ng-bind="$ctrl.media.mime=='video' ? 'Video' : $ctrl.media.extension"></span></p>
+        <p class="small-label" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'">Size: <span ng-bind="$ctrl.media.bytesHuman"></span></p>
+        <p class="small-label" ng-if="$ctrl.media.ratio">Ratio: <span ng-bind="$ctrl.media.ratio"></span></p>
+        <p class="small-label" ng-if="$ctrl.media.service">Service: <span ng-bind="$ctrl.media.service"></span></p>
       </div>
       <div class="description" ng-if="!$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)" ng-bind="$ctrl.selectedDesc.description || 'Add description'">
       </div>

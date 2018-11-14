@@ -94,8 +94,8 @@
         textOff: 'Show',
         emptyValue: false,
         classBtn: 'btnIcon',
-        classOn: 'btnText smallLabel textOn',
-        classOff: 'btnText smallLabel textOff',
+        classOn: 'btnText small-label textOn',
+        classOff: 'btnText small-label textOff',
 
         // specify what the value should be for ON and OFF if valueType is not boolean
         valueOn: true,

@@ -76,8 +76,8 @@
 .btnPublishFull:hover .publishIconFull svg,
 .published.btnPublishFull:hover .publishIconFull svg,
 .delayed.btnPublishFull:hover .publishIconFull svg {
-  animation: btnIconGrow .3s ease-out both;
-  -webkit-animation: btnIconGrow .3s ease-out both;
+  animation: btn-icon-grow .3s ease-out both;
+  -webkit-animation: btn-icon-grow .3s ease-out both;
 }
 
 .btn.btnPublishDropdown {

@@ -1,5 +1,5 @@
 <md-dialog class="drag-drop-dialog">
-  <md-dialog-content class="dropContainer mediaDialogue backgroundDark borderRadiusDefault" role="dialog">
+  <md-dialog-content class="dropContainer mediaDialogue background-dark borderRadiusDefault" role="dialog">
     <div class="titleContainer clearfix">
       <p class="instructions">
         <span class="optional">Drag &amp; drop or </span>
@@ -14,7 +14,7 @@
       <h2>Uploading</h2>
     </div>
 
-    <ul class="listInline response clearfix">
+    <ul class="list-inline response clearfix">
       <li class="droppedItem" ng-repeat="file in files track by $index"
           ng-class="file.uploadStatus == true ? 'uploadComplete' : '' ">
         <div class="image-container"
@@ -27,7 +27,7 @@
                   class="hover-tick hover-tick-run"></span>
           </div>
           <div class="image">
-            <div ng-if="file.type == 'application/x-unknown'" class="droppedUnknown positionCenter">
+            <div ng-if="file.type == 'application/x-unknown'" class="droppedUnknown position-center">
               <md-icon
                   md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
             </div>
@@ -44,11 +44,11 @@
             </div>
           </div>
         </div>
-        <div ng-if="file.errorUpload === true && file.uploadStatus === false" class="errorMessage fontBody">
+        <div ng-if="file.errorUpload === true && file.uploadStatus === false" class="error-message fontBody">
           {{ file.errorMsg }}
         </div>
       </li>
-      <li class="errorMessage fontBody" ng-repeat="file in invalidFiles">
+      <li class="error-message fontBody" ng-repeat="file in invalidFiles">
         <div ng-if="file.$error === 'maxFiles'">Maximum number of files allowed up to {{file.$errorParam}}.</div>
         <div ng-if="file.$error === 'pattern'">Sitetheory only allow file with types {{file.$errorParam}}.</div>
         <div ng-if="file.$error === 'maxSize'">Looks like your file ({{file.name}}) is too large. You can upload files
@@ -58,7 +58,7 @@
     </ul>
   </md-dialog-content>
 
-  <md-dialog-actions layout="row" class="backgroundDark">
+  <md-dialog-actions layout="row" class="background-dark">
     <md-button ng-disabled="uploadingFiles" class="md-raised md-primary" ng-click="cancel()">
       Close
     </md-button>

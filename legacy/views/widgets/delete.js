@@ -63,8 +63,8 @@
         textOff: 'Undelete',
         textDeleteConfirm: 'Are you sure you want to delete this?',
         classBtn: 'btnIcon',
-        classOn: 'btnText smallLabel textOn',
-        classOff: 'btnText smallLabel textOff',
+        classOn: 'btnText small-label textOn',
+        classOff: 'btnText small-label textOff',
         destroy: false,
 
         // specify if the widget should redirect the page after deletion

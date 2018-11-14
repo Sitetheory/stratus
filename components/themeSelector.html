@@ -5,17 +5,17 @@
 </div>
 <md-content class="theme-selector">
   <div class="selectedLayout clearfix">
-    <div ng-if="$ctrl.selectedTheme" class="imageColumn stGrid stGridMobile">
-      <div class="selectedImage positionAnchor backgroundDark">
-        <div class="imageContainer defaultShadow easyTransition">
+    <div ng-if="$ctrl.selectedTheme" class="imageColumn st-grid st-grid-mobile">
+      <div class="selectedImage position-anchor background-dark">
+        <div class="imageContainer defaultShadow easy-transition">
           <img stratus-src="{{ $ctrl.selectedTheme.images[0].url }}" alt=""/>
         </div>
-        <div ng-if="selectedLayout" class="positionCenter">
+        <div ng-if="selectedLayout" class="position-center">
           <a href="#" class="btn" ng-click="$ctrl.toggleGallery();">Change Theme</a>
         </div>
       </div>
     </div>
-    <div class="selectedInfo infoColumn stGrid stGridTablet column50">
+    <div class="selectedInfo infoColumn st-grid st-grid-tablet column50">
       <div ng-if="$ctrl.selectedTheme">
         <h4>You are currently using</h4>
         <h2>{{ $ctrl.selectedTheme.name }}</h2>
@@ -85,7 +85,7 @@
         <h3>{{ themeDetail.name }}</h3>
         <a href="#" ng-click="$ctrl.setFavorite(themeDetail.id)"><i ng-if="themeDetail.preferred"
                                                                     class="fa fa-heart favorite"></i></a>
-        <button type="button" class="btnClose" href="javascript:;" ng-click="closeDialog();">
+        <button type="button" class="btn-close" href="javascript:;" ng-click="closeDialog();">
           <span class="sr-only">Toggle Navigation</span>
           <svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg"
                xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -108,7 +108,7 @@
 
     <div class="pannel-content">
       <div class="ltpop-top">
-        <div class="name fontSecondary"
+        <div class="name font-secondary"
              ng-bind-html="$ctrl.themeRawDesc(themeDetail.description) | truncate:{limit:300}"></div>
         <a href="#" class="btn" ng-click="$ctrl.chooseTheme(themeDetail); closeDialog();">Choose Theme </a>
         <a href="#" class="btn">View Demo </a>

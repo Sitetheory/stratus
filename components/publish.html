@@ -31,7 +31,7 @@
 <!-- Full Publish Button with Calendar -->
 <div ng-if="full && model.get(property)">
   <!-- datetimepicker="true" unpublish="true" versionHistory="true" -->
-  <md-button id="headerControlsBtnPublishNow" class="btnPublishFull positionAnchor clearfix"
+  <md-button id="headerControlsBtnPublishNow" class="btnPublishFull position-anchor clearfix"
              ng-click="model.set(property + '.timePublish', 'API::NOW'); model.save()"
              ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') < 1, delayed: model.get(property + '.isPublished') == 2}">
     <div class="btnGradientLight"></div>
@@ -39,12 +39,12 @@
       <md-icon class="publishIconFull"
                md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/publishSprite.svg"></md-icon>
     </div>
-    <div class="btnText fontPrimary">{{ model.get(property + '.isPublished') == 1 ? 'Published' : 'Publish' }}</div>
+    <div class="btnText font-primary">{{ model.get(property + '.isPublished') == 1 ? 'Published' : 'Publish' }}</div>
   </md-button>
   <md-menu>
     <a ng-click="$mdOpenMenu($event)" aria-label="Open interactions menu"
        ng-class="{published: model.get(property + '.isPublished') == 1, unpublished: model.get(property + '.isPublished') < 1, delayed: model.get(property + '.isPublished') == 2}"
-       href="#" id="headerControlsPublishOptions" class="btnPublishFull positionAnchor">
+       href="#" id="headerControlsPublishOptions" class="btnPublishFull position-anchor">
       <div class="btnGradientLight"></div>
       <div class="caret"></div>
       <md-tooltip>Publish Options</md-tooltip>

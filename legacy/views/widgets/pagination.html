@@ -1,21 +1,21 @@
 {% if (paginator.pageTotal > 1) { %}
 <div class="paginator borderTopDefault borderColorStrong">
-  <span class="paginatorTotal customFontSecondary smallLabel">({{ paginator.countTotal }} Results)</span>
+  <span class="paginatorTotal customFontSecondary small-label">({{ paginator.countTotal }} Results)</span>
   <!-- Link to Previous Page -->
   {% if (paginator.pageCurrent <= 1) { %}
-  <a class="paginatorIterator paginatorPrevious customFontSecondary backgroundLight defaultShadow disabled">&lt;</a>
+  <a class="paginatorIterator paginatorPrevious customFontSecondary background-light defaultShadow disabled">&lt;</a>
   {% } else { %}
   <!-- Provide a fast backward link to the first page if we are more than the visible span away from the start -->
   {% if ((paginator.pageCurrent - 1) > 3) { %}
   <a data-scroll="false" href="#page/{{ entity }}/1"
-     class="paginatorIterator paginatorPrevious customFontSecondary backgroundLight defaultShadow">&lt;&lt;</a>
+     class="paginatorIterator paginatorPrevious customFontSecondary background-light defaultShadow">&lt;&lt;</a>
   {% } %}
 
   <!-- path() requires the route and the route params, e.g. url. But then we need to get extra variables,
   merge in the alternative page count, and merge that into the route params -->
 
   <a data-scroll="false" href="#page/{{ entity }}/{{ paginator.pageCurrent-1 }}"
-     class="paginatorIterator paginatorPrevious customFontSecondary backgroundLight defaultShadow">&lt;</a>
+     class="paginatorIterator paginatorPrevious customFontSecondary background-light defaultShadow">&lt;</a>
   {% } %}
 
   <!-- Fancy Jump to Page within Span -->
@@ -33,10 +33,10 @@
   {% var i = pagesStart; %}
   {% while (i <= pagesEnd) { %}
   {% if (i === 0) { %}
-  <a class="paginatorPages customFontSecondary  borderDefault borderColorDefault active">{{ paginator.pageCurrent }}</a>
+  <a class="paginatorPages customFontSecondary  border-default borderColorDefault active">{{ paginator.pageCurrent }}</a>
   {% } else if ((paginator.pageCurrent + i) > 0 && (paginator.pageCurrent + i) <= paginator.pageTotal) { %}
   <a data-scroll="false" href="#page/{{ entity }}/{{ paginator.pageCurrent + i }}"
-     class="paginatorPages customFontSecondary  borderDefault borderColorDefault">{{ paginator.pageCurrent + i }}</a>
+     class="paginatorPages customFontSecondary  border-default borderColorDefault">{{ paginator.pageCurrent + i }}</a>
   {% } %}
   {% i++; %}
   {% } %}
@@ -47,15 +47,15 @@
 
   <!-- Link to Next Page -->
   {% if (paginator.pageCurrent >= paginator.pageTotal) { %}
-  <a class="paginatorIterator paginatorNext customFontSecondary backgroundLight defaultShadow disabled">&gt;</a>
+  <a class="paginatorIterator paginatorNext customFontSecondary background-light defaultShadow disabled">&gt;</a>
   {% } else { %}
   <a data-scroll="false" href="#page/{{ entity }}/{{ paginator.pageCurrent+1 }}"
-     class="paginatorIterator paginatorNext customFontSecondary backgroundLight defaultShadow">&gt;</a>
+     class="paginatorIterator paginatorNext customFontSecondary background-light defaultShadow">&gt;</a>
 
   <!-- Provide a fast forward link to the end if we are more than the visible span away from the end -->
   {% if ((paginator.pageTotal - paginator.pageCurrent) > 3) { %}
   <a data-scroll="false" href="#page/{{ entity }}/{{ paginator.pageTotal }}"
-     class="paginatorIterator paginatorNext customFontSecondary backgroundLight defaultShadow">&gt;&gt;</a>
+     class="paginatorIterator paginatorNext customFontSecondary background-light defaultShadow">&gt;&gt;</a>
   {% } %}
   {% } %}
 </div>

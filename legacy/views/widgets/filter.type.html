@@ -1,7 +1,7 @@
 {% if (typeof meta.contentTypes !== 'undefined' && meta.contentTypes.length) { %}
-<h4 id="filterContentTypeTitle" class="customFontSecondary smallLabel">Filter by Type</h4>
+<h4 id="filterContentTypeTitle" class="customFontSecondary small-label">Filter by Type</h4>
 
-<div id="filterContentTypeContainer" class="backgroundDark">
+<div id="filterContentTypeContainer" class="background-dark">
   <ul id="filterContentType" class="filterContentType list-unstyled">
     {% _.each(_.first(meta.contentTypes, 6), function(contentType) { %}
     <li>
