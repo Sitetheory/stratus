@@ -59,6 +59,6 @@
         Math.floor((new Date()).getTime() / 1000)
       ))
     },
-    template: '<md-button ng-if="model.id" aria-label="Delete" id="{{ elementId }}" class="btn btnDelete" ng-click="setDelete()"><div class="btnGradientLight"></div><md-icon class="deleteIcon" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon><span class="deleteText">Delete</span></md-button>'
+    template: '<md-button ng-if="model.id" aria-label="Delete" id="{{ elementId }}" class="btn btn-delete" ng-click="setDelete()"><div class="btnGradientLight"></div><md-icon class="deleteIcon" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon><span class="delete-text">Delete</span></md-button>'
   }
 }))

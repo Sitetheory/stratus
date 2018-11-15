@@ -93,9 +93,9 @@
         textOn: 'Hide',
         textOff: 'Show',
         emptyValue: false,
-        classBtn: 'btnIcon',
-        classOn: 'btnText small-label textOn',
-        classOff: 'btnText small-label textOff',
+        classBtn: 'btn-icon',
+        classOn: 'btn-text small-label text-on',
+        classOff: 'btn-text small-label text-off',
 
         // specify what the value should be for ON and OFF if valueType is not boolean
         valueOn: true,
