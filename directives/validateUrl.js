@@ -37,7 +37,7 @@
                 case 'youtube-vimeo':
                   return modelValue.match(youtubeRegex) || modelValue.match(vimeoRegex)
                 case 'embed':
-                  urlRegex = /<iframe(.+)<\/iframe>/g
+                  urlRegex = /<iframe?.*src=('|")(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]?.*<\/iframe>/g
                   break
 
                 // case 'googledrive':
