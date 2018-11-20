@@ -119,26 +119,26 @@
         let calculate = function () {
           // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
           if (event.indexOf('reset') !== -1 && ((reset > 0 && $element.offset().top <= reset) || $(window).scrollTop() <= 0)) {
-            target.removeClass('onScreen offScreen scrollUp scrollDown reveal conceal')
+            target.removeClass('on-screen off-screen scroll-up scroll-down reveal conceal')
             target.addClass('reset')
             return
           }
           if (isOnScreen()) {
             // Add init class so we can know it's been on screen before
-            if (!target.hasClass('onScreen')) {
-              target.addClass('onScreen onScreenInit')
+            if (!target.hasClass('on-screen')) {
+              target.addClass('on-screen on-screen-init')
             }
-            if (target.hasClass('offScreen')) {
-              target.removeClass('offScreen')
+            if (target.hasClass('off-screen')) {
+              target.removeClass('off-screen')
             }
             // Execute Custom Methods
             onScreen()
           } else {
-            if (target.hasClass('onScreen')) {
-              target.removeClass('onScreen')
+            if (target.hasClass('on-screen')) {
+              target.removeClass('on-screen')
             }
-            if (!target.hasClass('offScreen')) {
-              target.addClass('offScreen')
+            if (!target.hasClass('off-screen')) {
+              target.addClass('off-screen')
             }
             // Execute Custom Methods
             offScreen()
@@ -154,11 +154,11 @@
 
           // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
           if (lastScroll === 'down' && !target.hasClass('reset')) {
-            if (!target.hasClass('scrollDown')) {
-              target.addClass('scrollDown')
+            if (!target.hasClass('scroll-down')) {
+              target.addClass('scroll-down')
             }
-            if (target.hasClass('scrollUp')) {
-              target.removeClass('scrollUp')
+            if (target.hasClass('scroll-up')) {
+              target.removeClass('scroll-up')
             }
             if (animation && Stratus.Internals.IsOnScreen(spy, offset, partial)) {
               if (target.hasClass('reveal')) {
@@ -172,11 +172,11 @@
           }
 
           if (lastScroll === 'up') {
-            if (!target.hasClass('scrollUp')) {
-              target.addClass('scrollUp')
+            if (!target.hasClass('scroll-up')) {
+              target.addClass('scroll-up')
             }
-            if (target.hasClass('scrollDown')) {
-              target.removeClass('scrollDown')
+            if (target.hasClass('scroll-down')) {
+              target.removeClass('scroll-down')
             }
             if (target.hasClass('reset')) {
               target.removeClass('reset')
