@@ -363,7 +363,7 @@
         // TODO: make it use a template that can be extended by the user
         // TODO: allow an image or HTML in the choices. It might be okay to just pass that through the label
         if (this.options.ui === 'menu') {
-          this.containerOptions.append('<div class="optionContainer' + containerClass + '" ' + imageBg + '><input id="' + optionId + '" type="' + this.options.inputType + '" name="' + this.options.inputName + '" value="' + value + '" ' + checked + ' class="form-control selectOption"><label class="control-label selectImage" for="' + optionId + '">' + label + '</label></div>');
+          this.containerOptions.append('<div class="optionContainer' + containerClass + '" ' + imageBg + '><input id="' + optionId + '" type="' + this.options.inputType + '" name="' + this.options.inputName + '" value="' + value + '" ' + checked + ' class="form-control select-option"><label class="control-label select-image" for="' + optionId + '">' + label + '</label></div>');
         } else {
           this.containerOptions.append('<option value="' + value + '" ' + checked + '>' + label + '</option>');
         }

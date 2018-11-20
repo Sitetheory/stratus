@@ -45,7 +45,7 @@
       this.targetInit = this.$el.data('targetinit') ? $(this.$el.data('targetinit')) : this.target;
       this.cssClass = this.$el.data('class') ? this.$el.data('class') : 'active';
       this.cssClassInit = this.$el.data('classinit') ? this.$el.data('classinit') : 'initialized';
-      this.cssClassInitUnique = this.cssClassInit + _.ucfirst(this.cssClass);
+      this.cssClassInitUnique = this.cssClassInit + '-' +this.cssClass;
       this.cssClassRemove = this.$el.data('classremove') ? this.$el.data('classremove') : 'hidden';
 
       // event can be multiple listeners: hover, click

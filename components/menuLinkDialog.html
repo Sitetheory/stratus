@@ -1,41 +1,41 @@
-<div id="editDialogue" class="initializeDialogue dialogueContainer backgroundDark defaultBorderRadius defaultShadow">
-  <div class="dialogueContent">
-    <div class="backgroundDarkBorderMatch dialogueNotch">&nbsp;</div>
-    <div class="dialogueButtons clearfix">
+<div id="edit-dialogue" class="initialize-dialogue dialogue-container background-dark default-border-radius default-shadow">
+  <div class="dialogue-content">
+    <div class="background-dark-border-match dialogue-notch">&nbsp;</div>
+    <div class="dialogue-buttons clearfix">
       <!-- TODO: Review whether or not we want the "Done" button to save in the process of closing the Dialogue -->
-      <a class="fontBody btn btnConfirm gradientAnchor" ng-click="ctrl.close();">
-        <div class="btnGradientLight"></div>
+      <a class="font-body btn btn-confirm gradient-anchor" ng-click="ctrl.close();">
+        <div class="btn-gradient-light"></div>
         Done
       </a>
       <ul>
-        <li class="linkEditButton button1 visibilityStatus" ng-click="ctrl.toggle()">
+        <li class="link-edit-button button1 visibility-status" ng-click="ctrl.toggle()">
           <a href="">
             <md-tooltip>Toggle Visibility</md-tooltip>
             <i class="fas fa-power-off" aria-hidden="true"></i>
           </a>
         </li>
-        <li class="linkEditButton button2 deleteLink" ng-click="ctrl.destroy(); ctrl.close();">
+        <li class="link-edit-button button2 delete-link" ng-click="ctrl.destroy(); ctrl.close();">
           <a href="">
             <md-tooltip>Remove link</md-tooltip>
             <i class="fas fa-trash-alt" aria-hidden="true"></i>
           </a>
         </li>
-        <li class="linkEditButton button3 addChild" ng-click="ctrl.addChild()">
+        <li class="link-edit-button button3 add-child" ng-click="ctrl.addChild()">
           <a href="">
             <md-tooltip>Add link</md-tooltip>
             <i class="fas fa-plus" aria-hidden="true"></i>
           </a>
         </li>
-        <li class="linkEditButton button4 contentSettings">
+        <li class="link-edit-button button4 content-settings">
           <a href="">
             <!-- {% embed '@SitetheoryCoreBundle/Resources/public/images/icons/actionButtons/settings.svg' %}{% block id %}actionSettings{% endblock %}{% endembed %} -->
           </a>
         </li>
       </ul>
     </div>
-    <div class="linkageListContainer">
-      <h4 class="smallLabel fontBody linkageListLabel">Links to</h4>
-      <div class="linkageList backgroundLight fontBody">
+    <div class="linkage-list-container">
+      <h4 class="small-label font-body linkage-list-label">Links to</h4>
+      <div class="linkage-list background-light font-body">
         <md-autocomplete  flex
                           md-floating-label="Content"
                           md-min-length="0"
@@ -64,8 +64,8 @@
         </md-autocomplete>
       </div>
       <!-- Parent AutoComplete -->
-      <h4 class="smallLabel fontBody linkageListLabel">Child of</h4>
-      <div class="linkageList backgroundLight fontBody">
+      <h4 class="small-label font-body linkage-list-label">Child of</h4>
+      <div class="linkage-list background-light font-body">
         <md-autocomplete  flex
                           md-floating-label="Parent"
                           md-min-length="0"
@@ -89,8 +89,8 @@
         </md-autocomplete>
       </div>
       <!-- Priority Control -->
-      <h4 class="smallLabel fontBody linkageListLabel">Priority</h4>
-      <div class="fontBody">
+      <h4 class="small-label font-body linkage-list-label">Priority</h4>
+      <div class="font-body">
         <a ng-click="ctrl.changePriority(1)" aria-label="Increase Priority">
           <i class="fa fa-chevron-up" aria-hidden="true"></i>
         </a>

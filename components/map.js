@@ -108,6 +108,6 @@
       // Console
       $log.log('map:', $element)
     },
-    template: '<div id="{{ elementId }}" class="loadAnimation">Map Here!</div>'
+    template: '<div id="{{ elementId }}" class="load-animation">Map Here!</div>'
   }
 }))
