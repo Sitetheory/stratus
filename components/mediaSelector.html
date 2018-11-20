@@ -1,5 +1,5 @@
 <div id="media-selector">
-  <div class="section-container selected-container border-default borderDefaultAll borderRadiusDefault">
+  <div class="section-container selected-container border-default border-default-all border-radius-default">
     <p class="small-label selected-media-label">Selected Media</p>
     <div id="selected-area" class="media-content"
           ng-class="{'dragBorder':dragClass}"
@@ -9,7 +9,7 @@
           ngf-before-model-change="beforeChange($files,$event)"
           ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
           ngf-max-files="10"
-          ngf-model-invalid="invalidFiles"
+          ngf-model-invalid="invalid-files"
           ngf-validate="{size: {max: '10MB'}}"
           ngf-drag-over-class="dragover"
           ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
@@ -23,7 +23,7 @@
 
                         <!-- Image Thumb -->
                         <div ng-if="df.mime.indexOf('image') > -1" class="image-draggable" id="libb_{{df.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;">
-                            <img id="{{df.id}}" class="shapeholder selectImgDrag"
+                            <img id="{{df.id}}" class="shapeholder select-img-drag"
                                   src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             <div class="thumb-gradient">&nbsp;</div>
                             <div class="thumb-icon icon-image">
@@ -66,10 +66,10 @@
                 </div>
             </li>
             <li class="library-toggle">
-                <a class="position-anchor accentBackgroundHover border-default borderDefaultAll colorAccent1" href="#"
+                <a class="position-anchor accent-background-hover border-default border-default-all color-accent1" href="#"
                     ng-click="$ctrl.toggleLibrary()">
                     <md-tooltip>Open Media Library</md-tooltip>
-                    <div ng-class="dragDropClass" aria-hidden="true">
+                    <div ng-class="drag-drop-class" aria-hidden="true">
                         <md-icon class="position-center"
                                   md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
                         <img class="shapeholder"

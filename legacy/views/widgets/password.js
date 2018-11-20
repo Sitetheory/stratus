@@ -37,7 +37,7 @@
     model: Stratus.Models.Generic,
 
     // The template MUST add the id = elementId
-    template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<input id="{{ elementId }}" class="widgetText" type="password">{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
+    template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<input id="{{ elementId }}" class="widget-text" type="password">{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
 
     // Standard Options for View
     options: {

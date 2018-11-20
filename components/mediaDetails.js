@@ -167,7 +167,7 @@
           $mdDialog.show({
             attachTo: angular.element(document.querySelector('#listContainer')),
             controller: OpenUploaderController,
-            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId" file-data="fileData"></stratus-media-uploader>',
+            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="file-id" file-data="fileData"></stratus-media-uploader>',
             clickOutsideToClose: false,
             focusOnOpen: true,
             autoWrap: true,

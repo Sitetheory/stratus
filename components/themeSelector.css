@@ -16,20 +16,20 @@
 .theme-selector h2 {
   text-transform: none;
 }
-.theme-selector .selectedLayout .imageContainer {
+.theme-selector .selected-layout .image-container {
   width: 200px;
   height: 250px;
   background-color: #e1e1e1;
 }
-.theme-selector .selectedLayout .imageContainer img {
+.theme-selector .selected-layout .image-container img {
   height: 100%;
   object-fit: cover;
 }
-.theme-selector .selectedLayout .selectedInfo {
+.theme-selector .selected-layout .selected-info {
   min-height: 50px;
   margin-left: 20px;
 }
-.theme-selector .selectedLayout .selectedInfo .description {
+.theme-selector .selected-layout .selected-info .description {
   color: rgba(0, 0, 0, 0.2);
 }
 .theme-selector .list-theme .menus ul {
@@ -118,11 +118,11 @@
   margin-bottom: 10px;
   display: inline-block;
 }
-.theme-selector .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular {
+.theme-selector .nav-button stratus-pagination .paginator .paginator-progress md-progress-circular {
   width: 20px !important;
   height: 20px !important;
 }
-.theme-selector .nav-button stratus-pagination .paginator .paginatorProgress md-progress-circular svg {
+.theme-selector .nav-button stratus-pagination .paginator .paginator-progress md-progress-circular svg {
   width: 100% !important;
   height: 100% !important;
   transform-origin: unset !important;

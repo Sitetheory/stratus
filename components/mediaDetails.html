@@ -1,4 +1,4 @@
-<div class="media-details clearfix borderRadiusDefault" role="dialog">
+<div class="media-details clearfix border-radius-default" role="dialog">
 
   <button type="button" class="btn-close" href="javascript:;" ng-click="$ctrl.done()">
     <span class="sr-only">Toggle Navigation</span>
@@ -15,7 +15,7 @@
   </div>
   <div class="details-content clearfix" layout-wrap layout-gt-sm="row">
     <div flex-gt-sm="75" flex-order="1" flex-order-gt-sm="2">
-      <div id="popupImage" class="details-image">
+      <div id="popup-image" class="details-image">
         <div ng-if="$ctrl.media.mime == 'video' && !$ctrl.media.embed">
           <iframe width="560" height="315" ng-src="{{ $ctrl.mediaUrl }}" frameborder="0" allowfullscreen></iframe>
         </div>
@@ -31,26 +31,26 @@
       <div class="action-btns clearfix">
         <ul class="list-unstyled">
           <li href="#" ng-if="$ctrl.media.mime != 'video'">
-            <a href="//{{ $ctrl.media.prefix }}.{{ $ctrl.media.extension }}" class="defaultBorderRadius">
+            <a href="//{{ $ctrl.media.prefix }}.{{ $ctrl.media.extension }}" class="default-border-radius">
               <md-tooltip>Download</md-tooltip>
               <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/download.svg" aria-hidden="true"></md-icon>
             </a>
           </li>
           <li>
-            <a href="#" ng-click="$ctrl.getLinkMedia()" class="defaultBorderRadius">
+            <a href="#" ng-click="$ctrl.getLinkMedia()" class="default-border-radius">
               <md-tooltip>Share link</md-tooltip>
               <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/linkage.svg" aria-hidden="true"></md-icon>
             </a>
           </li>
           <li>
-            <a href="#" ng-click="$ctrl.deleteMedia()" class="defaultBorderRadius">
+            <a href="#" ng-click="$ctrl.deleteMedia()" class="default-border-radius">
               <md-tooltip>Permanently delete from library</md-tooltip>
               <md-icon
                       md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg" aria-hidden="true"></md-icon>
             </a>
           </li>
           <li>
-            <a href="#" ng-click="$ctrl.openUploader(false, $ctrl.media.id, $ctrl.media)" class="defaultBorderRadius">
+            <a href="#" ng-click="$ctrl.openUploader(false, $ctrl.media.id, $ctrl.media)" class="default-border-radius">
               <md-tooltip>Replace file</md-tooltip>
               <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/replace.svg" aria-hidden="true"></md-icon>
             </a>

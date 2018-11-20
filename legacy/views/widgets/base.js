@@ -876,7 +876,7 @@
           this.$element.addClass('form-control');
         }
       } else {
-        this.$el.addClass('widgetContainer');
+        this.$el.addClass('widget-container');
       }
 
       // Capture Element

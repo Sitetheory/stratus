@@ -1,6 +1,6 @@
 <!-- Media Library -->
 <div id="media-library">
-    <div class="media-library border-default borderDefaultAll borderRadiusDefault">
+    <div class="media-library border-default border-default-all border-radius-default">
 
             <p class="section-container small-label selected-media-label">Media Library</p>
             <div class="section-container">
@@ -37,7 +37,7 @@
                          ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
                          ngf-multiple="true"
                          ngf-max-files="10"
-                         ngf-model-invalid="invalidFiles"
+                         ngf-model-invalid="invalid-files"
                          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
                         <li ng-repeat="media in collection.models" class="position-anchor" ng-if="media.data.url || media.data.file || media.data.embed"
                              ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">

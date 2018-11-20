@@ -1,13 +1,13 @@
 <md-dialog class="drag-drop-dialog">
-  <md-dialog-content class="dropContainer mediaDialogue background-dark borderRadiusDefault" role="dialog">
-    <div class="titleContainer clearfix">
+  <md-dialog-content class="drop-container media-dialogue background-dark border-radius-default" role="dialog">
+    <div class="title-container clearfix">
       <p class="instructions">
         <span class="optional">Drag &amp; drop or </span>
         <a href="#"
            ngf-select="addFiles($files)"
            ngf-multiple="true"
            ngf-max-files="20"
-           ngf-model-invalid="invalidFiles"
+           ngf-model-invalid="invalid-files"
            ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.pdf,.png'}">browse
         </a> to upload<span class="optional"> more</span>
       </p>
@@ -15,40 +15,40 @@
     </div>
 
     <ul class="list-inline response clearfix">
-      <li class="droppedItem" ng-repeat="file in files track by $index"
+      <li class="dropped-item" ng-repeat="file in files track by $index"
           ng-class="file.uploadStatus == true ? 'uploadComplete' : '' ">
         <div class="image-container"
              ng-class="file.progress >= 0 && file.uploadStatus === false ? 'progressVisible' : 'progressInvisible' ">
-          <div class="progressPercentage fontBody">{{file.progress}}%</div>
+          <div class="progress-percentage font-body">{{file.progress}}%</div>
           <div class="progress">
             <div ng-if="file.progress >= 0 && file.uploadStatus === false && file.errorUpload === false"
-                 class="progressColorBar" style="width:{{file.progress}}%"></div>
+                 class="progress-color-bar" style="width:{{file.progress}}%"></div>
             <span ng-if="file.uploadStatus === true && file.errorUpload === false"
                   class="hover-tick hover-tick-run"></span>
           </div>
           <div class="image">
-            <div ng-if="file.type == 'application/x-unknown'" class="droppedUnknown position-center">
+            <div ng-if="file.type == 'application/x-unknown'" class="dropped-unknown position-center">
               <md-icon
                   md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/contentTypeIcon/document.svg"></md-icon>
             </div>
             <img ngf-thumbnail="!file.$error && file">
-            <div class="hoverItems" ng-if="file.upload !== null && file.progress < 100 && !file.upload.aborted">
+            <div class="hover-items" ng-if="file.upload !== null && file.progress < 100 && !file.upload.aborted">
               <button title="Abort" ng-click="file.upload.abort();file.upload.aborted=true">
                 <md-tooltip>Abort upload</md-tooltip>
                 <i class="fas fa-times-circle" aria-hidden="true"></i>
               </button>
             </div>
-            <div ng-if="file.uploadStatus === true" class="successCheck">
+            <div ng-if="file.uploadStatus === true" class="success-check">
               <md-icon
                   md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg"></md-icon>
             </div>
           </div>
         </div>
-        <div ng-if="file.errorUpload === true && file.uploadStatus === false" class="error-message fontBody">
+        <div ng-if="file.errorUpload === true && file.uploadStatus === false" class="error-message font-body">
           {{ file.errorMsg }}
         </div>
       </li>
-      <li class="error-message fontBody" ng-repeat="file in invalidFiles">
+      <li class="error-message font-body" ng-repeat="file in invalidFiles">
         <div ng-if="file.$error === 'maxFiles'">Maximum number of files allowed up to {{file.$errorParam}}.</div>
         <div ng-if="file.$error === 'pattern'">Sitetheory only allow file with types {{file.$errorParam}}.</div>
         <div ng-if="file.$error === 'maxSize'">Looks like your file ({{file.name}}) is too large. You can upload files

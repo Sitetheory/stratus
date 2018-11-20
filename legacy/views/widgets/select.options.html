@@ -7,7 +7,7 @@
 {% } else if (scope === 'container') { %}
 {% var containerTag = (!globals.meta.ui) ? 'option' : 'div'; %}
 {% var optionValue = (!globals.meta.ui) ? 'value="'+model[globals.meta.modelIdAttribute]+'"' : ''; %}
-<{{ containerTag }} data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-iteration="{{ globals.iteration }}" data-id="{{ model.id }}" class="collectionOptionContainer" {{ optionValue }}></{{ containerTag }}>
+<{{ containerTag }} data-collection="{{ globals.uid }}" data-entity="{{ globals.entity }}" data-iteration="{{ globals.iteration }}" data-id="{{ model.id }}" class="collection-option-container" {{ optionValue }}></{{ containerTag }}>
 {% } else if (scope === 'entity') { %}
 {% if(!globals.meta.ui) { %}
 {{ model[globals.meta.modelLabelAttribute] }}

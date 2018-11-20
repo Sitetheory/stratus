@@ -124,7 +124,7 @@
     onRender: function (entries) {
       // If there is a special action, add css to differentiate this from the standard save button
       if (this.options.action) {
-        this.$el.addClass('action' + _.ucfirst(this.options.action));
+        this.$el.addClass('action-' + this.options.action);
       }
       this.scopeChanged();
     },

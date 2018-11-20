@@ -1,5 +1,5 @@
 
-.btn.btnPublishFull {
+.btn.btn-publish-full {
   padding: 14px 20px 0 20px !important;
   width: inherit;
   height: 55px;
@@ -8,14 +8,14 @@
   background: #FF5B3A;
 }
 
-.btn.btnPublishFull svg {
+.btn.btn-publish-full svg {
   position: relative;
   margin-right: 8px;
   width: 28px;
   vertical-align: middle;
 }
 
-.btn.btnPublishFull svg .actionButton {
+.btn.btn-publish-full svg .action-button {
   transition: transform .3s ease-out;
   -webkit-transition: transform .3s ease-out;
   transform: translateX(0);
@@ -23,64 +23,64 @@
   fill: #FFF;
 }
 
-.btn.btnPublishFull:hover {
+.btn.btn-publish-full:hover {
   background: #FF7550;
 }
 
 /* Published */
 
-.published.btnPublishFull svg .actionButton {
+.published.btn-publish-full svg .action-button {
   transform: translateX(-25%);
   -webkit-transform: translateX(-25%);
 }
 
-.published.md-button.btnPublishFull,
-.published.btnPublishFull {
+.published.md-button.btn-publish-full,
+.published.btn-publish-full {
   background: #56995E;
 }
 
-.published.md-button.btnPublishFull:not([disabled]):hover,
-.published.btnPublishFull:not([disabled]):hover {
+.published.md-button.btn-publish-full:not([disabled]):hover,
+.published.btn-publish-full:not([disabled]):hover {
   background: #7CB27D;
 }
 
 /* Unpublished */
 
-.unpublished.md-button.btnPublishFull,
-.unpublished.btnPublishFull {
+.unpublished.md-button.btn-publish-full,
+.unpublished.btn-publish-full {
   background: #D96236;
 }
 
-.unpublished.md-button.btnPublishFull:not([disabled]):hover,
-.unpublished.btnPublishFull:not([disabled]):hover {
+.unpublished.md-button.btn-publish-full:not([disabled]):hover,
+.unpublished.btn-publish-full:not([disabled]):hover {
   background: #FF7B55;
 }
 
 /* Delayed */
 
-.delayed.md-button.btnPublishFull,
-.delayed.btnPublishFull {
+.delayed.md-button.btn-publish-full,
+.delayed.btn-publish-full {
   background: #734564;
 }
 
-.delayed.md-button.btnPublishFull:not([disabled]):hover,
-.delayed.btnPublishFull:not([disabled]):hover {
+.delayed.md-button.btn-publish-full:not([disabled]):hover,
+.delayed.btn-publish-full:not([disabled]):hover {
   background: #A47594;
 }
 
-.delayed.btnPublishFull svg .actionButton {
+.delayed.btn-publish-full svg .action-button {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
 
-.btnPublishFull:hover .publishIconFull svg,
-.published.btnPublishFull:hover .publishIconFull svg,
-.delayed.btnPublishFull:hover .publishIconFull svg {
+.btn-publish-full:hover .publish-icon-full svg,
+.published.btn-publish-full:hover .publish-icon-full svg,
+.delayed.btn-publish-full:hover .publish-icon-full svg {
   animation: btn-icon-grow .3s ease-out both;
   -webkit-animation: btn-icon-grow .3s ease-out both;
 }
 
-.btn.btnPublishDropdown {
+.btn.btn-publish-dropdown {
   width: 245px;
   padding: 15px;
 }
@@ -92,18 +92,18 @@
 }
 /**/
 
-.btn.btnPublishMore {
+.btn.btn-publish-more {
   padding: 17px 13px 0 13px !important;
   border-left: 1px solid rgba(255, 255, 255, .4);
 }
 
-#header .btnPublishFull .caret {
+#header .btn-publish-full .caret {
   opacity: .7;
   border-width: 5px;
   border-top-color: #FFF;
 }
 
-#header .btnPublishFull:hover .caret {
+#header .btn-publish-full:hover .caret {
   opacity: 1;
 }
 

@@ -90,26 +90,26 @@
     if (!isReset) {
       // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
       if (lastScroll === 'down') {
-        options.target.addClass('scrollDown')
+        options.target.addClass('scroll-down')
       } else {
-        options.target.removeClass('scrollDown')
+        options.target.removeClass('scroll-down')
       }
       if (lastScroll === 'up') {
-        options.target.addClass('scrollUp')
+        options.target.addClass('scroll-up')
       } else {
-        options.target.removeClass('scrollUp')
+        options.target.removeClass('scroll-up')
       }
 
       if (Stratus.Internals.IsOnScreen(options.spy, options.offset)) {
         // Add init class so we can know it's been on screen before
         // remove the reveal/unreveal classes that are used for elements revealed when something is offscreen
         /*  'reveal unreveal' */
-        options.target.removeClass('offScreen').addClass('onScreen onScreenInit')
+        options.target.removeClass('off-screen').addClass('on-screen on-screen-init')
 
         // Execute Custom Methods
         options.onScreen()
       } else {
-        options.target.removeClass('onScreen').addClass('offScreen')
+        options.target.removeClass('on-screen').addClass('off-screen')
 
         // Headers that use this to reveal when offscreen, need to know when to trigger the 'retract' which
         // should happen only when it's already open (.offScreen.scrollUp and then you are scrolling down).
@@ -124,10 +124,10 @@
         }
 
         // If you want to reveal the opposite direction (e.g. a footer)
-        if (lastScroll === 'up' && options.target.hasClass('revealDown')) {
-          options.target.removeClass('revealDown').addClass('unrevealDown')
+        if (lastScroll === 'up' && options.target.hasClass('reveal-down')) {
+          options.target.removeClass('reveal-down').addClass('unreveal-down')
         } else if (lastScroll === 'down') {
-          options.target.removeClass('unrevealDown').addClass('revealDown')
+          options.target.removeClass('unreveal-down').addClass('reveal-down')
         }
 
         // Execute Custom Methods

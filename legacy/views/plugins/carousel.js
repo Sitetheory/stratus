@@ -120,7 +120,7 @@
           }
 
           // Prepare nested items to be inserted into item group
-          $(el).removeClass('item carousel-item').addClass('nestedItem col-' + colMinSize + '-' + cols)
+          $(el).removeClass('item carousel-item').addClass('nested-item col-' + colMinSize + '-' + cols)
           $groupContainer.append($(el))
 
           // Add Active to the Group Container

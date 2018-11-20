@@ -4,10 +4,10 @@
   <p>{{ $ctrl.errorMsg }}</p>
 </div>
 <md-content class="theme-selector">
-  <div class="selectedLayout clearfix">
-    <div ng-if="$ctrl.selectedTheme" class="imageColumn st-grid st-grid-mobile">
-      <div class="selectedImage position-anchor background-dark">
-        <div class="imageContainer defaultShadow easy-transition">
+  <div class="selected-layout clearfix">
+    <div ng-if="$ctrl.selectedTheme" class="image-column st-grid st-grid-mobile">
+      <div class="selected-image position-anchor background-dark">
+        <div class="image-container default-shadow easy-transition">
           <img stratus-src="{{ $ctrl.selectedTheme.images[0].url }}" alt=""/>
         </div>
         <div ng-if="selectedLayout" class="position-center">
@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div class="selectedInfo infoColumn st-grid st-grid-tablet column50">
+    <div class="selected-info info-column st-grid st-grid-tablet column50">
       <div ng-if="$ctrl.selectedTheme">
         <h4>You are currently using</h4>
         <h2>{{ $ctrl.selectedTheme.name }}</h2>
@@ -91,11 +91,11 @@
                xmlns:xlink="http://www.w3.org/1999/xlink">
             <defs></defs>
             <g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)">
-              <g id="closeX" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666">
-                <g id="lineLeft">
+              <g id="close-x" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666">
+                <g id="line-left">
                   <path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path>
                 </g>
-                <g id="lineRight">
+                <g id="line-right">
                   <path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path>
                 </g>
               </g>

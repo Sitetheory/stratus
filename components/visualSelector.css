@@ -1,42 +1,42 @@
-#visualSelector hr {
+#visual-selector hr {
   background: none;
   border-top: 1px solid #777;
 }
 /* Info areas */
-.imageColumn {
+.image-column {
   padding-right: 7%;
 }
-.imageColumn img {
+.image-column img {
   display: block;
 }
-.quickInfo {
+.quick-info {
   margin: 34px 0;
 }
 .description {
   margin-bottom: 40px;
 }
 /* Selected layout area */
-.selectedLayout {
+.selected-layout {
   margin-bottom: 60px;
 }
-.selectedLayout h2 {
+.selected-layout h2 {
   margin-top: 16px;
   line-height: 1.2;
 }
-.selectedLayout h4 {
+.selected-layout h4 {
   margin-bottom: 0;
 }
-.selectedImage .btn {
+.selected-image .btn {
   display: block;
   transition: all 0.1s ease-out !important;
   transform: scale(0.8);
   opacity: 0;
 }
-.selectedImage:hover .btn {
+.selected-image:hover .btn {
   transform: scale(1);
   opacity: 1;
 }
-.selectedImage:hover .imageContainer {
+.selected-image:hover .image-container {
   opacity: 0.2;
 }
 /* Info popup */
@@ -66,14 +66,14 @@
   display: table;
   margin-top: 26px;
 }
-.btnChoose {
+.btn-choose {
   margin-bottom: 34px !important;
 }
-.popupForm {
+.popup-form {
   margin-bottom: 8px;
   font-size: 13px;
 }
-.popupForm input {
+.popup-form input {
   margin-right: 10px;
 }
 @media (max-width: 899px) {
@@ -87,41 +87,41 @@
   }
 }
 /* Selector Gallery */
-.galleryTitle {
+.gallery-title {
   margin: 0 0 60px;
 }
-.galleryImage img {
+.gallery-image img {
   display: block;
 }
-.galleryImage .selectedBorder {
+.gallery-image .selected-border {
   opacity: 0;
   border: 5px solid #333;
 }
-.galleryItem .btn {
+.gallery-item .btn {
   transition: all 0.1s ease-out !important;
   transform: scale(0.8);
   display: block;
   opacity: 0;
   white-space: nowrap;
 }
-.galleryItem:hover .galleryImage {
+.gallery-item:hover .gallery-image {
   opacity: 0.2;
 }
-.galleryItem:hover .btn {
+.gallery-item:hover .btn {
   transform: scale(1, 1);
   opacity: 1;
 }
-.galleryItem:hover .infoIcon {
+.gallery-item:hover .info-icon {
   opacity: 0.8;
 }
-.galleryItem:hover .infoIcon:hover {
+.gallery-item:hover .info-icon:hover {
   transform: scale(1.25);
   opacity: 1;
 }
-.galleryItem .gallerySelected:hover .galleryImage {
+.gallery-item .gallery-selected:hover .gallery-image {
   opacity: 1;
 }
-.infoIcon {
+.info-icon {
   transition: all 0.2s ease-out;
   position: absolute;
   top: 20px;
@@ -132,48 +132,48 @@
   width: 32px;
   height: 32px;
 }
-.infoIcon md-icon {
+.info-icon md-icon {
   width: 100%;
   height: inherit;
 }
-.infoIcon md-icon svg g {
+.info-icon md-icon svg g {
   fill: #fff;
 }
-.gallerySelected .galleryImage .selectedBorder {
+.gallery-selected .gallery-image .selected-border {
   opacity: 1;
 }
-.gallerySelected .btn {
+.gallery-selected .btn {
   display: none;
 }
-.gallerySelected .checkIcon {
+.gallery-selected .check-icon {
   opacity: 1;
 }
-.checkIcon {
+.check-icon {
   position: absolute;
   top: 0;
   right: 0;
   opacity: 0;
   width: 20px;
 }
-.checkIcon.easy-transition {
+.check-icon.easy-transition {
   transition-delay: 0.15s;
   -webkit-transition-delay: 0.15s;
 }
-.checkIcon md-icon {
+.check-icon md-icon {
   width: 100%;
   height: inherit;
 }
 @media (max-width: 767px) {
-  .galleryList {
+  .gallery-list {
     padding: 0 6%;
   }
-  .galleryItem .background-dark {
+  .gallery-item .background-dark {
     background: none;
   }
-  .galleryItem h4 {
+  .gallery-item h4 {
     padding: 0 50px 0 0;
   }
-  .galleryItem .btnContainer {
+  .gallery-item .btn-container {
     transform: none;
     position: relative;
     top: inherit;
@@ -181,12 +181,12 @@
     bottom: inherit;
     left: inherit;
   }
-  .galleryItem .btn {
+  .gallery-item .btn {
     transform: none;
     opacity: 1;
     margin-top: 20px;
   }
-  .infoIcon {
+  .info-icon {
     transform: scale(1.25);
     margin-bottom: 16px;
     position: relative;
@@ -196,10 +196,10 @@
     left: inherit;
     opacity: 1;
   }
-  .infoIcon md-icon svg g {
+  .info-icon md-icon svg g {
     fill: #222;
   }
-  .checkIcon {
+  .check-icon {
     top: 3px;
     right: 44px;
   }
