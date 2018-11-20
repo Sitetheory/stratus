@@ -251,7 +251,10 @@
         }
 
         // Handle saving tags after updating
-        $scope.$watch('$ctrl.tags', function (data) {
+        $scope.$watch('$ctrl.tags', function (newValue, oldValue) {
+          if (newValue === oldValue) {
+            return
+          }
           if ($ctrl.infoId !== undefined) {
             var dataRes = {}
 
