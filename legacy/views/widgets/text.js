@@ -43,7 +43,7 @@
 // The custom template must include the {{ elementId }} variable for the id of the editable element.
 /*
 
- <div id="fooBar" data-type="text" data-property="version.title"></div>
+ <div id="foo-bar" data-type="text" data-property="version.title"></div>
  <script id="render_fooBar">
  <div id="{{ elementId }}">Template to Render</div>
  </script>
@@ -80,7 +80,7 @@
     model: Stratus.Models.Generic,
 
     // The template MUST add the id = elementId
-    template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widgetText" contenteditable="true"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
+    template: _.template('{% if (options.before || options.after) { %}<div class="input-group">{% } %}{% if (options.before) { %}<span class="before{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.before }}</span>{% } %}<span id="{{ elementId }}" class="widget-text" contenteditable="true"></span>{% if (options.after) { %}<span class="after{% if ( options.style === "form") { %} input-group-addon{% } %}">{{ options.after }}</span>{% } %}{% if (options.before || options.after) { %}</div>{% } %}'),
 
     // Standard Options for View
     options: {

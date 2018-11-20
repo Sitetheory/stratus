@@ -326,9 +326,9 @@
               }
               if (dayCompare != temp) {
                 $(
-                  '<li class="fc-dayHeader">' +
-                  '<span class="fc-headerLeft">' + disLeft + '</span>' +
-                  '<span class="fc-headerRight">' + disRight + '</span>' +
+                  '<li class="fc-day-header">' +
+                  '<span class="fc-header-left">' + disLeft + '</span>' +
+                  '<span class="fc-header-right">' + disRight + '</span>' +
                   '</li>'
                 ).appendTo($html);
                 temp = dayCompare;

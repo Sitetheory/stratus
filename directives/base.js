@@ -22,7 +22,7 @@
       link: function ($scope, $element) {
         console.log($scope, $element)
       },
-      template: '<div class="noTemplate"></div>'
+      template: '<div class="no-template"></div>'
     }
   }
 }))

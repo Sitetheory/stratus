@@ -202,9 +202,9 @@
               $scope.$watch($scope.liveEditStatus, function (liveEdit) {
                 $scope.$value.attr('contenteditable', liveEdit)
                 if (liveEdit) {
-                  $element.addClass('liveEdit')
+                  $element.addClass('live-edit')
                 } else {
-                  $element.removeClass('liveEdit')
+                  $element.removeClass('live-edit')
                 }
               })
             } else {

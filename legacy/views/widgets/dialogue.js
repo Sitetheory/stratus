@@ -107,14 +107,14 @@
      * @returns {*}
      */
     open: function () {
-      return this.$el.addClass('initializeDialogue');
+      return this.$el.addClass('initialize-dialogue');
     },
 
     /**
      * @returns {*}
      */
     close: function () {
-      return this.$el.removeClass('initializeDialogue');
+      return this.$el.removeClass('initialize-dialogue');
     }
 
   });

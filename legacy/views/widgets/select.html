@@ -1,27 +1,27 @@
 {% if (options.showSelected) { %}
-<div class="well clearfix selectedOptionsContainer">
+<div class="well clearfix selected-options-container">
   {% if (options.textSelectedHeader) { %}
   <h3 class="header">{{ options.textSelectedHeader }}</h3>
   {% } %}
   {% if (options.source) { %}
   <!-- FIXME: This collection should only have the selected media, but instead it has all -->
-  <div id="{{ elementId }}-SelectedCollection" class="clearfix selectedCollection" data-type="Collection"
+  <div id="{{ elementId }}-SelectedCollection" class="clearfix selected-collection" data-type="Collection"
        data-property="{{ property }}" data-source="{{ options.source }}"
        data-templates='{{ JSON.stringify(options.selectedTemplates) }}' data-rerender="none"
        data-multiple="{{ options.multiple }}" data-meta='{{ JSON.stringify(options.selectedMeta) }}'
        data-textNoContent="{{ options.textSelectedNoContent }}" data-cssNoContent="{{ options.cssSelectedNoContent }}">
-    <div class="loadAnimation"></div>
+    <div class="load-animation"></div>
   </div>
   {% } else { %}
   <div class="selected">
-    <div class="loadAnimation"></div>
+    <div class="load-animation"></div>
   </div>
   {% } %}
 </div>
 {% } %}
 
 {% if (!options.ui && !options.source) { %}
-<select class="selectOptionsContainer" name="{{ options.inputName }}" {% if (options.multiple) { %}multiple
+<select class="select-options-container" name="{{ options.inputName }}" {% if (options.multiple) { %}multiple
         size="{{ options.multipleSize }}" {% } %}></select>
 {% } else { %}
 {% if (options.ui == 'menu') { %}
@@ -33,7 +33,7 @@
   </button>
   {% } %}
   <div {% if (options.ui===
-  'menu') { %}aria-labelledby="dropdown-{{ elementId }}"{% } %} class="selectOptionsContainer {{ options.classDropdown
+  'menu') { %}aria-labelledby="dropdown-{{ elementId }}"{% } %} class="select-options-container {{ options.classDropdown
   }}">
   {% if (options.source) { %}
   {% if (options.showSearch) { %}
@@ -45,18 +45,18 @@
   <div id="{{ elementId }}-OptionsCollectionPaginationTop" class="pagination top" data-entity="{{ options.source }}"
        data-type="pagination" data-fetch="false"></div>
   {% } %}
-  <div id="{{ elementId }}-OptionsCollection" class="clearfix optionsCollection" data-type="Collection"
+  <div id="{{ elementId }}-options-collection" class="clearfix options-collection" data-type="Collection"
        data-entity="{{ options.source }}" {% if (options.sourceApi) {
        %}data-api='{{ JSON.stringify(options.sourceApi) }}' {% } %} {% if (options.collectionTarget) {
        %}data-target='{{ JSON.stringify(options.collectionTarget) }}' {% } %}
        data-templates='{{ JSON.stringify(options.sourceTemplates) }}' data-rerender="none"
        data-meta='{{ JSON.stringify(options.sourceMeta) }}'>
     {% if (options.ui) { %}
-    <div class="loadAnimation"></div>
+    <div class="load-animation"></div>
     {% } %}
   </div>
   {% if (options.ui) { %}
-  <div id="{{ elementId }}-OptionsCollectionPagination" class="pagination bottom" data-entity="{{ options.source }}"
+  <div id="{{ elementId }}-options-collection-pagination" class="pagination bottom" data-entity="{{ options.source }}"
        data-type="pagination" data-fetch="false"></div>
   {% } %}
   {% } %}

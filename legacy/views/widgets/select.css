@@ -1,21 +1,21 @@
-[data-type="select"] .optionContainer {
+[data-type="select"] .option-container {
   position: relative;
   vertical-align: top;
   float: left;
   width: 200px;
 }
 
-[data-type="select"] .hasImage {
+[data-type="select"] .has-image {
   margin: 0 20px 0 0;
 }
 
-[data-type="select"][data-ui="menu"] .selectOptionsContainer {
+[data-type="select"][data-ui="menu"] .select-options-container {
   max-height: 300px;
   overflow: auto;
   padding: 20px;
 }
 
-[data-type="select"] .selectOptionsContainer .optionContainer:hover .image {
+[data-type="select"] .select-options-container .option-container:hover .image {
   cursor: pointer;
   opacity: .6;
   transition: opacity 0.5s ease-out;
@@ -23,12 +23,12 @@
 }
 
 /* if there is an image */
-[data-type="select"] .selectOptionsContainer .optionContainer.hasImage .image {
+[data-type="select"] .select-options-container .option-container.has-image .image {
   cursor: pointer;
 }
 
 /* Hide the normal input attributes IF there is an image because in that case we'll add visual cue on the image otherwise we should show the normal input checkbox or radio */
-[data-type="select"] .hasImage input {
+[data-type="select"] .has-image input {
   background-color: transparent;
   border: none;
   box-shadow: none;
@@ -47,7 +47,7 @@
 }
 
 /* TODO: point to our own cool image */
-[data-type="select"] .hasImage input:checked {
+[data-type="select"] .has-image input:checked {
   background-image: url('/assets/1/0/bundles/sitetheorystratus/stratus/views/widgets/check-mark.png');
 }
 
@@ -57,46 +57,46 @@
   font-weight: normal;
 }
 
-[data-type="select"] .hasImage .title,
-[data-type="select"] .hasImage .actions {
+[data-type="select"] .has-image .title,
+[data-type="select"] .has-image .actions {
   text-align: center;
 }
 
-[data-type="select"] .noImage .title,
-[data-type="select"] .noImage .actions {
+[data-type="select"] .no-image .title,
+[data-type="select"] .no-image .actions {
   float: left;
 }
 
 /* @bootstrap overwrite ugly defaults */
-[data-type="select"] .noImage input {
+[data-type="select"] .no-image input {
   display: inline;
   height: inherit;
 }
 
-[data-type="select"][data-ui="menu"] .optionContainer {
+[data-type="select"][data-ui="menu"] .option-container {
   float: none;
 }
 
 /* SELECTED OPTIONS */
-[data-type="select"] .selectedOptionsContainer h3.header {
+[data-type="select"] .selected-options-container h3.header {
   font-size: 15px;
   font-weight: bold;
   opacity: .3;
   margin: 0 0 10px 0;
 }
 
-[data-type="select"] .selectedOptionsContainer .optionContainer:hover .image {
+[data-type="select"] .selected-options-container .option-container:hover .image {
   opacity: .3;
   transition: opacity 0.5s ease-out;
   -webkit-transition: opacity 0.2s ease-out;
 }
 
-[data-type="select"] .selectedOptionsContainer .optionContainer.hasImage .image {
+[data-type="select"] .selected-options-container .option-container.has-image .image {
   width: 100px;
   height: 100px;
 }
 
-[data-type="select"] .selectedOptionsContainer .optionContainer.hasImage .actions {
+[data-type="select"] .selected-options-container .option-container.has-image .actions {
   opacity: 0;
   position: absolute;
   width: 100%;
@@ -104,15 +104,15 @@
   z-index: 1;
 }
 
-[data-type="select"] .selectedOptionsContainer .optionContainer.hasImage:hover .actions {
+[data-type="select"] .selected-options-container .option-container.has-image:hover .actions {
   opacity: 1;
 }
 
-[data-type="select"] .selectedOptionsContainer .optionContainer .actions button {
+[data-type="select"] .selected-options-container .option-container .actions button {
   background: transparent;
   border: 0;
 }
 
-[data-type="select"] .selectedOptionsContainer .optionContainer .actions button svg {
+[data-type="select"] .selected-options-container .option-container .actions button svg {
   width: 30px;
 }

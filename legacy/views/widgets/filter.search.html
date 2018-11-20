@@ -1,38 +1,38 @@
 {% if (meta.pageTotal > 1) { %}
-<div id="filterQueryContainer" style="display: inline-block;">
-  <div id="filterQueryContainerSubmit">
-    <button id="filterSubmit" class="backgroundDark" type="submit" value="Search">
+<div id="filter-query-container" style="display: inline-block;">
+  <div id="filter-query-container-submit">
+    <button id="filter-submit" class="background-dark" type="submit" value="Search">
       <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" version="1.1"
            xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-iconContentSearch">
+          <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linear-gradient-icon-content-search">
             <stop class="stop1" stop-color="#666666" offset="0%"></stop>
             <stop class="stop2" stop-color="#666666" offset="100%"></stop>
           </linearGradient>
         </defs>
-        <g id="iconContentSearch" class="actionButton" fill="url(#linearGradient-iconContentSearch)">
+        <g id="icon-content-search" class="action-button" fill="url(#linearGradient-iconContentSearch)">
           <path
               d="M23,34 L23,30.2889502 C15.8476028,29.1244815 10.3880357,22.9181257 10.3880357,15.4366197 C10.3880357,7.12551628 17.1255163,0.388035734 25.4366197,0.388035734 C33.7477232,0.388035734 40.4852037,7.12551628 40.4852037,15.4366197 C40.4852037,23.2198061 34.5764619,29.6229319 27,30.4049755 L27,30.4049755 L27,34 L29.0140845,34 L29.0140845,50 L21,50 L21,34 L23,34 Z M26.8131779,26.7323944 C32.4480321,26.0528643 36.8148174,21.2547007 36.8148174,15.4366197 C36.8148174,9.15261468 31.7206248,4.05842207 25.4366197,4.05842207 C19.1526147,4.05842207 14.0584221,9.15261468 14.0584221,15.4366197 C14.0584221,21.2547007 18.4252073,26.0528643 24.0600615,26.7323944 L26.8131779,26.7323944 L26.8131779,26.7323944 Z"></path>
         </g>
       </svg>
     </button>
   </div>
-  <div id="filterQueryContainerInput">
-    <input type="text" id="filterQuery" name="q" placeholder="Search keyword or limit to specific field" value=""
-           class="customFontParagraph form-control">
+  <div id="filter-query-container-input">
+    <input type="text" id="filter-query" name="q" placeholder="Search keyword or limit to specific field" value=""
+           class="custom-font-paragraph form-control">
     <!--
     This only removes the query and the paging (keeps sort and limit) plus this keeps all the
     original query variables that aren't related to the filter, e.g. id or versionId on an edit page
     -->
-    <a href="#" id="filterQueryClear"></a>
+    <a href="#" id="filter-query-clear"></a>
   </div>
 
-  <div id="filterOptions">
+  <div id="filter-options">
 
     <!-- Filter Display Options, e.g. Sort, Order, Limit -->
-    <div id="filterDisplay" class="form-group">
+    <div id="filter-display" class="form-group">
       {% if (typeof meta.sort !== 'undefined') { %}
-      <select id="filterSort" name="qs" class="form-control">
+      <select id="filter-sort" name="qs" class="form-control">
         <option value="">Sort</option>
         {% _.each(meta.sort, function(sort) { %}
         <option value="{{ sort.value }}" selected>{{ sort.prompt }}</option>
@@ -40,14 +40,14 @@
       </select>
       {% } %}
       {% if (typeof meta.sortOrder !== 'undefined') { %}
-      <select id="filterSortOrder" name="qso" class="form-control">
+      <select id="filter-sort-order" name="qso" class="form-control">
         {% _.each(meta.sortOrder, function(order) { %}
         <option value="{{ order.value }}" selected>{{ order.prompt }}</option>
         {% }); %}
       </select>
       {% } %}
       {% if (typeof meta.limit !== 'undefined') { %}
-      <select id="filterLimit" name="ql" class="form-control">
+      <select id="filter-limit" name="ql" class="form-control">
         <option value="">Limit</option>
         <!-- Add the current limit request to options if not in list -->
         {% var selectedLimit = null; %}
@@ -64,10 +64,10 @@
     </div>
 
     <!-- Advanced Search Help -->
-    <div id="btn-filterAdvanced" onclick="document.getElementById('filterAdvancedHelp').classList.toggle('hide');">
+    <div id="btn-filter-advanced" onclick="document.getElementById('filterAdvancedHelp').classList.toggle('hide');">
       Advanced
     </div>
-    <div id="filterAdvancedHelp" class="slide slide-y hide">
+    <div id="filter-advanced-help" class="slide slide-y hide">
       <h3 class="title">What Is Advanced Filtering?</h3>
 
       <p class="help">
@@ -79,7 +79,7 @@
       <h3 class="title">Comparison Options</h3>
 
       <div class="table-responsive">
-        <table id="filterAdvancedComparison" class="table table-striped table-condensed">
+        <table id="filter-advanced-comparison" class="table table-striped table-condensed">
           <thead>
           <tr>
             <th>Comparison</th>
@@ -89,7 +89,7 @@
           </thead>
           <tbody>
           <tr>
-            <td class="titleInline">Contains</td>
+            <td class="title-inline">Contains</td>
             <td class="operator">[:], [!:], [LIKE] or [NOT LIKE]</td>
             <td class="details">
               The field contains the search string,
@@ -97,7 +97,7 @@
             </td>
           </tr>
           <tr>
-            <td class="titleInline">Equals</td>
+            <td class="title-inline">Equals</td>
             <td class="operator">[=] or [!=]</td>
             <td class="details">
               The field equals or does not equal the search string,
@@ -105,7 +105,7 @@
             </td>
           </tr>
           <tr>
-            <td class="titleInline">Greater or Lesser Than</td>
+            <td class="title-inline">Greater or Lesser Than</td>
             <td class="operator">[&gt;] or [&lt;]</td>
             <td class="details">
               The field is greater or lesser than the numeric or date value,
@@ -113,7 +113,7 @@
             </td>
           </tr>
           <tr>
-            <td class="titleInline">Regular Expression</td>
+            <td class="title-inline">Regular Expression</td>
             <td class="operator">[?], [!?], [REGEXP] or [NOT REGEXP]</td>
             <td class="details">
               The field matches or doesn't match the advanced <a
@@ -123,7 +123,7 @@
             </td>
           </tr>
           <tr>
-            <td class="titleInline">In List</td>
+            <td class="title-inline">In List</td>
             <td class="operator">[#], [!#], [IN] or [NOT IN]</td>
             <td class="details">
               The field contains one of the values in the comma separated list,
@@ -137,7 +137,7 @@
       <h3 class="title">Valid Fields</h3>
 
       <div class="table-responsive">
-        <table id="filterAdvancedFields" class="table table-striped table-condensed">
+        <table id="filter-advanced-fields" class="table table-striped table-condensed">
           <thead>
           <tr>
             <th>Field Alias</th>
@@ -148,7 +148,7 @@
           {% if (typeof meta.searchable !== "undefined" && _.size(meta.searchable) > 0) { %}
           {% _.each(meta.searchable, function(description, alias) { %}
           <tr>
-            <td class="titleInline">{{ alias }}</td>
+            <td class="title-inline">{{ alias }}</td>
             <td class="details">{{ description }}</td>
           </tr>
           {% }); %}

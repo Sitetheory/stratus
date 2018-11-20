@@ -1,5 +1,5 @@
 <div ng-cloak>
-  <md-content ng-if="!$ctrl.passwordReset" id="user-authentication" class="overlayForm defaultShadow defaultBorderRadius">
+  <md-content ng-if="!$ctrl.passwordReset" id="user-authentication" class="overlay-form default-shadow default-border-radius">
     <md-progress-linear ng-if="$ctrl.loading" md-mode="indeterminate"></md-progress-linear>
     <div class="tab-toggle-background"></div>
     <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex"
@@ -39,9 +39,9 @@
                   </md-input-container>
                 </div>
                 <div class="form-column submit-column">
-                  <md-button type="submit" class="btn btnSignIn gradientAnchor"
+                  <md-button type="submit" class="btn btn-sign-in gradient-anchor"
                              ng-disabled="signInForm.$invalid || $ctrl.loading">
-                    <div class="btnGradientLight"></div>
+                    <div class="btn-gradient-light"></div>
                     Sign In
                   </md-button>
                 </div>
@@ -50,7 +50,7 @@
               <div class="link-forgot">
                 <a ng-click="$ctrl.showForgotPassForm(true)"
                    capitalize-first>{{ $ctrl.forgotPassText }}
-                  <div class="animatedUnderline"></div>
+                  <div class="animated-underline"></div>
                 </a>
               </div>
 
@@ -60,15 +60,15 @@
                   ng-submit="forgotPassForm.$valid && $ctrl.doRequestResetPass(resetPassData)"
                   ng-if="$ctrl.enabledForgotPassForm">
 
-              <div class="divTable forgotTitle">
-                <div class="divTableRow">
-                  <div class="divTableCell border-column">
+              <div class="div-table forgot-title">
+                <div class="div-table-row">
+                  <div class="div-table-cell border-column">
                     <div class="label-border"></div>
                   </div>
-                  <div class="divTableCell titleColumn">
+                  <div class="div-table-cell title-column">
                     <h3>Password Reset Request</h3>
                   </div>
-                  <div class="divTableCell border-column">
+                  <div class="div-table-cell border-column">
                     <div class="label-border"></div>
                   </div>
                 </div>
@@ -97,14 +97,14 @@
                   </md-input-container>
                 </div>
                 <div class="form-column submit-column">
-                  <md-button type="submit" class="btn btnSignIn gradientAnchor"
+                  <md-button type="submit" class="btn btn-sign-in gradient-anchor"
                              ng-disabled="forgotPassForm.$invalid || $ctrl.loading">Send Reset
                     Link
-                    <div class="btnGradientLight"></div>
+                    <div class="btn-gradient-light"></div>
                   </md-button>
                 </div>
               </div>
-              <div class="textRight link-forgot">
+              <div class="text-right link-forgot">
                 <a ng-click="$ctrl.showForgotPassForm(false)"
                    capitalize-first>{{ $ctrl.forgotPassText }} >
                   <div class="animated-underline"></div>
@@ -159,7 +159,7 @@
 
             <div class="verify" ng-if="$ctrl.enabledVerificationForm">
               <h3>Verifying your account...</h3>
-              <div class="textCenter" ng-init="$ctrl.verifyAccount()">
+              <div class="text-center" ng-init="$ctrl.verifyAccount()">
                 <md-progress-circular md-mode="indeterminate"></md-progress-circular>
               </div>
             </div>
@@ -202,10 +202,10 @@
                 </md-input-container>
               </div>
               <div class="form-column submit-column">
-                <md-button type="submit" class="btn btnSignIn gradientAnchor"
+                <md-button type="submit" class="btn btn-sign-in gradient-anchor"
                            ng-disabled="registrationForm.$invalid || $ctrl.loading" stratus-clicked-disable>
                   Create Account
-                  <div class="btnGradientLight"></div>
+                  <div class="btn-gradient-light"></div>
                 </md-button>
               </div>
             </div>
@@ -215,15 +215,15 @@
     </md-tabs>
 
     <div class="social-signin" ng-if="!$ctrl.isLoggedIn">
-      <div class="divTable social-title-table">
-        <div class="divTableRow">
-          <div class="divTableCell border-column">
+      <div class="div-table social-title-table">
+        <div class="div-table-row">
+          <div class="div-table-cell border-column">
             <div class="label-border"></div>
           </div>
-          <div class="divTableCell titleColumn">
+          <div class="div-table-cell title-column">
             <h4 class="use-social-label">Or Sign In Using</h4>
           </div>
-          <div class="divTableCell border-column">
+          <div class="div-table-cell border-column">
             <div class="label-border"></div>
           </div>
         </div>

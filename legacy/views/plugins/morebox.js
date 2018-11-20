@@ -51,7 +51,7 @@
 
       // Add Default Classes
       var $moreBox = $(this.$el.data('target'));
-      $moreBox.addClass('moreBox');
+      $moreBox.addClass('more-box');
       $moreBox.attr('aria-labelledby', this.$el.attr('id'));
 
       // Utilize Standard AddClass Plugin

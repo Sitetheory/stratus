@@ -1,11 +1,11 @@
-<div class="media-uploader borderRadiusDefault">
+<div class="media-uploader border-radius-default">
     <div class="toolbar">
         <div class="md-toolbar-tools">
             <stratus-help>Files uploaded here will be saved on redundant file servers and delivered over a high speed, cached CDN (Content Delivery Network)
             </stratus-help>
             <h2>Add Media</h2>
 
-            <button class="btnClose" type="button" ng-disabled="$ctrl.uploadingFiles" ng-click="$ctrl.done()">
+            <button class="btn-close" type="button" ng-disabled="$ctrl.uploadingFiles" ng-click="$ctrl.done()">
                 <span class="sr-only">Close dialogue</span>
                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/close.svg" aria-hidden="true"></md-icon>
             </button>
@@ -20,7 +20,7 @@
                          ngf-select="$ctrl.uploadFiles($files, $invalidFiles)"
                          ngf-multiple="$ctrl.ngfMultiple"
                          ngf-max-files="10"
-                         ngf-model-invalid="invalidFiles"
+                         ngf-model-invalid="invalid-files"
                          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">browse
                        your computer</a></span>
                     </p>
@@ -28,16 +28,16 @@
                          ngf-drop="$ctrl.uploadFiles($files, $invalidFiles)"
                          ngf-multiple="$ctrl.ngfMultiple"
                          ngf-max-files="10"
-                         ngf-model-invalid="invalidFiles"
+                         ngf-model-invalid="invalid-files"
                          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
                         <div class="file-list">
-                            <ul class="listInline response clearfix">
+                            <ul class="list-inline response clearfix">
                                 <li class="dropped-item-container" ng-repeat="file in $ctrl.files track by $index"
                                     ng-class="!file.errorUpload ? 'upload-complete' : '' ">
                                     <div class="image-container"
                                          ng-class="file.progress >= 0 && !file.errorUpload ? 'progress-visible' : 'progressInvisible'">
                                         <div ng-class="{'progress-complete' : file.progress == 100, 'progress-aborted' : file.upload.aborted}">
-                                            <div class="progress-percentage fontBody">{{file.progress}}%</div>
+                                            <div class="progress-percentage font-body">{{file.progress}}%</div>
                                             <div class="progress">
                                                 <div ng-if="file.progress >= 0 && !file.errorUpload" class="progress-color-bar"
                                                      style="width:{{file.progress}}%"></div>
@@ -66,12 +66,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div ng-if="file.errorUpload" class="errorMessage fontBody">
+                                    <div ng-if="file.errorUpload" class="error-message font-body">
                                         {{ file.errorMsg }}
                                     </div>
                                 </li>
                             </ul>
-                            <div class="errorMessage fontBody borderRadiusDefault" ng-repeat="msg in $ctrl.invalidFilesMsg">{{msg}}</div>
+                            <div class="error-message font-body border-radius-default" ng-repeat="msg in $ctrl.invalidFilesMsg">{{msg}}</div>
                         </div>
                     </div>
                 </md-content>
@@ -87,14 +87,14 @@
                         <div class="md-padding video" ng-repeat="video in $ctrl.videos track by $index" ng-if="!video.isUploaded">
                             <form novalidate name="videoForm" ng-submit="videoForm.$valid && $ctrl.saveOneFile(video, 'video')">
                                 <div class="clearfix">
-                                    <div class="stGrid column20">
+                                    <div class="st-grid column20">
                                         <md-input-container class="md-block">
                                             <md-switch md-invert ng-model="video.type" aria-label="URL - Embed" ng-true-value="'Embed'" ng-false-value="'URL'" class="md-warn">{{ video.type || 'URL' }}</md-switch>
                                         </md-input-container>
                                     </div>
-                                    <div class="stGrid column5">&nbsp;</div>
+                                    <div class="st-grid column5">&nbsp;</div>
 
-                                    <div class="stGrid column75">
+                                    <div class="st-grid column75">
                                         <!-- URL field -->
                                         <md-input-container class="md-block" ng-if="video.type != 'Embed'">
                                             <label for="url">Full URL</label>
@@ -133,8 +133,8 @@
 
                                         <!-- Add tags -->
 
-                                         <div id="tagContainer" ng-controller="Generic"  data-target="Tag" ng-cloak data-direct="true">
-                                             <stratus-tag  class="fontSecondary" ng-model="video.tags" collection="collection"></stratus-tag>
+                                         <div id="tag-container" ng-controller="Generic"  data-target="Tag" ng-cloak data-direct="true">
+                                             <stratus-tag  class="font-secondary" ng-model="video.tags" collection="collection"></stratus-tag>
                                         </div>
                                     </div>
                                 </div>
@@ -147,10 +147,10 @@
                             </form>
                         </div>
                     </div>
-                    <md-button class="btn gradientAnchor md-button md-ink-ripple" ng-click="$ctrl.addExternalFile('video')" ng-if="$ctrl.ngfMultiple">Add
+                    <md-button class="btn gradient-anchor md-button md-ink-ripple" ng-click="$ctrl.addExternalFile('video')" ng-if="$ctrl.ngfMultiple">Add
                         video +
                     </md-button>
-                    <md-button ng-if="$ctrl.videos.length > 1 && $ctrl.ngfMultiple" class="btn gradientAnchor md-button md-ink-ripple"
+                    <md-button ng-if="$ctrl.videos.length > 1 && $ctrl.ngfMultiple" class="btn gradient-anchor md-button md-ink-ripple"
                                ng-click="$ctrl.saveAllFiles($ctrl.videos, 'video')">Save all
                     </md-button>
 
@@ -199,7 +199,7 @@
                         <div class="link" ng-repeat="link in $ctrl.links track by $index">
                             <form novalidate name="linkForm" ng-submit="linkForm.$valid && $ctrl.saveOneFile(link)">
                                 <div class="clearfix">
-                                    <div class="stGrid column20">
+                                    <div class="st-grid column20">
                                         <md-input-container class="md-block">
                                             <select ng-model="link.service" ng-change="link.url = ''">
                                                 <option ng-value="service" ng-repeat="service in $ctrl.services.link">
@@ -209,9 +209,9 @@
                                         </md-input-container>
                                     </div>
 
-                                    <div class="stGrid column5">&nbsp;</div>
+                                    <div class="st-grid column5">&nbsp;</div>
 
-                                    <div class="stGrid column75">
+                                    <div class="st-grid column75">
                                         <!-- URL field -->
                                         <md-input-container class="md-block">
                                             <label for="url">Full URL</label>
@@ -236,8 +236,8 @@
                                         </md-input-container>
 
                                         <!-- Add tags -->
-                                        <div id="tagLinkContainer" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
-                                            <stratus-tag  class="fontSecondary" ng-model="link.tags" collection="collection"></stratus-tag>
+                                        <div id="tag-link-container" ng-controller="Generic" data-target="Tag" ng-cloak data-direct="true">
+                                            <stratus-tag  class="font-secondary" ng-model="link.tags" collection="collection"></stratus-tag>
                                         </div>
                                     </div>
                                 </div>
