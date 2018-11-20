@@ -1,42 +1,42 @@
-#visual-selector hr {
+#visualSelector hr {
   background: none;
   border-top: 1px solid #777;
 }
 /* Info areas */
-.image-column {
+.imageColumn {
   padding-right: 7%;
 }
-.image-column img {
+.imageColumn img {
   display: block;
 }
-.quick-info {
+.quickInfo {
   margin: 34px 0;
 }
 .description {
   margin-bottom: 40px;
 }
 /* Selected layout area */
-.selected-layout {
+.selectedLayout {
   margin-bottom: 60px;
 }
-.selected-layout h2 {
+.selectedLayout h2 {
   margin-top: 16px;
   line-height: 1.2;
 }
-.selected-layout h4 {
+.selectedLayout h4 {
   margin-bottom: 0;
 }
-.selected-image .btn {
+.selectedImage .btn {
   display: block;
   transition: all 0.1s ease-out !important;
   transform: scale(0.8);
   opacity: 0;
 }
-.selected-image:hover .btn {
+.selectedImage:hover .btn {
   transform: scale(1);
   opacity: 1;
 }
-.selected-image:hover .image-container {
+.selectedImage:hover .imageContainer {
   opacity: 0.2;
 }
 /* Info popup */
@@ -53,12 +53,12 @@
   background: rgba(255, 255, 255, 0.9);
   width: 100%;
 }
-.popup .btn-close {
+.popup .btnClose {
   position: absolute;
   top: 20px;
   right: 20px;
 }
-.popup .small-label {
+.popup .smallLabel {
   font-size: 12px;
   margin-bottom: 16px;
 }
@@ -66,14 +66,14 @@
   display: table;
   margin-top: 26px;
 }
-.btn-choose {
+.btnChoose {
   margin-bottom: 34px !important;
 }
-.popup-form {
+.popupForm {
   margin-bottom: 8px;
   font-size: 13px;
 }
-.popup-form input {
+.popupForm input {
   margin-right: 10px;
 }
 @media (max-width: 899px) {
@@ -81,47 +81,47 @@
     padding: 40px;
     overflow: scroll;
   }
-  .popup .btn-close {
+  .popup .btnClose {
     top: 10px;
     right: 10px;
   }
 }
 /* Selector Gallery */
-.gallery-title {
+.galleryTitle {
   margin: 0 0 60px;
 }
-.gallery-image img {
+.galleryImage img {
   display: block;
 }
-.gallery-image .selected-border {
+.galleryImage .selectedBorder {
   opacity: 0;
   border: 5px solid #333;
 }
-.gallery-item .btn {
+.galleryItem .btn {
   transition: all 0.1s ease-out !important;
   transform: scale(0.8);
   display: block;
   opacity: 0;
   white-space: nowrap;
 }
-.gallery-item:hover .gallery-image {
+.galleryItem:hover .galleryImage {
   opacity: 0.2;
 }
-.gallery-item:hover .btn {
+.galleryItem:hover .btn {
   transform: scale(1, 1);
   opacity: 1;
 }
-.gallery-item:hover .info-icon {
+.galleryItem:hover .infoIcon {
   opacity: 0.8;
 }
-.gallery-item:hover .info-icon:hover {
+.galleryItem:hover .infoIcon:hover {
   transform: scale(1.25);
   opacity: 1;
 }
-.gallery-item .gallery-selected:hover .gallery-image {
+.galleryItem .gallerySelected:hover .galleryImage {
   opacity: 1;
 }
-.info-icon {
+.infoIcon {
   transition: all 0.2s ease-out;
   position: absolute;
   top: 20px;
@@ -132,48 +132,48 @@
   width: 32px;
   height: 32px;
 }
-.info-icon md-icon {
+.infoIcon md-icon {
   width: 100%;
   height: inherit;
 }
-.info-icon md-icon svg g {
+.infoIcon md-icon svg g {
   fill: #fff;
 }
-.gallery-selected .gallery-image .selected-border {
+.gallerySelected .galleryImage .selectedBorder {
   opacity: 1;
 }
-.gallery-selected .btn {
+.gallerySelected .btn {
   display: none;
 }
-.gallery-selected .check-icon {
+.gallerySelected .checkIcon {
   opacity: 1;
 }
-.check-icon {
+.checkIcon {
   position: absolute;
   top: 0;
   right: 0;
   opacity: 0;
   width: 20px;
 }
-.check-icon.easy-transition {
+.checkIcon.easyTransition {
   transition-delay: 0.15s;
   -webkit-transition-delay: 0.15s;
 }
-.check-icon md-icon {
+.checkIcon md-icon {
   width: 100%;
   height: inherit;
 }
 @media (max-width: 767px) {
-  .gallery-list {
+  .galleryList {
     padding: 0 6%;
   }
-  .gallery-item .background-dark {
+  .galleryItem .backgroundDark {
     background: none;
   }
-  .gallery-item h4 {
+  .galleryItem h4 {
     padding: 0 50px 0 0;
   }
-  .gallery-item .btn-container {
+  .galleryItem .btnContainer {
     transform: none;
     position: relative;
     top: inherit;
@@ -181,12 +181,12 @@
     bottom: inherit;
     left: inherit;
   }
-  .gallery-item .btn {
+  .galleryItem .btn {
     transform: none;
     opacity: 1;
     margin-top: 20px;
   }
-  .info-icon {
+  .infoIcon {
     transform: scale(1.25);
     margin-bottom: 16px;
     position: relative;
@@ -196,10 +196,10 @@
     left: inherit;
     opacity: 1;
   }
-  .info-icon md-icon svg g {
+  .infoIcon md-icon svg g {
     fill: #222;
   }
-  .check-icon {
+  .checkIcon {
     top: 3px;
     right: 44px;
   }
