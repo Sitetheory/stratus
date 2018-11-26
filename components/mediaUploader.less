@@ -12,7 +12,6 @@ md-dialog {
 
 
 /* Uploader header */
-
 .media-uploader .toolbar {
   position: relative;
   padding-bottom: 8px;
@@ -83,7 +82,7 @@ md-dialog {
     color: #222;
   }
   input {
-    transition: all .2s ease-out;
+    transition: all 0.2s ease-out;
     font-size: 15px;
     color: #222;
   }
@@ -127,11 +126,13 @@ md-dialog {
     padding: 0 6px;
     width: 33.3%;
   }
+
   @media (max-width: 600px) {
     ul li {
       width: 50%;
     }
   }
+
   @media (max-width: 479px) {
     ul li {
       display: block;
@@ -145,14 +146,15 @@ md-dialog {
 
 
 /* Error message */
+
 /* TODO: Change site.css to hyphens and come back to these */
 .drop-container .error-message {
   display: block;
   margin: 0 auto;
   padding: 8px;
   text-align: center;
-  color: #FFF;
-  background: #FF8E6C;
+  color: #fff;
+  background: #ff8e6c;
 }
 .drop-container li .error-message {
   position: absolute;
@@ -163,7 +165,6 @@ md-dialog {
 
 
 /* Progress bar & percentage */
-
 .drop-container {
   .progress-percentage {
     transition: all 0.2s ease-out;
@@ -176,7 +177,7 @@ md-dialog {
     margin-top: 1px;
     height: 12px;
     opacity: 0;
-    background: #D3D3D3;
+    background: #d3d3d3;
   }
   .progress-visible .progress-percentage,
   .progress-visible .progress {
@@ -196,19 +197,19 @@ md-dialog {
     margin-bottom: 1px;
     height: 12px;
     opacity: 0;
-    background: #D3D3D3;
+    background: #d3d3d3;
   }
   .progress-visible .progress-percentage,
   .progress-visible .progress {
     opacity: 1;
   }
+
   /* Hide progress & percentage when upload complete */
   .progress-complete .progress-percentage,
   .progress-complete .progress {
     opacity: 0;
     transition-delay: 1s;
   }
-
 }
 
 
@@ -218,7 +219,7 @@ md-dialog {
   transition: all 0.2s ease-out;
   position: relative;
   height: 148px;
-  background: #E9E9E9;
+  background: #e9e9e9;
   img {
     transition: all 0.2s ease-out;
     display: block;
@@ -229,21 +230,25 @@ md-dialog {
     object-fit: contain;
   }
 }
+
 @media (max-width: 959px) {
   .dropped-item {
     height: 140px;
   }
 }
+
 @media (max-width: 768px) {
   .dropped-item {
     height: 100px;
   }
 }
+
 @media (max-width: 600px) {
   .dropped-item {
     height: 125px;
   }
 }
+
 @media (max-width: 479px) {
   .dropped-item {
     height: 200px;
@@ -271,7 +276,7 @@ md-dialog {
 .media-uploader .content .link {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid rgba(0,0,0,.3);
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
 }
 .media-uploader .content md-card-content {
   text-align: center;
@@ -317,11 +322,11 @@ md-dialog {
     height: 70px;
   }
   md-icon svg {
-    -webkit-filter: drop-shadow( 0 0 4px rgba(0,0,0,.4));
-    filter: drop-shadow( 0 0 4px rgba(0,0,0,.4));
+    -webkit-filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
   }
   md-icon svg g {
-    fill: #FFF;
+    fill: #fff;
   }
 }
 
@@ -353,14 +358,13 @@ md-dialog {
     height: 100%;
   }
   svg g {
-    transition: all .1s ease-out;
-    fill: #FF7552;
+    transition: all 0.1s ease-out;
+    fill: #ff7552;
   }
   button:hover svg g {
     fill: #222;
   }
 }
-
 .media-uploader .dropped-item:hover .abort {
   display: inherit;
 }
