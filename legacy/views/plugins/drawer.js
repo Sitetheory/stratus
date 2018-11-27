@@ -18,15 +18,23 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base', 'stratus.views.plugins.addclass', 'stratus.views.plugins.addclose'], factory);
+    define([
+      'stratus',
+      'jquery',
+      'underscore',
+      'stratus.views.plugins.base',
+      'stratus.views.plugins.addclass',
+      'stratus.views.plugins.addclose'
+    ], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Drawer
   // -------------
 
@@ -39,59 +47,57 @@
     },
 
     initialize: function (options) {
-      this.prepare(options);
+      this.prepare(options)
 
       if (!this.$el.attr('id')) {
-        console.warn('No ID supplied for data-plugin="Drawer" button.', this.$el);
-        return false;
+        console.warn('No ID supplied for data-plugin="Drawer" button.', this.$el)
+        return false
       }
 
       // If a second element needs to toggle the drawer, you would need to give it the identical id with a
       // suffix "-*" (dash anything). Everything after the dash gets removed.
 
       // get base id
-      var toggleId = this.$el.attr('id').replace(/-.*$/, '');
-      var drawer = this.$el.data('target') ? $(this.$el.data('target')) : $('#' + toggleId + '-drawer');
+      var toggleId = this.$el.attr('id').replace(/-.*$/, '')
+      var drawer = this.$el.data('target') ? $(this.$el.data('target')) : $('#' + toggleId + '-drawer')
       if (!drawer) {
-        console.warn('No ID supplied for data-plugin="Drawer" targetted drawer.', this.$el);
-        return false;
+        console.warn('No ID supplied for data-plugin="Drawer" targetted drawer.', this.$el)
+        return false
       }
 
       // Determine if this is a drawer that only shows up for mobile
-      this.drawerClass = this.$el.data('mobileonly') ? 'mobileDrawer' : 'drawer';
+      this.drawerClass = this.$el.data('mobileonly') ? 'mobileDrawer' : 'drawer'
 
       // Add Default Classes
-      drawer.addClass(this.drawerClass);
+      drawer.addClass(this.drawerClass)
 
       // Only add the label if it's not there yet (in case there are multiple drawer buttons acting on the same
       // drawer
       if (!drawer.attr('aria-labelledby')) {
-        drawer.attr('aria-labelledby', toggleId);
+        drawer.attr('aria-labelledby', toggleId)
       }
 
       // Add a close button
-      var close = drawer.find('.btnClose');
+      var close = drawer.find('.btnClose')
       if (!close.length) {
-        new Stratus.Views.Plugins.AddClose({ el: drawer });
-        close = drawer.find('.btnClose');
+        new Stratus.Views.Plugins.AddClose({ el: drawer })
+        close = drawer.find('.btnClose')
       }
-      close.unbind('click');
+      close.unbind('click')
       close.on('click', function () {
-        this.toggle();
-      }.bind(this));
+        this.toggle()
+      }.bind(this))
     },
 
     // NOTE: with this method only one drawer can be open at a time
     toggle: function () {
+      var toggleId = this.$el.attr('id').replace(/-.*$/, '')
 
-      var toggleId = this.$el.attr('id').replace(/-.*$/, '');
-
-      $('#' + toggleId + '-drawer').removeClass('hidden');
-      var drawerVar = this.drawerClass.toLowerCase();
+      $('#' + toggleId + '-drawer').removeClass('hidden')
+      var drawerVar = this.drawerClass.toLowerCase()
       var $body = $('body');
-      ($body.attr('data-' + drawerVar + 'open') !== toggleId) ? $body.attr('data-' + drawerVar + 'open', toggleId) : $body.attr('data-' + drawerVar + 'open', null);
+      ($body.attr('data-' + drawerVar + 'open') !== toggleId) ? $body.attr('data-' + drawerVar + 'open', toggleId) : $body.attr('data-' + drawerVar + 'open', null)
     }
 
-  });
-
-}));
+  })
+}))

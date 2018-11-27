@@ -20,6 +20,9 @@
 
 // Data Attributes to Control Options
 // ----------------------------------
+
+/* global define */
+
 // The options below are the standard Bootstrap popover options. If you need to manipulate the widget, you can set data attributes to change the default values.
 
 /*
@@ -38,12 +41,11 @@ data-placement: The location of the popover, e.g. "auto top", "right", "bottom" 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'bootstrap', 'stratus.views.plugins.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'bootstrap', 'stratus.views.plugins.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Popover
   // -------------
 
@@ -57,13 +59,13 @@ data-placement: The location of the popover, e.g. "auto top", "right", "bottom" 
 
     // Custom Actions for View
     initialize: function (options) {
-      this.prepare(options);
-      this.render();
+      this.prepare(options)
+      this.render()
     },
 
     render: function () {
       // Add Extra Styles (if this is extended, e.g. help)
-      this.style();
+      this.style()
 
       // Popover
       this.$el.popover({
@@ -76,29 +78,28 @@ data-placement: The location of the popover, e.g. "auto top", "right", "bottom" 
         },
         container: 'body',
         content: function () {
-          return this.$el.data('content') ? this.$el.data('content') : $(this.$el.data('target')).html();
+          return this.$el.data('content') ? this.$el.data('content') : $(this.$el.data('target')).html()
         }.bind(this)
-      });
+      })
     },
 
     style: function () {
     },
 
     show: function () {
-      this.$el.popover('show');
+      this.$el.popover('show')
       $('.popover').on('mouseleave', function () {
-        this.$el.popover('hide');
-      }.bind(this));
+        this.$el.popover('hide')
+      }.bind(this))
     },
 
     hide: function () {
       setTimeout((function () {
         if (!$('.popover:hover').length) {
-          this.$el.popover('hide');
+          this.$el.popover('hide')
         }
-      }.bind(this)), 100);
+      }.bind(this)), 100)
     }
 
-  });
-
-}));
+  })
+}))

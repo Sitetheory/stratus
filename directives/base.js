@@ -6,7 +6,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular'], factory)
+    define([
+      'stratus',
+      'underscore',
+      'angular'
+    ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
   }
@@ -20,9 +24,17 @@
         ngModel: '='
       },
       link: function ($scope, $element) {
-        console.log($scope, $element)
+        this.uid = _.uniqueId('base_')
+        Stratus.Instances[this.uid] = $scope
+        $scope.elementId = $element.elementId || this.uid
+        Stratus.Internals.CssLoader(Stratus.BaseUrl +
+          Stratus.BundlePath + 'directives/base' +
+          (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+        console.log('directive:', this, $scope, $element)
       },
-      template: '<div class="no-template"></div>'
+      template: '<div id="{{ elementId }}" class="no-template"></div>',
+      templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'directives/drawer' +
+        (Stratus.Environment.get('production') ? '.min' : '') + '.html'
     }
   }
 }))

@@ -1,8 +1,8 @@
-.abc-rio-button-light-blue {
+.abcRioButtonLightBlue {
   height: 40px !important;
   width: 40px !important;
 }
-.abc-rio-button-light-blue .abc-rio-button-content-wrapper .abc-rio-button-icon {
+.abcRioButtonLightBlue .abcRioButtonContentWrapper .abcRioButtonIcon {
   text-align: -webkit-center !important;
   margin-top: 3px !important;
   float: none;

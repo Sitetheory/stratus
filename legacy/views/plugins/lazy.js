@@ -21,15 +21,16 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'stratus.views.plugins.base'], factory);
+    define(['stratus', 'jquery', 'stratus.views.plugins.base'], factory)
   } else {
-    factory(root.Stratus, root.$);
+    factory(root.Stratus, root.$)
   }
 }(this, function (Stratus, $) {
-
   // Lazy Plugin
   // -----------
 
@@ -48,18 +49,17 @@
   // automatically). But on mobile, we will listen for resize of window because
   Stratus.Views.Plugins.Lazy = Stratus.Views.Plugins.Base.extend({
     initialize: function (options) {
-      this.prepare(options);
-      if (this.$el.length === 0) return false;
+      this.prepare(options)
+      if (this.$el.length === 0) return false
 
       // allow watching a different element to trigger when this image is lazy loaded (needed for carousels)
-      var el = Stratus(this.el);
-      var $el = this.$el;
+      var el = Stratus(this.el)
+      var $el = this.$el
       Stratus.RegisterGroup.add('OnScroll', {
         method: Stratus.Internals.LoadImage,
         el: $el,
         spy: el.attr('data-spy') ? $(el.attr('data-spy')) : $el
-      });
+      })
     }
-  });
-
-}));
+  })
+}))
