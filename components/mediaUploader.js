@@ -127,9 +127,9 @@
       }, true)
 
       function done () {
-        if (!$ctrl.unsavedVideos) {
+        if (!$ctrl.unsavedVideos && !$ctrl.uploadingFiles) {
           closeDialog()
-        } else {
+        } else if($ctrl.unsavedVideos) {
           let confirmDialogPromise = $q((resolve, reject) => {
             $ctrl.videos.forEach(function (video) {
               if (!video.isUploaded) {
@@ -152,6 +152,16 @@
             } else {
               closeDialog()
             }
+          })
+        } else if($ctrl.uploadingFiles) {
+          var confirm = $mdDialog.confirm()
+            .title('Media upload is in progress.')
+            .textContent('Are you sure you want to abandon uploading?')
+            .ok('Abandon')
+            .cancel('Cancel')
+            .multiple(true)
+          $mdDialog.show(confirm).then(function () {
+            closeDialog()
           })
         }
       }
