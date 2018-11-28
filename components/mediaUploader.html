@@ -159,7 +159,7 @@
                             <div layout-gt-xs="row" layout-wrap>
                                 <md-card flex-gt-xs="33" ng-repeat="video in $ctrl.videos track by $index" ng-if="video.isUploaded">
 
-                                    <img class="md-card-image"  src="/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-youtube-dark.png">
+                                    <img class="md-card-image"  ng-src="{{video.thumbnailUrl || '/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-youtube-dark.png'}}">
 
                                     <!-- TODO: If no thumb exists for video because it is a link rather than an embed or for any other reason use the appropriate youtube or vimeo graphic
 
