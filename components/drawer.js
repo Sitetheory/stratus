@@ -26,19 +26,23 @@
       onClick: '&'
     },
     controller: function ($scope, $attrs, $log) {
-      this.uid = _.uniqueId('drawer_')
-      Stratus.Instances[this.uid] = $scope
-      $scope.elementId = $attrs.elementId || this.uid
-      this.display = false
-      this.$onInit = function () {
-        $log.log('initialized:', this)
-      }
+      // Initialize
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId('drawer_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
       /* *
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-          Stratus.BundlePath + 'components/drawer' +
-          (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+        Stratus.BundlePath + 'components/drawer' +
+        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
       /* */
-      $log.log('component:', this, $scope, $attrs)
+
+      // Functionality
+      $ctrl.display = false
+      $ctrl.$onInit = function () {
+        $log.log('initialized:', $ctrl)
+      }
+      $log.log('component:', $ctrl, $scope, $attrs)
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/drawer' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.html'

@@ -24,13 +24,17 @@
       hello: '@'
     },
     controller: function ($scope, $attrs, $log) {
-      this.uid = _.uniqueId('base_')
-      Stratus.Instances[this.uid] = $scope
-      $scope.elementId = $attrs.elementId || this.uid
+      // Initialize
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId('base_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
         Stratus.BundlePath + 'components/base' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
-      $log.log('component:', this, $scope, $attrs)
+
+      // Functionality
+      $log.log('component:', $scope, $attrs)
     },
     template: '<div id="{{ elementId }}">hello: <span ng-bind="hello"></span></div>',
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/base' +
