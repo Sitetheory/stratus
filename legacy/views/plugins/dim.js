@@ -18,15 +18,16 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Dim
   // -------------
 
@@ -37,11 +38,10 @@
       click: 'toggle'
     },
     initialize: function (options) {
-      this.prepare(options);
+      this.prepare(options)
     },
     toggle: function (event) {
-      $('body').toggleClass('dim');
+      $('body').toggleClass('dim')
     }
-  });
-
-}));
+  })
+}))

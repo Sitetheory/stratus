@@ -28,7 +28,7 @@ md-dialog {
   top: 20px;
   left: 0;
 }
-.media-uploader .toolbar .btn-close {
+.media-uploader .toolbar .btnClose {
   transform: translateY(-10px);
 }
 /* Tabs */
@@ -119,15 +119,15 @@ md-dialog {
 }
 /* Error message */
 /* TODO: Change site.css to hyphens and come back to these */
-.drop-container .error-message {
+.drop-container .errorMessage {
   display: block;
   margin: 0 auto;
   padding: 8px;
   text-align: center;
-  color: #FFF;
-  background: #FF8E6C;
+  color: #fff;
+  background: #ff8e6c;
 }
-.drop-container li .error-message {
+.drop-container li .errorMessage {
   position: absolute;
   top: 50%;
   right: 6px;
@@ -148,7 +148,7 @@ md-dialog {
   margin-top: 1px;
   height: 12px;
   opacity: 0;
-  background: #D3D3D3;
+  background: #d3d3d3;
 }
 .drop-container .progress-visible .progress-percentage,
 .drop-container .progress-visible .progress {
@@ -168,7 +168,7 @@ md-dialog {
   margin-bottom: 1px;
   height: 12px;
   opacity: 0;
-  background: #D3D3D3;
+  background: #d3d3d3;
 }
 .drop-container .progress-visible .progress-percentage,
 .drop-container .progress-visible .progress {
@@ -184,7 +184,7 @@ md-dialog {
   transition: all 0.2s ease-out;
   position: relative;
   height: 148px;
-  background: #E9E9E9;
+  background: #e9e9e9;
 }
 .dropped-item img {
   transition: all 0.2s ease-out;
@@ -244,22 +244,22 @@ md-dialog {
   line-height: 1.3;
 }
 /* TODO: Can we delete these ?
-.dropped-unknown md-icon {
+.droppedUnknown md-icon {
   display: block;
   margin: 0 auto;
   width: 80%;
   height: inherit;
 }
-.dropped-unknown #linear-gradient-iconDocument .stop1 {
+.droppedUnknown #linearGradient-iconDocument .stop1 {
   stop-color: #FFFFFF;
   stop-opacity: 0.7;
 }
-.dropped-unknown #linear-gradient-iconDocument .stop2 {
+.droppedUnknown #linearGradient-iconDocument .stop2 {
   stop-color: #FFFFFF;
   stop-opacity: 0.5;
 } */
 /* Success check icon */
-@-webkit-keyframes animate-check {
+@-webkit-keyframes animateCheck {
   from {
     opacity: 0;
   }
@@ -268,7 +268,7 @@ md-dialog {
   }
 }
 .upload-complete .success-check {
-  animation: animate-check ease-out 1.5s 0s;
+  animation: animateCheck ease-out 1.5s 0s;
 }
 .upload-complete .success-check md-icon {
   transform: translate(-50%, -50%);
@@ -283,7 +283,7 @@ md-dialog {
   filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.4));
 }
 .upload-complete .success-check md-icon svg g {
-  fill: #FFF;
+  fill: #fff;
 }
 /* Abort upload icon */
 .media-uploader .abort {
@@ -314,7 +314,7 @@ md-dialog {
 }
 .media-uploader .abort svg g {
   transition: all 0.1s ease-out;
-  fill: #FF7552;
+  fill: #ff7552;
 }
 .media-uploader .abort button:hover svg g {
   fill: #222;

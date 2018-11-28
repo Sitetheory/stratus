@@ -1,4 +1,4 @@
-// Base Component
+// Drawer Component
 // --------------
 
 /* global define */
@@ -16,28 +16,35 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
-  // This component is just a simple base.
-  Stratus.Components.Base = {
-    transclude: true,
+  // This component is just a simple drawer.
+  Stratus.Components.Drawer = {
+    transclude: {
+      view: '?stratusDrawerView'
+    },
     bindings: {
       elementId: '@',
-      hello: '@'
+      onClick: '&'
     },
     controller: function ($scope, $attrs, $log) {
       // Initialize
       const $ctrl = this
-      $ctrl.uid = _.uniqueId('base_')
+      $ctrl.uid = _.uniqueId('drawer_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
+      /* *
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        Stratus.BundlePath + 'components/base' +
+        Stratus.BundlePath + 'components/drawer' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+      /* */
 
       // Functionality
-      $log.log('component:', $scope, $attrs)
+      $ctrl.display = false
+      $ctrl.$onInit = function () {
+        $log.log('initialized:', $ctrl)
+      }
+      $log.log('component:', $ctrl, $scope, $attrs)
     },
-    template: '<div id="{{ elementId }}">hello: <span ng-bind="hello"></span></div>',
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/base' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/drawer' +
+        (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

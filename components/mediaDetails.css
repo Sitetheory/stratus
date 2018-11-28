@@ -19,11 +19,11 @@
   overflow: hidden;
   max-width: 55%;
 }
-.media-details .title-container .small-label {
+.media-details .title-container .smallLabel {
   padding-right: 60px;
 }
 /* Close button */
-.media-details .btn-close {
+.media-details .btnClose {
   float: none;
   position: absolute;
   right: 20px;
@@ -47,14 +47,14 @@
   margin: 0 4px 4px 0;
   padding: 6px;
   opacity: 1;
-  border: 1px solid #BCBCBC;
+  border: 1px solid #bcbcbc;
 }
 .media-details .action-btns a:hover {
   background: #222;
   border: 1px solid #222;
 }
 .media-details .action-btns a:hover svg g {
-  fill: #FFF;
+  fill: #fff;
 }
 .media-details .action-btns md-icon {
   width: inherit;
@@ -111,13 +111,13 @@
   margin: 0 8px 8px 0;
 }
 /* Media specs */
-.media-specs .small-label {
+.media-specs .smallLabel {
   margin: 0 0 6px;
   font-size: 12px;
   letter-spacing: 1px;
   color: #999;
 }
-.media-specs .small-label span {
+.media-specs .smallLabel span {
   color: #222;
   font-weight: bold;
 }

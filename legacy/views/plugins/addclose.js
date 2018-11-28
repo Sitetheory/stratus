@@ -18,15 +18,16 @@
 // Function Factory
 // ----------------
 
+/* global define */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.plugins.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // AddClose
   // -------------
 
@@ -40,18 +41,17 @@
      * @returns {boolean}
      */
     initialize: function (options) {
-      this.prepare(options);
-      this.render();
-      return true;
+      this.prepare(options)
+      this.render()
+      return true
     },
 
     /**
      * @returns {boolean}
      */
     render: function () {
-      this.$el.prepend(this.template({ id: this.$el.attr('id') }));
-      return true;
+      this.$el.prepend(this.template({ id: this.$el.attr('id') }))
+      return true
     }
-  });
-
-}));
+  })
+}))

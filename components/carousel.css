@@ -12,7 +12,7 @@ stratus-carousel .swiper-slide .swiper-image.stretch-image {
   width: 100%;
 }
 stratus-carousel .swiper-gallery {
-  background-color: #000000;
+  background-color: #000;
   max-height: 100px;
   box-sizing: border-box;
   padding: 10px 0;

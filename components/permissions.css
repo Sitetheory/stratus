@@ -8,14 +8,14 @@
   margin: 0 1.6%;
   width: 30%;
 }
-.selectdemo-select-header .demo-header-searchbox {
+.selectdemoSelectHeader .demo-header-searchbox {
   border: none;
   outline: none;
   height: 100%;
   width: 100%;
   padding: 0;
 }
-.selectdemo-select-header .demo-select-header {
+.selectdemoSelectHeader .demo-select-header {
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(0, 0, 0, 0.14), 0 0 0 0 rgba(0, 0, 0, 0.12);
   padding-left: 10.667px;
   height: 48px;
@@ -25,7 +25,7 @@
   align-items: center;
   width: auto;
 }
-.selectdemo-select-header md-content._md {
+.selectdemoSelectHeader md-content._md {
   max-height: 240px;
 }
 .submit {
