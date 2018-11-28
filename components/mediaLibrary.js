@@ -96,6 +96,8 @@
             draggedFiles: files,
             invalidFiles: invalidFiles
           }
+        }).then(function() {
+          media.getMedia($ctrl)
         })
 
         function OpenUploaderController (
