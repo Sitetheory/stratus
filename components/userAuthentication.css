@@ -81,6 +81,9 @@ a {
   text-align: center;
   white-space: nowrap;
 }
+.social-signin .use-social-label::before {
+  content: "Or sign in using";
+}
 .social-signin .label-border {
   height: 2px;
   border-top: 1px solid rgba(216, 216, 216, 0.6);
