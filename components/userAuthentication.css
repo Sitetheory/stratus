@@ -18,6 +18,11 @@ a {
   margin-top: 50px;
   text-align: center;
 }
+h3.optional-title {
+    display: none;
+    margin-top: 22px;
+    text-align: center;
+}
 #user-authentication md-tabs.hide-tab md-tabs-wrapper {
   display: none;
 }
@@ -47,13 +52,8 @@ a {
   margin-top: 8px;
   text-align: center;
 }
-.social-sign-in {
-  margin-bottom: 2.5em;
-  /* Social Sign-In Title */
-  /* Social Sign-In Buttons */
-}
 .social-sign-in .social-title-table {
-  margin: 0 0 1.5em;
+    margin: 10px 0 16px;
   width: 100%;
 }
 .social-sign-in .border-column {
@@ -65,10 +65,9 @@ a {
   text-align: center;
   white-space: nowrap;
   color: #AAA;
-  font-style: italic;
 }
 .social-sign-in .use-social-label::before {
-  content: "Sign In With";
+  content: "Sign in with";
 }
 .social-sign-in .label-border {
   height: 2px;
@@ -87,8 +86,13 @@ a {
 
 /* Small version */
 
-.simple-dialog.sign-in-small {
+.sign-in-small {
   padding: 10px 0;
+  width: 300px;
+}
+.sign-in-small md-content.md-default-theme,
+.sign-in-small md-content {
+  background: none;
 }
 .sign-in-small #user-authentication form {
   margin: 16px 10% 0;
@@ -102,6 +106,9 @@ a {
   padding: 6px 0;
   width: 100%;
   font-size: 13px;
+}
+.sign-in-small #user-authentication .link-forgot {
+    margin-top: 20px;
 }
 .sign-in-small .social-sign-in {
   margin: 0 10% 16px;
