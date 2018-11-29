@@ -1,24 +1,8 @@
-/* FIXME: Does angular have default colors for these elements already? If so, we need to delete these. If there are no angular defaults, we need to move these into common.css, so they can be re-used. We don't want one-off styling of these basic form elements in lots of places
 
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.risky .md-bar {
-  background-color: #f44336;
-}
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.guessable .md-bar {
-  background-color: #9c27b0;
-}
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.safely .md-bar {
-  background-color: #ff9800;
-}
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.moderate .md-bar {
-  background-color: #8bc34a;
-}
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.strong .md-bar {
-  background-color: #4caf50;
-} */
-/* FIXME: We shouldn't have to add cursor: pointer to all the button & link elements? It seems odd to rely on CSS to make the cursor function normally. */
+/* FIXME: We shouldn't have to add cursor: pointer to all the button & link elements? It seems odd to rely on CSS to make the cursor function normally.
 a {
   cursor: pointer;
-}
+} */
 .user-form {
   max-width: 360px;
   margin-left: auto;
@@ -63,36 +47,69 @@ a {
   margin-top: 8px;
   text-align: center;
 }
-.social-signin {
+.social-sign-in {
   margin-bottom: 2.5em;
   /* Social Sign-In Title */
   /* Social Sign-In Buttons */
 }
-.social-signin .social-title-table {
+.social-sign-in .social-title-table {
   margin: 0 0 1.5em;
   width: 100%;
 }
-.social-signin .border-column {
+.social-sign-in .border-column {
   width: 40%;
 }
-.social-signin .use-social-label {
+.social-sign-in .use-social-label {
   margin: 0;
   padding: 0 12px;
   text-align: center;
   white-space: nowrap;
+  color: #AAA;
+  font-style: italic;
 }
-.social-signin .use-social-label::before {
-  content: "Or sign in using";
+.social-sign-in .use-social-label::before {
+  content: "Sign In With";
 }
-.social-signin .label-border {
+.social-sign-in .label-border {
   height: 2px;
   border-top: 1px solid rgba(216, 216, 216, 0.6);
 }
-.social-signin ul {
+.social-sign-in ul {
   display: table;
   margin-left: auto;
   margin-right: auto;
 }
-.social-signin ul li {
+.social-sign-in ul li {
   margin: 0 4px;
 }
+
+
+
+/* Small version */
+
+.simple-dialog.sign-in-small {
+  padding: 10px 0;
+}
+.sign-in-small #user-authentication form {
+  margin: 16px 10% 0;
+}
+.sign-in-small md-input-container {
+  margin: 6px 0;
+}
+.sign-in-small #user-authentication .btn.md-button {
+  display: block;
+  margin: 0;
+  padding: 6px 0;
+  width: 100%;
+  font-size: 13px;
+}
+.sign-in-small .social-sign-in {
+  margin: 0 10% 16px;
+}
+.sign-in-small .social-sign-in ul {
+  padding: 0;
+}
+.sign-in-small .social-sign-in .social-title-table {
+  margin-bottom: 16px;
+}
+

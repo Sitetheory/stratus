@@ -58,7 +58,7 @@
         $ctrl.passwordReset = $ctrl.isLoggedIn ? !$ctrl.isHandlingUrl : false
         $ctrl.enabledResetPassForm = utility.getUrlParams().type === 'reset-password'
         $ctrl.enabledVerificationForm = utility.getUrlParams().type === 'verify'
-        $ctrl.forgotPassText = 'Forgot Password?'
+        $ctrl.forgotPassText = 'Password Trouble?'
         $ctrl.resetPassHeaderText = 'Reset your account password'
         $ctrl.changePassBtnText = 'Reset Password'
         $ctrl.selectedIndex = $ctrl.signInIndex
