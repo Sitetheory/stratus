@@ -1,5 +1,6 @@
 <div ng-cloak>
-  <md-content ng-if="!$ctrl.passwordReset" id="user-authentication" class="overlay-form default-shadow default-border-radius">
+  <h3 class="optional-title"></h3>
+  <md-content ng-if="!$ctrl.passwordReset" id="user-authentication" class="user-authentication ">
     <md-progress-linear ng-if="$ctrl.loading" md-mode="indeterminate"></md-progress-linear>
     <div class="tab-toggle-background"></div>
     <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex"
@@ -214,14 +215,14 @@
       </md-tab>
     </md-tabs>
 
-    <div class="social-signin" ng-if="!$ctrl.isLoggedIn">
+    <div class="social-sign-in" ng-if="!$ctrl.isLoggedIn">
       <div class="div-table social-title-table">
         <div class="div-table-row">
           <div class="div-table-cell border-column">
             <div class="label-border"></div>
           </div>
           <div class="div-table-cell title-column">
-            <h4 class="use-social-label">Or Sign In Using</h4>
+            <h4 class="use-social-label"></h4>
           </div>
           <div class="div-table-cell border-column">
             <div class="label-border"></div>

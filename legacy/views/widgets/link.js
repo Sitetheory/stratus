@@ -82,8 +82,8 @@
         textOn: 'Hide',
         textOff: 'Show',
         classBtn: 'btnIcon',
-        classOn: 'btnText smallLabel textOn',
-        classOff: 'btnText smallLabel textOff',
+        classOn: 'btnText small-label textOn',
+        classOff: 'btnText small-label textOff',
 
         // variables to add to the end of the string
         urlVars: null,

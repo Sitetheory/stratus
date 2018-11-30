@@ -4,7 +4,7 @@
   </li>
   <li ng-show="startPage > 1" class="paginator-previous"
       ng-class="{disabled:collection.meta.data.pagination.pageCurrent == 1}">
-    <a class="smallLabel" ng-click="collection.meta.data.pagination.pageCurrent == 1 || page(1)">First</a>
+    <a ng-click="collection.meta.data.pagination.pageCurrent == 1 || page(1)">First</a>
   </li>
   <li class="paginator-previous" ng-class="{disabled:collection.meta.data.pagination.pageCurrent == 1}">
     <a ng-click="collection.meta.data.pagination.pageCurrent == 1 || collection.page(collection.meta.data.pagination.pageCurrent - 1); scrollTop();">Previous</a>
@@ -21,7 +21,7 @@
   </li>
   <li class="paginator-next" ng-show="endPage < collection.meta.data.pagination.pageTotal"
       ng-class="{disabled:collection.meta.data.pagination.pageCurrent == collection.meta.data.pagination.pageTotal}">
-    <a class="smallLabel" ng-click="collection.meta.data.pagination.pageCurrent == collection.meta.data.pagination.pageTotal || collection.page(collection.meta.data.pagination.pageTotal)">
+    <a ng-click="collection.meta.data.pagination.pageCurrent == collection.meta.data.pagination.pageTotal || collection.page(collection.meta.data.pagination.pageTotal)">
       Last
     </a>
   </li>

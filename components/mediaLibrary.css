@@ -29,7 +29,7 @@
   right: 0;
   top: 0;
 }
-.thumb-slider .smallLabel {
+.thumb-slider .small-label {
   position: absolute;
   top: 8px;
   right: 30px;
@@ -107,8 +107,8 @@
   opacity: 0.65;
 }
 .media-item {
-  animation: itemsGrow 0.2s ease-out both;
-  -webkit-animation: itemsGrow 0.2s ease-out both;
+  animation: items-grow 0.2s ease-out both;
+  -webkit-animation: items-grow 0.2s ease-out both;
   transform-origin: top left;
   -webkit-transform-origin: top left;
   background: #222;
@@ -184,12 +184,12 @@
 .library-footer {
   margin-top: 30px;
 }
-.library-footer .smallLabel {
+.library-footer .small-label {
   color: #383838;
   font-size: 10px;
 }
 /* Library media type filter */
-.media-type-filter .smallLabel {
+.media-type-filter .small-label {
   margin: 0 12px 0 0;
 }
 .media-type-filter md-icon {

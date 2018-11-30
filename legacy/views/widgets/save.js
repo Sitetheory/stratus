@@ -74,10 +74,10 @@
         classBtn: 'btnIcon',
 
         // The CSS class that is on the element that shows up when the model is changed (unsaved).
-        classOff: 'btnText smallLabel textOff',
+        classOff: 'btnText small-label text-off',
 
         // The CSS class that is on the element that shows up when the model is saved.
-        classOn: 'btnText smallLabel textOn glyphicon glyphicon-ok success'
+        classOn: 'btnText small-label text-on glyphicon glyphicon-ok success'
       }
     },
 

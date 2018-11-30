@@ -1,31 +1,12 @@
-/* FIXME: Does angular have default colors for these elements already? If so, we need to delete these. If there are no angular defaults, we need to move these into common.css, so they can be re-used. We don't want one-off styling of these basic form elements in lots of places
 
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.risky .md-bar {
-  background-color: #f44336;
+h3.optional-title {
+  display: none;
+  margin-top: 22px;
+  text-align: center;
 }
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.guessable .md-bar {
-  background-color: #9c27b0;
-}
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.safely .md-bar {
-  background-color: #ff9800;
-}
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.moderate .md-bar {
-  background-color: #8bc34a;
-}
-#user-authentication md-tabs md-tab-content md-content md-progress-linear.strong .md-bar {
-  background-color: #4caf50;
-} */
 
-/* FIXME: We shouldn't have to add cursor: pointer to all the button & link elements? It seems odd to rely on CSS to make the cursor function normally. */
-a {
-  cursor: pointer;
-}
-.user-form {
-  max-width: 360px;
-  margin-left: auto;
-  margin-right: auto;
-}
-#user-authentication {
+.user-authentication {
+
   .show-error {
     h3 {
       margin-bottom: 3px;
@@ -59,7 +40,7 @@ a {
     }
   }
   form {
-    margin: 2.5em 1.5em;
+    margin: 25px;
   }
   .submit-column {
     text-align: center;
@@ -74,12 +55,15 @@ a {
     text-align: center;
   }
 }
+
+
+/* Social Sign-In */
 .social-signin {
   margin-bottom: 2.5em;
 
   /* Social Sign-In Title */
   .social-title-table {
-    margin: 0 0 1.5em;
+    margin: 10px 0 16px;
     width: 100%;
   }
   .border-column {
@@ -90,6 +74,7 @@ a {
     padding: 0 12px;
     text-align: center;
     white-space: nowrap;
+    color: #AAA;
   }
   .label-border {
     height: 2px;
@@ -106,3 +91,39 @@ a {
     }
   }
 }
+
+
+/* Small Area Sign In */
+
+.sign-in-small {
+  padding: 10px 0;
+  width: 300px;
+  .user-authentication {
+    form {
+      margin: 16px 10% 0;
+    }
+    md-input-container {
+      margin: 6px 0;
+    }
+    .btn.md-button {
+      display: block;
+      margin: 0;
+      padding: 6px 0;
+      width: 100%;
+      font-size: 13px;
+    }
+    .link-forgot {
+      margin-top: 20px;
+    }
+  }
+  .social-sign-in {
+    margin: 0 10% 16px;
+    ul {
+      padding: 0;
+    }
+    .social-title-table {
+      margin-bottom: 16px;
+    }
+  }
+}
+
