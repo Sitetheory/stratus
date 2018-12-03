@@ -2164,7 +2164,7 @@ Stratus.Internals.LoadImage = function (obj) {
 
       // Handle precedence
       if (!src || src === 'lazy' || _.isEmpty(src)) {
-        src = el.attr('src')
+        src = el.attr('stratus-src')
       }
 
       let size = null
@@ -2281,6 +2281,9 @@ Stratus.Internals.LoadImage = function (obj) {
       }
       el.addClass('loading')
       el.on('load', function () {
+        /* if (!_.isEmpty(src)) {
+          el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
+        } */
         el.addClass('loaded').removeClass('loading')
       })
 
