@@ -2164,7 +2164,7 @@ Stratus.Internals.LoadImage = function (obj) {
 
       // Handle precedence
       if (!src || src === 'lazy' || _.isEmpty(src)) {
-        src = el.attr('src')
+        src = el.attr('stratus-src')
       }
 
       let size = null

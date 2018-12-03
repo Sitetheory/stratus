@@ -34,7 +34,7 @@
           if ($scope.registered) {
             return true
           }
-          var ext = $element.attr('src') ? $element.attr('src').match(/\.([0-9a-z]+)(\?.*)?$/i) : null
+          var ext = $element.attr('stratus-src') ? $element.attr('stratus-src').match(/\.([0-9a-z]+)(\?.*)?$/i) : null
           if (ext) {
             ext = ext[1] ? ext[1].toLowerCase() : null
           }
@@ -64,13 +64,13 @@
         $scope.interpreter = $interpolate($scope.src, false, null, true)
         $scope.initial = $scope.interpreter($scope.$parent)
         if (angular.isDefined($scope.initial)) {
-          $element.attr('src', $scope.initial)
+          $element.attr('stratus-src', $scope.initial)
           $scope.register()
         }
 
         $scope.$watch('stratusSrc', function (value) {
           if (angular.isDefined(value) && !_.isEmpty(value)) {
-            $element.attr('src', value)
+            $element.attr('stratus-src', value)
             $scope.register()
           }
         })
