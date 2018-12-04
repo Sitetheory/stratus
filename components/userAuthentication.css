@@ -1,5 +1,8 @@
-
-
+h3.optional-title {
+  display: none;
+  margin-top: 22px;
+  text-align: center;
+}
 .user-authentication .show-error h3 {
   margin-bottom: 3px;
 }
@@ -10,13 +13,6 @@
   margin-top: 50px;
   text-align: center;
 }
-h3.optional-title {
-    display: none;
-    margin-top: 22px;
-    text-align: center;
-}
-
-/* User Auth Form */
 .user-authentication md-tabs.hide-tab md-tabs-wrapper {
   display: none;
 }
@@ -42,47 +38,43 @@ h3.optional-title {
   padding: 15px 20px;
   min-width: 180px;
 }
-
-/* Forgot Password */
 .user-authentication .link-forgot {
   margin-top: 8px;
   text-align: center;
 }
-
-
 /* Social Sign-In */
-.social-sign-in .social-title-table {
-    margin: 10px 0 16px;
+.social-signin {
+  margin-bottom: 2.5em;
+  /* Social Sign-In Title */
+  /* Social Sign-In Buttons */
+}
+.social-signin .social-title-table {
+  margin: 10px 0 16px;
   width: 100%;
 }
-.social-sign-in .border-column {
+.social-signin .border-column {
   width: 40%;
 }
-.social-sign-in .use-social-label {
+.social-signin .use-social-label {
   margin: 0;
   padding: 0 12px;
   text-align: center;
   white-space: nowrap;
   color: #AAA;
 }
-.social-sign-in .use-social-label::before {
-  content: "Sign in with";
-}
-.social-sign-in .label-border {
+.social-signin .label-border {
   height: 2px;
   border-top: 1px solid rgba(216, 216, 216, 0.6);
 }
-.social-sign-in ul {
+.social-signin ul {
   display: table;
   margin-left: auto;
   margin-right: auto;
 }
-.social-sign-in ul li {
+.social-signin ul li {
   margin: 0 4px;
 }
-
 /* Small Area Sign In */
-
 .sign-in-small {
   padding: 10px 0;
   width: 300px;
@@ -90,7 +82,7 @@ h3.optional-title {
 .sign-in-small .user-authentication form {
   margin: 16px 10% 0;
 }
-.sign-in-small md-input-container {
+.sign-in-small .user-authentication md-input-container {
   margin: 6px 0;
 }
 .sign-in-small .user-authentication .btn.md-button {
@@ -101,7 +93,7 @@ h3.optional-title {
   font-size: 13px;
 }
 .sign-in-small .user-authentication .link-forgot {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 .sign-in-small .social-sign-in {
   margin: 0 10% 16px;
@@ -112,4 +104,3 @@ h3.optional-title {
 .sign-in-small .social-sign-in .social-title-table {
   margin-bottom: 16px;
 }
-

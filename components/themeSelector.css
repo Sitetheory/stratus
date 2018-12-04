@@ -163,11 +163,11 @@
 #zoom-view .pannel-header .favorite {
   color: #f44336;
 }
-#zoom-view .pannel-header .btnClose svg g,
-#zoom-view .pannel-header .btnClose svg .oval {
+#zoom-view .pannel-header .btn-close svg g,
+#zoom-view .pannel-header .btn-close svg .oval {
   stroke: #fff;
 }
-#zoom-view .pannel-header .btnClose:hover svg g,
-#zoom-view .pannel-header .btnClose:hover svg .oval {
+#zoom-view .pannel-header .btn-close:hover svg g,
+#zoom-view .pannel-header .btn-close:hover svg .oval {
   stroke: #fafafa;
 }
