@@ -129,7 +129,7 @@
       function done () {
         if (!$ctrl.unsavedVideos && !$ctrl.uploadingFiles) {
           closeDialog()
-        } else if($ctrl.unsavedVideos) {
+        } else if ($ctrl.unsavedVideos) {
           let confirmDialogPromise = $q((resolve, reject) => {
             $ctrl.videos.forEach(function (video) {
               if (!video.isUploaded) {
@@ -153,7 +153,7 @@
               closeDialog()
             }
           })
-        } else if($ctrl.uploadingFiles) {
+        } else if ($ctrl.uploadingFiles) {
           var confirm = $mdDialog.confirm()
             .title('Media upload is in progress.')
             .textContent('Are you sure you want to abandon uploading?')
