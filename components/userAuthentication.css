@@ -43,35 +43,35 @@ h3.optional-title {
   text-align: center;
 }
 /* Social Sign-In */
-.social-signin {
+.social-sign-in {
   margin-bottom: 2.5em;
   /* Social Sign-In Title */
   /* Social Sign-In Buttons */
 }
-.social-signin .social-title-table {
+.social-sign-in .social-title-table {
   margin: 10px 0 16px;
   width: 100%;
 }
-.social-signin .border-column {
+.social-sign-in .border-column {
   width: 40%;
 }
-.social-signin .use-social-label {
+.social-sign-in .use-social-label {
   margin: 0;
   padding: 0 12px;
   text-align: center;
   white-space: nowrap;
   color: #AAA;
 }
-.social-signin .label-border {
+.social-sign-in .label-border {
   height: 2px;
   border-top: 1px solid rgba(216, 216, 216, 0.6);
 }
-.social-signin ul {
+.social-sign-in ul {
   display: table;
   margin-left: auto;
   margin-right: auto;
 }
-.social-signin ul li {
+.social-sign-in ul li {
   margin: 0 4px;
 }
 /* Small Area Sign In */
