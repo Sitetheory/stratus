@@ -10,7 +10,18 @@
       'stratus',
       'underscore',
       'angular',
-      'angular-material'
+
+      // Modules
+      'angular-material',
+
+      // Services
+      'stratus.services.registry',
+      'stratus.services.model',
+      'stratus.services.collection',
+
+      // Components
+      'stratus.components.pagination',
+      'stratus.components.search'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -20,24 +31,61 @@
   Stratus.Components.Base = {
     transclude: true,
     bindings: {
+      // Basic Control for Designers
       elementId: '@',
-      hello: '@'
+
+      // ngModel Logic for a Symbiotic Controller Relationship
+      ngModel: '=',
+      property: '@',
+
+      // Registry Elements
+      target: '@',
+      id: '@',
+      manifest: '@',
+      decouple: '@',
+      direct: '@',
+      api: '@',
+      urlRoot: '@',
+
+      // Collection Options
+      limit: '@',
+      options: '<'
     },
-    controller: function ($scope, $attrs, $log) {
+    controller: function ($scope, $attrs, Registry, Model, Collection, $log) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId('base_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
-      Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        Stratus.BundlePath + 'components/base' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + (Stratus.Environment.get('production') ? '.min' : '') + '.css')
 
-      // Functionality
+      // Hoist Attributes
+      $scope.property = $attrs.property || null
+
+      // Data References
+      $scope.data = null
+      $scope.model = null
+      $scope.collection = null
+
+      // Registry Connectivity
+      if ($attrs.target) {
+        $scope.registry = new Registry()
+        $scope.registry.fetch($attrs, $scope)
+      }
+
+      // Symbiotic Data Connectivity
+      $scope.$watch('$ctrl.ngModel', function (data) {
+        if (data instanceof Model && data !== $scope.model) {
+          $scope.model = data
+        } else if (data instanceof Collection && data !== $scope.collection) {
+          $scope.collection = data
+        }
+      })
+
+      // Display Complete Build
       $log.log('component:', $scope, $attrs)
     },
-    template: '<div id="{{ elementId }}">hello: <span ng-bind="hello"></span></div>',
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/base' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    // template: '<div id="{{ elementId }}"><div ng-if="model && property && model.get(property)" style="list-style-type: none;">{{ model.get(property) | json }}</div><ul ng-if="collection && model && property" ng-cloak><stratus-search></stratus-search><li ng-repeat="model in collection.models">{{ model.data | json }}</li><stratus-pagination></stratus-pagination></ul></div>',
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

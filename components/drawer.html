@@ -8,20 +8,8 @@
     <!-- Drawer Close Button -->
     <button type="button" class="btn-close" ng-click="$ctrl.display = false">
       <span class="sr-only">Toggle Navigation</span>
-      <svg viewBox="0 0 54 54" version="1.1" xmlns="http://www.w3.org/2000/svg">
-        <defs></defs>
-        <g id="close-{{ id }}" fill="none" transform="translate(1.000000, 2.000000)">
-          <g id="close-x" transform="translate(16.271267, 15.687500)" stroke-linecap="square" stroke="#666">
-            <g id="line-left">
-              <path d="M1.63636364,0.5875 L16.3737342,16.4608762"></path>
-            </g>
-            <g id="line-right">
-              <path d="M15.8181818,0.5875 L1.08081124,16.4608762"></path>
-            </g>
-          </g>
-          <circle class="oval" stroke="#555" cx="24.7258128" cy="24" r="24"></circle>
-        </g>
-      </svg>
+      <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/close.svg"
+               aria-hidden="true"></md-icon>
     </button>
 
     <span class="stratus-drawer-view-container" ng-cloak ng-transclude="view">
