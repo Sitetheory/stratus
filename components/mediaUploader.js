@@ -330,7 +330,7 @@
             $ctrl.uploadingFiles = false
 
             // Refresh the library
-            media.getMedia($ctrl)
+            //media.getMedia($ctrl)
           })
         }
       }

@@ -71,6 +71,8 @@
         $scope.$watch('stratusSrc', function (value) {
           if (angular.isDefined(value) && !_.isEmpty(value)) {
             $element.attr('stratus-src', value)
+            $element.attr('data-loading', false)
+            $scope.registered = false
             $scope.register()
           }
         })
