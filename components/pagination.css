@@ -49,8 +49,6 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 /* Compact paginator */
-.compact-paginator .paginator .paginatorPages a,
-.compact-paginator .paginator .paginatorPrevious a,
-.compact-paginator .paginator .paginatorNext a {
+.compact-paginator .paginator a {
   padding: 6px 10px;
 }

@@ -1,3 +1,197 @@
+/* Custom text elements */
+.small-label {
+  font-weight: bold;
+  color: #383838;
+}
+
+
+/* Action buttons for mediaShortDetails.html */
+.action-btns {
+  a {
+    transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
+    opacity: 0.8;
+    svg {
+      transition: all 0.2s ease-out;
+      -webkit-transition: all 0.2s ease-out;
+      g {
+        fill: #ccc;
+      }
+    }
+    &:hover {
+      opacity: 1;
+      svg g {
+        fill: #fff;
+      }
+    }
+  }
+}
+
+
+/* Draggable image */
+.image-draggable {
+  transition: all 0.2s ease-out;
+  -webkit-transition: all 0.2s ease-out;
+}
+
+
+/* Section container */
+.section-container {
+  position: relative;
+  z-index: 100;
+  padding: 3.5%;
+  background: #fff;
+  a {
+    transition: all 0.2s ease-out;
+  }
+  .selected-media-label {
+    margin-bottom: 18px;
+  }
+  ul {
+    animation: items-grow 0.2s ease-out both;
+    -webkit-animation: items-grow 0.2s ease-out both;
+    transform-origin: top left;
+    -webkit-transform-origin: top left;
+    display: block;
+    margin: 0 -4px;
+  }
+  .shapeholder {
+    width: 100%;
+  }
+
+}
+
+
+/* Media list */
+.media-content {
+  ul li {
+    position: relative;
+    width: 12.5%;
+    padding: 4px;
+  }
+}
+
+
+/* Media type icon */
+.thumb-gradient {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  height: 36px;
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.65));
+}
+.thumb-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 16px;
+  height: 16px;
+  md-icon {
+    display: block;
+    transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+  }
+  svg g {
+    fill: #fff;
+  }
+}
+
+/* Short details hover popup */
+.info-hover-container {
+  transition: all 0.2s ease-out;
+  -webkit-transition: all 0.2s ease-out;
+  transform: translate(-50%, -100%) scale(0.2);
+  -wekbit-transform: translate(-50%, -100%) scale(0.2);
+  transform-origin: center bottom;
+  -webkit-transform-origin: center bottom;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  visibility: hidden;
+  z-index: 99;
+  opacity: 0;
+  margin: -6px 0 8px;
+  padding: 0;
+  width: 150px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  .background-dark {
+    background: rgba(0, 0, 0, 0.95);
+  }
+}
+.media-item:hover .info-hover-container {
+  transform: translate(-50%, -94%) scale(1);
+  -wekbit-transform: translate(-50%, -94%) scale(1);
+  visibility: visible;
+  opacity: 1;
+}
+.image-hover-info {
+  overflow: hidden;
+  position: relative;
+  z-index: 99;
+  padding: 12px;
+  background: #222;
+  margin: 0;
+  color: #fff;
+  min-height: 120px;
+  .file-type {
+    color: #ddd;
+  }
+  .delimiter {
+    padding-right: 6px;
+    margin-right: 8px;
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .file-size {
+    color: #aaa;
+  }
+  .image-title {
+    overflow: hidden;
+    margin: 8px 0;
+    max-height: 56px;
+    font-size: 13px;
+    color: #FFF;
+    font-weight: bold;
+  }
+  .action-btns {
+    margin: 0 auto;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .action-btns a {
+    display: inline-block;
+  }
+}
+
+
+/* Image hover info container notch */
+.info-hover-container::after {
+  content: '';
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-top: 8px solid #222;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+
+
+
+
+
+
+
 /* Media library title */
 #media-library .selected-media-label {
   margin-bottom: 0;
@@ -12,6 +206,7 @@
   button {
     margin: 0;
     height: 46px;
+    line-height: 20px;
   }
 }
 
@@ -38,6 +233,8 @@
     right: 30px;
     left: 30px;
     margin: 0;
+    color: #999;
+    font-size: 10px;
     text-align: center;
   }
   .thumb-icon-large svg,
@@ -202,13 +399,12 @@
 /* Library media type filter */
 .media-type-filter {
   .small-label {
-    margin: 0 12px 0 0;
+    margin: 0 10px 0 0;
   }
   md-icon {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    height: 20px;
+    width: 18px;
+    min-width: 18px;
+    height: 18px;
     svg g {
       fill: #a5a5a5;
     }
@@ -225,13 +421,16 @@
     border-width: 1px;
   }
   md-checkbox .md-label {
-    margin-left: 26px;
+    margin-left: 24px;
   }
 }
 
 
 /* Library paginator */
 .library-paginator {
+  /* Temporary fix until we can limit the number of pages displayed by the paginator */
+  max-width: 300px;
+  overflow: hidden;
   ul {
     padding-top: 0;
     margin-top: 0;
