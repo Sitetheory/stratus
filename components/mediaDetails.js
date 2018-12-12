@@ -20,9 +20,9 @@
       'stratus.services.collection',
       // Components
       'stratus.components.tag',
-      
+
       // Directives
-      'stratus.directives.src',
+      'stratus.directives.src'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)

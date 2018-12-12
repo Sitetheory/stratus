@@ -67,6 +67,18 @@
                   api: $element.attr ? $element.attr('data-api') : $element.api,
                   urlRoot: $element.attr ? $element.attr('data-url-root') : $element.urlRoot
                 }
+                /* TODO: handle these sorts of shortcuts to the API that components are providing *
+                $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
+                var request = {
+                  api: {
+                    options: this.options ? this.options : {},
+                    limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
+                  }
+                }
+                if ($scope.api && angular.isObject($scope.api)) {
+                  request.api = _.extendDeep(request.api, $scope.api)
+                }
+                /* */
                 var completed = 0
                 $scope.$watch(function () {
                   return completed

@@ -92,29 +92,35 @@
         function init () {
           /** @type {Array<SlideImage> || Array<String> || String} */
           let images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : []
+
           /** @type {String} */
           $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null
+
           /**
            * @type {String}
            **/
           $scope.direction = $attrs.loop && $attrs.loop === 'vertical' ? 'vertical' : 'horizontal'
+
           /**
            * FIXME Some transitions seem to have trouble with lazyLoad that we'll need to work on
            * @type {String} ['slide,'fade,'cube,'coverflow','flip']
            */
           $scope.transitionEffect = $attrs.transitionEffect ? $attrs.transitionEffect : 'slide'
+
           /**
            * Set to true to round values of slides width and height to prevent blurry texts on usual resolution screens (if you have such)
            * Enabled by default
            * @type {boolean}
            */
           $scope.roundLengths = $attrs.roundLengths && _.isJSON($attrs.roundLengths) ? JSON.parse($attrs.roundLengths) : true
+
           /**
            * During pagination, allows a the last slide to return to the very first slide
            * Enabled by default
            * @type {boolean}
            **/
           $scope.loop = $attrs.loop && _.isJSON($attrs.loop) ? JSON.parse($attrs.loop) : true
+
           /**
            * EXPERIMENTAL
            * Enables a thumbnail gallery directly below the main carousel. Does not currently with with loop and will disable it.
@@ -125,12 +131,14 @@
           if ($scope.gallery) {
             $scope.loop = false
           }
+
           /**
            * Scales an image 'out' if it is too big for a the containing element to match to fit. Also centers all images that don't fit perfectly
            * Enabled by default
            * @type {boolean}
            */
           $scope.scaleHeight = $attrs.scaleHeight && _.isJSON($attrs.scaleHeight) ? JSON.parse($attrs.scaleHeight) : true
+
           /**
            * Allow Zooming into an image my double clicking or pinchig on Mobile. Requires and force enabled scaleHeight
            * Disabled by default
@@ -138,6 +146,7 @@
            */
           $scope.allowZoom = $attrs.allowZoom && _.isJSON($attrs.allowZoom) ? JSON.parse($attrs.allowZoom) : false
           $scope.scaleHeight = $scope.scaleHeight || $scope.allowZoom
+
           /**
            * Allow image to stretch wider than the image provided. May cause expected blurriness.
            * @type {boolean}
@@ -161,16 +170,20 @@
           $scope.allowTouchMove = $attrs.allowTouchMove && _.isJSON($attrs.allowTouchMove) ? JSON.parse($attrs.allowTouchMove) : true
           /** @type {Number} */
           $scope.transitionDelay = $attrs.transitionDelay && _.isJSON($attrs.transitionDelay) ? JSON.parse($attrs.transitionDelay) : 3000
+
           /**
            * Enable Lazy Loading to prevent everything from being fetched at once
            * By default Lazy Loading is enabled only for the next and previous images to give a buffer
            * @type {Object || boolean}
            */
           $scope.lazyLoad = $attrs.lazyLoad && _.isJSON($attrs.lazyLoad) ? JSON.parse($attrs.lazyLoad) : {}
+
           /** @type {boolean} */
           $scope.navigation = $attrs.navigation && _.isJSON($attrs.navigation) ? JSON.parse($attrs.navigation) : true
+
           /** @type {Object || boolean} */
           $scope.pagination = $attrs.pagination && _.isJSON($attrs.pagination) ? JSON.parse($attrs.pagination) : false
+
           /** @type {boolean} */
           $scope.scrollbar = $attrs.scrollbar && _.isJSON($attrs.scrollbar) ? JSON.parse($attrs.scrollbar) : false
 

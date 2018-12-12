@@ -5,14 +5,14 @@
         <span ng-if="target.data.mime && target.data.mime.indexOf('image') == 0" ng-transclude="image">
             <img ng-src="{{ target.data.url }}"/>
         </span>
-        <span ng-if="!target.data.mime || target.data.mime.indexOf('image') != 0" ng-transclude="label">
+      <span ng-if="!target.data.mime || target.data.mime.indexOf('image') != 0" ng-transclude="label">
             {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
         </span>
-        <md-tooltip>
+      <md-tooltip>
             <span ng-transclude="label">
                 {{ target.data.name || target.data.title || target.name || target.title || target.data || target }}
             </span>
-        </md-tooltip>
+      </md-tooltip>
     </md-button>
   </li>
 </ul>
@@ -21,7 +21,8 @@
 
 <span ng-if="collection && model && property" ng-repeat="target in collection.models" ng-cloak>
     <md-button aria-label="{{ target.data.name }}" ng-class="{ 'md-accent': model.exists(property, target.data.id) }"
-               ng-click="model.toggle(property, model.find(property, 'id', target.data.id) || target.data, toggleOptions)" class="md-raised">
+               ng-click="model.toggle(property, model.find(property, 'id', target.data.id) || target.data, toggleOptions)"
+               class="md-raised">
         <span ng-if="target.data.mime && target.data.mime.indexOf('image') == 0" ng-transclude="image">
             <img ng-src="{{ target.data.url }}"/>
         </span>
@@ -35,5 +36,6 @@
         </md-tooltip>
     </md-button>
 </span>
+
 <!-- hide this if not pagination -->
 <stratus-pagination></stratus-pagination>

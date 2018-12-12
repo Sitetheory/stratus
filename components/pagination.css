@@ -1,13 +1,18 @@
 .paginator {
-  margin-top: 40px;
+  margin: 30px -2px;
+  display: table;
+  float: right;
+}
+.paginator li {
+  margin: 0 2px;
 }
 .paginator a {
   cursor: pointer;
+  padding: 10px 14px;
   transition: all 0.1s ease-out;
   font-size: 12px;
   font-weight: bold;
-  color: #999;
-  padding: 10px 14px;
+  color: #666;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 .paginator a:hover {
@@ -23,7 +28,7 @@
 .paginator .disabled {
   display: none;
 }
-.paginator .paginator-total a {
+.paginator .paginatorTotal a {
   padding-right: 20px;
   font-size: 11px;
 }
@@ -44,9 +49,8 @@
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 /* Compact paginator */
-.compact-paginator .paginator .paginator-pages a,
-.compact-paginator .paginator .paginator-previous a,
-.compact-paginator .paginator .paginator-next a {
-  margin: 0 2px;
+.compact-paginator .paginator .paginatorPages a,
+.compact-paginator .paginator .paginatorPrevious a,
+.compact-paginator .paginator .paginatorNext a {
   padding: 6px 10px;
 }

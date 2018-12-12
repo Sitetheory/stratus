@@ -40,9 +40,9 @@
       // Functionality
       $ctrl.display = false
       $ctrl.$onInit = function () {
-        $log.log('initialized:', $ctrl)
+        // $log.log('initialized:', $ctrl)
       }
-      $log.log('component:', $ctrl, $scope, $attrs)
+      // $log.log('component:', $ctrl, $scope, $attrs)
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/drawer' +
         (Stratus.Environment.get('production') ? '.min' : '') + '.html'

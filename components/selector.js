@@ -16,14 +16,14 @@
       // Modules
       'angular-material',
 
-      // Components
-      'stratus.components.pagination',
-      'stratus.components.search',
-
       // Services
       'stratus.services.registry',
       'stratus.services.model',
-      'stratus.services.utility'
+      'stratus.services.collection',
+
+      // Components
+      'stratus.components.pagination',
+      'stratus.components.search'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -48,14 +48,20 @@
       limit: '@',
       options: '<'
     },
-    controller: function ($scope, $attrs, $log, Registry, Model, utility) {
+    controller: function ($scope, $attrs, $log, Registry, Model, Collection) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'selector')
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId('selector_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
 
       // Hydrate Settings
       $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
+      $scope.property = $attrs.property || null
+      $scope.model = null
+      $scope.collection = null
 
-      // Asset Collection
+      // Registry Connectivity
       if ($attrs.type) {
         $scope.registry = new Registry()
         var request = {
@@ -72,9 +78,6 @@
         $scope.registry.fetch(request, $scope)
       }
 
-      // Store Asset Property for Verification
-      $scope.property = $attrs.property || null
-
       // Store Toggle Options for Custom Actions
       $scope.toggleOptions = {
         multiple: _.isJSON($attrs.multiple)
@@ -83,10 +86,11 @@
       }
 
       // Data Connectivity
-      $scope.model = null
       $scope.$watch('$ctrl.ngModel', function (data) {
         if (data instanceof Model && data !== $scope.model) {
           $scope.model = data
+        } else if (data instanceof Collection && data !== $scope.collection) {
+          $scope.collection = data
         }
       })
     },

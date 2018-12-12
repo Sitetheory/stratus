@@ -96,7 +96,7 @@
             draggedFiles: files,
             invalidFiles: invalidFiles
           }
-        }).then(function() {
+        }).then(function () {
           media.getMedia($scope)
         })
 
