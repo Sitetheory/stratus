@@ -37,7 +37,7 @@ Stratus.Prototypes.Dispatch = function () {
 // Chronos System
 // --------------
 
-// This constructor builds jobs for various methods.
+// This constructor builds jobs for letious methods.
 /**
  * @param time
  * @param method
@@ -146,8 +146,8 @@ Stratus.Prototypes.Model = function (data) {
   this.setAttribute = function (attr, value) {
     if (typeof attr === 'string') {
       if (attr.indexOf('.') !== -1) {
-        var reference = this.data
-        var chain = attr.split('.')
+        let reference = this.data
+        let chain = attr.split('.')
         _.find(_.initial(chain), function (link) {
           if (!_.has(reference, link) || !reference[link]) {
             reference[link] = {}
@@ -161,7 +161,7 @@ Stratus.Prototypes.Model = function (data) {
           }
         }, this)
         if (!_.isEqual(reference, this.data)) {
-          var link = _.last(chain)
+          let link = _.last(chain)
           if (reference && typeof reference === 'object' &&
             (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
             reference[link] = value
@@ -235,7 +235,7 @@ Stratus.Prototypes.Model = function (data) {
    * Clear all internal data
    */
   this.clear = function () {
-    for (var attribute in this.data) {
+    for (let attribute in this.data) {
       if (this.data.hasOwnProperty(attribute)) {
         delete this.data[attribute]
       }
@@ -245,7 +245,7 @@ Stratus.Prototypes.Model = function (data) {
    * Clear all temporary data
    */
   this.clearTemp = function () {
-    for (var attribute in this.temps) {
+    for (let attribute in this.temps) {
       if (this.temps.hasOwnProperty(attribute)) {
         // delete this.data[attribute];
         // this.remove(attribute);
@@ -359,7 +359,7 @@ Stratus.Prototypes.Sentinel = function () {
         }
       }, this)
     } else {
-      var decimal = 0
+      let decimal = 0
       decimal += (this.view) ? (1 << 0) : (0 << 0)
       decimal += (this.create) ? (1 << 1) : (0 << 1)
       decimal += (this.edit) ? (1 << 2) : (0 << 2)
@@ -372,7 +372,7 @@ Stratus.Prototypes.Sentinel = function () {
     }
   }
   this.summary = function () {
-    var output = []
+    let output = []
     _.each(this, function (value, key) {
       if (typeof value === 'boolean' && value) {
         output.push(_.ucfirst(key))

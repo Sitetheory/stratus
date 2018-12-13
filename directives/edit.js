@@ -138,7 +138,7 @@
         $scope.$watch('ngModel', function (data) {
           if (data instanceof Model && !_.isEqual(data, $scope.model)) {
             $scope.model = data
-            var unwatch = $scope.$watch('model.data', function (dataCheck) {
+            let unwatch = $scope.$watch('model.data', function (dataCheck) {
               if (dataCheck !== undefined) {
                 unwatch() // Remove this watch as soon as it's run once
                 $scope.ctrl.init() // Initialize only after there is a model
@@ -198,7 +198,7 @@
         }
       },
       templateUrl: function (elements, $scope) {
-        var template = $scope.type || ''
+        let template = $scope.type || ''
         return Stratus.BaseUrl + Stratus.BundlePath + 'directives/edit' +
           template + (Stratus.Environment.get('production') ? '.min' : '') +
           '.html'

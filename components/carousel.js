@@ -19,22 +19,47 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
-
-      // Libraries
       'stratus',
       'underscore',
-
+      'angular',
       'swiper',
-      'angular'
+
+      // Services
+      'stratus.services.registry',
+      'stratus.services.model',
+      'stratus.services.collection'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.Swiper)
+    factory(root.Stratus, root._, root.angular, root.Swiper)
   }
-}(this, function (Stratus, _, Swiper) {
+}(this, function (Stratus, _, angular, Swiper) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+
+  // This component is just a simple base.
   Stratus.Components.Carousel = {
     bindings: {
-      // ngModel: '=',
+      // Basic Control for Designers
       elementId: '@',
+
+      // ngModel Logic for a Symbiotic Controller Relationship
+      ngModel: '=',
+      property: '@',
+
+      // Registry Elements
+      target: '@',
+      id: '@',
+      manifest: '@',
+      decouple: '@',
+      direct: '@',
+      api: '@',
+      urlRoot: '@',
+
+      // Collection Options
+      limit: '@',
+      options: '<',
+
+      // Carousel Specific
       initNow: '=',
       images: '@',
       imageLinkTarget: '@', // shortcut
@@ -55,16 +80,44 @@
       '$attrs',
       '$window',
       '$element',
-      'utility',
-      function ($scope, $attrs, $window, $element, utility) {
+      'Registry',
+      'Model',
+      'Collection',
+      function ($scope, $attrs, $window, $element, Registry, Model, Collection) {
         // Initialize
-        Stratus.Internals.CssLoader(Stratus.BaseUrl +
-          Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' +
-          (Stratus.Environment.get('production') ? '.min' : '') + '.css')
-        utility.componentInitializer(this, $scope, $attrs, 'carousel', true)
+        const $ctrl = this
+        $ctrl.uid = _.uniqueId('carousel_')
+        Stratus.Instances[$ctrl.uid] = $scope
+        $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Internals.CssLoader(
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' + min + '.css'
+        )
         $scope.initialized = false
 
-        let $ctrl = this
+        // Hoist Attributes
+        $scope.property = $attrs.property || null
+
+        // Data References
+        $scope.data = null
+        $scope.model = null
+        $scope.collection = null
+
+        // Registry Connectivity
+        if ($attrs.target) {
+          $scope.registry = new Registry()
+          $scope.registry.fetch($attrs, $scope)
+        }
+
+        // Symbiotic Data Connectivity
+        $scope.$watch('$ctrl.ngModel', function (data) {
+          if (data instanceof Model && data !== $scope.model) {
+            $scope.model = data
+          } else if (data instanceof Collection && data !== $scope.collection) {
+            $scope.collection = data
+          }
+        })
+
+        // Initialization by Event
         $ctrl.$onInit = function () {
           let initNow = true
           if ($attrs.$attr.hasOwnProperty('initNow')) {
@@ -434,8 +487,6 @@
         }
       }
     ],
-    templateUrl: Stratus.BaseUrl +
-    Stratus.BundlePath + 'components/carousel' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/carousel' + min + '.html'
   }
 }))

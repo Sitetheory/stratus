@@ -55,7 +55,7 @@
 
       // Handle Panel
       $scope.show = function ($event) {
-        var position = $mdPanel.newPanelPosition()
+        let position = $mdPanel.newPanelPosition()
           .relativeTo($element)
           .addPanelPosition($mdPanel.xPosition.OFFSET_END,
             $mdPanel.yPosition.ALIGN_TOPS)

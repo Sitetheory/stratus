@@ -19,7 +19,7 @@
         Stratus.Instances[_.uniqueId('href_')] = $scope
         $scope.href = null
         if ($attrs.stratusHref) {
-          var href = $parse($attrs.stratusHref)
+          let href = $parse($attrs.stratusHref)
           $scope.$watch('$parent', function (newValue) {
             if (typeof newValue !== 'undefined') {
               $scope.href = href($scope.$parent)

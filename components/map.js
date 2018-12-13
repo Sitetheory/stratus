@@ -43,14 +43,14 @@
 
       // This function builds a particular info window
       $scope.createInfoWindowContent = function (latLng, zoom) {
-        var scale = 1 << zoom
-        var worldCoordinate = $scope.project(latLng)
+        let scale = 1 << zoom
+        let worldCoordinate = $scope.project(latLng)
 
-        var pixelCoordinate = new google.maps.Point(
+        let pixelCoordinate = new google.maps.Point(
           Math.floor(worldCoordinate.x * scale),
           Math.floor(worldCoordinate.y * scale))
 
-        var tileCoordinate = new google.maps.Point(
+        let tileCoordinate = new google.maps.Point(
           Math.floor(worldCoordinate.x * scale / $scope.tile),
           Math.floor(worldCoordinate.y * scale / $scope.tile))
 
@@ -66,7 +66,7 @@
       // The mapping between latitude, longitude and pixels is defined
       // by the web mercator projection.
       $scope.project = function (latLng) {
-        var sinY = Math.sin(latLng.lat() * Math.PI / 180)
+        let sinY = Math.sin(latLng.lat() * Math.PI / 180)
 
         // Truncating to 0.9999 effectively limits latitude to 89.189. This is
         // about a third of a tile past the edge of the world tile.
@@ -88,7 +88,7 @@
             zoom: 13
           })
 
-          var coordInfoWindow = new google.maps.InfoWindow()
+          let coordInfoWindow = new google.maps.InfoWindow()
 
           coordInfoWindow.setContent($scope.createInfoWindowContent($scope.location, $scope.map.getZoom()))
           coordInfoWindow.setPosition($scope.location)

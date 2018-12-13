@@ -52,16 +52,16 @@
   opacity: 0;
 }
 .btn-social.use-facebook .social-hover {
-  background: linear-gradient(#6497FF, #4375bd);
-  background: -webkit-linear-gradient(#6497FF, #4375bd);
+  background: linear-gradient(#6497ff, #4375bd);
+  background: -webkit-linear-gradient(#6497ff, #4375bd);
 }
 .btn-social.use-google {
-  background: linear-gradient(#EA5B5B, #B95050);
-  background: -webkit-linear-gradient(#EA5B5B, #B95050);
+  background: linear-gradient(#ea5b5b, #b95050);
+  background: -webkit-linear-gradient(#ea5b5b, #b95050);
 }
 .btn-social.use-google .social-hover {
-  background: linear-gradient(#FF6B6B, #EB5856);
-  background: -webkit-linear-gradient(#FF6B6B, #EB5856);
+  background: linear-gradient(#ff6b6b, #eb5856);
+  background: -webkit-linear-gradient(#ff6b6b, #eb5856);
 }
 .btn-social:hover .social-hover {
   opacity: 1;

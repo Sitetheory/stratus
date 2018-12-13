@@ -1,6 +1,5 @@
 <!-- TODO: Monitor Performance and use throttleFetch if need be -->
-<div
-    ng-if="display || collection.meta.data.api.q.length > 0 || (collection.meta && collection.meta.data.pagination.pageTotal > 1)">
+<div ng-if="display || collection.meta.data.api.q.length > 0 || (collection.meta && collection.meta.data.pagination.pageTotal > 1)">
   <div class="search" flex>
     <md-icon class="left-icon" aria-label="Search" ng-click="collection && collection.filter(query)"
              md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/search.svg"></md-icon>

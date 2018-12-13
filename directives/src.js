@@ -34,7 +34,7 @@
           if ($scope.registered) {
             return true
           }
-          var ext = $element.attr('stratus-src') ? $element.attr('stratus-src').match(/\.([0-9a-z]+)(\?.*)?$/i) : null
+          let ext = $element.attr('stratus-src') ? $element.attr('stratus-src').match(/\.([0-9a-z]+)(\?.*)?$/i) : null
           if (ext) {
             ext = ext[1] ? ext[1].toLowerCase() : null
           }

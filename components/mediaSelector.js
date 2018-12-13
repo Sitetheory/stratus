@@ -59,7 +59,7 @@
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'media_selector', true)
 
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.$onInit = function () {
         // Variables
         $ctrl.loadLibrary = false

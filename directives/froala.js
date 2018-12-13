@@ -46,22 +46,22 @@
   // This directive intends to provide basic froala capabilities.
   Stratus.Directives.Froala = ['froalaConfig', 'Model', function (froalaConfig, Model) {
     'use strict' // Scope strict mode to only this directive
-    var generatedIds = 0
-    var defaultConfig = {
+    let generatedIds = 0
+    let defaultConfig = {
       immediateAngularModelUpdate: false,
       angularIgnoreAttrs: null
     }
 
-    var innerHtmlAttr = 'innerHTML'
+    let innerHtmlAttr = 'innerHTML'
 
     froalaConfig = froalaConfig || {}
 
     // console.log('froalaConfig:', froalaConfig);
 
     // Constants
-    var MANUAL = 'manual'
-    var AUTOMATIC = 'automatic'
-    var SPECIAL_TAGS = ['img', 'button', 'input', 'a']
+    let MANUAL = 'manual'
+    let AUTOMATIC = 'automatic'
+    let SPECIAL_TAGS = ['img', 'button', 'input', 'a']
 
     return {
       restrict: 'A',
@@ -90,12 +90,12 @@
         // Twiddle Element to Zepto since Angular is lame and doesn't handle anything other than jQuery...
         element = element.length ? $(element[0]) : element
 
-        var specialTag = false
+        let specialTag = false
         if (SPECIAL_TAGS.indexOf(element.prop('tagName').toLowerCase()) !== -1) {
           specialTag = true
         }
 
-        var ctrl = {
+        let ctrl = {
           editorInitialized: false
         }
 
@@ -160,11 +160,11 @@
           ngModel.$render = function () {
             if (ctrl.editorInitialized) {
               if (specialTag) {
-                var tags = scope.value
+                let tags = scope.value
 
                 // add tags on element
                 if (tags) {
-                  for (var attr in tags) {
+                  for (let attr in tags) {
                     if (tags.hasOwnProperty(attr) && attr !== innerHtmlAttr) {
                       element.attr(attr, tags[attr])
                     }
@@ -203,7 +203,7 @@
             }
 
             // flush means to load ng-model into editor
-            var flushNgModel = function () {
+            let flushNgModel = function () {
               ctrl.editorInitialized = true
               ngModel.$render()
             }
@@ -219,7 +219,7 @@
 
             // Register events provided in the options
             // Registering events before initializing the editor will bind the initialized event correctly.
-            for (var eventName in ctrl.options.events) {
+            for (let eventName in ctrl.options.events) {
               if (ctrl.options.events.hasOwnProperty(eventName)) {
                 ctrl.registerEventsWithCallbacks(eventName, ctrl.options.events[eventName])
               }
@@ -282,14 +282,14 @@
         }
 
         ctrl.updateModelView = function () {
-          var modelContent = null
+          let modelContent = null
 
           if (specialTag) {
-            var attributeNodes = element[0].attributes
-            var attrs = {}
+            let attributeNodes = element[0].attributes
+            let attrs = {}
 
-            for (var i = 0; i < attributeNodes.length; i++) {
-              var attrName = attributeNodes[i].name
+            for (let i = 0; i < attributeNodes.length; i++) {
+              let attrName = attributeNodes[i].name
               if (ctrl.options.angularIgnoreAttrs && ctrl.options.angularIgnoreAttrs.indexOf(attrName) !== -1) {
                 continue
               }
@@ -300,7 +300,7 @@
             }
             modelContent = attrs
           } else {
-            var returnedHtml = element.froalaEditor('html.get')
+            let returnedHtml = element.froalaEditor('html.get')
             if (angular.isString(returnedHtml)) {
               modelContent = returnedHtml
             }
@@ -318,8 +318,8 @@
         }
 
         if (scope.initMode === MANUAL) {
-          var _ctrl = ctrl
-          var controls = {
+          let _ctrl = ctrl
+          let controls = {
             initialize: ctrl.createEditor,
             destroy: function () {
               if (_ctrl.froalaEditor) {
@@ -338,7 +338,7 @@
           if (data instanceof Model && !_.isEqual(data, scope.model)) {
             scope.model = data
             if (ctrl.initialized !== true) {
-              var unwatch = scope.$watch('model.data', function (dataCheck) {
+              let unwatch = scope.$watch('model.data', function (dataCheck) {
                 if (dataCheck !== undefined) {
                   unwatch() // Remove this watch as soon as it's run once
                   ctrl.init() // Initialize only after there is a model to work with
@@ -358,7 +358,7 @@
         element.addClass('fr-view')
         scope.$watch(attrs.froalaView, function (nv) {
           if (nv || nv === '') {
-            var explicitlyTrustedValue = $sce.trustAsHtml(nv)
+            let explicitlyTrustedValue = $sce.trustAsHtml(nv)
             element.html(explicitlyTrustedValue.toString())
           }
         })

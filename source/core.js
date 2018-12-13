@@ -12,8 +12,7 @@
  */
 Stratus.Instances.Clean = function (instances) {
   if (typeof instances === 'undefined') {
-    console.error(
-      'Stratus.Instances.Clean() requires a string or array containing Unique ID(s).')
+    console.error('Stratus.Instances.Clean() requires a string or array containing Unique ID(s).')
   } else if (typeof instances === 'string') {
     instances = [instances]
   }
@@ -69,8 +68,8 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {string}
    */
   add: function (time, method, scope) {
-    var uid = null
-    var job = new Stratus.Prototypes.Job(time, method, scope)
+    let uid = null
+    let job = new Stratus.Prototypes.Job(time, method, scope)
     if (job.time !== null && typeof job.method === 'function') {
       uid = _.uniqueId('job_')
       this.set(uid, job)
@@ -83,7 +82,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {boolean|*}
    */
   enable: function (uid) {
-    var success = this.has(uid)
+    let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', true)
     }
@@ -94,7 +93,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {boolean|*}
    */
   disable: function (uid) {
-    var success = this.has(uid)
+    let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', false)
     }
@@ -106,7 +105,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {boolean|*}
    */
   toggle: function (uid, value) {
-    var success = this.has(uid)
+    let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled',
         (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'))
@@ -138,7 +137,7 @@ Stratus.PostMessage.Convoy = function (fn) {
 // appropriately.
 Stratus.PostMessage.Convoy(function (convoy) {
   // Single Sign On
-  var ssoEnabled = _.cookie('sso')
+  let ssoEnabled = _.cookie('sso')
   ssoEnabled = ssoEnabled === null ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
   if (ssoEnabled && convoy && convoy.meta && convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY')) {
     _.cookie({
@@ -279,7 +278,7 @@ Stratus.Events.on('finalize', function () {
     if (Stratus.Internals.Anchor.initialize) {
       Stratus.Internals.Anchor = Stratus.Internals.Anchor()
     }
-    var anchor = new Stratus.Internals.Anchor()
+    let anchor = new Stratus.Internals.Anchor()
     if (!Stratus.Environment.get('production')) {
       console.log('Anchor:', anchor)
     }
@@ -334,7 +333,7 @@ Stratus.Events.on('confirm', function (message, handler) {
 
 // This event allows a Notification to reach the browser.
 Stratus.Events.on('notification', function (message, title) {
-  var options = {}
+  let options = {}
   if (message && typeof message === 'object') {
     _.extend(options, message)
     options.message = options.message || 'Message'
@@ -343,7 +342,7 @@ Stratus.Events.on('notification', function (message, title) {
   }
   options.title = options.title || title || 'Stratus'
   options.icon = options.icon || 'https://avatars0.githubusercontent.com/u/15791995?v=3&s=200'
-  var notification
+  let notification
   if (!('Notification' in window)) {
     console.info('This browser does not support desktop notifications.  You should switch to a modern browser.')
   } else if (window.Notification.permission === 'granted') {
@@ -417,7 +416,7 @@ Stratus.DOM.unload(function (event) {
   if (event.cancelable === true) {
       // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
       event.preventDefault();
-      var confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
+      let confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
       (event || window.event).returnValue = confirmationMessage;
       return confirmationMessage;
   }

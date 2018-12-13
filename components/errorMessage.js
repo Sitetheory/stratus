@@ -29,11 +29,11 @@
         utility.componentInitializer(this, $scope, $attrs, 'error_message', true)
 
         // variables
-        var $ctrl = this
+        let $ctrl = this
         $ctrl.errors = $attrs.errors || []
 
         // class for icon;
-        var iconCss = {
+        let iconCss = {
           error: 'fa-times-circle red',
           notice: 'fa-exclamation-circle blue',
           warning: 'fa-exclamation-triangle yellow',
@@ -50,7 +50,7 @@
 
         // remove element from errors
         $ctrl.hideError = function (message) {
-          // var index = $ctrl.errors.indexOf(message)
+          // let index = $ctrl.errors.indexOf(message)
           $ctrl.errors.splice(0, 1)
         }
       },

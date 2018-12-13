@@ -50,11 +50,11 @@
       $scope.layout = 'column'
 
       // The data get from social api.
-      var $ctrl = this
+      let $ctrl = this
 
       $scope.$watch('$ctrl.ngModel', function () {
         if ($ctrl.ngModel) {
-          var myEl = angular.element(document.querySelector('.social'))
+          let myEl = angular.element(document.querySelector('.social'))
           myEl.css('margin-bottom', '1em')
         }
       })
@@ -107,8 +107,8 @@
 
       // GOOGLE LOGIN
       window.onSignIn = function onSignIn (googleUser) {
-        var profile = googleUser.getBasicProfile()
-        var data = {
+        let profile = googleUser.getBasicProfile()
+        let data = {
           email: profile.getEmail(),
           name: profile.getName(),
           id: profile.getId(),

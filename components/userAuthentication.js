@@ -39,7 +39,7 @@
     ) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'user_authentication', true)
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.$onInit = function () {
         // variables
         $ctrl.signinData = {}
@@ -106,7 +106,7 @@
         }
       }), function (newValue, oldValue) {
         if (newValue !== undefined && newValue !== oldValue) {
-          var strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
+          let strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
           $ctrl.progressBarClass = strengthBar.progressBarClass
           $ctrl.progressBarValue = strengthBar.progressBarValue
           if (!utility.validPassword(newValue)) {
@@ -172,7 +172,7 @@
 
         // normal sign up
         resetDefaultSettings()
-        var data = {
+        let data = {
           email: signupData.email,
           phone: utility.cleanedPhoneNumber(signupData.phone)
         }
@@ -185,7 +185,7 @@
             return ($window.location.href = '/')
           } else {
             $ctrl.isRequestSuccess = false
-            var status = utility.getStatus(response)
+            let status = utility.getStatus(response)
             $ctrl.message = (status.code === 'DUPLICATE')
               ? $ctrl.duplicateMessge
               : status.message
@@ -196,7 +196,7 @@
       function doRequestResetPass (resetPassData) {
         $ctrl.loading = true
         resetDefaultSettings()
-        var data = {
+        let data = {
           type: 'reset-password-request',
           email: resetPassData.email,
           phone: utility.cleanedPhoneNumber(resetPassData.phone)
@@ -218,10 +218,10 @@
       function doResetPass (resetPassData) {
         $ctrl.loading = true
         resetDefaultSettings()
-        var requestType = utility.getUrlParams().type === 'verify'
+        let requestType = utility.getUrlParams().type === 'verify'
           ? 'change-password'
           : utility.getUrlParams().type
-        var data = {
+        let data = {
           type: requestType,
           email: utility.getUrlParams().email,
           token: utility.getUrlParams().token,

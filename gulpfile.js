@@ -183,13 +183,13 @@ gulp.task('lint', [
 gulp.task('lint:js', function () {
   return gulp.src([
     '**/*.js',
+    '!**/*.min.js',
     '!bower_components/**/*.js',
     '!node_modules/**/*.js',
     '!dist/**/*.js',
     '!legacy/**/*.js',
     '!reports/**/*.js',
-    '!umd/**/*.js',
-    '!**/*.min.js'
+    '!umd/**/*.js'
   ])
     /* *
     .pipe(debug({

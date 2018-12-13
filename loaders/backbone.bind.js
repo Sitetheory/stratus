@@ -29,7 +29,7 @@
  */
 Stratus.Internals.Loader = function (selector, view, requirements) {
   if (typeof selector === 'undefined') {
-    var body = Stratus('body')
+    let body = Stratus('body')
     selector = !body.attr('data-loaded') ? '[data-entity],[data-plugin]' : null
     if (selector) {
       body.attr('data-loaded', true)
@@ -46,7 +46,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
     selector = (view && selector && typeof selector === 'object') ? Stratus(selector).find('[data-type],[data-plugin]') : Stratus(selector)
   }
   return new Promise(function (resolve, reject) {
-    var entries = {
+    let entries = {
       total: (selector && typeof selector === 'object') ? selector.length : 0,
       iteration: 0,
       views: {}
@@ -54,7 +54,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
     if (entries.total > 0) {
       selector.each(function (el, index, list) {
         entries.iteration++
-        var entry = _.uniqueId('entry_')
+        let entry = _.uniqueId('entry_')
         entries.views[entry] = false
         Stratus.Internals.ViewLoader(el, view, requirements).then(function (view) {
           entries.views[entry] = view
@@ -79,7 +79,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
  */
 Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
   toObject: function () {
-    var sanitized = _.clone(this.data)
+    let sanitized = _.clone(this.data)
     if (sanitized.el && sanitized.el.selection) {
       sanitized.el = sanitized.el.selection
       /* TODO: This may not be necessary */
@@ -93,7 +93,7 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
 
   // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
   hydrate: function () {
-    var nel = this.get('el')
+    let nel = this.get('el')
     this.set({
       // Unique IDs
       // -----------
@@ -160,7 +160,7 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
     })
 
     if (this.get('plugin') !== null) {
-      var plugins = this.get('plugin').split(' ')
+      let plugins = this.get('plugin').split(' ')
       if (this.get('type') !== null) {
         this.set('plugins', (plugins.length > 1) ? plugins : [this.get('plugin')])
       } else if (plugins.length > 1) {
@@ -170,9 +170,9 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
         this.set('plugins', _.rest(plugins))
       }
     }
-    var id = this.get('id')
-    var type = (this.get('type') !== null) ? this.get('type') : this.get('plugin')
-    var loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins'
+    let id = this.get('id')
+    let type = (this.get('type') !== null) ? this.get('type') : this.get('plugin')
+    let loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins'
     this.set({
       scope: (id !== null) ? 'model' : 'collection',
       alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
@@ -193,7 +193,7 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
    * @returns {{entity: *, id: *, versionEntity: *, versionRouter: *, versionId: *, scope: *, manifest: *}}
    */
   nest: function () {
-    var nest = {
+    let nest = {
       entity: this.get('entity'),
       id: this.get('id'),
       versionEntity: this.get('versionEntity'),
@@ -232,10 +232,10 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
  * @constructor
  */
 Stratus.Internals.ViewLoader = function (el, view, requirements) {
-  var parentView = (view) || null
-  var parentChild = false
+  let parentView = (view) || null
+  let parentChild = false
 
-  var element = Stratus(el)
+  let element = Stratus(el)
   view = new Stratus.Internals.View()
   view.set('el', element)
   view.hydrate()
@@ -248,13 +248,16 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
   }
   view.clean()
 
+  let templates
+  let templateMap
+
   if (!parentChild) {
     // TODO: Add Previous Requirements Here!
     if (typeof requirements === 'undefined') requirements = ['stratus']
-    var template = view.get('template')
-    var templates = view.get('templates')
-    var dialogue = view.get('dialogue')
-    var templateMap = []
+    templates = view.get('templates')
+    templateMap = []
+    let template = view.get('template')
+    let dialogue = view.get('dialogue')
 
     // Add Scope
     if (view.get('scope') !== null) {
@@ -266,8 +269,8 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       requirements.push(view.get('alias'))
     } else if (view.get('path')) {
       requirements.push(view.get('path'))
-      var srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
-      var srcMatch = srcRegex.exec(view.get('path'))
+      let srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
+      let srcMatch = srcRegex.exec(view.get('path'))
       view.set('type', _.ucfirst(srcMatch[1]))
     } else {
       view.set({
@@ -289,10 +292,11 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
 
     // Gather All Templates
     if (templates !== null) {
-      for (var key in templates) {
+      let key
+      for (key in templates) {
         if (!templates.hasOwnProperty(key) || typeof templates[key] === 'function') continue
         if (templates[key].indexOf('#') === 0) {
-          var $domTemplate = $(templates[key])
+          let $domTemplate = $(templates[key])
           if ($domTemplate.length > 0) {
             templates[key] = $domTemplate.html()
           }
@@ -322,9 +326,10 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
     }
     require(requirements, function (Stratus) {
       if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.group('Stratus View')
-      var hydrationKey = 0
+      let hydrationKey = 0
       if (templates && templateMap.length > 0) {
-        for (var i = 0; i < arguments.length; i++) {
+        let i
+        for (i = 0; i < arguments.length; i++) {
           if (typeof arguments[i] === 'string') {
             if (arguments[i].indexOf('<html') === -1) {
               templates[templateMap[hydrationKey]] = arguments[i]
@@ -340,19 +345,19 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       view.set('templates', templates)
       templates = view.get('templates')
 
-      var subRequirements = []
+      let subRequirements = []
 
       /* Handle Custom Templates */
       if (_.size(templates) > 0) {
-        var re = /<.+?data-type=["|'](.+?)["|'].*>/gi
+        let re = /<.+?data-type=["|'](.+?)["|'].*>/gi
 
         /* Hydrate Underscore Templates */
         _.each(templates, function (value, key) {
           if (typeof value === 'string') {
             if (value.search(re) !== -1) {
-              var match = re.exec(value)
+              let match = re.exec(value)
               while (match !== null) {
-                var subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
+                let subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
                 if (subRequirement && !_.has(requirejs.s.contexts._.config.paths, subRequirement)) {
                   if (!Stratus.Environment.get('production')) console.warn('Sub Type:', subRequirement, 'not configured in require.js')
                 }
@@ -377,7 +382,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       }
 
       // Detect Loader Types
-      var loaderTypes = []
+      let loaderTypes = []
       if (view.get('plugin') !== null) loaderTypes.push('PluginLoader')
       if (view.get('type') !== null) loaderTypes.push('WidgetLoader')
 
@@ -418,10 +423,10 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
       Stratus.Models.set(view.get('entity'), Stratus.Models.Generic.extend({}))
     }
 
-    var modelReference
-    var modelInstance
-    var modelInit = false
-    var ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null
+    let modelReference
+    let modelInstance
+    let modelInit = false
+    let ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null
 
     if (!view.get('id') && view.get('manifest')) {
       modelInstance = view.get('entity') + 'Manifest'
@@ -464,7 +469,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
            */
     }
 
-    var collectionReference = Stratus.Collections.get(view.get('entity'))
+    let collectionReference = Stratus.Collections.get(view.get('entity'))
 
     // Run initialization when the correct settings are present
     if (!collectionReference.initialized && view.get('fetch')) {
@@ -476,10 +481,10 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
   }
 
   if (view.get('type') !== null) {
-    var type = _.ucfirst(view.get('type'))
+    let type = _.ucfirst(view.get('type'))
     if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
       // if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
-      var options = view.toObject()
+      let options = view.toObject()
       options.view = view
       Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options)
       Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))
@@ -497,7 +502,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
     }
     if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
   } else {
-    var nest = view.get('el').find('[data-type],[data-plugin]')
+    let nest = view.get('el').find('[data-type],[data-plugin]')
     if (nest.length > 0) {
       Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (resolution) {
         if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
@@ -527,11 +532,11 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
  * @constructor
  */
 Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) {
-  var types = _.union([view.get('plugin')], view.get('plugins'))
+  let types = _.union([view.get('plugin')], view.get('plugins'))
   _.each(types, function (type) {
     type = _.ucfirst(type)
     if (typeof Stratus.Views.Plugins[type] !== 'undefined') {
-      var options = view.toObject()
+      let options = view.toObject()
       options.view = view
       Stratus.Instances[view.get('uid')] = new Stratus.Views.Plugins[type](options)
       Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))

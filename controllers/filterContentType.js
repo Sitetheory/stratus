@@ -65,7 +65,7 @@
       * Handle showOnly check
       */
       $scope.toggle = function (contentType) {
-        var index = $scope.showOnly.findIndex(
+        let index = $scope.showOnly.findIndex(
           function (x) { return x.value === contentType.value });
         (index !== -1)
           ? $scope.showOnly.splice(index, 1)

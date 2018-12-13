@@ -38,8 +38,8 @@
       $scope.layout = 'row'
 
       // The data get from social api.
-      var data = null
-      // var $ctrl = this
+      let data = null
+      // let $ctrl = this
 
       // FACEBOOK LOGIN
       window.checkLoginState = function () {
@@ -95,8 +95,8 @@
 
       // Useful data for your client-side scripts:
       window.onSignIn = function onSignIn (googleUser) {
-        var profile = googleUser.getBasicProfile()
-        var data = {
+        let profile = googleUser.getBasicProfile()
+        let data = {
           email: profile.getEmail(),
           name: profile.getName(),
           id: profile.getId(),

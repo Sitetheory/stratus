@@ -57,7 +57,7 @@
       utility.componentInitializer(this, $scope, $attrs, 'media_library',
         true)
 
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.$onInit = function () {
         // Variables
 
@@ -181,10 +181,10 @@
 
       $scope.$watch('collection.models', function (data) {
         if (!_.isUndefined(data) && $ctrl.mediaSelectorDraggedFiles && $ctrl.mediaSelectorDraggedFiles.length > 0) {
-          for (var i = 0; i < $ctrl.mediaSelectorDraggedFiles.length; i++) {
-            var addedFile = $ctrl.mediaSelectorDraggedFiles[i]
-            for (var j = 0; j < $scope.collection.models.length; j++) {
-              var media = $scope.collection.models[j]
+          for (let i = 0; i < $ctrl.mediaSelectorDraggedFiles.length; i++) {
+            let addedFile = $ctrl.mediaSelectorDraggedFiles[i]
+            for (let j = 0; j < $scope.collection.models.length; j++) {
+              let media = $scope.collection.models[j]
               if (addedFile.id === media.data.id) {
                 media.data.selectedClass = true
               }
