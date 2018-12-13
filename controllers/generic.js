@@ -39,7 +39,7 @@
       $scope._ = _
       $scope.setUrlParams = function (options) {
         if (angular.isObject(options)) {
-          var substance = false
+          let substance = false
           angular.forEach(options, function (value) {
             if (angular.isDefined(value) && value !== null) {
               if (!angular.isString(value)) {
@@ -69,7 +69,7 @@
 
       $scope.createSite = function (
         siteTitle, siteGenreId, masterSite, masterContentMethod) {
-        var data = {
+        let data = {
           name: siteTitle,
           genre: siteGenreId,
           masterSite: masterSite,
@@ -82,7 +82,7 @@
 
       // Handle Selected
       if ($scope.collection) {
-        var selected = {
+        let selected = {
           id: $element.attr('data-selected'),
           raw: $element.attr('data-raw')
         }

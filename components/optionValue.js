@@ -23,7 +23,7 @@
     controller: function ($scope) {
       Stratus.Instances[_.uniqueId('option_value_')] = $scope
       $scope.items = []
-      var normalize = function () {
+      let normalize = function () {
         if (!angular.isArray($scope.items)) {
           $scope.items = []
         }

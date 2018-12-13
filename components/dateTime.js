@@ -20,7 +20,7 @@
     },
     controller: function ($scope, $attrs) {
       // Basic Instantiation
-      var uid = _.uniqueId('date_time_')
+      let uid = _.uniqueId('date_time_')
       Stratus.Instances[uid] = $scope
       $scope.elementId = $attrs.elementId || uid
 
@@ -32,7 +32,7 @@
         return $scope.$ctrl.ngModel
       }, function (property) {
         if (property) {
-          var momentTime = property
+          let momentTime = property
             ? moment.unix(parseInt(property))
             : moment()
           $scope.property = new Date(momentTime.year(), momentTime.month(),

@@ -17,7 +17,7 @@
   }
 }(this, function (Stratus, _, angular) {
   // Root Scope
-  var root = this
+  let root = this
 
   // Force Google Maps for the Moment
   require(['//maps.googleapis.com/maps/api/js?v=3&key=' + Stratus.Api.GoogleMaps + '&libraries=places&callback=initAutocomplete'], function () {
@@ -41,7 +41,7 @@
 
       $log.log('component:', this)
 
-      var autocomplete
+      let autocomplete
 
       root.initAutocomplete = function () {
         autocomplete = new google.maps.places.Autocomplete(
@@ -55,11 +55,11 @@
       root.geolocate = function () {
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function (position) {
-            var geolocation = {
+            let geolocation = {
               lat: position.coords.latitude,
               lng: position.coords.longitude
             }
-            var circle = new google.maps.Circle({
+            let circle = new google.maps.Circle({
               center: geolocation,
               radius: position.coords.accuracy
             })

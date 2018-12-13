@@ -46,7 +46,7 @@
       $scope.$watchCollection(
         '[collection.meta.data.pagination.pageCurrent, collection.meta.data.pagination.pageTotal]',
         function (newValue, oldValue) {
-          var pageCurrent = newValue[0]
+          let pageCurrent = newValue[0]
           if (!pageCurrent) {
             return true
           }

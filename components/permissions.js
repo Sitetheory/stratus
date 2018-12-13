@@ -32,7 +32,7 @@
     controller: function ($scope, $timeout, $attrs, $http, utility) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'permissions', true)
-      var $ctrl = this
+      let $ctrl = this
 
       // mock up list permissions
       $scope.permissionSelected = []
@@ -111,10 +111,10 @@
           function (response) {
             // success
             if (response) {
-              var data = response.data.payload
+              let data = response.data.payload
 
               // Set permission selected
-              var permissions = data.summary
+              let permissions = data.summary
               angular.forEach(permissions, function (permission, index) {
                 index = $scope.permissions.findIndex(function (x) {
                   return x.name === permission
@@ -159,8 +159,8 @@
           function (response) {
             if (response.hasOwnProperty('data') &&
               response.data.hasOwnProperty('payload')) {
-              var value = response.data.payload
-              var results = []
+              let value = response.data.payload
+              let results = []
 
               // Prepare data
               if (value.User) {
@@ -199,8 +199,8 @@
           function (response) {
             if (response.hasOwnProperty('data') &&
               response.data.hasOwnProperty('payload')) {
-              var value = response.data.payload
-              var results = []
+              let value = response.data.payload
+              let results = []
 
               if (value.Bundle) {
                 angular.forEach(value.Bundle, function (bundle, index) {
@@ -294,7 +294,7 @@
        * action Selected will be converted to only contain master.
        */
       $scope.processSelectAction = function () {
-        var masterIndex = $scope.permissionSelected.indexOf(128)
+        let masterIndex = $scope.permissionSelected.indexOf(128)
         if ((masterIndex !== -1) ||
           ($scope.permissionSelected.length === $scope.permissions.length - 1)) {
           $scope.permissionSelected = [
@@ -330,7 +330,7 @@
        * @returns {*}
        */
       $scope.selectedContent = function (item) {
-        var data = null
+        let data = null
         if (item.version) {
           data = item.version + ' - ' + item.version.meta.id
         } else if (item.name) {

@@ -42,7 +42,7 @@
  * @returns {NodeList|Node}
  * @constructor
  */
-var Stratus = {
+const Stratus = {
   /* Settings */
   Settings: {
     image: {
@@ -259,8 +259,9 @@ _.mixin({
   // Babel class inheritance block
   createClass: (function () {
     function defineProperties (target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i]
+      let i
+      for (i = 0; i < props.length; i++) {
+        let descriptor = props[i]
         descriptor.enumerable = descriptor.enumerable || false
         descriptor.configurable = true
         if ('value' in descriptor) {
@@ -332,9 +333,9 @@ _.mixin({
    * @returns {View}
    */
   inherit: function (superClass, subClass) {
-    var blob = function (length) {
+    let blob = function (length) {
       _.classCallCheck(this, blob)
-      var that = _.possibleConstructorReturn(this,
+      let that = _.possibleConstructorReturn(this,
         (Object.getPrototypeOf(blob)).call(this, length,
           length))
       _.extend(that, subClass)
@@ -375,7 +376,7 @@ _.mixin({
    * @returns {Array|{index: number, input: string}}
    */
   cookie: function (name, value, expires, path, domain) {
-    var request = {
+    let request = {
       name: name,
       value: value,
       expires: expires,
@@ -386,12 +387,12 @@ _.mixin({
       _.extend(request, name)
     }
     if (typeof request.value === 'undefined') {
-      var search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name +
+      let search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name +
         ')=(.*?)(?:;|$)', 'g')
-      var data = search.exec(document.cookie)
+      let data = search.exec(document.cookie)
       return (data === null) ? null : data[1]
     } else {
-      var cookie = request.name + '=' + escape(request.value) + ';'
+      let cookie = request.name + '=' + escape(request.value) + ';'
       if (request.expires) {
         if (request.expires instanceof Date) {
           if (isNaN(request.expires.getTime())) {
@@ -424,7 +425,7 @@ _.mixin({
       method = 'min'
     }
     if (method === 'min') {
-      var lowest = _.min(list)
+      let lowest = _.min(list)
       return _.findKey(list, function (element) {
         return (element === lowest)
       })
@@ -447,7 +448,7 @@ _.mixin({
    */
   repeat: function (fn, times) {
     if (typeof fn === 'function' && typeof times === 'number') {
-      var i
+      let i
       for (i = 0; i < times; i++) {
         fn()
       }
@@ -494,7 +495,7 @@ _.mixin({
     if (typeof obj !== 'object') {
       return obj
     }
-    var shallow = _.clone(obj)
+    let shallow = _.clone(obj)
     _.each(shallow, function (value, key) {
       shallow[key] = _.cloneDeep(value)
     })
@@ -508,7 +509,7 @@ _.mixin({
    * @returns {*}
    */
   extendDeep: function (target, merger) {
-    var shallow = _.clone(target)
+    let shallow = _.clone(target)
     if (merger && typeof merger === 'object') {
       _.each(merger, function (value, key) {
         if (shallow && typeof shallow === 'object') {
@@ -531,12 +532,12 @@ _.mixin({
    * @returns {{}}
    */
   getUrlParams: function (key, href) {
-    var vars = {}
+    let lets = {}
     href = typeof href !== 'undefined' ? href : window.location.href
     href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-      vars[key] = value
+      lets[key] = value
     })
-    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+    return (typeof key !== 'undefined' && key) ? lets[key] : lets
   },
 
   // Ensure all values in an array or object are true
@@ -588,15 +589,15 @@ _.mixin({
    * @returns {number|null}
    */
   seconds: function (str) {
-    var seconds = 0
+    let seconds = 0
     if (typeof str === 'string') {
-      var timePairs = str.match(
+      let timePairs = str.match(
         /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/gi)
       if (_.size(timePairs)) {
-        var digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
-        var time
-        var unit
-        var value
+        let digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
+        let time
+        let unit
+        let value
         _.each(timePairs, function (timePair) {
           time = digest.exec(timePair)
           value = parseFloat(time[1])
@@ -677,8 +678,8 @@ _.mixin({
     if (!_.isObject(newData) || !_.size(newData)) {
       return null
     }
-    var patch = {}
-    var processor = {
+    let patch = {}
+    let processor = {
       eax: undefined,
       ebx: undefined,
       ecx: undefined,
@@ -687,7 +688,7 @@ _.mixin({
     if (!_.isObject(priorData) || !_.size(priorData)) {
       console.error('bad prior:', priorData)
     } else {
-      var detect = function (value, key) {
+      let detect = function (value, key) {
         processor.eax = processor.ecx ? processor.ecx + '.' + key : key
         if (_.isObject(value)) {
           processor.ecx = processor.eax
@@ -722,10 +723,8 @@ _.mixin({
   strcmp: function (a, b) {
     a = a.toString()
     b = b.toString()
-    for (var i = 0, n = Math.max(a.length, b.length); i < n &&
-    a.charAt(i) === b.charAt(i); ++i) {
-
-    }
+    let i, n
+    for (i = 0, n = Math.max(a.length, b.length); i < n && a.charAt(i) === b.charAt(i); ++i) {}
     if (i === n) {
       return 0
     }
@@ -741,27 +740,27 @@ _.mixin({
     limit = limit || 100
     suffix = suffix || '...'
 
-    var arr = target.replace(/</g, '\n<')
+    let arr = target.replace(/</g, '\n<')
       .replace(/>/g, '>\n')
       .replace(/\n\n/g, '\n')
       .replace(/^\n/g, '')
       .replace(/\n$/g, '')
       .split('\n')
 
-    var sum = 0
-    var row
-    var cut
-    var add
-    var tagMatch
-    var tagName
-    var tagStack = []
-    // var more = false
+    let sum = 0
+    let row
+    let cut
+    let add
+    let tagMatch
+    let tagName
+    let tagStack = []
+    // let more = false
 
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       row = arr[i]
 
       // count multiple spaces as one character
-      var rowCut = row.replace(/[ ]+/g, ' ')
+      let rowCut = row.replace(/[ ]+/g, ' ')
 
       if (!row.length) {
         continue
@@ -864,14 +863,14 @@ if (typeof $ === 'function' && $.fn) {
 // loaded at this time.
 
 // Regular expression used to split event strings.
-var eventSplitter = /\s+/
+let eventSplitter = /\s+/
 
 // Iterates over the standard `event, callback` (as well as the fancy multiple
 // space-separated events `"change blur", callback` and jQuery-style event
 // maps `{event: callback}`).
-var eventsApi = function (iteratee, events, name, callback, opts) {
-  var i = 0
-  var names
+let eventsApi = function (iteratee, events, name, callback, opts) {
+  let i = 0
+  let names
   if (name && typeof name === 'object') {
     // Handle event maps.
     if (callback !== void 0 && 'context' in opts &&
@@ -900,7 +899,7 @@ Stratus.Events.on = function (name, callback, context) {
 }
 
 // Guard the `listening` argument from the public API.
-var internalOn = function (obj, name, callback, context, listening) {
+let internalOn = function (obj, name, callback, context, listening) {
   obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
     context: context,
     ctx: obj,
@@ -908,7 +907,7 @@ var internalOn = function (obj, name, callback, context, listening) {
   })
 
   if (listening) {
-    var listeners = obj._listeners || (obj._listeners = {})
+    let listeners = obj._listeners || (obj._listeners = {})
     listeners[listening.id] = listening
   }
 
@@ -922,14 +921,14 @@ Stratus.Events.listenTo = function (obj, name, callback) {
   if (!obj) {
     return this
   }
-  var id = obj._listenId || (obj._listenId = _.uniqueId('l'))
-  var listeningTo = this._listeningTo || (this._listeningTo = {})
-  var listening = listeningTo[id]
+  let id = obj._listenId || (obj._listenId = _.uniqueId('l'))
+  let listeningTo = this._listeningTo || (this._listeningTo = {})
+  let listening = listeningTo[id]
 
   // This object is not listening to any other events on `obj` yet.
   // Setup the necessary references to track the listening callbacks.
   if (!listening) {
-    var thisId = this._listenId || (this._listenId = _.uniqueId('l'))
+    let thisId = this._listenId || (this._listenId = _.uniqueId('l'))
     listening = listeningTo[id] = {
       obj: obj,
       objId: id,
@@ -945,12 +944,12 @@ Stratus.Events.listenTo = function (obj, name, callback) {
 }
 
 // The reducing API that adds a callback to the `events` object.
-var onApi = function (events, name, callback, options) {
+let onApi = function (events, name, callback, options) {
   if (callback) {
-    var handlers = events[name] || (events[name] = [])
-    var context = options.context
-    var ctx = options.ctx
-    var listening = options.listening
+    let handlers = events[name] || (events[name] = [])
+    let context = options.context
+    let ctx = options.ctx
+    let listening = options.listening
     if (listening) {
       listening.count++
     }
@@ -983,15 +982,16 @@ Stratus.Events.off = function (name, callback, context) {
 // Tell this object to stop listening to either specific events ... or
 // to every object it's currently listening to.
 Stratus.Events.stopListening = function (obj, name, callback) {
-  var listeningTo = this._listeningTo
+  let listeningTo = this._listeningTo
   if (!listeningTo) {
     return this
   }
 
-  var ids = obj ? [obj._listenId] : _.keys(listeningTo)
+  let ids = obj ? [obj._listenId] : _.keys(listeningTo)
 
-  for (var i = 0; i < ids.length; i++) {
-    var listening = listeningTo[ids[i]]
+  let i
+  for (i = 0; i < ids.length; i++) {
+    let listening = listeningTo[ids[i]]
 
     // If listening doesn't exist, this object is not currently
     // listening to obj. Break out early.
@@ -1006,19 +1006,19 @@ Stratus.Events.stopListening = function (obj, name, callback) {
 }
 
 // The reducing API that removes a callback from the `events` object.
-var offApi = function (events, name, callback, options) {
+let offApi = function (events, name, callback, options) {
   if (!events) {
     return
   }
 
-  var i = 0
-  var listening
-  var context = options.context
-  var listeners = options.listeners
+  let i = 0
+  let listening
+  let context = options.context
+  let listeners = options.listeners
 
   // Delete all events listeners and "drop" events.
   if (!name && !callback && !context) {
-    var ids = _.keys(listeners)
+    let ids = _.keys(listeners)
     for (; i < ids.length; i++) {
       listening = listeners[ids[i]]
       delete listeners[listening.id]
@@ -1027,10 +1027,10 @@ var offApi = function (events, name, callback, options) {
     return
   }
 
-  var names = name ? [name] : _.keys(events)
+  let names = name ? [name] : _.keys(events)
   for (; i < names.length; i++) {
     name = names[i]
-    var handlers = events[name]
+    let handlers = events[name]
 
     // Bail out if there are no events stored.
     if (!handlers) {
@@ -1038,9 +1038,9 @@ var offApi = function (events, name, callback, options) {
     }
 
     // Replace events if there are any remaining.  Otherwise, clean up.
-    var remaining = []
-    for (var j = 0; j < handlers.length; j++) {
-      var handler = handlers[j]
+    let remaining = []
+    for (let j = 0; j < handlers.length; j++) {
+      let handler = handlers[j]
       if (
         (callback && callback !== handler.callback && callback !== handler.callback._callback) ||
         (context && context !== handler.context)
@@ -1071,7 +1071,7 @@ var offApi = function (events, name, callback, options) {
 // once for each event, not once for a combination of all events.
 Stratus.Events.once = function (name, callback, context) {
   // Map the event into a `{event: once}` object.
-  var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this))
+  let events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this))
   if (typeof name === 'string' && context == null) {
     callback = void 0
   }
@@ -1081,16 +1081,16 @@ Stratus.Events.once = function (name, callback, context) {
 // Inversion-of-control versions of `once`.
 Stratus.Events.listenToOnce = function (obj, name, callback) {
   // Map the event into a `{event: once}` object.
-  var events = eventsApi(onceMap, {}, name, callback,
+  let events = eventsApi(onceMap, {}, name, callback,
     _.bind(this.stopListening, this, obj))
   return this.listenTo(obj, events)
 }
 
 // Reduces the event callbacks into a map of `{event: onceWrapper}`.
 // `offer` unbinds the `onceWrapper` after it has been called.
-var onceMap = function (map, name, callback, offer) {
+let onceMap = function (map, name, callback, offer) {
   if (callback) {
-    var once = map[name] = _.once(function () {
+    let once = map[name] = _.once(function () {
       offer(name, once)
       callback.apply(this, arguments)
     })
@@ -1108,9 +1108,10 @@ Stratus.Events.trigger = function (name) {
     return this
   }
 
-  var length = Math.max(0, arguments.length - 1)
-  var args = Array(length)
-  for (var i = 0; i < length; i++) {
+  let length = Math.max(0, arguments.length - 1)
+  let args = Array(length)
+  let i
+  for (i = 0; i < length; i++) {
     args[i] = arguments[i + 1]
   }
 
@@ -1119,10 +1120,10 @@ Stratus.Events.trigger = function (name) {
 }
 
 // Handles triggering the appropriate event callbacks.
-var triggerApi = function (objEvents, name, callback, args) {
+let triggerApi = function (objEvents, name, callback, args) {
   if (objEvents) {
-    var events = objEvents[name]
-    var allEvents = objEvents.all
+    let events = objEvents[name]
+    let allEvents = objEvents.all
     if (events && allEvents) {
       allEvents = allEvents.slice()
     }
@@ -1139,13 +1140,13 @@ var triggerApi = function (objEvents, name, callback, args) {
 // A difficult-to-believe, but optimized internal dispatch function for
 // triggering events. Tries to keep the usual cases speedy (most internal
 // Backbone events have 3 arguments).
-var triggerEvents = function (events, args) {
-  var ev
-  var i = -1
-  var l = events.length
-  var a1 = args[0]
-  var a2 = args[1]
-  var a3 = args[2]
+let triggerEvents = function (events, args) {
+  let ev
+  let i = -1
+  let l = events.length
+  let a1 = args[0]
+  let a2 = args[1]
+  let a3 = args[2]
   switch (args.length) {
     case 0:
       while (++i < l) {
@@ -1217,7 +1218,7 @@ Stratus.Prototypes.Dispatch = function () {
 // Chronos System
 // --------------
 
-// This constructor builds jobs for various methods.
+// This constructor builds jobs for letious methods.
 /**
  * @param time
  * @param method
@@ -1326,8 +1327,8 @@ Stratus.Prototypes.Model = function (data) {
   this.setAttribute = function (attr, value) {
     if (typeof attr === 'string') {
       if (attr.indexOf('.') !== -1) {
-        var reference = this.data
-        var chain = attr.split('.')
+        let reference = this.data
+        let chain = attr.split('.')
         _.find(_.initial(chain), function (link) {
           if (!_.has(reference, link) || !reference[link]) {
             reference[link] = {}
@@ -1341,7 +1342,7 @@ Stratus.Prototypes.Model = function (data) {
           }
         }, this)
         if (!_.isEqual(reference, this.data)) {
-          var link = _.last(chain)
+          let link = _.last(chain)
           if (reference && typeof reference === 'object' &&
             (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
             reference[link] = value
@@ -1415,7 +1416,7 @@ Stratus.Prototypes.Model = function (data) {
    * Clear all internal data
    */
   this.clear = function () {
-    for (var attribute in this.data) {
+    for (let attribute in this.data) {
       if (this.data.hasOwnProperty(attribute)) {
         delete this.data[attribute]
       }
@@ -1425,7 +1426,7 @@ Stratus.Prototypes.Model = function (data) {
    * Clear all temporary data
    */
   this.clearTemp = function () {
-    for (var attribute in this.temps) {
+    for (let attribute in this.temps) {
       if (this.temps.hasOwnProperty(attribute)) {
         // delete this.data[attribute];
         // this.remove(attribute);
@@ -1539,7 +1540,7 @@ Stratus.Prototypes.Sentinel = function () {
         }
       }, this)
     } else {
-      var decimal = 0
+      let decimal = 0
       decimal += (this.view) ? (1 << 0) : (0 << 0)
       decimal += (this.create) ? (1 << 1) : (0 << 1)
       decimal += (this.edit) ? (1 << 2) : (0 << 2)
@@ -1552,7 +1553,7 @@ Stratus.Prototypes.Sentinel = function () {
     }
   }
   this.summary = function () {
-    var output = []
+    let output = []
     _.each(this, function (value, key) {
       if (typeof value === 'boolean' && value) {
         output.push(_.ucfirst(key))
@@ -1646,18 +1647,18 @@ Stratus.Internals.Ajax = function (request) {
 
   // Customize & Hoist
   _.extend(this, request)
-  var that = this
+  let that = this
 
   // Make Request
   this.xhr = new window.XMLHttpRequest()
-  var promise = new Promise(function (resolve, reject) {
+  let promise = new Promise(function (resolve, reject) {
     that.xhr.open(that.method, that.url, true)
     if (typeof that.type === 'string' && that.type.length) {
       that.xhr.setRequestHeader('Content-Type', that.type)
     }
     that.xhr.onload = function () {
       if (that.xhr.status >= 200 && that.xhr.status < 400) {
-        var response = that.xhr.responseText
+        let response = that.xhr.responseText
         if (_.isJSON(response)) {
           response = JSON.parse(response)
         }
@@ -1699,14 +1700,14 @@ Stratus.Internals.Anchor = (function Anchor () {
       if (window.location.pathname.replace(/^\//, '') ===
         event.currentTarget.pathname.replace(/^\//, '') &&
         window.location.hostname === event.currentTarget.hostname) {
-        var reserved = ['new', 'filter', 'page', 'version']
-        var valid = _.every(reserved, function (keyword) {
+        let reserved = ['new', 'filter', 'page', 'version']
+        let valid = _.every(reserved, function (keyword) {
           return !_.startsWith(event.currentTarget.hash, '#' + keyword)
         }, this)
         if (valid) {
           if (typeof $ === 'function' && $.fn && typeof Backbone === 'object') {
-            var $target = $(event.currentTarget.hash)
-            var anchor = event.currentTarget.hash.slice(1)
+            let $target = $(event.currentTarget.hash)
+            let anchor = event.currentTarget.hash.slice(1)
             $target = ($target.length) ? $target : $('[name=' + anchor + ']')
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
@@ -1771,7 +1772,7 @@ Stratus.Internals.Api = function (route, meta, payload) {
  * @constructor
  */
 Stratus.Internals.Compatibility = function () {
-  var profile = []
+  let profile = []
 
   // Operating System
   if (Stratus.Client.android) {
@@ -1907,7 +1908,7 @@ Stratus.Internals.CssLoader = function (url) {
     /* Digest Extension */
     /*
          FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
-         var extension = /\.([0-9a-z]+)$/i;
+         let extension = /\.([0-9a-z]+)$/i;
          extension = extension.exec(url);
          */
     /* Verify Identical Calls */
@@ -1922,7 +1923,7 @@ Stratus.Internals.CssLoader = function (url) {
       Stratus.CSS[url] = false
 
       /* Create Link */
-      var link = document.createElement('link')
+      let link = document.createElement('link')
       link.type = 'text/css'
       link.rel = 'stylesheet'
       link.href = url
@@ -1962,12 +1963,12 @@ Stratus.Internals.GetColWidth = function (el) {
   if (typeof el === 'undefined' || !el) {
     return false
   }
-  var classes = el.attr('class')
+  let classes = el.attr('class')
   if (typeof classes === 'undefined' || !classes) {
     return false
   }
-  var regexp = /col-.{2}-([0-9]*)/g
-  var match = regexp.exec(classes)
+  let regexp = /col-.{2}-([0-9]*)/g
+  let match = regexp.exec(classes)
   if (typeof match === 'undefined' || !match) {
     return false
   }
@@ -2074,14 +2075,14 @@ Stratus.Internals.LoadCss = function (urls) {
     if (typeof urls === 'string') {
       urls = [urls]
     }
-    var cssEntries = {
+    let cssEntries = {
       total: urls.length,
       iteration: 0
     }
     if (cssEntries.total > 0) {
       _.each(urls.reverse(), function (url) {
         cssEntries.iteration++
-        var cssEntry = _.uniqueId('css_')
+        let cssEntry = _.uniqueId('css_')
         cssEntries[cssEntry] = false
         if (typeof url === 'undefined' || !url) {
           cssEntries[cssEntry] = true
@@ -2114,7 +2115,7 @@ Stratus.Internals.LoadCss = function (urls) {
  * @constructor
  */
 Stratus.Internals.LoadEnvironment = function () {
-  var initialLoad = Stratus('body').attr('data-environment')
+  let initialLoad = Stratus('body').attr('data-environment')
   if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
     Stratus.Environment.set(initialLoad)
   }
@@ -2211,10 +2212,10 @@ Stratus.Internals.LoadImage = function (obj) {
           // If one of parents of the image (and child of the found parent) has
           // a bootstrap col-*-* set divide width by that in anticipation (e.g.
           // Carousel that has items grouped)
-          var $col = $visibleParent.find('[class*="col-"]')
+          let $col = $visibleParent.find('[class*="col-"]')
 
           if ($col.length > 0) {
-            var colWidth = Stratus.Internals.GetColWidth($col)
+            let colWidth = Stratus.Internals.GetColWidth($col)
             if (colWidth) {
               width = Math.round(width / colWidth)
             }
@@ -2337,7 +2338,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
       // Cycle through all the registered objects an execute their function
       // We must use the registered onScroll objects, because they get removed
       // in some cases (e.g. lazy load)
-      var elements = Stratus.RegisterGroup.get('OnScroll')
+      let elements = Stratus.RegisterGroup.get('OnScroll')
 
       _.each(elements, function (obj) {
         if (typeof obj !== 'undefined' && _.has(obj, 'method')) {
@@ -2423,7 +2424,7 @@ Stratus.Internals.Resource = function (path, elementId) {
         data: null
       }
       Stratus.Events.once('resource:' + path, resolve)
-      var meta = {path: path, dataType: 'text'}
+      let meta = {path: path, dataType: 'text'}
       if (elementId !== undefined) {
         meta.elementId = elementId
       }
@@ -2456,20 +2457,20 @@ Stratus.Internals.SetUrlParams = function (params, url) {
   if (typeof params === 'undefined') {
     return url
   }
-  var vars = {}
-  var glue = url.indexOf('?')
-  var anchor = url.indexOf('#')
-  var tail = ''
+  let lets = {}
+  let glue = url.indexOf('?')
+  let anchor = url.indexOf('#')
+  let tail = ''
   if (anchor >= 0) {
     tail = url.substring(anchor, url.length)
     url = url.substring(0, anchor)
   }
   url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    vars[key] = value
+    lets[key] = value
   })
-  vars = _.extend(vars, params)
+  lets = _.extend(lets, params)
   return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-    _.reduce(_.map(vars, function (value, key) {
+    _.reduce(_.map(lets, function (value, key) {
       return key + '=' + value
     }), function (memo, value) {
       return memo + '&' + value
@@ -2484,7 +2485,7 @@ Stratus.Internals.SetUrlParams = function (params, url) {
  * @constructor
  */
 Stratus.Internals.TrackLocation = function () {
-  var envData = {}
+  let envData = {}
   // if (!Stratus.Environment.has('timezone'))
   envData.timezone = new Date().toString().match(/\((.*)\)/)[1]
   if (Stratus.Environment.get('trackLocation')) {
@@ -2549,7 +2550,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
       data: request,
       type: 'application/json',
       success: function (response) {
-        var settings = response.payload || response
+        let settings = response.payload || response
         if (typeof settings === 'object') {
           _.each(Object.keys(settings), function (key) {
             Stratus.Environment.set(key, settings[key])
@@ -2623,7 +2624,7 @@ Stratus = _.extend(function (selector, context) {
  * @constructor
  */
 Stratus.Selector.attr = function (attr, value) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find "' + attr + '" for list:', that.selection)
     return null
@@ -2643,7 +2644,7 @@ Stratus.Selector.attr = function (attr, value) {
  * @returns {*}
  */
 Stratus.Selector.each = function (callable) {
-  var that = this
+  let that = this
   if (typeof callable !== 'function') {
     callable = function (element) {
       console.warn('each running on element:', element)
@@ -2660,7 +2661,7 @@ Stratus.Selector.each = function (callable) {
  * @returns {*}
  */
 Stratus.Selector.find = function (selector) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find "' + selector + '" for list:', that.selection)
   } else if (selector) {
@@ -2674,7 +2675,7 @@ Stratus.Selector.find = function (selector) {
  * @returns {*}
  */
 Stratus.Selector.map = function (callable) {
-  var that = this
+  let that = this
   if (typeof callable !== 'function') {
     callable = function (element) {
       console.warn('map running on element:', element)
@@ -2693,7 +2694,7 @@ Stratus.Selector.map = function (callable) {
  * @returns {*}
  */
 Stratus.Selector.append = function (child) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to append child:', child, 'to list:', that.selection)
   } else if (child) {
@@ -2709,7 +2710,7 @@ Stratus.Selector.append = function (child) {
  * @returns {*}
  */
 Stratus.Selector.prepend = function (child) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to prepend child:', child, 'to list:', that.selection)
   } else if (child) {
@@ -2725,7 +2726,7 @@ Stratus.Selector.prepend = function (child) {
  * @constructor
  */
 Stratus.Selector.addClass = function (className) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to add class "' + className + '" to list:', that.selection)
   } else {
@@ -2746,7 +2747,7 @@ Stratus.Selector.addClass = function (className) {
  * @constructor
  */
 Stratus.Selector.removeClass = function (className) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to remove class "' + className + '" from list:', that.selection)
   } else if (that.selection.classList) {
@@ -2765,7 +2766,7 @@ Stratus.Selector.removeClass = function (className) {
  * @returns {CSSStyleDeclaration|*}
  */
 Stratus.Selector.style = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find style for list:', that.selection)
   } else if (that.selection instanceof window.Node) {
@@ -2779,7 +2780,7 @@ Stratus.Selector.style = function () {
  * @returns {number|*}
  */
 Stratus.Selector.height = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find height for list:', that.selection)
     return null
@@ -2791,7 +2792,7 @@ Stratus.Selector.height = function () {
  * @returns {number|*}
  */
 Stratus.Selector.width = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find width for list:', that.selection)
     return null
@@ -2804,11 +2805,11 @@ Stratus.Selector.width = function () {
  * @returns {{top: number, left: number}|*}
  */
 Stratus.Selector.offset = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find offset for list:', that.selection)
   } else if (that.selection.getBoundingClientRect) {
-    var rect = that.selection.getBoundingClientRect()
+    let rect = that.selection.getBoundingClientRect()
     return {
       top: rect.top + document.body.scrollTop,
       left: rect.left + document.body.scrollLeft
@@ -2824,7 +2825,7 @@ Stratus.Selector.offset = function () {
  * @returns {*}
  */
 Stratus.Selector.parent = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find offset for list:', that.selection)
     return null
@@ -2863,7 +2864,7 @@ Stratus.Selector.parent = function () {
  */
 Stratus.Internals.Loader = function (selector, view, requirements) {
   if (typeof selector === 'undefined') {
-    var body = Stratus('body')
+    let body = Stratus('body')
     selector = !body.attr('data-loaded') ? '[data-entity],[data-plugin]' : null
     if (selector) {
       body.attr('data-loaded', true)
@@ -2880,7 +2881,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
     selector = (view && selector && typeof selector === 'object') ? Stratus(selector).find('[data-type],[data-plugin]') : Stratus(selector)
   }
   return new Promise(function (resolve, reject) {
-    var entries = {
+    let entries = {
       total: (selector && typeof selector === 'object') ? selector.length : 0,
       iteration: 0,
       views: {}
@@ -2888,7 +2889,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
     if (entries.total > 0) {
       selector.each(function (el, index, list) {
         entries.iteration++
-        var entry = _.uniqueId('entry_')
+        let entry = _.uniqueId('entry_')
         entries.views[entry] = false
         Stratus.Internals.ViewLoader(el, view, requirements).then(function (view) {
           entries.views[entry] = view
@@ -2913,7 +2914,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
  */
 Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
   toObject: function () {
-    var sanitized = _.clone(this.data)
+    let sanitized = _.clone(this.data)
     if (sanitized.el && sanitized.el.selection) {
       sanitized.el = sanitized.el.selection
       /* TODO: This may not be necessary */
@@ -2927,7 +2928,7 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
 
   // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
   hydrate: function () {
-    var nel = this.get('el')
+    let nel = this.get('el')
     this.set({
       // Unique IDs
       // -----------
@@ -2994,7 +2995,7 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
     })
 
     if (this.get('plugin') !== null) {
-      var plugins = this.get('plugin').split(' ')
+      let plugins = this.get('plugin').split(' ')
       if (this.get('type') !== null) {
         this.set('plugins', (plugins.length > 1) ? plugins : [this.get('plugin')])
       } else if (plugins.length > 1) {
@@ -3004,9 +3005,9 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
         this.set('plugins', _.rest(plugins))
       }
     }
-    var id = this.get('id')
-    var type = (this.get('type') !== null) ? this.get('type') : this.get('plugin')
-    var loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins'
+    let id = this.get('id')
+    let type = (this.get('type') !== null) ? this.get('type') : this.get('plugin')
+    let loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins'
     this.set({
       scope: (id !== null) ? 'model' : 'collection',
       alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
@@ -3027,7 +3028,7 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
    * @returns {{entity: *, id: *, versionEntity: *, versionRouter: *, versionId: *, scope: *, manifest: *}}
    */
   nest: function () {
-    var nest = {
+    let nest = {
       entity: this.get('entity'),
       id: this.get('id'),
       versionEntity: this.get('versionEntity'),
@@ -3066,10 +3067,10 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
  * @constructor
  */
 Stratus.Internals.ViewLoader = function (el, view, requirements) {
-  var parentView = (view) || null
-  var parentChild = false
+  let parentView = (view) || null
+  let parentChild = false
 
-  var element = Stratus(el)
+  let element = Stratus(el)
   view = new Stratus.Internals.View()
   view.set('el', element)
   view.hydrate()
@@ -3082,13 +3083,16 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
   }
   view.clean()
 
+  let templates
+  let templateMap
+
   if (!parentChild) {
     // TODO: Add Previous Requirements Here!
     if (typeof requirements === 'undefined') requirements = ['stratus']
-    var template = view.get('template')
-    var templates = view.get('templates')
-    var dialogue = view.get('dialogue')
-    var templateMap = []
+    templates = view.get('templates')
+    templateMap = []
+    let template = view.get('template')
+    let dialogue = view.get('dialogue')
 
     // Add Scope
     if (view.get('scope') !== null) {
@@ -3100,8 +3104,8 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       requirements.push(view.get('alias'))
     } else if (view.get('path')) {
       requirements.push(view.get('path'))
-      var srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
-      var srcMatch = srcRegex.exec(view.get('path'))
+      let srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
+      let srcMatch = srcRegex.exec(view.get('path'))
       view.set('type', _.ucfirst(srcMatch[1]))
     } else {
       view.set({
@@ -3123,10 +3127,11 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
 
     // Gather All Templates
     if (templates !== null) {
-      for (var key in templates) {
+      let key
+      for (key in templates) {
         if (!templates.hasOwnProperty(key) || typeof templates[key] === 'function') continue
         if (templates[key].indexOf('#') === 0) {
-          var $domTemplate = $(templates[key])
+          let $domTemplate = $(templates[key])
           if ($domTemplate.length > 0) {
             templates[key] = $domTemplate.html()
           }
@@ -3156,9 +3161,10 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
     }
     require(requirements, function (Stratus) {
       if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.group('Stratus View')
-      var hydrationKey = 0
+      let hydrationKey = 0
       if (templates && templateMap.length > 0) {
-        for (var i = 0; i < arguments.length; i++) {
+        let i
+        for (i = 0; i < arguments.length; i++) {
           if (typeof arguments[i] === 'string') {
             if (arguments[i].indexOf('<html') === -1) {
               templates[templateMap[hydrationKey]] = arguments[i]
@@ -3174,19 +3180,19 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       view.set('templates', templates)
       templates = view.get('templates')
 
-      var subRequirements = []
+      let subRequirements = []
 
       /* Handle Custom Templates */
       if (_.size(templates) > 0) {
-        var re = /<.+?data-type=["|'](.+?)["|'].*>/gi
+        let re = /<.+?data-type=["|'](.+?)["|'].*>/gi
 
         /* Hydrate Underscore Templates */
         _.each(templates, function (value, key) {
           if (typeof value === 'string') {
             if (value.search(re) !== -1) {
-              var match = re.exec(value)
+              let match = re.exec(value)
               while (match !== null) {
-                var subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
+                let subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
                 if (subRequirement && !_.has(requirejs.s.contexts._.config.paths, subRequirement)) {
                   if (!Stratus.Environment.get('production')) console.warn('Sub Type:', subRequirement, 'not configured in require.js')
                 }
@@ -3211,7 +3217,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       }
 
       // Detect Loader Types
-      var loaderTypes = []
+      let loaderTypes = []
       if (view.get('plugin') !== null) loaderTypes.push('PluginLoader')
       if (view.get('type') !== null) loaderTypes.push('WidgetLoader')
 
@@ -3252,10 +3258,10 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
       Stratus.Models.set(view.get('entity'), Stratus.Models.Generic.extend({}))
     }
 
-    var modelReference
-    var modelInstance
-    var modelInit = false
-    var ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null
+    let modelReference
+    let modelInstance
+    let modelInit = false
+    let ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null
 
     if (!view.get('id') && view.get('manifest')) {
       modelInstance = view.get('entity') + 'Manifest'
@@ -3298,7 +3304,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
            */
     }
 
-    var collectionReference = Stratus.Collections.get(view.get('entity'))
+    let collectionReference = Stratus.Collections.get(view.get('entity'))
 
     // Run initialization when the correct settings are present
     if (!collectionReference.initialized && view.get('fetch')) {
@@ -3310,10 +3316,10 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
   }
 
   if (view.get('type') !== null) {
-    var type = _.ucfirst(view.get('type'))
+    let type = _.ucfirst(view.get('type'))
     if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
       // if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
-      var options = view.toObject()
+      let options = view.toObject()
       options.view = view
       Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options)
       Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))
@@ -3331,7 +3337,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
     }
     if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
   } else {
-    var nest = view.get('el').find('[data-type],[data-plugin]')
+    let nest = view.get('el').find('[data-type],[data-plugin]')
     if (nest.length > 0) {
       Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (resolution) {
         if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
@@ -3361,11 +3367,11 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
  * @constructor
  */
 Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) {
-  var types = _.union([view.get('plugin')], view.get('plugins'))
+  let types = _.union([view.get('plugin')], view.get('plugins'))
   _.each(types, function (type) {
     type = _.ucfirst(type)
     if (typeof Stratus.Views.Plugins[type] !== 'undefined') {
-      var options = view.toObject()
+      let options = view.toObject()
       options.view = view
       Stratus.Instances[view.get('uid')] = new Stratus.Views.Plugins[type](options)
       Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))
@@ -3390,19 +3396,19 @@ Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) 
  * @constructor
  */
 Stratus.Loaders.Angular = function () {
-  var requirement
-  var nodes
-  var injection
+  let requirement
+  let nodes
+  let injection
 
   // This contains references for the auto-loader below
-  var container = {
+  let container = {
     requirement: [],
     module: [],
     stylesheet: []
   }
 
   // TODO: Add references to this prototype in the tree builder, accordingly
-  var injector = function (injection) {
+  let injector = function (injection) {
     injection = injection || {}
     _.each(injection, function (element, attribute) {
       container[attribute] = container[attribute] || []
@@ -3435,7 +3441,7 @@ Stratus.Loaders.Angular = function () {
           nodes = document.querySelectorAll(selector)
           element.length += nodes.length
           if (nodes.length) {
-            var name = selector.replace(/^\[/, '').replace(/]$/, '')
+            let name = selector.replace(/^\[/, '').replace(/]$/, '')
             requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
               injection = {
@@ -3452,10 +3458,10 @@ Stratus.Loaders.Angular = function () {
         nodes = document.querySelectorAll(element.selector)
         element.length = nodes.length
         if (nodes.length) {
-          var attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
+          let attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
           if (element.namespace) {
             _.each(nodes, function (node) {
-              var name = node.getAttribute(attribute)
+              let name = node.getAttribute(attribute)
               if (name) {
                 requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')))
                 if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
@@ -3537,7 +3543,7 @@ Stratus.Loaders.Angular = function () {
     require(container.requirement, function () {
       // App Reference
       angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
-        var whitelist = [
+        let whitelist = [
           'self',
           'http://*.sitetheory.io/**',
           'https://*.sitetheory.io/**'
@@ -3560,7 +3566,7 @@ Stratus.Loaders.Angular = function () {
         $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
-        var buttons = [
+        let buttons = [
           'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
           'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
           'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
@@ -3639,8 +3645,8 @@ Stratus.Loaders.Angular = function () {
 
       // Load CSS
       // TODO: Move this reference to the stylesheets block above
-      var css = container.stylesheet
-      var cssLoaded = Stratus('link[satisfies]').map(function (node) {
+      let css = container.stylesheet
+      let cssLoaded = Stratus('link[satisfies]').map(function (node) {
         return node.getAttribute('satisfies')
       })
       if (!_.contains(cssLoaded, 'angular-material.css')) {
@@ -3674,7 +3680,7 @@ Stratus.Loaders.Angular = function () {
       // FIXME: What is above this line is total crap
 
       if (css.length) {
-        var counter = 0
+        let counter = 0
         _.each(css, function (url) {
           Stratus.Internals.CssLoader(url).then(function () {
             if (++counter === css.length) {
@@ -3703,8 +3709,7 @@ Stratus.Loaders.Angular = function () {
  */
 Stratus.Instances.Clean = function (instances) {
   if (typeof instances === 'undefined') {
-    console.error(
-      'Stratus.Instances.Clean() requires a string or array containing Unique ID(s).')
+    console.error('Stratus.Instances.Clean() requires a string or array containing Unique ID(s).')
   } else if (typeof instances === 'string') {
     instances = [instances]
   }
@@ -3760,8 +3765,8 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {string}
    */
   add: function (time, method, scope) {
-    var uid = null
-    var job = new Stratus.Prototypes.Job(time, method, scope)
+    let uid = null
+    let job = new Stratus.Prototypes.Job(time, method, scope)
     if (job.time !== null && typeof job.method === 'function') {
       uid = _.uniqueId('job_')
       this.set(uid, job)
@@ -3774,7 +3779,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {boolean|*}
    */
   enable: function (uid) {
-    var success = this.has(uid)
+    let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', true)
     }
@@ -3785,7 +3790,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {boolean|*}
    */
   disable: function (uid) {
-    var success = this.has(uid)
+    let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', false)
     }
@@ -3797,7 +3802,7 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
    * @returns {boolean|*}
    */
   toggle: function (uid, value) {
-    var success = this.has(uid)
+    let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled',
         (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'))
@@ -3829,7 +3834,7 @@ Stratus.PostMessage.Convoy = function (fn) {
 // appropriately.
 Stratus.PostMessage.Convoy(function (convoy) {
   // Single Sign On
-  var ssoEnabled = _.cookie('sso')
+  let ssoEnabled = _.cookie('sso')
   ssoEnabled = ssoEnabled === null ? true : (_.isJSON(ssoEnabled) ? JSON.parse(ssoEnabled) : false)
   if (ssoEnabled && convoy && convoy.meta && convoy.meta.session && convoy.meta.session !== _.cookie('SITETHEORY')) {
     _.cookie({
@@ -3970,7 +3975,7 @@ Stratus.Events.on('finalize', function () {
     if (Stratus.Internals.Anchor.initialize) {
       Stratus.Internals.Anchor = Stratus.Internals.Anchor()
     }
-    var anchor = new Stratus.Internals.Anchor()
+    let anchor = new Stratus.Internals.Anchor()
     if (!Stratus.Environment.get('production')) {
       console.log('Anchor:', anchor)
     }
@@ -4025,7 +4030,7 @@ Stratus.Events.on('confirm', function (message, handler) {
 
 // This event allows a Notification to reach the browser.
 Stratus.Events.on('notification', function (message, title) {
-  var options = {}
+  let options = {}
   if (message && typeof message === 'object') {
     _.extend(options, message)
     options.message = options.message || 'Message'
@@ -4034,7 +4039,7 @@ Stratus.Events.on('notification', function (message, title) {
   }
   options.title = options.title || title || 'Stratus'
   options.icon = options.icon || 'https://avatars0.githubusercontent.com/u/15791995?v=3&s=200'
-  var notification
+  let notification
   if (!('Notification' in window)) {
     console.info('This browser does not support desktop notifications.  You should switch to a modern browser.')
   } else if (window.Notification.permission === 'granted') {
@@ -4108,7 +4113,7 @@ Stratus.DOM.unload(function (event) {
   if (event.cancelable === true) {
       // TODO: Check if any unsaved changes exist on any Stratus Models then request confirmation of navigation
       event.preventDefault();
-      var confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
+      let confirmationMessage = 'You have pending changes, if you leave now, they may not be saved.';
       (event || window.event).returnValue = confirmationMessage;
       return confirmationMessage;
   }

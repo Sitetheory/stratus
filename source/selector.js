@@ -58,7 +58,7 @@ Stratus = _.extend(function (selector, context) {
  * @constructor
  */
 Stratus.Selector.attr = function (attr, value) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find "' + attr + '" for list:', that.selection)
     return null
@@ -78,7 +78,7 @@ Stratus.Selector.attr = function (attr, value) {
  * @returns {*}
  */
 Stratus.Selector.each = function (callable) {
-  var that = this
+  let that = this
   if (typeof callable !== 'function') {
     callable = function (element) {
       console.warn('each running on element:', element)
@@ -95,7 +95,7 @@ Stratus.Selector.each = function (callable) {
  * @returns {*}
  */
 Stratus.Selector.find = function (selector) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find "' + selector + '" for list:', that.selection)
   } else if (selector) {
@@ -109,7 +109,7 @@ Stratus.Selector.find = function (selector) {
  * @returns {*}
  */
 Stratus.Selector.map = function (callable) {
-  var that = this
+  let that = this
   if (typeof callable !== 'function') {
     callable = function (element) {
       console.warn('map running on element:', element)
@@ -128,7 +128,7 @@ Stratus.Selector.map = function (callable) {
  * @returns {*}
  */
 Stratus.Selector.append = function (child) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to append child:', child, 'to list:', that.selection)
   } else if (child) {
@@ -144,7 +144,7 @@ Stratus.Selector.append = function (child) {
  * @returns {*}
  */
 Stratus.Selector.prepend = function (child) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to prepend child:', child, 'to list:', that.selection)
   } else if (child) {
@@ -160,7 +160,7 @@ Stratus.Selector.prepend = function (child) {
  * @constructor
  */
 Stratus.Selector.addClass = function (className) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to add class "' + className + '" to list:', that.selection)
   } else {
@@ -181,7 +181,7 @@ Stratus.Selector.addClass = function (className) {
  * @constructor
  */
 Stratus.Selector.removeClass = function (className) {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to remove class "' + className + '" from list:', that.selection)
   } else if (that.selection.classList) {
@@ -200,7 +200,7 @@ Stratus.Selector.removeClass = function (className) {
  * @returns {CSSStyleDeclaration|*}
  */
 Stratus.Selector.style = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find style for list:', that.selection)
   } else if (that.selection instanceof window.Node) {
@@ -214,7 +214,7 @@ Stratus.Selector.style = function () {
  * @returns {number|*}
  */
 Stratus.Selector.height = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find height for list:', that.selection)
     return null
@@ -226,7 +226,7 @@ Stratus.Selector.height = function () {
  * @returns {number|*}
  */
 Stratus.Selector.width = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find width for list:', that.selection)
     return null
@@ -239,11 +239,11 @@ Stratus.Selector.width = function () {
  * @returns {{top: number, left: number}|*}
  */
 Stratus.Selector.offset = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find offset for list:', that.selection)
   } else if (that.selection.getBoundingClientRect) {
-    var rect = that.selection.getBoundingClientRect()
+    let rect = that.selection.getBoundingClientRect()
     return {
       top: rect.top + document.body.scrollTop,
       left: rect.left + document.body.scrollLeft
@@ -259,7 +259,7 @@ Stratus.Selector.offset = function () {
  * @returns {*}
  */
 Stratus.Selector.parent = function () {
-  var that = this
+  let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find offset for list:', that.selection)
     return null

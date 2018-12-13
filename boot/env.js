@@ -1,20 +1,22 @@
 // Environment
 // -----------
 
-/* global cacheTime, config */
+/* global boot, cacheTime, config */
 
 // Global Tools
-var hamlet = {}
-hamlet.isCookie = function (key) {
-  return typeof document.cookie === 'string' && document.cookie.indexOf(key + '=') !== -1
+const hamlet = {
+  isCookie: function (key) {
+    return typeof document.cookie === 'string' && document.cookie.indexOf(key + '=') !== -1
+  },
+  isUndefined: function (key) {
+    return undefined === this[key]
+  }.bind(this)
 }
-hamlet.isUndefined = function (key) {
-  return undefined === this[key]
-}.bind(this)
 
 // Initial Setup
 if (hamlet.isUndefined('boot')) {
-  var boot = {}
+  const boot = {}
+  boot.native = true
 }
 
 // Backward Compatibility
@@ -46,7 +48,7 @@ boot.merge = function (destination, source) {
   if (destination === null || source === null) {
     return destination
   }
-  for (var key in source) {
+  for (let key in source) {
     if (source.hasOwnProperty(key)) {
       destination[key] = (typeof destination[key] === 'object') ? boot.merge(
         destination[key], source[key]) : source[key]
@@ -62,7 +64,7 @@ boot.config = function (configuration, options) {
   }
   /* *
   if (typeof options !== 'object') options = {}
-  var args = [
+  let args = [
     boot.configuration,
     !configuration.paths ? { paths: configuration } : configuration
   ]
@@ -71,12 +73,12 @@ boot.config = function (configuration, options) {
   }
   return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration
   /* */
-  return boot.merge(boot.configuration, !configuration.paths ? {paths: configuration} : configuration)
+  return boot.merge(boot.configuration, !configuration.paths ? { paths: configuration } : configuration)
 }
 
 // Initialization
-if (typeof config !== 'undefined') {
-  var localConfig = typeof config === 'function' ? config(boot) : config
+if (!hamlet.isUndefined('config')) {
+  let localConfig = typeof config === 'function' ? config(boot) : config
   if (typeof localConfig === 'object' && localConfig) {
     boot.config(localConfig)
   }

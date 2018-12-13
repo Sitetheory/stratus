@@ -29,13 +29,13 @@
       controller: function ($scope, $window, $attrs, userAuthentication, utility) {
         // Initialize
         utility.componentInitializer(this, $scope, $attrs, 'password_reset', true)
-        var $ctrl = this
+        let $ctrl = this
 
         // variables
         $ctrl.resetPassData = {}
         $ctrl.loading = false
         $ctrl.isRequestSuccess = false
-        var isRequested = false
+        let isRequested = false
 
         // methods
         $ctrl.doResetPass = doResetPass
@@ -44,8 +44,8 @@
         $scope.$watch(angular.bind(this, function () {
           if (!isRequested) {
             $ctrl.isRequestSuccess = false
-            var password = this.resetPassData.password
-            var confirmPassword = this.resetPassData.confirm_password
+            let password = this.resetPassData.password
+            let confirmPassword = this.resetPassData.confirm_password
 
             if (password && validPassword(password) && $ctrl.progressBarValue >= 40) {
               $ctrl.message = password !== confirmPassword ? 'Your password did not match.' : null
@@ -55,7 +55,7 @@
           }
         }), function (newValue, oldValue) {
           if (newValue !== undefined && newValue !== oldValue) {
-            var strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
+            let strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
 
             $ctrl.progressBarClass = strengthBar.progressBarClass
             $ctrl.progressBarValue = strengthBar.progressBarValue
@@ -73,10 +73,10 @@
         function doResetPass (resetPassData) {
           $ctrl.loading = true
           isRequested = true
-          var requestType = getUrlParams().token
+          let requestType = getUrlParams().token
             ? 'reset-pasword'
             : 'change-password'
-          var data = {
+          let data = {
             type: requestType,
             email: $attrs.userEmail,
             token: getUrlParams().token,
@@ -92,12 +92,12 @@
 
         // Helpers
         function validPassword (password) {
-          var passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/
+          let passwordRegex = /^(?:(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*)$/
           return password.length >= 8 && passwordRegex.test(password)
         }
 
         function getUrlParams () {
-          var url = new URL($window.location.href)
+          let url = new URL($window.location.href)
           return {
             type: url.searchParams.get('type'),
             email: url.searchParams.get('email'),

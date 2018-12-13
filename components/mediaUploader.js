@@ -46,7 +46,7 @@
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'media_uploader',
         true)
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.$onInit = function () {
         $ctrl.files = []
         $ctrl.uploadingFiles = false
@@ -140,7 +140,7 @@
           })
           confirmDialogPromise.then(isUnsavedVideo => {
             if (isUnsavedVideo) {
-              var confirm = $mdDialog.confirm()
+              let confirm = $mdDialog.confirm()
                 .title('You have not saved your video information.')
                 .textContent('Are you sure you want to abandon this video before saving?')
                 .ok('Abandon Video')
@@ -154,7 +154,7 @@
             }
           })
         } else if ($ctrl.uploadingFiles) {
-          var confirm = $mdDialog.confirm()
+          let confirm = $mdDialog.confirm()
             .title('Media upload is in progress.')
             .textContent('Are you sure you want to abandon uploading?')
             .ok('Abandon')
@@ -177,7 +177,7 @@
       }
 
       function addExternalFile (fileType) {
-        var newFile = {
+        let newFile = {
           url: null,
           name: null,
           tags: [],
@@ -207,7 +207,7 @@
           return
         }
 
-        var data = {
+        let data = {
           service: file.service && file.service.value ? file.service.value : '',
           name: file.name,
           tags: file.tags,
@@ -248,7 +248,7 @@
             data.url = 'https://player.vimeo.com/video/' + response.videoId
           }
 
-          var mediaSavePromise = null
+          let mediaSavePromise = null
           if ($ctrl.fileId) {
             mediaSavePromise = media.updateMedia($ctrl.fileId, data)
           } else {
@@ -261,9 +261,9 @@
                 $ctrl.fileData = response.data.payload
               }
               // Refresh the library
-              // var newMedia = media.getMedia($ctrl)
-              var type = fileType && fileType === 'video' ? 'videos' : 'links'
-              var index = $ctrl[type].indexOf(file)
+              // let newMedia = media.getMedia($ctrl)
+              let type = fileType && fileType === 'video' ? 'videos' : 'links'
+              let index = $ctrl[type].indexOf(file)
               $ctrl[type][index].isUploaded = true
               $ctrl.unsavedVideos = false
               if (type === 'videos') {
@@ -291,7 +291,7 @@
         if (invalidFiles && invalidFiles.length > 0) {
           $ctrl.uploadingFiles = false
           invalidFiles.forEach(function (file) {
-            var msg
+            let msg
             switch (file.$error) {
               case 'maxSize':
                 msg = 'Looks like one of your files is too large. You can upload files up to '
@@ -311,12 +311,12 @@
         // Handle uploading status for valid files
         if (files && files.length > 0) {
           $ctrl.uploadingFiles = true
-          var uploadFilePromise = []
+          let uploadFilePromise = []
           if ($ctrl.ngfMultiple) {
             // Upload new files
-            var i
+            let i
             for (i = 0; i < files.length; i++) {
-              var singleFile = media.fileUploader(files[i])
+              let singleFile = media.fileUploader(files[i])
               uploadFilePromise.push(singleFile.upload)
               $ctrl.files.push(singleFile)
             }
@@ -330,17 +330,17 @@
             $ctrl.uploadingFiles = false
 
             // Refresh the library
-            media.getMedia($ctrl)
+            //media.getMedia($ctrl)
           })
         }
       }
 
       function createTag (file, query) {
-        var data = { name: query }
+        let data = { name: query }
         media.createTag(data).then(function (response) {
           if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
-            var type = file.mime === 'video' ? 'videos' : 'links'
-            var index = $ctrl[type].indexOf(file)
+            let type = file.mime === 'video' ? 'videos' : 'links'
+            let index = $ctrl[type].indexOf(file)
             $ctrl[type][index].tags.push(response.data.payload)
           }
         })
@@ -358,7 +358,7 @@
               let vimeoApiUrl = $sce.trustAsResourceUrl('https://vimeo.com/api/v2/video/' + vimeoId + '.json')
               $http.jsonp(vimeoApiUrl, { jsonpCallbackParam: 'callback' })
                 .then(function successCallback (response) {
-                  var meta = {}
+                  let meta = {}
                   meta['thumbnail_small'] = response.data[0].thumbnail_small
                   meta['thumbnail_medium'] = response.data[0].thumbnail_medium
                   meta['thumbnail_large'] = response.data[0].thumbnail_large

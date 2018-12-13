@@ -54,7 +54,7 @@
 
       // handle click action
       $scope.toggle = function (roleId) {
-        var index = $scope.showOnly.indexOf(roleId);
+        let index = $scope.showOnly.indexOf(roleId);
         (index !== -1)
           ? $scope.showOnly.splice(index, 1)
           : $scope.showOnly.push(roleId)

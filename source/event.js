@@ -8,14 +8,14 @@
 // loaded at this time.
 
 // Regular expression used to split event strings.
-var eventSplitter = /\s+/
+let eventSplitter = /\s+/
 
 // Iterates over the standard `event, callback` (as well as the fancy multiple
 // space-separated events `"change blur", callback` and jQuery-style event
 // maps `{event: callback}`).
-var eventsApi = function (iteratee, events, name, callback, opts) {
-  var i = 0
-  var names
+let eventsApi = function (iteratee, events, name, callback, opts) {
+  let i = 0
+  let names
   if (name && typeof name === 'object') {
     // Handle event maps.
     if (callback !== void 0 && 'context' in opts &&
@@ -44,7 +44,7 @@ Stratus.Events.on = function (name, callback, context) {
 }
 
 // Guard the `listening` argument from the public API.
-var internalOn = function (obj, name, callback, context, listening) {
+let internalOn = function (obj, name, callback, context, listening) {
   obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
     context: context,
     ctx: obj,
@@ -52,7 +52,7 @@ var internalOn = function (obj, name, callback, context, listening) {
   })
 
   if (listening) {
-    var listeners = obj._listeners || (obj._listeners = {})
+    let listeners = obj._listeners || (obj._listeners = {})
     listeners[listening.id] = listening
   }
 
@@ -66,14 +66,14 @@ Stratus.Events.listenTo = function (obj, name, callback) {
   if (!obj) {
     return this
   }
-  var id = obj._listenId || (obj._listenId = _.uniqueId('l'))
-  var listeningTo = this._listeningTo || (this._listeningTo = {})
-  var listening = listeningTo[id]
+  let id = obj._listenId || (obj._listenId = _.uniqueId('l'))
+  let listeningTo = this._listeningTo || (this._listeningTo = {})
+  let listening = listeningTo[id]
 
   // This object is not listening to any other events on `obj` yet.
   // Setup the necessary references to track the listening callbacks.
   if (!listening) {
-    var thisId = this._listenId || (this._listenId = _.uniqueId('l'))
+    let thisId = this._listenId || (this._listenId = _.uniqueId('l'))
     listening = listeningTo[id] = {
       obj: obj,
       objId: id,
@@ -89,12 +89,12 @@ Stratus.Events.listenTo = function (obj, name, callback) {
 }
 
 // The reducing API that adds a callback to the `events` object.
-var onApi = function (events, name, callback, options) {
+let onApi = function (events, name, callback, options) {
   if (callback) {
-    var handlers = events[name] || (events[name] = [])
-    var context = options.context
-    var ctx = options.ctx
-    var listening = options.listening
+    let handlers = events[name] || (events[name] = [])
+    let context = options.context
+    let ctx = options.ctx
+    let listening = options.listening
     if (listening) {
       listening.count++
     }
@@ -127,15 +127,16 @@ Stratus.Events.off = function (name, callback, context) {
 // Tell this object to stop listening to either specific events ... or
 // to every object it's currently listening to.
 Stratus.Events.stopListening = function (obj, name, callback) {
-  var listeningTo = this._listeningTo
+  let listeningTo = this._listeningTo
   if (!listeningTo) {
     return this
   }
 
-  var ids = obj ? [obj._listenId] : _.keys(listeningTo)
+  let ids = obj ? [obj._listenId] : _.keys(listeningTo)
 
-  for (var i = 0; i < ids.length; i++) {
-    var listening = listeningTo[ids[i]]
+  let i
+  for (i = 0; i < ids.length; i++) {
+    let listening = listeningTo[ids[i]]
 
     // If listening doesn't exist, this object is not currently
     // listening to obj. Break out early.
@@ -150,19 +151,19 @@ Stratus.Events.stopListening = function (obj, name, callback) {
 }
 
 // The reducing API that removes a callback from the `events` object.
-var offApi = function (events, name, callback, options) {
+let offApi = function (events, name, callback, options) {
   if (!events) {
     return
   }
 
-  var i = 0
-  var listening
-  var context = options.context
-  var listeners = options.listeners
+  let i = 0
+  let listening
+  let context = options.context
+  let listeners = options.listeners
 
   // Delete all events listeners and "drop" events.
   if (!name && !callback && !context) {
-    var ids = _.keys(listeners)
+    let ids = _.keys(listeners)
     for (; i < ids.length; i++) {
       listening = listeners[ids[i]]
       delete listeners[listening.id]
@@ -171,10 +172,10 @@ var offApi = function (events, name, callback, options) {
     return
   }
 
-  var names = name ? [name] : _.keys(events)
+  let names = name ? [name] : _.keys(events)
   for (; i < names.length; i++) {
     name = names[i]
-    var handlers = events[name]
+    let handlers = events[name]
 
     // Bail out if there are no events stored.
     if (!handlers) {
@@ -182,9 +183,9 @@ var offApi = function (events, name, callback, options) {
     }
 
     // Replace events if there are any remaining.  Otherwise, clean up.
-    var remaining = []
-    for (var j = 0; j < handlers.length; j++) {
-      var handler = handlers[j]
+    let remaining = []
+    for (let j = 0; j < handlers.length; j++) {
+      let handler = handlers[j]
       if (
         (callback && callback !== handler.callback && callback !== handler.callback._callback) ||
         (context && context !== handler.context)
@@ -215,7 +216,7 @@ var offApi = function (events, name, callback, options) {
 // once for each event, not once for a combination of all events.
 Stratus.Events.once = function (name, callback, context) {
   // Map the event into a `{event: once}` object.
-  var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this))
+  let events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this))
   if (typeof name === 'string' && context == null) {
     callback = void 0
   }
@@ -225,16 +226,16 @@ Stratus.Events.once = function (name, callback, context) {
 // Inversion-of-control versions of `once`.
 Stratus.Events.listenToOnce = function (obj, name, callback) {
   // Map the event into a `{event: once}` object.
-  var events = eventsApi(onceMap, {}, name, callback,
+  let events = eventsApi(onceMap, {}, name, callback,
     _.bind(this.stopListening, this, obj))
   return this.listenTo(obj, events)
 }
 
 // Reduces the event callbacks into a map of `{event: onceWrapper}`.
 // `offer` unbinds the `onceWrapper` after it has been called.
-var onceMap = function (map, name, callback, offer) {
+let onceMap = function (map, name, callback, offer) {
   if (callback) {
-    var once = map[name] = _.once(function () {
+    let once = map[name] = _.once(function () {
       offer(name, once)
       callback.apply(this, arguments)
     })
@@ -252,9 +253,10 @@ Stratus.Events.trigger = function (name) {
     return this
   }
 
-  var length = Math.max(0, arguments.length - 1)
-  var args = Array(length)
-  for (var i = 0; i < length; i++) {
+  let length = Math.max(0, arguments.length - 1)
+  let args = Array(length)
+  let i
+  for (i = 0; i < length; i++) {
     args[i] = arguments[i + 1]
   }
 
@@ -263,10 +265,10 @@ Stratus.Events.trigger = function (name) {
 }
 
 // Handles triggering the appropriate event callbacks.
-var triggerApi = function (objEvents, name, callback, args) {
+let triggerApi = function (objEvents, name, callback, args) {
   if (objEvents) {
-    var events = objEvents[name]
-    var allEvents = objEvents.all
+    let events = objEvents[name]
+    let allEvents = objEvents.all
     if (events && allEvents) {
       allEvents = allEvents.slice()
     }
@@ -283,13 +285,13 @@ var triggerApi = function (objEvents, name, callback, args) {
 // A difficult-to-believe, but optimized internal dispatch function for
 // triggering events. Tries to keep the usual cases speedy (most internal
 // Backbone events have 3 arguments).
-var triggerEvents = function (events, args) {
-  var ev
-  var i = -1
-  var l = events.length
-  var a1 = args[0]
-  var a2 = args[1]
-  var a3 = args[2]
+let triggerEvents = function (events, args) {
+  let ev
+  let i = -1
+  let l = events.length
+  let a1 = args[0]
+  let a2 = args[1]
+  let a3 = args[2]
   switch (args.length) {
     case 0:
       while (++i < l) {

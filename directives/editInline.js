@@ -46,7 +46,7 @@
           return
         }
 
-        var ctrl = {
+        let ctrl = {
           initialized: false,
           rendered: false
         }
@@ -119,12 +119,12 @@
           if (win === undefined) {
             win = window
           }
-          var sel
-          var range
+          let sel
+          let range
           if (win.getSelection) {
             sel = win.getSelection()
             if (sel.rangeCount > 0) {
-              var textNode = sel.focusNode
+              let textNode = sel.focusNode
 
               if (textNode.length === undefined && textNode.childNodes[0]) {
                 textNode = textNode.childNodes[0]
@@ -134,7 +134,7 @@
                 return false
               }
 
-              var newOffset = sel.focusOffset + moveAmount
+              let newOffset = sel.focusOffset + moveAmount
               range = document.createRange()
               range.setStart(textNode,
                 Math.min((textNode.length || 0) + moveAmount, newOffset))
@@ -173,7 +173,7 @@
           if (data instanceof Model && !_.isEqual(data, $scope.model)) {
             $scope.model = data
             if (ctrl.initialized !== true) {
-              var unwatch = $scope.$watch('model.data', function (dataCheck) {
+              let unwatch = $scope.$watch('model.data', function (dataCheck) {
                 if (dataCheck !== undefined) {
                   unwatch() // Remove this watch as soon as it's run once
                   ctrl.init() // Initialize only after there is a model to

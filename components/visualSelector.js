@@ -72,7 +72,7 @@
         'visual_selector', true)
 
       // Variables
-      var $ctrl = this
+      let $ctrl = this
 
       $ctrl.$onInit = function () {
         $ctrl.layoutData = null

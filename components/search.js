@@ -24,6 +24,9 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+
   // This component handles searching to filter a collection
   Stratus.Components.Search = {
     bindings: {
@@ -32,19 +35,19 @@
       display: '@',
       placeholder: '@'
     },
-    controller: function ($scope, $attrs, Registry, Collection) {
+    controller: function ($scope, $attrs, Registry, Collection, $log) {
       Stratus.Instances[_.uniqueId('search_')] = $scope
-      Stratus.Internals.CssLoader(Stratus.BaseUrl +
-       Stratus.BundlePath + 'components/search' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/search' + min + '.css'
+      )
 
       // Settings
-      $scope.display = $attrs.display && _.isJSON($attrs.display) ? JSON.parse(
-        $attrs.display) : false
+      $scope.display = $attrs.display && _.isJSON($attrs.display) ? JSON.parse($attrs.display) : false
 
-      // Localize Collection
+      // Localize Data
+      $scope.data = null
       $scope.collection = null
-      $scope.$watch('$parent.collection', function (data) {
+      $scope.$watch('$parent.data', function (data) {
         if (data && data instanceof Collection) {
           $scope.collection = data
         }
@@ -53,8 +56,9 @@
       // Initial Query
       $scope.query = ''
 
-      // TODO: Add the ability to use either its own collection or hoist the
-      // parent's
+      $log.log('search:', $scope)
+
+      // TODO: Add the ability to use either its own collection or hoist the parent's
 
       /* *
       $scope.$watch('query', function (query) {
@@ -65,8 +69,6 @@
       $scope.registry.fetch('Media', $scope);
       /* */
     },
-    templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/search' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/search' + min + '.html'
   }
 }))

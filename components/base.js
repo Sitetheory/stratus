@@ -27,9 +27,14 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+
   // This component is just a simple base.
   Stratus.Components.Base = {
-    transclude: true,
+    transclude: {
+      model: '?stratusBaseModel'
+    },
     bindings: {
       // Basic Control for Designers
       elementId: '@',
@@ -51,13 +56,16 @@
       limit: '@',
       options: '<'
     },
-    controller: function ($scope, $attrs, Registry, Model, Collection, $log) {
+    controller: function ($scope, $attrs, $log, Registry, Model, Collection) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId('base_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
-      Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + min + '.css'
+      )
+      $scope.initialized = false
 
       // Hoist Attributes
       $scope.property = $attrs.property || null
@@ -83,9 +91,11 @@
       })
 
       // Display Complete Build
-      $log.log('component:', $scope, $attrs)
+      if (!Stratus.Environment.get('production')) {
+        $log.log('component:', $scope, $attrs)
+      }
     },
     // template: '<div id="{{ elementId }}"><div ng-if="model && property && model.get(property)" style="list-style-type: none;">{{ model.get(property) | json }}</div><ul ng-if="collection && model && property" ng-cloak><stratus-search></stratus-search><li ng-repeat="model in collection.models">{{ model.data | json }}</li><stratus-pagination></stratus-pagination></ul></div>',
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + min + '.html'
   }
 }))

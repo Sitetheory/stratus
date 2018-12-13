@@ -57,7 +57,7 @@
       utility.componentInitializer(this, $scope, $attrs, 'media_library',
         true)
 
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.$onInit = function () {
         // Variables
 
@@ -85,7 +85,7 @@
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: OpenUploaderController,
-          template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="file-id" dragged-files="draggedFiles" invalid-files="invalidFiles"></stratus-media-uploader>',
+          template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" dragged-files="draggedFiles" invalid-files="invalidFiles"></stratus-media-uploader>',
           clickOutsideToClose: false,
           focusOnOpen: true,
           autoWrap: true,
@@ -97,7 +97,7 @@
             invalidFiles: invalidFiles
           }
         }).then(function () {
-          media.getMedia($ctrl)
+          media.getMedia($scope)
         })
 
         function OpenUploaderController (
@@ -181,10 +181,10 @@
 
       $scope.$watch('collection.models', function (data) {
         if (!_.isUndefined(data) && $ctrl.mediaSelectorDraggedFiles && $ctrl.mediaSelectorDraggedFiles.length > 0) {
-          for (var i = 0; i < $ctrl.mediaSelectorDraggedFiles.length; i++) {
-            var addedFile = $ctrl.mediaSelectorDraggedFiles[i]
-            for (var j = 0; j < $scope.collection.models.length; j++) {
-              var media = $scope.collection.models[j]
+          for (let i = 0; i < $ctrl.mediaSelectorDraggedFiles.length; i++) {
+            let addedFile = $ctrl.mediaSelectorDraggedFiles[i]
+            for (let j = 0; j < $scope.collection.models.length; j++) {
+              let media = $scope.collection.models[j]
               if (addedFile.id === media.data.id) {
                 media.data.selectedClass = true
               }

@@ -64,7 +64,7 @@
       // Registry Connectivity
       if ($attrs.type) {
         $scope.registry = new Registry()
-        var request = {
+        let request = {
           target: $attrs.type,
           decouple: true,
           api: {

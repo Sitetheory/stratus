@@ -65,7 +65,7 @@
       utility.componentInitializer(this, $scope, $attrs, 'theme_selector',
         true)
 
-      var $ctrl = this
+      let $ctrl = this
 
       $ctrl.$onInit = function () {
         // Hydrate Settings
@@ -120,7 +120,7 @@
           if (theme[0] && theme[1] && theme[1].length > 0) {
             $ctrl.currentThemes = theme[1]
             if (!$ctrl.selectedTheme) {
-              var themeData = $ctrl.currentThemes.map(function (obj) {
+              let themeData = $ctrl.currentThemes.map(function (obj) {
                 return obj.data
               })
               $ctrl.selectedTheme = theme[0]
@@ -164,7 +164,7 @@
        * @param themeData
        */
       function finishChoosingTheme (themeData) {
-        var data = {
+        let data = {
           templateId: themeData.id
         }
         visualSelector.selectTheme(data).then(function (res) {

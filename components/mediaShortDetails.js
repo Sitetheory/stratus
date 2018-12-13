@@ -29,7 +29,7 @@
       isSelector: '<'
     },
     controller: function ($scope) {
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.$onInit = function () {
         // Methods
         $ctrl.showDetails = showDetails

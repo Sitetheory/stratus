@@ -56,7 +56,7 @@
         // Initialize
         utility.componentInitializer(this, $scope, $attrs,
           'media_details', true)
-        var $ctrl = this
+        let $ctrl = this
 
         $ctrl.$onInit = function () {
           // Variables
@@ -79,7 +79,7 @@
         function initFile (fileData) {
           if (fileData.url) {
             if (fileData.mime === 'video') {
-              var videoUrl
+              let videoUrl
               if (fileData.service === 'youtube') {
                 videoUrl = 'https://www.youtube.com/embed/' + media.getYouTubeID(fileData.url)
               } else if (fileData.service === 'vimeo') {
@@ -110,7 +110,7 @@
         }
 
         function deleteMedia () {
-          var fileId = $ctrl.media.id
+          let fileId = $ctrl.media.id
           if (!Stratus.Environment.get('production')) {
             console.log(fileId)
           }
@@ -170,7 +170,7 @@
           $mdDialog.show({
             attachTo: angular.element(document.querySelector('#listContainer')),
             controller: OpenUploaderController,
-            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="file-id" file-data="fileData"></stratus-media-uploader>',
+            template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" file-id="fileId" file-data="fileData"></stratus-media-uploader>',
             clickOutsideToClose: false,
             focusOnOpen: true,
             autoWrap: true,
@@ -202,13 +202,13 @@
         }
 
         function createTag (query, fileId, tags) {
-          var data = {
+          let data = {
             name: query
           }
           media.createTag(data).then(function (response) {
             if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
               if ((fileId !== undefined && tags !== undefined) || (response.data.payload !== undefined)) {
-                var dataRes = {}
+                let dataRes = {}
                 $ctrl.tags.push(response.data.payload)
                 $ctrl.media.tags.push(response.data.payload)
                 dataRes.tags = $ctrl.tags
@@ -237,7 +237,7 @@
 
         // Handle updating title & description
         function doneEditing (fileId, item) {
-          var data = {}
+          let data = {}
           if (item.description) {
             data.description = item.description
           }
@@ -259,7 +259,7 @@
             return
           }
           if ($ctrl.infoId !== undefined) {
-            var dataRes = {}
+            let dataRes = {}
 
             dataRes.tags = $ctrl.tags
             media.updateMedia($ctrl.infoId, dataRes).then(
