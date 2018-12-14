@@ -1,3 +1,10 @@
+/* Media library title */
+#media-library .selected-media-label {
+  margin-bottom: 0;
+  border-bottom: 1px solid #ebebeb;
+}
+
+
 .media-content li.library-toggle {
   padding: 0;
 }
@@ -21,4 +28,8 @@
 .media-content li.library-toggle a md-icon svg g {
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
+}
+
+.media-item:hover .image-draggable {
+  opacity: 0.65;
 }

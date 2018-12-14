@@ -2,10 +2,10 @@
 
 
 <div id="media-library">
-    <div class="media-library border-default border-default-all border-radius-default">
+    <div ng-class="{'media-component border-default border-default-all border-radius-default' : $ctrl.isSelector, 'full' : !$ctrl.isSelector}" class="media-library">
 
             <!--<p class="section-container small-label selected-media-label">Media Library</p>-->
-            <div class="section-container">
+            <div ng-class="{'section-container' : $ctrl.isSelector}">
                 <div class="library-header">
                     <div  layout="row" layout-align="space-between center">
                         <stratus-search class="media-search" placeholder="Search by title, date or tag"></stratus-search>
@@ -21,8 +21,11 @@
                                         md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
                             </div>
                             <h4 class="small-label">Thumb</h4>
+                            <!--
+                            <md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>-->
 
-                            <md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
+                            <md-slider min="4" max="8" ng-model="thumbList.changeColumns" aria-label="thumb size" id="thumb-slider"></md-slider>
+
                         </div>
 
                         <!-- Add Button -->
@@ -36,18 +39,23 @@
 
                 <div class="media-content library-content">
                     <ul class="list-inline medias"
+                        style="column-count: {{thumbList.changeColumns}};"
                          ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
                          ngf-multiple="true"
                          ngf-max-files="10"
                          ngf-model-invalid="invalid-files"
                          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
                         <li ng-repeat="media in collection.models" class="position-anchor" ng-if="media.data.url || media.data.file || media.data.embed"
-                             ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">
+                             ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" ng-style="$ctrl.isSelector && {width: {{thumbColumn.changeSize/10}}%}}">
                             <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
 
                                 <!-- Video Thumb -->
-                                <div ng-if="media.data.mime == 'video'" class="video-thumb image-draggable" style="background-image: url('{{getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                <div ng-if="media.data.mime == 'video'"
+                                     class="video-thumb image-draggable"
+                                     ng-style="$ctrl.isSelector && {'background-image':'url({{getThumbnailImgOfVideo(media.data)}})', 'background-position': 'center center', 'background-size': 'cover'}"
+                                     ng-dblclick="showDetails(media.data)}">
+                                    <img ng-if="$ctrl.isSelector" class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                    <img ng-if="!$ctrl.isSelector" src="{{getThumbnailImgOfVideo(media.data)}}">
                                     <div class="thumb-icon icon-video">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
                                     </div>
@@ -70,17 +78,18 @@
                                 </div>
 
                                 <!-- Image Thumb -->
-                                <div ng-if="media.data.mime.indexOf('image') > -1" class="image-draggable" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                <div ng-if="media.data.mime.indexOf('image') > -1" class="image-draggable"
+                                     ng-style="$ctrl.isSelector && {'background-image':'url({{media.data.url}})', 'background-position': 'center center', 'background-size': 'cover'}"
+                                     ng-dblclick="showDetails(media.data)">
+                                    <img ng-if="$ctrl.isSelector" class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                                    <img ng-if="!$ctrl.isSelector" src="{{media.data.url}}">
                                     <div class="thumb-gradient">&nbsp;</div>
                                     <div class="thumb-icon icon-video">
                                         <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
                                     </div>
                                 </div>
 
-                                <!--
-                                TODO: Discuss merits of lazy loading vs. background image
-                                <img ng-if="media.data.mime.indexOf('image') > -1" stratus-src="{{media.data.url || media.data.file}}">-->
+                                <!-- TODO: Enable lazy loading for background image -->
 
                                 <!-- Image hover info -->
                                 <stratus-media-short-details media="media.data"></stratus-media-short-details>
