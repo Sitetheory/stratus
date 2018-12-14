@@ -56,8 +56,6 @@
       // Initial Query
       $scope.query = ''
 
-      $log.log('search:', $scope)
-
       // TODO: Add the ability to use either its own collection or hoist the parent's
 
       /* *

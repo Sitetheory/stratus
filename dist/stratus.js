@@ -42,11 +42,11 @@
  * @returns {NodeList|Node}
  * @constructor
  */
-const Stratus = {
+let Stratus = {
   /* Settings */
   Settings: {
     image: {
-      size: {xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600}
+      size: { xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600 }
     },
     status: {
       reset: -2,
@@ -1748,7 +1748,7 @@ Stratus.Internals.Api = function (route, meta, payload) {
   }
 
   if (typeof meta !== 'object') {
-    meta = {method: meta}
+    meta = { method: meta }
   }
   if (!_.has(meta, 'method')) {
     meta.method = 'GET'
@@ -1866,7 +1866,7 @@ Stratus.Internals.Convoy = function (convoy, query) {
         },
         error: function (response) {
           reject(
-            new Stratus.Prototypes.Error({code: 'Convoy', message: response},
+            new Stratus.Prototypes.Error({ code: 'Convoy', message: response },
               this))
           return response
         }
@@ -2102,7 +2102,7 @@ Stratus.Internals.LoadCss = function (urls) {
       })
     } else {
       reject(new Stratus.Prototypes.Error(
-        {code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
+        { code: 'LoadCSS', message: 'No CSS Resource URLs found!' }, this))
     }
   })
 }
@@ -2424,7 +2424,7 @@ Stratus.Internals.Resource = function (path, elementId) {
         data: null
       }
       Stratus.Events.once('resource:' + path, resolve)
-      let meta = {path: path, dataType: 'text'}
+      let meta = { path: path, dataType: 'text' }
       if (elementId !== undefined) {
         meta.elementId = elementId
       }
