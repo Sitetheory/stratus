@@ -27,7 +27,10 @@
       // Services
       'stratus.services.registry',
       'stratus.services.model',
-      'stratus.services.collection'
+      'stratus.services.collection',
+
+      // Directives
+      'stratus.directives.src'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.Swiper)
@@ -117,10 +120,20 @@
           }
         })
 
+        // Image Conversion
+        $scope.$watch('collection.models', function (models) {
+          $scope.images = $scope.images || []
+          models = models || []
+          models.forEach(function (model) {
+            $scope.images.push('model:', model.data)
+          })
+        })
+
         // Initialization by Event
         $ctrl.$onInit = function () {
           let initNow = true
           if ($attrs.$attr.hasOwnProperty('initNow')) {
+            // TODO: This needs better logic to determine what is acceptably initialized
             initNow = _.isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
           }
 
@@ -241,7 +254,6 @@
           $scope.scrollbar = $attrs.scrollbar && _.isJSON($attrs.scrollbar) ? JSON.parse($attrs.scrollbar) : false
 
           initImages(images)
-          initSwiper()
 
           $scope.initialized = true
         }
@@ -298,9 +310,9 @@
         /**
          * Setup and load Swiper using the previously defined variables
          */
-        function initSwiper () {
+        $scope.initSwiper = function initSwiper () {
           // TODO shouldn't be querying global, need to select like this: probably need to get away from className however
-          $ctrl.swiperContainer = $element[0].getElementsByClassName('swiper-main')[0].getElementsByClassName('swiper-container')[0]
+          $ctrl.swiperContainer = $element[0].querySelector('.swiper-container')
 
           $ctrl.swiperParameters = {
             // Optional parameters

@@ -251,6 +251,9 @@ boot.config({
     'angular-froala': {
       deps: ['angular', 'froala']
     },
+    'angular-drag-and-drop-lists': {
+      deps: ['angular']
+    },
 
     /* Calendar */
     fullcalendar: {
@@ -529,7 +532,9 @@ boot.config({
 
     /* jQuery */
     'jquery-sandbox': boot.bundle + 'stratus/normalizers/jquery.sandbox' + boot.suffix,
-    jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix
+    jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
+
+    'angular-drag-and-drop-lists': boot.bundle + 'stratus/node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists' + boot.suffix
   }
 })
 

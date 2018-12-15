@@ -1,11 +1,17 @@
-<div class="swiper-flex" ng-class="{'swiper-main': !gallery, 'swiper-gallery': gallery}">
-  <div class="swiper-container">
+<div id="{{ elementId }}" class="swiper-flex" data-injection="swiper" ng-class="{'swiper-main': !gallery, 'swiper-gallery': gallery}">
+  <div class="swiper-container" ng-class="{'gallery-top': gallery}" ng-init="initSwiper()">
     <div class="swiper-wrapper">
-      <div class="swiper-slide" ng-repeat="image in images">
-        <div ng-class="::scaleHeight ? 'swiper-zoom-container' : ''">
+      <div class="swiper-slide" ng-repeat="image in images track by $index">
+        <div ng-class="{'swiper-zoom-container': ::scaleHeight}">
           <div ng-if="::lazyLoad" class="swiper-lazy-preloader"></div>
-          <img class="swiper-image {{lazyLoad ? 'swiper-lazy' : ''}} {{stretchWidth ? 'stretch-image' : ''}}"
-               ng-src="{{::image.src}}" ng-click="imageClick(image, $event)"/>
+          <img class="swiper-image" ng-class="{'stretch-image': stretchWidth}"
+               ng-if="!lazyLoad"
+               ng-click="imageClick(image, $event)"
+               ng-src="{{::(image.src||image.url)}}" />
+          <img class="swiper-image swiper-lazy" ng-class="{'stretch-image': stretchWidth}"
+               ng-if="lazyLoad"
+               ng-click="imageClick(image, $event)" stratus-src
+               data-src="{{::(image.src||image.url)}}" />
         </div>
       </div>
     </div>
