@@ -3,15 +3,20 @@
     <div class="swiper-wrapper">
       <div class="swiper-slide" ng-repeat="image in images track by $index">
         <div ng-class="{'swiper-zoom-container': scaleHeight}">
-          <div ng-if="::lazyLoad" class="swiper-lazy-preloader"></div>
+          <!--<div ng-if="::lazyLoad" class="swiper-lazy-preloader"></div>-->
           <img class="swiper-image" ng-class="{'stretch-image': stretchWidth}"
                ng-if="!lazyLoad"
                ng-click="imageClick(image, $event)"
                ng-src="{{::(image.src||image.url)}}" />
-          <img class="swiper-image swiper-lazy" ng-class="{'stretch-image': stretchWidth}"
+          <!-- swiper-lazy -->
+          <img class="swiper-image" ng-class="{'stretch-image': stretchWidth}"
                ng-if="lazyLoad"
                ng-click="imageClick(image, $event)"
-               data-src="{{::(image.src||image.url)}}" />
+               stratus-src
+               ng-src="{{::(image.src||image.url)}}" />
+          <div class="small-label font-primary bold"
+               ng-if="image.name" ng-bind="image.name">
+          </div>
         </div>
       </div>
     </div>

@@ -16,6 +16,9 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+
   // This component is just a simple drawer.
   Stratus.Components.Drawer = {
     transclude: {
@@ -31,11 +34,7 @@
       $ctrl.uid = _.uniqueId('drawer_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
-      /* *
-      Stratus.Internals.CssLoader(Stratus.BaseUrl +
-        Stratus.BundlePath + 'components/drawer' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
-      /* */
+      Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + 'components/drawer' + min + '.css')
 
       // Functionality
       $ctrl.display = false
@@ -44,7 +43,6 @@
       }
       // $log.log('component:', $ctrl, $scope, $attrs)
     },
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/drawer' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/drawer' + min + '.html'
   }
 }))

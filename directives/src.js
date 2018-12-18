@@ -19,7 +19,7 @@
         src: '@src',
         stratusSrc: '@stratusSrc'
       },
-      link: function ($scope, $element) {
+      link: function ($scope, $element, $attr) {
         Stratus.Instances[_.uniqueId('src_')] = $scope
         $scope.whitelist = [
           'jpg',
@@ -28,13 +28,26 @@
         ]
         $scope.filter = null
 
+        // Add Watchers
+        $scope.$watch(function () {
+          return $attr.src
+        }, function () {
+          $scope.register()
+        })
+        $scope.$watch(function () {
+          return $attr.stratusSrc
+        }, function () {
+          $scope.register()
+        })
+
         // Group Registration
         $scope.registered = false
         $scope.register = function () {
           if ($scope.registered) {
             return true
           }
-          let ext = $element.attr('stratus-src') ? $element.attr('stratus-src').match(/\.([0-9a-z]+)(\?.*)?$/i) : null
+          const src = $attr.stratusSrc || $attr.src || null
+          let ext = src ? src.match(/\.([0-9a-z]+)(\?.*)?$/i) : null
           if (ext) {
             ext = ext[1] ? ext[1].toLowerCase() : null
           }
@@ -48,7 +61,7 @@
             return true
           }
           $scope.registered = true
-          $element.attr('data-src', 'lazy') // This is here for CSS backwards compatibility
+          $element.attr('data-src', src)
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,
@@ -60,6 +73,7 @@
         }
 
         // Source Interpolation
+        /* *
         $scope.src = $scope.src || $scope.stratusSrc
         $scope.interpreter = $interpolate($scope.src, false, null, true)
         $scope.initial = $scope.interpreter($scope.$parent)
@@ -76,6 +90,7 @@
             $scope.register()
           }
         })
+        /* */
       }
     }
   }

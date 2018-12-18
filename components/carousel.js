@@ -76,7 +76,8 @@
       lazyLoad: '@',
       navigation: '@',
       pagination: '@',
-      scrollbar: '@'
+      scrollbar: '@',
+      slidesPerGroup: '@'
     },
     controller: [
       '$scope',
@@ -139,16 +140,18 @@
 
           if (initNow) {
             init()
-          } else {
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
-              if (initNow === true) {
-                if (!$scope.initialized) {
-                  init()
-                }
-                $ctrl.stopWatchingInitNow()
-              }
-            })
+            return
           }
+
+          $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
+            if (initNow !== true) {
+              return
+            }
+            if (!$scope.initialized) {
+              init()
+            }
+            $ctrl.stopWatchingInitNow()
+          })
         }
 
         /**
@@ -252,6 +255,9 @@
 
           /** @type {boolean} */
           $scope.scrollbar = $attrs.scrollbar && _.isJSON($attrs.scrollbar) ? JSON.parse($attrs.scrollbar) : false
+
+          /** @type {boolean} */
+          $scope.slidesPerGroup = $attrs.slidesPerGroup && _.isJSON($attrs.slidesPerGroup) ? JSON.parse($attrs.slidesPerGroup) : false
 
           initImages(images)
 
@@ -409,6 +415,11 @@
             }
           }
 
+          // TODO: Add Documentation
+          if ($scope.slidesPerGroup) {
+            $ctrl.swiperParameters.slidesPerView = $scope.slidesPerGroup
+          }
+
           /**
            * Auto play Options
            * @see {@link http://idangero.us/swiper/api/#autoplay|Swiper Doc}
@@ -461,6 +472,7 @@
           // console.log('swiperParameters', $ctrl.swiperParameters)
 
           $scope.$applyAsync(function () {
+            console.log('parameters:', $ctrl.swiperParameters)
             $ctrl.swiper = new Swiper($ctrl.swiperContainer, $ctrl.swiperParameters)
             if ($scope.gallery) {
               $ctrl.galleryContainer = $element[0].getElementsByClassName('swiper-gallery')[0].getElementsByClassName('swiper-container')[0]

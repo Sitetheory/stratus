@@ -15,6 +15,9 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+
   // This directive intends to provide basic logic for extending
   // the Stratus Auto-Loader for various contextual uses.
   Stratus.Directives.Base = function ($compile) {
@@ -27,14 +30,11 @@
         this.uid = _.uniqueId('base_')
         Stratus.Instances[this.uid] = $scope
         $scope.elementId = $element.elementId || this.uid
-        Stratus.Internals.CssLoader(Stratus.BaseUrl +
-          Stratus.BundlePath + 'directives/base' +
-          (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+        Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + 'directives/base' + min + '.css')
         console.log('directive:', this, $scope, $element)
       },
       template: '<div id="{{ elementId }}" class="no-template"></div>',
-      templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'directives/drawer' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+      templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'directives/base' + min + '.html'
     }
   }
 }))
