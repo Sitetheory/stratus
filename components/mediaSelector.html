@@ -13,10 +13,18 @@
           ngf-validate="{size: {max: '10MB'}}"
           ngf-drag-over-class="dragover"
           ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
-        <ul class="list-inline" stratus-sortable ng-sortable="$ctrl.draggedFiles"
-            ng-sortable-item-selector=".draggableImg">
+        <ul class="list-inline" stratus-sortable 
+            ng-sortable="$ctrl.draggedFiles"
+            ng-sortable-item-selector=".draggableImg" 
+            dnd-list="$ctrl.draggedFiles">
             <li ng-if="$ctrl.draggedFiles.length"
-                ng-repeat="df in $ctrl.draggedFiles">
+                ng-repeat="df in $ctrl.draggedFiles"
+                dnd-draggable="df"
+                dnd-moved="$ctrl.draggedFiles.splice($index, 1)"
+                dnd-effect-allowed="move"
+                dnd-selected="$ctrl.selectedFileToDrag = df"
+                dnd-dragend="$ctrl.updateDraggedFilesPriorities()"
+                ng-class="{'selected': $ctrl.selectedFileToDrag === df}">
                 <div class="media-item selected-media-item position-anchor">
                     <!-- <a>s are included to make mouse turn to cursor on hover -->
                     <a href="#">

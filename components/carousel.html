@@ -1,26 +1,28 @@
-<div class="swiper-main swiper-flex">
-  <div class="swiper-container">
+<div id="{{ elementId }}" class="swiper-flex" data-injection="swiper" ng-class="{'swiper-main': !gallery, 'swiper-gallery': gallery}">
+  <div class="swiper-container" ng-class="{'gallery-top': gallery}" ng-init="initSwiper()">
     <div class="swiper-wrapper">
-      <div class="swiper-slide" data-ng-repeat="image in images">
-        <div data-ng-class="::scaleHeight ? 'swiper-zoom-container' : ''">
-          <div ng-if="::lazyLoad" class="swiper-lazy-preloader"></div>
-          <img class="swiper-image {{lazyLoad ? 'swiper-lazy' : ''}} {{stretchWidth ? 'stretch-image' : ''}}"
-               data-ng-src="{{::image.src}}" data-ng-click="imageClick(image, $event)"/>
+      <div class="swiper-slide" ng-repeat="image in images track by $index">
+        <div ng-class="{'swiper-zoom-container': scaleHeight}">
+          <!--<div ng-if="::lazyLoad" class="swiper-lazy-preloader"></div>-->
+          <img class="swiper-image" ng-class="{'stretch-image': stretchWidth}"
+               ng-if="!lazyLoad"
+               ng-click="imageClick(image, $event)"
+               ng-src="{{::(image.src||image.url)}}" />
+          <!-- swiper-lazy -->
+          <img class="swiper-image" ng-class="{'stretch-image': stretchWidth}"
+               ng-if="lazyLoad"
+               ng-click="imageClick(image, $event)"
+               stratus-src
+               ng-src="{{::(image.src||image.url)}}" />
+          <div class="small-label font-primary bold"
+               ng-if="image.name" ng-bind="image.name">
+          </div>
         </div>
       </div>
     </div>
-    <div data-ng-show="::navigation" class="swiper-button-prev"></div>
-    <div data-ng-show="::navigation" class="swiper-button-next"></div>
-    <div data-ng-show="::pagination" class="swiper-pagination"></div>
-    <div data-ng-show="::scrollbar" class="swiper-scrollbar"></div>
-  </div>
-</div>
-<div data-ng-if="::gallery" class="swiper-gallery swiper-flex">
-  <div class="swiper-container">
-    <div class="swiper-wrapper">
-      <div class="swiper-slide" data-ng-repeat="image in images">
-        <img class="swiper-image" data-ng-src="{{::image.src}}"/>
-      </div>
-    </div>
+    <div ng-show="::navigation" class="swiper-button-prev"></div>
+    <div ng-show="::navigation" class="swiper-button-next"></div>
+    <div ng-show="::pagination" class="swiper-pagination"></div>
+    <div ng-show="::scrollbar" class="swiper-scrollbar"></div>
   </div>
 </div>

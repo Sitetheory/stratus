@@ -19,6 +19,7 @@
 
       // Modules
       'angular-file-upload',
+      'angular-drag-and-drop-lists',
 
       // Components
       'stratus.components.mediaLibrary',
@@ -41,6 +42,8 @@
 }(this, function (Stratus, _, jQuery, angular) {
   // We need to ensure the ng-file-upload and ng-cookies are registered
   Stratus.Modules.ngFileUpload = true
+
+  Stratus.Modules.dndLists = true
 
   // This component intends to handle binding of an
   // item array into a particular attribute.
@@ -65,10 +68,12 @@
         $ctrl.loadLibrary = false
         $ctrl.showLibrary = false
         $ctrl.draggedFiles = []
+        $ctrl.selectedFileToDrag = null
 
         // Methods
         $ctrl.openUploader = openUploader
         $ctrl.toggleLibrary = toggleLibrary
+        $ctrl.updateDraggedFilesPriorities = updateDraggedFilesPriorities
       }
 
       $scope.getThumbnailImgOfVideo = function (mediaData) {
@@ -108,6 +113,13 @@
         }
       }
 
+      function updateDraggedFilesPriorities () {
+        var priority = 0;
+        $ctrl.draggedFiles.forEach(function (draggedFile) {
+          draggedFile.priority = priority++;
+        });
+      }
+
       $scope.showDetails = function (media) {
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
@@ -139,7 +151,8 @@
         if (!_.isUndefined(data) && !_.isEqual($scope.draggedFiles, data)) {
           $ctrl.draggedFiles = data || []
         }
-      })
+      });
+
     },
     templateUrl: Stratus.BaseUrl +
      Stratus.BundlePath + 'components/mediaSelector' +

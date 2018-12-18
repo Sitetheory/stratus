@@ -27,7 +27,10 @@
       // Services
       'stratus.services.registry',
       'stratus.services.model',
-      'stratus.services.collection'
+      'stratus.services.collection',
+
+      // Directives
+      'stratus.directives.src'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.Swiper)
@@ -73,7 +76,8 @@
       lazyLoad: '@',
       navigation: '@',
       pagination: '@',
-      scrollbar: '@'
+      scrollbar: '@',
+      slidesPerGroup: '@'
     },
     controller: [
       '$scope',
@@ -117,25 +121,37 @@
           }
         })
 
+        // Image Conversion
+        $scope.$watch('collection.models', function (models) {
+          $scope.images = $scope.images || []
+          models = models || []
+          models.forEach(function (model) {
+            $scope.images.push('model:', model.data)
+          })
+        })
+
         // Initialization by Event
         $ctrl.$onInit = function () {
           let initNow = true
           if ($attrs.$attr.hasOwnProperty('initNow')) {
+            // TODO: This needs better logic to determine what is acceptably initialized
             initNow = _.isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
           }
 
           if (initNow) {
             init()
-          } else {
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
-              if (initNow === true) {
-                if (!$scope.initialized) {
-                  init()
-                }
-                $ctrl.stopWatchingInitNow()
-              }
-            })
+            return
           }
+
+          $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
+            if (initNow !== true) {
+              return
+            }
+            if (!$scope.initialized) {
+              init()
+            }
+            $ctrl.stopWatchingInitNow()
+          })
         }
 
         /**
@@ -240,8 +256,10 @@
           /** @type {boolean} */
           $scope.scrollbar = $attrs.scrollbar && _.isJSON($attrs.scrollbar) ? JSON.parse($attrs.scrollbar) : false
 
+          /** @type {boolean} */
+          $scope.slidesPerGroup = $attrs.slidesPerGroup && _.isJSON($attrs.slidesPerGroup) ? JSON.parse($attrs.slidesPerGroup) : false
+
           initImages(images)
-          initSwiper()
 
           $scope.initialized = true
         }
@@ -298,9 +316,9 @@
         /**
          * Setup and load Swiper using the previously defined variables
          */
-        function initSwiper () {
+        $scope.initSwiper = function initSwiper () {
           // TODO shouldn't be querying global, need to select like this: probably need to get away from className however
-          $ctrl.swiperContainer = $element[0].getElementsByClassName('swiper-main')[0].getElementsByClassName('swiper-container')[0]
+          $ctrl.swiperContainer = $element[0].querySelector('.swiper-container')
 
           $ctrl.swiperParameters = {
             // Optional parameters
@@ -397,6 +415,11 @@
             }
           }
 
+          // TODO: Add Documentation
+          if ($scope.slidesPerGroup) {
+            $ctrl.swiperParameters.slidesPerView = $scope.slidesPerGroup
+          }
+
           /**
            * Auto play Options
            * @see {@link http://idangero.us/swiper/api/#autoplay|Swiper Doc}
@@ -449,6 +472,7 @@
           // console.log('swiperParameters', $ctrl.swiperParameters)
 
           $scope.$applyAsync(function () {
+            console.log('parameters:', $ctrl.swiperParameters)
             $ctrl.swiper = new Swiper($ctrl.swiperContainer, $ctrl.swiperParameters)
             if ($scope.gallery) {
               $ctrl.galleryContainer = $element[0].getElementsByClassName('swiper-gallery')[0].getElementsByClassName('swiper-container')[0]

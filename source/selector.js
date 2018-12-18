@@ -19,8 +19,7 @@ Stratus.Select = function (selector, context) {
     let target
     if (_.startsWith(selector, '.') || _.contains(selector, '[')) {
       target = 'querySelectorAll'
-    } else if (_.contains(['html', 'head', 'body'], selector) ||
-      _.startsWith(selector, '#')) {
+    } else if (_.contains(['html', 'head', 'body'], selector) || _.startsWith(selector, '#')) {
       target = 'querySelector'
     } else {
       target = 'querySelectorAll'
