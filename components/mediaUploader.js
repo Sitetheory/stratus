@@ -80,7 +80,7 @@
         }
         if ($ctrl.fileData && $ctrl.fileData.mime === 'video') {
           $ctrl.videos = [
-            Object.assign($ctrl.fileData, {type: $ctrl.fileData.embed ? 'Embed' : 'URL'})
+            Object.assign($ctrl.fileData, { type: $ctrl.fileData.embed ? 'Embed' : 'URL' })
           ]
         } else {
           $ctrl.videos = [
@@ -330,7 +330,7 @@
             $ctrl.uploadingFiles = false
 
             // Refresh the library
-            //media.getMedia($ctrl)
+            // media.getMedia($ctrl)
           })
         }
       }

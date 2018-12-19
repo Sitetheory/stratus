@@ -16,6 +16,7 @@
 
       // UI Additions
       'angular-material',
+      'masonry',
 
       // Modules
       'angular-file-upload',
@@ -114,10 +115,10 @@
       }
 
       function updateDraggedFilesPriorities () {
-        var priority = 0;
+        var priority = 0
         $ctrl.draggedFiles.forEach(function (draggedFile) {
-          draggedFile.priority = priority++;
-        });
+          draggedFile.priority = priority++
+        })
       }
 
       $scope.showDetails = function (media) {
@@ -151,8 +152,7 @@
         if (!_.isUndefined(data) && !_.isEqual($scope.draggedFiles, data)) {
           $ctrl.draggedFiles = data || []
         }
-      });
-
+      })
     },
     templateUrl: Stratus.BaseUrl +
      Stratus.BundlePath + 'components/mediaSelector' +

@@ -46,7 +46,7 @@
       root.initAutocomplete = function () {
         autocomplete = new google.maps.places.Autocomplete(
           /** @type {!HTMLInputElement} */(document.getElementById('autocomplete')),
-          {types: ['geocode']})
+          { types: ['geocode'] })
         autocomplete.addListener('place_changed', function () {
           console.log('place:', autocomplete.getPlace())
         })

@@ -3,8 +3,6 @@
   margin-bottom: 0;
   border-bottom: 1px solid #ebebeb;
 }
-
-
 .media-content li.library-toggle {
   padding: 0;
 }
@@ -29,14 +27,13 @@
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
-
 .media-item:hover .image-draggable {
   opacity: 0.65;
 }
-
-ul[dnd-list] .dndDraggingSource{
-  display:none
+ul[dnd-list] .dndDraggingSource {
+  display: none;
 }
-ul[dnd-list] .dndPlaceholder{
-  background-color:#ddd;min-height:80px
+ul[dnd-list] .dndPlaceholder {
+  background-color: #ddd;
+  min-height: 80px;
 }
