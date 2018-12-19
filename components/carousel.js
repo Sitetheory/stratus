@@ -130,6 +130,9 @@
           })
         })
 
+        // Check Attributes
+        // console.log('attributes:', $attrs)
+
         // Initialization by Event
         $ctrl.$onInit = function () {
           let initNow = true
@@ -472,7 +475,7 @@
           // console.log('swiperParameters', $ctrl.swiperParameters)
 
           $scope.$applyAsync(function () {
-            console.log('parameters:', $ctrl.swiperParameters)
+            // console.log('parameters:', $ctrl.swiperParameters)
             $ctrl.swiper = new Swiper($ctrl.swiperContainer, $ctrl.swiperParameters)
             if ($scope.gallery) {
               $ctrl.galleryContainer = $element[0].getElementsByClassName('swiper-gallery')[0].getElementsByClassName('swiper-container')[0]

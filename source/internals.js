@@ -543,21 +543,18 @@ Stratus.Internals.LoadImage = function (obj) {
 
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
-      let src = _.hydrate(el.attr('data-src'))
+      let src = _.hydrate(el.attr('data-src')) || el.attr('src') || null
 
       // Handle precedence
-      if (!src || src === 'lazy' || _.isEmpty(src)) {
+      if (src === 'lazy' || _.isEmpty(src)) {
         src = el.attr('src')
       }
 
-      let size = null
+      let size = _.hydrate(el.attr('data-size')) || obj.size || null
 
       // if a specific valid size is requested, use that
       // FIXME: size.indexOf should never return anything useful
-      if (_.hydrate(el.attr('data-size')) &&
-        size.indexOf(_.hydrate(el.attr('data-size'))) !== false) {
-        size = _.hydrate(el.attr('data-size'))
-      } else {
+      if (!size) {
         let width = null
         let unit = null
         let percentage = null
@@ -586,7 +583,7 @@ Stratus.Internals.LoadImage = function (obj) {
           // So we need to find the first parent that is visible and use that width
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
-          let visibilitySelector = _.hydrate(el.attr('data-ignorevisibility')) ? null : ':visible'
+          let visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
           let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
           // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
@@ -650,22 +647,34 @@ Stratus.Internals.LoadImage = function (obj) {
 
       // Change Source to right size (get the base and extension and ignore
       // size)
+      const srcOrigin = src
       const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-      let srcMatch = srcRegex.exec(src)
+      const srcMatch = srcRegex.exec(src)
       if (srcMatch !== null) {
         src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
       } else {
         console.error('Unable to find src for image:', el)
       }
 
-      // Change the Source to be the desired path
-      if (!_.isEmpty(src)) {
-        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
-      }
+      // Start Loading
       el.addClass('loading')
+
+      // Add Listeners (Only once per Element!)
       el.on('load', function () {
         el.addClass('loaded').removeClass('loading')
       })
+      el.on('error', function () {
+        // TODO: Go down in sizes before reaching the origin
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('src', srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin)
+        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+      })
+
+      // Change the Source to be the desired path
+      if (!_.isEmpty(src)) {
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
+      }
 
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
