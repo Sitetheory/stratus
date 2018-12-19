@@ -1,7 +1,7 @@
 <div id="media-selector">
-  <div class="section-container selected-container border-default border-default-all border-radius-default">
+  <div class="media-component section-container selected-container border-default border-default-all border-radius-default">
     <p class="small-label selected-media-label">Selected Media</p>
-    <div id="selected-area" class="media-content"
+    <div id="selected-area" class="media-content" data-masonry="{'itemSelector': '.grid-item'}"
           ng-class="{'dragBorder':dragClass}"
           ng-model="files"
           name="files"
@@ -13,11 +13,13 @@
           ngf-validate="{size: {max: '10MB'}}"
           ngf-drag-over-class="dragover"
           ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
-        <ul class="list-inline" stratus-sortable 
+        <ul class="list-inline grid"
+            stratus-sortable
             ng-sortable="$ctrl.draggedFiles"
             ng-sortable-item-selector=".draggableImg" 
             dnd-list="$ctrl.draggedFiles">
-            <li ng-if="$ctrl.draggedFiles.length"
+            <li class="grid-item"
+                ng-if="$ctrl.draggedFiles.length"
                 ng-repeat="df in $ctrl.draggedFiles"
                 dnd-draggable="df"
                 dnd-moved="$ctrl.draggedFiles.splice($index, 1)"

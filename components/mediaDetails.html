@@ -51,7 +51,10 @@
           </li>
           <li>
             <a href="#" ng-click="$ctrl.openUploader(false, $ctrl.media.id, $ctrl.media)" class="default-border-radius">
-              <md-tooltip>Replace file</md-tooltip>
+              <md-tooltip>
+                <span ng-if="$ctrl.media.mime == 'video'">Change video URL</span>
+                <span ng-if="$ctrl.media.mime != 'video'">Replace file</span>
+              </md-tooltip>
               <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/replace.svg" aria-hidden="true"></md-icon>
             </a>
           </li>
@@ -70,10 +73,9 @@
       </div>
       <div class="description" ng-if="!$ctrl.selectedDesc.editing" ng-click="$ctrl.editItem($ctrl.selectedDesc)" ng-bind="$ctrl.selectedDesc.description || 'Add description'">
       </div>
-      <textarea rows="10" ng-if="$ctrl.selectedDesc.editing"
-                ng-model="$ctrl.selectedDesc.description"
-                ng-blur="$ctrl.doneEditing($ctrl.media.id, $ctrl.selectedDesc)" autofocus></textarea>
-
+        <textarea rows="8" ng-if="$ctrl.selectedDesc.editing"
+                  ng-model="$ctrl.selectedDesc.description"
+                  ng-blur="$ctrl.doneEditing($ctrl.media.id, $ctrl.selectedDesc)" autofocus></textarea>
     </div>
   </div>
 </div>

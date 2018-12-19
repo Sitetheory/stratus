@@ -21,6 +21,7 @@
   "dependencies": {
     "angular": "^1.7.*",
     "angular-chart.js": "^1.*",
+    "angular-drag-and-drop-lists": "^2.1.0",
     "angular-froala": "^2.8.*",
     "angular-material": "^1.*",
     "angular-material-datetimepicker": "^1.5",
@@ -42,6 +43,7 @@
     "jquery": "3.*",
     "js-md5": "md5#^0.4.1",
     "less": "2.7.3",
+    "masonry-layout": "^4.2.2",
     "moment": "^2.*",
     "moment-range": "^2.*",
     "moment-timezone": "^0.*",
