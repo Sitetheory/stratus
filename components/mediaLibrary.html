@@ -1,7 +1,6 @@
 <!-- Media Library -->
 
-
-<div id="media-library">
+<div id="media-library" data-masonry="{ "itemSelector": ".grid-item" }">
     <div ng-class="{'media-component border-default border-default-all border-radius-default' : $ctrl.isSelector, 'full' : !$ctrl.isSelector}" class="media-library">
 
             <!--<p class="section-container small-label selected-media-label">Media Library</p>-->
@@ -38,14 +37,15 @@
                 </div>
 
                 <div class="media-content library-content">
-                    <ul class="list-inline medias"
+                    <ul class="medias list-inline grid"
                         style="column-count: {{thumbList.changeColumns}};"
+                        data-masonry='{ "itemSelector": ".grid-item" }'
                          ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
                          ngf-multiple="true"
                          ngf-max-files="10"
                          ngf-model-invalid="invalid-files"
                          ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-                        <li ng-repeat="media in collection.models" class="position-anchor" ng-if="media.data.url || media.data.file || media.data.embed"
+                        <li ng-repeat="media in collection.models" class="position-anchor grid-item" ng-if="media.data.url || media.data.file || media.data.embed"
                              ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" ng-style="$ctrl.isSelector && {width: {{thumbColumn.changeSize/10}}%}}">
                             <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
 

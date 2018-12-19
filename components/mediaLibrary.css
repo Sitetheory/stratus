@@ -265,14 +265,11 @@
   margin-bottom: 46px;
 }
 .media-library.full .media-content ul {
-  column-count: 4;
-  column-gap: 1.2em;
+
 }
-.media-library.full .media-content ul li {
-  background-color: #eee;
-  display: inline-block;
-  margin: 0 0 1em;
-  width: 100%;
+.media-library.full .media-content .grid-item {
+  width: 25%;
+  float: left;
 }
 
 /* Short details hover popup for full library */
@@ -300,13 +297,14 @@
   bottom: 0;
   left: 0;
   opacity: 0;
-  background: rgba(0,0,0,.6);
+  background: rgba(0,0,0,.7);
 }
 .media-library.full .media-item:hover::before {
   opacity: 1;
 }
 .media-library.full .image-hover-info {
   width: 100%;
+  background: none;
 }
 .media-library.full .image-hover-info .file-details {
   display: none;
