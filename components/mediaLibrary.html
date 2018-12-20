@@ -5,7 +5,7 @@
 
     <!--<p class="section-container small-label selected-media-label">Media Library</p>-->
     <div ng-class="{'section-container' : $ctrl.isSelector}">
-        <div class="library-header">
+        <div ng-class="{'accent-border-horizontal-on-light' : !$ctrl.isSelector}" class="library-header">
             <div  layout="row" layout-align="space-between center">
                 <!-- Add Button -->
                 <md-button class="btn md-ink-ripple open-uploader"

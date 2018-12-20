@@ -261,8 +261,11 @@
 
 /******************* Full Library Only *******************/
 
+.media-library.full .accent-border-horizontal-on-light {
+  padding-top: 20px;
+}
 .media-library.full .library-header {
-  margin-bottom: 46px;
+  margin-bottom: 40px;
 }
 .media-library.full .media-content ul {
   margin: 0 -1.1%;
@@ -441,7 +444,7 @@
   visibility: hidden;
   z-index: 99;
   opacity: 0;
-  margin: -8px 0 8px;
+  margin: -9px 0 8px;
   padding: 0;
   width: 150px;
   text-align: center;
