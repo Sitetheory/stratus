@@ -47,14 +47,14 @@
       $scope.allowSelectUser = !$ctrl.identityUser
 
       $scope.permissions = [
-        {value: 1, name: 'View'},
-        {value: 2, name: 'Create'},
-        {value: 4, name: 'Edit'},
-        {value: 8, name: 'Delete'},
-        {value: 16, name: 'Publish'},
-        {value: 32, name: 'Design'},
-        {value: 64, name: 'Dev'},
-        {value: 128, name: 'Master'}
+        { value: 1, name: 'View' },
+        { value: 2, name: 'Create' },
+        { value: 4, name: 'Edit' },
+        { value: 8, name: 'Delete' },
+        { value: 16, name: 'Publish' },
+        { value: 32, name: 'Design' },
+        { value: 64, name: 'Dev' },
+        { value: 128, name: 'Master' }
       ]
 
       // mock up list roles

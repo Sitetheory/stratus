@@ -102,7 +102,7 @@
           function (response) {
             doSignIn(response, 'facebook', true)
           },
-          {scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture']})
+          { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] })
       }
 
       // GOOGLE LOGIN

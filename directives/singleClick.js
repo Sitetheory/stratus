@@ -27,7 +27,7 @@
           if (clicks === 1) {
             timer = setTimeout(function () {
               $scope.$apply(function () {
-                fn($scope, {$event: event})
+                fn($scope, { $event: event })
               })
               clicks = 0
             }, delay)

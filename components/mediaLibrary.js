@@ -15,6 +15,7 @@
 
       // UI Additions
       'angular-material',
+      'masonry',
 
       // Modules
       'angular-file-upload',
