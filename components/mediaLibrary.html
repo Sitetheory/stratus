@@ -1,6 +1,6 @@
 <!-- Media Library -->
 
-<div id="media-library" data-masonry="{ "itemSelector": ".grid-item" }">
+<div id="media-library">
 <div ng-class="{'media-component border-default border-default-all border-radius-default' : $ctrl.isSelector, 'full' : !$ctrl.isSelector}" class="media-library">
 
     <!--<p class="section-container small-label selected-media-label">Media Library</p>-->
@@ -44,8 +44,10 @@
                 ngf-max-files="10"
                 ngf-model-invalid="invalid-files"
                 ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-                <li ng-repeat="media in collection.models" class="position-anchor grid-item" ng-if="media.data.url || media.data.file || media.data.embed"
-                    ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">
+                <li ng-repeat="media in collection.models" class="position-anchor grid-item"
+                    ng-if="media.data.url || media.data.file || media.data.embed"
+                    ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}"
+                    style="width: {{thumbColumn.changeSize/10}}%;">
                     <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
 
                         <!-- Video Thumb -->
