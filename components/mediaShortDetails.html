@@ -1,9 +1,10 @@
 <div class="info-hover-container" ng-mouseenter="hovering = true" ng-mouseleave="hovering = false">
-    <div ng-class="{'background-dark border-radius-default' : $ctrl.isSelector}" class="image-hover-info" layout="column" layout-align="space-between center">
+    <div class="border-radius-default image-hover-info" layout="column" layout-align="space-between center">
         <div class="format-size">
             <div class="small-label file-details">
-                <span class="file-type">{{ ($ctrl.media.extension || $ctrl.media.service || ($ctrl.media.embed ? 'Embedded Video' : '')) | uppercase}}</span><span
-                    class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span><span class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty' ? $ctrl.media.bytesHuman : ''"></span>
+                <span class="file-type">{{ ($ctrl.media.extension || $ctrl.media.service || ($ctrl.media.embed ? 'Embedded Video' : '')) | uppercase}}</span>
+                <!--<span class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
+                <span class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty' ? $ctrl.media.bytesHuman : ''"></span> -->
             </div>
         </div>
         <p class="font-body image-title">{{ ($ctrl.media.name || 'No title')  | limitTo:34 }}</p>
