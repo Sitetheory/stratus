@@ -7,33 +7,37 @@
     <div ng-class="{'section-container' : $ctrl.isSelector}">
         <div ng-class="{'accent-border-horizontal-on-light' : !$ctrl.isSelector}" class="library-header">
             <div  layout="row" layout-align="space-between center">
-                <!-- Add Button -->
-                <md-button class="btn md-ink-ripple open-uploader" ng-click="$ctrl.openUploader(true)">
-                    Add <md-tooltip>Add to your library</md-tooltip>
-                </md-button>
 
                 <!-- Search -->
                 <stratus-search class="media-search" placeholder="Search by title, date or tag"></stratus-search>
 
-                <!-- Thumb size slider -->
-                <div class="thumb-slider position-anchor">
-                    <div class="thumb-icon-small">
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
-                    </div>
-                    <div class="thumb-icon-large">
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
-                    </div>
-                    <h4 class="small-label">Thumb</h4>
+                <div class="header-right" layout="row" layout-align="space-between center">
+                    <!-- Thumb size slider -->
+                    <div class="thumb-slider position-anchor">
+                        <div class="thumb-icon-small">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
+                        </div>
+                        <div class="thumb-icon-large">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
+                        </div>
 
-                    <md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
-                    <!--<md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>-->
+                        <!--<md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>-->
+                        <md-slider min="200" max="400" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
 
+                    </div>
+
+                    <!-- Add Button -->
+                    <md-button class="btn btn-add md-ink-ripple open-uploader" ng-click="$ctrl.openUploader(true)">
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
+                        <md-tooltip>Add to your library</md-tooltip>
+                    </md-button>
                 </div>
             </div>
         </div>
 
         <div class="media-content library-content clearfix">
             <ul class="medias list-inline grid"
+                ng-class="{'slider-grid-small' : thumbColumn.changeSize > 300 }"
                 data-masonry='{ "itemSelector": ".grid-item" }'
                 ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
                 ngf-multiple="true"
@@ -43,7 +47,8 @@
                 <li ng-repeat="media in collection.models" class="position-anchor grid-item"
                     ng-if="media.data.url || media.data.file || media.data.embed"
                     ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}"
-                    ng-style="{width: thumbColumn.changeSize/10+'%'}">
+                    ng-style="!$ctrl.isSelector && {'width': 5000/thumbColumn.changeSize+'%', 'padding-left' : 200/thumbColumn.changeSize+'%', 'padding-right' : 200/thumbColumn.changeSize+'%' } || $ctrl.isSelector && { 'width' : thumbColumn.changeSize/16+'%' }"
+                >
                     <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
 
                         <!-- Video Thumb -->

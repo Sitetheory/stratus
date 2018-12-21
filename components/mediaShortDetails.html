@@ -10,20 +10,26 @@
         <p class="font-body image-title">{{ ($ctrl.media.name || 'No title')  | limitTo:34 }}</p>
         <div class="position-action-area">
             <div class="action-btns">
-                <a href="#" class="border-radius-default">
-                    <md-icon class="info-icon" aria-hidden="true" ng-click="$ctrl.showDetails($ctrl.media)"
-                            md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"><md-tooltip>Show details</md-tooltip></md-icon>
-                </a>
-                <a href="#" ng-if="!$ctrl.isSelector" class="border-radius-default">
-                    <md-tooltip>Permanently delete from libary</md-tooltip>
-                    <md-icon class="delete-icon" aria-hidden="true" ng-click="$ctrl.deleteMedia($ctrl.media.id)"
-                             md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
-                </a>
-                <a href="#" ng-if="$ctrl.isSelector" class="border-radius-default">
-                    <md-tooltip>Remove selection</md-tooltip>
-                    <md-icon aria-hidden="true" class="clear-icon" ng-click="$ctrl.removeFromSelected($ctrl.media.id);"
-                              md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
-                </a>
+                <md-grid-list md-cols="2" md-row-height="1:1" md-gutter-gt-md="8px" md-gutter="6px">
+                    <md-grid-tile>
+                        <a href="#" class="border-radius-default">
+                            <md-icon class="info-icon" aria-hidden="true" ng-click="$ctrl.showDetails($ctrl.media)"
+                                     md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/info.svg"><md-tooltip>Show details</md-tooltip></md-icon>
+                        </a>
+                    </md-grid-tile>
+                    <md-grid-tile>
+                        <a href="#" ng-if="!$ctrl.isSelector" class="border-radius-default">
+                            <md-tooltip>Permanently delete from libary</md-tooltip>
+                            <md-icon class="delete-icon" aria-hidden="true" ng-click="$ctrl.deleteMedia($ctrl.media.id)"
+                                     md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg"></md-icon>
+                        </a>
+                        <a href="#" ng-if="$ctrl.isSelector" class="border-radius-default">
+                            <md-tooltip>Remove selection</md-tooltip>
+                            <md-icon aria-hidden="true" class="clear-icon" ng-click="$ctrl.removeFromSelected($ctrl.media.id);"
+                                     md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/clear.svg"></md-icon>
+                        </a>
+                    </md-grid-tile>
+                </md-grid-list>
             </div>
         </div>
     </div>
