@@ -44,9 +44,9 @@
                 ngf-max-files="10"
                 ngf-model-invalid="invalid-files"
                 ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-                <li ng-repeat="media in collection.models" class="position-anchor grid-item"
+                <li ng-repeat="media in collection.models" class="grid-item"
                     ng-if="media.data.url || media.data.file || media.data.embed"
-                    ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}"
+                    ng-class="{ 'filtered-out' : filterImages || filterVideos || filterDocuments, 'filter-images' : filterImages && media.data.mime.indexOf('image') > -1, 'filter-videos' : filterVideos && media.data.mime == 'video', 'filter-documents' : filterDocuments && (media.data.mime == 'application/pdf' ||  media.data.mime == 'application/msword')}"
                     ng-style="!$ctrl.isSelector && {'width': 5000/thumbColumn.changeSize+'%', 'padding-left' : 200/thumbColumn.changeSize+'%', 'padding-right' : 200/thumbColumn.changeSize+'%' } || $ctrl.isSelector && { 'width' : thumbColumn.changeSize/16+'%' }"
                 >
                     <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
@@ -91,8 +91,6 @@
                             </div>
                         </div>
 
-                        <!-- TODO: Enable lazy loading for background image -->
-
                         <!-- Image hover info -->
                         <stratus-media-short-details media="media.data"></stratus-media-short-details>
                         <!-- Image hover info ends -->
@@ -131,17 +129,17 @@
         </div>
 
         <div class="library-footer nav-button" layout="row" layout-align="space-between center">
+
             <!-- Media type filter -->
-            <!-- TODO: Make these checkboxes limit media -->
             <div class="media-type-filter" layout="row" layout-align="center center">
                 <p class="small-label">Show</p>
-                <md-checkbox>
+                <md-checkbox name="image-filter" ng-click="filterImages=!filterImages">
                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
                 </md-checkbox>
-                <md-checkbox>
+                <md-checkbox ng-click="filterVideos=!filterVideos">
                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
                 </md-checkbox>
-                <md-checkbox>
+                <md-checkbox ng-click="filterDocuments=!filterDocuments">
                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
                 </md-checkbox>
             </div>
