@@ -3,12 +3,11 @@
         <div class="format-size">
             <div class="small-label file-details">
                 <span class="file-type">{{ ($ctrl.media.extension || $ctrl.media.service || ($ctrl.media.embed ? 'Embedded Video' : '')) | uppercase}}</span>
-                <!--<span class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
-                <span class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty' ? $ctrl.media.bytesHuman : ''"></span> -->
+                <span class="delimiter" ng-if="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty'"></span>
+                <span class="file-size" ng-bind="$ctrl.media.bytesHuman && $ctrl.media.bytesHuman != 'Empty' ? $ctrl.media.bytesHuman : ''"></span>
             </div>
         </div>
         <p class="font-body image-title">{{ ($ctrl.media.name || 'No title')  | limitTo:34 }}</p>
-        <!-- <div class="time"><p>{{media.data.time *1000 | date: 'MMM dd, yyyy h:mma'}}</p></div> -->
         <div class="position-action-area">
             <div class="action-btns">
                 <a href="#" class="border-radius-default">

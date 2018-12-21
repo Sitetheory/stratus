@@ -72,12 +72,12 @@
                 <li class="library-toggle">
                     <a  class="position-anchor accent-background-hover border-default border-default-all color-primary"
                         ng-click="$ctrl.toggleLibrary(); libraryOpen=!libraryOpen"
-                        ng-class="{'library-toggle-open' : libraryOpen}" >
-                        <md-tooltip>Open Media Library</md-tooltip>
+                        ng-class="{'library-toggle-open' : libraryOpen}">
+                        <md-tooltip ng-if="!libraryOpen">Open Media Library</md-tooltip>
                         <div aria-hidden="true">
 
                             <md-icon class="position-center" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-                            <div class="btn-text small-label faux-link position-center">Close Library</div>
+                            <div class="btn-text small-label position-center">Close Library</div>
                             <img class="shapeholder"
                                  ng-src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                         </div>
