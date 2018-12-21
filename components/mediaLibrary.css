@@ -5,7 +5,6 @@
 .selected-media-label {
   font-weight: bold;
 }
-
 /* Action buttons for mediaShortDetails.html */
 .image-hover-info .action-btns a {
   display: inline-block;
@@ -15,8 +14,6 @@
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
-
-
 .media-component .action-btns a {
   opacity: 0.8;
 }
@@ -29,17 +26,15 @@
 .media-component .action-btns a:hover svg g {
   fill: #222;
 }
-
-
 .media-library.full .action-btns a {
   position: relative;
   margin: 0 2px;
   width: 46px;
   height: 46px;
-  background: rgba(255,255,255,.4);
+  background: rgba(255, 255, 255, 0.4);
 }
 .media-library.full .action-btns a svg {
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -55,9 +50,6 @@
 .media-library.full .action-btns a:hover svg g {
   fill: #222;
 }
-
-
-
 /* Media type icon */
 .thumb-gradient {
   position: absolute;
@@ -86,10 +78,7 @@
 .thumb-icon svg g {
   fill: #fff;
 }
-
-
 /* Library Header */
-
 .library-header button {
   margin: 0;
   height: 46px;
@@ -165,7 +154,6 @@
   -webkit-transform: scale(0.8);
   transform: scale(0.8);
 }
-
 /* Library search */
 .media-search {
   margin: 0;
@@ -184,9 +172,7 @@
   min-width: 42px;
   min-height: 42px;
 }
-
 /* Media list */
-
 .media-item {
   animation: items-grow 0.2s ease-out both;
   -webkit-animation: items-grow 0.2s ease-out both;
@@ -212,7 +198,6 @@
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
-
 /* Library footer */
 .library-footer {
   margin-top: 30px;
@@ -257,15 +242,9 @@
   padding-top: 0;
   margin-top: 0;
 }
-
-
 /******************* Full Library Only *******************/
-
-.media-library.full .accent-border-horizontal-on-light {
-  padding-top: 20px;
-}
 .media-library.full .library-header {
-  margin-bottom: 40px;
+  margin-bottom: 46px;
 }
 .media-library.full .media-content ul {
   margin: 0 -1.1%;
@@ -275,7 +254,6 @@
   width: 25%;
   float: left;
 }
-
 /* Short details hover popup for full library */
 .media-library.full .info-hover-container {
   transform: translateY(-50%);
@@ -294,7 +272,7 @@
   opacity: 1;
 }
 .media-library.full .media-item::before {
-  transition: all .2s ease-out;
+  transition: all 0.2s ease-out;
   content: "";
   position: absolute;
   top: 0;
@@ -302,7 +280,7 @@
   bottom: 0;
   left: 0;
   opacity: 0;
-  background: rgba(0,0,0,.7);
+  background: rgba(0, 0, 0, 0.7);
 }
 .media-library.full .media-item:hover::before {
   opacity: 1;
@@ -322,17 +300,11 @@
   color: #FFF;
   font-weight: bold;
 }
-
-
-
 /******************* Component Library Only *******************/
-
-
 .section-container.component .library-header {
   margin-top: -10px;
   margin-bottom: 14px;
 }
-
 /* Section container */
 .section-container {
   position: relative;
@@ -354,7 +326,6 @@
 .section-container .shapeholder {
   width: 100%;
 }
-
 /* Media component list */
 .media-component .library-content {
   margin: 16px 0 16px;
@@ -375,7 +346,6 @@
   max-width: unset;
   height: 80px;
 }
-
 /* library items hover */
 .icon-plus md-icon,
 .icon-minus md-icon,
@@ -396,7 +366,6 @@
 .icon-check md-icon svg g {
   fill: #fff;
 }
-
 /* Component Library hover controls */
 .icon-plus,
 .icon-minus {
@@ -429,7 +398,6 @@
   -webkit-transform: scale(0.3);
   opacity: 0;
 }
-
 /* Short details hover popup */
 .media-component .info-hover-container {
   transition: all 0.2s ease-out;
@@ -492,7 +460,6 @@
   margin: 0 auto;
   padding-top: 6px;
 }
-
 /* Image hover info container notch */
 .media-component .info-hover-container::after {
   content: '';
@@ -507,4 +474,3 @@
   border-right: 8px solid transparent;
   border-left: 8px solid transparent;
 }
-

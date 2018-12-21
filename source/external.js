@@ -123,8 +123,7 @@ _.mixin({
    * @returns {*}
    */
   ucfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0)
-      .toUpperCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0).toUpperCase() + string.substring(1) : null
   },
 
   // This function simply changes the first letter of a string to a lower case.
@@ -133,8 +132,7 @@ _.mixin({
    * @returns {*}
    */
   lcfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0)
-      .toLowerCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null
   },
 
   // This function allows creation, edit, retrieval and deletion of cookies.
@@ -413,16 +411,22 @@ _.mixin({
   /**
    * @param target
    */
-  camelToHyphen: function (target) {
+  camelToKebab: function (target) {
     return target.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
   },
   /**
    * @param target
    */
-  hyphenToCamel: function (target) {
+  kebabToCamel: function (target) {
     return target.replace(/(-\w)/g, function (m) {
       return m[1].toUpperCase()
     })
+  },
+  /**
+   * @param target
+   */
+  camelToSnake: function (target) {
+    return target.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
   },
   /**
    * @param target

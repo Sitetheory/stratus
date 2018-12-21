@@ -351,8 +351,7 @@ _.mixin({
    * @returns {*}
    */
   ucfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0)
-      .toUpperCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0).toUpperCase() + string.substring(1) : null
   },
 
   // This function simply changes the first letter of a string to a lower case.
@@ -361,8 +360,7 @@ _.mixin({
    * @returns {*}
    */
   lcfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0)
-      .toLowerCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null
   },
 
   // This function allows creation, edit, retrieval and deletion of cookies.
@@ -641,16 +639,22 @@ _.mixin({
   /**
    * @param target
    */
-  camelToHyphen: function (target) {
+  camelToKebab: function (target) {
     return target.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
   },
   /**
    * @param target
    */
-  hyphenToCamel: function (target) {
+  kebabToCamel: function (target) {
     return target.replace(/(-\w)/g, function (m) {
       return m[1].toUpperCase()
     })
+  },
+  /**
+   * @param target
+   */
+  camelToSnake: function (target) {
+    return target.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
   },
   /**
    * @param target
@@ -3437,7 +3441,7 @@ Stratus.Loaders.Angular = function () {
         element.selector = _.filter(
           _.map(requirejs.s.contexts._.config.paths, function (path, key) {
             // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
-            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToHyphen(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
+            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToKebab(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
           })
         )
       }
@@ -3450,13 +3454,13 @@ Stratus.Loaders.Angular = function () {
           element.length += nodes.length
           if (nodes.length) {
             let name = selector.replace(/^\[/, '').replace(/]$/, '')
-            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
+            requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
               injection = {
                 requirement: requirement
               }
               if (element.module) {
-                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(name + (element.suffix || '')))
+                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(name + (element.suffix || '')))
               }
               injector(injection)
             }
@@ -3471,7 +3475,7 @@ Stratus.Loaders.Angular = function () {
             _.each(nodes, function (node) {
               let name = node.getAttribute(attribute)
               if (name) {
-                requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')))
+                requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
                 if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
                   injector({
                     requirement: requirement
@@ -3484,7 +3488,7 @@ Stratus.Loaders.Angular = function () {
             container.requirement = _.union(container.requirement, element.require)
             injection = {}
             if (element.module) {
-              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(attribute + (element.suffix || '')))
+              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(attribute + (element.suffix || '')))
             }
             if (element.stylesheet) {
               injection.stylesheet = element.stylesheet

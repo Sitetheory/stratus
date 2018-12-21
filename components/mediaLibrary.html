@@ -8,10 +8,8 @@
         <div ng-class="{'accent-border-horizontal-on-light' : !$ctrl.isSelector}" class="library-header">
             <div  layout="row" layout-align="space-between center">
                 <!-- Add Button -->
-                <md-button class="btn md-ink-ripple open-uploader"
-                           ng-click="$ctrl.openUploader(true)">
-                    Add
-                    <md-tooltip>Add to your library</md-tooltip>
+                <md-button class="btn md-ink-ripple open-uploader" ng-click="$ctrl.openUploader(true)">
+                    Add <md-tooltip>Add to your library</md-tooltip>
                 </md-button>
 
                 <!-- Search -->
@@ -20,12 +18,10 @@
                 <!-- Thumb size slider -->
                 <div class="thumb-slider position-anchor">
                     <div class="thumb-icon-small">
-                        <md-icon
-                                md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
                     </div>
                     <div class="thumb-icon-large">
-                        <md-icon
-                                md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
                     </div>
                     <h4 class="small-label">Thumb</h4>
 
@@ -47,16 +43,16 @@
                 <li ng-repeat="media in collection.models" class="position-anchor grid-item"
                     ng-if="media.data.url || media.data.file || media.data.embed"
                     ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}"
-                    style="width: {{thumbColumn.changeSize/10}}%;">
+                    ng-style="{width: thumbColumn.changeSize/10+'%'}">
                     <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
 
                         <!-- Video Thumb -->
                         <div ng-if="media.data.mime == 'video'"
                              class="video-thumb image-draggable"
-                             ng-style="$ctrl.isSelector && {'background-image':'url({{getThumbnailImgOfVideo(media.data)}})', 'background-position': 'center center', 'background-size': 'cover'}"
-                             ng-dblclick="showDetails(media.data)}">
+                             ng-style="$ctrl.isSelector && {'background-image':'url(' + getThumbnailImgOfVideo(media.data) + ')', 'background-position': 'center center', 'background-size': 'cover'}"
+                             ng-dblclick="showDetails(media.data)">
                             <img ng-if="$ctrl.isSelector" class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                            <img ng-if="!$ctrl.isSelector" src="{{getThumbnailImgOfVideo(media.data)}}">
+                            <img ng-if="!$ctrl.isSelector" ng-src="{{ getThumbnailImgOfVideo(media.data) }}">
                             <div class="thumb-icon icon-video">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
                             </div>
@@ -120,9 +116,12 @@
                 </li>
             </ul>
             <div ng-if="collection.completed && !collection.models.length">
-                        <span ng-if="!collection.meta.attributes.api.q && !collection.meta.attributes.api.options "
-                              class="info">Welcome, looks like you are new here. Click the add button above to upload your first files.</span>
-                <span ng-if="collection.meta.attributes.api.q || collection.meta.attributes.api.options" class="info">Looks like your search didn't match any media items. Try again?</span>
+              <span ng-if="!collection.meta.attributes.api.q && !collection.meta.attributes.api.options " class="info">
+                Welcome, looks like you are new here. Click the add button above to upload your first files.
+              </span>
+              <span ng-if="collection.meta.attributes.api.q || collection.meta.attributes.api.options" class="info">
+                Looks like your search didn't match any media items. Try again?
+              </span>
             </div>
         </div>
 

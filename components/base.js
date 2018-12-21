@@ -29,6 +29,7 @@
 }(this, function (Stratus, _, angular) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'base'
 
   // This component is just a simple base.
   Stratus.Components.Base = {
@@ -59,11 +60,11 @@
     controller: function ($scope, $attrs, $log, Registry, Model, Collection) {
       // Initialize
       const $ctrl = this
-      $ctrl.uid = _.uniqueId('base_')
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
       Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + min + '.css'
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
       )
       $scope.initialized = false
 
@@ -92,10 +93,10 @@
 
       // Display Complete Build
       if (!Stratus.Environment.get('production')) {
-        $log.log('component:', $scope, $attrs)
+        $log.log(name, 'component:', $scope, $attrs)
       }
     },
     // template: '<div id="{{ elementId }}"><div ng-if="model && property && model.get(property)" style="list-style-type: none;">{{ model.get(property) | json }}</div><ul ng-if="collection && model && property" ng-cloak><stratus-search></stratus-search><li ng-repeat="model in collection.models">{{ model.data | json }}</li><stratus-pagination></stratus-pagination></ul></div>',
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/base' + min + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
 }))

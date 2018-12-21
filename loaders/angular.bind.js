@@ -37,7 +37,7 @@ Stratus.Loaders.Angular = function () {
         element.selector = _.filter(
           _.map(requirejs.s.contexts._.config.paths, function (path, key) {
             // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
-            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToHyphen(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
+            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToKebab(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
           })
         )
       }
@@ -50,13 +50,13 @@ Stratus.Loaders.Angular = function () {
           element.length += nodes.length
           if (nodes.length) {
             let name = selector.replace(/^\[/, '').replace(/]$/, '')
-            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
+            requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
               injection = {
                 requirement: requirement
               }
               if (element.module) {
-                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(name + (element.suffix || '')))
+                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(name + (element.suffix || '')))
               }
               injector(injection)
             }
@@ -71,7 +71,7 @@ Stratus.Loaders.Angular = function () {
             _.each(nodes, function (node) {
               let name = node.getAttribute(attribute)
               if (name) {
-                requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')))
+                requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
                 if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
                   injector({
                     requirement: requirement
@@ -84,7 +84,7 @@ Stratus.Loaders.Angular = function () {
             container.requirement = _.union(container.requirement, element.require)
             injection = {}
             if (element.module) {
-              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(attribute + (element.suffix || '')))
+              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(attribute + (element.suffix || '')))
             }
             if (element.stylesheet) {
               injection.stylesheet = element.stylesheet

@@ -34,14 +34,17 @@
 
       // Services
       'stratus.services.registry',
-      'stratus.services.utility',
       'stratus.services.media'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
-  // We need to ensure the ng-file-upload and ng-cookies are registered
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'mediaLibrary'
+
+  // We need to ensure the ng-file-upload and are registered
   Stratus.Modules.ngFileUpload = true
 
   // This component intends to handle binding of an
@@ -52,13 +55,20 @@
       isSelector: '<',
       mediaSelectorDraggedFiles: '='
     },
-    controller: function (
-      $scope, $attrs, Registry, $mdDialog, utility, media) {
+    controller: function ($scope, $attrs, Registry, $mdDialog, media) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'media_library',
-        true)
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
-      let $ctrl = this
+      // TODO: Collection Binds
+
+      // Bind Init
       $ctrl.$onInit = function () {
         // Variables
 
@@ -146,7 +156,7 @@
         ).then(function () {
           media.deleteMedia(fileId).then(
             function (response) {
-              if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
+              if (response.data.meta.status['0'].code === 'SUCCESS') {
                 // fetch media library list
                 media.getMedia($scope)
               } else {
@@ -157,7 +167,7 @@
                     .clickOutsideToClose(false)
                     .title('Error')
                     .multiple(true)
-                    .textContent(utility.getStatus(response).message)
+                    .textContent(response.data.meta.status['0'].message)
                     .ok('Ok')
                 )
               }
@@ -203,8 +213,6 @@
         }
       })
     },
-    templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/mediaLibrary' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
 }))
