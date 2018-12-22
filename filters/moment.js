@@ -41,7 +41,7 @@
       this.format = 'MMM Do YYYY, h:mma'
       if (angular.isObject(options)) angular.extend(this, options)
       if (this.relative && typeof this.relative === 'string' && Math.round(new Date().getTime() / 1000) > (input + _.seconds(this.relative))) this.since = false
-      var time = this.unix ? moment.unix(input) : moment(input)
+      let time = this.unix ? moment.unix(input) : moment(input)
       return (!this.since) ? time.format(this.format) : time.fromNow(!this.ago)
     }
   }

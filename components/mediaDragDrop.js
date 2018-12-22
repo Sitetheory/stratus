@@ -26,7 +26,7 @@
         'media_drag_drop', true)
 
       // Code
-      // var $ctrl = this
+      // let $ctrl = this
       $scope.isShowDialog = angular.element(document.body).hasClass('md-dialog-is-showing')
       $scope.files = []
 

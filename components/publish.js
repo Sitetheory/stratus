@@ -45,7 +45,7 @@
       redirect: '@'
     },
     controller: function ($scope, $element, $parse, $attrs, $log, Model) {
-      var uid = _.uniqueId('publish_')
+      let uid = _.uniqueId('publish_')
       Stratus.Instances[uid] = $scope
       Stratus.Internals.CssLoader(Stratus.BaseUrl +
        Stratus.BundlePath + 'components/publish' +
@@ -98,7 +98,7 @@
 
       return true
 
-      // var $dateTimeComponent = null
+      // let $dateTimeComponent = null
       // if ($scope.showDateTime) {
       //   $dateTimeComponent = jQuery('#' + $scope.elementId + ' stratus-date-time')
       // }

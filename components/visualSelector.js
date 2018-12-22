@@ -72,7 +72,7 @@
         'visual_selector', true)
 
       // Variables
-      var $ctrl = this
+      let $ctrl = this
 
       $ctrl.$onInit = function () {
         $ctrl.layoutData = null
@@ -98,7 +98,7 @@
               return obj.data
             })
             $ctrl.selectedLayoutData = $filter('filter')($ctrl.layoutData,
-              {id: layout[0].id})[0]
+              { id: layout[0].id })[0]
             $scope.selectedLayout = $ctrl.selectedLayoutData
           }
         })

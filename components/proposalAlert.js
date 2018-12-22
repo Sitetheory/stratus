@@ -32,11 +32,11 @@
           'proposal_alert', true)
 
         // variables
-        var $ctrl = this
+        let $ctrl = this
         $ctrl.proposals = $attrs.proposals || []
 
         // class for icon;
-        var iconCss = {
+        let iconCss = {
           error: 'fa-times-circle red',
           notice: 'fa-exclamation-circle blue',
           warning: 'fa-exclamation-triangle yellow',
@@ -53,7 +53,7 @@
 
         // remove element from proposals
         $ctrl.hideProposal = function (proposal) {
-          // var index = $ctrl.proposals.indexOf(proposal)
+          // let index = $ctrl.proposals.indexOf(proposal)
           $ctrl.proposals.splice(0, 1)
         }
       },

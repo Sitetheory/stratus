@@ -65,7 +65,7 @@
 
       // handle click action
       $scope.toggle = function (value) {
-        var index = $scope.showOnly.indexOf(value);
+        let index = $scope.showOnly.indexOf(value);
         (index !== -1)
           ? $scope.showOnly.splice(index, 1)
           : $scope.showOnly.push(value)

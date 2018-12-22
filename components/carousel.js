@@ -19,22 +19,53 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
-
-      // Libraries
       'stratus',
       'underscore',
-
+      'angular',
       'swiper',
-      'angular'
+
+      // Services
+      'stratus.services.registry',
+      'stratus.services.model',
+      'stratus.services.collection',
+
+      // Directives
+      'stratus.directives.src'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.Swiper)
+    factory(root.Stratus, root._, root.angular, root.Swiper)
   }
-}(this, function (Stratus, _, Swiper) {
+}(this, function (Stratus, _, angular, Swiper) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+
+  // This component is just a simple base.
   Stratus.Components.Carousel = {
+    transclude: {
+      model: '?stratusCarouselSlide'
+    },
     bindings: {
-      // ngModel: '=',
+      // Basic Control for Designers
       elementId: '@',
+
+      // ngModel Logic for a Symbiotic Controller Relationship
+      ngModel: '=',
+      property: '@',
+
+      // Registry Elements
+      target: '@',
+      id: '@',
+      manifest: '@',
+      decouple: '@',
+      direct: '@',
+      api: '@',
+      urlRoot: '@',
+
+      // Collection Options
+      limit: '@',
+      options: '<',
+
+      // Carousel Specific
       initNow: '=',
       images: '@',
       imageLinkTarget: '@', // shortcut
@@ -48,41 +79,85 @@
       lazyLoad: '@',
       navigation: '@',
       pagination: '@',
-      scrollbar: '@'
+      scrollbar: '@',
+      slidesPerGroup: '@'
     },
     controller: [
       '$scope',
       '$attrs',
       '$window',
       '$element',
-      'utility',
-      function ($scope, $attrs, $window, $element, utility) {
+      'Registry',
+      'Model',
+      'Collection',
+      function ($scope, $attrs, $window, $element, Registry, Model, Collection) {
         // Initialize
-        Stratus.Internals.CssLoader(Stratus.BaseUrl +
-          Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' +
-          (Stratus.Environment.get('production') ? '.min' : '') + '.css')
-        utility.componentInitializer(this, $scope, $attrs, 'carousel', true)
+        const $ctrl = this
+        $ctrl.uid = _.uniqueId('carousel_')
+        Stratus.Instances[$ctrl.uid] = $scope
+        $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Internals.CssLoader(
+          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' + min + '.css'
+        )
         $scope.initialized = false
 
-        let $ctrl = this
+        // Hoist Attributes
+        $scope.property = $attrs.property || null
+
+        // Data References
+        $scope.data = null
+        $scope.model = null
+        $scope.collection = null
+
+        // Registry Connectivity
+        if ($attrs.target) {
+          $scope.registry = new Registry()
+          $scope.registry.fetch($attrs, $scope)
+        }
+
+        // Symbiotic Data Connectivity
+        $scope.$watch('$ctrl.ngModel', function (data) {
+          if (data instanceof Model && data !== $scope.model) {
+            $scope.model = data
+          } else if (data instanceof Collection && data !== $scope.collection) {
+            $scope.collection = data
+          }
+        })
+
+        // Image Conversion
+        $scope.$watch('collection.models', function (models) {
+          $scope.images = $scope.images || []
+          models = models || []
+          models.forEach(function (model) {
+            $scope.images.push('model:', model.data)
+          })
+        })
+
+        // Check Attributes
+        // console.log('attributes:', $attrs)
+
+        // Initialization by Event
         $ctrl.$onInit = function () {
           let initNow = true
           if ($attrs.$attr.hasOwnProperty('initNow')) {
+            // TODO: This needs better logic to determine what is acceptably initialized
             initNow = _.isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
           }
 
           if (initNow) {
             init()
-          } else {
-            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
-              if (initNow === true) {
-                if (!$scope.initialized) {
-                  init()
-                }
-                $ctrl.stopWatchingInitNow()
-              }
-            })
+            return
           }
+
+          $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
+            if (initNow !== true) {
+              return
+            }
+            if (!$scope.initialized) {
+              init()
+            }
+            $ctrl.stopWatchingInitNow()
+          })
         }
 
         /**
@@ -187,8 +262,10 @@
           /** @type {boolean} */
           $scope.scrollbar = $attrs.scrollbar && _.isJSON($attrs.scrollbar) ? JSON.parse($attrs.scrollbar) : false
 
+          /** @type {boolean} */
+          $scope.slidesPerGroup = $attrs.slidesPerGroup && _.isJSON($attrs.slidesPerGroup) ? JSON.parse($attrs.slidesPerGroup) : false
+
           initImages(images)
-          initSwiper()
 
           $scope.initialized = true
         }
@@ -245,9 +322,9 @@
         /**
          * Setup and load Swiper using the previously defined variables
          */
-        function initSwiper () {
+        $scope.initSwiper = function initSwiper () {
           // TODO shouldn't be querying global, need to select like this: probably need to get away from className however
-          $ctrl.swiperContainer = $element[0].getElementsByClassName('swiper-main')[0].getElementsByClassName('swiper-container')[0]
+          $ctrl.swiperContainer = $element[0].querySelector('.swiper-container')
 
           $ctrl.swiperParameters = {
             // Optional parameters
@@ -344,6 +421,11 @@
             }
           }
 
+          // TODO: Add Documentation
+          if ($scope.slidesPerGroup) {
+            $ctrl.swiperParameters.slidesPerView = $scope.slidesPerGroup
+          }
+
           /**
            * Auto play Options
            * @see {@link http://idangero.us/swiper/api/#autoplay|Swiper Doc}
@@ -396,6 +478,7 @@
           // console.log('swiperParameters', $ctrl.swiperParameters)
 
           $scope.$applyAsync(function () {
+            // console.log('parameters:', $ctrl.swiperParameters)
             $ctrl.swiper = new Swiper($ctrl.swiperContainer, $ctrl.swiperParameters)
             if ($scope.gallery) {
               $ctrl.galleryContainer = $element[0].getElementsByClassName('swiper-gallery')[0].getElementsByClassName('swiper-container')[0]
@@ -434,8 +517,6 @@
         }
       }
     ],
-    templateUrl: Stratus.BaseUrl +
-    Stratus.BundlePath + 'components/carousel' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/carousel' + min + '.html'
   }
 }))

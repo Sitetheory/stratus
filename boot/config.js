@@ -408,6 +408,7 @@ boot.config({
     dropzone: boot.bundle + 'stratus/bower_components/dropzone/dist/' + boot.directory + 'dropzone-amd-module' + boot.suffix,
     fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
     md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
+    masonry: boot.bundle + 'stratus/bower_components/masonry-layout/dist/masonry.pkgd' + boot.suffix,
     moment: boot.bundle + 'stratus/bower_components/moment/' + boot.directory + 'moment' + boot.suffix,
     'moment-timezone': boot.bundle + 'stratus/bower_components/moment-timezone/builds/moment-timezone-with-data' + boot.suffix,
     'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
@@ -427,13 +428,16 @@ boot.config({
     'angular-messages': boot.bundle + 'stratus/bower_components/angular-messages/angular-messages' + boot.suffix,
     'angular-resource': boot.bundle + 'stratus/bower_components/angular-resource/angular-resource' + boot.suffix,
     'angular-sanitize': boot.bundle + 'stratus/bower_components/angular-sanitize/angular-sanitize' + boot.suffix,
+
+    /* Angular Modules */
     'angular-chart': boot.bundle + 'stratus/bower_components/angular-chart.js/dist/angular-chart' + boot.suffix,
+    'angular-drag-and-drop-lists': boot.bundle + 'stratus/bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists' + boot.suffix,
     'angular-icons': boot.bundle + 'stratus/bower_components/angular-material-icons/angular-material-icons' + boot.suffix,
     'angular-file-upload': boot.bundle + 'stratus/bower_components/ng-file-upload/ng-file-upload' + boot.suffix,
+    'angular-paging': boot.bundle + 'stratus/bower_components/angular-paging/dist/paging' + boot.suffix,
     'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
     'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
     'angular-ui-tree': boot.bundle + 'stratus/bower_components/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
-    'angular-paging': boot.bundle + 'stratus/bower_components/angular-paging/dist/paging' + boot.suffix,
 
     /* Backbone */
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,

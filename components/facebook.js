@@ -23,33 +23,33 @@
       Stratus.Instances[_.uniqueId('facebook_')] = $scope
 
       // Custom Variables
-      var facebookPageName = 'Brand New Congress'
-      var facebookPageId = 'brandnewcongress'
-      var containerId = 'facebookPageContainer'
-      var relatedContainerId = 'currentMediaContainer'
-      var relatedContainerOffset = -150
+      let facebookPageName = 'Brand New Congress'
+      let facebookPageId = 'brandnewcongress'
+      let containerId = 'facebookPageContainer'
+      let relatedContainerId = 'currentMediaContainer'
+      let relatedContainerOffset = -150
 
       // Setup
-      var container = document.getElementById(containerId)
-      var relatedContainer = document.getElementById(
+      let container = document.getElementById(containerId)
+      let relatedContainer = document.getElementById(
         (relatedContainerId || containerId))
-      var loadJob
+      let loadJob
 
       // Functions
       function resizePlugin () {
         // Manually resize Facebook Plugin's span and iframe to be 100%
-        var plugin = document.querySelector('.fb-page')
-        var containerSpan = plugin.querySelector('span')
+        let plugin = document.querySelector('.fb-page')
+        let containerSpan = plugin.querySelector('span')
         containerSpan.style.width = '100%'
-        var iframe = plugin.querySelector('iframe')
+        let iframe = plugin.querySelector('iframe')
         iframe.width = '100%'
         iframe.style.width = '100%'
 
         // FB has max 500px, scale if it's bigger so it fits in space at least
-        var maxWidth = 500
-        var width = container.offsetWidth
+        let maxWidth = 500
+        let width = container.offsetWidth
         if (width > maxWidth) {
-          var scale = width / maxWidth
+          let scale = width / maxWidth
           iframe.style.transform = 'scale(' + scale + ')'
           iframe.style['transform-origin'] = '0 0'
         }
@@ -57,16 +57,16 @@
 
       function loadPlugin () {
         // Get height of the related Container (e.g. in another column)
-        var height = relatedContainer.offsetHeight
+        let height = relatedContainer.offsetHeight
         height = height > 0 ? (height + relatedContainerOffset) : height
-        var width = container.offsetWidth
-        var minHeight = 500
-        var minWidth = 500
+        let width = container.offsetWidth
+        let minHeight = 500
+        let minWidth = 500
         height = height < minHeight ? minHeight : height
         width = width < minWidth ? minWidth : width
 
         // Facebook Page Plugin Code
-        var content = '<div class="fb-page" data-href="https://www.facebook.com/' +
+        let content = '<div class="fb-page" data-href="https://www.facebook.com/' +
           facebookPageId + '" data-tabs="timeline" data-width="' + width +
           '" data-height="' + height +
           '" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div><blockquote cite="https://www.facebook.com/' +

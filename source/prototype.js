@@ -16,11 +16,11 @@
  * @returns {NodeList|Node}
  * @constructor
  */
-var Stratus = {
+let Stratus = {
   /* Settings */
   Settings: {
     image: {
-      size: {xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600}
+      size: { xs: 200, s: 400, m: 600, l: 800, xl: 1200, hq: 1600 }
     },
     status: {
       reset: -2,

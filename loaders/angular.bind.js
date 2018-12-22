@@ -4,19 +4,19 @@
  * @constructor
  */
 Stratus.Loaders.Angular = function () {
-  var requirement
-  var nodes
-  var injection
+  let requirement
+  let nodes
+  let injection
 
   // This contains references for the auto-loader below
-  var container = {
+  let container = {
     requirement: [],
     module: [],
     stylesheet: []
   }
 
   // TODO: Add references to this prototype in the tree builder, accordingly
-  var injector = function (injection) {
+  let injector = function (injection) {
     injection = injection || {}
     _.each(injection, function (element, attribute) {
       container[attribute] = container[attribute] || []
@@ -37,7 +37,7 @@ Stratus.Loaders.Angular = function () {
         element.selector = _.filter(
           _.map(requirejs.s.contexts._.config.paths, function (path, key) {
             // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
-            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToHyphen(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
+            return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToKebab(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
           })
         )
       }
@@ -49,14 +49,14 @@ Stratus.Loaders.Angular = function () {
           nodes = document.querySelectorAll(selector)
           element.length += nodes.length
           if (nodes.length) {
-            var name = selector.replace(/^\[/, '').replace(/]$/, '')
-            requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
+            let name = selector.replace(/^\[/, '').replace(/]$/, '')
+            requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
             if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
               injection = {
                 requirement: requirement
               }
               if (element.module) {
-                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(name + (element.suffix || '')))
+                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(name + (element.suffix || '')))
               }
               injector(injection)
             }
@@ -66,12 +66,12 @@ Stratus.Loaders.Angular = function () {
         nodes = document.querySelectorAll(element.selector)
         element.length = nodes.length
         if (nodes.length) {
-          var attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
+          let attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
           if (element.namespace) {
             _.each(nodes, function (node) {
-              var name = node.getAttribute(attribute)
+              let name = node.getAttribute(attribute)
               if (name) {
-                requirement = element.namespace + _.lcfirst(_.hyphenToCamel(name.replace('Stratus', '')))
+                requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
                 if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
                   injector({
                     requirement: requirement
@@ -84,7 +84,7 @@ Stratus.Loaders.Angular = function () {
             container.requirement = _.union(container.requirement, element.require)
             injection = {}
             if (element.module) {
-              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.hyphenToCamel(attribute + (element.suffix || '')))
+              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(attribute + (element.suffix || '')))
             }
             if (element.stylesheet) {
               injection.stylesheet = element.stylesheet
@@ -151,7 +151,7 @@ Stratus.Loaders.Angular = function () {
     require(container.requirement, function () {
       // App Reference
       angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
-        var whitelist = [
+        let whitelist = [
           'self',
           'http://*.sitetheory.io/**',
           'https://*.sitetheory.io/**'
@@ -174,7 +174,7 @@ Stratus.Loaders.Angular = function () {
         $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
-        var buttons = [
+        let buttons = [
           'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
           'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
           'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
@@ -253,8 +253,8 @@ Stratus.Loaders.Angular = function () {
 
       // Load CSS
       // TODO: Move this reference to the stylesheets block above
-      var css = container.stylesheet
-      var cssLoaded = Stratus('link[satisfies]').map(function (node) {
+      let css = container.stylesheet
+      let cssLoaded = Stratus('link[satisfies]').map(function (node) {
         return node.getAttribute('satisfies')
       })
       if (!_.contains(cssLoaded, 'angular-material.css')) {
@@ -288,7 +288,7 @@ Stratus.Loaders.Angular = function () {
       // FIXME: What is above this line is total crap
 
       if (css.length) {
-        var counter = 0
+        let counter = 0
         _.each(css, function (url) {
           Stratus.Internals.CssLoader(url).then(function () {
             if (++counter === css.length) {

@@ -30,7 +30,7 @@
       // the id of main route
       $scope.mainRoute = 0
       $scope.setAsHomePage = function (model, $event) {
-        var confirm = $mdDialog.confirm()
+        let confirm = $mdDialog.confirm()
           .title('Set As Home Page')
           .textContent('Are you sure you want to set this current page as your main home page ?   If you confirm, then all traffic to your main domain will load this page. Please also remember that if your current home page does not have a secondary friendly URL, the system will create a temporary URL for it (which you may want to change). And there may not be a way to access that page if its not linked from your menu.')
           .targetEvent($event)
@@ -49,9 +49,9 @@
       // such as route in the header, route while creating article and while changing primary, setting home page
       $scope.$watch('model.data', function (routings) {
         if (routings.routing) {
-          var count = 1
-          var resetRouting = []
-          for (var i = 0; i < routings.routing.length; i++) {
+          let count = 1
+          let resetRouting = []
+          for (let i = 0; i < routings.routing.length; i++) {
             if (routings.routing[i] && routings.routing[i].main === true) {
               resetRouting[0] = routings.routing[i]
             } else {
@@ -76,13 +76,13 @@
         return $scope.routes
       }
       $scope.removeEmptyRoute = function (model, $event, $index) {
-        var alias = ''
+        let alias = ''
         if (model.data.routing[$index] !== undefined && model.data.routing[$index].url && model.data.routing[$index].url !== undefined) {
           alias = model.data.routing[$index].url
         } else {
           alias = ''
         }
-        var confirm = $mdDialog.confirm()
+        let confirm = $mdDialog.confirm()
           .title('Delete Route')
           .textContent("Are you sure you want to remove the friendly URL alias  '/" + alias + "'  from this page? ")
           .targetEvent($event)
@@ -97,20 +97,20 @@
       }
       /* Validation of urls */
       $scope.checkEmptyRoute = function (model, $event) {
-        var lastUrl = $event.$parent.route.url
-        var isMain = model.data.main
+        let lastUrl = $event.$parent.route.url
+        let isMain = model.data.main
         if (lastUrl === '' && isMain === true) {
           $scope.routeEmptyMessage = true
         } else {
           $scope.routeEmptyMessage = false
-          var uniqueValidation = $scope.checkUniqueRoute(model, $event)
+          let uniqueValidation = $scope.checkUniqueRoute(model, $event)
           if (uniqueValidation === true) {
             $scope.routeUniqueMessage = true
             $scope.selectedId = $event.$parent.route.uid
           } else {
             $scope.routeUniqueMessage = false
             $scope.selectedId = $event.$parent.route.uid
-            var patternValidation = $scope.checkPattern($event)
+            let patternValidation = $scope.checkPattern($event)
             if (patternValidation === true) {
               $scope.routeRegularEmpMessage = true
               $scope.selectedIds = $event.$parent.route.uid
@@ -122,7 +122,7 @@
         }
       }
       $scope.checkUniqueRoute = function (model, $event) {
-        var valueArr = []
+        let valueArr = []
         $scope.duplecateArr = []
         model.data.routing.map(function (item) {
           valueArr.push(item.url)
@@ -140,7 +140,7 @@
         }
       }
       $scope.checkPattern = function ($event) {
-        var patt = /^([a-z0-9]+)([a-z0-9\_\/\~\.\-])*([a-z0-9]+)$/i // eslint-disable-line
+        let patt = /^([a-z0-9]+)([a-z0-9\_\/\~\.\-])*([a-z0-9]+)$/i // eslint-disable-line
         if (patt.test($event.$parent.route.url)) {
           return false
         } else {

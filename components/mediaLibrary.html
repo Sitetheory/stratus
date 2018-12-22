@@ -1,140 +1,151 @@
 <!-- Media Library -->
+
 <div id="media-library">
-    <div class="media-library border-default border-default-all border-radius-default">
+<div ng-class="{'media-component border-default border-default-all border-radius-default' : $ctrl.isSelector, 'full' : !$ctrl.isSelector}" class="media-library">
 
-            <!--<p class="section-container small-label selected-media-label">Media Library</p>-->
-            <div class="section-container">
-                <div class="library-header">
-                    <div  layout="row" layout-align="space-between center">
-                        <stratus-search class="media-search" placeholder="Search by title, date or tag"></stratus-search>
+    <!--<p class="section-container small-label selected-media-label">Media Library</p>-->
+    <div ng-class="{'section-container' : $ctrl.isSelector}">
+        <div ng-class="{'accent-border-horizontal-on-light' : !$ctrl.isSelector}" class="library-header">
+            <div  layout="row" layout-align="space-between center">
+                <!-- Add Button -->
+                <md-button class="btn md-ink-ripple open-uploader" ng-click="$ctrl.openUploader(true)">
+                    Add <md-tooltip>Add to your library</md-tooltip>
+                </md-button>
 
-                        <!-- Thumb size slider -->
-                        <div class="thumb-slider position-anchor">
-                            <div class="thumb-icon-small">
-                                <md-icon
-                                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
-                            </div>
-                            <div class="thumb-icon-large">
-                                <md-icon
-                                        md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
-                            </div>
-                            <h4 class="small-label">Thumb size</h4>
+                <!-- Search -->
+                <stratus-search class="media-search" placeholder="Search by title, date or tag"></stratus-search>
 
-                            <md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
-                        </div>
-
-                        <!-- Add Button -->
-                        <md-button class="btn md-ink-ripple open-uploader"
-                                   ng-click="$ctrl.openUploader(true)">
-                            Add
-                            <md-tooltip>Add to your library</md-tooltip>
-                        </md-button>
+                <!-- Thumb size slider -->
+                <div class="thumb-slider position-anchor">
+                    <div class="thumb-icon-small">
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
                     </div>
-                </div>
-
-                <div class="media-content library-content">
-                    <ul class="list-inline medias"
-                         ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
-                         ngf-multiple="true"
-                         ngf-max-files="10"
-                         ngf-model-invalid="invalid-files"
-                         ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-                        <li ng-repeat="media in collection.models" class="position-anchor" ng-if="media.data.url || media.data.file || media.data.embed"
-                             ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}" style="width: {{thumbColumn.changeSize/10}}%;">
-                            <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
-
-                                <!-- Video Thumb -->
-                                <div ng-if="media.data.mime == 'video'" class="video-thumb image-draggable" style="background-image: url('{{getThumbnailImgOfVideo(media.data)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                    <div class="thumb-icon icon-video">
-                                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
-                                    </div>
-                                </div>
-
-                                <!-- PDF Thumb -->
-                                <div ng-if="media.data.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                    <div class="thumb-icon icon-document">
-                                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
-                                    </div>
-                                </div>
-
-                                <!-- Word Doc Thumb -->
-                                <div ng-if="media.data.mime == 'application/msword'"  class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                    <div class="thumb-icon icon-document">
-                                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
-                                    </div>
-                                </div>
-
-                                <!-- Image Thumb -->
-                                <div ng-if="media.data.mime.indexOf('image') > -1" class="image-draggable" style="background: url('{{media.data.url}}') no-repeat center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
-                                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
-                                    <div class="thumb-gradient">&nbsp;</div>
-                                    <div class="thumb-icon icon-video">
-                                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
-                                    </div>
-                                </div>
-
-                                <!--
-                                TODO: Discuss merits of lazy loading vs. background image
-                                <img ng-if="media.data.mime.indexOf('image') > -1" stratus-src="{{media.data.url || media.data.file}}">-->
-
-                                <!-- Image hover info -->
-                                <stratus-media-short-details media="media.data"></stratus-media-short-details>
-                                <!-- Image hover info ends -->
-
-
-                                <!-- Controls -->
-                                <!-- <a>s are included to make mouse turn to cursor on hover -->
-                                <a href="#" ng-if="$ctrl.isSelector">
-                                    <div ng-class="{display : !media.data.selectedClass}" class="icon-plus position-center">
-                                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg" aria-hidden="true"
-                                                 ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
-                                    </div>
-                                    <div ng-class="{display : media.data.selectedClass}" class="icon-minus position-center">
-                                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"  aria-hidden="true"
-                                                 ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
-                                    </div>
-                                    <div ng-class="{display : media.data.selectedClass}"  class="icon-check position-center">
-                                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg" aria-hidden="true"
-                                                 ng-click="showDetails(media.data)"></md-icon>
-                                    </div>
-                                </a>
-                                <!-- Controls End -->
-
-                            </div>
-
-                        </li>
-                    </ul>
-                    <div ng-if="collection.completed && !collection.models.length">
-                        <span ng-if="!collection.meta.attributes.api.q && !collection.meta.attributes.api.options "
-                              class="info">Welcome, looks like you are new here. Click the add button above to upload your first files.</span>
-                        <span ng-if="collection.meta.attributes.api.q || collection.meta.attributes.api.options" class="info">Looks like your search didn't match any media items. Try again?</span>
+                    <div class="thumb-icon-large">
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
                     </div>
-                </div>
+                    <h4 class="small-label">Thumb</h4>
 
-                <div class="library-footer nav-button" layout="row" layout-align="space-between center">
-                <!-- Media type filter -->
-                <!-- TODO: Make these checkboxes limit media -->
-                <div class="media-type-filter" layout="row" layout-align="center center">
-                    <p class="small-label">Show Only</p>
-                    <md-checkbox>
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
-                    </md-checkbox>
-                    <md-checkbox>
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
-                    </md-checkbox>
-                    <md-checkbox>
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
-                    </md-checkbox>
-                </div>
+                    <md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
+                    <!--<md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>-->
 
-                <!-- TODO: Limit amount of pages shown in paginator to 4 or 5 -->
-                <div class="library-paginator">
-                    <stratus-pagination scroll-top-element="media-library" class="compact-paginator"></stratus-pagination>
                 </div>
-            </div>
             </div>
         </div>
+
+        <div class="media-content library-content clearfix">
+            <ul class="medias list-inline grid"
+                data-masonry='{ "itemSelector": ".grid-item" }'
+                ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
+                ngf-multiple="true"
+                ngf-max-files="10"
+                ngf-model-invalid="invalid-files"
+                ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
+                <li ng-repeat="media in collection.models" class="position-anchor grid-item"
+                    ng-if="media.data.url || media.data.file || media.data.embed"
+                    ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}"
+                    ng-style="{width: thumbColumn.changeSize/10+'%'}">
+                    <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
+
+                        <!-- Video Thumb -->
+                        <div ng-if="media.data.mime == 'video'"
+                             class="video-thumb image-draggable"
+                             ng-style="$ctrl.isSelector && {'background-image':'url(' + getThumbnailImgOfVideo(media.data) + ')', 'background-position': 'center center', 'background-size': 'cover'}"
+                             ng-dblclick="showDetails(media.data)">
+                            <img ng-if="$ctrl.isSelector" class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                            <img ng-if="!$ctrl.isSelector" ng-src="{{ getThumbnailImgOfVideo(media.data) }}">
+                            <div class="thumb-icon icon-video">
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
+                            </div>
+                        </div>
+
+                        <!-- PDF Thumb -->
+                        <div ng-if="media.data.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
+                            <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                            <div class="thumb-icon icon-document">
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
+                            </div>
+                        </div>
+
+                        <!-- Word Doc Thumb -->
+                        <div ng-if="media.data.mime == 'application/msword'"  class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
+                            <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                            <div class="thumb-icon icon-document">
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
+                            </div>
+                        </div>
+
+                        <!-- Image Thumb -->
+                        <div ng-if="media.data.mime.indexOf('image') > -1" class="image-draggable"
+                             ng-style="$ctrl.isSelector && {'background-image':'url({{media.data.url}})', 'background-position': 'center center', 'background-size': 'cover'}"
+                             ng-dblclick="showDetails(media.data)">
+                            <img ng-if="$ctrl.isSelector" class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                            <img ng-if="!$ctrl.isSelector" src="{{media.data.url}}">
+                            <div class="thumb-gradient">&nbsp;</div>
+                            <div class="thumb-icon icon-video">
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
+                            </div>
+                        </div>
+
+                        <!-- TODO: Enable lazy loading for background image -->
+
+                        <!-- Image hover info -->
+                        <stratus-media-short-details media="media.data"></stratus-media-short-details>
+                        <!-- Image hover info ends -->
+
+
+                        <!-- Controls -->
+                        <!-- <a>s are included to make mouse turn to cursor on hover -->
+                        <a href="#" ng-if="$ctrl.isSelector">
+                            <div ng-class="{display : !media.data.selectedClass}" class="icon-plus position-center">
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg" aria-hidden="true"
+                                         ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
+                            </div>
+                            <div ng-class="{display : media.data.selectedClass}" class="icon-minus position-center">
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/minus.svg"  aria-hidden="true"
+                                         ng-click="mediaSelectorAddOrRemoveFile(media.data)"></md-icon>
+                            </div>
+                            <div ng-class="{display : media.data.selectedClass}"  class="icon-check position-center">
+                                <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/check.svg" aria-hidden="true"
+                                         ng-click="showDetails(media.data)"></md-icon>
+                            </div>
+                        </a>
+                        <!-- Controls End -->
+
+                    </div>
+
+                </li>
+            </ul>
+            <div ng-if="collection.completed && !collection.models.length">
+              <span ng-if="!collection.meta.attributes.api.q && !collection.meta.attributes.api.options " class="info">
+                Welcome, looks like you are new here. Click the add button above to upload your first files.
+              </span>
+              <span ng-if="collection.meta.attributes.api.q || collection.meta.attributes.api.options" class="info">
+                Looks like your search didn't match any media items. Try again?
+              </span>
+            </div>
+        </div>
+
+        <div class="library-footer nav-button" layout="row" layout-align="space-between center">
+            <!-- Media type filter -->
+            <!-- TODO: Make these checkboxes limit media -->
+            <div class="media-type-filter" layout="row" layout-align="center center">
+                <p class="small-label">Show</p>
+                <md-checkbox>
+                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
+                </md-checkbox>
+                <md-checkbox>
+                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
+                </md-checkbox>
+                <md-checkbox>
+                    <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
+                </md-checkbox>
+            </div>
+
+            <!-- TODO: Limit amount of pages shown in paginator to 4 or 5 -->
+            <div class="library-paginator">
+                <stratus-pagination scroll-top-element="media-library" class="compact-paginator"></stratus-pagination>
+            </div>
+        </div>
+    </div>
+</div>
 </div>

@@ -65,7 +65,7 @@
 
       // handle click action
       $scope.toggle = function (value) {
-        var index = $scope.showOnly.indexOf(value);
+        let index = $scope.showOnly.indexOf(value);
         (index !== -1)
           ? $scope.showOnly.splice(index, 1)
           : $scope.showOnly.push(value)
@@ -79,14 +79,14 @@
        * Cancelled: timeEnd <= currentTime
        */
       $scope.getStatus = function (invoiceProduct) {
-        var currentTime = new Date().getTime() / 1000
+        let currentTime = new Date().getTime() / 1000
         if (!invoiceProduct) {
           return
         }
-        var timeEnd = (invoiceProduct.timeEnd)
+        let timeEnd = (invoiceProduct.timeEnd)
           ? invoiceProduct.timeEnd
           : currentTime + 1000
-        var timeStart = invoiceProduct.timeStart || currentTime + 1000
+        let timeStart = invoiceProduct.timeStart || currentTime + 1000
         if (timeEnd <= currentTime) {
           return 'cancelled'
         }
@@ -129,7 +129,7 @@
       */
       $scope.filterDateRanger = function () {
         // Reset timeStart and timeEnd options
-        var options = $scope.collection.meta.get('api.options')
+        let options = $scope.collection.meta.get('api.options')
         if (options && options['timeStart']) delete options['timeStart']
         if (options && options['timeEnd']) delete options['timeEnd']
 
@@ -176,8 +176,8 @@
       * @return {string}
       */
       $scope.getSiteOrVendorName = function (invoice, siteList, vendorList) {
-        var siteName = 'Site Not Found'
-        var sites = (invoice.owningIdentity === 'SitetheoryHostingBundle:Site' ? siteList : vendorList) || []
+        let siteName = 'Site Not Found'
+        let sites = (invoice.owningIdentity === 'SitetheoryHostingBundle:Site' ? siteList : vendorList) || []
         if (sites.length > 0) {
           sites.forEach(function (site) {
             if (site.id === invoice.owningIdentityId) {
@@ -194,7 +194,7 @@
       * return
       */
       $scope.getTags = function (contentId, tagList) {
-        var tags = []
+        let tags = []
         if (tagList && tagList.length > 0) {
           tagList.forEach(function (tag) {
             if (contentId === tag.assets[0].id) {
@@ -218,9 +218,9 @@
       }
 
       $scope.search = function (collection, query) {
-        var results = collection.filter(query)
+        let results = collection.filter(query)
         return Promise.resolve(results).then(function (value) {
-          var response = []
+          let response = []
           if (value.InvoiceProduct) {
             response = response.concat(value.InvoiceProduct)
           }

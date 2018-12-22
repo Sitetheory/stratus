@@ -1,38 +1,37 @@
 <div id="media-selector">
-  <div class="section-container selected-container border-default border-default-all border-radius-default">
-    <p class="small-label selected-media-label">Selected Media</p>
-    <div id="selected-area" class="media-content"
-          ng-class="{'dragBorder':dragClass}"
-          ng-model="files"
-          name="files"
-          ngf-multiple="true"
-          ngf-before-model-change="beforeChange($files,$event)"
-          ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
-          ngf-max-files="10"
-          ngf-model-invalid="invalid-files"
-          ngf-validate="{size: {max: '10MB'}}"
-          ngf-drag-over-class="dragover"
-          ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
-        <ul class="list-inline" stratus-sortable 
-            ng-sortable="$ctrl.draggedFiles"
-            ng-sortable-item-selector=".draggableImg" 
-            dnd-list="$ctrl.draggedFiles">
-            <li ng-if="$ctrl.draggedFiles.length"
-                ng-repeat="df in $ctrl.draggedFiles"
-                dnd-draggable="df"
-                dnd-moved="$ctrl.draggedFiles.splice($index, 1)"
-                dnd-effect-allowed="move"
-                dnd-selected="$ctrl.selectedFileToDrag = df"
-                dnd-dragend="$ctrl.updateDraggedFilesPriorities()"
-                ng-class="{'selected': $ctrl.selectedFileToDrag === df}">
-                <div class="media-item selected-media-item position-anchor">
-                    <!-- <a>s are included to make mouse turn to cursor on hover -->
-                    <a href="#">
+    <div class="media-component section-container selected-container border-default border-default-all border-radius-default">
+        <p class="small-label selected-media-label">Selected Media</p>
+        <stratus-help ng-if="$ctrl.draggedFiles.length">Drag your media items to reorder</stratus-help>
+        <div id="selected-area" class="media-content"
+             ng-model="files"
+             name="files"
+             ngf-multiple="true"
+             ngf-before-model-change="beforeChange($files,$event)"
+             ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
+             ngf-max-files="10"
+             ngf-model-invalid="invalid-files"
+             ngf-validate="{size: {max: '10MB'}}"
+             ngf-drag-over-class="dragover"
+             ngf-model-options="{updateOn: 'select drop', allowInvalid: false, debounce: 0}">
+            <ul class="list-inline" stratus-sortable
+                ng-sortable="$ctrl.draggedFiles"
+                ng-sortable-item-selector=".draggableImg"
+                dnd-list="$ctrl.draggedFiles">
+                <li ng-if="$ctrl.draggedFiles.length"
+                    ng-repeat="df in $ctrl.draggedFiles"
+                    dnd-draggable="df"
+                    dnd-moved="$ctrl.draggedFiles.splice($index, 1)"
+                    dnd-effect-allowed="move"
+                    dnd-selected="$ctrl.selectedFileToDrag = df"
+                    dnd-dragend="$ctrl.updateDraggedFilesPriorities()"
+                    ng-class="{'selected': $ctrl.selectedFileToDrag === df}">
+
+                    <div class="media-item selected-media-item">
+
 
                         <!-- Image Thumb -->
-                        <div ng-if="df.mime.indexOf('image') > -1" class="image-draggable" id="libb_{{df.id}}" style="background: url('{{df.url}}') no-repeat center center; background-size: cover;" ng-dblclick="showDetails(df)">
-                            <img id="{{df.id}}" class="shapeholder select-img-drag"
-                                  src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                        <div ng-if="df.mime.indexOf('image') > -1" class="image-draggable" id="libb_{{df.id}}" ng-dblclick="showDetails(df)">
+                            <img id="{{df.id}}" ng-src="{{df.url}}">
                             <div class="thumb-gradient">&nbsp;</div>
                             <div class="thumb-icon icon-image">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
@@ -40,8 +39,8 @@
                         </div>
 
                         <!-- Video Thumb -->
-                        <div ng-if="df.mime == 'video'" class="video-thumb image-draggable position-anchor" style="background-image: url('{{getThumbnailImgOfVideo(df)}}'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(df)">
-                            <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                        <div ng-if="df.mime == 'video'" class="video-thumb image-draggable position-anchor" ng-dblclick="showDetails(df)">
+                            <img ng-src="{{getThumbnailImgOfVideo(df)}}">
 
                             <div class="thumb-gradient"></div>
                             <div class="thumb-icon icon-video">
@@ -51,7 +50,7 @@
 
                         <!-- PDF Thumb -->
                         <div ng-if="df.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(df)">
-                            <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                            <img class="shapeholder" ng-src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             <div class="thumb-icon icon-document">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
                             </div>
@@ -59,37 +58,36 @@
 
                         <!-- Word Doc Thumb -->
                         <div ng-if="df.mime == 'application/msword'"   class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(df)">
-                            <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                            <img class="shapeholder" ng-src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             <div class="thumb-icon icon-document">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
                             </div>
                         </div>
 
-                    </a>
+                        <!-- Image hover info -->
+                        <stratus-media-short-details media="df" is-selector="true"></stratus-media-short-details>
 
-                    <!-- Image hover info -->
-                    <stratus-media-short-details media="df" is-selector="true"></stratus-media-short-details>
-                    <!-- Image hover info ends -->
-            
-                </div>
-            </li>
-            <li class="library-toggle">
-                <a class="position-anchor accent-background-hover border-default border-default-all color-accent1" href="#"
-                    ng-click="$ctrl.toggleLibrary()">
-                    <md-tooltip>Open Media Library</md-tooltip>
-                    <div ng-class="drag-drop-class" aria-hidden="true">
-                        <md-icon class="position-center"
-                                  md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
-                        <img class="shapeholder"
-                              src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                     </div>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!-- Gl Content Ends -->
-  </div>
+                </li>
+                <li class="library-toggle">
+                    <a  class="position-anchor accent-background-hover border-default border-default-all color-primary"
+                        ng-click="$ctrl.toggleLibrary(); libraryOpen=!libraryOpen"
+                        ng-class="{'library-toggle-open' : libraryOpen}" >
+                        <md-tooltip>Open Media Library</md-tooltip>
+                        <div aria-hidden="true">
 
-  <stratus-media-library ng-if="$ctrl.loadLibrary" ng-show="$ctrl.showLibrary" is-selector="true" media-selector-dragged-files="$ctrl.draggedFiles"></stratus-media-library>
+                            <md-icon class="position-center" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
+                            <div class="btn-text small-label faux-link position-center">Close Library</div>
+                            <img class="shapeholder"
+                                 ng-src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- Gl Content Ends -->
+    </div>
+
+    <stratus-media-library ng-if="$ctrl.loadLibrary" ng-show="$ctrl.showLibrary" is-selector="true" media-selector-dragged-files="$ctrl.draggedFiles"></stratus-media-library>
 </div>
 

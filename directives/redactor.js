@@ -11,7 +11,7 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
-  var redactorOptions = {}
+  let redactorOptions = {}
 
   angular.module('angular-redactor', [])
     .constant('redactorOptions', redactorOptions)
@@ -29,10 +29,10 @@
           restrict: 'A',
           require: 'ngModel',
           link: function (scope, element, attrs, ngModel) {
-            // Expose scope var with loaded state of Redactor
+            // Expose scope let with loaded state of Redactor
             scope.redactorLoaded = false
 
-            var updateModel = function updateModel (value) {
+            let updateModel = function updateModel (value) {
               // $timeout to avoid $digest collision
               $timeout(function () {
                 scope.$apply(function () {
@@ -40,18 +40,18 @@
                 })
               })
             }
-            var options = {
+            let options = {
               changeCallback: updateModel
             }
-            var additionalOptions = attrs.redactor
+            let additionalOptions = attrs.redactor
               ? scope.$eval(attrs.redactor)
               : {}
-            var editor
+            let editor
 
             angular.extend(options, redactorOptions, additionalOptions)
 
             // prevent collision with the constant values on ChangeCallback
-            var changeCallback = additionalOptions.changeCallback ||
+            let changeCallback = additionalOptions.changeCallback ||
               redactorOptions.changeCallback
             if (changeCallback) {
               options.changeCallback = function (value) {

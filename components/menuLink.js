@@ -46,7 +46,7 @@
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'menu_link', true)
 
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.$onInit = function () {
         // Variables
         $ctrl.showDialog = false
@@ -109,7 +109,7 @@
       // FIXME: Need to click on a menu label twice to edit it
       function show ($event) {
         if ($ctrl.allowEdit) {
-          var position = $mdPanel.newPanelPosition()
+          let position = $mdPanel.newPanelPosition()
             .relativeTo($element)
             .addPanelPosition($mdPanel.xPosition.OFFSET_END, $mdPanel.yPosition.ALIGN_TOPS)
 
@@ -127,7 +127,7 @@
               versionData: $ctrl.versionData.meta.links
             },
             controller: function ($scope, mdPanelRef, menuLink, versionData) {
-              var dc = this
+              let dc = this
 
               dc.$onInit = function () {
                 dc.menuLink = menuLink
@@ -173,7 +173,7 @@
               }
 
               function addChild () {
-                var childLink = {
+                let childLink = {
                   name: 'Untitled Child',
                   parent: {
                     id: $ctrl.versionData.meta.id
@@ -192,7 +192,7 @@
               }
 
               function getContentForMenu (query, target, urlRoot) {
-                var collection = new Collection()
+                let collection = new Collection()
                 collection.target = target
                 collection.urlRoot = urlRoot
                 return collection.filter(query).then(function (response) {
@@ -221,9 +221,9 @@
 
               function getParentFromId (parentId) {
                 if (menuLink.nestParent) {
-                  var i
+                  let i
                   for (i = 0; i < versionData.length; i++) {
-                    var link = versionData[i]
+                    let link = versionData[i]
                     if (menuLink.nestParent.id === link.id) {
                       return link
                     }

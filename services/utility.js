@@ -36,6 +36,7 @@
            * @returns {*}
            */
           function componentInitializer (element, scope, attrs, componentName, loadCss) {
+            console.warn('Deprecated initializer:', element)
             element.uid = _.uniqueId(componentName + '_')
             Stratus.Instances[element.uid] = scope
             scope.elementId = attrs.elementId || element.uid
@@ -47,6 +48,7 @@
            * @returns {*}
            */
           function getStatus (response) {
+            console.trace('Deprecated getStatus call!')
             return response.data.meta.status['0']
           }
 
@@ -55,18 +57,8 @@
            * @returns {string}
            */
           function buildCssUrl (componentName) {
-            var componentUrl = Stratus.BundlePath + 'components/' + underscoreToCamel(componentName)
+            var componentUrl = Stratus.BundlePath + 'components/' + _.snakeToCamel(componentName)
             return Stratus.BaseUrl + componentUrl + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
-          }
-
-          /**
-           * @param inputString
-           * @returns {*}
-           */
-          function underscoreToCamel (inputString) {
-            return inputString.replace(/_([a-z])/g, function (g) {
-              return g[1].toUpperCase()
-            })
           }
 
           /**
@@ -202,7 +194,6 @@
             componentInitializer: componentInitializer,
             getStatus: getStatus,
             buildCssUrl: buildCssUrl,
-            underscoreToCamel: underscoreToCamel,
             validPassword: validPassword,
             generateStrengthBar: generateStrengthBar,
             getUrlParams: getUrlParams,

@@ -64,7 +64,7 @@
         _.each($scope.collection ? $scope.collection.models : [],
           function (model) {
             if (model.exists('id') && model.exists('sentinel')) {
-              var sentinel = new Stratus.Prototypes.Sentinel()
+              let sentinel = new Stratus.Prototypes.Sentinel()
               sentinel.permissions(model.get('permissions'))
               $scope.sentinel[model.getIdentifier()] = sentinel
             }

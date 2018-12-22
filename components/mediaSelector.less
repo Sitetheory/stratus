@@ -1,215 +1,99 @@
 
-
-/* Custom text elements */
-.small-label {
-  font-weight: bold;
-  color: #383838;
+/* Media library title */
+.section-container .selected-media-label {
+  margin-bottom: 18px;
+}
+#media-selector stratus-help {
+  top: 20px;
+  right: 20px;
+  left: unset;
 }
 
+/* Selected media list */
 
-/* Action buttons for mediaShortDetails.html */
-.action-btns {
-  a {
-    transition: all 0.2s ease-out;
-    -webkit-transition: all 0.2s ease-out;
-    opacity: 0.8;
-    svg {
-      transition: all 0.2s ease-out;
-      -webkit-transition: all 0.2s ease-out;
-      g {
-        fill: #ccc;
-      }
-    }
-    &:hover {
-      opacity: 1;
-      svg g {
-        fill: #fff;
-      }
-    }
-  }
+.media-component #selected-area ul li {
+  width: unset;
+  cursor: move; /* fallback: no `url()` support or images disabled */
+  cursor: url(images/grab.cur); /* fallback: Internet Explorer */
+  cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
+  cursor:    -moz-grab; /* Firefox 1.5-26 */
+  cursor:         grab; /* W3C standards syntax, should come least */
+}
+.media-component #selected-area ul li:active {
+  cursor: url(images/grabbing.cur);
+  cursor: -webkit-grabbing;
+  cursor:    -moz-grabbing;
+  cursor:         grabbing;
 }
 
-
-/* Draggable image */
-.image-draggable {
-  transition: all 0.2s ease-out;
-  -webkit-transition: all 0.2s ease-out;
-}
-
-
-/* Section container */
-.section-container {
-  position: relative;
-  z-index: 100;
-  padding: 3.5%;
-  background: #fff;
-  a {
-    transition: all 0.2s ease-out;
-  }
-  .selected-media-label {
-    margin-bottom: 18px;
-  }
-  ul {
-    animation: items-grow 0.2s ease-out both;
-    -webkit-animation: items-grow 0.2s ease-out both;
-    transform-origin: top left;
-    -webkit-transform-origin: top left;
-    display: block;
-    margin: 0 -4px;
-  }
-  .shapeholder {
-    width: 100%;
-  }
-
-}
-
-
-/* Media list */
-.media-content {
-  ul li {
-    position: relative;
-    width: 12.5%;
-    padding: 4px;
-  }
-  li.library-toggle {
-    padding: 0;
-    a {
-      transition: all 0.2s ease-out;
-      -webkit-transition: all 0.2s ease-out;
-      display: block;
-      &:hover {
-        border-color: rgba(0, 0, 0, 0.5);
-        svg g {
-          fill: #111;
-        }
-      }
-      md-icon {
-        height: inherit;
-        min-width: inherit;
-        min-height: inherit;
-        width: 50%;
-        svg g {
-          transition: all 0.2s ease-out;
-          -webkit-transition: all 0.2s ease-out;
-        }
-      }
-    }
-  }
-}
-
-
-/* Media type icon */
-.thumb-gradient {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  height: 36px;
-  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.65));
-}
-.thumb-icon {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 16px;
-  height: 16px;
-  md-icon {
-    display: block;
-    transition: all 0.2s ease-out;
-    -webkit-transition: all 0.2s ease-out;
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    min-height: 16px;
-  }
-  svg g {
-    fill: #fff;
-  }
-}
-
-/* Short details hover popup */
-.info-hover-container {
-  transition: all 0.2s ease-out;
-  -webkit-transition: all 0.2s ease-out;
-  transform: translate(-50%, -100%) scale(0.2);
-  -wekbit-transform: translate(-50%, -100%) scale(0.2);
-  transform-origin: center bottom;
-  -webkit-transform-origin: center bottom;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  visibility: hidden;
-  z-index: 99;
-  opacity: 0;
-  margin: -6px 0 8px;
+/* Selected media list toggle button */
+li.library-toggle {
   padding: 0;
-  width: 150px;
+}
+li.library-toggle a {
+  transition: all 0.2s ease-out;
+  -webkit-transition: all 0.2s ease-out;
+  display: block;
   text-align: center;
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  .background-dark {
-    background: rgba(0, 0, 0, 0.95);
-  }
 }
-.media-item:hover .info-hover-container {
-  transform: translate(-50%, -94%) scale(1);
-  -wekbit-transform: translate(-50%, -94%) scale(1);
-  visibility: visible;
-  opacity: 1;
+li.library-toggle .shapeholder {
+  width: 80px;
+  display: block;
 }
-.image-hover-info {
-  overflow: hidden;
-  position: relative;
-  z-index: 99;
-  padding: 12px;
-  background: #222;
-  margin: 0;
-  color: #fff;
-  min-height: 120px;
-  .file-type {
-    color: #ddd;
-  }
-  .delimiter {
-    padding-right: 6px;
-    margin-right: 8px;
-    border-right: 1px solid rgba(255, 255, 255, 0.3);
-  }
-  .file-size {
-    color: #aaa;
-  }
-  .image-title {
-    overflow: hidden;
-    margin: 8px 0;
-    max-height: 56px;
-    font-size: 13px;
-    color: #FFF;
-    font-weight: bold;
-  }
-  .action-btns {
-    margin: 0 auto;
-    padding-top: 6px;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-  }
-  .action-btns a {
-    display: inline-block;
-  }
+.library-toggle .btn-text {
+  font-size: 10px;
+  display: none;
+}
+.library-toggle a.library-toggle-open .btn-text {
+  display: unset;
+}
+li.library-toggle a:hover {
+  border-color: rgba(0, 0, 0, 0.5);
+}
+li.library-toggle a:hover svg g {
+  fill: #111;
+}
+li.library-toggle a md-icon {
+  transition: all .2s ease-out;
+  height: inherit;
+  min-width: inherit;
+  min-height: inherit;
+  width: 50%;
+}
+li.library-toggle a.library-toggle-open md-icon {
+  display: none;
+}
+.media-content li.library-toggle a md-icon svg g {
+  transition: all 0.2s ease-out;
+  -webkit-transition: all 0.2s ease-out;
 }
 
-
-/* Image hover info container notch */
-.info-hover-container::after {
-  content: '';
-  transform: translateX(-50%);
-  -webkit-transform: translateX(-50%);
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-top: 8px solid #222;
-  border-right: 8px solid transparent;
-  border-left: 8px solid transparent;
+/* Media items */
+.media-item:hover .image-draggable {
+  opacity: 0.45;
 }
+.selected-media {
+  background: #000;
+}
+.selected-media-item img {
+  max-width: unset !important;
+  width: unset !important;
+  height: 80px;
+}
+
+/* Reorder media items by dragging */
+.media-component #selected-area li.dndPlaceholder{
+  background: rgba(0,0,0,.2);
+  height: 80px;
+  width: 80px;
+}
+.dndDragging {
+  opacity: 0.7;
+}
+.dndDragover stratus-media-short-details {
+  display: none !important;
+}
+
 
 /**
  * The dndDraggingSource class will be applied to

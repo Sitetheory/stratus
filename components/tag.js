@@ -28,7 +28,7 @@
     controller: function ($scope, $parse, $attrs, utility, media, $location, $rootScope) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'tag', true)
-      var $ctrl = this
+      let $ctrl = this
       $ctrl.selectedChips = []
       $ctrl.collection = []
       $ctrl.queryText = ''
@@ -45,7 +45,7 @@
       // this watch function use to watch changes in tags and save and delete automatically when add or delete route.
       $scope.$watch('$ctrl.selectedChips', function (newData, oldData) {
         if (oldData.length > 0) {
-          var dataRes = {}
+          let dataRes = {}
           dataRes.tags = $ctrl.selectedChips
           if ($rootScope.$$childHead.collection !== undefined) {
             if ($rootScope.$$childHead.collection.target === 'Media') {
@@ -61,9 +61,9 @@
               }
             }
           } else {
-            var contentId = $location.absUrl().split('?id=')[1]
+            let contentId = $location.absUrl().split('?id=')[1]
             if (contentId) {
-              var apiUrl = $rootScope.$$childHead.data.urlRoot
+              let apiUrl = $rootScope.$$childHead.data.urlRoot
               updateContent(contentId, dataRes, apiUrl).then(function (response) {
                 $rootScope.$$childHead.data.changed = false
               })
@@ -80,13 +80,13 @@
        * Init value for search list
        */
       $ctrl.queryData = function () {
-        var results = $ctrl.collection.filter($ctrl.queryText)
+        let results = $ctrl.collection.filter($ctrl.queryText)
         $scope.status = true
         return Promise.resolve(results).then(function (value) {
           // return value
-          var returnArr = value.filter(function (item) {
+          let returnArr = value.filter(function (item) {
             if ($ctrl.queryText && ($ctrl.queryText !== '' || $ctrl.queryText !== undefined)) {
-              for (var i = 0; i < $ctrl.selectedChips.length; i++) {
+              for (let i = 0; i < $ctrl.selectedChips.length; i++) {
                 if (item.name.toUpperCase() === $ctrl.queryText.toUpperCase()) {
                   $scope.status = true
                   if ($ctrl.selectedChips[i].name.toUpperCase() === $ctrl.queryText.toUpperCase()) {
@@ -110,7 +110,7 @@
             return $scope.status
           })
           $ctrl.selectedChips.forEach(predata => {
-            var resultData = returnArr.find(mainArr => mainArr.name === predata.name)
+            let resultData = returnArr.find(mainArr => mainArr.name === predata.name)
             if (resultData !== undefined) {
               returnArr = returnArr.filter(function (itemNew) {
                 return itemNew.name !== resultData.name
@@ -139,7 +139,7 @@
        * Add an object when it isn't match with the exists list;
        */
       $ctrl.createTag = function (query) {
-        var data = { name: query }
+        let data = { name: query }
         media.createTag(data).then(function (response) {
           if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
             $ctrl.selectedChips.push(response.data.payload)

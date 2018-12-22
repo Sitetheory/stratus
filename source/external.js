@@ -31,8 +31,9 @@ _.mixin({
   // Babel class inheritance block
   createClass: (function () {
     function defineProperties (target, props) {
-      for (var i = 0; i < props.length; i++) {
-        var descriptor = props[i]
+      let i
+      for (i = 0; i < props.length; i++) {
+        let descriptor = props[i]
         descriptor.enumerable = descriptor.enumerable || false
         descriptor.configurable = true
         if ('value' in descriptor) {
@@ -104,9 +105,9 @@ _.mixin({
    * @returns {View}
    */
   inherit: function (superClass, subClass) {
-    var blob = function (length) {
+    let blob = function (length) {
       _.classCallCheck(this, blob)
-      var that = _.possibleConstructorReturn(this,
+      let that = _.possibleConstructorReturn(this,
         (Object.getPrototypeOf(blob)).call(this, length,
           length))
       _.extend(that, subClass)
@@ -122,8 +123,7 @@ _.mixin({
    * @returns {*}
    */
   ucfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0)
-      .toUpperCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0).toUpperCase() + string.substring(1) : null
   },
 
   // This function simply changes the first letter of a string to a lower case.
@@ -132,8 +132,7 @@ _.mixin({
    * @returns {*}
    */
   lcfirst: function (string) {
-    return (typeof string === 'string' && string) ? string.charAt(0)
-      .toLowerCase() + string.substring(1) : null
+    return (typeof string === 'string' && string) ? string.charAt(0).toLowerCase() + string.substring(1) : null
   },
 
   // This function allows creation, edit, retrieval and deletion of cookies.
@@ -147,7 +146,7 @@ _.mixin({
    * @returns {Array|{index: number, input: string}}
    */
   cookie: function (name, value, expires, path, domain) {
-    var request = {
+    let request = {
       name: name,
       value: value,
       expires: expires,
@@ -158,12 +157,12 @@ _.mixin({
       _.extend(request, name)
     }
     if (typeof request.value === 'undefined') {
-      var search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name +
+      let search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name +
         ')=(.*?)(?:;|$)', 'g')
-      var data = search.exec(document.cookie)
+      let data = search.exec(document.cookie)
       return (data === null) ? null : data[1]
     } else {
-      var cookie = request.name + '=' + escape(request.value) + ';'
+      let cookie = request.name + '=' + escape(request.value) + ';'
       if (request.expires) {
         if (request.expires instanceof Date) {
           if (isNaN(request.expires.getTime())) {
@@ -196,7 +195,7 @@ _.mixin({
       method = 'min'
     }
     if (method === 'min') {
-      var lowest = _.min(list)
+      let lowest = _.min(list)
       return _.findKey(list, function (element) {
         return (element === lowest)
       })
@@ -219,7 +218,7 @@ _.mixin({
    */
   repeat: function (fn, times) {
     if (typeof fn === 'function' && typeof times === 'number') {
-      var i
+      let i
       for (i = 0; i < times; i++) {
         fn()
       }
@@ -266,7 +265,7 @@ _.mixin({
     if (typeof obj !== 'object') {
       return obj
     }
-    var shallow = _.clone(obj)
+    let shallow = _.clone(obj)
     _.each(shallow, function (value, key) {
       shallow[key] = _.cloneDeep(value)
     })
@@ -280,7 +279,7 @@ _.mixin({
    * @returns {*}
    */
   extendDeep: function (target, merger) {
-    var shallow = _.clone(target)
+    let shallow = _.clone(target)
     if (merger && typeof merger === 'object') {
       _.each(merger, function (value, key) {
         if (shallow && typeof shallow === 'object') {
@@ -303,12 +302,12 @@ _.mixin({
    * @returns {{}}
    */
   getUrlParams: function (key, href) {
-    var vars = {}
+    let lets = {}
     href = typeof href !== 'undefined' ? href : window.location.href
     href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-      vars[key] = value
+      lets[key] = value
     })
-    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+    return (typeof key !== 'undefined' && key) ? lets[key] : lets
   },
 
   // Ensure all values in an array or object are true
@@ -360,15 +359,15 @@ _.mixin({
    * @returns {number|null}
    */
   seconds: function (str) {
-    var seconds = 0
+    let seconds = 0
     if (typeof str === 'string') {
-      var timePairs = str.match(
+      let timePairs = str.match(
         /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/gi)
       if (_.size(timePairs)) {
-        var digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
-        var time
-        var unit
-        var value
+        let digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
+        let time
+        let unit
+        let value
         _.each(timePairs, function (timePair) {
           time = digest.exec(timePair)
           value = parseFloat(time[1])
@@ -412,16 +411,22 @@ _.mixin({
   /**
    * @param target
    */
-  camelToHyphen: function (target) {
+  camelToKebab: function (target) {
     return target.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
   },
   /**
    * @param target
    */
-  hyphenToCamel: function (target) {
+  kebabToCamel: function (target) {
     return target.replace(/(-\w)/g, function (m) {
       return m[1].toUpperCase()
     })
+  },
+  /**
+   * @param target
+   */
+  camelToSnake: function (target) {
+    return target.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
   },
   /**
    * @param target
@@ -449,8 +454,8 @@ _.mixin({
     if (!_.isObject(newData) || !_.size(newData)) {
       return null
     }
-    var patch = {}
-    var processor = {
+    let patch = {}
+    let processor = {
       eax: undefined,
       ebx: undefined,
       ecx: undefined,
@@ -459,7 +464,7 @@ _.mixin({
     if (!_.isObject(priorData) || !_.size(priorData)) {
       console.error('bad prior:', priorData)
     } else {
-      var detect = function (value, key) {
+      let detect = function (value, key) {
         processor.eax = processor.ecx ? processor.ecx + '.' + key : key
         if (_.isObject(value)) {
           processor.ecx = processor.eax
@@ -494,10 +499,8 @@ _.mixin({
   strcmp: function (a, b) {
     a = a.toString()
     b = b.toString()
-    for (var i = 0, n = Math.max(a.length, b.length); i < n &&
-    a.charAt(i) === b.charAt(i); ++i) {
-
-    }
+    let i, n
+    for (i = 0, n = Math.max(a.length, b.length); i < n && a.charAt(i) === b.charAt(i); ++i) {}
     if (i === n) {
       return 0
     }
@@ -513,27 +516,27 @@ _.mixin({
     limit = limit || 100
     suffix = suffix || '...'
 
-    var arr = target.replace(/</g, '\n<')
+    let arr = target.replace(/</g, '\n<')
       .replace(/>/g, '>\n')
       .replace(/\n\n/g, '\n')
       .replace(/^\n/g, '')
       .replace(/\n$/g, '')
       .split('\n')
 
-    var sum = 0
-    var row
-    var cut
-    var add
-    var tagMatch
-    var tagName
-    var tagStack = []
-    // var more = false
+    let sum = 0
+    let row
+    let cut
+    let add
+    let tagMatch
+    let tagName
+    let tagStack = []
+    // let more = false
 
-    for (var i = 0; i < arr.length; i++) {
+    for (let i = 0; i < arr.length; i++) {
       row = arr[i]
 
       // count multiple spaces as one character
-      var rowCut = row.replace(/[ ]+/g, ' ')
+      let rowCut = row.replace(/[ ]+/g, ' ')
 
       if (!row.length) {
         continue

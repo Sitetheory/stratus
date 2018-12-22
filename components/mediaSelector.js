@@ -16,6 +16,7 @@
 
       // UI Additions
       'angular-material',
+      'masonry',
 
       // Modules
       'angular-file-upload',
@@ -33,15 +34,19 @@
 
       // Services
       'stratus.services.registry',
-      'stratus.services.utility',
       'stratus.services.media'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
   }
 }(this, function (Stratus, _, jQuery, angular) {
-  // We need to ensure the ng-file-upload and ng-cookies are registered
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'mediaSelector'
+
+  // We need to ensure the ng-file-upload and dnd-lists are registered
   Stratus.Modules.ngFileUpload = true
+  Stratus.Modules.dndLists = true
 
   Stratus.Modules.dndLists = true
 
@@ -51,18 +56,25 @@
     bindings: {
       ngModel: '='
     },
-    controller: function (
-      $scope,
-      $attrs,
-      Upload,
-      $mdDialog,
-      utility,
-      media
-    ) {
+    controller: function ($scope, $attrs, $mdDialog, Upload, media) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'media_selector', true)
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
-      var $ctrl = this
+      // Force CSS for Child Components
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/mediaLibrary' + min + '.css'
+      )
+
+      // TODO: Collection Binds
+
+      // Bind Init
       $ctrl.$onInit = function () {
         // Variables
         $ctrl.loadLibrary = false
@@ -91,6 +103,7 @@
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: OpenUploaderController,
+
           template: '<stratus-media-uploader collection="collection" ngf-multiple="ngfMultiple" dragged-files="draggedFiles" invalid-files="invalidFiles"></stratus-media-uploader>',
           clickOutsideToClose: false,
           focusOnOpen: true,
@@ -114,16 +127,17 @@
       }
 
       function updateDraggedFilesPriorities () {
-        var priority = 0;
+        var priority = 0
         $ctrl.draggedFiles.forEach(function (draggedFile) {
-          draggedFile.priority = priority++;
-        });
+          draggedFile.priority = priority++
+        })
       }
 
       $scope.showDetails = function (media) {
         $mdDialog.show({
           attachTo: angular.element(document.querySelector('#listContainer')),
           controller: DialogShowDetails,
+          // FIXME: This is a weird format below
           template: '<stratus-media-details media="media" collection="collection"></stratus-media-details>',
           clickOutsideToClose: false,
           focusOnOpen: true,
@@ -154,8 +168,6 @@
       });
 
     },
-    templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/mediaSelector' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
 }))

@@ -29,18 +29,18 @@ Stratus.Internals.Ajax = function (request) {
 
   // Customize & Hoist
   _.extend(this, request)
-  var that = this
+  let that = this
 
   // Make Request
   this.xhr = new window.XMLHttpRequest()
-  var promise = new Promise(function (resolve, reject) {
+  let promise = new Promise(function (resolve, reject) {
     that.xhr.open(that.method, that.url, true)
     if (typeof that.type === 'string' && that.type.length) {
       that.xhr.setRequestHeader('Content-Type', that.type)
     }
     that.xhr.onload = function () {
       if (that.xhr.status >= 200 && that.xhr.status < 400) {
-        var response = that.xhr.responseText
+        let response = that.xhr.responseText
         if (_.isJSON(response)) {
           response = JSON.parse(response)
         }
@@ -82,14 +82,14 @@ Stratus.Internals.Anchor = (function Anchor () {
       if (window.location.pathname.replace(/^\//, '') ===
         event.currentTarget.pathname.replace(/^\//, '') &&
         window.location.hostname === event.currentTarget.hostname) {
-        var reserved = ['new', 'filter', 'page', 'version']
-        var valid = _.every(reserved, function (keyword) {
+        let reserved = ['new', 'filter', 'page', 'version']
+        let valid = _.every(reserved, function (keyword) {
           return !_.startsWith(event.currentTarget.hash, '#' + keyword)
         }, this)
         if (valid) {
           if (typeof $ === 'function' && $.fn && typeof Backbone === 'object') {
-            var $target = $(event.currentTarget.hash)
-            var anchor = event.currentTarget.hash.slice(1)
+            let $target = $(event.currentTarget.hash)
+            let anchor = event.currentTarget.hash.slice(1)
             $target = ($target.length) ? $target : $('[name=' + anchor + ']')
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
@@ -130,7 +130,7 @@ Stratus.Internals.Api = function (route, meta, payload) {
   }
 
   if (typeof meta !== 'object') {
-    meta = {method: meta}
+    meta = { method: meta }
   }
   if (!_.has(meta, 'method')) {
     meta.method = 'GET'
@@ -154,7 +154,7 @@ Stratus.Internals.Api = function (route, meta, payload) {
  * @constructor
  */
 Stratus.Internals.Compatibility = function () {
-  var profile = []
+  let profile = []
 
   // Operating System
   if (Stratus.Client.android) {
@@ -248,7 +248,7 @@ Stratus.Internals.Convoy = function (convoy, query) {
         },
         error: function (response) {
           reject(
-            new Stratus.Prototypes.Error({code: 'Convoy', message: response},
+            new Stratus.Prototypes.Error({ code: 'Convoy', message: response },
               this))
           return response
         }
@@ -290,7 +290,7 @@ Stratus.Internals.CssLoader = function (url) {
     /* Digest Extension */
     /*
          FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
-         var extension = /\.([0-9a-z]+)$/i;
+         let extension = /\.([0-9a-z]+)$/i;
          extension = extension.exec(url);
          */
     /* Verify Identical Calls */
@@ -305,7 +305,7 @@ Stratus.Internals.CssLoader = function (url) {
       Stratus.CSS[url] = false
 
       /* Create Link */
-      var link = document.createElement('link')
+      let link = document.createElement('link')
       link.type = 'text/css'
       link.rel = 'stylesheet'
       link.href = url
@@ -345,12 +345,12 @@ Stratus.Internals.GetColWidth = function (el) {
   if (typeof el === 'undefined' || !el) {
     return false
   }
-  var classes = el.attr('class')
+  let classes = el.attr('class')
   if (typeof classes === 'undefined' || !classes) {
     return false
   }
-  var regexp = /col-.{2}-([0-9]*)/g
-  var match = regexp.exec(classes)
+  let regexp = /col-.{2}-([0-9]*)/g
+  let match = regexp.exec(classes)
   if (typeof match === 'undefined' || !match) {
     return false
   }
@@ -457,14 +457,14 @@ Stratus.Internals.LoadCss = function (urls) {
     if (typeof urls === 'string') {
       urls = [urls]
     }
-    var cssEntries = {
+    let cssEntries = {
       total: urls.length,
       iteration: 0
     }
     if (cssEntries.total > 0) {
       _.each(urls.reverse(), function (url) {
         cssEntries.iteration++
-        var cssEntry = _.uniqueId('css_')
+        let cssEntry = _.uniqueId('css_')
         cssEntries[cssEntry] = false
         if (typeof url === 'undefined' || !url) {
           cssEntries[cssEntry] = true
@@ -484,7 +484,7 @@ Stratus.Internals.LoadCss = function (urls) {
       })
     } else {
       reject(new Stratus.Prototypes.Error(
-        {code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
+        { code: 'LoadCSS', message: 'No CSS Resource URLs found!' }, this))
     }
   })
 }
@@ -497,7 +497,7 @@ Stratus.Internals.LoadCss = function (urls) {
  * @constructor
  */
 Stratus.Internals.LoadEnvironment = function () {
-  var initialLoad = Stratus('body').attr('data-environment')
+  let initialLoad = Stratus('body').attr('data-environment')
   if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
     Stratus.Environment.set(initialLoad)
   }
@@ -543,21 +543,18 @@ Stratus.Internals.LoadImage = function (obj) {
 
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
-      let src = _.hydrate(el.attr('data-src'))
+      let src = _.hydrate(el.attr('data-src')) || el.attr('src') || null
 
       // Handle precedence
-      if (!src || src === 'lazy' || _.isEmpty(src)) {
+      if (src === 'lazy' || _.isEmpty(src)) {
         src = el.attr('src')
       }
 
-      let size = null
+      let size = _.hydrate(el.attr('data-size')) || obj.size || null
 
       // if a specific valid size is requested, use that
       // FIXME: size.indexOf should never return anything useful
-      if (_.hydrate(el.attr('data-size')) &&
-        size.indexOf(_.hydrate(el.attr('data-size'))) !== false) {
-        size = _.hydrate(el.attr('data-size'))
-      } else {
+      if (!size) {
         let width = null
         let unit = null
         let percentage = null
@@ -586,7 +583,7 @@ Stratus.Internals.LoadImage = function (obj) {
           // So we need to find the first parent that is visible and use that width
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
-          let visibilitySelector = _.hydrate(el.attr('data-ignorevisibility')) ? null : ':visible'
+          let visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
           let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
           // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
@@ -594,10 +591,10 @@ Stratus.Internals.LoadImage = function (obj) {
           // If one of parents of the image (and child of the found parent) has
           // a bootstrap col-*-* set divide width by that in anticipation (e.g.
           // Carousel that has items grouped)
-          var $col = $visibleParent.find('[class*="col-"]')
+          let $col = $visibleParent.find('[class*="col-"]')
 
           if ($col.length > 0) {
-            var colWidth = Stratus.Internals.GetColWidth($col)
+            let colWidth = Stratus.Internals.GetColWidth($col)
             if (colWidth) {
               width = Math.round(width / colWidth)
             }
@@ -650,22 +647,34 @@ Stratus.Internals.LoadImage = function (obj) {
 
       // Change Source to right size (get the base and extension and ignore
       // size)
+      const srcOrigin = src
       const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-      let srcMatch = srcRegex.exec(src)
+      const srcMatch = srcRegex.exec(src)
       if (srcMatch !== null) {
         src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
       } else {
         console.error('Unable to find src for image:', el)
       }
 
-      // Change the Source to be the desired path
-      if (!_.isEmpty(src)) {
-        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
-      }
+      // Start Loading
       el.addClass('loading')
+
+      // Add Listeners (Only once per Element!)
       el.on('load', function () {
         el.addClass('loaded').removeClass('loading')
       })
+      el.on('error', function () {
+        // TODO: Go down in sizes before reaching the origin
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('src', srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin)
+        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+      })
+
+      // Change the Source to be the desired path
+      if (!_.isEmpty(src)) {
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
+      }
 
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
@@ -720,7 +729,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
       // Cycle through all the registered objects an execute their function
       // We must use the registered onScroll objects, because they get removed
       // in some cases (e.g. lazy load)
-      var elements = Stratus.RegisterGroup.get('OnScroll')
+      let elements = Stratus.RegisterGroup.get('OnScroll')
 
       _.each(elements, function (obj) {
         if (typeof obj !== 'undefined' && _.has(obj, 'method')) {
@@ -806,7 +815,7 @@ Stratus.Internals.Resource = function (path, elementId) {
         data: null
       }
       Stratus.Events.once('resource:' + path, resolve)
-      var meta = {path: path, dataType: 'text'}
+      let meta = { path: path, dataType: 'text' }
       if (elementId !== undefined) {
         meta.elementId = elementId
       }
@@ -839,20 +848,20 @@ Stratus.Internals.SetUrlParams = function (params, url) {
   if (typeof params === 'undefined') {
     return url
   }
-  var vars = {}
-  var glue = url.indexOf('?')
-  var anchor = url.indexOf('#')
-  var tail = ''
+  let lets = {}
+  let glue = url.indexOf('?')
+  let anchor = url.indexOf('#')
+  let tail = ''
   if (anchor >= 0) {
     tail = url.substring(anchor, url.length)
     url = url.substring(0, anchor)
   }
   url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    vars[key] = value
+    lets[key] = value
   })
-  vars = _.extend(vars, params)
+  lets = _.extend(lets, params)
   return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-    _.reduce(_.map(vars, function (value, key) {
+    _.reduce(_.map(lets, function (value, key) {
       return key + '=' + value
     }), function (memo, value) {
       return memo + '&' + value
@@ -867,7 +876,7 @@ Stratus.Internals.SetUrlParams = function (params, url) {
  * @constructor
  */
 Stratus.Internals.TrackLocation = function () {
-  var envData = {}
+  let envData = {}
   // if (!Stratus.Environment.has('timezone'))
   envData.timezone = new Date().toString().match(/\((.*)\)/)[1]
   if (Stratus.Environment.get('trackLocation')) {
@@ -932,7 +941,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
       data: request,
       type: 'application/json',
       success: function (response) {
-        var settings = response.payload || response
+        let settings = response.payload || response
         if (typeof settings === 'object') {
           _.each(Object.keys(settings), function (key) {
             Stratus.Environment.set(key, settings[key])

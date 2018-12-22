@@ -30,8 +30,8 @@
           Upload,
           utility
         ) {
-          var tagApi = '/Api/Tag'
-          var mediaApi = '/Api/Media'
+          let tagApi = '/Api/Tag'
+          let mediaApi = '/Api/Media'
 
           return {
             dragenter: dragenter,
@@ -57,42 +57,46 @@
           }
 
           function getMedia (scope) {
-            var currentPage = scope.collection.meta.data.pagination.pageCurrent
-            if (currentPage == null) return scope.collection.fetch()
+            let currentPage = scope.collection.meta.data.pagination.pageCurrent
+            if (currentPage == null) {
+              return scope.collection.fetch()
+            }
             return scope.collection.page(currentPage)
           }
 
           function createTag (data) {
+            console.warn('Using a non-model API call!')
             return utility.sendRequest(data, 'POST', tagApi)
           }
 
           function deleteMedia (fileId) {
-            return utility.sendRequest(null, 'DELETE', mediaApi + '/' +
-              fileId)
+            console.warn('Using a non-model API call!')
+            return utility.sendRequest(null, 'DELETE', mediaApi + '/' + fileId)
           }
 
           function fetchOneMedia (fileId) {
-            return utility.sendRequest(null, 'GET', mediaApi + '/' +
-              fileId)
+            console.warn('Using a non-model API call!')
+            return utility.sendRequest(null, 'GET', mediaApi + '/' + fileId)
           }
 
           function saveMediaUrl (data) {
+            console.warn('Using a non-model API call!')
             return utility.sendRequest(data, 'POST', mediaApi)
           }
 
           // Update title, description, tags of a file
           function updateMedia (fileId, data) {
+            console.warn('Using a non-model API call!')
             return utility.sendRequest(data, 'PUT', mediaApi + '/' + fileId)
           }
 
           // TODO: Evaluate this functionality
           function uploadToS3 (file, infoId) {
-            // var s3Credentials = appConfig.s3Credentials();
-            // var POLICY = s3Credentials.POLICY
-            // var SIGNATURE = s3Credentials.SIGNATURE
-            // var ACCESS_KEY = s3Credentials.ACCESS_KEY
-            var url = '//app.sitetheory.io:3000/?session=' +
-              _.cookie('SITETHEORY') + (infoId ? ('&id=' + infoId) : '')
+            // let s3Credentials = appConfig.s3Credentials();
+            // let POLICY = s3Credentials.POLICY
+            // let SIGNATURE = s3Credentials.SIGNATURE
+            // let ACCESS_KEY = s3Credentials.ACCESS_KEY
+            let url = '//app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY') + (infoId ? ('&id=' + infoId) : '')
 
             return Upload.upload({
               url: url,
@@ -152,7 +156,7 @@
           }
 
           function getYouTubeID (url) {
-            /* var ID = ''
+            /* let ID = ''
             url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)
             if (url[2] !== undefined) {
               ID = url[2].split(/[^0-9a-z_]/i)
@@ -161,8 +165,8 @@
               ID = url
             }
             return ID */
-            var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
-            var match = url.match(regExp)
+            let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
+            let match = url.match(regExp)
             return (match && match[7].length === 11) ? match[7] : ''
           }
         }
