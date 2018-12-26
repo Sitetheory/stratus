@@ -165,8 +165,7 @@
         if (!_.isUndefined(data) && !_.isEqual($scope.draggedFiles, data)) {
           $ctrl.draggedFiles = data || []
         }
-      });
-
+      })
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
