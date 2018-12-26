@@ -48,6 +48,8 @@
   Stratus.Modules.ngFileUpload = true
   Stratus.Modules.dndLists = true
 
+  Stratus.Modules.dndLists = true
+
   // This component intends to handle binding of an
   // item array into a particular attribute.
   Stratus.Components.MediaSelector = {
@@ -163,7 +165,8 @@
         if (!_.isUndefined(data) && !_.isEqual($scope.draggedFiles, data)) {
           $ctrl.draggedFiles = data || []
         }
-      })
+      });
+
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
