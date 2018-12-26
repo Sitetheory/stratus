@@ -7,43 +7,60 @@
     <div ng-class="{'section-container' : $ctrl.isSelector}">
         <div ng-class="{'accent-border-horizontal-on-light' : !$ctrl.isSelector}" class="library-header">
             <div  layout="row" layout-align="space-between center">
-                <!-- Add Button -->
-                <md-button class="btn md-ink-ripple open-uploader" ng-click="$ctrl.openUploader(true)">
-                    Add <md-tooltip>Add to your library</md-tooltip>
-                </md-button>
 
                 <!-- Search -->
                 <stratus-search class="media-search" placeholder="Search by title, date or tag"></stratus-search>
 
-                <!-- Thumb size slider -->
-                <div class="thumb-slider position-anchor">
-                    <div class="thumb-icon-small">
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
-                    </div>
-                    <div class="thumb-icon-large">
-                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
-                    </div>
-                    <h4 class="small-label">Thumb</h4>
+                <div class="header-right" layout="row" layout-align="space-between center">
+                    <!-- Thumb size slider -->
+                    <div class="thumb-slider position-anchor">
+                        <div class="thumb-icon-small">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridsmall.svg"></md-icon>
+                        </div>
+                        <div class="thumb-icon-large">
+                            <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/layoutTypeIcon/gridXLarge.svg"></md-icon>
+                        </div>
 
-                    <md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
-                    <!--<md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>-->
+                        <!--<md-slider min="125" max="200" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>-->
+                        <md-slider min="200" max="400" ng-model="thumbColumn.changeSize" aria-label="thumb size" id="thumb-slider"></md-slider>
 
+                    </div>
+
+                    <!-- Add Button -->
+                    <md-button class="btn btn-add md-ink-ripple open-uploader" ng-click="$ctrl.openUploader(true)">
+                        <md-icon md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/add.svg"></md-icon>
+                        <md-tooltip>Add to your library</md-tooltip>
+                    </md-button>
                 </div>
             </div>
         </div>
 
         <div class="media-content library-content clearfix">
+
+            <!-- Testing masonry. Deleted when done
+            <div class="grid">
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 200px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 70px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 300px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 500px; background: #FC1818;"></div>
+            </div> -->
             <ul class="medias list-inline grid"
-                data-masonry='{ "itemSelector": ".grid-item" }'
+                ng-class="{'slider-grid-small' : thumbColumn.changeSize > 300 }"
+
                 ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
                 ngf-multiple="true"
                 ngf-max-files="10"
                 ngf-model-invalid="invalid-files"
                 ngf-validate="{size: {max: '10MB'}, pattern: '.jpg,.png,.pdf,.doc'}">
-                <li ng-repeat="media in collection.models" class="position-anchor grid-item"
+                <li ng-repeat="media in collection.models" class="grid-item"
                     ng-if="media.data.url || media.data.file || media.data.embed"
-                    ng-class="{selected: $ctrl.isSelector && media.data.selectedClass}"
-                    ng-style="{width: thumbColumn.changeSize/10+'%'}">
+                    ng-class="{ 'filtered-out' : filterImages || filterVideos || filterDocuments, 'filter-images' : filterImages && media.data.mime.indexOf('image') > -1, 'filter-videos' : filterVideos && media.data.mime == 'video', 'filter-documents' : filterDocuments && (media.data.mime == 'application/pdf' ||  media.data.mime == 'application/msword')}"
+                    ng-style="!$ctrl.isSelector && {'width': 5000/thumbColumn.changeSize+'%', 'padding-left' : 200/thumbColumn.changeSize+'%', 'padding-right' : 200/thumbColumn.changeSize+'%' } || $ctrl.isSelector && { 'width' : thumbColumn.changeSize/16+'%' }"
+                >
                     <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
 
                         <!-- Video Thumb -->
@@ -86,8 +103,6 @@
                             </div>
                         </div>
 
-                        <!-- TODO: Enable lazy loading for background image -->
-
                         <!-- Image hover info -->
                         <stratus-media-short-details media="media.data"></stratus-media-short-details>
                         <!-- Image hover info ends -->
@@ -126,17 +141,17 @@
         </div>
 
         <div class="library-footer nav-button" layout="row" layout-align="space-between center">
+
             <!-- Media type filter -->
-            <!-- TODO: Make these checkboxes limit media -->
             <div class="media-type-filter" layout="row" layout-align="center center">
                 <p class="small-label">Show</p>
-                <md-checkbox>
+                <md-checkbox name="image-filter" ng-click="filterImages=!filterImages">
                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/image.svg" aria-hidden="true"></md-icon>
                 </md-checkbox>
-                <md-checkbox>
+                <md-checkbox ng-click="filterVideos=!filterVideos">
                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/video.svg" aria-hidden="true"></md-icon>
                 </md-checkbox>
-                <md-checkbox>
+                <md-checkbox ng-click="filterDocuments=!filterDocuments">
                     <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
                 </md-checkbox>
             </div>

@@ -1,18 +1,18 @@
-.btnPublish,
-.btnPublishFull {
+.btn-publish,
+.btn-publish-full {
   transition: all 0.12s ease-out;
-  background: #ff5b3a;
+  background: #FF5B3A;
 }
-.btnPublish svg g,
-.btnPublishFull svg g {
-  fill: #fff;
+.btn-publish svg g,
+.btn-publish-full svg g {
+  fill: #FFFFFF;
 }
-.btnPublish:hover,
-.btnPublishFull:hover {
-  background: #ff7150;
+.btn-publish:hover,
+.btn-publish-full:hover {
+  background: #FF7150;
 }
 /* Removed angular md-button styling */
-.btnPublishFull {
+.btn-publish-full {
   margin: 0;
   padding: 0;
   min-width: inherit;
@@ -20,81 +20,81 @@
   line-height: inherit;
   border-radius: 0;
 }
-.btnPublishFull:hover svg {
+.btn-publish-full:hover svg {
   animation: btn-icon-grow 0.3s ease-out both;
   -webkit-animation: btn-icon-grow 0.3s ease-out both;
 }
 /* TWO-PART HEADER PUBLISH BUTTON */
-#headerControlsPublish {
+#header-controls-publish {
   transform: translateX(22px);
   margin-left: -12px;
 }
 /* Part 1 Publish now */
-#headerControlsBtnPublishNow {
+#header-controls-btn-publish-now {
   float: left;
 }
-#headerControlsBtnPublishNow .btnIcon {
+#header-controls-btn-publish-now .btn-icon {
   float: left;
   padding: 16px 0 0 20px;
 }
-#headerControlsBtnPublishNow .btnText {
+#header-controls-btn-publish-now .btn-text {
   float: left;
   padding: 18px 20px 18px 10px;
-  color: #fff;
+  color: #FFFFFF;
   line-height: 1.4;
   font-size: 15px;
   font-weight: bold;
   letter-spacing: 0.04em;
 }
 /* Part 2 Other publishing options */
-#headerControlsPublishOptions {
+#header-controls-publish-options {
   float: left;
 }
-#headerControlsPublishOptions {
+#header-controls-publish-options {
   padding: 19px 16px;
   border-left: 1px solid rgba(255, 255, 255, 0.5);
 }
-#headerControlsPublishOptions .caret {
+#header-controls-publish-options .caret {
   opacity: 0.7;
   border-width: 5px;
   border-top-color: #fff;
 }
-#headerControlsPublishOptions:hover .caret {
+#header-controls-publish-options:hover .caret {
   opacity: 1;
 }
 /* MOVE SVG SPRITE TO DISPLAY CORRECT ICON */
-.published.btnPublishFull svg .actionButton {
+.published.btn-publish-full svg .action-button {
   transform: translateX(-100%);
   -webkit-transform: translateX(-100%);
 }
-.delayed.btnPublishFull svg .actionButton {
+.delayed.btn-publish-full svg .action-button {
   transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
 }
 /* CHANGE COLORS TO REFLECT PUBLISHING STATUS */
-.published.md-button.btnPublishFull:not([disabled]),
-.published.btnPublishFull:not([disabled]) {
+.published.md-button.btn-publish-full:not([disabled]),
+.published.btn-publish-full:not([disabled]) {
   background: #56995e;
 }
-.published.md-button.btnPublishFull:not([disabled]):hover,
-.published.btnPublishFull:not([disabled]):hover {
+.published.md-button.btn-publish-full:not([disabled]):hover,
+.published.btn-publish-full:not([disabled]):hover {
   background: #7cb27d;
 }
 /* Unpublished */
-.unpublished.md-button.btnPublishFull,
-.unpublished.btnPublishFull {
-  background: #ff5b3a;
+.unpublished.md-button.btn-publish-full,
+.unpublished.btn-publish-full {
+  background: #FF5B3A;
 }
-.unpublished.md-button.btnPublishFull:not([disabled]):hover,
-.unpublished.btnPublishFull:not([disabled]):hover {
+.unpublished.md-button.btn-publish-full:not([disabled]):hover,
+.unpublished.btn-publish-full:not([disabled]):hover {
   background: #ff7b55;
 }
 /* Delayed */
-.delayed.md-button.btnPublishFull,
-.delayed.btnPublishFull {
+.delayed.md-button.btn-publish-full,
+.delayed.btn-publish-full {
   background: #734564;
 }
-.delayed.md-button.btnPublishFull:not([disabled]):hover,
-.delayed.btnPublishFull:not([disabled]):hover {
+.delayed.md-button.btn-publish-full:not([disabled]):hover,
+.delayed.btn-publish-full:not([disabled]):hover {
   background: #a47594;
 }
