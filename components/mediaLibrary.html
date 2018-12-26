@@ -36,9 +36,20 @@
         </div>
 
         <div class="media-content library-content clearfix">
+
+            <div class="grid" id="container">
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 200px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 70px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 300px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 100px; background: #FC1818;"></div>
+                <div class="grid-item" style="float: left; width: 23%; margin-right: 2%; height: 500px; background: #FC1818;"></div>
+            </div>
             <ul class="medias list-inline grid"
                 ng-class="{'slider-grid-small' : thumbColumn.changeSize > 300 }"
-                data-masonry='{ "itemSelector": ".grid-item" }'
+
                 ngf-drop="$ctrl.openUploader(true, $files, $invalidFiles)"
                 ngf-multiple="true"
                 ngf-max-files="10"
