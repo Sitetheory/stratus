@@ -198,14 +198,16 @@
 
             // TODO: Abstract this deeper
             /**
-             * @param action
-             * @param data
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.sync = function (action, data) {
+            this.sync = function (action, data, options) {
               this.pending = true
               return $q(function (resolve, reject) {
                 action = action || 'GET'
+                options = options || {}
                 var prototype = {
                   method: action,
                   url: that.url(),
@@ -229,6 +231,15 @@
 
                 if (!Stratus.Environment.get('production')) {
                   $log.log('Prototype:', prototype)
+                }
+
+                if (
+                  options.hasOwnProperty('headers')
+                  && typeof options.headers === 'object'
+                ) {
+                  Object.keys(options.headers).forEach(function (headerKey) {
+                    prototype.headers[headerKey] = options.headers[headerKey]
+                  })
                 }
 
                 $http(prototype).then(function (response) {
@@ -290,12 +301,13 @@
             }
 
             /**
-             * @param action
-             * @param data
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.fetch = function (action, data) {
-              return that.sync(action, data || that.meta.get('api'))
+            this.fetch = function (action, data, options) {
+              return that.sync(action, data || that.meta.get('api'), options)
                 .catch(function (message) {
                   if (that.toast) {
                     $mdToast.show(
