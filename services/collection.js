@@ -151,7 +151,12 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      prototype.url += '?' + that.serialize(data)
+                      if (prototype.url.includes('?')) {
+                        prototype.url += '&'
+                      } else {
+                        prototype.url += '?'
+                      }
+                      prototype.url += that.serialize(data)
                     }
                   } else {
                     prototype.headers['Content-Type'] = 'application/json'

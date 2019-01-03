@@ -153,11 +153,15 @@
               var url = that.getIdentifier() ? that.urlRoot + '/' +
                 that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
 
-              // TODO: Move the following version logic to a router
-              url += '?'
 
               // add futher param to specific version
               if (_.getUrlParams('version')) {
+                // TODO: Move the following version logic to a router
+                if (url.includes('?')) {
+                  url += '&'
+                } else {
+                  url += '?'
+                }
                 url += 'options[version]=' + _.getUrlParams('version')
               }
               return url
@@ -210,7 +214,12 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      prototype.url += '&' + that.serialize(data)
+                      if (prototype.url.includes('?')) {
+                        prototype.url += '&'
+                      } else {
+                        prototype.url += '?'
+                      }
+                      prototype.url += that.serialize(data)
                     }
                   } else {
                     prototype.headers['Content-Type'] = 'application/json'
@@ -459,12 +468,12 @@
             }
 
             /**
-            * if the attributes is an array, the function allow to find the specific object by the condition ( key - value )
-            * @param attr
-            * @param key
-            * @param value
-            * @returns {*}
-            */
+             * if the attributes is an array, the function allow to find the specific object by the condition ( key - value )
+             * @param attr
+             * @param key
+             * @param value
+             * @returns {*}
+             */
             this.find = function (attributes, key, value) {
               if (typeof attributes === 'string') {
                 attributes = that.get(attributes)
@@ -473,7 +482,9 @@
               if (!(attributes instanceof Array)) {
                 return attributes
               } else {
-                return attributes.find(function (obj) { return obj[key] === value })
+                return attributes.find(function (obj) {
+                  return obj[key] === value
+                })
               }
             }
 
