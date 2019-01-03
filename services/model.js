@@ -153,7 +153,6 @@
               var url = that.getIdentifier() ? that.urlRoot + '/' +
                 that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
 
-
               // add futher param to specific version
               if (_.getUrlParams('version')) {
                 // TODO: Move the following version logic to a router
@@ -234,8 +233,8 @@
                 }
 
                 if (
-                  options.hasOwnProperty('headers')
-                  && typeof options.headers === 'object'
+                  options.hasOwnProperty('headers') &&
+                  typeof options.headers === 'object'
                 ) {
                   Object.keys(options.headers).forEach(function (headerKey) {
                     prototype.headers[headerKey] = options.headers[headerKey]
