@@ -153,11 +153,14 @@
               var url = that.getIdentifier() ? that.urlRoot + '/' +
                 that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
 
-              // TODO: Move the following version logic to a router
-              url += '?'
-
               // add futher param to specific version
               if (_.getUrlParams('version')) {
+                // TODO: Move the following version logic to a router
+                if (url.includes('?')) {
+                  url += '&'
+                } else {
+                  url += '?'
+                }
                 url += 'options[version]=' + _.getUrlParams('version')
               }
               return url
@@ -194,14 +197,16 @@
 
             // TODO: Abstract this deeper
             /**
-             * @param action
-             * @param data
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.sync = function (action, data) {
+            this.sync = function (action, data, options) {
               this.pending = true
               return $q(function (resolve, reject) {
                 action = action || 'GET'
+                options = options || {}
                 var prototype = {
                   method: action,
                   url: that.url(),
@@ -210,7 +215,12 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      prototype.url += '&' + that.serialize(data)
+                      if (prototype.url.includes('?')) {
+                        prototype.url += '&'
+                      } else {
+                        prototype.url += '?'
+                      }
+                      prototype.url += that.serialize(data)
                     }
                   } else {
                     prototype.headers['Content-Type'] = 'application/json'
@@ -220,6 +230,15 @@
 
                 if (!Stratus.Environment.get('production')) {
                   $log.log('Prototype:', prototype)
+                }
+
+                if (
+                  options.hasOwnProperty('headers') &&
+                  typeof options.headers === 'object'
+                ) {
+                  Object.keys(options.headers).forEach(function (headerKey) {
+                    prototype.headers[headerKey] = options.headers[headerKey]
+                  })
                 }
 
                 $http(prototype).then(function (response) {
@@ -281,12 +300,13 @@
             }
 
             /**
-             * @param action
-             * @param data
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.fetch = function (action, data) {
-              return that.sync(action, data || that.meta.get('api'))
+            this.fetch = function (action, data, options) {
+              return that.sync(action, data || that.meta.get('api'), options)
                 .catch(function (message) {
                   if (that.toast) {
                     $mdToast.show(
@@ -459,12 +479,12 @@
             }
 
             /**
-            * if the attributes is an array, the function allow to find the specific object by the condition ( key - value )
-            * @param attr
-            * @param key
-            * @param value
-            * @returns {*}
-            */
+             * if the attributes is an array, the function allow to find the specific object by the condition ( key - value )
+             * @param attr
+             * @param key
+             * @param value
+             * @returns {*}
+             */
             this.find = function (attributes, key, value) {
               if (typeof attributes === 'string') {
                 attributes = that.get(attributes)
@@ -473,7 +493,9 @@
               if (!(attributes instanceof Array)) {
                 return attributes
               } else {
-                return attributes.find(function (obj) { return obj[key] === value })
+                return attributes.find(function (obj) {
+                  return obj[key] === value
+                })
               }
             }
 

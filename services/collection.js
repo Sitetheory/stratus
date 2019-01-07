@@ -132,17 +132,19 @@
 
             // TODO: Abstract this deeper
             /**
-             * @param action
-             * @param data
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.sync = function (action, data) {
+            this.sync = function (action, data, options) {
               // Internals
               that.pending = true
               that.completed = false
 
               return $q(function (resolve, reject) {
                 action = action || 'GET'
+                options = options || {}
                 var prototype = {
                   method: action,
                   url: that.url(),
@@ -151,13 +153,28 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      prototype.url += '?' + that.serialize(data)
+                      if (prototype.url.includes('?')) {
+                        prototype.url += '&'
+                      } else {
+                        prototype.url += '?'
+                      }
+                      prototype.url += that.serialize(data)
                     }
                   } else {
                     prototype.headers['Content-Type'] = 'application/json'
                     prototype.data = JSON.stringify(data)
                   }
                 }
+
+                if (
+                  options.hasOwnProperty('headers') &&
+                  typeof options.headers === 'object'
+                ) {
+                  Object.keys(options.headers).forEach(function (headerKey) {
+                    prototype.headers[headerKey] = options.headers[headerKey]
+                  })
+                }
+
                 $http(prototype).then(function (response) {
                   if (response.status === 200 && angular.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
@@ -210,12 +227,13 @@
             }
 
             /**
-             * @param action
-             * @param data
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.fetch = function (action, data) {
-              return that.sync(action, data || that.meta.get('api')).catch(
+            this.fetch = function (action, data, options) {
+              return that.sync(action, data || that.meta.get('api'), options).catch(
                 function (message) {
                   $mdToast.show(
                     $mdToast.simple()
