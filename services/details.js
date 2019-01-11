@@ -25,7 +25,7 @@
               var that = this
               return new $q(function (resolve, reject) {
                 if (angular.isString($element)) {
-                  $element = {target: $element}
+                  $element = { target: $element }
                 }
                 var options = {
                   selectedId: $element.attr

@@ -28,8 +28,8 @@
       socialLibraries, utility, singleSignOn
     ) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'single_sign_on',
-        true)
+      // FIXME: This needs a lot of updates
+      utility.componentInitializer(this, $scope, $attrs, 'single_sign_on', true)
 
       // load libraries
       socialLibraries.loadGGLibrary()
@@ -54,14 +54,16 @@
                 (response.authResponse !== null)
                   ? FbGetBasicProfile()
                   : FB.login()
-              }, {
+              },
+              {
                 scope: [
                   'email',
                   'name',
                   'gender',
                   'locale',
                   'phone',
-                  'picture']
+                  'picture'
+                ]
               })
           }
         })
@@ -72,7 +74,8 @@
           function (response) {
             doSignIn(response, 'facebook', true)
           },
-          { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] })
+          { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] }
+        )
       }
 
       // HANDLE ERROR LOGIN
@@ -117,12 +120,10 @@
             }
           },
           function (error) {
-            console.log(error)
+            console.error(error)
           })
       }
     },
-    templateUrl: Stratus.BaseUrl +
-   Stratus.BundlePath + 'components/singleSignOn' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

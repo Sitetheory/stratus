@@ -5,23 +5,22 @@
                 <div class="social-hover"></div>
                 <md-icon class="position-center" md-svg-src="/Api/Resource?path=@SitetheoryCoreBundle/Resources/public/images/icons/social/facebook.svg">
                 </md-icon>
-                <div class="fb-login-button"
+                <div class="fb-login-button custom-fb-sign-in"
                      data-max-rows="1" data-size="large"
                      data-button-type="continue_with"
                      data-show-faces="false"
                      data-use-continue-as="false"
-                     class="custom-fb-sign-in"
                      data-scope="public_profile,email"
                      data-auto-logout-link="true"
                      onlogin="checkLoginState();">
                 </div>
-                <md-button ng-if="$ctrl.ngModel && $ctrl.ngModel.facebookId" class="md-fab md-mini md-primary"
+                <md-button ng-if="$ctrl.ngModel && $ctrl.ngModel.facebookId"
+                           class="md-fab md-mini md-primary"
                            ng-click="removeFacebook()" aria-label="Disconnect">
                     <md-tooltip>Disconnect</md-tooltip>
                     <md-icon md-font-icon="fa-circle" class="far fa-trash-alt"></md-icon>
                 </md-button>
             </div>
-
         </li>
         <li>
             <div class="btn-social use-google border-radius-default">
