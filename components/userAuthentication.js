@@ -22,6 +22,10 @@
     factory(root.Stratus, root._, root.angular, root.zxcvbn)
   }
 }(this, function (Stratus, _, angular, zxcvbn) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'userAuthentication'
+
   // This component intends to allow editing of various selections depending
   // on context.
   Stratus.Components.UserAuthentication = {
@@ -35,11 +39,19 @@
       $attrs,
       $compile,
       Model,
-      utility
+      utility // TODO: Remove this
     ) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'user_authentication', true)
-      let $ctrl = this
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
+
+      // Events
       $ctrl.$onInit = function () {
         // variables
         $ctrl.signinData = {}
@@ -291,10 +303,11 @@
         $ctrl.message = null
       }
 
+      // FIXME: This is a third level of abstraction...  Seriously?!?
       function safeMessage () {
         return utility.safeMessage($ctrl.message)
       }
     },
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/userAuthentication' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/userAuthentication' + min + '.html'
   }
 }))

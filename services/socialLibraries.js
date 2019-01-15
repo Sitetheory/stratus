@@ -29,35 +29,22 @@
           }
 
           function loadFacebookSDK () {
+            // console.info('Setting Facebook Callback...')
             window.fbAsyncInit = function () {
+              // console.info('Initializing Facebook...')
               FB.init({
                 appId: appConfig.facebookAppId(),
                 autoLogAppEvents: true,
-                xfbml: true,
+                cookie: true, // enable cookies to allow the server to access the session
+                xfbml: true, // parse social plugins on this page
                 version: 'v3.2'
               })
+              // FB.AppEvents.logPageView()
             }
 
-            require(['https://connect.facebook.net/en_US/sdk.js'])
-
-            /* *
-            window.fbAsyncInit = (function () {
-              FB.init({
-                appId: fbAppId,
-                cookie: true, // enable cookies to allow the server to access the session
-                xfbml: true // parse XFBML version: 'v2.10'
-              })
-              FB.AppEvents.logPageView()
-            }(function (d, s, id) {
-              var fjs = d.getElementsByTagName(s)[0]
-              var js = null
-              if (d.getElementById(id)) return
-              js = d.createElement(s)
-              js.id = id
-              js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10'
-              fjs.parentNode.insertBefore(js, fjs)
-            }(document, 'script', 'facebook-jssdk')))
-            /* */
+            if (!_.cookie('disableFacebook')) {
+              require(['https://connect.facebook.net/en_US/sdk.js'])
+            }
           }
 
           function loadGGLibrary () {

@@ -117,6 +117,22 @@ _.mixin({
     return blob
   },
 
+  // This function simply extracts the name of a function from code directly
+  /**
+   * @param code
+   * @returns {string}
+   */
+  functionName: function (code) {
+    if (_.isEmpty(code)) {
+      return null
+    }
+    if (!_.isString(code)) {
+      code = code.toString()
+    }
+    code = code.substr('function '.length)
+    return code.substr(0, code.indexOf('('))
+  },
+
   // This function simply capitalizes the first letter of a string.
   /**
    * @param string

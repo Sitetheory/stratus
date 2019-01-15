@@ -9,16 +9,23 @@
       'underscore',
       'angular',
 
+      // Services
+      'stratus.services.registry',
+      'stratus.services.model',
+      'stratus.services.collection',
+
       // Modules
       'angular-material',
-      'stratus.services.socialLibraries',
-      'stratus.services.utility',
-      'stratus.services.singleSignOn'
+      'stratus.services.socialLibraries'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'socialMedia'
+
   // This component intends to allow editing of various selections depending on
   // context.
   Stratus.Components.SocialMedia = {
@@ -34,23 +41,24 @@
       $http,
       $mdDialog,
       socialLibraries,
-      utility,
-      singleSignOn
+      Model
     ) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'social_media', false)
-      Stratus.Internals.CssLoader(Stratus.BaseUrl +
-       Stratus.BundlePath + 'components/singleSignOn' +
-        (Stratus.Environment.get('production') ? '.min' : '') + '.css')
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
+      // Social Libraries
       socialLibraries.loadFacebookSDK()
       socialLibraries.loadGGLibrary()
 
       // css
       $scope.layout = 'column'
-
-      // The data get from social api.
-      let $ctrl = this
 
       $scope.$watch('$ctrl.ngModel', function () {
         if ($ctrl.ngModel) {
@@ -102,7 +110,17 @@
           function (response) {
             doSignIn(response, 'facebook', true)
           },
-          { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] })
+          {
+            scope: [
+              'email',
+              'name',
+              'gender',
+              'locale',
+              'phone',
+              'picture'
+            ]
+          }
+        )
       }
 
       // GOOGLE LOGIN
@@ -122,10 +140,20 @@
         if ($ctrl.ngModel) {
           updateExistData(data, service)
         } else {
-          singleSignOn.signIn(data, service, truthData).then(
-            function (response) { console.log('response') },
-            function (error) { console.log(error) }
-          )
+          let model = new Model({
+            'target': 'Login'
+          }, {
+            service: service,
+            data: data,
+            truthData: truthData
+          })
+          model.save()
+            .then(function (data) {
+              console.log('response:', data)
+            })
+            .catch(function (error) {
+              console.error(error)
+            })
         }
       }
 

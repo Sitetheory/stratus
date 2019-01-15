@@ -9,27 +9,40 @@
       'underscore',
       'angular',
 
+      // Services
+      'stratus.services.registry',
+      'stratus.services.model',
+      'stratus.services.collection',
+
       // Modules
       'angular-material',
-      'stratus.services.socialLibraries',
-      'stratus.services.utility',
-      'stratus.services.singleSignOn'
+      'stratus.services.socialLibraries'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'singleSignOn'
+
   // This component intends to allow editing of various selections depending on
   // context.
   Stratus.Components.SingleSignOn = {
     bindings: {},
     controller: function (
-      $rootScope, $scope, $window, $attrs, $log, $http, $mdDialog,
-      socialLibraries, utility, singleSignOn
+      $rootScope, $scope, $window, $attrs, $http, $mdDialog,
+      socialLibraries, Model
     ) {
       // Initialize
-      // FIXME: This needs a lot of updates
-      utility.componentInitializer(this, $scope, $attrs, 'single_sign_on', true)
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
       // load libraries
       socialLibraries.loadGGLibrary()
@@ -39,29 +52,26 @@
 
       // The data get from social api.
       let data = null
-      // let $ctrl = this
 
       // FACEBOOK LOGIN
       window.checkLoginState = function () {
         FB.getLoginStatus(function (response) {
+          console.log('loginStatus:', response)
           switch (response.status) {
             case 'connected':
             case 'not_authorized':
-              FbGetBasicProfile()
+              getFBProfileBasic()
               break
             default:
               FB.login(function (response) {
                 (response.authResponse !== null)
-                  ? FbGetBasicProfile()
+                  ? getFBProfileBasic()
                   : FB.login()
               },
               {
                 scope: [
-                  'email',
                   'name',
-                  'gender',
-                  'locale',
-                  'phone',
+                  'email',
                   'picture'
                 ]
               })
@@ -69,12 +79,19 @@
         })
       }
 
-      function FbGetBasicProfile () {
-        FB.api('/me?fields=name,email,gender,locale,link,picture',
+      function getFBProfileBasic () {
+        // old: name,email,gender,locale,link,picture
+        FB.api('/me?fields=id,name,email,picture',
           function (response) {
-            doSignIn(response, 'facebook', true)
+            apiLogin(response, 'facebook', true)
           },
-          { scope: ['email', 'name', 'gender', 'locale', 'phone', 'picture'] }
+          {
+            scope: [
+              'name',
+              'email',
+              'picture'
+            ]
+          }
         )
       }
 
@@ -88,9 +105,13 @@
 
       $scope.$on('doSocialSignup', function (event, email) {
         data.email = email
-        doSignIn(data, 'facebook', false)
+        if (!Stratus.Environment.get('production')) {
+          console.log('SocialSignup:', event, email, data)
+        }
+        apiLogin(data, 'facebook', false)
       })
 
+      // TODO: Evaluate moving this to the SocialLibraries service
       // GOOGLE LOGIN
       window.onbeforeunload = function (e) {
         gapi.auth2.getAuthInstance().signOut()
@@ -105,25 +126,40 @@
           id: profile.getId(),
           picture: profile.getImageUrl()
         }
-        doSignIn(data, 'google', true)
+        if (!Stratus.Environment.get('production')) {
+          console.log('Google:', data)
+        }
+        apiLogin(data, 'google', true)
       }
 
       // Call HTTP REQUEST
-      function doSignIn (data, service, truthData) {
-        singleSignOn.signIn(data, service, truthData).then(
-          function (response) {
-            if (utility.getStatus(response).code === 'CREDENTIALS') {
-              data.message = utility.getStatus(response).message
-              requireEmail(service, data)
-            } else {
-              $window.location.href = '/'
+      // FIXME: What the hell is truthData?
+      function apiLogin (data, service, truthData) {
+        let model = new Model({
+          'target': 'Login'
+        }, {
+          service: service,
+          data: data,
+          truthData: truthData
+        })
+        model.save()
+          .then(function (data) {
+            // $window.location.href = '/'
+            if (!Stratus.Environment.get('production')) {
+              console.log('Successful login:', data)
             }
-          },
-          function (error) {
-            console.error(error)
+          })
+          .catch(function (error, response) {
+            let status = (response.meta && _.isArray(response.meta.status) && response.meta.status.length) ? _.first(response.meta.status) : null
+            if (status.code === 'CREDENTIALS') {
+              data.message = status.message
+              requireEmail(service, response)
+            } else {
+              console.error(error)
+            }
           })
       }
     },
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/singleSignOn' + min + '.html'
   }
 }))

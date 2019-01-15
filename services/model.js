@@ -290,7 +290,7 @@
                         angular.isObject(response.data) ? response.data : (
                           'Invalid Payload: ' + prototype.method + ' ' +
                           prototype.url)
-                      ))
+                      ), response)
                   }
                 }).catch(function () {
                   // (/(.*)\sReceived/i).exec(error.message)[1]

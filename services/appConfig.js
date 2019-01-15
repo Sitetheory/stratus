@@ -16,7 +16,7 @@
       $provide.factory('appConfig', [
         '$q', '$http', function ($q, $http) {
           function facebookAppId () {
-            return '244333872792483'
+            return '255517234835369'
           }
 
           function googleAppId () {
