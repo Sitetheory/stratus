@@ -339,6 +339,19 @@
             }
 
             /**
+             * @param predicate
+             * @returns {*}
+             */
+            this.find = function (predicate) {
+              if (!_.isFunction(predicate)) {
+                predicate = function (model) {
+                  return model.get('id') === predicate
+                }
+              }
+              return _.find(that.models, predicate)
+            }
+
+            /**
              * @param attribute
              * @returns {Array}
              */
