@@ -144,7 +144,7 @@
         })
         model.save()
           .then(function (data) {
-            // $window.location.href = '/'
+            $window.location.href = '/'
             if (!Stratus.Environment.get('production')) {
               console.log('Successful login:', data)
             }
