@@ -308,6 +308,7 @@ boot.config({
     'stratus.controllers.productFilter': boot.bundle + 'stratus/controllers/productFilter' + boot.suffix,
     'stratus.controllers.invoiceProductFilter': boot.bundle + 'stratus/controllers/invoiceProductFilter' + boot.suffix,
     'stratus.controllers.userFilter': boot.bundle + 'stratus/controllers/userFilter' + boot.suffix,
+    'stratus.controllers.filterStreamsByTag': boot.bundle + 'stratus/controllers/filterStreamsByTag' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.address': boot.bundle + 'stratus/components/address' + boot.suffix,
