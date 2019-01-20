@@ -34,9 +34,13 @@
       // the contents type used for filter list.
       $scope.filterTags = []
 
+      $scope.filterTagIds = []
+
       // constraint the contentType is choosed in showOnly
       $scope.showOnly = []
       $scope.meta = []
+
+      $scope.separateSections = false
 
       // show more
       $scope.more = false
@@ -47,6 +51,11 @@
           $scope.contents = $scope.data.contents = models
         }
       })
+
+      $scope.$watch('collection.meta.attributes.separateSections', function (separateSections) {
+        $scope.separateSections = separateSections
+      })
+
 
       $scope.$watch('collection.meta.attributes.filterTags',
         function (filterTag) {
@@ -69,8 +78,9 @@
           function (x) {
             return x.id === filterTag.id
           });
-        (index !== -1) ?
-        $scope.showOnly.splice(index, 1): $scope.showOnly.push(filterTag)
+        console.log($scope.showOnly);
+        (index !== -1) ? $scope.showOnly.splice(index, 1): $scope.showOnly.push(filterTag);
+        (index !== -1) ? $scope.filterTagIds.splice(index, 1): $scope.filterTagIds.push(filterTag.id);
         reloadAssets()
       }
 
@@ -82,14 +92,25 @@
        * Recall api to get contents
        */
       function reloadAssets() {
-        $scope.meta.set('api.options.tagIds',
-          $scope.showOnly.map(function (item) {
-            return item.id
-          }))
-        $scope.collection.fetch()
-          .then(function (response) {
-            console.log('response', response)
+
+        if (!$scope.separateSections) {
+          /*angular.forEach($scope.filterTagIds, function (value) {
+            $scope.meta.set('api.options.tagIds', value)
+            $scope.collection.fetch()
+              .then(function (response) {
+                console.log('response', response)
+              })
           })
+        } else { */
+          $scope.meta.set('api.options.tagIds',
+            $scope.showOnly.map(function (item) {
+              return item.id
+            }))
+          $scope.collection.fetch()
+            .then(function (response) {
+              console.log('response', response)
+            })
+        }
       }
     }
   ]
