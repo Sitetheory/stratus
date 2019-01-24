@@ -61,13 +61,12 @@
                     ng-class="{ 'filtered-out' : filterImages || filterVideos || filterDocuments, 'filter-images' : filterImages && media.data.mime.indexOf('image') > -1, 'filter-videos' : filterVideos && media.data.mime == 'video', 'filter-documents' : filterDocuments && (media.data.mime == 'application/pdf' ||  media.data.mime == 'application/msword')}"
                     ng-style="!$ctrl.isSelector && {'width': 5000/thumbColumn.changeSize+'%', 'padding-left' : 200/thumbColumn.changeSize+'%', 'padding-right' : 200/thumbColumn.changeSize+'%' } || $ctrl.isSelector && { 'width' : thumbColumn.changeSize/16+'%' }"
                 >
-                    <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor">
+                    <div ng-class="{'selected-media' : $ctrl.isSelector && media.data.selectedClass}" class="media-item position-anchor" ng-dblclick="showDetails(media.data)">
 
                         <!-- Video Thumb -->
                         <div ng-if="media.data.mime == 'video'"
                              class="video-thumb image-draggable"
-                             ng-style="$ctrl.isSelector && {'background-image':'url(' + getThumbnailImgOfVideo(media.data) + ')', 'background-position': 'center center', 'background-size': 'cover'}"
-                             ng-dblclick="showDetails(media.data)">
+                             ng-style="$ctrl.isSelector && {'background-image':'url(' + getThumbnailImgOfVideo(media.data) + ')', 'background-position': 'center center', 'background-size': 'cover'}">
                             <img ng-if="$ctrl.isSelector" class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             <img ng-if="!$ctrl.isSelector" ng-src="{{ getThumbnailImgOfVideo(media.data) }}">
                             <div class="thumb-icon icon-video">
@@ -76,7 +75,7 @@
                         </div>
 
                         <!-- PDF Thumb -->
-                        <div ng-if="media.data.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
+                        <div ng-if="media.data.mime == 'application/pdf'"  class="document-thumb pdf image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-pdf.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
                             <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             <div class="thumb-icon icon-document">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
@@ -84,7 +83,7 @@
                         </div>
 
                         <!-- Word Doc Thumb -->
-                        <div ng-if="media.data.mime == 'application/msword'"  class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;" ng-dblclick="showDetails(media.data)">
+                        <div ng-if="media.data.mime == 'application/msword'"  class="document-thumb word image-draggable" style="background-image: url('/assets/1/0/bundles/sitetheorycore/images/mediaTypeGraphics/media-graphic-doc.png'); background-repeat: no-repeat; background-position: center center; background-size: cover;">
                             <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             <div class="thumb-icon icon-document">
                                 <md-icon md-svg-src="/Api/Resource?path=@SitetheoryMediaBundle:images/contentTypeIcon/document.svg" aria-hidden="true"></md-icon>
@@ -93,8 +92,7 @@
 
                         <!-- Image Thumb -->
                         <div ng-if="media.data.mime.indexOf('image') > -1" class="image-draggable"
-                             ng-style="$ctrl.isSelector && {'background-image':'url({{media.data.url}})', 'background-position': 'center center', 'background-size': 'cover'}"
-                             ng-dblclick="showDetails(media.data)">
+                             ng-style="$ctrl.isSelector && {'background-image':'url({{media.data.url}})', 'background-position': 'center center', 'background-size': 'cover'}">
                             <img ng-if="$ctrl.isSelector" class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholderSquare.png">
                             <img ng-if="!$ctrl.isSelector" src="{{media.data.url}}">
                             <div class="thumb-gradient">&nbsp;</div>
