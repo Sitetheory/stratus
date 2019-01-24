@@ -9,11 +9,11 @@
     <label>{{ $ctrl.type }}</label>
     <input type="text" ng-model="item.value">
   </md-input-container>
-  <md-button ng-if="$last && $ctrl.multiple" ng-click="items.push({})" aria-label="add">
+  <md-button ng-if="$last && $ctrl.multiple" ng-click="items.push({})" aria-label="add">Add
     <i class="fas fa-plus" aria-hidden="true"></i>
   </md-button>
   <md-button ng-if="$ctrl.multiple" ng-click="items.length < 2 ? item.value = null : items.splice($index, 1)"
-             aria-label="delete">
+    aria-label="delete">Delete
     <i class="fas fa-trash-alt" aria-hidden="true"></i>
   </md-button>
 </div>
