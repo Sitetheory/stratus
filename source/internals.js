@@ -673,6 +673,7 @@ Stratus.Internals.LoadImage = function (obj) {
       // Change the Source to be the desired path
       if (!_.isEmpty(src)) {
         el.attr('data-loading', _.dehydrate(false))
+        el.attr('data-size', _.dehydrate(size))
         el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       }
 

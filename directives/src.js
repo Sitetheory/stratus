@@ -30,37 +30,40 @@
 
         // Add Watchers
         $scope.$watch(function () {
-          return $attr.src
-        }, function () {
-          $scope.register()
-        })
-        $scope.$watch(function () {
-          return $attr.stratusSrc
-        }, function () {
+          return $attr.stratusSrc || $attr.src
+        }, function (newVal, oldVal, scope) {
+          if (newVal && $element.attr('data-size')) {
+            $scope.registered = false
+          }
           $scope.register()
         })
 
         // Group Registration
         $scope.registered = false
         $scope.register = function () {
-          if ($scope.registered) {
-            return true
-          }
           const src = $attr.stratusSrc || $attr.src || null
+
+          // Get Extension
           let ext = src ? src.match(/\.([0-9a-z]+)(\?.*)?$/i) : null
           if (ext) {
             ext = ext[1] ? ext[1].toLowerCase() : null
           }
+
+          // Limit Resizable Types
           $scope.filter = _.filter($scope.whitelist, function (value) {
             return ext === value
           })
           if (!_.size($scope.filter)) {
             return true
           }
+
+          // Don't re-register
           if ($scope.registered) {
             return true
           }
           $scope.registered = true
+
+          // Begin Registration
           $element.attr('data-src', src)
           $scope.group = {
             method: Stratus.Internals.LoadImage,
