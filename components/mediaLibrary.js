@@ -181,6 +181,9 @@
       }
 
       $scope.mediaSelectorAddOrRemoveFile = function (media) {
+        if(!$ctrl.mediaSelectorDraggedFiles) {
+          return
+        }
         if (media.selectedClass === true) {
           $ctrl.mediaSelectorDraggedFiles.splice(_.findIndex($ctrl.mediaSelectorDraggedFiles, function (mediaSelectorDraggedFile) { return mediaSelectorDraggedFile.id === media.id }), 1)
           media.selectedClass = false
