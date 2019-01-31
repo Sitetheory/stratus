@@ -42,7 +42,7 @@
   // This component is just a simple base.
   Stratus.Components.Carousel = {
     transclude: {
-      model: '?stratusCarouselSlide'
+      slide: '?stratusCarouselSlide'
     },
     bindings: {
       // Basic Control for Designers
