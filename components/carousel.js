@@ -164,7 +164,7 @@
          * need to wait to prep variable only once are ready on the template side
          * TODO allow for altering the variables and updating Swiper after init (live editing/inline changes)
          */
-        function init () {
+        function init() {
           /** @type {Array<SlideImage> || Array<String> || String} */
           let images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : []
 
@@ -246,6 +246,7 @@
           /** @type {Number} */
           $scope.transitionDelay = $attrs.transitionDelay && _.isJSON($attrs.transitionDelay) ? JSON.parse($attrs.transitionDelay) : 3000
 
+          // FIXME lazyLoad currently has been changed to use stratus-src. Need to have an option is disable Sitetheory lazyLoading, as it doesn't work for external image urls
           /**
            * Enable Lazy Loading to prevent everything from being fetched at once
            * By default Lazy Loading is enabled only for the next and previous images to give a buffer
@@ -266,6 +267,7 @@
           $scope.slidesPerGroup = $attrs.slidesPerGroup && _.isJSON($attrs.slidesPerGroup) ? JSON.parse($attrs.slidesPerGroup) : false
 
           initImages(images)
+          $scope.initSwiper()
 
           $scope.initialized = true
         }
@@ -274,7 +276,7 @@
          * Actions to be preformed when an image is clicked. Will by default open a link is one exists
          * @param {SlideImage} slideImage
          */
-        $scope.imageClick = function imageClick (slideImage) {
+        $scope.imageClick = function imageClick(slideImage) {
           // Clicking doesn't have to open new window. it does for now
           if (slideImage && slideImage.hasOwnProperty('link')) {
             $window.open(slideImage.link, $scope.imageLinkTarget || slideImage.target || '_self')
@@ -285,7 +287,7 @@
          * Prep and process a list of images for Swiper's use
          * @param {Array<SlideImage> || Array<String> || String} images
          */
-        function initImages (images) {
+        function initImages(images) {
           if (typeof images === 'string') {
             images = [images]
           }
@@ -322,7 +324,7 @@
         /**
          * Setup and load Swiper using the previously defined variables
          */
-        $scope.initSwiper = function initSwiper () {
+        $scope.initSwiper = function initSwiper() {
           // TODO shouldn't be querying global, need to select like this: probably need to get away from className however
           $ctrl.swiperContainer = $element[0].querySelector('.swiper-container')
 
