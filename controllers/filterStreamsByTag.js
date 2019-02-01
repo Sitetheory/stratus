@@ -56,7 +56,6 @@
         $scope.separateSections = separateSections
       })
 
-
       $scope.$watch('collection.meta.attributes.filterTags',
         function (filterTag) {
           if (filterTag && filterTag.length > 0) {
@@ -77,10 +76,10 @@
         var index = $scope.showOnly.findIndex(
           function (x) {
             return x.id === filterTag.id
-          });
+          })
         console.log($scope.showOnly);
-        (index !== -1) ? $scope.showOnly.splice(index, 1): $scope.showOnly.push(filterTag);
-        (index !== -1) ? $scope.filterTagIds.splice(index, 1): $scope.filterTagIds.push(filterTag.id);
+        (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(filterTag);
+        (index !== -1) ? $scope.filterTagIds.splice(index, 1) : $scope.filterTagIds.push(filterTag.id)
         reloadAssets()
       }
 
@@ -91,17 +90,18 @@
       /*
        * Recall api to get contents
        */
-      function reloadAssets() {
-
+      function reloadAssets () {
         if (!$scope.separateSections) {
-          /*angular.forEach($scope.filterTagIds, function (value) {
+          /* *
+          angular.forEach($scope.filterTagIds, function (value) {
             $scope.meta.set('api.options.tagIds', value)
             $scope.collection.fetch()
               .then(function (response) {
                 console.log('response', response)
               })
           })
-        } else { */
+        } else {
+          /* */
           $scope.meta.set('api.options.tagIds',
             $scope.showOnly.map(function (item) {
               return item.id

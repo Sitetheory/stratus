@@ -75,9 +75,7 @@
     }
     return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration
     /* */
-    return boot.merge(boot.configuration, !configuration.paths ? {
-      paths: configuration
-    } : configuration)
+    return boot.merge(boot.configuration, !configuration.paths ? { paths: configuration } : configuration)
   }
 
   // Initialization
