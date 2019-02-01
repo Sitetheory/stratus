@@ -53,6 +53,19 @@
       )
       $scope.initialized = false
 
+      // Data References
+      $scope.model = null
+
+      // Symbiotic Data Connectivity
+      $scope.$watch('$ctrl.ngModel', function (data) {
+        if (data !== $scope.model) {
+          $scope.model = data
+
+          let myEl = angular.element(document.querySelector('.social'))
+          myEl.css('margin-bottom', '1em')
+        }
+      })
+
       // Social Libraries
       socialLibraries.loadFacebookSDK()
       socialLibraries.loadGGLibrary()
@@ -60,22 +73,35 @@
       // css
       $scope.layout = 'column'
 
-      $scope.$watch('$ctrl.ngModel', function () {
-        if ($ctrl.ngModel) {
-          let myEl = angular.element(document.querySelector('.social'))
-          myEl.css('margin-bottom', '1em')
-        }
-      })
-
       $scope.removeFacebook = function () {
-        if ($ctrl.ngModel && $ctrl.ngModel.hasOwnProperty('facebookId')) {
-          $ctrl.ngModel.facebookId = null
+        if ($scope.model.get('facebookId')) {
+          $mdDialog.show(
+            $mdDialog.confirm()
+              .title('CONFIRM DISCONNECTION')
+              .textContent(
+                'Are you sure you want to disconnect your account with google?')
+              .ok('Yes')
+              .cancel('No')
+          ).then(function () {
+            $scope.model.set('facebookId', null)
+            $scope.model.save()
+          })
         }
       }
 
       $scope.removeGoogle = function () {
-        if ($ctrl.ngModel && $ctrl.ngModel.hasOwnProperty('googleId')) {
-          $ctrl.ngModel.googleId = null
+        if ($scope.model.get('googleId')) {
+          $mdDialog.show(
+            $mdDialog.confirm()
+              .title('CONFIRM DISCONNECTION')
+              .textContent(
+                'Are you sure you want to disconnect your account with google?')
+              .ok('Yes')
+              .cancel('No')
+          ).then(function () {
+            $scope.model.set('googleId', null)
+            $scope.model.save()
+          })
         }
       }
 
@@ -137,7 +163,7 @@
 
       // Call HTTP REQUEST
       function doSignIn (data, service, truthData) {
-        if ($ctrl.ngModel) {
+        if ($scope.model) {
           updateExistData(data, service)
         } else {
           let model = new Model({
@@ -161,11 +187,11 @@
       function updateExistData (data, service) {
         if (data.hasOwnProperty('id')) {
           if (service === 'google') {
-            $ctrl.ngModel.googleId = null
-            $ctrl.ngModel.googleId = data.id
+            $scope.model.set('googleId', data.id)
+            $scope.model.save()
           } else {
-            $ctrl.ngModel.facebookId = null
-            $ctrl.ngModel.facebookId = data.id
+            $scope.model.set('facebookId', data.id)
+            $scope.model.save()
           }
         }
         if ($ctrl.ngModel.hasOwnProperty('profile')) {
