@@ -181,7 +181,7 @@
       }
 
       $scope.mediaSelectorAddOrRemoveFile = function (media) {
-        if(!$ctrl.mediaSelectorDraggedFiles) {
+        if (!$ctrl.mediaSelectorDraggedFiles) {
           return
         }
         if (media.selectedClass === true) {

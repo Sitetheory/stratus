@@ -95,7 +95,7 @@
         }
 
         // Otherwise, create a new one
-        return {address: chip}
+        return { address: chip }
       }
 
       // Retrieve data from server
