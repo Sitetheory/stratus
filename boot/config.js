@@ -242,7 +242,7 @@ boot.config({
     'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
     'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
     'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
-    'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
+    // 'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
     'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
     'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
     'stratus.components.singleSignOn': boot.bundle + 'stratus/components/singleSignOn' + boot.suffix,
