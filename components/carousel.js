@@ -67,7 +67,9 @@
 
       // Carousel Specific
       initNow: '=',
+      /** @deprecated */
       images: '@',
+      slides: '@',
       imageLinkTarget: '@', // shortcut
       direction: '@',
       transitionEffect: '@',
@@ -83,7 +85,7 @@
       slidesPerGroup: '@',
       stretchWidth: '@',
       allowTouchMove: '@',
-      allowZoom: '@',
+      allowZoom: '@'
     },
     controller: [
       '$scope',
@@ -99,6 +101,7 @@
         $ctrl.uid = _.uniqueId('carousel_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(
           Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' + min + '.css'
         )
@@ -128,13 +131,15 @@
         })
 
         // Image Conversion
-        $scope.$watch('collection.models', function (models) {
-          $scope.images = $scope.images || []
-          models = models || []
-          models.forEach(function (model) {
-            $scope.images.push('model:', model.data)
+        $scope.$watch('collection.models',
+          /** @param {Array} models */
+          function (models) {
+            $scope.images = $scope.images || []
+            models = models || []
+            models.forEach(function (model) {
+              $scope.images.push('model:', model.data)
+            })
           })
-        })
 
         // Check Attributes
         // console.log('attributes:', $attrs)
@@ -168,8 +173,13 @@
          * TODO allow for altering the variables and updating Swiper after init (live editing/inline changes)
          */
         function init () {
+          /**
+           * @type {Array<SlideImage> || Array<String> || String}
+           * @deprecated
+           * */
+          let images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : [] // This is a deprecated reference saved for backwards compatibility
           /** @type {Array<SlideImage> || Array<String> || String} */
-          let images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : []
+          let slides = $attrs.slides && _.isJSON($attrs.slides) ? JSON.parse($attrs.slides) : images // References images for temporary backwards compatibility
 
           /** @type {String} */
           $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null
@@ -269,7 +279,7 @@
           /** @type {boolean} */
           $scope.slidesPerGroup = $attrs.slidesPerGroup && _.isJSON($attrs.slidesPerGroup) ? JSON.parse($attrs.slidesPerGroup) : false
 
-          initImages(images)
+          initImages(slides)
           $scope.initSwiper()
 
           $scope.initialized = true
@@ -288,6 +298,7 @@
 
         /**
          * Prep and process a list of images for Swiper's use
+         * TODO later process non-image based slides
          * @param {Array<SlideImage> || Array<String> || String} images
          */
         function initImages (images) {
@@ -297,21 +308,23 @@
           if (_.isArray(images)) {
             /** @type {Array<SlideImage>} */
             let processedImages = []
-            images.forEach(function (image) {
-              /** @type {SlideImage} */
-              let preppedImage = {}
-              if (typeof image === 'string') {
-                // just urls were provided
-                preppedImage.src = image
-              } else if (typeof image === 'object') {
-                if (image.hasOwnProperty('src')) {
-                  preppedImage = image
+            images.forEach(
+              /** @param {String || SlideImage} image */
+              function (image) {
+                /** @type {SlideImage} */
+                let preppedImage = {}
+                if (typeof image === 'string') {
+                  // just urls were provided
+                  preppedImage.src = image
+                } else if (typeof image === 'object') {
+                  if (image.hasOwnProperty('src')) {
+                    preppedImage = image
+                  }
                 }
-              }
-              if (Object.keys(preppedImage).length > 0) {
-                processedImages.push(preppedImage)
-              }
-            })
+                if (Object.keys(preppedImage).length > 0) {
+                  processedImages.push(preppedImage)
+                }
+              })
 
             if (processedImages.length > 0) {
               $scope.images = processedImages
