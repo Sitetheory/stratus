@@ -75,7 +75,9 @@
     }
     return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration
     /* */
-    return boot.merge(boot.configuration, !configuration.paths ? { paths: configuration } : configuration)
+    return boot.merge(boot.configuration, !configuration.paths ? {
+      paths: configuration
+    } : configuration)
   }
 
   // Initialization
@@ -396,7 +398,7 @@ boot.config({
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
-    'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
+    //'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
     'stratus.services.media': boot.bundle + 'stratus/services/media' + boot.suffix,
