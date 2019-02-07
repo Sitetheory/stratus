@@ -80,7 +80,10 @@
       navigation: '@',
       pagination: '@',
       scrollbar: '@',
-      slidesPerGroup: '@'
+      slidesPerGroup: '@',
+      stretchWidth: '@',
+      allowTouchMove: '@',
+      allowZoom: '@',
     },
     controller: [
       '$scope',
@@ -174,11 +177,11 @@
           /**
            * @type {String}
            **/
-          $scope.direction = $attrs.loop && $attrs.loop === 'vertical' ? 'vertical' : 'horizontal'
+          $scope.direction = $attrs.direction && $attrs.direction === 'vertical' ? 'vertical' : 'horizontal'
 
           /**
            * FIXME Some transitions seem to have trouble with lazyLoad that we'll need to work on
-           * @type {String} ['slide,'fade,'cube,'coverflow','flip']
+           * @type {String} ['slide','fade','cube','coverflow','flip']
            */
           $scope.transitionEffect = $attrs.transitionEffect ? $attrs.transitionEffect : 'slide'
 
@@ -215,7 +218,7 @@
           $scope.scaleHeight = $attrs.scaleHeight && _.isJSON($attrs.scaleHeight) ? JSON.parse($attrs.scaleHeight) : true
 
           /**
-           * Allow Zooming into an image my double clicking or pinchig on Mobile. Requires and force enabled scaleHeight
+           * Allow Zooming into an image my double clicking or pinching on Mobile. Requires and force enabled scaleHeight
            * Disabled by default
            * @type {boolean}
            */
@@ -233,12 +236,12 @@
            **/
           $scope.autoHeight = $attrs.autoHeight && _.isJSON($attrs.autoHeight) ? JSON.parse($attrs.autoHeight) : false
           /**
-           * Automatically changes the slide are set intervals. Provide object and extra options
+           * Automatically changes the slide at set intervals. Provide object and extra options
            * @type {Object || boolean}
            **/
           $scope.autoplay = $attrs.autoplay && _.isJSON($attrs.autoplay) ? JSON.parse($attrs.autoplay) : false
           /**
-           * Allow moving the slides uing a finger of mouse
+           * Allow moving the slides using a finger of mouse
            * Enabled by default
            * @type {boolean}
            */
