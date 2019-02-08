@@ -13,16 +13,16 @@
       'text',
       'underscore',
       'bowser',
+      'jquery', // TODO: Remove once phased out appropriately,
       'promise',
       'backbone', // TODO: Remove once phased out appropriately
-      'jquery' // TODO: Remove once phased out appropriately
-    ], function (text, _, bowser) {
-      return (root.Stratus = factory(text, _, bowser))
+    ], function (text, _, bowser, jQuery) {
+      return (root.Stratus = factory(text, _, bowser, jQuery))
     })
   } else {
-    root.Stratus = factory(root.text, root._, root.bowser)
+    root.Stratus = factory(root.text, root._, root.bowser, root.jQuery)
   }
-}(this, function (text, _, bowser) {
+}(this, function (text, _, bowser, jQuery) {
 
 /* global requirejs, _, bowser */
 
@@ -858,18 +858,18 @@ _.mixin({
 
 // FIXME: These are deprecated, since they will never load in the core now that
 // jQuery is gone
-if (typeof $ === 'function' && $.fn) {
+if (typeof jQuery === 'function' && jQuery.fn) {
   /**
    * @param event
    * @returns {boolean}
    */
-  $.fn.notClicked = function (event) {
+  jQuery.fn.notClicked = function (event) {
     if (!this.selector && !this.context) {
       console.error(
         'No Selector or Context:', this)
     }
-    return (!$(event.target).closest(this.selector || this.context).length &&
-      !$(event.target).parents(this.selector || this.context).length)
+    return (!jQuery(event.target).closest(this.selector || this.context).length &&
+      !jQuery(event.target).parents(this.selector || this.context).length)
   }
 }
 
@@ -1636,7 +1636,7 @@ Stratus.Prototypes.Toast = function (message, title, priority, settings) {
   this.settings.timeout = this.settings.timeout || 10000
 }
 
-/* global Stratus, _, $, Backbone */
+/* global Stratus, _, jQuery, Backbone */
 
 /**
  * @param request
@@ -1725,13 +1725,13 @@ Stratus.Internals.Anchor = (function Anchor () {
           return !_.startsWith(event.currentTarget.hash, '#' + keyword)
         }, this)
         if (valid) {
-          if (typeof $ === 'function' && $.fn && typeof Backbone === 'object') {
-            let $target = $(event.currentTarget.hash)
+          if (typeof jQuery === 'function' && jQuery.fn && typeof Backbone === 'object') {
+            let $target = jQuery(event.currentTarget.hash)
             let anchor = event.currentTarget.hash.slice(1)
-            $target = ($target.length) ? $target : $('[name=' + anchor + ']')
+            $target = ($target.length) ? $target : jQuery('[name=' + anchor + ']')
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
-              $('html,body').animate({
+              jQuery('html,body').animate({
                 scrollTop: $target.offset().top
               }, 1000, function () {
                 Backbone.history.navigate(anchor)
@@ -1863,8 +1863,8 @@ Stratus.Internals.Convoy = function (convoy, query) {
         message: 'No Convoy defined for dispatch.'
       }, this))
     }
-    if (typeof $ === 'function' && $.ajax) {
-      $.ajax({
+    if (typeof jQuery === 'function' && jQuery.ajax) {
+      jQuery.ajax({
         type: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
@@ -2003,11 +2003,11 @@ Stratus.Internals.GetColWidth = function (el) {
  * @constructor
  */
 Stratus.Internals.GetScrollDir = function () {
-  let windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
+  let windowTop = jQuery(Stratus.Environment.get('viewPort') || window).scrollTop()
   let lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
-  let windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
-  let documentHeight = $(document).height()
+  let windowHeight = jQuery(Stratus.Environment.get('viewPort') || window).height()
+  let documentHeight = jQuery(document).height()
   /* */
 
   // return NULL if there is no scroll, otherwise up or down
@@ -2033,8 +2033,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   if (!el) {
     return false
   }
-  if (!(el instanceof $)) {
-    el = $(el)
+  if (!(el instanceof jQuery)) {
+    el = jQuery(el)
   }
   if (!el.length) {
     return false
@@ -2044,8 +2044,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
     partial = true
   }
   let viewPort = Stratus.Environment.get('viewPort') || window
-  let pageTop = $(viewPort).scrollTop()
-  let pageBottom = pageTop + $(viewPort).height()
+  let pageTop = jQuery(viewPort).scrollTop()
+  let pageBottom = pageTop + jQuery(viewPort).height()
   let elementTop = el.offset().top
   if (viewPort !== window) {
     elementTop += pageTop
@@ -2155,7 +2155,7 @@ Stratus.Internals.LoadImage = function (obj) {
     }, 500)
     return false
   }
-  let el = obj.el instanceof $ ? obj.el : $(obj.el)
+  let el = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
   if (!el.length) {
     setTimeout(function () {
       Stratus.Internals.LoadImage(obj)
@@ -2222,7 +2222,7 @@ Stratus.Internals.LoadImage = function (obj) {
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
           let visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-          let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
+          let $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
           // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
@@ -2376,13 +2376,13 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
         }
       })
       model.set('viewPortChange', false)
-      model.set('windowTop', $(Stratus.Environment.get('viewPort') || window).scrollTop())
+      model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
     }
   })
 
   // jQuery Binding
-  if (typeof $ === 'function' && $.fn) {
-    $(Stratus.Environment.get('viewPort') || window).scroll(function () {
+  if (typeof jQuery === 'function' && jQuery.fn) {
+    jQuery(Stratus.Environment.get('viewPort') || window).scroll(function () {
       /* *
       if (!Stratus.Environment.get('production')) {
         console.log('scrolling:', Stratus.Internals.GetScrollDir())
@@ -2394,7 +2394,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
     })
 
     // Resizing can change what's on screen so we need to check the scrolling
-    $(Stratus.Environment.get('viewPort') || window).resize(function () {
+    jQuery(Stratus.Environment.get('viewPort') || window).resize(function () {
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
@@ -2862,7 +2862,7 @@ Stratus.Selector.parent = function () {
   return Stratus(that.selection.parentNode)
 }
 
-/* global Stratus, _, $, requirejs */
+/* global Stratus, _, jQuery, requirejs */
 
 // Backbone Bindings
 // ----------------------
@@ -2902,7 +2902,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
     }
   }
   /* *
-  if (typeof selector === 'string') selector = $(selector);
+  if (typeof selector === 'string') selector = jQuery(selector);
   if (view && selector) selector.find('[data-type],[data-plugin]');
   /* */
   /* We check view, selector, and type in this order to save a small amount of power */
@@ -2947,8 +2947,8 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
     if (sanitized.el && sanitized.el.selection) {
       sanitized.el = sanitized.el.selection
       /* TODO: This may not be necessary */
-      if (typeof $ === 'function' && $.fn) {
-        sanitized.$el = $(sanitized.el)
+      if (typeof jQuery === 'function' && jQuery.fn) {
+        sanitized.$el = jQuery(sanitized.el)
       }
       /* */
     }
@@ -3160,7 +3160,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       for (key in templates) {
         if (!templates.hasOwnProperty(key) || typeof templates[key] === 'function') continue
         if (templates[key].indexOf('#') === 0) {
-          let $domTemplate = $(templates[key])
+          let $domTemplate = jQuery(templates[key])
           if ($domTemplate.length > 0) {
             templates[key] = $domTemplate.html()
           }
@@ -3419,7 +3419,7 @@ Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) 
   })
 }
 
-/* global Stratus, _, $, angular, boot, requirejs */
+/* global Stratus, _, jQuery, angular, boot, requirejs */
 
 /**
  * @constructor
@@ -3591,8 +3591,8 @@ Stratus.Loaders.Angular = function () {
 
       // TODO: Make Dynamic
       // Froala Configuration
-      if (typeof $ === 'function' && $.fn && $.FroalaEditor) {
-        $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
+      if (typeof jQuery === 'function' && jQuery.fn && jQuery.FroalaEditor) {
+        jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
         let buttons = [
@@ -3724,7 +3724,7 @@ Stratus.Loaders.Angular = function () {
   }
 }
 
-/* global Stratus, _, Backbone, $, bootbox */
+/* global Stratus, _, Backbone, jQuery, bootbox */
 
 // Instance Clean
 // --------------
@@ -4034,7 +4034,7 @@ Stratus.Events.on('alert', function (message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
-  /* if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') { */
+  /* if (typeof jQuery !== 'undefined' && typeof jQuery().modal === 'function' && typeof bootbox !== 'undefined') { */
   if (typeof bootbox !== 'undefined') {
     bootbox.alert(message.message, message.handler)
   } else {
@@ -4049,7 +4049,7 @@ Stratus.Events.on('confirm', function (message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
-  /* if (typeof jQuery !== 'undefined' && typeof $().modal === 'function' && typeof bootbox !== 'undefined') { */
+  /* if (typeof jQuery !== 'undefined' && typeof jQuery().modal === 'function' && typeof bootbox !== 'undefined') { */
   if (typeof bootbox !== 'undefined') {
     bootbox.confirm(message.message, message.handler)
   } else {
@@ -4103,8 +4103,8 @@ Stratus.Events.on('toast', function (message, title, priority, settings) {
   if (!Stratus.Environment.get('production')) {
     console.log('Toast:', message)
   }
-  if (typeof $ !== 'undefined' && $.toaster) {
-    $.toaster(message)
+  if (typeof jQuery !== 'undefined' && jQuery.toaster) {
+    jQuery.toaster(message)
   } else {
     Stratus.Events.trigger('alert', message.message)
   }
