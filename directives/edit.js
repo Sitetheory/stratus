@@ -9,26 +9,35 @@
     define([
       'stratus',
       'underscore',
-      'jquery',
       'angular',
-      'moment',
-      'angular-material',
-      'stratus.services.model',
-      'stratus.directives.froala',
+      'jquery',
 
+      // Modules
+      'angular-material',
+
+      // Services
+      'stratus.services.model'
+
+      // Components
+      // 'stratus.components.mediaSelector',
+
+      // Directives
+      // 'stratus.directives.froala',
       // 'stratus.directives.editInlineFroala',
-      'stratus.directives.src',
-      'stratus.components.mediaSelector'
+      // 'stratus.directives.src'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.jQuery, root.angular, root.moment)
+    factory(root.Stratus, root._, root.angular, root.jQuery)
   }
-}(this, function (Stratus, _, jQuery, angular, moment) {
+}(this, function (Stratus, _, angular, jQuery) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'edit'
+
   // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.Edit = function ($parse, $log, $timeout, Model) {
+  Stratus.Directives.Edit = function ($timeout, Model) {
     return {
       restrict: 'AE', // Element is required to transclude inner elements
-      require: 'ngModel',
       transclude: {
         view: '?stratusEditView',
         input: '?stratusEditInput'
@@ -49,14 +58,25 @@
         froalaOptions: '=' // Expects JSON. Options pushed to froala need to be
         // initialized, so it will be a one time push
       },
-      link: function ($scope, $element, $attrs, ngModel) {
+      link: function ($scope, $element, $attrs) {
         // Initialize
-        $scope.uid = this.uid = _.uniqueId('edit_')
-        Stratus.Instances[this.uid] = $scope
+        const $ctrl = this
+        $scope.uid = $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+        Stratus.Instances[$ctrl.uid] = $scope
+        $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Internals.CssLoader(
+          Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+        )
+        $scope.initialized = false
+
+        // Scope Globals
         $scope.Stratus = Stratus
-        $scope.elementId = $attrs.elementId || this.uid
-        $scope.edit_input_container = $element[0].getElementsByClassName(
-          'stratus_edit_input_container')[0]
+
+        // Hoist Attributes
+        $scope.elementId = $attrs.elementId || $ctrl.uid
+
+        // Elements
+        $scope.edit_input_container = $element[0].getElementsByClassName('stratus_edit_input_container')[0]
 
         // Settings
         $scope.edit = false
@@ -102,13 +122,10 @@
 
         $scope.focusOnEditable = function () {
           $timeout(function () {
-            if ($scope.edit_input_container.getElementsByTagName(
-              'input').length > 0) {
+            if ($scope.edit_input_container.getElementsByTagName('input').length > 0) {
               // Focus on the input field
-              $scope.edit_input_container.getElementsByTagName(
-                'input')[0].focus()
-            } else if (jQuery($scope.edit_input_container)
-              .find('[contenteditable]').length > 0) {
+              $scope.edit_input_container.getElementsByTagName('input')[0].focus()
+            } else if (jQuery($scope.edit_input_container).find('[contenteditable]').length > 0) {
               // Focus on any contenteditable (including froala)
               jQuery($scope.edit_input_container).find('[contenteditable]').focus()
             } else {
@@ -152,16 +169,25 @@
         // element and allows for editing.
         $scope.ctrl.init = function () {
           if (!$scope.ctrl.initialized) {
+            if (!Stratus.Environment.get('production')) {
+              console.log('initializing stratusEdit directive...')
+            }
             $scope.ctrl.initialized = true
+          } else {
+            if (!Stratus.Environment.get('production')) {
+              console.log('initializing repeatedly...')
+            }
+            return null
           }
 
           // WATCHERS
-
+          /* *
           $scope.$watch('model.data.' + $scope.property, function (data) {
             if (data) {
               $scope.value = data
             }
           })
+          /* */
 
           // TRIGGERS
 
@@ -198,10 +224,8 @@
         }
       },
       templateUrl: function (elements, $scope) {
-        let template = $scope.type || ''
-        return Stratus.BaseUrl + Stratus.BundlePath + 'directives/edit' +
-          template + (Stratus.Environment.get('production') ? '.min' : '') +
-          '.html'
+        let template = $scope.type || name
+        return Stratus.BaseUrl + Stratus.BundlePath + 'directives/edit' + template + min + '.html'
       }
     }
   }

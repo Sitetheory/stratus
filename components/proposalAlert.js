@@ -10,55 +10,59 @@
       'angular',
 
       // Modules
-      'stratus.services.utility',
       'stratus.directives.compileTemplate'
     ], factory)
   } else {
     // Browser globals
     factory(root.Stratus, root._, root.angular, root.zxcvbn)
   }
-}(this,
-  function (Stratus, _, angular, zxcvbn) {
-    // This component intends to allow editing of various selections depending
-    // on context.
-    Stratus.Components.ProposalAlert = {
-      bindings: {
-        proposals: '<'
-      },
-      controller: function (
-        $scope, $window, $attrs, $sce, $compile, utility) {
-        // Initialize
-        utility.componentInitializer(this, $scope, $attrs,
-          'proposal_alert', true)
+}(this, function (Stratus, _, angular, zxcvbn) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'proposalAlert'
 
-        // variables
-        let $ctrl = this
-        $ctrl.proposals = $attrs.proposals || []
+  // This component intends to allow editing of various selections depending
+  // on context.
+  Stratus.Components.ProposalAlert = {
+    bindings: {
+      proposals: '<'
+    },
+    controller: function ($scope, $window, $attrs, $sce, $compile) {
+      // Initialize
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
-        // class for icon;
-        let iconCss = {
-          error: 'fa-times-circle red',
-          notice: 'fa-exclamation-circle blue',
-          warning: 'fa-exclamation-triangle yellow',
-          success: 'fa-check-circle green'
-        }
+      // Scope Attributes
+      $ctrl.proposals = $attrs.proposals || []
 
-        // default icon is notice type
-        $ctrl.icon = iconCss.notice
+      // class for icon;
+      let iconCss = {
+        error: 'fa-times-circle red',
+        notice: 'fa-exclamation-circle blue',
+        warning: 'fa-exclamation-triangle yellow',
+        success: 'fa-check-circle green'
+      }
 
-        $ctrl.safeText = function (proposal) {
-          $ctrl.icon = iconCss[proposal.class]
-          return $sce.trustAsHtml(proposal.text)
-        }
+      // default icon is notice type
+      $ctrl.icon = iconCss.notice
 
-        // remove element from proposals
-        $ctrl.hideProposal = function (proposal) {
-          // let index = $ctrl.proposals.indexOf(proposal)
-          $ctrl.proposals.splice(0, 1)
-        }
-      },
-      templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/proposalAlert' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
-    }
-  }))
+      $ctrl.safeText = function (proposal) {
+        $ctrl.icon = iconCss[proposal.class]
+        return $sce.trustAsHtml(proposal.text)
+      }
+
+      // remove element from proposals
+      $ctrl.hideProposal = function (proposal) {
+        // let index = $ctrl.proposals.indexOf(proposal)
+        $ctrl.proposals.splice(0, 1)
+      }
+    },
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
+  }
+}))
