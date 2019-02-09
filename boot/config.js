@@ -258,6 +258,7 @@ boot.config({
 
     /* Sitetheory Stream Components */
     'stratus.components.calendar': boot.bundle + 'stratus/components/calendar' + boot.suffix,
+    'stratus.components.calendar.timezones': boot.bundle + 'stratus/components/calendar.timezones',
     'stratus.components.map': boot.bundle + 'stratus/components/map' + boot.suffix,
 
     /* Sitetheory Menu Components */
@@ -407,6 +408,7 @@ boot.config({
     chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart',
     dropzone: boot.bundle + 'stratus/bower_components/dropzone/dist/' + boot.directory + 'dropzone-amd-module' + boot.suffix,
     fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
+    ical: boot.bundle + 'stratus/bower_components/ical.js/build/ical' + boot.suffix,
     md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
     masonry: boot.bundle + 'stratus/bower_components/masonry-layout/dist/masonry.pkgd' + boot.suffix,
     moment: boot.bundle + 'stratus/bower_components/moment/' + boot.directory + 'moment' + boot.suffix,
