@@ -75,7 +75,9 @@
     }
     return requirejs.config ? requirejs.config(boot.configuration) : boot.configuration
     /* */
-    return boot.merge(boot.configuration, !configuration.paths ? { paths: configuration } : configuration)
+    return boot.merge(boot.configuration, !configuration.paths ? {
+      paths: configuration
+    } : configuration)
   }
 
   // Initialization
@@ -331,7 +333,7 @@ boot.config({
     'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
     'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
     'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
-    'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
+    //'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
     'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
     'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
     'stratus.components.singleSignOn': boot.bundle + 'stratus/components/singleSignOn' + boot.suffix,
@@ -396,7 +398,7 @@ boot.config({
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
     'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
-    'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
+    //'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
     'stratus.services.media': boot.bundle + 'stratus/services/media' + boot.suffix,
