@@ -46,7 +46,7 @@
             this.data = {}
 
             // The data used to detect the data is changed.
-            this.initData = {}
+            // this.initData = {}
 
             // Handle Collections & Meta
             this.header = new Stratus.Prototypes.Model()
@@ -86,7 +86,7 @@
             this.patch = {}
 
             // Contextual Hoisting
-            var that = this
+            const that = this
 
             // Watch for Data Changes
             this.watcher = function () {
@@ -97,21 +97,23 @@
               $rootScope.$watch(function () {
                 return that.data
               }, function (newData, priorData) {
-                var patch = _.patch(newData, priorData)
+                const patch = _.patch(newData, priorData)
 
                 if (!Stratus.Environment.get('production')) {
                   $log.log('Patch:', patch)
                 }
 
                 // Set the origin data
+                /* *
                 if (_.isEmpty(that.initData)) {
                   angular.copy(that.data, that.initData)
                 }
+                /* */
 
                 if (patch) {
-                  that.changed = !angular.equals(newData, that.initData)
-                  if ((newData.id && newData.id !== priorData.id) ||
-                    that.isNewVersion(newData)) {
+                  that.changed = true
+                  // that.changed = !angular.equals(newData, that.initData)
+                  if ((newData.id && newData.id !== priorData.id) || that.isNewVersion(newData)) {
                     window.location.replace(
                       Stratus.Internals.SetUrlParams({
                         id: newData.id
@@ -141,26 +143,19 @@
              * @returns {*}
              */
             this.getHash = function () {
-              return this.getType() +
-                (_.isNumber(this.getIdentifier()) ? this.getIdentifier()
-                  .toString() : this.getIdentifier())
+              return this.getType() + (_.isNumber(this.getIdentifier()) ? this.getIdentifier().toString() : this.getIdentifier())
             }
 
             /**
              * @returns {*}
              */
             this.url = function () {
-              var url = that.getIdentifier() ? that.urlRoot + '/' +
-                that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
+              let url = that.getIdentifier() ? that.urlRoot + '/' + that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
 
-              // add futher param to specific version
+              // add further param to specific version
               if (_.getUrlParams('version')) {
                 // TODO: Move the following version logic to a router
-                if (url.includes('?')) {
-                  url += '&'
-                } else {
-                  url += '?'
-                }
+                url += url.includes('?') ? '&' : '?'
                 url += 'options[version]=' + _.getUrlParams('version')
               }
               return url
@@ -172,7 +167,7 @@
              * @returns {string}
              */
             this.serialize = function (obj, chain) {
-              var str = []
+              const str = []
               obj = obj || {}
               angular.forEach(obj, function (value, key) {
                 if (angular.isObject(value)) {
@@ -181,7 +176,7 @@
                   }
                   str.push(that.serialize(value, key))
                 } else {
-                  var encoded = ''
+                  let encoded = ''
                   if (chain) {
                     encoded += chain + '['
                   }
@@ -207,7 +202,7 @@
               return $q(function (resolve, reject) {
                 action = action || 'GET'
                 options = options || {}
-                var prototype = {
+                const prototype = {
                   method: action,
                   url: that.url(),
                   headers: {}
@@ -232,10 +227,7 @@
                   $log.log('Prototype:', prototype)
                 }
 
-                if (
-                  options.hasOwnProperty('headers') &&
-                  typeof options.headers === 'object'
-                ) {
+                if (options.hasOwnProperty('headers') && typeof options.headers === 'object') {
                   Object.keys(options.headers).forEach(function (headerKey) {
                     prototype.headers[headerKey] = options.headers[headerKey]
                   })
@@ -247,7 +239,7 @@
                     // Data
                     that.header.set(response.headers() || {})
                     that.meta.set(response.data.meta || {})
-                    var convoy = response.data.payload || response.data
+                    const convoy = response.data.payload || response.data
                     if (that.meta.has('status') && _.first(that.meta.get('status')).code !== 'SUCCESS') {
                       that.error = true
                     } else if (angular.isArray(convoy) && convoy.length) {
@@ -270,13 +262,18 @@
 
                       // Begin Watching
                       that.watcher()
+
+                      // Reset status model
+                      setTimeout(function () {
+                        that.changed = false
+                      }, 100)
                     }
 
                     // XHR Flags
                     that.pending = false
 
                     // Promise
-                    angular.copy(that.data, that.initData)
+                    // angular.copy(that.data, that.initData)
                     resolve(that.data)
                   } else {
                     // XHR Flags
@@ -367,7 +364,7 @@
              */
             this.throttleSave = function () {
               return $q(function (resolve, reject) {
-                var request = that.throttle()
+                const request = that.throttle()
                 $log.log('throttle request:', request)
                 request.then(function (data) {
                   $log.log('throttle received:', data)
@@ -388,7 +385,7 @@
                   patch: false
               });
               /* */
-              var data
+              let data
 
               // options.patch ? that.toPatch() :
               data = that.data
@@ -423,12 +420,12 @@
              * @returns {Array}
              */
             this.buildPath = function (path) {
-              var acc = []
+              const acc = []
               if (!_.isString(path)) {
                 return acc
               }
-              var cur
-              var search
+              let cur
+              let search
               _.each(path.split('.'), function (link) {
                 // handle bracket chains
                 if (link.match(that.bracket.match)) {
@@ -533,7 +530,7 @@
               if (typeof attr === 'string' &&
                 (_.contains(attr, '.') || _.contains(attr, '['))
               ) {
-                var future
+                let future
                 that.buildPath(attr)
                   .reduce(function (attrs, link, index, chain) {
                     future = index + 1
@@ -570,9 +567,8 @@
               /* TODO: After plucking has been tested, remove this log *
               $log.log('toggle:', attribute, item, options);
               /* */
-              var request = attribute.split('[].')
-              var target = that.get(
-                request.length > 1 ? request[0] : attribute)
+              const request = attribute.split('[].')
+              let target = that.get(request.length > 1 ? request[0] : attribute)
               if (angular.isUndefined(target) ||
                 (options.strict && angular.isArray(target) !==
                   options.multiple)) {
@@ -581,7 +577,7 @@
               }
               if (angular.isArray(target)) {
                 /* This is disabled, since hydration should not be forced by default *
-                var hydrate = {};
+                const hydrate = {};
                 if (request.length > 1) {
                     hydrate[request[1]] = {
                         id: item
@@ -596,14 +592,14 @@
                   target.push(item)
                 } else {
                   _.each(target, function (element, key) {
-                    var child = (request.length > 1 &&
+                    const child = (request.length > 1 &&
                       angular.isObject(element) && request[1] in element)
                       ? element[request[1]]
                       : element
-                    var childId = (angular.isObject(child) && child.id)
+                    const childId = (angular.isObject(child) && child.id)
                       ? child.id
                       : child
-                    var itemId = (angular.isObject(item) && item.id)
+                    const itemId = (angular.isObject(item) && item.id)
                       ? item.id
                       : item
                     if (childId === itemId || (
@@ -630,11 +626,11 @@
             this.pluck = function (attribute) {
               if (typeof attribute === 'string' &&
                 attribute.indexOf('[].') > -1) {
-                var request = attribute.split('[].')
+                const request = attribute.split('[].')
                 if (request.length > 1) {
                   attribute = that.get(request[0])
                   if (attribute && angular.isArray(attribute)) {
-                    var list = []
+                    const list = []
                     attribute.forEach(function (element) {
                       if (angular.isObject(element) && request[1] in element) {
                         list.push(element[request[1]])
