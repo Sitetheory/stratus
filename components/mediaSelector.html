@@ -18,7 +18,7 @@
                 ng-sortable-item-selector=".draggableImg"
                 dnd-list="$ctrl.draggedFiles">
                 <li ng-if="$ctrl.draggedFiles.length"
-                    ng-repeat="df in $ctrl.draggedFiles"
+                    ng-repeat="df in $ctrl.draggedFiles | orderBy:'priority'"
                     dnd-draggable="df"
                     dnd-moved="$ctrl.draggedFiles.splice($index, 1)"
                     dnd-effect-allowed="move"
