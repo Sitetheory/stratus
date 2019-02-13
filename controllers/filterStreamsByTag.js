@@ -78,8 +78,8 @@
             return x.id === filterTag.id
           })
         console.log($scope.showOnly);
-        (index !== -1) ? $scope.showOnly.splice(index, 1): $scope.showOnly.push(filterTag);
-        (index !== -1) ? $scope.filterTagIds.splice(index, 1): $scope.filterTagIds.push(filterTag.id)
+        (index !== -1) ? $scope.showOnly.splice(index, 1) : $scope.showOnly.push(filterTag);
+        (index !== -1) ? $scope.filterTagIds.splice(index, 1) : $scope.filterTagIds.push(filterTag.id)
         reloadAssets()
       }
 
@@ -90,7 +90,7 @@
       /*
        * Recall api to get contents
        */
-      function reloadAssets() {
+      function reloadAssets () {
         if (!$scope.separateSections) {
           /* *
           angular.forEach($scope.filterTagIds, function (value) {
