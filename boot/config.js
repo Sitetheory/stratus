@@ -227,7 +227,6 @@ boot.config({
     'stratus.components.carousel': boot.bundle + 'stratus/components/carousel' + boot.suffix,
     'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
     'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
-    'stratus.components.drawer': boot.bundle + 'stratus/components/drawer' + boot.suffix,
     'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
     'stratus.components.errorMessage': boot.bundle + 'stratus/components/errorMessage' + boot.suffix,
     'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
