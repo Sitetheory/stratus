@@ -314,11 +314,6 @@ boot.config({
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
 
-    /* Stratus Core Widgets */
-      /* TODO: most of these are replaced by Angular and Material components. So if we need any of these still, they should migrated to standard components, and the rest deleted */
-    /* "Save "may still be in use in the header? and needs to be migrated to /components/ in sitetheory repo like delete and publish already were refactored */
-    'stratus.views.widgets.save': boot.bundle + 'stratus/legacy/views/widgets/save' + boot.suffix,
-
 
     /* Stratus Core Underscore Templates */
     /* TODO: remove these, they aren't even used anymore. Convert to components and remove. */
