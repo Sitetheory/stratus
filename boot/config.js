@@ -258,7 +258,7 @@ boot.config({
 
     /* Sitetheory Stream Components */
     'stratus.components.calendar': boot.bundle + 'stratus/components/calendar' + boot.suffix,
-    'stratus.components.calendar.timezones': boot.bundle + 'stratus/components/calendar.timezones',
+    'stratus.components.calendar.timezones': boot.bundle + 'stratus/components/calendar.timezones' + boot.suffix,
     'stratus.components.map': boot.bundle + 'stratus/components/map' + boot.suffix,
 
     /* Sitetheory Menu Components */
