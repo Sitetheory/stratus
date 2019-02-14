@@ -19,12 +19,15 @@
     factory(root.Stratus, root._, root.jQuery, root.angular)
   }
 }(this, function (Stratus, _, jQuery, angular) {
+  // TODO: Add in all the initial variables from components/base.js
   // This component intends to allow editing of various tags
   Stratus.Components.Tag = {
     bindings: {
+      // TODO: Add in all the general bindings from components/base.js
       ngModel: '=',
       collection: '<'
     },
+    // TODO: Remove utility & media, then evaluate why we're using the $rootScope
     controller: function ($scope, $parse, $attrs, utility, media, $location, $rootScope) {
       // Initialize
       utility.componentInitializer(this, $scope, $attrs, 'tag', true)
@@ -32,6 +35,8 @@
       $ctrl.selectedChips = []
       $ctrl.collection = []
       $ctrl.queryText = ''
+
+      // TODO: Add in normal initialize and Symbiotic data from components/base.js
 
       // init model for md-chips
       $scope.$watch('$ctrl.ngModel', function (items) {
@@ -42,6 +47,7 @@
       $scope.$watch('$ctrl.collection', function (data) {
         $ctrl.collection = data
       })
+
       // this watch function use to watch changes in tags and save and delete automatically when add or delete route.
       $scope.$watch('$ctrl.selectedChips', function (newData, oldData) {
         if (oldData.length > 0) {
@@ -55,8 +61,7 @@
                     media.fetchOneMedia($rootScope.mediaId)
                   },
                   function (rejection) {
-                    if (!Stratus.Environment.get('production')) {
-                    }
+                    console.error('tag:', rejection)
                   })
               }
             }
@@ -64,6 +69,7 @@
             let contentId = $location.absUrl().split('?id=')[1]
             if (contentId) {
               let apiUrl = $rootScope.$$childHead.data.urlRoot
+              // TODO: Use the model to query directly here
               updateContent(contentId, dataRes, apiUrl).then(function (response) {
                 $rootScope.$$childHead.data.changed = false
               })
@@ -71,7 +77,9 @@
           }
         }
       })
+
       // Update  tags of a content
+      // TODO: Remove this entirely (redundant)
       function updateContent (fileId, data, apiUrl) {
         return utility.sendRequest(data, 'PUT', apiUrl + '/' + fileId)
       }
@@ -86,7 +94,8 @@
           // return value
           let returnArr = value.filter(function (item) {
             if ($ctrl.queryText && ($ctrl.queryText !== '' || $ctrl.queryText !== undefined)) {
-              for (let i = 0; i < $ctrl.selectedChips.length; i++) {
+              let i
+              for (i = 0; i < $ctrl.selectedChips.length; i++) {
                 if (item.name.toUpperCase() === $ctrl.queryText.toUpperCase()) {
                   $scope.status = true
                   if ($ctrl.selectedChips[i].name.toUpperCase() === $ctrl.queryText.toUpperCase()) {
@@ -109,6 +118,7 @@
             }
             return $scope.status
           })
+          // TODO: Handle the correct data coming from the model
           $ctrl.selectedChips.forEach(predata => {
             let resultData = returnArr.find(mainArr => mainArr.name === predata.name)
             if (resultData !== undefined) {
@@ -138,6 +148,7 @@
       /**
        * Add an object when it isn't match with the exists list;
        */
+      // TODO: Change this to use Model Data
       $ctrl.createTag = function (query) {
         let data = { name: query }
         media.createTag(data).then(function (response) {
