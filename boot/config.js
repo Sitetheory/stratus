@@ -315,7 +315,6 @@ boot.config({
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
 
-
     /* Stratus Core Underscore Templates */
     /* TODO: remove these, they aren't even used anymore. Convert to components and remove. */
     'templates-base': boot.bundle + 'stratus/legacy/views/widgets/base.html',
