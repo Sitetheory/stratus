@@ -42,14 +42,14 @@
         // Group Registration
         $scope.registered = false
         $scope.register = function () {
-            // find background image in CSS if there is no src (e.g. for div)
-            var backgroundImage = null
-            if($element.prop('tagName').toLowerCase() !== 'img') {
-                var backgroundImage = $element.css('background-image') || null
-                if(backgroundImage) {
-                    backgroundImage = backgroundImage.slice(4, -1).replace(/"/g, "")
-                }
+          // find background image in CSS if there is no src (e.g. for div)
+          let backgroundImage = null
+          if ($element.prop('tagName').toLowerCase() !== 'img') {
+            backgroundImage = $element.css('background-image') || null
+            if (backgroundImage) {
+              backgroundImage = backgroundImage.slice(4, -1).replace(/"/g, '')
             }
+          }
           const src = $attr.stratusSrc || $attr.src || backgroundImage
 
           // Get Extension
@@ -71,9 +71,9 @@
             return true
           }
           $scope.registered = true
-            if(!src & !backgroundImage) {
-                return false;
-            }
+          if (!src & !backgroundImage) {
+            return false
+          }
 
           // Begin Registration
           $element.attr('data-src', src)
