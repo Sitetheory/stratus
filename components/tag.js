@@ -106,7 +106,7 @@
         } else if (data instanceof Collection && data !== $scope.collection) {
           $scope.collection = data
         }
-      });
+      })
 
       // add chip
       $ctrl.addChip = function (chip) {
@@ -193,5 +193,5 @@
       'components/tag' +
       (Stratus.Environment.get('production') ? '.min' : '') +
       '.html'
-  };
-});
+  }
+})
