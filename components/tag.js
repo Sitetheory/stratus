@@ -1,59 +1,59 @@
 /* global define */
 
 (function (root, factory) {
-  if (typeof define === "function" && define.amd) {
+  if (typeof define === 'function' && define.amd) {
     define([
       // Libraries
-      "stratus",
-      "underscore",
-      "jquery",
-      "angular",
+      'stratus',
+      'underscore',
+      'jquery',
+      'angular',
 
       // Modules
-      "angular-material",
+      'angular-material',
 
       // Services
-      "stratus.services.registry",
-      "stratus.services.model",
-      "stratus.services.collection",
+      'stratus.services.registry',
+      'stratus.services.model',
+      'stratus.services.collection',
 
       // Components
-      "stratus.components.pagination",
-      "stratus.components.search"
-    ], factory);
+      'stratus.components.pagination',
+      'stratus.components.search'
+    ], factory)
   } else {
-    factory(root.Stratus, root._, root.jQuery, root.angular);
+    factory(root.Stratus, root._, root.jQuery, root.angular)
   }
 })(this, function (Stratus, _, jQuery, angular) {
   // Environment
-  const min = Stratus.Environment.get("production") ? ".min" : "";
-  const name = "tag";
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'tag'
 
   // This component intends to allow editing of various tags
   Stratus.Components.Tag = {
     transclude: {
-      model: "?stratusBaseModel"
+      model: '?stratusBaseModel'
     },
     bindings: {
       // Basic Control for Designers
-      elementId: "@",
+      elementId: '@',
 
       // ngModel Logic for a Symbiotic Controller Relationship
-      ngModel: "=",
-      property: "@",
+      ngModel: '=',
+      property: '@',
 
       // Registry Elements
-      target: "@",
-      id: "@",
-      manifest: "@",
-      decouple: "@",
-      direct: "@",
-      api: "@",
-      urlRoot: "@",
+      target: '@',
+      id: '@',
+      manifest: '@',
+      decouple: '@',
+      direct: '@',
+      api: '@',
+      urlRoot: '@',
 
       // Collection Options
-      limit: "@",
-      options: "<"
+      limit: '@',
+      options: '<'
     },
     controller: function (
       $scope,
@@ -65,11 +65,11 @@
       Stratus.Internals.CssLoader(
         Stratus.BaseUrl +
         Stratus.BundlePath +
-        "components/" +
+        'components/' +
         name +
         min +
-        ".css"
-      );
+        '.css'
+      )
 
       // Initialize
       const $ctrl = this
@@ -99,22 +99,22 @@
       }
 
       // Symbiotic Data Connectivity
-      $scope.$watch("$ctrl.ngModel", function (data) {
-        $ctrl.selectedChips = data || [];
+      $scope.$watch('$ctrl.ngModel', function (data) {
+        $ctrl.selectedChips = data || []
         if (data instanceof Model && data !== $scope.model) {
-          $scope.model = data;
+          $scope.model = data
         } else if (data instanceof Collection && data !== $scope.collection) {
-          $scope.collection = data;
+          $scope.collection = data
         }
       });
 
       // add chip
       $ctrl.addChip = function (chip) {
-        $scope.$parent.model.save();
+        $scope.$parent.model.save()
       }
 
       $ctrl.removeChip = function (chip) {
-        $scope.$parent.model.save();
+        $scope.$parent.model.save()
       }
 
       $ctrl.isDisabled = function (chip) {
@@ -129,8 +129,8 @@
       }
 
       $ctrl.disableTag = function ($event) {
-        $event.stopPropagation();
-        $event.preventDefault();
+        $event.stopPropagation()
+        $event.preventDefault()
       }
 
       /**
@@ -139,7 +139,7 @@
       $ctrl.queryData = function () {
         let results = $scope.collection.filter($ctrl.queryText)
         $scope.status = true
-        query = $ctrl.queryText.toLowerCase()
+        let query = $ctrl.queryText.toLowerCase()
         return Promise.resolve(results).then(function (value) {
           let returnArr = value.filter(function (item) {
             let lower = item.name.toLowerCase()
@@ -148,7 +148,7 @@
             }
           })
           return returnArr
-        });
+        })
       }
 
       /**
@@ -158,14 +158,14 @@
       $ctrl.transformChip = function (chip) {
         // If it is an object, it's already a known chip
         if (angular.isObject(chip)) {
-          return chip;
+          return chip
         }
 
         // Otherwise, create a new one
         return {
           name: chip
-        };
-      };
+        }
+      }
 
       /**
        * Add an object when it isn't match with the exists list;
@@ -179,20 +179,19 @@
         model.save()
           .then(function (response) {
             $ctrl.selectedChips.push(response)
-            $scope.$parent.model.save();
+            $scope.$parent.model.save()
           })
           .catch(function (error, response) {
             console.error(error)
           })
-        $ctrl.queryText = ""
-        jQuery("input").blur();
-      };
-
+        $ctrl.queryText = ''
+        jQuery('input').blur()
+      }
     },
     templateUrl: Stratus.BaseUrl +
       Stratus.BundlePath +
-      "components/tag" +
-      (Stratus.Environment.get("production") ? ".min" : "") +
-      ".html"
+      'components/tag' +
+      (Stratus.Environment.get('production') ? '.min' : '') +
+      '.html'
   };
 });
