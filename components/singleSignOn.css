@@ -26,7 +26,7 @@
   background: rgba(255, 255, 255, 0.3);
   -webkit-backface-visibility: hidden;
 }
-.btn-social.disconnected {
+.btn-social .disconnected {
   opacity: 0.5;
 }
 .btn-social svg,

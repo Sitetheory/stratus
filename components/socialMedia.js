@@ -73,6 +73,10 @@
       // css
       $scope.layout = 'column'
 
+      function signOutFromFacebook () {
+        return FB.logout()
+      }
+
       $scope.removeFacebook = function () {
         if ($scope.model.get('facebookId')) {
           $mdDialog.show(
@@ -83,10 +87,20 @@
               .ok('Yes')
               .cancel('No')
           ).then(function () {
+            try {
+              signOutFromFacebook()
+            } catch (e) {
+              // Do Nothing
+            }
             $scope.model.set('facebookId', null)
             $scope.model.save()
           })
         }
+      }
+
+      // SIGN OUT FROM GOOGLE
+      function signOutFromGoogle () {
+        return gapi.auth2.getAuthInstance().signOut()
       }
 
       $scope.removeGoogle = function () {
@@ -99,6 +113,11 @@
               .ok('Yes')
               .cancel('No')
           ).then(function () {
+            try {
+              signOutFromGoogle()
+            } catch (e) {
+              // Do Nothing
+            }
             $scope.model.set('googleId', null)
             $scope.model.save()
           })
