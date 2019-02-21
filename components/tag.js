@@ -3,7 +3,6 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
-
       // Libraries
       'stratus',
       'underscore',
@@ -12,109 +11,140 @@
 
       // Modules
       'angular-material',
-      'stratus.services.utility',
-      'stratus.services.media'
+
+      // Services
+      'stratus.services.registry',
+      'stratus.services.model',
+      'stratus.services.collection',
+
+      // Components
+      'stratus.components.pagination',
+      'stratus.components.search'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
   }
-}(this, function (Stratus, _, jQuery, angular) {
+})(this, function (Stratus, _, jQuery, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'tag'
+
   // This component intends to allow editing of various tags
   Stratus.Components.Tag = {
-    bindings: {
-      ngModel: '=',
-      collection: '<'
+    transclude: {
+      model: '?stratusBaseModel'
     },
-    controller: function ($scope, $parse, $attrs, utility, media, $location, $rootScope) {
+    bindings: {
+      // Basic Control for Designers
+      elementId: '@',
+
+      // ngModel Logic for a Symbiotic Controller Relationship
+      ngModel: '=',
+      property: '@',
+
+      // Registry Elements
+      target: '@',
+      id: '@',
+      manifest: '@',
+      decouple: '@',
+      direct: '@',
+      api: '@',
+      urlRoot: '@',
+
+      // Collection Options
+      limit: '@',
+      options: '<'
+    },
+    controller: function (
+      $scope,
+      $attrs,
+      Registry,
+      Model,
+      Collection
+    ) {
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl +
+        Stratus.BundlePath +
+        'components/' +
+        name +
+        min +
+        '.css'
+      )
+
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'tag', true)
-      let $ctrl = this
-      $ctrl.selectedChips = []
-      $ctrl.collection = []
-      $ctrl.queryText = ''
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
-      // init model for md-chips
-      $scope.$watch('$ctrl.ngModel', function (items) {
-        $ctrl.selectedChips = items || []
-      })
+      // Bind Init
+      $ctrl.$onInit = function () {
+        // Variables
+        $ctrl.selectedChips = []
+        $ctrl.queryText = ''
 
-      // init model for autocomplete
-      $scope.$watch('$ctrl.collection', function (data) {
-        $ctrl.collection = data
-      })
-      // this watch function use to watch changes in tags and save and delete automatically when add or delete route.
-      $scope.$watch('$ctrl.selectedChips', function (newData, oldData) {
-        if (oldData.length > 0) {
-          let dataRes = {}
-          dataRes.tags = $ctrl.selectedChips
-          if ($rootScope.$$childHead.collection !== undefined) {
-            if ($rootScope.$$childHead.collection.target === 'Media') {
-              if ($rootScope.mediaId !== undefined) {
-                media.updateMedia($rootScope.mediaId, dataRes).then(
-                  function (response) {
-                    media.fetchOneMedia($rootScope.mediaId)
-                  },
-                  function (rejection) {
-                    if (!Stratus.Environment.get('production')) {
-                    }
-                  })
-              }
-            }
-          } else {
-            let contentId = $location.absUrl().split('?id=')[1]
-            if (contentId) {
-              let apiUrl = $rootScope.$$childHead.data.urlRoot
-              updateContent(contentId, dataRes, apiUrl).then(function (response) {
-                $rootScope.$$childHead.data.changed = false
-              })
-            }
-          }
+        // fetch Tag collection and hydrate to $scope.collection
+        $ctrl.registry = new Registry()
+        $ctrl.registry.fetch({
+          target: $attrs.target || 'Tag',
+          id: null,
+          manifest: false,
+          decouple: true,
+          direct: true
+        }, $scope)
+      }
+
+      // Symbiotic Data Connectivity
+      $scope.$watch('$ctrl.ngModel', function (data) {
+        $ctrl.selectedChips = data || []
+        if (data instanceof Model && data !== $scope.model) {
+          $scope.model = data
+        } else if (data instanceof Collection && data !== $scope.collection) {
+          $scope.collection = data
         }
       })
-      // Update  tags of a content
-      function updateContent (fileId, data, apiUrl) {
-        return utility.sendRequest(data, 'PUT', apiUrl + '/' + fileId)
+
+      // add chip
+      $ctrl.addChip = function (chip) {
+        $scope.$parent.model.save()
+      }
+
+      $ctrl.removeChip = function (chip) {
+        $scope.$parent.model.save()
+      }
+
+      $ctrl.isDisabled = function (chip) {
+        let index = $ctrl.selectedChips.findIndex(function (x) {
+          return x.name.toLowerCase() === chip.name.toLowerCase()
+        })
+        if (index !== -1) {
+          return true
+        } else {
+          return false
+        }
+      }
+
+      $ctrl.disableTag = function ($event) {
+        $event.stopPropagation()
+        $event.preventDefault()
       }
 
       /**
        * Init value for search list
        */
       $ctrl.queryData = function () {
-        let results = $ctrl.collection.filter($ctrl.queryText)
+        let results = $scope.collection.filter($ctrl.queryText)
         $scope.status = true
+        let query = $ctrl.queryText.toLowerCase()
         return Promise.resolve(results).then(function (value) {
-          // return value
           let returnArr = value.filter(function (item) {
-            if ($ctrl.queryText && ($ctrl.queryText !== '' || $ctrl.queryText !== undefined)) {
-              for (let i = 0; i < $ctrl.selectedChips.length; i++) {
-                if (item.name.toUpperCase() === $ctrl.queryText.toUpperCase()) {
-                  $scope.status = true
-                  if ($ctrl.selectedChips[i].name.toUpperCase() === $ctrl.queryText.toUpperCase()) {
-                    $ctrl.queryText = null
-                    jQuery('input').blur()
-                    $rootScope.$$childHead.data.meta.data.status = [{ code: 'INVALID', message: 'You have already selected a tag with that name', origin: 'name' }]
-                    $rootScope.$$childHead.data.error = true
-                    $scope.status = true
-                  } else {
-                    $rootScope.$$childHead.data.error = false
-                    $scope.status = true
-                    // return true;
-                  }
-                } else {
-                  $scope.status = false
-                }
-              }
-            } else {
-              $scope.status = true
-            }
-            return $scope.status
-          })
-          $ctrl.selectedChips.forEach(predata => {
-            let resultData = returnArr.find(mainArr => mainArr.name === predata.name)
-            if (resultData !== undefined) {
-              returnArr = returnArr.filter(function (itemNew) {
-                return itemNew.name !== resultData.name
-              })
+            let lower = item.name.toLowerCase()
+            if ($ctrl.queryText === '' || lower.indexOf(query) !== -1) {
+              return $scope.status
             }
           })
           return returnArr
@@ -132,28 +162,36 @@
         }
 
         // Otherwise, create a new one
-        return { name: chip }
+        return {
+          name: chip
+        }
       }
 
       /**
        * Add an object when it isn't match with the exists list;
        */
       $ctrl.createTag = function (query) {
-        let data = { name: query }
-        media.createTag(data).then(function (response) {
-          if (utility.getStatus(response).code === utility.RESPONSE_CODE.success) {
-            $ctrl.selectedChips.push(response.data.payload)
-            $rootScope.$$childHead.data.save()
-          } else {
-            $rootScope.$$childHead.data.meta.data.status = response.data.meta.status
-            $rootScope.$$childHead.data.error = true
-          }
+        let model = new Model({
+          'target': 'Tag'
+        }, {
+          name: query
         })
-        $ctrl.queryText = null
+        model.save()
+          .then(function (response) {
+            $ctrl.selectedChips.push(response)
+            $scope.$parent.model.save()
+          })
+          .catch(function (error, response) {
+            console.error(error)
+          })
+        $ctrl.queryText = ''
         jQuery('input').blur()
       }
     },
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/tag' +
-    (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl +
+      Stratus.BundlePath +
+      'components/tag' +
+      (Stratus.Environment.get('production') ? '.min' : '') +
+      '.html'
   }
-}))
+})

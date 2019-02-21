@@ -102,10 +102,8 @@
           })
         } else {
           /* */
-          $scope.meta.set('api.options.tagIds',
-            $scope.showOnly.map(function (item) {
-              return item.id
-            }))
+          $scope.meta.set('api.t',
+            angular.toJson($scope.filterTagIds))
           $scope.collection.fetch()
             .then(function (response) {
               console.log('response', response)

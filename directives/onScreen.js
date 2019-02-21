@@ -16,13 +16,17 @@
     factory(
       root.Stratus,
       root._,
-      root.$,
+      root.jQuery,
       root.angular
     )
   }
-}(this, function (Stratus, _, $, angular) {
+}(this, function (Stratus, _, jQuery, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'onScreen'
+
   // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.OnScreen = function ($parse, $interpolate) {
+  Stratus.Directives.OnScreen = function () {
     return {
       restrict: 'A',
       scope: {
@@ -38,16 +42,27 @@
         offset: '@offset', // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
         reset: '@reset' // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
       },
-      link: function (scope, element, attrs) {
-        element.uid = _.uniqueId('on_screen_')
-        Stratus.Instances[element.uid] = scope
-        scope.elementId = attrs.elementId || element.uid
+      link: function ($scope, element, attrs) {
+        // Initialize
+        const $ctrl = this
+        $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+        Stratus.Instances[$ctrl.uid] = $scope
+        let $element = element instanceof jQuery ? element : jQuery(element)
+        $scope.elementId = $element.elementId || $ctrl.uid
+        Stratus.Internals.CssLoader(
+          Stratus.BaseUrl + Stratus.BundlePath + 'directives/' + name + min + '.css'
+        )
+        $scope.initialized = false
+
+        // Etc..
+        element.uid = $ctrl.uid
+        Stratus.Instances[element.uid] = $scope
+        $scope.elementId = attrs.elementId || element.uid
 
         // event can be multiple listeners: reset
-        let $element = element instanceof $ ? element : $(element)
         let event = attrs.event ? attrs.event.split(' ') : []
-        let target = attrs.target ? $(attrs.target) : $element
-        let spy = attrs.spy ? $(attrs.spy) : $element
+        let target = attrs.target ? jQuery(attrs.target) : $element
+        let spy = attrs.spy ? jQuery(attrs.spy) : $element
         if (!spy.length) {
           spy = $element
         }
@@ -118,7 +133,7 @@
         // Bind Angular to Environment
         let calculate = function () {
           // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
-          if (event.indexOf('reset') !== -1 && ((reset > 0 && $element.offset().top <= reset) || $(window).scrollTop() <= 0)) {
+          if (event.indexOf('reset') !== -1 && ((reset > 0 && $element.offset().top <= reset) || jQuery(window).scrollTop() <= 0)) {
             target.removeClass('on-screen off-screen scroll-up scroll-down reveal conceal')
             target.addClass('reset')
             return

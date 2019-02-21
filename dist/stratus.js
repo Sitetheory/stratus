@@ -2182,10 +2182,14 @@ Stratus.Internals.LoadImage = function (obj) {
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
       let src = _.hydrate(el.attr('data-src')) || el.attr('src') || null
-
+      // NOTE: Element can be either <img> or any element with background image in style
+      let type = el.prop('tagName').toLowerCase()
       // Handle precedence
-      if (src === 'lazy' || _.isEmpty(src)) {
+      if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
         src = el.attr('src')
+      }
+      if (_.isEmpty(src)) {
+        return false;
       }
 
       let size = _.hydrate(el.attr('data-size')) || obj.size || null
@@ -2284,7 +2288,7 @@ Stratus.Internals.LoadImage = function (obj) {
       }
 
       // Change Source to right size (get the base and extension and ignore
-      // size)
+      // size and any cache busting or variables)
       const srcOrigin = src
       const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
       const srcMatch = srcRegex.exec(src)
@@ -2293,28 +2297,51 @@ Stratus.Internals.LoadImage = function (obj) {
       } else {
         console.error('Unable to find src for image:', el)
       }
-
+      let srcOriginProtocol = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
       // Start Loading
       el.addClass('loading')
 
       // Add Listeners (Only once per Element!)
-      el.on('load', function () {
-        el.addClass('loaded').removeClass('loading')
-      })
-      el.on('error', function () {
-        // TODO: Go down in sizes before reaching the origin
-        el.attr('data-loading', _.dehydrate(false))
-        el.attr('src', srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin)
-        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
-      })
-
-      // Change the Source to be the desired path
-      if (!_.isEmpty(src)) {
-        el.attr('data-loading', _.dehydrate(false))
-        el.attr('data-size', _.dehydrate(size))
-        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
+      // If Background Image Create a Test Image to Test Loading
+      if(type !== 'img') {
+          // Create image in memory for testing
+          var loadEl = $('<img/>')
+          loadEl.attr('src', srcOriginProtocol)
+          loadEl.on('load', function() {
+              el.addClass('loaded').removeClass('loading')
+              $(this).remove(); // prevent memory leaks
+          });
+          loadEl.on('error', function () {
+              // TODO: Go down in sizes before reaching the origin
+              // Standardize src
+              el.attr('data-loading', _.dehydrate(false))
+              el.css('background-image', 'url(' + srcOriginProtocol + ')')
+              console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
+          })
+      } else {
+          el.on('load', function () {
+              el.addClass('loaded').removeClass('loading')
+          })
+          // Test Loading on the Load Element (which could be img or test image for background images)
+          el.on('error', function () {
+              // TODO: Go down in sizes before reaching the origin
+              // Standardize src
+              el.attr('data-loading', _.dehydrate(false))
+              el.attr('src', srcOriginProtocol)
+              console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+          })
       }
 
+
+      // Change the Source to be the desired path
+      el.attr('data-loading', _.dehydrate(false))
+      el.attr('data-size', _.dehydrate(size))
+      let srcProtocol = src.startsWith('//') ? window.location.protocol + src : src
+      if(type === 'img') {
+          el.attr('src', srcProtocol)
+      } else {
+          el.css('background-image', 'url(' + srcProtocol + ')')
+      }
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
     })

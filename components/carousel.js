@@ -42,7 +42,7 @@
   // This component is just a simple base.
   Stratus.Components.Carousel = {
     transclude: {
-      model: '?stratusCarouselSlide'
+      slide: '?stratusCarouselSlide'
     },
     bindings: {
       // Basic Control for Designers
@@ -67,7 +67,9 @@
 
       // Carousel Specific
       initNow: '=',
+      /** @deprecated */
       images: '@',
+      slides: '@',
       imageLinkTarget: '@', // shortcut
       direction: '@',
       transitionEffect: '@',
@@ -80,7 +82,10 @@
       navigation: '@',
       pagination: '@',
       scrollbar: '@',
-      slidesPerGroup: '@'
+      slidesPerGroup: '@',
+      stretchWidth: '@',
+      allowTouchMove: '@',
+      allowZoom: '@'
     },
     controller: [
       '$scope',
@@ -96,6 +101,7 @@
         $ctrl.uid = _.uniqueId('carousel_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(
           Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' + min + '.css'
         )
@@ -125,13 +131,15 @@
         })
 
         // Image Conversion
-        $scope.$watch('collection.models', function (models) {
-          $scope.images = $scope.images || []
-          models = models || []
-          models.forEach(function (model) {
-            $scope.images.push('model:', model.data)
+        $scope.$watch('collection.models',
+          /** @param {Array} models */
+          function (models) {
+            $scope.images = $scope.images || []
+            models = models || []
+            models.forEach(function (model) {
+              $scope.images.push('model:', model.data)
+            })
           })
-        })
 
         // Check Attributes
         // console.log('attributes:', $attrs)
@@ -165,8 +173,13 @@
          * TODO allow for altering the variables and updating Swiper after init (live editing/inline changes)
          */
         function init () {
+          /**
+           * @type {Array<SlideImage> || Array<String> || String}
+           * @deprecated
+           * */
+          let images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : [] // This is a deprecated reference saved for backwards compatibility
           /** @type {Array<SlideImage> || Array<String> || String} */
-          let images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : []
+          let slides = $attrs.slides && _.isJSON($attrs.slides) ? JSON.parse($attrs.slides) : images // References images for temporary backwards compatibility
 
           /** @type {String} */
           $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null
@@ -174,11 +187,11 @@
           /**
            * @type {String}
            **/
-          $scope.direction = $attrs.loop && $attrs.loop === 'vertical' ? 'vertical' : 'horizontal'
+          $scope.direction = $attrs.direction && $attrs.direction === 'vertical' ? 'vertical' : 'horizontal'
 
           /**
            * FIXME Some transitions seem to have trouble with lazyLoad that we'll need to work on
-           * @type {String} ['slide,'fade,'cube,'coverflow','flip']
+           * @type {String} ['slide','fade','cube','coverflow','flip']
            */
           $scope.transitionEffect = $attrs.transitionEffect ? $attrs.transitionEffect : 'slide'
 
@@ -215,7 +228,7 @@
           $scope.scaleHeight = $attrs.scaleHeight && _.isJSON($attrs.scaleHeight) ? JSON.parse($attrs.scaleHeight) : true
 
           /**
-           * Allow Zooming into an image my double clicking or pinchig on Mobile. Requires and force enabled scaleHeight
+           * Allow Zooming into an image my double clicking or pinching on Mobile. Requires and force enabled scaleHeight
            * Disabled by default
            * @type {boolean}
            */
@@ -233,12 +246,12 @@
            **/
           $scope.autoHeight = $attrs.autoHeight && _.isJSON($attrs.autoHeight) ? JSON.parse($attrs.autoHeight) : false
           /**
-           * Automatically changes the slide are set intervals. Provide object and extra options
+           * Automatically changes the slide at set intervals. Provide object and extra options
            * @type {Object || boolean}
            **/
           $scope.autoplay = $attrs.autoplay && _.isJSON($attrs.autoplay) ? JSON.parse($attrs.autoplay) : false
           /**
-           * Allow moving the slides uing a finger of mouse
+           * Allow moving the slides using a finger of mouse
            * Enabled by default
            * @type {boolean}
            */
@@ -246,6 +259,7 @@
           /** @type {Number} */
           $scope.transitionDelay = $attrs.transitionDelay && _.isJSON($attrs.transitionDelay) ? JSON.parse($attrs.transitionDelay) : 3000
 
+          // FIXME lazyLoad currently has been changed to use stratus-src. Need to have an option is disable Sitetheory lazyLoading, as it doesn't work for external image urls
           /**
            * Enable Lazy Loading to prevent everything from being fetched at once
            * By default Lazy Loading is enabled only for the next and previous images to give a buffer
@@ -265,7 +279,8 @@
           /** @type {boolean} */
           $scope.slidesPerGroup = $attrs.slidesPerGroup && _.isJSON($attrs.slidesPerGroup) ? JSON.parse($attrs.slidesPerGroup) : false
 
-          initImages(images)
+          initImages(slides)
+          $scope.initSwiper()
 
           $scope.initialized = true
         }
@@ -283,6 +298,7 @@
 
         /**
          * Prep and process a list of images for Swiper's use
+         * TODO later process non-image based slides
          * @param {Array<SlideImage> || Array<String> || String} images
          */
         function initImages (images) {
@@ -292,21 +308,23 @@
           if (_.isArray(images)) {
             /** @type {Array<SlideImage>} */
             let processedImages = []
-            images.forEach(function (image) {
-              /** @type {SlideImage} */
-              let preppedImage = {}
-              if (typeof image === 'string') {
-                // just urls were provided
-                preppedImage.src = image
-              } else if (typeof image === 'object') {
-                if (image.hasOwnProperty('src')) {
-                  preppedImage = image
+            images.forEach(
+              /** @param {String || SlideImage} image */
+              function (image) {
+                /** @type {SlideImage} */
+                let preppedImage = {}
+                if (typeof image === 'string') {
+                  // just urls were provided
+                  preppedImage.src = image
+                } else if (typeof image === 'object') {
+                  if (image.hasOwnProperty('src')) {
+                    preppedImage = image
+                  }
                 }
-              }
-              if (Object.keys(preppedImage).length > 0) {
-                processedImages.push(preppedImage)
-              }
-            })
+                if (Object.keys(preppedImage).length > 0) {
+                  processedImages.push(preppedImage)
+                }
+              })
 
             if (processedImages.length > 0) {
               $scope.images = processedImages

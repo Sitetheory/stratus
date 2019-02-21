@@ -24,13 +24,14 @@
         $scope.whitelist = [
           'jpg',
           'jpeg',
-          'png'
+          'png',
+          'gif'
         ]
         $scope.filter = null
 
         // Add Watchers
         $scope.$watch(function () {
-          return $attr.stratusSrc || $attr.src
+          return $attr.stratusSrc || $attr.src || $attr.style
         }, function (newVal, oldVal, scope) {
           if (newVal && $element.attr('data-size')) {
             $scope.registered = false
@@ -41,7 +42,15 @@
         // Group Registration
         $scope.registered = false
         $scope.register = function () {
-          const src = $attr.stratusSrc || $attr.src || null
+          // find background image in CSS if there is no src (e.g. for div)
+          let backgroundImage = null
+          if ($element.prop('tagName').toLowerCase() !== 'img') {
+            backgroundImage = $element.css('background-image') || null
+            if (backgroundImage) {
+              backgroundImage = backgroundImage.slice(4, -1).replace(/"/g, '')
+            }
+          }
+          const src = $attr.stratusSrc || $attr.src || backgroundImage
 
           // Get Extension
           let ext = src ? src.match(/\.([0-9a-z]+)(\?.*)?$/i) : null
@@ -62,9 +71,13 @@
             return true
           }
           $scope.registered = true
+          if (!src & !backgroundImage) {
+            return false
+          }
 
           // Begin Registration
           $element.attr('data-src', src)
+
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,
