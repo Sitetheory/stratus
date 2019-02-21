@@ -1,4 +1,4 @@
-<div class="option-row">
+<div class="option-row" ng-repeat="model in models" ng-controller="Permission">
   <div class="select-options"
        ng-show="allowSelectUser">
     <md-autocomplete
@@ -12,7 +12,8 @@
         md-no-cache="true"
         md-selected-item="updateUserRole"
         md-floating-label="User and Role *"
-        placeholder="Choose an Identity">
+        placeholder="Choose an Identity"
+        md-clear-button="true">
       <md-item-template>
         <div layout="row" layout-wrap layout-align="space-between center">
           <div class="contact-item">
@@ -42,17 +43,18 @@
         md-no-cache="true"
         md-selected-item="updateContent"
         md-floating-label="Content"
-        placeholder="Choose an Identity">
+        placeholder="Choose an Identity"
+        md-clear-button="true">
       <md-item-template>
         <div layout="row" layout-align="space-between center">
           <div class="contact-item">
             <img
-                ng-src="{{ item.version.images[0] ? '//' + item.version.images[0].prefix + '.' + item.version.images[0].extension : null }}"
+                ng-src="{{ item.version.images[0] ? '//' + item.version.images[0].prefix + '.' + item.version.images[0].extension : (item.contentInfo.icon.resource ? '/Api/Resource?path=' + item.contentInfo.icon.resource.replace('/Resources/public/', ':') : null) }}"
                 class="md-avatar"/>
           </div>
           <div>
             <p class="md-contact-name" md-highlight-text="true" md-highlight-flags="i">
-              {{ item.version.title || item.name | limitTo:20 }}
+              {{ (item.version.title || item.name || 'Untitled') | limitTo:20 }}
             </p>
           </div>
         </div>
@@ -67,10 +69,10 @@
   <div class="select-options">
     <md-input-container>
       <label>Actions</label>
-      <md-select ng-model="permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()"
+      <md-select ng-model="model.permissionSelected" ng-change="processSelectAction()" md-on-close="clearSearchTerm()"
                  data-md-container-class="selectdemo-select-header" multiple="">
         <md-select-header class="demo-select-header">
-          <input ng-model="permissionSearchTerm" type="search" placeholder="Search for a action.."
+          <input ng-model="model.permissionSearchTerm" type="search" placeholder="Search for a action.."
                  class="demo-header-searchbox md-text">
         </md-select-header>
         <md-optgroup label="vegetables">
@@ -81,4 +83,12 @@
       </md-select>
     </md-input-container>
   </div>
+
+  <md-button ng-if="$last && $ctrl.multiple" ng-click="models.push({})" aria-label="add">Add
+    <i class="fas fa-plus" aria-hidden="true"></i>
+  </md-button>
+  <md-button ng-if="$ctrl.multiple" ng-click="models.length < 2 ? model.value = null : models.splice($index, 1)"
+    aria-label="delete">Delete
+    <i class="fas fa-trash-alt" aria-hidden="true"></i>
+  </md-button>
 </div>
