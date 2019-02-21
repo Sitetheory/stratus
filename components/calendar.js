@@ -41,7 +41,7 @@
     bindings: {
       ngModel: '=',
       elementId: '@',
-      eventSources: '@'
+      options: '@'
     },
     controller: function ($scope, $attrs, $log, Collection) {
       // Initialize
@@ -49,6 +49,8 @@
       $ctrl.uid = _.uniqueId('calendar_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
+      // FIXME '#calendar' needs to be replace with $ctrl.uid + '_fullcalendar'
+      $scope.calendarId = $scope.elementId + '_fullcalendar'
       Stratus.Internals.CssLoader(
         Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar/dist/fullcalendar' + min + '.css'
       )
@@ -66,6 +68,7 @@
         right: 'month,agendaWeek,agendaDay'
       }
       $scope.options.defaultView = $scope.options.defaultView || 'month'
+      $scope.options.possibleViews = $scope.options.possibleViews || ['month', 'weekAgenda', 'dayAgenda'] // Not used yet @see https://fullcalendar.io/docs/header
       $scope.options.defaultDate = $scope.options.defaultDate || null
       $scope.options.nowIndicator = $scope.options.nowIndicator || false
       $scope.options.timezone = $scope.options.timezone || false
@@ -85,12 +88,13 @@
       $scope.options.aspectRatio = $scope.options.aspectRatio || 1.35
       $scope.options.handleWindowResize = $scope.options.handleWindowResize || true
       $scope.options.windowResizeDelay = $scope.options.windowResizeDelay || 100
+      $scope.options.eventSources = $scope.options.eventSources || []
 
-      $scope.eventSources = $attrs.eventSources && _.isJSON($attrs.eventSources) ? JSON.parse($attrs.eventSources) : [
-        // 'https://gracedover.ccbchurch.com/w_calendar_sub.ics?campus_id=1'
-      ]
+      // [
+      // 'https://gracedover.ccbchurch.com/w_calendar_sub.ics?campus_id=1'
+      // ]
 
-      console.log('$scope.eventSources', $scope.eventSources)
+      console.log('loading external urls', $scope.options.eventSources)
 
       $scope.initialized = false
       $scope.fetched = false
@@ -120,7 +124,7 @@
           render()
           // process a list of URLS, just using single example below
           // Process each feed before continuing
-          await Promise.all($scope.eventSources.map(url => $scope.addEventICSSource(url)))
+          await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
           // console.log('completed loading events', events);
           console.log('events all loaded!')
           $scope.initialized = true
@@ -135,7 +139,7 @@
 
             const iCalExpander = new ICalExpander(urlResponse, { maxIterations: 0 })
             const events = iCalExpander.jsonEventsFC(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
-            jQuery('#calendar').fullCalendar('addEventSource', {
+            jQuery('#' + $scope.calendarId).fullCalendar('addEventSource', {
               events: events
               // color: 'black',     // an option!
               // textColor: 'yellow' // an option!
@@ -157,7 +161,7 @@
        * @TODO old code
        */
       function render () {
-        jQuery('#calendar').fullCalendar({
+        jQuery('#' + $scope.calendarId).fullCalendar({
           customButtons: $scope.options.customButtons,
           buttonIcons: $scope.options.buttonIcons,
           header: $scope.options.header,
@@ -460,8 +464,7 @@
       }
     },
     template: '<div id="{{ elementId }}">' +
-      'Calendar Stub' +
-      '<div id="calendar"></div>' +
+      '<div id="{{ calendarId }}"></div>' +
       '</div>'
   }
 }))
