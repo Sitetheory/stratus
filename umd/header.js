@@ -12,14 +12,14 @@
     define([
       'text',
       'underscore',
+      'jquery', // TODO: Remove once phased out appropriately
       'bowser',
       'promise',
-      'backbone', // TODO: Remove once phased out appropriately
-      'jquery' // TODO: Remove once phased out appropriately
+      'backbone' // TODO: Remove once phased out appropriately
     ], function (text, _, bowser) {
-      return (root.Stratus = factory(text, _, bowser))
+      return (root.Stratus = factory(text, _, jQuery, bowser))
     })
   } else {
-    root.Stratus = factory(root.text, root._, root.bowser)
+    root.Stratus = factory(root.text, root._, root.jQuery, root.bowser)
   }
-}(this, function (text, _, bowser) {
+}(this, function (text, _, jQuery, bowser) {

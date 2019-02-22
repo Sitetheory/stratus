@@ -316,7 +316,6 @@ boot.config({
     'stratus.components.carousel': boot.bundle + 'stratus/components/carousel' + boot.suffix,
     'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
     'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
-    'stratus.components.drawer': boot.bundle + 'stratus/components/drawer' + boot.suffix,
     'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
     'stratus.components.errorMessage': boot.bundle + 'stratus/components/errorMessage' + boot.suffix,
     'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
@@ -347,6 +346,7 @@ boot.config({
 
     /* Sitetheory Stream Components */
     'stratus.components.calendar': boot.bundle + 'stratus/components/calendar' + boot.suffix,
+    'stratus.components.calendar.timezones': boot.bundle + 'stratus/components/calendar.timezones' + boot.suffix,
     'stratus.components.map': boot.bundle + 'stratus/components/map' + boot.suffix,
 
     /* Sitetheory Menu Components */
@@ -404,7 +404,6 @@ boot.config({
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
 
-
     /* Stratus Core Underscore Templates */
     /* TODO: remove these, they aren't even used anymore. Convert to components and remove. */
     'templates-base': boot.bundle + 'stratus/legacy/views/widgets/base.html',
@@ -459,6 +458,7 @@ boot.config({
     chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart',
     dropzone: boot.bundle + 'stratus/bower_components/dropzone/dist/' + boot.directory + 'dropzone-amd-module' + boot.suffix,
     fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
+    ical: boot.bundle + 'stratus/bower_components/ical.js/build/ical' + boot.suffix,
     md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
     masonry: boot.bundle + 'stratus/bower_components/masonry-layout/dist/masonry.pkgd' + boot.suffix,
     moment: boot.bundle + 'stratus/bower_components/moment/' + boot.directory + 'moment' + boot.suffix,
