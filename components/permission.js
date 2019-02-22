@@ -83,8 +83,7 @@
           return
         }
         _.each(sentinels, function (sentinel, id) {
-          if (!angular.isObject($scope.collection) ||
-            !angular.isObject(sentinel)) {
+          if (!angular.isObject($scope.collection) || !angular.isObject(sentinel)) {
             return
           }
           _.each($scope.collection.models || [], function (model) {
