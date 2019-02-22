@@ -216,6 +216,7 @@ boot.config({
     'stratus.controllers.filterContentType': boot.bundle + 'stratus/controllers/filterContentType' + boot.suffix,
     'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
     'stratus.controllers.selectMainRoute': boot.bundle + 'stratus/controllers/selectMainRoute' + boot.suffix,
+    'stratus.controllers.addAlias': boot.bundle + 'stratus/controllers/addAlias' + boot.suffix,
     'stratus.controllers.productFilter': boot.bundle + 'stratus/controllers/productFilter' + boot.suffix,
     'stratus.controllers.invoiceProductFilter': boot.bundle + 'stratus/controllers/invoiceProductFilter' + boot.suffix,
     'stratus.controllers.userFilter': boot.bundle + 'stratus/controllers/userFilter' + boot.suffix,
