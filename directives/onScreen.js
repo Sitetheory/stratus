@@ -22,7 +22,6 @@
   }
 }(this, function (Stratus, _, jQuery, angular) {
   // Environment
-  const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'onScreen'
 
   // This directive intends to handle binding of a dynamic variable to
@@ -49,9 +48,6 @@
         Stratus.Instances[$ctrl.uid] = $scope
         let $element = element instanceof jQuery ? element : jQuery(element)
         $scope.elementId = $element.elementId || $ctrl.uid
-        Stratus.Internals.CssLoader(
-          Stratus.BaseUrl + Stratus.BundlePath + 'directives/' + name + min + '.css'
-        )
         $scope.initialized = false
 
         // Etc..
@@ -81,7 +77,7 @@
         let lastUpdate = 0
         let isWaiting = false
         let wasOnScreen = false
-        let wipeJob = false
+        let wipeJob = null
 
         // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
         let offset = _.hydrate(attrs.offset) || 0
@@ -98,6 +94,7 @@
           return attrs.offScreen && typeof attrs.offScreen === 'function' ? attrs.offScreen() : true
         }
         let isOnScreen = function () {
+          // FIXME: This needs to be converted to the Chronos structure.
           if (isWaiting) {
             return wasOnScreen
           }
@@ -119,7 +116,8 @@
             return
           }
           if (_.isUndefined(request)) {
-            if (wipeJob) {
+            // FIXME: This needs to be converted to the Chronos structure.
+            if (_.isNumber(wipeJob)) {
               clearTimeout(wipeJob)
             }
             wipeJob = setTimeout(function () {
@@ -160,6 +158,7 @@
           }
         }
 
+        // FIXME: This needs to be converted to the new event structure.
         // Ensure OnScroll is listening
         Stratus.Internals.OnScroll()
         Stratus.Environment.on('change:viewPortChange', calculate)

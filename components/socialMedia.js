@@ -48,9 +48,6 @@
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
-      Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
-      )
       $scope.initialized = false
 
       // Data References
@@ -228,6 +225,6 @@
         $scope.$digest()
       }
     },
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/singleSignOn' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/singleSignOn' + min + '.html'
   }
 }))

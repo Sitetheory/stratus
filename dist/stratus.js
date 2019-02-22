@@ -12,17 +12,17 @@
     define([
       'text',
       'underscore',
+      'jquery', // TODO: Remove once phased out appropriately
       'bowser',
       'promise',
-      'backbone', // TODO: Remove once phased out appropriately
-      'jquery' // TODO: Remove once phased out appropriately
+      'backbone' // TODO: Remove once phased out appropriately
     ], function (text, _, bowser) {
-      return (root.Stratus = factory(text, _, bowser))
+      return (root.Stratus = factory(text, _, jQuery, bowser))
     })
   } else {
-    root.Stratus = factory(root.text, root._, root.bowser)
+    root.Stratus = factory(root.text, root._, root.jQuery, root.bowser)
   }
-}(this, function (text, _, bowser) {
+}(this, function (text, _, jQuery, bowser) {
 
 /* global requirejs, _, bowser */
 
@@ -1636,7 +1636,7 @@ Stratus.Prototypes.Toast = function (message, title, priority, settings) {
   this.settings.timeout = this.settings.timeout || 10000
 }
 
-/* global Stratus, _, $, Backbone */
+/* global Stratus, _, jQuery, Backbone */
 
 /**
  * @param request
@@ -1725,13 +1725,13 @@ Stratus.Internals.Anchor = (function Anchor () {
           return !_.startsWith(event.currentTarget.hash, '#' + keyword)
         }, this)
         if (valid) {
-          if (typeof $ === 'function' && $.fn && typeof Backbone === 'object') {
-            let $target = $(event.currentTarget.hash)
+          if (typeof jQuery === 'function' && jQuery.fn && typeof Backbone === 'object') {
+            let $target = jQuery(event.currentTarget.hash)
             let anchor = event.currentTarget.hash.slice(1)
-            $target = ($target.length) ? $target : $('[name=' + anchor + ']')
+            $target = ($target.length) ? $target : jQuery('[name=' + anchor + ']')
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
-              $('html,body').animate({
+              jQuery('html,body').animate({
                 scrollTop: $target.offset().top
               }, 1000, function () {
                 Backbone.history.navigate(anchor)
@@ -1863,8 +1863,8 @@ Stratus.Internals.Convoy = function (convoy, query) {
         message: 'No Convoy defined for dispatch.'
       }, this))
     }
-    if (typeof $ === 'function' && $.ajax) {
-      $.ajax({
+    if (typeof jQuery === 'function' && jQuery.ajax) {
+      jQuery.ajax({
         type: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
@@ -1979,6 +1979,7 @@ Stratus.Internals.CssLoader = function (url) {
  * @returns {boolean}
  * @constructor
  */
+// FIXME: This would be better suited as a selector inside of Stratus.
 Stratus.Internals.GetColWidth = function (el) {
   if (typeof el === 'undefined' || !el) {
     return false
@@ -2002,12 +2003,13 @@ Stratus.Internals.GetColWidth = function (el) {
  * @returns {string}
  * @constructor
  */
+// FIXME: This would be better suited as non-jQuery, native logic in the selectors
 Stratus.Internals.GetScrollDir = function () {
-  let windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
+  let windowTop = jQuery(Stratus.Environment.get('viewPort') || window).scrollTop()
   let lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
-  let windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
-  let documentHeight = $(document).height()
+  let windowHeight = jQuery(Stratus.Environment.get('viewPort') || window).height()
+  let documentHeight = jQuery(document).height()
   /* */
 
   // return NULL if there is no scroll, otherwise up or down
@@ -2022,6 +2024,7 @@ Stratus.Internals.GetScrollDir = function () {
 // IsOnScreen()
 // ---------------
 // Check whether an element is on screen, returns true or false.
+// FIXME: This would be better suited as a selector inside of Stratus.
 /**
  * @param el
  * @param offset
@@ -2033,8 +2036,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   if (!el) {
     return false
   }
-  if (!(el instanceof $)) {
-    el = $(el)
+  if (!(el instanceof jQuery)) {
+    el = jQuery(el)
   }
   if (!el.length) {
     return false
@@ -2044,8 +2047,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
     partial = true
   }
   let viewPort = Stratus.Environment.get('viewPort') || window
-  let pageTop = $(viewPort).scrollTop()
-  let pageBottom = pageTop + $(viewPort).height()
+  let pageTop = jQuery(viewPort).scrollTop()
+  let pageBottom = pageTop + jQuery(viewPort).height()
   let elementTop = el.offset().top
   if (viewPort !== window) {
     elementTop += pageTop
@@ -2155,7 +2158,7 @@ Stratus.Internals.LoadImage = function (obj) {
     }, 500)
     return false
   }
-  let el = obj.el instanceof $ ? obj.el : $(obj.el)
+  let el = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
   if (!el.length) {
     setTimeout(function () {
       Stratus.Internals.LoadImage(obj)
@@ -2182,14 +2185,10 @@ Stratus.Internals.LoadImage = function (obj) {
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
       let src = _.hydrate(el.attr('data-src')) || el.attr('src') || null
-      // NOTE: Element can be either <img> or any element with background image in style
-      let type = el.prop('tagName').toLowerCase()
+
       // Handle precedence
-      if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
+      if (src === 'lazy' || _.isEmpty(src)) {
         src = el.attr('src')
-      }
-      if (_.isEmpty(src)) {
-        return false;
       }
 
       let size = _.hydrate(el.attr('data-size')) || obj.size || null
@@ -2226,7 +2225,7 @@ Stratus.Internals.LoadImage = function (obj) {
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
           let visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-          let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
+          let $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
           // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
@@ -2288,7 +2287,7 @@ Stratus.Internals.LoadImage = function (obj) {
       }
 
       // Change Source to right size (get the base and extension and ignore
-      // size and any cache busting or variables)
+      // size)
       const srcOrigin = src
       const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
       const srcMatch = srcRegex.exec(src)
@@ -2297,51 +2296,32 @@ Stratus.Internals.LoadImage = function (obj) {
       } else {
         console.error('Unable to find src for image:', el)
       }
-      let srcOriginProtocol = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
+
       // Start Loading
       el.addClass('loading')
 
       // Add Listeners (Only once per Element!)
-      // If Background Image Create a Test Image to Test Loading
-      if(type !== 'img') {
-          // Create image in memory for testing
-          var loadEl = $('<img/>')
-          loadEl.attr('src', srcOriginProtocol)
-          loadEl.on('load', function() {
-              el.addClass('loaded').removeClass('loading')
-              $(this).remove(); // prevent memory leaks
-          });
-          loadEl.on('error', function () {
-              // TODO: Go down in sizes before reaching the origin
-              // Standardize src
-              el.attr('data-loading', _.dehydrate(false))
-              el.css('background-image', 'url(' + srcOriginProtocol + ')')
-              console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
-          })
-      } else {
-          el.on('load', function () {
-              el.addClass('loaded').removeClass('loading')
-          })
-          // Test Loading on the Load Element (which could be img or test image for background images)
-          el.on('error', function () {
-              // TODO: Go down in sizes before reaching the origin
-              // Standardize src
-              el.attr('data-loading', _.dehydrate(false))
-              el.attr('src', srcOriginProtocol)
-              console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
-          })
-      }
-
+      el.on('load', function () {
+        el.addClass('loaded').removeClass('loading')
+      })
+      el.on('error', function () {
+        // TODO: Go down in sizes before reaching the origin
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('src', srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin)
+        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+      })
 
       // Change the Source to be the desired path
-      el.attr('data-loading', _.dehydrate(false))
-      el.attr('data-size', _.dehydrate(size))
-      let srcProtocol = src.startsWith('//') ? window.location.protocol + src : src
-      if(type === 'img') {
-          el.attr('src', srcProtocol)
-      } else {
-          el.css('background-image', 'url(' + srcProtocol + ')')
+      if (!_.isEmpty(src)) {
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('data-size', _.dehydrate(size))
+        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       }
+
+      // FIXME: This is a mess that we shouldn't need to maintain.
+      // RegisterGroups should just use Native Logic instead of
+      // another level of abstraction.
+
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
     })
@@ -2403,13 +2383,13 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
         }
       })
       model.set('viewPortChange', false)
-      model.set('windowTop', $(Stratus.Environment.get('viewPort') || window).scrollTop())
+      model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
     }
   })
 
   // jQuery Binding
-  if (typeof $ === 'function' && $.fn) {
-    $(Stratus.Environment.get('viewPort') || window).scroll(function () {
+  if (typeof jQuery === 'function' && jQuery.fn) {
+    jQuery(Stratus.Environment.get('viewPort') || window).scroll(function () {
       /* *
       if (!Stratus.Environment.get('production')) {
         console.log('scrolling:', Stratus.Internals.GetScrollDir())
@@ -2421,7 +2401,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
     })
 
     // Resizing can change what's on screen so we need to check the scrolling
-    $(Stratus.Environment.get('viewPort') || window).resize(function () {
+    jQuery(Stratus.Environment.get('viewPort') || window).resize(function () {
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
@@ -2431,6 +2411,11 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
   // Run Once initially
   Stratus.Environment.set('viewPortChange', true)
 })
+
+// FIXME: This logic above needs to be specific to a particular component or controller.
+// It can be abstracted into an underscore function or something, but this currently is
+// a bit ridiculous to maintain as a secondary black box.  Utility functions are supposed
+// to be simple and reusable functions.
 
 // Internal Rebase Function
 // ------------------------
