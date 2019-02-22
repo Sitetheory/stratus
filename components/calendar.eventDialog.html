@@ -9,12 +9,13 @@
 				</a>
 			</div>
 			<h2 class="event-title" data-ng-if="::ctrl.eventData.title" data-ng-bind="::ctrl.eventData.title"></h2>
-			<!-- TODO Need some time formatting (moment) -->
 			<p class="event-time">
 				<span class="event-time-label  label">Time: </span>
-				<span class="event-time-start" data-ng-bind="::ctrl.eventData.start"></span>
+				<!-- TODO if AllDay, remove time stamps and show day only? -->
+				<span class="event-time-start" data-ng-bind="::ctrl.eventData.start | moment:{unix:false,format:'dddd MMM Do, h:mm a'}"></span>
 				<span class="event-time-end" data-ng-if="::ctrl.eventData.end">
-					- <span data-ng-bind="::ctrl.eventData.end"></span>
+					- <span data-ng-bind="::ctrl.eventData.end | moment:{unix:false,format:'h:mm a'}"></span>
+					<!-- TODO detect if it's not in the same day to add the day to the end time again -->
 				</span>
 			</p>
 			<!-- Perhaps we should wrap the description into something so it separate from everything else? -->

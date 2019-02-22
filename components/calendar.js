@@ -163,7 +163,8 @@
 
         // Simply open  popup for now
         $scope.displayEventDialog(calEvent, jsEvent)
-        return true
+        // Return false to not issue other functions (such as URL clicking)
+        return false
       }
 
       $scope.displayEventDialog = async function (calEvent, clickEvent) {
@@ -439,7 +440,9 @@
           organizer: e.organizer,
           sequence: e.sequence,
           uid: e.uid,
-          location: e.location
+          location: e.location,
+          url: e.url,
+          allDay: e.allDay
         }
       }
 
@@ -490,7 +493,9 @@
           attendees: e.attendees,
           organizer: e.organizer,
           id: e.uid,
-          location: e.location
+          location: e.location,
+          url: e.url,
+          allDay: e.allDay
         }
       }
 
