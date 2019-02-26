@@ -31,12 +31,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'moment', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'moment', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.moment);
+    factory(root.Stratus, root.$, root._, root.moment)
   }
 }(this, function (Stratus, $, _, moment) {
-
   // Display Widget
   // -------------
 
@@ -86,10 +85,10 @@
           priority: 'danger',
           title: 'Missing Data Attribute',
           message: 'The data-property attribute is missing.'
-        }));
-        return false;
+        }))
+        return false
       }
-      return true;
+      return true
     },
 
     // postOptions()
@@ -101,9 +100,9 @@
      */
     postOptions: function (options) {
       if (this.options.formatType === 'timeSinceDate' && !this.options.interval) {
-        this.options.interval = 60000;
+        this.options.interval = 60000
       }
-      return true;
+      return true
     },
 
     // setValue()
@@ -114,9 +113,9 @@
      * @returns {*}
      */
     setValue: function (value) {
-      this.propertyValue = this.processValue(value);
-      this.$element.html(this.propertyValue);
-      return this.propertyValue;
+      this.propertyValue = this.processValue(value)
+      this.$element.html(this.propertyValue)
+      return this.propertyValue
     },
 
     // processValue()
@@ -127,14 +126,14 @@
      * @returns {*}
      */
     processValue: function (value) {
-      value = (typeof value !== 'undefined' && value) ? value : '';
+      value = (typeof value !== 'undefined' && value) ? value : ''
 
       if (this.options.formatType === 'date') {
-        value = this.formatDate(value);
+        value = this.formatDate(value)
       } else if (this.options.formatType === 'timeSince') {
-        value = this.formatTimeSince(value);
+        value = this.formatTimeSince(value)
       } else if (this.options.formatType === 'timeSinceDate') {
-        value = this.formatTimeSinceDate(value);
+        value = this.formatTimeSinceDate(value)
       }
 
       /*
@@ -142,7 +141,7 @@
       value = this.options.after ? value.toString() + this.options.after.toString() : value;
       */
 
-      return value;
+      return value
     },
 
     // TODO: we may want to move these into Stratus as a basic underscore mixin that we can reuse: date(time, format), timeSince(date)
@@ -154,9 +153,9 @@
      * @returns {*}
      */
     formatDate: function (value) {
-      value = parseInt(value);
-      value = moment.unix(value).format(this.options.format);
-      return value;
+      value = parseInt(value)
+      value = moment.unix(value).format(this.options.format)
+      return value
     },
 
     // formatTimeSince()
@@ -167,8 +166,8 @@
      * @returns {*}
      */
     formatTimeSince: function (value) {
-      value = parseInt(value);
-      return moment.unix(value).fromNow();
+      value = parseInt(value)
+      return moment.unix(value).fromNow()
     },
 
     // formatTimeSinceDate()
@@ -179,14 +178,14 @@
      * @returns {*}
      */
     formatTimeSinceDate: function (value) {
-      value = parseInt(value);
+      value = parseInt(value)
       if ((moment().unix() - value) < this.options.timeSinceLimit) {
-        value = this.formatTimeSince(value);
+        value = this.formatTimeSince(value)
       } else {
-        value = this.formatDate(value);
+        value = this.formatDate(value)
       }
-      return value;
+      return value
     }
 
-  });
-}));
+  })
+}))

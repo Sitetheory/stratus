@@ -21,12 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'tether', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'tether', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.Tether);
+    factory(root.Stratus, root.$, root._, root.Tether)
   }
 }(this, function (Stratus, $, _, Tether) {
-
   // Generic Model View
   // -------------
 
@@ -39,7 +38,7 @@
 
     template: _.template('{{ model.id }}'),
     el: function () {
-      return '[data-collection="' + this.collection.globals.get('uid') + '"][data-entity="' + this.model.collection.globals.get('entity') + '"][data-id="' + this.model.get('id') + '"][data-dialogue="true"]';
+      return '[data-collection="' + this.collection.globals.get('uid') + '"][data-entity="' + this.model.collection.globals.get('entity') + '"][data-id="' + this.model.get('id') + '"][data-dialogue="true"]'
     },
     events: {
       click: 'open',
@@ -54,8 +53,8 @@
      * @param options
      */
     preOptions: function (options) {
-      this.globals = options.globals || {};
-      this.widget = options.widget || null;
+      this.globals = options.globals || {}
+      this.widget = options.widget || null
     },
 
     /**
@@ -65,10 +64,10 @@
     onRender: function (entries) {
       if (this.widget) {
         this.widget.initializer.then(function () {
-          this.primeTether();
-        }.bind(this));
+          this.primeTether()
+        }.bind(this))
       }
-      return this;
+      return this
     },
 
     primeTether: function () {
@@ -81,14 +80,14 @@
 
           // offset: '0 10px'
           // constraints: [{to: 'window',pin: true}]
-        });
+        })
       } else {
         // console.info('dialogue parent didn\'t render:', this.widget);
       }
     },
 
     refresh: function () {
-      this.primeTether();
+      this.primeTether()
     },
 
     /**
@@ -97,26 +96,25 @@
     onRegister: function () {
       $(document).click(function (event) {
         if (this.$el.notClicked(event) && this.widget.$el.notClicked(event)) {
-          this.close();
+          this.close()
         }
-      }.bind(this));
-      return true;
+      }.bind(this))
+      return true
     },
 
     /**
      * @returns {*}
      */
     open: function () {
-      return this.$el.addClass('initialize-dialogue');
+      return this.$el.addClass('initialize-dialogue')
     },
 
     /**
      * @returns {*}
      */
     close: function () {
-      return this.$el.removeClass('initialize-dialogue');
+      return this.$el.removeClass('initialize-dialogue')
     }
 
-  });
-
-}));
+  })
+}))
