@@ -44,7 +44,7 @@
       elementId: '@',
       options: '@'
     },
-    controller: function ($scope, $attrs, $element, $log, $sce, $mdPanel, Collection) {
+    controller: function ($scope, $attrs, $element, $log, $sce, $mdPanel, $mdDialog, Collection) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
@@ -178,7 +178,7 @@
           .duration(135)
           .withAnimation($mdPanel.animation.SCALE)
 
-        $mdPanel.open({
+        /* $mdPanel.open({
           attachTo: angular.element(document.body),
           // parent: angular.element(document.body),
           templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/calendar.eventDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
@@ -213,6 +213,40 @@
             }
           },
           controllerAs: 'ctrl'
+        }) */
+
+        $mdDialog.show({
+          templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/calendar.eventDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
+          parent: angular.element(document.body),
+          targetEvent: clickEvent,
+          clickOutsideToClose: true,
+          escapeToClose: false,
+          fullscreen: true, // Only for -xs, -sm breakpoints.
+          locals: {
+            eventData: calEvent
+          },
+          bindToController: true,
+          controllerAs: 'ctrl',
+          controller: function ($scope, $mdDialog) {
+            let dc = this
+
+            dc.$onInit = function () {
+              if (
+                dc.eventData &&
+                dc.eventData.hasOwnProperty('description')
+              ) {
+                dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.description)
+              }
+
+              dc.close = close
+            }
+
+            function close () {
+              if ($mdDialog) {
+                $mdDialog.hide()
+              }
+            }
+          }
         })
       }
 
