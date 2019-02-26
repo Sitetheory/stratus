@@ -10,13 +10,13 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
-  Stratus.Controllers.AddAlias = [
+  Stratus.Controllers.AddRoutingAlias = [
     '$scope',
     '$mdDialog',
     '$rootScope',
     function ($scope, $mdDialog, $rootScope) {
       // Store Instance
-      Stratus.Instances[_.uniqueId('select_main_route_')] = $scope
+      Stratus.Instances[_.uniqueId('add_routing_alias_')] = $scope
       // Wrappers
       $scope.Stratus = Stratus
       $scope._ = _
@@ -26,6 +26,16 @@
       $scope.routeRegularEmpMessage = false
       $scope.selectedId = 0
       $scope.duplecateArr = []
+
+      $scope.checkValid = function (model, $event, $index) {
+        let lastUrl = $event.$parent.route.url
+        let isMain = model.data.main
+        if (lastUrl === '' && isMain === true) {
+          $scope.routeEmptyMessage = true
+        } else if ($event.$parent.route.url === '') {
+          $event.$parent.route.url.$validate()
+        }
+      }
 
       $scope.removeEmptyRoute = function (model, $event, $index) {
         let alias = ''
@@ -50,10 +60,14 @@
 
       /* Validation of urls */
       $scope.checkEmptyRoute = function (model, $event) {
+        console.log(model)
         let lastUrl = $event.$parent.route.url
         let isMain = model.data.main
         if (lastUrl === '' && isMain === true) {
           $scope.routeEmptyMessage = true
+        } else if ($event.$parent.route.url === '') {
+          $scope.routeRegularEmpMessage = false
+          $scope.selectedIds = $event.$parent.route.uid
         } else {
           $scope.routeEmptyMessage = false
           let uniqueValidation = $scope.checkUniqueRoute(model, $event)
