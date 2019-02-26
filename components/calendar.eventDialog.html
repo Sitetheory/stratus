@@ -8,6 +8,9 @@
 					Done
 				</a>
 			</div>
+			<div class="event-image-container" data-ng-if="::ctrl.eventData.image">
+				<img class="event-image" data-ng-src="::ctrl.eventData.image" />
+			</div>
 			<h2 class="event-title" data-ng-if="::ctrl.eventData.title" data-ng-bind="::ctrl.eventData.title"></h2>
 			<p class="event-time">
 				<span class="event-time-label  label">Time: </span>

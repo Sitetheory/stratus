@@ -168,7 +168,7 @@
       }
 
       $scope.displayEventDialog = async function (calEvent, clickEvent) {
-        let panelPosition = $mdPanel.newPanelPosition()
+        /* let panelPosition = $mdPanel.newPanelPosition()
           .relativeTo($element) // .relativeTo($element)
           .addPanelPosition($mdPanel.xPosition.CENTER, $mdPanel.yPosition.CENTER)
 
@@ -178,7 +178,7 @@
           .duration(135)
           .withAnimation($mdPanel.animation.SCALE)
 
-        /* $mdPanel.open({
+        $mdPanel.open({
           attachTo: angular.element(document.body),
           // parent: angular.element(document.body),
           templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/calendar.eventDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',
@@ -476,7 +476,8 @@
           uid: e.uid,
           location: e.location,
           url: e.url,
-          allDay: e.allDay
+          allDay: e.allDay,
+          image: e.image // Custom item
         }
       }
 
@@ -529,7 +530,8 @@
           id: e.uid,
           location: e.location,
           url: e.url,
-          allDay: e.allDay
+          allDay: e.allDay,
+          image: e.image // Custom item
         }
       }
 
