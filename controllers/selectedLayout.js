@@ -39,7 +39,6 @@
         } else {
           return
         }
-
         if ($scope.$parent.model.data.version.availableLayouts.length !== $scope.layoutsSelected.length) {
           let array = []
           angular.forEach($scope.layoutsSelected, function (id) {
@@ -53,7 +52,6 @@
           $scope.$parent.model.data.version.availableLayouts = array
         }
       }
-
     }
   ]
 }))
