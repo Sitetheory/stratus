@@ -1199,7 +1199,7 @@ let triggerEvents = function (events, args) {
 Stratus.Events.bind = Stratus.Events.on
 Stratus.Events.unbind = Stratus.Events.off
 
-/* global Stratus, _ */
+/* global Stratus, _, EventTarget */
 
 // Error Prototype
 // ---------------
@@ -1235,14 +1235,54 @@ Stratus.Prototypes.Dispatch = function () {
   return _.extend(this, Stratus.Events)
 }
 
+// Event Prototype
+// --------------
+
+// This constructor builds events for various methods.
+/**
+ * @param options
+ * @returns {Stratus.Prototypes.Event}
+ * @constructor
+ */
+Stratus.Prototypes.Event = function (options) {
+  this.enabled = false
+  this.event = null
+  this.target = null
+  this.scope = null
+  this.method = function () {
+    console.warn('No method:', this)
+  }
+  if (options && typeof options === 'object') {
+    _.extend(this, options)
+  }
+  this.invalid = false
+  if (typeof this.event !== 'string') {
+    console.error('Unsupported event:', this.event)
+    this.invalid = true
+  }
+  if (this.target !== undefined && this.target !== null && !(this.target instanceof EventTarget)) {
+    console.error('Unsupported target:', this.target)
+    this.invalid = true
+  }
+  if (typeof this.method !== 'function') {
+    console.error('Unsupported method:', this.method)
+    this.invalid = true
+  }
+  if (this.invalid) {
+    this.enabled = false
+  }
+  return this
+}
+
 // Chronos System
 // --------------
 
-// This constructor builds jobs for letious methods.
+// This constructor builds jobs for various methods.
 /**
  * @param time
  * @param method
  * @param scope
+ * @returns {Stratus.Prototypes.Job}
  * @constructor
  */
 Stratus.Prototypes.Job = function (time, method, scope) {
@@ -3768,6 +3808,63 @@ Stratus.Instances.Clean = function (instances) {
     return false
   }
 }
+
+// Aether System
+// --------------
+
+// This model handles all event related logic.
+Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
+  passiveSupported: false,
+  /**
+   * @param options
+   */
+  initialize: function (options) {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Invoked!')
+    }
+    let that = this
+    try {
+      let options = {
+        get passive () {
+          that.passiveSupported = true
+        }
+      }
+      window.addEventListener('test', options, options)
+      window.removeEventListener('test', options, options)
+    } catch (err) {
+      that.passiveSupported = false
+    }
+    this.on('change', this.synchronize, this)
+  },
+  synchronize: function () {
+    _.each(this.changed, function (event, key) {
+      if (typeof key === 'string' && key.indexOf('.') !== -1) {
+        key = _.first(key.split('.'))
+        event = this.get(key)
+      }
+      if (!event.code && event.enabled) {
+        (event.target || window).addEventListener(event.event, event.method, this.passiveSupported ? { passive: true } : false)
+        event.code = 1
+      } else if (event.code && !event.enabled) {
+        event.code = 0
+      }
+    }, this)
+  },
+  /**
+   * @param options
+   */
+  add: function (options) {
+    let uid = null
+    let event = new Stratus.Prototypes.Event(options)
+    if (!event.invalid) {
+      uid = _.uniqueId('event_')
+      this.set(uid, event)
+      Stratus.Instances[uid] = event
+    }
+    return uid
+  }
+})
+Stratus.Aether.reinitialize()
 
 // Chronos System
 // --------------

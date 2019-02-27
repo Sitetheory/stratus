@@ -1,4 +1,4 @@
-/* global Stratus, _ */
+/* global Stratus, _, EventTarget */
 
 // Error Prototype
 // ---------------
@@ -34,14 +34,54 @@ Stratus.Prototypes.Dispatch = function () {
   return _.extend(this, Stratus.Events)
 }
 
+// Event Prototype
+// --------------
+
+// This constructor builds events for various methods.
+/**
+ * @param options
+ * @returns {Stratus.Prototypes.Event}
+ * @constructor
+ */
+Stratus.Prototypes.Event = function (options) {
+  this.enabled = false
+  this.event = null
+  this.target = null
+  this.scope = null
+  this.method = function () {
+    console.warn('No method:', this)
+  }
+  if (options && typeof options === 'object') {
+    _.extend(this, options)
+  }
+  this.invalid = false
+  if (typeof this.event !== 'string') {
+    console.error('Unsupported event:', this.event)
+    this.invalid = true
+  }
+  if (this.target !== undefined && this.target !== null && !(this.target instanceof EventTarget)) {
+    console.error('Unsupported target:', this.target)
+    this.invalid = true
+  }
+  if (typeof this.method !== 'function') {
+    console.error('Unsupported method:', this.method)
+    this.invalid = true
+  }
+  if (this.invalid) {
+    this.enabled = false
+  }
+  return this
+}
+
 // Chronos System
 // --------------
 
-// This constructor builds jobs for letious methods.
+// This constructor builds jobs for various methods.
 /**
  * @param time
  * @param method
  * @param scope
+ * @returns {Stratus.Prototypes.Job}
  * @constructor
  */
 Stratus.Prototypes.Job = function (time, method, scope) {
