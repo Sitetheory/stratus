@@ -311,6 +311,7 @@ boot.config({
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
     'stratus.services.media': boot.bundle + 'stratus/services/media' + boot.suffix,
+    'stratus.services.iCal': boot.bundle + 'stratus/services/iCal' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
