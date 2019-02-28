@@ -67,7 +67,20 @@
         prevYear: 'left-double-arrow',
         nextYear: 'right-double-arrow'
       }
-      $scope.options.headerOptions = {}
+      const defaultButtonText = {
+        today: 'today',
+
+        month: 'month',
+        listMonth: 'month list',
+        agendaWeek: 'week agenda',
+        basicWeek: 'week',
+        listWeek: 'week list',
+        agendaDay: 'day agenda',
+        basicDay: 'day',
+        listDay: 'day list',
+        listYear: 'year'
+      }
+      $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
       $scope.options.defaultView = $scope.options.defaultView || 'month'
       $scope.options.possibleViews = $scope.options.possibleViews || ['month', 'weekAgenda', 'dayAgenda'] // Not used yet @see https://fullcalendar.io/docs/header
       $scope.options.defaultDate = $scope.options.defaultDate || null
@@ -234,6 +247,7 @@
        */
       $ctrl.render = function () {
         jQuery('#' + $scope.calendarId).fullCalendar({
+          buttonText: $scope.options.buttonText,
           customButtons: $scope.options.customButtons,
           buttonIcons: $scope.options.buttonIcons,
           header: $scope.options.header,
