@@ -74,7 +74,7 @@
           if (!Stratus.Environment.get('production')) {
             console.info('Navigate:', 'version/' + this.versionId)
           }
-          this.navigate('version/' + this.versionId, {replace: true})
+          this.navigate('version/' + this.versionId, { replace: true })
         }
       } else {
         Stratus.Events.once('finalized', function () {

@@ -70,7 +70,7 @@
         this.navigate('#')
         collection.create(
           _.has(collection, 'prototype') ? collection.prototype : {},
-          {wait: true})
+          { wait: true })
       }
     },
     /**
@@ -95,7 +95,7 @@
         if (collection.meta.has('api.p')) {
           collection.meta.set('api.p', 1)
         }
-        collection.refresh({reset: true})
+        collection.refresh({ reset: true })
       }
     },
     /**
@@ -117,7 +117,7 @@
             if (collection.meta.get('pageTotal') >= parseInt(page) &&
               parseInt(page) >= 1) {
               collection.meta.set('api.p', page)
-              collection.refresh({reset: true})
+              collection.refresh({ reset: true })
             } else {
               if (!Stratus.Environment.get('production')) {
                 console.log('Page', page, 'of entity', entity,
