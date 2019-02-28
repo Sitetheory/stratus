@@ -67,11 +67,7 @@
         prevYear: 'left-double-arrow',
         nextYear: 'right-double-arrow'
       }
-      $scope.options.header = $scope.options.header || { // object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
-        left: 'prev,next today',
-        center: 'title',
-        right: 'month,agendaWeek,agendaDay'
-      }
+      $scope.options.headerOptions = {}
       $scope.options.defaultView = $scope.options.defaultView || 'month'
       $scope.options.possibleViews = $scope.options.possibleViews || ['month', 'weekAgenda', 'dayAgenda'] // Not used yet @see https://fullcalendar.io/docs/header
       $scope.options.defaultDate = $scope.options.defaultDate || null
@@ -105,8 +101,9 @@
 
       $ctrl.$onInit = function () {
         // Load all timezones for use
-        // $ctrl.registerTimezones(timezones)
         iCal.registerTimezones(timezones)
+        // Compile the fullcalendar header to look useable
+        $ctrl.prepareHeader()
 
         $scope.$watch('$ctrl.ngModel', function (data) {
           if (data instanceof Collection) {
@@ -203,6 +200,28 @@
             }
           }
         })
+      }
+
+      /**
+       * Compile $scope.options.header and $scope.options.possibleViews into something viewable on the page
+       */
+      $ctrl.prepareHeader = function () {
+        if (!$scope.options.header) {
+          let headerLeft = 'prev,next today'
+          let headerCenter = 'title'
+          let headerRight = 'month,agendaWeek,agendaDay'
+          // All this is assuming tha the default Header is not customized
+          if (_.isArray($scope.options.possibleViews)) {
+            // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
+            headerRight = $scope.options.possibleViews.join(',')
+          }
+
+          $scope.options.header = { // object. Defines the buttons and title at the top of the calendar. See http://fullcalendar.io/docs/display/header/
+            left: headerLeft,
+            center: headerCenter,
+            right: headerRight
+          }
+        }
       }
 
       /**
