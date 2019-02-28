@@ -174,11 +174,17 @@
         $log.log('View', view.name) */
 
         // Simply open  popup for now
-        $scope.displayEventDialog(calEvent, jsEvent)
+        $scope.displayEventDialog(calEvent, jsEvent, view)
         // Return false to not issue other functions (such as URL clicking)
         return false
       }
 
+      /**
+       * Create MDDialog popup for an event
+       * @param {Object} calEvent
+       * @param {Object} clickEvent
+       * @returns {Promise<void>}
+       */
       $scope.displayEventDialog = async function (calEvent, clickEvent) {
         $mdDialog.show({
           templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/calendar.eventDialog' + (Stratus.Environment.get('production') ? '.min' : '') + '.html',

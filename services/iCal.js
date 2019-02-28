@@ -8,12 +8,10 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      'underscore',
-      'angular',
       'ical' // Global ICAL variable.... not able to be sandboxed yet
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.angular)
+    factory(root.Stratus)
   }
 }(this, function (Stratus, _, angular) {
   // This Collection Service handles data binding for multiple objects with the
