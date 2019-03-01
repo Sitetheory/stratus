@@ -45,7 +45,7 @@ Stratus.Prototypes.Dispatch = function () {
  */
 Stratus.Prototypes.Event = function (options) {
   this.enabled = false
-  this.event = null
+  this.hook = null
   this.target = null
   this.scope = null
   this.method = function () {
@@ -55,8 +55,8 @@ Stratus.Prototypes.Event = function (options) {
     _.extend(this, options)
   }
   this.invalid = false
-  if (typeof this.event !== 'string') {
-    console.error('Unsupported event:', this.event)
+  if (typeof this.hook !== 'string') {
+    console.error('Unsupported hook:', this.hook)
     this.invalid = true
   }
   if (this.target !== undefined && this.target !== null && !(this.target instanceof EventTarget)) {

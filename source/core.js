@@ -59,13 +59,16 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
     this.on('change', this.synchronize, this)
   },
   synchronize: function () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Synchronizing...')
+    }
     _.each(this.changed, function (event, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {
         key = _.first(key.split('.'))
         event = this.get(key)
       }
       if (!event.code && event.enabled) {
-        (event.target || window).addEventListener(event.event, event.method, this.passiveSupported ? { passive: true } : false)
+        (event.target || window).addEventListener(event.hook, event.method, this.passiveSupported ? { passive: true } : false)
         event.code = 1
       } else if (event.code && !event.enabled) {
         event.code = 0
@@ -103,6 +106,9 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
     this.on('change', this.synchronize, this)
   },
   synchronize: function () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Chronos Synchronizing...')
+    }
     _.each(this.changed, function (job, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {
         key = _.first(key.split('.'))
