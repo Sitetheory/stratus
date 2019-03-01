@@ -109,13 +109,13 @@
       })
 
       // add chip
-      $ctrl.addChip = function (chip) {
-        $scope.$parent.model.save()
-      }
+      /* $ctrl.addChip = function (chip) {
+         $scope.$parent.model.save()
+       }
 
-      $ctrl.removeChip = function (chip) {
-        $scope.$parent.model.save()
-      }
+       $ctrl.removeChip = function (chip) {
+         $scope.$parent.model.save()
+       } */
 
       $ctrl.isDisabled = function (chip) {
         let index = $ctrl.selectedChips.findIndex(function (x) {
@@ -147,6 +147,15 @@
               return $scope.status
             }
           })
+          if (returnArr.length > 0) {
+            if (returnArr.findIndex(mainArr => mainArr.name.toLowerCase() === $ctrl.queryText.toLowerCase()) === -1) {
+              var obj = {
+                'isNew': 'true',
+                'name': $ctrl.queryText
+              }
+              returnArr.push(obj)
+            }
+          }
           return returnArr
         })
       }
@@ -178,8 +187,8 @@
         })
         model.save()
           .then(function (response) {
-            $ctrl.selectedChips.push(response)
-            $scope.$parent.model.save()
+            //  $ctrl.selectedChips.push(response)
+            //  $scope.$parent.model.save()
           })
           .catch(function (error, response) {
             console.error(error)

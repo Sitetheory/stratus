@@ -216,10 +216,12 @@ boot.config({
     'stratus.controllers.filterContentType': boot.bundle + 'stratus/controllers/filterContentType' + boot.suffix,
     'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
     'stratus.controllers.selectMainRoute': boot.bundle + 'stratus/controllers/selectMainRoute' + boot.suffix,
+    'stratus.controllers.addRoutingAlias': boot.bundle + 'stratus/controllers/addRoutingAlias' + boot.suffix,
     'stratus.controllers.productFilter': boot.bundle + 'stratus/controllers/productFilter' + boot.suffix,
     'stratus.controllers.invoiceProductFilter': boot.bundle + 'stratus/controllers/invoiceProductFilter' + boot.suffix,
     'stratus.controllers.userFilter': boot.bundle + 'stratus/controllers/userFilter' + boot.suffix,
     'stratus.controllers.filterStreamsByTag': boot.bundle + 'stratus/controllers/filterStreamsByTag' + boot.suffix,
+    'stratus.controllers.selectedLayout': boot.bundle + 'stratus/controllers/selectedLayout' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.address': boot.bundle + 'stratus/components/address' + boot.suffix,
