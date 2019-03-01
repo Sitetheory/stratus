@@ -1,41 +1,32 @@
-ul.fc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-ul.fc-list .fc-dayHeader {
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 10px;
-  overflow: hidden;
-}
-
-ul.fc-list .fc-dayHeader .fc-headerLeft {
-  float: left;
-  font-weight: 700;
-}
-
-ul.fc-list .fc-dayHeader .fc-headerRight {
-  float: right;
-  font-weight: 500;
-}
-
-ul.fc-list .fc-item + .fc-item {
-  border-top: 1px solid #e0e0e0;
-}
-
-ul.fc-list .fc-item .fc-listEvent {
-  display: block;
-  padding: 8px;
-  margin: 2px;
-}
-
-ul.fc-list .fc-item .fc-listEvent .fc-time {
-  display: inline-block;
-  width: 15%;
-}
-
-ul.fc-list .fc-item .fc-listEvent .fc-details {
-  display: inline-block;
+stratus-calendar {
+  .fc {
+    .fc-toolbar {
+      /* Example CSS affects only the toolbar area */
+      box-sizing: border-box;
+    }
+    .fc-basic-view {
+      /* Example CSS affects all 'Basic' Type Views */
+      box-sizing: content-box;
+    }
+    .fc-list-view {
+      /* Example CSS affects all 'List' Type Views */
+      box-sizing: content-box;
+    }
+    .fc-agenda-view {
+      /* Example CSS affects all 'Agenda' Type Views */
+      box-sizing: content-box;
+    }
+    .fc-month-view {
+      /* Example CSS affects only 'Month' basic View */
+      box-sizing: content-box;
+    }
+    .fc-listYear-view {
+      /* Example CSS affects only 'Year List' View */
+      box-sizing: content-box;
+    }
+    .fc-agendaWeek-view {
+      /* Example CSS affects only 'Agenda List' View */
+      box-sizing: content-box;
+    }
+  }
 }
