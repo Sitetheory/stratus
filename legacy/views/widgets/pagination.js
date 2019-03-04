@@ -31,12 +31,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'text!templates-pagination', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'text!templates-pagination', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _, Template) {
-
   // Views
   // -------------
 
@@ -65,16 +64,16 @@
      * @param options
      */
     preOptions: function (options) {
-      if (typeof Template === 'string') this.template = _.template(Template);
+      if (typeof Template === 'string') this.template = _.template(Template)
     },
 
     /**
      * @returns {boolean}
      */
     onRegister: function () {
-      this.collection.on('reset', this.render, this);
-      this.collection.on('change', this.render, this);
-      return true;
+      this.collection.on('reset', this.render, this)
+      this.collection.on('change', this.render, this)
+      return true
     },
 
     /**
@@ -89,11 +88,10 @@
           pageTotal: this.collection.meta.get('pageTotal')
         },
         entity: this.collection.entity
-      }));
-      this.renderEvent();
-      return true;
+      }))
+      this.renderEvent()
+      return true
     }
 
-  });
-
-}));
+  })
+}))

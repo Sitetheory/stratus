@@ -37,12 +37,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'text!templates-toggle', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'text!templates-toggle', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _, Template) {
-
   // Toggle Widget
   // -------------
 
@@ -144,16 +143,16 @@
      */
     promise: function (options, resolve, reject) {
       // set empty value as the off value
-      this.options.emptyValue = this.options.valueOff;
+      this.options.emptyValue = this.options.valueOff
 
       // TODO: Move this into the base for Icon Registration
       if (this.options.ui === 'icon' && this.options.iconPath) {
         Stratus.Internals.Resource(this.options.iconPath, this.element).then(function (icon) {
-          this.options.icon = icon;
-          Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
-        }.bind(this));
+          this.options.icon = icon
+          Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject)
+        }.bind(this))
       } else {
-        Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
+        Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject)
       }
     },
 
@@ -162,8 +161,8 @@
      */
     preOptions: function (options) {
       if (this.$el.dataAttr('ui') === 'slider') {
-        this.options.public.textOn = 'Enabled';
-        this.options.public.textOff = 'Disabled';
+        this.options.public.textOn = 'Enabled'
+        this.options.public.textOff = 'Disabled'
       }
     },
 
@@ -175,18 +174,18 @@
      */
     postOptions: function (options) {
       if (this.options.ui === 'slider') {
-        this.options.ui = 'checkbox';
-        this.options.slider = true;
-        this.options.cssFile = _.union(this.options.cssFile, this.options.sliderCss);
+        this.options.ui = 'checkbox'
+        this.options.slider = true
+        this.options.cssFile = _.union(this.options.cssFile, this.options.sliderCss)
       }
       if (this.options.related) {
-        this.options.ui = (this.options.relatedRequire) ? 'radio' : this.options.ui;
+        this.options.ui = (this.options.relatedRequire) ? 'radio' : this.options.ui
       }
       if (((this.options.ui === 'checkbox' && !this.options.slider) || this.options.ui === 'radio') && typeof this.$el.dataAttr('textOn') === 'undefined') {
-        this.options.textOn = null;
-        this.options.textOff = null;
+        this.options.textOn = null
+        this.options.textOff = null
       }
-      this.options.valueType = typeof (this.options.valueOn);
+      this.options.valueType = typeof (this.options.valueOn)
     },
 
     // validate()
@@ -198,17 +197,17 @@
     validate: function () {
       // Both model bound and Stratus.Environment variables need to set the data-property (name of the variable being altered)
       if (!this.$el.dataAttr('property')) {
-        Stratus.Events.trigger('toast', 'The data-property attribute is missing.', 'Missing Data Attribute', 'danger');
-        return false;
+        Stratus.Events.trigger('toast', 'The data-property attribute is missing.', 'Missing Data Attribute', 'danger')
+        return false
       }
 
       // Verify Model
       if (this.options.dataType === 'model' && typeof this.model === 'function') {
-        Stratus.Events.trigger('toast', 'This widget requires a model that is missing.', 'Missing Model', 'danger');
-        return false;
+        Stratus.Events.trigger('toast', 'This widget requires a model that is missing.', 'Missing Model', 'danger')
+        return false
       }
 
-      return true;
+      return true
     },
 
     /**
@@ -217,8 +216,7 @@
     onRender: function (options) {
       // Bootstrap Toggle
       if (this.options.ui === 'checkbox' && this.options.slider) {
-
-        this.scopeChanged();
+        this.scopeChanged()
 
         /*
         // Find DOM Element
@@ -249,17 +247,17 @@
      */
     clickAction: function (event) {
       // If ui is set as 'radio', don't let them uncheck
-      var newValue = this.toggleValue();
-      if (this.options.ui === 'radio' && newValue === this.getValueOff()) return;
+      var newValue = this.toggleValue()
+      if (this.options.ui === 'radio' && newValue === this.getValueOff()) return
 
-      this.setPropertyValue(newValue);
+      this.setPropertyValue(newValue)
 
       // Whenever an element is clicked (and sets value), it also needs to check related
       if (this.options.dataType === 'model') {
         // this calls the default saveAction which sets to the model
-        this.safeSaveAction({ saveNow: true });
+        this.safeSaveAction({ saveNow: true })
       }
-      this.setRelated();
+      this.setRelated()
     },
 
     // modelChange()
@@ -272,24 +270,24 @@
     scopeChanged: function (event) {
       // Toggle Class: if the value is boolean (if the status is true then the "on" class is set)
       // If this is a model, we want to get the data of the model, otherwise
-      var value = this.getPropertyValue();
+      var value = this.getPropertyValue()
 
       // If boolean, set the opposite of the class, otherwise, set the class name to be the value
       // Set Value on the element's data attribute
-      this.setValue(value);
+      this.setValue(value)
 
       if (this.options.valueType === 'boolean') {
-        this.$el.toggleClass('on', value);
-        this.$el.toggleClass('off', !value);
+        this.$el.toggleClass('on', value)
+        this.$el.toggleClass('off', !value)
       } else {
-        this.$el.toggleClass('on on-' + this.options.valueOn, (value === this.options.valueOn));
-        this.$el.toggleClass('off off-' + this.options.valueOff, (value === this.options.valueOff));
+        this.$el.toggleClass('on on-' + this.options.valueOn, (value === this.options.valueOn))
+        this.$el.toggleClass('off off-' + this.options.valueOff, (value === this.options.valueOff))
       }
       if (this.options.ui === 'checkbox' || this.options.ui === 'radio') {
-        value ? this.$element.attr('checked', 'checked') : this.$element.removeAttr('checked');
+        value ? this.$element.attr('checked', 'checked') : this.$element.removeAttr('checked')
       }
 
-      return true;
+      return true
     },
 
     // toggleValue()
@@ -299,32 +297,32 @@
      * @returns {boolean}
      */
     toggleValue: function () {
-      var value = this.getPropertyValue();
+      var value = this.getPropertyValue()
 
       // NOTE: If the value is relatedRequire (radio) it will always be the on/true value
       // If the Value is boolean, just get the opposite for now (see above)
       // NOTE: an icon based toggle will have this.options.related=null
       // so relatedRequire doesn't apply
       if (this.options.valueType === 'boolean') {
-        value = (this.options.related && this.options.relatedRequire) ? true : !value;
+        value = (this.options.related && this.options.relatedRequire) ? true : !value
       } else {
-        value = ((this.options.related && this.options.relatedRequire) || value !== this.options.valueOn) ? this.options.valueOn : this.options.valueOff;
+        value = ((this.options.related && this.options.relatedRequire) || value !== this.options.valueOn) ? this.options.valueOn : this.options.valueOff
       }
-      return value;
+      return value
     },
 
     /**
      * @returns {boolean}
      */
     getValueOn: function () {
-      return (this.options.valueType === 'boolean') ? true : this.options.valueOn;
+      return (this.options.valueType === 'boolean') ? true : this.options.valueOn
     },
 
     /**
      * @returns {boolean}
      */
     getValueOff: function () {
-      return (this.options.valueType === 'boolean') ? false : this.options.valueOff;
+      return (this.options.valueType === 'boolean') ? false : this.options.valueOff
     },
 
     // setValue()
@@ -334,18 +332,17 @@
      * @param value
      */
     setValue: function (value) {
-
       // Store as JSON so that it boolean remains
-      this.$element.closest('[data-type="toggle"]').dataAttr('value', value);
+      this.$element.closest('[data-type="toggle"]').dataAttr('value', value)
 
       // Check if this toggle is a checkbox or radio (determined if it's flagged as 'related')
       if (this.options.related) {
         if (value === this.getValueOn()) {
-          this.$element.prop('checked', true);
-          this.$element.attr('checked', 'checked');
+          this.$element.prop('checked', true)
+          this.$element.attr('checked', 'checked')
         } else {
-          this.$element.prop('checked', false);
-          this.$element.removeAttr('checked');
+          this.$element.prop('checked', false)
+          this.$element.removeAttr('checked')
         }
       }
 
@@ -353,7 +350,7 @@
       if (this.options.dataType === 'var') {
         // Since this doesn't register a 'change' event on the model, we just have to call scopeChanged manually
         // Set the value on the body, so we can referenece this in CSS if necessary, e.g. data-liveEdit
-        $('#app').dataAttr(this.propertyName.toLowerCase(), value);
+        $('#app').dataAttr(this.propertyName.toLowerCase(), value)
       }
     },
 
@@ -364,8 +361,8 @@
      * @returns {*}
      */
     getValue: function () {
-      var value = this.$el.dataAttr('value');
-      return (typeof value !== 'undefined') ? value : this.getValueOff();
+      var value = this.$el.dataAttr('value')
+      return (typeof value !== 'undefined') ? value : this.getValueOff()
     },
 
     /**
@@ -373,8 +370,8 @@
      * @returns {*}
      */
     getValueInverse: function (value) {
-      if (value === undefined) value = this.getValue();
-      return (value === this.getValueOn()) ? this.getValueOff() : this.getValueOn();
+      if (value === undefined) value = this.getValue()
+      return (value === this.getValueOn()) ? this.getValueOff() : this.getValueOn()
     },
 
     // setRelated()
@@ -382,7 +379,7 @@
     // When a toggle with relations is clicked, check the related toggles and base their values off the current
     // getValue. This should only be executed on click.
     setRelated: function () {
-      if (!this.options.related) return false;
+      if (!this.options.related) return false
 
       // If relatedRequire is set, it will be a radio, otherwise it will be a checkbox
       // radio cannot be unchecked, but checkbox will allow checking and unchecking so it needs to
@@ -404,14 +401,14 @@
         // If there is a collection, AND (2) the entity is set to
         if (this.options.dataType === 'model' && _.has(this.model, 'collection')) {
           this.model.once('success', function () {
-            this.model.collection.refresh();
-          }.bind(this));
+            this.model.collection.refresh()
+          }.bind(this))
         }
       } else {
         // TODO: add ability to save collections (once API supports that) IF it's a collection
 
         // if the current element is on, all others should be off
-        var relatedValue = this.options.relatedInverse ? this.getValueInverse() : this.getValue();
+        var relatedValue = this.options.relatedInverse ? this.getValueInverse() : this.getValue()
 
         // If it's a collection, we need to cycle through each model and change the value so that it
         // saves (the widget's scopeChanged method will update the DOM accordingly).
@@ -419,14 +416,12 @@
           _.each(this.model.collection.models, function (model) {
             // cannot use  model.has(this.propertyName) because the value may be NULL
             if (this.propertyName in model.attributes && model.get('id') !== this.model.get('id')) {
-              model.set(this.propertyName, relatedValue);
+              model.set(this.propertyName, relatedValue)
             }
-          }.bind(this));
+          }.bind(this))
         }
       }
-
     }
 
-  });
-
-}));
+  })
+}))

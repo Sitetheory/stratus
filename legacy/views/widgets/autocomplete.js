@@ -34,12 +34,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base', 'selectize'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base', 'selectize'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Views
   // -------------
 
@@ -83,9 +82,9 @@
      */
     initialize: function (options) {
       if (this.$el.dataAttr('entity') && this.$el.dataAttr('id')) {
-        this.options.forceType = 'model';
+        this.options.forceType = 'model'
       }
-      return Stratus.Views.Widgets.Base.prototype.initialize.call(this, options);
+      return Stratus.Views.Widgets.Base.prototype.initialize.call(this, options)
     },
 
     // postOptions()
@@ -98,60 +97,59 @@
      * @param options
      */
     postOptions: function (options) {
-
       // Dynamic Api Url
       if (this.options.target !== null) {
-        var entity = _.ucfirst(this.options.target);
-        this.url = '/Api/' + entity + '/';
+        var entity = _.ucfirst(this.options.target)
+        this.url = '/Api/' + entity + '/'
         if (!Stratus.Collections.has(entity)) {
           Stratus.Collections.set(entity, new Stratus.Collections.Generic({
             entity: entity,
             initialize: true
-          }));
+          }))
         }
-        this.suggestions = Stratus.Collections.get(entity);
+        this.suggestions = Stratus.Collections.get(entity)
       }
 
       // Grab Selectize Options from DOM
-      this.getDataOptions(this.options.selectize);
+      this.getDataOptions(this.options.selectize)
 
       // Add Standard Options to Selectize (on init)
       this.options.selectize.render = {
         option: function (model, escape) {
           // TODO: Switch this for a more appropriate template (i.e. list, container, entity)
-          return this.template({ model: model, options: this.options, scope: 'suggestion' });
+          return this.template({ model: model, options: this.options, scope: 'suggestion' })
         }.bind(this)
-      };
+      }
 
       this.options.selectize.load = function (query, callback) {
-        if (!query.length && !this.initial.request) return callback();
-        this.initial.request = false;
+        if (!query.length && !this.initial.request) return callback()
+        this.initial.request = false
         if (!this.options.decouple && _.has(this, 'suggestions')) {
-          var convoy = {};
+          var convoy = {}
           if (query.length) {
-            this.suggestions.meta.set('api.query', query);
+            this.suggestions.meta.set('api.query', query)
             this.suggestions.once('success', function () {
-              convoy = this.suggestions.toJSON();
-              callback(_.has(convoy, 'payload') ? convoy.payload : convoy);
-            }, this);
-            this.suggestions.refresh({ reset: true });
+              convoy = this.suggestions.toJSON()
+              callback(_.has(convoy, 'payload') ? convoy.payload : convoy)
+            }, this)
+            this.suggestions.refresh({ reset: true })
           } else {
-            convoy = this.suggestions.toJSON();
-            callback(_.has(convoy, 'payload') ? convoy.payload : convoy);
+            convoy = this.suggestions.toJSON()
+            callback(_.has(convoy, 'payload') ? convoy.payload : convoy)
           }
         } else {
           $.ajax({
             url: this.url + '?query=' + query + '&' + $.param({ options: this.options.api }),
             type: 'GET',
             error: function () {
-              callback();
+              callback()
             },
             success: function (res) {
-              callback(res.payload);
+              callback(res.payload)
             }
-          });
+          })
         }
-      }.bind(this);
+      }.bind(this)
     },
 
     // promise()
@@ -165,10 +163,10 @@
     promise: function (options, resolve, reject) {
       if (_.contains(this.options.selectize.plugins, 'drag_drop')) {
         require(['jquery-ui'], function () {
-          Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
-        }.bind(this));
+          Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject)
+        }.bind(this))
       } else {
-        Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
+        Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject)
       }
     },
 
@@ -177,18 +175,18 @@
      */
     storeElement: function (selectedElement) {
       // NOTE: this overwrites the this.$el with the selectize, so it wipes out the normal widget prompt, status responses, etc
-      var $parent = this.$el;
+      var $parent = this.$el
       if (this.options.label) {
-        this.$el.append('<div class="autocomplete"></div>');
-        $parent = this.$el.find('.autocomplete');
+        this.$el.append('<div class="autocomplete"></div>')
+        $parent = this.$el.find('.autocomplete')
       }
-      $parent.selectize(this.options.selectize);
+      $parent.selectize(this.options.selectize)
       this.initial = this.initial || {
         request: true,
         load: true
-      };
-      this.$element = $parent[0].selectize;
-      this.registeredElement = false;
+      }
+      this.$element = $parent[0].selectize
+      this.registeredElement = false
     },
 
     // render()
@@ -202,38 +200,38 @@
     onRender: function (entries) {
       // Manually Select the items selected (this shouldn't be necessary since we set the 'items' field in the options, but that doesn't work so we are currently doing it manually.
       // FIXME: Various things aren't firing in this widget; we'll need to go through and debug most of it.
-      var that = this;
+      var that = this
       this.$element.on('load', function () {
         if (that.initial.load) {
-          that.initial.load = false;
+          that.initial.load = false
 
           if (that.options.selectize.items !== null && that.options.selectize.items.length > 0) {
             _.each(that.options.selectize.items, function (el) {
               // If the value doesn't exists in the list add it to the list so that it shows up
               if (!_.has(this.options, el)) {
-                var data = {};
+                var data = {}
                 /*
                 var data = new Stratus.Prototypes.Model();
                 data.set(that.options.selectize.valueField, el);
                 data.set(that.options.selectize.labelField, el);
                 */
-                data[that.options.selectize.valueField] = el;
-                data[that.options.selectize.labelField] = el;
-                this.addOption(data);
+                data[that.options.selectize.valueField] = el
+                data[that.options.selectize.labelField] = el
+                this.addOption(data)
               }
 
               // set the default value selected
-              this.setValue([el]);
-            }, this);
+              this.setValue([el])
+            }, this)
           }
 
           // set dynamic api value if available
           if (_.has(that, 'selected')) {
-            this.setValue(that.selected);
+            this.setValue(that.selected)
           }
         }
-      });
-      return true;
+      })
+      return true
     },
 
     // getValue()
@@ -244,21 +242,21 @@
      */
     getValue: function () {
       if (!this.$element || typeof this.$element !== 'object' || (typeof this.$element.length !== 'undefined' && !this.$element.length)) {
-        return false;
+        return false
       }
-      var parsed = [];
-      var selected = this.$element.getValue();
-      selected = (selected.length) ? selected.split(',') : null;
+      var parsed = []
+      var selected = this.$element.getValue()
+      selected = (selected.length) ? selected.split(',') : null
       if (selected) {
-        var id;
+        var id
         _.each(selected, function (value) {
-          id = parseInt(value);
+          id = parseInt(value)
           if (!isNaN(id)) {
-            parsed.push({ id: id });
+            parsed.push({ id: id })
           }
-        }, parsed);
+        }, parsed)
       }
-      return parsed;
+      return parsed
     },
 
     // setValue()
@@ -270,24 +268,23 @@
      */
     setValue: function (value) {
       if (!this.$element || typeof this.$element !== 'object' || (typeof this.$element.length !== 'undefined' && !this.$element.length)) {
-        return false;
+        return false
       }
-      this.selected = [];
-      var parsed = '';
+      this.selected = []
+      var parsed = ''
       if (value && value.length) {
         _.each(value, function (model) {
           if (model && typeof model === 'object' && _.has(model, 'id')) {
-            if (parsed.length) parsed += ',';
-            parsed += model.id;
-            this.selected.push(model.id);
+            if (parsed.length) parsed += ','
+            parsed += model.id
+            this.selected.push(model.id)
           }
-        }, this);
+        }, this)
       }
-      this.$el.dataAttr('value', parsed);
-      this.$element.setValue(this.selected);
-      return true;
+      this.$el.dataAttr('value', parsed)
+      this.$element.setValue(this.selected)
+      return true
     }
 
-  });
-
-}));
+  })
+}))

@@ -3,6 +3,33 @@
 // Stratus Event System
 // --------------------
 
+console.warn('I\'m rebuilding the Event system, so this may break some stuff!')
+
+class EventManager {
+  constructor () {
+    this.name = 'EventManager'
+    this.register = []
+  }
+
+  off () {
+    console.log('on:', arguments)
+    return this
+  }
+
+  on () {
+    console.log('on:', arguments)
+    return this
+  }
+
+  trigger () {
+    console.log('trigger:', arguments)
+    return this
+  }
+}
+
+Stratus.EventManager = EventManager
+// Stratus.Events = new EventManager()
+
 // This is largely based on the work of Backbone.Events
 // to provide the logic in case we don't have Backbone
 // loaded at this time.
@@ -40,6 +67,7 @@ let eventsApi = function (iteratee, events, name, callback, opts) {
 // Bind an event to a `callback` function. Passing `"all"` will bind
 // the callback to all events fired.
 Stratus.Events.on = function (name, callback, context) {
+  // console.warn('Deprecated usage of event', name, '->', callback)
   return internalOn(this, name, callback, context)
 }
 

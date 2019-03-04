@@ -31,6 +31,66 @@ Stratus.Instances.Clean = function (instances) {
   }
 }
 
+// Aether System
+// --------------
+
+// This model handles all event related logic.
+Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
+  passiveSupported: false,
+  /**
+   * @param options
+   */
+  initialize: function (options) {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Invoked!')
+    }
+    let that = this
+    try {
+      let options = {
+        get passive () {
+          that.passiveSupported = true
+        }
+      }
+      window.addEventListener('test', options, options)
+      window.removeEventListener('test', options, options)
+    } catch (err) {
+      that.passiveSupported = false
+    }
+    this.on('change', this.synchronize, this)
+  },
+  synchronize: function () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Synchronizing...')
+    }
+    _.each(this.changed, function (event, key) {
+      if (typeof key === 'string' && key.indexOf('.') !== -1) {
+        key = _.first(key.split('.'))
+        event = this.get(key)
+      }
+      if (!event.code && event.enabled) {
+        (event.target || window).addEventListener(event.hook, event.method, this.passiveSupported ? { passive: true } : false)
+        event.code = 1
+      } else if (event.code && !event.enabled) {
+        event.code = 0
+      }
+    }, this)
+  },
+  /**
+   * @param options
+   */
+  add: function (options) {
+    let uid = null
+    let event = new Stratus.Prototypes.Event(options)
+    if (!event.invalid) {
+      uid = _.uniqueId('event_')
+      this.set(uid, event)
+      Stratus.Instances[uid] = event
+    }
+    return uid
+  }
+})
+Stratus.Aether.reinitialize()
+
 // Chronos System
 // --------------
 
@@ -46,6 +106,9 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
     this.on('change', this.synchronize, this)
   },
   synchronize: function () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Chronos Synchronizing...')
+    }
     _.each(this.changed, function (job, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {
         key = _.first(key.split('.'))

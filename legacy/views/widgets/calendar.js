@@ -31,12 +31,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'moment', 'moment-range', 'stratus.views.widgets.base', 'fullcalendar'], factory);
+    define(['stratus', 'jquery', 'underscore', 'moment', 'moment-range', 'stratus.views.widgets.base', 'fullcalendar'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.moment);
+    factory(root.Stratus, root.$, root._, root.moment)
   }
 }(this, function (Stratus, $, _, moment) {
-
   // Views
   // -------------
 
@@ -46,10 +45,10 @@
     model: Stratus.Models.Generic,
     template: _.template(''),
     url: '/Api/',
-    /*routes: {
+    /* routes: {
         'range/:dateStart': 'paginate',
         'range/:dateStart/:dateEnd': 'paginate'
-    },*/
+    }, */
 
     options: {
       private: {
@@ -107,8 +106,8 @@
      * @returns {boolean}
      */
     onRender: function (entries) {
-      var that = this;
-      that.setupCustomView();
+      var that = this
+      that.setupCustomView()
       that.$el.fullCalendar({
         customButtons: that.options.customButtons,
         buttonIcons: that.options.buttonIcons,
@@ -135,40 +134,40 @@
         events: function (start, end, timezone, callback) {
           // Alter the start/end to only fetch the range we don't have & Set the new parsed range
           if (that.startRange <= start) {
-            start = null;
+            start = null
           }
 
           if (that.endRange >= end) {
-            end = null;
+            end = null
           }
 
           //  Handle Scope
-          if (start != null && end != null) {// Overall greater
-            that.startRange = start;
-            that.endRange = end;
-          } else if (start == null && end != null) {// Extend right
-            start = that.endRange;
-            that.endRange = end;
-          } else if (end == null && start != null) {// Extend left
-            end = that.startRange;
-            that.startRange = start;
+          if (start != null && end != null) { // Overall greater
+            that.startRange = start
+            that.endRange = end
+          } else if (start == null && end != null) { // Extend right
+            start = that.endRange
+            that.endRange = end
+          } else if (end == null && start != null) { // Extend left
+            end = that.startRange
+            that.startRange = start
           } // Else no scope change
 
           if (!that.initialRequest && start != null && end != null) { // Request on other than initial and if there is a scope change
             that.collection.once('success', function () {
-              console.log('Calendar fetch data: ', start.format(), end.format());
-              callback(that.parseEvents());
-            });
-            that.collection.meta.set('api.startRange', start.format('X'));
-            that.collection.meta.set('api.endRange', end.format('X'));
-            that.collection.refresh(); // FIXME: Does this merge the new collection results with the current?
+              console.log('Calendar fetch data: ', start.format(), end.format())
+              callback(that.parseEvents())
+            })
+            that.collection.meta.set('api.startRange', start.format('X'))
+            that.collection.meta.set('api.endRange', end.format('X'))
+            that.collection.refresh() // FIXME: Does this merge the new collection results with the current?
           } else {
-            callback(that.parseEvents());
-            that.initialRequest = false;
+            callback(that.parseEvents())
+            that.initialRequest = false
           }
         }
-      });
-      return true;
+      })
+      return true
     },
     /**
      * Parse Asset Collection into JSON Array usable by fullcalendar
@@ -176,8 +175,8 @@
      * @returns {Array}
      */
     parseEvents: function (callback) {
-      var that = this;
-      var events = [];
+      var that = this
+      var events = []
       _.each(that.collection.toJSON().payload, function (payload) {
         if (payload.version) {
           events.push({
@@ -187,7 +186,7 @@
             end: ((!that.options.eventForceAllDay || !payload.version.meta.allDay) && payload.version.meta.timeEnd) ? moment.unix(payload.version.meta.timeEnd).format() : null,
             url: payload.routingPrimary.url,
             allDay: that.options.eventForceAllDay || payload.version.meta.allDay
-          });
+          })
         } else {
           // no version would likely mean it is a media resource
           events.push({
@@ -196,16 +195,16 @@
             start: moment.unix(payload.time).format(),
             url: '//' + payload.url + (payload.extension ? '.' + payload.extension : null),
             allDay: that.options.eventForceAllDay
-          });
+          })
         }
-      });
-      if (callback) callback(events);
-      return events;
+      })
+      if (callback) callback(events)
+      return events
     },
     setupCustomView: function () {
       // TODO Needs to be setup to allow views to be 'plugged in'
       // TODO need to render these from their own template file
-      var FC = $.fullCalendar; // a reference to FullCalendar's root namespace
+      var FC = $.fullCalendar // a reference to FullCalendar's root namespace
 
       FC.ListView = FC.View.extend({
         /**
@@ -214,8 +213,8 @@
          * @returns {!boolean}
          */
         isMomentInRange: function (time) {
-          var intervalRange = moment.range(this.intervalStart, this.intervalEnd);
-          return time.within(intervalRange);
+          var intervalRange = moment.range(this.intervalStart, this.intervalEnd)
+          return time.within(intervalRange)
         },
         /**
          * Determine if an event falls within the current interval
@@ -224,11 +223,11 @@
          */
         isEventInRange: function (event) {
           if (event.end) {
-            var intervalRange = moment.range(this.intervalStart, this.intervalEnd);
-            var eventRange = moment.range(event.start, event.end);
-            return eventRange.overlaps(intervalRange);
+            var intervalRange = moment.range(this.intervalStart, this.intervalEnd)
+            var eventRange = moment.range(event.start, event.end)
+            return eventRange.overlaps(intervalRange)
           } else {
-            return this.isMomentInRange(event.start);
+            return this.isMomentInRange(event.start)
           }
         },
         /**
@@ -242,24 +241,24 @@
          * @returns {Array}
          */
         prepareEvents: function (events) {
-          var preparedEvents = [];
-          var tStart;
-          var tEnd;
-          var event;
+          var preparedEvents = []
+          var tStart
+          var tEnd
+          var event
           for (i in events) {
             if (events.hasOwnProperty(i)) {
               if (this.isEventInRange(events[i])) {
-                tStart = events[i].start.clone();
-                tEnd = events[i].end ? events[i].end.clone() : events[i].start.clone();
+                tStart = events[i].start.clone()
+                tEnd = events[i].end ? events[i].end.clone() : events[i].start.clone()
                 while (tEnd >= tStart) {
                   if (this.isMomentInRange(tStart)) {
-                    event = Object.create(events[i]);
-                    event.displayDay = tStart.clone();
+                    event = Object.create(events[i])
+                    event.displayDay = tStart.clone()
 
-                    preparedEvents.push(event);
+                    preparedEvents.push(event)
                   }
 
-                  tStart.add(1, 'day');
+                  tStart.add(1, 'day')
                 }
               }
             }
@@ -267,12 +266,12 @@
 
           // We would like to display these events in order, newest first
           preparedEvents.sort(function (a, b) {
-            var dateA = new Date(a.displayDay);
-            var dateB = new Date(b.displayDay);
-            return dateA - dateB;
-          });
+            var dateA = new Date(a.displayDay)
+            var dateB = new Date(b.displayDay)
+            return dateA - dateB
+          })
 
-          return preparedEvents;
+          return preparedEvents
         },
         /**
          * Re-renders the view
@@ -281,48 +280,48 @@
          * @param modifiedEventId
          */
         renderEvents: function (events, modifiedEventId) {
-          console.log('Rending Events');
+          console.log('Rending Events')
 
-          var preparedEvents = this.prepareEvents(events);
+          var preparedEvents = this.prepareEvents(events)
 
           // Start displaying our sorted list
-          var viewName = this.opt('viewName') || 'list';
-          var $html = $('<ul class="fc-' + viewName + '"></ul>');
+          var viewName = this.opt('viewName') || 'list'
+          var $html = $('<ul class="fc-' + viewName + '"></ul>')
 
-          var disLeft;
-          var disRight;
-          var lUrl;
-          var lTitle;
-          var allDay;
-          var startDate;
-          var endDate;
-          var classes;
-          var description;
-          var dayCompare;
-          var temp;
-          var count = 0;
+          var disLeft
+          var disRight
+          var lUrl
+          var lTitle
+          var allDay
+          var startDate
+          var endDate
+          var classes
+          var description
+          var dayCompare
+          var temp
+          var count = 0
 
           for (i in preparedEvents) {
             if (preparedEvents.hasOwnProperty(i)) {
-              disLeft = disRight = lUrl = lTitle = allDay = startDate = endDate = classes = description = null;
+              disLeft = disRight = lUrl = lTitle = allDay = startDate = endDate = classes = description = null
 
-              count++;
-              disLeft = moment(preparedEvents[i].displayDay).format(this.opt('leftHeaderFormat'));
-              disRight = moment(preparedEvents[i].displayDay).format(this.opt('rightHeaderFormat'));
-              dayCompare = moment(preparedEvents[i].displayDay).format('LL');
-              lTitle = FC.htmlEscape(preparedEvents[i].title);
-              allDay = preparedEvents[i].allDay;
-              startDate = FC.htmlEscape(moment(preparedEvents[i].start).format(this.opt('eventTimeFormat')));
+              count++
+              disLeft = moment(preparedEvents[i].displayDay).format(this.opt('leftHeaderFormat'))
+              disRight = moment(preparedEvents[i].displayDay).format(this.opt('rightHeaderFormat'))
+              dayCompare = moment(preparedEvents[i].displayDay).format('LL')
+              lTitle = FC.htmlEscape(preparedEvents[i].title)
+              allDay = preparedEvents[i].allDay
+              startDate = FC.htmlEscape(moment(preparedEvents[i].start).format(this.opt('eventTimeFormat')))
               if (preparedEvents[i].end) {
-                endDate = FC.htmlEscape(moment(preparedEvents[i].end).format(this.opt('eventTimeFormat')));
+                endDate = FC.htmlEscape(moment(preparedEvents[i].end).format(this.opt('eventTimeFormat')))
               }
-              lUrl = preparedEvents[i].url;
-              classes = preparedEvents[i].className;
-              description = preparedEvents[i].description;
+              lUrl = preparedEvents[i].url
+              classes = preparedEvents[i].className
+              description = preparedEvents[i].description
 
               // if the events are from source, then pick the className from the source not from event object itself
               if (preparedEvents[i].source) {
-                classes = classes.concat(preparedEvents[i].source.className);
+                classes = classes.concat(preparedEvents[i].source.className)
               }
               if (dayCompare != temp) {
                 $(
@@ -330,8 +329,8 @@
                   '<span class="fc-header-left">' + disLeft + '</span>' +
                   '<span class="fc-header-right">' + disRight + '</span>' +
                   '</li>'
-                ).appendTo($html);
-                temp = dayCompare;
+                ).appendTo($html)
+                temp = dayCompare
               }
               if (allDay) {
                 // if the event is all day , make sure you print that and not date and time
@@ -349,7 +348,7 @@
                   '</div>' +
                   '</' + (lUrl ? 'a' : 'div') + '>' +
                   '</li>'
-                ).appendTo($html);
+                ).appendTo($html)
               } else {
                 $eventdisplay = $(
                   '<li class="fc-item">' +
@@ -357,7 +356,7 @@
                   ' class="fc-listEvent ' + classes + '">' +
                   '<div class="fc-time">' +
                   '<span class="fc-start-time">' + startDate + '</span> ' +
-                  '<span class="fc-end-time">' + (endDate ? endDate : '') + '</span>' +
+                  '<span class="fc-end-time">' + (endDate || '') + '</span>' +
                   '</div>' +
                   '<div class="fc-details">' +
                   '<div class="fc-title">' + lTitle + '</div>' +
@@ -365,14 +364,14 @@
                   '</div>' +
                   '</' + (lUrl ? 'a' : 'div') + '>' +
                   '</li>'
-                ).appendTo($html);
+                ).appendTo($html)
               }
             }
           }
-          $(this.el).html($html);
-          this.trigger('eventAfterAllRender');
+          $(this.el).html($html)
+          this.trigger('eventAfterAllRender')
         }
-      });
+      })
       FC.views.listMonth = {
         duration: { months: 1 },
         defaults: {
@@ -384,7 +383,7 @@
           buttonText: 'month'
         },
         class: FC.ListView
-      };
+      }
 
       FC.views.listWeek = {
         duration: { weeks: 1 },
@@ -397,8 +396,7 @@
           buttonText: 'week'
         },
         class: FC.ListView
-      };
+      }
     }
-  });
-
-}));
+  })
+}))
