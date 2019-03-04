@@ -1,4 +1,4 @@
-/* global Stratus, _, Backbone, $, bootbox */
+/* global Stratus, _, Backbone, $, bootbox, Model */
 
 // Instance Clean
 // --------------
@@ -35,12 +35,12 @@ Stratus.Instances.Clean = function (instances) {
 // --------------
 
 // This model handles all event related logic.
-Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
-  passiveSupported: false,
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Aether extends Model {
+  constructor (data, options) {
+    super(data, options)
+
+    this.passiveSupported = false
+
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Invoked!')
     }
@@ -57,8 +57,8 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
       that.passiveSupported = false
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Synchronizing...')
     }
@@ -74,11 +74,11 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
         event.code = 0
       }
     }, this)
-  },
+  }
   /**
    * @param options
    */
-  add: function (options) {
+  listen (options) {
     let uid = null
     let event = new Stratus.Prototypes.Event(options)
     if (!event.invalid) {
@@ -88,24 +88,22 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
     }
     return uid
   }
-})
-Stratus.Aether.reinitialize()
+}
+Stratus.Aether = Aether
 
 // Chronos System
 // --------------
 
 // This model handles all time related jobs.
-Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Chronos extends Model {
+  constructor (data, options) {
+    super(data, options)
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Invoked!')
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Synchronizing...')
     }
@@ -123,14 +121,14 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         job.code = 0
       }
     }, this)
-  },
+  }
   /**
    * @param time
    * @param method
    * @param scope
    * @returns {string}
    */
-  add: function (time, method, scope) {
+  queue (time, method, scope) {
     let uid = null
     let job = new Stratus.Prototypes.Job(time, method, scope)
     if (job.time !== null && typeof job.method === 'function') {
@@ -139,35 +137,35 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
       Stratus.Instances[uid] = job
     }
     return uid
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  enable: function (uid) {
+  enable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', true)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  disable: function (uid) {
+  disable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', false)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @param value
    * @returns {boolean|*}
    */
-  toggle: function (uid, value) {
+  toggle (uid, value) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled',
@@ -175,8 +173,8 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
     }
     return success
   }
-})
-Stratus.Chronos.reinitialize()
+}
+Stratus.Chronos = Chronos
 
 // Post Message Handling
 // ---------------------

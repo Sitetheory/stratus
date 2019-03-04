@@ -1227,7 +1227,7 @@ let triggerEvents = function (events, args) {
 Stratus.Events.bind = Stratus.Events.on
 Stratus.Events.unbind = Stratus.Events.off
 
-/* global Stratus, _, EventTarget */
+/* global Stratus, _, EventTarget, EventManager */
 
 // Error Prototype
 // ---------------
@@ -1332,87 +1332,102 @@ Stratus.Prototypes.Job = function (time, method, scope) {
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-/**
- * @param data
- * @returns {Stratus.Prototypes.Model}
- * @constructor
- */
-Stratus.Prototypes.Model = function (data) {
-  /**
-   * @type {{}}
-   */
-  this.data = {}
-  /**
-   * @type {{}}
-   */
-  this.attributes = this.data
-  /**
-   * @type {{}}
-   */
-  this.temps = {}
+class Model extends EventManager {
+  constructor (data, options) {
+    super()
+    this.name = 'Model'
+
+    /**
+     * @type {{}}
+     */
+    this.data = {}
+    /**
+     * @type {{}}
+     */
+    this.temps = {}
+
+    // Evaluate object or array
+    if (data) {
+      // TODO: Evaluate object or array into a string of sets
+      /* *
+        data = _.defaults(_.extend({}, defaults, data), defaults)
+        this.set(data, options)
+        /* */
+      _.extend(this.data, data)
+    }
+  }
+
   /**
    * @param options
    * @returns {*}
    */
-  this.toObject = function (options) {
+  toObject (options) {
     return _.clone(this.data)
   }
+
   /**
    * @param options
    * @returns {{meta: (*|string|{type, data}), payload: *}}
    */
-  this.toJSON = function (options) {
+  toJSON (options) {
     return _.clone(this.data)
   }
+
   /**
    * @param callback
    * @param scope
    */
-  this.each = function (callback, scope) {
+  each (callback, scope) {
     _.each.apply((scope === undefined) ? this : scope,
       _.union([this.data], arguments))
   }
+
   /**
    * @param attr
    * @returns {*}
    */
-  this.get = function (attr) {
+  get (attr) {
     return _.reduce(typeof attr === 'string' ? attr.split('.') : [],
       function (attrs, a) {
         return attrs && attrs[a]
       }, this.data)
   }
+
   /**
    * @param attr
    * @returns {boolean}
    */
-  this.has = function (attr) {
+  has (attr) {
     return (typeof this.get(attr) !== 'undefined')
   }
+
   /**
    * @returns {number}
    */
-  this.size = function () {
+  size () {
     return _.size(this.data)
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.set = function (attr, value) {
+  set (attr, value) {
     if (attr && typeof attr === 'object') {
+      let that = this
       _.each(attr, function (value, attr) {
-        this.setAttribute(attr, value)
+        that.setAttribute(attr, value)
       }, this)
     } else {
       this.setAttribute(attr, value)
     }
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.setAttribute = function (attr, value) {
+  setAttribute (attr, value) {
     if (typeof attr === 'string') {
       if (attr.indexOf('.') !== -1) {
         let reference = this.data
@@ -1443,11 +1458,12 @@ Stratus.Prototypes.Model = function (data) {
       }
     }
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.temp = function (attr, value) {
+  temp (attr, value) {
     this.set(attr, value)
     if (attr && typeof attr === 'object') {
       _.each(attr, function (value, attr) {
@@ -1457,12 +1473,13 @@ Stratus.Prototypes.Model = function (data) {
       this.temps[attr] = value
     }
   }
+
   /**
    * @param attr
    * @param value
    * @returns {*}
    */
-  this.add = function (attr, value) {
+  add (attr, value) {
     // Ensure a placeholder exists
     if (!this.has(attr)) {
       this.set(attr, [])
@@ -1475,12 +1492,13 @@ Stratus.Prototypes.Model = function (data) {
       return value
     }
   }
+
   /**
    * @param attr
    * @param value
    * @returns {*}
    */
-  this.remove = function (attr, value) {
+  remove (attr, value) {
     if (value === undefined) {
       // delete this.data[attr];
     } else {
@@ -1490,30 +1508,33 @@ Stratus.Prototypes.Model = function (data) {
     }
     return this.data[attr]
   }
+
   /**
    * @param attr
    * @returns {number}
    */
-  this.iterate = function (attr) {
+  iterate (attr) {
     if (!this.has(attr)) {
       this.set(attr, 0)
     }
     return ++this.data[attr]
   }
+
   /**
    * Clear all internal data
    */
-  this.clear = function () {
+  clear () {
     for (let attribute in this.data) {
       if (this.data.hasOwnProperty(attribute)) {
         delete this.data[attribute]
       }
     }
   }
+
   /**
    * Clear all temporary data
    */
-  this.clearTemp = function () {
+  clearTemp () {
     for (let attribute in this.temps) {
       if (this.temps.hasOwnProperty(attribute)) {
         // delete this.data[attribute];
@@ -1522,35 +1543,9 @@ Stratus.Prototypes.Model = function (data) {
       }
     }
   }
-
-  /**
-   * @returns {boolean}
-   */
-  this.initialize = function () {
-    return true
-  }
-
-  // Evaluate object or array
-  if (data) {
-    // TODO: Evaluate object or array into a string of sets
-    /*
-         attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
-         this.set(attrs, options);
-         */
-    _.extend(this.data, data)
-  }
-
-  // Add Event Logic
-  _.extend(this, Stratus.Events)
-
-  // Initialize
-  this.reinitialize = function () {
-    this.initialize.apply(this, arguments)
-  }.bind(this)
-  this.reinitialize()
-
-  return this
 }
+
+Stratus.Prototypes.Model = Model
 
 // Internal Collections
 Stratus.Collections = new Stratus.Prototypes.Model()
@@ -3804,7 +3799,7 @@ Stratus.Loaders.Angular = function () {
   }
 }
 
-/* global Stratus, _, Backbone, $, bootbox */
+/* global Stratus, _, Backbone, $, bootbox, Model */
 
 // Instance Clean
 // --------------
@@ -3841,12 +3836,12 @@ Stratus.Instances.Clean = function (instances) {
 // --------------
 
 // This model handles all event related logic.
-Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
-  passiveSupported: false,
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Aether extends Model {
+  constructor (data, options) {
+    super(data, options)
+
+    this.passiveSupported = false
+
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Invoked!')
     }
@@ -3863,8 +3858,8 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
       that.passiveSupported = false
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Synchronizing...')
     }
@@ -3880,11 +3875,11 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
         event.code = 0
       }
     }, this)
-  },
+  }
   /**
    * @param options
    */
-  add: function (options) {
+  listen (options) {
     let uid = null
     let event = new Stratus.Prototypes.Event(options)
     if (!event.invalid) {
@@ -3894,24 +3889,22 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
     }
     return uid
   }
-})
-Stratus.Aether.reinitialize()
+}
+Stratus.Aether = Aether
 
 // Chronos System
 // --------------
 
 // This model handles all time related jobs.
-Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Chronos extends Model {
+  constructor (data, options) {
+    super(data, options)
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Invoked!')
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Synchronizing...')
     }
@@ -3929,14 +3922,14 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         job.code = 0
       }
     }, this)
-  },
+  }
   /**
    * @param time
    * @param method
    * @param scope
    * @returns {string}
    */
-  add: function (time, method, scope) {
+  queue (time, method, scope) {
     let uid = null
     let job = new Stratus.Prototypes.Job(time, method, scope)
     if (job.time !== null && typeof job.method === 'function') {
@@ -3945,35 +3938,35 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
       Stratus.Instances[uid] = job
     }
     return uid
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  enable: function (uid) {
+  enable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', true)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  disable: function (uid) {
+  disable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', false)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @param value
    * @returns {boolean|*}
    */
-  toggle: function (uid, value) {
+  toggle (uid, value) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled',
@@ -3981,8 +3974,8 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
     }
     return success
   }
-})
-Stratus.Chronos.reinitialize()
+}
+Stratus.Chronos = Chronos
 
 // Post Message Handling
 // ---------------------
