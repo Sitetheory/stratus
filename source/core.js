@@ -89,7 +89,7 @@ class Aether extends Model {
     return uid
   }
 }
-Stratus.Aether = Aether
+Stratus.Aether = new Aether()
 
 // Chronos System
 // --------------
@@ -174,7 +174,7 @@ class Chronos extends Model {
     return success
   }
 }
-Stratus.Chronos = Chronos
+Stratus.Chronos = new Chronos()
 
 // Post Message Handling
 // ---------------------

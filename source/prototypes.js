@@ -221,11 +221,13 @@ class Model extends EventManager {
             (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
             reference[link] = value
             this.trigger('change:' + attr, this)
+            this.trigger('change', this)
           }
         }
       } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
         this.data[attr] = value
         this.trigger('change:' + attr, this)
+        this.trigger('change', this)
       }
     }
   }
