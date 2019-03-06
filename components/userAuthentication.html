@@ -58,7 +58,7 @@
             </form>
 
             <form class="form-forgot" name="forgotPassForm"
-                  ng-submit="forgotPassForm.$valid && $ctrl.doRequestResetPass(resetPassData)"
+                  ng-submit="$ctrl.doRequestPasswordReset(resetPassData)"
                   ng-if="$ctrl.enabledForgotPassForm">
 
               <div class="div-table forgot-title">

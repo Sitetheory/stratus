@@ -71,7 +71,7 @@
         $ctrl.enabledResetPassForm = utility.getUrlParams().type === 'reset-password'
         $ctrl.enabledVerificationForm = utility.getUrlParams().type === 'verify'
         $ctrl.forgotPassText = 'Password Trouble?'
-        $ctrl.resetPassHeaderText = 'Reset your account password'
+        $ctrl.resetPassHeaderText = 'Reset Your Account Password'
         $ctrl.changePassBtnText = 'Reset Password'
         $ctrl.selectedIndex = $ctrl.signInIndex
         $ctrl.message = null
@@ -84,14 +84,14 @@
           $ctrl.resetPassHeaderEmail = null
         }
         $ctrl.duplicateMessge = '<span>There is already an account registered to this email, ' +
-          'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
-          'Sign In</a> and then create a new site from the control panel.</span>'
+                    'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
+                    'Sign In</a> and then create a new site from the control panel.</span>'
 
         // methods
         $ctrl.showForgotPassForm = showForgotPassForm
         $ctrl.doSignIn = doSignIn
         $ctrl.doSignUp = doSignUp
-        $ctrl.doRequestResetPass = doRequestResetPass
+        $ctrl.doRequestPasswordReset = doRequestPasswordReset
         $ctrl.doResetPass = doResetPass
         $ctrl.onTabSelected = onTabSelected
         $ctrl.backToLogin = backToLogin
@@ -100,10 +100,10 @@
 
         // data sets
         $ctrl.login = new Model({
-          'target': 'login'
+          'target': 'Login'
         })
         $ctrl.user = new Model({
-          'target': 'user'
+          'target': 'User'
         })
       }
 
@@ -122,7 +122,7 @@
           $ctrl.progressBarClass = strengthBar.progressBarClass
           $ctrl.progressBarValue = strengthBar.progressBarValue
           if (!utility.validPassword(newValue)) {
-            $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number.'
+            $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number. Consider using a unique "pass phrase".'
             $ctrl.allowSubmit = false
           } else {
             $ctrl.message = null
@@ -135,13 +135,43 @@
         }
       })
 
+      function doSignUp (signupData) {
+        $ctrl.loading = true
+
+        // social sign up
+        if ($ctrl.socialMode) {
+          return doSocialSignup(signupData.email)
+        }
+
+        // normal sign up
+        resetDefaultSettings()
+        let data = {
+          email: signupData.email,
+          phone: utility.cleanedPhoneNumber(signupData.phone)
+        }
+
+        $ctrl.user.save(data).then(function (response) {
+          $ctrl.loading = false
+          if (utility.getStatus(response).code ===
+                        utility.RESPONSE_CODE.success) {
+            return ($window.location.href = '/')
+          } else {
+            $ctrl.isRequestSuccess = false
+            let status = utility.getStatus(response)
+            $ctrl.message = (status.code === 'DUPLICATE')
+              ? $ctrl.duplicateMessge
+              : status.message
+          }
+        })
+      }
+
       // Define functional methods
       function verifyAccount () {
         // FIXME: This runs from an ng-init
         resetDefaultSettings()
         $ctrl.loading = true
+        // Custom API Action is Required
         $ctrl.user.meta.temp('api.options.action', 'Verify')
-        // $ctrl.user.meta.temp('api.options.token', utility.getUrlParams().token)
         $ctrl.user.set('token', utility.getUrlParams().token)
         $ctrl.user.save().then(function () {
           $ctrl.loading = false
@@ -152,6 +182,44 @@
             $ctrl.enabledResetPassForm = true
             $ctrl.resetPassHeaderText = 'Please create a new secure password for your account.'
             $ctrl.changePassBtnText = 'Update password'
+          }
+        })
+      }
+      // verifyAccount returns the User model which allows us to do a save (PUT) action here on the /Api/User/{ID}.
+      function doResetPass (resetPassData) {
+        $ctrl.loading = true
+        resetDefaultSettings()
+        /*
+                let requestType = utility.getUrlParams().type === 'verify'
+                    ? 'change-password'
+                    : utility.getUrlParams().type
+                let data = {
+                    type: requestType,
+                    email: utility.getUrlParams().email,
+                    token: utility.getUrlParams().token,
+                    password: resetPassData.password
+                }
+
+                if ($ctrl.passwordReset) {
+                    data.email = $ctrl.email
+                    data.type = 'update-password'
+                    data.confirm_password = resetPassData.confirm_password
+                }
+                $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPassword')
+                */
+        // reset meta because we want a normal PUT not a custom API action
+        $ctrl.user.meta.set('api', {})
+        $ctrl.user.data.password = resetPassData.password
+
+        $ctrl.user.save().then(function (response) {
+          $ctrl.loading = false
+          if (utility.getStatus(response).code ===
+                        utility.RESPONSE_CODE.success) {
+            $window.location.href = $window.location.origin +
+                            '/Member/Sign-In'
+          } else {
+            $ctrl.isRequestSuccess = false
+            $ctrl.message = utility.getStatus(response).message
           }
         })
       }
@@ -174,89 +242,34 @@
         })
       }
 
-      function doSignUp (signupData) {
-        $ctrl.loading = true
-
-        // social sign up
-        if ($ctrl.socialMode) {
-          return doSocialSignup(signupData.email)
-        }
-
-        // normal sign up
-        resetDefaultSettings()
-        let data = {
-          email: signupData.email,
-          phone: utility.cleanedPhoneNumber(signupData.phone)
-        }
-
-        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'SignUp')
-        $ctrl.user.save(data).then(function (response) {
-          $ctrl.loading = false
-          if (utility.getStatus(response).code ===
-            utility.RESPONSE_CODE.success) {
-            return ($window.location.href = '/')
-          } else {
-            $ctrl.isRequestSuccess = false
-            let status = utility.getStatus(response)
-            $ctrl.message = (status.code === 'DUPLICATE')
-              ? $ctrl.duplicateMessge
-              : status.message
-          }
-        })
-      }
-
-      function doRequestResetPass (resetPassData) {
+      function doRequestPasswordReset (resetPassData) {
         $ctrl.loading = true
         resetDefaultSettings()
-        let data = {
-          type: 'reset-password-request',
-          email: resetPassData.email,
-          phone: utility.cleanedPhoneNumber(resetPassData.phone)
-        }
 
-        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPasswordRequest')
-        $ctrl.user.save(data).then(function (response) {
+        $ctrl.user.meta.temp('api.options.action', 'RequestPasswordReset')
+
+        $ctrl.user.set('email', resetPassData.email)
+        $ctrl.user.set('phone', utility.cleanedPhoneNumber(resetPassData.phone))
+        /*
+                let data = {
+                    type: 'reset-password-request',
+                    email: resetPassData.email,
+                    phone: utility.cleanedPhoneNumber(resetPassData.phone)
+                }
+                $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPasswordRequest')
+                */
+        console.log('reset password request')
+        console.log(resetPassData)
+
+        $ctrl.user.save().then(function (response) {
           $ctrl.loading = false
           if (utility.getStatus(response).code ===
-            utility.RESPONSE_CODE.success) {
+                        utility.RESPONSE_CODE.success) {
             $ctrl.isRequestSuccess = true
           } else {
             $ctrl.isRequestSuccess = false
           }
           $ctrl.message = utility.getStatus(response).message
-        })
-      }
-
-      function doResetPass (resetPassData) {
-        $ctrl.loading = true
-        resetDefaultSettings()
-        let requestType = utility.getUrlParams().type === 'verify'
-          ? 'change-password'
-          : utility.getUrlParams().type
-        let data = {
-          type: requestType,
-          email: utility.getUrlParams().email,
-          token: utility.getUrlParams().token,
-          password: resetPassData.password
-        }
-
-        if ($ctrl.passwordReset) {
-          data.email = $ctrl.email
-          data.type = 'update-password'
-          data.confirm_password = resetPassData.confirm_password
-        }
-
-        $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPassword')
-        $ctrl.user.save(data).then(function (response) {
-          $ctrl.loading = false
-          if (utility.getStatus(response).code ===
-            utility.RESPONSE_CODE.success) {
-            $window.location.href = $window.location.origin +
-              '/Member/Sign-In'
-          } else {
-            $ctrl.isRequestSuccess = false
-            $ctrl.message = utility.getStatus(response).message
-          }
         })
       }
 
