@@ -1,7 +1,7 @@
 // Model Service
 // -------------
 
-/* global define */
+/* global define, location */
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
@@ -10,8 +10,7 @@
       'stratus',
       'underscore',
       'angular',
-      'angular-material',
-      'stratus.services.utility'
+      'angular-material'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -27,8 +26,7 @@
         '$mdToast',
         '$rootScope',
         '$log',
-        'utility',
-        function ($q, $http, $mdToast, $rootScope, $log, utility) {
+        function ($q, $http, $mdToast, $rootScope, $log) {
           return function (options, attributes) {
             // Environment
             this.target = null
@@ -210,11 +208,7 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      if (prototype.url.includes('?')) {
-                        prototype.url += '&'
-                      } else {
-                        prototype.url += '?'
-                      }
+                      prototype.url += prototype.url.includes('?') ? '&' : '?'
                       prototype.url += that.serialize(data)
                     }
                   } else {
@@ -497,6 +491,26 @@
             }
 
             /**
+             * Get more params which is shown after '#' symbol in url.
+             * @return {*}
+             */
+            this.moreParams = function () {
+              let params = {}
+              let digest
+              location.hash.split('#').forEach(function (param) {
+                if (!param) {
+                  return
+                }
+                digest = param.split('/')
+                if (digest.length <= 1) {
+                  return
+                }
+                params[digest[0]] = digest[1]
+              })
+              return params
+            }
+
+            /**
              * Check response is a new version. In the case, current url
              * represent the specific version. we need to check the version
              * after submit, if it is a new one, we'll redirect to the newest
@@ -504,8 +518,8 @@
              * @return boolean
              */
             this.isNewVersion = function (newData) {
-              return !_.isEmpty(utility.moreParams()) && newData.version &&
-                parseInt(utility.moreParams().version) !== newData.version.id
+              return !_.isEmpty(this.moreParams()) && newData.version &&
+                parseInt(this.moreParams().version) !== newData.version.id
             }
 
             /**
@@ -624,27 +638,28 @@
              * @returns {*}
              */
             this.pluck = function (attribute) {
-              if (typeof attribute === 'string' &&
-                attribute.indexOf('[].') > -1) {
-                const request = attribute.split('[].')
-                if (request.length > 1) {
-                  attribute = that.get(request[0])
-                  if (attribute && angular.isArray(attribute)) {
-                    const list = []
-                    attribute.forEach(function (element) {
-                      if (angular.isObject(element) && request[1] in element) {
-                        list.push(element[request[1]])
-                      }
-                    })
-                    if (list.length) {
-                      return list
-                    }
-                  }
-                }
-              } else {
+              if (typeof attribute !== 'string' || attribute.indexOf('[].') === -1) {
                 return that.get(attribute)
               }
-              return undefined
+              const request = attribute.split('[].')
+              if (request.length <= 1) {
+                return undefined
+              }
+              attribute = that.get(request[0])
+              if (!attribute || !angular.isArray(attribute)) {
+                return undefined
+              }
+              const list = []
+              attribute.forEach(function (element) {
+                if (!angular.isObject(element) || !(request[1] in element)) {
+                  return
+                }
+                list.push(element[request[1]])
+              })
+              if (!list.length) {
+                return undefined
+              }
+              return list
             }
 
             /**
