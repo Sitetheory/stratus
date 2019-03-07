@@ -5,6 +5,9 @@
     <div class="tab-toggle-background"></div>
     <md-tabs md-dynamic-height md-border-bottom md-selected="$ctrl.selectedIndex"
              ng-class="{ 'hide-tab': $ctrl.isLoggedIn }">
+
+
+      <!-- TAB: SIGN IN -->
       <md-tab label="Sign In" class="sign-in" ng-click="$ctrl.showForgotPassForm(false)">
         <md-content class="md-padding">
           <div class="message"
@@ -14,6 +17,8 @@
           </div>
 
           <div ng-if="!$ctrl.isHandlingUrl">
+
+            <!-- FORM: SIGN IN -->
             <form class="form-sign-in" name="signInForm"
                   ng-submit="signInForm.$valid && $ctrl.doSignIn(signinData)"
                   ng-if="!$ctrl.enabledForgotPassForm">
@@ -57,6 +62,8 @@
 
             </form>
 
+
+            <!-- FORM: PASSWORD RESET REQUEST -->
             <form class="form-forgot" name="forgotPassForm"
                   ng-submit="$ctrl.doRequestPasswordReset(resetPassData)"
                   ng-if="$ctrl.enabledForgotPassForm">
@@ -114,13 +121,15 @@
             </form>
           </div>
 
+
+          <!-- FORM: PASSWORD RESET -->
+          <!-- TODO: This should NOT be duplicated with md-content below -->
           <div ng-if="$ctrl.isHandlingUrl">
             <form class="form-reset-pass" name="resetPassForm"
                   ng-submit="resetPassForm.$valid && $ctrl.doResetPass($ctrl.resetPassData)"
                   ng-if="$ctrl.enabledResetPassForm">
               <div class="show-error">
                 <h3>{{ $ctrl.resetPassHeaderText }}</h3>
-                <h4>{{ $ctrl.resetPassHeaderEmail }}</h4>
               </div>
 
               <div class="clearfix">
@@ -168,14 +177,19 @@
         </md-content>
       </md-tab>
 
+
+      <!-- TAB: REGISTRATION -->
       <md-tab label="Sign Up" class="sign-up" md-on-select="$ctrl.onTabSelected($ctrl.signUpIndex)"
               ng-disabled="$ctrl.isHandlingUrl">
+
         <md-content class="md-padding">
           <div class="message error"
                ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}"
                ng-if="$ctrl.message != null">
             <p ng-bind-html="$ctrl.safeMessage()" stratus-compile-template></p>
           </div>
+
+          <!-- FORM: REGISTRATION -->
           <form class="form-sign-up" name="registrationForm"
                 ng-submit="registrationForm.$valid && $ctrl.doSignUp(signupData)">
             <div class="clearfix">
@@ -215,6 +229,9 @@
       </md-tab>
     </md-tabs>
 
+
+
+    <!-- SINGLE SIGN-ON -->
     <div class="social-sign-in" ng-if="!$ctrl.isLoggedIn">
       <div class="div-table social-title-table">
         <div class="div-table-row">
@@ -233,6 +250,9 @@
     </div>
   </md-content>
 
+
+
+  <!-- UNKNOWN: PASSWORD RESET REQUEST -->
   <md-content class="md-padding" ng-if="$ctrl.passwordReset">
     <div class="message"
          ng-class="{'success': $ctrl.isRequestSuccess, 'error': !$ctrl.isRequestSuccess}"
@@ -243,7 +263,6 @@
           ng-submit="resetPassForm.$valid && $ctrl.doResetPass($ctrl.resetPassData)">
       <div class="show-error">
         <h3>{{ $ctrl.resetPassHeaderText }}</h3>
-        <h4>{{ $ctrl.resetPassHeaderEmail }}</h4>
       </div>
 
       <div class="clearfix">
