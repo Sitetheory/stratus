@@ -1,7 +1,7 @@
 // Model Service
 // -------------
 
-/* global define, location */
+/* global define */
 
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {

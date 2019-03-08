@@ -10,8 +10,8 @@ const vinylPaths = require('vinyl-paths')
 const _ = require('underscore')
 
 // Unit Testing
-const mocha = require('mocha')
-const chai = require('chai')
+// const mocha = require('mocha')
+// const chai = require('chai')
 
 // Task Specific
 const babel = require('gulp-babel')
@@ -202,6 +202,7 @@ gulp.task('lint:js', function () {
     /* */
     .pipe(standard())
     .pipe(standard.reporter('default', {
+      fix: true,
       breakOnError: true,
       breakOnWarning: true,
       showRuleNames: true

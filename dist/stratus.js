@@ -547,7 +547,7 @@ _.mixin({
     if (_.isEmpty(tail)) {
       return vars
     }
-    const digest = /(?<resource>[a-zA-Z]+)(?:\/(?<identifier>[0-9]+))?/g
+    const digest = /([a-zA-Z]+)(?:\/([0-9]+))?/g
     let match
     while ((match = digest.exec(tail))) {
       vars[match[1]] = _.hydrate(match[2])
