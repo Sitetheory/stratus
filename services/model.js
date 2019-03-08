@@ -491,26 +491,6 @@
             }
 
             /**
-             * Get more params which is shown after '#' symbol in url.
-             * @return {*}
-             */
-            this.moreParams = function () {
-              let params = {}
-              let digest
-              location.hash.split('#').forEach(function (param) {
-                if (!param) {
-                  return
-                }
-                digest = param.split('/')
-                if (digest.length <= 1) {
-                  return
-                }
-                params[digest[0]] = digest[1]
-              })
-              return params
-            }
-
-            /**
              * Check response is a new version. In the case, current url
              * represent the specific version. we need to check the version
              * after submit, if it is a new one, we'll redirect to the newest
@@ -518,8 +498,8 @@
              * @return boolean
              */
             this.isNewVersion = function (newData) {
-              return !_.isEmpty(this.moreParams()) && newData.version &&
-                parseInt(this.moreParams().version) !== newData.version.id
+              return !_.isEmpty(this.more()) && newData.version &&
+                parseInt(_.getAnchorParams('version')) !== newData.version.id
             }
 
             /**

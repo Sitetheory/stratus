@@ -43,17 +43,21 @@ Stratus.Prototypes.Dispatch = function () {
  * @returns {Stratus.Prototypes.Event}
  * @constructor
  */
+// TODO: Update to ES6
 Stratus.Prototypes.Event = function (options) {
   this.enabled = false
   this.hook = null
   this.target = null
   this.scope = null
+  this.debounce = null
+  this.throttle = null
   this.method = function () {
     console.warn('No method:', this)
   }
   if (options && typeof options === 'object') {
     _.extend(this, options)
   }
+  this.listening = false
   this.invalid = false
   if (typeof this.hook !== 'string') {
     console.error('Unsupported hook:', this.hook)

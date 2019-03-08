@@ -537,21 +537,79 @@ _.mixin({
     return shallow
   },
 
+  /**
+   * Get more params which is shown after anchor '#' anchor in the url.
+   * @return {*}
+   */
+  getAnchorParams: function (key, url) {
+    let vars = {}
+    let tail = window.location.hash
+    if (_.isEmpty(tail)) {
+      return vars
+    }
+    const digest = /(?<resource>[a-zA-Z]+)(?:\/(?<identifier>[0-9]+))?/g
+    let match
+    while ((match = digest.exec(tail))) {
+      vars[match[1]] = _.hydrate(match[2])
+    }
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
   // Get a specific value or all values located in the URL
   /**
-   * TODO: This is somewhat farther than underscore's ideology and should be
-   * moved into Stratus.Internals
    * @param key
-   * @param href
+   * @param url
    * @returns {{}}
    */
-  getUrlParams: function (key, href) {
-    let lets = {}
-    href = typeof href !== 'undefined' ? href : window.location.href
-    href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-      lets[key] = value
+  getUrlParams: function (key, url) {
+    const vars = {}
+    if (url === undefined) {
+      url = window.location.href
+    }
+    const anchor = url.indexOf('#')
+    if (anchor >= 0) {
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = _.hydrate(value)
     })
-    return (typeof key !== 'undefined' && key) ? lets[key] : lets
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
+  // This function digests URLs into an object containing their respective
+  // values, which will be merged with requested parameters and formulated
+  // into a new URL.
+  /**
+   * @param params
+   * @param url
+   * @returns {string|*}
+   * @constructor
+   */
+  setUrlParams: function (params, url) {
+    if (url === undefined) {
+      url = window.location.href
+    }
+    if (params === undefined) {
+      return url
+    }
+    let vars = {}
+    const glue = url.indexOf('?')
+    const anchor = url.indexOf('#')
+    let tail = ''
+    if (anchor >= 0) {
+      tail = url.substring(anchor, url.length)
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = value
+    })
+    vars = _.extend(vars, params)
+    return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
+      _.map(vars, function (value, key) {
+        return key + '=' + _.dehydrate(value)
+      }).reduce(function (memo, value) {
+        return memo + '&' + value
+      }) + tail)
   },
 
   // Ensure all values in an array or object are true
@@ -1286,17 +1344,21 @@ Stratus.Prototypes.Dispatch = function () {
  * @returns {Stratus.Prototypes.Event}
  * @constructor
  */
+// TODO: Update to ES6
 Stratus.Prototypes.Event = function (options) {
   this.enabled = false
   this.hook = null
   this.target = null
   this.scope = null
+  this.debounce = null
+  this.throttle = null
   this.method = function () {
     console.warn('No method:', this)
   }
   if (options && typeof options === 'object') {
     _.extend(this, options)
   }
+  this.listening = false
   this.invalid = false
   if (typeof this.hook !== 'string') {
     console.error('Unsupported hook:', this.hook)
@@ -2571,31 +2633,8 @@ Stratus.Internals.Resource = function (path, elementId) {
  * @constructor
  */
 Stratus.Internals.SetUrlParams = function (params, url) {
-  // FIXME: This can't handle anchors correctly
-  if (typeof url === 'undefined') {
-    url = window.location.href
-  }
-  if (typeof params === 'undefined') {
-    return url
-  }
-  let lets = {}
-  let glue = url.indexOf('?')
-  let anchor = url.indexOf('#')
-  let tail = ''
-  if (anchor >= 0) {
-    tail = url.substring(anchor, url.length)
-    url = url.substring(0, anchor)
-  }
-  url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    lets[key] = value
-  })
-  lets = _.extend(lets, params)
-  return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-    _.reduce(_.map(lets, function (value, key) {
-      return key + '=' + value
-    }), function (memo, value) {
-      return memo + '&' + value
-    }) + tail)
+  console.warn('Stratus.Internals.SetUrlParams is deprecated. Use _.setUrlParams instead.')
+  return _.setUrlParams(params, url)
 }
 
 // Track Location
@@ -3879,17 +3918,23 @@ class Aether extends Model {
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Synchronizing...')
     }
-    _.each(this.changed, function (event, key) {
-      if (typeof key === 'string' && key.indexOf('.') !== -1) {
-        key = _.first(key.split('.'))
-        event = this.get(key)
+    if (_.isEmpty(this.data)) {
+      console.warn('synchronize: no data!')
+    }
+    _.each(this.data, function (event, key) {
+      if (event.listening || !event.enabled) {
+        return
       }
-      if (!event.code && event.enabled) {
-        (event.target || window).addEventListener(event.hook, event.method, this.passiveSupported ? { passive: true } : false)
-        event.code = 1
-      } else if (event.code && !event.enabled) {
-        event.code = 0
+      if (Stratus.Environment.get('viewPort')) {
+        console.warn('Aether does not support custom viewPorts:', Stratus.Environment.get('viewPort'))
       }
+      (event.target || window).addEventListener(event.hook, event.method,
+        this.passiveSupported ? {
+          capture: true,
+          passive: true
+        } : false
+      )
+      event.listening = true
     }, this)
   }
   /**
@@ -3923,6 +3968,9 @@ class Chronos extends Model {
   synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Synchronizing...')
+    }
+    if (_.isEmpty(this.changed)) {
+      console.warn('synchronize: empty changeset!')
     }
     _.each(this.changed, function (job, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {

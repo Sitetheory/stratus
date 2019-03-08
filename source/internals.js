@@ -854,31 +854,8 @@ Stratus.Internals.Resource = function (path, elementId) {
  * @constructor
  */
 Stratus.Internals.SetUrlParams = function (params, url) {
-  // FIXME: This can't handle anchors correctly
-  if (typeof url === 'undefined') {
-    url = window.location.href
-  }
-  if (typeof params === 'undefined') {
-    return url
-  }
-  let lets = {}
-  let glue = url.indexOf('?')
-  let anchor = url.indexOf('#')
-  let tail = ''
-  if (anchor >= 0) {
-    tail = url.substring(anchor, url.length)
-    url = url.substring(0, anchor)
-  }
-  url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    lets[key] = value
-  })
-  lets = _.extend(lets, params)
-  return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-    _.reduce(_.map(lets, function (value, key) {
-      return key + '=' + value
-    }), function (memo, value) {
-      return memo + '&' + value
-    }) + tail)
+  console.warn('Stratus.Internals.SetUrlParams is deprecated. Use _.setUrlParams instead.')
+  return _.setUrlParams(params, url)
 }
 
 // Track Location

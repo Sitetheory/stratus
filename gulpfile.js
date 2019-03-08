@@ -9,6 +9,10 @@ const del = require('del')
 const vinylPaths = require('vinyl-paths')
 const _ = require('underscore')
 
+// Unit Testing
+const mocha = require('mocha')
+const chai = require('chai')
+
 // Task Specific
 const babel = require('gulp-babel')
 const standard = require('gulp-standard')

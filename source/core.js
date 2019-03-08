@@ -62,17 +62,23 @@ class Aether extends Model {
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Synchronizing...')
     }
-    _.each(this.changed, function (event, key) {
-      if (typeof key === 'string' && key.indexOf('.') !== -1) {
-        key = _.first(key.split('.'))
-        event = this.get(key)
+    if (_.isEmpty(this.data)) {
+      console.warn('synchronize: no data!')
+    }
+    _.each(this.data, function (event, key) {
+      if (event.listening || !event.enabled) {
+        return
       }
-      if (!event.code && event.enabled) {
-        (event.target || window).addEventListener(event.hook, event.method, this.passiveSupported ? { passive: true } : false)
-        event.code = 1
-      } else if (event.code && !event.enabled) {
-        event.code = 0
+      if (Stratus.Environment.get('viewPort')) {
+        console.warn('Aether does not support custom viewPorts:', Stratus.Environment.get('viewPort'))
       }
+      (event.target || window).addEventListener(event.hook, event.method,
+        this.passiveSupported ? {
+          capture: true,
+          passive: true
+        } : false
+      )
+      event.listening = true
     }, this)
   }
   /**
@@ -106,6 +112,9 @@ class Chronos extends Model {
   synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Synchronizing...')
+    }
+    if (_.isEmpty(this.changed)) {
+      console.warn('synchronize: empty changeset!')
     }
     _.each(this.changed, function (job, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {
