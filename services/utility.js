@@ -1,4 +1,4 @@
-/* global define, location */
+/* global define */
 
 // TODO: Separate these functions out, into more narrow services
 (function (root, factory) {
@@ -124,25 +124,8 @@
            * @returns {*}
            */
           function cleanedPhoneNumber (phoneNumber) {
-            var keepNumberOnlyRegex = /\D+/g
+            const keepNumberOnlyRegex = /\D+/g
             return phoneNumber.replace(keepNumberOnlyRegex, '')
-          }
-
-          /**
-           * Get more params which is shown after '#' symbol in url.
-           * @return {*}
-           */
-          function moreParams () {
-            var params = {}
-            angular.forEach(location.hash.split('#'), function (param) {
-              if (param) {
-                var digest = param.split('/')
-                if (digest.length > 1) {
-                  params[digest[0]] = digest[1]
-                }
-              }
-            })
-            return params
           }
 
           /**
@@ -198,7 +181,6 @@
             generateStrengthBar: generateStrengthBar,
             getUrlParams: getUrlParams,
             cleanedPhoneNumber: cleanedPhoneNumber,
-            moreParams: moreParams,
             RESPONSE_CODE: RESPONSE_CODE,
             copyToClipboard: copyToClipboard,
             sendRequest: sendRequest,

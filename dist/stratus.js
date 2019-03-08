@@ -537,21 +537,79 @@ _.mixin({
     return shallow
   },
 
+  /**
+   * Get more params which is shown after anchor '#' anchor in the url.
+   * @return {*}
+   */
+  getAnchorParams: function (key, url) {
+    let vars = {}
+    let tail = window.location.hash
+    if (_.isEmpty(tail)) {
+      return vars
+    }
+    const digest = /([a-zA-Z]+)(?:\/([0-9]+))?/g
+    let match
+    while ((match = digest.exec(tail))) {
+      vars[match[1]] = _.hydrate(match[2])
+    }
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
   // Get a specific value or all values located in the URL
   /**
-   * TODO: This is somewhat farther than underscore's ideology and should be
-   * moved into Stratus.Internals
    * @param key
-   * @param href
+   * @param url
    * @returns {{}}
    */
-  getUrlParams: function (key, href) {
-    let lets = {}
-    href = typeof href !== 'undefined' ? href : window.location.href
-    href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-      lets[key] = value
+  getUrlParams: function (key, url) {
+    const vars = {}
+    if (url === undefined) {
+      url = window.location.href
+    }
+    const anchor = url.indexOf('#')
+    if (anchor >= 0) {
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = _.hydrate(value)
     })
-    return (typeof key !== 'undefined' && key) ? lets[key] : lets
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
+  // This function digests URLs into an object containing their respective
+  // values, which will be merged with requested parameters and formulated
+  // into a new URL.
+  /**
+   * @param params
+   * @param url
+   * @returns {string|*}
+   * @constructor
+   */
+  setUrlParams: function (params, url) {
+    if (url === undefined) {
+      url = window.location.href
+    }
+    if (params === undefined) {
+      return url
+    }
+    let vars = {}
+    const glue = url.indexOf('?')
+    const anchor = url.indexOf('#')
+    let tail = ''
+    if (anchor >= 0) {
+      tail = url.substring(anchor, url.length)
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = value
+    })
+    vars = _.extend(vars, params)
+    return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
+      _.map(vars, function (value, key) {
+        return key + '=' + _.dehydrate(value)
+      }).reduce(function (memo, value) {
+        return memo + '&' + value
+      }) + tail)
   },
 
   // Ensure all values in an array or object are true
@@ -883,21 +941,35 @@ console.warn('I\'m rebuilding the Event system, so this may break some stuff!')
 class EventManager {
   constructor () {
     this.name = 'EventManager'
-    this.register = []
+    this.listeners = {}
   }
 
-  off () {
-    console.log('on:', arguments)
+  off (name, callback, context) {
+    console.log('off:', arguments)
     return this
   }
 
-  on () {
-    console.log('on:', arguments)
+  on (name, callback, context) {
+    let event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
+      enabled: true,
+      hook: name,
+      method: callback,
+      scope: context || null
+    })
+    name = event.hook
+    if (!(name in this.listeners)) {
+      this.listeners[name] = []
+    }
+    this.listeners[name].push(event)
     return this
   }
 
-  trigger () {
-    console.log('trigger:', arguments)
+  trigger (name, data) {
+    if (name in this.listeners) {
+      this.listeners[name].forEach(function (event) {
+        event.method.call(event.scope || this, data)
+      })
+    }
     return this
   }
 }
@@ -1227,7 +1299,7 @@ let triggerEvents = function (events, args) {
 Stratus.Events.bind = Stratus.Events.on
 Stratus.Events.unbind = Stratus.Events.off
 
-/* global Stratus, _, EventTarget */
+/* global Stratus, _, EventTarget, EventManager */
 
 // Error Prototype
 // ---------------
@@ -1272,17 +1344,21 @@ Stratus.Prototypes.Dispatch = function () {
  * @returns {Stratus.Prototypes.Event}
  * @constructor
  */
+// TODO: Update to ES6
 Stratus.Prototypes.Event = function (options) {
   this.enabled = false
   this.hook = null
   this.target = null
   this.scope = null
+  this.debounce = null
+  this.throttle = null
   this.method = function () {
     console.warn('No method:', this)
   }
   if (options && typeof options === 'object') {
     _.extend(this, options)
   }
+  this.listening = false
   this.invalid = false
   if (typeof this.hook !== 'string') {
     console.error('Unsupported hook:', this.hook)
@@ -1332,87 +1408,102 @@ Stratus.Prototypes.Job = function (time, method, scope) {
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-/**
- * @param data
- * @returns {Stratus.Prototypes.Model}
- * @constructor
- */
-Stratus.Prototypes.Model = function (data) {
-  /**
-   * @type {{}}
-   */
-  this.data = {}
-  /**
-   * @type {{}}
-   */
-  this.attributes = this.data
-  /**
-   * @type {{}}
-   */
-  this.temps = {}
+class Model extends EventManager {
+  constructor (data, options) {
+    super()
+    this.name = 'Model'
+
+    /**
+     * @type {{}}
+     */
+    this.data = {}
+    /**
+     * @type {{}}
+     */
+    this.temps = {}
+
+    // Evaluate object or array
+    if (data) {
+      // TODO: Evaluate object or array into a string of sets
+      /* *
+        data = _.defaults(_.extend({}, defaults, data), defaults)
+        this.set(data, options)
+        /* */
+      _.extend(this.data, data)
+    }
+  }
+
   /**
    * @param options
    * @returns {*}
    */
-  this.toObject = function (options) {
+  toObject (options) {
     return _.clone(this.data)
   }
+
   /**
    * @param options
    * @returns {{meta: (*|string|{type, data}), payload: *}}
    */
-  this.toJSON = function (options) {
+  toJSON (options) {
     return _.clone(this.data)
   }
+
   /**
    * @param callback
    * @param scope
    */
-  this.each = function (callback, scope) {
+  each (callback, scope) {
     _.each.apply((scope === undefined) ? this : scope,
       _.union([this.data], arguments))
   }
+
   /**
    * @param attr
    * @returns {*}
    */
-  this.get = function (attr) {
+  get (attr) {
     return _.reduce(typeof attr === 'string' ? attr.split('.') : [],
       function (attrs, a) {
         return attrs && attrs[a]
       }, this.data)
   }
+
   /**
    * @param attr
    * @returns {boolean}
    */
-  this.has = function (attr) {
+  has (attr) {
     return (typeof this.get(attr) !== 'undefined')
   }
+
   /**
    * @returns {number}
    */
-  this.size = function () {
+  size () {
     return _.size(this.data)
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.set = function (attr, value) {
+  set (attr, value) {
     if (attr && typeof attr === 'object') {
+      let that = this
       _.each(attr, function (value, attr) {
-        this.setAttribute(attr, value)
+        that.setAttribute(attr, value)
       }, this)
     } else {
       this.setAttribute(attr, value)
     }
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.setAttribute = function (attr, value) {
+  setAttribute (attr, value) {
     if (typeof attr === 'string') {
       if (attr.indexOf('.') !== -1) {
         let reference = this.data
@@ -1435,19 +1526,22 @@ Stratus.Prototypes.Model = function (data) {
             (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
             reference[link] = value
             this.trigger('change:' + attr, this)
+            this.trigger('change', this)
           }
         }
       } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
         this.data[attr] = value
         this.trigger('change:' + attr, this)
+        this.trigger('change', this)
       }
     }
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.temp = function (attr, value) {
+  temp (attr, value) {
     this.set(attr, value)
     if (attr && typeof attr === 'object') {
       _.each(attr, function (value, attr) {
@@ -1457,12 +1551,13 @@ Stratus.Prototypes.Model = function (data) {
       this.temps[attr] = value
     }
   }
+
   /**
    * @param attr
    * @param value
    * @returns {*}
    */
-  this.add = function (attr, value) {
+  add (attr, value) {
     // Ensure a placeholder exists
     if (!this.has(attr)) {
       this.set(attr, [])
@@ -1475,12 +1570,13 @@ Stratus.Prototypes.Model = function (data) {
       return value
     }
   }
+
   /**
    * @param attr
    * @param value
    * @returns {*}
    */
-  this.remove = function (attr, value) {
+  remove (attr, value) {
     if (value === undefined) {
       // delete this.data[attr];
     } else {
@@ -1490,30 +1586,33 @@ Stratus.Prototypes.Model = function (data) {
     }
     return this.data[attr]
   }
+
   /**
    * @param attr
    * @returns {number}
    */
-  this.iterate = function (attr) {
+  iterate (attr) {
     if (!this.has(attr)) {
       this.set(attr, 0)
     }
     return ++this.data[attr]
   }
+
   /**
    * Clear all internal data
    */
-  this.clear = function () {
+  clear () {
     for (let attribute in this.data) {
       if (this.data.hasOwnProperty(attribute)) {
         delete this.data[attribute]
       }
     }
   }
+
   /**
    * Clear all temporary data
    */
-  this.clearTemp = function () {
+  clearTemp () {
     for (let attribute in this.temps) {
       if (this.temps.hasOwnProperty(attribute)) {
         // delete this.data[attribute];
@@ -1522,35 +1621,9 @@ Stratus.Prototypes.Model = function (data) {
       }
     }
   }
-
-  /**
-   * @returns {boolean}
-   */
-  this.initialize = function () {
-    return true
-  }
-
-  // Evaluate object or array
-  if (data) {
-    // TODO: Evaluate object or array into a string of sets
-    /*
-         attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
-         this.set(attrs, options);
-         */
-    _.extend(this.data, data)
-  }
-
-  // Add Event Logic
-  _.extend(this, Stratus.Events)
-
-  // Initialize
-  this.reinitialize = function () {
-    this.initialize.apply(this, arguments)
-  }.bind(this)
-  this.reinitialize()
-
-  return this
 }
+
+Stratus.Prototypes.Model = Model
 
 // Internal Collections
 Stratus.Collections = new Stratus.Prototypes.Model()
@@ -2560,31 +2633,8 @@ Stratus.Internals.Resource = function (path, elementId) {
  * @constructor
  */
 Stratus.Internals.SetUrlParams = function (params, url) {
-  // FIXME: This can't handle anchors correctly
-  if (typeof url === 'undefined') {
-    url = window.location.href
-  }
-  if (typeof params === 'undefined') {
-    return url
-  }
-  let lets = {}
-  let glue = url.indexOf('?')
-  let anchor = url.indexOf('#')
-  let tail = ''
-  if (anchor >= 0) {
-    tail = url.substring(anchor, url.length)
-    url = url.substring(0, anchor)
-  }
-  url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    lets[key] = value
-  })
-  lets = _.extend(lets, params)
-  return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-    _.reduce(_.map(lets, function (value, key) {
-      return key + '=' + value
-    }), function (memo, value) {
-      return memo + '&' + value
-    }) + tail)
+  console.warn('Stratus.Internals.SetUrlParams is deprecated. Use _.setUrlParams instead.')
+  return _.setUrlParams(params, url)
 }
 
 // Track Location
@@ -3804,7 +3854,7 @@ Stratus.Loaders.Angular = function () {
   }
 }
 
-/* global Stratus, _, Backbone, $, bootbox */
+/* global Stratus, _, Backbone, $, bootbox, Model */
 
 // Instance Clean
 // --------------
@@ -3841,12 +3891,12 @@ Stratus.Instances.Clean = function (instances) {
 // --------------
 
 // This model handles all event related logic.
-Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
-  passiveSupported: false,
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Aether extends Model {
+  constructor (data, options) {
+    super(data, options)
+
+    this.passiveSupported = false
+
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Invoked!')
     }
@@ -3863,28 +3913,34 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
       that.passiveSupported = false
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Synchronizing...')
     }
-    _.each(this.changed, function (event, key) {
-      if (typeof key === 'string' && key.indexOf('.') !== -1) {
-        key = _.first(key.split('.'))
-        event = this.get(key)
+    if (_.isEmpty(this.data)) {
+      console.warn('synchronize: no data!')
+    }
+    _.each(this.data, function (event, key) {
+      if (event.listening || !event.enabled) {
+        return
       }
-      if (!event.code && event.enabled) {
-        (event.target || window).addEventListener(event.hook, event.method, this.passiveSupported ? { passive: true } : false)
-        event.code = 1
-      } else if (event.code && !event.enabled) {
-        event.code = 0
+      if (Stratus.Environment.get('viewPort')) {
+        console.warn('Aether does not support custom viewPorts:', Stratus.Environment.get('viewPort'))
       }
+      (event.target || window).addEventListener(event.hook, event.method,
+        this.passiveSupported ? {
+          capture: true,
+          passive: true
+        } : false
+      )
+      event.listening = true
     }, this)
-  },
+  }
   /**
    * @param options
    */
-  add: function (options) {
+  listen (options) {
     let uid = null
     let event = new Stratus.Prototypes.Event(options)
     if (!event.invalid) {
@@ -3894,26 +3950,27 @@ Stratus.Aether = _.extend(new Stratus.Prototypes.Model(), {
     }
     return uid
   }
-})
-Stratus.Aether.reinitialize()
+}
+Stratus.Aether = new Aether()
 
 // Chronos System
 // --------------
 
 // This model handles all time related jobs.
-Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Chronos extends Model {
+  constructor (data, options) {
+    super(data, options)
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Invoked!')
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Synchronizing...')
+    }
+    if (_.isEmpty(this.changed)) {
+      console.warn('synchronize: empty changeset!')
     }
     _.each(this.changed, function (job, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {
@@ -3929,14 +3986,14 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         job.code = 0
       }
     }, this)
-  },
+  }
   /**
    * @param time
    * @param method
    * @param scope
    * @returns {string}
    */
-  add: function (time, method, scope) {
+  queue (time, method, scope) {
     let uid = null
     let job = new Stratus.Prototypes.Job(time, method, scope)
     if (job.time !== null && typeof job.method === 'function') {
@@ -3945,35 +4002,35 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
       Stratus.Instances[uid] = job
     }
     return uid
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  enable: function (uid) {
+  enable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', true)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  disable: function (uid) {
+  disable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', false)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @param value
    * @returns {boolean|*}
    */
-  toggle: function (uid, value) {
+  toggle (uid, value) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled',
@@ -3981,8 +4038,8 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
     }
     return success
   }
-})
-Stratus.Chronos.reinitialize()
+}
+Stratus.Chronos = new Chronos()
 
 // Post Message Handling
 // ---------------------

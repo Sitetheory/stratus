@@ -10,8 +10,7 @@
       'stratus',
       'underscore',
       'angular',
-      'angular-material',
-      'stratus.services.utility'
+      'angular-material'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -27,8 +26,7 @@
         '$mdToast',
         '$rootScope',
         '$log',
-        'utility',
-        function ($q, $http, $mdToast, $rootScope, $log, utility) {
+        function ($q, $http, $mdToast, $rootScope, $log) {
           return function (options, attributes) {
             // Environment
             this.target = null
@@ -210,11 +208,7 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      if (prototype.url.includes('?')) {
-                        prototype.url += '&'
-                      } else {
-                        prototype.url += '?'
-                      }
+                      prototype.url += prototype.url.includes('?') ? '&' : '?'
                       prototype.url += that.serialize(data)
                     }
                   } else {
@@ -504,8 +498,8 @@
              * @return boolean
              */
             this.isNewVersion = function (newData) {
-              return !_.isEmpty(utility.moreParams()) && newData.version &&
-                parseInt(utility.moreParams().version) !== newData.version.id
+              return !_.isEmpty(this.more()) && newData.version &&
+                parseInt(_.getAnchorParams('version')) !== newData.version.id
             }
 
             /**
@@ -624,27 +618,28 @@
              * @returns {*}
              */
             this.pluck = function (attribute) {
-              if (typeof attribute === 'string' &&
-                attribute.indexOf('[].') > -1) {
-                const request = attribute.split('[].')
-                if (request.length > 1) {
-                  attribute = that.get(request[0])
-                  if (attribute && angular.isArray(attribute)) {
-                    const list = []
-                    attribute.forEach(function (element) {
-                      if (angular.isObject(element) && request[1] in element) {
-                        list.push(element[request[1]])
-                      }
-                    })
-                    if (list.length) {
-                      return list
-                    }
-                  }
-                }
-              } else {
+              if (typeof attribute !== 'string' || attribute.indexOf('[].') === -1) {
                 return that.get(attribute)
               }
-              return undefined
+              const request = attribute.split('[].')
+              if (request.length <= 1) {
+                return undefined
+              }
+              attribute = that.get(request[0])
+              if (!attribute || !angular.isArray(attribute)) {
+                return undefined
+              }
+              const list = []
+              attribute.forEach(function (element) {
+                if (!angular.isObject(element) || !(request[1] in element)) {
+                  return
+                }
+                list.push(element[request[1]])
+              })
+              if (!list.length) {
+                return undefined
+              }
+              return list
             }
 
             /**

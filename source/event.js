@@ -8,21 +8,35 @@ console.warn('I\'m rebuilding the Event system, so this may break some stuff!')
 class EventManager {
   constructor () {
     this.name = 'EventManager'
-    this.register = []
+    this.listeners = {}
   }
 
-  off () {
-    console.log('on:', arguments)
+  off (name, callback, context) {
+    console.log('off:', arguments)
     return this
   }
 
-  on () {
-    console.log('on:', arguments)
+  on (name, callback, context) {
+    let event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
+      enabled: true,
+      hook: name,
+      method: callback,
+      scope: context || null
+    })
+    name = event.hook
+    if (!(name in this.listeners)) {
+      this.listeners[name] = []
+    }
+    this.listeners[name].push(event)
     return this
   }
 
-  trigger () {
-    console.log('trigger:', arguments)
+  trigger (name, data) {
+    if (name in this.listeners) {
+      this.listeners[name].forEach(function (event) {
+        event.method.call(event.scope || this, data)
+      })
+    }
     return this
   }
 }
