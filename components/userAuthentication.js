@@ -29,6 +29,7 @@
   // This component intends to allow editing of various selections depending
   // on context.
   Stratus.Components.UserAuthentication = {
+    // TODO: determine if these are necessary. these one way bindings don't appear to be used on the DOM, i.e. updated on DOM
     bindings: {
       isLoggedIn: '<',
       email: '<'
@@ -53,41 +54,52 @@
 
       // Events
       $ctrl.$onInit = function () {
+        // regular expression patterns
+        $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i
+        $ctrl.phoneRegex = /^[\d+\-().]+$/
+
         // variables
         $ctrl.signinData = {}
         $ctrl.resetPassData = {}
         $ctrl.allowSubmit = false
-        $ctrl.socialMode = false // in this mode, the user just need to
-        // input email and submit to singleSignOn
-        // components
+        $ctrl.socialMode = false // in this mode, the user just need to input email and submit to singleSignOn components
         $ctrl.loading = false
+        $ctrl.message = null
+        $ctrl.isRequestSuccess = false
         $ctrl.signInIndex = 0
         $ctrl.signUpIndex = 1
-        $ctrl.emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/i
-        $ctrl.phoneRegex = /^[\d+\-().]+$/
-        $ctrl.enabledForgotPassForm = false
-        $ctrl.isHandlingUrl = utility.getUrlParams().type !== null
-        $ctrl.passwordReset = $ctrl.isLoggedIn ? !$ctrl.isHandlingUrl : false
-        $ctrl.enabledResetPassForm = utility.getUrlParams().type === 'reset-password'
-        $ctrl.enabledVerificationForm = utility.getUrlParams().type === 'verify'
+        $ctrl.selectedIndex = $ctrl.signInIndex
+        // TODO: make sure these are used
         $ctrl.forgotPassText = 'Password Trouble?'
         $ctrl.resetPassHeaderText = 'Reset Your Account Password'
         $ctrl.changePassBtnText = 'Reset Password'
-        $ctrl.selectedIndex = $ctrl.signInIndex
-        $ctrl.message = null
-        $ctrl.isRequestSuccess = false
-        if ($ctrl.passwordReset) {
-          $ctrl.resetPassHeaderEmail = $ctrl.email
-        } else if (utility.getUrlParams().type === 'reset-password') {
-          $ctrl.resetPassHeaderEmail = utility.getUrlParams().email
-        } else {
-          $ctrl.resetPassHeaderEmail = null
-        }
+
+        // forms to show
+        $ctrl.isHandlingUrl = _.getUrlParams('type') !== null
+        $ctrl.passwordReset = $ctrl.isLoggedIn ? !$ctrl.isHandlingUrl : false
+        $ctrl.enabledForgotPassForm = false
+        $ctrl.enabledResetPassForm = _.getUrlParams('type') === 'passwordReset'
+        $ctrl.enabledVerificationForm = _.getUrlParams('type') === 'verify'
+
+        // TODO: remove since we don't use this anymore
+        /*
+                if ($ctrl.passwordReset) {
+
+                    $ctrl.resetPassHeaderEmail = $ctrl.email
+                } else if (_.getUrlParams("type") === 'reset-password') {
+                    $ctrl.resetPassHeaderEmail = _.getUrlParams("email")
+                } else {
+                    $ctrl.resetPassHeaderEmail = null
+                }
+                */
+        $ctrl.resetPassHeaderEmail = null
+
         $ctrl.duplicateMessge = '<span>There is already an account registered to this email, ' +
                     'please <a href="#" ng-click="$ctrl.onTabSelected($ctrl.signInIndex)">' +
-                    'Sign In</a> and then create a new site from the control panel.</span>'
+                    'Sign In</a>.</span>'
 
         // methods
+        $ctrl.doVerifyAccount = doVerifyAccount
         $ctrl.showForgotPassForm = showForgotPassForm
         $ctrl.doSignIn = doSignIn
         $ctrl.doSignUp = doSignUp
@@ -95,7 +107,6 @@
         $ctrl.doResetPass = doResetPass
         $ctrl.onTabSelected = onTabSelected
         $ctrl.backToLogin = backToLogin
-        $ctrl.verifyAccount = verifyAccount
         $ctrl.safeMessage = safeMessage
 
         // data sets
@@ -118,20 +129,23 @@
         }
       }), function (newValue, oldValue) {
         if (newValue !== undefined && newValue !== oldValue) {
-          let strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
-          $ctrl.progressBarClass = strengthBar.progressBarClass
-          $ctrl.progressBarValue = strengthBar.progressBarValue
-          if (!utility.validPassword(newValue)) {
-            $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number. Consider using a unique "pass phrase".'
-            $ctrl.allowSubmit = false
-          } else {
-            $ctrl.message = null
-            $ctrl.allowSubmit = true
-            if ($ctrl.resetPassData.confirm_password !== undefined && $ctrl.resetPassData.confirm_password !== newValue) {
-              $ctrl.message = 'Your passwords did not match.'
-              $ctrl.allowSubmit = false
-            }
-          }
+          // TODO: fix strength bar
+          /*
+                    let strengthBar = utility.generateStrengthBar(newValue, zxcvbn)
+                    $ctrl.progressBarClass = strengthBar.progressBarClass
+                    $ctrl.progressBarValue = strengthBar.progressBarValue
+                    if (!utility.validPassword(newValue)) {
+                        $ctrl.message = 'Your password must be at 8 or more characters and contain at least one lower and uppercase letter and one number. Consider using a unique "pass phrase".'
+                        $ctrl.allowSubmit = false
+                    } else {
+                        $ctrl.message = null
+                        $ctrl.allowSubmit = true
+                        if ($ctrl.resetPassData.confirm_password !== undefined && $ctrl.resetPassData.confirm_password !== newValue) {
+                            $ctrl.message = 'Your passwords did not match.'
+                            $ctrl.allowSubmit = false
+                        }
+                    }
+                    */
         }
       })
 
@@ -150,127 +164,127 @@
           phone: utility.cleanedPhoneNumber(signupData.phone)
         }
 
-        $ctrl.user.save(data).then(function (response) {
-          $ctrl.loading = false
-          if (utility.getStatus(response).code ===
-                        utility.RESPONSE_CODE.success) {
-            return ($window.location.href = '/')
-          } else {
+        $ctrl.user.save(data)
+          .then(function (data) {
+            $ctrl.loading = false
+            $ctrl.isRequestSuccess = true
+            $window.location.href = '/'
+          })
+          .catch(function (error, response) {
+            $ctrl.loading = false
+            let status = (response.meta && _.isArray(response.meta.status) && response.meta.status.length) ? _.first(response.meta.status) : null
             $ctrl.isRequestSuccess = false
-            let status = utility.getStatus(response)
             $ctrl.message = (status.code === 'DUPLICATE')
               ? $ctrl.duplicateMessge
               : status.message
-          }
-        })
+            if (error) {
+              console.error(error.stack)
+            }
+          })
       }
 
       // Define functional methods
-      function verifyAccount () {
-        // FIXME: This runs from an ng-init
-        resetDefaultSettings()
+      function doVerifyAccount () {
         $ctrl.loading = true
+
+        resetDefaultSettings()
+
         // Custom API Action is Required
-        $ctrl.user.meta.temp('api.options.action', 'Verify')
-        $ctrl.user.set('token', utility.getUrlParams().token)
-        $ctrl.user.save().then(function () {
-          $ctrl.loading = false
-          $ctrl.message = _.first($ctrl.user.meta.get('status')).message
-          $ctrl.enabledVerificationForm = false
-          $ctrl.isRequestSuccess = !$ctrl.user.error
-          if (!$ctrl.user.error) {
+        $ctrl.login.meta.temp('api.options.action', 'Verify')
+        $ctrl.login.set('token', _.getUrlParams('token'))
+
+        $ctrl.login.save()
+          .then(function (data) {
+            $ctrl.loading = false
+            let status = (response.meta && _.isArray(response.meta.status) && response.meta.status.length) ? _.first(response.meta.status) : null
+            console.log(response);
+
+            $ctrl.message = status.message
+            console.log('STATUS: '+status.message)
+            $ctrl.enabledVerificationForm = false
+            $ctrl.isRequestSuccess = true
             $ctrl.enabledResetPassForm = true
             $ctrl.resetPassHeaderText = 'Please create a new secure password for your account.'
             $ctrl.changePassBtnText = 'Update password'
-          }
-        })
+          })
+          .catch(function (error, response) {
+            $ctrl.loading = false
+            console.log(response);
+            let status = (response.meta && _.isArray(response.meta.status) && response.meta.status.length) ? _.first(response.meta.status) : null
+            $ctrl.isRequestSuccess = false
+            $ctrl.message = status.message
+            console.log('ERROR: '+$ctrl.message)
+            if (error) {
+              console.error(error.stack)
+            }
+          })
       }
       // verifyAccount returns the User model which allows us to do a save (PUT) action here on the /Api/User/{ID}.
       function doResetPass (resetPassData) {
         $ctrl.loading = true
         resetDefaultSettings()
-        /*
-                let requestType = utility.getUrlParams().type === 'verify'
-                    ? 'change-password'
-                    : utility.getUrlParams().type
-                let data = {
-                    type: requestType,
-                    email: utility.getUrlParams().email,
-                    token: utility.getUrlParams().token,
-                    password: resetPassData.password
-                }
-
-                if ($ctrl.passwordReset) {
-                    data.email = $ctrl.email
-                    data.type = 'update-password'
-                    data.confirm_password = resetPassData.confirm_password
-                }
-                $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPassword')
-                */
         // reset meta because we want a normal PUT not a custom API action
         $ctrl.user.meta.set('api', {})
         $ctrl.user.data.password = resetPassData.password
-
-        $ctrl.user.save().then(function (response) {
-          $ctrl.loading = false
-          if (utility.getStatus(response).code ===
-                        utility.RESPONSE_CODE.success) {
-            $window.location.href = $window.location.origin +
-                            '/Member/Sign-In'
-          } else {
+        $ctrl.user.save()
+          .then(function (data) {
+            $ctrl.enabledResetPassForm = false
+            $ctrl.resetPassHeaderText = null
+            $ctrl.message = 'Your password has been reset successfully!'
+            $window.location.href = '/'
+          })
+          .catch(function (error, response) {
+            let status = (response.meta && _.isArray(response.meta.status) && response.meta.status.length) ? _.first(response.meta.status) : null
             $ctrl.isRequestSuccess = false
-            $ctrl.message = utility.getStatus(response).message
-          }
-        })
+            $ctrl.message = status.message
+            if (error) {
+              console.error(error.stack)
+            }
+          })
       }
 
       function doSignIn (signInData) {
         $ctrl.loading = true
         resetDefaultSettings()
-
         $ctrl.login.set('email', signInData.email)
         $ctrl.login.set('password', signInData.password)
-
-        $ctrl.login.save().then(function (response) {
-          $ctrl.loading = false
-          if (!$ctrl.login.error) {
-            return ($window.location.href = '/')
-          } else {
+        $ctrl.login.save()
+          .then(function (data) {
+            $ctrl.loading = false
+            $window.location.href = '/'
+          })
+          .catch(function (error, response) {
+            $ctrl.loading = false
+            let status = (response.meta && _.isArray(response.meta.status) && response.meta.status.length) ? _.first(response.meta.status) : null
             $ctrl.isRequestSuccess = false
-            $ctrl.message = _.first($ctrl.login.meta.get('status')).message
-          }
-        })
+            $ctrl.message = status.message
+            if (error) {
+              console.error(error.stack)
+            }
+          })
       }
 
       function doRequestPasswordReset (resetPassData) {
         $ctrl.loading = true
         resetDefaultSettings()
 
-        $ctrl.user.meta.temp('api.options.action', 'RequestPasswordReset')
+        $ctrl.login.meta.temp('api.options.action', 'RequestPasswordReset')
 
-        $ctrl.user.set('email', resetPassData.email)
-        $ctrl.user.set('phone', utility.cleanedPhoneNumber(resetPassData.phone))
-        /*
-                let data = {
-                    type: 'reset-password-request',
-                    email: resetPassData.email,
-                    phone: utility.cleanedPhoneNumber(resetPassData.phone)
-                }
-                $ctrl.user.meta.temp('api.options.apiSpecialAction', 'ResetPasswordRequest')
-                */
-        console.log('reset password request')
-        console.log(resetPassData)
-
-        $ctrl.user.save().then(function (response) {
-          $ctrl.loading = false
-          if (utility.getStatus(response).code ===
-                        utility.RESPONSE_CODE.success) {
+        $ctrl.login.set('email', resetPassData.email)
+        $ctrl.login.set('phone', utility.cleanedPhoneNumber(resetPassData.phone))
+        $ctrl.login.save()
+          .then(function (data) {
+            $ctrl.loading = false
             $ctrl.isRequestSuccess = true
-          } else {
+          })
+          .catch(function (error, response) {
+            $ctrl.loading = false
+            let status = (response.meta && _.isArray(response.meta.status) && response.meta.status.length) ? _.first(response.meta.status) : null
             $ctrl.isRequestSuccess = false
-          }
-          $ctrl.message = utility.getStatus(response).message
-        })
+            if (error) {
+              console.error(error.stack)
+            }
+          })
       }
 
       // Trigger request from Social sign on

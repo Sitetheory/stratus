@@ -167,12 +167,23 @@
               </div>
             </form>
 
-            <div class="verify" ng-if="$ctrl.enabledVerificationForm">
-              <h3>Verifying your account...</h3>
-              <div class="text-center" ng-init="$ctrl.verifyAccount()">
-                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            <form class="form-verify-account" name="verifyAccountForm"
+                  ng-submit="$ctrl.doVerifyAccount()"
+                  ng-if="$ctrl.enabledVerificationForm">
+
+              <div class="show-verifying" ng-hide="!$ctrl.loading">
+                <h3>Verifying your account...</h3>
+                <div class="text-center">
+                  <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+                </div>
               </div>
-            </div>
+              <div class="form-column submit-column" ng-disable="$ctrl.loading">
+                <h3>Please click the button below to verify your account.</h3>
+                <md-button type="submit" class="btn">
+                  Verify Account
+                </md-button>
+              </div>
+            </form>
           </div>
         </md-content>
       </md-tab>
