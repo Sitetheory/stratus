@@ -309,21 +309,79 @@ _.mixin({
     return shallow
   },
 
+  /**
+   * Get more params which is shown after anchor '#' anchor in the url.
+   * @return {*}
+   */
+  getAnchorParams: function (key, url) {
+    let vars = {}
+    let tail = window.location.hash
+    if (_.isEmpty(tail)) {
+      return vars
+    }
+    const digest = /([a-zA-Z]+)(?:\/([0-9]+))?/g
+    let match
+    while ((match = digest.exec(tail))) {
+      vars[match[1]] = _.hydrate(match[2])
+    }
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
   // Get a specific value or all values located in the URL
   /**
-   * TODO: This is somewhat farther than underscore's ideology and should be
-   * moved into Stratus.Internals
    * @param key
-   * @param href
+   * @param url
    * @returns {{}}
    */
-  getUrlParams: function (key, href) {
-    let lets = {}
-    href = typeof href !== 'undefined' ? href : window.location.href
-    href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-      lets[key] = value
+  getUrlParams: function (key, url) {
+    const vars = {}
+    if (url === undefined) {
+      url = window.location.href
+    }
+    const anchor = url.indexOf('#')
+    if (anchor >= 0) {
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = _.hydrate(value)
     })
-    return (typeof key !== 'undefined' && key) ? lets[key] : lets
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
+  // This function digests URLs into an object containing their respective
+  // values, which will be merged with requested parameters and formulated
+  // into a new URL.
+  /**
+   * @param params
+   * @param url
+   * @returns {string|*}
+   * @constructor
+   */
+  setUrlParams: function (params, url) {
+    if (url === undefined) {
+      url = window.location.href
+    }
+    if (params === undefined) {
+      return url
+    }
+    let vars = {}
+    const glue = url.indexOf('?')
+    const anchor = url.indexOf('#')
+    let tail = ''
+    if (anchor >= 0) {
+      tail = url.substring(anchor, url.length)
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = value
+    })
+    vars = _.extend(vars, params)
+    return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
+      _.map(vars, function (value, key) {
+        return key + '=' + _.dehydrate(value)
+      }).reduce(function (memo, value) {
+        return memo + '&' + value
+      }) + tail)
   },
 
   // Ensure all values in an array or object are true

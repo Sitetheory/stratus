@@ -1,4 +1,4 @@
-/* global Stratus, _, $, Backbone */
+/* global Stratus, _, jQuery, Backbone */
 
 /**
  * @param request
@@ -87,13 +87,13 @@ Stratus.Internals.Anchor = (function Anchor () {
           return !_.startsWith(event.currentTarget.hash, '#' + keyword)
         }, this)
         if (valid) {
-          if (typeof $ === 'function' && $.fn && typeof Backbone === 'object') {
-            let $target = $(event.currentTarget.hash)
+          if (typeof jQuery === 'function' && jQuery.fn && typeof Backbone === 'object') {
+            let $target = jQuery(event.currentTarget.hash)
             let anchor = event.currentTarget.hash.slice(1)
-            $target = ($target.length) ? $target : $('[name=' + anchor + ']')
+            $target = ($target.length) ? $target : jQuery('[name=' + anchor + ']')
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
-              $('html,body').animate({
+              jQuery('html,body').animate({
                 scrollTop: $target.offset().top
               }, 1000, function () {
                 Backbone.history.navigate(anchor)
@@ -225,8 +225,8 @@ Stratus.Internals.Convoy = function (convoy, query) {
         message: 'No Convoy defined for dispatch.'
       }, this))
     }
-    if (typeof $ === 'function' && $.ajax) {
-      $.ajax({
+    if (typeof jQuery === 'function' && jQuery.ajax) {
+      jQuery.ajax({
         type: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
@@ -341,6 +341,7 @@ Stratus.Internals.CssLoader = function (url) {
  * @returns {boolean}
  * @constructor
  */
+// FIXME: This would be better suited as a selector inside of Stratus.
 Stratus.Internals.GetColWidth = function (el) {
   if (typeof el === 'undefined' || !el) {
     return false
@@ -364,12 +365,13 @@ Stratus.Internals.GetColWidth = function (el) {
  * @returns {string}
  * @constructor
  */
+// FIXME: This would be better suited as non-jQuery, native logic in the selectors
 Stratus.Internals.GetScrollDir = function () {
-  let windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
+  let windowTop = jQuery(Stratus.Environment.get('viewPort') || window).scrollTop()
   let lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
-  let windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
-  let documentHeight = $(document).height()
+  let windowHeight = jQuery(Stratus.Environment.get('viewPort') || window).height()
+  let documentHeight = jQuery(document).height()
   /* */
 
   // return NULL if there is no scroll, otherwise up or down
@@ -384,6 +386,7 @@ Stratus.Internals.GetScrollDir = function () {
 // IsOnScreen()
 // ---------------
 // Check whether an element is on screen, returns true or false.
+// FIXME: This would be better suited as a selector inside of Stratus.
 /**
  * @param el
  * @param offset
@@ -395,8 +398,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   if (!el) {
     return false
   }
-  if (!(el instanceof $)) {
-    el = $(el)
+  if (!(el instanceof jQuery)) {
+    el = jQuery(el)
   }
   if (!el.length) {
     return false
@@ -406,8 +409,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
     partial = true
   }
   let viewPort = Stratus.Environment.get('viewPort') || window
-  let pageTop = $(viewPort).scrollTop()
-  let pageBottom = pageTop + $(viewPort).height()
+  let pageTop = jQuery(viewPort).scrollTop()
+  let pageBottom = pageTop + jQuery(viewPort).height()
   let elementTop = el.offset().top
   if (viewPort !== window) {
     elementTop += pageTop
@@ -517,7 +520,7 @@ Stratus.Internals.LoadImage = function (obj) {
     }, 500)
     return false
   }
-  let el = obj.el instanceof $ ? obj.el : $(obj.el)
+  let el = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
   if (!el.length) {
     setTimeout(function () {
       Stratus.Internals.LoadImage(obj)
@@ -584,7 +587,7 @@ Stratus.Internals.LoadImage = function (obj) {
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
           let visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-          let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
+          let $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
           // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
@@ -677,6 +680,10 @@ Stratus.Internals.LoadImage = function (obj) {
         el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       }
 
+      // FIXME: This is a mess that we shouldn't need to maintain.
+      // RegisterGroups should just use Native Logic instead of
+      // another level of abstraction.
+
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
     })
@@ -738,13 +745,13 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
         }
       })
       model.set('viewPortChange', false)
-      model.set('windowTop', $(Stratus.Environment.get('viewPort') || window).scrollTop())
+      model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
     }
   })
 
   // jQuery Binding
-  if (typeof $ === 'function' && $.fn) {
-    $(Stratus.Environment.get('viewPort') || window).scroll(function () {
+  if (typeof jQuery === 'function' && jQuery.fn) {
+    jQuery(Stratus.Environment.get('viewPort') || window).scroll(function () {
       /* *
       if (!Stratus.Environment.get('production')) {
         console.log('scrolling:', Stratus.Internals.GetScrollDir())
@@ -756,7 +763,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
     })
 
     // Resizing can change what's on screen so we need to check the scrolling
-    $(Stratus.Environment.get('viewPort') || window).resize(function () {
+    jQuery(Stratus.Environment.get('viewPort') || window).resize(function () {
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
@@ -766,6 +773,11 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
   // Run Once initially
   Stratus.Environment.set('viewPortChange', true)
 })
+
+// FIXME: This logic above needs to be specific to a particular component or controller.
+// It can be abstracted into an underscore function or something, but this currently is
+// a bit ridiculous to maintain as a secondary black box.  Utility functions are supposed
+// to be simple and reusable functions.
 
 // Internal Rebase Function
 // ------------------------
@@ -842,31 +854,8 @@ Stratus.Internals.Resource = function (path, elementId) {
  * @constructor
  */
 Stratus.Internals.SetUrlParams = function (params, url) {
-  // FIXME: This can't handle anchors correctly
-  if (typeof url === 'undefined') {
-    url = window.location.href
-  }
-  if (typeof params === 'undefined') {
-    return url
-  }
-  let lets = {}
-  let glue = url.indexOf('?')
-  let anchor = url.indexOf('#')
-  let tail = ''
-  if (anchor >= 0) {
-    tail = url.substring(anchor, url.length)
-    url = url.substring(0, anchor)
-  }
-  url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    lets[key] = value
-  })
-  lets = _.extend(lets, params)
-  return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-    _.reduce(_.map(lets, function (value, key) {
-      return key + '=' + value
-    }), function (memo, value) {
-      return memo + '&' + value
-    }) + tail)
+  console.warn('Stratus.Internals.SetUrlParams is deprecated. Use _.setUrlParams instead.')
+  return _.setUrlParams(params, url)
 }
 
 // Track Location

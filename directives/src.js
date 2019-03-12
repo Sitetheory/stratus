@@ -71,13 +71,14 @@
             return true
           }
           $scope.registered = true
-          if (!src & !backgroundImage) {
+          if (!src && !backgroundImage) {
             return false
           }
 
           // Begin Registration
           $element.attr('data-src', src)
 
+          // FIXME: This needs to be converted to the new event structure.
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,

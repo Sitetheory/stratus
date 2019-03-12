@@ -21,12 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Map View
   // --------
 
@@ -84,31 +83,31 @@
      */
     prepareOptions: function () {
       if (!(this.options.center instanceof google.maps.LatLng) && this.options.center.lat !== undefined && this.options.center.lng !== undefined) {
-        this.options.center = new google.maps.LatLng(this.options.center);
+        this.options.center = new google.maps.LatLng(this.options.center)
       }
       if ((this.options.locations !== undefined) && this.options.locations instanceof Object) {
         if (!(this.options.locations instanceof Array)) {
-          this.options.locations = [this.options.locations];
+          this.options.locations = [this.options.locations]
         }
 
         _.each(this.options.locations, function (location) {
           if (location.position != undefined) {
-            location.position = this.prepareLatLng(location.position);
+            location.position = this.prepareLatLng(location.position)
           }
 
           if (location.center && location.position != undefined) {
-            this.options.center = location.position;
+            this.options.center = location.position
           }
 
-          if (typeof location.template == 'string' && this.templates[location.template]) { // Check if a path was specified
-            location.template = this.templates[location.template];
+          if (typeof location.template === 'string' && this.templates[location.template]) { // Check if a path was specified
+            location.template = this.templates[location.template]
           } else if (this.templates != undefined && this.templates[Object.keys(this.templates)[0]]) { // else fetch the first of the template batch
-            location.template = this.templates[Object.keys(this.templates)[0]];
+            location.template = this.templates[Object.keys(this.templates)[0]]
           } else if (typeof location.template !== 'function') {
-            console.warn('no template for location', location);
-            delete location.template;
+            console.warn('no template for location', location)
+            delete location.template
           }
-        }, this);
+        }, this)
       }
     },
 
@@ -117,11 +116,10 @@
      */
     prepareLatLng: function (latLng) {
       if (!(latLng instanceof google.maps.LatLng) && latLng !== undefined) {
-        return new google.maps.LatLng(latLng);
+        return new google.maps.LatLng(latLng)
       } else {
-        return latLng;
+        return latLng
       }
-
     },
 
     /**
@@ -130,15 +128,14 @@
      */
     onRender: function (entries) {
       require(['//maps.googleapis.com/maps/api/js?key=' + this.options.apiKey], function () {
-        this.prepareOptions();
-        console.log('!!MAP OPTIONS', this.options);
+        this.prepareOptions()
+        console.log('!!MAP OPTIONS', this.options)
 
-        console.warn(this.collection.toJSON().payload);
+        console.warn(this.collection.toJSON().payload)
 
         // TODO provide more layouts and a way to switch between them
-        this.setupMarkersLayout();
-
-      }.bind(this));
+        this.setupMarkersLayout()
+      }.bind(this))
     },
 
     /**
@@ -148,85 +145,83 @@
       // Gather Current Geo-Location
       return new Promise(function (resolve, reject) {
         Stratus.Internals.Location().then(function (pos) {
-          this.currentLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-          if (resolve) resolve(this.currentLocation);
+          this.currentLocation = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)
+          if (resolve) resolve(this.currentLocation)
         }.bind(this), function (error) {
-          if (reject) reject(error);
-        }.bind(this));
-      });
+          if (reject) reject(error)
+        })
+      })
     },
 
     setupMarkersLayout: function () {
-      this.renderMap();
+      this.renderMap()
 
       // create empty LatLngBounds object for centering map
-      var bounds = new google.maps.LatLngBounds();
-      var numericLabel = this.options.labelOptions.numericStart;
-      var alphaLabel = this.options.labelOptions.alphaStart.charCodeAt(0);
+      var bounds = new google.maps.LatLngBounds()
+      var numericLabel = this.options.labelOptions.numericStart
+      var alphaLabel = this.options.labelOptions.alphaStart.charCodeAt(0)
 
       _.each(this.options.locations, function (location) {
         if (!location || !location.position || typeof location.template !== 'function') {
-          return false;
+          return false
         }
 
         // setup objects
         var infoWin = this.addInfoWindow({
           content: location.template({ location: location }) // inject itself
-        });
+        })
 
-        var markerOptions = { position: location.position };
-        markerOptions.animation = google.maps.Animation.DROP; // TODO need to set animation options
+        var markerOptions = { position: location.position }
+        markerOptions.animation = google.maps.Animation.DROP // TODO need to set animation options
         if (this.options.autoLabel == 'numeric') {
-          markerOptions.label = '' + numericLabel++;
+          markerOptions.label = '' + numericLabel++
         } else if (this.options.autoLabel == 'alpha') {
-          markerOptions.label = String.fromCharCode(alphaLabel++);
+          markerOptions.label = String.fromCharCode(alphaLabel++)
         }
 
-        var marker = this.addMarker(markerOptions);
+        var marker = this.addMarker(markerOptions)
 
         // extend the bounds to include each marker's position
-        bounds.extend(location.position);
+        bounds.extend(location.position)
 
         // setup marker events
         marker.addListener('click', function () {
-          infoWin.open(this.map, marker);
-        }.bind(this));
-
-      }, this);
+          infoWin.open(this.map, marker)
+        }.bind(this))
+      }, this)
 
       // now fit the map to the newly inclusive bounds (Center and Zoom)
       if (this.options.fitBounds) {
-        this.map.fitBounds(bounds);
+        this.map.fitBounds(bounds)
       }
 
       if (this.options.centerOnUser) {
         this.fetchCurrentLocation().then(function (currentLocation) {
-          this.options.center = currentLocation;
-          this.map.setCenter(this.options.center);
+          this.options.center = currentLocation
+          this.map.setCenter(this.options.center)
         }.bind(this), function (error) {
-          console.warn('Can\'t get currentLocation', error);
+          console.warn('Can\'t get currentLocation', error)
           if (this.currentLocation) { // At least grab the last known location
-            this.options.center = this.currentLocation;
-            this.map.setCenter(this.options.center);
+            this.options.center = this.currentLocation
+            this.map.setCenter(this.options.center)
           }
-        }.bind(this));
+        }.bind(this))
       }
-
     },
 
     /**
      * @returns {boolean}
      */
     renderMap: function (options, callback) {
-      if (this.map) return false; // TODO possibly allow re-rendering later if we redo objects?
+      if (this.map) return false // TODO possibly allow re-rendering later if we redo objects?
 
       this.map = new google.maps.Map(this.$el[0], {
         center: (options || {}).center || this.options.center,
         zoom: (options || {}).zoom || this.options.zoom
-      });
+      })
 
-      if (callback) callback(this.map);
-      return true;
+      if (callback) callback(this.map)
+      return true
     },
 
     /**
@@ -236,15 +231,15 @@
      * @returns {google.maps.Marker}
      */
     addMarker: function (markerOptions) {
-      if (!markerOptions) return false;
-      if (!markerOptions.position) return false;
-      if (!this.map) return false;
+      if (!markerOptions) return false
+      if (!markerOptions.position) return false
+      if (!this.map) return false
 
-      markerOptions.map = this.map;
+      markerOptions.map = this.map
 
-      var marker = new google.maps.Marker(markerOptions);
-      this.markers.push(marker);
-      return marker;
+      var marker = new google.maps.Marker(markerOptions)
+      this.markers.push(marker)
+      return marker
     },
 
     /**
@@ -254,11 +249,11 @@
      * @returns {google.maps.InfoWindow}
      */
     addInfoWindow: function (infoWindowOptions) {
-      if (!infoWindowOptions) return false;
+      if (!infoWindowOptions) return false
 
-      var infoWindow = new google.maps.InfoWindow(infoWindowOptions);
-      this.infoWindows.push(infoWindow);
-      return infoWindow;
+      var infoWindow = new google.maps.InfoWindow(infoWindowOptions)
+      this.infoWindows.push(infoWindow)
+      return infoWindow
     },
 
     // The mapping between latitude, longitude and pixels is defined by the web
@@ -268,15 +263,15 @@
      * @returns {streamGeometryType.Point}
      */
     projectCoord: function (latLng) {
-      var siny = Math.sin(latLng.lat() * Math.PI / 180);
+      var siny = Math.sin(latLng.lat() * Math.PI / 180)
 
       // Truncating to 0.9999 effectively limits latitude to 89.189. This is
       // about a third of a tile past the edge of the world tile.
-      siny = Math.min(Math.max(siny, -0.9999), 0.9999);
+      siny = Math.min(Math.max(siny, -0.9999), 0.9999)
 
       return new google.maps.Point(
         this.options.tile * (0.5 + latLng.lng() / 360),
-        this.options.tile * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)));
+        this.options.tile * (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)))
     },
 
     // This function builds a particular info window
@@ -284,34 +279,33 @@
      * @returns {string}
      */
     sampleContent: function () {
-      var scale = 1 << (this.map ? this.map.getZoom() : this.options.zoom);
-      var worldCoordinate = this.projectCoord(this.currentLocation || this.options.center);
+      var scale = 1 << (this.map ? this.map.getZoom() : this.options.zoom)
+      var worldCoordinate = this.projectCoord(this.currentLocation || this.options.center)
 
       var pixelCoordinate = new google.maps.Point(
         Math.floor(worldCoordinate.x * scale),
-        Math.floor(worldCoordinate.y * scale));
+        Math.floor(worldCoordinate.y * scale))
 
       var tileCoordinate = new google.maps.Point(
         Math.floor(worldCoordinate.x * scale / this.options.tile),
-        Math.floor(worldCoordinate.y * scale / this.options.tile));
+        Math.floor(worldCoordinate.y * scale / this.options.tile))
 
-      var output = [];
+      var output = []
       if (!this.currentLocation) {
         output.push(
           'Can\'t Get Current Location ',
           'Center: ' + this.options.center
-        );
+        )
       } else {
-        output.push('Lat/Lng: ' + this.currentLocation);
+        output.push('Lat/Lng: ' + this.currentLocation)
       }
       output.push(
         'Zoom level: ' + (this.map ? this.map.getZoom() : this.options.zoom),
         'World Coordinate: ' + worldCoordinate,
         'Pixel Coordinate: ' + pixelCoordinate,
         'Tile Coordinate: ' + tileCoordinate
-      );
-      return output.join('<br>');
+      )
+      return output.join('<br>')
     }
-  });
-
-}));
+  })
+}))

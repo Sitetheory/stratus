@@ -22,6 +22,10 @@
     factory(root.Stratus, root._, root.jQuery, root.angular)
   }
 }(this, function (Stratus, _, jQuery, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'permissions'
+
   // Permissions
   Stratus.Components.Permissions = {
     bindings: {
@@ -32,8 +36,14 @@
     },
     controller: function ($scope, $attrs, utility) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'permissions', true)
-      let $ctrl = this
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
       // Data References
       $scope.model = null
@@ -375,6 +385,6 @@
         return data
       } */
     },
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/permissions' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
 }))

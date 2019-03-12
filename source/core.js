@@ -1,4 +1,4 @@
-/* global Stratus, _, Backbone, $, bootbox */
+/* global Stratus, _, Backbone, $, bootbox, Model */
 
 // Instance Clean
 // --------------
@@ -31,21 +31,91 @@ Stratus.Instances.Clean = function (instances) {
   }
 }
 
+// Aether System
+// --------------
+
+// This model handles all event related logic.
+class Aether extends Model {
+  constructor (data, options) {
+    super(data, options)
+
+    this.passiveSupported = false
+
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Invoked!')
+    }
+    let that = this
+    try {
+      let options = {
+        get passive () {
+          that.passiveSupported = true
+        }
+      }
+      window.addEventListener('test', options, options)
+      window.removeEventListener('test', options, options)
+    } catch (err) {
+      that.passiveSupported = false
+    }
+    this.on('change', this.synchronize, this)
+  }
+  synchronize () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Synchronizing...')
+    }
+    if (_.isEmpty(this.data)) {
+      console.warn('synchronize: no data!')
+    }
+    _.each(this.data, function (event, key) {
+      if (event.listening || !event.enabled) {
+        return
+      }
+      if (Stratus.Environment.get('viewPort')) {
+        console.warn('Aether does not support custom viewPorts:', Stratus.Environment.get('viewPort'))
+      }
+      (event.target || window).addEventListener(event.hook, event.method,
+        this.passiveSupported ? {
+          capture: true,
+          passive: true
+        } : false
+      )
+      event.listening = true
+    }, this)
+  }
+  /**
+   * @param options
+   */
+  listen (options) {
+    let uid = null
+    let event = new Stratus.Prototypes.Event(options)
+    if (!event.invalid) {
+      uid = _.uniqueId('event_')
+      this.set(uid, event)
+      Stratus.Instances[uid] = event
+    }
+    return uid
+  }
+}
+Stratus.Aether = new Aether()
+
 // Chronos System
 // --------------
 
 // This model handles all time related jobs.
-Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Chronos extends Model {
+  constructor (data, options) {
+    super(data, options)
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Invoked!')
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Chronos Synchronizing...')
+    }
+    if (_.isEmpty(this.changed)) {
+      console.warn('synchronize: empty changeset!')
+    }
     _.each(this.changed, function (job, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {
         key = _.first(key.split('.'))
@@ -60,14 +130,14 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         job.code = 0
       }
     }, this)
-  },
+  }
   /**
    * @param time
    * @param method
    * @param scope
    * @returns {string}
    */
-  add: function (time, method, scope) {
+  queue (time, method, scope) {
     let uid = null
     let job = new Stratus.Prototypes.Job(time, method, scope)
     if (job.time !== null && typeof job.method === 'function') {
@@ -76,35 +146,35 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
       Stratus.Instances[uid] = job
     }
     return uid
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  enable: function (uid) {
+  enable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', true)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  disable: function (uid) {
+  disable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', false)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @param value
    * @returns {boolean|*}
    */
-  toggle: function (uid, value) {
+  toggle (uid, value) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled',
@@ -112,8 +182,8 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
     }
     return success
   }
-})
-Stratus.Chronos.reinitialize()
+}
+Stratus.Chronos = new Chronos()
 
 // Post Message Handling
 // ---------------------
