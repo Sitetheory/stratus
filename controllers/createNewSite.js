@@ -53,7 +53,7 @@
             }
           })
           if (substance) {
-            window.location.replace(Stratus.Internals.SetUrlParams(options))
+            window.location.replace(_.setUrlParams(options))
           }
         }
       }

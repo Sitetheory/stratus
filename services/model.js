@@ -21,77 +21,121 @@
   Stratus.Services.Model = [
     '$provide', function ($provide) {
       $provide.factory('Model', [
-        '$q',
         '$http',
         '$mdToast',
         '$rootScope',
         '$log',
-        function ($q, $http, $mdToast, $rootScope, $log) {
-          return function (options, attributes) {
-            // Environment
-            this.target = null
-            this.manifest = false
-            this.stagger = false
-            this.toast = false
-            this.urlRoot = '/Api'
-            if (!options || typeof options !== 'object') {
-              options = {}
-            }
-            angular.extend(this, options)
+        function ($http, $mdToast, $rootScope, $log) {
+          return class AngularModel extends Stratus.Prototypes.Model {
+            constructor (options, attributes) {
+              super(attributes)
+              this.name = 'AngularModel'
 
-            // Infrastructure
-            this.identifier = null
-            this.data = {}
-
-            // The data used to detect the data is changed.
-            // this.initData = {}
-
-            // Handle Collections & Meta
-            this.header = new Stratus.Prototypes.Model()
-            this.meta = new Stratus.Prototypes.Model()
-            if (_.has(this, 'collection')) {
-              if (this.collection.target) {
-                this.target = this.collection.target
+              // Environment
+              this.target = null
+              this.manifest = false
+              this.stagger = false
+              this.toast = false
+              this.urlRoot = '/Api'
+              if (!options || typeof options !== 'object') {
+                options = {}
               }
-              if (this.collection.meta.has('api')) {
-                this.meta.set('api', this.collection.meta.get('api'))
+              angular.extend(this, options)
+
+              // Infrastructure
+              this.identifier = null
+              this.data = {}
+
+              // The data used to detect the data is changed.
+              // this.initData = {}
+
+              // Handle Collections & Meta
+              this.header = new Stratus.Prototypes.Model()
+              this.meta = new Stratus.Prototypes.Model()
+              if (_.has(this, 'collection')) {
+                if (this.collection.target) {
+                  this.target = this.collection.target
+                }
+                if (this.collection.meta.has('api')) {
+                  this.meta.set('api', this.collection.meta.get('api'))
+                }
+              }
+
+              // Handle Attributes (Typically from Collection Hydration)
+              if (attributes && typeof attributes === 'object') {
+                angular.extend(this.data, attributes)
+              }
+
+              // Generate URL
+              if (this.target) {
+                this.urlRoot += '/' + _.ucfirst(this.target)
+              }
+
+              // XHR Flags
+              this.pending = false
+              this.error = false
+              this.completed = false
+
+              // TODO: Enable Auto-Save
+
+              // Auto-Saving Flags
+              this.changed = false
+              this.saving = false
+              this.watching = false
+
+              // Auto-Saving Logic
+              this.patch = {}
+
+              /**
+               * @type {{match: RegExp, search: RegExp, attr: RegExp}}
+               */
+              this.bracket = {
+                match: /\[[\d+]]/,
+                search: /\[([\d+])]/g,
+                attr: /(^[^[]+)/
+              }
+
+              /**
+               * @type {Function}
+               */
+              this.throttle = _.throttle(this.save, 2000)
+
+              /**
+               * @type {Function}
+               */
+              this.initialize = _.once(this.initialize || function () {
+                const that = this
+                if (that.manifest && !that.getIdentifier()) {
+                  that.sync('POST', that.meta.has('api') ? {
+                    meta: that.meta.get('api'),
+                    payload: {}
+                  } : {}).catch(function (message) {
+                    if (that.toast) {
+                      $mdToast.show(
+                        $mdToast.simple()
+                          .textContent('Failure to Manifest!')
+                          .toastClass('errorMessage')
+                          .position('top right')
+                          .hideDelay(3000)
+                      )
+                    }
+                    $log.error('MANIFEST:', message)
+                  })
+                }
+              })
+
+              if (!this.stagger) {
+                this.initialize()
               }
             }
-
-            // Handle Attributes (Typically from Collection Hydration)
-            if (attributes && typeof attributes === 'object') {
-              angular.extend(this.data, attributes)
-            }
-
-            // Generate URL
-            if (this.target) {
-              this.urlRoot += '/' + _.ucfirst(this.target)
-            }
-
-            // XHR Flags
-            this.pending = false
-            this.error = false
-            this.completed = false
-
-            // TODO: Enable Auto-Save
-
-            // Auto-Saving Flags
-            this.changed = false
-            this.saving = false
-            this.watching = false
-
-            // Auto-Saving Logic
-            this.patch = {}
-
-            // Contextual Hoisting
-            const that = this
 
             // Watch for Data Changes
-            this.watcher = function () {
-              if (that.watching) {
+            watcher () {
+              if (this.watching) {
                 return true
               }
-              that.watching = true
+              this.watching = true
+              const that = this
               $rootScope.$watch(function () {
                 return that.data
               }, function (newData, priorData) {
@@ -108,47 +152,54 @@
                 }
                 /* */
 
-                if (patch) {
-                  that.changed = true
-                  // that.changed = !angular.equals(newData, that.initData)
-                  if ((newData.id && newData.id !== priorData.id) || that.isNewVersion(newData)) {
-                    window.location.replace(
-                      Stratus.Internals.SetUrlParams({
-                        id: newData.id
-                      })
-                    )
-                  }
-                  that.patch = _.extend(that.patch, patch)
+                if (!patch) {
+                  return true
                 }
+
+                that.changed = true
+
+                const version = _.getAnchorParams('version')
+
+                // that.changed = !angular.equals(newData, that.initData)
+                if ((newData.id && newData.id !== priorData.id) ||
+                  (!_.isEmpty(version) && newData.version && parseInt(version) !== newData.version.id)
+                ) {
+                  window.location.replace(
+                    _.setUrlParams({
+                      id: newData.id
+                    })
+                  )
+                }
+                that.patch = _.extend(that.patch, patch)
               }, true)
             }
 
             /**
-             * @returns {*}
-             */
-            this.getIdentifier = function () {
-              return (this.identifier = that.get('id') || that.identifier)
+               * @returns {*}
+               */
+            getIdentifier () {
+              return (this.identifier = this.get('id') || this.identifier)
             }
 
             /**
-             * @returns {*}
-             */
-            this.getType = function () {
-              return (this.type = that.type || that.target || 'orphan')
+               * @returns {*}
+               */
+            getType () {
+              return (this.type = this.type || this.target || 'orphan')
             }
 
             /**
-             * @returns {*}
-             */
-            this.getHash = function () {
+               * @returns {*}
+               */
+            getHash () {
               return this.getType() + (_.isNumber(this.getIdentifier()) ? this.getIdentifier().toString() : this.getIdentifier())
             }
 
             /**
-             * @returns {*}
-             */
-            this.url = function () {
-              let url = that.getIdentifier() ? that.urlRoot + '/' + that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
+               * @returns {*}
+               */
+            url () {
+              let url = this.getIdentifier() ? this.urlRoot + '/' + this.getIdentifier() : this.urlRoot + (this.targetSuffix || '')
 
               // add further param to specific version
               if (_.getUrlParams('version')) {
@@ -160,11 +211,12 @@
             }
 
             /**
-             * @param obj
-             * @param chain
-             * @returns {string}
-             */
-            this.serialize = function (obj, chain) {
+               * @param obj
+               * @param chain
+               * @returns {string}
+               */
+            serialize (obj, chain) {
+              const that = this
               const str = []
               obj = obj || {}
               angular.forEach(obj, function (value, key) {
@@ -190,14 +242,15 @@
 
             // TODO: Abstract this deeper
             /**
-             * @param {String=} [action=GET] Define GET or POST
-             * @param {Object=} data
-             * @param {Object=} [options={}]
-             * @returns {*}
-             */
-            this.sync = function (action, data, options) {
+               * @param {String=} [action=GET] Define GET or POST
+               * @param {Object=} data
+               * @param {Object=} [options={}]
+               * @returns {*}
+               */
+            sync (action, data, options) {
               this.pending = true
-              return $q(function (resolve, reject) {
+              const that = this
+              return new Promise(function (resolve, reject) {
                 action = action || 'GET'
                 options = options || {}
                 const prototype = {
@@ -280,23 +333,25 @@
                       : (
                         angular.isObject(response.data) ? response.data : (
                           'Invalid Payload: ' + prototype.method + ' ' +
-                          prototype.url)
+                            prototype.url)
                       ), response)
                   }
                 }).catch(function () {
                   // (/(.*)\sReceived/i).exec(error.message)[1]
-                  reject('XHR: ' + prototype.method + ' ' + prototype.url)
+                  console.error('XHR: ' + prototype.method + ' ' + prototype.url)
+                  reject.call(arguments)
                 })
               })
             }
 
             /**
-             * @param {String=} [action=GET] Define GET or POST
-             * @param {Object=} data
-             * @param {Object=} [options={}]
-             * @returns {*}
-             */
-            this.fetch = function (action, data, options) {
+               * @param {String=} [action=GET] Define GET or POST
+               * @param {Object=} data
+               * @param {Object=} [options={}]
+               * @returns {*}
+               */
+            fetch (action, data, options) {
+              const that = this
               return that.sync(action, data || that.meta.get('api'), options)
                 .catch(function (message) {
                   if (that.toast) {
@@ -313,9 +368,10 @@
             }
 
             /**
-             * @returns {*}
-             */
-            this.save = function () {
+               * @returns {*}
+               */
+            save () {
+              const that = this
               that.saving = true
               return that.sync(that.getIdentifier() ? 'PUT' : 'POST',
                 that.toJSON({
@@ -336,11 +392,11 @@
             }
 
             /**
-             * TODO: Ensure the meta temp locations get cleared appropriately before removing function
-             * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
-             * @returns {*}
-             */
-            this.specialAction = function (action) {
+               * TODO: Ensure the meta temp locations get cleared appropriately before removing function
+               * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
+               * @returns {*}
+               */
+            specialAction (action) {
               this.meta.temp('api.options.apiSpecialAction', action)
               this.save()
               if (this.meta.get('api') && this.meta.get('api').hasOwnProperty('options') && this.meta.get('api').options.hasOwnProperty('apiSpecialAction')) {
@@ -349,15 +405,11 @@
             }
 
             /**
-             * @type {Function}
-             */
-            this.throttle = _.throttle(this.save, 2000)
-
-            /**
-             * @returns {*}
-             */
-            this.throttleSave = function () {
-              return $q(function (resolve, reject) {
+               * @returns {*}
+               */
+            throttleSave () {
+              const that = this
+              return new Promise(function (resolve, reject) {
                 const request = that.throttle()
                 $log.log('throttle request:', request)
                 request.then(function (data) {
@@ -370,15 +422,16 @@
             // Attribute Functions
 
             /**
-             * @param options
-             * @returns {{meta, payload}}
-             */
-            this.toJSON = function (options) {
+               * @param options
+               * @returns {{meta, payload}}
+               */
+            toJSON (options) {
               /* *
-              options = _.extend(options || {}, {
-                  patch: false
-              });
-              /* */
+                options = _.extend(options || {}, {
+                    patch: false
+                });
+                /* */
+              const that = this
               let data
 
               // options.patch ? that.toPatch() :
@@ -394,30 +447,22 @@
             }
 
             /**
-             * @returns {null}
-             */
-            that.toPatch = function () {
-              return that.patch
+               * @returns {null}
+               */
+            toPatch () {
+              return this.patch
             }
 
             /**
-             * @type {{match: RegExp, search: RegExp, attr: RegExp}}
-             */
-            this.bracket = {
-              match: /\[[\d+]]/,
-              search: /\[([\d+])]/g,
-              attr: /(^[^[]+)/
-            }
-
-            /**
-             * @param path
-             * @returns {Array}
-             */
-            this.buildPath = function (path) {
+               * @param path
+               * @returns {Array}
+               */
+            buildPath (path) {
               const acc = []
               if (!_.isString(path)) {
                 return acc
               }
+              const that = this
               let cur
               let search
               _.each(path.split('.'), function (link) {
@@ -454,13 +499,13 @@
             }
 
             /**
-             * Use to get an attributes in the model.
-             * @param attr
-             * @returns {*}
-             */
-            this.get = function (attr) {
-              if (typeof attr !== 'string' || !that.data ||
-                typeof that.data !== 'object') {
+               * Use to get an attributes in the model.
+               * @param attr
+               * @returns {*}
+               */
+            get (attr) {
+              const that = this
+              if (typeof attr !== 'string' || !that.data || typeof that.data !== 'object') {
                 return undefined
               } else {
                 return that.buildPath(attr).reduce(function (attrs, link) {
@@ -471,12 +516,13 @@
 
             /**
              * if the attributes is an array, the function allow to find the specific object by the condition ( key - value )
-             * @param attr
+             * @param attributes
              * @param key
              * @param value
              * @returns {*}
              */
-            this.find = function (attributes, key, value) {
+            find (attributes, key, value) {
+              const that = this
               if (typeof attributes === 'string') {
                 attributes = that.get(attributes)
               }
@@ -491,22 +537,11 @@
             }
 
             /**
-             * Check response is a new version. In the case, current url
-             * represent the specific version. we need to check the version
-             * after submit, if it is a new one, we'll redirect to the newest
-             * version page
-             * @return boolean
-             */
-            this.isNewVersion = function (newData) {
-              return !_.isEmpty(this.more()) && newData.version &&
-                parseInt(_.getAnchorParams('version')) !== newData.version.id
-            }
-
-            /**
-             * @param attr
-             * @param value
-             */
-            this.set = function (attr, value) {
+               * @param attr
+               * @param value
+               */
+            set (attr, value) {
+              const that = this
               if (attr && typeof attr === 'object') {
                 _.each(attr, function (value, attr) {
                   that.setAttribute(attr, value)
@@ -517,12 +552,13 @@
             }
 
             /**
-             * @param attr
-             * @param value
-             */
-            this.setAttribute = function (attr, value) {
+               * @param attr
+               * @param value
+               */
+            setAttribute (attr, value) {
+              const that = this
               if (typeof attr === 'string' &&
-                (_.contains(attr, '.') || _.contains(attr, '['))
+                  (_.contains(attr, '.') || _.contains(attr, '['))
               ) {
                 let future
                 that.buildPath(attr)
@@ -530,7 +566,7 @@
                     future = index + 1
                     if (!_.has(attrs, link)) {
                       attrs[link] = _.has(chain, future) &&
-                      _.isNumber(chain[future]) ? [] : {}
+                        _.isNumber(chain[future]) ? [] : {}
                     }
                     if (!_.has(chain, future)) {
                       attrs[link] = value
@@ -544,42 +580,43 @@
             }
 
             /**
-             * @param attribute
-             * @param item
-             * @param options
-             * @returns {*}
-             */
-            this.toggle = function (attribute, item, options) {
+               * @param attribute
+               * @param item
+               * @param options
+               * @returns {*}
+               */
+            toggle (attribute, item, options) {
+              const that = this
               if (angular.isObject(options) &&
-                angular.isDefined(options.multiple) &&
-                angular.isUndefined(options.strict)) {
+                  angular.isDefined(options.multiple) &&
+                  angular.isUndefined(options.strict)) {
                 options.strict = true
               }
               options = _.extend({
                 multiple: true
               }, angular.isObject(options) ? options : {})
               /* TODO: After plucking has been tested, remove this log *
-              $log.log('toggle:', attribute, item, options);
-              /* */
+                $log.log('toggle:', attribute, item, options);
+                /* */
               const request = attribute.split('[].')
               let target = that.get(request.length > 1 ? request[0] : attribute)
               if (angular.isUndefined(target) ||
-                (options.strict && angular.isArray(target) !==
-                  options.multiple)) {
+                  (options.strict && angular.isArray(target) !==
+                    options.multiple)) {
                 target = options.multiple ? [] : null
                 that.set(request.length > 1 ? request[0] : attribute, target)
               }
               if (angular.isArray(target)) {
                 /* This is disabled, since hydration should not be forced by default *
-                const hydrate = {};
-                if (request.length > 1) {
-                    hydrate[request[1]] = {
-                        id: item
-                    };
-                } else {
-                    hydrate.id = item;
-                }
-                /* */
+                  const hydrate = {};
+                  if (request.length > 1) {
+                      hydrate[request[1]] = {
+                          id: item
+                      };
+                  } else {
+                      hydrate.id = item;
+                  }
+                  /* */
                 if (angular.isUndefined(item)) {
                   that.set(attribute, null)
                 } else if (!that.exists(attribute, item)) {
@@ -587,7 +624,7 @@
                 } else {
                   _.each(target, function (element, key) {
                     const child = (request.length > 1 &&
-                      angular.isObject(element) && request[1] in element)
+                        angular.isObject(element) && request[1] in element)
                       ? element[request[1]]
                       : element
                     const childId = (angular.isObject(child) && child.id)
@@ -614,10 +651,11 @@
             }
 
             /**
-             * @param attribute
-             * @returns {*}
-             */
-            this.pluck = function (attribute) {
+               * @param attribute
+               * @returns {*}
+               */
+            pluck (attribute) {
+              const that = this
               if (typeof attribute !== 'string' || attribute.indexOf('[].') === -1) {
                 return that.get(attribute)
               }
@@ -643,11 +681,12 @@
             }
 
             /**
-             * @param attribute
-             * @param item
-             * @returns {boolean}
-             */
-            this.exists = function (attribute, item) {
+               * @param attribute
+               * @param item
+               * @returns {boolean}
+               */
+            exists (attribute, item) {
+              const that = this
               if (!item) {
                 attribute = that.get(attribute)
                 return typeof attribute !== 'undefined' && attribute
@@ -671,9 +710,10 @@
             }
 
             /**
-             * @type {Function}
-             */
-            this.destroy = function () {
+               * @type {Function}
+               */
+            destroy () {
+              const that = this
               // TODO: Add a confirmation option here
               if (that.collection) {
                 that.collection.remove(that)
@@ -692,32 +732,6 @@
                   $log.error('DESTROY:', message)
                 })
               }
-            }
-
-            /**
-             * @type {Function}
-             */
-            this.initialize = _.once(this.initialize || function () {
-              if (that.manifest && !that.getIdentifier()) {
-                that.sync('POST', that.meta.has('api') ? {
-                  meta: that.meta.get('api'),
-                  payload: {}
-                } : {}).catch(function (message) {
-                  if (that.toast) {
-                    $mdToast.show(
-                      $mdToast.simple()
-                        .textContent('Failure to Manifest!')
-                        .toastClass('errorMessage')
-                        .position('top right')
-                        .hideDelay(3000)
-                    )
-                  }
-                  $log.error('MANIFEST:', message)
-                })
-              }
-            })
-            if (!that.stagger) {
-              this.initialize()
             }
           }
         }

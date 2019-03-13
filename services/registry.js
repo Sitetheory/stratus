@@ -28,8 +28,7 @@
         'Collection',
         'Model',
         '$interpolate',
-        '$q',
-        function (Collection, Model, $interpolate, $q) {
+        function (Collection, Model, $interpolate) {
           return function () {
             // TODO: Handle Version Routing through Angular
             // Maintain all models in Namespace
@@ -37,11 +36,11 @@
             /**
              * @param $element
              * @param $scope
-             * @returns $q
+             * @returns Promise
              */
             this.fetch = function ($element, $scope) {
               var that = this
-              return new $q(function (resolve, reject) {
+              return new Promise(function (resolve, reject) {
                 if (angular.isString($element)) {
                   $element = {
                     target: $element

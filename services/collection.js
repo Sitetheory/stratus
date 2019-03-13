@@ -23,17 +23,15 @@
   // registered collections and models
   // RAJ Added $qProvide to handle unhandleExceptions in angular 1.6
   Stratus.Services.Collection = [
-    '$provide', '$qProvider',
-    function ($provide, $qProvider) {
-      $qProvider.errorOnUnhandledRejections(false)
+    '$provide',
+    function ($provide) {
       $provide.factory('Collection', [
-        '$q',
         '$http',
         '$mdToast',
         '$timeout',
         '$log',
         'Model',
-        function ($q, $http, $mdToast, $timeout, $log, Model) {
+        function ($http, $mdToast, $timeout, $log, Model) {
           return function (options) {
             // Environment
             this.target = null
@@ -142,7 +140,7 @@
               that.pending = true
               that.completed = false
 
-              return $q(function (resolve, reject) {
+              return new Promise(function (resolve, reject) {
                 action = action || 'GET'
                 options = options || {}
                 var prototype = {
@@ -269,7 +267,7 @@
              */
             this.throttleFilter = function (query) {
               that.meta.set('api.q', angular.isDefined(query) ? query : '')
-              return $q(function (resolve, reject) {
+              return new Promise(function (resolve, reject) {
                 var request = that.throttle()
                 if (!Stratus.Environment.get('production')) {
                   $log.log('request:', request)
