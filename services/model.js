@@ -24,8 +24,7 @@
         '$http',
         '$mdToast',
         '$rootScope',
-        '$log',
-        function ($http, $mdToast, $rootScope, $log) {
+        function ($http, $mdToast, $rootScope) {
           return class AngularModel extends Stratus.Prototypes.Model {
             constructor (options, attributes) {
               super(attributes)
@@ -95,6 +94,30 @@
                 attr: /(^[^[]+)/
               }
 
+              // Scope Binding
+              this.watcher = this.watcher.bind(this)
+              this.getIdentifier = this.getIdentifier.bind(this)
+              this.getType = this.getType.bind(this)
+              this.getHash = this.getHash.bind(this)
+              this.url = this.url.bind(this)
+              this.serialize = this.serialize.bind(this)
+              this.sync = this.sync.bind(this)
+              this.fetch = this.fetch.bind(this)
+              this.save = this.save.bind(this)
+              this.specialAction = this.specialAction.bind(this)
+              this.throttleSave = this.throttleSave.bind(this)
+              this.toJSON = this.toJSON.bind(this)
+              this.toPatch = this.toPatch.bind(this)
+              this.buildPath = this.buildPath.bind(this)
+              this.get = this.get.bind(this)
+              this.find = this.find.bind(this)
+              this.set = this.set.bind(this)
+              this.setAttribute = this.setAttribute.bind(this)
+              this.toggle = this.toggle.bind(this)
+              this.pluck = this.pluck.bind(this)
+              this.exists = this.exists.bind(this)
+              this.destroy = this.destroy.bind(this)
+
               /**
                * @type {Function}
                */
@@ -119,7 +142,7 @@
                           .hideDelay(3000)
                       )
                     }
-                    $log.error('MANIFEST:', message)
+                    console.error('MANIFEST:', message)
                   })
                 }
               })
@@ -142,7 +165,7 @@
                 const patch = _.patch(newData, priorData)
 
                 if (!Stratus.Environment.get('production')) {
-                  $log.log('Patch:', patch)
+                  console.log('Patch:', patch)
                 }
 
                 // Set the origin data
@@ -175,29 +198,29 @@
             }
 
             /**
-               * @returns {*}
-               */
+             * @returns {*}
+             */
             getIdentifier () {
               return (this.identifier = this.get('id') || this.identifier)
             }
 
             /**
-               * @returns {*}
-               */
+             * @returns {*}
+             */
             getType () {
               return (this.type = this.type || this.target || 'orphan')
             }
 
             /**
-               * @returns {*}
-               */
+             * @returns {*}
+             */
             getHash () {
               return this.getType() + (_.isNumber(this.getIdentifier()) ? this.getIdentifier().toString() : this.getIdentifier())
             }
 
             /**
-               * @returns {*}
-               */
+             * @returns {*}
+             */
             url () {
               let url = this.getIdentifier() ? this.urlRoot + '/' + this.getIdentifier() : this.urlRoot + (this.targetSuffix || '')
 
@@ -211,10 +234,10 @@
             }
 
             /**
-               * @param obj
-               * @param chain
-               * @returns {string}
-               */
+             * @param obj
+             * @param chain
+             * @returns {string}
+             */
             serialize (obj, chain) {
               const that = this
               const str = []
@@ -242,11 +265,11 @@
 
             // TODO: Abstract this deeper
             /**
-               * @param {String=} [action=GET] Define GET or POST
-               * @param {Object=} data
-               * @param {Object=} [options={}]
-               * @returns {*}
-               */
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
+             * @returns {*}
+             */
             sync (action, data, options) {
               this.pending = true
               const that = this
@@ -271,7 +294,7 @@
                 }
 
                 if (!Stratus.Environment.get('production')) {
-                  $log.log('Prototype:', prototype)
+                  console.log('Prototype:', prototype)
                 }
 
                 if (options.hasOwnProperty('headers') && typeof options.headers === 'object') {
@@ -327,29 +350,34 @@
                     that.pending = false
                     that.error = true
 
+                    // Build Report
+                    const error = new Stratus.Prototypes.Error()
+                    error.payload = _.isObject(response.data) ? response.data : response
+                    if (response.statusText && response.statusText !== 'OK') {
+                      error.message = response.statusText
+                    } else if (!_.isObject(response.data)) {
+                      error.message = `Invalid Payload: ${prototype.method} ${prototype.url}`
+                    } else {
+                      error.message = 'Unknown AngularModel error!'
+                    }
+
                     // Promise
-                    reject((response.statusText && response.statusText !== 'OK')
-                      ? response.statusText
-                      : (
-                        angular.isObject(response.data) ? response.data : (
-                          'Invalid Payload: ' + prototype.method + ' ' +
-                            prototype.url)
-                      ), response)
+                    reject(error)
                   }
                 }).catch(function () {
                   // (/(.*)\sReceived/i).exec(error.message)[1]
-                  console.error('XHR: ' + prototype.method + ' ' + prototype.url)
+                  console.error(`XHR: ${prototype.method} ${prototype.url}`, arguments)
                   reject.call(arguments)
                 })
               })
             }
 
             /**
-               * @param {String=} [action=GET] Define GET or POST
-               * @param {Object=} data
-               * @param {Object=} [options={}]
-               * @returns {*}
-               */
+             * @param {String=} [action=GET] Define GET or POST
+             * @param {Object=} data
+             * @param {Object=} [options={}]
+             * @returns {*}
+             */
             fetch (action, data, options) {
               const that = this
               return that.sync(action, data || that.meta.get('api'), options)
@@ -363,13 +391,13 @@
                         .hideDelay(3000)
                     )
                   }
-                  $log.error('FETCH:', message)
+                  console.error('FETCH:', message)
                 })
             }
 
             /**
-               * @returns {*}
-               */
+             * @returns {*}
+             */
             save () {
               const that = this
               that.saving = true
@@ -387,15 +415,15 @@
                         .hideDelay(3000)
                     )
                   }
-                  $log.error('SAVE:', message)
+                  console.error('SAVE:', message)
                 })
             }
 
             /**
-               * TODO: Ensure the meta temp locations get cleared appropriately before removing function
-               * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
-               * @returns {*}
-               */
+             * TODO: Ensure the meta temp locations get cleared appropriately before removing function
+             * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
+             * @returns {*}
+             */
             specialAction (action) {
               this.meta.temp('api.options.apiSpecialAction', action)
               this.save()
@@ -405,15 +433,15 @@
             }
 
             /**
-               * @returns {*}
-               */
+             * @returns {*}
+             */
             throttleSave () {
               const that = this
               return new Promise(function (resolve, reject) {
                 const request = that.throttle()
-                $log.log('throttle request:', request)
+                console.log('throttle request:', request)
                 request.then(function (data) {
-                  $log.log('throttle received:', data)
+                  console.log('throttle received:', data)
                   resolve(data)
                 }).catch(reject)
               })
@@ -422,9 +450,9 @@
             // Attribute Functions
 
             /**
-               * @param options
-               * @returns {{meta, payload}}
-               */
+             * @param options
+             * @returns {{meta, payload}}
+             */
             toJSON (options) {
               /* *
                 options = _.extend(options || {}, {
@@ -447,16 +475,16 @@
             }
 
             /**
-               * @returns {null}
-               */
+             * @returns {null}
+             */
             toPatch () {
               return this.patch
             }
 
             /**
-               * @param path
-               * @returns {Array}
-               */
+             * @param path
+             * @returns {Array}
+             */
             buildPath (path) {
               const acc = []
               if (!_.isString(path)) {
@@ -499,10 +527,10 @@
             }
 
             /**
-               * Use to get an attributes in the model.
-               * @param attr
-               * @returns {*}
-               */
+             * Use to get an attributes in the model.
+             * @param attr
+             * @returns {*}
+             */
             get (attr) {
               const that = this
               if (typeof attr !== 'string' || !that.data || typeof that.data !== 'object') {
@@ -537,9 +565,9 @@
             }
 
             /**
-               * @param attr
-               * @param value
-               */
+             * @param attr
+             * @param value
+             */
             set (attr, value) {
               const that = this
               if (attr && typeof attr === 'object') {
@@ -552,9 +580,9 @@
             }
 
             /**
-               * @param attr
-               * @param value
-               */
+             * @param attr
+             * @param value
+             */
             setAttribute (attr, value) {
               const that = this
               if (typeof attr === 'string' &&
@@ -580,11 +608,11 @@
             }
 
             /**
-               * @param attribute
-               * @param item
-               * @param options
-               * @returns {*}
-               */
+             * @param attribute
+             * @param item
+             * @param options
+             * @returns {*}
+             */
             toggle (attribute, item, options) {
               const that = this
               if (angular.isObject(options) &&
@@ -596,7 +624,7 @@
                 multiple: true
               }, angular.isObject(options) ? options : {})
               /* TODO: After plucking has been tested, remove this log *
-                $log.log('toggle:', attribute, item, options);
+                console.log('toggle:', attribute, item, options);
                 /* */
               const request = attribute.split('[].')
               let target = that.get(request.length > 1 ? request[0] : attribute)
@@ -608,15 +636,15 @@
               }
               if (angular.isArray(target)) {
                 /* This is disabled, since hydration should not be forced by default *
-                  const hydrate = {};
-                  if (request.length > 1) {
-                      hydrate[request[1]] = {
-                          id: item
-                      };
-                  } else {
-                      hydrate.id = item;
+                const hydrate = {}
+                if (request.length > 1) {
+                  hydrate[request[1]] = {
+                    id: item
                   }
-                  /* */
+                } else {
+                  hydrate.id = item
+                }
+                /* */
                 if (angular.isUndefined(item)) {
                   that.set(attribute, null)
                 } else if (!that.exists(attribute, item)) {
@@ -651,9 +679,9 @@
             }
 
             /**
-               * @param attribute
-               * @returns {*}
-               */
+             * @param attribute
+             * @returns {*}
+             */
             pluck (attribute) {
               const that = this
               if (typeof attribute !== 'string' || attribute.indexOf('[].') === -1) {
@@ -681,10 +709,10 @@
             }
 
             /**
-               * @param attribute
-               * @param item
-               * @returns {boolean}
-               */
+             * @param attribute
+             * @param item
+             * @returns {boolean}
+             */
             exists (attribute, item) {
               const that = this
               if (!item) {
@@ -710,8 +738,8 @@
             }
 
             /**
-               * @type {Function}
-               */
+             * @type {Function}
+             */
             destroy () {
               const that = this
               // TODO: Add a confirmation option here
@@ -729,7 +757,7 @@
                         .hideDelay(3000)
                     )
                   }
-                  $log.error('DESTROY:', message)
+                  console.error('DESTROY:', message)
                 })
               }
             }

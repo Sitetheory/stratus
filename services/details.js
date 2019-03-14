@@ -6,8 +6,13 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular', 'stratus.services.model'],
-      factory)
+    define([
+      'stratus',
+      'underscore',
+      'angular',
+      'stratus.services.model'
+    ],
+    factory)
   } else {
     factory(root.Stratus, root._, root.angular)
   }
@@ -18,16 +23,20 @@
         '$http',
         'Model',
         '$interpolate',
-        '$q',
-        function ($http, Model, $interpolate, $q) {
-          return function () {
-            this.fetch = function ($element, $scope) {
-              var that = this
-              return new $q(function (resolve, reject) {
+        function ($http, Model, $interpolate) {
+          return class AngularDetails {
+            constructor () {
+              // Scope Binding
+              this.fetch = this.fetch.bind(this)
+              this.build = this.build.bind(this)
+            }
+            fetch ($element, $scope) {
+              const that = this
+              return new Promise(function (resolve, reject) {
                 if (angular.isString($element)) {
                   $element = { target: $element }
                 }
-                var options = {
+                const options = {
                   selectedId: $element.attr
                     ? $element.attr('data-selectedId')
                     : $element.selectedId,
@@ -35,8 +44,7 @@
                     ? $element.attr('data-property')
                     : $element.property
                 }
-
-                var completed = 0
+                let completed = 0
                 $scope.$watch(function () {
                   return completed
                 }, function (iteration) {
@@ -47,8 +55,8 @@
                 })
                 _.each(options, function (element, key) {
                   if (element && angular.isString(element)) {
-                    var interpreter = $interpolate(element, false, null, true)
-                    var initial = interpreter($scope.$parent)
+                    const interpreter = $interpolate(element, false, null, true)
+                    const initial = interpreter($scope.$parent)
                     if (angular.isDefined(initial)) {
                       options[key] = initial
                       completed++
@@ -68,18 +76,17 @@
                 })
               })
             }
-
-            this.build = function (options, $scope) {
+            build (options, $scope) {
               if (options.selectedId) {
-                var targetUrl
+                let targetUrl
                 if (options.property === 'version.layout') {
                   targetUrl = '/Api/Layout/' + options.selectedId
                 }
                 if (options.property === 'version.template') {
                   targetUrl = '/Api/Template/' + options.selectedId
                 }
-                var action = 'GET'
-                var prototype = {
+                const action = 'GET'
+                const prototype = {
                   method: action,
                   url: targetUrl,
                   headers: {}

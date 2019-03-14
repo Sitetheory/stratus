@@ -1299,7 +1299,7 @@ let triggerEvents = function (events, args) {
 Stratus.Events.bind = Stratus.Events.on
 Stratus.Events.unbind = Stratus.Events.off
 
-/* global Stratus, _, EventTarget, EventManager */
+/* global Stratus, _, EventTarget */
 
 // Error Prototype
 // ---------------
@@ -1380,7 +1380,6 @@ Stratus.Prototypes.Event = class StratusEvent {
     if (this.invalid) {
       this.enabled = false
     }
-    return this
   }
 }
 
@@ -1407,7 +1406,6 @@ Stratus.Prototypes.Job = class Job {
     }
     this.time = _.seconds(this.time)
     this.scope = this.scope || window
-    return this
   }
 }
 
@@ -1416,7 +1414,7 @@ Stratus.Prototypes.Job = class Job {
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-Stratus.Prototypes.Model = class Model extends EventManager {
+Stratus.Prototypes.Model = class Model extends Stratus.EventManager {
   constructor (data, options) {
     super()
     this.name = 'Model'
@@ -1439,6 +1437,22 @@ Stratus.Prototypes.Model = class Model extends EventManager {
       /* */
       _.extend(this.data, data)
     }
+
+    // Scope Binding
+    this.toObject = this.toObject.bind(this)
+    this.toJSON = this.toJSON.bind(this)
+    this.each = this.each.bind(this)
+    this.get = this.get.bind(this)
+    this.has = this.has.bind(this)
+    this.size = this.size.bind(this)
+    this.set = this.set.bind(this)
+    this.setAttribute = this.setAttribute.bind(this)
+    this.temp = this.temp.bind(this)
+    this.add = this.add.bind(this)
+    this.remove = this.remove.bind(this)
+    this.iterate = this.iterate.bind(this)
+    this.clear = this.clear.bind(this)
+    this.clearTemp = this.clearTemp.bind(this)
   }
 
   /**
@@ -1646,16 +1660,23 @@ Stratus.Environment = new Stratus.Prototypes.Model(Stratus.Environment)
  * @returns {Stratus.Sentinel.Prototypes}
  * @constructor
  */
-Stratus.Prototypes.Sentinel = function () {
-  this.view = false
-  this.create = false
-  this.edit = false
-  this.delete = false
-  this.publish = false
-  this.design = false
-  this.dev = false
-  this.master = false
-  this.zero = function () {
+Stratus.Prototypes.Sentinel = class Sentinel {
+  constructor () {
+    this.view = false
+    this.create = false
+    this.edit = false
+    this.delete = false
+    this.publish = false
+    this.design = false
+    this.dev = false
+    this.master = false
+
+    // Scope Binding
+    this.zero = this.zero.bind(this)
+    this.permissions = this.permissions.bind(this)
+    this.summary = this.summary.bind(this)
+  }
+  zero () {
     _.extend(this, {
       view: false,
       create: false,
@@ -1667,7 +1688,7 @@ Stratus.Prototypes.Sentinel = function () {
       master: false
     })
   }
-  this.permissions = function (value) {
+  permissions (value) {
     if (!isNaN(value)) {
       _.each(value.toString(2).split('').reverse(), function (bit, key) {
         if (bit === '1') {
@@ -1719,7 +1740,7 @@ Stratus.Prototypes.Sentinel = function () {
       return decimal
     }
   }
-  this.summary = function () {
+  summary () {
     let output = []
     _.each(this, function (value, key) {
       if (typeof value === 'boolean' && value) {
@@ -1728,7 +1749,6 @@ Stratus.Prototypes.Sentinel = function () {
     })
     return output
   }
-  return this
 }
 
 // This is the prototype for a bootbox event, in which one could be
@@ -1740,19 +1760,21 @@ Stratus.Prototypes.Sentinel = function () {
  * @param handler
  * @constructor
  */
-Stratus.Prototypes.Bootbox = function (message, handler) {
-  if (message && typeof message === 'object') {
-    _.extend(this, message)
-    this.message = this.message || 'Message'
-  } else {
-    this.message = message || 'Message'
-  }
-  this.handler = this.handler || handler
-  if (typeof this.handler !== 'function') {
-    this.handler = function (result) {
-      console.info('Client ' + (result === undefined ? 'closed' : (result
-        ? 'confirmed'
-        : 'cancelled')) + ' dialog.')
+Stratus.Prototypes.Bootbox = class Bootbox {
+  constructor (message, handler) {
+    if (message && typeof message === 'object') {
+      _.extend(this, message)
+      this.message = this.message || 'Message'
+    } else {
+      this.message = message || 'Message'
+    }
+    this.handler = this.handler || handler
+    if (typeof this.handler !== 'function') {
+      this.handler = function (result) {
+        console.info('Client ' + (result === undefined ? 'closed' : (result
+          ? 'confirmed'
+          : 'cancelled')) + ' dialog.')
+      }
     }
   }
 }
@@ -1767,20 +1789,22 @@ Stratus.Prototypes.Bootbox = function (message, handler) {
  * @param settings
  * @constructor
  */
-Stratus.Prototypes.Toast = function (message, title, priority, settings) {
-  if (message && typeof message === 'object') {
-    _.extend(this, message)
-    this.message = this.message || 'Message'
-  } else {
-    this.message = message || 'Message'
+Stratus.Prototypes.Toast = class Toast {
+  constructor (message, title, priority, settings) {
+    if (message && typeof message === 'object') {
+      _.extend(this, message)
+      this.message = this.message || 'Message'
+    } else {
+      this.message = message || 'Message'
+    }
+    this.title = this.title || title || 'Toast'
+    this.priority = this.priority || priority || 'danger'
+    this.settings = this.settings || settings
+    if (!this.settings || typeof this.settings !== 'object') {
+      this.settings = {}
+    }
+    this.settings.timeout = this.settings.timeout || 10000
   }
-  this.title = this.title || title || 'Toast'
-  this.priority = this.priority || priority || 'danger'
-  this.settings = this.settings || settings
-  if (!this.settings || typeof this.settings !== 'object') {
-    this.settings = {}
-  }
-  this.settings.timeout = this.settings.timeout || 10000
 }
 
 /* global Stratus, _, jQuery, Backbone */
@@ -1856,6 +1880,7 @@ Stratus.Internals.Ajax = function (request) {
 /**
  * @type {*|Function|void}
  */
+// TODO: This runs on fancy Backbone code that should be removed
 Stratus.Internals.Anchor = (function Anchor () {
   Anchor.initialize = true
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
@@ -3860,7 +3885,7 @@ Stratus.Loaders.Angular = function () {
   }
 }
 
-/* global Stratus, _, Backbone, $, bootbox, Model */
+/* global Stratus, _, Backbone, $, bootbox */
 
 // Instance Clean
 // --------------

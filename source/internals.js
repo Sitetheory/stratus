@@ -71,6 +71,7 @@ Stratus.Internals.Ajax = function (request) {
 /**
  * @type {*|Function|void}
  */
+// TODO: This runs on fancy Backbone code that should be removed
 Stratus.Internals.Anchor = (function Anchor () {
   Anchor.initialize = true
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
