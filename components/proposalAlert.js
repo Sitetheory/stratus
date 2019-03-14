@@ -10,13 +10,13 @@
       'angular',
 
       // Modules
-      'stratus.directives.compileTemplate'
+      //'stratus.directives.compileTemplate'
     ], factory)
   } else {
     // Browser globals
-    factory(root.Stratus, root._, root.angular, root.zxcvbn)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _, angular, zxcvbn) {
+}(this, function (Stratus, _, angular) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'proposalAlert'
@@ -27,7 +27,7 @@
     bindings: {
       proposals: '<'
     },
-    controller: function ($scope, $window, $attrs, $sce, $compile) {
+    controller: function ($scope, $window, $attrs, $sce) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
@@ -54,6 +54,7 @@
 
       $ctrl.safeText = function (proposal) {
         $ctrl.icon = iconCss[proposal.class]
+        // TODO: @SECURITY determine if this is safe
         return $sce.trustAsHtml(proposal.text)
       }
 

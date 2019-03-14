@@ -1,5 +1,7 @@
 /* global define */
 
+// TODO: this is probably not needed after we confirm we also don't need passwordReset
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([

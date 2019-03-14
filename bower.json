@@ -35,7 +35,6 @@
     "bowser": "^1.*",
     "codemirror": "^5.*",
     "coffeescript": "^2.2.2",
-    "countUp.js": "1.8.3",
     "dropzone": "^4.*",
     "font-awesome": "^5.0.0",
     "froala-wysiwyg-editor": "^2.8.*",
@@ -52,8 +51,7 @@
     "requirejs": "^2.*",
     "swiper": "^4.*",
     "text": "^2.*",
-    "underscore": "^1.9.*",
-    "zxcvbn": "^4.4.2"
+    "underscore": "^1.9.*"
   },
   "resolutions": {
     "angular": "~1.7.*"
