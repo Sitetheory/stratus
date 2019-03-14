@@ -16,7 +16,8 @@
 
       // Modules
       'angular-material',
-      'stratus.services.utility'
+      'stratus.services.utility',
+      'stratus.controllers.permission'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.jQuery, root.angular)
@@ -46,7 +47,6 @@
       $scope.initialized = false
 
       // Data References
-      $scope.model = null
       $scope.models = []
 
       // mock up list permissions
@@ -61,18 +61,6 @@
       // specific the identityUser who is grated permissions
       $scope.allowSelectUser = !$ctrl.identityUser
 
-      // List of allowed permissions
-      $scope.permissions = [
-        { value: 1, name: 'View' },
-        { value: 2, name: 'Create' },
-        { value: 4, name: 'Edit' },
-        { value: 8, name: 'Delete' },
-        { value: 16, name: 'Publish' },
-        { value: 32, name: 'Design' },
-        { value: 64, name: 'Dev' },
-        { value: 128, name: 'Master' }
-      ]
-
       // mock up list roles
       $scope.userRoleSelected = null
       $scope.updateUserRole = null
@@ -81,115 +69,34 @@
       $scope.contentSelected = null
       $scope.updateContent = null
 
-      /* $scope.$watch('$ctrl.permissionId', function (permissionId) {
-        if (typeof permissionId !== 'undefined') {
-          $scope.getPermission(permissionId)
-        }
-      }) */
-
       $scope.$watch('$ctrl.ngModel', function (data) {
-        console.log(data)
-        if (data && data !== $scope.model) {
+        if (data && data !== $scope.models) {
           if($ctrl.multiple) {
             $scope.models = data
           } else {
-            $scope.model = data
+            $scope.models = []
+            $scope.models.push(data)
           }
-          //$scope.model = data
           $scope.updateUserRole = data.identityRole || data.identityUser || null
         }
-
-        //if($ctrl.multiple) {
-          if (!angular.isArray($scope.models)) {
-            $scope.models = []
-          }
-          if (!$scope.models.length) {
-            $scope.models.push({})
-          }
-        //}
-        
+        if (!angular.isArray($scope.models)) {
+          $scope.models = []
+        }
+        if (!$scope.models.length) {
+          $scope.models.push({})
+        }
         if ($ctrl.identityUser && $ctrl.ngModel) {
           $scope.allowSelectUser = false
-          $scope.newPermission.identityUser = {
-            id: $ctrl.ngModel.id,
-            bestName: $ctrl.ngModel.bestName
-          }
-          $scope.userRoleSelected = $scope.newPermission.identityUser
-          if (!$ctrl.ngModel.permissions) {
-            $ctrl.ngModel.permissions = []
-          }
         }
       })
 
       $scope.$watch('models', function (data) {
-        console.log(data)
+        if($ctrl.multiple) {
+          $ctrl.ngModel = data
+        } else {
+          $ctrl.ngModel = _.first(data)
+        }
       },true)
-
-      $scope.$watchGroup(['contentSelected', 'permissionSelected'],
-        function () {
-          //console.log($scope.permissionSelected)
-          if ($ctrl.identityUser && $scope.userRoleSelected && $ctrl.ngModel &&
-            $ctrl.ngModel.permissions) {
-            if (_.last($ctrl.ngModel.permissions) &&
-              !_.last($ctrl.ngModel.permissions).hasOwnProperty('id')) {
-              $ctrl.ngModel.permissions.splice($ctrl.ngModel.permissions.length -
-                1, 1)
-            }
-            if ($scope.contentSelected &&
-              $scope.permissionSelected.length > 0) {
-              $ctrl.ngModel.permissions.push($scope.newPermission)
-            }
-          }
-        })
-
-      /**
-       * @param permissionId
-       * @returns {*}
-       */
-      /* $scope.getPermission = function (permissionId) {
-        return utility.sendRequest(null, 'GET', '/Api/Permission/' +
-          permissionId).then(
-          function (response) {
-            // success
-            if (response) {
-              let data = response.data.payload
-
-              // Set permission selected
-              let permissions = data.summary
-              angular.forEach(permissions, function (permission, index) {
-                index = $scope.permissions.findIndex(function (x) {
-                  return x.name === permission
-                })
-
-                if (index > -1) {
-                  $scope.permissionSelected.push(
-                    $scope.permissions[index].value)
-                }
-              })
-
-              $ctrl.ngModel.permissions = $scope.permissionSelected
-
-              // Set identity name
-              $scope.userRoleSelected = data.identityRole
-                ? data.identityRole
-                : data.identityUser
-              $scope.updateUserRole = data.identityRole
-                ? data.identityRole
-                : data.identityUser
-
-              // Set asset name
-              $scope.updateContent = {
-                name: data.assetContent,
-                assetType: data.asset,
-                id: data.assetId
-              }
-            }
-          },
-          function (response) {
-            // something went wrong
-            console.log('response error', response)
-          })
-      } */
 
       /**
        * Retrieve data from server
@@ -287,103 +194,11 @@
 
       /**
        * @param item
-       */
-      $scope.selectedUserRoleChange = function (item) {
-        $scope.userRoleSelected = item
-        if (!$ctrl.identityUser) {
-          if ($scope.userRoleSelected && $scope.userRoleSelected.name) {
-            $ctrl.ngModel.identityRole = item
-            $ctrl.ngModel.identityUser = null
-          } else {
-            $ctrl.ngModel.identityRole = null
-            $ctrl.ngModel.identityUser = item
-          }
-        }
-      }
-
-      /**
-       * @param content
-       */
-      /* $scope.selectedContentChange = function (content) {
-        $scope.contentSelected = content
-        if ($ctrl.identityUser) {
-          persistContentData($scope.newPermission, content)
-        } else {
-          persistContentData($ctrl.ngModel, content)
-        }
-      } */
-
-      /**
-       * persist the content data into model.
-       *
-       * @param data
-       * @param contentSelected
-       */
-      function persistContentData (data, contentSelected) {
-        if ($scope.contentSelected.type === 'Content') {
-          data.assetId = $scope.contentSelected.version.meta.id
-        } else {
-          data.assetId = $scope.contentSelected.id
-        }
-
-        data.asset = $scope.contentSelected.assetType
-      }
-
-      /**
-       * If user selected the master Action, the other action selected will be
-       * ignored. If user selected all of actions except the master action, the
-       * action Selected will be converted to only contain master.
-       */
-      $scope.processSelectAction = function () {
-        //console.log($scope.permissionSelected)
-        var masterIndex = $scope.permissionSelected.indexOf(128)
-        if ((masterIndex !== -1) /*||
-          ($scope.permissionSelected.length === $scope.permissions.length - 1)*/) {
-            $scope.permissionSelected = _.pluck($scope.permissions, 'value')
-            $scope.permissionToBePersisted = [$scope.permissions[$scope.permissions.length - 1].value]
-        } else if($scope.permissionSelected.length === $scope.permissions.length - 1) {
-          $scope.permissionToBePersisted = [$scope.permissions[$scope.permissions.length - 1].value]
-        } else {
-          $scope.permissionToBePersisted = $scope.permissionSelected
-        }
-        persistActionData($ctrl.identityUser ? $scope.newPermission : $ctrl.ngModel)
-      }
-
-      /**
-       * persist the action data into model.
-       *
-       * @param data
-       */
-      function persistActionData (data) {
-        if ($scope.permissionToBePersisted.length > 0) {
-          data.permissions = null
-          angular.forEach($scope.permissionToBePersisted, function (permission) {
-            data.permissions |= permission
-          })
-        }
-      }
-
-      /**
-       * @param item
        * @returns {string}
        */
       $scope.selectedIdentify = function (item) {
         return (item.name || item.bestName) + ' - ' + item.id
       }
-
-      /**
-       * @param item
-       * @returns {*}
-       */
-      /* $scope.selectedContent = function (item) {
-        let data = null
-        if (item.version) {
-          data = item.version.title + ' - ' + item.version.meta.id
-        } else if (item.name) {
-          data = item.name + ' - ' + item.id
-        }
-        return data
-      } */
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }

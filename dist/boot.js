@@ -311,6 +311,7 @@ boot.config({
     'stratus.controllers.userFilter': boot.bundle + 'stratus/controllers/userFilter' + boot.suffix,
     'stratus.controllers.filterStreamsByTag': boot.bundle + 'stratus/controllers/filterStreamsByTag' + boot.suffix,
     'stratus.controllers.selectedLayout': boot.bundle + 'stratus/controllers/selectedLayout' + boot.suffix,
+    'stratus.controllers.permission': boot.bundle + 'stratus/controllers/permission' + boot.suffix,
 
     /* Stratus Core Components */
     'stratus.components.address': boot.bundle + 'stratus/components/address' + boot.suffix,
@@ -355,7 +356,7 @@ boot.config({
     'stratus.components.menuLink': boot.bundle + 'stratus/components/menuLink' + boot.suffix,
 
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
-    'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
+    //'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
     'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
     'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
     // 'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
