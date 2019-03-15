@@ -170,11 +170,12 @@
               if (this.types.indexOf(type) === -1) {
                 this.types.push(type)
               }
+              const that = this
               // TODO: Make this able to be flagged as direct entities
               data.forEach(function (target) {
                 // TODO: Add references to the Catalog when creating these
                 // models
-                this.models.push(new Model({
+                that.models.push(new Model({
                   collection: this,
                   type: type || null
                 }, target))
@@ -206,11 +207,7 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      if (prototype.url.includes('?')) {
-                        prototype.url += '&'
-                      } else {
-                        prototype.url += '?'
-                      }
+                      prototype.url += prototype.url.includes('?') ? '&' : '?'
                       prototype.url += that.serialize(data)
                     }
                   } else {
@@ -369,17 +366,19 @@
              * @param options
              */
             add (target, options) {
+              if (!angular.isObject(target)) {
+                return
+              }
               if (!options || typeof options !== 'object') {
                 options = {}
               }
-              if (angular.isObject(target)) {
-                target = (target instanceof Model) ? target : new Model({
-                  collection: this
-                }, target)
-                this.models.push(target)
-                if (options.save) {
-                  target.save()
-                }
+              const that = this
+              target = (target instanceof Model) ? target : new Model({
+                collection: that
+              }, target)
+              this.models.push(target)
+              if (options.save) {
+                target.save()
               }
             }
 

@@ -27,7 +27,7 @@
         function ($http, $mdToast, $rootScope) {
           return class AngularModel extends Stratus.Prototypes.Model {
             constructor (options, attributes) {
-              super(attributes)
+              super()
               this.name = 'AngularModel'
 
               // Environment
@@ -36,10 +36,10 @@
               this.stagger = false
               this.toast = false
               this.urlRoot = '/Api'
-              if (!options || typeof options !== 'object') {
-                options = {}
-              }
-              angular.extend(this, options)
+              this.collection = null
+
+              // Inject Options
+              _.extend(this, (!options || typeof options !== 'object') ? {} : options)
 
               // Infrastructure
               this.identifier = null
@@ -51,7 +51,7 @@
               // Handle Collections & Meta
               this.header = new Stratus.Prototypes.Model()
               this.meta = new Stratus.Prototypes.Model()
-              if (_.has(this, 'collection')) {
+              if (!_.isEmpty(this.collection)) {
                 if (this.collection.target) {
                   this.target = this.collection.target
                 }
@@ -187,6 +187,7 @@
                 if ((newData.id && newData.id !== priorData.id) ||
                   (!_.isEmpty(version) && newData.version && parseInt(version) !== newData.version.id)
                 ) {
+                  // console.warn('replacing version...')
                   window.location.replace(
                     _.setUrlParams({
                       id: newData.id
