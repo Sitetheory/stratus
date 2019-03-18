@@ -11,19 +11,29 @@
       'underscore',
       'angular',
       'angular-material',
-      'stratus.services.collection',
-      'stratus.services.utility'
+      'stratus.services.collection'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'pagination'
+
   // This component intends to handle binding and
   // full pagination for the scope's collection.
   Stratus.Components.Pagination = {
-    controller: function ($scope, $attrs, Collection, utility) {
+    controller: function ($scope, $attrs, Collection) {
       // Initialize
-      utility.componentInitializer(this, $scope, $attrs, 'pagination', true)
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+      )
+      $scope.initialized = false
 
       // Settings
       $scope.pages = []
@@ -61,15 +71,11 @@
               $scope.endPage = 10
             } else if ($scope.collection.meta.get('pagination.pageCurrent') + 4 >=
               $scope.collection.meta.get('pagination.pageTotal')) {
-              $scope.startPage = $scope.collection.meta.get(
-                'pagination.pageTotal') - 9
-              $scope.endPage = $scope.collection.meta.get(
-                'pagination.pageTotal')
+              $scope.startPage = $scope.collection.meta.get('pagination.pageTotal') - 9
+              $scope.endPage = $scope.collection.meta.get('pagination.pageTotal')
             } else {
-              $scope.startPage = $scope.collection.meta.get(
-                'pagination.pageCurrent') - 5
-              $scope.endPage = $scope.collection.meta.get(
-                'pagination.pageCurrent') + 4
+              $scope.startPage = $scope.collection.meta.get('pagination.pageCurrent') - 5
+              $scope.endPage = $scope.collection.meta.get('pagination.pageCurrent') + 4
             }
           }
 
@@ -78,8 +84,6 @@
           }
         })
     },
-    templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/pagination' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
 }))

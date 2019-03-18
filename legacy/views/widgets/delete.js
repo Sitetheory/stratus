@@ -31,12 +31,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Delete Widget
   // -------------
 
@@ -82,35 +81,34 @@
     onRegister: function () {
       if (this.options.collectionMin && _.has(this.model, 'collection') && typeof this.model.collection !== 'function') {
         // Don't allow destroying
-        this.model.collection.on('add', this.checkMin, this);
-        this.model.collection.on('remove', this.checkMin, this);
-        this.checkMin();
+        this.model.collection.on('add', this.checkMin, this)
+        this.model.collection.on('remove', this.checkMin, this)
+        this.checkMin()
       }
-      this.model.on('change', this.scopeChanged, this);
-      this.model.on('success', this.successAction, this);
-      return true;
+      this.model.on('change', this.scopeChanged, this)
+      this.model.on('success', this.successAction, this)
+      return true
     },
 
     // checkMin()
     // ----------
     // Check whether there is a minimum number of collections in order to show or hide the delete button
     checkMin: function () {
-      this.disabled = false;
+      this.disabled = false
       if (this.model.collection.length <= this.options.collectionMin) {
-        this.disabled = true;
-        this.$el.addClass('hidden');
+        this.disabled = true
+        this.$el.addClass('hidden')
       } else {
-        this.$el.removeClass('hidden');
+        this.$el.removeClass('hidden')
       }
     },
 
     // When the button is clicked toggle the delete status.
     saveAction: function (options) {
-
-      if (this.disabled) return this;
+      if (this.disabled) return this
 
       if (this.options.destroy) {
-        this.model.destroy();
+        this.model.destroy()
       } else {
         // TODO: use the small confirm/cancel popover
         if (this.toggleValue() < 0 && this.options.textDeleteConfirm) {
@@ -118,17 +116,17 @@
             {
               message: this.options.textDeleteConfirm,
               handler: function (result) {
-                if (result) this.model.save({ status: this.toggleValue() });
+                if (result) this.model.save({ status: this.toggleValue() })
               }.bind(this)
             }
-          );
-          Stratus.Events.trigger('confirm', this.confirm);
+          )
+          Stratus.Events.trigger('confirm', this.confirm)
         } else {
-          this.model.save({ status: this.toggleValue() });
+          this.model.save({ status: this.toggleValue() })
         }
       }
 
-      return this;
+      return this
     },
 
     // If this model is updated anywhere, check the status and update the DOM.
@@ -137,10 +135,10 @@
      */
     scopeChanged: function (event) {
       // Toggle Class
-      var deleteStatus = (this.model.get('status') === -1);
-      this.$el.toggleClass('deleted', deleteStatus);
-      this.$el.toggleClass('on', !deleteStatus);
-      this.$el.toggleClass('off', deleteStatus);
+      var deleteStatus = (this.model.get('status') === -1)
+      this.$el.toggleClass('deleted', deleteStatus)
+      this.$el.toggleClass('on', !deleteStatus)
+      this.$el.toggleClass('off', deleteStatus)
     },
 
     // After successfully deleting or undeleting, remove model from DOM or redirect
@@ -148,7 +146,7 @@
       // If a redirect is set and it's just been deleted, redirect to that URL on Delete
       if (this.model.get('status') === -1) {
         if (this.options.redirect) {
-          window.location.href = this.options.redirect;
+          window.location.href = this.options.redirect
         } else if (this.options.destroy) {
           // TODO: allow specifying an alternative element (e.g. not the delete button)
           // this.$el.remove();
@@ -159,9 +157,8 @@
     // If the entity is deleted return 0 (status off but not deleted). If status is not deleted, return -1 delete (deleted).
     toggleValue: function () {
       // If the Value is boolean, just get the opposite for now (see above)
-      return (this.model.get('status') === -1) ? 0 : -1;
+      return (this.model.get('status') === -1) ? 0 : -1
     }
 
-  });
-
-}));
+  })
+}))

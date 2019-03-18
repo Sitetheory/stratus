@@ -35,12 +35,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Save Widget
   // -----------
 
@@ -97,11 +96,11 @@
       if (this.options.iconPath) {
         Stratus.Internals.Resource(this.options.iconPath, this.element).then(function (icon) {
           // get the resource text and set as the icon
-          this.options.icon = icon;
-          Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
-        }.bind(this));
+          this.options.icon = icon
+          Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject)
+        }.bind(this))
       } else {
-        Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject);
+        Stratus.Views.Widgets.Base.prototype.promise.call(this, options, resolve, reject)
       }
     },
 
@@ -110,7 +109,7 @@
      */
     preOptions: function (options) {
       if (this.model && typeof this.model === 'object') {
-        this.originalId = this.model.get('id');
+        this.originalId = this.model.get('id')
       }
     },
 
@@ -124,9 +123,9 @@
     onRender: function (entries) {
       // If there is a special action, add css to differentiate this from the standard save button
       if (this.options.action) {
-        this.$el.addClass('action-' + this.options.action);
+        this.$el.addClass('action-' + this.options.action)
       }
-      this.scopeChanged();
+      this.scopeChanged()
     },
 
     /**
@@ -134,10 +133,10 @@
      */
     onRegister: function () {
       $(window).bind('keydown', function (event) {
-        this.saveKey(event);
-      }.bind(this));
-      this.model.on('save', this.onSave, this);
-      return Stratus.Views.Widgets.Base.prototype.onRegister.call(this);
+        this.saveKey(event)
+      }.bind(this))
+      this.model.on('save', this.onSave, this)
+      return Stratus.Views.Widgets.Base.prototype.onRegister.call(this)
     },
 
     // saveAction()
@@ -151,21 +150,21 @@
       // Pass in other options
       // Get Special Actions
       if (this.options.action === 'version') {
-        this.model.meta.temp('apiSpecialAction', 'iterateVersion');
-        this.model.set('timeEdit', 'API::NOW');
+        this.model.meta.temp('apiSpecialAction', 'iterateVersion')
+        this.model.set('timeEdit', 'API::NOW')
       } else if (this.options.action === 'duplicate') {
-        this.model.meta.temp('apiSpecialAction', 'duplicate');
-        this.model.set('timeEdit', 'API::NOW');
+        this.model.meta.temp('apiSpecialAction', 'duplicate')
+        this.model.set('timeEdit', 'API::NOW')
       }
 
       if (_.size(this.model.patch)) {
-        this.model.trigger('save');
+        this.model.trigger('save')
       }
 
       // check the model for changes and update the DOM classes, just in case a save doesn't trigger a change event
       // so we can make sure the button stays in sync with the model changes
-      this.scopeChanged();
-      return true;
+      this.scopeChanged()
+      return true
     },
 
     // scopeChanged()
@@ -181,20 +180,20 @@
       // Otherwise redirect to the new url
       // FIXME: Move this logic into the model!
       if (this.model.get('id') !== this.originalId) {
-        var url = window.location.toString();
-        var urlNew = url.replace(/id=[0-9]+/, 'id=' + this.model.get('id'));
+        var url = window.location.toString()
+        var urlNew = url.replace(/id=[0-9]+/, 'id=' + this.model.get('id'))
 
         // If there was no ID, find the URL of the new page
         if (urlNew === url) {
-          urlNew = (this.originalId === null) ? Stratus.Internals.SetUrlParams({ id: this.model.get('id') }) : this.model.get('routingPrimary.url');
+          urlNew = (this.originalId === null) ? Stratus.Internals.SetUrlParams({ id: this.model.get('id') }) : this.model.get('routingPrimary.url')
         }
-        if (urlNew) window.location.replace(urlNew);
+        if (urlNew) window.location.replace(urlNew)
       }
 
       // Confirm if the "change" is from a full API change (will have id) or from a user change
       // timeEdit will only be in the change set when it fetches the full model from the API
       // this.primeChanges(!_.size(this.model.patch));
-      this.primeChanges((!_.size(this.model.patch) || this.model.hasChanged('timeStatus') || (this.model.hasChanged('timeEdit') && this.model.get('timEdit') !== 'API::NOW')));
+      this.primeChanges((!_.size(this.model.patch) || this.model.hasChanged('timeStatus') || (this.model.hasChanged('timeEdit') && this.model.get('timEdit') !== 'API::NOW')))
     },
 
     /**
@@ -202,9 +201,9 @@
      */
     primeChanges: function (state) {
       if (!this._stateChanging && this._prevState !== state) {
-        this._stateChanging = !state;
-        this.$el.toggleClass('on', state);
-        this.$el.toggleClass('off', !state);
+        this._stateChanging = !state
+        this.$el.toggleClass('on', state)
+        this.$el.toggleClass('off', !state)
       }
     },
 
@@ -214,10 +213,10 @@
     onSave: function (patch) {
       this.model.once('success', function () {
         this.model.once('change', function () {
-          this._stateChanging = false;
-          this.scopeChanged();
-        }, this);
-      }, this);
+          this._stateChanging = false
+          this.scopeChanged()
+        }, this)
+      }, this)
     },
 
     // keyActions()
@@ -231,14 +230,13 @@
       if (event.ctrlKey || event.metaKey) {
         switch (String.fromCharCode(event.which).toLowerCase()) {
           case 's':
-            event.preventDefault();
-            this.saveNowAction({});
-            break;
+            event.preventDefault()
+            this.saveNowAction({})
+            break
         }
       }
-      return true;
+      return true
     }
 
-  });
-
-}));
+  })
+}))

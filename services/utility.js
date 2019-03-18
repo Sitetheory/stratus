@@ -1,4 +1,4 @@
-/* global define, location */
+/* global define */
 
 // TODO: Separate these functions out, into more narrow services
 (function (root, factory) {
@@ -64,23 +64,6 @@
 
 
           /**
-           * Get more params which is shown after '#' symbol in url.
-           * @return {*}
-           */
-          function moreParams () {
-            var params = {}
-            angular.forEach(location.hash.split('#'), function (param) {
-              if (param) {
-                var digest = param.split('/')
-                if (digest.length > 1) {
-                  params[digest[0]] = digest[1]
-                }
-              }
-            })
-            return params
-          }
-
-          /**
            * @param value
            * @returns {boolean}
            */
@@ -130,7 +113,6 @@
             componentInitializer: componentInitializer,
             getStatus: getStatus,
             buildCssUrl: buildCssUrl,
-            moreParams: moreParams,
             copyToClipboard: copyToClipboard,
             sendRequest: sendRequest,
             safeMessage: safeMessage

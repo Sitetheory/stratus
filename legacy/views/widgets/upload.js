@@ -21,12 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'text!templates-upload', 'stratus.views.widgets.base', 'dropzone'], factory);
+    define(['stratus', 'jquery', 'underscore', 'text!templates-upload', 'stratus.views.widgets.base', 'dropzone'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.Template);
+    factory(root.Stratus, root.$, root._, root.Template)
   }
 }(this, function (Stratus, $, _, Template) {
-
   // Upload Widget
   // -------------
 
@@ -60,12 +59,11 @@
      * @returns {boolean}
      */
     onRender: function (entries) {
-      var hydrate = _.template(this.options.dropzone.url);
-      this.options.dropzone.url = hydrate({ session: _.cookie('SITETHEORY') });
-      this.$el.dropzone(this.options.dropzone);
-      return true;
+      var hydrate = _.template(this.options.dropzone.url)
+      this.options.dropzone.url = hydrate({ session: _.cookie('SITETHEORY') })
+      this.$el.dropzone(this.options.dropzone)
+      return true
     }
 
-  });
-
-}));
+  })
+}))

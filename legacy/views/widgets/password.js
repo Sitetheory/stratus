@@ -21,12 +21,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Password Widget
   // -------------
 
@@ -66,10 +65,10 @@
           priority: 'danger',
           title: 'Missing Data Attribute',
           message: 'The data-property attribute is missing.'
-        }));
-        return false;
+        }))
+        return false
       }
-      return true;
+      return true
     },
 
     // getValue()
@@ -79,7 +78,7 @@
      * @returns {*}
      */
     getValue: function () {
-      return (!this.$element || !this.$element.length) ? false : this.$element.val();
+      return (!this.$element || !this.$element.length) ? false : this.$element.val()
     },
 
     // setValue()
@@ -90,11 +89,10 @@
      * @returns {boolean}
      */
     setValue: function (value) {
-      if (!this.$element || !this.$element.length) return false;
-      this.$element.val(value);
-      return true;
+      if (!this.$element || !this.$element.length) return false
+      this.$element.val(value)
+      return true
     }
 
-  });
-
-}));
+  })
+}))

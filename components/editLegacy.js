@@ -75,8 +75,7 @@
             // Focus on the input field
             $scope.edit_input_container.getElementsByTagName(
               'input')[0].focus()
-          } else if (jQuery($scope.edit_input_container)
-            .find('[contenteditable]').length > 0) {
+          } else if (jQuery($scope.edit_input_container).find('[contenteditable]').length > 0) {
             // Focus on any contenteditable (including froala)
             jQuery($scope.edit_input_container).find('[contenteditable]').focus()
           } else {
@@ -139,7 +138,6 @@
         $scope.setEdit(false)
       })
     },
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/edit' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/edit' + (Stratus.Environment.get('production') ? '.min' : '') + '.html'
   }
 }))

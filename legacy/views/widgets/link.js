@@ -41,12 +41,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Link Widget
   // -------------
 
@@ -103,18 +102,18 @@
      * @param reject
      */
     promise: function (options, resolve, reject) {
-      this.originalUrl = this.$el.attr('href');
+      this.originalUrl = this.$el.attr('href')
 
       if (this.options.iconPath) {
         Stratus.Internals.Resource(this.options.iconPath, this.element).then(function (icon) {
           // get the resource text and set as the icon
-          this.options.icon = icon;
-          this.initializeSetup();
-          resolve(this);
-        }.bind(this));
+          this.options.icon = icon
+          this.initializeSetup()
+          resolve(this)
+        }.bind(this))
       } else {
-        this.initializeSetup();
-        resolve(this);
+        this.initializeSetup()
+        resolve(this)
       }
     },
 
@@ -126,11 +125,10 @@
      */
     initializeSetup: function () {
       if (this.options.dataType === 'var' && !Stratus.Environment.has(this.propertyName)) {
-        Stratus.Environment.set(this.propertyName, this.options.valueOff);
+        Stratus.Environment.set(this.propertyName, this.options.valueOff)
       }
-      this.render();
-      return true;
-
+      this.render()
+      return true
     },
 
     // onRender()
@@ -141,13 +139,12 @@
      * @param entries
      */
     onRender: function (entries) {
-
       // Register Events
       // Set Values on DOM first time, and every time the model changes (if there is a model)
       if (this.options.dataType === 'model') {
-        this.model.on('change', this.scopeChanged, this);
+        this.model.on('change', this.scopeChanged, this)
       }
-      this.scopeChanged();
+      this.scopeChanged()
 
       // set events after model is rendered
     },
@@ -162,10 +159,10 @@
       // Both model bound and Stratus.Environment variables need to set the data-property (name of the variable being altered)
       if (!this.$el.data('property')) {
         // message, title, class
-        Stratus.Events.trigger('toast', 'The data-property attribute is missing.', 'Missing Data Attribute', 'danger');
-        return false;
+        Stratus.Events.trigger('toast', 'The data-property attribute is missing.', 'Missing Data Attribute', 'danger')
+        return false
       }
-      return true;
+      return true
     },
 
     // scopeChanged()
@@ -175,11 +172,11 @@
      * @returns {boolean}
      */
     scopeChanged: function () {
-      this.$el.attr('href', ((this.options.replaceUrl) ? '' : this.originalUrl) + this.getPropertyValue() + this.options.urlVars);
-      return true;
+      this.$el.attr('href', ((this.options.replaceUrl) ? '' : this.originalUrl) + this.getPropertyValue() + this.options.urlVars)
+      return true
     }
 
-  });
+  })
 
   // Require.js
   // -------------
@@ -187,5 +184,4 @@
   // We are not returning this module because it should be
   // able to add its objects to the Stratus object reference,
   // passed by sharing.
-
-}));
+}))

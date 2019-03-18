@@ -31,12 +31,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._);
+    factory(root.Stratus, root.$, root._)
   }
 }(this, function (Stratus, $, _) {
-
   // Views
   // -------------
 
@@ -72,17 +71,17 @@
      * @returns {boolean}
      */
     onRender: function (views) {
-      this.input = this.$el.find('input[type="text"]');
-      return true;
+      this.input = this.$el.find('input[type="text"]')
+      return true
     },
 
     /**
      * @returns {boolean}
      */
     onRegister: function () {
-      this.collection.on('reset', this.rerender, this);
-      this.collection.on('change', this.rerender, this);
-      return true;
+      this.collection.on('reset', this.rerender, this)
+      this.collection.on('change', this.rerender, this)
+      return true
     },
 
     /**
@@ -90,7 +89,7 @@
      * @returns {boolean}
      */
     submit: function (event) {
-      this.search(this.input.val());
+      this.search(this.input.val())
     },
 
     /**
@@ -98,7 +97,7 @@
      */
     enter: function (event) {
       if (event.keyCode === Stratus.Key.Enter) {
-        this.search(this.input.val());
+        this.search(this.input.val())
       }
     },
 
@@ -107,7 +106,7 @@
      */
     escape: function (event) {
       if (event.keyCode === Stratus.Key.Escape) {
-        this.search();
+        this.search()
       }
     },
 
@@ -116,10 +115,9 @@
      * @param query
      */
     search: function (query) {
-      if (!this.collection.isHydrated()) return false;
-      Backbone.history.navigate('filter/' + this.collection.entity + (typeof query === 'undefined' ? '' : '/' + query), true);
+      if (!this.collection.isHydrated()) return false
+      Backbone.history.navigate('filter/' + this.collection.entity + (typeof query === 'undefined' ? '' : '/' + query), true)
     }
 
-  });
-
-}));
+  })
+}))

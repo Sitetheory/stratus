@@ -17,6 +17,10 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'permission'
+
   // This component intends to allow editing of various permissions depending
   // on context.
   Stratus.Components.Permission = {
@@ -32,9 +36,11 @@
     },
     controller: function ($scope, $attrs, $log, Collection) {
       // Initialize
-      this.uid = _.uniqueId('permission_')
-      Stratus.Instances[this.uid] = $scope
-      $scope.elementId = $attrs.elementId || this.uid
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      $scope.initialized = false
 
       // Permission Collection
       $scope.collection = null
@@ -77,8 +83,7 @@
           return
         }
         _.each(sentinels, function (sentinel, id) {
-          if (!angular.isObject($scope.collection) ||
-            !angular.isObject(sentinel)) {
+          if (!angular.isObject($scope.collection) || !angular.isObject(sentinel)) {
             return
           }
           _.each($scope.collection.models || [], function (model) {
@@ -91,8 +96,6 @@
         })
       }, true)
     },
-    templateUrl: Stratus.BaseUrl +
-     Stratus.BundlePath + 'components/permission' +
-      (Stratus.Environment.get('production') ? '.min' : '') + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
   }
 }))

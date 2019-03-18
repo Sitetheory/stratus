@@ -57,12 +57,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'tether', 'moment', 'promise', 'stratus.views.base', 'stratus.models.generic', 'stratus.collections.generic'], factory);
+    define(['stratus', 'jquery', 'underscore', 'tether', 'moment', 'promise', 'stratus.views.base', 'stratus.models.generic', 'stratus.collections.generic'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.Tether, root.moment);
+    factory(root.Stratus, root.$, root._, root.Tether, root.moment)
   }
 }(this, function (Stratus, $, _, Tether, moment) {
-
   // Base Model View
   // -------------
   // This Backbone View intends to handle Generic rendering for a single Model.
@@ -203,7 +202,7 @@
      * @returns {boolean|*|jQuery|HTMLElement}
      */
     $element: function () {
-      return (!this.element) ? null : $('#' + this.element);
+      return (!this.element) ? null : $('#' + this.element)
     },
 
     // initialize()
@@ -215,42 +214,41 @@
      * @returns {*}
      */
     initialize: function (options) {
-
       // Create Dispatch
-      this.dispatch = new Stratus.Prototypes.Dispatch();
+      this.dispatch = new Stratus.Prototypes.Dispatch()
 
       // Register Main Events
-      this.primeEvents();
+      this.primeEvents()
 
       // Child View Registry
-      this.childViews = [];
+      this.childViews = []
 
       // Data Attribute Registry
-      this.data = {};
+      this.data = {}
 
       // Store Options Locally
-      this.templates = (_.has(options, 'templates') && options.templates != undefined) ? options.templates : this.templates;
-      this.entity = (_.has(options, 'entity')) ? options.entity : null;
+      this.templates = (_.has(options, 'templates') && options.templates != undefined) ? options.templates : this.templates
+      this.entity = (_.has(options, 'entity')) ? options.entity : null
 
       // Return Promise for Loader Validation
       this.initializer = new Promise(function (resolve, reject) {
         if (!this.prepare(options)) {
-          reject(new Stratus.Prototypes.Error('Prepare', this));
+          reject(new Stratus.Prototypes.Error('Prepare', this))
         } else {
-          this.fork(options, resolve, reject);
+          this.fork(options, resolve, reject)
         }
-      }.bind(this));
+      }.bind(this))
 
       // Return Boolean for Constructor
-      return true;
+      return true
     },
 
     /**
      * @returns {boolean}
      */
     primeEvents: function () {
-      this.registeredEvents = this.registeredEvents || this.registerEvents();
-      return true;
+      this.registeredEvents = this.registeredEvents || this.registerEvents()
+      return true
     },
 
     /**
@@ -258,46 +256,46 @@
      */
     registerEvents: function () {
       // Listen for Rendering
-      this.on('render', this.onRender, this);
-      this.on('render', this.dispatchTrigger, this);
+      this.on('render', this.onRender, this)
+      this.on('render', this.dispatchTrigger, this)
 
       // Handle Other Events
-      this.on('unrender', this.onUnrender, this);
-      this.on('postrender', this.onPostRender, this);
-      this.on('register', this.primeRegister, this);
+      this.on('unrender', this.onUnrender, this)
+      this.on('postrender', this.onPostRender, this)
+      this.on('register', this.primeRegister, this)
 
       // TODO: Only mark change, error and success on fields that were changed (i.e. don't add success marks to every field on the page)
 
       // Track the status of the API calls if there is a model or collection present
       // Model Status takes precedence over Collection
-      var scope = (this.model && typeof this.model === 'object') ? 'model' : ((this.collection && typeof this.collection === 'object') ? 'collection' : null);
+      var scope = (this.model && typeof this.model === 'object') ? 'model' : ((this.collection && typeof this.collection === 'object') ? 'collection' : null)
       if (scope) {
         // Set Loading Animation
-        if (!this[scope].isHydrated()) this.setStatus('load');
+        if (!this[scope].isHydrated()) this.setStatus('load')
 
         // Listen for Request
         this[scope].on('request', function () {
-          this.setStatus('request');
-        }, this);
+          this.setStatus('request')
+        }, this)
 
         // Listen for Error
         this[scope].on('error', function () {
-          this.setStatus('error');
-          this.onError.apply(this, arguments);
-        }, this);
+          this.setStatus('error')
+          this.onError.apply(this, arguments)
+        }, this)
 
         // Listen for Success
         this[scope].on('success', function () {
-          this.setStatus('success');
-        }, this);
+          this.setStatus('success')
+        }, this)
 
         // Remove DOM Elements on Model Destruction
         if (scope === 'model') {
-          this.model.on('destroy', this.onDestroy, this);
+          this.model.on('destroy', this.onDestroy, this)
         }
       }
 
-      return true;
+      return true
     },
 
     /**
@@ -305,29 +303,29 @@
      * @returns {boolean}
      */
     destroyViews: function (target) {
-      if (!target) return false;
+      if (!target) return false
       if (_.isArray(target) && _.size(target) > 0) {
         _.each(target, function (view) {
-          this.destroyViews(view);
-        }, this);
-        return true;
+          this.destroyViews(view)
+        }, this)
+        return true
       } else if (_.isObject(target)) {
         if (target.childViews && _.size(target.childViews) > 0) {
-          this.destroyViews(target.childViews);
+          this.destroyViews(target.childViews)
         }
-        target.$el.remove();
+        target.$el.remove()
         if (!target.uid || !Stratus.Instances.Clean(target.uid)) {
-          target.remove();
+          target.remove()
         }
-        return true;
+        return true
       }
-      return false;
+      return false
     },
 
     // TODO: Add "Soft" and "Hard" delete options (i.e. one adds a data-attribute, the other removes the element from the DOM)
     // When a Model is destroyed, the widget and its children will also be removed
     onDestroy: function () {
-      this.destroyViews(this);
+      this.destroyViews(this)
     },
 
     /**
@@ -337,7 +335,7 @@
      * @returns {boolean}
      */
     onError: function (scope, response, options) {
-      return true;
+      return true
     },
 
     // Passively fork this method until a Collection or Model is Hydrated
@@ -348,26 +346,26 @@
      * @returns {boolean}
      */
     fork: function (options, resolve, reject) {
-      var success = true;
+      var success = true
       if (this.collection && typeof this.collection === 'object' && !this.collection.isHydrated()) {
         this.collection.once('success', function () {
           // FIXME: this.collection.once('reset', function () { this.fork(options, resolve, reject); }, this);
-          this.fork(options, resolve, reject);
-        }, this);
+          this.fork(options, resolve, reject)
+        }, this)
       } else if (this.model && typeof this.model === 'object' && !this.model.isHydrated()) {
         this.model.once('success', function () {
           this.model.once('change', function () {
-            this.fork(options, resolve, reject);
-          }, this);
-        }, this);
+            this.fork(options, resolve, reject)
+          }, this)
+        }, this)
         this.model.once('error', function () {
-          reject(new Stratus.Prototypes.Error(this.model.entity + ' does not exist', this));
-        }, this);
+          reject(new Stratus.Prototypes.Error(this.model.entity + ' does not exist', this))
+        }, this)
       } else {
-        this.$el.removeClass('has-load');
-        this.promise(options, resolve, reject);
+        this.$el.removeClass('has-load')
+        this.promise(options, resolve, reject)
       }
-      return success;
+      return success
     },
 
     // prepare()
@@ -378,75 +376,74 @@
      * @returns {boolean}
      */
     prepare: function (options) {
+      this.uid = (_.has(options, 'uid')) ? options.uid : null
+      this.type = options.type.toLowerCase()
+      this.view = options.view
+      this.api = options.api
+      this.target = options.target
 
-      this.uid = (_.has(options, 'uid')) ? options.uid : null;
-      this.type = options.type.toLowerCase();
-      this.view = options.view;
-      this.api = options.api;
-      this.target = options.target;
-
-      this.propertyName = options.property;
-      this.propertyValue = null;
+      this.propertyName = options.property
+      this.propertyValue = null
 
       // This is the Id that should be set on the editable element
-      this.element = this.$el.data('id') ? this.$el.data('id') : _.uniqueId('Widget-');
+      this.element = this.$el.data('id') ? this.$el.data('id') : _.uniqueId('Widget-')
 
       // Allow Customization of Internals
-      this.preOptions(options);
+      this.preOptions(options)
 
       // Clone and Merge Defaults with Options (Instantiate)
       this.options = {
         private: (this.options.private && _.size(this.options.private)) ? _.extend(_.cloneDeep(this.defaults.private), _.cloneDeep(this.options.private)) : _.cloneDeep(this.defaults.private),
         public: (this.options.public && _.size(this.options.public)) ? _.extend(_.cloneDeep(this.defaults.public), _.cloneDeep(this.options.public)) : _.cloneDeep(this.defaults.public)
-      };
+      }
 
       // All the display options to be customized by data attribute options (merge with optionsCustom)
-      this.getDataOptions(this.options.public);
+      this.getDataOptions(this.options.public)
 
       // Store all Data Attributes for Custom Template Usage
       if (this.$el && this.$el.length) {
         _.each(this.$el[0].attributes, function (attribute) {
           if (_.startsWith(attribute.name, 'data-')) {
-            var key = attribute.name.substr(5);
-            this.data[key] = Stratus(this.$el).attr(key);
+            var key = attribute.name.substr(5)
+            this.data[key] = Stratus(this.$el).attr(key)
           }
-        }, this);
+        }, this)
       } else {
-        console.log('$el:', this.$el);
+        console.log('$el:', this.$el)
       }
 
       // Bring Nested Values to Surface
-      this.options = _.extend(this.options.public, this.options.private);
+      this.options = _.extend(this.options.public, this.options.private)
 
       // Merge Initialize-Passed Options
-      this.mergeOptions(options);
+      this.mergeOptions(options)
 
       // Merge CSS File Requirements
-      this.mergeCssOptions(options);
+      this.mergeCssOptions(options)
 
       // Allow Options to be Changed on a Per-Widget Bases
-      this.postOptions(options);
+      this.postOptions(options)
 
       // Handle Collection View Architecture Appropriately
-      this.setCollectionView(options);
+      this.setCollectionView(options)
 
-      if (!this.validate()) return false;
+      if (!this.validate()) return false
 
       // specify whether this is the model or the alternative var (e.g. for Stratus.Environment variables)
-      this.options.dataType = (this.model && typeof this.model === 'object') ? 'model' : ((this.collection && typeof this.collection === 'object') ? 'collection' : 'var');
+      this.options.dataType = (this.model && typeof this.model === 'object') ? 'model' : ((this.collection && typeof this.collection === 'object') ? 'collection' : 'var')
 
       // Ensure System Variables are Defined
       if (this.options.dataType === 'var' && typeof Stratus.Environment.get(this.propertyName) === 'undefined') {
-        Stratus.Environment.set(this.propertyName, this.options.emptyValue);
+        Stratus.Environment.set(this.propertyName, this.options.emptyValue)
       }
 
       // Manipulate any custom options
-      this.getStandardData();
+      this.getStandardData()
 
       // Select Template for Rendering
-      this.selectTemplate(options);
+      this.selectTemplate(options)
 
-      return true;
+      return true
     },
 
     /**
@@ -454,11 +451,11 @@
      */
     mergeCssOptions: function (options) {
       // Clean Options
-      this.options.cssFile = (this.options.cssFile === 'string') ? [this.options.cssFile] : (_.isArray(this.options.cssFile) ? this.options.cssFile : []);
-      this.options.requiredCssFile = (this.options.requiredCssFile === 'string') ? [this.options.requiredCssFile] : (_.isArray(this.options.requiredCssFile) ? this.options.requiredCssFile : []);
+      this.options.cssFile = (this.options.cssFile === 'string') ? [this.options.cssFile] : (_.isArray(this.options.cssFile) ? this.options.cssFile : [])
+      this.options.requiredCssFile = (this.options.requiredCssFile === 'string') ? [this.options.requiredCssFile] : (_.isArray(this.options.requiredCssFile) ? this.options.requiredCssFile : [])
 
       // Unite
-      this.options.cssFile = _.union(this.options.cssFile, this.options.requiredCssFile);
+      this.options.cssFile = _.union(this.options.cssFile, this.options.requiredCssFile)
     },
 
     /**
@@ -476,34 +473,33 @@
      * @returns {boolean}
      */
     setStatus: function (status) {
-
       // Don't Change the status if it's identical
       // if (status === this.$el.attr('data-status')) return true;
-      this.$el.attr('data-status', status);
+      this.$el.attr('data-status', status)
 
       var statuses = {
         request: this.$el.hasClass('has-request'),
         error: this.$el.hasClass('has-error'),
         change: this.$el.hasClass('has-change')
-      };
+      }
 
       // only add request if it's changed
-      if (status === 'request' && !statuses.change) return false;
+      if (status === 'request' && !statuses.change) return false
 
       // only add "error" if the "change" status was set already
-      if (status === 'error' && !statuses.change) return false;
+      if (status === 'error' && !statuses.change) return false
 
       // only add "success" if the "change" or "error" status was already
-      if (status === 'success' && !statuses.change && !statuses.error && !statuses.request) return false;
+      if (status === 'success' && !statuses.change && !statuses.error && !statuses.request) return false
 
       // remove all assisting 'has-' classes so they don't accumulate
       this.$el.removeClass(function (index, className) {
-        return (className.match(/(^|\s)has-\S+/g) || []).join(' ').replace('has-feedback');
-      });
+        return (className.match(/(^|\s)has-\S+/g) || []).join(' ').replace('has-feedback')
+      })
 
-      this.$el.addClass('has-' + status);
+      this.$el.addClass('has-' + status)
 
-      return true;
+      return true
     },
 
     // mergeOptions()
@@ -519,24 +515,24 @@
         _.each(this.options, function (el, index) {
           if (typeof options.options[index] !== 'undefined') {
             if (typeof el === 'object') {
-              this.options[index] = _.defaults(options.options[index], this.options[index]);
+              this.options[index] = _.defaults(options.options[index], this.options[index])
             } else {
-              this.options[index] = options.options[index];
+              this.options[index] = options.options[index]
             }
           }
-        }, this);
+        }, this)
 
         // Store any API options that need to be passed
         if (_.has(options.options, 'api')) {
           if (typeof this.model === 'object' && !this.model.meta.has('api')) {
-            this.model.meta.set('api', options.options.api);
+            this.model.meta.set('api', options.options.api)
           } else if (typeof this.collection === 'object' && !this.collection.meta.has('api')) {
-            this.collection.meta.set('api', options.options.api);
+            this.collection.meta.set('api', options.options.api)
           }
         }
       }
 
-      return true;
+      return true
     },
 
     // postOptions()
@@ -557,19 +553,19 @@
      * @returns {*}
      */
     getDataOptions: function (options) {
-      if (!options) return false;
+      if (!options) return false
       var data = {
         key: null,
         value: null
-      };
+      }
       _.each(options, function (value, key) {
-        data.key = key.toLowerCase();
-        data.value = Stratus(this.$el).attr(data.key);
+        data.key = key.toLowerCase()
+        data.value = Stratus(this.$el).attr(data.key)
         if (data.value !== undefined) {
-          options[key] = data.value;
+          options[key] = data.value
         }
-      }, this);
-      return options;
+      }, this)
+      return options
     },
 
     // setCollectionView()
@@ -580,17 +576,17 @@
      */
     setCollectionView: function (options) {
       if ('collectionView' in options) {
-        this.collectionView = options.collectionView;
+        this.collectionView = options.collectionView
       } else {
-        this.collectionView = {};
+        this.collectionView = {}
       }
       if ('globals' in options) {
-        this.globals = options.globals;
-        this.model.globals = options.globals;
+        this.globals = options.globals
+        this.model.globals = options.globals
       } else {
-        this.globals = {};
+        this.globals = {}
       }
-      return true;
+      return true
     },
 
     // selectTemplate()
@@ -615,12 +611,11 @@
      * @returns {boolean}
      */
     selectTemplate: function (options) {
-
       // setting data-render="false" will bypass any template rendering, e.g. if you want to keep the content you entered inside
       // an element manually.
       if (this.options.render === false) {
-        this.template = null;
-        return false;
+        this.template = null
+        return false
       }
 
       // Capture the template for rendering. This is specified as the HTML
@@ -629,22 +624,22 @@
       // variables and sudo twig like logic. Alternatively multiple templates
       // can be passed in the data-template as JSON string array, where the main
       // template is labelled 'render' key, e.g. {"render": "#myTemplate", "subContainer": "#mySubContainer"}.
-      var renderTemplate = (options.templates && _.has(options.templates, this.templateRender)) ? options.templates[this.templateRender] : '#render_' + this.$el.attr('id');
+      var renderTemplate = (options.templates && _.has(options.templates, this.templateRender)) ? options.templates[this.templateRender] : '#render_' + this.$el.attr('id')
 
       if (_.has(options.templates, 'combined')) {
-        renderTemplate = options.templates.combined;
+        renderTemplate = options.templates.combined
       }
 
       if (typeof renderTemplate === 'function') {
-        this.template = renderTemplate;
+        this.template = renderTemplate
       } else if (renderTemplate.indexOf('#') === 0) {
-        var $renderTemplate = $(renderTemplate);
+        var $renderTemplate = $(renderTemplate)
         if ($renderTemplate.length > 0) {
-          this.template = _.template($renderTemplate.html());
+          this.template = _.template($renderTemplate.html())
         }
       }
 
-      return true;
+      return true
     },
 
     // getStandardData()
@@ -654,14 +649,13 @@
      * @returns {boolean}
      */
     getStandardData: function () {
-
       // If the widget is set to load on some event, we don't want to require the designer to manually set the
       // data-unrender for ever widget. That should be default. If someone does NOT want to unrender, they can
       // set data-unrender="false" but if it's null (the default), we'll set it as the default.
 
       // Each widget can set a different unrenderEventDefault. If the render is 'auto' we do NOT want to set an unrender
       if (this.options.render !== 'auto' && this.options.unrender === null && this.options.unrender !== false) {
-        this.options.unrender = this.options.unrenderEventDefault;
+        this.options.unrender = this.options.unrenderEventDefault
       }
 
       // If the widget is editable (i.e. a getValue() has been defined), set the style as a form and wrap with
@@ -671,15 +665,15 @@
 
       if (this.options.editable) {
         if (this.options.style === null) {
-          this.options.style = 'form';
+          this.options.style = 'form'
         }
         if (this.options.autoSave && this.model && typeof this.model === 'object') {
-          this.model.autoSave(this.options.autoSave);
+          this.model.autoSave(this.options.autoSave)
         }
       }
-      this.options.feedback = !!(this.options.feedback || this.options.style === 'form');
+      this.options.feedback = !!(this.options.feedback || this.options.style === 'form')
 
-      return true;
+      return true
     },
 
     // validate()
@@ -689,7 +683,7 @@
      * @returns {boolean}
      */
     validate: function () {
-      return true;
+      return true
     },
 
     // promise()
@@ -704,19 +698,19 @@
      */
     promise: function (options, resolve, reject) {
       if (this.options.forceType && (!_.has(this, this.options.forceType) || typeof this[this.options.forceType] !== 'object')) {
-        reject(new Stratus.Prototypes.Error(_.ucfirst(this.options.forceType) + ' not present on widget.', this));
+        reject(new Stratus.Prototypes.Error(_.ucfirst(this.options.forceType) + ' not present on widget.', this))
       } else if (_.size(this.options.cssFile)) {
         Stratus.Internals.LoadCss(this.options.cssFile).then(function () {
-          this.onResolve();
-          this.render();
-          resolve(this);
+          this.onResolve()
+          this.render()
+          resolve(this)
         }.bind(this), function (rejection) {
-          reject(new Stratus.Prototypes.Error(rejection, this));
-        }.bind(this));
+          reject(new Stratus.Prototypes.Error(rejection, this))
+        }.bind(this))
       } else {
-        this.onResolve();
-        this.render();
-        resolve(this);
+        this.onResolve()
+        this.render()
+        resolve(this)
       }
     },
 
@@ -735,37 +729,37 @@
       if (this.template === null || typeof this.template !== 'function') {
         // Handle Element, regardless of rendering method (some widgets may have a completely customized element
         // and desire functionality without template rendering.)
-        this.storeElement(Stratus.Views.Widgets.Base.prototype.$element.call(this));
-        this.primeElement();
+        this.storeElement(Stratus.Views.Widgets.Base.prototype.$element.call(this))
+        this.primeElement()
 
         // If it doesn't render, we still need to call the renderCallback because we may normally render a template
         // but some widget sets data-render="false" but it still needs the callback to execute the model change
         // event, e.g. link
-        this.renderEvent();
-        this.isRendered = true;
-        return false;
+        this.renderEvent()
+        this.isRendered = true
+        return false
       }
       if (this.options.render === 'auto') {
-        this.renderTemplate();
+        this.renderTemplate()
       } else {
         // Register Custom Render Event Trigger
-        this.primeRenderTrigger();
+        this.primeRenderTrigger()
 
         // Listen for LiveEdit
-        this.primeLiveEdit();
+        this.primeLiveEdit()
 
         // If set to render on click, set initial value on parent element
-        this.unrender();
+        this.unrender()
       }
-      return true;
+      return true
     },
 
     /**
      * @returns {boolean}
      */
     primeRenderTrigger: function () {
-      this.renderTrigger = this.renderTrigger || this.registerRenderTrigger();
-      return true;
+      this.renderTrigger = this.renderTrigger || this.registerRenderTrigger()
+      return true
     },
 
     /**
@@ -775,18 +769,18 @@
       this.$el.on(this.options.render, function () {
         // Render if not already rendered and live edit is on
         if (!this.isRendered && Stratus.Environment.get('liveEdit')) {
-          this.renderTemplate();
+          this.renderTemplate()
         }
-      }.bind(this));
-      return true;
+      }.bind(this))
+      return true
     },
 
     /**
      * @returns {boolean}
      */
     primeLiveEdit: function () {
-      this.liveEditTrigger = this.liveEditTrigger || this.registerLiveEdit();
-      return true;
+      this.liveEditTrigger = this.liveEditTrigger || this.registerLiveEdit()
+      return true
     },
 
     /**
@@ -796,9 +790,9 @@
       // Create a Listener for when LiveEdit is toggled
       Stratus.Environment.on('change:liveEdit', function () {
         // Toggle the related LiveEdit* method depending on when it's
-        Stratus.Environment.get('liveEdit') ? this.liveEditOn() : this.liveEditOff();
-      }.bind(this));
-      return true;
+        Stratus.Environment.get('liveEdit') ? this.liveEditOn() : this.liveEditOff()
+      }.bind(this))
+      return true
     },
 
     // renderTemplate()
@@ -811,8 +805,7 @@
      * @returns {boolean}
      */
     renderTemplate: function () {
-
-      var editElement;
+      var editElement
 
       var templateData = {
         // Generic Data
@@ -832,61 +825,61 @@
         // List Items
         globals: _.has(this, 'globals') ? this.globals : {},
         icon: _.has(this, 'icon') ? this.icon : {}
-      };
+      }
 
       // Add Model Information
       if (this.model && typeof this.model === 'object') {
-        templateData.model = this.model.attributes;
-        templateData.meta = this.model.meta.toObject();
+        templateData.model = this.model.attributes
+        templateData.meta = this.model.meta.toObject()
       }
 
       // Add Collection Information with Meta Precedence
       if (this.collection && typeof this.collection === 'object') {
-        templateData.collection = this.collection.models;
-        templateData.meta = this.collection.meta.toObject();
+        templateData.collection = this.collection.models
+        templateData.meta = this.collection.meta.toObject()
       }
 
       // This is for custom template values
       if (_.has(this, 'collectionView') && _.has(this.collectionView, 'data')) {
-        templateData.data = this.collectionView.data;
+        templateData.data = this.collectionView.data
       }
 
       // Add the Editable Element Inside a Container
-      editElement = this.template(templateData);
+      editElement = this.template(templateData)
 
       // If this is not auto render, then it's being rendered based on an event. In that case, we do not want to
       // show the feedback option twice, so we should remove the status until an event happens again
       if (this.options.render !== 'auto') {
         // set to 'render' which is just a generic value (don't want to show a success message)
-        this.setStatus('render');
+        this.setStatus('render')
       }
 
       // Insert the edit element into the container
-      this.$el.html(this.renderContainer(editElement));
+      this.$el.html(this.renderContainer(editElement))
 
       // Assign Element Selector as a local property
-      this.storeElement(Stratus.Views.Widgets.Base.prototype.$element.call(this));
+      this.storeElement(Stratus.Views.Widgets.Base.prototype.$element.call(this))
 
       // Handle Input Design
       if (this.options.style === 'form') {
-        this.$el.addClass('form-group has-feedback');
+        this.$el.addClass('form-group has-feedback')
 
         // Do not add form-control if mode = live edit, unless specifically requested
         if ((!Stratus.Environment.get('liveEdit') || this.options.formControl) && this.$element.addClass) {
-          this.$element.addClass('form-control');
+          this.$element.addClass('form-control')
         }
       } else {
-        this.$el.addClass('widget-container');
+        this.$el.addClass('widget-container')
       }
 
       // Capture Element
-      this.primeElement();
+      this.primeElement()
 
       // TODO: ADD DISPATCH HERE!
 
       // Load Nested Types & Plugins
       if (this.options.autoLoader) {
-        this.autoload();
+        this.autoload()
       }
 
       // Register Unrender After the Element is Rendered
@@ -901,16 +894,16 @@
         // Some widgets can't detect a blur event, instead they record isFocused (e.g. editor, datetimepicker, etc).
         // So in those cases the widget needs to trigger the blurAction by it's own methods. which will call unrender.
         this.$element.on(this.options.unrender, function (event) {
-          this.unrender();
-        }.bind(this));
+          this.unrender()
+        }.bind(this))
       }
 
       // Any customized post render methods
       if (!this.options.autoLoader) {
-        this.renderEvent();
+        this.renderEvent()
       }
 
-      return true;
+      return true
     },
 
     /**
@@ -918,8 +911,8 @@
      */
     storeElement: function (selectedElement) {
       if (typeof this.$element === 'function' || !_.isEqual(this.$element, selectedElement)) {
-        this.$element = selectedElement;
-        this.registeredElement = false;
+        this.$element = selectedElement
+        this.registeredElement = false
       }
     },
 
@@ -928,8 +921,8 @@
      * @returns {boolean}
      */
     primeElement: function () {
-      this.registeredElement = this.registeredElement || this.registerElement();
-      return true;
+      this.registeredElement = this.registeredElement || this.registerElement()
+      return true
     },
 
     // Capture Auto-Saving Routines
@@ -938,21 +931,21 @@
      */
     registerElement: function () {
       if (!this.$element || typeof this.$element !== 'object' || (typeof this.$element.length !== 'undefined' && !this.$element.length)) {
-        return false;
+        return false
       }
       this.$element.on('focus', function (event) {
-        this.focusAction(event);
-      }.bind(this));
+        this.focusAction(event)
+      }.bind(this))
       this.$element.on('blur', function (event) {
-        this.blurAction(event);
-      }.bind(this));
+        this.blurAction(event)
+      }.bind(this))
       this.$element.on('keydown', function (event) {
-        this.keyActions(event);
-      }.bind(this));
+        this.keyActions(event)
+      }.bind(this))
       this.$element.on('click', function (event) {
-        this.editAction(event);
-      }.bind(this));
-      return true;
+        this.editAction(event)
+      }.bind(this))
+      return true
     },
 
     // autoload()
@@ -964,9 +957,9 @@
       Stratus.Internals.Loader(this.el || this.$el, this.view).then(function (nest) {
         /* Second Loader for Parent-Children */
         Stratus.Internals.Loader(this.$el.find('[data-entity]')).then(function (parent) {
-          this.loaderCallback(nest, parent);
-        }.bind(this));
-      }.bind(this));
+          this.loaderCallback(nest, parent)
+        }.bind(this))
+      }.bind(this))
     },
 
     // renderContainer()
@@ -982,7 +975,7 @@
         template: template,
         elementId: this.element,
         options: this.options
-      });
+      })
     },
 
     // liveEditOn()
@@ -995,14 +988,14 @@
      */
     liveEditOn: function () {
       // If the widget is not editable, i.e. a getValue is not defined (e.g. display widgets), then don't do anything
-      if (this.getValue() === 'undefined' || !Stratus.Environment.get('liveEdit')) return false;
+      if (this.getValue() === 'undefined' || !Stratus.Environment.get('liveEdit')) return false
 
       // If the widget is not rendered yet, and this model value is empty, set default value on the DOM element
       // before it's even rendered, so that users can see the fields that are available
-      var modelValue = this.getPropertyValue();
+      var modelValue = this.getPropertyValue()
       if (!this.isRendered && modelValue === this.options.emptyValue) {
         // This sets the contents of the element itself, not using traditional setValue()
-        this.$el.html(this.options.placeholder);
+        this.$el.html(this.options.placeholder)
       }
     },
 
@@ -1017,7 +1010,7 @@
      */
     liveEditOff: function () {
       // If the widget is not editable, i.e. a getValue is not defined (e.g. display widgets), then don't do anything
-      return (this.getValue() !== 'undefined') ? this.unrender() : false;
+      return (this.getValue() !== 'undefined') ? this.unrender() : false
     },
 
     // unrender()
@@ -1026,32 +1019,31 @@
     // But when liveEdit is toggled off, the widget may not be rendered yet (it may just have placeholder), so we
     // need to unrender the same way both ways.
     unrender: function () {
-
       // if template is not set to unrender, don't do anything
-      if (!this.options.unrender) return false;
+      if (!this.options.unrender) return false
 
       // NOTE: It doesn't matter if the template is rendered, or just a placeholder, either way we reset the element with
       // the model value
       // Save Before Unrendering
-      this.safeSaveAction({ saveNow: true });
+      this.safeSaveAction({ saveNow: true })
 
       // TODO: don't save placeholder value
       // TODO: allow placeholder to be customized in the data attribute
 
       // When unrendering, set the data of the DOM element to the Display Value (which by default is the Model's
       // value, but can be manipulated)
-      var unrenderedValue = this.options.before + this.getDisplayValue() + this.options.after;
-      unrenderedValue = unrenderedValue === null ? '' : unrenderedValue;
+      var unrenderedValue = this.options.before + this.getDisplayValue() + this.options.after
+      unrenderedValue = unrenderedValue === null ? '' : unrenderedValue
 
       // This sets the contents of the element itself, not using traditional setValue()
-      this.$el.html(unrenderedValue);
-      this.isRendered = false;
+      this.$el.html(unrenderedValue)
+      this.isRendered = false
 
       // AFTER UNRENDERING
       // If LiveEdit is on, we need to render back to a state that looks right for liveEdit, e.g. placeholders
-      this.liveEditOn();
+      this.liveEditOn()
 
-      this.trigger('unrender');
+      this.trigger('unrender')
     },
 
     /**
@@ -1060,9 +1052,9 @@
     registerChildViews: function (entries) {
       if (entries && typeof entries === 'object' && entries.total > 0) {
         _.each(entries.views, function (view) {
-          view.dispatch = this.dispatch;
-          this.childViews.push(view);
-        }, this);
+          view.dispatch = this.dispatch
+          this.childViews.push(view)
+        }, this)
       }
     },
 
@@ -1073,20 +1065,20 @@
      * @returns {{parent: *, nest: *}}
      */
     loaderCallback: function (nest, parent) {
-      var entries = { parent: parent, nest: nest };
-      this.registerChildViews(parent);
-      this.registerChildViews(nest);
-      this.renderEvent(entries);
-      return entries;
+      var entries = { parent: parent, nest: nest }
+      this.registerChildViews(parent)
+      this.registerChildViews(nest)
+      this.renderEvent(entries)
+      return entries
     },
 
     /**
      * @returns {boolean}
      */
     primeIdleCheck: function () {
-      if (!this.$element) return false;
-      this.idleJob = this.idleJob || Stratus.Chronos.add(this.options.autoSaveInterval, this.idleCheck, this);
-      return Stratus.Chronos.toggle(this.idleJob, this.isFocused);
+      if (!this.$element) return false
+      this.idleJob = this.idleJob || Stratus.Chronos.add(this.options.autoSaveInterval, this.idleCheck, this)
+      return Stratus.Chronos.toggle(this.idleJob, this.isFocused)
     },
 
     /**
@@ -1094,10 +1086,10 @@
      */
     idleCheck: function () {
       if (this._timestamp && ((Date.now() - this._timestamp) > (_.seconds(this.options.autoSaveInterval) * 1000))) {
-        this._timestamp = null;
-        this.savePropertyValue();
+        this._timestamp = null
+        this.savePropertyValue()
       }
-      return true;
+      return true
     },
 
     // focusAction()
@@ -1111,11 +1103,11 @@
      */
     focusAction: function (event) {
       if (!this.isFocused) {
-        this.isFocused = true;
-        this.$el.addClass('editing');
-        this.primeIdleCheck();
+        this.isFocused = true
+        this.$el.addClass('editing')
+        this.primeIdleCheck()
       }
-      return true;
+      return true
     },
 
     /**
@@ -1123,10 +1115,10 @@
      */
     savePropertyValue: function () {
       if (this.getValue() !== this.getPropertyValue()) {
-        this.setPropertyValue(this.getValue());
-        this.safeSaveAction();
+        this.setPropertyValue(this.getValue())
+        this.safeSaveAction()
       }
-      return true;
+      return true
     },
 
     // blurAction()
@@ -1140,36 +1132,36 @@
      */
     blurAction: function (event) {
       if (this.isFocused) {
-        this.isFocused = false;
-        this.$el.removeClass('editing');
-        this.primeIdleCheck();
-        this.savePropertyValue();
+        this.isFocused = false
+        this.$el.removeClass('editing')
+        this.primeIdleCheck()
+        this.savePropertyValue()
 
         // If it's still rendered, AND the unrender options is set (whether it's an event or just true) then we call unrender
         if (this.isRendered && this.options.unrender) {
           // Some widgets can't detect a blur event, instead they record isFocused (e.g. editor, datetimepicker, etc).
           // So in those cases the widget needs to trigger the blurAction by it's own methods. which will call this here.
-          this.unrender();
+          this.unrender()
         }
       }
-      return true;
+      return true
     },
 
     // Stub to allow widget to toggle focus on the element, if it requires unusual method
     focus: function () {
       if (this.$elementInput) {
-        this.$elementInput.focus();
+        this.$elementInput.focus()
       } else if (this.$element && this.$element.length) {
-        this.$element.focus();
+        this.$element.focus()
       }
     },
 
     // Stub to allow widget to toggle blur on the element, if it requires unusual method
     blur: function () {
       if (this.$elementInput) {
-        this.$elementInput.blur();
+        this.$elementInput.blur()
       } else if (this.$element && this.$element.length) {
-        this.$element.blur();
+        this.$element.blur()
       }
     },
 
@@ -1184,19 +1176,19 @@
     keyActions: function (event) {
       // Enter should blur focus and trigger the changes to be set to the model
       if (event.keyCode === Stratus.Key.Enter && this.options.blurOnEnter) {
-        event.preventDefault();
-        $(event.target).blur();
+        event.preventDefault()
+        $(event.target).blur()
       }
 
       // Escape should cancel the changes
       if (event.keyCode === Stratus.Key.Escape) {
-        event.preventDefault();
-        this.closeAction(event);
+        event.preventDefault()
+        this.closeAction(event)
       }
 
       // Update Key Timestamp
-      this._timestamp = Date.now();
-      return true;
+      this._timestamp = Date.now()
+      return true
     },
 
     // editAction()
@@ -1207,8 +1199,8 @@
      * @returns {boolean}
      */
     editAction: function (event) {
-      $(event.target).focus();
-      return true;
+      $(event.target).focus()
+      return true
     },
 
     // closeAction()
@@ -1219,9 +1211,9 @@
      * @returns {boolean}
      */
     closeAction: function (event) {
-      this.scopeChanged();
-      $(event.target).blur();
-      return true;
+      this.scopeChanged()
+      $(event.target).blur()
+      return true
     },
 
     // safeSaveAction
@@ -1232,9 +1224,9 @@
      * @returns {boolean}
      */
     safeSaveAction: function (options) {
-      if (!this.propertyName || this.options.dataType !== 'model' || !this.isRendered || !this.options.editable) return false;
-      this.saveAction(options);
-      return true;
+      if (!this.propertyName || this.options.dataType !== 'model' || !this.isRendered || !this.options.editable) return false
+      this.saveAction(options)
+      return true
     },
 
     // getPropertyValue()
@@ -1245,11 +1237,11 @@
      */
     getPropertyValue: function () {
       if (this.options.dataType === 'model') {
-        return this.model.get(this.propertyName);
+        return this.model.get(this.propertyName)
       } else if (this.options.dataType === 'var') {
-        return Stratus.Environment.get(this.propertyName);
+        return Stratus.Environment.get(this.propertyName)
       } else {
-        return false;
+        return false
       }
     },
 
@@ -1258,23 +1250,23 @@
     // In some cases getModelValue may return an object, e.g. images will return one or more media objects
     // But we really only want an array of simple values (whatever field is the identifier)
     getPropertyValues: function () {
-      var value = this.getPropertyValue();
+      var value = this.getPropertyValue()
 
       // If value is not an array then just return it as a simple array
       if (!_.isArray(value)) {
-        value = [value];
+        value = [value]
       }
 
       // If value is an array, e.g. images is a media object, then create an array of just the ids
-      var values = [];
+      var values = []
       _.each(value, function (v) {
         if (!_.isObject(v)) {
-          values.push(v);
+          values.push(v)
         } else if (_.has(v, 'id')) {
-          values.push(v.id);
+          values.push(v.id)
         }
-      });
-      return values;
+      })
+      return values
     },
 
     // setPropertyValue()
@@ -1285,30 +1277,30 @@
      */
     setPropertyValue: function (value) {
       // Ensure Changing
-      if (this.getPropertyValue() === value) return true;
+      if (this.getPropertyValue() === value) return true
 
       // Set Change Status
-      this.setStatus('change');
+      this.setStatus('change')
 
       // Determine Value Scope
-      var scope = this.propertyName;
+      var scope = this.propertyName
       if (value === null && typeof scope === 'string' && scope.indexOf('.') !== -1) {
-        var digest = scope.split('.');
+        var digest = scope.split('.')
         if (_.last(digest) === 'id') {
-          scope = scope.slice(0, -3);
+          scope = scope.slice(0, -3)
         }
       }
 
       // Remove Empty Values
-      if (typeof value !== 'boolean' && !value) value = this.options.emptyValue;
+      if (typeof value !== 'boolean' && !value) value = this.options.emptyValue
 
       // Set Value
       if (this.options.dataType === 'model') {
-        return this.model.set(scope, value);
+        return this.model.set(scope, value)
       } else if (this.options.dataType === 'var') {
-        return Stratus.Environment.set(scope, value);
+        return Stratus.Environment.set(scope, value)
       } else {
-        return false;
+        return false
       }
     },
 
@@ -1324,7 +1316,7 @@
      * @returns {string}
      */
     getValue: function () {
-      return 'undefined';
+      return 'undefined'
     },
 
     // setValue()
@@ -1336,7 +1328,7 @@
      * @returns {*}
      */
     setValue: function (value) {
-      return value;
+      return value
     },
 
     // RECOMMENDED TO BE SET ON EVERY VIEW
@@ -1351,7 +1343,7 @@
      * @returns {*}
      */
     getDisplayValue: function () {
-      return this.formatDisplayValue(this.getPropertyValue());
+      return this.formatDisplayValue(this.getPropertyValue())
     },
 
     // formatDisplayValue()
@@ -1364,7 +1356,7 @@
      * @returns {*}
      */
     formatDisplayValue: function (value) {
-      return value;
+      return value
     },
 
     // saveAction()
@@ -1377,17 +1369,17 @@
      * @returns {boolean}
      */
     saveAction: function (options) {
-      if (!this.propertyName) return false;
+      if (!this.propertyName) return false
 
       // Ensure Options Exist
-      if (options === undefined) options = {};
+      if (options === undefined) options = {}
 
       // If auto save is set, the stratus will automatically save at intervals
       if (this.model && typeof this.model === 'object' && (!this.options.autoSave || options.saveNow)) {
-        this.model.saveInterval();
+        this.model.saveInterval()
       }
 
-      return true;
+      return true
     },
 
     // scopeChanged()
@@ -1400,17 +1392,17 @@
      * @returns {boolean}
      */
     scopeChanged: function () {
-      if (!this.propertyName) return false;
+      if (!this.propertyName) return false
       if (!this.isFocused) {
         // get the value of the property fetched from the API and update the element's value in the DOM
         // NOTE: We do not want the current field to be updated if the model updates from a save somewhere else
         // otherwise, the stuff we typed since last save is going to be overwritten
-        this.setValue(this.getPropertyValue());
+        this.setValue(this.getPropertyValue())
       } else if (!this.isRendered && this.options.unrender) {
-        var displayValue = this.options.before + this.getDisplayValue() + this.options.after;
-        this.$el.html(displayValue || '');
+        var displayValue = this.options.before + this.getDisplayValue() + this.options.after
+        this.$el.html(displayValue || '')
       }
-      return true;
+      return true
     },
 
     // dispatchTrigger()
@@ -1421,8 +1413,8 @@
      * @returns {boolean}
      */
     dispatchTrigger: function (entries) {
-      this.dispatch.trigger('render', entries);
-      return true;
+      this.dispatch.trigger('render', entries)
+      return true
     },
 
     // Render Event
@@ -1436,17 +1428,17 @@
      * @returns {Stratus.Views.Widgets.Base}
      */
     renderEvent: function (options) {
-      this.primePostRender();
-      this.trigger('render', options || this);
-      return this;
+      this.primePostRender()
+      this.trigger('render', options || this)
+      return this
     },
 
     // Prime the Post Render event before each render trigger
     primePostRender: function () {
       // This will be added to the render function once after the render event
       this.once('render', function () {
-        this.trigger('postrender');
-      }, this);
+        this.trigger('postrender')
+      }, this)
     },
 
     // onRender()
@@ -1458,7 +1450,7 @@
      * @returns {boolean}
      */
     onRender: function (entries) {
-      return true;
+      return true
     },
 
     // onPostRender()
@@ -1470,19 +1462,19 @@
      * @returns {boolean}
      */
     onPostRender: function (entries) {
-      this.isRendered = true;
+      this.isRendered = true
 
       // Add the value to the rendered template (this is done after callback in case part of rendering needs to
       // happen first, e.g. dateTimePicker gets instantiated on the rendered element, before values can be saved)
-      this.scopeChanged();
+      this.scopeChanged()
 
       // If this was rendered based on a click, focus on the element
       // This is called after renderCallback so that the elementInput can be set custom if necessary
       if (this.options.render !== 'auto') {
-        this.focus();
+        this.focus()
       }
-      this.trigger('register');
-      return true;
+      this.trigger('register')
+      return true
     },
 
     // onUnrender()
@@ -1494,7 +1486,7 @@
      * @returns {Stratus.Views.Widgets.Base}
      */
     onUnrender: function (entries) {
-      return this;
+      return this
     },
 
     // Event Registration
@@ -1508,8 +1500,8 @@
      * @returns {boolean}
      */
     primeRegister: function () {
-      this.registered = this.registered || this.onRegister();
-      return true;
+      this.registered = this.registered || this.onRegister()
+      return true
     },
 
     /**
@@ -1517,18 +1509,17 @@
      */
     onRegister: function () {
       // Determine Scope
-      var scope = this.propertyName || 'change';
-      if (scope !== 'change') scope = 'change:' + scope;
+      var scope = this.propertyName || 'change'
+      if (scope !== 'change') scope = 'change:' + scope
 
       // Listen to Properties
       if (this.model && typeof this.model === 'object') {
-        this.model.on(scope, this.scopeChanged, this);
+        this.model.on(scope, this.scopeChanged, this)
       } else if (this.options.dataType === 'var') {
-        Stratus.Environment.on(scope, this.scopeChanged, this);
+        Stratus.Environment.on(scope, this.scopeChanged, this)
       }
-      return true;
+      return true
     }
 
-  });
-
-}));
+  })
+}))

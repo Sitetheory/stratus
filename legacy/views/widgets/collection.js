@@ -576,8 +576,8 @@
         for (var i = 0; i < phantoms; i++) {
           phantom.iteration++
           if (i === (phantoms - 1)) {
-              phantom.last = true
-            }
+            phantom.last = true
+          }
           $(phantom.hook).append(phantomTemplate({
             scope: 'entity',
             globals: phantom
