@@ -324,7 +324,6 @@ boot.config({
     'templates-upload': boot.bundle + 'stratus/legacy/views/widgets/upload.html',
 
     /* Froala Libraries */
-
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     froala: boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/froala_editor.min',
     'froala-align': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/align.min',
@@ -372,7 +371,6 @@ boot.config({
     'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
     promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     swiper: boot.bundle + 'stratus/bower_components/swiper/dist/js/swiper' + boot.suffix,
-
 
     /* Interpreters */
     coffee: boot.bundle + 'stratus/bower_components/coffeescript/docs/v2/browser-compiler/coffeescript',

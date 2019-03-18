@@ -22,11 +22,6 @@
         '$sce',
         '$log',
         function ($q, $http, $window, $sce, $log) {
-          var RESPONSE_CODE = {
-            verify: 'VERIFY',
-            success: 'SUCCESS'
-          }
-
           /**
            * @param element
            * @param scope
@@ -61,7 +56,6 @@
             var componentUrl = Stratus.BundlePath + 'components/' + _.snakeToCamel(componentName)
             return Stratus.BaseUrl + componentUrl + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
           }
-
 
           /**
            * @param value
