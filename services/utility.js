@@ -22,11 +22,6 @@
         '$sce',
         '$log',
         function ($q, $http, $window, $sce, $log) {
-          var RESPONSE_CODE = {
-            verify: 'VERIFY',
-            success: 'SUCCESS'
-          }
-
           /**
            * @param element
            * @param scope
@@ -44,6 +39,7 @@
           }
 
           /**
+           * @deprecated
            * @param response
            * @returns {*}
            */
@@ -62,73 +58,6 @@
           }
 
           /**
-           * @param password
-           * @returns {boolean}
-           */
-          function validPassword (password) {
-            var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d$&+,:;=?@#|'<>.^*()%!-]{8,}|^.{20,}$/
-            return passwordRegex.test(password)
-          }
-
-          /**
-           * @param password
-           * @param zxcvbn
-           * @returns {{progressBarClass: string, progressBarValue: number}}
-           */
-          function generateStrengthBar (password, zxcvbn) {
-            var data = {
-              progressBarClass: '',
-              progressBarValue: 0
-            }
-
-            switch (zxcvbn(password).score) {
-              case 0:
-                data.progressBarClass = 'risky'
-                data.progressBarValue = 20
-                break
-              case 1:
-                data.progressBarClass = 'guessable'
-                data.progressBarValue = 40
-                break
-              case 2:
-                data.progressBarClass = 'safe'
-                data.progressBarValue = 60
-                break
-              case 3:
-                data.progressBarClass = 'moderate'
-                data.progressBarValue = 80
-                break
-              case 4:
-                data.progressBarClass = 'strong'
-                data.progressBarValue = 100
-                break
-            }
-
-            return data
-          }
-
-          /**
-           * @returns {{type: null, email: null, token: null}}
-           */
-          function getUrlParams () {
-            var params = _.getUrlParams()
-            return {
-              type: _.has(params, 'type') ? params.type : null,
-              email: _.has(params, 'email') ? params.email : null,
-              token: _.has(params, 'token') ? params.token : null
-            }
-          }
-
-          /**
-           * @param phoneNumber
-           * @returns {*}
-           */
-          function cleanedPhoneNumber (phoneNumber) {
-            const keepNumberOnlyRegex = /\D+/g
-            return phoneNumber.replace(keepNumberOnlyRegex, '')
-          }
-
-          /**
            * @param value
            * @returns {boolean}
            */
@@ -143,6 +72,7 @@
           }
 
           /**
+           * @deprecated
            * @param data
            * @param method
            * @param url
@@ -177,11 +107,6 @@
             componentInitializer: componentInitializer,
             getStatus: getStatus,
             buildCssUrl: buildCssUrl,
-            validPassword: validPassword,
-            generateStrengthBar: generateStrengthBar,
-            getUrlParams: getUrlParams,
-            cleanedPhoneNumber: cleanedPhoneNumber,
-            RESPONSE_CODE: RESPONSE_CODE,
             copyToClipboard: copyToClipboard,
             sendRequest: sendRequest,
             safeMessage: safeMessage
