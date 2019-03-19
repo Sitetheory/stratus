@@ -71,6 +71,7 @@ Stratus.Internals.Ajax = function (request) {
 /**
  * @type {*|Function|void}
  */
+// TODO: This runs on fancy Backbone code that should be removed
 Stratus.Internals.Anchor = (function Anchor () {
   Anchor.initialize = true
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
@@ -848,13 +849,15 @@ Stratus.Internals.Resource = function (path, elementId) {
 // values, which will be merged with requested parameters and formulated
 // into a new URL. TODO: Move this into underscore as a mixin.
 /**
+ * @deprecated
  * @param params
  * @param url
  * @returns {string|*}
  * @constructor
  */
 Stratus.Internals.SetUrlParams = function (params, url) {
-  console.warn('Stratus.Internals.SetUrlParams is deprecated. Use _.setUrlParams instead.')
+  // TODO: Add Controls for Deprecation Warnings...
+  // console.warn('Stratus.Internals.SetUrlParams is deprecated. Use _.setUrlParams instead.')
   return _.setUrlParams(params, url)
 }
 

@@ -1,2 +1,2 @@
-// Stratus.Internals.SetUrlParams() == url
-// Stratus.Internals.SetUrlParams({foo: 'bar'}) = url?foo=bar
+// _.setUrlParams() == url
+// _.setUrlParams({foo: 'bar'}) = url?foo=bar
