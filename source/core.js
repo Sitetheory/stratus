@@ -1,4 +1,4 @@
-/* global Stratus, _, Backbone, $, bootbox, Model */
+/* global Stratus, _, Backbone, $, bootbox */
 
 // Instance Clean
 // --------------
@@ -35,7 +35,7 @@ Stratus.Instances.Clean = function (instances) {
 // --------------
 
 // This model handles all event related logic.
-class Aether extends Model {
+class Aether extends Stratus.Prototypes.Model {
   constructor (data, options) {
     super(data, options)
 
@@ -101,7 +101,7 @@ Stratus.Aether = new Aether()
 // --------------
 
 // This model handles all time related jobs.
-class Chronos extends Model {
+class Chronos extends Stratus.Prototypes.Model {
   constructor (data, options) {
     super(data, options)
     if (!Stratus.Environment.get('production')) {

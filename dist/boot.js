@@ -334,13 +334,9 @@ boot.config({
     'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
     'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
     // 'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
-    'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
-    'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
-    'stratus.components.singleSignOn': boot.bundle + 'stratus/components/singleSignOn' + boot.suffix,
     'stratus.components.socialMedia': boot.bundle + 'stratus/components/socialMedia' + boot.suffix,
     'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
     'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
-    'stratus.components.proposalAlert': boot.bundle + 'stratus/components/proposalAlert' + boot.suffix,
     'stratus.components.mediaDragDrop': boot.bundle + 'stratus/components/mediaDragDrop' + boot.suffix,
     'stratus.components.mediaDetails': boot.bundle + 'stratus/components/mediaDetails' + boot.suffix,
     'stratus.components.mediaShortDetails': boot.bundle + 'stratus/components/mediaShortDetails' + boot.suffix,
@@ -392,16 +388,12 @@ boot.config({
     'stratus.filters.truncate': boot.bundle + 'stratus/filters/truncate' + boot.suffix,
 
     /* Stratus Core Services */
-    'stratus.services.appConfig': boot.bundle + 'stratus/services/appConfig' + boot.suffix,
     'stratus.services.model': boot.bundle + 'stratus/services/model' + boot.suffix,
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
-    'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
-    // 'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
-    'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
     'stratus.services.media': boot.bundle + 'stratus/services/media' + boot.suffix,
     'stratus.services.iCal': boot.bundle + 'stratus/services/iCal' + boot.suffix,
 
@@ -422,7 +414,6 @@ boot.config({
     'templates-upload': boot.bundle + 'stratus/legacy/views/widgets/upload.html',
 
     /* Froala Libraries */
-
     // TODO: Move these to Sitetheory since they are specific to Sitetheory
     froala: boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/froala_editor.min',
     'froala-align': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/align.min',
@@ -470,7 +461,6 @@ boot.config({
     'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
     promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     swiper: boot.bundle + 'stratus/bower_components/swiper/dist/js/swiper' + boot.suffix,
-    zxcvbn: boot.bundle + 'stratus/bower_components/zxcvbn/dist/zxcvbn',
 
     /* Interpreters */
     coffee: boot.bundle + 'stratus/bower_components/coffeescript/docs/v2/browser-compiler/coffeescript',

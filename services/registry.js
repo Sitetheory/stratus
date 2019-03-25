@@ -28,26 +28,29 @@
         'Collection',
         'Model',
         '$interpolate',
-        '$q',
-        function (Collection, Model, $interpolate, $q) {
-          return function () {
+        function (Collection, Model, $interpolate) {
+          return class AngularRegistry {
+            constructor () {
+              // Scope Binding
+              this.fetch = this.fetch.bind(this)
+            }
+
             // TODO: Handle Version Routing through Angular
             // Maintain all models in Namespace
             // Inverse the parent and child objects the same way Doctrine does
             /**
              * @param $element
              * @param $scope
-             * @returns $q
+             * @returns Promise
              */
-            this.fetch = function ($element, $scope) {
-              var that = this
-              return new $q(function (resolve, reject) {
+            fetch ($element, $scope) {
+              return new Promise(function (resolve, reject) {
                 if (angular.isString($element)) {
                   $element = {
                     target: $element
                   }
                 }
-                var options = {
+                const options = {
                   target: $element.attr
                     ? $element.attr('data-target')
                     : $element.target,
@@ -69,7 +72,7 @@
                 }
                 /* TODO: handle these sorts of shortcuts to the API that components are providing *
                 $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
-                var request = {
+                const request = {
                   api: {
                     options: this.options ? this.options : {},
                     limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
@@ -79,19 +82,19 @@
                   request.api = _.extendDeep(request.api, $scope.api)
                 }
                 /* */
-                var completed = 0
+                let completed = 0
                 $scope.$watch(function () {
                   return completed
                 }, function (iteration) {
                   if (_.isNumber(iteration) &&
                     parseInt(iteration) === _.size(options)) {
-                    resolve(that.build(options, $scope))
+                    resolve(AngularRegistry.build(options, $scope))
                   }
                 })
                 _.each(options, function (element, key) {
                   if (element && angular.isString(element)) {
-                    var interpreter = $interpolate(element, false, null, true)
-                    var initial = interpreter($scope.$parent)
+                    const interpreter = $interpolate(element, false, null, true)
+                    const initial = interpreter($scope.$parent)
                     if (angular.isDefined(initial)) {
                       options[key] = initial
                       completed++
@@ -114,8 +117,8 @@
             /**
              * @returns {collection|model|*}
              */
-            this.build = function (options, $scope) {
-              var data
+            static build (options, $scope) {
+              let data
               if (options.target) {
                 options.target = _.ucfirst(options.target)
 
@@ -124,10 +127,10 @@
                   if (!Stratus.Catalog[options.target]) {
                     Stratus.Catalog[options.target] = {}
                   }
-                  var id = options.id || 'manifest'
+                  const id = options.id || 'manifest'
                   if (options.decouple ||
                     !Stratus.Catalog[options.target][id]) {
-                    var modelOptions = {
+                    const modelOptions = {
                       target: options.target,
                       manifest: options.manifest,
                       stagger: true
@@ -148,13 +151,13 @@
                     data = Stratus.Catalog[options.target][id]
                   }
                 } else {
-                  var registry = !options.direct ? 'Catalog' : 'Compendium'
+                  const registry = !options.direct ? 'Catalog' : 'Compendium'
                   if (!Stratus[registry][options.target]) {
                     Stratus[registry][options.target] = {}
                   }
                   if (options.decouple ||
                     !Stratus[registry][options.target].collection) {
-                    var collectionOptions = {
+                    const collectionOptions = {
                       target: options.target,
                       direct: !!options.direct
                     }

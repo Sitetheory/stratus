@@ -53,8 +53,7 @@
     "requirejs": "^2.*",
     "swiper": "^4.*",
     "text": "^2.*",
-    "underscore": "^1.9.*",
-    "zxcvbn": "^4.4.2"
+    "underscore": "^1.9.*"
   },
   "resolutions": {
     "angular": "~1.7.*"
