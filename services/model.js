@@ -154,11 +154,11 @@
 
             // Watch for Data Changes
             watcher () {
-              if (this.watching) {
+              const that = this
+              if (that.watching) {
                 return true
               }
-              this.watching = true
-              const that = this
+              that.watching = true
               $rootScope.$watch(function () {
                 return that.data
               }, function (newData, priorData) {
@@ -202,28 +202,32 @@
              * @returns {*}
              */
             getIdentifier () {
-              return (this.identifier = this.get('id') || this.identifier)
+              const that = this
+              return (that.identifier = that.get('id') || that.identifier)
             }
 
             /**
              * @returns {*}
              */
             getType () {
-              return (this.type = this.type || this.target || 'orphan')
+              const that = this
+              return (that.type = that.type || that.target || 'orphan')
             }
 
             /**
              * @returns {*}
              */
             getHash () {
-              return this.getType() + (_.isNumber(this.getIdentifier()) ? this.getIdentifier().toString() : this.getIdentifier())
+              const that = this
+              return that.getType() + (_.isNumber(that.getIdentifier()) ? that.getIdentifier().toString() : that.getIdentifier())
             }
 
             /**
              * @returns {*}
              */
             url () {
-              let url = this.getIdentifier() ? this.urlRoot + '/' + this.getIdentifier() : this.urlRoot + (this.targetSuffix || '')
+              const that = this
+              let url = that.getIdentifier() ? that.urlRoot + '/' + that.getIdentifier() : that.urlRoot + (that.targetSuffix || '')
 
               // add further param to specific version
               if (_.getUrlParams('version')) {
@@ -272,8 +276,8 @@
              * @returns {*}
              */
             sync (action, data, options) {
-              this.pending = true
               const that = this
+              that.pending = true
               return new Promise(function (resolve, reject) {
                 action = action || 'GET'
                 options = options || {}
@@ -426,10 +430,11 @@
              * @returns {*}
              */
             specialAction (action) {
-              this.meta.temp('api.options.apiSpecialAction', action)
-              this.save()
-              if (this.meta.get('api') && this.meta.get('api').hasOwnProperty('options') && this.meta.get('api').options.hasOwnProperty('apiSpecialAction')) {
-                delete this.meta.get('api').options.apiSpecialAction
+              const that = this
+              that.meta.temp('api.options.apiSpecialAction', action)
+              that.save()
+              if (that.meta.get('api') && that.meta.get('api').hasOwnProperty('options') && that.meta.get('api').options.hasOwnProperty('apiSpecialAction')) {
+                delete that.meta.get('api').options.apiSpecialAction
               }
             }
 
@@ -479,7 +484,8 @@
              * @returns {null}
              */
             toPatch () {
-              return this.patch
+              const that = this
+              return that.patch
             }
 
             /**

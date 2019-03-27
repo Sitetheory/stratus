@@ -156,7 +156,8 @@
              * @returns {*}
              */
             url () {
-              return this.urlRoot + (this.targetSuffix || '')
+              const that = this
+              return that.urlRoot + (that.targetSuffix || '')
             }
 
             /**
@@ -167,16 +168,16 @@
               if (!_.isArray(data)) {
                 return
               }
-              if (this.types.indexOf(type) === -1) {
-                this.types.push(type)
-              }
               const that = this
+              if (that.types.indexOf(type) === -1) {
+                that.types.push(type)
+              }
               // TODO: Make this able to be flagged as direct entities
               data.forEach(function (target) {
                 // TODO: Add references to the Catalog when creating these
                 // models
                 that.models.push(new Model({
-                  collection: this,
+                  collection: that,
                   type: type || null
                 }, target))
               })
@@ -193,8 +194,8 @@
               const that = this
 
               // Internals
-              this.pending = true
-              this.completed = false
+              that.pending = true
+              that.completed = false
 
               return new Promise(function (resolve, reject) {
                 action = action || 'GET'
@@ -286,7 +287,8 @@
              * @returns {*}
              */
             fetch (action, data, options) {
-              return this.sync(action, data || this.meta.get('api'), options).catch(
+              const that = this
+              return that.sync(action, data || that.meta.get('api'), options).catch(
                 function (error) {
                   $mdToast.show(
                     $mdToast.simple()
@@ -305,10 +307,11 @@
              * @returns {*}
              */
             filter (query) {
-              this.filtering = true
-              this.meta.set('api.q', angular.isDefined(query) ? query : '')
-              this.meta.set('api.p', 1)
-              return this.fetch()
+              const that = this
+              that.filtering = true
+              that.meta.set('api.q', angular.isDefined(query) ? query : '')
+              that.meta.set('api.p', 1)
+              return that.fetch()
             }
 
             /**
@@ -317,7 +320,7 @@
              */
             throttleFilter (query) {
               const that = this
-              this.meta.set('api.q', angular.isDefined(query) ? query : '')
+              that.meta.set('api.q', angular.isDefined(query) ? query : '')
               return new Promise(function (resolve, reject) {
                 const request = that.throttle()
                 if (!Stratus.Environment.get('production')) {
@@ -342,10 +345,11 @@
              * @returns {*}
              */
             page (page) {
-              this.paginate = true
-              this.meta.set('api.p', page)
-              this.fetch()
-              delete this.meta.get('api').p
+              const that = this
+              that.paginate = true
+              that.meta.set('api.p', page)
+              that.fetch()
+              delete that.meta.get('api').p
             }
 
             /**
@@ -353,7 +357,8 @@
              */
             toJSON () {
               const sanitized = []
-              this.models.forEach(function (model) {
+              const that = this
+              that.models.forEach(function (model) {
                 if (typeof model.toJSON === 'function') {
                   sanitized.push(model.toJSON())
                 }
@@ -376,7 +381,7 @@
               target = (target instanceof Model) ? target : new Model({
                 collection: that
               }, target)
-              this.models.push(target)
+              that.models.push(target)
               if (options.save) {
                 target.save()
               }
@@ -386,7 +391,8 @@
              * @param target
              */
             remove (target) {
-              this.models.splice(this.models.indexOf(target), 1)
+              const that = this
+              that.models.splice(that.models.indexOf(target), 1)
             }
 
             /**
@@ -394,7 +400,8 @@
              * @returns {*}
              */
             find (predicate) {
-              return _.find(this.models, _.isFunction(predicate) ? predicate : function (model) {
+              const that = this
+              return _.find(that.models, _.isFunction(predicate) ? predicate : function (model) {
                 return model.get('id') === predicate
               })
             }
@@ -404,7 +411,8 @@
              * @returns {Array}
              */
             pluck (attribute) {
-              return _.map(this.models, function (element) {
+              const that = this
+              return _.map(that.models, function (element) {
                 return element instanceof Model
                   ? element.pluck(attribute)
                   : null
@@ -416,7 +424,8 @@
              * @returns {boolean}
              */
             exists (attribute) {
-              return !!_.reduce(this.pluck(attribute) || [],
+              const that = this
+              return !!_.reduce(that.pluck(attribute) || [],
                 function (memo, data) {
                   return memo || angular.isDefined(data)
                 })
