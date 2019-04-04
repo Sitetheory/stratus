@@ -88,8 +88,7 @@
         $ctrl.queryText = ''
 
         // fetch Tag collection and hydrate to $scope.collection
-        $ctrl.registry = new Registry()
-        $ctrl.registry.fetch({
+        Registry.fetch({
           target: $attrs.target || 'Tag',
           id: null,
           manifest: false,
@@ -121,11 +120,7 @@
         let index = $ctrl.selectedChips.findIndex(function (x) {
           return x.name.toLowerCase() === chip.name.toLowerCase()
         })
-        if (index !== -1) {
-          return true
-        } else {
-          return false
-        }
+        return (index !== -1)
       }
 
       $ctrl.disableTag = function ($event) {
@@ -149,7 +144,7 @@
           })
           if (returnArr.length > 0) {
             if (returnArr.findIndex(mainArr => mainArr.name.toLowerCase() === $ctrl.queryText.toLowerCase()) === -1) {
-              var obj = {
+              const obj = {
                 'isNew': 'true',
                 'name': $ctrl.queryText
               }

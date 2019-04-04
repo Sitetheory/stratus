@@ -3,8 +3,6 @@
 // Stratus Event System
 // --------------------
 
-console.warn('I\'m rebuilding the Event system, so this may break some stuff!')
-
 class EventManager {
   constructor () {
     this.name = 'EventManager'

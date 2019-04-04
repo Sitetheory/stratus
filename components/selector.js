@@ -63,7 +63,6 @@
 
       // Registry Connectivity
       if ($attrs.type) {
-        $scope.registry = new Registry()
         let request = {
           target: $attrs.type,
           decouple: true,
@@ -75,7 +74,7 @@
         if ($scope.api && angular.isObject($scope.api)) {
           request.api = _.extendDeep(request.api, $scope.api)
         }
-        $scope.registry.fetch(request, $scope)
+        Registry.fetch(request, $scope)
       }
 
       // Store Toggle Options for Custom Actions

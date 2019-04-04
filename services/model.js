@@ -25,7 +25,7 @@
         '$mdToast',
         '$rootScope',
         function ($http, $mdToast, $rootScope) {
-          return class AngularModel extends Stratus.Prototypes.Model {
+          Stratus.Prototypes.AngularModel = Stratus.Prototypes.AngularModel || class AngularModel extends Stratus.Prototypes.Model {
             constructor (options, attributes) {
               super()
               this.name = 'AngularModel'
@@ -769,6 +769,7 @@
               }
             }
           }
+          return Stratus.Prototypes.AngularModel
         }
       ])
     }]
