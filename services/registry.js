@@ -17,10 +17,7 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
-  // This Collection Service handles data binding for multiple objects with the
-  // $http Service
-  // TODO: Build out the query-only structure here as a separate set of
-  // registered collections and models
+  // This Registry Service handles data binding for an element
   Stratus.Services.Registry = [
     '$provide',
     function ($provide) {
@@ -29,7 +26,7 @@
         'Model',
         '$interpolate',
         function (Collection, Model, $interpolate) {
-          return class AngularRegistry {
+          Stratus.Prototypes.AngularRegistry = Stratus.Prototypes.AngularRegistry || class AngularRegistry {
             constructor () {
               // Scope Binding
               this.fetch = this.fetch.bind(this)
@@ -45,7 +42,7 @@
              */
             fetch ($element, $scope) {
               return new Promise(function (resolve, reject) {
-                if (angular.isString($element)) {
+                if (typeof $element === 'string') {
                   $element = {
                     target: $element
                   }
@@ -78,42 +75,55 @@
                     limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
                   }
                 }
-                if ($scope.api && angular.isObject($scope.api)) {
+                if ($scope.api && _.isObject($scope.api)) {
                   request.api = _.extendDeep(request.api, $scope.api)
                 }
                 /* */
                 let completed = 0
-                $scope.$watch(function () {
-                  return completed
-                }, function (iteration) {
-                  if (_.isNumber(iteration) &&
-                    parseInt(iteration) === _.size(options)) {
-                    resolve(AngularRegistry.build(options, $scope))
+                let verify = function () {
+                  if (!_.isNumber(completed) || completed !== _.size(options)) {
+                    return
                   }
-                })
+                  resolve(AngularRegistry.build(options, $scope))
+                }
                 _.each(options, function (element, key) {
-                  if (element && angular.isString(element)) {
-                    const interpreter = $interpolate(element, false, null, true)
-                    const initial = interpreter($scope.$parent)
-                    if (angular.isDefined(initial)) {
-                      options[key] = initial
-                      completed++
-                    } else {
-                      $scope.$watch(function () {
-                        return interpreter($scope.$parent)
-                      }, function (value) {
-                        if (value) {
-                          options[key] = value
-                          completed++
-                        }
-                      })
-                    }
-                  } else {
+                  if (!element || typeof element !== 'string') {
                     completed++
+                    verify()
+                    return
                   }
+                  const interpreter = $interpolate(element, false, null, true)
+                  const initial = interpreter($scope.$parent)
+                  if (typeof initial !== 'undefined') {
+                    options[key] = initial
+                    completed++
+                    verify()
+                    return
+                  }
+                  if (!Stratus.Environment.get('production')) {
+                    console.log('poll attribute:', key)
+                  }
+                  _.poll(function () {
+                    return interpreter($scope.$parent)
+                  }, 7500, 250)
+                    .then(function (value) {
+                      if (!Stratus.Environment.get('production')) {
+                        console.log('interpreted:', value)
+                      }
+                      if (typeof value === 'undefined') {
+                        return
+                      }
+                      options[key] = value
+                      completed++
+                      verify()
+                    })
+                    .catch(function (message) {
+                      console.error(message)
+                    })
                 })
               })
             }
+
             /**
              * @returns {collection|model|*}
              */
@@ -128,8 +138,7 @@
                     Stratus.Catalog[options.target] = {}
                   }
                   const id = options.id || 'manifest'
-                  if (options.decouple ||
-                    !Stratus.Catalog[options.target][id]) {
+                  if (options.decouple || !Stratus.Catalog[options.target][id]) {
                     const modelOptions = {
                       target: options.target,
                       manifest: options.manifest,
@@ -190,7 +199,7 @@
               }
 
               // Evaluate
-              if (angular.isObject(data)) {
+              if (typeof data === 'object' && data !== null) {
                 if (typeof $scope !== 'undefined') {
                   $scope.data = data
                   if (data instanceof Model) {
@@ -206,6 +215,7 @@
               return data
             }
           }
+          return new Stratus.Prototypes.AngularRegistry()
         }
       ])
     }

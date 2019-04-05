@@ -117,8 +117,7 @@
 
         // Registry Connectivity
         if ($attrs.target) {
-          $scope.registry = new Registry()
-          $scope.registry.fetch($attrs, $scope)
+          Registry.fetch($attrs, $scope)
         }
 
         // Symbiotic Data Connectivity

@@ -122,6 +122,7 @@ Stratus.Prototypes.Model = class Model extends Stratus.EventManager {
      * @type {{}}
      */
     this.data = {}
+
     /**
      * @type {{}}
      */
