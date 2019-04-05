@@ -63,8 +63,7 @@
           console.log('query:', query);
       });
       console.log('attributes:', $attrs.ngModel);
-      $scope.registry = new registry();
-      $scope.registry.fetch('Media', $scope);
+      Registry.fetch('Media', $scope);
       /* */
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/search' + min + '.html'
