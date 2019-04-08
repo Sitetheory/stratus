@@ -93,7 +93,10 @@
           id: null,
           manifest: false,
           decouple: true,
-          direct: true
+          direct: true,
+          api: {
+            limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 50
+          }
         }, $scope)
       }
 
@@ -134,7 +137,10 @@
       $ctrl.queryData = function () {
         let results = $scope.collection.filter($ctrl.queryText)
         $scope.status = true
-        let query = $ctrl.queryText.toLowerCase()
+        let query = ''
+        if ($ctrl.queryText !== '') {
+          query = $ctrl.queryText.toLowerCase()
+        }
         return Promise.resolve(results).then(function (value) {
           let returnArr = value.filter(function (item) {
             let lower = item.name.toLowerCase()
@@ -143,7 +149,7 @@
             }
           })
           if (returnArr.length > 0) {
-            if (returnArr.findIndex(mainArr => mainArr.name.toLowerCase() === $ctrl.queryText.toLowerCase()) === -1) {
+            if ($ctrl.queryText !== '' && returnArr.findIndex(mainArr => mainArr.name.toLowerCase() === $ctrl.queryText.toLowerCase()) === -1) {
               const obj = {
                 'isNew': 'true',
                 'name': $ctrl.queryText
