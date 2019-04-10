@@ -655,8 +655,15 @@ _.mixin({
    * @returns {boolean}
    */
   startsWith: function (target, search) {
-    return (typeof target === 'string' &&
-      target.substr(0, search.length).toUpperCase() === search.toUpperCase())
+    return (typeof target === 'string' && target.substr(0, search.length).toLowerCase() === search.toLowerCase())
+  },
+  /**
+   * @param target
+   * @param search
+   * @returns {boolean}
+   */
+  endsWith: function (target, search) {
+    return (typeof target === 'string' && target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
   },
   /**
    * @param newData
