@@ -164,6 +164,12 @@
               }, function (newData, priorData) {
                 const patch = _.patch(newData, priorData)
 
+                _.each(_.keys(patch), function (key) {
+                  if (_.endsWith(key, '$$hashKey')) {
+                    delete patch[key]
+                  }
+                })
+
                 if (!Stratus.Environment.get('production')) {
                   console.log('Patch:', patch)
                 }
