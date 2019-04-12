@@ -230,8 +230,6 @@ boot.config({
     'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
     'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
     'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
-    // 'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
-    'stratus.components.socialMedia': boot.bundle + 'stratus/components/socialMedia' + boot.suffix,
     'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
     'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
     'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
