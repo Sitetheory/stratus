@@ -222,51 +222,19 @@ boot.config({
     'stratus.controllers.filterStreamsByTag': boot.bundle + 'stratus/controllers/filterStreamsByTag' + boot.suffix,
 
     /* Stratus Core Components */
-    'stratus.components.address': boot.bundle + 'stratus/components/address' + boot.suffix,
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
-    'stratus.components.carousel': boot.bundle + 'stratus/components/carousel' + boot.suffix,
     'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
-    'stratus.components.delete': boot.bundle + 'stratus/components/delete' + boot.suffix,
     'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
-    'stratus.components.errorMessage': boot.bundle + 'stratus/components/errorMessage' + boot.suffix,
     'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
-    'stratus.components.filter': boot.bundle + 'stratus/components/filter' + boot.suffix,
-    'stratus.components.help': boot.bundle + 'stratus/components/help' + boot.suffix,
-    'stratus.components.mediaSelector': boot.bundle + 'stratus/components/mediaSelector' + boot.suffix,
-    'stratus.components.mediaLibrary': boot.bundle + 'stratus/components/mediaLibrary' + boot.suffix,
-    'stratus.components.optionValue': boot.bundle + 'stratus/components/optionValue' + boot.suffix,
-    'stratus.components.pagination': boot.bundle + 'stratus/components/pagination' + boot.suffix,
-    'stratus.components.search': boot.bundle + 'stratus/components/search' + boot.suffix,
     'stratus.components.selector': boot.bundle + 'stratus/components/selector' + boot.suffix,
     'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
     'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
     'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
     // 'stratus.components.visualSelector': boot.bundle + 'stratus/components/visualSelector' + boot.suffix,
-    'stratus.components.userAuthentication': boot.bundle + 'stratus/components/userAuthentication' + boot.suffix,
-    'stratus.components.passwordReset': boot.bundle + 'stratus/components/passwordReset' + boot.suffix,
-    'stratus.components.singleSignOn': boot.bundle + 'stratus/components/singleSignOn' + boot.suffix,
     'stratus.components.socialMedia': boot.bundle + 'stratus/components/socialMedia' + boot.suffix,
     'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
     'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
-    'stratus.components.proposalAlert': boot.bundle + 'stratus/components/proposalAlert' + boot.suffix,
-    'stratus.components.mediaDragDrop': boot.bundle + 'stratus/components/mediaDragDrop' + boot.suffix,
-    'stratus.components.mediaDetails': boot.bundle + 'stratus/components/mediaDetails' + boot.suffix,
-    'stratus.components.mediaShortDetails': boot.bundle + 'stratus/components/mediaShortDetails' + boot.suffix,
-    'stratus.components.mediaUploader': boot.bundle + 'stratus/components/mediaUploader' + boot.suffix,
     'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
-
-    /* Sitetheory Stream Components */
-    'stratus.components.calendar': boot.bundle + 'stratus/components/calendar' + boot.suffix,
-    'stratus.components.map': boot.bundle + 'stratus/components/map' + boot.suffix,
-
-    /* Sitetheory Menu Components */
-    'stratus.components.menuLink': boot.bundle + 'stratus/components/menuLink' + boot.suffix,
-
-    // TODO: Move these to Sitetheory since they are specific to Sitetheory
-    'stratus.components.permission': boot.bundle + 'stratus/components/permission' + boot.suffix,
-    'stratus.components.permissions': boot.bundle + 'stratus/components/permissions' + boot.suffix,
-    'stratus.components.publish': boot.bundle + 'stratus/components/publish' + boot.suffix,
-    // 'stratus.components.themeSelector': boot.bundle + 'stratus/components/themeSelector' + boot.suffix,
 
     /* Stratus Core Directives */
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
@@ -304,12 +272,10 @@ boot.config({
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
-    'stratus.services.userAuthentication': boot.bundle + 'stratus/services/userAuthentication' + boot.suffix,
     'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
     // 'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
-    'stratus.services.media': boot.bundle + 'stratus/services/media' + boot.suffix,
 
     /* Stratus Core Views */
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
@@ -321,7 +287,6 @@ boot.config({
     'templates-filter-search': boot.bundle + 'stratus/legacy/views/widgets/filter.search.html',
     'templates-filter-sort': boot.bundle + 'stratus/legacy/views/widgets/filter.sort.html',
     'templates-filter-type': boot.bundle + 'stratus/legacy/views/widgets/filter.type.html',
-    'templates-pagination': boot.bundle + 'stratus/legacy/views/widgets/pagination.html',
     'templates-toggle': boot.bundle + 'stratus/legacy/views/widgets/toggle.html',
     'templates-widgets-select': boot.bundle + 'stratus/legacy/views/widgets/select.html',
     'templates-widgets-select-options': boot.bundle + 'stratus/legacy/views/widgets/select.options.html',

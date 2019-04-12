@@ -1,4 +1,8 @@
 /* global define, FB */
+/*
+NOTE: this does not appear to be implemented anywhere at the moment.
+It seems to be a generic way to connect to social media, but we use singleSignOn.js now that does this.
+ */
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
