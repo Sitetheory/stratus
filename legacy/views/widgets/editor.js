@@ -56,12 +56,11 @@
       // CodeMirror Modules
       'codemirror/mode/htmlmixed/htmlmixed',
       'codemirror/addon/edit/matchbrackets'
-    ], factory);
+    ], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.CodeMirror);
+    factory(root.Stratus, root.$, root._, root.CodeMirror)
   }
 }(this, function (Stratus, $, _, CodeMirror) {
-
   // Editor View
   // -------------
 
@@ -127,8 +126,8 @@
      * @returns {boolean}
      */
     postOptions: function (options) {
-      this.options.cssFile = this.options.cssFile || [];
-      this.options.cssFile = _.union((!_.isArray(this.options.cssFile)) ? [this.options.cssFile] : this.options.cssFile, [this.options.codemirrorCssFile]);
+      this.options.cssFile = this.options.cssFile || []
+      this.options.cssFile = _.union((!_.isArray(this.options.cssFile)) ? [this.options.cssFile] : this.options.cssFile, [this.options.codemirrorCssFile])
     },
 
     // validate()
@@ -146,10 +145,10 @@
           title: 'Missing Data Attribute',
           message: 'The data-property attribute is missing for redactor.',
           class: 'danger'
-        }));
-        return false;
+        }))
+        return false
       }
-      return true;
+      return true
     },
 
     // registerElement()
@@ -160,26 +159,26 @@
      */
     registerElement: function () {
       // Set the value of codeMirror from user options
-      this.options.redactor.codemirror = this.options.codemirror;
+      this.options.redactor.codemirror = this.options.codemirror
 
       // Add the redactor to the editable element (not the widget container)
-      this.$element.redactor(this.options.redactor);
-      this.redactor = this.$element.data('redactor');
+      this.$element.redactor(this.options.redactor)
+      this.redactor = this.$element.data('redactor')
 
       // Listen for Redactor Box Focus
-      this.primeFocusListener();
+      this.primeFocusListener()
 
       // The built in callbacks: keydown, blur, etc doesn't trigger so we do it manually
       // Manually record whether the redactor or the codeMirror editors are focused so we can do specific actions
       this.redactor.$editor.on('blur', function (event) {
-        this.redactorIsFocused = false;
-      }.bind(this));
+        this.redactorIsFocused = false
+      }.bind(this))
       this.redactor.$editor.on('focus', function (event) {
-        this.redactorIsFocused = true;
-      }.bind(this));
+        this.redactorIsFocused = true
+      }.bind(this))
       this.redactor.$editor.on('keydown', function (event) {
-        this.keyActions(event);
-      }.bind(this));
+        this.keyActions(event)
+      }.bind(this))
 
       if (this.options.codemirror) {
         // Initialize CodeMirror
@@ -189,20 +188,20 @@
           matchBrackets: true,
           lineWrapping: true,
           theme: 'sitetheory'
-        });
+        })
 
         // List for CodeMirror Events
         this.codeMirror.on('blur', function (event) {
-          this.codeMirrorIsFocused = false;
-        }.bind(this));
+          this.codeMirrorIsFocused = false
+        }.bind(this))
         this.codeMirror.on('focus', function (event) {
-          this.codeMirrorIsFocused = true;
-        }.bind(this));
+          this.codeMirrorIsFocused = true
+        }.bind(this))
         this.codeMirror.on('keydown', function (event) {
-          this.keyActions(event);
-        }.bind(this));
+          this.keyActions(event)
+        }.bind(this))
       }
-      return true;
+      return true
     },
 
     // onUnrender()
@@ -212,26 +211,26 @@
      * @param entries
      */
     onUnrender: function (entries) {
-      this.isFocused = false;
-      this.redactorIsFocused = false;
-      this.codeMirrorIsFocused = false;
-      this.redactor = null;
-      this.codeMirror = null;
+      this.isFocused = false
+      this.redactorIsFocused = false
+      this.codeMirrorIsFocused = false
+      this.redactor = null
+      this.codeMirror = null
     },
 
     focus: function () {
-      this.redactor.focus.setStart();
+      this.redactor.focus.setStart()
     },
     blur: function () {
-      this.redactor.focus.setEnd();
+      this.redactor.focus.setEnd()
     },
 
     /**
      * @returns {boolean}
      */
     primeFocusListener: function () {
-      this.focusBind = this.focusBind || this.focusListener();
-      return true;
+      this.focusBind = this.focusBind || this.focusListener()
+      return true
     },
 
     // focusListener()
@@ -239,13 +238,13 @@
     // Since there can be two editors, a toolbar, etc, we need to know if the entire widget is focused or not
     focusListener: function () {
       $(document).click(function (event) {
-        this.box = this.box || this.$el.find('.redactor-box');
+        this.box = this.box || this.$el.find('.redactor-box')
         if (!(this.box.notClicked(event))) {
-          this.focusAction(event);
+          this.focusAction(event)
         } else {
-          this.blurAction(event);
+          this.blurAction(event)
         }
-      }.bind(this));
+      }.bind(this))
     },
 
     // scopeChanged()
@@ -256,8 +255,8 @@
      * @returns {boolean}
      */
     scopeChanged: function () {
-      if (!this.redactor) return false;
-      return Stratus.Views.Widgets.Base.prototype.scopeChanged.call(this);
+      if (!this.redactor) return false
+      return Stratus.Views.Widgets.Base.prototype.scopeChanged.call(this)
     },
 
     // getValue()
@@ -269,8 +268,8 @@
      */
     getValue: function () {
       // there are no values to get if the redactor isn't loaded (i.e. not rendered yet or unrendered)
-      if (!this.redactor) return false;
-      return (this.codeMirrorIsFocused) ? this.codeMirror.getValue() : this.redactor.code.get();
+      if (!this.redactor) return false
+      return (this.codeMirrorIsFocused) ? this.codeMirror.getValue() : this.redactor.code.get()
     },
 
     /**
@@ -278,11 +277,10 @@
      * @returns {boolean}
      */
     setValue: function (value) {
-      if (!this.redactor || value === undefined) return false;
+      if (!this.redactor || value === undefined) return false
       value = value || '';
-      (this.codeMirrorIsFocused) ? this.codeMirror.setValue(value) : this.redactor.code.set(value);
+      (this.codeMirrorIsFocused) ? this.codeMirror.setValue(value) : this.redactor.code.set(value)
     }
 
-  });
-
-}));
+  })
+}))

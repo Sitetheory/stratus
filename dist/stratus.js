@@ -12,17 +12,17 @@
     define([
       'text',
       'underscore',
+      'jquery', // TODO: Remove once phased out appropriately
       'bowser',
       'promise',
-      'backbone', // TODO: Remove once phased out appropriately
-      'jquery' // TODO: Remove once phased out appropriately
+      'backbone' // TODO: Remove once phased out appropriately
     ], function (text, _, bowser) {
-      return (root.Stratus = factory(text, _, bowser))
+      return (root.Stratus = factory(text, _, jQuery, bowser))
     })
   } else {
-    root.Stratus = factory(root.text, root._, root.bowser)
+    root.Stratus = factory(root.text, root._, root.jQuery, root.bowser)
   }
-}(this, function (text, _, bowser) {
+}(this, function (text, _, jQuery, bowser) {
 
 /* global requirejs, _, bowser */
 
@@ -256,99 +256,10 @@ _.templateSettings = {
  */
 _.mixin({
 
-  // Babel class inheritance block
-  createClass: (function () {
-    function defineProperties (target, props) {
-      let i
-      for (i = 0; i < props.length; i++) {
-        let descriptor = props[i]
-        descriptor.enumerable = descriptor.enumerable || false
-        descriptor.configurable = true
-        if ('value' in descriptor) {
-          descriptor.writable = true
-        }
-        Object.defineProperty(target, descriptor.key, descriptor)
-      }
-    }
-
-    return function (Constructor, protoProps, staticProps) {
-      if (protoProps) {
-        defineProperties(Constructor.prototype, protoProps)
-      }
-      if (staticProps) {
-        defineProperties(Constructor, staticProps)
-      }
-      return Constructor
-    }
-  })(),
-  /**
-   * @param self
-   * @param call
-   * @returns {*}
-   */
-  possibleConstructorReturn: function (self, call) {
-    if (!self) {
-      throw new ReferenceError(
-        'this hasn\'t been initialised - super() hasn\'t been called')
-    }
-    return call && (typeof call === 'object' || typeof call === 'function')
-      ? call
-      : self
-  },
-  /**
-   * @param subClass
-   * @param superClass
-   */
-  inherits: function (subClass, superClass) {
-    if (typeof superClass !== 'function' && superClass !== null) {
-      throw new TypeError('Super expression must either be null or a function, not ' +
-        typeof superClass)
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-      constructor: {
-        value: subClass,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    })
-    if (superClass) {
-      Object.setPrototypeOf(subClass, superClass)
-    }
-  },
-  /**
-   * @param instance
-   * @param Constructor
-   */
-  classCallCheck: function (instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function')
-    }
-  },
-
-  // This function wraps the inheritance logic in a single usable function.
-  /**
-   * @param superClass
-   * @param subClass
-   * @returns {View}
-   */
-  inherit: function (superClass, subClass) {
-    let blob = function (length) {
-      _.classCallCheck(this, blob)
-      let that = _.possibleConstructorReturn(this,
-        (Object.getPrototypeOf(blob)).call(this, length,
-          length))
-      _.extend(that, subClass)
-      return that
-    }
-    _.inherits(blob, superClass)
-    return blob
-  },
-
   // This function simply extracts the name of a function from code directly
   /**
    * @param code
-   * @returns {string}
+   * @returns {string|null}
    */
   functionName: function (code) {
     if (_.isEmpty(code)) {
@@ -537,21 +448,79 @@ _.mixin({
     return shallow
   },
 
+  /**
+   * Get more params which is shown after anchor '#' anchor in the url.
+   * @return {*}
+   */
+  getAnchorParams: function (key, url) {
+    let vars = {}
+    let tail = window.location.hash
+    if (_.isEmpty(tail)) {
+      return vars
+    }
+    const digest = /([a-zA-Z]+)(?:\/([0-9]+))?/g
+    let match
+    while ((match = digest.exec(tail))) {
+      vars[match[1]] = _.hydrate(match[2])
+    }
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
   // Get a specific value or all values located in the URL
   /**
-   * TODO: This is somewhat farther than underscore's ideology and should be
-   * moved into Stratus.Internals
    * @param key
-   * @param href
+   * @param url
    * @returns {{}}
    */
-  getUrlParams: function (key, href) {
-    let lets = {}
-    href = typeof href !== 'undefined' ? href : window.location.href
-    href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-      lets[key] = value
+  getUrlParams: function (key, url) {
+    const vars = {}
+    if (url === undefined) {
+      url = window.location.href
+    }
+    const anchor = url.indexOf('#')
+    if (anchor >= 0) {
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = _.hydrate(value)
     })
-    return (typeof key !== 'undefined' && key) ? lets[key] : lets
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
+  // This function digests URLs into an object containing their respective
+  // values, which will be merged with requested parameters and formulated
+  // into a new URL.
+  /**
+   * @param params
+   * @param url
+   * @returns {string|*}
+   * @constructor
+   */
+  setUrlParams: function (params, url) {
+    if (url === undefined) {
+      url = window.location.href
+    }
+    if (params === undefined) {
+      return url
+    }
+    let vars = {}
+    const glue = url.indexOf('?')
+    const anchor = url.indexOf('#')
+    let tail = ''
+    if (anchor >= 0) {
+      tail = url.substring(anchor, url.length)
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = value
+    })
+    vars = _.extend(vars, params)
+    return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
+      _.map(vars, function (value, key) {
+        return key + '=' + _.dehydrate(value)
+      }).reduce(function (memo, value) {
+        return memo + '&' + value
+      }) + tail)
   },
 
   // Ensure all values in an array or object are true
@@ -686,8 +655,15 @@ _.mixin({
    * @returns {boolean}
    */
   startsWith: function (target, search) {
-    return (typeof target === 'string' &&
-      target.substr(0, search.length).toUpperCase() === search.toUpperCase())
+    return (typeof target === 'string' && target.substr(0, search.length).toLowerCase() === search.toLowerCase())
+  },
+  /**
+   * @param target
+   * @param search
+   * @returns {boolean}
+   */
+  endsWith: function (target, search) {
+    return (typeof target === 'string' && target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
   },
   /**
    * @param newData
@@ -734,7 +710,29 @@ _.mixin({
     }
     return (!patch || !_.size(patch)) ? null : patch
   },
+  /**
+   * @param fn
+   * @param timeout
+   * @param interval
+   * @returns {Promise<any>}
+   */
+  poll: function (fn, timeout, interval) {
+    timeout = timeout || 2000
+    interval = interval || 100
+    const threshold = Number(new Date()) + timeout
+    const check = function (resolve, reject) {
+      const cond = fn()
+      if (cond) {
+        resolve(cond)
+      } else if (Number(new Date()) < threshold) {
+        setTimeout(check, interval, resolve, reject)
+      } else {
+        reject(new Error('Timeout ' + fn + ': ' + arguments))
+      }
+    }
 
+    return new Promise(check)
+  },
   /**
    * @param a
    * @param b
@@ -868,8 +866,8 @@ if (typeof $ === 'function' && $.fn) {
       console.error(
         'No Selector or Context:', this)
     }
-    return (!$(event.target).closest(this.selector || this.context).length &&
-      !$(event.target).parents(this.selector || this.context).length)
+    return !$(event.target).closest(this.selector || this.context).length &&
+      !$(event.target).parents(this.selector || this.context).length
   }
 }
 
@@ -877,6 +875,45 @@ if (typeof $ === 'function' && $.fn) {
 
 // Stratus Event System
 // --------------------
+
+class EventManager {
+  constructor () {
+    this.name = 'EventManager'
+    this.listeners = {}
+  }
+
+  off (name, callback, context) {
+    console.log('off:', arguments)
+    return this
+  }
+
+  on (name, callback, context) {
+    let event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
+      enabled: true,
+      hook: name,
+      method: callback,
+      scope: context || null
+    })
+    name = event.hook
+    if (!(name in this.listeners)) {
+      this.listeners[name] = []
+    }
+    this.listeners[name].push(event)
+    return this
+  }
+
+  trigger (name, data) {
+    if (name in this.listeners) {
+      this.listeners[name].forEach(function (event) {
+        event.method.call(event.scope || this, data)
+      })
+    }
+    return this
+  }
+}
+
+Stratus.EventManager = EventManager
+// Stratus.Events = new EventManager()
 
 // This is largely based on the work of Backbone.Events
 // to provide the logic in case we don't have Backbone
@@ -915,6 +952,7 @@ let eventsApi = function (iteratee, events, name, callback, opts) {
 // Bind an event to a `callback` function. Passing `"all"` will bind
 // the callback to all events fired.
 Stratus.Events.on = function (name, callback, context) {
+  // console.warn('Deprecated usage of event', name, '->', callback)
   return internalOn(this, name, callback, context)
 }
 
@@ -1199,7 +1237,7 @@ let triggerEvents = function (events, args) {
 Stratus.Events.bind = Stratus.Events.on
 Stratus.Events.unbind = Stratus.Events.off
 
-/* global Stratus, _ */
+/* global Stratus, _, EventTarget */
 
 // Error Prototype
 // ---------------
@@ -1209,18 +1247,20 @@ Stratus.Events.unbind = Stratus.Events.off
  * @param chain
  * @constructor
  */
-Stratus.Prototypes.Error = function (error, chain) {
-  this.code = 'Internal'
-  this.message = 'No discernible data received.'
-  this.chain = []
+Stratus.Prototypes.Error = class StratusError {
+  constructor (error, chain) {
+    this.code = 'Internal'
+    this.message = 'No discernible data received.'
+    this.chain = []
 
-  if (typeof error === 'string') {
-    this.message = error
-  } else if (error && typeof error === 'object') {
-    _.extend(this, error)
+    if (typeof error === 'string') {
+      this.message = error
+    } else if (error && typeof error === 'object') {
+      _.extend(this, error)
+    }
+
+    this.chain.push(chain)
   }
-
-  this.chain.push(chain)
 }
 
 // Dispatch Prototype
@@ -1230,33 +1270,81 @@ Stratus.Prototypes.Error = function (error, chain) {
  * @returns {Object}
  * @constructor
  */
-Stratus.Prototypes.Dispatch = function () {
-  // if Backbone
-  return _.extend(this, Stratus.Events)
+Stratus.Prototypes.Dispatch = class Dispatch extends Stratus.EventManager {
+  constructor () {
+    super()
+    console.warn('Stratus Dispatch is deprecated.  Use Stratus.EventManager instead.')
+  }
+}
+
+// Event Prototype
+// --------------
+
+// This constructor builds events for various methods.
+/**
+ * @param options
+ * @returns {Stratus.Prototypes.Event}
+ * @constructor
+ */
+// TODO: Update to ES6
+Stratus.Prototypes.Event = class StratusEvent {
+  constructor (options) {
+    this.enabled = false
+    this.hook = null
+    this.target = null
+    this.scope = null
+    this.debounce = null
+    this.throttle = null
+    this.method = function () {
+      console.warn('No method:', this)
+    }
+    if (options && typeof options === 'object') {
+      _.extend(this, options)
+    }
+    this.listening = false
+    this.invalid = false
+    if (typeof this.hook !== 'string') {
+      console.error('Unsupported hook:', this.hook)
+      this.invalid = true
+    }
+    if (this.target !== undefined && this.target !== null && !(this.target instanceof EventTarget)) {
+      console.error('Unsupported target:', this.target)
+      this.invalid = true
+    }
+    if (typeof this.method !== 'function') {
+      console.error('Unsupported method:', this.method)
+      this.invalid = true
+    }
+    if (this.invalid) {
+      this.enabled = false
+    }
+  }
 }
 
 // Chronos System
 // --------------
 
-// This constructor builds jobs for letious methods.
+// This constructor builds jobs for various methods.
 /**
  * @param time
  * @param method
  * @param scope
+ * @returns {Stratus.Prototypes.Job}
  * @constructor
  */
-Stratus.Prototypes.Job = function (time, method, scope) {
-  this.enabled = false
-  if (time && typeof time === 'object') {
-    _.extend(this, time)
-  } else {
-    this.time = time
-    this.method = method
-    this.scope = scope
+Stratus.Prototypes.Job = class Job {
+  constructor (time, method, scope) {
+    this.enabled = false
+    if (time && typeof time === 'object') {
+      _.extend(this, time)
+    } else {
+      this.time = time
+      this.method = method
+      this.scope = scope
+    }
+    this.time = _.seconds(this.time)
+    this.scope = this.scope || window
   }
-  this.time = _.seconds(this.time)
-  this.scope = this.scope || window
-  return this
 }
 
 // Model Prototype
@@ -1264,87 +1352,119 @@ Stratus.Prototypes.Job = function (time, method, scope) {
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-/**
- * @param data
- * @returns {Stratus.Prototypes.Model}
- * @constructor
- */
-Stratus.Prototypes.Model = function (data) {
-  /**
-   * @type {{}}
-   */
-  this.data = {}
-  /**
-   * @type {{}}
-   */
-  this.attributes = this.data
-  /**
-   * @type {{}}
-   */
-  this.temps = {}
+Stratus.Prototypes.Model = class Model extends Stratus.EventManager {
+  constructor (data, options) {
+    super()
+    this.name = 'Model'
+
+    /**
+     * @type {{}}
+     */
+    this.data = {}
+
+    /**
+     * @type {{}}
+     */
+    this.temps = {}
+
+    // Evaluate object or array
+    if (data) {
+      // TODO: Evaluate object or array into a string of sets
+      /* *
+      data = _.defaults(_.extend({}, defaults, data), defaults)
+      this.set(data, options)
+      /* */
+      _.extend(this.data, data)
+    }
+
+    // Scope Binding
+    this.toObject = this.toObject.bind(this)
+    this.toJSON = this.toJSON.bind(this)
+    this.each = this.each.bind(this)
+    this.get = this.get.bind(this)
+    this.has = this.has.bind(this)
+    this.size = this.size.bind(this)
+    this.set = this.set.bind(this)
+    this.setAttribute = this.setAttribute.bind(this)
+    this.temp = this.temp.bind(this)
+    this.add = this.add.bind(this)
+    this.remove = this.remove.bind(this)
+    this.iterate = this.iterate.bind(this)
+    this.clear = this.clear.bind(this)
+    this.clearTemp = this.clearTemp.bind(this)
+  }
+
   /**
    * @param options
    * @returns {*}
    */
-  this.toObject = function (options) {
+  toObject (options) {
     return _.clone(this.data)
   }
+
   /**
    * @param options
    * @returns {{meta: (*|string|{type, data}), payload: *}}
    */
-  this.toJSON = function (options) {
+  toJSON (options) {
     return _.clone(this.data)
   }
+
   /**
    * @param callback
    * @param scope
    */
-  this.each = function (callback, scope) {
+  each (callback, scope) {
     _.each.apply((scope === undefined) ? this : scope,
       _.union([this.data], arguments))
   }
+
   /**
    * @param attr
    * @returns {*}
    */
-  this.get = function (attr) {
+  get (attr) {
     return _.reduce(typeof attr === 'string' ? attr.split('.') : [],
       function (attrs, a) {
         return attrs && attrs[a]
       }, this.data)
   }
+
   /**
    * @param attr
    * @returns {boolean}
    */
-  this.has = function (attr) {
+  has (attr) {
     return (typeof this.get(attr) !== 'undefined')
   }
+
   /**
    * @returns {number}
    */
-  this.size = function () {
+  size () {
     return _.size(this.data)
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.set = function (attr, value) {
+  set (attr, value) {
     if (attr && typeof attr === 'object') {
+      let that = this
       _.each(attr, function (value, attr) {
-        this.setAttribute(attr, value)
+        that.setAttribute(attr, value)
       }, this)
     } else {
       this.setAttribute(attr, value)
     }
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.setAttribute = function (attr, value) {
+  setAttribute (attr, value) {
     if (typeof attr === 'string') {
       if (attr.indexOf('.') !== -1) {
         let reference = this.data
@@ -1367,19 +1487,22 @@ Stratus.Prototypes.Model = function (data) {
             (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
             reference[link] = value
             this.trigger('change:' + attr, this)
+            this.trigger('change', this)
           }
         }
       } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
         this.data[attr] = value
         this.trigger('change:' + attr, this)
+        this.trigger('change', this)
       }
     }
   }
+
   /**
    * @param attr
    * @param value
    */
-  this.temp = function (attr, value) {
+  temp (attr, value) {
     this.set(attr, value)
     if (attr && typeof attr === 'object') {
       _.each(attr, function (value, attr) {
@@ -1389,12 +1512,13 @@ Stratus.Prototypes.Model = function (data) {
       this.temps[attr] = value
     }
   }
+
   /**
    * @param attr
    * @param value
    * @returns {*}
    */
-  this.add = function (attr, value) {
+  add (attr, value) {
     // Ensure a placeholder exists
     if (!this.has(attr)) {
       this.set(attr, [])
@@ -1407,12 +1531,13 @@ Stratus.Prototypes.Model = function (data) {
       return value
     }
   }
+
   /**
    * @param attr
    * @param value
    * @returns {*}
    */
-  this.remove = function (attr, value) {
+  remove (attr, value) {
     if (value === undefined) {
       // delete this.data[attr];
     } else {
@@ -1422,30 +1547,33 @@ Stratus.Prototypes.Model = function (data) {
     }
     return this.data[attr]
   }
+
   /**
    * @param attr
    * @returns {number}
    */
-  this.iterate = function (attr) {
+  iterate (attr) {
     if (!this.has(attr)) {
       this.set(attr, 0)
     }
     return ++this.data[attr]
   }
+
   /**
    * Clear all internal data
    */
-  this.clear = function () {
+  clear () {
     for (let attribute in this.data) {
       if (this.data.hasOwnProperty(attribute)) {
         delete this.data[attribute]
       }
     }
   }
+
   /**
    * Clear all temporary data
    */
-  this.clearTemp = function () {
+  clearTemp () {
     for (let attribute in this.temps) {
       if (this.temps.hasOwnProperty(attribute)) {
         // delete this.data[attribute];
@@ -1454,34 +1582,6 @@ Stratus.Prototypes.Model = function (data) {
       }
     }
   }
-
-  /**
-   * @returns {boolean}
-   */
-  this.initialize = function () {
-    return true
-  }
-
-  // Evaluate object or array
-  if (data) {
-    // TODO: Evaluate object or array into a string of sets
-    /*
-         attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
-         this.set(attrs, options);
-         */
-    _.extend(this.data, data)
-  }
-
-  // Add Event Logic
-  _.extend(this, Stratus.Events)
-
-  // Initialize
-  this.reinitialize = function () {
-    this.initialize.apply(this, arguments)
-  }.bind(this)
-  this.reinitialize()
-
-  return this
 }
 
 // Internal Collections
@@ -1499,16 +1599,23 @@ Stratus.Environment = new Stratus.Prototypes.Model(Stratus.Environment)
  * @returns {Stratus.Sentinel.Prototypes}
  * @constructor
  */
-Stratus.Prototypes.Sentinel = function () {
-  this.view = false
-  this.create = false
-  this.edit = false
-  this.delete = false
-  this.publish = false
-  this.design = false
-  this.dev = false
-  this.master = false
-  this.zero = function () {
+Stratus.Prototypes.Sentinel = class Sentinel {
+  constructor () {
+    this.view = false
+    this.create = false
+    this.edit = false
+    this.delete = false
+    this.publish = false
+    this.design = false
+    this.dev = false
+    this.master = false
+
+    // Scope Binding
+    this.zero = this.zero.bind(this)
+    this.permissions = this.permissions.bind(this)
+    this.summary = this.summary.bind(this)
+  }
+  zero () {
     _.extend(this, {
       view: false,
       create: false,
@@ -1520,7 +1627,7 @@ Stratus.Prototypes.Sentinel = function () {
       master: false
     })
   }
-  this.permissions = function (value) {
+  permissions (value) {
     if (!isNaN(value)) {
       _.each(value.toString(2).split('').reverse(), function (bit, key) {
         if (bit === '1') {
@@ -1572,7 +1679,7 @@ Stratus.Prototypes.Sentinel = function () {
       return decimal
     }
   }
-  this.summary = function () {
+  summary () {
     let output = []
     _.each(this, function (value, key) {
       if (typeof value === 'boolean' && value) {
@@ -1581,7 +1688,6 @@ Stratus.Prototypes.Sentinel = function () {
     })
     return output
   }
-  return this
 }
 
 // This is the prototype for a bootbox event, in which one could be
@@ -1593,19 +1699,21 @@ Stratus.Prototypes.Sentinel = function () {
  * @param handler
  * @constructor
  */
-Stratus.Prototypes.Bootbox = function (message, handler) {
-  if (message && typeof message === 'object') {
-    _.extend(this, message)
-    this.message = this.message || 'Message'
-  } else {
-    this.message = message || 'Message'
-  }
-  this.handler = this.handler || handler
-  if (typeof this.handler !== 'function') {
-    this.handler = function (result) {
-      console.info('Client ' + (result === undefined ? 'closed' : (result
-        ? 'confirmed'
-        : 'cancelled')) + ' dialog.')
+Stratus.Prototypes.Bootbox = class Bootbox {
+  constructor (message, handler) {
+    if (message && typeof message === 'object') {
+      _.extend(this, message)
+      this.message = this.message || 'Message'
+    } else {
+      this.message = message || 'Message'
+    }
+    this.handler = this.handler || handler
+    if (typeof this.handler !== 'function') {
+      this.handler = function (result) {
+        console.info('Client ' + (result === undefined ? 'closed' : (result
+          ? 'confirmed'
+          : 'cancelled')) + ' dialog.')
+      }
     }
   }
 }
@@ -1620,23 +1728,25 @@ Stratus.Prototypes.Bootbox = function (message, handler) {
  * @param settings
  * @constructor
  */
-Stratus.Prototypes.Toast = function (message, title, priority, settings) {
-  if (message && typeof message === 'object') {
-    _.extend(this, message)
-    this.message = this.message || 'Message'
-  } else {
-    this.message = message || 'Message'
+Stratus.Prototypes.Toast = class Toast {
+  constructor (message, title, priority, settings) {
+    if (message && typeof message === 'object') {
+      _.extend(this, message)
+      this.message = this.message || 'Message'
+    } else {
+      this.message = message || 'Message'
+    }
+    this.title = this.title || title || 'Toast'
+    this.priority = this.priority || priority || 'danger'
+    this.settings = this.settings || settings
+    if (!this.settings || typeof this.settings !== 'object') {
+      this.settings = {}
+    }
+    this.settings.timeout = this.settings.timeout || 10000
   }
-  this.title = this.title || title || 'Toast'
-  this.priority = this.priority || priority || 'danger'
-  this.settings = this.settings || settings
-  if (!this.settings || typeof this.settings !== 'object') {
-    this.settings = {}
-  }
-  this.settings.timeout = this.settings.timeout || 10000
 }
 
-/* global Stratus, _, $, Backbone */
+/* global Stratus, _, jQuery, Backbone */
 
 /**
  * @param request
@@ -1709,6 +1819,7 @@ Stratus.Internals.Ajax = function (request) {
 /**
  * @type {*|Function|void}
  */
+// TODO: This runs on fancy Backbone code that should be removed
 Stratus.Internals.Anchor = (function Anchor () {
   Anchor.initialize = true
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
@@ -1725,13 +1836,13 @@ Stratus.Internals.Anchor = (function Anchor () {
           return !_.startsWith(event.currentTarget.hash, '#' + keyword)
         }, this)
         if (valid) {
-          if (typeof $ === 'function' && $.fn && typeof Backbone === 'object') {
-            let $target = $(event.currentTarget.hash)
+          if (typeof jQuery === 'function' && jQuery.fn && typeof Backbone === 'object') {
+            let $target = jQuery(event.currentTarget.hash)
             let anchor = event.currentTarget.hash.slice(1)
-            $target = ($target.length) ? $target : $('[name=' + anchor + ']')
+            $target = ($target.length) ? $target : jQuery('[name=' + anchor + ']')
             /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
             if ($target.length) {
-              $('html,body').animate({
+              jQuery('html,body').animate({
                 scrollTop: $target.offset().top
               }, 1000, function () {
                 Backbone.history.navigate(anchor)
@@ -1863,8 +1974,8 @@ Stratus.Internals.Convoy = function (convoy, query) {
         message: 'No Convoy defined for dispatch.'
       }, this))
     }
-    if (typeof $ === 'function' && $.ajax) {
-      $.ajax({
+    if (typeof jQuery === 'function' && jQuery.ajax) {
+      jQuery.ajax({
         type: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
@@ -1979,6 +2090,7 @@ Stratus.Internals.CssLoader = function (url) {
  * @returns {boolean}
  * @constructor
  */
+// FIXME: This would be better suited as a selector inside of Stratus.
 Stratus.Internals.GetColWidth = function (el) {
   if (typeof el === 'undefined' || !el) {
     return false
@@ -2002,12 +2114,13 @@ Stratus.Internals.GetColWidth = function (el) {
  * @returns {string}
  * @constructor
  */
+// FIXME: This would be better suited as non-jQuery, native logic in the selectors
 Stratus.Internals.GetScrollDir = function () {
-  let windowTop = $(Stratus.Environment.get('viewPort') || window).scrollTop()
+  let windowTop = jQuery(Stratus.Environment.get('viewPort') || window).scrollTop()
   let lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
-  let windowHeight = $(Stratus.Environment.get('viewPort') || window).height()
-  let documentHeight = $(document).height()
+  let windowHeight = jQuery(Stratus.Environment.get('viewPort') || window).height()
+  let documentHeight = jQuery(document).height()
   /* */
 
   // return NULL if there is no scroll, otherwise up or down
@@ -2022,6 +2135,7 @@ Stratus.Internals.GetScrollDir = function () {
 // IsOnScreen()
 // ---------------
 // Check whether an element is on screen, returns true or false.
+// FIXME: This would be better suited as a selector inside of Stratus.
 /**
  * @param el
  * @param offset
@@ -2033,8 +2147,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   if (!el) {
     return false
   }
-  if (!(el instanceof $)) {
-    el = $(el)
+  if (!(el instanceof jQuery)) {
+    el = jQuery(el)
   }
   if (!el.length) {
     return false
@@ -2044,8 +2158,8 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
     partial = true
   }
   let viewPort = Stratus.Environment.get('viewPort') || window
-  let pageTop = $(viewPort).scrollTop()
-  let pageBottom = pageTop + $(viewPort).height()
+  let pageTop = jQuery(viewPort).scrollTop()
+  let pageBottom = pageTop + jQuery(viewPort).height()
   let elementTop = el.offset().top
   if (viewPort !== window) {
     elementTop += pageTop
@@ -2155,7 +2269,7 @@ Stratus.Internals.LoadImage = function (obj) {
     }, 500)
     return false
   }
-  let el = obj.el instanceof $ ? obj.el : $(obj.el)
+  let el = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
   if (!el.length) {
     setTimeout(function () {
       Stratus.Internals.LoadImage(obj)
@@ -2182,14 +2296,10 @@ Stratus.Internals.LoadImage = function (obj) {
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
       let src = _.hydrate(el.attr('data-src')) || el.attr('src') || null
-      // NOTE: Element can be either <img> or any element with background image in style
-      let type = el.prop('tagName').toLowerCase()
+
       // Handle precedence
-      if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
+      if (src === 'lazy' || _.isEmpty(src)) {
         src = el.attr('src')
-      }
-      if (_.isEmpty(src)) {
-        return false;
       }
 
       let size = _.hydrate(el.attr('data-size')) || obj.size || null
@@ -2226,7 +2336,7 @@ Stratus.Internals.LoadImage = function (obj) {
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
           let visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-          let $visibleParent = $(_.first($(obj.el).parents(visibilitySelector)))
+          let $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
           // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
@@ -2288,7 +2398,7 @@ Stratus.Internals.LoadImage = function (obj) {
       }
 
       // Change Source to right size (get the base and extension and ignore
-      // size and any cache busting or variables)
+      // size)
       const srcOrigin = src
       const srcRegex = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
       const srcMatch = srcRegex.exec(src)
@@ -2297,51 +2407,32 @@ Stratus.Internals.LoadImage = function (obj) {
       } else {
         console.error('Unable to find src for image:', el)
       }
-      let srcOriginProtocol = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
+
       // Start Loading
       el.addClass('loading')
 
       // Add Listeners (Only once per Element!)
-      // If Background Image Create a Test Image to Test Loading
-      if(type !== 'img') {
-          // Create image in memory for testing
-          var loadEl = $('<img/>')
-          loadEl.attr('src', srcOriginProtocol)
-          loadEl.on('load', function() {
-              el.addClass('loaded').removeClass('loading')
-              $(this).remove(); // prevent memory leaks
-          });
-          loadEl.on('error', function () {
-              // TODO: Go down in sizes before reaching the origin
-              // Standardize src
-              el.attr('data-loading', _.dehydrate(false))
-              el.css('background-image', 'url(' + srcOriginProtocol + ')')
-              console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
-          })
-      } else {
-          el.on('load', function () {
-              el.addClass('loaded').removeClass('loading')
-          })
-          // Test Loading on the Load Element (which could be img or test image for background images)
-          el.on('error', function () {
-              // TODO: Go down in sizes before reaching the origin
-              // Standardize src
-              el.attr('data-loading', _.dehydrate(false))
-              el.attr('src', srcOriginProtocol)
-              console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
-          })
-      }
-
+      el.on('load', function () {
+        el.addClass('loaded').removeClass('loading')
+      })
+      el.on('error', function () {
+        // TODO: Go down in sizes before reaching the origin
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('src', srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin)
+        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+      })
 
       // Change the Source to be the desired path
-      el.attr('data-loading', _.dehydrate(false))
-      el.attr('data-size', _.dehydrate(size))
-      let srcProtocol = src.startsWith('//') ? window.location.protocol + src : src
-      if(type === 'img') {
-          el.attr('src', srcProtocol)
-      } else {
-          el.css('background-image', 'url(' + srcProtocol + ')')
+      if (!_.isEmpty(src)) {
+        el.attr('data-loading', _.dehydrate(false))
+        el.attr('data-size', _.dehydrate(size))
+        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
       }
+
+      // FIXME: This is a mess that we shouldn't need to maintain.
+      // RegisterGroups should just use Native Logic instead of
+      // another level of abstraction.
+
       // Remove from registration
       Stratus.RegisterGroup.remove('OnScroll', obj)
     })
@@ -2403,13 +2494,13 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
         }
       })
       model.set('viewPortChange', false)
-      model.set('windowTop', $(Stratus.Environment.get('viewPort') || window).scrollTop())
+      model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
     }
   })
 
   // jQuery Binding
-  if (typeof $ === 'function' && $.fn) {
-    $(Stratus.Environment.get('viewPort') || window).scroll(function () {
+  if (typeof jQuery === 'function' && jQuery.fn) {
+    jQuery(Stratus.Environment.get('viewPort') || window).scroll(function () {
       /* *
       if (!Stratus.Environment.get('production')) {
         console.log('scrolling:', Stratus.Internals.GetScrollDir())
@@ -2421,7 +2512,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
     })
 
     // Resizing can change what's on screen so we need to check the scrolling
-    $(Stratus.Environment.get('viewPort') || window).resize(function () {
+    jQuery(Stratus.Environment.get('viewPort') || window).resize(function () {
       if (Stratus.Environment.get('viewPortChange') === false) {
         Stratus.Environment.set('viewPortChange', true)
       }
@@ -2431,6 +2522,11 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
   // Run Once initially
   Stratus.Environment.set('viewPortChange', true)
 })
+
+// FIXME: This logic above needs to be specific to a particular component or controller.
+// It can be abstracted into an underscore function or something, but this currently is
+// a bit ridiculous to maintain as a secondary black box.  Utility functions are supposed
+// to be simple and reusable functions.
 
 // Internal Rebase Function
 // ------------------------
@@ -2501,37 +2597,16 @@ Stratus.Internals.Resource = function (path, elementId) {
 // values, which will be merged with requested parameters and formulated
 // into a new URL. TODO: Move this into underscore as a mixin.
 /**
+ * @deprecated
  * @param params
  * @param url
  * @returns {string|*}
  * @constructor
  */
 Stratus.Internals.SetUrlParams = function (params, url) {
-  // FIXME: This can't handle anchors correctly
-  if (typeof url === 'undefined') {
-    url = window.location.href
-  }
-  if (typeof params === 'undefined') {
-    return url
-  }
-  let lets = {}
-  let glue = url.indexOf('?')
-  let anchor = url.indexOf('#')
-  let tail = ''
-  if (anchor >= 0) {
-    tail = url.substring(anchor, url.length)
-    url = url.substring(0, anchor)
-  }
-  url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-    lets[key] = value
-  })
-  lets = _.extend(lets, params)
-  return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
-    _.reduce(_.map(lets, function (value, key) {
-      return key + '=' + value
-    }), function (memo, value) {
-      return memo + '&' + value
-    }) + tail)
+  // TODO: Add Controls for Deprecation Warnings...
+  // console.warn('Stratus.Internals.SetUrlParams is deprecated. Use _.setUrlParams instead.')
+  return _.setUrlParams(params, url)
 }
 
 // Track Location
@@ -2920,7 +2995,7 @@ Stratus.Selector.parent = function () {
  */
 Stratus.Internals.Loader = function (selector, view, requirements) {
   if (typeof selector === 'undefined') {
-    let body = Stratus('body')
+    const body = Stratus('body')
     selector = !body.attr('data-loaded') ? '[data-entity],[data-plugin]' : null
     if (selector) {
       body.attr('data-loaded', true)
@@ -2937,7 +3012,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
     selector = (view && selector && typeof selector === 'object') ? Stratus(selector).find('[data-type],[data-plugin]') : Stratus(selector)
   }
   return new Promise(function (resolve, reject) {
-    let entries = {
+    const entries = {
       total: (selector && typeof selector === 'object') ? selector.length : 0,
       iteration: 0,
       views: {}
@@ -2945,7 +3020,7 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
     if (entries.total > 0) {
       selector.each(function (el, index, list) {
         entries.iteration++
-        let entry = _.uniqueId('entry_')
+        const entry = _.uniqueId('entry_')
         entries.views[entry] = false
         Stratus.Internals.ViewLoader(el, view, requirements).then(function (view) {
           entries.views[entry] = view
@@ -2968,9 +3043,21 @@ Stratus.Internals.Loader = function (selector, view, requirements) {
 /**
  * @type {void|*}
  */
-Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
-  toObject: function () {
-    let sanitized = _.clone(this.data)
+Stratus.Internals.View = class InternalView extends Stratus.Prototypes.Model {
+  constructor (data, options) {
+    super(data, options)
+
+    // Scope Binding
+    this.toObject = this.toObject.bind(this)
+    this.hydrate = this.hydrate.bind(this)
+    this.clean = this.clean.bind(this)
+    this.nest = this.nest.bind(this)
+    this.modelAttributes = this.modelAttributes.bind(this)
+  }
+
+  toObject () {
+    const that = this
+    const sanitized = _.clone(that.data)
     if (sanitized.el && sanitized.el.selection) {
       sanitized.el = sanitized.el.selection
       /* TODO: This may not be necessary */
@@ -2980,12 +3067,13 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
       /* */
     }
     return sanitized
-  },
+  }
 
   // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
-  hydrate: function () {
-    let nel = this.get('el')
-    this.set({
+  hydrate () {
+    const that = this
+    const nel = that.get('el')
+    that.set({
       // Unique IDs
       // -----------
 
@@ -3050,65 +3138,70 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
       plugins: []
     })
 
-    if (this.get('plugin') !== null) {
-      let plugins = this.get('plugin').split(' ')
-      if (this.get('type') !== null) {
-        this.set('plugins', (plugins.length > 1) ? plugins : [this.get('plugin')])
+    if (that.get('plugin') !== null) {
+      const plugins = that.get('plugin').split(' ')
+      if (that.get('type') !== null) {
+        that.set('plugins', (plugins.length > 1) ? plugins : [that.get('plugin')])
       } else if (plugins.length > 1) {
-        this.set('plugin', _.first(plugins))
+        that.set('plugin', _.first(plugins))
 
         // Add additional plugins
-        this.set('plugins', _.rest(plugins))
+        that.set('plugins', _.rest(plugins))
       }
     }
-    let id = this.get('id')
-    let type = (this.get('type') !== null) ? this.get('type') : this.get('plugin')
-    let loaderType = (this.get('type') !== null) ? 'widgets' : 'plugins'
-    this.set({
+    const id = that.get('id')
+    const type = (that.get('type') !== null) ? that.get('type') : that.get('plugin')
+    const loaderType = (that.get('type') !== null) ? 'widgets' : 'plugins'
+    that.set({
       scope: (id !== null) ? 'model' : 'collection',
       alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
       path: (type !== null) ? type : null
     })
-    if (!id && this.get('entity') !== null && this.get('manifest') !== null) {
-      this.set('scope', 'model')
+    if (!id && that.get('entity') !== null && that.get('manifest') !== null) {
+      that.set('scope', 'model')
     }
-  },
-  clean: function () {
-    if (!this.get('entity') || this.get('entity').toLowerCase() === 'none') {
-      this.set({ entity: null, scope: null })
+  }
+
+  clean () {
+    const that = this
+    if (!that.get('entity') || that.get('entity').toLowerCase() === 'none') {
+      that.set({ entity: null, scope: null })
     }
-  },
+  }
 
   // Give Nested Attributes for Child Views
   /**
    * @returns {{entity: *, id: *, versionEntity: *, versionRouter: *, versionId: *, scope: *, manifest: *}}
    */
-  nest: function () {
-    let nest = {
-      entity: this.get('entity'),
-      id: this.get('id'),
-      versionEntity: this.get('versionEntity'),
-      versionRouter: this.get('versionRouter'),
-      versionId: this.get('versionId'),
-      scope: this.get('scope'),
-      manifest: this.get('manifest')
+  nest () {
+    const that = this
+    const nest = {
+      entity: that.get('entity'),
+      id: that.get('id'),
+      versionEntity: that.get('versionEntity'),
+      versionRouter: that.get('versionRouter'),
+      versionId: that.get('versionId'),
+      scope: that.get('scope'),
+      manifest: that.get('manifest')
     }
 
     // Add Model or Collection to Nest
-    if (this.has(nest.scope)) {
-      nest[nest.scope] = this.get(nest.scope)
+    if (that.has(nest.scope)) {
+      nest[nest.scope] = that.get(nest.scope)
     }
     return nest
-  },
+  }
+
   /**
    * @returns {{id: *}}
    */
-  modelAttributes: function () {
+  modelAttributes () {
+    const that = this
     return {
-      id: this.get('id')
+      id: that.get('id')
     }
   }
-})
+}
 
 // This function creates and hydrates a view from the DOM,
 // then either references or creates a Model or Collection
@@ -3123,10 +3216,10 @@ Stratus.Internals.View = _.inherit(Stratus.Prototypes.Model, {
  * @constructor
  */
 Stratus.Internals.ViewLoader = function (el, view, requirements) {
-  let parentView = (view) || null
+  const parentView = (view) || null
   let parentChild = false
 
-  let element = Stratus(el)
+  const element = Stratus(el)
   view = new Stratus.Internals.View()
   view.set('el', element)
   view.hydrate()
@@ -3147,8 +3240,8 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
     if (typeof requirements === 'undefined') requirements = ['stratus']
     templates = view.get('templates')
     templateMap = []
-    let template = view.get('template')
-    let dialogue = view.get('dialogue')
+    const template = view.get('template')
+    const dialogue = view.get('dialogue')
 
     // Add Scope
     if (view.get('scope') !== null) {
@@ -3160,8 +3253,8 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       requirements.push(view.get('alias'))
     } else if (view.get('path')) {
       requirements.push(view.get('path'))
-      let srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
-      let srcMatch = srcRegex.exec(view.get('path'))
+      const srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
+      const srcMatch = srcRegex.exec(view.get('path'))
       view.set('type', _.ucfirst(srcMatch[1]))
     } else {
       view.set({
@@ -3187,7 +3280,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       for (key in templates) {
         if (!templates.hasOwnProperty(key) || typeof templates[key] === 'function') continue
         if (templates[key].indexOf('#') === 0) {
-          let $domTemplate = $(templates[key])
+          const $domTemplate = $(templates[key])
           if ($domTemplate.length > 0) {
             templates[key] = $domTemplate.html()
           }
@@ -3236,11 +3329,11 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       view.set('templates', templates)
       templates = view.get('templates')
 
-      let subRequirements = []
+      const subRequirements = []
 
       /* Handle Custom Templates */
       if (_.size(templates) > 0) {
-        let re = /<.+?data-type=["|'](.+?)["|'].*>/gi
+        const re = /<.+?data-type=["|'](.+?)["|'].*>/gi
 
         /* Hydrate Underscore Templates */
         _.each(templates, function (value, key) {
@@ -3248,7 +3341,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
             if (value.search(re) !== -1) {
               let match = re.exec(value)
               while (match !== null) {
-                let subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
+                const subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
                 if (subRequirement && !_.has(requirejs.s.contexts._.config.paths, subRequirement)) {
                   if (!Stratus.Environment.get('production')) console.warn('Sub Type:', subRequirement, 'not configured in require.js')
                 }
@@ -3273,7 +3366,7 @@ Stratus.Internals.ViewLoader = function (el, view, requirements) {
       }
 
       // Detect Loader Types
-      let loaderTypes = []
+      const loaderTypes = []
       if (view.get('plugin') !== null) loaderTypes.push('PluginLoader')
       if (view.get('type') !== null) loaderTypes.push('WidgetLoader')
 
@@ -3317,7 +3410,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
     let modelReference
     let modelInstance
     let modelInit = false
-    let ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null
+    const ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null
 
     if (!view.get('id') && view.get('manifest')) {
       modelInstance = view.get('entity') + 'Manifest'
@@ -3360,7 +3453,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
            */
     }
 
-    let collectionReference = Stratus.Collections.get(view.get('entity'))
+    const collectionReference = Stratus.Collections.get(view.get('entity'))
 
     // Run initialization when the correct settings are present
     if (!collectionReference.initialized && view.get('fetch')) {
@@ -3372,10 +3465,10 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
   }
 
   if (view.get('type') !== null) {
-    let type = _.ucfirst(view.get('type'))
+    const type = _.ucfirst(view.get('type'))
     if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
       // if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
-      let options = view.toObject()
+      const options = view.toObject()
       options.view = view
       Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options)
       Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))
@@ -3393,7 +3486,7 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
     }
     if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
   } else {
-    let nest = view.get('el').find('[data-type],[data-plugin]')
+    const nest = view.get('el').find('[data-type],[data-plugin]')
     if (nest.length > 0) {
       Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (resolution) {
         if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
@@ -3423,11 +3516,11 @@ Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) 
  * @constructor
  */
 Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) {
-  let types = _.union([view.get('plugin')], view.get('plugins'))
+  const types = _.union([view.get('plugin')], view.get('plugins'))
   _.each(types, function (type) {
     type = _.ucfirst(type)
     if (typeof Stratus.Views.Plugins[type] !== 'undefined') {
-      let options = view.toObject()
+      const options = view.toObject()
       options.view = view
       Stratus.Instances[view.get('uid')] = new Stratus.Views.Plugins[type](options)
       Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))
@@ -3437,7 +3530,9 @@ Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) 
         resolve(Stratus.Instances[view.get('uid')])
       }
     } else {
-      if (!Stratus.Environment.get('production')) console.warn('Stratus.Views.Plugins.' + type + ' is not correctly configured.')
+      if (!Stratus.Environment.get('production')) {
+        console.warn('Stratus.Views.Plugins.' + type + ' is not correctly configured.')
+      }
       reject(new Stratus.Prototypes.Error({
         code: 'PluginLoader',
         message: 'Stratus.Views.Plugins.' + type + ' is not correctly configured.'
@@ -3784,21 +3879,91 @@ Stratus.Instances.Clean = function (instances) {
   }
 }
 
+// Aether System
+// --------------
+
+// This model handles all event related logic.
+class Aether extends Stratus.Prototypes.Model {
+  constructor (data, options) {
+    super(data, options)
+
+    this.passiveSupported = false
+
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Invoked!')
+    }
+    let that = this
+    try {
+      let options = {
+        get passive () {
+          that.passiveSupported = true
+        }
+      }
+      window.addEventListener('test', options, options)
+      window.removeEventListener('test', options, options)
+    } catch (err) {
+      that.passiveSupported = false
+    }
+    this.on('change', this.synchronize, this)
+  }
+  synchronize () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Aether Synchronizing...')
+    }
+    if (_.isEmpty(this.data)) {
+      console.warn('synchronize: no data!')
+    }
+    _.each(this.data, function (event, key) {
+      if (event.listening || !event.enabled) {
+        return
+      }
+      if (Stratus.Environment.get('viewPort')) {
+        console.warn('Aether does not support custom viewPorts:', Stratus.Environment.get('viewPort'))
+      }
+      (event.target || window).addEventListener(event.hook, event.method,
+        this.passiveSupported ? {
+          capture: true,
+          passive: true
+        } : false
+      )
+      event.listening = true
+    }, this)
+  }
+  /**
+   * @param options
+   */
+  listen (options) {
+    let uid = null
+    let event = new Stratus.Prototypes.Event(options)
+    if (!event.invalid) {
+      uid = _.uniqueId('event_')
+      this.set(uid, event)
+      Stratus.Instances[uid] = event
+    }
+    return uid
+  }
+}
+Stratus.Aether = new Aether()
+
 // Chronos System
 // --------------
 
 // This model handles all time related jobs.
-Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
-  /**
-   * @param options
-   */
-  initialize: function (options) {
+class Chronos extends Stratus.Prototypes.Model {
+  constructor (data, options) {
+    super(data, options)
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Invoked!')
     }
     this.on('change', this.synchronize, this)
-  },
-  synchronize: function () {
+  }
+  synchronize () {
+    if (!Stratus.Environment.get('production')) {
+      console.info('Chronos Synchronizing...')
+    }
+    if (_.isEmpty(this.changed)) {
+      console.warn('synchronize: empty changeset!')
+    }
     _.each(this.changed, function (job, key) {
       if (typeof key === 'string' && key.indexOf('.') !== -1) {
         key = _.first(key.split('.'))
@@ -3813,14 +3978,14 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
         job.code = 0
       }
     }, this)
-  },
+  }
   /**
    * @param time
    * @param method
    * @param scope
    * @returns {string}
    */
-  add: function (time, method, scope) {
+  queue (time, method, scope) {
     let uid = null
     let job = new Stratus.Prototypes.Job(time, method, scope)
     if (job.time !== null && typeof job.method === 'function') {
@@ -3829,35 +3994,35 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
       Stratus.Instances[uid] = job
     }
     return uid
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  enable: function (uid) {
+  enable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', true)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @returns {boolean|*}
    */
-  disable: function (uid) {
+  disable (uid) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled', false)
     }
     return success
-  },
+  }
   /**
    * @param uid
    * @param value
    * @returns {boolean|*}
    */
-  toggle: function (uid, value) {
+  toggle (uid, value) {
     let success = this.has(uid)
     if (success) {
       this.set(uid + '.enabled',
@@ -3865,8 +4030,8 @@ Stratus.Chronos = _.extend(new Stratus.Prototypes.Model(), {
     }
     return success
   }
-})
-Stratus.Chronos.reinitialize()
+}
+Stratus.Chronos = new Chronos()
 
 // Post Message Handling
 // ---------------------

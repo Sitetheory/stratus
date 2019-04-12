@@ -31,12 +31,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'moment', 'promise', 'datetimepicker', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'moment', 'promise', 'datetimepicker', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.moment);
+    factory(root.Stratus, root.$, root._, root.moment)
   }
 }(this, function (Stratus, $, _, moment) {
-
   // DateTime Widget
   // ---------------
 
@@ -93,10 +92,10 @@
       // We pass in the options for dataTimePicker from the data attributes, but if we pass in unrecognized values
       // from the default optionsCustom it throws an error. So we need to get the data attributes specifically
       // for the dateTimePicker separately
-      this.getDataOptions(this.options.dateTimePicker);
+      this.getDataOptions(this.options.dateTimePicker)
 
       // If it's set to be inline, then the style should not be form because form-control does weird stuff to overflow
-      if (this.options.inline) this.options.style = 'widget';
+      if (this.options.inline) this.options.style = 'widget'
     },
 
     // setEvents()
@@ -106,42 +105,42 @@
      * @returns {boolean}
      */
     registerElement: function () {
-      if (!this.$element || !this.$element.length) return false;
+      if (!this.$element || !this.$element.length) return false
 
       // Hydrate Element
-      this.$element.datetimepicker(this.options.dateTimePicker);
-      this.dateTimePicker = this.$element.data('DateTimePicker');
+      this.$element.datetimepicker(this.options.dateTimePicker)
+      this.dateTimePicker = this.$element.data('DateTimePicker')
 
       // If customValue is set (e.g. publish sets one on the internal date time picker)
       if (this.options.customValue) {
-        this.setValue(this.options.customValue);
+        this.setValue(this.options.customValue)
       }
 
       // Also available but not needed "dp.change"
       this.$element.on('dp.show', function (event) {
-        this.focusAction(event);
-      }.bind(this));
+        this.focusAction(event)
+      }.bind(this))
       this.$element.on('dp.hide', function (event) {
-        this.blurAction(event);
-      }.bind(this));
+        this.blurAction(event)
+      }.bind(this))
 
       // If it's not display inline (and there is an input element) the input element should register blur
       if (!this.options.inline) {
-        this.$elementInput = this.$element.find('input');
+        this.$elementInput = this.$element.find('input')
 
         // Native DatetimePicker events don't work as documented, so we just do native
         this.$elementInput.on('focus', function (event) {
-          this.focusAction(event);
-        }.bind(this));
+          this.focusAction(event)
+        }.bind(this))
         this.$elementInput.on('blur', function (event) {
-          this.blurAction(event);
-        }.bind(this));
+          this.blurAction(event)
+        }.bind(this))
         this.$elementInput.on('keydown', function (event) {
-          this.keyActions(event);
-        }.bind(this));
+          this.keyActions(event)
+        }.bind(this))
       }
 
-      return true;
+      return true
     },
 
     // getValue()
@@ -150,7 +149,7 @@
      * @returns {*}
      */
     getValue: function () {
-      return (typeof this.dateTimePicker === 'object' && this.dateTimePicker && this.dateTimePicker.date()) ? this.dateTimePicker.date().unix() : null;
+      return (typeof this.dateTimePicker === 'object' && this.dateTimePicker && this.dateTimePicker.date()) ? this.dateTimePicker.date().unix() : null
     },
 
     // setValue()
@@ -159,13 +158,13 @@
      * @returns {*}
      */
     setValue: function (value) {
-      if (!value || typeof this.dateTimePicker !== 'object' || !this.dateTimePicker) return false;
+      if (!value || typeof this.dateTimePicker !== 'object' || !this.dateTimePicker) return false
 
       // convert timestamp to
-      var momentTime = moment.unix(value);
+      var momentTime = moment.unix(value)
 
       // The Date Time Picker object is stored in a data attribute
-      return (momentTime) ? this.dateTimePicker.date(momentTime) : momentTime;
+      return (momentTime) ? this.dateTimePicker.date(momentTime) : momentTime
     },
 
     // formatDisplayValue()
@@ -177,9 +176,8 @@
      * @returns {*|string}
      */
     formatDisplayValue: function (value) {
-      return (value && this.options.format) ? moment.unix(value).format(this.options.format) : value || '';
+      return (value && this.options.format) ? moment.unix(value).format(this.options.format) : value || ''
     }
 
-  });
-
-}));
+  })
+}))

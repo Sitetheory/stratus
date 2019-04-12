@@ -34,6 +34,11 @@
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'edit'
 
+  // Temporarily disable Stratus-Edit Directives
+  if (name === 'edit') {
+    return
+  }
+
   // This directive intends to handle binding of a dynamic variable to
   Stratus.Directives.Edit = function ($timeout, Model) {
     return {

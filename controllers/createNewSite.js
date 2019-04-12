@@ -34,8 +34,7 @@
       Stratus.Instances[_.uniqueId('createNewSite_')] = $scope
 
       // Registry
-      $scope.registry = new Registry()
-      $scope.registry.fetch($element, $scope)
+      Registry.fetch($element, $scope)
 
       // Wrappers
       $scope.Stratus = Stratus
@@ -53,7 +52,7 @@
             }
           })
           if (substance) {
-            window.location.replace(Stratus.Internals.SetUrlParams(options))
+            window.location.replace(_.setUrlParams(options))
           }
         }
       }

@@ -23,62 +23,113 @@
   // registered collections and models
   // RAJ Added $qProvide to handle unhandleExceptions in angular 1.6
   Stratus.Services.Collection = [
-    '$provide', '$qProvider',
-    function ($provide, $qProvider) {
-      $qProvider.errorOnUnhandledRejections(false)
+    '$provide',
+    function ($provide) {
       $provide.factory('Collection', [
-        '$q',
         '$http',
         '$mdToast',
         '$timeout',
-        '$log',
         'Model',
-        function ($q, $http, $mdToast, $timeout, $log, Model) {
-          return function (options) {
-            // Environment
-            this.target = null
-            this.direct = false
-            this.infinite = false
-            this.threshold = 0.5
-            this.qualifier = '' // ng-if
-            this.decay = 0
-            this.urlRoot = '/Api'
+        function ($http, $mdToast, $timeout, Model) {
+          Stratus.Prototypes.AngularCollection = Stratus.Prototypes.AngularCollection || class AngularCollection {
+            constructor (options) {
+              // Environment
+              this.target = null
+              this.direct = false
+              this.infinite = false
+              this.threshold = 0.5
+              this.qualifier = '' // ng-if
+              this.decay = 0
+              this.urlRoot = '/Api'
 
-            if (options && typeof options === 'object') {
-              angular.extend(this, options)
+              if (options && typeof options === 'object') {
+                angular.extend(this, options)
+              }
+
+              // Infrastructure
+              this.header = new Stratus.Prototypes.Model()
+              this.meta = new Stratus.Prototypes.Model()
+              this.model = Model
+              this.models = []
+              this.types = []
+
+              // Internals
+              this.pending = false
+              this.error = false
+              this.completed = false
+
+              // Action Flags
+              this.filtering = false
+              this.paginate = false
+
+              // Generate URL
+              if (this.target) {
+                this.urlRoot += '/' + _.ucfirst(this.target)
+              }
+
+              // Scope Binding
+              this.serialize = this.serialize.bind(this)
+              this.url = this.url.bind(this)
+              this.inject = this.inject.bind(this)
+              this.sync = this.sync.bind(this)
+              this.fetch = this.fetch.bind(this)
+              this.filter = this.filter.bind(this)
+              this.throttleFilter = this.throttleFilter.bind(this)
+              this.page = this.page.bind(this)
+              this.toJSON = this.toJSON.bind(this)
+              this.add = this.add.bind(this)
+              this.remove = this.remove.bind(this)
+              this.find = this.find.bind(this)
+              this.pluck = this.pluck.bind(this)
+              this.exists = this.exists.bind(this)
+
+              /**
+               * @type {Function}
+               */
+              this.throttle = _.throttle(this.fetch, 1000)
+
+              // Infinite Scrolling
+              /* *
+              this.infiniteModels = {
+                numLoaded_: 0,
+                toLoad_: 0,
+                // Required.
+                getItemAtIndex: function (index) {
+                  if (index > this.numLoaded_) {
+                    this.fetchMoreItems_(index)
+                    return null
+                  }
+                  return index
+                },
+                // Required.
+                // For infinite scroll behavior, we always return a slightly higher
+                // number than the previously loaded items.
+                getLength: function () {
+                  return this.numLoaded_ + 5
+                },
+                fetchMoreItems_: function (index) {
+                  // For demo purposes, we simulate loading more items with a timed
+                  // promise. In real code, this function would likely contain an
+                  // $http request.
+                  if (this.toLoad_ < index) {
+                    this.toLoad_ += 20
+                    $timeout(angular.noop, 300).then(angular.bind(this, function () {
+                      this.numLoaded_ = this.toLoad_
+                    }))
+                  }
+                }
+              }
+              /* */
             }
-
-            // Infrastructure
-            this.header = new Stratus.Prototypes.Model()
-            this.meta = new Stratus.Prototypes.Model()
-            this.model = Model
-            this.models = []
-            this.types = []
-
-            // Internals
-            this.pending = false
-            this.error = false
-            this.completed = false
-
-            // Action Flags
-            this.filtering = false
-            this.paginate = false
-
-            // Generate URL
-            if (this.target) {
-              this.urlRoot += '/' + _.ucfirst(this.target)
-            }
-
-            // Contextual Hoisting
-            var that = this
 
             /**
              * @param obj
              * @param chain
              * @returns {string}
              */
-            this.serialize = function (obj, chain) {
-              var str = []
+            serialize (obj, chain) {
+              const that = this
+              const str = []
               obj = obj || {}
               angular.forEach(obj, function (value, key) {
                 if (angular.isObject(value)) {
@@ -87,7 +138,7 @@
                   }
                   str.push(that.serialize(value, key))
                 } else {
-                  var encoded = ''
+                  let encoded = ''
                   if (chain) {
                     encoded += chain + '['
                   }
@@ -104,7 +155,8 @@
             /**
              * @returns {*}
              */
-            this.url = function () {
+            url () {
+              const that = this
               return that.urlRoot + (that.targetSuffix || '')
             }
 
@@ -112,10 +164,11 @@
              * @param data
              * @param type
              */
-            this.inject = function (data, type) {
+            inject (data, type) {
               if (!_.isArray(data)) {
                 return
               }
+              const that = this
               if (that.types.indexOf(type) === -1) {
                 that.types.push(type)
               }
@@ -137,15 +190,17 @@
              * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.sync = function (action, data, options) {
+            sync (action, data, options) {
+              const that = this
+
               // Internals
               that.pending = true
               that.completed = false
 
-              return $q(function (resolve, reject) {
+              return new Promise(function (resolve, reject) {
                 action = action || 'GET'
                 options = options || {}
-                var prototype = {
+                const prototype = {
                   method: action,
                   url: that.url(),
                   headers: {}
@@ -153,11 +208,7 @@
                 if (angular.isDefined(data)) {
                   if (action === 'GET') {
                     if (angular.isObject(data) && Object.keys(data).length) {
-                      if (prototype.url.includes('?')) {
-                        prototype.url += '&'
-                      } else {
-                        prototype.url += '?'
-                      }
+                      prototype.url += prototype.url.includes('?') ? '&' : '?'
                       prototype.url += that.serialize(data)
                     }
                   } else {
@@ -166,10 +217,7 @@
                   }
                 }
 
-                if (
-                  options.hasOwnProperty('headers') &&
-                  typeof options.headers === 'object'
-                ) {
+                if (options.hasOwnProperty('headers') && typeof options.headers === 'object') {
                   Object.keys(options.headers).forEach(function (headerKey) {
                     prototype.headers[headerKey] = options.headers[headerKey]
                   })
@@ -183,7 +231,7 @@
                     that.header.set(response.headers() || {})
                     that.meta.set(response.data.meta || {})
                     that.models = []
-                    var data = response.data.payload || response.data
+                    const data = response.data.payload || response.data
                     if (that.direct) {
                       that.models = data
                     } else if (_.isArray(data)) {
@@ -191,7 +239,7 @@
                     } else if (_.isObject(data)) {
                       _.each(data, that.inject)
                     } else {
-                      $log.error('malformed payload:', data)
+                      console.error('malformed payload:', data)
                     }
 
                     // XHR Flags
@@ -209,19 +257,25 @@
                     that.pending = false
                     that.error = true
 
+                    // Build Report
+                    const error = new Stratus.Prototypes.Error()
+                    error.payload = _.isObject(response.data) ? response.data : response
+                    if (response.statusText && response.statusText !== 'OK') {
+                      error.message = response.statusText
+                    } else if (!_.isObject(response.data)) {
+                      error.message = `Invalid Payload: ${prototype.method} ${prototype.url}`
+                    } else {
+                      error.message = 'Unknown AngularCollection error!'
+                    }
+
                     // Promise
-                    reject((response.statusText && response.statusText !== 'OK')
-                      ? response.statusText
-                      : (
-                        angular.isObject(response.data) ? response.data : (
-                          'Invalid Payload: ' + prototype.method + ' ' +
-                          prototype.url
-                        )
-                      ))
+                    reject(error)
                   }
-                }).catch(function () {
+                }).catch(function (error) {
                   // (/(.*)\sReceived/i).exec(error.message)[1]
-                  reject('XHR: ' + prototype.method + ' ' + prototype.url)
+                  console.error('XHR: ' + prototype.method + ' ' + prototype.url)
+                  reject(error)
+                  throw error
                 })
               })
             }
@@ -232,9 +286,10 @@
              * @param {Object=} [options={}]
              * @returns {*}
              */
-            this.fetch = function (action, data, options) {
+            fetch (action, data, options) {
+              const that = this
               return that.sync(action, data || that.meta.get('api'), options).catch(
-                function (message) {
+                function (error) {
                   $mdToast.show(
                     $mdToast.simple()
                       .textContent('Failure to Fetch!')
@@ -242,7 +297,7 @@
                       .position('top right')
                       .hideDelay(3000)
                   )
-                  $log.error('FETCH:', message)
+                  console.error('FETCH:', error)
                 }
               )
             }
@@ -251,7 +306,8 @@
              * @param query
              * @returns {*}
              */
-            this.filter = function (query) {
+            filter (query) {
+              const that = this
               that.filtering = true
               that.meta.set('api.q', angular.isDefined(query) ? query : '')
               that.meta.set('api.p', 1)
@@ -259,29 +315,25 @@
             }
 
             /**
-             * @type {Function}
-             */
-            this.throttle = _.throttle(this.fetch, 1000)
-
-            /**
              * @param query
              * @returns {*}
              */
-            this.throttleFilter = function (query) {
+            throttleFilter (query) {
+              const that = this
               that.meta.set('api.q', angular.isDefined(query) ? query : '')
-              return $q(function (resolve, reject) {
-                var request = that.throttle()
+              return new Promise(function (resolve, reject) {
+                const request = that.throttle()
                 if (!Stratus.Environment.get('production')) {
-                  $log.log('request:', request)
+                  console.log('request:', request)
                 }
                 request.then(function (models) {
                   if (!Stratus.Environment.get('production')) {
                     // TODO: Finish handling throttled data
                     /* *
-                    $log.log('throttled:', _.map(models, function (model) {
-                      return model.domainPrimary
-                    }))
-                    /* */
+                      console.log('throttled:', _.map(models, function (model) {
+                        return model.domainPrimary
+                      }))
+                      /* */
                   }
                   resolve(models)
                 }).catch(reject)
@@ -292,7 +344,8 @@
              * @param page
              * @returns {*}
              */
-            this.page = function (page) {
+            page (page) {
+              const that = this
               that.paginate = true
               that.meta.set('api.p', page)
               that.fetch()
@@ -302,8 +355,9 @@
             /**
              * @returns {Array}
              */
-            this.toJSON = function () {
-              var sanitized = []
+            toJSON () {
+              const sanitized = []
+              const that = this
               that.models.forEach(function (model) {
                 if (typeof model.toJSON === 'function') {
                   sanitized.push(model.toJSON())
@@ -316,25 +370,28 @@
              * @param target
              * @param options
              */
-            this.add = function (target, options) {
+            add (target, options) {
+              if (!angular.isObject(target)) {
+                return
+              }
               if (!options || typeof options !== 'object') {
                 options = {}
               }
-              if (angular.isObject(target)) {
-                target = (target instanceof Model) ? target : new Model({
-                  collection: that
-                }, target)
-                that.models.push(target)
-                if (options.save) {
-                  target.save()
-                }
+              const that = this
+              target = (target instanceof Model) ? target : new Model({
+                collection: that
+              }, target)
+              that.models.push(target)
+              if (options.save) {
+                target.save()
               }
             }
 
             /**
              * @param target
              */
-            this.remove = function (target) {
+            remove (target) {
+              const that = this
               that.models.splice(that.models.indexOf(target), 1)
             }
 
@@ -342,7 +399,8 @@
              * @param predicate
              * @returns {*}
              */
-            this.find = function (predicate) {
+            find (predicate) {
+              const that = this
               return _.find(that.models, _.isFunction(predicate) ? predicate : function (model) {
                 return model.get('id') === predicate
               })
@@ -352,7 +410,8 @@
              * @param attribute
              * @returns {Array}
              */
-            this.pluck = function (attribute) {
+            pluck (attribute) {
+              const that = this
               return _.map(that.models, function (element) {
                 return element instanceof Model
                   ? element.pluck(attribute)
@@ -364,46 +423,15 @@
              * @param attribute
              * @returns {boolean}
              */
-            this.exists = function (attribute) {
+            exists (attribute) {
+              const that = this
               return !!_.reduce(that.pluck(attribute) || [],
                 function (memo, data) {
                   return memo || angular.isDefined(data)
                 })
             }
-
-            // Infinite Scrolling
-            /* *
-            this.infiniteModels = {
-              numLoaded_: 0,
-              toLoad_: 0,
-              // Required.
-              getItemAtIndex: function (index) {
-                if (index > this.numLoaded_) {
-                  this.fetchMoreItems_(index)
-                  return null
-                }
-                return index
-              },
-              // Required.
-              // For infinite scroll behavior, we always return a slightly higher
-              // number than the previously loaded items.
-              getLength: function () {
-                return this.numLoaded_ + 5
-              },
-              fetchMoreItems_: function (index) {
-                // For demo purposes, we simulate loading more items with a timed
-                // promise. In real code, this function would likely contain an
-                // $http request.
-                if (this.toLoad_ < index) {
-                  this.toLoad_ += 20
-                  $timeout(angular.noop, 300).then(angular.bind(this, function () {
-                    this.numLoaded_ = this.toLoad_
-                  }))
-                }
-              }
-            }
-            /* */
           }
+          return Stratus.Prototypes.AngularCollection
         }
       ])
     }

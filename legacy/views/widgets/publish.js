@@ -31,12 +31,11 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'jquery', 'underscore', 'moment', 'bootstrap', 'stratus.views.widgets.base'], factory);
+    define(['stratus', 'jquery', 'underscore', 'moment', 'bootstrap', 'stratus.views.widgets.base'], factory)
   } else {
-    factory(root.Stratus, root.$, root._, root.moment);
+    factory(root.Stratus, root.$, root._, root.moment)
   }
 }(this, function (Stratus, $, _, moment) {
-
   // Publish Widget
   // -------------
 
@@ -115,10 +114,10 @@
      */
     postOptions: function (options) {
       if (this.options.dateTimePicker || this.options.unpublish || this.options.versionHistory) {
-        this.options.more = true;
+        this.options.more = true
       }
       if (this.options.versionEntity) {
-        this.options.propertyName = this.options.versionEntity + '.timePublish';
+        this.options.propertyName = this.options.versionEntity + '.timePublish'
       }
     },
 
@@ -131,18 +130,18 @@
      */
     onRender: function (entries) {
       // don't bother, if no dateTimePicker is required
-      if (!this.options.dateTimePicker) return true;
+      if (!this.options.dateTimePicker) return true
 
       // There may be more than one element found (e.g. date time and unpublish button)
       if (entries.total > 0) {
         _.each(entries.views, function (el) {
           if (el.type === 'datetime') {
             // after the onRender() so it should be fine.
-            this.dateTimePickerView = el;
+            this.dateTimePickerView = el
           }
-        }.bind(this));
+        }.bind(this))
       }
-      return true;
+      return true
     },
 
     // saveAction()
@@ -156,46 +155,45 @@
      * @returns {boolean}
      */
     saveAction: function (options) {
-
-      if (typeof options === 'undefined') options = {};
-      options.actions = options.actions ? options.actions : 'publish';
+      if (typeof options === 'undefined') options = {}
+      options.actions = options.actions ? options.actions : 'publish'
 
       // When publish is clicked, use 'now' or the time set in optional dateTimePicker object
-      var timePublish = null;
+      var timePublish = null
 
       if (options.action === 'unpublish') {
         // Set the picker to the current date (so when they open it again it's at today) and then clear
         if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
-          this.dateTimePickerView.dateTimePicker.date(moment());
-          this.dateTimePickerView.dateTimePicker.clear();
+          this.dateTimePickerView.dateTimePicker.date(moment())
+          this.dateTimePickerView.dateTimePicker.clear()
         }
       } else {
         // If expired (published in the past) treat as if it's unpublished (and publish the current time if none specified). Problem is... there is a date specified. So we need to clear the date somehow if it's expired.
         if (this.dateTimePickerView && typeof this.dateTimePickerView.dateTimePicker === 'object') {
           // return a moment object
-          timePublish = this.dateTimePickerView.dateTimePicker.date();
+          timePublish = this.dateTimePickerView.dateTimePicker.date()
 
           // If expired publish (published for past date and superceded by new version)
           // and publish is clicked without changing the date (the dates are identical)
           // then use the now date like they just want to publish at this moment.
           if (this.isPublished === 3 && timePublish && timePublish.unix() === this.timePublish) {
-            timePublish = null;
+            timePublish = null
           } else {
             // convert moment object to unix milliseconds
-            timePublish = timePublish ? timePublish.unix() : null;
+            timePublish = timePublish ? timePublish.unix() : null
           }
         }
 
         // If dateTimePicker exists but is empty, OR no picker, then we will use "now".
-        timePublish = timePublish ? timePublish : 'API::NOW';
+        timePublish = timePublish || 'API::NOW'
       }
 
       if (this.options.versionEntity) {
-        this.model.set(this.options.versionEntity + '.timePublish', timePublish);
+        this.model.set(this.options.versionEntity + '.timePublish', timePublish)
       } else if (this.model.has('timePublish')) {
-        this.model.set('timePublish', timePublish);
+        this.model.set('timePublish', timePublish)
       } else {
-        console.warn('This entity is either not versionable or a valid data-versionentity was not set');
+        console.warn('This entity is either not versionable or a valid data-versionentity was not set')
       }
 
       if (options.action === 'unpublish' && this.options.textUnpublishConfirm) {
@@ -203,23 +201,23 @@
           {
             message: this.options.textUnpublishConfirm,
             handler: function (result) {
-              if (result) this.model.save();
+              if (result) this.model.save()
             }.bind(this)
           }
-        );
-        Stratus.Events.trigger('confirm', this.confirm);
+        )
+        Stratus.Events.trigger('confirm', this.confirm)
       } else {
-        this.model.save();
+        this.model.save()
       }
 
-      return true;
+      return true
     },
 
     /**
      * @param event
      */
     publishAction: function (event) {
-      this.saveAction();
+      this.saveAction()
     },
 
     /**
@@ -227,7 +225,7 @@
      */
     unpublishAction: function (event) {
       if (this.options.unpublish) {
-        this.saveAction({ action: 'unpublish' });
+        this.saveAction({ action: 'unpublish' })
       }
     },
 
@@ -239,34 +237,33 @@
      */
     scopeChanged: function () {
       if (this.options.versionEntity) {
-        this.timePublish = this.getPropertyValue();
-        this.isPublished = this.model.get(this.options.versionEntity + '.isPublished');
+        this.timePublish = this.getPropertyValue()
+        this.isPublished = this.model.get(this.options.versionEntity + '.isPublished')
       } else {
-        this.timePublish = this.model.get('timePublish');
-        this.isPublished = this.model.get('isPublished');
+        this.timePublish = this.model.get('timePublish')
+        this.isPublished = this.model.get('isPublished')
       }
 
       // If there is a dateTimePicker object, set the date in the picker to the model time
       if (this.timePublish && this.dateTimePickerView) {
         // convert timestamp to
-        var momentTime = moment.unix(this.timePublish);
-        if (momentTime) this.dateTimePickerView.dateTimePicker.date(momentTime);
+        var momentTime = moment.unix(this.timePublish)
+        if (momentTime) this.dateTimePickerView.dateTimePicker.date(momentTime)
       }
 
       // If this widget has a child element containing the publish text, reset the words whenever the model changes
       if (this.$el.find('.publishText')) {
-        var isPublishedText = _.ucfirst(this.options.isPublishedValues[this.isPublished]);
-        var publishText = this.options['text' + isPublishedText];
-        this.$el.find('.publishText').text(publishText);
+        var isPublishedText = _.ucfirst(this.options.isPublishedValues[this.isPublished])
+        var publishText = this.options['text' + isPublishedText]
+        this.$el.find('.publishText').text(publishText)
       }
-      this.$el.toggleClass('unpublished', !this.isPublished);
-      this.$el.toggleClass('published', (this.isPublished === 1));
-      this.$el.toggleClass('delayed', (this.isPublished === 2));
+      this.$el.toggleClass('unpublished', !this.isPublished)
+      this.$el.toggleClass('published', (this.isPublished === 1))
+      this.$el.toggleClass('delayed', (this.isPublished === 2))
 
       // expired: treated like unpublished
-      this.$el.toggleClass('unpublished', (this.isPublished === 3));
+      this.$el.toggleClass('unpublished', (this.isPublished === 3))
     }
 
-  });
-
-}));
+  })
+}))

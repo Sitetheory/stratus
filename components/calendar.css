@@ -1,0 +1,28 @@
+stratus-calendar .fc .fc-toolbar {
+  /* Example CSS affects only the toolbar area */
+  box-sizing: border-box;
+}
+stratus-calendar .fc .fc-basic-view {
+  /* Example CSS affects all 'Basic' Type Views */
+  box-sizing: content-box;
+}
+stratus-calendar .fc .fc-list-view {
+  /* Example CSS affects all 'List' Type Views */
+  box-sizing: content-box;
+}
+stratus-calendar .fc .fc-agenda-view {
+  /* Example CSS affects all 'Agenda' Type Views */
+  box-sizing: content-box;
+}
+stratus-calendar .fc .fc-month-view {
+  /* Example CSS affects only 'Month' basic View */
+  box-sizing: content-box;
+}
+stratus-calendar .fc .fc-listYear-view {
+  /* Example CSS affects only 'Year List' View */
+  box-sizing: content-box;
+}
+stratus-calendar .fc .fc-agendaWeek-view {
+  /* Example CSS affects only 'Agenda List' View */
+  box-sizing: content-box;
+}

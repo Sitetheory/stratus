@@ -28,99 +28,10 @@ _.templateSettings = {
  */
 _.mixin({
 
-  // Babel class inheritance block
-  createClass: (function () {
-    function defineProperties (target, props) {
-      let i
-      for (i = 0; i < props.length; i++) {
-        let descriptor = props[i]
-        descriptor.enumerable = descriptor.enumerable || false
-        descriptor.configurable = true
-        if ('value' in descriptor) {
-          descriptor.writable = true
-        }
-        Object.defineProperty(target, descriptor.key, descriptor)
-      }
-    }
-
-    return function (Constructor, protoProps, staticProps) {
-      if (protoProps) {
-        defineProperties(Constructor.prototype, protoProps)
-      }
-      if (staticProps) {
-        defineProperties(Constructor, staticProps)
-      }
-      return Constructor
-    }
-  })(),
-  /**
-   * @param self
-   * @param call
-   * @returns {*}
-   */
-  possibleConstructorReturn: function (self, call) {
-    if (!self) {
-      throw new ReferenceError(
-        'this hasn\'t been initialised - super() hasn\'t been called')
-    }
-    return call && (typeof call === 'object' || typeof call === 'function')
-      ? call
-      : self
-  },
-  /**
-   * @param subClass
-   * @param superClass
-   */
-  inherits: function (subClass, superClass) {
-    if (typeof superClass !== 'function' && superClass !== null) {
-      throw new TypeError('Super expression must either be null or a function, not ' +
-        typeof superClass)
-    }
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-      constructor: {
-        value: subClass,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    })
-    if (superClass) {
-      Object.setPrototypeOf(subClass, superClass)
-    }
-  },
-  /**
-   * @param instance
-   * @param Constructor
-   */
-  classCallCheck: function (instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function')
-    }
-  },
-
-  // This function wraps the inheritance logic in a single usable function.
-  /**
-   * @param superClass
-   * @param subClass
-   * @returns {View}
-   */
-  inherit: function (superClass, subClass) {
-    let blob = function (length) {
-      _.classCallCheck(this, blob)
-      let that = _.possibleConstructorReturn(this,
-        (Object.getPrototypeOf(blob)).call(this, length,
-          length))
-      _.extend(that, subClass)
-      return that
-    }
-    _.inherits(blob, superClass)
-    return blob
-  },
-
   // This function simply extracts the name of a function from code directly
   /**
    * @param code
-   * @returns {string}
+   * @returns {string|null}
    */
   functionName: function (code) {
     if (_.isEmpty(code)) {
@@ -309,21 +220,79 @@ _.mixin({
     return shallow
   },
 
+  /**
+   * Get more params which is shown after anchor '#' anchor in the url.
+   * @return {*}
+   */
+  getAnchorParams: function (key, url) {
+    let vars = {}
+    let tail = window.location.hash
+    if (_.isEmpty(tail)) {
+      return vars
+    }
+    const digest = /([a-zA-Z]+)(?:\/([0-9]+))?/g
+    let match
+    while ((match = digest.exec(tail))) {
+      vars[match[1]] = _.hydrate(match[2])
+    }
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
   // Get a specific value or all values located in the URL
   /**
-   * TODO: This is somewhat farther than underscore's ideology and should be
-   * moved into Stratus.Internals
    * @param key
-   * @param href
+   * @param url
    * @returns {{}}
    */
-  getUrlParams: function (key, href) {
-    let lets = {}
-    href = typeof href !== 'undefined' ? href : window.location.href
-    href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-      lets[key] = value
+  getUrlParams: function (key, url) {
+    const vars = {}
+    if (url === undefined) {
+      url = window.location.href
+    }
+    const anchor = url.indexOf('#')
+    if (anchor >= 0) {
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = _.hydrate(value)
     })
-    return (typeof key !== 'undefined' && key) ? lets[key] : lets
+    return (typeof key !== 'undefined' && key) ? vars[key] : vars
+  },
+
+  // This function digests URLs into an object containing their respective
+  // values, which will be merged with requested parameters and formulated
+  // into a new URL.
+  /**
+   * @param params
+   * @param url
+   * @returns {string|*}
+   * @constructor
+   */
+  setUrlParams: function (params, url) {
+    if (url === undefined) {
+      url = window.location.href
+    }
+    if (params === undefined) {
+      return url
+    }
+    let vars = {}
+    const glue = url.indexOf('?')
+    const anchor = url.indexOf('#')
+    let tail = ''
+    if (anchor >= 0) {
+      tail = url.substring(anchor, url.length)
+      url = url.substring(0, anchor)
+    }
+    url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+      vars[key] = value
+    })
+    vars = _.extend(vars, params)
+    return ((glue >= 0 ? url.substring(0, glue) : url) + '?' +
+      _.map(vars, function (value, key) {
+        return key + '=' + _.dehydrate(value)
+      }).reduce(function (memo, value) {
+        return memo + '&' + value
+      }) + tail)
   },
 
   // Ensure all values in an array or object are true
@@ -458,8 +427,15 @@ _.mixin({
    * @returns {boolean}
    */
   startsWith: function (target, search) {
-    return (typeof target === 'string' &&
-      target.substr(0, search.length).toUpperCase() === search.toUpperCase())
+    return (typeof target === 'string' && target.substr(0, search.length).toLowerCase() === search.toLowerCase())
+  },
+  /**
+   * @param target
+   * @param search
+   * @returns {boolean}
+   */
+  endsWith: function (target, search) {
+    return (typeof target === 'string' && target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
   },
   /**
    * @param newData
@@ -506,7 +482,29 @@ _.mixin({
     }
     return (!patch || !_.size(patch)) ? null : patch
   },
+  /**
+   * @param fn
+   * @param timeout
+   * @param interval
+   * @returns {Promise<any>}
+   */
+  poll: function (fn, timeout, interval) {
+    timeout = timeout || 2000
+    interval = interval || 100
+    const threshold = Number(new Date()) + timeout
+    const check = function (resolve, reject) {
+      const cond = fn()
+      if (cond) {
+        resolve(cond)
+      } else if (Number(new Date()) < threshold) {
+        setTimeout(check, interval, resolve, reject)
+      } else {
+        reject(new Error('Timeout ' + fn + ': ' + arguments))
+      }
+    }
 
+    return new Promise(check)
+  },
   /**
    * @param a
    * @param b
@@ -640,7 +638,7 @@ if (typeof $ === 'function' && $.fn) {
       console.error(
         'No Selector or Context:', this)
     }
-    return (!$(event.target).closest(this.selector || this.context).length &&
-      !$(event.target).parents(this.selector || this.context).length)
+    return !$(event.target).closest(this.selector || this.context).length &&
+      !$(event.target).parents(this.selector || this.context).length
   }
 }
