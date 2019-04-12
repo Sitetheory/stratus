@@ -68,6 +68,9 @@ boot.config({
       deps: ['backbone']
     },
 
+
+    /* TODO: move Froala to Sitetheory */
+
     /* Froala */
     'froala-align': {
       deps: ['froala']
@@ -184,6 +187,7 @@ boot.config({
          main: 'stratus'
      },
      /**/
+    /* TODO: move codemirror to Sitetheory */
     {
       name: 'codemirror',
       location: boot.bundle + 'stratus/bower_components/codemirror',
@@ -209,35 +213,26 @@ boot.config({
     'stratus.routers.generic': boot.bundle + 'stratus/routers/generic' + boot.suffix,
     'stratus.routers.version': boot.bundle + 'stratus/routers/version' + boot.suffix,
 
-    /* Stratus Controllers */
-    'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
+
+    /* CONTROLLERS: */
     'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
+
+    /* CONTROLLERS: Angular */
+    'stratus.controllers.dialogue': boot.bundle + 'stratus/controllers/dialogue' + boot.suffix,
     'stratus.controllers.panel': boot.bundle + 'stratus/controllers/panel' + boot.suffix,
-    'stratus.controllers.filterContentType': boot.bundle + 'stratus/controllers/filterContentType' + boot.suffix,
-    'stratus.controllers.createNewSite': boot.bundle + 'stratus/controllers/createNewSite' + boot.suffix,
-    'stratus.controllers.selectMainRoute': boot.bundle + 'stratus/controllers/selectMainRoute' + boot.suffix,
-    'stratus.controllers.productFilter': boot.bundle + 'stratus/controllers/productFilter' + boot.suffix,
-    'stratus.controllers.invoiceProductFilter': boot.bundle + 'stratus/controllers/invoiceProductFilter' + boot.suffix,
-    'stratus.controllers.userFilter': boot.bundle + 'stratus/controllers/userFilter' + boot.suffix,
-    'stratus.controllers.filterStreamsByTag': boot.bundle + 'stratus/controllers/filterStreamsByTag' + boot.suffix,
 
-    /* Stratus Core Components */
+
+    /* COMPONENTS:  */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
-    'stratus.components.dateTime': boot.bundle + 'stratus/components/dateTime' + boot.suffix,
-    'stratus.components.editLegacy': boot.bundle + 'stratus/components/editLegacy' + boot.suffix,
-    'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
-    'stratus.components.selector': boot.bundle + 'stratus/components/selector' + boot.suffix,
-    'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
-    'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
-    'stratus.components.upload': boot.bundle + 'stratus/components/upload' + boot.suffix,
-    'stratus.components.stream': boot.bundle + 'stratus/components/stream' + boot.suffix,
-    'stratus.components.streamExcerpt': boot.bundle + 'stratus/components/streamExcerpt' + boot.suffix,
-    'stratus.components.tag': boot.bundle + 'stratus/components/tag' + boot.suffix,
 
-    /* Stratus Core Directives */
+    /* COMPONENTS: Social Media */
+    // TODO: Move these eventually to a non core stratus, 3rd party
+    'stratus.components.facebook': boot.bundle + 'stratus/components/facebook' + boot.suffix,
+    'stratus.components.tweet': boot.bundle + 'stratus/components/tweet' + boot.suffix,
+
+
+    /* DIRECTIVES: */
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
-    'stratus.directives.edit': boot.bundle + 'stratus/directives/edit' + boot.suffix,
-    'stratus.directives.editInline': boot.bundle + 'stratus/directives/editInline' + boot.suffix,
     'stratus.directives.drag': boot.bundle + 'stratus/directives/drag' + boot.suffix,
     'stratus.directives.drop': boot.bundle + 'stratus/directives/drop' + boot.suffix,
     'stratus.directives.href': boot.bundle + 'stratus/directives/href' + boot.suffix,
@@ -246,17 +241,16 @@ boot.config({
     'stratus.directives.src': boot.bundle + 'stratus/directives/src' + boot.suffix,
     'stratus.directives.trigger': boot.bundle + 'stratus/directives/trigger' + boot.suffix,
     'stratus.directives.validate': boot.bundle + 'stratus/directives/validate' + boot.suffix,
-    'stratus.directives.passwordCheck': boot.bundle + 'stratus/directives/passwordCheck' + boot.suffix,
     'stratus.directives.validateUrl': boot.bundle + 'stratus/directives/validateUrl' + boot.suffix,
     'stratus.directives.compileTemplate': boot.bundle + 'stratus/directives/compileTemplate' + boot.suffix,
     'stratus.directives.stringToNumber': boot.bundle + 'stratus/directives/stringToNumber' + boot.suffix,
     'stratus.directives.timestampToDate': boot.bundle + 'stratus/directives/timestampToDate' + boot.suffix,
 
-    // TODO: Move these to Sitetheory since they are specific to Sitetheory
+    // TODO: Move these eventually to a non core stratus, 3rd party
     'stratus.directives.froala': boot.bundle + 'stratus/directives/froala' + boot.suffix,
     'stratus.directives.redactor': boot.bundle + 'stratus/directives/redactor' + boot.suffix,
 
-    /* Stratus Core Filters */
+    /* FILTERS: */
     'stratus.filters.age': boot.bundle + 'stratus/filters/age' + boot.suffix,
     'stratus.filters.gravatar': boot.bundle + 'stratus/filters/gravatar' + boot.suffix,
     'stratus.filters.map': boot.bundle + 'stratus/filters/map' + boot.suffix,
@@ -264,14 +258,12 @@ boot.config({
     'stratus.filters.reduce': boot.bundle + 'stratus/filters/reduce' + boot.suffix,
     'stratus.filters.truncate': boot.bundle + 'stratus/filters/truncate' + boot.suffix,
 
-    /* Stratus Core Services */
+    /* SERVICES: */
     'stratus.services.appConfig': boot.bundle + 'stratus/services/appConfig' + boot.suffix,
     'stratus.services.model': boot.bundle + 'stratus/services/model' + boot.suffix,
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
-    'stratus.services.createNewSite': boot.bundle + 'stratus/services/createNewSite' + boot.suffix,
-    // 'stratus.services.visualSelector': boot.bundle + 'stratus/services/visualSelector' + boot.suffix,
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
     'stratus.services.socialLibraries': boot.bundle + 'stratus/services/socialLibraries' + boot.suffix,
 
@@ -279,7 +271,7 @@ boot.config({
     'stratus.views.base': boot.bundle + 'stratus/legacy/views/base' + boot.suffix,
 
 
-    /* Stratus Core Underscore Templates */
+    /* UNDERSCORE TEMPLATES: */
     /* TODO: remove these, they aren't even used anymore. Convert to components and remove. */
     'templates-base': boot.bundle + 'stratus/legacy/views/widgets/base.html',
     'templates-filter-search': boot.bundle + 'stratus/legacy/views/widgets/filter.search.html',
