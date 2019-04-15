@@ -20,7 +20,6 @@
       'stratus.components.calendar.timezones',
       'angular-material',
       'moment-range',
-
       'stratus.services.iCal'
     ], factory)
   } else {

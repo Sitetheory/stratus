@@ -1,6 +1,10 @@
 // Facebook Component
 // ------------------
 
+/*
+NOTE: this was used by Brand New Congress and needs to be customized so values can be passed in to bindings.
+ */
+
 /* global define, FB */
 
 // Define AMD, Require.js, or Contextual Scope
@@ -23,8 +27,8 @@
       Stratus.Instances[_.uniqueId('facebook_')] = $scope
 
       // Custom Variables
-      let facebookPageName = 'Brand New Congress'
-      let facebookPageId = 'brandnewcongress'
+      let facebookPageName = 'Test Page Name'
+      let facebookPageId = 'enterpagId'
       let containerId = 'facebookPageContainer'
       let relatedContainerId = 'currentMediaContainer'
       let relatedContainerOffset = -150

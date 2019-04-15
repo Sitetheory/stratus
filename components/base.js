@@ -20,6 +20,7 @@
       'stratus.services.collection',
 
       // Components
+      // TODO: determine if this should really be in Base, or if it's even Stratus specific
       'stratus.components.pagination',
       'stratus.components.search'
     ], factory)

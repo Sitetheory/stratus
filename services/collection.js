@@ -10,6 +10,7 @@
       'stratus',
       'underscore',
       'angular',
+      // TODO: determine why we require angular-material?
       'angular-material',
       'stratus.services.model'
     ], factory)
