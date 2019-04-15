@@ -1,4 +1,4 @@
-// Generic Controller
+// Generic Controller: used to connect to any API and/or process
 // ------------------
 
 /* global define */
@@ -10,8 +10,7 @@
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.registry',
-      'stratus.services.createNewSite'
+      'stratus.services.registry'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
@@ -25,8 +24,7 @@
     '$log',
     '$parse',
     'Registry',
-    'createNewSite',
-    function ($scope, $element, $log, $parse, Registry, createNewSite) {
+    function ($scope, $element, $log, $parse, Registry) {
       // Store Instance
       Stratus.Instances[_.uniqueId('generic_')] = $scope
 
@@ -65,19 +63,6 @@
       $scope.isObject = angular.isObject
       $scope.isString = angular.isString
       $scope.isUndefined = angular.isUndefined
-
-      $scope.createSite = function (
-        siteTitle, siteGenreId, masterSite, masterContentMethod) {
-        let data = {
-          name: siteTitle,
-          genre: siteGenreId,
-          masterSite: masterSite,
-          masterContentMethod: masterContentMethod
-        }
-        createNewSite.create(data).then(function (res) {
-          console.log(res)
-        })
-      }
 
       // Handle Selected
       if ($scope.collection) {

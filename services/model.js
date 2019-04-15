@@ -9,8 +9,7 @@
     define([
       'stratus',
       'underscore',
-      'angular',
-      'angular-material'
+      'angular'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)

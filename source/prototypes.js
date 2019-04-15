@@ -451,34 +451,7 @@ Stratus.Prototypes.Sentinel = class Sentinel {
   }
 }
 
-// This is the prototype for a bootbox event, in which one could be
-// supplied for any bootbox message (i.e. confirm or delete), or one
-// will automatically be created at runtime using current arguments.
-// TODO: Reevaluate this.
-/**
- * @param message
- * @param handler
- * @constructor
- */
-Stratus.Prototypes.Bootbox = class Bootbox {
-  constructor (message, handler) {
-    if (message && typeof message === 'object') {
-      _.extend(this, message)
-      this.message = this.message || 'Message'
-    } else {
-      this.message = message || 'Message'
-    }
-    this.handler = this.handler || handler
-    if (typeof this.handler !== 'function') {
-      this.handler = function (result) {
-        console.info('Client ' + (result === undefined ? 'closed' : (result
-          ? 'confirmed'
-          : 'cancelled')) + ' dialog.')
-      }
-    }
-  }
-}
-
+// TODO: rethink whether this should be in the core
 // This is the prototype for the toaster, in which one could be supplied
 // for a toast message, or one will automatically be created at runtime
 // using current arguments.

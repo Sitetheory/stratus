@@ -1,4 +1,4 @@
-/* global Stratus, _, jQuery, Backbone */
+/* global Stratus, _, jQuery */
 
 /**
  * @param request
@@ -71,9 +71,10 @@ Stratus.Internals.Ajax = function (request) {
 /**
  * @type {*|Function|void}
  */
-// TODO: This runs on fancy Backbone code that should be removed
+// TODO: backbone was removed, so this needs to be rebuilt using native models
 Stratus.Internals.Anchor = (function Anchor () {
   Anchor.initialize = true
+  /*
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
     el: 'a[href*=\\#]:not([href=\\#]):not([data-scroll="false"])',
     events: {
@@ -92,7 +93,7 @@ Stratus.Internals.Anchor = (function Anchor () {
             let $target = jQuery(event.currentTarget.hash)
             let anchor = event.currentTarget.hash.slice(1)
             $target = ($target.length) ? $target : jQuery('[name=' + anchor + ']')
-            /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
+            // TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page
             if ($target.length) {
               jQuery('html,body').animate({
                 scrollTop: $target.offset().top
@@ -106,6 +107,7 @@ Stratus.Internals.Anchor = (function Anchor () {
       }
     }
   })
+  */
 })()
 
 // Internal Convoy Builder
@@ -686,7 +688,11 @@ Stratus.Internals.LoadImage = function (obj) {
       // another level of abstraction.
 
       // Remove from registration
+      // TODO: remove this
       Stratus.RegisterGroup.remove('OnScroll', obj)
+      if (!Stratus.Environment.get('production')) {
+        console.log('Remove RegisterGroup:', obj)
+      }
     })
   }
 }
@@ -738,6 +744,10 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
       // Cycle through all the registered objects an execute their function
       // We must use the registered onScroll objects, because they get removed
       // in some cases (e.g. lazy load)
+      // TODO: remove logic of RegisterGroup
+      if (!Stratus.Environment.get('production')) {
+        console.log('Remove RegisterGroup Logic:')
+      }
       let elements = Stratus.RegisterGroup.get('OnScroll')
 
       _.each(elements, function (obj) {

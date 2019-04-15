@@ -1,4 +1,4 @@
-/* global Stratus, _, Backbone, $, bootbox */
+/* global Stratus, _, $, bootbox */
 
 // Instance Clean
 // --------------
@@ -306,14 +306,6 @@ Stratus.Events.on('initialize', function () {
   Stratus.Internals.Compatibility()
   Stratus.RegisterGroup = new Stratus.Prototypes.Model()
 
-  /* FIXME: This breaks outside of Sitetheory *
-  // Start Generic Router
-  require(['stratus.routers.generic'], function () {
-    Stratus.Routers.set('generic', new Stratus.Routers.Generic())
-    Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic')
-  })
-  /**/
-
   // Handle Location
   Stratus.Internals.TrackLocation()
 
@@ -327,9 +319,8 @@ Stratus.Events.on('initialize', function () {
     }
     window.views = views
     Stratus.Events.on('finalize', function (views) {
-      if (typeof Backbone !== 'undefined' && !Backbone.History.started) {
-        Backbone.history.start()
-      }
+      // TODO: backbone is gone, so rewrite this portion to record history so we can back/forward
+      // Backbone.history.start()
       Stratus.Events.trigger('finalized', views)
     })
     Stratus.Events.trigger('finalize', views)
@@ -343,15 +334,13 @@ Stratus.Events.on('finalize', function () {
     console.group('Stratus Finalize')
   }
 
-  // Load Internals after Widgets and Plugins
-  if (typeof Backbone === 'object') {
-    if (Stratus.Internals.Anchor.initialize) {
-      Stratus.Internals.Anchor = Stratus.Internals.Anchor()
-    }
-    let anchor = new Stratus.Internals.Anchor()
-    if (!Stratus.Environment.get('production')) {
-      console.log('Anchor:', anchor)
-    }
+  // Load Internals
+  if (Stratus.Internals.Anchor.initialize) {
+    Stratus.Internals.Anchor = Stratus.Internals.Anchor()
+  }
+  let anchor = new Stratus.Internals.Anchor()
+  if (!Stratus.Environment.get('production')) {
+    console.log('Anchor:', anchor)
   }
 
   // Call Any Registered Group Methods that plugins might use, e.g. OnScroll
@@ -361,6 +350,10 @@ Stratus.Events.on('finalize', function () {
       // elements
       if (_.has(Stratus.Internals, key)) {
         Stratus.Internals[key](objs)
+        // TODO: remove
+        if (!Stratus.Environment.get('production')) {
+          console.log('Register Group: remove - ', key, objs)
+        }
       }
     })
   }

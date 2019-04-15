@@ -10,7 +10,6 @@
       'stratus',
       'underscore',
       'angular',
-      'angular-material',
       'stratus.services.model'
     ], factory)
   } else {

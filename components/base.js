@@ -17,11 +17,7 @@
       // Services
       'stratus.services.registry',
       'stratus.services.model',
-      'stratus.services.collection',
-
-      // Components
-      'stratus.components.pagination',
-      'stratus.components.search'
+      'stratus.services.collection'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
