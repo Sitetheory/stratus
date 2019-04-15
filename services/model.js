@@ -25,7 +25,7 @@
         '$mdToast',
         '$rootScope',
         function ($http, $mdToast, $rootScope) {
-          return class AngularModel extends Stratus.Prototypes.Model {
+          Stratus.Prototypes.AngularModel = Stratus.Prototypes.AngularModel || class AngularModel extends Stratus.Prototypes.Model {
             constructor (options, attributes) {
               super()
               this.name = 'AngularModel'
@@ -163,6 +163,12 @@
                 return that.data
               }, function (newData, priorData) {
                 const patch = _.patch(newData, priorData)
+
+                _.each(_.keys(patch), function (key) {
+                  if (_.endsWith(key, '$$hashKey')) {
+                    delete patch[key]
+                  }
+                })
 
                 if (!Stratus.Environment.get('production')) {
                   console.log('Patch:', patch)
@@ -769,6 +775,7 @@
               }
             }
           }
+          return Stratus.Prototypes.AngularModel
         }
       ])
     }]

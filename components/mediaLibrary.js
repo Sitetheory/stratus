@@ -76,8 +76,7 @@
         $ctrl.openUploader = openUploader
 
         // fetch media collection and hydrate to $scope.collection
-        $ctrl.registry = new Registry()
-        $ctrl.registry.fetch({
+        Registry.fetch({
           target: $attrs.target || 'Media',
           id: null,
           manifest: false,

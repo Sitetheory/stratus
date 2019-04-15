@@ -31,7 +31,7 @@
         '$timeout',
         'Model',
         function ($http, $mdToast, $timeout, Model) {
-          return class AngularCollection {
+          Stratus.Prototypes.AngularCollection = Stratus.Prototypes.AngularCollection || class AngularCollection {
             constructor (options) {
               // Environment
               this.target = null
@@ -431,6 +431,7 @@
                 })
             }
           }
+          return Stratus.Prototypes.AngularCollection
         }
       ])
     }

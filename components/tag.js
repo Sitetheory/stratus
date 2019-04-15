@@ -88,13 +88,15 @@
         $ctrl.queryText = ''
 
         // fetch Tag collection and hydrate to $scope.collection
-        $ctrl.registry = new Registry()
-        $ctrl.registry.fetch({
+        Registry.fetch({
           target: $attrs.target || 'Tag',
           id: null,
           manifest: false,
           decouple: true,
-          direct: true
+          direct: true,
+          api: {
+            limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 50
+          }
         }, $scope)
       }
 
@@ -121,11 +123,7 @@
         let index = $ctrl.selectedChips.findIndex(function (x) {
           return x.name.toLowerCase() === chip.name.toLowerCase()
         })
-        if (index !== -1) {
-          return true
-        } else {
-          return false
-        }
+        return (index !== -1)
       }
 
       $ctrl.disableTag = function ($event) {
@@ -139,7 +137,10 @@
       $ctrl.queryData = function () {
         let results = $scope.collection.filter($ctrl.queryText)
         $scope.status = true
-        let query = $ctrl.queryText.toLowerCase()
+        let query = ''
+        if ($ctrl.queryText !== '') {
+          query = $ctrl.queryText.toLowerCase()
+        }
         return Promise.resolve(results).then(function (value) {
           let returnArr = value.filter(function (item) {
             let lower = item.name.toLowerCase()
@@ -148,8 +149,8 @@
             }
           })
           if (returnArr.length > 0) {
-            if (returnArr.findIndex(mainArr => mainArr.name.toLowerCase() === $ctrl.queryText.toLowerCase()) === -1) {
-              var obj = {
+            if ($ctrl.queryText !== '' && returnArr.findIndex(mainArr => mainArr.name.toLowerCase() === $ctrl.queryText.toLowerCase()) === -1) {
+              const obj = {
                 'isNew': 'true',
                 'name': $ctrl.queryText
               }

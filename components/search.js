@@ -35,7 +35,7 @@
       display: '@',
       placeholder: '@'
     },
-    controller: function ($scope, $attrs, Registry, Collection, $log) {
+    controller: function ($scope, $attrs, Registry, Collection) {
       Stratus.Instances[_.uniqueId('search_')] = $scope
       Stratus.Internals.CssLoader(
         Stratus.BaseUrl + Stratus.BundlePath + 'components/search' + min + '.css'
@@ -63,8 +63,7 @@
           console.log('query:', query);
       });
       console.log('attributes:', $attrs.ngModel);
-      $scope.registry = new registry();
-      $scope.registry.fetch('Media', $scope);
+      Registry.fetch('Media', $scope);
       /* */
     },
     templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/search' + min + '.html'
