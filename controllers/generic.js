@@ -64,7 +64,6 @@
       $scope.isString = angular.isString
       $scope.isUndefined = angular.isUndefined
 
-
       // Handle Selected
       if ($scope.collection) {
         let selected = {

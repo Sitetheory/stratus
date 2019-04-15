@@ -18,13 +18,11 @@ boot.config({
   // Dependencies
   shim: {
 
-
     // TODO: remove once we know we don't use backbone
     /* Backbone */
     'backbone.relational': {
       deps: ['backbone']
-    },
-
+    }
 
   },
 
@@ -36,7 +34,7 @@ boot.config({
          location: boot.bundle + 'stratus',
          main: 'stratus'
      },
-     /**/
+     **/
     /* THIRD PARTY: enable if you want, e.g. used with Froala or Redactor editor code view */
     /*
     {
@@ -49,6 +47,7 @@ boot.config({
 
   // Relative Paths
   paths: {
+
     /* Require.js Plugins */
     text: boot.bundle + 'stratus/bower_components/text/text',
 
@@ -59,11 +58,8 @@ boot.config({
     'stratus.routers.generic': boot.bundle + 'stratus/routers/generic' + boot.suffix,
     'stratus.routers.version': boot.bundle + 'stratus/routers/version' + boot.suffix,
 
-
     /* CONTROLLERS: */
     'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
-
-
 
     /* SERVICES: */
     'stratus.services.appConfig': boot.bundle + 'stratus/services/appConfig' + boot.suffix,
@@ -74,14 +70,11 @@ boot.config({
     // TODO: deprecate this once we've moved all features from utility to specific service
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
 
-
     /* COMPONENTS:  */
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
 
-
     /* DIRECTIVES: */
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
-
 
     /*
     EXTRAS: enable these as your specific project needs them.
@@ -94,7 +87,6 @@ boot.config({
     /* CONTROLLERS: Angular */
     // 'stratus.controllers.dialogue': boot.bundle + 'stratus/extras/controllers/dialogue' + boot.suffix,
     // 'stratus.controllers.panel': boot.bundle + 'stratus/extras/controllers/panel' + boot.suffix,
-
 
     /* EXTRA DIRECTIVES: */
     // 'stratus.directives.drag': boot.bundle + 'stratus/extras/directives/drag' + boot.suffix,
@@ -121,7 +113,6 @@ boot.config({
     // 'stratus.filters.reduce': boot.bundle + 'stratus/extras/filters/reduce' + boot.suffix,
     // 'stratus.filters.truncate': boot.bundle + 'stratus/extras/filters/truncate' + boot.suffix,
 
-
     // TODO: determine if we need jquery in the Stratus core still, remove once we do not!
     'jquery-sandbox': boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix,
 
@@ -134,13 +125,11 @@ boot.config({
     'backbone.relational': boot.bundle + 'stratus/legacy-deprecated/normalizers/backbone.relational.injector',
     'backbone.relational.core': boot.bundle + 'stratus/bower_components/backbone-relational/backbone-relational',
 
-
-    //'stratus.components.calendar': boot.bundle + 'stratus/extras/components/calendar' + boot.suffix,
-    //'stratus.components.carousel': boot.bundle + 'stratus/extras/components/carousel' + boot.suffix,
+    // 'stratus.components.calendar': boot.bundle + 'stratus/extras/components/calendar' + boot.suffix,
+    // 'stratus.components.carousel': boot.bundle + 'stratus/extras/components/carousel' + boot.suffix,
     /* COMPONENTS: Social Media */
-    //'stratus.components.facebook': boot.bundle + 'stratus/extras/components/facebook' + boot.suffix,
-    //'stratus.components.tweet': boot.bundle + 'stratus/extras/components/tweet' + boot.suffix,
-
+    // 'stratus.components.facebook': boot.bundle + 'stratus/extras/components/facebook' + boot.suffix,
+    // 'stratus.components.tweet': boot.bundle + 'stratus/extras/components/tweet' + boot.suffix,
 
     /* THIRD PARTY: BOWER COMPONENTS */
 
@@ -153,7 +142,7 @@ boot.config({
 
     // TODO: determine if we need jquery in the Stratus core still, remove once we do not!
     /* jQuery */
-    jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
+    jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix
 
     /* Froala Libraries */
     // froala: boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/froala_editor.min',
@@ -203,8 +192,6 @@ boot.config({
     // swiper: boot.bundle + 'stratus/bower_components/swiper/dist/js/swiper' + boot.suffix,
     // zxcvbn: boot.bundle + 'stratus/bower_components/zxcvbn/dist/zxcvbn',
 
-
-
     /* Angular */
     // angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
     // 'angular-animate': boot.bundle + 'stratus/bower_components/angular-animate/angular-animate' + boot.suffix,
@@ -223,9 +210,6 @@ boot.config({
     // 'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
     // 'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
     // 'angular-ui-tree': boot.bundle + 'stratus/bower_components/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
-
-
-
 
   }
 })
