@@ -53,23 +53,8 @@ let Stratus = {
     ? requirejs.s.contexts._.config.bundlePath
     : '') || '',
 
-  // TODO: Change each of these "namespaces" into Backbone.Models references so
-  // that we can easily use the events of type changes to hook different
-  // initialization routines to wait for the type to be created before
-  // continuing with view creation.  This will take a little finesse for the
-  // initial writing of a view, since they actually are created as
-  // "Stratus.Collections.Generic" inside the individual modules at runtime.
-
-  /* Backbone */
-  Collections: null,
-  Models: null,
-  Routers: null,
-  Views: {
-    Plugins: {},
-    Widgets: {}
-  },
+  /* This is used internally for triggering events */
   Events: {},
-  Relations: {},
 
   /* Angular */
   Apps: {},
@@ -183,9 +168,8 @@ let Stratus = {
     }
   },
 
-  // Plugins */
-  PluginMethods: {},
   /* Methods that need to be called as a group later, e.g. OnScroll */
+  // TODO: RegisterGroup needs to be removed
   RegisterGroup: {},
 
   // TODO: Turn this into a Dynamic Object loaded from the DOM in Sitetheory

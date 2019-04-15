@@ -24,15 +24,156 @@ boot.config({
   // Dependencies
   shim: {
 
-    // TODO: remove once we know we don't use backbone
-    /* Backbone */
-    'backbone.relational': {
-      deps: ['backbone']
-    },
-
     /* Angular */
     angular: {
       exports: 'angular'
+    },
+    'angular-aria': {
+      deps: ['angular']
+    },
+    'angular-animate': {
+      deps: ['angular']
+    },
+    'angular-messages': {
+      deps: ['angular']
+    },
+    'angular-material': {
+      deps: [
+        'angular-aria',
+        'angular-animate',
+        'angular-messages'
+      ]
+    },
+    'angular-resource': {
+      deps: ['angular']
+    },
+    'angular-sanitize': {
+      deps: ['angular']
+    },
+
+    /* Angular Modules */
+    'angular-file-upload': {
+      deps: ['angular']
+    },
+    'angular-icons': {
+      deps: ['angular']
+    },
+    'angular-scrollSpy': {
+      deps: ['angular']
+    },
+    'angular-ui-tree': {
+      deps: ['angular']
+    },
+
+    // Charts
+    'chart.js': {
+      deps: ['angular', 'chart']
+    },
+
+    /* Froala */
+    'froala-align': {
+      deps: ['froala']
+    },
+    'froala-char-counter': {
+      deps: ['froala']
+    },
+    'froala-code-beautifier': {
+      deps: ['froala']
+    },
+    'froala-code-view': {
+      deps: ['froala']
+    },
+    'froala-colors': {
+      deps: ['froala']
+    },
+    'froala-draggable': {
+      deps: ['froala']
+    },
+    'froala-emoticons': {
+      deps: ['froala']
+    },
+    'froala-entities': {
+      deps: ['froala']
+    },
+    'froala-file': {
+      deps: ['froala']
+    },
+    'froala-font-family': {
+      deps: ['froala']
+    },
+    'froala-font-size': {
+      deps: ['froala']
+    },
+    'froala-forms': {
+      deps: ['froala']
+    },
+    'froala-fullscreen': {
+      deps: ['froala']
+    },
+    'froala-help': {
+      deps: ['froala']
+    },
+    'froala-image': {
+      deps: ['froala']
+    },
+    'froala-image-manager': {
+      deps: ['froala', 'froala-image']
+    },
+    'froala-inline-style': {
+      deps: ['froala']
+    },
+    'froala-line-breaker': {
+      deps: ['froala']
+    },
+    'froala-link': {
+      deps: ['froala']
+    },
+    'froala-lists': {
+      deps: ['froala']
+    },
+    'froala-paragraph-format': {
+      deps: ['froala']
+    },
+    'froala-paragraph-style': {
+      deps: ['froala']
+    },
+    'froala-quick-insert': {
+      deps: ['froala']
+    },
+    'froala-quote': {
+      deps: ['froala']
+    },
+    'froala-save': {
+      deps: ['froala']
+    },
+    'froala-special-characters': {
+      deps: ['froala']
+    },
+    'froala-table': {
+      deps: ['froala']
+    },
+    'froala-url': {
+      deps: ['froala']
+    },
+    'froala-video': {
+      deps: ['froala']
+    },
+    'froala-word-paste': {
+      deps: ['froala']
+    },
+    'angular-froala': {
+      deps: ['angular', 'froala']
+    },
+    'angular-drag-and-drop-lists': {
+      deps: ['angular']
+    },
+
+    /* Calendar */
+    fullcalendar: {
+      deps: [
+        'jquery',
+        'moment'
+      ]
     }
   },
 
@@ -45,36 +186,30 @@ boot.config({
          main: 'stratus'
      },
      **/
+    // Enabled For Editor
+    {
+      name: 'codemirror',
+      location: 'sitetheorystratus/stratus/bower_components/codemirror',
+      main: 'lib/codemirror'
+    }
   ],
 
   // Relative Paths
   paths: {
 
     /* Require.js Plugins */
-    // TODO: determine what text is?
+    // This is used to load raw TEXT in templates (e.g. via require.js) -- in most cases we use Angular
     text: boot.bundle + 'stratus/bower_components/text/text',
 
     /* Stratus Core Library */
     stratus: boot.bundle + 'stratus/dist/stratus' + boot.suffix,
 
-    /* Stratus Core Routers */
-    'stratus.routers.generic': boot.bundle + 'stratus/routers/generic' + boot.suffix,
-    'stratus.routers.version': boot.bundle + 'stratus/routers/version' + boot.suffix,
-
-    // TODO: remove once we know we don't need it in stratus.js where it is currently referenced
-    /* Stratus Core Collections */
-    'stratus.collections.generic': boot.bundle + 'stratus/legacy-deprecated/collections/generic' + boot.suffix,
-
-    /*
-    CONTROLLERS:
-    ------------
-    */
+    // CONTROLLERS:
+    // ------------
     'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
 
-    /*
-    SERVICES:
-    ---------
-    */
+    // SERVICES:
+    // ---------
     'stratus.services.appConfig': boot.bundle + 'stratus/services/appConfig' + boot.suffix,
     'stratus.services.model': boot.bundle + 'stratus/services/model' + boot.suffix,
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
@@ -83,21 +218,12 @@ boot.config({
     // TODO: deprecate this once we've moved all features from utility to specific service
     'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
 
-    /*
-    COMPONENTS:
-    -----------
-    */
+    // COMPONENTS:
+    // -----------
     'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
 
-    // TODO: determine if these should be in Sitetheory instead, right now they are used in base.js (but maybe should not be)
-    'stratus.components.search': boot.bundle + 'stratus/components/search' + boot.suffix,
-    'stratus.components.pagination': boot.bundle + 'stratus/components/pagination' + boot.suffix,
-    'stratus.components.sort': boot.bundle + 'stratus/components/sort' + boot.suffix,
-
-    /*
-    DIRECTIVES:
-    -----------
-    */
+    // DIRECTIVES:
+    // -----------
     'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
     // Used for extras/directives/drag.js, drop.js
     'stratus.directives.drag': boot.bundle + '/stratus/extras/directives/drag' + boot.suffix,
@@ -108,16 +234,13 @@ boot.config({
     'stratus.directives.froala': 'sitetheorystratus/stratus/extras/directives/froala' + boot.suffix,
     'stratus.directives.redactor': 'sitetheorystratus/stratus/extras/directives/redactor' + boot.suffix,
 
-    /*
-    THIRD PARTY: BOWER COMPONENTS
-    -----------------------------
-    */
+    // THIRD PARTY: BOWER COMPONENTS
+    // -----------------------------
     promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
 
     // Used by extras/filters/gravatar.js
     md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
 
-    /* Backbone */
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
 
     /* Bowser */
@@ -128,23 +251,15 @@ boot.config({
     coffee: boot.bundle + 'stratus/bower_components/coffeescript/docs/v2/browser-compiler/coffeescript',
     less: boot.bundle + 'stratus/bower_components/less/dist/less' + boot.suffix,
 
-    // TODO: determine if we need backbone still, if not remove!
-    backbone: boot.bundle + 'stratus/legacy-deprecated/external/backbone' + boot.suffix,
-    'backbone.relational': boot.bundle + 'stratus/legacy-deprecated/normalizers/backbone.relational.injector',
-    'backbone.relational.core': boot.bundle + 'stratus/bower_components/backbone-relational/backbone-relational',
+    // REQUIRED DEPENDENCIES FOR EXTRAS:
+    // TODO: determine if we should keep these defined permanently or require that a user define these in their custom config.js
 
-    /*
-    REQUIRED DEPENDENCIES FOR EXTRAS:
-    TODO: determine if we should keep these defined permanently or require that a user define these in their custom config.js
-     */
-
-    // Required for: a LOT of extras/components and directives still...
-    jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
-    // TODO: there appears to be no use case of this, we should determine if it's needed and then delete
-    'jquery-sandbox': boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix,
-
-    // TODO: Doesn't Appear to be used outside of deprecated deprecated upload.js (we use ng-drop zone)
-    //dropzone: 'sitetheorystratus/stratus/bower_components/dropzone/dist/' + boot.directory + 'dropzone-amd-module' + boot.suffix,
+    // TODO: convert all instances of jQuery to use Stratus selector if possible.
+    // jQuery is currently used in a lot of components and directives that probably don't need it, since they are just
+    // using the selector so they could just the Stratus Selector: Stratus('div')
+    // NOTE: this sandboxes jquery into require so it's not in the window
+    'jquery-native': boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
+    jquery: boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix,
 
     /* Common Libraries */
     // Required for extras/filters/moment.js
@@ -162,7 +277,6 @@ boot.config({
 
     /* Angular: required for almost all extras and lots of others */
     angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
-    // TODO: there is no bower.json definition for angular-animate
     'angular-animate': boot.bundle + 'stratus/bower_components/angular-animate/angular-animate' + boot.suffix,
     'angular-aria': boot.bundle + 'stratus/bower_components/angular-aria/angular-aria' + boot.suffix,
     'angular-material': boot.bundle + 'stratus/bower_components/angular-material/angular-material' + boot.suffix,
@@ -179,7 +293,6 @@ boot.config({
     'angular-sortable': boot.bundle + 'stratus/bower_components/ng-sortable/angular-legacy-sortable' + boot.suffix,
     'angular-scrollSpy': boot.bundle + 'stratus/bower_components/angular-scroll-spy/angular-scroll-spy',
     'angular-ui-tree': boot.bundle + 'stratus/bower_components/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
-
 
     /* Froala Libraries */
     froala: boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/froala_editor.min',

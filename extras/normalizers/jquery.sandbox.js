@@ -6,7 +6,7 @@
 // Enable noConflict to ensure this version's jQuery globals aren't set in Require.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory)
+    define(['jquery-native'], factory)
   } else {
     factory(root.jQuery)
   }

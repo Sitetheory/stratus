@@ -3,7 +3,7 @@
 // Native Selector
 // ---------------
 
-// This function intends to allow native jQuery-Type chaining and plugins.
+// NOTE: This is a replacement for basic jQuery selectors. This function intends to allow native jQuery-Type chaining and plugins.
 /**
  * @param selector
  * @param context

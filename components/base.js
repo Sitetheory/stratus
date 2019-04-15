@@ -17,12 +17,7 @@
       // Services
       'stratus.services.registry',
       'stratus.services.model',
-      'stratus.services.collection',
-
-      // Components
-      // TODO: determine if this should really be in Base, or if it's even Stratus specific
-      'stratus.components.pagination',
-      'stratus.components.search'
+      'stratus.services.collection'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)

@@ -79,23 +79,8 @@ let Stratus = {
     ? requirejs.s.contexts._.config.bundlePath
     : '') || '',
 
-  // TODO: Change each of these "namespaces" into Backbone.Models references so
-  // that we can easily use the events of type changes to hook different
-  // initialization routines to wait for the type to be created before
-  // continuing with view creation.  This will take a little finesse for the
-  // initial writing of a view, since they actually are created as
-  // "Stratus.Collections.Generic" inside the individual modules at runtime.
-
-  /* Backbone */
-  Collections: null,
-  Models: null,
-  Routers: null,
-  Views: {
-    Plugins: {},
-    Widgets: {}
-  },
+  /* This is used internally for triggering events */
   Events: {},
-  Relations: {},
 
   /* Angular */
   Apps: {},
@@ -209,9 +194,8 @@ let Stratus = {
     }
   },
 
-  // Plugins */
-  PluginMethods: {},
   /* Methods that need to be called as a group later, e.g. OnScroll */
+  // TODO: RegisterGroup needs to be removed
   RegisterGroup: {},
 
   // TODO: Turn this into a Dynamic Object loaded from the DOM in Sitetheory
@@ -871,7 +855,7 @@ if (typeof $ === 'function' && $.fn) {
   }
 }
 
-/* global Stratus, _ */
+/* global Stratus */
 
 // Stratus Event System
 // --------------------
@@ -913,325 +897,7 @@ class EventManager {
 }
 
 Stratus.EventManager = EventManager
-// Stratus.Events = new EventManager()
-
-// This is largely based on the work of Backbone.Events
-// to provide the logic in case we don't have Backbone
-// loaded at this time.
-
-// Regular expression used to split event strings.
-let eventSplitter = /\s+/
-
-// Iterates over the standard `event, callback` (as well as the fancy multiple
-// space-separated events `"change blur", callback` and jQuery-style event
-// maps `{event: callback}`).
-let eventsApi = function (iteratee, events, name, callback, opts) {
-  let i = 0
-  let names
-  if (name && typeof name === 'object') {
-    // Handle event maps.
-    if (callback !== void 0 && 'context' in opts &&
-      opts.context === void 0) {
-      opts.context = callback
-    }
-    for (names = _.keys(name); i < names.length; i++) {
-      events = eventsApi(iteratee, events, names[i], name[names[i]], opts)
-    }
-  } else if (name && eventSplitter.test(name)) {
-    // Handle space-separated event names by delegating them individually.
-    for (names = name.split(eventSplitter); i < names.length; i++) {
-      events = iteratee(events, names[i], callback, opts)
-    }
-  } else {
-    // Finally, standard events.
-    events = iteratee(events, name, callback, opts)
-  }
-  return events
-}
-
-// Bind an event to a `callback` function. Passing `"all"` will bind
-// the callback to all events fired.
-Stratus.Events.on = function (name, callback, context) {
-  // console.warn('Deprecated usage of event', name, '->', callback)
-  return internalOn(this, name, callback, context)
-}
-
-// Guard the `listening` argument from the public API.
-let internalOn = function (obj, name, callback, context, listening) {
-  obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
-    context: context,
-    ctx: obj,
-    listening: listening
-  })
-
-  if (listening) {
-    let listeners = obj._listeners || (obj._listeners = {})
-    listeners[listening.id] = listening
-  }
-
-  return obj
-}
-
-// Inversion-of-control versions of `on`. Tell *this* object to listen to
-// an event in another object... keeping track of what it's listening to
-// for easier unbinding later.
-Stratus.Events.listenTo = function (obj, name, callback) {
-  if (!obj) {
-    return this
-  }
-  let id = obj._listenId || (obj._listenId = _.uniqueId('l'))
-  let listeningTo = this._listeningTo || (this._listeningTo = {})
-  let listening = listeningTo[id]
-
-  // This object is not listening to any other events on `obj` yet.
-  // Setup the necessary references to track the listening callbacks.
-  if (!listening) {
-    let thisId = this._listenId || (this._listenId = _.uniqueId('l'))
-    listening = listeningTo[id] = {
-      obj: obj,
-      objId: id,
-      id: thisId,
-      listeningTo: listeningTo,
-      count: 0
-    }
-  }
-
-  // Bind callbacks on obj, and keep track of them on listening.
-  internalOn(obj, name, callback, this, listening)
-  return this
-}
-
-// The reducing API that adds a callback to the `events` object.
-let onApi = function (events, name, callback, options) {
-  if (callback) {
-    let handlers = events[name] || (events[name] = [])
-    let context = options.context
-    let ctx = options.ctx
-    let listening = options.listening
-    if (listening) {
-      listening.count++
-    }
-
-    handlers.push({
-      callback: callback,
-      context: context,
-      ctx: context || ctx,
-      listening: listening
-    })
-  }
-  return events
-}
-
-// Remove one or many callbacks. If `context` is null, removes all
-// callbacks with that function. If `callback` is null, removes all
-// callbacks for the event. If `name` is null, removes all bound
-// callbacks for all events.
-Stratus.Events.off = function (name, callback, context) {
-  if (!this._events) {
-    return this
-  }
-  this._events = eventsApi(offApi, this._events, name, callback, {
-    context: context,
-    listeners: this._listeners
-  })
-  return this
-}
-
-// Tell this object to stop listening to either specific events ... or
-// to every object it's currently listening to.
-Stratus.Events.stopListening = function (obj, name, callback) {
-  let listeningTo = this._listeningTo
-  if (!listeningTo) {
-    return this
-  }
-
-  let ids = obj ? [obj._listenId] : _.keys(listeningTo)
-
-  let i
-  for (i = 0; i < ids.length; i++) {
-    let listening = listeningTo[ids[i]]
-
-    // If listening doesn't exist, this object is not currently
-    // listening to obj. Break out early.
-    if (!listening) {
-      break
-    }
-
-    listening.obj.off(name, callback, this)
-  }
-
-  return this
-}
-
-// The reducing API that removes a callback from the `events` object.
-let offApi = function (events, name, callback, options) {
-  if (!events) {
-    return
-  }
-
-  let i = 0
-  let listening
-  let context = options.context
-  let listeners = options.listeners
-
-  // Delete all events listeners and "drop" events.
-  if (!name && !callback && !context) {
-    let ids = _.keys(listeners)
-    for (; i < ids.length; i++) {
-      listening = listeners[ids[i]]
-      delete listeners[listening.id]
-      delete listening.listeningTo[listening.objId]
-    }
-    return
-  }
-
-  let names = name ? [name] : _.keys(events)
-  for (; i < names.length; i++) {
-    name = names[i]
-    let handlers = events[name]
-
-    // Bail out if there are no events stored.
-    if (!handlers) {
-      break
-    }
-
-    // Replace events if there are any remaining.  Otherwise, clean up.
-    let remaining = []
-    for (let j = 0; j < handlers.length; j++) {
-      let handler = handlers[j]
-      if (
-        (callback && callback !== handler.callback && callback !== handler.callback._callback) ||
-        (context && context !== handler.context)
-      ) {
-        remaining.push(handler)
-      } else {
-        listening = handler.listening
-        if (listening && --listening.count === 0) {
-          delete listeners[listening.id]
-          delete listening.listeningTo[listening.objId]
-        }
-      }
-    }
-
-    // Update tail event if the list has any events.  Otherwise, clean up.
-    if (remaining.length) {
-      events[name] = remaining
-    } else {
-      delete events[name]
-    }
-  }
-  return events
-}
-
-// Bind an event to only be triggered a single time. After the first time
-// the callback is invoked, its listener will be removed. If multiple events
-// are passed in using the space-separated syntax, the handler will fire
-// once for each event, not once for a combination of all events.
-Stratus.Events.once = function (name, callback, context) {
-  // Map the event into a `{event: once}` object.
-  let events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this))
-  if (typeof name === 'string' && context == null) {
-    callback = void 0
-  }
-  return this.on(events, callback, context)
-}
-
-// Inversion-of-control versions of `once`.
-Stratus.Events.listenToOnce = function (obj, name, callback) {
-  // Map the event into a `{event: once}` object.
-  let events = eventsApi(onceMap, {}, name, callback,
-    _.bind(this.stopListening, this, obj))
-  return this.listenTo(obj, events)
-}
-
-// Reduces the event callbacks into a map of `{event: onceWrapper}`.
-// `offer` unbinds the `onceWrapper` after it has been called.
-let onceMap = function (map, name, callback, offer) {
-  if (callback) {
-    let once = map[name] = _.once(function () {
-      offer(name, once)
-      callback.apply(this, arguments)
-    })
-    once._callback = callback
-  }
-  return map
-}
-
-// Trigger one or many events, firing all bound callbacks. Callbacks are
-// passed the same arguments as `trigger` is, apart from the event name
-// (unless you're listening on `"all"`, which will cause your callback to
-// receive the true name of the event as the first argument).
-Stratus.Events.trigger = function (name) {
-  if (!this._events) {
-    return this
-  }
-
-  let length = Math.max(0, arguments.length - 1)
-  let args = Array(length)
-  let i
-  for (i = 0; i < length; i++) {
-    args[i] = arguments[i + 1]
-  }
-
-  eventsApi(triggerApi, this._events, name, void 0, args)
-  return this
-}
-
-// Handles triggering the appropriate event callbacks.
-let triggerApi = function (objEvents, name, callback, args) {
-  if (objEvents) {
-    let events = objEvents[name]
-    let allEvents = objEvents.all
-    if (events && allEvents) {
-      allEvents = allEvents.slice()
-    }
-    if (events) {
-      triggerEvents(events, args)
-    }
-    if (allEvents) {
-      triggerEvents(allEvents, [name].concat(args))
-    }
-  }
-  return objEvents
-}
-
-// A difficult-to-believe, but optimized internal dispatch function for
-// triggering events. Tries to keep the usual cases speedy (most internal
-// Backbone events have 3 arguments).
-let triggerEvents = function (events, args) {
-  let ev
-  let i = -1
-  let l = events.length
-  let a1 = args[0]
-  let a2 = args[1]
-  let a3 = args[2]
-  switch (args.length) {
-    case 0:
-      while (++i < l) {
-        (ev = events[i]).callback.call(ev.ctx)
-      }
-      return
-    case 1:
-      while (++i < l) {
-        (ev = events[i]).callback.call(ev.ctx, a1)
-      }
-      return
-    case 2:
-      while (++i < l) {
-        (ev = events[i]).callback.call(ev.ctx, a1, a2)
-      }
-      return
-    case 3:
-      while (++i < l) {
-        (ev = events[i]).callback.call(ev.ctx, a1, a2, a3)
-      }
-      return
-    default:
-      while (++i < l) {
-        (ev = events[i]).callback.apply(ev.ctx, args)
-      }
-  }
-}
+Stratus.Events = new EventManager()
 
 // Aliases for backwards compatibility.
 Stratus.Events.bind = Stratus.Events.on
@@ -1690,34 +1356,7 @@ Stratus.Prototypes.Sentinel = class Sentinel {
   }
 }
 
-// This is the prototype for a bootbox event, in which one could be
-// supplied for any bootbox message (i.e. confirm or delete), or one
-// will automatically be created at runtime using current arguments.
-// TODO: Reevaluate this.
-/**
- * @param message
- * @param handler
- * @constructor
- */
-Stratus.Prototypes.Bootbox = class Bootbox {
-  constructor (message, handler) {
-    if (message && typeof message === 'object') {
-      _.extend(this, message)
-      this.message = this.message || 'Message'
-    } else {
-      this.message = message || 'Message'
-    }
-    this.handler = this.handler || handler
-    if (typeof this.handler !== 'function') {
-      this.handler = function (result) {
-        console.info('Client ' + (result === undefined ? 'closed' : (result
-          ? 'confirmed'
-          : 'cancelled')) + ' dialog.')
-      }
-    }
-  }
-}
-
+// TODO: rethink whether this should be in the core
 // This is the prototype for the toaster, in which one could be supplied
 // for a toast message, or one will automatically be created at runtime
 // using current arguments.
@@ -1746,7 +1385,7 @@ Stratus.Prototypes.Toast = class Toast {
   }
 }
 
-/* global Stratus, _, jQuery, Backbone */
+/* global Stratus, _, jQuery */
 
 /**
  * @param request
@@ -1819,9 +1458,10 @@ Stratus.Internals.Ajax = function (request) {
 /**
  * @type {*|Function|void}
  */
-// TODO: This runs on fancy Backbone code that should be removed
+// TODO: backbone was removed, so this needs to be rebuilt using native models
 Stratus.Internals.Anchor = (function Anchor () {
   Anchor.initialize = true
+  /*
   return (typeof Backbone !== 'object') ? Anchor : Backbone.View.extend({
     el: 'a[href*=\\#]:not([href=\\#]):not([data-scroll="false"])',
     events: {
@@ -1840,7 +1480,7 @@ Stratus.Internals.Anchor = (function Anchor () {
             let $target = jQuery(event.currentTarget.hash)
             let anchor = event.currentTarget.hash.slice(1)
             $target = ($target.length) ? $target : jQuery('[name=' + anchor + ']')
-            /* TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page */
+            // TODO: Ensure that this animation only stops propagation of click event son anchors that are confirmed to exist on the page
             if ($target.length) {
               jQuery('html,body').animate({
                 scrollTop: $target.offset().top
@@ -1854,6 +1494,7 @@ Stratus.Internals.Anchor = (function Anchor () {
       }
     }
   })
+  */
 })()
 
 // Internal Convoy Builder
@@ -2434,7 +2075,11 @@ Stratus.Internals.LoadImage = function (obj) {
       // another level of abstraction.
 
       // Remove from registration
+      // TODO: remove this
       Stratus.RegisterGroup.remove('OnScroll', obj)
+      if (!Stratus.Environment.get('production')) {
+        console.log('Remove RegisterGroup:', obj)
+      }
     })
   }
 }
@@ -2486,6 +2131,10 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
       // Cycle through all the registered objects an execute their function
       // We must use the registered onScroll objects, because they get removed
       // in some cases (e.g. lazy load)
+      // TODO: remove logic of RegisterGroup
+      if (!Stratus.Environment.get('production')) {
+        console.log('Remove RegisterGroup Logic:')
+      }
       let elements = Stratus.RegisterGroup.get('OnScroll')
 
       _.each(elements, function (obj) {
@@ -2701,7 +2350,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
 // Native Selector
 // ---------------
 
-// This function intends to allow native jQuery-Type chaining and plugins.
+// NOTE: This is a replacement for basic jQuery selectors. This function intends to allow native jQuery-Type chaining and plugins.
 /**
  * @param selector
  * @param context
@@ -2962,583 +2611,6 @@ Stratus.Selector.parent = function () {
     return null
   }
   return Stratus(that.selection.parentNode)
-}
-
-/* global Stratus, _, $, requirejs */
-
-// Backbone Bindings
-// ----------------------
-
-// Due to the nature of Backbone, this logic will be non-standard,
-// so that we can maintain native plugins to avoid specific
-// dependencies.
-
-// Internal View Loader
-// ----------------------
-
-// This will hydrate every entity data attribute into a model or
-// collection either by reference or instantiation and attach said
-// 'scope' to a view instance.
-/**
- * Events:
- *
- * Editable
- * Manipulate
- * Container Overlay (View)
- * Container Inlay (View)
- *
- * @param selector
- * @param view
- * @param requirements
- * @returns {Promise}
- * @constructor
- */
-Stratus.Internals.Loader = function (selector, view, requirements) {
-  if (typeof selector === 'undefined') {
-    const body = Stratus('body')
-    selector = !body.attr('data-loaded') ? '[data-entity],[data-plugin]' : null
-    if (selector) {
-      body.attr('data-loaded', true)
-    } else {
-      console.warn('Attempting to load Stratus root repeatedly!')
-    }
-  }
-  /* *
-  if (typeof selector === 'string') selector = $(selector);
-  if (view && selector) selector.find('[data-type],[data-plugin]');
-  /* */
-  /* We check view, selector, and type in this order to save a small amount of power */
-  if (selector) {
-    selector = (view && selector && typeof selector === 'object') ? Stratus(selector).find('[data-type],[data-plugin]') : Stratus(selector)
-  }
-  return new Promise(function (resolve, reject) {
-    const entries = {
-      total: (selector && typeof selector === 'object') ? selector.length : 0,
-      iteration: 0,
-      views: {}
-    }
-    if (entries.total > 0) {
-      selector.each(function (el, index, list) {
-        entries.iteration++
-        const entry = _.uniqueId('entry_')
-        entries.views[entry] = false
-        Stratus.Internals.ViewLoader(el, view, requirements).then(function (view) {
-          entries.views[entry] = view
-          if (entries.total === entries.iteration && _.allTrue(entries.views)) {
-            resolve(entries)
-          }
-        }, reject)
-      })
-    } else {
-      resolve(entries)
-    }
-  })
-}
-
-// Internal View Model
-// ---------------------
-
-// This non-relational model is instantiated every time a Stratus Loader
-// finds a Stratus DOM element.
-/**
- * @type {void|*}
- */
-Stratus.Internals.View = class InternalView extends Stratus.Prototypes.Model {
-  constructor (data, options) {
-    super(data, options)
-
-    // Scope Binding
-    this.toObject = this.toObject.bind(this)
-    this.hydrate = this.hydrate.bind(this)
-    this.clean = this.clean.bind(this)
-    this.nest = this.nest.bind(this)
-    this.modelAttributes = this.modelAttributes.bind(this)
-  }
-
-  toObject () {
-    const that = this
-    const sanitized = _.clone(that.data)
-    if (sanitized.el && sanitized.el.selection) {
-      sanitized.el = sanitized.el.selection
-      /* TODO: This may not be necessary */
-      if (typeof $ === 'function' && $.fn) {
-        sanitized.$el = $(sanitized.el)
-      }
-      /* */
-    }
-    return sanitized
-  }
-
-  // TODO: This function's documentation needs to be moved to the Sitetheory-Docs repo
-  hydrate () {
-    const that = this
-    const nel = that.get('el')
-    that.set({
-      // Unique IDs
-      // -----------
-
-      // This is set as the widgets are gathered
-      uid: _.uniqueId('view_'),
-
-      // This is set as a widget is created to ensure duplicates don't exist
-      guid: (typeof nel.attr('data-guid') !== 'undefined') ? nel.attr('data-guid') : null,
-
-      // Model or Collection
-      // -----------
-
-      // Entity Type (i.e. 'View' which would correlate to a Restful /Api/View Request)
-      entity: (typeof nel.attr('data-entity') !== 'undefined') ? _.ucfirst(nel.attr('data-entity')) : null,
-
-      // Entity ID (Determines Model or Collection)
-      id: (typeof nel.attr('data-id') !== 'undefined') ? nel.attr('data-id') : null,
-
-      // Determines whether or not we should create an Entity Stub to render the dependent widgets
-      manifest: (typeof nel.attr('data-manifest') !== 'undefined') ? nel.attr('data-manifest') : null,
-
-      // API Options are added to the Request URL
-      api: (typeof nel.attr('data-api') !== 'undefined') ? nel.attr('data-api') : null,
-
-      // Determine whether this widget will fetch
-      fetch: (typeof nel.attr('data-fetch') !== 'undefined') ? nel.attr('data-fetch') : true,
-
-      // Specify Target
-      target: (typeof nel.attr('data-target') !== 'undefined') ? nel.attr('data-target') : null,
-
-      // This is determines what a new Entity's settings would be on creation
-      prototype: (typeof nel.attr('data-prototype') !== 'undefined') ? nel.attr('data-prototype') : null,
-
-      // Stuff
-      autoSave: (typeof nel.attr('data-autoSave') !== 'undefined') ? nel.attr('data-autoSave') : null,
-
-      // View
-      // -----------
-
-      type: (typeof nel.attr('data-type') !== 'undefined') ? nel.attr('data-type') : null,
-      types: (typeof nel.attr('data-types') !== 'undefined') ? nel.attr('data-types') : null,
-      template: (typeof nel.attr('data-template') !== 'undefined') ? nel.attr('data-template') : null,
-      templates: (typeof nel.attr('data-templates') !== 'undefined') ? nel.attr('data-templates') : null,
-      dialogue: (typeof nel.attr('data-dialogue') !== 'undefined') ? nel.attr('data-dialogue') : null,
-      pagination: (typeof nel.attr('data-pagination') !== 'undefined') ? nel.attr('data-pagination') : null,
-      property: (typeof nel.attr('data-property') !== 'undefined') ? nel.attr('data-property') : null,
-      field: (typeof nel.attr('data-field') !== 'undefined') ? nel.attr('data-field') : null,
-      load: (typeof nel.attr('data-load') !== 'undefined') ? nel.attr('data-load') : null,
-      options: (typeof nel.attr('data-options') !== 'undefined') ? nel.attr('data-options') : null,
-
-      // Versioning
-      // -----------
-
-      versionEntity: (typeof nel.attr('data-versionentity') !== 'undefined') ? nel.attr('data-versionentity') : null,
-      versionRouter: (typeof nel.attr('data-versionrouter') !== 'undefined') ? nel.attr('data-versionrouter') : null,
-      versionId: (typeof nel.attr('data-versionid') !== 'undefined') ? nel.attr('data-versionid') : null,
-
-      // Plugins
-      // -----------
-
-      plugin: (typeof nel.attr('data-plugin') !== 'undefined') ? nel.attr('data-plugin') : null,
-      plugins: []
-    })
-
-    if (that.get('plugin') !== null) {
-      const plugins = that.get('plugin').split(' ')
-      if (that.get('type') !== null) {
-        that.set('plugins', (plugins.length > 1) ? plugins : [that.get('plugin')])
-      } else if (plugins.length > 1) {
-        that.set('plugin', _.first(plugins))
-
-        // Add additional plugins
-        that.set('plugins', _.rest(plugins))
-      }
-    }
-    const id = that.get('id')
-    const type = (that.get('type') !== null) ? that.get('type') : that.get('plugin')
-    const loaderType = (that.get('type') !== null) ? 'widgets' : 'plugins'
-    that.set({
-      scope: (id !== null) ? 'model' : 'collection',
-      alias: (type !== null) ? 'stratus.views.' + loaderType + '.' + type.toLowerCase() : null,
-      path: (type !== null) ? type : null
-    })
-    if (!id && that.get('entity') !== null && that.get('manifest') !== null) {
-      that.set('scope', 'model')
-    }
-  }
-
-  clean () {
-    const that = this
-    if (!that.get('entity') || that.get('entity').toLowerCase() === 'none') {
-      that.set({ entity: null, scope: null })
-    }
-  }
-
-  // Give Nested Attributes for Child Views
-  /**
-   * @returns {{entity: *, id: *, versionEntity: *, versionRouter: *, versionId: *, scope: *, manifest: *}}
-   */
-  nest () {
-    const that = this
-    const nest = {
-      entity: that.get('entity'),
-      id: that.get('id'),
-      versionEntity: that.get('versionEntity'),
-      versionRouter: that.get('versionRouter'),
-      versionId: that.get('versionId'),
-      scope: that.get('scope'),
-      manifest: that.get('manifest')
-    }
-
-    // Add Model or Collection to Nest
-    if (that.has(nest.scope)) {
-      nest[nest.scope] = that.get(nest.scope)
-    }
-    return nest
-  }
-
-  /**
-   * @returns {{id: *}}
-   */
-  modelAttributes () {
-    const that = this
-    return {
-      id: that.get('id')
-    }
-  }
-}
-
-// This function creates and hydrates a view from the DOM,
-// then either references or creates a Model or Collection
-// instance (if present), then, upon View instantiation, calls
-// the Internal Loader on that element to build the nested
-// view tree.
-/**
- * @param el
- * @param view
- * @param requirements
- * @returns {Promise}
- * @constructor
- */
-Stratus.Internals.ViewLoader = function (el, view, requirements) {
-  const parentView = (view) || null
-  let parentChild = false
-
-  const element = Stratus(el)
-  view = new Stratus.Internals.View()
-  view.set('el', element)
-  view.hydrate()
-  if (parentView) {
-    if (!view.has('entity')) {
-      view.set(parentView.nest())
-    } else {
-      parentChild = true
-    }
-  }
-  view.clean()
-
-  let templates
-  let templateMap
-
-  if (!parentChild) {
-    // TODO: Add Previous Requirements Here!
-    if (typeof requirements === 'undefined') requirements = ['stratus']
-    templates = view.get('templates')
-    templateMap = []
-    const template = view.get('template')
-    const dialogue = view.get('dialogue')
-
-    // Add Scope
-    if (view.get('scope') !== null) {
-      requirements.push('stratus.' + view.get('scope') + 's.generic')
-    }
-
-    // Handle Alias or External Link
-    if (view.get('alias') && _.has(requirejs.s.contexts._.config.paths, view.get('alias'))) {
-      requirements.push(view.get('alias'))
-    } else if (view.get('path')) {
-      requirements.push(view.get('path'))
-      const srcRegex = /(?=[^/]*$)([a-zA-Z]+)/i
-      const srcMatch = srcRegex.exec(view.get('path'))
-      view.set('type', _.ucfirst(srcMatch[1]))
-    } else {
-      view.set({
-        type: null,
-        alias: null,
-        path: null
-      })
-    }
-
-    // Aggregate Template
-    if (template !== null) {
-      templates = _.extend((templates !== null) ? templates : {}, { combined: template })
-    }
-
-    // Aggregate Dialogue
-    if (dialogue !== null) {
-      templates = _.extend((templates !== null) ? templates : {}, { dialogue: dialogue })
-    }
-
-    // Gather All Templates
-    if (templates !== null) {
-      let key
-      for (key in templates) {
-        if (!templates.hasOwnProperty(key) || typeof templates[key] === 'function') continue
-        if (templates[key].indexOf('#') === 0) {
-          const $domTemplate = $(templates[key])
-          if ($domTemplate.length > 0) {
-            templates[key] = $domTemplate.html()
-          }
-        } else if (templates[key] in requirejs.s.contexts._.config.paths) {
-          requirements.push('text!' + templates[key])
-          templateMap.push(key)
-        } else {
-          requirements.push('text!' + templates[key])
-          templateMap.push(key)
-        }
-      }
-      view.set('templates', templates)
-      templates = view.get('templates')
-    }
-  }
-
-  return new Promise(function (resolve, reject) {
-    if (view.get('guid')) {
-      if (!Stratus.Environment.get('production')) console.warn('View hydration halted on', view.get('guid'), 'due to repeat calls on the same element.', view.toObject())
-      resolve(true)
-      return true
-    }
-    if (parentChild) {
-      /* if (!Stratus.Environment.get('production')) console.warn('Parent Child Detected:', view.toObject()); */
-      resolve(true)
-      return true
-    }
-    require(requirements, function (Stratus) {
-      if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.group('Stratus View')
-      let hydrationKey = 0
-      if (templates && templateMap.length > 0) {
-        let i
-        for (i = 0; i < arguments.length; i++) {
-          if (typeof arguments[i] === 'string') {
-            if (arguments[i].indexOf('<html') === -1) {
-              templates[templateMap[hydrationKey]] = arguments[i]
-            } else {
-              console.error('Template', templates[templateMap[hydrationKey]], 'failed to load.')
-            }
-            hydrationKey++
-          }
-        }
-      }
-
-      /* Refresh Template HTML on View */
-      view.set('templates', templates)
-      templates = view.get('templates')
-
-      const subRequirements = []
-
-      /* Handle Custom Templates */
-      if (_.size(templates) > 0) {
-        const re = /<.+?data-type=["|'](.+?)["|'].*>/gi
-
-        /* Hydrate Underscore Templates */
-        _.each(templates, function (value, key) {
-          if (typeof value === 'string') {
-            if (value.search(re) !== -1) {
-              let match = re.exec(value)
-              while (match !== null) {
-                const subRequirement = 'stratus.views.' + (view.get('plugin') ? 'plugins' : 'widgets') + '.' + match[1].toLowerCase()
-                if (subRequirement && !_.has(requirejs.s.contexts._.config.paths, subRequirement)) {
-                  if (!Stratus.Environment.get('production')) console.warn('Sub Type:', subRequirement, 'not configured in require.js')
-                }
-                subRequirements.push(subRequirement)
-                match = re.exec(value)
-              }
-            }
-            templates[key] = _.template(value)
-          }
-        })
-
-        /* Refresh Template Functions on View */
-        view.set('templates', templates)
-        templates = view.get('templates')
-      }
-
-      // Gather subRequirements
-      if (view.get('plugins').length) {
-        _.each(view.get('plugins'), function (plugin) {
-          subRequirements.push('stratus.views.plugins.' + plugin.toLowerCase())
-        })
-      }
-
-      // Detect Loader Types
-      const loaderTypes = []
-      if (view.get('plugin') !== null) loaderTypes.push('PluginLoader')
-      if (view.get('type') !== null) loaderTypes.push('WidgetLoader')
-
-      // Set Default Path
-      if (!loaderTypes.length) loaderTypes.push('WidgetLoader')
-
-      // Start Loader for each type detected
-      _.each(loaderTypes, function (loaderType) {
-        /* If subRequirements are detected in Custom Template, load their types before the View is instantiated. */
-        if (_.size(subRequirements) === 0) {
-          Stratus.Internals[loaderType](resolve, reject, view, requirements)
-        } else {
-          requirements = _.union(requirements, subRequirements)
-          new Promise(function (resolve, reject) {
-            require(requirements, function (Stratus) {
-              Stratus.Internals[loaderType](resolve, reject, view, requirements)
-            })
-          }).then(resolve, reject)
-        }
-      })
-    })
-  })
-}
-
-// Load Widgets
-/**
- * @param resolve
- * @param reject
- * @param view
- * @param requirements
- * @constructor
- */
-Stratus.Internals.WidgetLoader = function (resolve, reject, view, requirements) {
-  /* TODO: In the a model scope, we are more likely to want a collection of the View to create the original reference, since it will be able to determine the model's relational data at runtime */
-  if (view.get('scope') === 'model') {
-    if (!Stratus.Models.has(view.get('entity'))) {
-      /* TODO: Add Relations */
-      Stratus.Models.set(view.get('entity'), Stratus.Models.Generic.extend({}))
-    }
-
-    let modelReference
-    let modelInstance
-    let modelInit = false
-    const ModelType = Stratus.Models.has(view.get('entity')) ? Stratus.Models.get(view.get('entity')) : null
-
-    if (!view.get('id') && view.get('manifest')) {
-      modelInstance = view.get('entity') + 'Manifest'
-      modelReference = Stratus.Instances[modelInstance]
-      if (!modelReference) {
-        Stratus.Instances[modelInstance] = new ModelType()
-        modelReference = Stratus.Instances[modelInstance]
-        modelInit = true
-      }
-    } else {
-      if (ModelType && _.has(ModelType, 'findOrCreate')) {
-        modelReference = ModelType.findOrCreate(view.get('id'))
-        if (!modelReference) {
-          modelReference = new ModelType(view.modelAttributes())
-          modelInit = true
-        }
-      } else {
-        modelInstance = view.get('entity') + view.get('id')
-        modelReference = Stratus.Instances[modelInstance]
-        if (!modelReference) {
-          Stratus.Instances[modelInstance] = new ModelType(view.modelAttributes())
-          modelReference = Stratus.Instances[modelInstance]
-          modelInit = true
-        }
-      }
-    }
-
-    if (modelInit) {
-      modelReference.safeInitialize(view.toObject())
-    }
-    view.set({ model: modelReference })
-  } else if (view.get('scope') === 'collection') {
-    // Create reference, if not defined
-    if (!Stratus.Collections.has(view.get('entity'))) {
-      Stratus.Collections.set(view.get('entity'), new Stratus.Collections.Generic(view.toObject()))
-
-      // TODO: Inject prototype into Dynamic, Event-Controlled Namespace
-      /*
-           Stratus.Collections.set(view.get('entity'), Stratus.Collections.Generic);
-           */
-    }
-
-    const collectionReference = Stratus.Collections.get(view.get('entity'))
-
-    // Run initialization when the correct settings are present
-    if (!collectionReference.initialized && view.get('fetch')) {
-      collectionReference.safeInitialize(view.toObject())
-    }
-
-    // Set collection reference
-    view.set({ collection: collectionReference })
-  }
-
-  if (view.get('type') !== null) {
-    const type = _.ucfirst(view.get('type'))
-    if (typeof Stratus.Views.Widgets[type] !== 'undefined') {
-      // if (!Stratus.Environment.get('production')) console.info('View:', view.toObject());
-      const options = view.toObject()
-      options.view = view
-      Stratus.Instances[view.get('uid')] = new Stratus.Views.Widgets[type](options)
-      Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))
-      if (_.has(Stratus.Instances[view.get('uid')], 'promise')) {
-        Stratus.Instances[view.get('uid')].initializer.then(resolve, reject)
-      } else {
-        resolve(Stratus.Instances[view.get('uid')])
-      }
-    } else {
-      if (!Stratus.Environment.get('production')) console.warn('Stratus.Views.Widgets.' + type + ' is not correctly configured.')
-      reject(new Stratus.Prototypes.Error({
-        code: 'WidgetLoader',
-        message: 'Stratus.Views.Widgets.' + type + ' is not correctly configured.'
-      }, view.toObject()))
-    }
-    if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
-  } else {
-    const nest = view.get('el').find('[data-type],[data-plugin]')
-    if (nest.length > 0) {
-      Stratus.Internals.Loader(view.get('el'), view, requirements).then(function (resolution) {
-        if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
-        resolve(resolution)
-      }, function (rejection) {
-        if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) console.groupEnd()
-        reject(new Stratus.Prototypes.Error(rejection, nest))
-      })
-    } else {
-      if (!Stratus.Environment.get('production') && Stratus.Environment.get('nestDebug')) {
-        console.warn('No Innate or Nested Type Found:', view.toObject())
-        resolve(view.toObject())
-        console.groupEnd()
-      } else {
-        resolve(view.toObject())
-      }
-    }
-  }
-}
-
-// Load Plugins Like we Load Views
-/**
- * @param resolve
- * @param reject
- * @param view
- * @param requirements
- * @constructor
- */
-Stratus.Internals.PluginLoader = function (resolve, reject, view, requirements) {
-  const types = _.union([view.get('plugin')], view.get('plugins'))
-  _.each(types, function (type) {
-    type = _.ucfirst(type)
-    if (typeof Stratus.Views.Plugins[type] !== 'undefined') {
-      const options = view.toObject()
-      options.view = view
-      Stratus.Instances[view.get('uid')] = new Stratus.Views.Plugins[type](options)
-      Stratus.Instances[view.get('uid')].$el.attr('data-guid', view.get('uid'))
-      if (_.has(Stratus.Instances[view.get('uid')], 'promise')) {
-        Stratus.Instances[view.get('uid')].initializer.then(resolve, reject)
-      } else {
-        resolve(Stratus.Instances[view.get('uid')])
-      }
-    } else {
-      if (!Stratus.Environment.get('production')) {
-        console.warn('Stratus.Views.Plugins.' + type + ' is not correctly configured.')
-      }
-      reject(new Stratus.Prototypes.Error({
-        code: 'PluginLoader',
-        message: 'Stratus.Views.Plugins.' + type + ' is not correctly configured.'
-      }, view.toObject()))
-    }
-  })
 }
 
 /* global Stratus, _, $, angular, boot, requirejs */
@@ -3846,7 +2918,7 @@ Stratus.Loaders.Angular = function () {
   }
 }
 
-/* global Stratus, _, Backbone, $, bootbox */
+/* global Stratus, _, $, bootbox */
 
 // Instance Clean
 // --------------
@@ -4154,14 +3226,6 @@ Stratus.Events.on('initialize', function () {
   Stratus.Internals.Compatibility()
   Stratus.RegisterGroup = new Stratus.Prototypes.Model()
 
-  /* FIXME: This breaks outside of Sitetheory *
-  // Start Generic Router
-  require(['stratus.routers.generic'], function () {
-    Stratus.Routers.set('generic', new Stratus.Routers.Generic())
-    Stratus.Instances[_.uniqueId('router.generic_')] = Stratus.Routers.get('generic')
-  })
-  /**/
-
   // Handle Location
   Stratus.Internals.TrackLocation()
 
@@ -4175,9 +3239,8 @@ Stratus.Events.on('initialize', function () {
     }
     window.views = views
     Stratus.Events.on('finalize', function (views) {
-      if (typeof Backbone !== 'undefined' && !Backbone.History.started) {
-        Backbone.history.start()
-      }
+      // TODO: backbone is gone, so rewrite this portion to record history so we can back/forward
+      // Backbone.history.start()
       Stratus.Events.trigger('finalized', views)
     })
     Stratus.Events.trigger('finalize', views)
@@ -4191,15 +3254,13 @@ Stratus.Events.on('finalize', function () {
     console.group('Stratus Finalize')
   }
 
-  // Load Internals after Widgets and Plugins
-  if (typeof Backbone === 'object') {
-    if (Stratus.Internals.Anchor.initialize) {
-      Stratus.Internals.Anchor = Stratus.Internals.Anchor()
-    }
-    let anchor = new Stratus.Internals.Anchor()
-    if (!Stratus.Environment.get('production')) {
-      console.log('Anchor:', anchor)
-    }
+  // Load Internals
+  if (Stratus.Internals.Anchor.initialize) {
+    Stratus.Internals.Anchor = Stratus.Internals.Anchor()
+  }
+  let anchor = new Stratus.Internals.Anchor()
+  if (!Stratus.Environment.get('production')) {
+    console.log('Anchor:', anchor)
   }
 
   // Call Any Registered Group Methods that plugins might use, e.g. OnScroll
@@ -4209,6 +3270,10 @@ Stratus.Events.on('finalize', function () {
       // elements
       if (_.has(Stratus.Internals, key)) {
         Stratus.Internals[key](objs)
+        // TODO: remove
+        if (!Stratus.Environment.get('production')) {
+          console.log('Register Group: remove - ', key, objs)
+        }
       }
     })
   }
