@@ -13,7 +13,7 @@
 }(this, function (jQuery) {
   // This sandboxes jquery's dollar sign
   // FIXME: noConflict causes Angular to never detect jQuery, so it is disabled temporarily!
-  var sandbox = jQuery.noConflict(true)
+  const sandbox = jQuery.noConflict(true)
 
   // Expose
   window[sandbox.fn.jquery.replace(/./g, ' ')] = sandbox

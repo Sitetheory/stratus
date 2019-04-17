@@ -10,6 +10,7 @@
       'stratus',
       'underscore',
       'angular',
+      'angular-material', // Reliant for $mdToast
       'stratus.services.model'
     ], factory)
   } else {
