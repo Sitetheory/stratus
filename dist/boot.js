@@ -304,8 +304,6 @@ boot.config({
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
-    // TODO: deprecate this once we've moved all features from utility to specific service
-    'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
 
     // COMPONENTS:
     // -----------
@@ -415,7 +413,10 @@ boot.config({
     'froala-url': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/url.min',
     'froala-video': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/video.min',
     'froala-word-paste': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/word_paste.min',
-    'angular-froala': boot.bundle + 'stratus/bower_components/angular-froala/src/angular-froala'
+    'angular-froala': boot.bundle + 'stratus/bower_components/angular-froala/src/angular-froala',
+
+    /* Common Libraries */
+    chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart'
 
   }
 })

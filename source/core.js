@@ -313,6 +313,7 @@ Stratus.Events.on('initialize', function () {
   Stratus.Loaders.Angular()
 
   // Load Views
+  /* *
   Stratus.Internals.Loader().then(function (views) {
     if (!Stratus.Environment.get('production')) {
       console.info('Views:', views)
@@ -327,6 +328,7 @@ Stratus.Events.on('initialize', function () {
   }, function (error) {
     console.error('Stratus Loader:', error)
   })
+  /* */
 })
 Stratus.Events.on('finalize', function () {
   if (!Stratus.Environment.get('production')) {

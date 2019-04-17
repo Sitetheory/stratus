@@ -1,5 +1,47 @@
 /* global Stratus, _, EventTarget */
 
+// Stratus Event System
+// --------------------
+
+class EventManager {
+  constructor () {
+    this.name = 'EventManager'
+    this.listeners = {}
+  }
+
+  off (name, callback, context) {
+    console.log('off:', arguments)
+    return this
+  }
+
+  on (name, callback, context) {
+    let event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
+      enabled: true,
+      hook: name,
+      method: callback,
+      scope: context || null
+    })
+    name = event.hook
+    if (!(name in this.listeners)) {
+      this.listeners[name] = []
+    }
+    this.listeners[name].push(event)
+    return this
+  }
+
+  trigger (name, data) {
+    if (name in this.listeners) {
+      this.listeners[name].forEach(function (event) {
+        event.method.call(event.scope || this, data)
+      })
+    }
+    return this
+  }
+}
+
+Stratus.EventManager = EventManager
+Stratus.Events = new EventManager()
+
 // Error Prototype
 // ---------------
 
@@ -24,20 +66,6 @@ Stratus.Prototypes.Error = class StratusError {
   }
 }
 
-// Dispatch Prototype
-// ----------------
-
-/**
- * @returns {Object}
- * @constructor
- */
-Stratus.Prototypes.Dispatch = class Dispatch extends Stratus.EventManager {
-  constructor () {
-    super()
-    console.warn('Stratus Dispatch is deprecated.  Use Stratus.EventManager instead.')
-  }
-}
-
 // Event Prototype
 // --------------
 
@@ -47,7 +75,6 @@ Stratus.Prototypes.Dispatch = class Dispatch extends Stratus.EventManager {
  * @returns {Stratus.Prototypes.Event}
  * @constructor
  */
-// TODO: Update to ES6
 Stratus.Prototypes.Event = class StratusEvent {
   constructor (options) {
     this.enabled = false

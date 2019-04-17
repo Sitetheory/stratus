@@ -854,7 +854,7 @@ if (typeof $ === 'function' && $.fn) {
   }
 }
 
-/* global Stratus */
+/* global Stratus, _, EventTarget */
 
 // Stratus Event System
 // --------------------
@@ -898,12 +898,6 @@ class EventManager {
 Stratus.EventManager = EventManager
 Stratus.Events = new EventManager()
 
-// Aliases for backwards compatibility.
-Stratus.Events.bind = Stratus.Events.on
-Stratus.Events.unbind = Stratus.Events.off
-
-/* global Stratus, _, EventTarget */
-
 // Error Prototype
 // ---------------
 
@@ -928,20 +922,6 @@ Stratus.Prototypes.Error = class StratusError {
   }
 }
 
-// Dispatch Prototype
-// ----------------
-
-/**
- * @returns {Object}
- * @constructor
- */
-Stratus.Prototypes.Dispatch = class Dispatch extends Stratus.EventManager {
-  constructor () {
-    super()
-    console.warn('Stratus Dispatch is deprecated.  Use Stratus.EventManager instead.')
-  }
-}
-
 // Event Prototype
 // --------------
 
@@ -951,7 +931,6 @@ Stratus.Prototypes.Dispatch = class Dispatch extends Stratus.EventManager {
  * @returns {Stratus.Prototypes.Event}
  * @constructor
  */
-// TODO: Update to ES6
 Stratus.Prototypes.Event = class StratusEvent {
   constructor (options) {
     this.enabled = false
@@ -3232,6 +3211,7 @@ Stratus.Events.on('initialize', function () {
   Stratus.Loaders.Angular()
 
   // Load Views
+  /* *
   Stratus.Internals.Loader().then(function (views) {
     if (!Stratus.Environment.get('production')) {
       console.info('Views:', views)
@@ -3246,6 +3226,7 @@ Stratus.Events.on('initialize', function () {
   }, function (error) {
     console.error('Stratus Loader:', error)
   })
+  /* */
 })
 Stratus.Events.on('finalize', function () {
   if (!Stratus.Environment.get('production')) {
