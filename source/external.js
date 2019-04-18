@@ -1,4 +1,4 @@
-/* global _, $, jQuery, angular */
+/* global _, jQuery, angular */
 
 // Underscore Settings
 // -------------------
