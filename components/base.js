@@ -26,6 +26,7 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'base'
+  const localPath = 'components'
 
   // This component is just a simple base.
   Stratus.Components.Base = {
@@ -65,7 +66,7 @@
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
       Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+        Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
       )
       $scope.initialized = false
 
@@ -97,6 +98,6 @@
       }
     },
     // template: '<div id="{{ elementId }}"><div ng-if="model && property && model.get(property)" style="list-style-type: none;">{{ model.get(property) | json }}</div><ul ng-if="collection && model && property" ng-cloak><stratus-search></stratus-search><li ng-repeat="model in collection.models">{{ model.data | json }}</li><stratus-pagination></stratus-pagination></ul></div>',
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.html'
   }
 }))
