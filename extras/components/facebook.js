@@ -15,6 +15,11 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Environment
+  // const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'facebook'
+  // const localPath = 'extras/components'
+
   // This component intends to handle binding and
   // full pagination for the scope's collection.
   Stratus.Components.Facebook = {
@@ -23,8 +28,13 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
       appId: '@',
       token: '@'
     },
-    controller: function ($scope, $http) {
-      Stratus.Instances[_.uniqueId('facebook_')] = $scope
+    controller: function ($scope, $attrs, $http) {
+      // Initialize
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      $scope.elementId = $attrs.elementId || $ctrl.uid
+      $scope.initialized = false
 
       // Custom Variables
       let facebookPageName = 'Test Page Name'
@@ -112,30 +122,31 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
         loadPlugin()
       }
 
-      /**
-       $scope.fetch = function () {
-                if ($scope.bindings.appId) {
-                    $http({
-                        method: 'POST',
-                        url: 'https://graph.facebook.com/' + $scope.bindings.pageId + '/feed?app_id=' + $scope.bindings.appId + ($scope.bindings.token ? '&access_token=' + $scope.bindings.token : ''),
-                        data: {
-                            message: 'message',
-                            name: 'name',
-                            caption: 'caption',
-                            description: 'desc'
-                        }
-                    }).then(function (response) {
-                        console.log('success:', response);
-                    }, function (error) {
-                        console.error('error:', error);
-                    });
-                }
-            };
-       /**/
+      /* *
+      $scope.fetch = function () {
+        if ($scope.bindings.appId) {
+          $http({
+            method: 'POST',
+            url: 'https://graph.facebook.com/' + $scope.bindings.pageId + '/feed?app_id=' + $scope.bindings.appId + ($scope.bindings.token ? '&access_token=' + $scope.bindings.token : ''),
+            data: {
+              message: 'message',
+              name: 'name',
+              caption: 'caption',
+              description: 'desc'
+            }
+          }).then(function (response) {
+            console.log('success:', response)
+          }, function (error) {
+            console.error('error:', error)
+          })
+        }
+      }
+      /* */
+      /* *
       $scope.$watch('bindings', function () {
-        // $scope.fetch();
+        $scope.fetch()
       })
-    },
-    template: ''
+      /* */
+    }
   }
 }))
