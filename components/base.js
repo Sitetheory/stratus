@@ -29,7 +29,12 @@
 
   // This component is just a simple base.
   Stratus.Components.Base = {
+    // Angular Components allow transclude options directly in the object. So whatever you put in Foo, will overwrite
+    // whatever is in this component's template `stratus-base-model` area.
+    // <stratus-base><stratus-base-model>Foo</stratus-base-model></stratus-base>
     transclude: {
+      // This is a sample only
+      // See ngTransclude for more character options, e.g. ? means it won't freak out if child node doesn't exist
       model: '?stratusBaseModel'
     },
     bindings: {
