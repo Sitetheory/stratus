@@ -323,7 +323,7 @@ boot.config({
 
     // THIRD PARTY: BOWER COMPONENTS
     // -----------------------------
-    //promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
+    // promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     // Used by extras/filters/gravatar.js
     md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,

@@ -208,7 +208,7 @@ if (!Stratus.Environment.production) {
   console.group('Stratus Warm Up')
 }
 
-/* global _, $, jQuery, angular */
+/* global _, jQuery, angular */
 
 // Underscore Settings
 // -------------------
