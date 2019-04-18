@@ -13,9 +13,8 @@
       'text',
       'underscore',
       'jquery', // TODO: Remove once phased out appropriately
-      'bowser',
-      'promise'
-    ], function (text, _, bowser) {
+      'bowser'
+    ], function (text, _, jQuery, bowser) {
       return (root.Stratus = factory(text, _, jQuery, bowser))
     })
   } else {
@@ -79,7 +78,7 @@ let Stratus = {
     : '') || '',
 
   /* This is used internally for triggering events */
-  Events: {},
+  Events: null,
 
   /* Angular */
   Apps: {},
@@ -537,8 +536,7 @@ _.mixin({
    * @returns {boolean}
    */
   isAngular: function (element) {
-    return typeof angular === 'object' && angular && angular.element &&
-      element instanceof angular.element
+    return typeof angular === 'object' && angular && angular.element && element instanceof angular.element
   },
 
   // Determines whether or not the element was selected from Angular
@@ -834,44 +832,36 @@ _.mixin({
   }
 })
 
-// jQuery Plugins
-// --------------
-
-// FIXME: These are deprecated, since they will never load in the core now that
-// jQuery is gone
-if (typeof $ === 'function' && $.fn) {
-  /**
-   * @param event
-   * @returns {boolean}
-   */
-  $.fn.notClicked = function (event) {
-    if (!this.selector && !this.context) {
-      console.error(
-        'No Selector or Context:', this)
-    }
-    return !$(event.target).closest(this.selector || this.context).length &&
-      !$(event.target).parents(this.selector || this.context).length
-  }
-}
-
 /* global Stratus, _, EventTarget */
 
 // Stratus Event System
 // --------------------
 
-class EventManager {
+Stratus.Prototypes.EventManager = class EventManager {
   constructor () {
     this.name = 'EventManager'
     this.listeners = {}
   }
 
+  /**
+   * @param name
+   * @param callback
+   * @param context
+   * @returns {Stratus.Prototypes.EventManager}
+   */
   off (name, callback, context) {
     console.log('off:', arguments)
     return this
   }
 
+  /**
+   * @param name
+   * @param callback
+   * @param context
+   * @returns {Stratus.Prototypes.EventManager}
+   */
   on (name, callback, context) {
-    let event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
+    const event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
       enabled: true,
       hook: name,
       method: callback,
@@ -885,18 +875,45 @@ class EventManager {
     return this
   }
 
-  trigger (name, data) {
-    if (name in this.listeners) {
-      this.listeners[name].forEach(function (event) {
-        event.method.call(event.scope || this, data)
-      })
+  /**
+   * @param name
+   * @param callback
+   * @param context
+   * @returns {Stratus.Prototypes.EventManager}
+   */
+  once (name, callback, context) {
+    this.on(name, function (event, ...args) {
+      event.enabled = false
+      let childArgs = _.clone(args)
+      childArgs.unshift(event)
+      callback.apply(event.scope || this, childArgs)
+    }, context)
+    return this
+  }
+
+  /**
+   * @param name
+   * @param args
+   * @returns {Stratus.Prototypes.EventManager}
+   */
+  trigger (name, ...args) {
+    if (!(name in this.listeners)) {
+      return this
     }
+    this.listeners[name].forEach(function (event) {
+      if (!event.enabled) {
+        return
+      }
+      let childArgs = _.clone(args)
+      childArgs.unshift(event)
+      event.method.apply(event.scope || this, childArgs)
+    })
     return this
   }
 }
 
-Stratus.EventManager = EventManager
-Stratus.Events = new EventManager()
+// Global Instantiation
+Stratus.Events = new Stratus.Prototypes.EventManager()
 
 // Error Prototype
 // ---------------
@@ -996,7 +1013,7 @@ Stratus.Prototypes.Job = class Job {
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-Stratus.Prototypes.Model = class Model extends Stratus.EventManager {
+Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
   constructor (data, options) {
     super()
     this.name = 'Model'
@@ -1657,49 +1674,51 @@ Stratus.Internals.CssLoader = function (url) {
   return new Promise(function (resolve, reject) {
     /* Digest Extension */
     /*
-         FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
-         let extension = /\.([0-9a-z]+)$/i;
-         extension = extension.exec(url);
-         */
-    /* Verify Identical Calls */
+    FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
+    let extension = /\.([0-9a-z]+)$/i;
+    extension = extension.exec(url);
+    */
+
+    /* Handle Identical Calls */
     if (url in Stratus.CSS) {
       if (Stratus.CSS[url]) {
         resolve()
       } else {
         Stratus.Events.once('onload:' + url, resolve)
       }
-    } else {
-      /* Set CSS State */
-      Stratus.CSS[url] = false
+      return
+    }
 
-      /* Create Link */
-      let link = document.createElement('link')
-      link.type = 'text/css'
-      link.rel = 'stylesheet'
-      link.href = url
+    /* Set CSS State */
+    Stratus.CSS[url] = false
 
-      /* Track Resolution */
-      Stratus.Events.once('onload:' + url, function () {
-        Stratus.CSS[url] = true
-        resolve()
-      })
+    /* Create Link */
+    let link = document.createElement('link')
+    link.type = 'text/css'
+    link.rel = 'stylesheet'
+    link.href = url
 
-      /* Capture OnLoad or Fallback */
-      if ('onload' in link && !Stratus.Client.android) {
-        link.onload = function () {
-          Stratus.Events.trigger('onload:' + url)
-        }
-      } else {
-        Stratus.CSS[url] = true
+    /* Track Resolution */
+    Stratus.Events.once('onload:' + url, function () {
+      Stratus.CSS[url] = true
+      resolve()
+    })
+
+    /* Capture OnLoad or Fallback */
+    if ('onload' in link && !Stratus.Client.android) {
+      link.onload = function () {
         Stratus.Events.trigger('onload:' + url)
       }
-
-      /* Inject Link into Head */
-
-      // TODO: Add the ability to prepend or append by a flagged option
-      // Stratus('head').prepend(link);
-      Stratus('head').append(link)
+    } else {
+      Stratus.CSS[url] = true
+      Stratus.Events.trigger('onload:' + url)
     }
+
+    /* Inject Link into Head */
+
+    // TODO: Add the ability to prepend or append by a flagged option
+    // Stratus('head').prepend(link);
+    Stratus('head').append(link)
   })
 }
 
@@ -2102,7 +2121,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
 
   // Execute the methods for every registered object ONLY when there is a
   // change to the viewPort
-  Stratus.Environment.on('change:viewPortChange', function (model) {
+  Stratus.Environment.on('change:viewPortChange', function (event, model) {
     if (model.get('viewPortChange')) {
       model.set('lastScroll', Stratus.Internals.GetScrollDir())
 
@@ -3195,7 +3214,7 @@ Stratus.Key.Escape = 27
 // when adding to the Initialization and Exit Routines as AMD Modules, views
 // and custom script(s) progressively add Objects within the Stratus Layer.
 
-Stratus.Events.on('initialize', function () {
+Stratus.Events.once('initialize', function () {
   if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Initialize')
@@ -3228,7 +3247,7 @@ Stratus.Events.on('initialize', function () {
   })
   /* */
 })
-Stratus.Events.on('finalize', function () {
+Stratus.Events.once('finalize', function () {
   if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Finalize')
@@ -3258,7 +3277,7 @@ Stratus.Events.on('finalize', function () {
     })
   }
 })
-Stratus.Events.on('terminate', function () {
+Stratus.Events.once('terminate', function () {
   if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Terminate')
@@ -3267,7 +3286,7 @@ Stratus.Events.on('terminate', function () {
 
 // This event supports both Native and Bootbox styling to generate
 // an alert box with an optional message and handler callback.
-Stratus.Events.on('alert', function (message, handler) {
+Stratus.Events.on('alert', function (event, message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
@@ -3282,7 +3301,7 @@ Stratus.Events.on('alert', function (message, handler) {
 
 // This event supports both Native and Bootbox styling to generate
 // a confirmation box with an optional message and handler callback.
-Stratus.Events.on('confirm', function (message, handler) {
+Stratus.Events.on('confirm', function (event, message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
@@ -3295,7 +3314,7 @@ Stratus.Events.on('confirm', function (message, handler) {
 })
 
 // This event allows a Notification to reach the browser.
-Stratus.Events.on('notification', function (message, title) {
+Stratus.Events.on('notification', function (event, message, title) {
   let options = {}
   if (message && typeof message === 'object') {
     _.extend(options, message)
@@ -3333,7 +3352,7 @@ Stratus.Events.on('notification', function (message, title) {
 
 // This event only supports Toaster styling to generate a message
 // with either a Bootbox or Native Alert as a fallback, respectively.
-Stratus.Events.on('toast', function (message, title, priority, settings) {
+Stratus.Events.on('toast', function (event, message, title, priority, settings) {
   if (!(message instanceof Stratus.Prototypes.Toast)) {
     message = new Stratus.Prototypes.Toast(message, title, priority, settings)
   }

@@ -3,19 +3,31 @@
 // Stratus Event System
 // --------------------
 
-class EventManager {
+Stratus.Prototypes.EventManager = class EventManager {
   constructor () {
     this.name = 'EventManager'
     this.listeners = {}
   }
 
+  /**
+   * @param name
+   * @param callback
+   * @param context
+   * @returns {Stratus.Prototypes.EventManager}
+   */
   off (name, callback, context) {
     console.log('off:', arguments)
     return this
   }
 
+  /**
+   * @param name
+   * @param callback
+   * @param context
+   * @returns {Stratus.Prototypes.EventManager}
+   */
   on (name, callback, context) {
-    let event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
+    const event = (name instanceof Stratus.Prototypes.Event) ? name : new Stratus.Prototypes.Event({
       enabled: true,
       hook: name,
       method: callback,
@@ -29,18 +41,45 @@ class EventManager {
     return this
   }
 
-  trigger (name, data) {
-    if (name in this.listeners) {
-      this.listeners[name].forEach(function (event) {
-        event.method.call(event.scope || this, data)
-      })
+  /**
+   * @param name
+   * @param callback
+   * @param context
+   * @returns {Stratus.Prototypes.EventManager}
+   */
+  once (name, callback, context) {
+    this.on(name, function (event, ...args) {
+      event.enabled = false
+      let childArgs = _.clone(args)
+      childArgs.unshift(event)
+      callback.apply(event.scope || this, childArgs)
+    }, context)
+    return this
+  }
+
+  /**
+   * @param name
+   * @param args
+   * @returns {Stratus.Prototypes.EventManager}
+   */
+  trigger (name, ...args) {
+    if (!(name in this.listeners)) {
+      return this
     }
+    this.listeners[name].forEach(function (event) {
+      if (!event.enabled) {
+        return
+      }
+      let childArgs = _.clone(args)
+      childArgs.unshift(event)
+      event.method.apply(event.scope || this, childArgs)
+    })
     return this
   }
 }
 
-Stratus.EventManager = EventManager
-Stratus.Events = new EventManager()
+// Global Instantiation
+Stratus.Events = new Stratus.Prototypes.EventManager()
 
 // Error Prototype
 // ---------------
@@ -140,7 +179,7 @@ Stratus.Prototypes.Job = class Job {
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-Stratus.Prototypes.Model = class Model extends Stratus.EventManager {
+Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
   constructor (data, options) {
     super()
     this.name = 'Model'

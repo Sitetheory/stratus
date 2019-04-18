@@ -323,11 +323,9 @@ boot.config({
 
     // THIRD PARTY: BOWER COMPONENTS
     // -----------------------------
-    promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
-
+    //promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     // Used by extras/filters/gravatar.js
     md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
-
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
 
     /* Bowser */
@@ -345,8 +343,8 @@ boot.config({
     // jQuery is currently used in a lot of components and directives that probably don't need it, since they are just
     // using the selector so they could just the Stratus Selector: Stratus('div')
     // NOTE: this sandboxes jquery into require so it's not in the window
-    jquery: boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
-    'jquery-sandbox': boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix,
+    'jquery-native': boot.bundle + 'stratus/bower_components/jquery/dist/jquery' + boot.suffix,
+    jquery: boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix,
 
     /* Common Libraries */
     // Required for extras/filters/moment.js
