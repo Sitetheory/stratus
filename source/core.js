@@ -297,7 +297,7 @@ Stratus.Key.Escape = 27
 // when adding to the Initialization and Exit Routines as AMD Modules, views
 // and custom script(s) progressively add Objects within the Stratus Layer.
 
-Stratus.Events.on('initialize', function () {
+Stratus.Events.once('initialize', function () {
   if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Initialize')
@@ -330,7 +330,7 @@ Stratus.Events.on('initialize', function () {
   })
   /* */
 })
-Stratus.Events.on('finalize', function () {
+Stratus.Events.once('finalize', function () {
   if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Finalize')
@@ -360,7 +360,7 @@ Stratus.Events.on('finalize', function () {
     })
   }
 })
-Stratus.Events.on('terminate', function () {
+Stratus.Events.once('terminate', function () {
   if (!Stratus.Environment.get('production')) {
     console.groupEnd()
     console.group('Stratus Terminate')
@@ -369,7 +369,7 @@ Stratus.Events.on('terminate', function () {
 
 // This event supports both Native and Bootbox styling to generate
 // an alert box with an optional message and handler callback.
-Stratus.Events.on('alert', function (message, handler) {
+Stratus.Events.on('alert', function (event, message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
@@ -384,7 +384,7 @@ Stratus.Events.on('alert', function (message, handler) {
 
 // This event supports both Native and Bootbox styling to generate
 // a confirmation box with an optional message and handler callback.
-Stratus.Events.on('confirm', function (message, handler) {
+Stratus.Events.on('confirm', function (event, message, handler) {
   if (!(message instanceof Stratus.Prototypes.Bootbox)) {
     message = new Stratus.Prototypes.Bootbox(message, handler)
   }
@@ -397,7 +397,7 @@ Stratus.Events.on('confirm', function (message, handler) {
 })
 
 // This event allows a Notification to reach the browser.
-Stratus.Events.on('notification', function (message, title) {
+Stratus.Events.on('notification', function (event, message, title) {
   let options = {}
   if (message && typeof message === 'object') {
     _.extend(options, message)
@@ -435,7 +435,7 @@ Stratus.Events.on('notification', function (message, title) {
 
 // This event only supports Toaster styling to generate a message
 // with either a Bootbox or Native Alert as a fallback, respectively.
-Stratus.Events.on('toast', function (message, title, priority, settings) {
+Stratus.Events.on('toast', function (event, message, title, priority, settings) {
   if (!(message instanceof Stratus.Prototypes.Toast)) {
     message = new Stratus.Prototypes.Toast(message, title, priority, settings)
   }

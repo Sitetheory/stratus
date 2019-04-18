@@ -54,7 +54,7 @@ let Stratus = {
     : '') || '',
 
   /* This is used internally for triggering events */
-  Events: {},
+  Events: null,
 
   /* Angular */
   Apps: {},
