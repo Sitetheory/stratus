@@ -210,7 +210,6 @@ boot.config({
 
     // SERVICES:
     // ---------
-    'stratus.services.appConfig': boot.bundle + 'stratus/services/appConfig' + boot.suffix,
     'stratus.services.model': boot.bundle + 'stratus/services/model' + boot.suffix,
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,

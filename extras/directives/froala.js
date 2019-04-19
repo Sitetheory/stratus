@@ -44,93 +44,93 @@
   }
 }(this, function (Stratus, _, $, angular) {
   // This directive intends to provide basic froala capabilities.
-  Stratus.Directives.Froala = ['froalaConfig', 'Model', function (froalaConfig, Model) {
-    'use strict' // Scope strict mode to only this directive
-    let generatedIds = 0
-    let defaultConfig = {
-      immediateAngularModelUpdate: false,
-      angularIgnoreAttrs: null
-    }
+  Stratus.Directives.Froala = [
+    'Model',
+    function (Model) {
+      'use strict' // Scope strict mode to only this directive
+      let generatedIds = 0
+      const defaultConfig = {
+        immediateAngularModelUpdate: false,
+        angularIgnoreAttrs: null
+      }
 
-    let innerHtmlAttr = 'innerHTML'
+      const innerHtmlAttr = 'innerHTML'
 
-    froalaConfig = froalaConfig || {}
+      const froalaConfig = angular.module('stratusApp').value('froalaConfig') || {}
 
-    // console.log('froalaConfig:', froalaConfig);
+      // Constants
+      let MANUAL = 'manual'
+      let AUTOMATIC = 'automatic'
+      let SPECIAL_TAGS = ['img', 'button', 'input', 'a']
 
-    // Constants
-    let MANUAL = 'manual'
-    let AUTOMATIC = 'automatic'
-    let SPECIAL_TAGS = ['img', 'button', 'input', 'a']
-
-    return {
-      restrict: 'A',
-      require: 'ngModel',
-      scope: {
-        ngModel: '=',
-        property: '@',
-        froalaOptions: '=stratusFroala',
-        staticOptions: '@froalaOptions', // Alias of stratusFroala, but for instances where the data cannot be bound
-        initFunction: '&froalaInit',
-        autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
-      },
-      link: function (scope, element, attrs, ngModel) {
+      return {
+        restrict: 'A',
+        require: 'ngModel',
+        scope: {
+          ngModel: '=',
+          property: '@',
+          froalaOptions: '=stratusFroala',
+          staticOptions: '@froalaOptions', // Alias of stratusFroala, but for instances where the data cannot be bound
+          initFunction: '&froalaInit',
+          autoSave: '@' // A bool/string to define if the model will auto save on focus out or Enter presses. Defaults to true
+        },
+        link: function (scope, element, attrs, ngModel) {
         // Initialize
-        scope.uid = this.uid = _.uniqueId('froala_')
-        Stratus.Instances[this.uid] = scope
+          scope.uid = this.uid = _.uniqueId('froala_')
+          Stratus.Instances[this.uid] = scope
 
-        // Data Connectivity
-        scope.model = null
+          // Data Connectivity
+          scope.model = null
 
-        if (!ngModel || !scope.property) {
-          console.warn(scope.uid + ' has no model or property!')
-          return
-        }
+          if (!ngModel || !scope.property) {
+            console.warn(scope.uid + ' has no model or property!')
+            return
+          }
 
-        // Twiddle Element to Zepto since Angular is lame and doesn't handle anything other than jQuery...
-        element = element.length ? $(element[0]) : element
+          // Twiddle Element to Zepto since Angular is lame and doesn't handle anything other than jQuery...
+          element = element.length ? $(element[0]) : element
 
-        let specialTag = false
-        if (SPECIAL_TAGS.indexOf(element.prop('tagName').toLowerCase()) !== -1) {
-          specialTag = true
-        }
+          let specialTag = false
+          if (SPECIAL_TAGS.indexOf(element.prop('tagName').toLowerCase()) !== -1) {
+            specialTag = true
+          }
 
-        let ctrl = {
-          editorInitialized: false
-        }
+          let ctrl = {
+            editorInitialized: false
+          }
 
-        if (scope.staticOptions && typeof scope.staticOptions === 'string') {
-          scope.staticOptions = JSON.parse(scope.staticOptions)
-        }
+          if (scope.staticOptions && typeof scope.staticOptions === 'string') {
+            scope.staticOptions = JSON.parse(scope.staticOptions)
+          }
 
-        scope.initMode = attrs.froalaInit ? MANUAL : AUTOMATIC
+          scope.initMode = attrs.froalaInit ? MANUAL : AUTOMATIC
 
-        scope.settle = function () {
-          if (ctrl.editorInitialized &&
+          scope.settle = function () {
+            if (ctrl.editorInitialized &&
             scope.model instanceof Model &&
             scope.property &&
             scope.model.get(scope.property) !== scope.value
-          ) {
-            scope.model.set(scope.property, scope.value)
-            if (!scope.$root.$$phase) {
-              scope.$apply()
+            ) {
+              scope.model.set(scope.property, scope.value)
+              if (!scope.$root.$$phase) {
+                scope.$apply()
+              }
             }
           }
-        }
 
-        scope.accept = function () {
-          if (ctrl.editorInitialized &&
+          scope.accept = function () {
+            if (ctrl.editorInitialized &&
             scope.model instanceof Model &&
             scope.property &&
             scope.model.changed === true
-          ) {
+            ) {
             // scope.model.set(scope.property, scope.value);
-            scope.model.throttleSave()
+              scope.model.throttleSave()
+            }
           }
-        }
 
-        // We may not be using a cancel function
-        /* scope.cancel = function () {
+          // We may not be using a cancel function
+          /* scope.cancel = function () {
             if (ctrl.editorInitialized
                 && scope.model instanceof model
                 && scope.property)
@@ -140,135 +140,135 @@
             }
         }; */
 
-        ctrl.init = function () {
-          if (!attrs.id) {
+          ctrl.init = function () {
+            if (!attrs.id) {
             // generate an ID if not present
-            attrs.$set('id', 'froala-' + generatedIds++)
-          }
+              attrs.$set('id', 'froala-' + generatedIds++)
+            }
 
-          scope.$watch('model.data.' + scope.property, function (data) {
-            scope.value = data
-            ngModel.$render() // if the value changes, show the new change (since rendering doesn't always happen)
-          })
+            scope.$watch('model.data.' + scope.property, function (data) {
+              scope.value = data
+              ngModel.$render() // if the value changes, show the new change (since rendering doesn't always happen)
+            })
 
-          // init the editor
-          if (scope.initMode === AUTOMATIC) {
-            ctrl.createEditor()
-          }
+            // init the editor
+            if (scope.initMode === AUTOMATIC) {
+              ctrl.createEditor()
+            }
 
-          // Instruct ngModel how to update the froala editor
-          ngModel.$render = function () {
-            if (ctrl.editorInitialized) {
-              if (specialTag) {
-                let tags = scope.value
+            // Instruct ngModel how to update the froala editor
+            ngModel.$render = function () {
+              if (ctrl.editorInitialized) {
+                if (specialTag) {
+                  let tags = scope.value
 
-                // add tags on element
-                if (tags) {
-                  for (let attr in tags) {
-                    if (tags.hasOwnProperty(attr) && attr !== innerHtmlAttr) {
-                      element.attr(attr, tags[attr])
+                  // add tags on element
+                  if (tags) {
+                    for (let attr in tags) {
+                      if (tags.hasOwnProperty(attr) && attr !== innerHtmlAttr) {
+                        element.attr(attr, tags[attr])
+                      }
+                    }
+                    if (tags.hasOwnProperty(innerHtmlAttr)) {
+                      element[0].innerHTML = tags[innerHtmlAttr]
                     }
                   }
-                  if (tags.hasOwnProperty(innerHtmlAttr)) {
-                    element[0].innerHTML = tags[innerHtmlAttr]
-                  }
-                }
-              } else if (element.froalaEditor('html.get') !== scope.value) { // only rerender if there is a change
-                element.froalaEditor('html.set', scope.value || '', true)
+                } else if (element.froalaEditor('html.get') !== scope.value) { // only rerender if there is a change
+                  element.froalaEditor('html.set', scope.value || '', true)
 
-                // This will reset the undo stack everytime the model changes externally. Can we fix this?
-                element.froalaEditor('undo.reset')
-                element.froalaEditor('undo.saveStep')
+                  // This will reset the undo stack everytime the model changes externally. Can we fix this?
+                  element.froalaEditor('undo.reset')
+                  element.froalaEditor('undo.saveStep')
+                }
+              }
+            }
+
+            ngModel.$isEmpty = function (value) {
+              if (!value) {
+                return true
+              }
+
+              return element.froalaEditor('node.isEmpty', $('<div>' + value + '</div>').get(0))
+            }
+          }
+
+          ctrl.createEditor = function (froalaInitOptions) {
+            ctrl.listeningEvents = ['froalaEditor']
+            if (!ctrl.editorInitialized) {
+              froalaInitOptions = (froalaInitOptions || {})
+              ctrl.options = angular.extend({}, defaultConfig, froalaConfig, scope.froalaOptions, scope.staticOptions, froalaInitOptions)
+
+              if (ctrl.options.immediateAngularModelUpdate) {
+                ctrl.listeningEvents.push('keyup')
+              }
+
+              // flush means to load ng-model into editor
+              let flushNgModel = function () {
+                ctrl.editorInitialized = true
+                ngModel.$render()
+              }
+
+              if (specialTag) {
+              // flush before editor is initialized
+                flushNgModel()
+              } else {
+                ctrl.registerEventsWithCallbacks('froalaEditor.initialized', function () {
+                  flushNgModel()
+                })
+              }
+
+              // Register events provided in the options
+              // Registering events before initializing the editor will bind the initialized event correctly.
+              for (let eventName in ctrl.options.events) {
+                if (ctrl.options.events.hasOwnProperty(eventName)) {
+                  ctrl.registerEventsWithCallbacks(eventName, ctrl.options.events[eventName])
+                }
+              }
+
+              ctrl.froalaElement = element.froalaEditor(ctrl.options).data('froala.editor').$el
+              ctrl.froalaEditor = angular.bind(element, element.froalaEditor)
+              ctrl.initListeners()
+
+              // assign the froala instance to the options object to make methods available in parent scope
+              if (scope.froalaOptions) {
+                scope.froalaOptions.froalaEditor = ctrl.froalaEditor
               }
             }
           }
 
-          ngModel.$isEmpty = function (value) {
-            if (!value) {
-              return true
-            }
-
-            return element.froalaEditor('node.isEmpty', $('<div>' + value + '</div>').get(0))
-          }
-        }
-
-        ctrl.createEditor = function (froalaInitOptions) {
-          ctrl.listeningEvents = ['froalaEditor']
-          if (!ctrl.editorInitialized) {
-            froalaInitOptions = (froalaInitOptions || {})
-            ctrl.options = angular.extend({}, defaultConfig, froalaConfig, scope.froalaOptions, scope.staticOptions, froalaInitOptions)
-
+          ctrl.initListeners = function () {
             if (ctrl.options.immediateAngularModelUpdate) {
-              ctrl.listeningEvents.push('keyup')
-            }
-
-            // flush means to load ng-model into editor
-            let flushNgModel = function () {
-              ctrl.editorInitialized = true
-              ngModel.$render()
-            }
-
-            if (specialTag) {
-              // flush before editor is initialized
-              flushNgModel()
-            } else {
-              ctrl.registerEventsWithCallbacks('froalaEditor.initialized', function () {
-                flushNgModel()
+              ctrl.froalaElement.on('keyup', function () {
+                scope.$evalAsync(ctrl.updateModelView)
               })
             }
 
-            // Register events provided in the options
-            // Registering events before initializing the editor will bind the initialized event correctly.
-            for (let eventName in ctrl.options.events) {
-              if (ctrl.options.events.hasOwnProperty(eventName)) {
-                ctrl.registerEventsWithCallbacks(eventName, ctrl.options.events[eventName])
-              }
-            }
-
-            ctrl.froalaElement = element.froalaEditor(ctrl.options).data('froala.editor').$el
-            ctrl.froalaEditor = angular.bind(element, element.froalaEditor)
-            ctrl.initListeners()
-
-            // assign the froala instance to the options object to make methods available in parent scope
-            if (scope.froalaOptions) {
-              scope.froalaOptions.froalaEditor = ctrl.froalaEditor
-            }
-          }
-        }
-
-        ctrl.initListeners = function () {
-          if (ctrl.options.immediateAngularModelUpdate) {
-            ctrl.froalaElement.on('keyup', function () {
+            element.on('froalaEditor.contentChanged', function () {
               scope.$evalAsync(ctrl.updateModelView)
             })
-          }
 
-          element.on('froalaEditor.contentChanged', function () {
-            scope.$evalAsync(ctrl.updateModelView)
-          })
-
-          element.bind('$destroy', function () {
-            element.off(ctrl.listeningEvents.join(' '))
-            element.froalaEditor('destroy')
-            element = null
-          })
-
-          if (scope.autoSave !== false &&
-            scope.autoSave !== 'false'
-          ) {
-            element.froalaEditor('events.on', 'blur', function (event) {
-              if (ctrl.editorInitialized) {
-                switch (event.type) {
-                  case 'focusout':
-                  case 'blur':
-                    scope.$apply(scope.accept)
-                    break
-                }
-              }
+            element.bind('$destroy', function () {
+              element.off(ctrl.listeningEvents.join(' '))
+              element.froalaEditor('destroy')
+              element = null
             })
-          }
 
-          // FIXME need to make blur on cancel
+            if (scope.autoSave !== false &&
+            scope.autoSave !== 'false'
+            ) {
+              element.froalaEditor('events.on', 'blur', function (event) {
+                if (ctrl.editorInitialized) {
+                  switch (event.type) {
+                    case 'focusout':
+                    case 'blur':
+                      scope.$apply(scope.accept)
+                      break
+                  }
+                }
+              })
+            }
+
+            // FIXME need to make blur on cancel
           /* element.froalaEditor('events.on', 'keydown keypress', function (event) {
               if (ctrl.editorInitialized) {
                   switch (event.which) {
@@ -279,77 +279,77 @@
                   }
               }
           }); */
-        }
-
-        ctrl.updateModelView = function () {
-          let modelContent = null
-
-          if (specialTag) {
-            let attributeNodes = element[0].attributes
-            let attrs = {}
-
-            for (let i = 0; i < attributeNodes.length; i++) {
-              let attrName = attributeNodes[i].name
-              if (ctrl.options.angularIgnoreAttrs && ctrl.options.angularIgnoreAttrs.indexOf(attrName) !== -1) {
-                continue
-              }
-              attrs[attrName] = attributeNodes[i].value
-            }
-            if (element[0].innerHTML) {
-              attrs[innerHtmlAttr] = element[0].innerHTML
-            }
-            modelContent = attrs
-          } else {
-            let returnedHtml = element.froalaEditor('html.get')
-            if (angular.isString(returnedHtml)) {
-              modelContent = returnedHtml
-            }
           }
 
-          scope.value = modelContent
-          scope.settle()
-        }
+          ctrl.updateModelView = function () {
+            let modelContent = null
 
-        ctrl.registerEventsWithCallbacks = function (eventName, callback) {
-          if (eventName && callback) {
-            ctrl.listeningEvents.push(eventName)
-            element.on(eventName, callback)
-          }
-        }
+            if (specialTag) {
+              let attributeNodes = element[0].attributes
+              let attrs = {}
 
-        if (scope.initMode === MANUAL) {
-          let _ctrl = ctrl
-          let controls = {
-            initialize: ctrl.createEditor,
-            destroy: function () {
-              if (_ctrl.froalaEditor) {
-                _ctrl.froalaEditor('destroy')
-                _ctrl.editorInitialized = false
-              }
-            },
-            getEditor: function () {
-              return _ctrl.froalaEditor ? _ctrl.froalaEditor : null
-            }
-          }
-          scope.initFunction({ initControls: controls })
-        }
-
-        scope.$watch('ngModel', function (data) {
-          if (data instanceof Model && !_.isEqual(data, scope.model)) {
-            scope.model = data
-            if (ctrl.initialized !== true) {
-              let unwatch = scope.$watch('model.data', function (dataCheck) {
-                if (dataCheck !== undefined) {
-                  unwatch() // Remove this watch as soon as it's run once
-                  ctrl.init() // Initialize only after there is a model to work with
+              for (let i = 0; i < attributeNodes.length; i++) {
+                let attrName = attributeNodes[i].name
+                if (ctrl.options.angularIgnoreAttrs && ctrl.options.angularIgnoreAttrs.indexOf(attrName) !== -1) {
+                  continue
                 }
-              })
+                attrs[attrName] = attributeNodes[i].value
+              }
+              if (element[0].innerHTML) {
+                attrs[innerHtmlAttr] = element[0].innerHTML
+              }
+              modelContent = attrs
+            } else {
+              let returnedHtml = element.froalaEditor('html.get')
+              if (angular.isString(returnedHtml)) {
+                modelContent = returnedHtml
+              }
+            }
+
+            scope.value = modelContent
+            scope.settle()
+          }
+
+          ctrl.registerEventsWithCallbacks = function (eventName, callback) {
+            if (eventName && callback) {
+              ctrl.listeningEvents.push(eventName)
+              element.on(eventName, callback)
             }
           }
-        })
+
+          if (scope.initMode === MANUAL) {
+            let _ctrl = ctrl
+            let controls = {
+              initialize: ctrl.createEditor,
+              destroy: function () {
+                if (_ctrl.froalaEditor) {
+                  _ctrl.froalaEditor('destroy')
+                  _ctrl.editorInitialized = false
+                }
+              },
+              getEditor: function () {
+                return _ctrl.froalaEditor ? _ctrl.froalaEditor : null
+              }
+            }
+            scope.initFunction({ initControls: controls })
+          }
+
+          scope.$watch('ngModel', function (data) {
+            if (data instanceof Model && !_.isEqual(data, scope.model)) {
+              scope.model = data
+              if (ctrl.initialized !== true) {
+                let unwatch = scope.$watch('model.data', function (dataCheck) {
+                  if (dataCheck !== undefined) {
+                    unwatch() // Remove this watch as soon as it's run once
+                    ctrl.init() // Initialize only after there is a model to work with
+                  }
+                })
+              }
+            }
+          })
+        }
       }
-    }
-  }]
+    }]
   Stratus.Directives.FroalaView = ['$sce', function ($sce) {
     return {
       restrict: 'ACM',
