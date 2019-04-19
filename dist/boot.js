@@ -278,7 +278,7 @@ boot.config({
     // Enabled For Editor
     {
       name: 'codemirror',
-      location: 'sitetheorystratus/stratus/bower_components/codemirror',
+      location: boot.bundle + 'stratus/bower_components/codemirror',
       main: 'lib/codemirror'
     }
   ],
@@ -316,10 +316,10 @@ boot.config({
     'stratus.directives.drag': boot.bundle + '/stratus/extras/directives/drag' + boot.suffix,
     'stratus.directives.drop': boot.bundle + '/stratus/extras/directives/drop' + boot.suffix,
     // Used for extras/directives/carousel.js
-    'stratus.directives.src': 'sitetheorystratus/stratus/extras/directives/src' + boot.suffix,
+    'stratus.directives.src': boot.bundle + 'stratus/extras/directives/src' + boot.suffix,
 
-    'stratus.directives.froala': 'sitetheorystratus/stratus/extras/directives/froala' + boot.suffix,
-    'stratus.directives.redactor': 'sitetheorystratus/stratus/extras/directives/redactor' + boot.suffix,
+    'stratus.directives.froala': boot.bundle + 'stratus/extras/directives/froala' + boot.suffix,
+    'stratus.directives.redactor': boot.bundle + 'stratus/extras/directives/redactor' + boot.suffix,
 
     // THIRD PARTY: BOWER COMPONENTS
     // -----------------------------
