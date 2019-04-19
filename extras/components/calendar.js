@@ -35,6 +35,7 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
+  const localPath = 'extras/components'
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {
@@ -50,12 +51,15 @@
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
+      )
+      $scope.initialized = false
+
+      // FullCalendar
       $scope.calendarId = $scope.elementId + '_fullcalendar'
       Stratus.Internals.CssLoader(
         Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar/dist/fullcalendar' + min + '.css'
-      )
-      Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
       )
 
       $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}

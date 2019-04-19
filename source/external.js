@@ -1,4 +1,4 @@
-/* global _, $, jQuery, angular */
+/* global _, jQuery, angular */
 
 // Underscore Settings
 // -------------------
@@ -326,8 +326,7 @@ _.mixin({
    * @returns {boolean}
    */
   isAngular: function (element) {
-    return typeof angular === 'object' && angular && angular.element &&
-      element instanceof angular.element
+    return typeof angular === 'object' && angular && angular.element && element instanceof angular.element
   },
 
   // Determines whether or not the element was selected from Angular
@@ -622,23 +621,3 @@ _.mixin({
     return arr.join('\n').replace(/\n/g, '')
   }
 })
-
-// jQuery Plugins
-// --------------
-
-// FIXME: These are deprecated, since they will never load in the core now that
-// jQuery is gone
-if (typeof $ === 'function' && $.fn) {
-  /**
-   * @param event
-   * @returns {boolean}
-   */
-  $.fn.notClicked = function (event) {
-    if (!this.selector && !this.context) {
-      console.error(
-        'No Selector or Context:', this)
-    }
-    return !$(event.target).closest(this.selector || this.context).length &&
-      !$(event.target).parents(this.selector || this.context).length
-  }
-}

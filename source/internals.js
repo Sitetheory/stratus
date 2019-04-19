@@ -292,49 +292,51 @@ Stratus.Internals.CssLoader = function (url) {
   return new Promise(function (resolve, reject) {
     /* Digest Extension */
     /*
-         FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
-         let extension = /\.([0-9a-z]+)$/i;
-         extension = extension.exec(url);
-         */
-    /* Verify Identical Calls */
+    FIXME: Less files won't load correctly due to less.js not being able to parse new stylesheets after runtime
+    let extension = /\.([0-9a-z]+)$/i;
+    extension = extension.exec(url);
+    */
+
+    /* Handle Identical Calls */
     if (url in Stratus.CSS) {
       if (Stratus.CSS[url]) {
         resolve()
       } else {
         Stratus.Events.once('onload:' + url, resolve)
       }
-    } else {
-      /* Set CSS State */
-      Stratus.CSS[url] = false
+      return
+    }
 
-      /* Create Link */
-      let link = document.createElement('link')
-      link.type = 'text/css'
-      link.rel = 'stylesheet'
-      link.href = url
+    /* Set CSS State */
+    Stratus.CSS[url] = false
 
-      /* Track Resolution */
-      Stratus.Events.once('onload:' + url, function () {
-        Stratus.CSS[url] = true
-        resolve()
-      })
+    /* Create Link */
+    let link = document.createElement('link')
+    link.type = 'text/css'
+    link.rel = 'stylesheet'
+    link.href = url
 
-      /* Capture OnLoad or Fallback */
-      if ('onload' in link && !Stratus.Client.android) {
-        link.onload = function () {
-          Stratus.Events.trigger('onload:' + url)
-        }
-      } else {
-        Stratus.CSS[url] = true
+    /* Track Resolution */
+    Stratus.Events.once('onload:' + url, function () {
+      Stratus.CSS[url] = true
+      resolve()
+    })
+
+    /* Capture OnLoad or Fallback */
+    if ('onload' in link && !Stratus.Client.android) {
+      link.onload = function () {
         Stratus.Events.trigger('onload:' + url)
       }
-
-      /* Inject Link into Head */
-
-      // TODO: Add the ability to prepend or append by a flagged option
-      // Stratus('head').prepend(link);
-      Stratus('head').append(link)
+    } else {
+      Stratus.CSS[url] = true
+      Stratus.Events.trigger('onload:' + url)
     }
+
+    /* Inject Link into Head */
+
+    // TODO: Add the ability to prepend or append by a flagged option
+    // Stratus('head').prepend(link);
+    Stratus('head').append(link)
   })
 }
 
@@ -737,7 +739,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
 
   // Execute the methods for every registered object ONLY when there is a
   // change to the viewPort
-  Stratus.Environment.on('change:viewPortChange', function (model) {
+  Stratus.Environment.on('change:viewPortChange', function (event, model) {
     if (model.get('viewPortChange')) {
       model.set('lastScroll', Stratus.Internals.GetScrollDir())
 

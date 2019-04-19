@@ -189,7 +189,7 @@ boot.config({
     // Enabled For Editor
     {
       name: 'codemirror',
-      location: 'sitetheorystratus/stratus/bower_components/codemirror',
+      location: boot.bundle + 'stratus/bower_components/codemirror',
       main: 'lib/codemirror'
     }
   ],
@@ -215,8 +215,6 @@ boot.config({
     'stratus.services.collection': boot.bundle + 'stratus/services/collection' + boot.suffix,
     'stratus.services.registry': boot.bundle + 'stratus/services/registry' + boot.suffix,
     'stratus.services.details': boot.bundle + 'stratus/services/details' + boot.suffix,
-    // TODO: deprecate this once we've moved all features from utility to specific service
-    'stratus.services.utility': boot.bundle + 'stratus/services/utility' + boot.suffix,
 
     // COMPONENTS:
     // -----------
@@ -229,18 +227,16 @@ boot.config({
     'stratus.directives.drag': boot.bundle + '/stratus/extras/directives/drag' + boot.suffix,
     'stratus.directives.drop': boot.bundle + '/stratus/extras/directives/drop' + boot.suffix,
     // Used for extras/directives/carousel.js
-    'stratus.directives.src': 'sitetheorystratus/stratus/extras/directives/src' + boot.suffix,
+    'stratus.directives.src': boot.bundle + 'stratus/extras/directives/src' + boot.suffix,
 
-    'stratus.directives.froala': 'sitetheorystratus/stratus/extras/directives/froala' + boot.suffix,
-    'stratus.directives.redactor': 'sitetheorystratus/stratus/extras/directives/redactor' + boot.suffix,
+    'stratus.directives.froala': boot.bundle + 'stratus/extras/directives/froala' + boot.suffix,
+    'stratus.directives.redactor': boot.bundle + 'stratus/extras/directives/redactor' + boot.suffix,
 
     // THIRD PARTY: BOWER COMPONENTS
     // -----------------------------
-    promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
-
+    // promise: boot.bundle + 'stratus/bower_components/promise-polyfill/promise' + boot.suffix,
     // Used by extras/filters/gravatar.js
     md5: boot.bundle + 'stratus/bower_components/js-md5/build/md5.min',
-
     underscore: boot.bundle + 'stratus/bower_components/underscore/underscore' + boot.dashSuffix,
 
     /* Bowser */
@@ -326,7 +322,10 @@ boot.config({
     'froala-url': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/url.min',
     'froala-video': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/video.min',
     'froala-word-paste': boot.bundle + 'stratus/bower_components/froala-wysiwyg-editor/js/plugins/word_paste.min',
-    'angular-froala': boot.bundle + 'stratus/bower_components/angular-froala/src/angular-froala'
+    'angular-froala': boot.bundle + 'stratus/bower_components/angular-froala/src/angular-froala',
+
+    /* Common Libraries */
+    chart: boot.bundle + 'stratus/bower_components/chart.js/dist/Chart'
 
   }
 })

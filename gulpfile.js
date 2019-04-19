@@ -69,7 +69,6 @@ const location = {
       'umd/header.js',
       'source/prototype.js',
       'source/external.js',
-      'source/event.js',
       'source/prototypes.js',
       'source/internals.js',
       'source/selector.js',
@@ -90,15 +89,15 @@ const location = {
   },
   mangle: {
     core: [
-      'normalizers/*.js',
-      'routers/*.js',
+      'extras/normalizers/*.js',
       'services/*.js',
+      'extras/services/*.js',
       'legacy/**/*.js'
     ],
     min: [
-      'normalizers/*.min.js',
-      'routers/*.min.js',
+      'extras/normalizers/*.min.js',
       'services/*.min.js',
+      'extras/services/*.min.js',
       'legacy/**/*.min.js'
     ]
   },
@@ -106,22 +105,33 @@ const location = {
     core: [
       'boot/*.js',
       'components/*.js',
+      'extras/components/*.js',
       'controllers/*.js',
+      'extras/controllers/*.js',
       'directives/*.js',
-      'filters/*.js'
+      'extras/directives/*.js',
+      'filters/*.js',
+      'extras/filters/*.js'
     ],
     min: [
       'boot/*.min.js',
       'components/*.min.js',
+      'extras/components/*.min.js',
       'controllers/*.min.js',
+      'extras/controllers/*.min.js',
       'directives/*.min.js',
-      'filters/*.min.js'
+      'extras/directives/*.min.js',
+      'filters/*.min.js',
+      'extras/filters/*.min.js'
     ]
   },
   less: {
     core: [
       // 'stratus.less',
-      'components/*.less'
+      'components/*.less',
+      'extras/components/*.less',
+      'directives/*.less',
+      'extras/directives/*.less'
     ],
     compile: []
   },
@@ -129,22 +139,30 @@ const location = {
     core: [
       // 'stratus.css',
       'components/*.css',
-      'directives/*.css'
+      'extras/components/*.css',
+      'directives/*.css',
+      'extras/directives/*.css'
     ],
     min: [
       // 'stratus.min.css',
       'components/*.min.css',
-      'directives/*.min.css'
+      'extras/components/*.min.css',
+      'directives/*.min.css',
+      'extras/directives/*.min.css'
     ]
   },
   template: {
     core: [
       'components/*.html',
-      'directives/*.html'
+      'extras/components/*.html',
+      'directives/*.html',
+      'extras/directives/*.html'
     ],
     min: [
       'components/*.min.html',
-      'directives/*.min.html'
+      'extras/components/*.min.html',
+      'directives/*.min.html',
+      'extras/directives/*.min.html'
     ]
   }
 }

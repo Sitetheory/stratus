@@ -13,10 +13,8 @@
       'text',
       'underscore',
       'jquery', // TODO: Remove once phased out appropriately
-      'bowser',
-      'promise',
-      'backbone' // TODO: Remove once phased out appropriately
-    ], function (text, _, bowser) {
+      'bowser'
+    ], function (text, _, jQuery, bowser) {
       return (root.Stratus = factory(text, _, jQuery, bowser))
     })
   } else {

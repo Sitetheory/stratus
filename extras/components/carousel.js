@@ -38,6 +38,8 @@
 }(this, function (Stratus, _, angular, Swiper) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'carousel'
+  const localPath = 'extras/components'
 
   // This component is just a simple base.
   Stratus.Components.Carousel = {
@@ -98,14 +100,18 @@
       function ($scope, $attrs, $window, $element, Registry, Model, Collection) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId('carousel_')
+        $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Internals.CssLoader(
+          Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
+        )
+        $scope.initialized = false
+
         // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(
           Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' + min + '.css'
         )
-        $scope.initialized = false
 
         // Hoist Attributes
         $scope.property = $attrs.property || null
@@ -535,6 +541,6 @@
         }
       }
     ],
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/carousel' + min + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.html'
   }
 }))

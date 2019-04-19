@@ -26,10 +26,16 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'base'
+  const localPath = 'components'
 
   // This component is just a simple base.
   Stratus.Components.Base = {
+    // Angular Components allow transclude options directly in the object. So whatever you put in Foo, will overwrite
+    // whatever is in this component's template `stratus-base-model` area.
+    // <stratus-base><stratus-base-model>Foo</stratus-base-model></stratus-base>
     transclude: {
+      // This is a sample only
+      // See ngTransclude for more character options, e.g. ? means it won't freak out if child node doesn't exist
       model: '?stratusBaseModel'
     },
     bindings: {
@@ -60,7 +66,7 @@
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
       Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.css'
+        Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
       )
       $scope.initialized = false
 
@@ -92,6 +98,6 @@
       }
     },
     // template: '<div id="{{ elementId }}"><div ng-if="model && property && model.get(property)" style="list-style-type: none;">{{ model.get(property) | json }}</div><ul ng-if="collection && model && property" ng-cloak><stratus-search></stratus-search><li ng-repeat="model in collection.models">{{ model.data | json }}</li><stratus-pagination></stratus-pagination></ul></div>',
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + 'components/' + name + min + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.html'
   }
 }))

@@ -9,7 +9,8 @@
     define([
       'stratus',
       'underscore',
-      'angular'
+      'angular',
+      'angular-material' // Reliant for $mdToast
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
