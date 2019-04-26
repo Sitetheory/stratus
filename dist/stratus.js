@@ -1942,7 +1942,7 @@ Stratus.Internals.LoadImage = function (obj) {
         src = el.attr('src')
       }
       if (_.isEmpty(src)) {
-        return false;
+        return false
       }
 
       let size = _.hydrate(el.attr('data-size')) || obj.size || null
@@ -2057,7 +2057,7 @@ Stratus.Internals.LoadImage = function (obj) {
       let srcOriginProtocol = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
 
       // Set up actions for onLoad and onError (if size doesn't exist, revert to srcOrigin)
-      if(type == 'img') {
+      if (type === 'img') {
         // Add Listeners (Only once per Element!)
         el.on('load', function () {
           el.addClass('loaded').removeClass('loading')
@@ -2070,12 +2070,12 @@ Stratus.Internals.LoadImage = function (obj) {
         })
       } else {
         // If Background Image Create a Test Image to Test Loading
-        var loadEl = jQuery('<img/>')
+        let loadEl = jQuery('<img/>')
         loadEl.attr('src', srcOriginProtocol)
-        loadEl.on('load', function() {
+        loadEl.on('load', function () {
           el.addClass('loaded').removeClass('loading')
-          jQuery(this).remove(); // prevent memory leaks
-        });
+          jQuery(this).remove() // prevent memory leaks
+        })
         loadEl.on('error', function () {
           // TODO: Go down in sizes before reaching the origin
           // Standardize src
@@ -2089,7 +2089,7 @@ Stratus.Internals.LoadImage = function (obj) {
       let srcProtocol = src.startsWith('//') ? window.location.protocol + src : src
       el.attr('data-loading', _.dehydrate(false))
       el.attr('data-size', _.dehydrate(size))
-      if(type === 'img') {
+      if (type === 'img') {
         el.attr('src', srcProtocol)
       } else {
         el.css('background-image', 'url(' + srcProtocol + ')')
@@ -2097,7 +2097,7 @@ Stratus.Internals.LoadImage = function (obj) {
 
       // FIXME: This is a mess that we shouldn't need to maintain.
       // RegisterGroups should just use Native Logic instead of
-      // another level of abstraction.
+      // another level of abstraction.np
 
       // Remove from registration
       // TODO: remove this
