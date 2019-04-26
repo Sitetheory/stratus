@@ -3,8 +3,10 @@
 
 /* global define */
 
-// Define AMD, Require.js, or Contextual Scope
+// Define AMD (Universal Module Definition: https://github.com/umdjs/umd), Require.js, or Contextual Scope
+// We are making a factory (Javascript function prototype that is wrapped so that it can be loaded asynchronously)
 (function (root, factory) {
+  // This will define the dependencies that will load in require.js
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
@@ -20,8 +22,12 @@
       'stratus.services.collection'
     ], factory)
   } else {
+    // If there is no define then it starts the function instantly, but it wouldn't have any requirements, only root (window) available objects
     factory(root.Stratus, root._, root.angular)
   }
+  // this=root (window), function = factory
+  // the properties passed to the function, are the items (in order) defined in the define() or factory()
+  // These properties are now available inside the factory
 }(this, function (Stratus, _, angular) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
@@ -38,6 +44,9 @@
       // See ngTransclude for more character options, e.g. ? means it won't freak out if child node doesn't exist
       model: '?stratusBaseModel'
     },
+    // These are attribute that can be passed from the tag to this factory, they are accessed in the factory as
+    // $attrs.x (flat string - used with @ sign) or
+    // $ctrl.x (parsed - needed with = sign)
     bindings: {
       // Basic Control for Designers
       elementId: '@',
@@ -57,6 +66,7 @@
 
       // Collection Options
       limit: '@',
+      // One way bound (will parse once and never touch again)
       options: '<'
     },
     controller: function ($scope, $attrs, $log, Registry, Model, Collection) {

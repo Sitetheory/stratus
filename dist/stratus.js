@@ -1934,10 +1934,15 @@ Stratus.Internals.LoadImage = function (obj) {
       // Don't Get the Width, until it's "onScreen" (in case it was collapsed
       // offscreen originally)
       let src = _.hydrate(el.attr('data-src')) || el.attr('src') || null
+      // NOTE: Element can be either <img> or any element with background image in style
+      let type = el.prop('tagName').toLowerCase()
 
       // Handle precedence
-      if (src === 'lazy' || _.isEmpty(src)) {
+      if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
         src = el.attr('src')
+      }
+      if (_.isEmpty(src)) {
+        return false
       }
 
       let size = _.hydrate(el.attr('data-size')) || obj.size || null
@@ -2043,33 +2048,56 @@ Stratus.Internals.LoadImage = function (obj) {
       if (srcMatch !== null) {
         src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
       } else {
-        console.error('Unable to find src for image:', el)
+        console.error('Unable to find file name for image src:', el)
       }
 
       // Start Loading
       el.addClass('loading')
 
-      // Add Listeners (Only once per Element!)
-      el.on('load', function () {
-        el.addClass('loaded').removeClass('loading')
-      })
-      el.on('error', function () {
-        // TODO: Go down in sizes before reaching the origin
-        el.attr('data-loading', _.dehydrate(false))
-        el.attr('src', srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin)
-        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
-      })
+      let srcOriginProtocol = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
 
-      // Change the Source to be the desired path
-      if (!_.isEmpty(src)) {
-        el.attr('data-loading', _.dehydrate(false))
-        el.attr('data-size', _.dehydrate(size))
-        el.attr('src', src.startsWith('//') ? window.location.protocol + src : src)
+      // Set up actions for onLoad and onError (if size doesn't exist, revert to srcOrigin)
+      if (type === 'img') {
+        // Add Listeners (Only once per Element!)
+        el.on('load', function () {
+          el.addClass('loaded').removeClass('loading')
+        })
+        el.on('error', function () {
+          // TODO: Go down in sizes before reaching the origin
+          el.attr('data-loading', _.dehydrate(false))
+          el.attr('src', srcOriginProtocol)
+          console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+        })
+      } else {
+        // If Background Image Create a Test Image to Test Loading
+        let loadEl = jQuery('<img/>')
+        loadEl.attr('src', srcOriginProtocol)
+        loadEl.on('load', function () {
+          el.addClass('loaded').removeClass('loading')
+          jQuery(this).remove() // prevent memory leaks
+        })
+        loadEl.on('error', function () {
+          // TODO: Go down in sizes before reaching the origin
+          // Standardize src
+          el.attr('data-loading', _.dehydrate(false))
+          el.css('background-image', 'url(' + srcOriginProtocol + ')')
+          console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
+        })
+      }
+
+      // Change the Source to be the desired path (for image or background)
+      let srcProtocol = src.startsWith('//') ? window.location.protocol + src : src
+      el.attr('data-loading', _.dehydrate(false))
+      el.attr('data-size', _.dehydrate(size))
+      if (type === 'img') {
+        el.attr('src', srcProtocol)
+      } else {
+        el.css('background-image', 'url(' + srcProtocol + ')')
       }
 
       // FIXME: This is a mess that we shouldn't need to maintain.
       // RegisterGroups should just use Native Logic instead of
-      // another level of abstraction.
+      // another level of abstraction.np
 
       // Remove from registration
       // TODO: remove this
