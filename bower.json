@@ -47,6 +47,7 @@
     "promise-polyfill": "^6.*",
     "requirejs": "^2.*",
     "swiper": "^4.*",
+    "skrollr": "^0.6.30",
     "text": "^2.*",
     "underscore": "^1.9.*"
   },
