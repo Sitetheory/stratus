@@ -22,7 +22,7 @@
     skrollr.init({})
     // HACK: This refresh is needed in order for certain areas to load
     setTimeout(function () {
-      skrollr.get().refresh();
-    }, 3000);
+      skrollr.get().refresh()
+    }, 3000)
   })
 }))
