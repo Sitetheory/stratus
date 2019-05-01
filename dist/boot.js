@@ -351,8 +351,9 @@ boot.config({
 
     // Required for extras/components/calendar.js
     fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
+    ical: boot.bundle + 'stratus/bower_components/ical.js/build/ical' + boot.suffix,
     'stratus.services.iCal': boot.bundle + 'stratus/extras/services/iCal' + boot.suffix,
-    'stratus.components.calendar.timezones': boot.bundle + 'stratus/components/calendar.timezones' + boot.suffix,
+    'stratus.components.calendar.timezones': boot.bundle + 'stratus/extras/components/calendar.timezones' + boot.suffix,
     'moment-timezone': boot.bundle + 'stratus/bower_components/moment-timezone/builds/moment-timezone-with-data' + boot.suffix,
     'moment-range': boot.bundle + 'stratus/bower_components/moment-range/dist/moment-range' + boot.suffix,
 
