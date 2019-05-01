@@ -358,6 +358,9 @@ boot.config({
 
     // Required for extras/components/carousel.js
     swiper: boot.bundle + 'stratus/bower_components/swiper/dist/js/swiper' + boot.suffix,
+    // Required for extras/directives/skrollr.js
+    'skrollr-native': boot.bundle + 'stratus/bower_components/skrollr/' + (boot.dev ? 'src' : 'dist') + '/skrollr' + boot.suffix,
+    'skrollr': boot.bundle + 'stratus/extras/normalizers/skrollr.init' + boot.suffix,
 
     /* Angular: required for almost all extras and lots of others */
     angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
