@@ -59,6 +59,9 @@
       }
       $scope.$log = $log
 
+      // Inject Javascript Objects
+      $scope.Math = window.Math
+
       // Type Checks
       $scope.isArray = angular.isArray
       $scope.isDate = angular.isDate
