@@ -16,7 +16,8 @@
   }
 }(this, function (Stratus, skrollr) {
   Stratus.DOM.complete(function () {
-    if (Stratus.Client.name === 'iosdevice') {
+    // Disable Skrollr (parallax) for all mobile, it doesn't work on ios, safari, chrome or android chrome)
+    if (Stratus.Client.mobile) {
       return
     }
     skrollr.init({})
