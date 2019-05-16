@@ -1891,6 +1891,24 @@ Stratus.Internals.LoadEnvironment = function () {
   if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
     Stratus.Environment.set(initialLoad)
   }
+  // Environment Information
+  let passiveEventOptions = false
+  try {
+    (Stratus.Environment.get('viewPort') || window).addEventListener(
+      'test',
+      null,
+      Object.defineProperty(
+        {},
+        'passive',
+        {
+          get: function () {
+            passiveEventOptions = { passive: true }
+          }
+        }
+      )
+    )
+  } catch (err) {}
+  Stratus.Environment.set('passiveEventOptions', passiveEventOptions)
 }
 
 // Lazy Load Image
@@ -2150,48 +2168,48 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
   // Execute the methods for every registered object ONLY when there is a
   // change to the viewPort
   Stratus.Environment.on('change:viewPortChange', function (event, model) {
-    if (model.get('viewPortChange')) {
-      model.set('lastScroll', Stratus.Internals.GetScrollDir())
-
-      // Cycle through all the registered objects an execute their function
-      // We must use the registered onScroll objects, because they get removed
-      // in some cases (e.g. lazy load)
-      // TODO: remove logic of RegisterGroup
-      if (!Stratus.Environment.get('production')) {
-        console.log('Remove RegisterGroup Logic:')
-      }
-      let elements = Stratus.RegisterGroup.get('OnScroll')
-
-      _.each(elements, function (obj) {
-        if (typeof obj !== 'undefined' && _.has(obj, 'method')) {
-          obj.method(obj)
-        }
-      })
-      model.set('viewPortChange', false)
-      model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
+    if (!model.get('viewPortChange')) {
+      return
     }
+    model.set('lastScroll', Stratus.Internals.GetScrollDir())
+
+    // Cycle through all the registered objects an execute their function
+    // We must use the registered onScroll objects, because they get removed
+    // in some cases (e.g. lazy load)
+    // TODO: remove logic of RegisterGroup
+    let elements = Stratus.RegisterGroup.get('OnScroll')
+
+    _.each(elements, function (obj) {
+      if (typeof obj !== 'undefined' && _.has(obj, 'method')) {
+        obj.method(obj)
+      }
+    })
+    model.set('viewPortChange', false)
+    model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
   })
 
-  // jQuery Binding
-  if (typeof jQuery === 'function' && jQuery.fn) {
-    jQuery(Stratus.Environment.get('viewPort') || window).scroll(function () {
-      /* *
-      if (!Stratus.Environment.get('production')) {
-        console.log('scrolling:', Stratus.Internals.GetScrollDir())
-      }
-      /* */
-      if (Stratus.Environment.get('viewPortChange') === false) {
-        Stratus.Environment.set('viewPortChange', true)
-      }
-    })
+  // Listen for Scrolling Updates
+  // Note: You can't use event.preventDefault() in Passive Events
+  const viewPort = (Stratus.Environment.get('viewPort') || window)
+  viewPort.addEventListener('scroll', function () {
+    /* *
+    if (!Stratus.Environment.get('production')) {
+      console.log('scrolling:', Stratus.Internals.GetScrollDir())
+    }
+    /* */
+    if (Stratus.Environment.get('viewPortChange') !== false) {
+      return
+    }
+    Stratus.Environment.set('viewPortChange', true)
+  }, Stratus.Environment.get('passiveEventOptions'))
 
-    // Resizing can change what's on screen so we need to check the scrolling
-    jQuery(Stratus.Environment.get('viewPort') || window).resize(function () {
-      if (Stratus.Environment.get('viewPortChange') === false) {
-        Stratus.Environment.set('viewPortChange', true)
-      }
-    })
-  }
+  // Resizing can change what's on screen so we need to check the scrolling
+  viewPort.addEventListener('resize', function () {
+    if (Stratus.Environment.get('viewPortChange') !== false) {
+      return
+    }
+    Stratus.Environment.set('viewPortChange', true)
+  }, Stratus.Environment.get('passiveEventOptions'))
 
   // Run Once initially
   Stratus.Environment.set('viewPortChange', true)
