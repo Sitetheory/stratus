@@ -580,27 +580,36 @@
             /**
              * @param attr
              * @param value
+             * @returns {AngularModel}
              */
             set (attr, value) {
               const that = this
-              if (attr && typeof attr === 'object') {
+              if (!attr) {
+                console.warn('No attr for model.set()!')
+                return that
+              }
+              if (typeof attr === 'object') {
                 _.each(attr, function (value, attr) {
                   that.setAttribute(attr, value)
                 }, this)
-              } else {
-                that.setAttribute(attr, value)
+                return that
               }
+              that.setAttribute(attr, value)
+              return that
             }
 
             /**
              * @param attr
              * @param value
+             * @returns {boolean}
              */
             setAttribute (attr, value) {
               const that = this
-              if (typeof attr === 'string' &&
-                  (_.contains(attr, '.') || _.contains(attr, '['))
-              ) {
+              if (typeof attr !== 'string') {
+                console.warn('Malformed attr for model.setAttribute()!')
+                return false
+              }
+              if (_.contains(attr, '.') || _.contains(attr, '[')) {
                 let future
                 that.buildPath(attr)
                   .reduce(function (attrs, link, index, chain) {
@@ -617,7 +626,8 @@
               } else {
                 that.data[attr] = value
               }
-              /* TODO: that.trigger('change:' + attr, value); */
+              that.trigger('change', that)
+              that.trigger(`change:${attr}`, value)
             }
 
             /**

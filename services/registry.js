@@ -35,6 +35,7 @@
             // TODO: Handle Version Routing through Angular
             // Maintain all models in Namespace
             // Inverse the parent and child objects the same way Doctrine does
+            // TODO: PushState Handling like: #/media/p/2
             /**
              * @param $element
              * @param $scope
@@ -103,6 +104,7 @@
                   if (!Stratus.Environment.get('production')) {
                     console.log('poll attribute:', key)
                   }
+                  // TODO: Check if this ever hits a timeout
                   _.poll(function () {
                     return interpreter($scope.$parent)
                   }, 7500, 250)
@@ -204,6 +206,10 @@
                   $scope.data = data
                   if (data instanceof Model) {
                     $scope.model = data
+                    $scope.model.on('change', function () {
+                      $scope.$apply()
+                    })
+                    // TODO: Add $scope.$apply()
                   } else if (data instanceof Collection) {
                     $scope.collection = data
                   }
