@@ -10,7 +10,8 @@
       'stratus',
       'underscore',
       'angular',
-      'stratus.services.registry'
+      'stratus.services.registry',
+      'angular-sanitize'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
