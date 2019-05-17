@@ -16,15 +16,19 @@
     factory(root.Stratus, root._, root.angular)
   }
 }(this, function (Stratus, _, angular) {
+  // Require this to Sanitize all ng-bind-html instances
+  Stratus.Modules.ngSanitize = true
+
   // This Controller handles simple element binding
   // for a single scope to an API Object Reference.
   Stratus.Controllers.Generic = [
     '$scope',
     '$element',
     '$log',
+    '$sce',
     '$parse',
     'Registry',
-    function ($scope, $element, $log, $parse, Registry) {
+    function ($scope, $element, $log, $sce, $parse, Registry) {
       // Store Instance
       Stratus.Instances[_.uniqueId('generic_')] = $scope
 
@@ -72,6 +76,9 @@
       $scope.isObject = angular.isObject
       $scope.isString = angular.isString
       $scope.isUndefined = angular.isUndefined
+
+      // Angular Wrappers
+      $scope.getHTML = $sce.trustAsHtml
 
       // Handle Selected
       if ($scope.collection) {
