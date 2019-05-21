@@ -148,7 +148,10 @@
       $scope.addEventICSSource = async function (url) {
         return new Promise(function (resolve) {
           // TODO handle bad fetch softly
-          jQuery.get(`https://cors-anywhere.herokuapp.com/${url}`, function (urlResponse) {
+          // TODO: do not use CORS if there is a better way!
+          // temporarily we at least don't use CORS on relative URLs
+          let fetchUrl = (url.indexOf('http') === 0) ? `https://cors-anywhere.herokuapp.com/${url}` : url;
+          jQuery.get(fetchUrl, function (urlResponse) {
             $log.log('fetched the events from', url)
 
             const iCalExpander = new iCal.ICalExpander(urlResponse, { maxIterations: 0 })

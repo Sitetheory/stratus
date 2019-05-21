@@ -402,6 +402,7 @@
                         .hideDelay(3000)
                     )
                   }
+                  // TODO: add an error to the model so that we can see this error on the model and display it to users (instead of just a console). See: https://app.asana.com/0/348819471518170/1123940482172957
                   console.error('FETCH:', message)
                 })
             }
