@@ -74,6 +74,7 @@
               this.pending = false
               this.error = false
               this.completed = false
+              this.status = null
 
               // TODO: Enable Auto-Save
 
@@ -315,6 +316,7 @@
                 }
 
                 $http(prototype).then(function (response) {
+                  that.status = response.status
                   if (response.status === 200 && angular.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
                     // Data
