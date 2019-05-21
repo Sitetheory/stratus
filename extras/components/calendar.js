@@ -41,11 +41,13 @@
   Stratus.Components.Calendar = {
     transclude: true,
     bindings: {
-      ngModel: '=',
+      // TODO: remove if we don't need models and collections
+      // ngModel: '=',
       elementId: '@',
       options: '@'
     },
-    controller: function ($scope, $attrs, $element, $log, $sce, $mdPanel, $mdDialog, Collection, iCal) {
+    // TODO: remove Collection if we don't need models and collections
+    controller: function ($scope, $attrs, $element, $log, $sce, $mdPanel, $mdDialog, /* Collection, */ iCal) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
@@ -113,7 +115,8 @@
       $scope.endRange = moment()
 
       // Event Collection
-      $scope.collection = null
+      // TODO: remove if we don't need models and collections
+      //$scope.collection = null
 
       $ctrl.$onInit = function () {
         // Load all timezones for use
@@ -121,39 +124,52 @@
         // Compile the fullcalendar header to look useable
         $ctrl.prepareHeader()
 
-        $scope.$watch('$ctrl.ngModel', function (data) {
-          if (data instanceof Collection) {
-            $scope.collection = data
-          }
-        })
 
+        // TODO: remove if we don't need models and collections
+        // $scope.$watch('$ctrl.ngModel', function (data) {
+        //   if (data instanceof Collection) {
+        //     $scope.collection = data
+        //   }
+        // })
         // Ensure the Collection is ready first
-        let collectionWatcher = $scope.$watch('collection.completed', async function (completed) {
-          if (completed) {
-            collectionWatcher() // Destroy this watcher
-            $log.log('collection:', $scope.collection)
-            // initialize everything here
-            $ctrl.render()
+
+        // let collectionWatcher = $scope.$watch('collection.completed', async function (completed) {
+        //   if (completed) {
+        //     collectionWatcher() // Destroy this watcher
+        //     $log.log('collection:', $scope.collection)
+        //     // initialize everything here
+        //     $ctrl.render()
+        //     // process a list of URLS, just using single example below
+        //     // Process each feed before continuing
+        //     $log.log('loading external urls', $scope.options.eventSources)
+        //     await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
+        //     // $log.log('completed loading events', events);
+        //     $log.log('events all loaded!')
+        //     $scope.initialized = true
+        //   }
+        // }, true)
+
+        setTimeout(async function () {
+          $ctrl.render().then(function() {
             // process a list of URLS, just using single example below
             // Process each feed before continuing
             $log.log('loading external urls', $scope.options.eventSources)
-            await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
-            // $log.log('completed loading events', events);
+            // This
+            $scope.options.eventSources.map(url => $scope.addEventICSSource(url))
+            // $log.log('completed loading events', events);\
             $log.log('events all loaded!')
             $scope.initialized = true
-          }
-        }, true)
+          }).catch(function(e) {
+            console.error('Unknown error rendering the calendar', e)
+          })
+        }, 1)
       }
 
       $scope.addEventICSSource = async function (url) {
         return new Promise(function (resolve) {
           // TODO handle bad fetch softly
-          // TODO: do not use CORS if there is a better way!
-          // temporarily we at least don't use CORS on relative URLs
-          let fetchUrl = (url.indexOf('http') === 0) ? `https://cors-anywhere.herokuapp.com/${url}` : url;
-          jQuery.get(fetchUrl, function (urlResponse) {
+          jQuery.get(`https://cors-anywhere.herokuapp.com/${url}`, function (urlResponse) {
             $log.log('fetched the events from', url)
-
             const iCalExpander = new iCal.ICalExpander(urlResponse, { maxIterations: 0 })
             const events = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
             jQuery('#' + $scope.calendarId).fullCalendar('addEventSource', {
@@ -258,36 +274,42 @@
        * 'render' force calendar to redraw - http://fullcalendar.io/docs/display/render/
        */
       $ctrl.render = function () {
-        jQuery('#' + $scope.calendarId).fullCalendar({
-          buttonText: $scope.options.buttonText,
-          customButtons: $scope.options.customButtons,
-          buttonIcons: $scope.options.buttonIcons,
-          header: $scope.options.header,
-          defaultView: $scope.options.defaultView,
-          defaultDate: $scope.options.defaultDate,
-          nowIndicator: $scope.options.nowIndicator,
-          timezone: $scope.options.timezone,
-          eventLimit: $scope.options.eventLimit,
-          eventLimitClick: $scope.options.eventLimitClick,
-          fixedWeekCount: $scope.options.fixedWeekCount,
-          firstDay: $scope.options.firstDay,
-          weekends: $scope.options.weekends,
-          hiddenDays: $scope.options.hiddenDays,
-          weekNumbers: $scope.options.weekNumbers,
-          weekNumberCalculation: $scope.options.weekNumberCalculation,
-          businessHours: $scope.options.businessHours,
-          isRTL: $scope.options.RTL,
-          height: $scope.options.height,
-          contentHeight: $scope.options.contentHeight,
-          aspectRatio: $scope.options.aspectRatio,
-          handleWindowResize: $scope.options.handleWindowResize,
-          windowResizeDelay: $scope.options.windowResizeDelay,
-          eventClick: $scope.handleEventClick // Handles what happens when an event is clicked
+        return new Promise(function (resolve) {
+          jQuery('#' + $scope.calendarId).fullCalendar({
+            buttonText: $scope.options.buttonText,
+            customButtons: $scope.options.customButtons,
+            buttonIcons: $scope.options.buttonIcons,
+            header: $scope.options.header,
+            defaultView: $scope.options.defaultView,
+            defaultDate: $scope.options.defaultDate,
+            nowIndicator: $scope.options.nowIndicator,
+            timezone: $scope.options.timezone,
+            eventLimit: $scope.options.eventLimit,
+            eventLimitClick: $scope.options.eventLimitClick,
+            fixedWeekCount: $scope.options.fixedWeekCount,
+            firstDay: $scope.options.firstDay,
+            weekends: $scope.options.weekends,
+            hiddenDays: $scope.options.hiddenDays,
+            weekNumbers: $scope.options.weekNumbers,
+            weekNumberCalculation: $scope.options.weekNumberCalculation,
+            businessHours: $scope.options.businessHours,
+            isRTL: $scope.options.RTL,
+            height: $scope.options.height,
+            contentHeight: $scope.options.contentHeight,
+            aspectRatio: $scope.options.aspectRatio,
+            handleWindowResize: $scope.options.handleWindowResize,
+            windowResizeDelay: $scope.options.windowResizeDelay,
+            eventClick: $scope.handleEventClick, // Handles what happens when an event is clicked
+            // Resolve Promise after Rendering
+            viewRender: function (view) {
+              resolve()
+            },
+          })
         })
       }
     },
     template: '<div id="{{ elementId }}">' +
-      '<div id="{{ calendarId }}"></div>' +
-      '</div>'
+    '<div id="{{ calendarId }}"></div>' +
+    '</div>'
   }
 }))
