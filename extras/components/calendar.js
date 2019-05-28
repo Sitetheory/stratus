@@ -319,7 +319,7 @@
       }
     },
     template: '<div id="{{ elementId }}">' +
-    '<div id="{{ calendarId }}"></div>' +
-    '</div>'
+      '<div id="{{ calendarId }}"></div>' +
+      '</div>'
   }
 }))
