@@ -153,42 +153,53 @@
         /* */
 
         setTimeout(async function () {
-          if (!Stratus.Environment.get('production')) {
-            console.log('loading external urls:', $scope.options.eventSources)
-          }
           try {
-            await Promise.all(_.union(
-              [$ctrl.render()],
-              $scope.options.eventSources.map(url => $scope.addEventICSSource(url))
-            )).then(function () {
-              if (!Stratus.Environment.get('production')) {
-                console.log('completed loading events:', arguments)
-              }
-              $scope.initialized = true
-            })
+            if (!Stratus.Environment.get('production')) {
+              console.log('loading external urls:', $scope.options.eventSources)
+            }
+            // Render happens once prior to any url fetching
+            await $ctrl.render()
+            // process a list of URLS, just using single example below
+            // Process each feed before continuing
+            // If we want to
+            await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
+            // $log.log('completed loading events', events);\
+            if (!Stratus.Environment.get('production')) {
+              console.log('completed loading events:', arguments)
+            }
+            $scope.initialized = true
           } catch (e) {
             console.error('calendar render:', e)
           }
         }, 1)
       }
 
+      /**
+       * Fetch a ics source via URL and load into rendered fullcalendar
+       * @param {string} url
+       * @returns {Promise<EventObject[]>}
+       * @fulfill {EventObject[]}
+       */
       $scope.addEventICSSource = async function (url) {
-        return new Promise(function (resolve) {
-          // TODO handle bad fetch softly
-          jQuery.get(`https://cors-anywhere.herokuapp.com/${url}`, function (urlResponse) {
-            if (!Stratus.Environment.get('production')) {
-              console.log('fetched the events from:', url)
-            }
-            const iCalExpander = new iCal.ICalExpander(urlResponse, { maxIterations: 0 })
-            const events = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
-            jQuery('#' + $scope.calendarId).fullCalendar('addEventSource', {
-              events: events
-              // color: 'black',     // an option!
-              // textColor: 'yellow' // an option!
-            })
-            resolve(events)
-          })
+        let fullUrl = url
+        // TODO handle bad fetch softly (throw)
+        // If pulling externally, we'll use cors-anywhere.herokuapp.com for now
+        if (fullUrl.startsWith('http')) {
+          fullUrl = `https://cors-anywhere.herokuapp.com/${url}`
+        }
+
+        let response = await jQuery.get(fullUrl)
+        if (!Stratus.Environment.get('production')) {
+          console.log('fetched the events from:', url)
+        }
+        const iCalExpander = new iCal.ICalExpander(response, { maxIterations: 0 })
+        const events = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
+        jQuery('#' + $scope.calendarId).fullCalendar('addEventSource', {
+          events: events
+          // color: 'black',     // an option!
+          // textColor: 'yellow' // an option!
         })
+        return events
       }
 
       /**
@@ -197,6 +208,7 @@
        * @param {Object} jsEvent
        * @param {Object}view
        * @returns {Promise<boolean>}
+       * @fulfill {boolean}
        */
       $scope.handleEventClick = async function (calEvent, jsEvent, view) {
         // TODO in fullcalendarV4 calEvent, jsEvent, and view are combined into a single object
@@ -276,12 +288,13 @@
       }
 
       /**
-       *
        * Methods to look into:
        * 'viewRender' for callbacks on new date range (pagination maybe)  - http:// fullcalendar.io/docs/display/viewRender/
        * 'dayRender' for modifying day cells - http://fullcalendar.io/docs/display/dayRender/
        * 'windowResize' for callbacks on window resizing - http://fullcalendar.io/docs/display/windowResize/
        * 'render' force calendar to redraw - http://fullcalendar.io/docs/display/render/
+       * @returns {Promise<void>}
+       * @fulfill {void}
        */
       $ctrl.render = function () {
         return new Promise(function (resolve) {
