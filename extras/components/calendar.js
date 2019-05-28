@@ -218,7 +218,7 @@
        */
       $scope.displayEventDialog = async function (calEvent, clickEvent) {
         $mdDialog.show({
-          templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/components/calendar.eventDialog' + min + '.html',
+          templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/extras/components/calendar.eventDialog' + min + '.html',
           parent: angular.element(document.body),
           targetEvent: clickEvent,
           clickOutsideToClose: true,
