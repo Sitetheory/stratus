@@ -263,6 +263,11 @@ boot.config({
         'jquery',
         'moment'
       ]
+    },
+    '@fullcalendar/daygrid': {
+      deps: [
+        '@fullcalendar/core'
+      ]
     }
   },
 
@@ -351,6 +356,8 @@ boot.config({
 
     // Required for extras/components/calendar.js
     fullcalendar: boot.bundle + 'stratus/bower_components/fullcalendar/dist/fullcalendar' + boot.suffix,
+    '@fullcalendar/core': boot.bundle + 'stratus/bower_components/fullcalendar-core/main' + boot.suffix,
+    '@fullcalendar/daygrid': boot.bundle + 'stratus/bower_components/fullcalendar-daygrid/main' + boot.suffix,
     ical: boot.bundle + 'stratus/bower_components/ical.js/build/ical' + boot.suffix,
     'stratus.services.iCal': boot.bundle + 'stratus/extras/services/iCal' + boot.suffix,
     'stratus.components.calendar.timezones': boot.bundle + 'stratus/extras/components/calendar.timezones' + boot.suffix,

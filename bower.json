@@ -50,7 +50,8 @@
     "skrollr": "^0.6.30",
     "text": "^2.*",
     "underscore": "^1.9.*",
-    "fullcalendar-core": "npm:@fullcalendar/core#^4.1.0"
+    "fullcalendar-core": "npm:@fullcalendar/core#^4.1.0",
+    "fullcalendar-daygrid": "npm:@fullcalendar/daygrid#^4.1.0"
   },
   "resolutions": {
     "angular": "~1.7.8"

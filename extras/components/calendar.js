@@ -16,8 +16,10 @@
       'jquery',
       'moment',
       'angular',
-      'fullcalendar',
       'stratus.components.calendar.timezones',
+      'fullcalendar',
+      '@fullcalendar/core',
+      '@fullcalendar/daygrid',
       'angular-material',
       'moment-range',
       'stratus.services.iCal'
@@ -31,11 +33,18 @@
       root.angular
     )
   }
-}(this, function (Stratus, _, jQuery, moment, angular, fullcalendar, timezones) {
+}(this, function (Stratus, _, jQuery, moment, angular, timezones, fullcalendar, fullcalendarCore, fullcalendarDayGrid) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
   const localPath = 'extras/components'
+
+  console.log('old fullcalendar', fullcalendar)
+  console.log('new fullcalendar', fullcalendarCore)
+
+  // attempt workaround:
+  // fullcalendarDayGrid.deps = fullcalendarDayGrid.default.deps
+  console.log('new fullcalendarDayGrid', fullcalendarDayGrid)
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {
@@ -61,9 +70,20 @@
 
       // FullCalendar
       $scope.calendarId = $scope.elementId + '_fullcalendar'
+      $scope.calendar = null
+      $scope.calendarEl = null
       // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
+      /*Stratus.Internals.CssLoader(
         Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar/dist/fullcalendar' + min + '.css'
+      )*/
+
+      // new FullCalendar
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar-core/main' + min + '.css'
+      )
+      // new FullCalendar
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar-daygrid/main' + min + '.css'
       )
 
       $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
@@ -156,6 +176,7 @@
 
         setTimeout(async function () {
           try {
+            // TODO add a loading indicator
             if (!Stratus.Environment.get('production')) {
               console.log('loading external urls:', $scope.options.eventSources)
             }
@@ -196,32 +217,34 @@
         }
         const iCalExpander = new iCal.ICalExpander(response, { maxIterations: 0 })
         const events = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
-        jQuery('#' + $scope.calendarId).fullCalendar('addEventSource', {
+        $scope.calendar.addEventSource({
           events: events
           // color: 'black',     // an option!
           // textColor: 'yellow' // an option!
         })
+
         return events
       }
 
       // noinspection JSUnusedLocalSymbols
       /**
        * Handles what actions to perform when an event is clicked
-       * @param {Object} calEvent
-       * @param {Object} jsEvent
-       * @param {Object} view
+       * @param {Object} clickEvent
+       * @param {Object} clickEvent.el HTML Element
+       * @param {Object} clickEvent.event Event data (Calendar Data)
+       * @param {Object} clickEvent.jsEvent Click data
+       * @param {Object} clickEvent.view Plugin View data
        * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
        * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
        */
-      $scope.handleEventClick = async function (calEvent, jsEvent, view) {
-        // TODO in fullcalendarV4 calEvent, jsEvent, and view are combined into a single object
-        /* console.log('Event', calEvent)
-        console.log('Coordinates', jsEvent)
-        console.log('View', view.name) */
+      $scope.handleEventClick = async function (clickEvent) {
+        console.log('Event', clickEvent)
+
+        // FIXME the event data is no longer inlcuding all the data from the original object.... Need to reference this data somehow
 
         // Simply open  popup for now
         // noinspection JSIgnoredPromiseFromCall
-        $scope.displayEventDialog(calEvent, jsEvent)
+        $scope.displayEventDialog(clickEvent.event, clickEvent.jsEvent)
         return false // Return false to not issue other functions (such as URL clicking)
       }
 
@@ -249,6 +272,13 @@
             let dc = this
 
             dc.$onInit = function () {
+              // The event saves misc data to the 'extendedProps' field. So we'll merge this in
+              if (
+                dc.eventData &&
+                dc.eventData.constructor.prototype.hasOwnProperty('extendedProps')
+              ) {
+                _.extend(dc.eventData, dc.eventData.extendedProps)
+              }
               if (
                 dc.eventData &&
                 dc.eventData.hasOwnProperty('description')
@@ -298,42 +328,57 @@
        * 'dayRender' for modifying day cells - http://fullcalendar.io/docs/display/dayRender/
        * 'windowResize' for callbacks on window resizing - http://fullcalendar.io/docs/display/windowResize/
        * 'render' force calendar to redraw - http://fullcalendar.io/docs/display/render/
-       * @returns {Promise<void>}
-       * @fulfill {void}
+       * @returns {Promise<Calendar>}
+       * @fulfill {Calendar}
        */
       $ctrl.render = function () {
-        return new Promise(function (resolve) {
-          jQuery('#' + $scope.calendarId).fullCalendar({
-            buttonText: $scope.options.buttonText,
-            customButtons: $scope.options.customButtons,
-            buttonIcons: $scope.options.buttonIcons,
-            header: $scope.options.header,
-            defaultView: $scope.options.defaultView,
-            defaultDate: $scope.options.defaultDate,
-            nowIndicator: $scope.options.nowIndicator,
-            timezone: $scope.options.timezone,
-            eventLimit: $scope.options.eventLimit,
-            eventLimitClick: $scope.options.eventLimitClick,
-            fixedWeekCount: $scope.options.fixedWeekCount,
-            firstDay: $scope.options.firstDay,
-            weekends: $scope.options.weekends,
-            hiddenDays: $scope.options.hiddenDays,
-            weekNumbers: $scope.options.weekNumbers,
-            weekNumberCalculation: $scope.options.weekNumberCalculation,
-            businessHours: $scope.options.businessHours,
-            isRTL: $scope.options.RTL,
-            height: $scope.options.height,
-            contentHeight: $scope.options.contentHeight,
-            aspectRatio: $scope.options.aspectRatio,
-            handleWindowResize: $scope.options.handleWindowResize,
-            windowResizeDelay: $scope.options.windowResizeDelay,
-            eventClick: $scope.handleEventClick, // Handles what happens when an event is clicked
-            // Resolve Promise after Rendering
-            viewRender: function () { // returns view
-              resolve()
-            }
-          })
+        // return new Promise(function (resolve) {
+        $scope.calendarEl = document.getElementById($scope.calendarId)
+
+        $scope.calendar = new fullcalendarCore.Calendar($scope.calendarEl, {
+          eventClick: $scope.handleEventClick, // Handles what happens when an event is clicked
+          plugins: [
+            fullcalendarDayGrid.default // Plugins are ES6 imports and return with 'default'
+          ]
+          /* eventRender: function (info) {
+            console.log(info.event.extendedProps)
+          } */
         })
+        console.log('loaded', $scope.calendar)
+        $scope.calendar.render()
+        return $scope.calendar
+
+        /*jQuery('#' + $scope.calendarId).fullCalendar({
+          buttonText: $scope.options.buttonText,
+          customButtons: $scope.options.customButtons,
+          buttonIcons: $scope.options.buttonIcons,
+          header: $scope.options.header,
+          defaultView: $scope.options.defaultView,
+          defaultDate: $scope.options.defaultDate,
+          nowIndicator: $scope.options.nowIndicator,
+          timezone: $scope.options.timezone,
+          eventLimit: $scope.options.eventLimit,
+          eventLimitClick: $scope.options.eventLimitClick,
+          fixedWeekCount: $scope.options.fixedWeekCount,
+          firstDay: $scope.options.firstDay,
+          weekends: $scope.options.weekends,
+          hiddenDays: $scope.options.hiddenDays,
+          weekNumbers: $scope.options.weekNumbers,
+          weekNumberCalculation: $scope.options.weekNumberCalculation,
+          businessHours: $scope.options.businessHours,
+          isRTL: $scope.options.RTL,
+          height: $scope.options.height,
+          contentHeight: $scope.options.contentHeight,
+          aspectRatio: $scope.options.aspectRatio,
+          handleWindowResize: $scope.options.handleWindowResize,
+          windowResizeDelay: $scope.options.windowResizeDelay,
+          eventClick: $scope.handleEventClick, // Handles what happens when an event is clicked
+          // Resolve Promise after Rendering
+          viewRender: function () { // returns view
+            resolve()
+          }
+        })*/
+        //})
       }
     },
     template: '<div id="{{ elementId }}">' +
