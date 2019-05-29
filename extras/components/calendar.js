@@ -53,6 +53,7 @@
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
+      // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
         Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
       )
@@ -60,6 +61,7 @@
 
       // FullCalendar
       $scope.calendarId = $scope.elementId + '_fullcalendar'
+      // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
         Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar/dist/fullcalendar' + min + '.css'
       )
@@ -202,13 +204,14 @@
         return events
       }
 
+      // noinspection JSUnusedLocalSymbols
       /**
        * Handles what actions to perform when an event is clicked
        * @param {Object} calEvent
        * @param {Object} jsEvent
-       * @param {Object}view
-       * @returns {Promise<boolean>}
-       * @fulfill {boolean}
+       * @param {Object} view
+       * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
+       * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
        */
       $scope.handleEventClick = async function (calEvent, jsEvent, view) {
         // TODO in fullcalendarV4 calEvent, jsEvent, and view are combined into a single object
@@ -217,19 +220,20 @@
         console.log('View', view.name) */
 
         // Simply open  popup for now
-        $scope.displayEventDialog(calEvent, jsEvent, view)
-        // Return false to not issue other functions (such as URL clicking)
-        return false
+        // noinspection JSIgnoredPromiseFromCall
+        $scope.displayEventDialog(calEvent, jsEvent)
+        return false // Return false to not issue other functions (such as URL clicking)
       }
 
       /**
        * Create MDDialog popup for an event
        * @param {Object} calEvent
        * @param {Object} clickEvent
-       * @returns {Promise<void>}
+       * @returns {Promise}
+       * @fulfill {*} Unknown fulfillment
        */
       $scope.displayEventDialog = async function (calEvent, clickEvent) {
-        $mdDialog.show({
+        return $mdDialog.show({
           templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/extras/components/calendar.eventDialog' + min + '.html',
           parent: angular.element(document.body),
           targetEvent: clickEvent,
@@ -288,7 +292,8 @@
       }
 
       /**
-       * Methods to look into:
+       * Initializes the fullcalendar display. Required before anything may be added to the calendar
+       * @TODO Methods to look into:
        * 'viewRender' for callbacks on new date range (pagination maybe)  - http:// fullcalendar.io/docs/display/viewRender/
        * 'dayRender' for modifying day cells - http://fullcalendar.io/docs/display/dayRender/
        * 'windowResize' for callbacks on window resizing - http://fullcalendar.io/docs/display/windowResize/
@@ -324,7 +329,7 @@
             windowResizeDelay: $scope.options.windowResizeDelay,
             eventClick: $scope.handleEventClick, // Handles what happens when an event is clicked
             // Resolve Promise after Rendering
-            viewRender: function (view) {
+            viewRender: function () { // returns view
               resolve()
             }
           })
