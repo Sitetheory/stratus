@@ -13,13 +13,13 @@
     define([
       'stratus',
       'underscore',
-      'jquery',
       'moment',
       'angular',
       'stratus.components.calendar.timezones',
-      'fullcalendar',
       '@fullcalendar/core',
       '@fullcalendar/daygrid',
+      '@fullcalendar/timegrid',
+      '@fullcalendar/list',
       'angular-material',
       'moment-range',
       'stratus.services.iCal'
@@ -28,23 +28,18 @@
     factory(
       root.Stratus,
       root._,
-      root.jQuery,
       root.moment,
       root.angular
     )
   }
-}(this, function (Stratus, _, jQuery, moment, angular, timezones, fullcalendar, fullcalendarCore, fullcalendarDayGrid) {
+}(this, function (Stratus, _, moment, angular, timezones, fullcalendarCore, fullcalendarDayGridPlugin, fullcalendarTimeGridPlugin, fullcalendarListPlugin) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
   const localPath = 'extras/components'
 
-  console.log('old fullcalendar', fullcalendar)
   console.log('new fullcalendar', fullcalendarCore)
-
-  // attempt workaround:
-  // fullcalendarDayGrid.deps = fullcalendarDayGrid.default.deps
-  console.log('new fullcalendarDayGrid', fullcalendarDayGrid)
+  console.log('Stratus.BundlePath', Stratus.BundlePath)
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {
@@ -56,7 +51,7 @@
       options: '@'
     },
     // TODO: remove Collection if we don't need models and collections
-    controller: function ($scope, $attrs, $element, $sce, $mdPanel, $mdDialog, /* Collection, */ iCal) {
+    controller: function ($scope, $attrs, $element, $sce, $mdPanel, $mdDialog, $http, iCal) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
@@ -64,7 +59,7 @@
       $scope.elementId = $attrs.elementId || $ctrl.uid
       // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
+        `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.css`
       )
       $scope.initialized = false
 
@@ -72,18 +67,22 @@
       $scope.calendarId = $scope.elementId + '_fullcalendar'
       $scope.calendar = null
       $scope.calendarEl = null
-      // noinspection JSIgnoredPromiseFromCall
-      /*Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar/dist/fullcalendar' + min + '.css'
-      )*/
 
-      // new FullCalendar
+      // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar-core/main' + min + '.css'
+        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-core/main${min}.css`
       )
-      // new FullCalendar
+      // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
-        Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/fullcalendar-daygrid/main' + min + '.css'
+        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-daygrid/main${min}.css`
+      )
+      // noinspection JSIgnoredPromiseFromCall
+      Stratus.Internals.CssLoader(
+        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-timegrid/main${min}.css`
+      )
+      // noinspection JSIgnoredPromiseFromCall
+      Stratus.Internals.CssLoader(
+        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-list/main${min}.css`
       )
 
       $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
@@ -97,19 +96,19 @@
       const defaultButtonText = {
         today: 'today',
 
-        month: 'month',
+        dayGridMonth: 'month',
         listMonth: 'month list',
-        agendaWeek: 'week agenda',
-        basicWeek: 'week',
+        timeGridWeek: 'week agenda',
+        dayGridWeek: 'week',
         listWeek: 'week list',
-        agendaDay: 'day agenda',
-        basicDay: 'day',
+        timeGridDay: 'day agenda',
+        dayGridDay: 'day',
         listDay: 'day list',
         listYear: 'year'
       }
       $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
-      $scope.options.defaultView = $scope.options.defaultView || 'month'
-      $scope.options.possibleViews = $scope.options.possibleViews || ['month', 'weekAgenda', 'dayAgenda'] // Not used yet @see https://fullcalendar.io/docs/header
+      $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
+      $scope.options.possibleViews = $scope.options.possibleViews || ['dayGridMonth', 'timeGridWeek', 'timeGridDay'] // Not used yet @see https://fullcalendar.io/docs/header
       $scope.options.defaultDate = $scope.options.defaultDate || null
       $scope.options.nowIndicator = $scope.options.nowIndicator || false
       $scope.options.timezone = $scope.options.timezone || false
@@ -211,11 +210,11 @@
           fullUrl = `https://cors-anywhere.herokuapp.com/${url}`
         }
 
-        let response = await jQuery.get(fullUrl)
+        let response = await $http.get(fullUrl)
         if (!Stratus.Environment.get('production')) {
           console.log('fetched the events from:', url)
         }
-        const iCalExpander = new iCal.ICalExpander(response, { maxIterations: 0 })
+        const iCalExpander = new iCal.ICalExpander(response.data, { maxIterations: 0 })
         const events = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
         $scope.calendar.addEventSource({
           events: events
@@ -257,7 +256,7 @@
        */
       $scope.displayEventDialog = async function (calEvent, clickEvent) {
         return $mdDialog.show({
-          templateUrl: Stratus.BaseUrl + 'sitetheorystratus/stratus/extras/components/calendar.eventDialog' + min + '.html',
+          templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/calendar.eventDialog${min}.html`,
           parent: angular.element(document.body),
           targetEvent: clickEvent,
           clickOutsideToClose: true,
@@ -307,7 +306,7 @@
         }
         let headerLeft = 'prev,next today'
         let headerCenter = 'title'
-        let headerRight = 'month,agendaWeek,agendaDay'
+        let headerRight = 'month,weekGrid,dayGrid'
         // All this is assuming tha the default Header is not customized
         if (_.isArray($scope.options.possibleViews)) {
           // FIXME Other views don't have a proper 'name' yet. (such as lists), need a Naming scheme
@@ -336,22 +335,11 @@
         $scope.calendarEl = document.getElementById($scope.calendarId)
 
         $scope.calendar = new fullcalendarCore.Calendar($scope.calendarEl, {
-          eventClick: $scope.handleEventClick, // Handles what happens when an event is clicked
           plugins: [
-            fullcalendarDayGrid.default // Plugins are ES6 imports and return with 'default'
-          ]
-          /* eventRender: function (info) {
-            console.log(info.event.extendedProps)
-          } */
-        })
-        console.log('loaded', $scope.calendar)
-        $scope.calendar.render()
-        return $scope.calendar
-
-        /*jQuery('#' + $scope.calendarId).fullCalendar({
-          buttonText: $scope.options.buttonText,
-          customButtons: $scope.options.customButtons,
-          buttonIcons: $scope.options.buttonIcons,
+            fullcalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
+            fullcalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
+            fullcalendarListPlugin.default // Plugins are ES6 imports and return with 'default'
+          ],
           header: $scope.options.header,
           defaultView: $scope.options.defaultView,
           defaultDate: $scope.options.defaultDate,
@@ -359,6 +347,8 @@
           timezone: $scope.options.timezone,
           eventLimit: $scope.options.eventLimit,
           eventLimitClick: $scope.options.eventLimitClick,
+          buttonText: $scope.options.buttonText,
+          customButtons: $scope.options.customButtons,
           fixedWeekCount: $scope.options.fixedWeekCount,
           firstDay: $scope.options.firstDay,
           weekends: $scope.options.weekends,
@@ -372,13 +362,13 @@
           aspectRatio: $scope.options.aspectRatio,
           handleWindowResize: $scope.options.handleWindowResize,
           windowResizeDelay: $scope.options.windowResizeDelay,
-          eventClick: $scope.handleEventClick, // Handles what happens when an event is clicked
-          // Resolve Promise after Rendering
-          viewRender: function () { // returns view
-            resolve()
-          }
-        })*/
-        //})
+          eventClick: $scope.handleEventClick // Handles what happens when an event is clicked
+          /* eventRender: function (info) {
+            console.log(info.event.extendedProps)
+          } */
+        })
+        $scope.calendar.render()
+        return $scope.calendar
       }
     },
     template: '<div id="{{ elementId }}">' +
