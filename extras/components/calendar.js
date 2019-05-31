@@ -20,6 +20,7 @@
       '@fullcalendar/daygrid',
       '@fullcalendar/timegrid',
       '@fullcalendar/list',
+      'fullcalendar/customView',
       'angular-material',
       'moment-range',
       'stratus.services.iCal'
@@ -32,14 +33,14 @@
       root.angular
     )
   }
-}(this, function (Stratus, _, moment, angular, timezones, fullcalendarCore, fullcalendarDayGridPlugin, fullcalendarTimeGridPlugin, fullcalendarListPlugin) {
+}(this, function (Stratus, _, moment, angular, timezones, fullcalendarCore, fullcalendarDayGridPlugin, fullcalendarTimeGridPlugin, fullcalendarListPlugin, fullcalendarCustomViewPlugin) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
   const localPath = 'extras/components'
 
   console.log('new fullcalendar', fullcalendarCore)
-  console.log('Stratus.BundlePath', Stratus.BundlePath)
+  console.log('new plugin', fullcalendarCustomViewPlugin)
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {
@@ -104,7 +105,9 @@
         timeGridDay: 'day agenda',
         dayGridDay: 'day',
         listDay: 'day list',
-        listYear: 'year'
+        listYear: 'year',
+
+        custom: 'custom'
       }
       $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
       $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
@@ -130,10 +133,20 @@
       $scope.options.windowResizeDelay = $scope.options.windowResizeDelay || 100
       $scope.options.eventSources = $scope.options.eventSources || []
 
+      $scope.options.plugins = [
+        fullcalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
+        fullcalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
+        fullcalendarListPlugin.default, // Plugins are ES6 imports and return with 'default'
+        fullcalendarCustomViewPlugin.default // Plugins are ES6 imports and return with 'default'
+      ]
+
       $scope.initialized = false
       $scope.fetched = false
       $scope.startRange = moment()
       $scope.endRange = moment()
+
+      $scope.options.defaultView = 'custom' // dev testing
+      $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom'] // dev testing
 
       // Event Collection
       // TODO: remove if we don't need models and collections
@@ -238,9 +251,6 @@
        */
       $scope.handleEventClick = async function (clickEvent) {
         console.log('Event', clickEvent)
-
-        // FIXME the event data is no longer inlcuding all the data from the original object.... Need to reference this data somehow
-
         // Simply open  popup for now
         // noinspection JSIgnoredPromiseFromCall
         $scope.displayEventDialog(clickEvent.event, clickEvent.jsEvent)
@@ -335,11 +345,7 @@
         $scope.calendarEl = document.getElementById($scope.calendarId)
 
         $scope.calendar = new fullcalendarCore.Calendar($scope.calendarEl, {
-          plugins: [
-            fullcalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullcalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
-            fullcalendarListPlugin.default // Plugins are ES6 imports and return with 'default'
-          ],
+          plugins: $scope.options.plugins,
           header: $scope.options.header,
           defaultView: $scope.options.defaultView,
           defaultDate: $scope.options.defaultDate,
