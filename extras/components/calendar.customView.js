@@ -20,7 +20,6 @@
     )
   }
 }(this, function (exports, Stratus, _, fullcalendarCore, fullcalendarDayGridPlugin) {
-  // something
   // Environment
   // const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar.customView'
@@ -42,25 +41,23 @@
         `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.css`
       ) */
 
+      $scope.events = []
+
       // $scope.model = $parse($attrs.ngModel)
-      $scope.render = function () {}
+      // $scope.render = function () {}
       // $scope.render()
-    }
+
+      $ctrl.$onInit = function () {
+        console.log('init initied')
+      }
+
+      // Make sure we reference our current scope, or events may not be updated
+      $scope.$parent.customViewScope = $scope
+    },
+    template: '<p>A CalendarCustomView</p>' +
+      '<p>There are <span ng-bind="events.length"></span> events. Btw this is now ran through angular</p>' +
+      '<p>This is a place holder template for <span ng-bind="::elementId"></span>. We will need to make an html file soon</p>'
   }
-
-  /* class Renderer extends fullcalendarCore.FgEventRenderer {
-    constructor (context) {
-      super(context)
-      console.log('Renderer made', this)
-      // this.view = customView
-      // this.emptyEvents()
-    }
-
-    emptyEvents () {
-      console.log('running emptyEvents')
-      this.context.view.renderEmptyMessage()
-    }
-  } */
 
   class CustomView extends fullcalendarCore.View {
     /**
@@ -71,13 +68,21 @@
       // initialize member variables or do other setup tasks.
       console.log('initialize ran', this)
 
-      // let freeEl = fullcalendarCore.createElement('div', { className: `fc-elly fc-${this.viewSpec.type}-elly` }, 'This is a test')
-      // this.view.el
+      this.$parentScope = this.viewSpec.options.$scope
 
-      fullcalendarCore.appendToElement(this.el, 'Loading')
+      console.log('parent scope is', this.$parentScope)
 
-      // this.eventRenderer = new Renderer(this)
-      // this.renderContent = fullcalendarCore.memoizeRendering(this.eventRenderer.renderSegs.bind(this.eventRenderer), this.eventRenderer.unrender.bind(this.eventRenderer))
+      // Create the CalendarCustomView Component
+      let calendarCustomViewComponent = this.viewSpec.options.$compile('<stratus-calendar-custom-view></stratus-calendar-custom-view>')
+      this.componentEl = calendarCustomViewComponent(this.$parentScope)
+      this.$scope = this.$parentScope.customViewScope
+
+      console.log('our scope', this.$scope)
+      console.log('componentEl', this.componentEl)
+
+      fullcalendarCore.appendToElement(this.el, this.componentEl)
+
+      // FIXME need to either destory this instance on movement to another View, or need to reload the existing
     }
 
     // render OOP:
@@ -91,55 +96,58 @@
 
     renderDates (dateProfile) {
       // responsible for rendering the given dates
-      console.log('renderDates ran', dateProfile, this)
+      // console.log('renderDates ran', dateProfile, this)
 
       // this.currentStart and this.currentEnd are now set
     }
 
     renderEvents (eventStore, eventUiHash) {
-      // FIXME need to limit events by the date range
-      // TODO need to parse events that are between this.currentStart and this.currentEnd
       // responsible for rendering events
       // console.log('renderEvents ran', eventStore, eventUiHash)
-      let events = this.getEventsInRange(eventStore)
+      this.getEventsInRange(eventStore)
 
-      if (events.length < 1) {
+      /* if (events.length < 1) {
         // this.eventRenderer.emptyEvents() // could just put the items in here manually
         this.renderEmptyMessage()
-      } else {
-        this.el.innerHTML = `<h3>Wow, there are events here? ${events.length} infact... now gotta find out how to render them...</h3>`
-        // TODO need some real rendering ability. first hard code.... then maybe can pull from a html file and display like stratus
-      }
+      } else { */
+      //  this.el.innerHTML = `<h3>Wow, there are events here? ${events.length} infact... now gotta find out how to render them...</h3>`
+      // TODO need some real rendering ability. first hard code.... then maybe can pull from a html file and display like stratus
+      // this.el.appendChild(this.componentEl)
+      // fullcalendarCore.appendToElement(this.el, this.componentEl)
+      // }
       // eventStore is all the new events loaded
       // return '<div>Some Event</div>'
     }
 
     getEventsInRange (eventStore, eventUiBases) {
+      let that = this
       eventStore = eventStore || this.props.eventStore
       eventUiBases = eventUiBases || this.props.eventUiBases
       // let currentStart = this.currentStart || this.props.dateProfile.currentRange.start
       // let currentEnd = this.currentEnd || this.props.dateProfile.currentRange.end
       // this.currentStart
       // this.currentEnd
-      let events = []
+      this.$scope.events = []
 
       let sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, this.props.dateProfile.activeRange, this.nextDayThreshold)
       if (
         sliceEventObjects.hasOwnProperty('fg') &&
         _.isArray(sliceEventObjects.fg)
       ) {
-        events.push(...sliceEventObjects.fg)
+        this.$scope.$applyAsync(function () {
+          that.$scope.events.push(...sliceEventObjects.fg)
+        })
       }
 
       console.log({
         eventStore: eventStore,
         eventUiBases: eventUiBases,
         activeRange: this.props.dateProfile.activeRange,
-        events: events
+        events: this.$scope.events
         // test: test
       })
 
-      return events
+      // return this.$scope.events
     }
 
     /**

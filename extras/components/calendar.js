@@ -52,7 +52,7 @@
       options: '@'
     },
     // TODO: remove Collection if we don't need models and collections
-    controller: function ($scope, $attrs, $element, $sce, $mdPanel, $mdDialog, $http, iCal) {
+    controller: function ($scope, $attrs, $element, $sce, $mdPanel, $mdDialog, $http, $compile, iCal) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
@@ -145,7 +145,7 @@
       $scope.startRange = moment()
       $scope.endRange = moment()
 
-      $scope.options.defaultView = 'custom' // dev testing
+      $scope.options.defaultView = 'listMonth' // dev testing
       $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom'] // dev testing
 
       // Event Collection
@@ -345,6 +345,11 @@
         $scope.calendarEl = document.getElementById($scope.calendarId)
 
         $scope.calendar = new fullcalendarCore.Calendar($scope.calendarEl, {
+          $scope: $scope,
+          $compile: $compile,
+          // customViewScope: customViewScope,
+          // customViewComponent: compiledComponent,
+
           plugins: $scope.options.plugins,
           header: $scope.options.header,
           defaultView: $scope.options.defaultView,
