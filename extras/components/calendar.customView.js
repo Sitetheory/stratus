@@ -5,6 +5,7 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'exports',
+      'stratus',
       'underscore',
       '@fullcalendar/core',
       '@fullcalendar/daygrid'
@@ -12,13 +13,40 @@
   } else {
     factory(
       {},
+      root.Stratus,
       root._,
       root.FullCalendar,
       root.FullCalendarDayGrid
     )
   }
-}(this, function (exports, _, fullcalendarCore, fullcalendarDayGridPlugin) {
+}(this, function (exports, Stratus, _, fullcalendarCore, fullcalendarDayGridPlugin) {
   // something
+  // Environment
+  // const min = Stratus.Environment.get('production') ? '.min' : ''
+  const name = 'calendar.customView'
+  // const localPath = 'extras/components'
+
+  Stratus.Components.CalendarCustomView = {
+    /* bindings: {
+      ngModel: '='
+    }, */
+    controller: function ($scope) {
+      // Initialize
+      const $ctrl = this
+      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      Stratus.Instances[$ctrl.uid] = $scope
+      // $scope.elementId = $attrs.elementId || $ctrl.uid
+      $scope.elementId = $ctrl.uid
+      // noinspection JSIgnoredPromiseFromCall
+      /* Stratus.Internals.CssLoader(
+        `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.css`
+      ) */
+
+      // $scope.model = $parse($attrs.ngModel)
+      $scope.render = function () {}
+      // $scope.render()
+    }
+  }
 
   /* class Renderer extends fullcalendarCore.FgEventRenderer {
     constructor (context) {
