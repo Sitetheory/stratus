@@ -21,9 +21,9 @@
   }
 }(this, function (exports, Stratus, _, fullcalendarCore, fullcalendarDayGridPlugin) {
   // Environment
-  // const min = Stratus.Environment.get('production') ? '.min' : ''
+  const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar.customView'
-  // const localPath = 'extras/components'
+  const localPath = 'extras/components'
 
   Stratus.Components.CalendarCustomView = {
     /* bindings: {
@@ -34,7 +34,6 @@
       const $ctrl = this
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
-      // $scope.elementId = $attrs.elementId || $ctrl.uid
       $scope.elementId = $ctrl.uid
       // noinspection JSIgnoredPromiseFromCall
       /* Stratus.Internals.CssLoader(
@@ -42,6 +41,8 @@
       ) */
 
       $scope.events = []
+      // Make sure we reference our current scope, or events may not be updated
+      $scope.$parent.customViewScope = $scope
 
       // $scope.model = $parse($attrs.ngModel)
       // $scope.render = function () {}
@@ -51,23 +52,24 @@
         console.log('init initied')
       }
 
-      // Make sure we reference our current scope, or events may not be updated
-      $scope.$parent.customViewScope = $scope
+      $scope.destroy = function () {
+        if (typeof Stratus.Instances[$ctrl.uid].remove === 'function') {
+          Stratus.Instances[$ctrl.uid].remove()
+        }
+        $scope.$destroy()
+        delete Stratus.Instances[$ctrl.uid]
+      }
     },
-    template: '<p>A CalendarCustomView</p>' +
-      '<p>There are <span ng-bind="events.length"></span> events. Btw this is now ran through angular</p>' +
-      '<p>This is a place holder template for <span ng-bind="::elementId"></span>. We will need to make an html file soon</p>'
+    templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.html`
   }
 
   class CustomView extends fullcalendarCore.View {
     /**
      * Runs after constructor, no arguments
+     * called once when the view is instantiated, when the user switches to the view.
+     * Expects a scope insid eth main calendar
      */
     initialize () {
-      // called once when the view is instantiated, when the user switches to the view.
-      // initialize member variables or do other setup tasks.
-      console.log('initialize ran', this)
-
       this.$parentScope = this.viewSpec.options.$scope
 
       console.log('parent scope is', this.$parentScope)
@@ -75,14 +77,18 @@
       // Create the CalendarCustomView Component
       let calendarCustomViewComponent = this.viewSpec.options.$compile('<stratus-calendar-custom-view></stratus-calendar-custom-view>')
       this.componentEl = calendarCustomViewComponent(this.$parentScope)
-      this.$scope = this.$parentScope.customViewScope
 
-      console.log('our scope', this.$scope)
-      console.log('componentEl', this.componentEl)
+      // Watch for scope to get ready
+      let that = this
+      let stopWatchingScope = this.$parentScope.$watch('customViewScope', function () {
+        if (that.$parentScope.customViewScope) {
+          that.$scope = that.$parentScope.customViewScope
+          stopWatchingScope()
+          // console.log('our scope', that.$scope)
+        }
+      })
 
       fullcalendarCore.appendToElement(this.el, this.componentEl)
-
-      // FIXME need to either destory this instance on movement to another View, or need to reload the existing
     }
 
     // render OOP:
@@ -101,69 +107,61 @@
       // this.currentStart and this.currentEnd are now set
     }
 
-    renderEvents (eventStore, eventUiHash) {
-      // responsible for rendering events
-      // console.log('renderEvents ran', eventStore, eventUiHash)
-      this.getEventsInRange(eventStore)
+    /**
+     * Runs when View to being left to another View
+     */
+    destroy () {
+      console.log('destroy')
+      super.destroy()
+      this.$scope.destroy()
 
-      /* if (events.length < 1) {
-        // this.eventRenderer.emptyEvents() // could just put the items in here manually
-        this.renderEmptyMessage()
-      } else { */
-      //  this.el.innerHTML = `<h3>Wow, there are events here? ${events.length} infact... now gotta find out how to render them...</h3>`
-      // TODO need some real rendering ability. first hard code.... then maybe can pull from a html file and display like stratus
-      // this.el.appendChild(this.componentEl)
-      // fullcalendarCore.appendToElement(this.el, this.componentEl)
-      // }
-      // eventStore is all the new events loaded
-      // return '<div>Some Event</div>'
+      // TODO in the future, instead of creating new Vies, could recreate the existing one
     }
 
+    /**
+     * responsible for rendering events
+     * Update the display. Specifically, Update the list of events on the scope
+     * @param eventStore
+     * @param eventUiHash
+     */
+    renderEvents (eventStore, eventUiHash) {
+      if (this.$scope) {
+        let that = this
+        that.$scope.$applyAsync(function () {
+          that.$scope.events.length = 0
+          that.$scope.events.push(...that.getEventsInRange(eventStore))
+        })
+      }
+    }
+
+    /**
+     * Get the current range of Events
+     * @param {[]} eventStore
+     * @param {[]} eventUiBases
+     * @returns {[]}
+     */
     getEventsInRange (eventStore, eventUiBases) {
-      let that = this
       eventStore = eventStore || this.props.eventStore
       eventUiBases = eventUiBases || this.props.eventUiBases
       // let currentStart = this.currentStart || this.props.dateProfile.currentRange.start
       // let currentEnd = this.currentEnd || this.props.dateProfile.currentRange.end
       // this.currentStart
       // this.currentEnd
-      this.$scope.events = []
+      // this.$scope.events = []
 
+      let events = []
       let sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, this.props.dateProfile.activeRange, this.nextDayThreshold)
       if (
         sliceEventObjects.hasOwnProperty('fg') &&
         _.isArray(sliceEventObjects.fg)
       ) {
-        this.$scope.$applyAsync(function () {
-          that.$scope.events.push(...sliceEventObjects.fg)
-        })
+        events.push(...sliceEventObjects.fg)
       }
 
-      console.log({
-        eventStore: eventStore,
-        eventUiBases: eventUiBases,
-        activeRange: this.props.dateProfile.activeRange,
-        events: this.$scope.events
-        // test: test
-      })
+      // TODO may need to process these better for stratus
 
-      // return this.$scope.events
-    }
-
-    /**
-     * @TODO testing
-     */
-    renderEmptyMessage () {
-      console.log('running emptyEvents')
-      // this.contentEl.innerHTML =
-      this.el.innerHTML =
-        '<div class="fc-list-empty-wrap2">' + // TODO: try less wraps
-        '<div class="fc-list-empty-wrap1">' +
-        '<div class="fc-list-empty">' +
-        fullcalendarCore.htmlEscape(this.opt('noEventsMessage')) +
-        '</div>' +
-        '</div>' +
-        '</div>'
+      console.log('events', events)
+      return events
     }
   }
 
