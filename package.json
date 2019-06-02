@@ -69,5 +69,8 @@
   ],
   "engines": {
     "yarn": ">= 1.0.0"
+  },
+  "dependencies": {
+    "bower-npm-resolver": "^0.10.0"
   }
 }
