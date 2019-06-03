@@ -185,7 +185,7 @@
            * */
           let images = $ctrl.images ? $ctrl.images : [] // This is a deprecated reference saved for backwards compatibility
           /** @type {Array<SlideImage> || Array<String> || String} */
-            // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
+          // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
           let slides = $ctrl.slides ? $ctrl.slides : images // References images for temporary backwards compatibility
 
           /** @type {String} */
