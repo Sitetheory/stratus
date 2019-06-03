@@ -21,7 +21,7 @@
           Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor.css',
           Stratus.BaseUrl + 'sitetheorycore/dist/redactor/redactor-clips.css',
           Stratus.BaseUrl +
-         Stratus.BundlePath + 'bower_components/codemirror/lib/codemirror.css'
+         Stratus.BundlePath + 'node_modules/codemirror/lib/codemirror.css'
         ], function (url) {
           Stratus.Internals.CssLoader(url)
         })

@@ -110,7 +110,7 @@
 
         // noinspection JSIgnoredPromiseFromCall
         Stratus.Internals.CssLoader(
-          Stratus.BaseUrl + Stratus.BundlePath + 'bower_components/swiper/dist/css/swiper' + min + '.css'
+          Stratus.BaseUrl + Stratus.BundlePath + 'node_modules/swiper/dist/css/swiper' + min + '.css'
         )
 
         // Hoist Attributes
