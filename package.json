@@ -6,6 +6,71 @@
   "directories": {
     "test": "test"
   },
+  "scripts": {
+    "test": "gulp dist && gulp compile && gulp compress && gulp lint",
+    "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
+    "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sitetheory/stratus.git"
+  },
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus",
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "widgets",
+    "angular",
+    "backbone",
+    "underscore"
+  ],
+  "engines": {
+    "yarn": ">= 1.0.0"
+  },
+  "dependencies": {
+    "@angular/core": "^8.0.0",
+    "angular": "^1.7.8",
+    "angular-animate": "^1.7.8",
+    "angular-aria": "^1.7.8",
+    "angular-chart.js": "^1.1.1",
+    "angular-drag-and-drop-lists": "^2.1.0",
+    "angular-froala-wysiwyg": "^2.*",
+    "angular-material": "^1.1.19",
+    "angular-material-datetimepicker": "^1.4.0",
+    "angular-messages": "^1.7.8",
+    "angular-paging": "^2.2.2",
+    "angular-resource": "^1.7.8",
+    "angular-sanitize": "^1.7.8",
+    "angular-scroll-spy": "^1.0.0",
+    "angular-ui-tree": "^2.22.6",
+    "bowser": "^1.*",
+    "chart.js": "^2.8.0",
+    "codemirror": "^5.47.0",
+    "coffeescript": "^2.4.1",
+    "froala-editor": "^2.*",
+    "fullcalendar": "^3.10.0",
+    "ical.js": "^1.3.0",
+    "jquery": "^3.4.1",
+    "js-md5": "^0.7.3",
+    "less": "^3.9.0",
+    "lodash": "^4.17.11",
+    "masonry-layout": "^4.2.2",
+    "moment": "^2.24.0",
+    "moment-range": "^4.0.2",
+    "moment-timezone": "^0.5.25",
+    "ng-file-upload": "^12.2.13",
+    "promise-polyfill": "^8.1.0",
+    "requirejs": "^2.3.6",
+    "requirejs-text": "^2.0.15",
+    "skrollr-typed": "^0.6.33",
+    "swiper": "^4.5.0",
+    "underscore": "^1.9.1"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
@@ -36,41 +101,10 @@
     "mocha": "^5.2.0",
     "mochawesome": "^3.0.2",
     "pump": "^3.0.0",
-    "requirejs": "^2.3.5",
     "sinon": "^6.2.0",
     "stylelint": "^9.5.0",
     "stylelint-config-standard": "^18.0.0",
     "terser": "^3.8.2",
-    "underscore": "^1.9.1",
     "vinyl-paths": "^2.1.*"
-  },
-  "scripts": {
-    "test": "gulp dist && gulp compile && gulp compress && gulp lint",
-    "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
-    "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sitetheory/stratus.git"
-  },
-  "author": "Sitetheory Development Team (https://sitetheory.io/)",
-  "license": "SEE LICENSE IN LICENSE",
-  "bugs": {
-    "url": "https://github.com/Sitetheory/stratus/issues"
-  },
-  "homepage": "https://github.com/Sitetheory/stratus",
-  "keywords": [
-    "sitetheory",
-    "stratus",
-    "widgets",
-    "angular",
-    "backbone",
-    "underscore"
-  ],
-  "engines": {
-    "yarn": ">= 1.0.0"
-  },
-  "dependencies": {
-    "bower-npm-resolver": "^0.10.0"
   }
 }
