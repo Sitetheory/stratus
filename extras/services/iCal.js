@@ -181,7 +181,7 @@
           /**
            * Processes a Recurring Event into generic Object format.
            * @param {Object} e - Event data
-           * @returns {{startDate: Date, endDate: Date, description: String, summary: String, attendees: ICAL.Property[], organizer: String, sequence: Number | String, uid: String, location: String, url: String,  allDay: boolean, image: String, recurrenceId: Date}}
+           * @returns {EventObject}
            */
           ICalExpander.prototype.flattenRecurringEvent = function (e) {
             let event = this.flattenEvent(e.item)
@@ -192,16 +192,36 @@
           }
 
           /**
+           * @typedef {Object} EventObject
+           * @property {Date} startDate
+           * @property {Date} endDate
+           * @property {string} description
+           * @property {string} title
+           * @property {string} summary
+           * @property {[]} attendees
+           * @property {string} organizer
+           * @property {number || string} sequence
+           * @property {Date} recurrenceId
+           * @property {string} uid
+           * @property {string} location
+           * @property {string} location
+           * @property {string} url
+           * @property {boolean} allDay
+           * @property {string} image
+           */
+
+          /**
            * Processes an Event into generic Object format.
            * Events that were reoccurring need to use flattenRecurringEvent to process extra data
            * @param {Object} e - Event data
-           * @returns {{startDate: Date, endDate: Date, description: String, summary: String, attendees: ICAL.Property[], organizer: String, sequence: Number | String, uid: String, location: String, url: String,  allDay: boolean, image: String}}
+           * @returns {EventObject}
            */
           ICalExpander.prototype.flattenEvent = function (e) {
             return {
               startDate: e.startDate.toJSDate(),
               endDate: e.endDate.toJSDate(),
               description: e.description,
+              title: e.summary,
               summary: e.summary,
               attendees: e.attendees,
               organizer: e.organizer,
@@ -236,7 +256,7 @@
           /**
            * Processes a Recurring Event into Full Calendar usable format.
            * @param {Object} e - Event data
-           * @returns {{start: Date, end: Date, location: String, id: String, title: String}}
+           * @returns {EventObject}
            */
           ICalExpander.prototype.flattenRecurringEventForFullCalendar = function (e) {
             let event = this.flattenEventForFullCalendar(e.item)
@@ -249,7 +269,7 @@
            * Processes an Event into Full Calendar usable format.
            * Events that were reoccurring need to use flattenRecurringEventForFullCalendar to process extra data
            * @param {Object} e - Event data
-           * @returns {{start: Date, end: Date, location: String, id: String, title: String}}
+           * @returns {EventObject}
            */
           ICalExpander.prototype.flattenEventForFullCalendar = function (e) {
             return {
@@ -273,7 +293,7 @@
            * If Dates are not specified, processes all possible dates
            * @param {Date=} startRange
            * @param {Date=} endRange
-           * @returns {[Object]}
+           * @returns {EventObject[]}
            */
           ICalExpander.prototype.jsonEventsForFullCalendar = function (startRange, endRange) {
             // TODO fields to add
