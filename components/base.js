@@ -69,7 +69,7 @@
       // One way bound (will parse once and never touch again)
       options: '<'
     },
-    controller: function ($scope, $attrs, $log, Registry, Model, Collection) {
+    controller: function ($scope, $attrs, Registry, Model, Collection) {
       // Initialize
       const $ctrl = this
       $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
@@ -102,9 +102,42 @@
         }
       })
 
+      // Delayed Initialization
+      $scope.initialize = function () {
+        if ($scope.initialized) {
+          return
+        }
+        if ($scope.model) {
+          $scope.initialized = true
+          $scope.model.on('change', function () {
+            console.log('model changed:', arguments)
+          })
+        }
+        if ($scope.collection) {
+          $scope.initialized = true
+          console.log('collection available')
+        }
+      }
+
+      // Model Watcher
+      $scope.$watch('$scope.model.completed', function (newVal, oldVal) {
+        if (!newVal || _.isEqual(newVal, oldVal)) {
+          return
+        }
+        $scope.initialize()
+      })
+
+      // Collection Watcher
+      $scope.$watch('$scope.collection.completed', function (newVal, oldVal) {
+        if (!newVal || _.isEqual(newVal, oldVal)) {
+          return
+        }
+        $scope.initialize()
+      })
+
       // Display Complete Build
       if (!Stratus.Environment.get('production')) {
-        $log.log(name, 'component:', $scope, $attrs)
+        console.log(name, 'component:', $scope, $attrs)
       }
     },
     // template: '<div id="{{ elementId }}"><div ng-if="model && property && model.get(property)" style="list-style-type: none;">{{ model.get(property) | json }}</div><ul ng-if="collection && model && property" ng-cloak><stratus-search></stratus-search><li ng-repeat="model in collection.models">{{ model.data | json }}</li><stratus-pagination></stratus-pagination></ul></div>',

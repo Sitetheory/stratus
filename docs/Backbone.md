@@ -1,5 +1,9 @@
 ## Backbone Usage
 
+##### Deprecated
+
+Backbone is no longer supported.  Use Angular or React instead.
+
 ##### Overview
 
 Core Types:

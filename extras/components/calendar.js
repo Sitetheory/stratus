@@ -71,19 +71,19 @@
 
       // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-core/main${min}.css`
+        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/core/main${min}.css`
       )
       // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-daygrid/main${min}.css`
+        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/daygrid/main${min}.css`
       )
       // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-timegrid/main${min}.css`
+        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/timegrid/main${min}.css`
       )
       // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}bower_components/fullcalendar-list/main${min}.css`
+        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/list/main${min}.css`
       )
 
       $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
