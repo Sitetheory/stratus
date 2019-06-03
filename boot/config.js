@@ -299,6 +299,10 @@ boot.config({
     'skrollr-native': boot.bundle + 'stratus/bower_components/skrollr/' + (boot.dev ? 'src' : 'dist') + '/skrollr' + boot.suffix,
     'skrollr': boot.bundle + 'stratus/extras/normalizers/skrollr.init' + boot.suffix,
 
+    'masonry-native': boot.bundle + 'stratus/bower_components/masonry-layout/dist/masonry.pkgd' + boot.suffix,
+    // 'masonry-init': boot.bundle + 'stratus/extras/normalizers/masonry.init' + boot.suffix,
+    'masonry': boot.bundle + 'stratus/extras/directives/masonry' + boot.suffix,
+
     /* Angular: required for almost all extras and lots of others */
     angular: boot.bundle + 'stratus/bower_components/angular/angular' + boot.suffix,
     'angular-animate': boot.bundle + 'stratus/bower_components/angular-animate/angular-animate' + boot.suffix,

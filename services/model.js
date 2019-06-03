@@ -379,6 +379,9 @@
                   }
                 }).catch(function () {
                   // (/(.*)\sReceived/i).exec(error.message)[1]
+                  // Treat a fatal error like 500 (our UI code relies on this distinction)
+                  that.status = 500
+                  that.error = true
                   console.error(`XHR: ${prototype.method} ${prototype.url}`, arguments)
                   reject.call(arguments)
                 })
@@ -404,6 +407,8 @@
                         .hideDelay(3000)
                     )
                   }
+                  that.status = 500
+                  that.error = true
                   console.error('FETCH:', message)
                 })
             }
@@ -428,6 +433,7 @@
                         .hideDelay(3000)
                     )
                   }
+                  that.error = true
                   console.error('SAVE:', message)
                 })
             }

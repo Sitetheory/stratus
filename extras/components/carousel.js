@@ -70,8 +70,8 @@
       // Carousel Specific
       initNow: '=',
       /** @deprecated */
-      images: '@',
-      slides: '@',
+      images: '<',
+      slides: '<',
       imageLinkTarget: '@', // shortcut
       direction: '@',
       transitionEffect: '@',
@@ -183,9 +183,10 @@
            * @type {Array<SlideImage> || Array<String> || String}
            * @deprecated
            * */
-          let images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : [] // This is a deprecated reference saved for backwards compatibility
+          let images = $ctrl.images ? $ctrl.images : [] // This is a deprecated reference saved for backwards compatibility
           /** @type {Array<SlideImage> || Array<String> || String} */
-          let slides = $attrs.slides && _.isJSON($attrs.slides) ? JSON.parse($attrs.slides) : images // References images for temporary backwards compatibility
+          // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
+          let slides = $ctrl.slides ? $ctrl.slides : images // References images for temporary backwards compatibility
 
           /** @type {String} */
           $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null

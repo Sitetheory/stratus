@@ -79,6 +79,8 @@
           $element.attr('data-src', src)
 
           // FIXME: This needs to be converted to the new event structure.
+          // TODO: this also needs to listen for if the src or stratus-src changes, so it retriggers, e.g. in a reusable popup where the contents change.
+          // TODO: this also needs to work in popups that may not be trigger "onScroll" or "onScreen" because they are outside the flow of the page (usually at the bottom of the page out of view, but in the window with an absolute position)
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,
