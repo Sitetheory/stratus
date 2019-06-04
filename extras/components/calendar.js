@@ -22,7 +22,7 @@
       '@fullcalendar/list',
       'fullcalendar/customView',
       'angular-material',
-      // 'moment-range',
+      'moment-range',
       'stratus.services.iCal'
     ], factory)
   } else {
@@ -242,10 +242,10 @@
       /**
        * Handles what actions to perform when an event is clicked
        * @param {Object} clickEvent
-       * @param {Object} clickEvent.el HTML Element
-       * @param {Object} clickEvent.event Event data (Calendar Data)
-       * @param {Object} clickEvent.jsEvent Click data
-       * @param {Object} clickEvent.view Plugin View data
+       * @param {Element} clickEvent.el HTML Element
+       * @param {fullcalendarCore.EventApi} clickEvent.event Event data (Calendar Data)
+       * @param {MouseEvent} clickEvent.jsEvent Click data
+       * @param {fullcalendarCore.View} clickEvent.view Plugin View data
        * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
        * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
        */
@@ -284,16 +284,15 @@
               // The event saves misc data to the 'extendedProps' field. So we'll merge this in
               if (
                 dc.eventData &&
-                dc.eventData.constructor.prototype.hasOwnProperty('extendedProps')
+                !dc.eventData.descriptionHTML &&
+                dc.eventData.constructor.prototype.hasOwnProperty('extendedProps') &&
+                dc.eventData.extendedProps.hasOwnProperty('description')
               ) {
-                _.extend(dc.eventData, dc.eventData.extendedProps)
+                dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.extendedProps.description)
+                console.log('processed desc')
               }
-              if (
-                dc.eventData &&
-                dc.eventData.hasOwnProperty('description')
-              ) {
-                dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.description)
-              }
+
+              console.log('evet', dc.eventData)
 
               dc.close = close
             }
@@ -347,6 +346,7 @@
         $scope.calendar = new fullcalendarCore.Calendar($scope.calendarEl, {
           $scope: $scope,
           $compile: $compile,
+          $sce: $sce,
           // customViewScope: customViewScope,
           // customViewComponent: compiledComponent,
 

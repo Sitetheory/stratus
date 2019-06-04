@@ -8,7 +8,9 @@
       'stratus',
       'underscore',
       '@fullcalendar/core',
-      '@fullcalendar/daygrid'
+      '@fullcalendar/daygrid',
+      'angular-material',
+      'moment-range'
     ], factory)
   } else {
     factory(
@@ -40,6 +42,7 @@
         `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.css`
       ) */
 
+      /** @type {fullcalendarCore.EventApi[]} */
       $scope.events = []
       // Make sure we reference our current scope, or events may not be updated
       $scope.$parent.customViewScope = $scope
@@ -49,7 +52,24 @@
       // $scope.render()
 
       $ctrl.$onInit = function () {
-        console.log('init inited')
+        // console.log('init inited')
+      }
+
+      /**
+       *
+       * @param {fullcalendarCore.EventApi} eventData
+       * @param {MouseEvent} ev
+       * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
+       * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
+       */
+      $scope.eventClick = async function (eventData, ev) {
+        $scope.$parent.calendar.publiclyTrigger('eventClick', [{
+          el: ev.target || null,
+          event: eventData,
+          jsEvent: ev,
+          view: $scope.view
+        }])
+        return false // Return false to not issue other functions (such as URL clicking)
       }
 
       $scope.destroy = function () {
@@ -67,12 +87,12 @@
     /**
      * Runs after constructor, no arguments
      * called once when the view is instantiated, when the user switches to the view.
-     * Expects a scope insid eth main calendar
+     * Expects a scope inside th main calendar
      */
     initialize () {
       this.$parentScope = this.viewSpec.options.$scope
 
-      console.log('parent scope is', this.$parentScope)
+      // console.log('parent scope is', this.$parentScope)
 
       // Create the CalendarCustomView Component
       let calendarCustomViewComponent = this.viewSpec.options.$compile('<stratus-calendar-custom-view></stratus-calendar-custom-view>')
@@ -83,6 +103,7 @@
       let stopWatchingScope = this.$parentScope.$watch('customViewScope', function () {
         if (that.$parentScope.customViewScope) {
           that.$scope = that.$parentScope.customViewScope
+          that.$scope.view = that
           if (that.eventsWaiting) {
             that.updateEventScope(that.eventsWaiting)
           }
@@ -139,7 +160,7 @@
 
     /**
      * Update the displayed events in the Stratus Component by sending it over
-     * @param {[]} events
+     * @param {fullcalendarCore.EventApi[]} events
      */
     updateEventScope (events) {
       let that = this
@@ -153,9 +174,10 @@
      * Get the current range of Events
      * @param {[]} eventStore
      * @param {[]=} eventUiBases
-     * @returns {[]}
+     * @returns {fullcalendarCore.EventApi[]}
      */
     getEventsInRange (eventStore, eventUiBases) {
+      let that = this
       eventStore = eventStore || this.props.eventStore
       eventUiBases = eventUiBases || this.props.eventUiBases
       // let currentStart = this.currentStart || this.props.dateProfile.currentRange.start
@@ -165,12 +187,23 @@
       // this.$scope.events = []
 
       let events = []
-      let sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, this.props.dateProfile.activeRange, this.nextDayThreshold)
+      let sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, that.props.dateProfile.activeRange, that.nextDayThreshold)
       if (
         sliceEventObjects.hasOwnProperty('fg') &&
         _.isArray(sliceEventObjects.fg)
       ) {
-        events.push(...sliceEventObjects.fg)
+        sliceEventObjects.fg.forEach(function (eventRaw) {
+          let event = new fullcalendarCore.EventApi(that.$parentScope.calendar, eventRaw.def, eventRaw.instance)
+          if (
+            event &&
+            !event.descriptionHTML &&
+            event.constructor.prototype.hasOwnProperty('extendedProps') &&
+            event.extendedProps.hasOwnProperty('description')
+          ) {
+            event.descriptionHTML = that.viewSpec.options.$sce.trustAsHtml(event.extendedProps.description)
+          }
+          events.push(event)
+        })
       }
 
       // TODO may need to process these better for stratus
