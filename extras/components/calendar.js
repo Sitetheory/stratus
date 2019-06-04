@@ -22,7 +22,7 @@
       '@fullcalendar/list',
       'fullcalendar/customView',
       'angular-material',
-      'moment-range',
+      // 'moment-range',
       'stratus.services.iCal'
     ], factory)
   } else {

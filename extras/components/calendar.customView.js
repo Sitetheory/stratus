@@ -49,7 +49,7 @@
       // $scope.render()
 
       $ctrl.$onInit = function () {
-        console.log('init initied')
+        console.log('init inited')
       }
 
       $scope.destroy = function () {
@@ -83,6 +83,9 @@
       let stopWatchingScope = this.$parentScope.$watch('customViewScope', function () {
         if (that.$parentScope.customViewScope) {
           that.$scope = that.$parentScope.customViewScope
+          if (that.eventsWaiting) {
+            that.updateEventScope(that.eventsWaiting)
+          }
           stopWatchingScope()
           // console.log('our scope', that.$scope)
         }
@@ -119,25 +122,37 @@
     }
 
     /**
-     * responsible for rendering events
-     * Update the display. Specifically, Update the list of events on the scope
-     * @param eventStore
-     * @param eventUiHash
+     * Runns when ever the View inits or the date range changes
+     * Attempts tp update the display. Specifically, Update the list of events on the scope
+     * @param {[]} eventStore
+     * @param {[]} eventUiHash
      */
     renderEvents (eventStore, eventUiHash) {
       if (this.$scope) {
         let that = this
-        that.$scope.$applyAsync(function () {
-          that.$scope.events.length = 0
-          that.$scope.events.push(...that.getEventsInRange(eventStore))
-        })
+        this.updateEventScope(that.getEventsInRange(eventStore))
+      } else {
+        // If scope isn't ready yet, add the events to waiting
+        this.eventsWaiting = this.getEventsInRange(eventStore)
       }
+    }
+
+    /**
+     * Update the displayed events in the Stratus Component by sending it over
+     * @param {[]} events
+     */
+    updateEventScope (events) {
+      let that = this
+      that.$scope.$applyAsync(function () {
+        that.$scope.events.length = 0
+        that.$scope.events.push(...events)
+      })
     }
 
     /**
      * Get the current range of Events
      * @param {[]} eventStore
-     * @param {[]} eventUiBases
+     * @param {[]=} eventUiBases
      * @returns {[]}
      */
     getEventsInRange (eventStore, eventUiBases) {
