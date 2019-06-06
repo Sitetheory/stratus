@@ -1,4 +1,5 @@
-<md-content layout-padding>
+<md-content id="{{ elementId }}" class="{{ template }}Template" layout-padding>
+	<span>Default view for {{ elementId }} (remove me)</span>
 	<md-card class="" ng-repeat="eventData in events">
 		<div class="event-image-container" data-ng-if="::eventData.extendedProps.image">
 			<img class="event-image" data-ng-src="::eventData.extendedProps.image"/>
