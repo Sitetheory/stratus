@@ -8,7 +8,6 @@
       'stratus',
       'underscore',
       '@fullcalendar/core',
-      '@fullcalendar/daygrid',
       'angular-material',
       'moment-range'
     ], factory)
