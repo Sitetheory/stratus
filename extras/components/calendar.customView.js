@@ -8,85 +8,126 @@
       'stratus',
       'underscore',
       '@fullcalendar/core',
-      '@fullcalendar/daygrid'
+      'angular-material',
+      'moment-range'
     ], factory)
   } else {
     factory(
       {},
       root.Stratus,
       root._,
-      root.FullCalendar,
-      root.FullCalendarDayGrid
+      root.FullCalendar
     )
   }
-}(this, function (exports, Stratus, _, fullcalendarCore, fullcalendarDayGridPlugin) {
+}(this, function (exports, Stratus, _, fullcalendarCore) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar.customView'
   const localPath = 'extras/components'
+  const defaultTemplate = 'default'
+  let uid = null
 
   Stratus.Components.CalendarCustomView = {
-    /* bindings: {
-      ngModel: '='
-    }, */
-    controller: function ($scope) {
+    bindings: {
+      template: '@'
+    },
+    controller: function ($scope, $attrs) {
       // Initialize
       const $ctrl = this
-      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      // uid should have be created b the View. Rely on that instead
+      if (!uid) {
+        uid = _.uniqueId(_.camelToSnake(name) + '_')
+      }
+      $ctrl.uid = uid
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $ctrl.uid
-      // noinspection JSIgnoredPromiseFromCall
-      /* Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.css`
-      ) */
+      $scope.template = $attrs.template && !_.isEmpty($attrs.template) ? $attrs.template : defaultTemplate
 
+      // Load this particular template's CSS
+      // noinspection JSIgnoredPromiseFromCall
+      Stratus.Internals.CssLoader(
+        `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}.${$scope.template}${min}.css`
+      )
+
+      /** @type {fullcalendarCore.EventApi[]} */
       $scope.events = []
       // Make sure we reference our current scope, or events may not be updated
-      $scope.$parent.customViewScope = $scope
+      $scope.$applyAsync(function () {
+        $scope.$parent.customViews[uid] = $scope.template
+      })
 
       // $scope.model = $parse($attrs.ngModel)
       // $scope.render = function () {}
       // $scope.render()
 
       $ctrl.$onInit = function () {
-        console.log('init initied')
+        // console.log('init inited')
+      }
+
+      /**
+       *
+       * @param {fullcalendarCore.EventApi} eventData
+       * @param {MouseEvent} ev
+       * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
+       * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
+       */
+      $scope.eventClick = async function (eventData, ev) {
+        $scope.$parent.calendar.publiclyTrigger('eventClick', [{
+          el: ev.target || null,
+          event: eventData,
+          jsEvent: ev,
+          view: $scope.view
+        }])
+        return false // Return false to not issue other functions (such as URL clicking)
       }
 
       $scope.destroy = function () {
-        if (typeof Stratus.Instances[$ctrl.uid].remove === 'function') {
-          Stratus.Instances[$ctrl.uid].remove()
+        delete $scope.$parent.customViews[uid]
+        if (typeof Stratus.Instances[uid].remove === 'function') {
+          Stratus.Instances[uid].remove()
         }
         $scope.$destroy()
-        delete Stratus.Instances[$ctrl.uid]
+        delete Stratus.Instances[uid]
       }
     },
-    templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}${min}.html`
+    templateUrl: function ($element, $attrs) {
+      return `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/${name}.${$attrs.template || defaultTemplate}${min}.html`
+    }
   }
 
   class CustomView extends fullcalendarCore.View {
     /**
      * Runs after constructor, no arguments
      * called once when the view is instantiated, when the user switches to the view.
-     * Expects a scope insid eth main calendar
+     * Expects a scope inside th main calendar
      */
     initialize () {
+      uid = _.uniqueId(_.camelToSnake(name) + '_')
+      // console.log('this.viewSpec.options', this.viewSpec.options)
       this.$parentScope = this.viewSpec.options.$scope
 
-      console.log('parent scope is', this.$parentScope)
+      // console.log('parent scope is', this.$parentScope)
 
       // Create the CalendarCustomView Component
-      let calendarCustomViewComponent = this.viewSpec.options.$compile('<stratus-calendar-custom-view></stratus-calendar-custom-view>')
+      let calendarCustomViewComponent = this.viewSpec.options.$compile(`<stratus-calendar-custom-view data-template="${this.viewSpec.options.template}"></stratus-calendar-custom-view>`)
       this.componentEl = calendarCustomViewComponent(this.$parentScope)
 
       // Watch for scope to get ready
       let that = this
-      let stopWatchingScope = this.$parentScope.$watch('customViewScope', function () {
-        if (that.$parentScope.customViewScope) {
-          that.$scope = that.$parentScope.customViewScope
+      let stopWatchingScope = this.$parentScope.$watch(`customViews`, function () {
+        if (
+          that.$parentScope.customViews.hasOwnProperty(uid) &&
+          Stratus.Instances.hasOwnProperty(uid)
+        ) {
+          // that.$scope = that.$parentScope.customViews[uid] // Angular is not allowing the scoped to be passed in this way
+          that.$scope = Stratus.Instances[uid]
+          that.$scope.view = that
+          if (that.eventsWaiting) {
+            that.updateEventScope(that.eventsWaiting)
+          }
           stopWatchingScope()
-          // console.log('our scope', that.$scope)
         }
-      })
+      }, true)
 
       fullcalendarCore.appendToElement(this.el, this.componentEl)
     }
@@ -100,83 +141,93 @@
     // renderEventDragMem(props.eventDrag);
     // renderEventResizeMem(props.eventResize);
 
-    renderDates (dateProfile) {
-      // responsible for rendering the given dates
-      // console.log('renderDates ran', dateProfile, this)
-
-      // this.currentStart and this.currentEnd are now set
-    }
-
     /**
      * Runs when View to being left to another View
      */
     destroy () {
-      console.log('destroy')
       super.destroy()
       this.$scope.destroy()
-
       // TODO in the future, instead of creating new Vies, could recreate the existing one
     }
 
+    // noinspection JSUnusedGlobalSymbols
     /**
-     * responsible for rendering events
-     * Update the display. Specifically, Update the list of events on the scope
-     * @param eventStore
-     * @param eventUiHash
+     * Runns when ever the View inits or the date range changes
+     * Attempts tp update the display. Specifically, Update the list of events on the scope
+     * @param {[]} eventStore
+     * @param {[]} eventUiHash
      */
     renderEvents (eventStore, eventUiHash) {
       if (this.$scope) {
         let that = this
-        that.$scope.$applyAsync(function () {
-          that.$scope.events.length = 0
-          that.$scope.events.push(...that.getEventsInRange(eventStore))
-        })
+        this.updateEventScope(that.getEventsInRange(eventStore))
+      } else {
+        // If scope isn't ready yet, add the events to waiting
+        this.eventsWaiting = this.getEventsInRange(eventStore)
       }
+    }
+
+    /**
+     * Update the displayed events in the Stratus Component by sending it over
+     * @param {fullcalendarCore.EventApi[]} events
+     */
+    updateEventScope (events) {
+      let that = this
+      that.$scope.$applyAsync(function () {
+        that.$scope.events.length = 0
+        that.$scope.events.push(...events)
+      })
     }
 
     /**
      * Get the current range of Events
      * @param {[]} eventStore
-     * @param {[]} eventUiBases
-     * @returns {[]}
+     * @param {[]=} eventUiBases
+     * @returns {fullcalendarCore.EventApi[]}
      */
     getEventsInRange (eventStore, eventUiBases) {
+      let that = this
       eventStore = eventStore || this.props.eventStore
       eventUiBases = eventUiBases || this.props.eventUiBases
-      // let currentStart = this.currentStart || this.props.dateProfile.currentRange.start
-      // let currentEnd = this.currentEnd || this.props.dateProfile.currentRange.end
-      // this.currentStart
-      // this.currentEnd
-      // this.$scope.events = []
 
       let events = []
-      let sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, this.props.dateProfile.activeRange, this.nextDayThreshold)
+      let sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, that.props.dateProfile.activeRange, that.nextDayThreshold)
       if (
         sliceEventObjects.hasOwnProperty('fg') &&
         _.isArray(sliceEventObjects.fg)
       ) {
-        events.push(...sliceEventObjects.fg)
+        sliceEventObjects.fg.forEach(function (eventRaw) {
+          let event = new fullcalendarCore.EventApi(that.$parentScope.calendar, eventRaw.def, eventRaw.instance)
+          if (
+            event &&
+            !event.descriptionHTML &&
+            event.constructor.prototype.hasOwnProperty('extendedProps') &&
+            event.extendedProps.hasOwnProperty('description')
+          ) {
+            event.descriptionHTML = that.viewSpec.options.$sce.trustAsHtml(event.extendedProps.description)
+          }
+          events.push(event)
+        })
       }
 
-      // TODO may need to process these better for stratus
-
-      console.log('events', events)
+      // console.log('events', events)
       return events
     }
   }
 
   exports.CustomView = CustomView
   exports.default = fullcalendarCore.createPlugin({
-    defaultView: 'customGrid',
+    defaultView: 'custom',
     views: {
       custom: {
         class: CustomView,
-        allDaySlot: true,
+        template: 'default',
         duration: { month: 1 }
       },
-      customGrid: {
+      customArticle: {
         type: 'custom',
-        duration: { days: 1 }
+        template: 'article',
+        duration: { month: 1 }
       }
     }
   })

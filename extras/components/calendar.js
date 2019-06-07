@@ -7,6 +7,14 @@
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
 /* global define */
 
+/**
+ * @typedef {Object} fullcalendarCore
+ * @typedef {Function} fullcalendarCore.appendToElement
+ * @typedef {Function} fullcalendarCore.sliceEventStore
+ * @typedef {Class} fullcalendarCore.EventApi
+ * @typedef {Object} fullcalendarCore.EventApi.extendedProps
+ */
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -15,7 +23,7 @@
       'underscore',
       'moment',
       'angular',
-      'stratus.components.calendar.timezones',
+      'stratus.components.calendar.timezones', // TODO may be able to remove due to moment
       '@fullcalendar/core',
       '@fullcalendar/daygrid',
       '@fullcalendar/timegrid',
@@ -38,9 +46,6 @@
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
   const localPath = 'extras/components'
-
-  console.log('new fullcalendar', fullcalendarCore)
-  console.log('new plugin', fullcalendarCustomViewPlugin)
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {
@@ -107,7 +112,8 @@
         listDay: 'day list',
         listYear: 'year',
 
-        custom: 'custom'
+        custom: 'custom default',
+        customArticle: 'Article'
       }
       $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
       $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
@@ -144,9 +150,11 @@
       $scope.fetched = false
       $scope.startRange = moment()
       $scope.endRange = moment()
+      $scope.customViews = {}
 
-      $scope.options.defaultView = 'listMonth' // dev testing
-      $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom'] // dev testing
+      // TODO this is overwriting the possible views until they are ready. Remove once we can get this working on Sitetheory
+      $scope.options.defaultView = 'listMonth' // FIXME dev testing - remove later
+      $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom', 'customArticle'] // FIXME dev testing - remove later
 
       // Event Collection
       // TODO: remove if we don't need models and collections
@@ -154,6 +162,7 @@
 
       $ctrl.$onInit = function () {
         // Load all timezones for use
+        // FIXME, moment should be able to handle the timezones now. Will need to check
         iCal.registerTimezones(timezones)
         // Compile the fullcalendar header to look useable
         $ctrl.prepareHeader()
@@ -242,15 +251,15 @@
       /**
        * Handles what actions to perform when an event is clicked
        * @param {Object} clickEvent
-       * @param {Object} clickEvent.el HTML Element
-       * @param {Object} clickEvent.event Event data (Calendar Data)
-       * @param {Object} clickEvent.jsEvent Click data
-       * @param {Object} clickEvent.view Plugin View data
+       * @param {Element} clickEvent.el HTML Element
+       * @param {fullcalendarCore.EventApi} clickEvent.event Event data (Calendar Data)
+       * @param {MouseEvent} clickEvent.jsEvent Click data
+       * @param {fullcalendarCore.View} clickEvent.view Plugin View data
        * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
        * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
        */
       $scope.handleEventClick = async function (clickEvent) {
-        console.log('Event', clickEvent)
+        // console.log('Event', clickEvent)
         // Simply open  popup for now
         // noinspection JSIgnoredPromiseFromCall
         $scope.displayEventDialog(clickEvent.event, clickEvent.jsEvent)
@@ -259,8 +268,8 @@
 
       /**
        * Create MDDialog popup for an event
-       * @param {Object} calEvent
-       * @param {Object} clickEvent
+       * @param {fullcalendarCore.EventApi} calEvent
+       * @param {MouseEvent} clickEvent
        * @returns {Promise}
        * @fulfill {*} Unknown fulfillment
        */
@@ -284,15 +293,11 @@
               // The event saves misc data to the 'extendedProps' field. So we'll merge this in
               if (
                 dc.eventData &&
-                dc.eventData.constructor.prototype.hasOwnProperty('extendedProps')
+                !dc.eventData.descriptionHTML &&
+                dc.eventData.constructor.prototype.hasOwnProperty('extendedProps') &&
+                dc.eventData.extendedProps.hasOwnProperty('description')
               ) {
-                _.extend(dc.eventData, dc.eventData.extendedProps)
-              }
-              if (
-                dc.eventData &&
-                dc.eventData.hasOwnProperty('description')
-              ) {
-                dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.description)
+                dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.extendedProps.description)
               }
 
               dc.close = close
@@ -347,6 +352,7 @@
         $scope.calendar = new fullcalendarCore.Calendar($scope.calendarEl, {
           $scope: $scope,
           $compile: $compile,
+          $sce: $sce,
           // customViewScope: customViewScope,
           // customViewComponent: compiledComponent,
 
