@@ -474,8 +474,8 @@ boot.config({
 
     // Angular Dependency RXJS is all that is broken: https://github.com/ReactiveX/rxjs
 
-    'rxjs': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix
-    // 'rxjs/operators': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
+    'rxjs': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
+    'rxjs/operators': boot.bundle + 'stratus/extras/services/rxjs.operators' + boot.suffix
 
     /* STRATUS EXTRAS: Angular: required for almost all extras and lots of others */
     // angular: boot.bundle + 'stratus/node_modules/angular/angular' + boot.suffix,
