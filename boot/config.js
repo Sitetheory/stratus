@@ -50,8 +50,8 @@ boot.config({
     // 'angular-sanitize': {
     //   deps: ['angular']
     // },
-    //
-    // /* Angular Modules */
+
+    /* Angular Modules */
     // 'angular-file-upload': {
     //   deps: ['angular']
     // },
@@ -64,13 +64,13 @@ boot.config({
     // 'angular-ui-tree': {
     //   deps: ['angular']
     // },
-    //
+
     // // Charts
     // 'chart.js': {
     //   deps: ['angular', 'chart']
     // },
-    //
-    // /* Froala */
+
+    /* Froala */
     // 'froala-align': {
     //   deps: ['froala']
     // },
@@ -167,8 +167,8 @@ boot.config({
     // 'angular-drag-and-drop-lists': {
     //   deps: ['angular']
     // },
-    //
-    // /* Calendar */
+
+    /* Calendar */
     // fullcalendar: {
     //   deps: [
     //     'jquery',
@@ -198,21 +198,47 @@ boot.config({
   },
 
   // Package Directories
-  // packages: [
-  //   /**
-  //    {
-  //        name: 'stratus',
-  //        location: boot.bundle + 'stratus',
-  //        main: 'stratus'
-  //    },
-  //    **/
-  //   // Enabled For Editor: e.g. Froala or Redactor
-  //   {
-  //     name: 'codemirror',
-  //     location: boot.bundle + 'stratus/node_modules/codemirror',
-  //     main: 'lib/codemirror'
-  //   }
-  // ],
+  packages: [
+    /* *
+    {
+      name: 'stratus',
+      location: boot.bundle + 'stratus',
+      main: 'stratus'
+    },
+    /* */
+
+    /* *
+    {
+      name: 'rxjs',
+      location: boot.bundle + 'stratus/node_modules/rxjs',
+      main: 'bundles/rxjs.umd'  + boot.suffix,
+    },
+    /* */
+
+    /* *
+    {
+      name: 'rxjs/operators',
+      location: boot.bundle + 'stratus/node_modules/rxjs/operators'
+    }
+    /* */
+
+    /* *
+    {
+      name: '@angular/material',
+      location: boot.bundle + 'stratus/node_modules/@angular/material/bundles',
+      main: 'material.umd' + boot.suffix
+    }
+    /* */
+
+    // Enabled For Editor: e.g. Froala or Redactor
+    /* *
+    {
+      name: 'codemirror',
+      location: boot.bundle + 'stratus/node_modules/codemirror',
+      main: 'lib/codemirror'
+    }
+    /* */
+  ],
 
   // Relative Paths
   paths: {
@@ -252,8 +278,8 @@ boot.config({
     bowser: boot.bundle + 'stratus/node_modules/bowser/bowser' + boot.suffix,
 
     /* THIRD PARTY: Interpreters */
-    coffee: boot.bundle + 'stratus/node_modules/coffeescript/docs/v2/browser-compiler/coffeescript',
-    less: boot.bundle + 'stratus/node_modules/less/dist/less' + boot.suffix,
+    // coffee: boot.bundle + 'stratus/node_modules/coffeescript/docs/v2/browser-compiler/coffeescript',
+    // less: boot.bundle + 'stratus/node_modules/less/dist/less' + boot.suffix,
 
     /* THIRD PARTY: jQuery */
     // TODO: convert all instances of jQuery to use Stratus selector if possible.
@@ -261,17 +287,17 @@ boot.config({
     // using the selector so they could just the Stratus Selector: Stratus('div')
     // NOTE: this sandboxes jquery into require so it's not in the window
     'jquery-native': boot.bundle + 'stratus/node_modules/jquery/dist/jquery' + boot.suffix,
-    jquery: boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix
+    jquery: boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix,
 
-    // /* STRATUS ELEMENTS: enabled in your project as you need them  */
+    /* STRATUS ELEMENTS: enabled in your project as you need them  */
 
-    // /* STRATUS CONTROLLERS */
-    //
-    // /* STRATUS CONTROLLERS: Angular */
+    /* STRATUS CONTROLLERS */
+
+    /* STRATUS CONTROLLERS: Angular */
     // 'stratus.controllers.dialogue': boot.bundle + 'stratus/extras/controllers/dialogue' + boot.suffix,
     // 'stratus.controllers.panel': boot.bundle + 'stratus/extras/controllers/panel' + boot.suffix,
-    //
-    // /* STRATUS DIRECTIVES: */
+
+    /* STRATUS DIRECTIVES: */
     // 'stratus.directives.href': boot.bundle + 'stratus/extras/directives/href' + boot.suffix,
     // 'stratus.directives.singleClick': boot.bundle + 'stratus/extras/directives/singleClick' + boot.suffix,
     // 'stratus.directives.onScreen': boot.bundle + 'stratus/extras/directives/onScreen' + boot.suffix,
@@ -283,8 +309,8 @@ boot.config({
     // 'stratus.directives.timestampToDate': boot.bundle + 'stratus/extras/directives/timestampToDate' + boot.suffix,
     // 'stratus.directives.drag': boot.bundle + '/stratus/extras/directives/drag' + boot.suffix,
     // 'stratus.directives.drop': boot.bundle + '/stratus/extras/directives/drop' + boot.suffix,
-    //
-    // /* STRATUS DIRECTIVES: Froala Directive and Libraries */
+
+    /* STRATUS DIRECTIVES: Froala Directive and Libraries */
     // 'stratus.directives.froala': boot.bundle + 'stratus/extras/directives/froala' + boot.suffix,
     // froala: boot.bundle + 'stratus/node_modules/froala-editor/js/froala_editor.min',
     // 'froala-align': boot.bundle + 'stratus/node_modules/froala-editor/js/plugins/align.min',
@@ -318,8 +344,8 @@ boot.config({
     // 'froala-video': boot.bundle + 'stratus/node_modules/froala-editor/js/plugins/video.min',
     // 'froala-word-paste': boot.bundle + 'stratus/node_modules/froala-editor/js/plugins/word_paste.min',
     // 'angular-froala': boot.bundle + 'stratus/node_modules/angular-froala/src/angular-froala',
-    //
-    // /* STRATUS DIRECTIVES: Redactor Directive and Libraries */
+
+    /* STRATUS DIRECTIVES: Redactor Directive and Libraries */
     // // NOTE: this isn't functioning at the moment. It needs to be rebuilt and enabled from the Stratus extras.
     // 'stratus.directives.redactor': boot.bundle + 'stratus/extras/directives/redactor' + boot.suffix,
     // // TODO: these should be moved to the stratus/extras (instead of sitetheory, e.g. see froala)
@@ -332,13 +358,13 @@ boot.config({
     // 'redactor-table': 'sitetheorycore/dist/redactor/redactor.table' + boot.suffix,
     // 'redactor-textexpander': 'sitetheorycore/dist/redactor/redactor.textexpander' + boot.suffix,
     // 'redactor-video': 'sitetheorycore/dist/redactor/redactor.video' + boot.suffix,
-    //
-    // /* STRATUS NORMALIZERS: */
-    // /* STRAUTS NORMALIZERS: Skroller Normalizer and Libraries */
+
+    /* STRATUS NORMALIZERS: */
+    /* STRAUTS NORMALIZERS: Skroller Normalizer and Libraries */
     // skrollr: boot.bundle + 'stratus/extras/normalizers/skrollr.init' + boot.suffix,
     // 'skrollr-native': boot.bundle + 'stratus/node_modules/skrollr-typed/' + (boot.dev ? 'src' : 'dist') + '/skrollr' + boot.suffix,
-    //
-    // /* STRATUS FILTERS */
+
+    /* STRATUS FILTERS */
     // 'stratus.filters.age': boot.bundle + 'stratus/extras/filters/age' + boot.suffix,
     // 'stratus.filters.map': boot.bundle + 'stratus/extras/filters/map' + boot.suffix,
     // 'stratus.filters.reduce': boot.bundle + 'stratus/extras/filters/reduce' + boot.suffix,
@@ -348,18 +374,17 @@ boot.config({
     // 'stratus.filters.gravatar': boot.bundle + 'stratus/extras/filters/gravatar' + boot.suffix,
     // md5: boot.bundle + 'stratus/node_modules/js-md5/build/md5.min',
 
-    //
-    // /* STRATUS FILTERS: Moment and libraries */
+    /* STRATUS FILTERS: Moment and libraries */
     // 'stratus.filters.moment': boot.bundle + 'stratus/extras/filters/moment' + boot.suffix,
     // moment: boot.bundle + 'stratus/node_modules/moment/' + boot.directory + 'moment' + boot.suffix,
     // 'moment-timezone': boot.bundle + 'stratus/node_modules/moment-timezone/builds/moment-timezone-with-data' + boot.suffix,
     // 'moment-range': boot.bundle + 'stratus/node_modules/moment-range/dist/moment-range' + boot.suffix,
-    //
-    // /*
+
+    /*
     // STRATUS EXTRAS: Extra features that are used from the Stratus core "extras" library
     //  */
-    //
-    // /* STRATUS EXTRAS - COMPONENTS: Calendar and Libraries */
+
+    /* STRATUS EXTRAS - COMPONENTS: Calendar and Libraries */
     // 'stratus.components.calendar': boot.bundle + 'stratus/extras/components/calendar' + boot.suffix,
     // fullcalendar: boot.bundle + 'stratus/node_modules/fullcalendar/dist/fullcalendar' + boot.suffix,
     // '@fullcalendar/core': boot.bundle + 'stratus/node_modules/fullcalendar-core/main' + boot.suffix,
@@ -370,16 +395,89 @@ boot.config({
     // ical: boot.bundle + 'stratus/node_modules/ical.js/build/ical' + boot.suffix,
     // 'stratus.services.iCal': boot.bundle + 'stratus/extras/services/iCal' + boot.suffix,
     // 'stratus.components.calendar.timezones': boot.bundle + 'stratus/extras/components/calendar.timezones' + boot.suffix,
-    //
-    // /* STRATUS EXTRAS - COMPONENTS: Carousel and libraries */
+
+    /* STRATUS EXTRAS - COMPONENTS: Carousel and libraries */
     // 'stratus.components.carousel': boot.bundle + 'stratus/extras/components/carousel' + boot.suffix,
     // swiper: boot.bundle + 'stratus/node_modules/swiper/dist/js/swiper' + boot.suffix,
-    //
-    // /* STRATUS COMPONENTS: Social Media */
-    // // Not Currently Used: this is a way to enable facebook components for a specific facebook page (component not 100% finished for general use)
-    // // 'stratus.components.facebook': boot.bundle + 'stratus/extras/components/facebook' + boot.suffix,
-    //
-    // /* STRATUS EXTRAS: Angular: required for almost all extras and lots of others */
+
+    /* STRATUS COMPONENTS: Social Media */
+    // Not Currently Used: this is a way to enable facebook components for a specific facebook page (component not 100% finished for general use)
+    // 'stratus.components.facebook': boot.bundle + 'stratus/extras/components/facebook' + boot.suffix,
+
+    /* STRATUS LIBRARY: Angular */
+    '@angular/animations': boot.bundle + 'stratus/node_modules/@angular/animations/bundles/animations.umd' + boot.suffix,
+    '@angular/animations/browser': boot.bundle + 'stratus/node_modules/@angular/animations/bundles/animations-browser.umd' + boot.suffix,
+    '@angular/cdk': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk.umd' + boot.suffix,
+    '@angular/cdk/a11y': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-a11y.umd' + boot.suffix,
+    '@angular/cdk/accordion': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-accordion.umd' + boot.suffix,
+    '@angular/cdk/bidi': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-bidi.umd' + boot.suffix,
+    '@angular/cdk/coercion': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-coercion.umd' + boot.suffix,
+    '@angular/cdk/collections': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-collections.umd' + boot.suffix,
+    '@angular/cdk/drag-drop': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-drag-drop.umd' + boot.suffix,
+    '@angular/cdk/keycodes': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-keycodes.umd' + boot.suffix,
+    '@angular/cdk/layout': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-layout.umd' + boot.suffix,
+    '@angular/cdk/observers': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-observers.umd' + boot.suffix,
+    '@angular/cdk/overlay': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-overlay.umd' + boot.suffix,
+    '@angular/cdk/platform': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-platform.umd' + boot.suffix,
+    '@angular/cdk/portal': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-portal.umd' + boot.suffix,
+    '@angular/cdk/scrolling': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-scrolling.umd' + boot.suffix,
+    '@angular/cdk/stepper': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-stepper.umd' + boot.suffix,
+    '@angular/cdk/table': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-table.umd' + boot.suffix,
+    '@angular/cdk/text-field': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-text-field.umd' + boot.suffix,
+    '@angular/cdk/tree': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-tree.umd' + boot.suffix,
+    '@angular/common': boot.bundle + 'stratus/node_modules/@angular/common/bundles/common.umd' + boot.suffix,
+    '@angular/common/http': boot.bundle + 'stratus/node_modules/@angular/common/bundles/common-http.umd' + boot.suffix,
+    '@angular/compiler': boot.bundle + 'stratus/node_modules/@angular/compiler/bundles/compiler.umd' + boot.suffix,
+    '@angular/core': boot.bundle + 'stratus/node_modules/@angular/core/bundles/core.umd' + boot.suffix,
+    '@angular/flex-layout': boot.bundle + 'stratus/node_modules/@angular/flex-layout/bundles/flex-layout.umd' + boot.suffix,
+    '@angular/forms': boot.bundle + 'stratus/node_modules/@angular/forms/bundles/forms.umd' + boot.suffix,
+    '@angular/material': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material.umd' + boot.suffix,
+    '@angular/material/autocomplete': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-autocomplete.umd' + boot.suffix,
+    '@angular/material/badge': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-badge.umd' + boot.suffix,
+    '@angular/material/bottom-sheet': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-bottom-sheet.umd' + boot.suffix,
+    '@angular/material/button': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-button.umd' + boot.suffix,
+    '@angular/material/button-toggle': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-button-toggle.umd' + boot.suffix,
+    '@angular/material/card': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-card.umd' + boot.suffix,
+    '@angular/material/checkbox': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-checkbox.umd' + boot.suffix,
+    '@angular/material/chips': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-chips.umd' + boot.suffix,
+    '@angular/material/core': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-core.umd' + boot.suffix,
+    '@angular/material/datepicker': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-datepicker.umd' + boot.suffix,
+    '@angular/material/dialog': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-dialog.umd' + boot.suffix,
+    '@angular/material/divider': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-divider.umd' + boot.suffix,
+    '@angular/material/expansion': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-expansion.umd' + boot.suffix,
+    '@angular/material/form-field': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-form-field.umd' + boot.suffix,
+    '@angular/material/grid-list': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-grid-list.umd' + boot.suffix,
+    '@angular/material/icon': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-icon.umd' + boot.suffix,
+    '@angular/material/input': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-input.umd' + boot.suffix,
+    '@angular/material/list': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-list.umd' + boot.suffix,
+    '@angular/material/menu': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-menu.umd' + boot.suffix,
+    '@angular/material/paginator': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-paginator.umd' + boot.suffix,
+    '@angular/material/progress-bar': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-progress-bar.umd' + boot.suffix,
+    '@angular/material/progress-spinner': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-progress-spinner.umd' + boot.suffix,
+    '@angular/material/radio': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-radio.umd' + boot.suffix,
+    '@angular/material/select': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-select.umd' + boot.suffix,
+    '@angular/material/sidenav': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-sidenav.umd' + boot.suffix,
+    '@angular/material/slide-toggle': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-slide-toggle.umd' + boot.suffix,
+    '@angular/material/slider': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-slider.umd' + boot.suffix,
+    '@angular/material/snack-bar': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-snack-bar.umd' + boot.suffix,
+    '@angular/material/sort': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-sort.umd' + boot.suffix,
+    '@angular/material/stepper': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-stepper.umd' + boot.suffix,
+    '@angular/material/table': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-table.umd' + boot.suffix,
+    '@angular/material/tabs': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-tabs.umd' + boot.suffix,
+    '@angular/material/toolbar': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-toolbar.umd' + boot.suffix,
+    '@angular/material/tooltip': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-tooltip.umd' + boot.suffix,
+    '@angular/material/tree': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-tree.umd' + boot.suffix,
+    '@angular/material-moment-adapter': boot.bundle + 'stratus/node_modules/@angular/material-moment-adapter/bundles/material-moment-adapter.umd' + boot.suffix,
+    '@angular/platform-browser': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser.umd' + boot.suffix,
+    '@angular/platform-browser/animations': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd' + boot.suffix,
+    '@angular/platform-browser-dynamic': boot.bundle + 'stratus/node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd' + boot.suffix,
+
+    // Angular Dependency RXJS is all that is broken: https://github.com/ReactiveX/rxjs
+
+    'rxjs': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix
+    // 'rxjs/operators': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
+
+    /* STRATUS EXTRAS: Angular: required for almost all extras and lots of others */
     // angular: boot.bundle + 'stratus/node_modules/angular/angular' + boot.suffix,
     // 'angular-animate': boot.bundle + 'stratus/node_modules/angular-animate/angular-animate' + boot.suffix,
     // 'angular-aria': boot.bundle + 'stratus/node_modules/angular-aria/angular-aria' + boot.suffix,
@@ -387,8 +485,9 @@ boot.config({
     // 'angular-messages': boot.bundle + 'stratus/node_modules/angular-messages/angular-messages' + boot.suffix,
     // 'angular-resource': boot.bundle + 'stratus/node_modules/angular-resource/angular-resource' + boot.suffix,
     // 'angular-sanitize': boot.bundle + 'stratus/node_modules/angular-sanitize/angular-sanitize' + boot.suffix,
-    //
-    // /* STRATUS EXTRAS: Angular Modules */
+
+    /* STRATUS EXTRAS: Angular Modules */
+
     // 'angular-chart': boot.bundle + 'stratus/node_modules/angular-chart.js/dist/angular-chart' + boot.suffix,
     // 'angular-drag-and-drop-lists': boot.bundle + 'stratus/node_modules/angular-drag-and-drop-lists/angular-drag-and-drop-lists' + boot.suffix,
     // 'angular-icons': boot.bundle + 'stratus/node_modules/angular-material-icons/angular-material-icons' + boot.suffix,
@@ -397,11 +496,11 @@ boot.config({
     // 'angular-sortable': boot.bundle + 'stratus/node_modules/ng-sortable/angular-legacy-sortable' + boot.suffix,
     // 'angular-scrollSpy': boot.bundle + 'stratus/node_modules/angular-scroll-spy/angular-scroll-spy',
     // 'angular-ui-tree': boot.bundle + 'stratus/node_modules/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
-    //
-    // /* STRATUS EXTRAS: Chart */
+
+    /* STRATUS EXTRAS: Chart */
     // chart: boot.bundle + 'stratus/node_modules/chart.js/dist/Chart',
-    //
-    // /* STRATUS EXTRAS: Masonry */
+
+    /* STRATUS EXTRAS: Masonry */
     // 'masonry-native': boot.bundle + 'stratus/node_modules/masonry-layout/dist/masonry.pkgd' + boot.suffix,
     // masonry: boot.bundle + 'stratus/extras/directives/masonry' + boot.suffix,
 

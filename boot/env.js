@@ -51,10 +51,22 @@
       return destination
     }
     for (let key in source) {
-      if (source.hasOwnProperty(key)) {
-        destination[key] = (typeof destination[key] === 'object') ? boot.merge(
-          destination[key], source[key]) : source[key]
+      if (!source.hasOwnProperty(key)) {
+        continue
       }
+      if (Array.isArray(destination[key])) {
+        if (!Array.isArray(source[key])) {
+          console.warn('boot:', key, 'is not an array in all configurations.')
+          continue
+        }
+        destination[key] = destination[key].concat(source[key])
+        continue
+      }
+      if (typeof destination[key] === 'object' && destination[key]) {
+        destination[key] = boot.merge(destination[key], source[key])
+        continue
+      }
+      destination[key] = source[key]
     }
     return destination
   }
