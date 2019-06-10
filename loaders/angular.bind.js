@@ -47,12 +47,12 @@ Stratus.Loaders.Angular = function () {
         element.length = 0
         _.each(element.selector, function (selector) {
           nodes = document.querySelectorAll(selector)
-          if(!nodes || !nodes.length) {
+          if (!nodes || !nodes.length) {
             return
           }
           element.length += nodes.length
           let name = selector.replace(/^\[/, '').replace(/]$/, '')
-          if(!name) {
+          if (!name) {
             return
           }
           requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))

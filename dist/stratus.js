@@ -2727,19 +2727,18 @@ Stratus.Loaders.Angular = function () {
       } else if (_.isString(element.selector)) {
         nodes = document.querySelectorAll(element.selector)
         element.length = nodes.length
-        if (nodes && nodes.length) {
+        if (!nodes.length) {
           let attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
           if (attribute && element.namespace) {
             _.each(nodes, function (node) {
               let name = node.getAttribute(attribute)
-              if (!name) {
-                return
-              }
-              requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
-              if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
-                injector({
-                  requirement: requirement
-                })
+              if (name) {
+                requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
+                if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+                  injector({
+                    requirement: requirement
+                  })
+                }
               }
             })
           } else if (element.require) {
