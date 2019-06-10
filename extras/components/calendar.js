@@ -23,8 +23,10 @@
       'underscore',
       'moment',
       'angular',
-      'stratus.components.calendar.timezones', // TODO may be able to remove due to moment
+      // 'stratus.components.calendar.timezones', // TODO may be able to remove due to moment
       '@fullcalendar/core',
+      '@fullcalendar/moment',
+      '@fullcalendar/moment-timezone',
       '@fullcalendar/daygrid',
       '@fullcalendar/timegrid',
       '@fullcalendar/list',
@@ -41,7 +43,7 @@
       root.angular
     )
   }
-}(this, function (Stratus, _, moment, angular, timezones, fullcalendarCore, fullcalendarDayGridPlugin, fullcalendarTimeGridPlugin, fullcalendarListPlugin, fullcalendarCustomViewPlugin) {
+}(this, function (Stratus, _, moment, angular, fullcalendarCore, momentPlugin, momentTimezonePlugin, fullcalendarDayGridPlugin, fullcalendarTimeGridPlugin, fullcalendarListPlugin, fullcalendarCustomViewPlugin) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
@@ -73,6 +75,8 @@
       $scope.calendarId = $scope.elementId + '_fullcalendar'
       $scope.calendar = null
       $scope.calendarEl = null
+
+      // TODO will needed checks on what Layouts are available and only load the css for what is used
 
       // noinspection JSIgnoredPromiseFromCall
       Stratus.Internals.CssLoader(
@@ -120,7 +124,7 @@
       $scope.options.possibleViews = $scope.options.possibleViews || ['dayGridMonth', 'timeGridWeek', 'timeGridDay'] // Not used yet @see https://fullcalendar.io/docs/header
       $scope.options.defaultDate = $scope.options.defaultDate || null
       $scope.options.nowIndicator = $scope.options.nowIndicator || false
-      $scope.options.timezone = $scope.options.timezone || false
+      $scope.options.timeZone = $scope.options.timeZone || 'local'
       $scope.options.eventForceAllDay = $scope.options.eventForceAllDay || false
       $scope.options.eventLimit = $scope.options.eventLimit || 7
       $scope.options.eventLimitClick = $scope.options.eventLimitClick || 'popover'
@@ -140,6 +144,8 @@
       $scope.options.eventSources = $scope.options.eventSources || []
 
       $scope.options.plugins = [
+        momentPlugin.default, // Plugins are ES6 imports and return with 'default'
+        momentTimezonePlugin.default, // Plugins are ES6 imports and return with 'default'
         fullcalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
         fullcalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
         fullcalendarListPlugin.default, // Plugins are ES6 imports and return with 'default'
@@ -155,6 +161,7 @@
       // TODO this is overwriting the possible views until they are ready. Remove once we can get this working on Sitetheory
       $scope.options.defaultView = 'listMonth' // FIXME dev testing - remove later
       $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom', 'customArticle'] // FIXME dev testing - remove later
+      // $scope.options.timeZone = 'America/New_York'
 
       // Event Collection
       // TODO: remove if we don't need models and collections
@@ -163,7 +170,7 @@
       $ctrl.$onInit = function () {
         // Load all timezones for use
         // FIXME, moment should be able to handle the timezones now. Will need to check
-        iCal.registerTimezones(timezones)
+        // iCal.registerTimezones(timezones)
         // Compile the fullcalendar header to look useable
         $ctrl.prepareHeader()
 
@@ -274,6 +281,7 @@
        * @fulfill {*} Unknown fulfillment
        */
       $scope.displayEventDialog = async function (calEvent, clickEvent) {
+        // FIXME needs to force time in correct timeZone
         return $mdDialog.show({
           templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/calendar.eventDialog${min}.html`,
           parent: angular.element(document.body),
@@ -361,7 +369,7 @@
           defaultView: $scope.options.defaultView,
           defaultDate: $scope.options.defaultDate,
           nowIndicator: $scope.options.nowIndicator,
-          timezone: $scope.options.timezone,
+          timeZone: $scope.options.timeZone,
           eventLimit: $scope.options.eventLimit,
           eventLimitClick: $scope.options.eventLimitClick,
           buttonText: $scope.options.buttonText,
