@@ -232,7 +232,22 @@
       customArticle: {
         type: 'custom',
         template: 'article',
+      },
+      customArticleDay: {
+        type: 'customArticle',
+        duration: { day: 1 }
+      },
+      customArticleWeek: {
+        type: 'customArticle',
+        duration: { week: 1 }
+      },
+      customArticleMonth: {
+        type: 'customArticle',
         duration: { month: 1 }
+      },
+      customArticleYear: {
+        type: 'customArticle',
+        duration: { year: 1 }
       }
     }
   })
