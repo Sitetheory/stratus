@@ -257,8 +257,14 @@
           },
           bindToController: true,
           controllerAs: 'ctrl',
-          controller: function ($scope) { // $mdDialog unused
+          controller: function () { // $scope, $mdDialog unused
             let dc = this
+
+            let close = function close () {
+              if ($mdDialog) {
+                $mdDialog.hide()
+              }
+            }
 
             dc.$onInit = function () {
               // Set a timezone that's easy to grab
@@ -286,11 +292,7 @@
               // console.log('event', $scope, dc)
             }
 
-            function close () {
-              if ($mdDialog) {
-                $mdDialog.hide()
-              }
-            }
+
           }
         })
       }
