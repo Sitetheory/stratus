@@ -124,7 +124,7 @@
       $scope.options.possibleViews = $scope.options.possibleViews || ['dayGridMonth', 'timeGridWeek', 'timeGridDay'] // Not used yet @see https://fullcalendar.io/docs/header
       $scope.options.defaultDate = $scope.options.defaultDate || null
       $scope.options.nowIndicator = $scope.options.nowIndicator || false
-      $scope.options.timeZone = $scope.options.timeZone || 'local'
+      $scope.options.timeZone = $scope.options.timeZone || 'local' // TODO update reference on Sitetheory
       $scope.options.eventForceAllDay = $scope.options.eventForceAllDay || false
       $scope.options.eventLimit = $scope.options.eventLimit || 7
       $scope.options.eventLimitClick = $scope.options.eventLimitClick || 'popover'
@@ -298,6 +298,17 @@
             let dc = this
 
             dc.$onInit = function () {
+              // Set a tiemezone that's easy to grab
+              dc.timeZone = ''
+              if (
+                dc.eventData
+                && dc.eventData._calendar
+                && dc.eventData._calendar.dateEnv
+                && dc.eventData._calendar.dateEnv.timeZone !== 'local'
+              ) {
+                dc.timeZone = dc.eventData._calendar.dateEnv.timeZone
+              }
+
               // The event saves misc data to the 'extendedProps' field. So we'll merge this in
               if (
                 dc.eventData &&
@@ -309,6 +320,7 @@
               }
 
               dc.close = close
+              console.log('event', $scope, dc)
             }
 
             function close () {
