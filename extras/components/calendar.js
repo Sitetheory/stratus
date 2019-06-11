@@ -185,7 +185,9 @@
             if (!Stratus.Environment.get('production')) {
               console.log('completed loading events:', arguments)
             }
-            $scope.initialized = true
+            $scope.$applyAsync(function () {
+              $scope.initialized = true
+            })
           } catch (e) {
             console.error('calendar render:', e)
           }
@@ -292,7 +294,6 @@
               // console.log('event', $scope, dc)
             }
 
-
           }
         })
       }
@@ -374,6 +375,7 @@
       }
     },
     template: '<div id="{{ elementId }}">' +
+      '<md-progress-linear md-mode="indeterminate" data-ng-if="!initialized"></md-progress-linear>' +
       '<div id="{{ calendarId }}"></div>' +
       '</div>'
   }
