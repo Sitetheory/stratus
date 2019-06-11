@@ -47,7 +47,7 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
-  const localPath = 'extras/components'
+  const localPath = 'extras/components/calendar'
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {
@@ -248,7 +248,7 @@
        */
       $scope.displayEventDialog = function (calEvent, clickEvent) {
         $mdDialog.show({
-          templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/calendar.eventDialog${min}.html`,
+          templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/eventDialog${min}.html`,
           parent: angular.element(document.body),
           targetEvent: clickEvent,
           clickOutsideToClose: true,

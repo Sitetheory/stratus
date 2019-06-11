@@ -22,8 +22,8 @@
 }(this, function (exports, Stratus, _, fullcalendarCore) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
-  const name = 'calendar.customView'
-  const localPath = 'extras/components'
+  const name = 'customView'
+  const localPath = 'extras/components/calendar'
   const defaultTemplate = 'default'
   let uid = null
 
