@@ -22,8 +22,8 @@
 }(this, function (exports, Stratus, _, fullcalendarCore) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
-  const name = 'calendar.customView'
-  const localPath = 'extras/components'
+  const name = 'customView'
+  const localPath = 'extras/components/calendar'
   const defaultTemplate = 'default'
   let uid = null
 
@@ -55,6 +55,10 @@
       $scope.$applyAsync(function () {
         $scope.$parent.customViews[uid] = $scope.template
       })
+
+      // Will be given access to
+      // $scope.view
+      // $scope.options
 
       // $scope.model = $parse($attrs.ngModel)
       // $scope.render = function () {}
@@ -121,6 +125,7 @@
         ) {
           // that.$scope = that.$parentScope.customViews[uid] // Angular is not allowing the scoped to be passed in this way
           that.$scope = Stratus.Instances[uid]
+          that.$scope.options = that.viewSpec.options
           that.$scope.view = that
           if (that.eventsWaiting) {
             that.updateEventScope(that.eventsWaiting)
@@ -226,8 +231,23 @@
       },
       customArticle: {
         type: 'custom',
-        template: 'article',
+        template: 'article'
+      },
+      customArticleDay: {
+        type: 'customArticle',
+        duration: { day: 1 }
+      },
+      customArticleWeek: {
+        type: 'customArticle',
+        duration: { week: 1 }
+      },
+      customArticleMonth: {
+        type: 'customArticle',
         duration: { month: 1 }
+      },
+      customArticleYear: {
+        type: 'customArticle',
+        duration: { year: 1 }
       }
     }
   })

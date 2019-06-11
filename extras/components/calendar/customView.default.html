@@ -1,6 +1,5 @@
 <md-content id="{{ elementId }}" class="{{ template }}Template" layout-padding>
-	<span>Article view for {{ elementId }} (remove me)</span>
-
+	<span>Default view for {{ elementId }} (remove me)</span>
 	<md-card class="" ng-repeat="eventData in events">
 		<div class="event-image-container" data-ng-if="::eventData.extendedProps.image">
 			<img class="event-image" data-ng-src="::eventData.extendedProps.image"/>
@@ -9,9 +8,9 @@
 		<p class="event-time">
 			<span class="event-time-label  label">Time: </span>
 			<!-- TODO if AllDay, remove time stamps and show day only? -->
-			<span class="event-time-start" data-ng-bind="::eventData.start | moment:{unix:false, format:'dddd MMM Do, h:mm a'}"></span>
+			<span class="event-time-start" data-ng-bind="::eventData.start | moment:{unix:false, format:'dddd MMM Do, h:mm a', tz:options.timeZone}"></span>
 			<span class="event-time-end" data-ng-if="::eventData.end != null"> <!-- data-ng-if="::eventData.end" causes digest errors..? -->
-					- <span data-ng-bind="eventData.end  | moment:{unix:false, format:'h:mm a'}"></span>
+					- <span data-ng-bind="eventData.end  | moment:{unix:false, format:'h:mm a', tz:options.timeZone}"></span>
 				<!-- TODO detect if it's not in the same day to add the day to the end time again -->
 				</span>
 		</p>

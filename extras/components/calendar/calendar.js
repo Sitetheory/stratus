@@ -3,6 +3,7 @@
 // See https://fullcalendar.io/docs/v4/release-notes
 // https://www.gracedover.com/Connect/General-Calendar
 // https://gracedover.ccbchurch.com/w_calendar_sub.ics?campus_id=1
+// TODO later when implementing new data source types, refer to https://fullcalendar.io/docs/google-calendar as a plugin example
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
 /* global define */
@@ -23,8 +24,9 @@
       'underscore',
       'moment',
       'angular',
-      'stratus.components.calendar.timezones', // TODO may be able to remove due to moment
       '@fullcalendar/core',
+      '@fullcalendar/moment',
+      '@fullcalendar/moment-timezone',
       '@fullcalendar/daygrid',
       '@fullcalendar/timegrid',
       '@fullcalendar/list',
@@ -41,22 +43,19 @@
       root.angular
     )
   }
-}(this, function (Stratus, _, moment, angular, timezones, fullcalendarCore, fullcalendarDayGridPlugin, fullcalendarTimeGridPlugin, fullcalendarListPlugin, fullcalendarCustomViewPlugin) {
+}(this, function (Stratus, _, moment, angular, fullcalendarCore, momentPlugin, momentTimezonePlugin, fullcalendarDayGridPlugin, fullcalendarTimeGridPlugin, fullcalendarListPlugin, fullcalendarCustomViewPlugin) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
-  const localPath = 'extras/components'
+  const localPath = 'extras/components/calendar'
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {
     transclude: true,
     bindings: {
-      // TODO: remove if we don't need models and collections
-      // ngModel: '=',
       elementId: '@',
       options: '@'
     },
-    // TODO: remove Collection if we don't need models and collections
     controller: function ($scope, $attrs, $element, $sce, $mdPanel, $mdDialog, $http, $compile, iCal) {
       // Initialize
       const $ctrl = this
@@ -73,23 +72,6 @@
       $scope.calendarId = $scope.elementId + '_fullcalendar'
       $scope.calendar = null
       $scope.calendarEl = null
-
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/core/main${min}.css`
-      )
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/daygrid/main${min}.css`
-      )
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/timegrid/main${min}.css`
-      )
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/list/main${min}.css`
-      )
 
       $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
       $scope.options.customButtons = $scope.options.customButtons || null // See http://fullcalendar.io/docs/display/customButtons/
@@ -112,15 +94,17 @@
         listDay: 'day list',
         listYear: 'year',
 
-        custom: 'custom default',
-        customArticle: 'Article'
+        customArticleDay: 'article',
+        customArticleWeek: 'article',
+        customArticleMonth: 'article',
+        customArticleYear: 'article'
       }
       $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
       $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
       $scope.options.possibleViews = $scope.options.possibleViews || ['dayGridMonth', 'timeGridWeek', 'timeGridDay'] // Not used yet @see https://fullcalendar.io/docs/header
       $scope.options.defaultDate = $scope.options.defaultDate || null
       $scope.options.nowIndicator = $scope.options.nowIndicator || false
-      $scope.options.timezone = $scope.options.timezone || false
+      $scope.options.timeZone = $scope.options.timeZone || 'local' // TODO update reference on Sitetheory
       $scope.options.eventForceAllDay = $scope.options.eventForceAllDay || false
       $scope.options.eventLimit = $scope.options.eventLimit || 7
       $scope.options.eventLimitClick = $scope.options.eventLimitClick || 'popover'
@@ -140,6 +124,8 @@
       $scope.options.eventSources = $scope.options.eventSources || []
 
       $scope.options.plugins = [
+        momentPlugin.default, // Plugins are ES6 imports and return with 'default'
+        momentTimezonePlugin.default, // Plugins are ES6 imports and return with 'default'
         fullcalendarDayGridPlugin.default, // Plugins are ES6 imports and return with 'default'
         fullcalendarTimeGridPlugin.default, // Plugins are ES6 imports and return with 'default'
         fullcalendarListPlugin.default, // Plugins are ES6 imports and return with 'default'
@@ -150,50 +136,40 @@
       $scope.fetched = false
       $scope.startRange = moment()
       $scope.endRange = moment()
-      $scope.customViews = {}
+      $scope.customViews = {} // Filled by the customPlugin to hold any custom Views currently displayed for storage and reuse
 
-      // TODO this is overwriting the possible views until they are ready. Remove once we can get this working on Sitetheory
-      $scope.options.defaultView = 'listMonth' // FIXME dev testing - remove later
-      $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom', 'customArticle'] // FIXME dev testing - remove later
+      // CSS Loading depends on Views possible
 
-      // Event Collection
-      // TODO: remove if we don't need models and collections
-      // $scope.collection = null
+      // Base CSS always required
+      // noinspection JSIgnoredPromiseFromCall
+      Stratus.Internals.CssLoader(
+        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/core/main${min}.css`
+      )
+      // Check if dayGrid is used and load the CSS. TODO load here as well rather than at init
+      if ($scope.options.possibleViews.some(r => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
+        // noinspection JSIgnoredPromiseFromCall
+        Stratus.Internals.CssLoader(
+          `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/daygrid/main${min}.css`
+        )
+      }
+      // Check if timeGrid is used and load the CSS. TODO load here as well rather than at init
+      if ($scope.options.possibleViews.some(r => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
+        // noinspection JSIgnoredPromiseFromCall
+        Stratus.Internals.CssLoader(
+          `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/timegrid/main${min}.css`
+        )
+      }
+      // Check if dayGrid is used and load the CSS. TODO load here as well rather than at init
+      if ($scope.options.possibleViews.some(r => ['list', 'listDay', 'listWeek', 'listMonth', 'listYear'].includes(r))) {
+        // noinspection JSIgnoredPromiseFromCall
+        Stratus.Internals.CssLoader(
+          `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/list/main${min}.css`
+        )
+      }
 
       $ctrl.$onInit = function () {
-        // Load all timezones for use
-        // FIXME, moment should be able to handle the timezones now. Will need to check
-        iCal.registerTimezones(timezones)
-        // Compile the fullcalendar header to look useable
+        // Compile the fullcalendar header to look usable
         $ctrl.prepareHeader()
-
-        // TODO: remove if we don't need models and collections
-        /* *
-        $scope.$watch('$ctrl.ngModel', function (data) {
-          if (data instanceof Collection) {
-            $scope.collection = data
-          }
-        })
-        /* */
-
-        // Ensure the Collection is ready first
-        /* *
-        let collectionWatcher = $scope.$watch('collection.completed', async function (completed) {
-          if (completed) {
-            collectionWatcher() // Destroy this watcher
-            console.log('collection:', $scope.collection)
-            // initialize everything here
-            $ctrl.render()
-            // process a list of URLS, just using single example below
-            // Process each feed before continuing
-            console.log('loading external urls', $scope.options.eventSources)
-            await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
-            // console.log('completed loading events', events);
-            console.log('events all loaded!')
-            $scope.initialized = true
-          }
-        }, true)
-        /* */
 
         setTimeout(async function () {
           try {
@@ -204,14 +180,14 @@
             // Render happens once prior to any url fetching
             await $ctrl.render()
             // process a list of URLS, just using single example below
-            // Process each feed before continuing
-            // If we want to
+            // Process each feed before continuing noting that Calendar is done loading
             await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
-            // $log.log('completed loading events', events);\
             if (!Stratus.Environment.get('production')) {
               console.log('completed loading events:', arguments)
             }
-            $scope.initialized = true
+            $scope.$applyAsync(function () {
+              $scope.initialized = true
+            })
           } catch (e) {
             console.error('calendar render:', e)
           }
@@ -240,6 +216,7 @@
         const events = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
         $scope.calendar.addEventSource({
           events: events
+          // TODO give Sitetheory options to color each event source
           // color: 'black',     // an option!
           // textColor: 'yellow' // an option!
         })
@@ -255,13 +232,11 @@
        * @param {fullcalendarCore.EventApi} clickEvent.event Event data (Calendar Data)
        * @param {MouseEvent} clickEvent.jsEvent Click data
        * @param {fullcalendarCore.View} clickEvent.view Plugin View data
-       * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
-       * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
+       * @returns {boolean} Return false to not issue other functions (such as URL clicking)
        */
-      $scope.handleEventClick = async function (clickEvent) {
+      $scope.handleEventClick = function (clickEvent) {
         // console.log('Event', clickEvent)
         // Simply open  popup for now
-        // noinspection JSIgnoredPromiseFromCall
         $scope.displayEventDialog(clickEvent.event, clickEvent.jsEvent)
         return false // Return false to not issue other functions (such as URL clicking)
       }
@@ -270,12 +245,10 @@
        * Create MDDialog popup for an event
        * @param {fullcalendarCore.EventApi} calEvent
        * @param {MouseEvent} clickEvent
-       * @returns {Promise}
-       * @fulfill {*} Unknown fulfillment
        */
-      $scope.displayEventDialog = async function (calEvent, clickEvent) {
-        return $mdDialog.show({
-          templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/calendar.eventDialog${min}.html`,
+      $scope.displayEventDialog = function (calEvent, clickEvent) {
+        $mdDialog.show({
+          templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/eventDialog${min}.html`,
           parent: angular.element(document.body),
           targetEvent: clickEvent,
           clickOutsideToClose: true,
@@ -286,10 +259,27 @@
           },
           bindToController: true,
           controllerAs: 'ctrl',
-          controller: function ($scope, $mdDialog) {
+          controller: function () { // $scope, $mdDialog unused
             let dc = this
 
+            let close = function close () {
+              if ($mdDialog) {
+                $mdDialog.hide()
+              }
+            }
+
             dc.$onInit = function () {
+              // Set a timezone that's easy to grab
+              dc.timeZone = ''
+              if (
+                dc.eventData &&
+                dc.eventData._calendar &&
+                dc.eventData._calendar.dateEnv &&
+                dc.eventData._calendar.dateEnv.timeZone !== 'local'
+              ) {
+                dc.timeZone = dc.eventData._calendar.dateEnv.timeZone
+              }
+
               // The event saves misc data to the 'extendedProps' field. So we'll merge this in
               if (
                 dc.eventData &&
@@ -301,12 +291,7 @@
               }
 
               dc.close = close
-            }
-
-            function close () {
-              if ($mdDialog) {
-                $mdDialog.hide()
-              }
+              // console.log('event', $scope, dc)
             }
           }
         })
@@ -361,7 +346,7 @@
           defaultView: $scope.options.defaultView,
           defaultDate: $scope.options.defaultDate,
           nowIndicator: $scope.options.nowIndicator,
-          timezone: $scope.options.timezone,
+          timeZone: $scope.options.timeZone,
           eventLimit: $scope.options.eventLimit,
           eventLimitClick: $scope.options.eventLimitClick,
           buttonText: $scope.options.buttonText,
@@ -389,6 +374,7 @@
       }
     },
     template: '<div id="{{ elementId }}">' +
+      '<md-progress-linear md-mode="indeterminate" data-ng-if="!initialized"></md-progress-linear>' +
       '<div id="{{ calendarId }}"></div>' +
       '</div>'
   }
