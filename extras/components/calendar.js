@@ -94,10 +94,10 @@
         listDay: 'day list',
         listYear: 'year',
 
-        customArticleDay: 'Article',
-        customArticleWeek: 'Article',
-        customArticleMonth: 'Article',
-        customArticleYear: 'Article',
+        customArticleDay: 'article',
+        customArticleWeek: 'article',
+        customArticleMonth: 'article',
+        customArticleYear: 'article',
       }
       $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
       $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
@@ -137,11 +137,6 @@
       $scope.startRange = moment()
       $scope.endRange = moment()
       $scope.customViews = {}
-
-      // TODO this is overwriting the possible views until they are ready. Remove once we can get this working on Sitetheory
-      $scope.options.defaultView = 'listMonth' // FIXME dev testing - remove later
-      $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'customArticleWeek', 'customArticleMonth', 'customArticleYear'] // FIXME dev testing - remove later
-      // $scope.options.timeZone = 'America/New_York'
 
       // CSS Loading depends on Views possible
 
