@@ -136,7 +136,7 @@
       $scope.fetched = false
       $scope.startRange = moment()
       $scope.endRange = moment()
-      $scope.customViews = {}
+      $scope.customViews = {} // Filled by the customPlugin to hold any custom Views currently displayed for storage and reuse
 
       // CSS Loading depends on Views possible
 
@@ -230,13 +230,11 @@
        * @param {fullcalendarCore.EventApi} clickEvent.event Event data (Calendar Data)
        * @param {MouseEvent} clickEvent.jsEvent Click data
        * @param {fullcalendarCore.View} clickEvent.view Plugin View data
-       * @returns {Promise<boolean>} Return false to not issue other functions (such as URL clicking)
-       * @fulfill {boolean} Return false to not issue other functions (such as URL clicking)
+       * @returns {boolean} Return false to not issue other functions (such as URL clicking)
        */
-      $scope.handleEventClick = async function (clickEvent) {
+      $scope.handleEventClick = function (clickEvent) {
         // console.log('Event', clickEvent)
         // Simply open  popup for now
-        // noinspection JSIgnoredPromiseFromCall
         $scope.displayEventDialog(clickEvent.event, clickEvent.jsEvent)
         return false // Return false to not issue other functions (such as URL clicking)
       }
@@ -245,12 +243,9 @@
        * Create MDDialog popup for an event
        * @param {fullcalendarCore.EventApi} calEvent
        * @param {MouseEvent} clickEvent
-       * @returns {Promise}
-       * @fulfill {*} Unknown fulfillment
        */
-      $scope.displayEventDialog = async function (calEvent, clickEvent) {
-        // FIXME needs to force time in correct timeZone
-        return $mdDialog.show({
+      $scope.displayEventDialog = function (calEvent, clickEvent) {
+        $mdDialog.show({
           templateUrl: `${Stratus.BaseUrl}${Stratus.BundlePath}${localPath}/calendar.eventDialog${min}.html`,
           parent: angular.element(document.body),
           targetEvent: clickEvent,
@@ -262,11 +257,11 @@
           },
           bindToController: true,
           controllerAs: 'ctrl',
-          controller: function ($scope, $mdDialog) {
+          controller: function ($scope) { // $mdDialog unused
             let dc = this
 
             dc.$onInit = function () {
-              // Set a tiemezone that's easy to grab
+              // Set a timezone that's easy to grab
               dc.timeZone = ''
               if (
                 dc.eventData
@@ -288,7 +283,7 @@
               }
 
               dc.close = close
-              console.log('event', $scope, dc)
+              // console.log('event', $scope, dc)
             }
 
             function close () {
