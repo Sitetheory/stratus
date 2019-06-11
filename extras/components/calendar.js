@@ -97,7 +97,7 @@
         customArticleDay: 'article',
         customArticleWeek: 'article',
         customArticleMonth: 'article',
-        customArticleYear: 'article',
+        customArticleYear: 'article'
       }
       $scope.options.buttonText = _.extend({}, defaultButtonText, $scope.options.buttonText)
       $scope.options.defaultView = $scope.options.defaultView || 'dayGridMonth'
@@ -272,10 +272,10 @@
               // Set a timezone that's easy to grab
               dc.timeZone = ''
               if (
-                dc.eventData
-                && dc.eventData._calendar
-                && dc.eventData._calendar.dateEnv
-                && dc.eventData._calendar.dateEnv.timeZone !== 'local'
+                dc.eventData &&
+                dc.eventData._calendar &&
+                dc.eventData._calendar.dateEnv &&
+                dc.eventData._calendar.dateEnv.timeZone !== 'local'
               ) {
                 dc.timeZone = dc.eventData._calendar.dateEnv.timeZone
               }
@@ -293,7 +293,6 @@
               dc.close = close
               // console.log('event', $scope, dc)
             }
-
           }
         })
       }

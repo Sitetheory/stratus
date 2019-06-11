@@ -231,7 +231,7 @@
       },
       customArticle: {
         type: 'custom',
-        template: 'article',
+        template: 'article'
       },
       customArticleDay: {
         type: 'customArticle',
