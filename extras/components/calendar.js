@@ -53,12 +53,9 @@
   Stratus.Components.Calendar = {
     transclude: true,
     bindings: {
-      // TODO: remove if we don't need models and collections
-      // ngModel: '=',
       elementId: '@',
       options: '@'
     },
-    // TODO: remove Collection if we don't need models and collections
     controller: function ($scope, $attrs, $element, $sce, $mdPanel, $mdDialog, $http, $compile, iCal) {
       // Initialize
       const $ctrl = this
@@ -173,44 +170,9 @@
         )
       }
 
-      // Event Collection
-      // TODO: remove if we don't need models and collections
-      // $scope.collection = null
-
       $ctrl.$onInit = function () {
-        // Load all timezones for use
-        // FIXME, moment should be able to handle the timezones now. Will need to check
-        // iCal.registerTimezones(timezones)
-        // Compile the fullcalendar header to look useable
+        // Compile the fullcalendar header to look usable
         $ctrl.prepareHeader()
-
-        // TODO: remove if we don't need models and collections
-        /* *
-        $scope.$watch('$ctrl.ngModel', function (data) {
-          if (data instanceof Collection) {
-            $scope.collection = data
-          }
-        })
-        /* */
-
-        // Ensure the Collection is ready first
-        /* *
-        let collectionWatcher = $scope.$watch('collection.completed', async function (completed) {
-          if (completed) {
-            collectionWatcher() // Destroy this watcher
-            console.log('collection:', $scope.collection)
-            // initialize everything here
-            $ctrl.render()
-            // process a list of URLS, just using single example below
-            // Process each feed before continuing
-            console.log('loading external urls', $scope.options.eventSources)
-            await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
-            // console.log('completed loading events', events);
-            console.log('events all loaded!')
-            $scope.initialized = true
-          }
-        }, true)
-        /* */
 
         setTimeout(async function () {
           try {
@@ -221,10 +183,8 @@
             // Render happens once prior to any url fetching
             await $ctrl.render()
             // process a list of URLS, just using single example below
-            // Process each feed before continuing
-            // If we want to
+            // Process each feed before continuing noting that Calendar is done loading
             await Promise.all($scope.options.eventSources.map(url => $scope.addEventICSSource(url)))
-            // $log.log('completed loading events', events);\
             if (!Stratus.Environment.get('production')) {
               console.log('completed loading events:', arguments)
             }
@@ -257,6 +217,7 @@
         const events = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
         $scope.calendar.addEventSource({
           events: events
+          // TODO give Sitetheory options to color each event source
           // color: 'black',     // an option!
           // textColor: 'yellow' // an option!
         })
