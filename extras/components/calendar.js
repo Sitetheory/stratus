@@ -144,8 +144,6 @@
       $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom', 'customArticle'] // FIXME dev testing - remove later
       // $scope.options.timeZone = 'America/New_York'
 
-      // TODO will needed checks on what Layouts are available and only load the css for what is used
-
       // CSS Loading depends on Views possible
 
       // Base CSS always required
