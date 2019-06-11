@@ -56,6 +56,10 @@
         $scope.$parent.customViews[uid] = $scope.template
       })
 
+      // Will be given access to
+      // $scope.view
+      // $scope.options
+
       // $scope.model = $parse($attrs.ngModel)
       // $scope.render = function () {}
       // $scope.render()
@@ -121,6 +125,7 @@
         ) {
           // that.$scope = that.$parentScope.customViews[uid] // Angular is not allowing the scoped to be passed in this way
           that.$scope = Stratus.Instances[uid]
+          that.$scope.options = that.viewSpec.options
           that.$scope.view = that
           if (that.eventsWaiting) {
             that.updateEventScope(that.eventsWaiting)
