@@ -3,6 +3,7 @@
 // See https://fullcalendar.io/docs/v4/release-notes
 // https://www.gracedover.com/Connect/General-Calendar
 // https://gracedover.ccbchurch.com/w_calendar_sub.ics?campus_id=1
+// TODO later when implementing new data source types, refer to https://fullcalendar.io/docs/google-calendar as a plugin example
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
 /* global define */
@@ -23,7 +24,6 @@
       'underscore',
       'moment',
       'angular',
-      // 'stratus.components.calendar.timezones', // TODO may be able to remove due to moment
       '@fullcalendar/core',
       '@fullcalendar/moment',
       '@fullcalendar/moment-timezone',
@@ -75,25 +75,6 @@
       $scope.calendarId = $scope.elementId + '_fullcalendar'
       $scope.calendar = null
       $scope.calendarEl = null
-
-      // TODO will needed checks on what Layouts are available and only load the css for what is used
-
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/core/main${min}.css`
-      )
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/daygrid/main${min}.css`
-      )
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/timegrid/main${min}.css`
-      )
-      // noinspection JSIgnoredPromiseFromCall
-      Stratus.Internals.CssLoader(
-        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/list/main${min}.css`
-      )
 
       $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
       $scope.options.customButtons = $scope.options.customButtons || null // See http://fullcalendar.io/docs/display/customButtons/
@@ -162,6 +143,37 @@
       $scope.options.defaultView = 'listMonth' // FIXME dev testing - remove later
       $scope.options.possibleViews = ['dayGridMonth', 'timeGridWeek', 'listMonth', 'custom', 'customArticle'] // FIXME dev testing - remove later
       // $scope.options.timeZone = 'America/New_York'
+
+      // TODO will needed checks on what Layouts are available and only load the css for what is used
+
+      // CSS Loading depends on Views possible
+
+      // Base CSS always required
+      // noinspection JSIgnoredPromiseFromCall
+      Stratus.Internals.CssLoader(
+        `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/core/main${min}.css`
+      )
+      // Check if dayGrid is used and load the CSS. TODO load here as well rather than at init
+      if ($scope.options.possibleViews.some(r => ['dayGrid', 'dayGridDay', 'dayGridWeek', 'dayGridMonth'].includes(r))) {
+        // noinspection JSIgnoredPromiseFromCall
+        Stratus.Internals.CssLoader(
+          `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/daygrid/main${min}.css`
+        )
+      }
+      // Check if timeGrid is used and load the CSS. TODO load here as well rather than at init
+      if ($scope.options.possibleViews.some(r => ['timeGrid', 'timeGridDay', 'timeGridWeek'].includes(r))) {
+        // noinspection JSIgnoredPromiseFromCall
+        Stratus.Internals.CssLoader(
+          `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/timegrid/main${min}.css`
+        )
+      }
+      // Check if dayGrid is used and load the CSS. TODO load here as well rather than at init
+      if ($scope.options.possibleViews.some(r => ['list', 'listDay', 'listWeek', 'listMonth', 'listYear'].includes(r))) {
+        // noinspection JSIgnoredPromiseFromCall
+        Stratus.Internals.CssLoader(
+          `${Stratus.BaseUrl}${Stratus.BundlePath}node_modules/@fullcalendar/list/main${min}.css`
+        )
+      }
 
       // Event Collection
       // TODO: remove if we don't need models and collections
