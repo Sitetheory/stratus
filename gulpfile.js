@@ -96,14 +96,16 @@ const location = {
       'extras/normalizers/*.js',
       'services/*.js',
       'extras/services/*.js',
-      'legacy/**/*.js'
+      'legacy/**/*.js',
+      'src/**/*.js'
     ],
     min: [
       'dist/*.min.js',
       'extras/normalizers/*.min.js',
       'services/*.min.js',
       'extras/services/*.min.js',
-      'legacy/**/*.min.js'
+      'legacy/**/*.min.js',
+      'src/**/*.min.js'
     ]
   },
   preserve: {
@@ -180,7 +182,8 @@ const location = {
       'components/*.ts',
       'extras/components/*.ts',
       'directives/*.ts',
-      'extras/directives/*.ts'
+      'extras/directives/*.ts',
+      'src/**/*.ts'
     ],
     compile: []
   },
@@ -205,9 +208,9 @@ function lintJS () {
   return src([
     '**/*.js',
     '!**/*.min.js',
-    '!**/*.component.js', // TypeScript supersedes Standard JS
     '!node_modules/**/*.js',
     '!dist/**/*.js',
+    '!src/**/*.js', // TypeScript supersedes Standard JS
     '!legacy/**/*.js',
     '!reports/**/*.js',
     '!umd/**/*.js'
@@ -427,14 +430,19 @@ function compileTypeScript () {
   // .pipe(debug({ title: 'Compile TypeScript:' }))
     .pipe(ts({
       'target': 'es6',
-      'module': 'system',
+      'module': 'amd',
       'moduleResolution': 'node',
       'noImplicitAny': true,
       'removeComments': true,
       'preserveConstEnums': true,
       'sourceMap': true,
       'emitDecoratorMetadata': true,
-      'experimentalDecorators': true
+      'experimentalDecorators': true,
+      'baseUrl': 'src',
+      'paths': {
+        '@stratus/components/*': [ 'components/*' ],
+        '@stratus/loaders/*': [ 'loaders/*' ]
+      }
     }))
     .pipe(gulpDest('.', { ext: '.js' }))
     .pipe(dest('.'))
@@ -467,7 +475,7 @@ function compressTemplate () {
     .pipe(dest('.'))
 }
 
-// Modules Exports
+// Module Exports
 exports.compile = parallel(
   series(cleanLESS, compileLESS),
   series(cleanSASS, compileSASS),

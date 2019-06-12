@@ -4,7 +4,7 @@
  * @param request
  * @constructor
  */
-Stratus.Internals.Ajax = function (request) {
+Stratus.Internals.XHR = function (request) {
   // Defaults
   this.method = 'GET'
   this.url = '/Api'
@@ -257,7 +257,7 @@ Stratus.Internals.Convoy = function (convoy, query) {
         }
       })
     } else {
-      Stratus.Internals.Ajax({
+      Stratus.Internals.XHR({
         method: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
@@ -942,7 +942,7 @@ Stratus.Internals.TrackLocation = function () {
         console.error('Stratus Location:', error)
       })
     } else {
-      Stratus.Internals.Ajax({
+      Stratus.Internals.XHR({
         url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
         success: function (data) {
           if (!data) {
@@ -986,7 +986,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
   if (typeof request === 'object' && Object.keys(request).length) {
     // TODO: Create a better URL, switching between relative APIs based on
     // environment
-    Stratus.Internals.Ajax({
+    Stratus.Internals.XHR({
       method: 'PUT',
       url: '/Api/Session', // auth.sitetheory.io
       data: request,

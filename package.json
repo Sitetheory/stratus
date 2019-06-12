@@ -78,8 +78,9 @@
     "chart.js": "^2.8.0",
     "codemirror": "^5.47.0",
     "coffeescript": "^2.4.1",
-    "core-js": "^3.1.3",
+    "core-js": "2.5.*",
     "froala-editor": "2.*",
+    "hammerjs": "^2.0.8",
     "ical.js": "^1.3.0",
     "jquery": "3.4.*",
     "js-md5": "^0.7.3",
@@ -105,6 +106,7 @@
     "swiper": "^4.5.0",
     "tslib": "^1.9.3",
     "underscore": "^1.9.1",
+    "web-animations-js": "^2.3.1",
     "zone.js": "^0.9.1"
   },
   "devDependencies": {

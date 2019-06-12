@@ -470,10 +470,23 @@ boot.config({
     '@angular/platform-browser/animations': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd' + boot.suffix,
     '@angular/platform-browser-dynamic': boot.bundle + 'stratus/node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd' + boot.suffix,
 
-    // Angular Dependency RXJS is all that is broken: https://github.com/ReactiveX/rxjs
+    // STRATUS LOADERS: All
+    '@stratus/loaders/angular/main': boot.bundle + 'stratus/src/loaders/angular/main' + boot.suffix,
+    '@stratus/loaders/angular/material-modules': boot.bundle + 'stratus/src/loaders/angular/material-modules' + boot.suffix,
+    '@stratus/loaders/angular/polyfills': boot.bundle + 'stratus/src/loaders/angular/polyfills' + boot.suffix,
+    '@stratus/loaders/react/main': boot.bundle + 'stratus/src/loaders/react/main' + boot.suffix,
 
+    // STRATUS COMPONENTS: Basic
+    '@stratus/components/aetherial': boot.bundle + 'stratus/src/components/aetherial' + boot.suffix,
+
+    // Angular Dependencies
+    'core-js/es6/reflect': boot.bundle + 'stratus/node_modules/core-js/es6/reflect' + boot.suffix,
+    'core-js/es7/reflect': boot.bundle + 'stratus/node_modules/core-js/es7/reflect' + boot.suffix,
+    'hammerjs': boot.bundle + 'stratus/node_modules/hammerjs/hammer' + boot.suffix,
     'rxjs': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
-    'rxjs/operators': boot.bundle + 'stratus/extras/services/rxjs.operators' + boot.suffix
+    'rxjs/operators': boot.bundle + 'stratus/extras/services/rxjs.operators' + boot.suffix,
+    'web-animations-js': boot.bundle + 'stratus/node_modules/web-animations-js/web-animations.min',
+    'zone.js/dist/zone': boot.bundle + 'stratus/node_modules/zone.js/dist/zone' + boot.suffix
 
     /* STRATUS EXTRAS: Angular: required for almost all extras and lots of others */
     // angular: boot.bundle + 'stratus/node_modules/angular/angular' + boot.suffix,

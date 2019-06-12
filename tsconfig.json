@@ -1,14 +1,19 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "system",
+    "module": "amd",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": "src",
+    "paths": {
+      "@stratus/components/*": [ "components/*" ],
+      "@stratus/loaders/*": [ "loaders/*" ]
+    }
   },
   "exclude": [
     "node_modules"

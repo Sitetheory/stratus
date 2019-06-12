@@ -106,41 +106,6 @@ Stratus.Loaders.Angular = function () {
 
   // Angular Injector
   if (container.requirement.length) {
-    // Deprecated the use of the 'froala' directive for stratus-froala
-    /* *
-    if (_.contains(container.requirement, 'angular-froala')) {
-      [
-        'codemirror/mode/htmlmixed/htmlmixed',
-        'codemirror/addon/edit/matchbrackets',
-        'codemirror',
-        'froala-align',
-        'froala-code-beautifier',
-        'froala-code-view',
-        'froala-draggable',
-        'froala-entities',
-        'froala-file',
-        'froala-forms',
-        'froala-fullscreen',
-        'froala-help',
-        'froala-image',
-        'froala-image-manager',
-        'froala-inline-style',
-        'froala-link',
-        'froala-lists',
-        'froala-paragraph-format',
-        'froala-paragraph-style',
-        'froala-quick-insert',
-        'froala-quote',
-        'froala-table',
-        'froala-url',
-        'froala-video',
-        'froala-word-paste'
-      ].forEach(function (requirement) {
-        container.requirement.push(requirement);
-      });
-    }
-    /* */
-
     // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
     Object.keys(requirejs.s.contexts._.config.paths).filter(function (path) {
       return _.startsWith(path, 'stratus.filters.')
