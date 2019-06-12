@@ -254,6 +254,7 @@ function distBoot () {
     }))
     /* */
     .pipe(concat(location.boot.output))
+    .pipe(dest('.'))
 }
 function distStratus () {
   return src(location.stratus.source)
@@ -263,6 +264,7 @@ function distStratus () {
     }))
     /* */
     .pipe(concat(location.stratus.output))
+    .pipe(dest('.'))
 }
 
 // Mangle Functions
