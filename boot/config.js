@@ -393,8 +393,6 @@ boot.config({
     // 'fullcalendar/customView': boot.bundle + 'stratus/extras/components/calendar/customView' + boot.suffix,
     // ical: boot.bundle + 'stratus/node_modules/ical.js/build/ical' + boot.suffix,
     // 'stratus.services.iCal': boot.bundle + 'stratus/extras/services/iCal' + boot.suffix,
-    // NOTE: this does not exist
-    // 'stratus.components.calendar.timezones': boot.bundle + 'stratus/extras/components/calendar.timezones' + boot.suffix,
 
     /* STRATUS EXTRAS - COMPONENTS: Carousel and libraries */
     // 'stratus.components.carousel': boot.bundle + 'stratus/extras/components/carousel' + boot.suffix,
