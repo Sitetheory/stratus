@@ -385,14 +385,15 @@ boot.config({
     //  */
 
     /* STRATUS EXTRAS - COMPONENTS: Calendar and Libraries */
-    // 'stratus.components.calendar': boot.bundle + 'stratus/extras/components/calendar' + boot.suffix,
+    // 'stratus.components.calendar': boot.bundle + 'stratus/extras/components/calendar/calendar' + boot.suffix,
     // '@fullcalendar/core': boot.bundle + 'stratus/node_modules/@fullcalendar/core/main' + boot.suffix,
     // '@fullcalendar/daygrid': boot.bundle + 'stratus/node_modules/@fullcalendar/daygrid/main' + boot.suffix,
     // '@fullcalendar/timegrid': boot.bundle + 'stratus/node_modules/@fullcalendar/timegrid/main' + boot.suffix,
     // '@fullcalendar/list': boot.bundle + 'stratus/node_modules/@fullcalendar/list/main' + boot.suffix,
-    // 'fullcalendar/customView': boot.bundle + 'stratus/extras/components/calendar.customView' + boot.suffix,
+    // 'fullcalendar/customView': boot.bundle + 'stratus/extras/components/calendar/customView' + boot.suffix,
     // ical: boot.bundle + 'stratus/node_modules/ical.js/build/ical' + boot.suffix,
     // 'stratus.services.iCal': boot.bundle + 'stratus/extras/services/iCal' + boot.suffix,
+    // NOTE: this does not exist
     // 'stratus.components.calendar.timezones': boot.bundle + 'stratus/extras/components/calendar.timezones' + boot.suffix,
 
     /* STRATUS EXTRAS - COMPONENTS: Carousel and libraries */
