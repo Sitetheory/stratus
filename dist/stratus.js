@@ -2832,8 +2832,8 @@ Stratus.Loaders.Angular = function () {
 
       // TODO: Make Dynamic
       // Froala Configuration
-      if (typeof $ === 'function' && $.fn && $.FroalaEditor) {
-        $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
+      if (typeof jQuery === 'function' && jQuery.fn && jQuery.FroalaEditor) {
+        jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
         let buttons = [
@@ -2861,7 +2861,7 @@ Stratus.Loaders.Angular = function () {
             tabMode: 'space',
             tabSize: 4
           },
-          fileUploadURL: 'https://app002.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
+          fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + _.cookie('SITETHEORY'),
           htmlAllowedAttrs: ['.*'],
           htmlAllowedEmptyTags: [
             'textarea', 'a', '.fa',

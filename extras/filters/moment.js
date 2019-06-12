@@ -23,7 +23,7 @@
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular', 'moment'], factory)
+    define(['stratus', 'underscore', 'angular', 'moment', 'moment-timezone/builds/moment-timezone-with-data'], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
   }
@@ -42,6 +42,7 @@
       if (angular.isObject(options)) angular.extend(this, options)
       if (this.relative && typeof this.relative === 'string' && Math.round(new Date().getTime() / 1000) > (input + _.seconds(this.relative))) this.since = false
       let time = this.unix ? moment.unix(input) : moment(input)
+      time = this.tz ? time.tz(this.tz) : time
       return (!this.since) ? time.format(this.format) : time.fromNow(!this.ago)
     }
   }

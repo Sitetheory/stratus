@@ -1,4 +1,4 @@
-/* global Stratus, _, $, bootbox */
+/* global Stratus, _, jQuery, bootbox */
 
 // Instance Clean
 // --------------
@@ -442,8 +442,8 @@ Stratus.Events.on('toast', function (event, message, title, priority, settings) 
   if (!Stratus.Environment.get('production')) {
     console.log('Toast:', message)
   }
-  if (typeof $ !== 'undefined' && $.toaster) {
-    $.toaster(message)
+  if (typeof jQuery !== 'undefined' && jQuery.toaster) {
+    jQuery.toaster(message)
   } else {
     Stratus.Events.trigger('alert', message.message)
   }

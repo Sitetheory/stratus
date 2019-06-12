@@ -1,0 +1,31 @@
+<md-content id="{{ elementId }}" class="{{ template }}Template" layout-padding>
+	<span>Default view for {{ elementId }} (remove me)</span>
+	<md-card class="" ng-repeat="eventData in events">
+		<div class="event-image-container" data-ng-if="::eventData.extendedProps.image">
+			<img class="event-image" data-ng-src="::eventData.extendedProps.image"/>
+		</div>
+		<h2 class="event-title" data-ng-if="::eventData.title" data-ng-bind="::eventData.title"></h2>
+		<p class="event-time">
+			<span class="event-time-label  label">Time: </span>
+			<!-- TODO if AllDay, remove time stamps and show day only? -->
+			<span class="event-time-start" data-ng-bind="::eventData.start | moment:{unix:false, format:'dddd MMM Do, h:mm a', tz:options.timeZone}"></span>
+			<span class="event-time-end" data-ng-if="::eventData.end != null"> <!-- data-ng-if="::eventData.end" causes digest errors..? -->
+					- <span data-ng-bind="eventData.end  | moment:{unix:false, format:'h:mm a', tz:options.timeZone}"></span>
+				<!-- TODO detect if it's not in the same day to add the day to the end time again -->
+				</span>
+		</p>
+		<!-- Perhaps we should wrap the description into something so it separate from everything else? -->
+		<p class="event-description" data-ng-if="::eventData.descriptionHTML" data-ng-bind-html="::eventData.descriptionHTML"></p>
+
+		<p class="event-location" data-ng-if="::eventData.extendedProps.location">
+			<span class="event-location-label  label">Location: </span>
+			<span class="event-location-text" data-ng-bind="::eventData.extendedProps.location"></span>
+		</p>
+
+		<p class="event-organizer" data-ng-if="::eventData.extendedProps.organizer">
+			<span class="event-organizer-label label">Organizer: </span>
+			<span class="event-organizer-text" data-ng-bind="::eventData.extendedProps.organizer"></span>
+		</p>
+		<md-button data-ng-click="eventClick(eventData, $event)">Read More</md-button>
+	</md-card>
+</md-content>

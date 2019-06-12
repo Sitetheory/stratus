@@ -8,30 +8,30 @@
 					Done
 				</a>
 			</div>
-			<div class="event-image-container" data-ng-if="::ctrl.eventData.image">
-				<img class="event-image" data-ng-src="::ctrl.eventData.image" />
+			<div class="event-image-container" data-ng-if="::ctrl.eventData.extendedProps.image">
+				<img class="event-image" data-ng-src="::ctrl.eventData.extendedProps.image" />
 			</div>
 			<h2 class="event-title" data-ng-if="::ctrl.eventData.title" data-ng-bind="::ctrl.eventData.title"></h2>
 			<p class="event-time">
 				<span class="event-time-label  label">Time: </span>
 				<!-- TODO if AllDay, remove time stamps and show day only? -->
-				<span class="event-time-start" data-ng-bind="::ctrl.eventData.start | moment:{unix:false,format:'dddd MMM Do, h:mm a'}"></span>
-				<span class="event-time-end" data-ng-if="::ctrl.eventData.end">
-					- <span data-ng-bind="::ctrl.eventData.end | moment:{unix:false,format:'h:mm a'}"></span>
+				<span class="event-time-start" data-ng-bind="::ctrl.eventData.start | moment:{unix:false, format:'dddd MMM Do, h:mm a', tz:ctrl.timeZone}"></span>
+				<span class="event-time-end" data-ng-if="::ctrl.eventData.end != null">
+					- <span data-ng-bind="::ctrl.eventData.end | moment:{unix:false,format:'h:mm a', tz:ctrl.timeZone}"></span>
 					<!-- TODO detect if it's not in the same day to add the day to the end time again -->
 				</span>
 			</p>
 			<!-- Perhaps we should wrap the description into something so it separate from everything else? -->
 			<p class="event-description" data-ng-if="::ctrl.eventData.descriptionHTML" data-ng-bind-html="::ctrl.eventData.descriptionHTML"></p>
 
-			<p class="event-location" data-ng-if="::ctrl.eventData.location">
+			<p class="event-location" data-ng-if="::ctrl.eventData.extendedProps.location">
 				<span class="event-location-label  label">Location: </span>
-				<span class="event-location-text" data-ng-bind="::ctrl.eventData.location"></span>
+				<span class="event-location-text" data-ng-bind="::ctrl.eventData.extendedProps.location"></span>
 			</p>
 
-			<p class="event-organizer" data-ng-if="::ctrl.eventData.organizer">
+			<p class="event-organizer" data-ng-if="::ctrl.eventData.extendedProps.organizer">
 				<span class="event-organizer-label label">Organizer: </span>
-				<span class="event-organizer-text" data-ng-bind="::ctrl.eventData.organizer"></span>
+				<span class="event-organizer-text" data-ng-bind="::ctrl.eventData.extendedProps.organizer"></span>
 			</p>
 		</div>
 	</md-content>
