@@ -491,7 +491,6 @@ boot.config({
     // 'angular-icons': boot.bundle + 'stratus/node_modules/angular-material-icons/angular-material-icons' + boot.suffix,
     // 'angular-file-upload': boot.bundle + 'stratus/node_modules/ng-file-upload/dist/ng-file-upload' + boot.suffix,
     // 'angular-paging': boot.bundle + 'stratus/node_modules/angular-paging/dist/paging' + boot.suffix,
-    // 'angular-sortable': boot.bundle + 'stratus/node_modules/ng-sortable/angular-legacy-sortable' + boot.suffix,
     // 'angular-scrollSpy': boot.bundle + 'stratus/node_modules/angular-scroll-spy/angular-scroll-spy',
     // 'angular-ui-tree': boot.bundle + 'stratus/node_modules/angular-ui-tree/dist/angular-ui-tree' + boot.suffix,
 
