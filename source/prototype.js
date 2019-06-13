@@ -137,11 +137,6 @@ let Stratus = {
       module: true,
       suffix: '.js'
     },
-    sortable: {
-      selector: '[ng-sortable]',
-      require: ['angular-sortable'],
-      module: 'ng-sortable'
-    },
 
     // TODO: Move Froala to Sitetheory since it is specific to Sitetheory
     modules: {

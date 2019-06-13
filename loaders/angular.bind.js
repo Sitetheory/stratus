@@ -47,29 +47,25 @@ Stratus.Loaders.Angular = function () {
         element.length = 0
         _.each(element.selector, function (selector) {
           nodes = document.querySelectorAll(selector)
-          if (!nodes || !nodes.length) {
-            return
-          }
           element.length += nodes.length
-          let name = selector.replace(/^\[/, '').replace(/]$/, '')
-          if (!name) {
-            return
-          }
-          requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
-          if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
-            injection = {
-              requirement: requirement
+          if (nodes.length) {
+            let name = selector.replace(/^\[/, '').replace(/]$/, '')
+            requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
+            if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+              injection = {
+                requirement: requirement
+              }
+              if (element.module) {
+                injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(name + (element.suffix || '')))
+              }
+              injector(injection)
             }
-            if (element.module) {
-              injection.module = _.isString(element.module) ? element.module : _.lcfirst(_.kebabToCamel(name + (element.suffix || '')))
-            }
-            injector(injection)
           }
         })
       } else if (_.isString(element.selector)) {
         nodes = document.querySelectorAll(element.selector)
         element.length = nodes.length
-        if (!nodes.length) {
+        if (nodes.length) {
           let attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
           if (attribute && element.namespace) {
             _.each(nodes, function (node) {
