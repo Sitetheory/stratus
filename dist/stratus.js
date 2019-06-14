@@ -22,7 +22,7 @@
   }
 }(this, function (text, _, jQuery, bowser) {
 
-/* global requirejs, _, bowser */
+/* global boot, _, bowser */
 
 // Stratus Layer Prototype
 // -----------------------
@@ -70,12 +70,8 @@ let Stratus = {
   Select: null,
 
   /* Boot */
-  BaseUrl: (requirejs && _.has(requirejs.s.contexts._, 'config')
-    ? requirejs.s.contexts._.config.baseUrl
-    : null) || '/',
-  BundlePath: (requirejs && _.has(requirejs.s.contexts._, 'config')
-    ? requirejs.s.contexts._.config.bundlePath
-    : '') || '',
+  BaseUrl: (boot && _.has(boot, 'configuration') ? boot.configuration.baseUrl : null) || '/',
+  BundlePath: (boot && _.has(boot, 'configuration') ? boot.configuration.bundlePath : '') || '',
 
   /* This is used internally for triggering events */
   Events: null,
@@ -1194,13 +1190,21 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
    * @returns {*}
    */
   remove (attr, value) {
+    // Note:
+    // This needs to tree build into dot notation strings
+    // then delete the keys for the values or remove an
+    // element from an array.
+
+    // console.log('remove:', attr, value === undefined ? 'straight' : 'element')
     if (value === undefined) {
+      // FIXME: This needs to remove the dot notation references
       // delete this.data[attr];
     } else {
       // TODO: use dot notation for nested removal or _.without for array
       // values (these should be separate functions)
       this.data[attr] = _.without(this.data[attr], value)
     }
+    // console.log('removed:', this.data[attr])
     return this.data[attr]
   }
 
@@ -1381,7 +1385,7 @@ Stratus.Prototypes.Toast = class Toast {
  * @param request
  * @constructor
  */
-Stratus.Internals.Ajax = function (request) {
+Stratus.Internals.XHR = function (request) {
   // Defaults
   this.method = 'GET'
   this.url = '/Api'
@@ -1634,7 +1638,7 @@ Stratus.Internals.Convoy = function (convoy, query) {
         }
       })
     } else {
-      Stratus.Internals.Ajax({
+      Stratus.Internals.XHR({
         method: 'POST',
         url: '/Api' + encodeURIComponent(query || ''),
         data: {
@@ -2319,7 +2323,7 @@ Stratus.Internals.TrackLocation = function () {
         console.error('Stratus Location:', error)
       })
     } else {
-      Stratus.Internals.Ajax({
+      Stratus.Internals.XHR({
         url: 'https://ipapi.co/' + Stratus.Environment.get('ip') + '/json/',
         success: function (data) {
           if (!data) {
@@ -2363,7 +2367,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
   if (typeof request === 'object' && Object.keys(request).length) {
     // TODO: Create a better URL, switching between relative APIs based on
     // environment
-    Stratus.Internals.Ajax({
+    Stratus.Internals.XHR({
       method: 'PUT',
       url: '/Api/Session', // auth.sitetheory.io
       data: request,
@@ -2651,7 +2655,7 @@ Stratus.Selector.parent = function () {
   return Stratus(that.selection.parentNode)
 }
 
-/* global Stratus, _, $, angular, boot, requirejs */
+/* global Stratus, _, $, angular, boot */
 
 /**
  * @constructor
@@ -2688,7 +2692,7 @@ Stratus.Loaders.Angular = function () {
       // sanitize roster fields without selector attribute
       if (_.isUndefined(element.selector) && element.namespace) {
         element.selector = _.filter(
-          _.map(requirejs.s.contexts._.config.paths, function (path, key) {
+          _.map(boot.configuration.paths, function (path, key) {
             // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
             return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToKebab(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
           })
@@ -2704,7 +2708,7 @@ Stratus.Loaders.Angular = function () {
           if (nodes.length) {
             let name = selector.replace(/^\[/, '').replace(/]$/, '')
             requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
-            if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+            if (_.has(boot.configuration.paths, requirement)) {
               injection = {
                 requirement: requirement
               }
@@ -2725,7 +2729,7 @@ Stratus.Loaders.Angular = function () {
               let name = node.getAttribute(attribute)
               if (name) {
                 requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
-                if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+                if (_.has(boot.configuration.paths, requirement)) {
                   injector({
                     requirement: requirement
                   })
@@ -2750,7 +2754,6 @@ Stratus.Loaders.Angular = function () {
   })
 
   // Ensure Modules enabled are in the requirements
-  // TODO: store the require config in a stratus key: requirejs.s.contexts._.config
   container.requirement.push('angular-material')
   _.each(container, function (element, key) {
     container[key] = _.uniq(element)
@@ -2795,7 +2798,7 @@ Stratus.Loaders.Angular = function () {
     /* */
 
     // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
-    Object.keys(requirejs.s.contexts._.config.paths).filter(function (path) {
+    Object.keys(boot.configuration.paths).filter(function (path) {
       return _.startsWith(path, 'stratus.filters.')
     }).forEach(function (requirement) {
       container.requirement.push(requirement)
@@ -2823,8 +2826,8 @@ Stratus.Loaders.Angular = function () {
 
       // TODO: Make Dynamic
       // Froala Configuration
-      if (typeof jQuery === 'function' && jQuery.fn && jQuery.FroalaEditor) {
-        jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
+      if (typeof $ === 'function' && $.fn && $.FroalaEditor) {
+        $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
         let buttons = [
@@ -2915,7 +2918,7 @@ Stratus.Loaders.Angular = function () {
           Stratus.BaseUrl + Stratus.BundlePath + 'node_modules/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
         )
       }
-      if (Stratus('[froala]').length || Stratus.Directives.Froala) {
+      if (Stratus.Directives.Froala || Stratus('[froala]').length) {
         [
           // FIXME this is sitetheory only
           Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
@@ -2956,7 +2959,7 @@ Stratus.Loaders.Angular = function () {
   }
 }
 
-/* global Stratus, _, $, bootbox */
+/* global Stratus, _, jQuery, bootbox */
 
 // Instance Clean
 // --------------
@@ -3400,8 +3403,8 @@ Stratus.Events.on('toast', function (event, message, title, priority, settings) 
   if (!Stratus.Environment.get('production')) {
     console.log('Toast:', message)
   }
-  if (typeof $ !== 'undefined' && $.toaster) {
-    $.toaster(message)
+  if (typeof jQuery !== 'undefined' && jQuery.toaster) {
+    jQuery.toaster(message)
   } else {
     Stratus.Events.trigger('alert', message.message)
   }

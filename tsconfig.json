@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "amd",
+    "module": "system",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "removeComments": true,
@@ -9,10 +9,16 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "baseUrl": "src",
+    "baseUrl": "",
     "paths": {
-      "@stratus/components/*": [ "components/*" ],
-      "@stratus/loaders/*": [ "loaders/*" ]
+      "@stratus/components/*": [ "src/components/*" ],
+      "@stratus/loaders/*": [ "src/loaders/*" ],
+      "stratus": [
+        "dist/stratus"
+      ],
+      "core-js/es7/reflect": [
+        "node_modules/core-js/proposals/reflect-metadata"
+      ]
     }
   },
   "exclude": [

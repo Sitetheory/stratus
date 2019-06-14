@@ -1,4 +1,4 @@
-/* global Stratus, _, jQuery, angular, boot, requirejs */
+/* global Stratus, _, $, angular, boot */
 
 /**
  * @constructor
@@ -35,7 +35,7 @@ Stratus.Loaders.Angular = function () {
       // sanitize roster fields without selector attribute
       if (_.isUndefined(element.selector) && element.namespace) {
         element.selector = _.filter(
-          _.map(requirejs.s.contexts._.config.paths, function (path, key) {
+          _.map(boot.configuration.paths, function (path, key) {
             // if (_.isString(key)) console.log(key.match(/([a-zA-Z]+)/g));
             return _.startsWith(key, element.namespace) ? (element.type === 'attribute' ? '[' : '') + _.camelToKebab(key.replace(element.namespace, 'stratus-')) + (element.type === 'attribute' ? ']' : '') : null
           })
@@ -51,7 +51,7 @@ Stratus.Loaders.Angular = function () {
           if (nodes.length) {
             let name = selector.replace(/^\[/, '').replace(/]$/, '')
             requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
-            if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+            if (_.has(boot.configuration.paths, requirement)) {
               injection = {
                 requirement: requirement
               }
@@ -72,7 +72,7 @@ Stratus.Loaders.Angular = function () {
               let name = node.getAttribute(attribute)
               if (name) {
                 requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
-                if (_.has(requirejs.s.contexts._.config.paths, requirement)) {
+                if (_.has(boot.configuration.paths, requirement)) {
                   injector({
                     requirement: requirement
                   })
@@ -97,7 +97,6 @@ Stratus.Loaders.Angular = function () {
   })
 
   // Ensure Modules enabled are in the requirements
-  // TODO: store the require config in a stratus key: requirejs.s.contexts._.config
   container.requirement.push('angular-material')
   _.each(container, function (element, key) {
     container[key] = _.uniq(element)
@@ -106,8 +105,43 @@ Stratus.Loaders.Angular = function () {
 
   // Angular Injector
   if (container.requirement.length) {
+    // Deprecated the use of the 'froala' directive for stratus-froala
+    /* *
+    if (_.contains(container.requirement, 'angular-froala')) {
+      [
+        'codemirror/mode/htmlmixed/htmlmixed',
+        'codemirror/addon/edit/matchbrackets',
+        'codemirror',
+        'froala-align',
+        'froala-code-beautifier',
+        'froala-code-view',
+        'froala-draggable',
+        'froala-entities',
+        'froala-file',
+        'froala-forms',
+        'froala-fullscreen',
+        'froala-help',
+        'froala-image',
+        'froala-image-manager',
+        'froala-inline-style',
+        'froala-link',
+        'froala-lists',
+        'froala-paragraph-format',
+        'froala-paragraph-style',
+        'froala-quick-insert',
+        'froala-quote',
+        'froala-table',
+        'froala-url',
+        'froala-video',
+        'froala-word-paste'
+      ].forEach(function (requirement) {
+        container.requirement.push(requirement);
+      });
+    }
+    /* */
+
     // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
-    Object.keys(requirejs.s.contexts._.config.paths).filter(function (path) {
+    Object.keys(boot.configuration.paths).filter(function (path) {
       return _.startsWith(path, 'stratus.filters.')
     }).forEach(function (requirement) {
       container.requirement.push(requirement)
@@ -135,8 +169,8 @@ Stratus.Loaders.Angular = function () {
 
       // TODO: Make Dynamic
       // Froala Configuration
-      if (typeof jQuery === 'function' && jQuery.fn && jQuery.FroalaEditor) {
-        jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
+      if (typeof $ === 'function' && $.fn && $.FroalaEditor) {
+        $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
         let buttons = [
@@ -227,7 +261,7 @@ Stratus.Loaders.Angular = function () {
           Stratus.BaseUrl + Stratus.BundlePath + 'node_modules/angular-material/angular-material' + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
         )
       }
-      if (Stratus('[froala]').length || Stratus.Directives.Froala) {
+      if (Stratus.Directives.Froala || Stratus('[froala]').length) {
         [
           // FIXME this is sitetheory only
           Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',

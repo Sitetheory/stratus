@@ -1,8 +1,6 @@
 // Environment
 // -----------
 
-/* global cacheTime, config */
-
 (function (root) {
   // To be or not to be...
   const hamlet = root.hamlet = {}
@@ -23,7 +21,7 @@
 
   // Backward Compatibility
   if (!hamlet.isUndefined('cacheTime')) {
-    boot.cacheTime = cacheTime
+    boot.cacheTime = root.cacheTime
   }
 
   // Environment
@@ -92,9 +90,39 @@
 
   // Initialization
   if (!hamlet.isUndefined('config')) {
-    let localConfig = typeof config === 'function' ? config(boot) : config
+    let localConfig = typeof root.config === 'function' ? root.config(boot) : root.config
     if (typeof localConfig === 'object' && localConfig) {
       boot.config(localConfig)
+    }
+  }
+
+  // Chain Require for Backwards Compatibility
+  if (typeof root.require === 'undefined') {
+    root.require = function (requirements, callback) {
+      const System = root.System
+      if (typeof System === 'undefined') {
+        return
+      }
+      const tracker = {
+        loaded: 0,
+        total: requirements.length,
+        modules: {}
+      }
+      requirements.forEach(function (requirement) {
+        System.import(requirement)
+          .then(function (module) {
+            tracker.modules[requirement] = module
+            if (++tracker.loaded !== tracker.total) {
+              return
+            }
+            if (typeof callback !== 'function') {
+              return
+            }
+            callback.apply(root, requirements.map(function(key) {
+              return tracker.modules[key];
+            }))
+          })
+      })
     }
   }
 })(this)

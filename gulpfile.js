@@ -138,7 +138,8 @@ const location = {
       'components/*.less',
       'extras/components/*.less',
       'directives/*.less',
-      'extras/directives/*.less'
+      'extras/directives/*.less',
+      'src/**/*.less'
     ],
     compile: []
   },
@@ -148,7 +149,8 @@ const location = {
       'components/*.scss',
       'extras/components/*.scss',
       'directives/*.scss',
-      'extras/directives/*.scss'
+      'extras/directives/*.scss',
+      'src/**/*.scss'
     ],
     compile: []
   },
@@ -158,14 +160,16 @@ const location = {
       'components/*.css',
       'extras/components/*.css',
       'directives/*.css',
-      'extras/directives/*.css'
+      'extras/directives/*.css',
+      'src/**/*.css'
     ],
     min: [
       // 'stratus.min.css',
       'components/*.min.css',
       'extras/components/*.min.css',
       'directives/*.min.css',
-      'extras/directives/*.min.css'
+      'extras/directives/*.min.css',
+      'src/**/*.min.css'
     ]
   },
   coffee: {
@@ -173,7 +177,8 @@ const location = {
       'components/*.coffee',
       'extras/components/*.coffee',
       'directives/*.coffee',
-      'extras/directives/*.coffee'
+      'extras/directives/*.coffee',
+      'src/**/*.coffee'
     ],
     compile: []
   },
@@ -192,13 +197,15 @@ const location = {
       'components/*.html',
       'extras/components/*.html',
       'directives/*.html',
-      'extras/directives/*.html'
+      'extras/directives/*.html',
+      'src/**/*.html'
     ],
     min: [
       'components/*.min.html',
       'extras/components/*.min.html',
       'directives/*.min.html',
-      'extras/directives/*.min.html'
+      'extras/directives/*.min.html',
+      'src/**/*.min.html'
     ]
   }
 }
@@ -432,7 +439,7 @@ function compileTypeScript () {
   // .pipe(debug({ title: 'Compile TypeScript:' }))
     .pipe(ts({
       'target': 'es6',
-      'module': 'amd',
+      'module': 'system',
       'moduleResolution': 'node',
       'noImplicitAny': true,
       'removeComments': true,

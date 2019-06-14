@@ -27,7 +27,7 @@
             }
           })
           $element.bind('click', function () {
-            $scope.$apply(function () {
+            $scope.$applyAsync(function () {
               if ($scope.href) {
                 $location.path($scope.href)
               }
