@@ -1,32 +1,73 @@
-stratus-calendar {
-  .fc {
-    .fc-toolbar {
-      /* Example CSS affects only the toolbar area */
-      box-sizing: border-box;
+
+#calendar-event-dialogue {
+  overflow: hidden;
+  max-width: 1000px;
+  @media (max-width: 959px) {
+    overflow: unset;
+    text-align: center;
+  }
+  .btn-close {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+  }
+  .dialog-content {
+    padding: 60px;
+  }
+  .event-border {
+    height: 8px;
+  }
+  .title-container {
+    margin-bottom: 40px;
+    background-position: left bottom;
+  }
+  h1,
+  h3 {
+    text-align: center;
+  }
+  h1 {
+    margin: -10px 0 24px;
+    font-size: 80px;
+    text-transform: uppercase;
+    @media (max-width: 768px) {
+      font-size: 60px;
     }
-    .fc-basic-view {
-      /* Example CSS affects all 'Basic' Type Views */
-      box-sizing: content-box;
+    @media (max-width: 600px) {
+      font-size: 40px;
     }
-    .fc-list-view {
-      /* Example CSS affects all 'List' Type Views */
-      box-sizing: content-box;
+  }
+
+  .title-table {
+    width: 100%;
+    .div-table-cell.title-border {
+      height: 1px;
+      @media (max-width: 767px) {
+        display: none;
+      }
     }
-    .fc-agenda-view {
-      /* Example CSS affects all 'Agenda' Type Views */
-      box-sizing: content-box;
+    .title-column {
+      width: 10%;
+      @media (max-width: 767px) {
+        width: 90%;
+      }
     }
-    .fc-month-view {
-      /* Example CSS affects only 'Month' basic View */
-      box-sizing: content-box;
+    h3 {
+      font-size: 30px;
+      white-space: nowrap;
+      padding: 0 14px;
+      @media (max-width: 959px) {
+        font-size: 22px;
+      }
+      @media (max-width: 767px) {
+        white-space: normal;
+      }
     }
-    .fc-listYear-view {
-      /* Example CSS affects only 'Year List' View */
-      box-sizing: content-box;
-    }
-    .fc-agendaWeek-view {
-      /* Example CSS affects only 'Agenda List' View */
-      box-sizing: content-box;
-    }
+  }
+  .event-image {
+    width: 100%;
+  }
+  p.event-description {
+    font-size: 15px;
+    color: #333;
   }
 }

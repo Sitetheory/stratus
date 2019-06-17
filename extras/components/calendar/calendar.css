@@ -1,28 +1,86 @@
-stratus-calendar .fc .fc-toolbar {
-  /* Example CSS affects only the toolbar area */
-  box-sizing: border-box;
+#calendar-event-dialogue {
+  overflow: hidden;
+  max-width: 1000px;
 }
-stratus-calendar .fc .fc-basic-view {
-  /* Example CSS affects all 'Basic' Type Views */
-  box-sizing: content-box;
+@media (max-width: 959px) {
+  #calendar-event-dialogue {
+    overflow: unset;
+    text-align: center;
+  }
 }
-stratus-calendar .fc .fc-list-view {
-  /* Example CSS affects all 'List' Type Views */
-  box-sizing: content-box;
+#calendar-event-dialogue .btn-close {
+  position: absolute;
+  top: 22px;
+  right: 22px;
 }
-stratus-calendar .fc .fc-agenda-view {
-  /* Example CSS affects all 'Agenda' Type Views */
-  box-sizing: content-box;
+#calendar-event-dialogue .dialog-content {
+  padding: 60px;
 }
-stratus-calendar .fc .fc-month-view {
-  /* Example CSS affects only 'Month' basic View */
-  box-sizing: content-box;
+#calendar-event-dialogue .event-border {
+  height: 8px;
 }
-stratus-calendar .fc .fc-listYear-view {
-  /* Example CSS affects only 'Year List' View */
-  box-sizing: content-box;
+#calendar-event-dialogue .title-container {
+  margin-bottom: 40px;
+  background-position: left bottom;
 }
-stratus-calendar .fc .fc-agendaWeek-view {
-  /* Example CSS affects only 'Agenda List' View */
-  box-sizing: content-box;
+#calendar-event-dialogue h1,
+#calendar-event-dialogue h3 {
+  text-align: center;
 }
+#calendar-event-dialogue h1 {
+  margin: -10px 0 24px;
+  font-size: 80px;
+  text-transform: uppercase;
+}
+@media (max-width: 768px) {
+  #calendar-event-dialogue h1 {
+    font-size: 60px;
+  }
+}
+@media (max-width: 600px) {
+  #calendar-event-dialogue h1 {
+    font-size: 40px;
+  }
+}
+#calendar-event-dialogue .title-table {
+  width: 100%;
+}
+#calendar-event-dialogue .title-table .div-table-cell.title-border {
+  height: 1px;
+}
+@media (max-width: 767px) {
+  #calendar-event-dialogue .title-table .div-table-cell.title-border {
+    display: none;
+  }
+}
+#calendar-event-dialogue .title-table .title-column {
+  width: 10%;
+}
+@media (max-width: 767px) {
+  #calendar-event-dialogue .title-table .title-column {
+    width: 90%;
+  }
+}
+#calendar-event-dialogue .title-table h3 {
+  font-size: 30px;
+  white-space: nowrap;
+  padding: 0 14px;
+}
+@media (max-width: 959px) {
+  #calendar-event-dialogue .title-table h3 {
+    font-size: 22px;
+  }
+}
+@media (max-width: 767px) {
+  #calendar-event-dialogue .title-table h3 {
+    white-space: normal;
+  }
+}
+#calendar-event-dialogue .event-image {
+  width: 100%;
+}
+#calendar-event-dialogue p.event-description {
+  font-size: 15px;
+  color: #333;
+}
+/*# sourceMappingURL=calendar.css.map */
