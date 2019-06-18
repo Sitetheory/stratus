@@ -28,7 +28,7 @@
       // angular: {
       //   exports: 'angular'
       // },
-      // 'angular-aria': {
+      // 'angular-ariaa': {
       //   deps: ['angular']
       // },
       // 'angular-animate': {

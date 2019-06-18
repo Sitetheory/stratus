@@ -1,7 +1,7 @@
 // jQuery Definition
 // ------------------
 
-/* global define, jQuery */
+/* global define */
 
 // Enable noConflict to ensure this version's jQuery globals aren't set in Require.js
 (function (root, factory) {

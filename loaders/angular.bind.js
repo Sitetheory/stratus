@@ -293,11 +293,11 @@ Stratus.Loaders.Angular = function () {
         css.forEach(function (url) {
           Stratus.Internals.CssLoader(url)
             .then(function () {
-            if (++counter !== css.length) {
-              return
-            }
-            angular.bootstrap(document.querySelector('html'), ['stratusApp'])
-          })
+              if (++counter !== css.length) {
+                return
+              }
+              angular.bootstrap(document.querySelector('html'), ['stratusApp'])
+            })
         })
       } else {
         angular.bootstrap(document.querySelector('html'), ['stratusApp'])
