@@ -97,8 +97,14 @@
   }
 
   // Chain Require for Backwards Compatibility
-  if (typeof root.require === 'undefined') {
+  if (typeof root.require !== 'function') {
     root.require = function (requirements, callback) {
+      /* *
+      const require = root.requirejs
+      if (typeof require === 'function') {
+        return require(requirements, callback)
+      }
+      /* */
       const System = root.System
       if (typeof System === 'undefined') {
         return
@@ -108,10 +114,20 @@
         total: requirements.length,
         modules: {}
       }
-      requirements.forEach(function (requirement) {
-        System.import(requirement)
+      const shim = boot.configuration.shim || {}
+      const external = function (name) {
+        const regexp = /(\.js)$/
+        let match = regexp.exec(name)
+        if (typeof match === 'undefined' || !match) {
+          return false
+        }
+        return typeof match[1] !== 'undefined' ? match[1] : false
+      }
+      const load = function (requirement) {
+        return System.import(requirement.replace(/(\.js)$/, ''))
           .then(function (module) {
-            tracker.modules[requirement] = module
+            const wrap = shim[requirement] || {}
+            tracker.modules[requirement] = wrap.exports ? root[wrap.exports] : module
             if (++tracker.loaded !== tracker.total) {
               return
             }
@@ -122,6 +138,19 @@
               return tracker.modules[key];
             }))
           })
+          .catch(function (error) {
+            console.error(error)
+          })
+      }
+      requirements.forEach(function (requirement) {
+        const wrap = shim[requirement] || {}
+        if (wrap.deps) {
+          root.require(wrap.deps, function () {
+            load(requirement)
+          })
+          return
+        }
+        load(requirement)
       })
     }
   }

@@ -24,7 +24,10 @@
   if (typeof steal !== 'undefined' && typeof steal.config === 'function') {
     // Require.js Config Conversion
     const config = boot.configuration
-    config.baseURL = (typeof config.baseUrl === 'string') ? config.baseUrl : '/'
+    config.baseURL = typeof config.baseUrl === 'string' ? config.baseUrl : '/'
+    config.cacheKey = 'v'
+    config.cacheVersion = boot.cacheTime
+    // config.configMain = '@empty'
     if (typeof config.paths === 'object' && config.paths) {
       for (let path in config.paths) {
         if (!config.paths.hasOwnProperty(path)) {

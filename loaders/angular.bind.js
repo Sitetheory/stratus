@@ -147,6 +147,8 @@ Stratus.Loaders.Angular = function () {
       container.requirement.push(requirement)
     })
 
+    // console.log('requirements:', container.requirement)
+
     require(container.requirement, function () {
       // App Reference
       angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
@@ -288,11 +290,13 @@ Stratus.Loaders.Angular = function () {
 
       if (css.length) {
         let counter = 0
-        _.each(css, function (url) {
-          Stratus.Internals.CssLoader(url).then(function () {
-            if (++counter === css.length) {
-              angular.bootstrap(document.querySelector('html'), ['stratusApp'])
+        css.forEach(function (url) {
+          Stratus.Internals.CssLoader(url)
+            .then(function () {
+            if (++counter !== css.length) {
+              return
             }
+            angular.bootstrap(document.querySelector('html'), ['stratusApp'])
           })
         })
       } else {
