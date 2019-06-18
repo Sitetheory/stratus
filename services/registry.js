@@ -206,12 +206,10 @@
                   $scope.data = data
                   if (data instanceof Model) {
                     $scope.model = data
-                    /* *
                     $scope.model.on('change', function () {
                       console.log('changed:', $scope)
-                      $scope.$apply()
+                      $scope.$applyAsync()
                     })
-                    /* */
                   } else if (data instanceof Collection) {
                     $scope.collection = data
                   }
