@@ -26,7 +26,7 @@
           // count clicks
           if (clicks === 1) {
             timer = setTimeout(function () {
-              $scope.$apply(function () {
+              $scope.$applyAsync(function () {
                 fn($scope, { $event: event })
               })
               clicks = 0

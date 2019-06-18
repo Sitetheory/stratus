@@ -1,7 +1,7 @@
 // jQuery Definition
 // ------------------
 
-/* global define, jQuery */
+/* global define */
 
 // Enable noConflict to ensure this version's jQuery globals aren't set in Require.js
 (function (root, factory) {
@@ -10,31 +10,37 @@
   } else {
     factory()
   }
-}(this, function () {
+}(this, function (jQuery) {
+  jQuery = jQuery || this.jQuery || window.jQuery
+  if (typeof jQuery === 'undefined') {
+    console.error('jQuery is undefined!')
+    return
+  }
+
   // This sandboxes jquery's dollar sign
-  // FIXME: noConflict causes Angular to never detect jQuery, so it is disabled temporarily!
-  const sandbox = jQuery.noConflict(true)
+  // NOTE: noConflict causes Angular to never detect jQuery!
+  jQuery.noConflict(true)
 
   // Expose
-  window[`jQ${sandbox.fn.jquery.replace(/\./g, '')}`] = sandbox
+  window[`jQ${jQuery.fn.jquery.replace(/\./g, '')}`] = jQuery
 
   // Notify developers of sandbox version
   if (typeof document.cookie === 'string' && document.cookie.indexOf('env=') !== -1) {
-    console.log('Sandbox jQuery:', sandbox.fn.jquery)
-    console.log('Global jQuery:', `jQ${sandbox.fn.jquery.replace(/\./g, '')}`)
+    console.log('Sandbox jQuery:', jQuery.fn.jquery)
+    console.log('Global jQuery:', `jQ${jQuery.fn.jquery.replace(/\./g, '')}`)
   }
 
   /**
    * @param event
    * @returns {boolean}
    */
-  sandbox.fn.notClicked = function (event) {
+  jQuery.fn.notClicked = function (event) {
     if (!this.selector) {
       console.error('No Selector:', this)
     }
-    return !sandbox(event.target).closest(this.selector).length && !sandbox(event.target).parents(this.selector).length
+    return !jQuery(event.target).closest(this.selector).length && !jQuery(event.target).parents(this.selector).length
   }
 
   // Return jQuery Sandbox for assigning local variables
-  return sandbox
+  return jQuery
 }))

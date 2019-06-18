@@ -797,4 +797,6 @@
         }
       ])
     }]
+  // return Stratus.Services.Model
+  return Stratus.Prototypes.AngularModel
 }))

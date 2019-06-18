@@ -96,14 +96,16 @@ const location = {
       'extras/normalizers/*.js',
       'services/*.js',
       'extras/services/*.js',
-      'legacy/**/*.js'
+      'legacy/**/*.js',
+      'src/**/*.js'
     ],
     min: [
       'dist/*.min.js',
       'extras/normalizers/*.min.js',
       'services/*.min.js',
       'extras/services/*.min.js',
-      'legacy/**/*.min.js'
+      'legacy/**/*.min.js',
+      'src/**/*.min.js'
     ]
   },
   preserve: {
@@ -136,7 +138,8 @@ const location = {
       'components/*.less',
       'extras/components/*.less',
       'directives/*.less',
-      'extras/directives/*.less'
+      'extras/directives/*.less',
+      'src/**/*.less'
     ],
     compile: []
   },
@@ -146,7 +149,8 @@ const location = {
       'components/*.scss',
       'extras/components/*.scss',
       'directives/*.scss',
-      'extras/directives/*.scss'
+      'extras/directives/*.scss',
+      'src/**/*.scss'
     ],
     compile: []
   },
@@ -156,14 +160,16 @@ const location = {
       'components/*.css',
       'extras/components/*.css',
       'directives/*.css',
-      'extras/directives/*.css'
+      'extras/directives/*.css',
+      'src/**/*.css'
     ],
     min: [
       // 'stratus.min.css',
       'components/*.min.css',
       'extras/components/*.min.css',
       'directives/*.min.css',
-      'extras/directives/*.min.css'
+      'extras/directives/*.min.css',
+      'src/**/*.min.css'
     ]
   },
   coffee: {
@@ -171,7 +177,8 @@ const location = {
       'components/*.coffee',
       'extras/components/*.coffee',
       'directives/*.coffee',
-      'extras/directives/*.coffee'
+      'extras/directives/*.coffee',
+      'src/**/*.coffee'
     ],
     compile: []
   },
@@ -180,7 +187,8 @@ const location = {
       'components/*.ts',
       'extras/components/*.ts',
       'directives/*.ts',
-      'extras/directives/*.ts'
+      'extras/directives/*.ts',
+      'src/**/*.ts'
     ],
     compile: []
   },
@@ -189,13 +197,15 @@ const location = {
       'components/*.html',
       'extras/components/*.html',
       'directives/*.html',
-      'extras/directives/*.html'
+      'extras/directives/*.html',
+      'src/**/*.html'
     ],
     min: [
       'components/*.min.html',
       'extras/components/*.min.html',
       'directives/*.min.html',
-      'extras/directives/*.min.html'
+      'extras/directives/*.min.html',
+      'src/**/*.min.html'
     ]
   }
 }
@@ -205,9 +215,9 @@ function lintJS () {
   return src([
     '**/*.js',
     '!**/*.min.js',
-    '!**/*.component.js', // TypeScript supersedes Standard JS
     '!node_modules/**/*.js',
     '!dist/**/*.js',
+    '!src/**/*.js', // TypeScript supersedes Standard JS
     '!legacy/**/*.js',
     '!reports/**/*.js',
     '!umd/**/*.js'
@@ -251,6 +261,7 @@ function distBoot () {
     }))
     /* */
     .pipe(concat(location.boot.output))
+    .pipe(dest('.'))
 }
 function distStratus () {
   return src(location.stratus.source)
@@ -260,6 +271,7 @@ function distStratus () {
     }))
     /* */
     .pipe(concat(location.stratus.output))
+    .pipe(dest('.'))
 }
 
 // Mangle Functions
@@ -434,7 +446,12 @@ function compileTypeScript () {
       'preserveConstEnums': true,
       'sourceMap': true,
       'emitDecoratorMetadata': true,
-      'experimentalDecorators': true
+      'experimentalDecorators': true,
+      'baseUrl': 'src',
+      'paths': {
+        '@stratus/components/*': [ 'components/*' ],
+        '@stratus/loaders/*': [ 'loaders/*' ]
+      }
     }))
     .pipe(gulpDest('.', { ext: '.js' }))
     .pipe(dest('.'))
@@ -467,7 +484,7 @@ function compressTemplate () {
     .pipe(dest('.'))
 }
 
-// Modules Exports
+// Module Exports
 exports.compile = parallel(
   series(cleanLESS, compileLESS),
   series(cleanSASS, compileSASS),

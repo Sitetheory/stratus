@@ -365,13 +365,21 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
    * @returns {*}
    */
   remove (attr, value) {
+    // Note:
+    // This needs to tree build into dot notation strings
+    // then delete the keys for the values or remove an
+    // element from an array.
+
+    // console.log('remove:', attr, value === undefined ? 'straight' : 'element')
     if (value === undefined) {
+      // FIXME: This needs to remove the dot notation references
       // delete this.data[attr];
     } else {
       // TODO: use dot notation for nested removal or _.without for array
       // values (these should be separate functions)
       this.data[attr] = _.without(this.data[attr], value)
     }
+    // console.log('removed:', this.data[attr])
     return this.data[attr]
   }
 
