@@ -1,5 +1,5 @@
 // Dependencies
-const {src, dest, series, parallel} = require('gulp')
+const { src, dest, series, parallel } = require('gulp')
 const concat = require('gulp-concat')
 // const debug = require('gulp-debug')
 const gulpDest = require('gulp-dest')
