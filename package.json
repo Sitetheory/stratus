@@ -61,6 +61,8 @@
     "@material-ui/system": "^4.0.2",
     "@material-ui/types": "^4.0.1",
     "@material-ui/utils": "^4.0.1",
+    "@types/lodash": "^4.14.134",
+    "@types/underscore": "^1.8.20",
     "angular": "^1.7.8",
     "angular-animate": "^1.7.8",
     "angular-aria": "^1.7.8",

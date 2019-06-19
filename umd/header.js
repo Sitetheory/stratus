@@ -10,14 +10,14 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
-      'text',
+      'exports',
       'underscore',
       'jquery', // TODO: Remove once phased out appropriately
       'bowser'
-    ], function (text, _, jQuery, bowser) {
-      return (root.Stratus = factory(text, _, jQuery, bowser))
+    ], function (exports, _, jQuery, bowser) {
+      return (root.Stratus = factory(exports, _, jQuery, bowser))
     })
   } else {
-    root.Stratus = factory(root.text, root._, root.jQuery, root.bowser)
+    root.Stratus = factory(root.exports, root._, root.jQuery, root.bowser)
   }
-}(this, function (text, _, jQuery, bowser) {
+}(this, function (exports, _, jQuery, bowser) {

@@ -28,7 +28,7 @@
       // angular: {
       //   exports: 'angular'
       // },
-      // 'angular-ariaa': {
+      // 'angular-aria': {
       //   deps: ['angular']
       // },
       // 'angular-animate': {
@@ -275,6 +275,9 @@
       /* Underscore is used in most components */
       underscore: boot.bundle + 'stratus/node_modules/underscore/underscore' + boot.dashSuffix,
 
+      /* Lodash is used in place of Underscore in most modern components */
+      lodash: boot.bundle + 'stratus/node_modules/lodash/lodash' + boot.suffix,
+
       /* THIRD PARTY: Bowser */
       bowser: boot.bundle + 'stratus/node_modules/bowser/bowser' + boot.suffix,
 
@@ -473,17 +476,17 @@
       // '@angular/material/tree': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-tree.umd' + boot.suffix,
       '@angular/material-moment-adapter': boot.bundle + 'stratus/node_modules/@angular/material-moment-adapter/bundles/material-moment-adapter.umd' + boot.suffix,
       '@angular/platform-browser': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser.umd' + boot.suffix,
-      // '@angular/platform-browser/*': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser-*.umd' + boot.suffix,
+      '@angular/platform-browser/*': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser-*.umd' + boot.suffix,
       '@angular/platform-browser-dynamic': boot.bundle + 'stratus/node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd' + boot.suffix,
 
       // STRATUS SRC: All
       '@stratus/*': boot.bundle + 'stratus/src/*' + boot.suffix,
 
       // STRATUS LOADERS: All
-      // '@stratus/loaders/angular/main': boot.bundle + 'stratus/src/loaders/angular/main' + boot.suffix,
-      // '@stratus/loaders/angular/material-modules': boot.bundle + 'stratus/src/loaders/angular/material-modules' + boot.suffix,
-      // '@stratus/loaders/angular/polyfills': boot.bundle + 'stratus/src/loaders/angular/polyfills' + boot.suffix,
-      // '@stratus/loaders/react/main': boot.bundle + 'stratus/src/loaders/react/main' + boot.suffix,
+      // '@stratus/angular/main': boot.bundle + 'stratus/src/loaders/angular/main' + boot.suffix,
+      // '@stratus/angular/material-modules': boot.bundle + 'stratus/src/loaders/angular/material-modules' + boot.suffix,
+      // '@stratus/angular/polyfills': boot.bundle + 'stratus/src/loaders/angular/polyfills' + boot.suffix,
+      // '@stratus/react/main': boot.bundle + 'stratus/src/loaders/react/main' + boot.suffix,
 
       // STRATUS COMPONENTS: Basic
       // '@stratus/components/aetherial': boot.bundle + 'stratus/src/components/aetherial' + boot.suffix,
@@ -494,9 +497,9 @@
       'core-js/*': boot.bundle + 'stratus/node_modules/core-js/*',
       'core-js/es7/reflect': boot.bundle + 'stratus/node_modules/core-js/proposals/reflect-metadata',
       'hammerjs': boot.bundle + 'stratus/node_modules/hammerjs/hammer' + boot.suffix,
-      // 'rxjs': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
-      'rxjs': boot.bundle + 'stratus/node_modules/rxjs/index',
-      // 'rxjs/operators': boot.bundle + 'stratus/extras/services/rxjs.operators' + boot.suffix,
+      'rxjs': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
+      // 'rxjs': boot.bundle + 'stratus/node_modules/rxjs/index',
+      'rxjs/operators': boot.bundle + 'stratus/extras/normalizers/rxjs.operators' + boot.suffix,
       // 'rxjs/operators': boot.bundle + 'stratus/node_modules/rxjs/operators/index',
       'rxjs-compat': boot.bundle + 'stratus/node_modules/rxjs-compat/index',
       'web-animations-js': boot.bundle + 'stratus/node_modules/web-animations-js/web-animations.min',
