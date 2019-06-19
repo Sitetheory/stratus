@@ -115,15 +115,6 @@
         modules: {}
       }
       const shim = boot.configuration.shim || {}
-      // FIX Travis Ci: says this variable is never used so it should not be set
-      // const external = function (name) {
-      //   const regexp = /(\.js)$/
-      //   let match = regexp.exec(name)
-      //   if (typeof match === 'undefined' || !match) {
-      //     return false
-      //   }
-      //   return typeof match[1] !== 'undefined' ? match[1] : false
-      // }
       const load = function (requirement) {
         return System.import(requirement.replace(/(\.js)$/, ''))
           .then(function (module) {

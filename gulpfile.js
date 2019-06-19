@@ -447,10 +447,21 @@ function compileTypeScript () {
       'sourceMap': true,
       'emitDecoratorMetadata': true,
       'experimentalDecorators': true,
-      'baseUrl': 'src',
+      'baseUrl': '',
       'paths': {
-        '@stratus/components/*': [ 'components/*' ],
-        '@stratus/loaders/*': [ 'loaders/*' ]
+        "*": [
+          "node_modules/*"
+        ],
+        "@stratus/*": [ "src/*" ],
+        "@stratus/angular/*": [ "src/angular/*" ],
+        "@stratus/components/*": [ "src/components/*" ],
+        "@stratus/react/*": [ "src/react/*" ],
+        "stratus": [
+          "dist/stratus"
+        ],
+        "core-js/es7/reflect": [
+          "node_modules/core-js/proposals/reflect-metadata"
+        ]
       }
     }))
     .pipe(gulpDest('.', { ext: '.js' }))

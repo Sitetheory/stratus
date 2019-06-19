@@ -14,4 +14,5 @@
   }
 }(this, function (exports, rxjs) {
   exports = rxjs.operators
+  return rxjs.operators
 }))
