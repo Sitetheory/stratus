@@ -29,17 +29,17 @@ import * as Stratus from "stratus";
         MatNativeDateModule,
         ReactiveFormsModule,
     ],
-    entryComponents: [
-        AetherialComponent,
-        BaseComponent
-    ],
+    // entryComponents: [
+    //     AetherialComponent,
+    //     BaseComponent
+    // ],
     declarations: [
-        AetherialComponent,
-        BaseComponent
+        // BaseComponent,
+        AetherialComponent
     ],
     bootstrap: [
-        AetherialComponent,
-        BaseComponent
+        // BaseComponent,
+        AetherialComponent
     ],
     providers: []
 })
@@ -55,7 +55,7 @@ platformBrowserDynamic().bootstrapModule(AppModule)
     .then(function () {
         console.log('@stratus/angular:', arguments)
     })
-    .catch(function (error) {
-        console.error('@stratus/angular:', error)
-    })
+    // .catch(function (error) {
+    //     console.error('@stratus/angular:', error)
+    // })
 ;

@@ -449,18 +449,18 @@ function compileTypeScript () {
       'experimentalDecorators': true,
       'baseUrl': '',
       'paths': {
-        "*": [
-          "node_modules/*"
+        '*': [
+          'node_modules/*'
         ],
-        "@stratus/*": [ "src/*" ],
-        "@stratus/angular/*": [ "src/angular/*" ],
-        "@stratus/components/*": [ "src/components/*" ],
-        "@stratus/react/*": [ "src/react/*" ],
-        "stratus": [
-          "dist/stratus"
+        '@stratus/*': [ 'src/*' ],
+        '@stratus/angular/*': [ 'src/angular/*' ],
+        '@stratus/components/*': [ 'src/components/*' ],
+        '@stratus/react/*': [ 'src/react/*' ],
+        'stratus': [
+          'dist/stratus'
         ],
-        "core-js/es7/reflect": [
-          "node_modules/core-js/proposals/reflect-metadata"
+        'core-js/es7/reflect': [
+          'node_modules/core-js/proposals/reflect-metadata'
         ]
       }
     }))

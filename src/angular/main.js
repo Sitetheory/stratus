@@ -1,4 +1,4 @@
-System.register(["@stratus/angular/polyfills", "@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-browser/animations", "@stratus/angular/material-modules", "@stratus/components/aetherial", "@stratus/components/base", "lodash", "stratus"], function (exports_1, context_1) {
+System.register(["@stratus/angular/polyfills", "@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser-dynamic", "@angular/platform-browser/animations", "@stratus/angular/material-modules", "@stratus/components/aetherial", "lodash", "stratus"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@stratus/angular/polyfills", "@angular/common/http", "@angular
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var http_1, core_1, forms_1, material_1, platform_browser_1, platform_browser_dynamic_1, animations_1, material_modules_1, aetherial_1, base_1, _, Stratus, AppModule;
+    var http_1, core_1, forms_1, material_1, platform_browser_1, platform_browser_dynamic_1, animations_1, material_modules_1, aetherial_1, _, Stratus, AppModule;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -42,9 +42,6 @@ System.register(["@stratus/angular/polyfills", "@angular/common/http", "@angular
             function (aetherial_1_1) {
                 aetherial_1 = aetherial_1_1;
             },
-            function (base_1_1) {
-                base_1 = base_1_1;
-            },
             function (_2) {
                 _ = _2;
             },
@@ -70,17 +67,11 @@ System.register(["@stratus/angular/polyfills", "@angular/common/http", "@angular
                         material_1.MatNativeDateModule,
                         forms_1.ReactiveFormsModule,
                     ],
-                    entryComponents: [
-                        aetherial_1.AetherialComponent,
-                        base_1.BaseComponent
-                    ],
                     declarations: [
-                        aetherial_1.AetherialComponent,
-                        base_1.BaseComponent
+                        aetherial_1.AetherialComponent
                     ],
                     bootstrap: [
-                        aetherial_1.AetherialComponent,
-                        base_1.BaseComponent
+                        aetherial_1.AetherialComponent
                     ],
                     providers: []
                 }),
@@ -90,9 +81,6 @@ System.register(["@stratus/angular/polyfills", "@angular/common/http", "@angular
             platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(AppModule)
                 .then(function () {
                 console.log('@stratus/angular:', arguments);
-            })
-                .catch(function (error) {
-                console.error('@stratus/angular:', error);
             });
         }
     };

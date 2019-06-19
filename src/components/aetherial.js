@@ -30,6 +30,7 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "stratus", "lodash"]
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/';
             AetherialComponent = class AetherialComponent {
                 constructor() {
+                    this.title = 'aetherial-app';
                     this.examples = [
                         'Foo',
                         'Bar',

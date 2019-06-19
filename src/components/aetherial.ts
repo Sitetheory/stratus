@@ -21,6 +21,8 @@ export class AetherialComponent {
         Stratus.Instances[_.uniqueId('s2_aetherial_')] = this;
     }
 
+    title = 'aetherial-app';
+
     examples = [
         'Foo',
         'Bar',
