@@ -25,6 +25,9 @@ const coffee = require('gulp-coffee')
 // const sourcemaps = require('gulp-sourcemaps')
 const ts = require('gulp-typescript')
 
+// Project
+const tsProject = ts.createProject('tsconfig.json')
+
 // Helper Functions
 const nullify = function (proto) {
   proto = proto || []
@@ -436,34 +439,10 @@ function cleanTypeScript () {
 }
 function compileTypeScript () {
   return src(_.union(location.typescript.core, nullify(location.typescript.compile)), { base: '.' })
-  // .pipe(debug({ title: 'Compile TypeScript:' }))
-    .pipe(ts({
-      'target': 'es6',
-      'module': 'system',
-      'moduleResolution': 'node',
-      'noImplicitAny': true,
-      'removeComments': true,
-      'preserveConstEnums': true,
-      'sourceMap': true,
-      'emitDecoratorMetadata': true,
-      'experimentalDecorators': true,
-      'baseUrl': '',
-      'paths': {
-        '*': [
-          'node_modules/*'
-        ],
-        '@stratus/*': [ 'src/*' ],
-        '@stratus/angular/*': [ 'src/angular/*' ],
-        '@stratus/components/*': [ 'src/components/*' ],
-        '@stratus/react/*': [ 'src/react/*' ],
-        'stratus': [
-          'dist/stratus'
-        ],
-        'core-js/es7/reflect': [
-          'node_modules/core-js/proposals/reflect-metadata'
-        ]
-      }
-    }))
+    // .pipe(debug({ title: 'Compile TypeScript:' }))
+    // .pipe(sourcemaps.init())
+    .pipe(tsProject())
+    // .pipe(sourcemaps.write())
     .pipe(gulpDest('.', { ext: '.js' }))
     .pipe(dest('.'))
 }
@@ -500,7 +479,7 @@ exports.compile = parallel(
   series(cleanLESS, compileLESS),
   series(cleanSASS, compileSASS),
   series(cleanCoffee, compileCoffee),
-  series(cleanTypeScript, compileTypeScript)
+  // series(cleanTypeScript, compileTypeScript)
 )
 exports.compress = parallel(
   series(cleanMangle, compressMangle),
@@ -516,7 +495,7 @@ exports.clean = parallel(
   cleanSASS,
   cleanCSS,
   cleanCoffee,
-  cleanTypeScript,
+  // cleanTypeScript,
   cleanTemplate,
   cleanExternal
 )
@@ -528,3 +507,5 @@ exports.dist = parallel(
   distBoot,
   distStratus
 )
+
+exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)

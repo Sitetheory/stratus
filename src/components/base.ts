@@ -17,6 +17,6 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/'
 export class BaseComponent {
     constructor() {
         console.log('Base:', this);
-        Stratus.Instances[_.uniqueId('s2_base_')] = this;
+        Stratus.Instances[_.uniqueId('s2_base_component_')] = this;
     }
 }

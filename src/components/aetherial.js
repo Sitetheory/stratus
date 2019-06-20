@@ -38,7 +38,7 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "stratus", "lodash"]
                         'Qux',
                     ];
                     console.log('Aetherial:', this);
-                    Stratus.Instances[_.uniqueId('s2_aetherial_')] = this;
+                    Stratus.Instances[_.uniqueId('s2_aetherial_component_')] = this;
                 }
                 drop(event) {
                     drag_drop_1.moveItemInArray(this.examples, event.previousIndex, event.currentIndex);
@@ -56,3 +56,4 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "stratus", "lodash"]
         }
     };
 });
+//# sourceMappingURL=aetherial.js.map

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "stratus", "lodash", "stratus.services.registry"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, Stratus, _, localDir, BaseComponent;
+    var core_1, Stratus, _, Registry, localDir, AppComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -21,26 +21,33 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
             },
             function (_1) {
                 _ = _1;
+            },
+            function (Registry_1) {
+                Registry = Registry_1;
             }
         ],
         execute: function () {
-            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/';
-            BaseComponent = class BaseComponent {
+            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular/';
+            AppComponent = class AppComponent {
                 constructor() {
-                    console.log('Base:', this);
-                    Stratus.Instances[_.uniqueId('s2_base_component_')] = this;
+                    this.title = 's2-app';
+                    console.log('AppComponent:', this);
+                    Stratus.Instances[_.uniqueId('s2_app_component_')] = this;
+                    this.registry = new Registry();
+                    this.registry.fetch({
+                        target: 'Media'
+                    }, this);
                 }
             };
-            BaseComponent = __decorate([
+            AppComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-base',
-                    templateUrl: `${localDir}base.html`,
-                    styleUrls: [`${localDir}base.css`]
+                    selector: 's2-app',
+                    templateUrl: `${localDir}app.component.html`
                 }),
                 __metadata("design:paramtypes", [])
-            ], BaseComponent);
-            exports_1("BaseComponent", BaseComponent);
+            ], AppComponent);
+            exports_1("AppComponent", AppComponent);
         }
     };
 });
-//# sourceMappingURL=base.js.map
+//# sourceMappingURL=app.component.js.map

@@ -18,7 +18,7 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/'
 export class AetherialComponent {
     constructor() {
         console.log('Aetherial:', this);
-        Stratus.Instances[_.uniqueId('s2_aetherial_')] = this;
+        Stratus.Instances[_.uniqueId('s2_aetherial_component_')] = this;
     }
 
     title = 'aetherial-app';
