@@ -35,7 +35,7 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
                 core_1.Component({
                     selector: 's2-base',
                     templateUrl: `${localDir}base.html`,
-                    styleUrls: [`${localDir}base.css`]
+                    styleUrls: [`${localDir}base.css`],
                 }),
                 __metadata("design:paramtypes", [])
             ], BaseComponent);

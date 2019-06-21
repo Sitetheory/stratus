@@ -6,12 +6,13 @@ import * as _ from "lodash";
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/';
 
 /**
- * @title Drag&Drop sorting
+ * @title Basic Load
  */
 @Component({
     selector: 's2-base',
     templateUrl: `${localDir}base.html`,
-    styleUrls: [ `${localDir}base.css`]
+    styleUrls: [`${localDir}base.css`],
+    // viewProviders: [BaseComponent]
 })
 
 export class BaseComponent {

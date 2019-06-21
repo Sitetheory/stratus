@@ -31,7 +31,8 @@ System.register(["@angular/core", "stratus", "lodash", "stratus.services.registr
             AppComponent = class AppComponent {
                 constructor() {
                     this.title = 's2-app';
-                    console.log('AppComponent:', this);
+                    console.log('AppComponent:', this, document.getElementsByTagName('s2-app'));
+                    console.log('AppComponent Elements:', document.getElementsByTagName('s2-app'));
                     Stratus.Instances[_.uniqueId('s2_app_component_')] = this;
                     this.registry = new Registry();
                     this.registry.fetch({
@@ -42,7 +43,8 @@ System.register(["@angular/core", "stratus", "lodash", "stratus.services.registr
             AppComponent = __decorate([
                 core_1.Component({
                     selector: 's2-app',
-                    templateUrl: `${localDir}app.component.html`
+                    templateUrl: `${localDir}app.component.html`,
+                    providers: [],
                 }),
                 __metadata("design:paramtypes", [])
             ], AppComponent);

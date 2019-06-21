@@ -1,4 +1,4 @@
 declare module 'stratus.services.registry' {
-    let AngularRegistry: any;
-    export = AngularRegistry;
+    let Registry: any;
+    export = Registry;
 }

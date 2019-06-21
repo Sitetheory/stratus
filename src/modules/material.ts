@@ -90,4 +90,5 @@ import {
         ScrollingModule,
     ]
 })
-export class MaterialModules {}
+export class MaterialModules {
+}

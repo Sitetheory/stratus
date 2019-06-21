@@ -12,7 +12,8 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/'
 @Component({
     selector: 's2-aetherial',
     templateUrl: `${localDir}aetherial.html`,
-    styleUrls: [ `${localDir}aetherial.css`]
+    styleUrls: [`${localDir}aetherial.css`],
+    // viewProviders: [AetherialComponent]
 })
 
 export class AetherialComponent {
@@ -21,7 +22,7 @@ export class AetherialComponent {
         Stratus.Instances[_.uniqueId('s2_aetherial_component_')] = this;
     }
 
-    title = 'aetherial-app';
+    title = 'aetherial-dnd';
 
     examples = [
         'Foo',

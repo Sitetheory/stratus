@@ -3,7 +3,7 @@ import * as jQuery from "jquery";
 import * as bowser from "bowser";
 
 export class Stratus {
-    constructor () {
+    constructor() {
         console.log('Stratus:', this, _, jQuery, bowser)
     }
 }

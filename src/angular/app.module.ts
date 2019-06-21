@@ -1,20 +1,20 @@
 // Angular Core
-import {HttpClientModule} from '@angular/common/http';
+// import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatNativeDateModule} from '@angular/material';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+// import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+// import {MatNativeDateModule} from '@angular/material';
+// import {BrowserModule} from '@angular/platform-browser';
+// import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 // Stratus Modules
-import {MaterialModules} from '@stratus/modules/material';
+// import {MaterialModules} from '@stratus/modules/material';
 
 // Stratus Core Components
 import {AppComponent} from '@stratus/angular/app.component';
 import {BaseComponent} from '@stratus/components/base';
 
 // Stratus Custom Components
-import {AetherialComponent} from '@stratus/components/aetherial';
+// import {AetherialComponent} from '@stratus/components/aetherial';
 
 // External Modules
 import * as _ from "lodash";
@@ -22,13 +22,14 @@ import * as Stratus from "stratus";
 
 @NgModule({
     imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpClientModule,
-        MaterialModules,
-        MatNativeDateModule,
-        ReactiveFormsModule,
+        // FIXME: One of these Imports breaks everything...  WHY ANGULAR?!?
+        // BrowserModule,
+        // BrowserAnimationsModule,
+        // FormsModule,
+        // HttpClientModule,
+        // MaterialModules,
+        // MatNativeDateModule,
+        // ReactiveFormsModule,
     ],
     // entryComponents: [
     //     AetherialComponent,
@@ -36,8 +37,8 @@ import * as Stratus from "stratus";
     // ],
     declarations: [
         AppComponent,
-        BaseComponent,
-        AetherialComponent
+        BaseComponent
+        // AetherialComponent
     ],
     bootstrap: [
         AppComponent
@@ -47,7 +48,7 @@ import * as Stratus from "stratus";
 
 export class AppModule {
     constructor() {
-        console.log('Angular Boot:', this);
+        console.log('App Module:', this);
         Stratus.Instances[_.uniqueId('s2_app_module_')] = this;
     }
 }
