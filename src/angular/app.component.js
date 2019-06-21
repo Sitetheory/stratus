@@ -9,7 +9,7 @@ System.register(["@angular/core", "stratus", "lodash", "stratus.services.registr
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, Stratus, _, Registry, localDir, AppComponent;
+    var core_1, Stratus, _, localDir, AppComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -22,28 +22,21 @@ System.register(["@angular/core", "stratus", "lodash", "stratus.services.registr
             function (_1) {
                 _ = _1;
             },
-            function (Registry_1) {
-                Registry = Registry_1;
+            function (_2) {
             }
         ],
         execute: function () {
-            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular/';
+            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
             AppComponent = class AppComponent {
                 constructor() {
-                    this.title = 's2-app';
-                    console.log('AppComponent:', this, document.getElementsByTagName('s2-app'));
-                    console.log('AppComponent Elements:', document.getElementsByTagName('s2-app'));
+                    this.title = 's2-content-module-edit';
                     Stratus.Instances[_.uniqueId('s2_app_component_')] = this;
-                    this.registry = new Registry();
-                    this.registry.fetch({
-                        target: 'Media'
-                    }, this);
                 }
             };
             AppComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-app',
-                    templateUrl: `${localDir}app.component.html`,
+                    selector: 's2-content-module-edit',
+                    templateUrl: `${localDir}/app.component.html`,
                     providers: [],
                 }),
                 __metadata("design:paramtypes", [])

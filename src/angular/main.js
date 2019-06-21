@@ -27,12 +27,11 @@ System.register(["@stratus/angular/polyfills", "stratus", "@angular/core", "@ang
                 core_1.enableProdMode();
             }
             Stratus.DOM.complete(function () {
-                console.log('Bootstrapping App Module...');
                 platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule)
-                    .then(function () {
-                    console.log('@stratus/angular:', arguments);
+                    .then(function (module) {
+                    console.log('@stratus/angular initialized!');
                 })
-                    .catch(err => console.error('@stratus/angular did not initialize!'));
+                    .catch(err => console.error('@stratus/angular did not initialize properly!'));
             });
         }
     };

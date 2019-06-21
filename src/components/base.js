@@ -24,7 +24,7 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
             }
         ],
         execute: function () {
-            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/';
+            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components';
             BaseComponent = class BaseComponent {
                 constructor() {
                     console.log('Base:', this);
@@ -34,8 +34,8 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
             BaseComponent = __decorate([
                 core_1.Component({
                     selector: 's2-base',
-                    templateUrl: `${localDir}base.html`,
-                    styleUrls: [`${localDir}base.css`],
+                    templateUrl: `${localDir}/base.html`,
+                    styleUrls: [`${localDir}/base.css`],
                 }),
                 __metadata("design:paramtypes", [])
             ], BaseComponent);

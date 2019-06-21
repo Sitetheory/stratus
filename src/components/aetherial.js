@@ -27,28 +27,25 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "stratus", "lodash"]
             }
         ],
         execute: function () {
-            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/';
+            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components';
             AetherialComponent = class AetherialComponent {
                 constructor() {
                     this.title = 'aetherial-dnd';
-                    this.examples = [
-                        'Foo',
-                        'Bar',
-                        'Baz',
-                        'Qux',
-                    ];
-                    console.log('Aetherial:', this);
                     Stratus.Instances[_.uniqueId('s2_aetherial_component_')] = this;
+                    this.registry = new Stratus.Data.Registry();
+                    this.registry.fetch({
+                        target: 'Content'
+                    }, this);
                 }
                 drop(event) {
-                    drag_drop_1.moveItemInArray(this.examples, event.previousIndex, event.currentIndex);
+                    drag_drop_1.moveItemInArray(this.collection.models, event.previousIndex, event.currentIndex);
                 }
             };
             AetherialComponent = __decorate([
                 core_1.Component({
                     selector: 's2-aetherial',
-                    templateUrl: `${localDir}aetherial.html`,
-                    styleUrls: [`${localDir}aetherial.css`],
+                    templateUrl: `${localDir}/aetherial.html`,
+                    styleUrls: [`${localDir}/aetherial.css`],
                 }),
                 __metadata("design:paramtypes", [])
             ], AetherialComponent);
