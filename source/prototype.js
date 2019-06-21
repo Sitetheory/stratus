@@ -73,6 +73,7 @@ let Stratus = {
   /* Stratus */
   CSS: {},
   Chronos: null,
+  Data: {},
   Environment: {
     ip: null,
     production: !(typeof document.cookie === 'string' &&

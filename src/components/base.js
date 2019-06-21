@@ -24,18 +24,18 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
             }
         ],
         execute: function () {
-            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components/';
+            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components';
             BaseComponent = class BaseComponent {
                 constructor() {
                     console.log('Base:', this);
-                    Stratus.Instances[_.uniqueId('s2_base_')] = this;
+                    Stratus.Instances[_.uniqueId('s2_base_component_')] = this;
                 }
             };
             BaseComponent = __decorate([
                 core_1.Component({
                     selector: 's2-base',
-                    templateUrl: `${localDir}base.html`,
-                    styleUrls: [`${localDir}base.css`]
+                    templateUrl: `${localDir}/base.html`,
+                    styleUrls: [`${localDir}/base.css`],
                 }),
                 __metadata("design:paramtypes", [])
             ], BaseComponent);
@@ -43,3 +43,4 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
         }
     };
 });
+//# sourceMappingURL=base.js.map

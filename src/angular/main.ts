@@ -1,61 +1,27 @@
 // Normalizers
 import '@stratus/angular/polyfills';
 
-// Angular Core
-import {HttpClientModule} from '@angular/common/http';
-import {NgModule} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatNativeDateModule} from '@angular/material';
-import {BrowserModule} from '@angular/platform-browser';
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-
-// Stratus Specific
-import {MaterialModules} from '@stratus/angular/material-modules';
-import {AetherialComponent} from '@stratus/components/aetherial';
-import {BaseComponent} from '@stratus/components/base';
-
-// External Modules
-import * as _ from "lodash";
+// Environment
 import * as Stratus from "stratus";
 
-@NgModule({
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        HttpClientModule,
-        MaterialModules,
-        MatNativeDateModule,
-        ReactiveFormsModule,
-    ],
-    // entryComponents: [
-    //     AetherialComponent,
-    //     BaseComponent
-    // ],
-    declarations: [
-        // BaseComponent,
-        AetherialComponent
-    ],
-    bootstrap: [
-        // BaseComponent,
-        AetherialComponent
-    ],
-    providers: []
-})
+// Angular Core
+import {enableProdMode} from '@angular/core';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
-export class AppModule {
-    constructor() {
-        console.log('Angular Boot:', this);
-        Stratus.Instances[_.uniqueId('s2_app_')] = this;
-    }
+// Bootstrap
+import {environment} from '@stratus/environments/environment';
+import {AppModule} from "@stratus/angular/app.module";
+
+if (environment.production) {
+    enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-    .then(function () {
-        console.log('@stratus/angular:', arguments)
-    })
-    // .catch(function (error) {
-    //     console.error('@stratus/angular:', error)
-    // })
-;
+Stratus.DOM.complete(function () {
+    platformBrowserDynamic().bootstrapModule(AppModule)
+        .then(function (module) {
+            console.log('@stratus/angular initialized!')
+        })
+        // .then(foo => console.error('@stratus/angular:', arguments))
+        .catch(err => console.error('@stratus/angular did not initialize properly!'))
+    ;
+});

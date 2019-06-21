@@ -9,17 +9,18 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "esModuleInterop": true,
     "baseUrl": "",
     "paths": {
       "*": [
         "node_modules/*"
       ],
       "@stratus/*": [ "src/*" ],
-      "@stratus/angular/*": [ "src/angular/*" ],
-      "@stratus/components/*": [ "src/components/*" ],
-      "@stratus/react/*": [ "src/react/*" ],
       "stratus": [
         "dist/stratus"
+      ],
+      "stratus.services.*": [
+        "stratus/services/*"
       ],
       "core-js/es7/reflect": [
         "node_modules/core-js/proposals/reflect-metadata"
