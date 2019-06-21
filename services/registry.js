@@ -223,7 +223,9 @@
     function ($provide) {
       $provide.factory('Registry', [
         '$interpolate',
-        function ($interpolate) {
+        'Collection',
+        'Model',
+        function ($interpolate, Collection, Model) {
           $$interpolate = $interpolate
           return new Registry()
         }
