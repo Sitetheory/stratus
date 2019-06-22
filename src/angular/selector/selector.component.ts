@@ -1,6 +1,10 @@
 import {Component} from "@angular/core";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 
+// SVG Icons
+import {DomSanitizer} from '@angular/platform-browser';
+import {MatIconRegistry} from '@angular/material/icon';
+
 import * as Stratus from "stratus";
 import * as _ from "lodash";
 
@@ -18,15 +22,30 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 })
 
 export class SelectorComponent {
-    constructor() {
-        Stratus.Instances[_.uniqueId('s2_selector_component_')] = this;
+    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+
+        // Initialization
+        this.uid = _.uniqueId('s2_selector_component_');
+        Stratus.Instances[this.uid] = this;
+
+        // Data Connections
         this.registry = new Stratus.Data.Registry();
         this.registry.fetch({
             target: 'Content'
         }, this)
+            .then(function (data: any) {
+                console.log('Received:', data)
+            });
+
+        // SVG Icons
+        iconRegistry.addSvgIcon(
+            'delete',
+            sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg')
+        );
     }
 
     title = 'selector-dnd';
+    uid: string;
 
     registry: any;
     data: any;
