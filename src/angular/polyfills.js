@@ -16,4 +16,3 @@ System.register(["core-js/es7/reflect", "zone.js/dist/zone", "hammerjs", "web-an
         }
     };
 });
-//# sourceMappingURL=polyfills.js.map

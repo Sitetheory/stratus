@@ -1,4 +1,4 @@
-System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/modules/material", "@stratus/angular/app.component", "@stratus/components/base", "@stratus/components/aetherial", "lodash", "stratus"], function (exports_1, context_1) {
+System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/angular/material", "@stratus/angular/app.component", "@stratus/angular/base/base.component", "@stratus/angular/selector/selector.component", "lodash", "stratus"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, app_component_1, base_1, aetherial_1, _, Stratus, AppModule;
+    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, app_component_1, base_component_1, selector_component_1, _, Stratus, AppModule;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -37,11 +37,11 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
             function (app_component_1_1) {
                 app_component_1 = app_component_1_1;
             },
-            function (base_1_1) {
-                base_1 = base_1_1;
+            function (base_component_1_1) {
+                base_component_1 = base_component_1_1;
             },
-            function (aetherial_1_1) {
-                aetherial_1 = aetherial_1_1;
+            function (selector_component_1_1) {
+                selector_component_1 = selector_component_1_1;
             },
             function (_1) {
                 _ = _1;
@@ -68,13 +68,13 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                         forms_1.ReactiveFormsModule,
                     ],
                     entryComponents: [
-                        base_1.BaseComponent,
-                        aetherial_1.AetherialComponent
+                        base_component_1.BaseComponent,
+                        selector_component_1.SelectorComponent
                     ],
                     declarations: [
                         app_component_1.AppComponent,
-                        base_1.BaseComponent,
-                        aetherial_1.AetherialComponent
+                        base_component_1.BaseComponent,
+                        selector_component_1.SelectorComponent
                     ],
                     bootstrap: [
                         app_component_1.AppComponent
@@ -87,4 +87,3 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
         }
     };
 });
-//# sourceMappingURL=app.module.js.map

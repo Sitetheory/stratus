@@ -1,0 +1,37 @@
+<div cdkDropList class="selected-list" (cdkDropListDropped)="drop($event)" *ngIf="collection.model.length">
+    <h3 class="selected-list-header border-default border-default-bottom"
+        [textContent]="'Selected' + collection.type + 'Items'"></h3>
+    <p class="note">Drag to reorder</p>
+    <div class="list-unstyled">
+        <div class="selected-list-row selected-box" *ngFor="let model of collection.models" cdkDrag>
+            <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
+            Data: {{ model.data.version.title | json }}<br>
+            Straight: {{ model.version.title | json }}<br>
+            <div class="selected-list-container" layout="row" layout-align="space-between center">
+                <div class="column-image position-anchor" no-flex>
+                    <div class="image position-all" no-flex
+                         stratus-src
+                         [style.background]="'url(' + (model.data.version.images[0].mime.indexOf('image') !== -1 ? model.data.version.images[0].src : (model.data.version.images[0].mime.indexOf('video') !== -1 ? model.data.version.images[0].meta.thumbnail_small : '' )) + ') no-repeat center center'"
+                         [style.background-size]="cover"
+                    ></div>
+                </div>
+                <div class="column-title" flex>
+                    <h3 [innerHTML]="model.data.version.title ? model.data.version.title : model.data.contentType.controller=='Content\\Module' ? model.data.version.meta.identifier : 'Untitled ' + model.contentType.name + ' (' + model.data.id + ')'"></h3>
+                    <span class="routing"
+                          *ngIf="model.data.routing.length"
+                          [textContent]="'/' + model.data.routing[0].url"></span>
+                </div>
+                <div no-flex>
+                    <button mat-button
+                            matTooltip="'Delete' + collection.type"
+                            aria-label="'Delete' + collection.type"
+                            class="btn btn-delete"
+                            (click)="remove(model)">
+                        <!-- /Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg-->
+                        <mat-icon svgIcon="delete" aria-hidden="false" aria-label="'Delete' + collection.type"></mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

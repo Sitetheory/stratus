@@ -7,14 +7,14 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 // Stratus Modules
-import {MaterialModules} from '@stratus/modules/material';
+import {MaterialModules} from '@stratus/angular/material';
 
 // Stratus Core Components
 import {AppComponent} from '@stratus/angular/app.component';
-import {BaseComponent} from '@stratus/components/base';
+import {BaseComponent} from '@stratus/angular/base/base.component';
 
 // Stratus Custom Components
-import {AetherialComponent} from '@stratus/components/aetherial';
+import {SelectorComponent} from '@stratus/angular/selector/selector.component';
 
 // External Modules
 import * as _ from "lodash";
@@ -32,12 +32,12 @@ import * as Stratus from "stratus";
     ],
     entryComponents: [
         BaseComponent,
-        AetherialComponent
+        SelectorComponent
     ],
     declarations: [
         AppComponent,
         BaseComponent,
-        AetherialComponent
+        SelectorComponent
     ],
     bootstrap: [
         AppComponent

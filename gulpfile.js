@@ -478,8 +478,8 @@ function compressTemplate () {
 exports.compile = parallel(
   series(cleanLESS, compileLESS),
   series(cleanSASS, compileSASS),
-  series(cleanCoffee, compileCoffee)
-  // series(cleanTypeScript, compileTypeScript)
+  series(cleanCoffee, compileCoffee),
+  series(cleanTypeScript, compileTypeScript)
 )
 exports.compress = parallel(
   series(cleanMangle, compressMangle),
@@ -495,7 +495,7 @@ exports.clean = parallel(
   cleanSASS,
   cleanCSS,
   cleanCoffee,
-  // cleanTypeScript,
+  cleanTypeScript,
   cleanTemplate,
   cleanExternal
 )

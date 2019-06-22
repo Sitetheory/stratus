@@ -19,9 +19,9 @@ if (environment.production) {
 Stratus.DOM.complete(function () {
     platformBrowserDynamic().bootstrapModule(AppModule)
         .then(function (module) {
-            console.log('@stratus/angular initialized!')
+            console.log('@stratus/angular initialized successfully!')
         })
         // .then(foo => console.error('@stratus/angular:', arguments))
-        .catch(err => console.error('@stratus/angular did not initialize properly!'))
+        .catch(err => console.error('@stratus/angular failed to initialize!', err))
     ;
 });

@@ -29,11 +29,10 @@ System.register(["@stratus/angular/polyfills", "stratus", "@angular/core", "@ang
             Stratus.DOM.complete(function () {
                 platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule)
                     .then(function (module) {
-                    console.log('@stratus/angular initialized!');
+                    console.log('@stratus/angular initialized successfully!');
                 })
-                    .catch(err => console.error('@stratus/angular did not initialize properly!'));
+                    .catch(err => console.error('@stratus/angular failed to initialize!', err));
             });
         }
     };
 });
-//# sourceMappingURL=main.js.map

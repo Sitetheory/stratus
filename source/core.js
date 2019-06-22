@@ -465,6 +465,12 @@ Stratus.DOM.ready(function () {
 // stub.
 Stratus.DOM.complete(function () {
   Stratus('body').removeClass('loading unloaded').addClass('loaded')
+
+  // Load Angular 8+
+  const detect = document.getElementsByTagName('s2-content-module-edit')
+  if (detect && detect.length) {
+    require(['@stratus/angular/main'])
+  }
 })
 
 // DOM Unload Routines
