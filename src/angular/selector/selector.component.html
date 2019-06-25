@@ -1,30 +1,44 @@
+<mat-form-field class="example-full-width">
+    <input matInput [placeholder]="'Add ' + target + ': Not Connected Yet!'" aria-label="Selector AutoComplete" [matAutocomplete]="auto" [formControl]="selectCtrl">
+    <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let selectModel of filteredModels | async" [value]="selectModel">
+            {{ selectModel.version.title }}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>
+
 <div class="selected-list">
     <h3 class="selected-list-header border-default border-default-bottom"
-        [textContent]="'Selected ' + collection.target + ' Items'"></h3>
+        [textContent]="'Selected ' + target + ' Items'"></h3>
     <p class="note">Drag to reorder</p>
-    <div cdkDropList class="list-unstyled" (cdkDropListDropped)="drop($event)" *ngIf="collection.model.length">
-        <div class="selected-list-row selected-box" *ngFor="let model of collection.models" cdkDrag>
+    <div cdkDropList class="list-unstyled" (cdkDropListDropped)="drop($event)" *ngIf="_.has(model, 'data.version.modules') && _.get(model, 'data.version.modules').length">
+        <div class="selected-list-row selected-box" *ngFor="let module of model.data.version.modules" cdkDrag>
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
             <div class="selected-list-container" layout="row" layout-align="space-between center">
                 <div class="column-image position-anchor" no-flex>
                     <div class="image position-all" no-flex
-                         stratus-src
-                         [style.background-size]="cover"
+                         [ngStyle]="{'background-url': 'findImage(module)', 'background-size': 'cover'}"
                     ></div>
-                    <!-- [style.background]="'url(' + (model.data.version.images && model.data.version.images[0].mime.indexOf('image') !== -1 ? model.data.version.images[0].src : (model.data.version.images && model.data.version.images[0].mime.indexOf('video') !== -1 ? model.data.version.images[0].meta.thumbnail_small : '' )) + ') no-repeat center center'"-->
+                    <!--
+                        stratus-src
+                         [style.background-size]="cover"
+                         [style.background-repeat]="no-repeat"
+                         [style.background-url]=""
+                         [style.background]="sanitizer.bypassSecurityTrustStyle('url(' + findImage(module) + ') no-repeat center center')"
+                     -->
                 </div>
                 <div class="column-title" flex>
-                    <h3 [innerHTML]="model.data.version.title ? model.data.version.title : model.data.contentType.controller=='Content\\Module' ? model.data.version.meta.identifier : 'Untitled ' + model.data.contentType.name + ' (' + model.data.id + ')'"></h3>
+                    <h3 [innerHTML]="module.version.title || (module.contentType.controller=='Content\\Module' ? module.version.meta.identifier : 'Untitled ' + module.contentType.name + ' (' + module.id + ')')"></h3>
                     <span class="routing"
-                          *ngIf="model.data.routing.length"
-                          [textContent]="model.data.routing ? ('/' + model.data.routing[0].url) : 'No Route Present!'"></span>
+                          *ngIf="module.routing.length"
+                          [textContent]="module.routing ? ('/' + module.routing[0].url) : 'No Route Present!'"></span>
                 </div>
                 <div no-flex>
                     <button mat-button
-                            matTooltip="Delete {{ model.target }}"
+                            [matTooltip]="'Delete' + target"
                             aria-label="Delete Item"
                             class="btn btn-delete"
-                            (click)="remove(model)">
+                            (click)="remove(module)">
                         <mat-icon svgIcon="delete" aria-hidden="false" aria-label="Delete Item"></mat-icon>
                     </button>
                 </div>

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/platform-browser", "@angular/material/icon", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "rxjs/operators", "@angular/platform-browser", "@angular/material/icon", "stratus", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,15 +9,21 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/platform-b
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, drag_drop_1, platform_browser_1, icon_1, Stratus, _, localDir, SelectorComponent;
+    var core_1, forms_1, drag_drop_1, operators_1, platform_browser_1, icon_1, Stratus, _, localDir, SelectorComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
+            function (forms_1_1) {
+                forms_1 = forms_1_1;
+            },
             function (drag_drop_1_1) {
                 drag_drop_1 = drag_drop_1_1;
+            },
+            function (operators_1_1) {
+                operators_1 = operators_1_1;
             },
             function (platform_browser_1_1) {
                 platform_browser_1 = platform_browser_1_1;
@@ -37,22 +43,49 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/platform-b
             SelectorComponent = class SelectorComponent {
                 constructor(iconRegistry, sanitizer) {
                     this.title = 'selector-dnd';
+                    this.selectCtrl = new forms_1.FormControl();
+                    this.registry = new Stratus.Data.Registry();
+                    this.url = '/Api/Content?q=value&options["showRouting"]';
+                    this.target = 'Content';
                     this.uid = _.uniqueId('s2_selector_component_');
                     Stratus.Instances[this.uid] = this;
-                    this.registry = new Stratus.Data.Registry();
-                    this.registry.fetch({
-                        target: 'Content'
-                    }, this)
+                    this._ = _;
+                    this.sanitizer = sanitizer;
+                    iconRegistry.addSvgIcon(':delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
+                    this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
                         .then(function (data) {
-                        console.log('Received:', data);
+                        console.log('S2 Selector Model:', data);
                     });
-                    iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
+                    this.filteredModels = this.selectCtrl.valueChanges
+                        .pipe(operators_1.startWith(''), operators_1.map(value => this._filterModels(value)));
                 }
                 drop(event) {
-                    drag_drop_1.moveItemInArray(this.collection.models, event.previousIndex, event.currentIndex);
+                    if (!this.model) {
+                        return;
+                    }
+                    const models = _.get(this.model, "data.version.modules");
+                    if (!models || !_.isArray(models)) {
+                        return;
+                    }
+                    drag_drop_1.moveItemInArray(models, event.previousIndex, event.currentIndex);
                 }
                 remove(model) {
-                    console.log('remove:', model, 'from:', this.collection ? this.collection.models : []);
+                }
+                _filterModels(value) {
+                    return [];
+                }
+                findImage(model) {
+                    const mime = _.get(model, 'version.images[0].mime');
+                    if (mime === undefined) {
+                        return '';
+                    }
+                    if (mime.indexOf('image') !== -1) {
+                        return _.get(model, 'version.images[0].src');
+                    }
+                    else if (mime.indexOf('video') !== -1) {
+                        return _.get(model, 'version.images[0].meta.thumbnail_small');
+                    }
+                    return '';
                 }
             };
             SelectorComponent = __decorate([
@@ -69,3 +102,4 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/platform-b
         }
     };
 });
+//# sourceMappingURL=selector.component.js.map
