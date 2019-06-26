@@ -1,5 +1,5 @@
 // Angular Core
-import {Component} from "@angular/core";
+import {Component, Output} from "@angular/core";
 import {FormControl} from '@angular/forms';
 
 // CDK
@@ -17,6 +17,11 @@ import * as Stratus from "stratus";
 import * as _ from "lodash";
 
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
+
+// export interface Model {
+//     completed: boolean;
+//     data: object;
+// }
 
 /**
  * @title AutoComplete Selector with Drag&Drop Sorting
@@ -42,9 +47,14 @@ export class SelectorComponent {
 
     // Stratus Data Connectivity
     registry = new Stratus.Data.Registry();
+    fetched: any;
     data: any;
     collection: any;
+    // @Output() model: any;
     model: any;
+
+    // Observable Connection
+    selectedModels: Observable<[]>;
 
     // API Endpoint for Selector
     // TODO: Avoid hard-coding this...
@@ -52,7 +62,7 @@ export class SelectorComponent {
     target = 'Content';
 
     // API Connectivity for Selector
-    filteredModels: Observable<[]>;
+    // filteredModels: Observable<[]>;
     // filteredModels: any;
 
     constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
@@ -67,57 +77,129 @@ export class SelectorComponent {
 
         // SVG Icons
         iconRegistry.addSvgIcon(
-            ':delete',
+            'delete',
             sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg')
         );
 
         // Data Connections
-        this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
-            .then(function (data: any) {
-                console.log('S2 Selector Model:', data)
-            });
+        this.fetchModel();
+            // .then(function (data: any) {
+            //     console.log('S2 Selector Model:', data)
+            // });
 
         // Handling Pipes with Promises
-        this.filteredModels = this.selectCtrl.valueChanges
-            .pipe(
-                startWith(''),
-                map(value => this._filterModels(value))
-            );
+        this.selectedModels = new Observable((observer) => this.selectedModelDefer(observer));
+
+        // AutoComplete Binding
+        // this.filteredModels = this.selectCtrl.valueChanges
+        //     .pipe(
+        //         startWith(''),
+        //         map(value => this._filterModels(value))
+        //     );
+
+        // console.info('constructor!');
     }
+
+    // ngOnInit(): void {
+    //     console.info('ngOnInit!');
+    // }
+
+    // ngDoCheck(): void {
+    //     console.info('ngDoCheck:', this.selectedModels);
+    // }
 
     /**
      * @param event
      */
     drop(event: CdkDragDrop<string[]>) {
-        if (!this.model) {
-            return
-        }
-        const models = _.get(this.model, "data.version.modules");
-        if (!models || !_.isArray(models)) {
+        const models = this.selectedModelRef();
+        if (!models || !models.length) {
             return
         }
         moveItemInArray(models, event.previousIndex, event.currentIndex);
+        let priority = 0;
+        _.each(models, (model) => model.priority = priority++);
+        // this.model.set('version.modules', models);
     }
 
     /**
      * @param model
      */
-    remove (model: any) {
+    remove(model: any) {
         // console.log('remove:', model, 'from:', this.collection ? this.collection.models : [])
     }
+
+    // Data Connections
+    async fetchModel(): Promise<any> {
+        if (!this.fetched) {
+            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
+        }
+        return this.fetched;
+    }
+
+    selectedModelDefer (observer: any) {
+        const models = this.selectedModelRef();
+        if (models && models.length) {
+            observer.next(models);
+            return;
+        }
+        setTimeout(() => this.selectedModelDefer(observer), 500);
+    }
+
+    selectedModelRef(): any {
+        if (!this.model) {
+            return []
+        }
+        const models = this.model.get("version.modules");
+        if (!models || !_.isArray(models)) {
+            return []
+        }
+        return models;
+    }
+
+    // selectedModel (observer: any) : any {
+    //     if (!this.data) {
+    //         this.fetchModel().then(function (data: any) {
+    //             observer.next(data)
+    //         });
+    //     }
+    //     // data.on('change', () => observer.next(that.selectedModelRef()));
+    //     observer.next()
+    // }
+
+    // async selectedModelFetch(observer: any): Promise<[]> {
+    //     const that = this;
+    //     return new Promise(function (resolve, reject) {
+    //         if (that.model) {
+    //             resolve(that.selectedModelRef());
+    //             return;
+    //         }
+    //         that.fetchModel()
+    //             .then(function (data: any) {
+    //                 if (!data.completed) {
+    //                     console.error('still waiting on XHR!');
+    //                     // return;
+    //                 }
+    //                 resolve(that.selectedModelRef());
+    //             })
+    //             .catch(function (err: any) {
+    //                 console.error("unable to fetch model:", err);
+    //                 reject(err)
+    //             });
+    //     });
+    // }
 
     /**
      * @param value
      * @private
      */
-    private _filterModels(value: string): any {
-        // TODO:
-        // return await this.collection.filterAsync(value);
-        // return await [];
-        return [];
-    }
+    // private _filterModels(value: string): any {
+    //     // return await this.collection.filterAsync(value);
+    //     // return await [];
+    //     return [];
+    // }
 
-    findImage (model: any) {
+    findImage(model: any) {
         const mime = _.get(model, 'version.images[0].mime');
         if (mime === undefined) {
             return ''

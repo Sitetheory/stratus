@@ -122,8 +122,8 @@
     }
 
     /**
-             * @returns {collection|model|*}
-             */
+     * @returns {collection|model|*}
+     */
     static build (options, $scope) {
       let data
       if (options.target) {
@@ -201,10 +201,12 @@
           $scope.data = data
           if (data instanceof Model) {
             $scope.model = data
-            $scope.model.on('change', function () {
-              console.log('changed:', $scope)
-              $scope.$applyAsync()
-            })
+            if (typeof $scope.$applyAsync === 'function') {
+              $scope.model.on('change', function () {
+                // console.log('changed:', $scope)
+                $scope.$applyAsync()
+              })
+            }
           } else if (data instanceof Collection) {
             $scope.collection = data
           }

@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "rxjs/operators", "@angular/platform-browser", "@angular/material/icon", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "rxjs", "@angular/platform-browser", "@angular/material/icon", "stratus", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,15 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, forms_1, drag_drop_1, operators_1, platform_browser_1, icon_1, Stratus, _, localDir, SelectorComponent;
+    var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+        return new (P || (P = Promise))(function (resolve, reject) {
+            function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+            function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+            step((generator = generator.apply(thisArg, _arguments || [])).next());
+        });
+    };
+    var core_1, forms_1, drag_drop_1, rxjs_1, platform_browser_1, icon_1, Stratus, _, localDir, SelectorComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -22,8 +30,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
             function (drag_drop_1_1) {
                 drag_drop_1 = drag_drop_1_1;
             },
-            function (operators_1_1) {
-                operators_1 = operators_1_1;
+            function (rxjs_1_1) {
+                rxjs_1 = rxjs_1_1;
             },
             function (platform_browser_1_1) {
                 platform_browser_1 = platform_browser_1_1;
@@ -51,28 +59,46 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     Stratus.Instances[this.uid] = this;
                     this._ = _;
                     this.sanitizer = sanitizer;
-                    iconRegistry.addSvgIcon(':delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
-                    this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
-                        .then(function (data) {
-                        console.log('S2 Selector Model:', data);
-                    });
-                    this.filteredModels = this.selectCtrl.valueChanges
-                        .pipe(operators_1.startWith(''), operators_1.map(value => this._filterModels(value)));
+                    iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
+                    this.fetchModel();
+                    this.selectedModels = new rxjs_1.Observable((observer) => this.selectedModelDefer(observer));
                 }
                 drop(event) {
-                    if (!this.model) {
-                        return;
-                    }
-                    const models = _.get(this.model, "data.version.modules");
-                    if (!models || !_.isArray(models)) {
+                    const models = this.selectedModelRef();
+                    if (!models || !models.length) {
                         return;
                     }
                     drag_drop_1.moveItemInArray(models, event.previousIndex, event.currentIndex);
+                    let priority = 0;
+                    _.each(models, (model) => model.priority = priority++);
                 }
                 remove(model) {
                 }
-                _filterModels(value) {
-                    return [];
+                fetchModel() {
+                    return __awaiter(this, void 0, void 0, function* () {
+                        if (!this.fetched) {
+                            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this);
+                        }
+                        return this.fetched;
+                    });
+                }
+                selectedModelDefer(observer) {
+                    const models = this.selectedModelRef();
+                    if (models && models.length) {
+                        observer.next(models);
+                        return;
+                    }
+                    setTimeout(() => this.selectedModelDefer(observer), 500);
+                }
+                selectedModelRef() {
+                    if (!this.model) {
+                        return [];
+                    }
+                    const models = this.model.get("version.modules");
+                    if (!models || !_.isArray(models)) {
+                        return [];
+                    }
+                    return models;
                 }
                 findImage(model) {
                     const mime = _.get(model, 'version.images[0].mime');
@@ -102,4 +128,3 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
         }
     };
 });
-//# sourceMappingURL=selector.component.js.map

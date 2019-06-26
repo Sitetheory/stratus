@@ -738,9 +738,9 @@ Stratus.Internals.LoadImage = function (obj) {
       // Remove from registration
       // TODO: remove this
       Stratus.RegisterGroup.remove('OnScroll', obj)
-      if (!Stratus.Environment.get('production')) {
-        console.log('Remove RegisterGroup:', obj)
-      }
+      // if (!Stratus.Environment.get('production')) {
+      //   console.log('Remove RegisterGroup:', obj)
+      // }
     })
   }
 }
