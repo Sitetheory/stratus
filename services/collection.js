@@ -300,11 +300,10 @@
      * @returns {*}
      */
     filter (query) {
-      const that = this
-      that.filtering = true
-      that.meta.set('api.q', angular.isDefined(query) ? query : '')
-      that.meta.set('api.p', 1)
-      return that.fetch()
+      this.filtering = true
+      this.meta.set('api.q', angular.isDefined(query) ? query : '')
+      this.meta.set('api.p', 1)
+      return this.fetch()
     }
 
     /**

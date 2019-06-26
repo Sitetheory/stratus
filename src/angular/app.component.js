@@ -45,4 +45,3 @@ System.register(["@angular/core", "stratus", "lodash", "stratus.services.registr
         }
     };
 });
-//# sourceMappingURL=app.component.js.map

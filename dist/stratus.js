@@ -2120,9 +2120,9 @@ Stratus.Internals.LoadImage = function (obj) {
       // Remove from registration
       // TODO: remove this
       Stratus.RegisterGroup.remove('OnScroll', obj)
-      if (!Stratus.Environment.get('production')) {
-        console.log('Remove RegisterGroup:', obj)
-      }
+      // if (!Stratus.Environment.get('production')) {
+      //   console.log('Remove RegisterGroup:', obj)
+      // }
     })
   }
 }
@@ -3431,6 +3431,12 @@ Stratus.DOM.ready(function () {
 // stub.
 Stratus.DOM.complete(function () {
   Stratus('body').removeClass('loading unloaded').addClass('loaded')
+
+  // Load Angular 8+
+  const detect = document.getElementsByTagName('s2-content-module-edit')
+  if (detect && detect.length) {
+    require(['@stratus/angular/main'])
+  }
 })
 
 // DOM Unload Routines

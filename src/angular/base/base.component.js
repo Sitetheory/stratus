@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/cdk/drag-drop", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "stratus", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,15 +9,12 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "stratus", "lodash"]
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, drag_drop_1, Stratus, _, localDir, AetherialComponent;
+    var core_1, Stratus, _, localDir, BaseComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
-            },
-            function (drag_drop_1_1) {
-                drag_drop_1 = drag_drop_1_1;
             },
             function (Stratus_1) {
                 Stratus = Stratus_1;
@@ -27,30 +24,22 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "stratus", "lodash"]
             }
         ],
         execute: function () {
-            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/components';
-            AetherialComponent = class AetherialComponent {
+            localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
+            BaseComponent = class BaseComponent {
                 constructor() {
-                    this.title = 'aetherial-dnd';
-                    Stratus.Instances[_.uniqueId('s2_aetherial_component_')] = this;
-                    this.registry = new Stratus.Data.Registry();
-                    this.registry.fetch({
-                        target: 'Content'
-                    }, this);
-                }
-                drop(event) {
-                    drag_drop_1.moveItemInArray(this.collection.models, event.previousIndex, event.currentIndex);
+                    console.log('Base:', this);
+                    Stratus.Instances[_.uniqueId('s2_base_component_')] = this;
                 }
             };
-            AetherialComponent = __decorate([
+            BaseComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-aetherial',
-                    templateUrl: `${localDir}/aetherial.html`,
-                    styleUrls: [`${localDir}/aetherial.css`],
+                    selector: 's2-base',
+                    templateUrl: `${localDir}/base/base.component.html`,
+                    styleUrls: [`${localDir}/base/base.component.css`],
                 }),
                 __metadata("design:paramtypes", [])
-            ], AetherialComponent);
-            exports_1("AetherialComponent", AetherialComponent);
+            ], BaseComponent);
+            exports_1("BaseComponent", BaseComponent);
         }
     };
 });
-//# sourceMappingURL=aetherial.js.map
