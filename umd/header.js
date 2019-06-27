@@ -11,7 +11,7 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'exports',
-      'underscore',
+      'lodash',
       'jquery', // TODO: Remove once phased out appropriately
       'bowser'
     ], function (exports, _, jQuery, bowser) {

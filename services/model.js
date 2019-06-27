@@ -9,7 +9,7 @@
     define([
       'exports',
       'stratus',
-      'underscore',
+      'lodash',
       'angular',
       'angular-material' // Reliant for $mdToast
     ], factory)

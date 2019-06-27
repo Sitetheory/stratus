@@ -5,7 +5,7 @@ const concat = require('gulp-concat')
 const gulpDest = require('gulp-dest')
 const terser = require('gulp-terser')
 const del = require('del')
-const _ = require('underscore')
+const _ = require('lodash')
 
 // Unit Testing
 // const mocha = require('mocha')

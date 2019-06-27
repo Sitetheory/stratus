@@ -10,7 +10,7 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      'underscore',
+      'lodash',
       'angular',
 
       // Modules

@@ -9,7 +9,7 @@
     define([
       'exports',
       'stratus',
-      'underscore',
+      'lodash',
       'angular',
       'stratus.services.model',
       'angular-material' // Reliant for $mdToast

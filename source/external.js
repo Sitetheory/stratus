@@ -28,6 +28,21 @@ _.templateSettings = {
  */
 _.mixin({
 
+  // Underscore Compatibility References: https://github.com/lodash/lodash/wiki/Migrating
+  // TODO: Remove once phased out completely
+  any: _.some,
+  all: _.every,
+  compose: _.flowRight,
+  contains: _.includes,
+  findWhere: _.find,
+  indexBy: _.keyBy,
+  mapObject: _.mapValues,
+  object: _.zipObject,
+  omit: _.omitBy,
+  pairs: _.toPairs,
+  pluck: _.map,
+  where: _.filter,
+
   // This function simply extracts the name of a function from code directly
   /**
    * @param code

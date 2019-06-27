@@ -6,7 +6,7 @@
     define([
       'exports',
       'stratus',
-      'underscore',
+      'lodash',
       '@fullcalendar/core',
       'angular-material',
       'moment-range'
