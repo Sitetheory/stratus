@@ -1,10 +1,9 @@
+/* Based on Angular Material 8+ */
 .selected-list {
   width: 500px;
   max-width: 100%;
-  border: solid 1px #ccc;
   min-height: 60px;
   display: block;
-  background: white;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -43,4 +42,56 @@
   border: dotted 3px #999;
   min-height: 60px;
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Based on ContentSelector.css */
+s2-selector {
+  /* Selected List */
+}
+s2-selector .routing {
+  color: #333;
+  font-size: 13px;
+}
+s2-selector .selected-list .selected-list-header {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+}
+s2-selector .selected-list .selected-list-container li {
+  display: inline-block;
+  vertical-align: middle;
+}
+s2-selector .selected-list .selected-list-row {
+  margin-bottom: 10px;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 2px;
+}
+s2-selector .selected-list .column-image {
+  display: inline-block;
+  vertical-align: middle;
+  overflow: hidden;
+  margin-right: 20px;
+  height: 50px;
+  width: 50px;
+  background: rgba(0, 0, 0, 0.05);
+}
+s2-selector .selected-list .column-title h3 {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+s2-selector .selected-list .btn.btn-delete {
+  position: relative;
+  height: 44px;
+  font-size: 10px;
+  margin-left: 12px;
+  padding: 2px 10px;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+s2-selector .selected-list .btn.btn-delete svg g {
+  fill: #222;
+}
+s2-selector .selected-list .btn.btn-delete:hover {
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
 }
