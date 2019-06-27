@@ -17,6 +17,8 @@ import * as Stratus from "stratus";
 import * as _ from "lodash";
 
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
+const systemDir = '@stratus/angular';
+const moduleName = 'selector';
 
 // export interface Model {
 //     completed: boolean;
@@ -28,10 +30,11 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
  */
 @Component({
     selector: 's2-selector',
-    templateUrl: `${localDir}/selector/selector.component.html`,
-    styleUrls: [
-        `${localDir}/selector/selector.component.css`
-    ],
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+    // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will require the steal-css module
+    // styleUrls: [
+    //     `${localDir}/${moduleName}/${moduleName}.component.css`
+    // ],
 })
 
 export class SelectorComponent {
@@ -81,6 +84,10 @@ export class SelectorComponent {
             sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg')
         );
 
+        // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
+        // Load Component CSS until System.js can import CSS properly.
+        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
+
         // Data Connections
         this.fetchModel();
             // .then(function (data: any) {
@@ -119,14 +126,23 @@ export class SelectorComponent {
         moveItemInArray(models, event.previousIndex, event.currentIndex);
         let priority = 0;
         _.each(models, (model) => model.priority = priority++);
-        // this.model.set('version.modules', models);
+        this.model.trigger('change')
     }
 
     /**
      * @param model
      */
     remove(model: any) {
-        // console.log('remove:', model, 'from:', this.collection ? this.collection.models : [])
+        const models = this.selectedModelRef();
+        if (!models || !models.length) {
+            return
+        }
+        const index: number = models.indexOf(model);
+        if (index === -1) {
+            return
+        }
+        models.splice(index, 1);
+        this.model.trigger('change')
     }
 
     // Data Connections
