@@ -172,10 +172,6 @@
           }
         })
 
-        if (!Stratus.Environment.get('production')) {
-          console.log('Patch:', patch)
-        }
-
         // Set the origin data
         /* *
         if (_.isEmpty(that.initData)) {
@@ -185,6 +181,10 @@
 
         if (!patch) {
           return true
+        }
+
+        if (!Stratus.Environment.get('production')) {
+          console.log('Patch:', patch)
         }
 
         that.changed = true
@@ -203,6 +203,7 @@
           )
         }
         that.patch = _.extend(that.patch, patch)
+        that.trigger('change')
       }, true)
     }
 
