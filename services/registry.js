@@ -9,7 +9,7 @@
     define([
       'exports',
       'stratus',
-      'underscore',
+      'lodash',
       'angular',
       'stratus.services.collection',
       'stratus.services.model'

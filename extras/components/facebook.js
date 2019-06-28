@@ -10,7 +10,7 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'underscore', 'angular', 'angular-material'], factory)
+    define(['stratus', 'lodash', 'angular', 'angular-material'], factory)
   } else {
     factory(root.Stratus, root._, root.angular)
   }

@@ -1,12 +1,12 @@
 // Angular Core
-import {Component, Output} from "@angular/core";
+import {ChangeDetectorRef, Component, Output} from "@angular/core";
 import {FormControl} from '@angular/forms';
 
 // CDK
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 
 // External
-import {Observable} from 'rxjs';
+import {Observable, Subject, Subscriber} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
 // SVG Icons
@@ -15,6 +15,7 @@ import {MatIconRegistry} from '@angular/material/icon';
 
 import * as Stratus from "stratus";
 import * as _ from "lodash";
+import {SubjectSubscriber} from "rxjs/internal/Subject";
 
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 const systemDir = '@stratus/angular';
@@ -58,6 +59,9 @@ export class SelectorComponent {
 
     // Observable Connection
     selectedModels: Observable<[]>;
+    onChange = new Subject();
+    subscriber: Subscriber<any>;
+    // Note: It may be better to LifeCycle::tick(), but this works for now
 
     // API Endpoint for Selector
     // TODO: Avoid hard-coding this...
@@ -68,11 +72,14 @@ export class SelectorComponent {
     // filteredModels: Observable<[]>;
     // filteredModels: any;
 
-    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
 
         // Initialization
         this.uid = _.uniqueId('s2_selector_component_');
         Stratus.Instances[this.uid] = this;
+
+        // Hoist Context
+        const that = this;
 
         // Dependencies
         this._ = _;
@@ -89,13 +96,18 @@ export class SelectorComponent {
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
 
         // Data Connections
-        this.fetchModel();
-            // .then(function (data: any) {
-            //     console.log('S2 Selector Model:', data)
-            // });
+        this.fetchModel()
+            .then(function (data: any) {
+                // Manually render upon model change
+                ref.detach();
+                data.on('change', function () {
+                    that.selectedModelDefer(that.subscriber);
+                    ref.detectChanges();
+                });
+            });
 
         // Handling Pipes with Promises
-        this.selectedModels = new Observable((observer) => this.selectedModelDefer(observer));
+        this.selectedModels = new Observable((subscriber) => this.selectedModelDefer(subscriber));
 
         // AutoComplete Binding
         // this.filteredModels = this.selectCtrl.valueChanges
@@ -153,13 +165,14 @@ export class SelectorComponent {
         return this.fetched;
     }
 
-    selectedModelDefer (observer: any) {
+    selectedModelDefer (subscriber: Subscriber<any>) {
+        this.subscriber = subscriber;
         const models = this.selectedModelRef();
         if (models && models.length) {
-            observer.next(models);
+            subscriber.next(models);
             return;
         }
-        setTimeout(() => this.selectedModelDefer(observer), 500);
+        setTimeout(() => this.selectedModelDefer(subscriber), 500);
     }
 
     selectedModelRef(): any {

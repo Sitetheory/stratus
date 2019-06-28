@@ -10,7 +10,7 @@
 
       // Libraries
       'stratus',
-      'underscore',
+      'lodash',
       'angular',
 
       // Modules

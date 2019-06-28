@@ -8,7 +8,7 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      'underscore',
+      'lodash',
       'angular',
       'https://platform.twitter.com/widgets.js'], factory)
   } else {
