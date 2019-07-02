@@ -119,7 +119,7 @@
     "babel-preset-env": "^1.7.0",
     "chai": "^4.2.0",
     "csscomb": "^4.2.0",
-    "del": "^4.1.1",
+    "del": "^5.0.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.2.0",
