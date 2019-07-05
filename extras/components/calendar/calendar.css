@@ -1,4 +1,12 @@
 /* CALENDAR */
+/* On mobile this calendar product freezes the scrolling and makes the calendar scroll inside a set window so these are overrides for that */
+body[class^="SitetheoryCalendarBundle"] {
+  overflow: auto !important;
+}
+.fc-scroller {
+  overflow: visible !important;
+  height: unset !important;
+}
 #stream-calendar {
   max-width: 1000px;
   margin: 80px auto 0;
@@ -13,14 +21,6 @@
     margin: 10px auto 0;
   }
 }
-/* On mobile this calendar product freezes the scrolling and makes the calendar scroll inside a set window so these are overrides for that */
-body[class^="SitetheoryCalendarBundle"] {
-  overflow: auto !important;
-}
-.fc-scroller {
-  overflow: visible !important;
-  height: unset !important;
-}
 .fc {
   /*  Force left and right button areas to have same width so month name is centered */
   /* Days of the week (Calendar View) */
@@ -28,6 +28,7 @@ body[class^="SitetheoryCalendarBundle"] {
   /* Today (Calendar View) */
   /* Calendar View Events */
   /* Month List View */
+  /* Article View */
 }
 .fc .fc-toolbar.fc-header-toolbar {
   padding-bottom: 16px;
@@ -247,6 +248,27 @@ body[class^="SitetheoryCalendarBundle"] {
 }
 .fc .fc-list-item:hover .fc-list-item-marker .fc-event-dot {
   background: #111;
+}
+.fc .article-layout md-card {
+  padding: 50px 6%;
+}
+.fc .article-layout h2 {
+  margin-bottom: 50px;
+  font-size: 34px;
+}
+.fc .article-layout h4 {
+  font-size: 12px;
+}
+.fc .article-layout p {
+  font-size: 15px;
+}
+.fc .article-layout .event-time,
+.fc .article-layout .event-location {
+  font-size: 17px;
+}
+.fc .article-layout .event-image-container {
+  float: left;
+  margin: 0 40px 40px 0;
 }
 /* Popup */
 #calendar-event-dialogue {
