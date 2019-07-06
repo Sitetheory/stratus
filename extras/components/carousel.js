@@ -123,8 +123,7 @@
 
         // Registry Connectivity
         if ($attrs.target) {
-          $scope.registry = new Registry()
-          $scope.registry.fetch($attrs, $scope)
+          Registry.fetch($attrs, $scope)
         }
 
         // Symbiotic Data Connectivity
@@ -143,7 +142,14 @@
             $scope.images = $scope.images || []
             models = models || []
             models.forEach(function (model) {
-              $scope.images.push('model:', model.data)
+              if (!$scope.property) {
+                return
+              }
+              const target = model.get($scope.property)
+              if (!target) {
+                return
+              }
+              $scope.images.push(target)
             })
           })
 
