@@ -27,6 +27,23 @@ System.register(["@stratus/angular/polyfills", "stratus", "@angular/core", "@ang
                 core_1.enableProdMode();
             }
             Stratus.DOM.complete(function () {
+                const s2 = [
+                    's2-selector',
+                ];
+                let detected = false;
+                s2.forEach(function (component) {
+                    if (detected) {
+                        return;
+                    }
+                    const elements = document.getElementsByTagName(component);
+                    if (!elements || !elements.length) {
+                        return;
+                    }
+                    detected = true;
+                });
+                if (!detected) {
+                    return;
+                }
                 platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule)
                     .then(function (module) {
                     console.log('@stratus/angular initialized successfully!');

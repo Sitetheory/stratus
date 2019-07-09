@@ -17,7 +17,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, drag_drop_1, rxjs_1, platform_browser_1, icon_1, Stratus, _, localDir, systemDir, moduleName, SelectorComponent;
+    var core_1, forms_1, drag_drop_1, rxjs_1, platform_browser_1, icon_1, Stratus, _, localDir, systemDir, moduleName, TreeComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -49,17 +49,15 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
         execute: function () {
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
             systemDir = '@stratus/angular';
-            moduleName = 'selector';
-            SelectorComponent = class SelectorComponent {
+            moduleName = 'tree';
+            TreeComponent = class TreeComponent {
                 constructor(iconRegistry, sanitizer, ref) {
                     this.ref = ref;
-                    this.title = 'selector-dnd';
+                    this.title = 'tree-dnd';
                     this.selectCtrl = new forms_1.FormControl();
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
-                    this.url = '/Api/Content?q=value&options["showRouting"]';
-                    this.target = 'Content';
-                    this.uid = _.uniqueId('s2_selector_component_');
+                    this.uid = _.uniqueId('s2_tree_component_');
                     Stratus.Instances[this.uid] = this;
                     const that = this;
                     this._ = _;
@@ -68,6 +66,10 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
                     this.fetchModel()
                         .then(function (data) {
+                        if (!data.on) {
+                            console.warn('Unable to bind data from Registry!');
+                            return;
+                        }
                         ref.detach();
                         data.on('change', function () {
                             that.selectedModelDefer(that.subscriber);
@@ -101,7 +103,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                 fetchModel() {
                     return __awaiter(this, void 0, void 0, function* () {
                         if (!this.fetched) {
-                            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this);
+                            this.fetched = this.registry.fetch(Stratus.Select('#content-menu-primary'), this);
                         }
                         return this.fetched;
                     });
@@ -119,42 +121,21 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     if (!this.model) {
                         return [];
                     }
-                    const models = _.get(this.model, "data.version.modules");
+                    const models = _.get(this.model, "data.version.text");
                     if (!models || !_.isArray(models)) {
                         return [];
                     }
                     return models;
                 }
-                prioritize() {
-                    const models = this.selectedModelRef();
-                    if (!models || !models.length) {
-                        return;
-                    }
-                    let priority = 0;
-                    _.each(models, (model) => model.priority = priority++);
-                }
-                findImage(model) {
-                    const mime = _.get(model, 'version.images[0].mime');
-                    if (mime === undefined) {
-                        return '';
-                    }
-                    if (mime.indexOf('image') !== -1) {
-                        return _.get(model, 'version.images[0].src');
-                    }
-                    else if (mime.indexOf('video') !== -1) {
-                        return _.get(model, 'version.images[0].meta.thumbnail_small');
-                    }
-                    return '';
-                }
             };
-            SelectorComponent = __decorate([
+            TreeComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-selector-component',
+                    selector: 's2-tree-component',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
                 }),
                 __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, core_1.ChangeDetectorRef])
-            ], SelectorComponent);
-            exports_1("SelectorComponent", SelectorComponent);
+            ], TreeComponent);
+            exports_1("TreeComponent", TreeComponent);
         }
     };
 });

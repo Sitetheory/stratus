@@ -10,14 +10,14 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
  * @title Shell Component
  */
 @Component({
-    selector: 's2-content-module-edit',
-    templateUrl: `${localDir}/app.component.html`,
+    selector: 's2-tree',
+    templateUrl: `${localDir}/tree/boot.component.html`,
     providers: [],
 })
-export class AppComponent {
+export class TreeBootComponent {
     constructor() {
-        Stratus.Instances[_.uniqueId('s2_app_component_')] = this;
+        Stratus.Instances[_.uniqueId('s2_tree_boot_component_')] = this;
     }
 
-    title = 's2-content-module-edit';
+    title = 's2-tree';
 }

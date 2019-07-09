@@ -3448,24 +3448,7 @@ Stratus.DOM.complete(function () {
   Stratus('body').removeClass('loading unloaded').addClass('loaded')
 
   // Load Angular 8+
-  const s2 = [
-    's2-content-module-edit',
-    's2-menu-edit'
-  ]
-  let detected = false
-  s2.forEach(function (component) {
-    if (detected) {
-      return
-    }
-    const element = document.getElementsByTagName(component)
-    if (!element || !element.length) {
-      return
-    }
-    detected = true
-  })
-  if (detected) {
-    require(['@stratus/angular/main'])
-  }
+  require(['@stratus/angular/main'])
 })
 
 // DOM Unload Routines
