@@ -101,10 +101,9 @@ export class SelectorComponent {
                 // Manually render upon model change
                 ref.detach();
                 data.on('change', function () {
-                    // that.prioritize();
-                    that.selectedModelDefer(that.subscriber);
-                    ref.detectChanges();
+                    that.onModelChange(ref);
                 });
+                that.onModelChange(ref);
             });
 
         // Handling Pipes with Promises
@@ -229,6 +228,15 @@ export class SelectorComponent {
     //     // return await [];
     //     return [];
     // }
+
+    /**
+     * @param ref
+     */
+    onModelChange (ref: ChangeDetectorRef) {
+        // that.prioritize();
+        this.selectedModelDefer(this.subscriber);
+        ref.detectChanges();
+    }
 
     prioritize () {
         const models = this.selectedModelRef();
