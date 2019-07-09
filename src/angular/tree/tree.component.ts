@@ -19,7 +19,7 @@ import {SubjectSubscriber} from "rxjs/internal/Subject";
 
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 const systemDir = '@stratus/angular';
-const moduleName = 'selector';
+const moduleName = 'tree';
 
 // export interface Model {
 //     completed: boolean;
@@ -27,10 +27,10 @@ const moduleName = 'selector';
 // }
 
 /**
- * @title AutoComplete Selector with Drag&Drop Sorting
+ * @title Tree with Nested Drag&Drop
  */
 @Component({
-    selector: 's2-selector-component',
+    selector: 's2-tree-component',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will require the steal-css module
     // styleUrls: [
@@ -38,10 +38,10 @@ const moduleName = 'selector';
     // ],
 })
 
-export class SelectorComponent {
+export class TreeComponent {
 
     // Basic Component Settings
-    title = 'selector-dnd';
+    title = 'tree-dnd';
     uid: string;
 
     // Dependencies
@@ -54,28 +54,17 @@ export class SelectorComponent {
     fetched: any;
     data: any;
     collection: any;
-    // @Output() model: any;
     model: any;
 
     // Observable Connection
     selectedModels: Observable<[]>;
     onChange = new Subject();
     subscriber: Subscriber<any>;
-    // Note: It may be better to LifeCycle::tick(), but this works for now
-
-    // API Endpoint for Selector
-    // TODO: Avoid hard-coding this...
-    url = '/Api/Content?q=value&options["showRouting"]';
-    target = 'Content';
-
-    // API Connectivity for Selector
-    // filteredModels: Observable<[]>;
-    // filteredModels: any;
 
     constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
 
         // Initialization
-        this.uid = _.uniqueId('s2_selector_component_');
+        this.uid = _.uniqueId('s2_tree_component_');
         Stratus.Instances[this.uid] = this;
 
         // Hoist Context
@@ -98,10 +87,13 @@ export class SelectorComponent {
         // Data Connections
         this.fetchModel()
             .then(function (data: any) {
+                if (!data.on) {
+                    console.warn('Unable to bind data from Registry!');
+                    return
+                }
                 // Manually render upon model change
                 ref.detach();
                 data.on('change', function () {
-                    // that.prioritize();
                     that.selectedModelDefer(that.subscriber);
                     ref.detectChanges();
                 });
@@ -109,24 +101,7 @@ export class SelectorComponent {
 
         // Handling Pipes with Promises
         this.selectedModels = new Observable((subscriber) => this.selectedModelDefer(subscriber));
-
-        // AutoComplete Binding
-        // this.filteredModels = this.selectCtrl.valueChanges
-        //     .pipe(
-        //         startWith(''),
-        //         map(value => this._filterModels(value))
-        //     );
-
-        // console.info('constructor!');
     }
-
-    // ngOnInit(): void {
-    //     console.info('ngOnInit!');
-    // }
-
-    // ngDoCheck(): void {
-    //     console.info('ngDoCheck:', this.selectedModels);
-    // }
 
     /**
      * @param event
@@ -155,14 +130,13 @@ export class SelectorComponent {
             return
         }
         models.splice(index, 1);
-        // this.prioritize();
         this.model.trigger('change')
     }
 
     // Data Connections
     async fetchModel(): Promise<any> {
         if (!this.fetched) {
-            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
+            this.fetched = this.registry.fetch(Stratus.Select('#content-menu-primary'), this)
         }
         return this.fetched;
     }
@@ -181,77 +155,10 @@ export class SelectorComponent {
         if (!this.model) {
             return []
         }
-        const models = _.get(this.model, "data.version.modules");
+        const models = _.get(this.model, "data.version.text");
         if (!models || !_.isArray(models)) {
             return []
         }
         return models;
-    }
-
-    // selectedModel (observer: any) : any {
-    //     if (!this.data) {
-    //         this.fetchModel().then(function (data: any) {
-    //             observer.next(data)
-    //         });
-    //     }
-    //     // data.on('change', () => observer.next(that.selectedModelRef()));
-    //     observer.next()
-    // }
-
-    // async selectedModelFetch(observer: any): Promise<[]> {
-    //     const that = this;
-    //     return new Promise(function (resolve, reject) {
-    //         if (that.model) {
-    //             resolve(that.selectedModelRef());
-    //             return;
-    //         }
-    //         that.fetchModel()
-    //             .then(function (data: any) {
-    //                 if (!data.completed) {
-    //                     console.error('still waiting on XHR!');
-    //                     // return;
-    //                 }
-    //                 resolve(that.selectedModelRef());
-    //             })
-    //             .catch(function (err: any) {
-    //                 console.error("unable to fetch model:", err);
-    //                 reject(err)
-    //             });
-    //     });
-    // }
-
-    /**
-     * @param value
-     * @private
-     */
-    // private _filterModels(value: string): any {
-    //     // return await this.collection.filterAsync(value);
-    //     // return await [];
-    //     return [];
-    // }
-
-    prioritize () {
-        const models = this.selectedModelRef();
-        if (!models || !models.length) {
-            return
-        }
-        let priority = 0;
-        _.each(models, (model) => model.priority = priority++);
-    }
-
-    /**
-     * @param model
-     */
-    findImage(model: any) {
-        const mime = _.get(model, 'version.images[0].mime');
-        if (mime === undefined) {
-            return ''
-        }
-        if (mime.indexOf('image') !== -1) {
-            return _.get(model, 'version.images[0].src');
-        } else if (mime.indexOf('video') !== -1) {
-            return _.get(model, 'version.images[0].meta.thumbnail_small');
-        }
-        return ''
     }
 }

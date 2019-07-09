@@ -9,7 +9,7 @@ System.register(["@angular/core", "stratus", "lodash", "stratus.services.registr
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, Stratus, _, localDir, AppComponent;
+    var core_1, Stratus, _, localDir, SelectorBootComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -27,21 +27,21 @@ System.register(["@angular/core", "stratus", "lodash", "stratus.services.registr
         ],
         execute: function () {
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
-            AppComponent = class AppComponent {
+            SelectorBootComponent = class SelectorBootComponent {
                 constructor() {
-                    this.title = 's2-content-module-edit';
-                    Stratus.Instances[_.uniqueId('s2_app_component_')] = this;
+                    this.title = 's2-selector';
+                    Stratus.Instances[_.uniqueId('s2_selector_boot_component_')] = this;
                 }
             };
-            AppComponent = __decorate([
+            SelectorBootComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-content-module-edit',
-                    templateUrl: `${localDir}/app.component.html`,
+                    selector: 's2-selector',
+                    templateUrl: `${localDir}/selector/boot.component.html`,
                     providers: [],
                 }),
                 __metadata("design:paramtypes", [])
-            ], AppComponent);
-            exports_1("AppComponent", AppComponent);
+            ], SelectorBootComponent);
+            exports_1("SelectorBootComponent", SelectorBootComponent);
         }
     };
 });

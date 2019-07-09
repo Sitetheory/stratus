@@ -95,44 +95,44 @@ const location = {
   },
   mangle: {
     core: [
-      'dist/*.js',
-      'extras/normalizers/*.js',
-      'services/*.js',
-      'extras/services/*.js',
+      'dist/**/*.js',
+      'extras/normalizers/**/*.js',
+      'services/**/*.js',
+      'extras/services/**/*.js',
       'legacy/**/*.js',
       'src/**/*.js'
     ],
     min: [
-      'dist/*.min.js',
-      'extras/normalizers/*.min.js',
-      'services/*.min.js',
-      'extras/services/*.min.js',
+      'dist/**/*.min.js',
+      'extras/normalizers/**/*.min.js',
+      'services/**/*.min.js',
+      'extras/services/**/*.min.js',
       'legacy/**/*.min.js',
       'src/**/*.min.js'
     ]
   },
   preserve: {
     core: [
-      'boot/*.js',
-      'components/*.js',
-      'extras/components/*.js',
-      'controllers/*.js',
-      'extras/controllers/*.js',
-      'directives/*.js',
-      'extras/directives/*.js',
-      'filters/*.js',
-      'extras/filters/*.js'
+      'boot/**/*.js',
+      'components/**/*.js',
+      'extras/components/**/*.js',
+      'controllers/**/*.js',
+      'extras/controllers/**/*.js',
+      'directives/**/*.js',
+      'extras/directives/**/*.js',
+      'filters/**/*.js',
+      'extras/filters/**/*.js'
     ],
     min: [
-      'boot/*.min.js',
-      'components/*.min.js',
-      'extras/components/*.min.js',
-      'controllers/*.min.js',
-      'extras/controllers/*.min.js',
-      'directives/*.min.js',
-      'extras/directives/*.min.js',
-      'filters/*.min.js',
-      'extras/filters/*.min.js'
+      'boot/**/*.min.js',
+      'components/**/*.min.js',
+      'extras/components/**/*.min.js',
+      'controllers/**/*.min.js',
+      'extras/controllers/**/*.min.js',
+      'directives/**/*.min.js',
+      'extras/directives/**/*.min.js',
+      'filters/**/*.min.js',
+      'extras/filters/**/*.min.js'
     ]
   },
   less: {

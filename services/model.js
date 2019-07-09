@@ -318,7 +318,21 @@
         }
 
         $$http(prototype).then(function (response) {
+          // XHR Flags
+          that.pending = false
+          that.completed = true
+
+          // Data Stores
           that.status = response.status
+
+          // Begin Watching
+          that.watcher()
+
+          // Reset status model
+          setTimeout(function () {
+            that.changed = false
+          }, 100)
+
           if (response.status === 200 && angular.isObject(response.data)) {
             // TODO: Make this into an over-writable function
             // Data
@@ -338,31 +352,16 @@
             }
 
             if (!that.error) {
-              // XHR Flags
-              that.completed = true
-
               // Auto-Saving Settings
               that.saving = false
               that.patch = {}
-
-              // Begin Watching
-              that.watcher()
-
-              // Reset status model
-              setTimeout(function () {
-                that.changed = false
-              }, 100)
             }
-
-            // XHR Flags
-            that.pending = false
 
             // Promise
             // angular.copy(that.data, that.initData)
             resolve(that.data)
           } else {
             // XHR Flags
-            that.pending = false
             that.error = true
 
             // Build Report
