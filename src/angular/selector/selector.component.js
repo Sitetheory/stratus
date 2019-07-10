@@ -70,9 +70,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                         .then(function (data) {
                         ref.detach();
                         data.on('change', function () {
-                            that.selectedModelDefer(that.subscriber);
-                            ref.detectChanges();
+                            that.onModelChange(ref);
                         });
+                        that.onModelChange(ref);
                     });
                     this.selectedModels = new rxjs_1.Observable((subscriber) => this.selectedModelDefer(subscriber));
                 }
@@ -124,6 +124,10 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                         return [];
                     }
                     return models;
+                }
+                onModelChange(ref) {
+                    this.selectedModelDefer(this.subscriber);
+                    ref.detectChanges();
                 }
                 prioritize() {
                     const models = this.selectedModelRef();

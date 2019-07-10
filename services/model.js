@@ -18,13 +18,13 @@
   }
 }(this, function (exports, Stratus, _, angular) {
   let $$http = function () {
-    console.error('$$http not loaded:', arguments)
+    console.error('$http not loaded:', arguments)
   }
   let $$mdToast = function () {
-    console.error('$$mdToast not loaded:', arguments)
+    console.error('$mdToast not loaded:', arguments)
   }
   let $$rootScope = function () {
-    console.error('$$rootScope not loaded:', arguments)
+    console.error('$rootScope not loaded:', arguments)
   }
   class Model extends Stratus.Prototypes.Model {
     constructor (options, attributes) {
@@ -331,6 +331,7 @@
           // Reset status model
           setTimeout(function () {
             that.changed = false
+            that.trigger('change')
           }, 100)
 
           if (response.status === 200 && angular.isObject(response.data)) {
