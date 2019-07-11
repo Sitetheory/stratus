@@ -1,4 +1,4 @@
-System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/angular/material", "@stratus/angular/base/base.component", "@stratus/angular/selector/boot.component", "@stratus/angular/selector/selector.component", "@stratus/angular/tree/boot.component", "@stratus/angular/tree/tree.component", "lodash", "stratus"], function (exports_1, context_1) {
+System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/angular/material", "@stratus/angular/base/base.component", "@stratus/angular/selector/selector.component", "@stratus/angular/tree/tree.component", "lodash", "stratus"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, boot_component_1, selector_component_1, boot_component_2, tree_component_1, _, Stratus, AppModule;
+    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, selector_component_1, tree_component_1, _, Stratus, roster, bootstrap, AppModule;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -37,14 +37,8 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
             function (base_component_1_1) {
                 base_component_1 = base_component_1_1;
             },
-            function (boot_component_1_1) {
-                boot_component_1 = boot_component_1_1;
-            },
             function (selector_component_1_1) {
                 selector_component_1 = selector_component_1_1;
-            },
-            function (boot_component_2_1) {
-                boot_component_2 = boot_component_2_1;
             },
             function (tree_component_1_1) {
                 tree_component_1 = tree_component_1_1;
@@ -57,6 +51,21 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
             }
         ],
         execute: function () {
+            roster = {
+                's2-selector': selector_component_1.SelectorComponent,
+                's2-tree': tree_component_1.TreeComponent
+            };
+            bootstrap = _.keys(roster)
+                .map(function (component) {
+                const elements = document.getElementsByTagName(component);
+                if (!elements || !elements.length) {
+                    return null;
+                }
+                return component;
+            })
+                .filter((item) => !!item)
+                .map((element) => element in roster ? _.get(roster, element) : null)
+                .filter((item) => !!item);
             AppModule = class AppModule {
                 constructor() {
                     Stratus.Instances[_.uniqueId('s2_app_module_')] = this;
@@ -76,18 +85,14 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                     entryComponents: [
                         base_component_1.BaseComponent,
                         selector_component_1.SelectorComponent,
-                        tree_component_1.TreeComponent
+                        tree_component_1.TreeComponent,
                     ],
                     declarations: [
                         base_component_1.BaseComponent,
-                        boot_component_1.SelectorBootComponent,
                         selector_component_1.SelectorComponent,
-                        boot_component_2.TreeBootComponent,
                         tree_component_1.TreeComponent
                     ],
-                    bootstrap: [
-                        boot_component_1.SelectorBootComponent
-                    ],
+                    bootstrap: bootstrap,
                     providers: []
                 }),
                 __metadata("design:paramtypes", [])

@@ -20,9 +20,9 @@ Stratus.DOM.complete(function () {
     // Load Angular 8+
     const s2 = [
         's2-selector',
-        // 's2-tree'
+        's2-tree'
     ];
-    //s2.map((element) => element).reduce((element) => element);
+    // s2.map((element) => element).reduce((element) => element);
     let detected = false;
     s2.forEach(function (component) {
         if (detected) {

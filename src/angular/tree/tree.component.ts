@@ -3,20 +3,24 @@ import {ChangeDetectorRef, Component, Output} from "@angular/core";
 import {FormControl} from '@angular/forms';
 
 // CDK
+import {ArrayDataSource} from '@angular/cdk/collections';
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-
-// External
-import {Observable, Subject, Subscriber} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {NestedTreeControl} from '@angular/cdk/tree';
 
 // SVG Icons
 import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
 
-import * as Stratus from "stratus";
-import * as _ from "lodash";
+// RXJS
+import {Observable, Subject, Subscriber} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 import {SubjectSubscriber} from "rxjs/internal/Subject";
 
+// External
+import * as Stratus from "stratus";
+import * as _ from "lodash";
+
+// Local Setup
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 const systemDir = '@stratus/angular';
 const moduleName = 'tree';
@@ -30,8 +34,10 @@ const moduleName = 'tree';
  * @title Tree with Nested Drag&Drop
  */
 @Component({
-    selector: 's2-tree-component',
+    // selector: 's2-tree-component',
+    selector: 's2-tree',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+    // templateUrl: `${systemDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will require the steal-css module
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
@@ -57,9 +63,13 @@ export class TreeComponent {
     model: any;
 
     // Observable Connection
-    selectedModels: Observable<[]>;
+    dataSub: Observable<[]>;
     onChange = new Subject();
     subscriber: Subscriber<any>;
+
+    // Tree Specific
+    treeControl = new NestedTreeControl <any> (node => this.getChildren(node));
+    hasChild = (_: number, node: any) => this.getChildren(node).length > 0;
 
     constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
 
@@ -85,7 +95,7 @@ export class TreeComponent {
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
 
         // Data Connections
-        this.fetchModel()
+        this.fetchData()
             .then(function (data: any) {
                 if (!data.on) {
                     console.warn('Unable to bind data from Registry!');
@@ -94,20 +104,20 @@ export class TreeComponent {
                 // Manually render upon model change
                 ref.detach();
                 data.on('change', function () {
-                    that.selectedModelDefer(that.subscriber);
-                    ref.detectChanges();
+                    that.onDataChange(ref);
                 });
+                that.onDataChange(ref);
             });
 
         // Handling Pipes with Promises
-        this.selectedModels = new Observable((subscriber) => this.selectedModelDefer(subscriber));
+        this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber));
     }
 
     /**
      * @param event
      */
     drop(event: CdkDragDrop<string[]>) {
-        const models = this.selectedModelRef();
+        const models = this.dataRef();
         if (!models || !models.length) {
             return
         }
@@ -121,7 +131,7 @@ export class TreeComponent {
      * @param model
      */
     remove(model: any) {
-        const models = this.selectedModelRef();
+        const models = this.dataRef();
         if (!models || !models.length) {
             return
         }
@@ -134,31 +144,58 @@ export class TreeComponent {
     }
 
     // Data Connections
-    async fetchModel(): Promise<any> {
+    async fetchData(): Promise<any> {
         if (!this.fetched) {
             this.fetched = this.registry.fetch(Stratus.Select('#content-menu-primary'), this)
         }
         return this.fetched;
     }
 
-    selectedModelDefer (subscriber: Subscriber<any>) {
+    /**
+     * @param subscriber
+     */
+    dataDefer (subscriber: Subscriber<any>) {
         this.subscriber = subscriber;
-        const models = this.selectedModelRef();
+        const models = this.dataRef();
         if (models && models.length) {
             subscriber.next(models);
             return;
         }
-        setTimeout(() => this.selectedModelDefer(subscriber), 500);
+        setTimeout(() => this.dataDefer(subscriber), 500);
     }
 
-    selectedModelRef(): any {
-        if (!this.model) {
-            return []
+    dataRef(): any {
+        if (!this.collection) {
+            return [];
         }
-        const models = _.get(this.model, "data.version.text");
+        const models = this.collection.models;
         if (!models || !_.isArray(models)) {
-            return []
+            return [];
         }
         return models;
+    }
+
+    /**
+     * @param ref
+     */
+    onDataChange (ref: ChangeDetectorRef) {
+        // that.prioritize();
+        this.dataDefer(this.subscriber);
+        ref.detectChanges();
+    }
+
+    /**
+     * @param model
+     */
+    getChildren(model: any): any[] {
+        if (!model) {
+            return [];
+        }
+        // TODO: Instead of a filter, like this, it would
+        return _.filter(this.dataRef(), function (child) {
+            const modelId = _.get(model, 'data.id');
+            const parentId = _.get(child, 'data.nestParent.id');
+            return modelId && parentId && modelId === parentId;
+        })
     }
 }

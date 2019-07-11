@@ -1,0 +1,19 @@
+/* Based on Angular Material 8+ */
+s2-tree {
+  .example-tree-invisible {
+    display: none;
+  }
+  .example-tree {
+    ul, li {
+      margin-top: 0;
+      margin-bottom: 0;
+      list-style-type: none;
+    }
+  }
+  .example-tree-node {
+    display: block;
+    .example-tree-node {
+      padding-left: 40px;
+    }
+  }
+}

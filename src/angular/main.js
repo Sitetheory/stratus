@@ -29,6 +29,7 @@ System.register(["@stratus/angular/polyfills", "stratus", "@angular/core", "@ang
             Stratus.DOM.complete(function () {
                 const s2 = [
                     's2-selector',
+                    's2-tree'
                 ];
                 let detected = false;
                 s2.forEach(function (component) {
