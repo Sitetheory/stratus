@@ -116,6 +116,9 @@
       }
       const shim = boot.configuration.shim || {}
       const load = function (requirement) {
+        // hamlet.dependencies = hamlet.dependencies || {}
+        // hamlet.dependencies[requirement] = hamlet.dependencies[requirement] || []
+        // hamlet.dependencies[requirement].push(callback)
         return System.import(requirement.replace(/(\.js)$/, ''))
           .then(function (module) {
             const wrap = shim[requirement] || {}

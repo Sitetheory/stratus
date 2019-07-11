@@ -30,8 +30,10 @@ const moduleName = 'selector';
  * @title AutoComplete Selector with Drag&Drop Sorting
  */
 @Component({
-    selector: 's2-selector-component',
+    // selector: 's2-selector-component',
+    selector: 's2-selector',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will require the steal-css module
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
@@ -58,7 +60,7 @@ export class SelectorComponent {
     model: any;
 
     // Observable Connection
-    selectedModels: Observable<[]>;
+    dataSub: Observable<[]>;
     onChange = new Subject();
     subscriber: Subscriber<any>;
     // Note: It may be better to LifeCycle::tick(), but this works for now
@@ -96,18 +98,22 @@ export class SelectorComponent {
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
 
         // Data Connections
-        this.fetchModel()
+        this.fetchData()
             .then(function (data: any) {
+                if (!data.on) {
+                    console.warn('Unable to bind data from Registry!');
+                    return
+                }
                 // Manually render upon model change
                 ref.detach();
                 data.on('change', function () {
-                    that.onModelChange(ref);
+                    that.onDataChange(ref);
                 });
-                that.onModelChange(ref);
+                that.onDataChange(ref);
             });
 
         // Handling Pipes with Promises
-        this.selectedModels = new Observable((subscriber) => this.selectedModelDefer(subscriber));
+        this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber));
 
         // AutoComplete Binding
         // this.filteredModels = this.selectCtrl.valueChanges
@@ -124,14 +130,14 @@ export class SelectorComponent {
     // }
 
     // ngDoCheck(): void {
-    //     console.info('ngDoCheck:', this.selectedModels);
+    //     console.info('ngDoCheck:', this.dataSub);
     // }
 
     /**
      * @param event
      */
     drop(event: CdkDragDrop<string[]>) {
-        const models = this.selectedModelRef();
+        const models = this.dataRef();
         if (!models || !models.length) {
             return
         }
@@ -145,7 +151,7 @@ export class SelectorComponent {
      * @param model
      */
     remove(model: any) {
-        const models = this.selectedModelRef();
+        const models = this.dataRef();
         if (!models || !models.length) {
             return
         }
@@ -159,24 +165,24 @@ export class SelectorComponent {
     }
 
     // Data Connections
-    async fetchModel(): Promise<any> {
+    async fetchData(): Promise<any> {
         if (!this.fetched) {
             this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
         }
         return this.fetched;
     }
 
-    selectedModelDefer (subscriber: Subscriber<any>) {
+    dataDefer (subscriber: Subscriber<any>) {
         this.subscriber = subscriber;
-        const models = this.selectedModelRef();
+        const models = this.dataRef();
         if (models && models.length) {
             subscriber.next(models);
             return;
         }
-        setTimeout(() => this.selectedModelDefer(subscriber), 500);
+        setTimeout(() => this.dataDefer(subscriber), 500);
     }
 
-    selectedModelRef(): any {
+    dataRef(): any {
         if (!this.model) {
             return []
         }
@@ -189,11 +195,11 @@ export class SelectorComponent {
 
     // selectedModel (observer: any) : any {
     //     if (!this.data) {
-    //         this.fetchModel().then(function (data: any) {
+    //         this.fetchData().then(function (data: any) {
     //             observer.next(data)
     //         });
     //     }
-    //     // data.on('change', () => observer.next(that.selectedModelRef()));
+    //     // data.on('change', () => observer.next(that.dataRef()));
     //     observer.next()
     // }
 
@@ -201,16 +207,16 @@ export class SelectorComponent {
     //     const that = this;
     //     return new Promise(function (resolve, reject) {
     //         if (that.model) {
-    //             resolve(that.selectedModelRef());
+    //             resolve(that.dataRef());
     //             return;
     //         }
-    //         that.fetchModel()
+    //         that.fetchData()
     //             .then(function (data: any) {
     //                 if (!data.completed) {
     //                     console.error('still waiting on XHR!');
     //                     // return;
     //                 }
-    //                 resolve(that.selectedModelRef());
+    //                 resolve(that.dataRef());
     //             })
     //             .catch(function (err: any) {
     //                 console.error("unable to fetch model:", err);
@@ -232,14 +238,14 @@ export class SelectorComponent {
     /**
      * @param ref
      */
-    onModelChange (ref: ChangeDetectorRef) {
+    onDataChange (ref: ChangeDetectorRef) {
         // that.prioritize();
-        this.selectedModelDefer(this.subscriber);
+        this.dataDefer(this.subscriber);
         ref.detectChanges();
     }
 
     prioritize () {
-        const models = this.selectedModelRef();
+        const models = this.dataRef();
         if (!models || !models.length) {
             return
         }

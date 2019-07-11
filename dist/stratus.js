@@ -2979,7 +2979,7 @@ Stratus.Loaders.Angular = function () {
   }
 }
 
-/* global Stratus, _, jQuery, bootbox */
+/* global Stratus, _, jQuery, hamlet, bootbox */
 
 // Instance Clean
 // --------------
@@ -3448,7 +3448,9 @@ Stratus.DOM.complete(function () {
   Stratus('body').removeClass('loading unloaded').addClass('loaded')
 
   // Load Angular 8+
-  require(['@stratus/angular/main'])
+  if (!hamlet.isUndefined('System')) {
+    require(['@stratus/angular/main'])
+  }
 })
 
 // DOM Unload Routines

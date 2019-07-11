@@ -173,6 +173,9 @@ const location = {
       'directives/*.min.css',
       'extras/directives/*.min.css',
       'src/**/*.min.css'
+    ],
+    nonstandard: [
+      'src/**/*.css'
     ]
   },
   coffee: {
@@ -239,7 +242,7 @@ function lintJS () {
     }))
 }
 function lintCSS () {
-  return src(_.union(location.css.core, nullify(location.css.min)))
+  return src(_.union(location.css.core, nullify(location.css.min), nullify(location.css.nonstandard)))
     /* *
     .pipe(debug({
       title: 'Lint CSS:'

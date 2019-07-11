@@ -13,7 +13,7 @@
     <h3 class="selected-list-header border-default border-default-bottom" [textContent]="'Selected ' + target + ' Items'"></h3>
     <p class="note">Drag to reorder</p>
     <div cdkDropList class="list-unstyled" (cdkDropListDropped)="drop($event)">
-        <div class="selected-list-row selected-box" *ngFor="let selectedModel of selectedModels | async" cdkDrag>
+        <div class="selected-list-row selected-box" *ngFor="let selectedModel of dataSub | async" cdkDrag>
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
             <div class="selected-list-container" layout="row" layout-align="space-between center">
                 <div class="column-image position-anchor" no-flex>
@@ -23,9 +23,7 @@
                 </div>
                 <div class="column-title" flex>
                     <h3 [innerHTML]="selectedModel.version.title || (selectedModel.contentType.controller=='Content\\Module' ? selectedModel.version.meta.identifier : 'Untitled ' + selectedModel.contentType.name + ' (' + selectedModel.id + ')')"></h3>
-                    <span class="routing"
-                          *ngIf="selectedModel.routing.length"
-                          [textContent]="selectedModel.routing ? ('/' + selectedModel.routing[0].url) : 'No Route Present!'"></span>
+                    <span class="routing" [textContent]="(selectedModel.routing && selectedModel.routing.length) ? ('/' + _.first(selectedModel.routing).url) : 'No Route Present!'"></span>
                 </div>
                 <div no-flex>
                     <button mat-button

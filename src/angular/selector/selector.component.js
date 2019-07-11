@@ -66,18 +66,22 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     this.sanitizer = sanitizer;
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
-                    this.fetchModel()
+                    this.fetchData()
                         .then(function (data) {
+                        if (!data.on) {
+                            console.warn('Unable to bind data from Registry!');
+                            return;
+                        }
                         ref.detach();
                         data.on('change', function () {
-                            that.onModelChange(ref);
+                            that.onDataChange(ref);
                         });
-                        that.onModelChange(ref);
+                        that.onDataChange(ref);
                     });
-                    this.selectedModels = new rxjs_1.Observable((subscriber) => this.selectedModelDefer(subscriber));
+                    this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
                 }
                 drop(event) {
-                    const models = this.selectedModelRef();
+                    const models = this.dataRef();
                     if (!models || !models.length) {
                         return;
                     }
@@ -87,7 +91,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     this.model.trigger('change');
                 }
                 remove(model) {
-                    const models = this.selectedModelRef();
+                    const models = this.dataRef();
                     if (!models || !models.length) {
                         return;
                     }
@@ -98,7 +102,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     models.splice(index, 1);
                     this.model.trigger('change');
                 }
-                fetchModel() {
+                fetchData() {
                     return __awaiter(this, void 0, void 0, function* () {
                         if (!this.fetched) {
                             this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this);
@@ -106,16 +110,16 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                         return this.fetched;
                     });
                 }
-                selectedModelDefer(subscriber) {
+                dataDefer(subscriber) {
                     this.subscriber = subscriber;
-                    const models = this.selectedModelRef();
+                    const models = this.dataRef();
                     if (models && models.length) {
                         subscriber.next(models);
                         return;
                     }
-                    setTimeout(() => this.selectedModelDefer(subscriber), 500);
+                    setTimeout(() => this.dataDefer(subscriber), 500);
                 }
-                selectedModelRef() {
+                dataRef() {
                     if (!this.model) {
                         return [];
                     }
@@ -125,12 +129,12 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     }
                     return models;
                 }
-                onModelChange(ref) {
-                    this.selectedModelDefer(this.subscriber);
+                onDataChange(ref) {
+                    this.dataDefer(this.subscriber);
                     ref.detectChanges();
                 }
                 prioritize() {
-                    const models = this.selectedModelRef();
+                    const models = this.dataRef();
                     if (!models || !models.length) {
                         return;
                     }
@@ -153,7 +157,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
             };
             SelectorComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-selector-component',
+                    selector: 's2-selector',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
                 }),
                 __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, core_1.ChangeDetectorRef])
