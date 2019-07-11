@@ -77,9 +77,11 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                         }
                         ref.detach();
                         data.on('change', function () {
-                            that.onDataChange(ref);
+                            that.dataDefer(that.subscriber);
+                            ref.detectChanges();
                         });
-                        that.onDataChange(ref);
+                        that.dataDefer(that.subscriber);
+                        ref.detectChanges();
                     });
                     this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
                 }

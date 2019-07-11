@@ -104,9 +104,13 @@ export class TreeComponent {
                 // Manually render upon model change
                 ref.detach();
                 data.on('change', function () {
-                    that.onDataChange(ref);
+                    // that.onDataChange(ref);
+                    that.dataDefer(that.subscriber);
+                    ref.detectChanges();
                 });
-                that.onDataChange(ref);
+                // that.onDataChange(ref);
+                that.dataDefer(that.subscriber);
+                ref.detectChanges();
             });
 
         // Handling Pipes with Promises
