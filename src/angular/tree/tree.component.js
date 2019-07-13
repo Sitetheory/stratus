@@ -60,8 +60,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.selectCtrl = new forms_1.FormControl();
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
-                    this.treeControl = new tree_1.NestedTreeControl(node => this.getChildren(node));
-                    this.hasChild = (_, node) => this.getChildren(node).length > 0;
+                    this.treeControl = new tree_1.NestedTreeControl(node => node.child || []);
+                    this.hasChild = (_, node) => node.child && node.child.length > 0;
                     this.uid = _.uniqueId('s2_tree_component_');
                     Stratus.Instances[this.uid] = this;
                     const that = this;
@@ -132,13 +132,40 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     if (!models || !_.isArray(models)) {
                         return [];
                     }
-                    return models;
+                    this.treeMap = {};
+                    const that = this;
+                    const tree = [];
+                    _.each(models, function (model) {
+                        const modelId = _.get(model, 'data.id');
+                        const parentId = _.get(model, 'data.nestParent.id');
+                        if (!_.has(that.treeMap, modelId)) {
+                            that.treeMap[modelId] = {
+                                model: null,
+                                child: []
+                            };
+                        }
+                        that.treeMap[modelId].model = model;
+                        if (!parentId) {
+                            tree.push(that.treeMap[modelId]);
+                        }
+                        else {
+                            console.log(that.treeMap[parentId]);
+                            if (!_.has(that.treeMap, parentId)) {
+                                that.treeMap[parentId] = {
+                                    model: null,
+                                    child: []
+                                };
+                            }
+                            that.treeMap[parentId].child.push(that.treeMap[modelId]);
+                        }
+                    });
+                    return tree;
                 }
                 onDataChange(ref) {
                     this.dataDefer(this.subscriber);
                     ref.detectChanges();
                 }
-                getChildren(model) {
+                getChild(model) {
                     if (!model) {
                         return [];
                     }
