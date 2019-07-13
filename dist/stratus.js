@@ -1035,6 +1035,11 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
      */
     this.temps = {}
 
+    // Diff Detection
+    this.changed = false
+    this.watching = false
+    this.patch = {}
+
     // Evaluate object or array
     if (data) {
       // TODO: Evaluate object or array into a string of sets
@@ -3116,16 +3121,16 @@ class Chronos extends Stratus.Prototypes.Model {
    * @param time
    * @param method
    * @param scope
-   * @returns {string}
+   * @returns {string|null}
    */
   queue (time, method, scope) {
-    let uid = null
-    let job = new Stratus.Prototypes.Job(time, method, scope)
-    if (job.time !== null && typeof job.method === 'function') {
-      uid = _.uniqueId('job_')
-      this.set(uid, job)
-      Stratus.Instances[uid] = job
+    const job = time instanceof Stratus.Prototypes.Job ? time : new Stratus.Prototypes.Job(time, method, scope)
+    if (job.time === null || typeof job.method !== 'function') {
+      return null
     }
+    const uid = _.uniqueId('job_')
+    this.set(uid, job)
+    Stratus.Instances[uid] = job
     return uid
   }
   /**
@@ -3133,22 +3138,22 @@ class Chronos extends Stratus.Prototypes.Model {
    * @returns {boolean|*}
    */
   enable (uid) {
-    let success = this.has(uid)
-    if (success) {
-      this.set(uid + '.enabled', true)
+    if (!this.has(uid)) {
+      return false
     }
-    return success
+    this.set(uid + '.enabled', true)
+    return true
   }
   /**
    * @param uid
    * @returns {boolean|*}
    */
   disable (uid) {
-    let success = this.has(uid)
-    if (success) {
-      this.set(uid + '.enabled', false)
+    if (!this.has(uid)) {
+      return false
     }
-    return success
+    this.set(uid + '.enabled', false)
+    return true
   }
   /**
    * @param uid
@@ -3156,12 +3161,11 @@ class Chronos extends Stratus.Prototypes.Model {
    * @returns {boolean|*}
    */
   toggle (uid, value) {
-    let success = this.has(uid)
-    if (success) {
-      this.set(uid + '.enabled',
-        (typeof value === 'boolean') ? value : !this.get(uid + '.enabled'))
+    if (!this.has(uid)) {
+      return false
     }
-    return success
+    this.set(uid + '.enabled', typeof value === 'boolean' ? value : !this.get(uid + '.enabled'))
+    return true
   }
 }
 Stratus.Chronos = new Chronos()

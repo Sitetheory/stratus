@@ -194,6 +194,11 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
      */
     this.temps = {}
 
+    // Diff Detection
+    this.changed = false
+    this.watching = false
+    this.patch = {}
+
     // Evaluate object or array
     if (data) {
       // TODO: Evaluate object or array into a string of sets
