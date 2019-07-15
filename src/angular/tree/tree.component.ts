@@ -25,6 +25,15 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 const systemDir = '@stratus/angular';
 const moduleName = 'tree';
 
+export interface Node {
+    model: object;
+    child: Node[];
+}
+
+export interface NodeMap {
+    [key: number]: Node
+}
+
 // export interface Model {
 //     completed: boolean;
 //     data: object;
@@ -68,8 +77,11 @@ export class TreeComponent {
     subscriber: Subscriber<any>;
 
     // Tree Specific
-    treeControl = new NestedTreeControl <any> (node => this.getChildren(node));
-    hasChild = (_: number, node: any) => this.getChildren(node).length > 0;
+    treeMap: NodeMap;
+    // treeControl = new NestedTreeControl <any> (node => this.getChild(node));
+    treeControl = new NestedTreeControl <any> (node => node.child || []);
+    // hasChild = (_: number, node: any) => this.getChild(node).length > 0;
+    hasChild = (_: number, node: any) => node.child && node.child.length > 0;
 
     constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
 
@@ -104,9 +116,13 @@ export class TreeComponent {
                 // Manually render upon model change
                 ref.detach();
                 data.on('change', function () {
-                    that.onDataChange(ref);
+                    // that.onDataChange(ref);
+                    that.dataDefer(that.subscriber);
+                    ref.detectChanges();
                 });
-                that.onDataChange(ref);
+                // that.onDataChange(ref);
+                that.dataDefer(that.subscriber);
+                ref.detectChanges();
             });
 
         // Handling Pipes with Promises
@@ -121,10 +137,11 @@ export class TreeComponent {
         if (!models || !models.length) {
             return
         }
+        // TODO: Allow Multi-Level Priorities
         moveItemInArray(models, event.previousIndex, event.currentIndex);
         let priority = 0;
         _.each(models, (model) => model.priority = priority++);
-        this.model.trigger('change')
+        this.model.trigger('change');
     }
 
     /**
@@ -135,12 +152,13 @@ export class TreeComponent {
         if (!models || !models.length) {
             return
         }
+        // TODO: Handle Multi-Level Targetting
         const index: number = models.indexOf(model);
         if (index === -1) {
             return
         }
         models.splice(index, 1);
-        this.model.trigger('change')
+        this.model.trigger('change');
     }
 
     // Data Connections
@@ -172,7 +190,38 @@ export class TreeComponent {
         if (!models || !_.isArray(models)) {
             return [];
         }
-        return models;
+        // Convert Collection Models to Nested Tree to optimize references
+        this.treeMap = {};
+        const that = this;
+        const tree : Array<Node> = [];
+        _.each(models, function (model) {
+            const modelId = _.get(model, 'data.id');
+            const parentId = _.get(model, 'data.nestParent.id');
+            if (!_.has(that.treeMap, modelId)) {
+                that.treeMap[modelId] = {
+                    model: null,
+                    child: []
+                };
+            }
+            that.treeMap[modelId].model = model;
+            if (!parentId) {
+                tree.push(
+                    that.treeMap[modelId]
+                );
+            } else {
+                console.log(that.treeMap[parentId]);
+                if (!_.has(that.treeMap, parentId)) {
+                    that.treeMap[parentId] = {
+                        model: null,
+                        child: []
+                    };
+                }
+                that.treeMap[parentId].child.push(
+                    that.treeMap[modelId]
+                );
+            }
+        });
+        return tree;
     }
 
     /**
@@ -187,11 +236,11 @@ export class TreeComponent {
     /**
      * @param model
      */
-    getChildren(model: any): any[] {
+    getChild(model: any): any[] {
         if (!model) {
             return [];
         }
-        // TODO: Instead of a filter, like this, it would
+        // TODO: Instead of a filter, like this, it would be better to search the tree
         return _.filter(this.dataRef(), function (child) {
             const modelId = _.get(model, 'data.id');
             const parentId = _.get(child, 'data.nestParent.id');
