@@ -86,11 +86,13 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                         base_component_1.BaseComponent,
                         selector_component_1.SelectorComponent,
                         tree_component_1.TreeComponent,
+                        tree_component_1.TreeComponentDialog,
                     ],
                     declarations: [
                         base_component_1.BaseComponent,
                         selector_component_1.SelectorComponent,
-                        tree_component_1.TreeComponent
+                        tree_component_1.TreeComponent,
+                        tree_component_1.TreeComponentDialog,
                     ],
                     bootstrap: bootstrap,
                     providers: []

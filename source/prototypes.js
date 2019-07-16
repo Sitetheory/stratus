@@ -4,9 +4,10 @@
 // --------------------
 
 Stratus.Prototypes.EventManager = class EventManager {
-  constructor () {
+  constructor (throttle) {
     this.name = 'EventManager'
     this.listeners = {}
+    this.throttleTrigger = _.throttle(this.trigger, throttle || 100)
   }
 
   /**
