@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectorRef, Component, Output} from "@angular/core";
+import {ChangeDetectorRef, Component, Inject, Output} from "@angular/core";
 import {FormControl} from '@angular/forms';
 
 // CDK
@@ -7,9 +7,13 @@ import {ArrayDataSource} from '@angular/cdk/collections';
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {NestedTreeControl} from '@angular/cdk/tree';
 
+// Material
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
+
 // SVG Icons
 import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
+
 
 // RXJS
 import {Observable, Subject, Subscriber} from 'rxjs';
@@ -39,11 +43,14 @@ export interface NodeMap {
 //     data: object;
 // }
 
+export interface DialogData {
+    name: string;
+}
+
 /**
  * @title Tree with Nested Drag&Drop
  */
 @Component({
-    // selector: 's2-tree-component',
     selector: 's2-tree',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // templateUrl: `${systemDir}/${moduleName}/${moduleName}.component.html`,
@@ -61,7 +68,7 @@ export class TreeComponent {
 
     // Dependencies
     _: any;
-    sanitizer: DomSanitizer;
+    // sanitizer: DomSanitizer;
     selectCtrl = new FormControl();
 
     // Stratus Data Connectivity
@@ -83,7 +90,16 @@ export class TreeComponent {
     // hasChild = (_: number, node: any) => this.getChild(node).length > 0;
     hasChild = (_: number, node: any) => node.child && node.child.length > 0;
 
-    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
+    // Dialog
+    // dialog: MatDialog;
+
+    /**
+     * @param iconRegistry
+     * @param sanitizer
+     * @param dialog
+     * @param ref
+     */
+    constructor(public iconRegistry: MatIconRegistry, public sanitizer: DomSanitizer, private ref: ChangeDetectorRef) { //public dialog: MatDialog
 
         // Initialization
         this.uid = _.uniqueId('s2_tree_component_');
@@ -94,7 +110,6 @@ export class TreeComponent {
 
         // Dependencies
         this._ = _;
-        this.sanitizer = sanitizer;
 
         // SVG Icons
         iconRegistry.addSvgIcon(
@@ -113,16 +128,20 @@ export class TreeComponent {
                     console.warn('Unable to bind data from Registry!');
                     return
                 }
-                // Manually render upon model change
-                ref.detach();
+                // Manually render upon data change
+                // ref.detach();
                 data.on('change', function () {
+                    if (!data.completed) {
+                        return;
+                    }
+                    console.log('Tree collection changed!')
                     // that.onDataChange(ref);
-                    that.dataDefer(that.subscriber);
-                    ref.detectChanges();
+                    // that.dataDefer(that.subscriber);
+                    // ref.detectChanges();
                 });
                 // that.onDataChange(ref);
-                that.dataDefer(that.subscriber);
-                ref.detectChanges();
+                // that.dataDefer(that.subscriber);
+                // ref.detectChanges();
             });
 
         // Handling Pipes with Promises
@@ -152,7 +171,7 @@ export class TreeComponent {
         if (!models || !models.length) {
             return
         }
-        // TODO: Handle Multi-Level Targetting
+        // TODO: Handle Multi-Level Targeting
         const index: number = models.indexOf(model);
         if (index === -1) {
             return
@@ -209,7 +228,6 @@ export class TreeComponent {
                     that.treeMap[modelId]
                 );
             } else {
-                console.log(that.treeMap[parentId]);
                 if (!_.has(that.treeMap, parentId)) {
                     that.treeMap[parentId] = {
                         model: null,
@@ -236,15 +254,43 @@ export class TreeComponent {
     /**
      * @param model
      */
-    getChild(model: any): any[] {
-        if (!model) {
-            return [];
-        }
-        // TODO: Instead of a filter, like this, it would be better to search the tree
-        return _.filter(this.dataRef(), function (child) {
-            const modelId = _.get(model, 'data.id');
-            const parentId = _.get(child, 'data.nestParent.id');
-            return modelId && parentId && modelId === parentId;
-        })
+    // getChild(model: any): any[] {
+    //     if (!model) {
+    //         return [];
+    //     }
+    //     // TODO: Instead of a filter, like this, it would be better to search the tree
+    //     return _.filter(this.dataRef(), function (child) {
+    //         const modelId = _.get(model, 'data.id');
+    //         const parentId = _.get(child, 'data.nestParent.id');
+    //         return modelId && parentId && modelId === parentId;
+    //     })
+    // }
+
+    openDialog(model: any): void {
+        // FIXME: This Dialog has problems with Dependency Injection
+        // const dialogRef = this.dialog.open(TreeComponentDialog, {
+        //     width: '250px',
+        //     data: {name: model.data.name}
+        // });
+        //
+        // dialogRef.afterClosed().subscribe(result => {
+        //     console.log('The dialog was closed');
+        //     model.data.name = result;
+        // });
+    }
+}
+
+@Component({
+    selector: 's2-tree-dialog',
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
+})
+export class TreeComponentDialog {
+
+    constructor(
+        public dialogRef: MatDialogRef<TreeComponentDialog>,
+        @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+
+    onCancelClick(): void {
+        this.dialogRef.close();
     }
 }

@@ -845,9 +845,10 @@ _.mixin({
 // --------------------
 
 Stratus.Prototypes.EventManager = class EventManager {
-  constructor () {
+  constructor (throttle) {
     this.name = 'EventManager'
     this.listeners = {}
+    this.throttleTrigger = _.throttle(this.trigger, throttle || 100)
   }
 
   /**
@@ -3230,7 +3231,7 @@ Stratus.LocalStorage.Listen = function (key, fn) {
 // When an event arrives from any source, we will handle it
 // appropriately.
 Stratus.LocalStorage.Listen('stratus-core', function (data) {
-  console.log('LocalStorage:', data)
+  // console.log('LocalStorage:', data)
 })
 // localStorage.setItem('stratus-core', 'foo')
 

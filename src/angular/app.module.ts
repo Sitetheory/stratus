@@ -2,7 +2,7 @@
 import {HttpClientModule} from '@angular/common/http';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatNativeDateModule} from '@angular/material';
+import {MatDialogModule, MatNativeDateModule} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
@@ -14,7 +14,7 @@ import {BaseComponent} from '@stratus/angular/base/base.component';
 
 // Stratus Custom Components
 import {SelectorComponent} from '@stratus/angular/selector/selector.component';
-import {TreeComponent} from '@stratus/angular/tree/tree.component';
+import {TreeComponent, TreeComponentDialog} from '@stratus/angular/tree/tree.component';
 
 // External Modules
 import * as _ from "lodash";
@@ -52,11 +52,13 @@ const bootstrap = _.keys(roster)
         BaseComponent,
         SelectorComponent,
         TreeComponent,
+        TreeComponentDialog,
     ],
     declarations: [
         BaseComponent,
         SelectorComponent,
-        TreeComponent
+        TreeComponent,
+        TreeComponentDialog,
     ],
     bootstrap: bootstrap,
     providers: []

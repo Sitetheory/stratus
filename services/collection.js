@@ -24,8 +24,11 @@
   let $$mdToast = function () {
     console.error('$$mdToast not loaded:', arguments)
   }
-  class Collection {
+  class Collection extends Stratus.Prototypes.EventManager {
     constructor (options) {
+      super()
+      this.name = 'Collection'
+
       // Environment
       this.target = null
       this.direct = false
@@ -264,6 +267,9 @@
             // Promise
             reject(error)
           }
+
+          // Trigger Change Event
+          that.throttleTrigger('change')
         }).catch(function (error) {
           // (/(.*)\sReceived/i).exec(error.message)[1]
           console.error('XHR: ' + prototype.method + ' ' + prototype.url)

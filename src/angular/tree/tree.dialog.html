@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Menu Link Editor</h1>
+<div mat-dialog-content>
+    <mat-form-field class="example-form-field">
+        <input matInput type="text" placeholder="Name" [(ngModel)]="data.name">
+        <button mat-button *ngIf="data.name" matSuffix mat-icon-button aria-label="Clear" (click)="data.name=''">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="data.name" cdkFocusInitial>Ok</button>
+</div>

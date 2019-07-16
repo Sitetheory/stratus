@@ -244,7 +244,7 @@ Stratus.LocalStorage.Listen = function (key, fn) {
 // When an event arrives from any source, we will handle it
 // appropriately.
 Stratus.LocalStorage.Listen('stratus-core', function (data) {
-  console.log('LocalStorage:', data)
+  // console.log('LocalStorage:', data)
 })
 // localStorage.setItem('stratus-core', 'foo')
 

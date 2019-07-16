@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/platform-browser", "@angular/material/icon", "rxjs", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "stratus", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,6 +9,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
+    var __param = (this && this.__param) || function (paramIndex, decorator) {
+        return function (target, key) { decorator(target, key, paramIndex); }
+    };
     var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
         return new (P || (P = Promise))(function (resolve, reject) {
             function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -17,7 +20,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, drag_drop_1, tree_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, localDir, systemDir, moduleName, TreeComponent;
+    var core_1, forms_1, drag_drop_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, localDir, systemDir, moduleName, TreeComponent, TreeComponentDialog;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -32,6 +35,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             },
             function (tree_1_1) {
                 tree_1 = tree_1_1;
+            },
+            function (dialog_1_1) {
+                dialog_1 = dialog_1_1;
             },
             function (platform_browser_1_1) {
                 platform_browser_1 = platform_browser_1_1;
@@ -55,6 +61,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             moduleName = 'tree';
             TreeComponent = class TreeComponent {
                 constructor(iconRegistry, sanitizer, ref) {
+                    this.iconRegistry = iconRegistry;
+                    this.sanitizer = sanitizer;
                     this.ref = ref;
                     this.title = 'tree-dnd';
                     this.selectCtrl = new forms_1.FormControl();
@@ -66,7 +74,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     Stratus.Instances[this.uid] = this;
                     const that = this;
                     this._ = _;
-                    this.sanitizer = sanitizer;
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
                     this.fetchData()
@@ -75,13 +82,12 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                             console.warn('Unable to bind data from Registry!');
                             return;
                         }
-                        ref.detach();
                         data.on('change', function () {
-                            that.dataDefer(that.subscriber);
-                            ref.detectChanges();
+                            if (!data.completed) {
+                                return;
+                            }
+                            console.log('Tree collection changed!');
                         });
-                        that.dataDefer(that.subscriber);
-                        ref.detectChanges();
                     });
                     this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
                 }
@@ -149,7 +155,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                             tree.push(that.treeMap[modelId]);
                         }
                         else {
-                            console.log(that.treeMap[parentId]);
                             if (!_.has(that.treeMap, parentId)) {
                                 that.treeMap[parentId] = {
                                     model: null,
@@ -165,15 +170,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.dataDefer(this.subscriber);
                     ref.detectChanges();
                 }
-                getChild(model) {
-                    if (!model) {
-                        return [];
-                    }
-                    return _.filter(this.dataRef(), function (child) {
-                        const modelId = _.get(model, 'data.id');
-                        const parentId = _.get(child, 'data.nestParent.id');
-                        return modelId && parentId && modelId === parentId;
-                    });
+                openDialog(model) {
                 }
             };
             TreeComponent = __decorate([
@@ -184,6 +181,25 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                 __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, core_1.ChangeDetectorRef])
             ], TreeComponent);
             exports_1("TreeComponent", TreeComponent);
+            TreeComponentDialog = class TreeComponentDialog {
+                constructor(dialogRef, data) {
+                    this.dialogRef = dialogRef;
+                    this.data = data;
+                }
+                onCancelClick() {
+                    this.dialogRef.close();
+                }
+            };
+            TreeComponentDialog = __decorate([
+                core_1.Component({
+                    selector: 's2-tree-dialog',
+                    templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
+                }),
+                __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
+                __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object])
+            ], TreeComponentDialog);
+            exports_1("TreeComponentDialog", TreeComponentDialog);
         }
     };
 });
+//# sourceMappingURL=tree.component.js.map
