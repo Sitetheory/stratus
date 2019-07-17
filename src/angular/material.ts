@@ -16,7 +16,6 @@ import {
     MatCheckboxModule,
     MatChipsModule,
     MatDatepickerModule,
-    MatDialogModule,
     MatDividerModule,
     MatExpansionModule,
     MatGridListModule,
@@ -43,6 +42,8 @@ import {
     MatTooltipModule,
     MatTreeModule,
 } from '@angular/material';
+
+import {MatDialogModule} from '@angular/material/dialog';
 
 @NgModule({
     exports: [

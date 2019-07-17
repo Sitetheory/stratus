@@ -60,9 +60,10 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             systemDir = '@stratus/angular';
             moduleName = 'tree';
             TreeComponent = class TreeComponent {
-                constructor(iconRegistry, sanitizer, ref) {
+                constructor(iconRegistry, sanitizer, dialog, ref) {
                     this.iconRegistry = iconRegistry;
                     this.sanitizer = sanitizer;
+                    this.dialog = dialog;
                     this.ref = ref;
                     this.title = 'tree-dnd';
                     this.selectCtrl = new forms_1.FormControl();
@@ -171,6 +172,17 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     ref.detectChanges();
                 }
                 openDialog(model) {
+                    if (!model || !_.has(model, 'data')) {
+                        return;
+                    }
+                    const dialogRef = this.dialog.open(TreeComponentDialog, {
+                        width: '250px',
+                        data: { name: model.data.name }
+                    });
+                    dialogRef.afterClosed().subscribe(result => {
+                        model.data.name = result;
+                        model.save();
+                    });
                 }
             };
             TreeComponent = __decorate([
@@ -178,7 +190,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     selector: 's2-tree',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
                 }),
-                __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, core_1.ChangeDetectorRef])
+                __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, dialog_1.MatDialog, core_1.ChangeDetectorRef])
             ], TreeComponent);
             exports_1("TreeComponent", TreeComponent);
             TreeComponentDialog = class TreeComponentDialog {
@@ -202,4 +214,3 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
         }
     };
 });
-//# sourceMappingURL=tree.component.js.map

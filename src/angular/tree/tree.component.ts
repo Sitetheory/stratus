@@ -14,7 +14,6 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
 
-
 // RXJS
 import {Observable, Subject, Subscriber} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
@@ -90,16 +89,13 @@ export class TreeComponent {
     // hasChild = (_: number, node: any) => this.getChild(node).length > 0;
     hasChild = (_: number, node: any) => node.child && node.child.length > 0;
 
-    // Dialog
-    // dialog: MatDialog;
-
     /**
      * @param iconRegistry
      * @param sanitizer
      * @param dialog
      * @param ref
      */
-    constructor(public iconRegistry: MatIconRegistry, public sanitizer: DomSanitizer, private ref: ChangeDetectorRef) { //public dialog: MatDialog
+    constructor(public iconRegistry: MatIconRegistry, public sanitizer: DomSanitizer, public dialog: MatDialog, private ref: ChangeDetectorRef) {
 
         // Initialization
         this.uid = _.uniqueId('s2_tree_component_');
@@ -266,17 +262,22 @@ export class TreeComponent {
     //     })
     // }
 
+    /**
+     * @param model
+     */
     openDialog(model: any): void {
-        // FIXME: This Dialog has problems with Dependency Injection
-        // const dialogRef = this.dialog.open(TreeComponentDialog, {
-        //     width: '250px',
-        //     data: {name: model.data.name}
-        // });
-        //
-        // dialogRef.afterClosed().subscribe(result => {
-        //     console.log('The dialog was closed');
-        //     model.data.name = result;
-        // });
+        if (!model || !_.has(model, 'data')) {
+            return;
+        }
+        const dialogRef = this.dialog.open(TreeComponentDialog, {
+            width: '250px',
+            data: {name: model.data.name}
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            model.data.name = result;
+            model.save()
+        });
     }
 }
 
