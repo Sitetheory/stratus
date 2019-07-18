@@ -56,7 +56,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                 's2-tree': tree_component_1.TreeComponent
             };
             bootstrap = _.keys(roster)
-                .map(function (component) {
+                .map(component => {
                 const elements = document.getElementsByTagName(component);
                 if (!elements || !elements.length) {
                     return null;
@@ -86,15 +86,15 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                         base_component_1.BaseComponent,
                         selector_component_1.SelectorComponent,
                         tree_component_1.TreeComponent,
-                        tree_component_1.TreeComponentDialog,
+                        tree_component_1.TreeDialogComponent,
                     ],
                     declarations: [
                         base_component_1.BaseComponent,
                         selector_component_1.SelectorComponent,
                         tree_component_1.TreeComponent,
-                        tree_component_1.TreeComponentDialog,
+                        tree_component_1.TreeDialogComponent,
                     ],
-                    bootstrap: bootstrap,
+                    bootstrap,
                     providers: []
                 }),
                 __metadata("design:paramtypes", [])

@@ -67,13 +67,13 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
                     this.fetchData()
-                        .then(function (data) {
+                        .then((data) => {
                         if (!data.on) {
                             console.warn('Unable to bind data from Registry!');
                             return;
                         }
                         ref.detach();
-                        data.on('change', function () {
+                        data.on('change', () => {
                             that.dataDefer(that.subscriber);
                             ref.detectChanges();
                         });
@@ -125,7 +125,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     if (!this.model) {
                         return [];
                     }
-                    const models = _.get(this.model, "data.version.modules");
+                    const models = _.get(this.model, 'data.version.modules');
                     if (!models || !_.isArray(models)) {
                         return [];
                     }

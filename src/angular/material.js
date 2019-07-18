@@ -1,4 +1,4 @@
-System.register(["@angular/cdk/a11y", "@angular/cdk/drag-drop", "@angular/cdk/portal", "@angular/cdk/scrolling", "@angular/cdk/stepper", "@angular/cdk/table", "@angular/cdk/tree", "@angular/core", "@angular/material"], function (exports_1, context_1) {
+System.register(["@angular/cdk/a11y", "@angular/cdk/drag-drop", "@angular/cdk/portal", "@angular/cdk/scrolling", "@angular/cdk/stepper", "@angular/cdk/table", "@angular/cdk/tree", "@angular/core", "@angular/material", "@angular/material/dialog"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6,7 +6,7 @@ System.register(["@angular/cdk/a11y", "@angular/cdk/drag-drop", "@angular/cdk/po
         else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
         return c > 3 && r && Object.defineProperty(target, key, r), r;
     };
-    var a11y_1, drag_drop_1, portal_1, scrolling_1, stepper_1, table_1, tree_1, core_1, material_1, MaterialModules;
+    var a11y_1, drag_drop_1, portal_1, scrolling_1, stepper_1, table_1, tree_1, core_1, material_1, dialog_1, MaterialModules;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -36,6 +36,9 @@ System.register(["@angular/cdk/a11y", "@angular/cdk/drag-drop", "@angular/cdk/po
             },
             function (material_1_1) {
                 material_1 = material_1_1;
+            },
+            function (dialog_1_1) {
+                dialog_1 = dialog_1_1;
             }
         ],
         execute: function () {
@@ -59,7 +62,7 @@ System.register(["@angular/cdk/a11y", "@angular/cdk/drag-drop", "@angular/cdk/po
                         material_1.MatChipsModule,
                         material_1.MatStepperModule,
                         material_1.MatDatepickerModule,
-                        material_1.MatDialogModule,
+                        dialog_1.MatDialogModule,
                         material_1.MatDividerModule,
                         material_1.MatExpansionModule,
                         material_1.MatGridListModule,

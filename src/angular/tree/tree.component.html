@@ -1,32 +1,38 @@
 <cdk-tree [dataSource]="dataSub | async" [treeControl]="treeControl">
     <!-- This is the tree node template for leaf nodes -->
-    <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="example-tree-node">
+    <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="tree-node">
         <!-- use a disabled button to provide padding for tree leaf -->
         <button mat-icon-button disabled></button>
 
+        <!-- Display Clickable Name -->
+        <span (click)="openDialog(node.model)" [textContent]="node.model.data.name"></span>
+
         <!-- Display Name & Dialogue Button -->
-        {{node.model.data.name}}
-<!--        <button mat-icon-button (click)="openDialog(node.model)">-->
+<!--        {{node.model.data.name}}&nbsp;-->
+<!--        <button mat-raised-button (click)="openDialog(node.model)">-->
 <!--            <i class="fas fa-pencil-alt"></i>-->
 <!--        </button>-->
 
     </cdk-nested-tree-node>
 
     <!-- This is the tree node template for expandable nodes -->
-    <cdk-nested-tree-node *cdkTreeNodeDef="let node; when: hasChild" class="example-tree-node">
+    <cdk-nested-tree-node *cdkTreeNodeDef="let node; when: hasChild" class="tree-node">
         <button mat-icon-button [attr.aria-label]="'toggle ' + node.model.data.name" cdkTreeNodeToggle>
             <mat-icon class="mat-icon-rtl-mirror">
                 {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
         </button>
 
+        <!-- Display Clickable Name -->
+        <span (click)="openDialog(node.model)" [textContent]="node.model.data.name"></span>
+
         <!-- Display Name & Dialogue Button -->
-        {{node.model.data.name}}
-<!--        <button mat-icon-button (click)="openDialog()">-->
+<!--        {{node.model.data.name}}&nbsp;-->
+<!--        <button mat-raised-button (click)="openDialog(node.model)">-->
 <!--            <i class="fas fa-pencil-alt"></i>-->
 <!--        </button>-->
 
-        <div [class.example-tree-invisible]="!treeControl.isExpanded(node)">
+        <div [class.tree-invisible]="!treeControl.isExpanded(node)">
             <ng-container cdkTreeNodeOutlet></ng-container>
         </div>
     </cdk-nested-tree-node>

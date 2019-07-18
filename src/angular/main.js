@@ -26,13 +26,13 @@ System.register(["@stratus/angular/polyfills", "stratus", "@angular/core", "@ang
             if (environment_1.environment.production) {
                 core_1.enableProdMode();
             }
-            Stratus.DOM.complete(function () {
+            Stratus.DOM.complete(() => {
                 const s2 = [
                     's2-selector',
                     's2-tree'
                 ];
                 let detected = false;
-                s2.forEach(function (component) {
+                s2.forEach(component => {
                     if (detected) {
                         return;
                     }
@@ -46,7 +46,7 @@ System.register(["@stratus/angular/polyfills", "stratus", "@angular/core", "@ang
                     return;
                 }
                 platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule)
-                    .then(function (module) {
+                    .then(module => {
                     console.log('@stratus/angular initialized successfully!');
                 })
                     .catch(err => console.error('@stratus/angular failed to initialize!', err));

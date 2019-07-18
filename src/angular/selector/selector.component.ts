@@ -1,9 +1,9 @@
 // Angular Core
-import {ChangeDetectorRef, Component, Output} from "@angular/core";
+import {ChangeDetectorRef, Component, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 // CDK
-import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 // External
 import {Observable, Subject, Subscriber} from 'rxjs';
@@ -13,9 +13,9 @@ import {map, startWith} from 'rxjs/operators';
 import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
 
-import * as Stratus from "stratus";
-import * as _ from "lodash";
-import {SubjectSubscriber} from "rxjs/internal/Subject";
+import * as Stratus from 'stratus';
+import * as _ from 'lodash';
+import {SubjectSubscriber} from 'rxjs/internal/Subject';
 
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 const systemDir = '@stratus/angular';
@@ -33,8 +33,8 @@ const moduleName = 'selector';
     // selector: 's2-selector-component',
     selector: 's2-selector',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
-
-    // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will require the steal-css module
+    // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
+    // require the steal-css module
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
     // ],
@@ -99,14 +99,14 @@ export class SelectorComponent {
 
         // Data Connections
         this.fetchData()
-            .then(function (data: any) {
+            .then((data: any) => {
                 if (!data.on) {
                     console.warn('Unable to bind data from Registry!');
-                    return
+                    return;
                 }
                 // Manually render upon model change
                 ref.detach();
-                data.on('change', function () {
+                data.on('change', () => {
                     // that.onDataChange(ref);
                     that.dataDefer(that.subscriber);
                     ref.detectChanges();
@@ -137,46 +137,40 @@ export class SelectorComponent {
     //     console.info('ngDoCheck:', this.dataSub);
     // }
 
-    /**
-     * @param event
-     */
     drop(event: CdkDragDrop<string[]>) {
         const models = this.dataRef();
         if (!models || !models.length) {
-            return
+            return;
         }
         moveItemInArray(models, event.previousIndex, event.currentIndex);
         let priority = 0;
         _.each(models, (model) => model.priority = priority++);
-        this.model.trigger('change')
+        this.model.trigger('change');
     }
 
-    /**
-     * @param model
-     */
     remove(model: any) {
         const models = this.dataRef();
         if (!models || !models.length) {
-            return
+            return;
         }
         const index: number = models.indexOf(model);
         if (index === -1) {
-            return
+            return;
         }
         models.splice(index, 1);
         // this.prioritize();
-        this.model.trigger('change')
+        this.model.trigger('change');
     }
 
     // Data Connections
     async fetchData(): Promise<any> {
         if (!this.fetched) {
-            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
+            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this);
         }
         return this.fetched;
     }
 
-    dataDefer (subscriber: Subscriber<any>) {
+    dataDefer(subscriber: Subscriber<any>) {
         this.subscriber = subscriber;
         const models = this.dataRef();
         if (models && models.length) {
@@ -188,11 +182,11 @@ export class SelectorComponent {
 
     dataRef(): any {
         if (!this.model) {
-            return []
+            return [];
         }
-        const models = _.get(this.model, "data.version.modules");
+        const models = _.get(this.model, 'data.version.modules');
         if (!models || !_.isArray(models)) {
-            return []
+            return [];
         }
         return models;
     }
@@ -229,47 +223,37 @@ export class SelectorComponent {
     //     });
     // }
 
-    /**
-     * @param value
-     * @private
-     */
     // private _filterModels(value: string): any {
     //     // return await this.collection.filterAsync(value);
     //     // return await [];
     //     return [];
     // }
 
-    /**
-     * @param ref
-     */
-    onDataChange (ref: ChangeDetectorRef) {
+    onDataChange(ref: ChangeDetectorRef) {
         // that.prioritize();
         this.dataDefer(this.subscriber);
         ref.detectChanges();
     }
 
-    prioritize () {
+    prioritize() {
         const models = this.dataRef();
         if (!models || !models.length) {
-            return
+            return;
         }
         let priority = 0;
         _.each(models, (model) => model.priority = priority++);
     }
 
-    /**
-     * @param model
-     */
     findImage(model: any) {
         const mime = _.get(model, 'version.images[0].mime');
         if (mime === undefined) {
-            return ''
+            return '';
         }
         if (mime.indexOf('image') !== -1) {
             return _.get(model, 'version.images[0].src');
         } else if (mime.indexOf('video') !== -1) {
             return _.get(model, 'version.images[0].meta.thumbnail_small');
         }
-        return ''
+        return '';
     }
 }
