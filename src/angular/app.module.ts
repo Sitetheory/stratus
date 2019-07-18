@@ -14,11 +14,11 @@ import {BaseComponent} from '@stratus/angular/base/base.component';
 
 // Stratus Custom Components
 import {SelectorComponent} from '@stratus/angular/selector/selector.component';
-import {TreeComponent, TreeComponentDialog} from '@stratus/angular/tree/tree.component';
+import {TreeComponent, TreeDialogComponent} from '@stratus/angular/tree/tree.component';
 
 // External Modules
-import * as _ from "lodash";
-import * as Stratus from "stratus";
+import * as _ from 'lodash';
+import * as Stratus from 'stratus';
 
 let roster: {};
 roster = {
@@ -27,7 +27,7 @@ roster = {
 };
 
 const bootstrap = _.keys(roster)
-    .map(function (component) {
+    .map(component => {
         const elements = document.getElementsByTagName(component);
         if (!elements || !elements.length) {
             return null;
@@ -52,15 +52,15 @@ const bootstrap = _.keys(roster)
         BaseComponent,
         SelectorComponent,
         TreeComponent,
-        TreeComponentDialog,
+        TreeDialogComponent,
     ],
     declarations: [
         BaseComponent,
         SelectorComponent,
         TreeComponent,
-        TreeComponentDialog,
+        TreeDialogComponent,
     ],
-    bootstrap: bootstrap,
+    bootstrap,
     providers: []
 })
 export class AppModule {

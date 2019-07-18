@@ -1,13 +1,24 @@
 /* Based on Angular Material 8+ */
-s2-tree .example-tree-invisible {
+s2-tree .tree-invisible {
   display: none; }
 
-s2-tree .example-tree ul, s2-tree .example-tree li {
+s2-tree .tree ul, s2-tree .tree li {
   margin-top: 0;
   margin-bottom: 0;
   list-style-type: none; }
 
-s2-tree .example-tree-node {
+s2-tree .tree-node {
   display: block; }
-  s2-tree .example-tree-node .example-tree-node {
+  s2-tree .tree-node .tree-node {
     padding-left: 40px; }
+
+s2-tree .radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0; }
+
+s2-tree .radio-button {
+  margin: 5px; }
+
+s2-tree .full-width {
+  width: 100%; }

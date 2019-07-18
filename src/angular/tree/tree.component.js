@@ -20,7 +20,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, drag_drop_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, localDir, systemDir, moduleName, TreeComponent, TreeComponentDialog;
+    var core_1, forms_1, drag_drop_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -59,6 +59,24 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
             systemDir = '@stratus/angular';
             moduleName = 'tree';
+            TreeDialogComponent = class TreeDialogComponent {
+                constructor(dialogRef, data) {
+                    this.dialogRef = dialogRef;
+                    this.data = data;
+                }
+                onCancelClick() {
+                    this.dialogRef.close();
+                }
+            };
+            TreeDialogComponent = __decorate([
+                core_1.Component({
+                    selector: 's2-tree-dialog',
+                    templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
+                }),
+                __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
+                __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object])
+            ], TreeDialogComponent);
+            exports_1("TreeDialogComponent", TreeDialogComponent);
             TreeComponent = class TreeComponent {
                 constructor(iconRegistry, sanitizer, dialog, ref) {
                     this.iconRegistry = iconRegistry;
@@ -70,7 +88,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
                     this.treeControl = new tree_1.NestedTreeControl(node => node.child || []);
-                    this.hasChild = (_, node) => node.child && node.child.length > 0;
+                    this.hasChild = (index, node) => node.child && node.child.length > 0;
                     this.uid = _.uniqueId('s2_tree_component_');
                     Stratus.Instances[this.uid] = this;
                     const that = this;
@@ -78,12 +96,12 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
                     this.fetchData()
-                        .then(function (data) {
+                        .then((data) => {
                         if (!data.on) {
                             console.warn('Unable to bind data from Registry!');
                             return;
                         }
-                        data.on('change', function () {
+                        data.on('change', () => {
                             if (!data.completed) {
                                 return;
                             }
@@ -142,7 +160,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.treeMap = {};
                     const that = this;
                     const tree = [];
-                    _.each(models, function (model) {
+                    _.each(models, model => {
                         const modelId = _.get(model, 'data.id');
                         const parentId = _.get(model, 'data.nestParent.id');
                         if (!_.has(that.treeMap, modelId)) {
@@ -175,12 +193,25 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     if (!model || !_.has(model, 'data')) {
                         return;
                     }
-                    const dialogRef = this.dialog.open(TreeComponentDialog, {
+                    const dialogRef = this.dialog.open(TreeDialogComponent, {
                         width: '250px',
-                        data: { name: model.data.name }
+                        data: {
+                            id: model.data.id || null,
+                            name: model.data.name || '',
+                            target: model.data.url ? 'url' : 'content',
+                            content: model.data.content || null,
+                            url: model.data.url || null,
+                            collection: this.collection || null,
+                            parent: model.data.parent || null,
+                            nestParent: model.data.nestParent || null,
+                        }
                     });
                     dialogRef.afterClosed().subscribe(result => {
-                        model.data.name = result;
+                        model.set({
+                            name: result.name,
+                            content: result.content,
+                            url: result.url,
+                        });
                         model.save();
                     });
                 }
@@ -190,27 +221,12 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     selector: 's2-tree',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
                 }),
-                __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, dialog_1.MatDialog, core_1.ChangeDetectorRef])
+                __metadata("design:paramtypes", [icon_1.MatIconRegistry,
+                    platform_browser_1.DomSanitizer,
+                    dialog_1.MatDialog,
+                    core_1.ChangeDetectorRef])
             ], TreeComponent);
             exports_1("TreeComponent", TreeComponent);
-            TreeComponentDialog = class TreeComponentDialog {
-                constructor(dialogRef, data) {
-                    this.dialogRef = dialogRef;
-                    this.data = data;
-                }
-                onCancelClick() {
-                    this.dialogRef.close();
-                }
-            };
-            TreeComponentDialog = __decorate([
-                core_1.Component({
-                    selector: 's2-tree-dialog',
-                    templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
-                }),
-                __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
-                __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object])
-            ], TreeComponentDialog);
-            exports_1("TreeComponentDialog", TreeComponentDialog);
         }
     };
 });

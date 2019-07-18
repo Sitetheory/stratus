@@ -1,13 +1,50 @@
 <h1 mat-dialog-title>Menu Link Editor</h1>
 <div mat-dialog-content>
-    <mat-form-field class="example-form-field">
+    <mat-form-field class="form-field">
         <input matInput type="text" placeholder="Name" [(ngModel)]="data.name">
         <button mat-button *ngIf="data.name" matSuffix mat-icon-button aria-label="Clear" (click)="data.name=''">
             <mat-icon>close</mat-icon>
         </button>
     </mat-form-field>
+
+    <!-- Target Selector -->
+    <h4><label id="radio-group-label">Link Type:</label></h4>
+    <mat-radio-group class="radio-group"
+            aria-labelledby="radio-group-label"
+            [(ngModel)]="data.target">
+        <mat-radio-button class="radio-button" value="content">
+            Content
+        </mat-radio-button>
+        <mat-radio-button class="radio-button" value="url">
+            URL
+        </mat-radio-button>
+    </mat-radio-group>
+
+    <!-- Target Editor -->
+    <mat-form-field class="form-field" *ngIf="data.target == 'content'">
+        <input matInput placeholder="Link Content" aria-label="Link Content" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+<!--            <mat-option *ngFor="let content of filteredModels | async" [value]="content">-->
+<!--                {{ content.version.title }}-->
+<!--            </mat-option>-->
+        </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field class="form-field" *ngIf="data.target == 'url'">
+        <input matInput type="text" placeholder="URL" [(ngModel)]="data.url">
+        <button mat-button *ngIf="data.url" matSuffix mat-icon-button aria-label="Clear" (click)="data.url=''">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <!-- Target Display -->
+    <h4>Linked To:</h4>
+
+    <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? data.content.routing[0].url : 'Nothing yet!'"></span>
+    <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
 </div>
 <div mat-dialog-actions>
     <button mat-button (click)="onCancelClick()">Cancel</button>
-    <button mat-button [mat-dialog-close]="data.name" cdkFocusInitial>Ok</button>
+    <!-- <button mat-button (click)="collection.add({name:'Untitled Child', parent: data.parent, nestParent: data.id},{save: true})">Add Child</button> -->
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
 </div>
