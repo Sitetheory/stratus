@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "rxjs/operators", "stratus", "lodash", "@stratus/angular/backend.service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20,7 +20,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, drag_drop_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
+    var core_1, forms_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, operators_1, Stratus, _, backend_service_1, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -29,9 +29,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             },
             function (forms_1_1) {
                 forms_1 = forms_1_1;
-            },
-            function (drag_drop_1_1) {
-                drag_drop_1 = drag_drop_1_1;
             },
             function (tree_1_1) {
                 tree_1 = tree_1_1;
@@ -48,11 +45,17 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             function (rxjs_1_1) {
                 rxjs_1 = rxjs_1_1;
             },
+            function (operators_1_1) {
+                operators_1 = operators_1_1;
+            },
             function (Stratus_1) {
                 Stratus = Stratus_1;
             },
             function (_1) {
                 _ = _1;
+            },
+            function (backend_service_1_1) {
+                backend_service_1 = backend_service_1_1;
             }
         ],
         execute: function () {
@@ -60,12 +63,43 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             systemDir = '@stratus/angular';
             moduleName = 'tree';
             TreeDialogComponent = class TreeDialogComponent {
-                constructor(dialogRef, data) {
+                constructor(dialogRef, data, fb, backend) {
                     this.dialogRef = dialogRef;
                     this.data = data;
+                    this.fb = fb;
+                    this.backend = backend;
+                    this.isLoading = false;
+                }
+                ngOnInit() {
+                    this.dialogForm = this.fb.group({
+                        selectorInput: null
+                    });
+                    this.dialogForm
+                        .get('selectorInput')
+                        .valueChanges
+                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isLoading = true), operators_1.switchMap(value => this.backend.get('/Api/Content?q=' + value)
+                        .pipe(operators_1.finalize(() => this.isLoading = false))))
+                        .subscribe(response => {
+                        if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                            return this.filteredOptions = [];
+                        }
+                        const payload = _.get(response.body, 'payload') || response.body;
+                        if (_.isEmpty(payload) || !Array.isArray(payload)) {
+                            return this.filteredOptions = [];
+                        }
+                        return this.filteredOptions = payload;
+                    });
                 }
                 onCancelClick() {
                     this.dialogRef.close();
+                }
+                getOptions() {
+                    return this.backend.get('/Api/Content');
+                }
+                displayOption(option) {
+                    if (option) {
+                        return _.get(option, 'version.text');
+                    }
                 }
             };
             TreeDialogComponent = __decorate([
@@ -74,7 +108,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
                 }),
                 __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
-                __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object])
+                __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object, forms_1.FormBuilder,
+                    backend_service_1.BackendService])
             ], TreeDialogComponent);
             exports_1("TreeDialogComponent", TreeDialogComponent);
             TreeComponent = class TreeComponent {
@@ -91,7 +126,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.hasChild = (index, node) => node.child && node.child.length > 0;
                     this.uid = _.uniqueId('s2_tree_component_');
                     Stratus.Instances[this.uid] = this;
-                    const that = this;
                     this._ = _;
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
@@ -105,20 +139,13 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                             if (!data.completed) {
                                 return;
                             }
-                            console.log('Tree collection changed!');
+                            console.log('tree collection changed!');
                         });
                     });
                     this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
                 }
                 drop(event) {
-                    const models = this.dataRef();
-                    if (!models || !models.length) {
-                        return;
-                    }
-                    drag_drop_1.moveItemInArray(models, event.previousIndex, event.currentIndex);
-                    let priority = 0;
-                    _.each(models, (model) => model.priority = priority++);
-                    this.model.trigger('change');
+                    console.log('tree drop:', event);
                 }
                 remove(model) {
                     const models = this.dataRef();
@@ -201,16 +228,25 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                             target: model.data.url ? 'url' : 'content',
                             content: model.data.content || null,
                             url: model.data.url || null,
+                            model: model || null,
                             collection: this.collection || null,
                             parent: model.data.parent || null,
                             nestParent: model.data.nestParent || null,
                         }
                     });
                     dialogRef.afterClosed().subscribe(result => {
-                        model.set({
-                            name: result.name,
-                            content: result.content,
-                            url: result.url,
+                        if (!result || _.isEmpty(result)) {
+                            return;
+                        }
+                        [
+                            'name',
+                            'content',
+                            'url'
+                        ].forEach(attr => {
+                            if (!_.has(result, attr)) {
+                                return;
+                            }
+                            model.set(attr, _.get(result, attr));
                         });
                         model.save();
                     });

@@ -1,6 +1,7 @@
 // Angular Core
-import {ChangeDetectorRef, Component, Inject, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {ChangeDetectorRef, Component, Inject, Injectable, OnInit, Output} from '@angular/core';
+import {HttpResponse} from '@angular/common/http';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 
 // CDK
 import {ArrayDataSource} from '@angular/cdk/collections';
@@ -16,12 +17,15 @@ import {MatIconRegistry} from '@angular/material/icon';
 
 // RXJS
 import {Observable, Subject, Subscriber} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {map, startWith, switchMap, debounceTime, tap, finalize} from 'rxjs/operators';
 import {SubjectSubscriber} from 'rxjs/internal/Subject';
 
 // External
 import * as Stratus from 'stratus';
 import * as _ from 'lodash';
+
+// Services
+import {BackendService} from '@stratus/angular/backend.service';
 
 // Local Setup
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
@@ -48,6 +52,7 @@ export interface DialogData {
     target: string;
     content: any;
     url: string;
+    model: any;
     collection: any;
     parent: any;
     nestParent: any;
@@ -57,14 +62,60 @@ export interface DialogData {
     selector: 's2-tree-dialog',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
 })
-export class TreeDialogComponent {
+export class TreeDialogComponent implements OnInit {
+
+    filteredOptions: any[];
+    dialogForm: FormGroup;
+    isLoading = false;
 
     constructor(
         public dialogRef: MatDialogRef<TreeDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+        @Inject(MAT_DIALOG_DATA) public data: DialogData,
+        private fb: FormBuilder,
+        private backend: BackendService
+    ) {}
+
+    ngOnInit() {
+        this.dialogForm = this.fb.group({
+            selectorInput: null
+        });
+
+        this.dialogForm
+          .get('selectorInput')
+          .valueChanges
+          .pipe(
+            debounceTime(300),
+            tap(() => this.isLoading = true),
+            switchMap(value => this.backend.get('/Api/Content?q=' + value)
+              .pipe(
+                finalize(() => this.isLoading = false),
+              )
+            )
+          )
+          .subscribe(response => {
+              if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                  return this.filteredOptions = [];
+              }
+              const payload = _.get(response.body, 'payload') || response.body;
+              if (_.isEmpty(payload) || !Array.isArray(payload)) {
+                  return this.filteredOptions = [];
+              }
+              return this.filteredOptions = payload;
+          });
+    }
 
     onCancelClick(): void {
         this.dialogRef.close();
+    }
+
+    getOptions(): Observable<HttpResponse<any>> {
+        return this.backend.get('/Api/Content');
+    }
+
+    displayOption(option: any) {
+        if (option) {
+            return _.get(option, 'version.text');
+        }
     }
 }
 
@@ -90,7 +141,8 @@ export class TreeComponent {
 
     // Dependencies
     _: any;
-    // sanitizer: DomSanitizer;
+
+    // Forms
     selectCtrl = new FormControl();
 
     // Stratus Data Connectivity
@@ -123,9 +175,6 @@ export class TreeComponent {
         this.uid = _.uniqueId('s2_tree_component_');
         Stratus.Instances[this.uid] = this;
 
-        // Hoist Context
-        const that = this;
-
         // Dependencies
         this._ = _;
 
@@ -152,7 +201,7 @@ export class TreeComponent {
                     if (!data.completed) {
                         return;
                     }
-                    console.log('Tree collection changed!');
+                    console.log('tree collection changed!');
                     // that.onDataChange(ref);
                     // that.dataDefer(that.subscriber);
                     // ref.detectChanges();
@@ -167,15 +216,16 @@ export class TreeComponent {
     }
 
     drop(event: CdkDragDrop<string[]>) {
-        const models = this.dataRef();
-        if (!models || !models.length) {
-            return;
-        }
+        console.log('tree drop:', event);
+        // const models = this.dataRef();
+        // if (!models || !models.length) {
+        //     return;
+        // }
         // TODO: Allow Multi-Level Priorities
-        moveItemInArray(models, event.previousIndex, event.currentIndex);
-        let priority = 0;
-        _.each(models, (model) => model.priority = priority++);
-        this.model.trigger('change');
+        // moveItemInArray(models, event.previousIndex, event.currentIndex);
+        // let priority = 0;
+        // _.each(models, (model) => model.priority = priority++);
+        // this.model.trigger('change');
     }
 
     remove(model: any) {
@@ -210,7 +260,7 @@ export class TreeComponent {
         setTimeout(() => this.dataDefer(subscriber), 500);
     }
 
-    dataRef(): any {
+    dataRef(): Array<Node> {
         if (!this.collection) {
             return [];
         }
@@ -281,6 +331,7 @@ export class TreeComponent {
                 target: model.data.url ? 'url' : 'content',
                 content: model.data.content || null,
                 url: model.data.url || null,
+                model: model || null,
                 collection: this.collection || null,
                 parent: model.data.parent || null,
                 nestParent: model.data.nestParent || null,
@@ -288,10 +339,18 @@ export class TreeComponent {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            model.set({
-                name: result.name,
-                content: result.content,
-                url: result.url,
+            if (!result || _.isEmpty(result)) {
+                return;
+            }
+            [
+                'name',
+                'content',
+                'url'
+            ].forEach(attr => {
+                if (!_.has(result, attr)) {
+                    return;
+                }
+                model.set(attr, _.get(result, attr));
             });
             model.save();
         });
