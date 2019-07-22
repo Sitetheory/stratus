@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>Menu Link Editor</h1>
 <div mat-dialog-content>
     <mat-form-field class="form-field">
-        <input matInput type="text" placeholder="Name" [(ngModel)]="data.name">
+        <input matInput type="text" placeholder="Name" [(ngModel)]="data.name" >
         <button mat-button *ngIf="data.name" matSuffix mat-icon-button aria-label="Clear" (click)="data.name=''">
             <mat-icon>close</mat-icon>
         </button>
@@ -21,14 +21,21 @@
     </mat-radio-group>
 
     <!-- Target Editor -->
-    <mat-form-field class="form-field" *ngIf="data.target == 'content'">
-        <input matInput placeholder="Link Content" aria-label="Link Content" [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-<!--            <mat-option *ngFor="let content of filteredModels | async" [value]="content">-->
-<!--                {{ content.version.title }}-->
-<!--            </mat-option>-->
-        </mat-autocomplete>
-    </mat-form-field>
+    <form class="dialog-form" [formGroup]='dialogForm'>
+        <ng-container *ngIf="data.target == 'content'">
+            <mat-form-field class="form-field">
+                <input matInput placeholder="Link Content" aria-label="Link Content" [matAutocomplete]="auto" formControlName='selectorInput'>
+            </mat-form-field>
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayOption">
+                <mat-option *ngIf="isLoading" class="is-loading">
+                    <mat-spinner diameter="50"></mat-spinner>
+                </mat-option>
+                <ng-container *ngIf="!isLoading">
+                    <mat-option *ngFor="let option of filteredOptions" [value]="option" [innerHTML]="option.version.text"></mat-option>
+                </ng-container>
+            </mat-autocomplete>
+        </ng-container>
+    </form>
 
     <mat-form-field class="form-field" *ngIf="data.target == 'url'">
         <input matInput type="text" placeholder="URL" [(ngModel)]="data.url">
@@ -42,9 +49,15 @@
 
     <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? data.content.routing[0].url : 'Nothing yet!'"></span>
     <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
+
+    <h4>Actions:</h4>
+
+    <button mat-button (click)="data.model.destroy(); onCancelClick()">Delete (Completely)</button>
+    <button mat-button (click)="data.collection.add({name:'Untitled Child', parent: data.parent, nestParent: data.id},{save: true})">Add Child</button>
+
+    <mat-divider></mat-divider>
 </div>
 <div mat-dialog-actions>
     <button mat-button (click)="onCancelClick()">Cancel</button>
-    <!-- <button mat-button (click)="collection.add({name:'Untitled Child', parent: data.parent, nestParent: data.id},{save: true})">Add Child</button> -->
     <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
 </div>
