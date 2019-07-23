@@ -33,7 +33,7 @@ const systemDir = '@stratus/angular';
 const moduleName = 'tree';
 
 export interface Node {
-    model: object;
+    model: any;
     child: Node[];
 }
 
@@ -67,6 +67,7 @@ export class TreeDialogComponent implements OnInit {
     filteredOptions: any[];
     dialogForm: FormGroup;
     isLoading = false;
+    lastSelectorQuery: string;
 
     constructor(
         public dialogRef: MatDialogRef<TreeDialogComponent>,
@@ -77,7 +78,7 @@ export class TreeDialogComponent implements OnInit {
 
     ngOnInit() {
         this.dialogForm = this.fb.group({
-            selectorInput: null
+            selectorInput: this.data.content
         });
 
         this.dialogForm
@@ -86,10 +87,18 @@ export class TreeDialogComponent implements OnInit {
           .pipe(
             debounceTime(300),
             tap(() => this.isLoading = true),
-            switchMap(value => this.backend.get('/Api/Content?q=' + value)
-              .pipe(
-                finalize(() => this.isLoading = false),
-              )
+            switchMap(value => {
+                  if (_.isString(value)) {
+                      this.lastSelectorQuery = `/Api/Content?q=${value}`;
+                  } else {
+                      this.data.content = value;
+                      this.data.url = null;
+                  }
+                  return this.backend.get(this.lastSelectorQuery)
+                    .pipe(
+                      finalize(() => this.isLoading = false),
+                    );
+              }
             )
           )
           .subscribe(response => {
@@ -108,13 +117,9 @@ export class TreeDialogComponent implements OnInit {
         this.dialogRef.close();
     }
 
-    getOptions(): Observable<HttpResponse<any>> {
-        return this.backend.get('/Api/Content');
-    }
-
     displayOption(option: any) {
         if (option) {
-            return _.get(option, 'version.text');
+            return _.get(option, 'version.title');
         }
     }
 }
@@ -188,6 +193,9 @@ export class TreeComponent {
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
 
+        // Hoist Context
+        const that = this;
+
         // Data Connections
         this.fetchData()
             .then((data: any) => {
@@ -201,14 +209,13 @@ export class TreeComponent {
                     if (!data.completed) {
                         return;
                     }
-                    console.log('tree collection changed!');
                     // that.onDataChange(ref);
                     // that.dataDefer(that.subscriber);
-                    // ref.detectChanges();
+                    ref.detectChanges();
                 });
                 // that.onDataChange(ref);
                 // that.dataDefer(that.subscriber);
-                // ref.detectChanges();
+                ref.detectChanges();
             });
 
         // Handling Pipes with Promises
@@ -216,16 +223,28 @@ export class TreeComponent {
     }
 
     drop(event: CdkDragDrop<string[]>) {
+        const tree = this.dataRef();
+        if (!tree || !tree.length) {
+            return;
+        }
         console.log('tree drop:', event);
-        // const models = this.dataRef();
-        // if (!models || !models.length) {
-        //     return;
-        // }
         // TODO: Allow Multi-Level Priorities
-        // moveItemInArray(models, event.previousIndex, event.currentIndex);
-        // let priority = 0;
-        // _.each(models, (model) => model.priority = priority++);
-        // this.model.trigger('change');
+        moveItemInArray(tree, event.previousIndex, event.currentIndex);
+        let priority = 0;
+        _.each(tree, (node) => {
+            if (!node.model || !node.model.set) {
+                return;
+            }
+            const newPosition = priority++;
+            if (node.model.get('priority') === newPosition) {
+                return;
+            }
+            node.model.set('priority', newPosition);
+            node.model.save();
+        });
+        this.subscriber.next(tree);
+        this.ref.detectChanges();
+        this.collection.throttleTrigger('change');
     }
 
     remove(model: any) {
@@ -252,9 +271,9 @@ export class TreeComponent {
 
     dataDefer(subscriber: Subscriber<any>) {
         this.subscriber = subscriber;
-        const models = this.dataRef();
-        if (models && models.length) {
-            subscriber.next(models);
+        const tree = this.dataRef();
+        if (tree && tree.length) {
+            subscriber.next(tree);
             return;
         }
         setTimeout(() => this.dataDefer(subscriber), 500);
@@ -331,12 +350,14 @@ export class TreeComponent {
                 target: model.data.url ? 'url' : 'content',
                 content: model.data.content || null,
                 url: model.data.url || null,
+                priority: model.data.priority || null,
                 model: model || null,
                 collection: this.collection || null,
                 parent: model.data.parent || null,
                 nestParent: model.data.nestParent || null,
             }
         });
+        this.ref.detectChanges();
 
         dialogRef.afterClosed().subscribe(result => {
             if (!result || _.isEmpty(result)) {
@@ -345,7 +366,8 @@ export class TreeComponent {
             [
                 'name',
                 'content',
-                'url'
+                'url',
+                'priority'
             ].forEach(attr => {
                 if (!_.has(result, attr)) {
                     return;
@@ -353,6 +375,7 @@ export class TreeComponent {
                 model.set(attr, _.get(result, attr));
             });
             model.save();
+            // this.ref.detectChanges();
         });
     }
 }
