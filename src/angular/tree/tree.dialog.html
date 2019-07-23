@@ -31,7 +31,7 @@
                     <mat-spinner diameter="50"></mat-spinner>
                 </mat-option>
                 <ng-container *ngIf="!isLoading">
-                    <mat-option *ngFor="let option of filteredOptions" [value]="option" [innerHTML]="option.version.text"></mat-option>
+                    <mat-option *ngFor="let option of filteredOptions" [value]="option" [innerHTML]="option.version.title"></mat-option>
                 </ng-container>
             </mat-autocomplete>
         </ng-container>

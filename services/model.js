@@ -131,12 +131,12 @@
       this.initialize = _.once(this.initialize || function () {
         const that = this
         // Bubble Event + Defer
-        that.on('change', function () {
-          if (!that.collection) {
-            return
-          }
-          that.collection.throttleTrigger('change')
-        })
+        // that.on('change', function () {
+        //   if (!that.collection) {
+        //     return
+        //   }
+        //   that.collection.throttleTrigger('change')
+        // })
         if (that.manifest && !that.getIdentifier()) {
           that.sync('POST', that.meta.has('api') ? {
             meta: that.meta.get('api'),
@@ -339,6 +339,9 @@
           setTimeout(function () {
             that.changed = false
             that.throttleTrigger('change')
+            if (that.collection) {
+              that.collection.throttleTrigger('change')
+            }
           }, 100)
 
           if (response.status === 200 && angular.isObject(response.data)) {
