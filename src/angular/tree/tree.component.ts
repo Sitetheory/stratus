@@ -229,22 +229,22 @@ export class TreeComponent {
         }
         console.log('tree drop:', event);
         // TODO: Allow Multi-Level Priorities
-        moveItemInArray(tree, event.previousIndex, event.currentIndex);
-        let priority = 0;
-        _.each(tree, (node) => {
-            if (!node.model || !node.model.set) {
-                return;
-            }
-            const newPosition = priority++;
-            if (node.model.get('priority') === newPosition) {
-                return;
-            }
-            node.model.set('priority', newPosition);
-            node.model.save();
-        });
-        this.subscriber.next(tree);
-        this.ref.detectChanges();
-        this.collection.throttleTrigger('change');
+        // moveItemInArray(tree, event.previousIndex, event.currentIndex);
+        // let priority = 0;
+        // _.each(tree, (node) => {
+        //     if (!node.model || !node.model.set) {
+        //         return;
+        //     }
+        //     const newPosition = priority++;
+        //     if (node.model.get('priority') === newPosition) {
+        //         return;
+        //     }
+        //     node.model.set('priority', newPosition);
+        //     node.model.save();
+        // });
+        // this.subscriber.next(tree);
+        // this.ref.detectChanges();
+        // this.collection.throttleTrigger('change');
     }
 
     remove(model: any) {
@@ -350,7 +350,7 @@ export class TreeComponent {
                 target: model.data.url ? 'url' : 'content',
                 content: model.data.content || null,
                 url: model.data.url || null,
-                priority: model.data.priority || null,
+                priority: model.data.priority || 0,
                 model: model || null,
                 collection: this.collection || null,
                 parent: model.data.parent || null,
