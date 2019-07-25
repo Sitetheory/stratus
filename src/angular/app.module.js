@@ -1,4 +1,4 @@
-System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/angular/material", "@stratus/angular/base/base.component", "@stratus/angular/selector/selector.component", "@stratus/angular/tree/tree.component", "lodash", "stratus"], function (exports_1, context_1) {
+System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/angular/material", "@stratus/angular/base/base.component", "@stratus/angular/selector/selector.component", "@stratus/angular/tree/tree.component", "ngx-quill", "lodash", "stratus"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, selector_component_1, tree_component_1, _, Stratus, roster, bootstrap, AppModule;
+    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, selector_component_1, tree_component_1, ngx_quill_1, _, Stratus, roster, bootstrap, AppModule;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -43,6 +43,9 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
             function (tree_component_1_1) {
                 tree_component_1 = tree_component_1_1;
             },
+            function (ngx_quill_1_1) {
+                ngx_quill_1 = ngx_quill_1_1;
+            },
             function (_1) {
                 _ = _1;
             },
@@ -64,7 +67,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                 return component;
             })
                 .filter((item) => !!item)
-                .map((element) => element in roster ? _.get(roster, element) : null)
+                .map((element) => _.get(roster, element) || null)
                 .filter((item) => !!item);
             AppModule = class AppModule {
                 constructor() {
@@ -81,6 +84,27 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                         material_2.MaterialModules,
                         material_1.MatNativeDateModule,
                         forms_1.ReactiveFormsModule,
+                        ngx_quill_1.QuillModule.forRoot({
+                            modules: {
+                                syntax: true,
+                                toolbar: [
+                                    ['bold', 'italic', 'underline', 'strike'],
+                                    ['blockquote', 'code-block'],
+                                    [{ header: 1 }, { header: 2 }],
+                                    [{ list: 'ordered' }, { list: 'bullet' }],
+                                    [{ script: 'sub' }, { script: 'super' }],
+                                    [{ indent: '-1' }, { indent: '+1' }],
+                                    [{ direction: 'rtl' }],
+                                    [{ size: ['small', false, 'large', 'huge'] }],
+                                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                                    [{ color: [] }, { background: [] }],
+                                    [{ font: [] }],
+                                    [{ align: [] }],
+                                    ['clean'],
+                                    ['link', 'image', 'video']
+                                ]
+                            }
+                        })
                     ],
                     entryComponents: [
                         base_component_1.BaseComponent,

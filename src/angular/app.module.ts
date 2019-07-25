@@ -16,7 +16,10 @@ import {BaseComponent} from '@stratus/angular/base/base.component';
 import {SelectorComponent} from '@stratus/angular/selector/selector.component';
 import {TreeComponent, TreeDialogComponent} from '@stratus/angular/tree/tree.component';
 
-// External Modules
+// Angular Components
+import {QuillModule} from 'ngx-quill';
+
+// External Dependencies
 import * as _ from 'lodash';
 import * as Stratus from 'stratus';
 
@@ -35,7 +38,7 @@ const bootstrap = _.keys(roster)
         return component;
     })
     .filter((item) => !!item)
-    .map((element) => element in roster ? _.get(roster, element) : null)
+    .map((element) => _.get(roster, element) || null)
     .filter((item) => !!item);
 
 @NgModule({
@@ -47,6 +50,32 @@ const bootstrap = _.keys(roster)
         MaterialModules,
         MatNativeDateModule,
         ReactiveFormsModule,
+        QuillModule.forRoot({
+            modules: {
+                syntax: true,
+                toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                    ['blockquote', 'code-block'],
+
+                    [{ header: 1 }, { header: 2 }],               // custom button values
+                    [{ list: 'ordered'}, { list: 'bullet' }],
+                    [{ script: 'sub'}, { script: 'super' }],      // superscript/subscript
+                    [{ indent: '-1'}, { indent: '+1' }],          // outdent/indent
+                    [{ direction: 'rtl' }],                         // text direction
+
+                    [{ size: ['small', false, 'large', 'huge'] }],  // custom dropdown
+                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+                    [{ color: [] }, { background: [] }],          // dropdown with defaults from theme
+                    [{ font: [] }],
+                    [{ align: [] }],
+
+                    ['clean'],                                         // remove formatting button
+
+                    ['link', 'image', 'video']                         // link and image, video
+                ]
+            }
+        })
     ],
     entryComponents: [
         BaseComponent,

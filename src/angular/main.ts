@@ -20,7 +20,8 @@ Stratus.DOM.complete(() => {
     // Load Angular 8+
     const s2 = [
         's2-selector',
-        's2-tree'
+        's2-tree',
+        'quill-editor'
     ];
     // s2.map((element) => element).reduce((element) => element);
     let detected = false;
