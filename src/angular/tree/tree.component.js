@@ -261,6 +261,11 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                             if (!_.has(result, attr)) {
                                 return;
                             }
+                            if ('content' === attr) {
+                                const value = _.get(result, attr);
+                                model.set(attr, !value ? null : { id: _.get(value, 'id') });
+                                return;
+                            }
                             model.set(attr, _.get(result, attr));
                         });
                         model.save();
