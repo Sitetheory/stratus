@@ -372,6 +372,12 @@ export class TreeComponent {
                 if (!_.has(result, attr)) {
                     return;
                 }
+                // Normalize Content
+                if ('content' === attr) {
+                    const value = _.get(result, attr);
+                    model.set(attr, !value ? null : { id: _.get(value, 'id') });
+                    return;
+                }
                 model.set(attr, _.get(result, attr));
             });
             model.save();

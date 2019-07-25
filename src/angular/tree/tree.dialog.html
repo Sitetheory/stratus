@@ -55,28 +55,14 @@
     <mat-form-field class="form-field">
         <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">
 <!--        <button mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
-<!--                (click)="data.priority = (data.priority || 0) + 1">-->
+<!--                (click)="data.priority = data.priority + 1">-->
 <!--            <mat-icon>expand_less</mat-icon>-->
 <!--        </button>-->
 <!--        <button mat-button matSuffix mat-icon-button aria-label="Decrease Priority"-->
-<!--                (click)="data.priority = (data.priority || 0) - 1">-->
+<!--                (click)="data.priority = data.priority - 1">-->
 <!--            <mat-icon>expand_more</mat-icon>-->
 <!--        </button>-->
     </mat-form-field>
-
-<!--    <button mat-icon-button [attr.aria-label]="'toggle ' + node.model.data.name" cdkTreeNodeToggle>-->
-<!--        <mat-icon class="mat-icon-rtl-mirror">-->
-<!--            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}-->
-<!--        </mat-icon>-->
-<!--    </button>-->
-
-<!--    <a (click)="" aria-label="Increase Priority">-->
-<!--        <i class="fa fa-chevron-up" aria-hidden="true"></i>-->
-<!--    </a>-->
-<!--    <span [textContent]="data.priority || 0"></span>-->
-<!--    <a (click)="" aria-label="Decrease Priority">-->
-<!--        <i class="fa fa-chevron-down" aria-hidden="true"></i>-->
-<!--    </a>-->
 
     <h4>Actions:</h4>
 
