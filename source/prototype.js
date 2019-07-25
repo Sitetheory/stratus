@@ -167,7 +167,7 @@ let Stratus = {
   // TODO: Turn this into a Dynamic Object loaded from the DOM in Sitetheory
   Api: {
     GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA',
-    Froala: 'FB2C2D2B1uB5A2B2D3A5F1D4E1A3B17hfE-13cA-9mrI-7sogE4in=='
+    Froala: 'KybxhzguB-7j1jC3A-16y=='
   }
 }
 
