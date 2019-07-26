@@ -233,6 +233,10 @@
               if (scope.froalaOptions) {
                 scope.froalaOptions.froalaEditor = ctrl.froalaEditor
               }
+
+              // TODO: the code below does not work because ctrl.froalaEditor.DEFAULTS is not defined (this was the recommended method from support)
+              // Assign the License
+              //ctrl.froalaEditor.DEFAULTS.key = Stratus.Api.Froala
             }
           }
 
