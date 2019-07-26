@@ -86,7 +86,6 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                         forms_1.ReactiveFormsModule,
                         ngx_quill_1.QuillModule.forRoot({
                             modules: {
-                                syntax: true,
                                 toolbar: [
                                     ['bold', 'italic', 'underline', 'strike'],
                                     ['blockquote', 'code-block'],

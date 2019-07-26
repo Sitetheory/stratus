@@ -4,12 +4,13 @@
 (function (root) {
   // To be or not to be...
   const hamlet = root.hamlet = {}
-  root.hamlet.isCookie = function (key) {
+  hamlet.isCookie = function (key) {
     return typeof document.cookie === 'string' && document.cookie.indexOf(key + '=') !== -1
   }
   hamlet.isUndefined = function (key) {
     return undefined === this[key]
   }.bind(root)
+  hamlet.delay = ms => new Promise(res => setTimeout(res, ms));
 
   // Contextual Boot
   if (hamlet.isUndefined('boot')) {
@@ -98,6 +99,7 @@
 
   // Chain Require for Backwards Compatibility
   if (typeof root.require !== 'function') {
+    const cache = {}
     root.require = function (requirements, callback) {
       /* *
       const require = root.requirejs
@@ -106,9 +108,36 @@
       }
       /* */
       const System = root.System
-      if (typeof System === 'undefined') {
+      if (typeof System === 'undefined' || !requirements) {
         return
       }
+      // Handle Node-like Syntax
+      if (typeof requirements === 'string' && typeof callback === 'undefined') {
+        // Skip await for Quill
+        if ('quill' === requirements && requirements in cache) {
+          return cache[requirements]
+        }
+
+        System.import(requirements)
+          .then(function (module) {
+            cache[requirements] = module
+          }).catch(function (error) {
+            console.error(error)
+          })
+
+        // start polling at an interval until the data is found at the global
+        const poll = async () => {
+          await hamlet.delay(100);
+          if (!data) {
+            return await poll()
+          }
+          return data
+        }
+
+        return poll()
+      }
+      // Handle require-like syntax
+      requirements = Array.isArray(requirements) ? requirements : [requirements]
       const tracker = {
         loaded: 0,
         total: requirements.length,
@@ -123,6 +152,7 @@
           .then(function (module) {
             const wrap = shim[requirement] || {}
             tracker.modules[requirement] = wrap.exports ? root[wrap.exports] : module
+            cache[requirement] = tracker.modules[requirement]
             if (++tracker.loaded !== tracker.total) {
               return
             }

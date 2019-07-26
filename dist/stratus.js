@@ -3454,7 +3454,7 @@ Stratus.DOM.complete(function () {
 
   // Load Angular 8+
   if (!hamlet.isUndefined('System')) {
-    require(['@stratus/angular/main'])
+    require(['quill', '@stratus/angular/main'])
   }
 })
 

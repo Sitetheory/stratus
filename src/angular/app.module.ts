@@ -52,7 +52,7 @@ const bootstrap = _.keys(roster)
         ReactiveFormsModule,
         QuillModule.forRoot({
             modules: {
-                syntax: true,
+                // syntax: true,
                 toolbar: [
                     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                     ['blockquote', 'code-block'],
