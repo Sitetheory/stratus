@@ -235,18 +235,25 @@
               }
 
               // TODO: the code below does not work because ctrl.froalaEditor.DEFAULTS is not defined (this was the recommended method from support)
+              // TODO: remove all failed attempts to issue key
               // Assign the License
               //ctrl.froalaEditor.DEFAULTS.key = Stratus.Api.Froala
             }
           }
 
           ctrl.initListeners = function () {
+
+            // TODO: remove this if it doesn't work. HINT: it doesn't work right now but we need to find a way to do it.
+            // element.on('froalaEditor.initialized', function () {
+            //   //scope.$evalAsync(ctrl.updateModelView)
+            //   console.log('initizialized', ctrl.froalaEditor)
+            //   ctrl.froalaEditor.DEFAULTS.key = Stratus.Api.Froala
+            // })
             if (ctrl.options.immediateAngularModelUpdate) {
               ctrl.froalaElement.on('keyup', function () {
                 scope.$evalAsync(ctrl.updateModelView)
               })
             }
-
             element.on('froalaEditor.contentChanged', function () {
               scope.$evalAsync(ctrl.updateModelView)
             })
