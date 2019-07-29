@@ -10,7 +10,11 @@
   hamlet.isUndefined = function (key) {
     return undefined === this[key]
   }.bind(root)
-  hamlet.delay = ms => new Promise(res => setTimeout(res, ms));
+  hamlet.delay = function (ms) {
+    return new Promise(function (resolve, reject) {
+      return setTimeout(resolve, ms)
+    })
+  }
 
   // Contextual Boot
   if (hamlet.isUndefined('boot')) {
@@ -114,7 +118,7 @@
       // Handle Node-like Syntax
       if (typeof requirements === 'string' && typeof callback === 'undefined') {
         // Skip await for Quill
-        if ('quill' === requirements && requirements in cache) {
+        if (requirements === 'quill' && requirements in cache) {
           return cache[requirements]
         }
 
@@ -125,11 +129,17 @@
             console.error(error)
           })
 
+        const debug = hamlet.isCookie('env')
+
         // start polling at an interval until the data is found at the global
-        const poll = async () => {
-          await hamlet.delay(100);
+        const poll = async function () {
+          const delay = await hamlet.delay(100)
+          if (debug) {
+            console.log(`${requirements} poll:`, delay)
+          }
+          const data = cache[requirements]
           if (!data) {
-            return await poll()
+            return poll()
           }
           return data
         }
