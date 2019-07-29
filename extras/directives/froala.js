@@ -245,6 +245,7 @@
           ctrl.initListeners = function () {
 
             // TODO: remove this if it doesn't work. HINT: it doesn't work right now but we need to find a way to do it.
+            // This never executes
             // element.on('froalaEditor.initialized', function () {
             //   //scope.$evalAsync(ctrl.updateModelView)
             //   console.log('initizialized', ctrl.froalaEditor)
