@@ -2677,7 +2677,7 @@ Stratus.Selector.parent = function () {
   return Stratus(that.selection.parentNode)
 }
 
-/* global Stratus, _, $, angular, boot */
+/* global Stratus, _, jQuery, angular, boot */
 
 /**
  * @constructor
@@ -2851,8 +2851,8 @@ Stratus.Loaders.Angular = function () {
       // TODO: Make Dynamic
       // TODO: this should be in the Froala Directive, NOT the core stratus.js
       // Froala Configuration
-      if (typeof $ === 'function' && $.fn && $.FroalaEditor) {
-        $.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
+      if (typeof jQuery === 'function' && jQuery.fn && jQuery.FroalaEditor) {
+        jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
         let buttons = [
@@ -3455,7 +3455,7 @@ Stratus.DOM.complete(function () {
 
   // Load Angular 8+
   if (!hamlet.isUndefined('System')) {
-    require(['@stratus/angular/main'])
+    require(['quill', '@stratus/angular/main'])
   }
 })
 

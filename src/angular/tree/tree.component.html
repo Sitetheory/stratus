@@ -13,6 +13,17 @@
 <!--            <i class="fas fa-pencil-alt"></i>-->
 <!--        </button>-->
 
+        <!-- This is just a test of the Quill Editor, since we have not made decorators to provide a data connection -->
+        <ng-container *ngIf="node.model.data.content && node.model.data.content.version">
+            <span [innerHTML]="node.model.data.content.version.text"></span>
+            <br />
+            <quill-editor>
+                <div class="ql-container ql-snow" style="border-width: 0;">
+                    <div class="ql-editor" [innerHTML]="node.model.data.content.version.text"></div>
+                </div>
+            </quill-editor>
+        </ng-container>
+
     </cdk-nested-tree-node>
 
     <!-- This is the tree node template for expandable nodes -->
@@ -31,6 +42,16 @@
 <!--        <button mat-raised-button (click)="openDialog(node.model)">-->
 <!--            <i class="fas fa-pencil-alt"></i>-->
 <!--        </button>-->
+
+        <!-- This is just a test of the Quill Editor, since we have not made decorators to provide a data connection -->
+        <ng-container *ngIf="node.model.data.content && node.model.data.content.version">
+            <!-- <span [innerHTML]="node.model.data.content.version.text"></span><br /> -->
+<!--            <quill-editor>-->
+<!--                <div class="ql-container ql-snow" style="border-width: 0;">-->
+<!--                    <div class="ql-editor" [innerHTML]="node.model.data.content.version.text"></div>-->
+<!--                </div>-->
+<!--            </quill-editor>-->
+        </ng-container>
 
         <div [class.tree-invisible]="!treeControl.isExpanded(node)">
             <ng-container cdkTreeNodeOutlet></ng-container>
