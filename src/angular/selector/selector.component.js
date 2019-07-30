@@ -72,7 +72,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                             console.warn('Unable to bind data from Registry!');
                             return;
                         }
-                        ref.detach();
                         data.on('change', () => {
                             that.dataDefer(that.subscriber);
                             ref.detectChanges();

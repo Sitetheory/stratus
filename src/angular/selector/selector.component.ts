@@ -105,7 +105,7 @@ export class SelectorComponent {
                     return;
                 }
                 // Manually render upon model change
-                ref.detach();
+                // ref.detach();
                 data.on('change', () => {
                     // that.onDataChange(ref);
                     that.dataDefer(that.subscriber);
