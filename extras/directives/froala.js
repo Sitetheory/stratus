@@ -233,16 +233,30 @@
               if (scope.froalaOptions) {
                 scope.froalaOptions.froalaEditor = ctrl.froalaEditor
               }
+
+              // TODO: the code below does not work (this was the recommended method from support)
+              // https://wysiwyg-editor.froala.help/hc/en-us/articles/360001272865-How-can-I-activate-the-editor-license-
+              // TODO: remove all failed attempts to issue key
+              // Assign the License
+              // element.froalaEditor({key: Stratus.Api.Froala})
             }
           }
 
           ctrl.initListeners = function () {
+            // TODO: remove this if it doesn't work. HINT: it doesn't work right now but we need to find a way to do it.
+            // This never executes
+            // element.on('froalaEditor.initialized', function () {
+            //   //scope.$evalAsync(ctrl.updateModelView)
+            //   console.log('initizialized', ctrl.froalaEditor)
+            //   console.log('initizialized', element.froalaEditor)
+            //   element.froalaEditor({key: Stratus.Api.Froala})
+            // })
+
             if (ctrl.options.immediateAngularModelUpdate) {
               ctrl.froalaElement.on('keyup', function () {
                 scope.$evalAsync(ctrl.updateModelView)
               })
             }
-
             element.on('froalaEditor.contentChanged', function () {
               scope.$evalAsync(ctrl.updateModelView)
             })
