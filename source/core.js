@@ -267,8 +267,7 @@ Stratus.DOM.ready = function (fn) {
  * @param fn
  */
 Stratus.DOM.complete = function (fn) {
-  (document.readyState === 'complete') ? fn() : window.addEventListener('load',
-    fn)
+  (document.readyState === 'complete') ? fn() : window.addEventListener('load', fn)
 }
 
 // This function executes before the DOM has completely Unloaded,
