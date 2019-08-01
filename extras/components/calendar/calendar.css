@@ -1,6 +1,6 @@
 /* CALENDAR */
 /* On mobile this calendar product freezes the scrolling and makes the calendar scroll inside a set window so these are overrides for that */
-body[class^="SitetheoryCalendarBundle"] {
+body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
   overflow: auto !important;
 }
 .fc-scroller {
