@@ -112,6 +112,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                 core_1.Component({
                     selector: 's2-tree-dialog',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
+                    changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),
                 __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
                 __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object, forms_1.FormBuilder,
@@ -276,6 +277,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                 core_1.Component({
                     selector: 's2-tree',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+                    changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),
                 __metadata("design:paramtypes", [icon_1.MatIconRegistry,
                     platform_browser_1.DomSanitizer,

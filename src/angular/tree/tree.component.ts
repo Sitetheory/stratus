@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectorRef, Component, Inject, Injectable, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Injectable, OnInit, Output} from '@angular/core';
 import {HttpResponse} from '@angular/common/http';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 
@@ -61,6 +61,7 @@ export interface DialogData {
 @Component({
     selector: 's2-tree-dialog',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeDialogComponent implements OnInit {
 
@@ -136,6 +137,7 @@ export class TreeDialogComponent implements OnInit {
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
     // ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class TreeComponent {

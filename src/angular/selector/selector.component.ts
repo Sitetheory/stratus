@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectorRef, Component, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 // CDK
@@ -38,6 +38,7 @@ const moduleName = 'selector';
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
     // ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class SelectorComponent {
@@ -45,6 +46,13 @@ export class SelectorComponent {
     // Basic Component Settings
     title = 'selector-dnd';
     uid: string;
+
+    // Element Attributes
+    @Input() target: string;
+    @Input() id: number;
+    @Input() manifest: boolean;
+    @Input() api: object;
+    @Input() searchQuery: object;
 
     // Dependencies
     _: any;
@@ -64,11 +72,6 @@ export class SelectorComponent {
     onChange = new Subject();
     subscriber: Subscriber<any>;
     // Note: It may be better to LifeCycle::tick(), but this works for now
-
-    // API Endpoint for Selector
-    // TODO: Avoid hard-coding this...
-    url = '/Api/Content?q=value&options["showRouting"]';
-    target = 'Content';
 
     // API Connectivity for Selector
     // filteredModels: Observable<[]>;
@@ -97,6 +100,11 @@ export class SelectorComponent {
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
 
+        console.log('inputs:', this.target, this.id, this.manifest, this.api);
+
+        // Handling Pipes with Promises
+        this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber));
+
         // Data Connections
         this.fetchData()
             .then((data: any) => {
@@ -115,9 +123,6 @@ export class SelectorComponent {
                 that.dataDefer(that.subscriber);
                 ref.detectChanges();
             });
-
-        // Handling Pipes with Promises
-        this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber));
 
         // AutoComplete Binding
         // this.filteredModels = this.selectCtrl.valueChanges

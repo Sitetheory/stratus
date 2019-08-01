@@ -25,6 +25,7 @@ import * as Stratus from 'stratus';
 
 let roster: {};
 roster = {
+    // 's2-base': BaseComponent,
     's2-selector': SelectorComponent,
     's2-tree': TreeComponent
 };
