@@ -30,8 +30,8 @@ const moduleName = 'selector';
  * @title AutoComplete Selector with Drag&Drop Sorting
  */
 @Component({
-    // selector: 's2-selector-component',
-    selector: 's2-selector',
+    // selector: 'sa-selector-component',
+    selector: 'sa-selector',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
@@ -80,7 +80,7 @@ export class SelectorComponent {
     constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
 
         // Initialization
-        this.uid = _.uniqueId('s2_selector_component_');
+        this.uid = _.uniqueId('sa_selector_component_');
         Stratus.Instances[this.uid] = this;
 
         // Hoist Context
@@ -101,6 +101,10 @@ export class SelectorComponent {
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
 
         console.log('inputs:', this.target, this.id, this.manifest, this.api);
+
+        if (_.isUndefined(this.target)) {
+            this.target = 'Content';
+        }
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber));

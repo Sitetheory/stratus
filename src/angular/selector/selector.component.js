@@ -57,7 +57,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     this.selectCtrl = new forms_1.FormControl();
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
-                    this.uid = _.uniqueId('s2_selector_component_');
+                    this.uid = _.uniqueId('sa_selector_component_');
                     Stratus.Instances[this.uid] = this;
                     const that = this;
                     this._ = _;
@@ -65,6 +65,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
                     console.log('inputs:', this.target, this.id, this.manifest, this.api);
+                    if (_.isUndefined(this.target)) {
+                        this.target = 'Content';
+                    }
                     this.dataSub = new rxjs_1.Observable(subscriber => this.dataDefer(subscriber));
                     this.fetchData()
                         .then((data) => {
@@ -180,7 +183,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
             ], SelectorComponent.prototype, "searchQuery", void 0);
             SelectorComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-selector',
+                    selector: 'sa-selector',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
                     changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),

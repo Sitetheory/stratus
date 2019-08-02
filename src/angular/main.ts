@@ -25,15 +25,15 @@ function angularBoot() {
         return;
     }
     // Load Angular 8+
-    const s2 = [
-        // 's2-base',
-        's2-selector',
-        's2-tree',
+    const sa = [
+        // 'sa-base',
+        'sa-selector',
+        'sa-tree',
         'quill-editor'
     ];
-    // s2.map((element) => element).reduce((element) => element);
+    // sa.map((element) => element).reduce((element) => element);
     let detected = false;
-    s2.forEach(component => {
+    sa.forEach(component => {
         if (detected) {
             return;
         }

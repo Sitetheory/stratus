@@ -59,7 +59,7 @@ export interface DialogData {
 }
 
 @Component({
-    selector: 's2-tree-dialog',
+    selector: 'sa-tree-dialog',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -129,7 +129,7 @@ export class TreeDialogComponent implements OnInit {
  * @title Tree with Nested Drag&Drop
  */
 @Component({
-    selector: 's2-tree',
+    selector: 'sa-tree',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // templateUrl: `${systemDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
@@ -179,7 +179,7 @@ export class TreeComponent {
     ) {
 
         // Initialization
-        this.uid = _.uniqueId('s2_tree_component_');
+        this.uid = _.uniqueId('sa_tree_component_');
         Stratus.Instances[this.uid] = this;
 
         // Dependencies

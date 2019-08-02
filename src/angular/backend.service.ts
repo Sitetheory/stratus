@@ -30,7 +30,7 @@ export class BackendService {
 
     constructor(private http: HttpClient) {
         // Initialization
-        this.uid = _.uniqueId('s2_backend_service_');
+        this.uid = _.uniqueId('sa_backend_service_');
         Stratus.Instances[this.uid] = this;
 
         // Instantiate Cache

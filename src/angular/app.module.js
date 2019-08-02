@@ -55,8 +55,8 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
         ],
         execute: function () {
             roster = {
-                's2-selector': selector_component_1.SelectorComponent,
-                's2-tree': tree_component_1.TreeComponent
+                'sa-selector': selector_component_1.SelectorComponent,
+                'sa-tree': tree_component_1.TreeComponent
             };
             bootstrap = _.keys(roster)
                 .map(component => {
@@ -71,7 +71,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                 .filter((item) => !!item);
             AppModule = class AppModule {
                 constructor() {
-                    Stratus.Instances[_.uniqueId('s2_app_module_')] = this;
+                    Stratus.Instances[_.uniqueId('sa_app_module_')] = this;
                 }
             };
             AppModule = __decorate([

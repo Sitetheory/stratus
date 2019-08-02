@@ -9,7 +9,7 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
  * @title Basic Load
  */
 @Component({
-    selector: 's2-base',
+    selector: 'sa-base',
     template: '',
     // templateUrl: `${localDir}/base/base.component.html`,
     // styleUrls: [`${localDir}/base/base.component.css`],
@@ -19,6 +19,6 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 // @Injectable()
 export class BaseComponent {
     constructor() {
-        Stratus.Instances[_.uniqueId('s2_base_component_')] = this;
+        Stratus.Instances[_.uniqueId('sa_base_component_')] = this;
     }
 }

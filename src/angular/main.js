@@ -7,13 +7,13 @@ System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/co
             console.log('stopped angular boot attempt after successful boot.');
             return;
         }
-        const s2 = [
-            's2-selector',
-            's2-tree',
+        const sa = [
+            'sa-selector',
+            'sa-tree',
             'quill-editor'
         ];
         let detected = false;
-        s2.forEach(component => {
+        sa.forEach(component => {
             if (detected) {
                 return;
             }

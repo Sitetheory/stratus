@@ -27,12 +27,12 @@ System.register(["@angular/core", "stratus", "lodash"], function (exports_1, con
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
             BaseComponent = class BaseComponent {
                 constructor() {
-                    Stratus.Instances[_.uniqueId('s2_base_component_')] = this;
+                    Stratus.Instances[_.uniqueId('sa_base_component_')] = this;
                 }
             };
             BaseComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-base',
+                    selector: 'sa-base',
                     template: '',
                     changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),
