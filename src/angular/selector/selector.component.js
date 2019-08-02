@@ -65,7 +65,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
                     console.log('inputs:', this.target, this.id, this.manifest, this.api);
-                    this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
+                    this.dataSub = new rxjs_1.Observable(subscriber => this.dataDefer(subscriber));
                     this.fetchData()
                         .then((data) => {
                         if (!data.on) {
@@ -113,11 +113,14 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                 dataDefer(subscriber) {
                     this.subscriber = subscriber;
                     const models = this.dataRef();
-                    if (models && models.length) {
-                        subscriber.next(models);
+                    if (!models || !models.length) {
+                        setTimeout(() => {
+                            this.dataDefer(subscriber);
+                        }, 500);
                         return;
                     }
-                    setTimeout(() => this.dataDefer(subscriber), 500);
+                    console.log('pushed models to subscriber.');
+                    subscriber.next(models);
                 }
                 dataRef() {
                     if (!this.model) {

@@ -18,44 +18,49 @@ if (environment.production) {
 
 let boot = false;
 
-export function angularBoot() {
-  // Run Once
-  if (boot) {
-    return;
-  }
-  // Load Angular 8+
-  const s2 = [
-    's2-base',
-    's2-selector',
-    's2-tree',
-    'quill-editor'
-  ];
-  // s2.map((element) => element).reduce((element) => element);
-  let detected = false;
-  s2.forEach(component => {
-    if (detected) {
-      return;
+function angularBoot() {
+    // Run Once
+    if (boot) {
+        console.log('stopped angular boot attempt after successful boot.');
+        return;
     }
-    const elements = document.getElementsByTagName(component);
-    if (!elements || !elements.length) {
-      return;
+    // Load Angular 8+
+    const s2 = [
+        // 's2-base',
+        's2-selector',
+        's2-tree',
+        'quill-editor'
+    ];
+    // s2.map((element) => element).reduce((element) => element);
+    let detected = false;
+    s2.forEach(component => {
+        if (detected) {
+            return;
+        }
+        const elements = document.getElementsByTagName(component);
+        if (!elements || !elements.length) {
+            return;
+        }
+        detected = true;
+    });
+    if (!detected) {
+        setTimeout(() => {
+            console.log('reattempt angular boot cycle.');
+            angularBoot();
+        }, 3000);
+        return;
     }
-    detected = true;
-  });
-  if (!detected) {
-    return;
-  }
-  // Lock Bootstrapper
-  boot = true;
-  // Start App Module
-  platformBrowserDynamic().bootstrapModule(AppModule)
-    .then(module => {
-      console.log('@stratus/angular initialized successfully!');
-    })
-    // .then(module => console.log('@stratus/angular:', arguments))
-    .catch(err => console.error('@stratus/angular failed to initialize!', err))
-  ;
+    // Lock Bootstrapper
+    boot = true;
+    // Start App Module
+    platformBrowserDynamic().bootstrapModule(AppModule)
+        .then(module => {
+            console.log('@stratus/angular initialized successfully!');
+        })
+        // .then(module => console.log('@stratus/angular:', arguments))
+        .catch(err => console.error('@stratus/angular failed to initialize!', err))
+    ;
 }
 
 // Automatic Bootstrapping on DOM Complete
-DOMComplete().then(angularBoot);
+DOMComplete().then(() => angularBoot());

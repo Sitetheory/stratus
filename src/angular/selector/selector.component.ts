@@ -102,8 +102,8 @@ export class SelectorComponent {
 
         console.log('inputs:', this.target, this.id, this.manifest, this.api);
 
-        // Handling Pipes with Promises
-        this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber));
+        // Declare Observable with Subscriber (Only Happens Once)
+        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber));
 
         // Data Connections
         this.fetchData()
@@ -175,14 +175,19 @@ export class SelectorComponent {
         return this.fetched;
     }
 
+    // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
         this.subscriber = subscriber;
         const models = this.dataRef();
-        if (models && models.length) {
-            subscriber.next(models);
+        if (!models || !models.length) {
+            setTimeout(() => {
+                this.dataDefer(subscriber);
+            }, 500);
             return;
         }
-        setTimeout(() => this.dataDefer(subscriber), 500);
+        console.log('pushed models to subscriber.');
+        subscriber.next(models);
+        // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
     dataRef(): any {

@@ -4,10 +4,10 @@ System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/co
     var __moduleName = context_1 && context_1.id;
     function angularBoot() {
         if (boot) {
+            console.log('stopped angular boot attempt after successful boot.');
             return;
         }
         const s2 = [
-            's2-base',
             's2-selector',
             's2-tree',
             'quill-editor'
@@ -24,6 +24,10 @@ System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/co
             detected = true;
         });
         if (!detected) {
+            setTimeout(() => {
+                console.log('reattempt angular boot cycle.');
+                angularBoot();
+            }, 3000);
             return;
         }
         boot = true;
@@ -33,7 +37,6 @@ System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/co
         })
             .catch(err => console.error('@stratus/angular failed to initialize!', err));
     }
-    exports_1("angularBoot", angularBoot);
     return {
         setters: [
             function (_1) {
@@ -59,7 +62,7 @@ System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/co
                 core_1.enableProdMode();
             }
             boot = false;
-            dom_1.DOMComplete().then(angularBoot);
+            dom_1.DOMComplete().then(() => angularBoot());
         }
     };
 });

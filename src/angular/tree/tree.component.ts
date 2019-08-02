@@ -83,35 +83,35 @@ export class TreeDialogComponent implements OnInit {
         });
 
         this.dialogForm
-          .get('selectorInput')
-          .valueChanges
-          .pipe(
-            debounceTime(300),
-            tap(() => this.isLoading = true),
-            switchMap(value => {
-                  if (_.isString(value)) {
-                      this.lastSelectorQuery = `/Api/Content?q=${value}`;
-                  } else {
-                      this.data.content = value;
-                      this.data.url = null;
-                  }
-                  return this.backend.get(this.lastSelectorQuery)
-                    .pipe(
-                      finalize(() => this.isLoading = false),
-                    );
-              }
+            .get('selectorInput')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+                tap(() => this.isLoading = true),
+                switchMap(value => {
+                        if (_.isString(value)) {
+                            this.lastSelectorQuery = `/Api/Content?q=${value}`;
+                        } else {
+                            this.data.content = value;
+                            this.data.url = null;
+                        }
+                        return this.backend.get(this.lastSelectorQuery)
+                            .pipe(
+                                finalize(() => this.isLoading = false),
+                            );
+                    }
+                )
             )
-          )
-          .subscribe(response => {
-              if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                  return this.filteredOptions = [];
-              }
-              const payload = _.get(response.body, 'payload') || response.body;
-              if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                  return this.filteredOptions = [];
-              }
-              return this.filteredOptions = payload;
-          });
+            .subscribe(response => {
+                if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                    return this.filteredOptions = [];
+                }
+                const payload = _.get(response.body, 'payload') || response.body;
+                if (_.isEmpty(payload) || !Array.isArray(payload)) {
+                    return this.filteredOptions = [];
+                }
+                return this.filteredOptions = payload;
+            });
     }
 
     onCancelClick(): void {
