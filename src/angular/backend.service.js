@@ -31,7 +31,7 @@ System.register(["@angular/core", "@angular/common/http", "stratus", "lodash"], 
                 constructor(http) {
                     this.http = http;
                     this.title = 'tree-dnd';
-                    this.uid = _.uniqueId('s2_backend_service_');
+                    this.uid = _.uniqueId('sa_backend_service_');
                     Stratus.Instances[this.uid] = this;
                     this.cache = {};
                 }

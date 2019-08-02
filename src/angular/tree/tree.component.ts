@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectorRef, Component, Inject, Injectable, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Injectable, OnInit, Output} from '@angular/core';
 import {HttpResponse} from '@angular/common/http';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 
@@ -59,8 +59,9 @@ export interface DialogData {
 }
 
 @Component({
-    selector: 's2-tree-dialog',
+    selector: 'sa-tree-dialog',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeDialogComponent implements OnInit {
 
@@ -82,35 +83,35 @@ export class TreeDialogComponent implements OnInit {
         });
 
         this.dialogForm
-          .get('selectorInput')
-          .valueChanges
-          .pipe(
-            debounceTime(300),
-            tap(() => this.isLoading = true),
-            switchMap(value => {
-                  if (_.isString(value)) {
-                      this.lastSelectorQuery = `/Api/Content?q=${value}`;
-                  } else {
-                      this.data.content = value;
-                      this.data.url = null;
-                  }
-                  return this.backend.get(this.lastSelectorQuery)
-                    .pipe(
-                      finalize(() => this.isLoading = false),
-                    );
-              }
+            .get('selectorInput')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+                tap(() => this.isLoading = true),
+                switchMap(value => {
+                        if (_.isString(value)) {
+                            this.lastSelectorQuery = `/Api/Content?q=${value}`;
+                        } else {
+                            this.data.content = value;
+                            this.data.url = null;
+                        }
+                        return this.backend.get(this.lastSelectorQuery)
+                            .pipe(
+                                finalize(() => this.isLoading = false),
+                            );
+                    }
+                )
             )
-          )
-          .subscribe(response => {
-              if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                  return this.filteredOptions = [];
-              }
-              const payload = _.get(response.body, 'payload') || response.body;
-              if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                  return this.filteredOptions = [];
-              }
-              return this.filteredOptions = payload;
-          });
+            .subscribe(response => {
+                if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                    return this.filteredOptions = [];
+                }
+                const payload = _.get(response.body, 'payload') || response.body;
+                if (_.isEmpty(payload) || !Array.isArray(payload)) {
+                    return this.filteredOptions = [];
+                }
+                return this.filteredOptions = payload;
+            });
     }
 
     onCancelClick(): void {
@@ -128,7 +129,7 @@ export class TreeDialogComponent implements OnInit {
  * @title Tree with Nested Drag&Drop
  */
 @Component({
-    selector: 's2-tree',
+    selector: 'sa-tree',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // templateUrl: `${systemDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
@@ -136,6 +137,7 @@ export class TreeDialogComponent implements OnInit {
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
     // ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class TreeComponent {
@@ -177,7 +179,7 @@ export class TreeComponent {
     ) {
 
         // Initialization
-        this.uid = _.uniqueId('s2_tree_component_');
+        this.uid = _.uniqueId('sa_tree_component_');
         Stratus.Instances[this.uid] = this;
 
         // Dependencies

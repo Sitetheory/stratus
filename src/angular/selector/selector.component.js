@@ -57,15 +57,18 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     this.selectCtrl = new forms_1.FormControl();
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
-                    this.url = '/Api/Content?q=value&options["showRouting"]';
-                    this.target = 'Content';
-                    this.uid = _.uniqueId('s2_selector_component_');
+                    this.uid = _.uniqueId('sa_selector_component_');
                     Stratus.Instances[this.uid] = this;
                     const that = this;
                     this._ = _;
                     this.sanitizer = sanitizer;
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
+                    console.log('inputs:', this.target, this.id, this.manifest, this.api);
+                    if (_.isUndefined(this.target)) {
+                        this.target = 'Content';
+                    }
+                    this.dataSub = new rxjs_1.Observable(subscriber => this.dataDefer(subscriber));
                     this.fetchData()
                         .then((data) => {
                         if (!data.on) {
@@ -79,7 +82,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                         that.dataDefer(that.subscriber);
                         ref.detectChanges();
                     });
-                    this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
                 }
                 drop(event) {
                     const models = this.dataRef();
@@ -114,11 +116,14 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                 dataDefer(subscriber) {
                     this.subscriber = subscriber;
                     const models = this.dataRef();
-                    if (models && models.length) {
-                        subscriber.next(models);
+                    if (!models || !models.length) {
+                        setTimeout(() => {
+                            this.dataDefer(subscriber);
+                        }, 500);
                         return;
                     }
-                    setTimeout(() => this.dataDefer(subscriber), 500);
+                    console.log('pushed models to subscriber.');
+                    subscriber.next(models);
                 }
                 dataRef() {
                     if (!this.model) {
@@ -156,10 +161,31 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     return '';
                 }
             };
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", String)
+            ], SelectorComponent.prototype, "target", void 0);
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Number)
+            ], SelectorComponent.prototype, "id", void 0);
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Boolean)
+            ], SelectorComponent.prototype, "manifest", void 0);
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Object)
+            ], SelectorComponent.prototype, "api", void 0);
+            __decorate([
+                core_1.Input(),
+                __metadata("design:type", Object)
+            ], SelectorComponent.prototype, "searchQuery", void 0);
             SelectorComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-selector',
+                    selector: 'sa-selector',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+                    changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),
                 __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, core_1.ChangeDetectorRef])
             ], SelectorComponent);

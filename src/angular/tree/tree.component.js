@@ -110,8 +110,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
             };
             TreeDialogComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-tree-dialog',
+                    selector: 'sa-tree-dialog',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
+                    changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),
                 __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
                 __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object, forms_1.FormBuilder,
@@ -130,7 +131,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                     this.onChange = new rxjs_1.Subject();
                     this.treeControl = new tree_1.NestedTreeControl(node => node.child || []);
                     this.hasChild = (index, node) => node.child && node.child.length > 0;
-                    this.uid = _.uniqueId('s2_tree_component_');
+                    this.uid = _.uniqueId('sa_tree_component_');
                     Stratus.Instances[this.uid] = this;
                     this._ = _;
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
@@ -274,8 +275,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
             };
             TreeComponent = __decorate([
                 core_1.Component({
-                    selector: 's2-tree',
+                    selector: 'sa-tree',
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
+                    changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),
                 __metadata("design:paramtypes", [icon_1.MatIconRegistry,
                     platform_browser_1.DomSanitizer,

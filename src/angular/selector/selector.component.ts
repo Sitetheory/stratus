@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectorRef, Component, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 // CDK
@@ -30,14 +30,15 @@ const moduleName = 'selector';
  * @title AutoComplete Selector with Drag&Drop Sorting
  */
 @Component({
-    // selector: 's2-selector-component',
-    selector: 's2-selector',
+    // selector: 'sa-selector-component',
+    selector: 'sa-selector',
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
     // ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class SelectorComponent {
@@ -45,6 +46,13 @@ export class SelectorComponent {
     // Basic Component Settings
     title = 'selector-dnd';
     uid: string;
+
+    // Element Attributes
+    @Input() target: string;
+    @Input() id: number;
+    @Input() manifest: boolean;
+    @Input() api: object;
+    @Input() searchQuery: object;
 
     // Dependencies
     _: any;
@@ -65,11 +73,6 @@ export class SelectorComponent {
     subscriber: Subscriber<any>;
     // Note: It may be better to LifeCycle::tick(), but this works for now
 
-    // API Endpoint for Selector
-    // TODO: Avoid hard-coding this...
-    url = '/Api/Content?q=value&options["showRouting"]';
-    target = 'Content';
-
     // API Connectivity for Selector
     // filteredModels: Observable<[]>;
     // filteredModels: any;
@@ -77,7 +80,7 @@ export class SelectorComponent {
     constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
 
         // Initialization
-        this.uid = _.uniqueId('s2_selector_component_');
+        this.uid = _.uniqueId('sa_selector_component_');
         Stratus.Instances[this.uid] = this;
 
         // Hoist Context
@@ -97,6 +100,15 @@ export class SelectorComponent {
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
 
+        console.log('inputs:', this.target, this.id, this.manifest, this.api);
+
+        if (_.isUndefined(this.target)) {
+            this.target = 'Content';
+        }
+
+        // Declare Observable with Subscriber (Only Happens Once)
+        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber));
+
         // Data Connections
         this.fetchData()
             .then((data: any) => {
@@ -115,9 +127,6 @@ export class SelectorComponent {
                 that.dataDefer(that.subscriber);
                 ref.detectChanges();
             });
-
-        // Handling Pipes with Promises
-        this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber));
 
         // AutoComplete Binding
         // this.filteredModels = this.selectCtrl.valueChanges
@@ -170,14 +179,19 @@ export class SelectorComponent {
         return this.fetched;
     }
 
+    // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
         this.subscriber = subscriber;
         const models = this.dataRef();
-        if (models && models.length) {
-            subscriber.next(models);
+        if (!models || !models.length) {
+            setTimeout(() => {
+                this.dataDefer(subscriber);
+            }, 500);
             return;
         }
-        setTimeout(() => this.dataDefer(subscriber), 500);
+        console.log('pushed models to subscriber.');
+        subscriber.next(models);
+        // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
     dataRef(): any {

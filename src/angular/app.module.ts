@@ -25,8 +25,9 @@ import * as Stratus from 'stratus';
 
 let roster: {};
 roster = {
-    's2-selector': SelectorComponent,
-    's2-tree': TreeComponent
+    // 'sa-base': BaseComponent,
+    'sa-selector': SelectorComponent,
+    'sa-tree': TreeComponent
 };
 
 const bootstrap = _.keys(roster)
@@ -94,6 +95,6 @@ const bootstrap = _.keys(roster)
 })
 export class AppModule {
     constructor() {
-        Stratus.Instances[_.uniqueId('s2_app_module_')] = this;
+        Stratus.Instances[_.uniqueId('sa_app_module_')] = this;
     }
 }

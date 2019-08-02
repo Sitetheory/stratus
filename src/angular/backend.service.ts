@@ -8,45 +8,45 @@ import * as _ from 'lodash';
 
 // Interfaces
 export interface Query {
-  fetched: number;
-  data: Observable<HttpResponse<any>>;
+    fetched: number;
+    data: Observable<HttpResponse<any>>;
 }
 
 export interface QueryMap {
-  [key: string]: Query;
+    [key: string]: Query;
 }
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class BackendService {
 
-  // Basic Component Settings
-  title = 'tree-dnd';
-  uid: string;
+    // Basic Component Settings
+    title = 'tree-dnd';
+    uid: string;
 
-  // HTTP Logic
-  cache: QueryMap;
+    // HTTP Logic
+    cache: QueryMap;
 
-  constructor(private http: HttpClient) {
-    // Initialization
-    this.uid = _.uniqueId('s2_backend_service_');
-    Stratus.Instances[this.uid] = this;
+    constructor(private http: HttpClient) {
+        // Initialization
+        this.uid = _.uniqueId('sa_backend_service_');
+        Stratus.Instances[this.uid] = this;
 
-    // Instantiate Cache
-    this.cache = {};
-  }
-
-  get(url: string): Observable<HttpResponse<any>> {
-    if (!_.has(this.cache, url)) {
-      const now = new Date();
-      const data = this.http.get(url, { observe: 'response' });
-      this.cache[url] = {
-        fetched: now.valueOf(),
-        data
-      };
-      return data;
+        // Instantiate Cache
+        this.cache = {};
     }
-    return this.cache[url].data;
-  }
+
+    get(url: string): Observable<HttpResponse<any>> {
+        if (!_.has(this.cache, url)) {
+            const now = new Date();
+            const data = this.http.get(url, { observe: 'response' });
+            this.cache[url] = {
+                fetched: now.valueOf(),
+                data
+            };
+            return data;
+        }
+        return this.cache[url].data;
+    }
 }
