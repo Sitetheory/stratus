@@ -1,13 +1,13 @@
 {
   "name": "stratus.js",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "description": "This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.",
   "main": "stratus.html",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "gulp dist && gulp compile && gulp compress && gulp lint",
+    "test": "gulp dist && gulp compile && gulp compress && gulp lint && ng lint",
     "karma": "node_modules/karma/bin/karma start karma.conf.js --single-run",
     "mocha": "mocha --recursive --reporter mochawesome --reporter-options reportDir=reports"
   },
@@ -24,11 +24,13 @@
   "keywords": [
     "sitetheory",
     "stratus",
-    "widgets",
     "angular",
-    "backbone",
+    "angularjs",
+    "react",
     "underscore",
-    "lodash"
+    "lodash",
+    "javascript",
+    "typescript"
   ],
   "engines": {
     "yarn": ">= 1.0.0"

@@ -2,8 +2,8 @@
 
 ##### Overview
 
-The Stratus Library is a designer-centric MVC framework.
+This is a minimalistic framework that becomes progressively more complex on-demand.
 
 ##### Implications
 
-* Anything that alters the DOM needs to be located in the HTML
+* We provide as many settings in the HTML as possible to ease app design.
