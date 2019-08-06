@@ -1,46 +1,88 @@
 ## Angular Usage
 
-##### Overview
+This is the TypeScript version of Angular, which utilizes the TypeScript version of Stratus.
 
-Core Types:
-
-* Component
-* Directive
-* Filter
-* Service
+Note: This portion of the project is in heavy development and is subject to change.
 
 ##### Component
 
-More soon.
+A Component takes on a full HTML tag, as opposed to Directives which are accessible as a decorator inside another tag.
 
-```js
-// These examples will be expanded
-if (tbd) console.log('tbd');
+```html
+<sa-component></sa-component>
 ```
 
 ##### Directive
 
-More soon.
+A Directive is only a decorator for an HTML tag, as opposed to Components which are the entire tag.
 
-```js
-// These examples will be expanded
-if (tbd) console.log('tbd');
+```html
+<span saDirective></span>
 ```
 
-##### Filter
+##### XHRs
 
-More soon.
+We currently handle XHRs with our Data Service, inside your respective Component or Directive.
 
-```js
-// These examples will be expanded
-if (tbd) console.log('tbd');
-```
+```typescript
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {BackendService} from '@stratus/angular/backend.service';
+import * as _ from 'lodash';
 
-##### Service
+@Component({
+    selector: 'sa-data-component',
+    templateUrl: 'data.component.html',
+})
+export class DataComponent implements OnInit {
 
-More soon.
+    filteredOptions: any[];
+    dialogForm: FormGroup;
+    isLoading = false;
+    lastSelectorQuery: string;
 
-```js
-// These examples will be expanded
-if (tbd) console.log('tbd');
+    content: any;
+    url: string;
+
+    constructor(
+        private fb: FormBuilder,
+        private backend: BackendService
+    ) {}
+
+    ngOnInit() {
+        this.dialogForm = this.fb.group({
+            selectorInput: this.content
+        });
+
+        this.dialogForm
+            .get('selectorInput')
+            .valueChanges
+            .pipe(
+                debounceTime(300),
+                tap(() => this.isLoading = true),
+                switchMap(value => {
+                        if (_.isString(value)) {
+                            this.lastSelectorQuery = `/Api/Content?q=${value}`;
+                        } else {
+                            this.content = value;
+                            this.url = null;
+                        }
+                        return this.backend.get(this.lastSelectorQuery)
+                            .pipe(
+                                finalize(() => this.isLoading = false),
+                            );
+                    }
+                )
+            )
+            .subscribe(response => {
+                if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                    return this.filteredOptions = [];
+                }
+                const payload = _.get(response.body, 'payload') || response.body;
+                if (_.isEmpty(payload) || !Array.isArray(payload)) {
+                    return this.filteredOptions = [];
+                }
+                return this.filteredOptions = payload;
+            });
+    }
+}
 ```
