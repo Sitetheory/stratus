@@ -10,22 +10,26 @@
 -->
 
 <div class="selected-list">
-    <h3 class="selected-list-header border-default border-default-bottom" [textContent]="'Selected ' + target + ' Items'"></h3>
-    <p class="note">Drag to reorder</p>
-    <div cdkDropList class="list-unstyled" (cdkDropListDropped)="drop($event)">
+    <div class="selected-list-header border-default border-default-bottom">
+        <h3 [textContent]="'Selected ' + target + ' Items'"></h3>
+        <p class="note">Drag to reorder</p>
+    </div>
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
         <div class="selected-list-row selected-box" *ngFor="let selectedModel of dataSub | async" cdkDrag>
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
-            <div class="selected-list-container" layout="row" layout-align="space-between center">
-                <div class="column-image position-anchor" no-flex>
-                    <div class="image position-all" no-flex stratus-src
+            <div class="selected-list-container clearfix">
+                <div class="column-image st-grid column15">
+                    <div class="image" no-flex stratus-src
                          [ngStyle]="{'background': 'url(' + findImage(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}"
-                    ></div>
+                    >
+                        <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                    </div>
                 </div>
-                <div class="column-title" flex>
+                <div class="column-title st-grid column70">
                     <h3 [innerHTML]="selectedModel.version.title || (selectedModel.contentType.controller=='Content\\Module' ? selectedModel.version.meta.identifier : 'Untitled ' + selectedModel.contentType.name + ' (' + selectedModel.id + ')')"></h3>
-                    <span class="routing" [textContent]="(selectedModel.routing && selectedModel.routing.length) ? ('/' + _.first(selectedModel.routing).url) : 'No Route Present!'"></span>
+                    <span class="routing" [textContent]="(selectedModel.routing && selectedModel.routing.length) ? ('/' + _.first(selectedModel.routing).url) : ''"></span>
                 </div>
-                <div no-flex>
+                <div class="st-grid column15">
                     <button mat-button
                             [matTooltip]="'Delete ' + target"
                             aria-label="Delete Item"
