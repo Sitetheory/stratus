@@ -147,19 +147,21 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     let priority = 0;
                     _.each(models, (model) => model.priority = priority++);
                 }
-                findImage(model) {
-                    const mime = _.get(model, 'version.images[0].mime');
-                    if (mime === undefined) {
-                        return '';
-                    }
-                    if (mime.indexOf('image') !== -1) {
-                        return _.get(model, 'version.images[0].src');
-                    }
-                    else if (mime.indexOf('video') !== -1) {
-                        return _.get(model, 'version.images[0].meta.thumbnail_small');
-                    }
-                    return '';
-                }
+                // TODO: if we were going to use this, it needs to actually pass in the media collection, not the model, because we would need to pass in images, shellImages, or video, etc. But we don't really need this if we can do this in the HTML directly
+                // findImage(model) {
+                //     // NOTE: this is probably not necessary since we standardize all this in the media.src and don't use meta.thumbnail_*
+                //     const mime = _.get(model, 'version.images[0].mime');
+                //     if (mime === undefined) {
+                //         return '';
+                //     }
+                //     if (mime.indexOf('image') !== -1) {
+                //         return _.get(model, 'version.images[0].src');
+                //     }
+                //     else if (mime.indexOf('video') !== -1) {
+                //         return _.get(model, 'version.images[0].src');
+                //     }
+                //     return '';
+                // }
             };
             __decorate([
                 core_1.Input(),
