@@ -10,22 +10,54 @@
 -->
 
 <div class="selected-list">
-    <h3 class="selected-list-header border-default border-default-bottom" [textContent]="'Selected ' + target + ' Items'"></h3>
-    <p class="note">Drag to reorder</p>
-    <div cdkDropList class="list-unstyled" (cdkDropListDropped)="drop($event)">
+    <div class="selected-list-header border-default border-default-bottom">
+        <h3 [textContent]="'Selected ' + target + ' Items'"></h3>
+        <p class="note">Drag to reorder</p>
+    </div>
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
         <div class="selected-list-row selected-box" *ngFor="let selectedModel of dataSub | async" cdkDrag>
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
-            <div class="selected-list-container" layout="row" layout-align="space-between center">
-                <div class="column-image position-anchor" no-flex>
-                    <div class="image position-all" no-flex stratus-src
-                         [ngStyle]="{'background': 'url(' + findImage(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}"
-                    ></div>
+            <div class="selected-list-container">
+                <div class="column-image position-anchor">
+
+
+                    <!--<div class="image" no-flex stratus-src-->
+                         <!--[ngStyle]="{'background': 'url(' + findImage(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}"-->
+                    <!--&gt;-->
+                        <!--<img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">-->
+                    <!--</div>-->
+
+                    <div class="image position-all"
+                         *ngIf="selectedModel.version.images.length || selectedModel.version.shellImages.length"
+                         stratus-src
+                         [ngStyle]="{'background': 'url(' + (selectedModel.version.images.length ? selectedModel.version.images[0].src : selectedModel.version.shellImages.length ? selectedModel.version.shellImages[0].src : null) + ') no-repeat center center', 'background-size': 'cover'}"></div>
+
+
+                    <div class="image position-all" *ngIf="!selectedModel.version.images.length && !selectedModel.version.shellImages.length && selectedModel.version.videos.length"
+                         [ngStyle]="{'background': 'url(' + selectedModel.version.videos[0].src + ') no-repeat center center', 'background-size': 'cover'}"></div>
+
+                    <!-- Icon for items with no image -->
+                    <div class="no-image-icon position-all" *ngIf="!selectedModel.version.images.length && !selectedModel.version.videos.length && !selectedModel.version.shellImages.length" [ngClass]="selectedModel.contentType.class + '-background-color'">
+
+                        <!-- TODO: Make this icon work -->
+                        <!--<mat-icon class="content-type-icon position-center" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
+                    </div>
+
+                    <!-- Shapeholder -->
+                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                
                 </div>
-                <div class="column-title" flex>
+                <div class="column-title">
+                    <div class="content-type" *ngIf="selectedModel.contentType.iconResource">
+                        <!-- TODO: path needs to be marked as safe with DomSanitizer: https://material.angular.io/components/icon/overview#svg-icons -->
+                        <!--<mat-icon  class="content-type-icon" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
+                        <span class="comment content-type-name font-body" [ngClass]="(selectedModel.contentType.name | lowercase) + '-color'" [innerHTML]="selectedModel.contentType.name"></span>
+                    </div>
+
                     <h3 [innerHTML]="selectedModel.version.title || (selectedModel.contentType.controller=='Content\\Module' ? selectedModel.version.meta.identifier : 'Untitled ' + selectedModel.contentType.name + ' (' + selectedModel.id + ')')"></h3>
-                    <span class="routing" [textContent]="(selectedModel.routing && selectedModel.routing.length) ? ('/' + _.first(selectedModel.routing).url) : 'No Route Present!'"></span>
+                    <span class="routing" [textContent]="(selectedModel.routing && selectedModel.routing.length) ? ('/' + _.first(selectedModel.routing).url) : ''"></span>
                 </div>
-                <div no-flex>
+                <div class="column-action">
                     <button mat-button
                             [matTooltip]="'Delete ' + target"
                             aria-label="Delete Item"
