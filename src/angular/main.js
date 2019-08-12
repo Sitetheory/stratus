@@ -1,6 +1,6 @@
-System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/core", "@angular/platform-browser-dynamic", "@stratus/environments/environment", "@stratus/angular/app.module"], function (exports_1, context_1) {
+System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/core", "@angular/platform-browser-dynamic", "@stratus/angular/app.module", "@stratus/core/environment"], function (exports_1, context_1) {
     "use strict";
-    var dom_1, core_1, platform_browser_dynamic_1, environment_1, app_module_1, boot;
+    var dom_1, core_1, platform_browser_dynamic_1, app_module_1, environment_1, boot;
     var __moduleName = context_1 && context_1.id;
     function angularBoot() {
         if (boot) {
@@ -25,7 +25,6 @@ System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/co
         });
         if (!detected) {
             setTimeout(() => {
-                console.log('reattempt angular boot cycle.');
                 angularBoot();
             }, 3000);
             return;
@@ -50,15 +49,15 @@ System.register(["@stratus/angular/polyfills", "@stratus/core/dom", "@angular/co
             function (platform_browser_dynamic_1_1) {
                 platform_browser_dynamic_1 = platform_browser_dynamic_1_1;
             },
-            function (environment_1_1) {
-                environment_1 = environment_1_1;
-            },
             function (app_module_1_1) {
                 app_module_1 = app_module_1_1;
+            },
+            function (environment_1_1) {
+                environment_1 = environment_1_1;
             }
         ],
         execute: function () {
-            if (environment_1.environment.production) {
+            if (null === environment_1.cookie('env')) {
                 core_1.enableProdMode();
             }
             boot = false;
