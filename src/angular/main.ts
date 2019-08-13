@@ -9,10 +9,13 @@ import {enableProdMode} from '@angular/core';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 // Bootstrap
-import {environment} from '@stratus/environments/environment';
 import {AppModule} from '@stratus/angular/app.module';
 
-if (environment.production) {
+// Stratus Core
+import {cookie} from '@stratus/core/environment';
+
+// Switch Environment Appropriately
+if (null === cookie('env')) {
     enableProdMode();
 }
 
@@ -45,7 +48,7 @@ function angularBoot() {
     });
     if (!detected) {
         setTimeout(() => {
-            console.log('reattempt angular boot cycle.');
+            // console.log('reattempt angular boot cycle.');
             angularBoot();
         }, 3000);
         return;
