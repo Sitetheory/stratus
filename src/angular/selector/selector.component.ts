@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, Output} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
 // CDK
@@ -21,6 +21,10 @@ const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
 const systemDir = '@stratus/angular';
 const moduleName = 'selector';
 
+const has = (object: object, path: string): boolean => {
+    return _.has(object, path) && !_.isEmpty(_.get(object, path));
+};
+
 // export interface Model {
 //     completed: boolean;
 //     data: object;
@@ -41,7 +45,7 @@ const moduleName = 'selector';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class SelectorComponent {
+export class SelectorComponent { // implements OnInit
 
     // Basic Component Settings
     title = 'selector-dnd';
@@ -55,7 +59,9 @@ export class SelectorComponent {
     @Input() searchQuery: object;
 
     // Dependencies
-    _: any;
+    _ = _;
+    has = has;
+    log = console.log;
     sanitizer: DomSanitizer;
     selectCtrl = new FormControl();
 
@@ -87,7 +93,6 @@ export class SelectorComponent {
         const that = this;
 
         // Dependencies
-        this._ = _;
         this.sanitizer = sanitizer;
 
         // SVG Icons
@@ -139,7 +144,7 @@ export class SelectorComponent {
     }
 
     // ngOnInit(): void {
-    //     console.info('ngOnInit!');
+    //     console.info('selector.ngOnInit');
     // }
 
     // ngDoCheck(): void {
@@ -258,16 +263,16 @@ export class SelectorComponent {
         _.each(models, (model) => model.priority = priority++);
     }
 
-    findImage(model: any) {
-        const mime = _.get(model, 'version.images[0].mime');
-        if (mime === undefined) {
-            return '';
-        }
-        if (mime.indexOf('image') !== -1) {
-            return _.get(model, 'version.images[0].src');
-        } else if (mime.indexOf('video') !== -1) {
-            return _.get(model, 'version.images[0].meta.thumbnail_small');
-        }
-        return '';
-    }
+    // findImage(model: any): string {
+    //     const mime = _.get(model, 'version.images[0].mime');
+    //     if (mime === undefined) {
+    //         return '';
+    //     }
+    //     if (mime.indexOf('image') !== -1) {
+    //         return _.get(model, 'version.images[0].src') || _.get(model, 'version.shellImages[0].src') || '';
+    //     } else if (mime.indexOf('video') !== -1) {
+    //         return _.get(model, 'version.images[0].meta.thumbnail_small') || '';
+    //     }
+    //     return '';
+    // }
 }
