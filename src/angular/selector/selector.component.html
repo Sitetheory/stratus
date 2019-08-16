@@ -15,11 +15,12 @@
         <p class="note">Drag to reorder</p>
     </div>
     <div cdkDropList (cdkDropListDropped)="drop($event)">
+        <!--<span class="selectedModels" style="display: none" [textContent]="dataSub | async | json"></span>-->
+        <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
         <div class="selected-list-row selected-box" *ngFor="let selectedModel of dataSub | async" cdkDrag>
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
             <div class="selected-list-container">
                 <div class="column-image position-anchor">
-
 
                     <!--<div class="image" no-flex stratus-src-->
                          <!--[ngStyle]="{'background': 'url(' + findImage(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}"-->
@@ -28,16 +29,20 @@
                     <!--</div>-->
 
                     <div class="image position-all"
-                         *ngIf="selectedModel.version.images.length || selectedModel.version.shellImages.length"
+                         *ngIf="has(selectedModel, 'version.images') || has(selectedModel, 'version.shellImages')"
                          stratus-src
-                         [ngStyle]="{'background': 'url(' + (selectedModel.version.images.length ? selectedModel.version.images[0].src : selectedModel.version.shellImages.length ? selectedModel.version.shellImages[0].src : null) + ') no-repeat center center', 'background-size': 'cover'}"></div>
+                         [ngStyle]="{'background': 'url(' + (has(selectedModel, 'version.images') ? selectedModel.version.images[0].src : has(selectedModel, 'version.shellImages') ? selectedModel.version.shellImages[0].src : null) + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
 
-
-                    <div class="image position-all" *ngIf="!selectedModel.version.images.length && !selectedModel.version.shellImages.length && selectedModel.version.videos.length"
-                         [ngStyle]="{'background': 'url(' + selectedModel.version.videos[0].src + ') no-repeat center center', 'background-size': 'cover'}"></div>
+                    <div class="image position-all"
+                         *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.shellImages') && has(selectedModel, 'version.videos')"
+                         [ngStyle]="{'background': 'url(' + selectedModel.version.videos[0].src + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
 
                     <!-- Icon for items with no image -->
-                    <div class="no-image-icon position-all" *ngIf="!selectedModel.version.images.length && !selectedModel.version.videos.length && !selectedModel.version.shellImages.length" [ngClass]="selectedModel.contentType.class + '-background-color'">
+                    <div class="no-image-icon position-all"
+                         *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.videos') && !has(selectedModel, 'version.shellImages')"
+                         [ngClass]="selectedModel.contentType.class + '-background-color'">
 
                         <!-- TODO: Make this icon work -->
                         <!--<mat-icon class="content-type-icon position-center" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
@@ -54,8 +59,8 @@
                         <span class="comment content-type-name font-body" [ngClass]="(selectedModel.contentType.name | lowercase) + '-color'" [innerHTML]="selectedModel.contentType.name"></span>
                     </div>
 
-                    <h3 [innerHTML]="selectedModel.version.title || (selectedModel.contentType.controller=='Content\\Module' ? selectedModel.version.meta.identifier : 'Untitled ' + selectedModel.contentType.name + ' (' + selectedModel.id + ')')"></h3>
-                    <span class="routing" [textContent]="(selectedModel.routing && selectedModel.routing.length) ? ('/' + _.first(selectedModel.routing).url) : ''"></span>
+                    <h3 [innerHTML]="selectedModel.version.title || (selectedModel.contentType.controller === 'Content\\Module' ? selectedModel.version.meta.identifier : 'Untitled ' + selectedModel.contentType.name + ' (' + selectedModel.id + ')')"></h3>
+                    <span class="routing" [textContent]="has(selectedModel, 'routing') ? ('/' + _.first(selectedModel.routing).url) : ''"></span>
                 </div>
                 <div class="column-action">
                     <button mat-button
