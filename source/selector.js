@@ -54,20 +54,21 @@ Stratus = _.extend(function (selector, context) {
  * @param attr
  * @param value
  * @returns {*}
- * @constructor
  */
 Stratus.Selector.attr = function (attr, value) {
   let that = this
   if (that.selection instanceof window.NodeList) {
     console.warn('Unable to find "' + attr + '" for list:', that.selection)
     return null
-  } else if (attr) {
-    if (typeof value === 'undefined') {
-      value = that.selection.getAttribute(attr)
-      return _.hydrate(value)
-    } else {
-      that.selection.setAttribute(attr, _.dehydrate(value))
-    }
+  }
+  if (!attr) {
+    return this
+  }
+  if (typeof value === 'undefined') {
+    value = that.selection.getAttribute(attr)
+    return _.hydrate(value)
+  } else {
+    that.selection.setAttribute(attr, _.dehydrate(value))
   }
   return that
 }

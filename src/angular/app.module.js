@@ -9,7 +9,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, selector_component_1, tree_component_1, ngx_quill_1, _, Stratus, roster, bootstrap, AppModule;
+    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, selector_component_1, tree_component_1, ngx_quill_1, _, Stratus, AppModule;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -54,24 +54,40 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
             }
         ],
         execute: function () {
-            roster = {
-                'sa-selector': selector_component_1.SelectorComponent,
-                'sa-tree': tree_component_1.TreeComponent
-            };
-            bootstrap = _.keys(roster)
-                .map(component => {
-                const elements = document.getElementsByTagName(component);
-                if (!elements || !elements.length) {
-                    return null;
-                }
-                return component;
-            })
-                .filter((item) => !!item)
-                .map((element) => _.get(roster, element) || null)
-                .filter((item) => !!item);
             AppModule = class AppModule {
                 constructor() {
+                    this.initialTimeout = 1000;
+                    this.instances = {};
+                    this.modules = {
+                        'sa-selector': selector_component_1.SelectorComponent,
+                        'sa-tree': tree_component_1.TreeComponent
+                    };
                     Stratus.Instances[_.uniqueId('sa_app_module_')] = this;
+                }
+                ngDoBootstrap(appRef) {
+                    this.detectBoot(appRef);
+                }
+                exponentialTimeout() {
+                    const currentTimeout = this.initialTimeout;
+                    this.initialTimeout = this.initialTimeout * 1.01;
+                    return currentTimeout;
+                }
+                detectBoot(appRef) {
+                    _.each(this.modules, (module, selector) => {
+                        const elements = document.getElementsByTagName(selector);
+                        if (!elements || !elements.length) {
+                            return;
+                        }
+                        _.each(elements, (node) => {
+                            if (node.hasAttribute('ng-version')) {
+                                return;
+                            }
+                            appRef.bootstrap(module, node);
+                        });
+                    });
+                    setTimeout(() => {
+                        this.detectBoot(appRef);
+                    }, this.exponentialTimeout());
                 }
             };
             AppModule = __decorate([
@@ -117,7 +133,6 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                         tree_component_1.TreeComponent,
                         tree_component_1.TreeDialogComponent,
                     ],
-                    bootstrap,
                     providers: []
                 }),
                 __metadata("design:paramtypes", [])

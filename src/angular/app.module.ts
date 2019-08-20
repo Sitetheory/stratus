@@ -1,6 +1,6 @@
 // Angular Core
 import {HttpClientModule} from '@angular/common/http';
-import {NgModule} from '@angular/core';
+import {ApplicationRef, ComponentFactory, NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatNativeDateModule} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
@@ -23,24 +23,24 @@ import {QuillModule} from 'ngx-quill';
 import * as _ from 'lodash';
 import * as Stratus from 'stratus';
 
-let roster: {};
-roster = {
-    // 'sa-base': BaseComponent,
-    'sa-selector': SelectorComponent,
-    'sa-tree': TreeComponent
-};
-
-const bootstrap = _.keys(roster)
-    .map(component => {
-        const elements = document.getElementsByTagName(component);
-        if (!elements || !elements.length) {
-            return null;
-        }
-        return component;
-    })
-    .filter((item) => !!item)
-    .map((element) => _.get(roster, element) || null)
-    .filter((item) => !!item);
+// let roster: {};
+// roster = {
+//     // 'sa-base': BaseComponent,
+//     'sa-selector': SelectorComponent,
+//     'sa-tree': TreeComponent
+// };
+//
+// const bootstrap = _.keys(roster)
+//     .map(component => {
+//         const elements = document.getElementsByTagName(component);
+//         if (!elements || !elements.length) {
+//             return null;
+//         }
+//         return component;
+//     })
+//     .filter((item) => !!item)
+//     .map((element) => _.get(roster, element) || null)
+//     .filter((item) => !!item);
 
 @NgModule({
     imports: [
@@ -77,6 +77,7 @@ const bootstrap = _.keys(roster)
                 ]
             }
         })
+        // SelectorComponent.forRoot()
     ],
     entryComponents: [
         BaseComponent,
@@ -90,11 +91,51 @@ const bootstrap = _.keys(roster)
         TreeComponent,
         TreeDialogComponent,
     ],
-    bootstrap,
+    // bootstrap,
     providers: []
 })
 export class AppModule {
+    // node: true || false
+    initialTimeout = 1000;
+    instances = {};
+    modules = {
+        // 'sa-base': BaseComponent,
+        'sa-selector': SelectorComponent,
+        'sa-tree': TreeComponent
+    };
     constructor() {
         Stratus.Instances[_.uniqueId('sa_app_module_')] = this;
+    }
+    ngDoBootstrap(appRef: ApplicationRef) {
+        this.detectBoot(appRef);
+    }
+    // Fade out detection cycles
+    exponentialTimeout() {
+        const currentTimeout = this.initialTimeout;
+        this.initialTimeout = this.initialTimeout * 1.01;
+        return currentTimeout;
+    }
+    detectBoot(appRef: ApplicationRef) {
+        _.each(this.modules, (module, selector) => {
+            // if (!(module instanceof ComponentFactory)) {
+            //     return;
+            // }
+            const elements = document.getElementsByTagName(selector);
+            if (!elements || !elements.length) {
+                return;
+            }
+            _.each(elements, (node) => {
+                if (node.hasAttribute('ng-version')) {
+                    return;
+                }
+                // console.log('ngDoBootstrap detected:', node);
+                // FIXME: The Modules aren't explicitly the correct type
+                // @ts-ignore
+                appRef.bootstrap(module, node);
+            });
+        });
+        setTimeout(() => {
+            this.detectBoot(appRef);
+        }, this.exponentialTimeout());
     }
 }
