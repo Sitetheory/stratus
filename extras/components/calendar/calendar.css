@@ -259,7 +259,8 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
 .fc .article-layout h4 {
   font-size: 12px;
 }
-.fc .article-layout p {
+.fc .article-layout p,
+.fc .article-layout ul li {
   font-size: 15px;
 }
 .fc .article-layout .event-time,
@@ -272,7 +273,6 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
 }
 /* Popup */
 #calendar-event-dialogue {
-  overflow: hidden;
   max-width: 1000px;
 }
 @media (max-width: 959px) {
@@ -352,7 +352,8 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
 #calendar-event-dialogue .event-image {
   width: 100%;
 }
-#calendar-event-dialogue p.event-description {
+#calendar-event-dialogue p.event-description,
+#calendar-event-dialogue ul li {
   font-size: 15px;
   color: #333;
 }
