@@ -205,12 +205,11 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
 
   &.fc-unthemed td.fc-today {
     font-weight: bold;
-    background: rgba(0,0,0,.05);
+    background: rgba(0,0,0,.03);
   }
 
   &.fc-unthemed .fc-dayGridMonth-view td.fc-today {
-    color: #FFF;
-    background: rgba(0,0,0,.8);
+    background: rgba(0,0,0,.03);
     &.fc-day-top {
       background: none;
     }
@@ -272,7 +271,8 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
     h4 {
       font-size: 12px;
     }
-    p {
+    p,
+    ul li {
       font-size: 15px;
     }
     .event-time,
@@ -292,7 +292,6 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
 /* Popup */
 
 #calendar-event-dialogue {
-  overflow: hidden;
   max-width: 1000px;
   @media (max-width: 959px) {
     overflow: unset;
@@ -358,7 +357,8 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
   .event-image {
     width: 100%;
   }
-  p.event-description {
+  p.event-description,
+  ul li {
     font-size: 15px;
     color: #333;
   }
