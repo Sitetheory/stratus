@@ -1002,3 +1002,34 @@ Stratus.Internals.UpdateEnvironment = function (request) {
     })
   }
 }
+
+/**
+ * @type {{renderer: null, webgl: null, vendor: null, debugInfo: null}}
+ */
+const rendererData = {
+  webgl: null,
+  debugInfo: null,
+  vendor: null,
+  renderer: null
+}
+
+/**
+ * @param full
+ * @returns {*}
+ */
+Stratus.Internals.Renderer = function (full) {
+  if (rendererData.webgl) {
+    return full ? rendererData : rendererData.renderer
+  }
+  const canvas = document.createElement('canvas')
+  try {
+    rendererData.webgl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+  } catch (e) {}
+  if (!rendererData.webgl) {
+    return full ? rendererData : rendererData.renderer
+  }
+  rendererData.debugInfo = rendererData.webgl.getExtension('WEBGL_debug_renderer_info')
+  rendererData.vendor = rendererData.webgl.getParameter(rendererData.debugInfo.UNMASKED_VENDOR_WEBGL)
+  rendererData.renderer = rendererData.webgl.getParameter(rendererData.debugInfo.UNMASKED_RENDERER_WEBGL)
+  return full ? rendererData : rendererData.renderer
+}
