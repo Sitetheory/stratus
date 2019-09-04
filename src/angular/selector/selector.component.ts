@@ -1,29 +1,29 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, Output} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, Output} from '@angular/core'
+import {FormControl} from '@angular/forms'
 
 // CDK
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
 
 // External
-import {Observable, Subject, Subscriber} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {Observable, Subject, Subscriber} from 'rxjs'
+import {map, startWith} from 'rxjs/operators'
 
 // SVG Icons
-import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser';
-import {MatIconRegistry} from '@angular/material/icon';
+import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser'
+import {MatIconRegistry} from '@angular/material/icon'
 
-import * as Stratus from 'stratus';
-import * as _ from 'lodash';
-import {SubjectSubscriber} from 'rxjs/internal/Subject';
+import * as Stratus from 'stratus'
+import * as _ from 'lodash'
+import {SubjectSubscriber} from 'rxjs/internal/Subject'
 
-const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
-const systemDir = '@stratus/angular';
-const moduleName = 'selector';
+const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
+const systemDir = '@stratus/angular'
+const moduleName = 'selector'
 
 const has = (object: object, path: string): boolean => {
-    return _.has(object, path) && !_.isEmpty(_.get(object, path));
-};
+    return _.has(object, path) && !_.isEmpty(_.get(object, path))
+}
 
 // export interface Model {
 //     completed: boolean;
@@ -48,35 +48,35 @@ const has = (object: object, path: string): boolean => {
 export class SelectorComponent { // implements OnInit
 
     // Basic Component Settings
-    title = 'selector-dnd';
-    uid: string;
+    title = 'selector-dnd'
+    uid: string
 
     // Element Attributes
-    @Input() target: string;
-    @Input() id: number;
-    @Input() manifest: boolean;
-    @Input() api: object;
-    @Input() searchQuery: object;
+    @Input() target: string
+    @Input() id: number
+    @Input() manifest: boolean
+    @Input() api: object
+    @Input() searchQuery: object
 
     // Dependencies
-    _ = _;
-    has = has;
-    log = console.log;
-    sanitizer: DomSanitizer;
-    selectCtrl = new FormControl();
+    _ = _
+    has = has
+    log = console.log
+    sanitizer: DomSanitizer
+    selectCtrl = new FormControl()
 
     // Stratus Data Connectivity
-    registry = new Stratus.Data.Registry();
-    fetched: any;
-    data: any;
-    collection: any;
+    registry = new Stratus.Data.Registry()
+    fetched: any
+    data: any
+    collection: any
     // @Output() model: any;
-    model: any;
+    model: any
 
     // Observable Connection
-    dataSub: Observable<[]>;
-    onChange = new Subject();
-    subscriber: Subscriber<any>;
+    dataSub: Observable<[]>
+    onChange = new Subject()
+    subscriber: Subscriber<any>
     // Note: It may be better to LifeCycle::tick(), but this works for now
 
     // API Connectivity for Selector
@@ -86,52 +86,52 @@ export class SelectorComponent { // implements OnInit
     constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
 
         // Initialization
-        this.uid = _.uniqueId('sa_selector_component_');
-        Stratus.Instances[this.uid] = this;
+        this.uid = _.uniqueId('sa_selector_component_')
+        Stratus.Instances[this.uid] = this
 
         // Hoist Context
-        const that = this;
+        const that = this
 
         // Dependencies
-        this.sanitizer = sanitizer;
+        this.sanitizer = sanitizer
 
         // SVG Icons
         iconRegistry.addSvgIcon(
             'delete',
             sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg')
-        );
+        )
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
+        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
 
-        console.log('inputs:', this.target, this.id, this.manifest, this.api);
+        console.log('inputs:', this.target, this.id, this.manifest, this.api)
 
         if (_.isUndefined(this.target)) {
-            this.target = 'Content';
+            this.target = 'Content'
         }
 
         // Declare Observable with Subscriber (Only Happens Once)
-        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber));
+        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
 
         // Data Connections
         this.fetchData()
             .then((data: any) => {
                 if (!data.on) {
-                    console.warn('Unable to bind data from Registry!');
-                    return;
+                    console.warn('Unable to bind data from Registry!')
+                    return
                 }
                 // Manually render upon model change
                 // ref.detach();
                 data.on('change', () => {
                     // that.onDataChange(ref);
-                    that.dataDefer(that.subscriber);
-                    ref.detectChanges();
-                });
+                    that.dataDefer(that.subscriber)
+                    ref.detectChanges()
+                })
                 // that.onDataChange(ref);
-                that.dataDefer(that.subscriber);
-                ref.detectChanges();
-            });
+                that.dataDefer(that.subscriber)
+                ref.detectChanges()
+            })
 
         // AutoComplete Binding
         // this.filteredModels = this.selectCtrl.valueChanges
@@ -152,62 +152,62 @@ export class SelectorComponent { // implements OnInit
     // }
 
     drop(event: CdkDragDrop<string[]>) {
-        const models = this.dataRef();
+        const models = this.dataRef()
         if (!models || !models.length) {
-            return;
+            return
         }
-        moveItemInArray(models, event.previousIndex, event.currentIndex);
-        let priority = 0;
-        _.each(models, (model) => model.priority = priority++);
-        this.model.trigger('change');
+        moveItemInArray(models, event.previousIndex, event.currentIndex)
+        let priority = 0
+        _.each(models, (model) => model.priority = priority++)
+        this.model.trigger('change')
     }
 
     remove(model: any) {
-        const models = this.dataRef();
+        const models = this.dataRef()
         if (!models || !models.length) {
-            return;
+            return
         }
-        const index: number = models.indexOf(model);
+        const index: number = models.indexOf(model)
         if (index === -1) {
-            return;
+            return
         }
-        models.splice(index, 1);
+        models.splice(index, 1)
         // this.prioritize();
-        this.model.trigger('change');
+        this.model.trigger('change')
     }
 
     // Data Connections
     async fetchData(): Promise<any> {
         if (!this.fetched) {
-            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this);
+            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
         }
-        return this.fetched;
+        return this.fetched
     }
 
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
-        this.subscriber = subscriber;
-        const models = this.dataRef();
+        this.subscriber = subscriber
+        const models = this.dataRef()
         if (!models || !models.length) {
             setTimeout(() => {
-                this.dataDefer(subscriber);
-            }, 500);
-            return;
+                this.dataDefer(subscriber)
+            }, 500)
+            return
         }
-        console.log('pushed models to subscriber.');
-        subscriber.next(models);
+        console.log('pushed models to subscriber.')
+        subscriber.next(models)
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
     dataRef(): any {
         if (!this.model) {
-            return [];
+            return []
         }
-        const models = _.get(this.model, 'data.version.modules');
+        const models = _.get(this.model, 'data.version.modules')
         if (!models || !_.isArray(models)) {
-            return [];
+            return []
         }
-        return models;
+        return models
     }
 
     // selectedModel (observer: any) : any {
@@ -250,17 +250,17 @@ export class SelectorComponent { // implements OnInit
 
     onDataChange(ref: ChangeDetectorRef) {
         // that.prioritize();
-        this.dataDefer(this.subscriber);
-        ref.detectChanges();
+        this.dataDefer(this.subscriber)
+        ref.detectChanges()
     }
 
     prioritize() {
-        const models = this.dataRef();
+        const models = this.dataRef()
         if (!models || !models.length) {
-            return;
+            return
         }
-        let priority = 0;
-        _.each(models, (model) => model.priority = priority++);
+        let priority = 0
+        _.each(models, (model) => model.priority = priority++)
     }
 
     // findImage(model: any): string {

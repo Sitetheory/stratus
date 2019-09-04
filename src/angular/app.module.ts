@@ -1,27 +1,27 @@
 // Angular Core
-import {HttpClientModule} from '@angular/common/http';
-import {ApplicationRef, ComponentFactory, NgModule} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatNativeDateModule} from '@angular/material';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HttpClientModule} from '@angular/common/http'
+import {ApplicationRef, ComponentFactory, NgModule} from '@angular/core'
+import {FormsModule, ReactiveFormsModule} from '@angular/forms'
+import {MatNativeDateModule} from '@angular/material'
+import {BrowserModule} from '@angular/platform-browser'
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 
 // Stratus Modules
-import {MaterialModules} from '@stratus/angular/material';
+import {MaterialModules} from '@stratus/angular/material'
 
 // Stratus Core Components
-import {BaseComponent} from '@stratus/angular/base/base.component';
+import {BaseComponent} from '@stratus/angular/base/base.component'
 
 // Stratus Custom Components
-import {SelectorComponent} from '@stratus/angular/selector/selector.component';
-import {TreeComponent, TreeDialogComponent} from '@stratus/angular/tree/tree.component';
+import {SelectorComponent} from '@stratus/angular/selector/selector.component'
+import {TreeComponent, TreeDialogComponent} from '@stratus/angular/tree/tree.component'
 
 // Angular Components
-import {QuillModule} from 'ngx-quill';
+import {QuillModule} from 'ngx-quill'
 
 // External Dependencies
-import * as _ from 'lodash';
-import * as Stratus from 'stratus';
+import * as _ from 'lodash'
+import * as Stratus from 'stratus'
 
 // let roster: {};
 // roster = {
@@ -96,46 +96,46 @@ import * as Stratus from 'stratus';
 })
 export class AppModule {
     // node: true || false
-    initialTimeout = 1000;
-    instances = {};
+    initialTimeout = 1000
+    instances = {}
     modules = {
         // 'sa-base': BaseComponent,
         'sa-selector': SelectorComponent,
         'sa-tree': TreeComponent
-    };
+    }
     constructor() {
-        Stratus.Instances[_.uniqueId('sa_app_module_')] = this;
+        Stratus.Instances[_.uniqueId('sa_app_module_')] = this
     }
     ngDoBootstrap(appRef: ApplicationRef) {
-        this.detectBoot(appRef);
+        this.detectBoot(appRef)
     }
     // Fade out detection cycles
     exponentialTimeout() {
-        const currentTimeout = this.initialTimeout;
-        this.initialTimeout = this.initialTimeout * 1.01;
-        return currentTimeout;
+        const currentTimeout = this.initialTimeout
+        this.initialTimeout = this.initialTimeout * 1.01
+        return currentTimeout
     }
     detectBoot(appRef: ApplicationRef) {
         _.each(this.modules, (module, selector) => {
             // if (!(module instanceof ComponentFactory)) {
             //     return;
             // }
-            const elements = document.getElementsByTagName(selector);
+            const elements = document.getElementsByTagName(selector)
             if (!elements || !elements.length) {
-                return;
+                return
             }
             _.each(elements, (node) => {
                 if (node.hasAttribute('ng-version')) {
-                    return;
+                    return
                 }
                 // console.log('ngDoBootstrap detected:', node);
                 // FIXME: The Modules aren't explicitly the correct type
                 // @ts-ignore
-                appRef.bootstrap(module, node);
-            });
-        });
+                appRef.bootstrap(module, node)
+            })
+        })
         setTimeout(() => {
-            this.detectBoot(appRef);
-        }, this.exponentialTimeout());
+            this.detectBoot(appRef)
+        }, this.exponentialTimeout())
     }
 }

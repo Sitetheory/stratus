@@ -1,8 +1,8 @@
 // Internal
-import {seconds} from '@stratus/core/conversion';
+import {seconds} from '@stratus/core/conversion'
 
 // External
-import * as _ from 'lodash';
+import * as _ from 'lodash'
 
 // Cookie Getter & Setter
 export function cookie(name: any, value?: any, expires?: any, path?: any, domain?: any) {
@@ -12,36 +12,36 @@ export function cookie(name: any, value?: any, expires?: any, path?: any, domain
         expires,
         path: path || '/',
         domain
-    };
+    }
     if (name && typeof name === 'object') {
-        _.extend(request, name);
+        _.extend(request, name)
     }
-    let data;
+    let data
     if (typeof request.value === 'undefined') {
-        const search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name + ')=(.*?)(?:;|$)', 'g');
-        data = search.exec(document.cookie);
-        return null === data ? null : data[1];
+        const search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name + ')=(.*?)(?:;|$)', 'g')
+        data = search.exec(document.cookie)
+        return null === data ? null : data[1]
     }
-    data = request.name + '=' + escape(request.value) + ';';
+    data = request.name + '=' + escape(request.value) + ';'
     if (request.expires) {
         if (request.expires instanceof Date) {
             if (isNaN(request.expires.getTime())) {
-                request.expires = new Date();
+                request.expires = new Date()
             }
         } else {
-            request.expires = new Date(new Date().getTime() + seconds(request.expires) * 1000);
+            request.expires = new Date(new Date().getTime() + seconds(request.expires) * 1000)
         }
-        data += 'expires=' + request.expires.toUTCString() + ';';
+        data += 'expires=' + request.expires.toUTCString() + ';'
     }
     if (request.path) {
-        data += 'path=' + request.path + ';';
+        data += 'path=' + request.path + ';'
     }
     if (request.domain) {
-        data += 'domain=' + request.domain + ';';
+        data += 'domain=' + request.domain + ';'
     }
-    document.cookie = data;
+    document.cookie = data
 }
 
 export class Environment {
-    cookie = cookie;
+    cookie = cookie
 }

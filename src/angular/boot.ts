@@ -1,20 +1,20 @@
-import {DOMComplete} from '@stratus/core/dom';
+import {DOMComplete} from '@stratus/core/dom'
 
 // Fade out detection cycles
-let initialTimeout = 1000;
+let initialTimeout = 1000
 function exponentialTimeout() {
-    const currentTimeout = initialTimeout;
-    initialTimeout = initialTimeout * 1.2;
-    return currentTimeout;
+    const currentTimeout = initialTimeout
+    initialTimeout = initialTimeout * 1.2
+    return currentTimeout
 }
 
 // Attempt to boot Angular
-let boot = false;
+let boot = false
 function angularBoot() {
     // Run Once
     if (boot) {
-        console.log('stopped angular boot attempt after successful boot.');
-        return;
+        console.log('stopped angular boot attempt after successful boot.')
+        return
     }
     // Load Angular 8+
     const sa = [
@@ -22,31 +22,31 @@ function angularBoot() {
         'sa-selector',
         'sa-tree',
         'quill-editor'
-    ];
+    ]
     // sa.map((element) => element).reduce((element) => element);
-    let detected = false;
+    let detected = false
     sa.forEach(component => {
         if (detected) {
-            return;
+            return
         }
-        const elements = document.getElementsByTagName(component);
+        const elements = document.getElementsByTagName(component)
         if (!elements || !elements.length) {
-            return;
+            return
         }
-        detected = true;
-    });
+        detected = true
+    })
     if (!detected) {
         setTimeout(() => {
             // console.log('reattempt angular boot cycle.');
-            angularBoot();
-        }, exponentialTimeout());
-        return;
+            angularBoot()
+        }, exponentialTimeout())
+        return
     }
     // Lock Bootstrapper
-    boot = true;
+    boot = true
     // Require Main
-    require('@stratus/angular/main');
+    require('@stratus/angular/main')
 }
 
 // Automatic Bootstrapping on DOM Complete
-DOMComplete().then(() => angularBoot());
+DOMComplete().then(() => angularBoot())
