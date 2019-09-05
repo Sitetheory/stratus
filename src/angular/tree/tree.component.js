@@ -68,43 +68,75 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                     this.data = data;
                     this.fb = fb;
                     this.backend = backend;
-                    this.isLoading = false;
+                    this.isContentLoading = false;
+                    this.isParentLoading = false;
                 }
                 ngOnInit() {
-                    this.dialogForm = this.fb.group({
-                        selectorInput: this.data.content
+                    this.dialogContentForm = this.fb.group({
+                        contentSelectorInput: this.data.content
                     });
-                    this.dialogForm
-                        .get('selectorInput')
+                    this.dialogContentForm
+                        .get('contentSelectorInput')
                         .valueChanges
-                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isLoading = true), operators_1.switchMap(value => {
+                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isContentLoading = true), operators_1.switchMap(value => {
                         if (_.isString(value)) {
-                            this.lastSelectorQuery = `/Api/Content?q=${value}`;
+                            this.lastContentSelectorQuery = `/Api/Content?q=${value}`;
                         }
                         else {
                             this.data.content = value;
                             this.data.url = null;
                         }
-                        return this.backend.get(this.lastSelectorQuery)
-                            .pipe(operators_1.finalize(() => this.isLoading = false));
+                        return this.backend.get(this.lastContentSelectorQuery)
+                            .pipe(operators_1.finalize(() => this.isContentLoading = false));
                     }))
                         .subscribe(response => {
                         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                            return this.filteredOptions = [];
+                            return this.filteredContentOptions = [];
                         }
                         const payload = _.get(response.body, 'payload') || response.body;
                         if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                            return this.filteredOptions = [];
+                            return this.filteredContentOptions = [];
                         }
-                        return this.filteredOptions = payload;
+                        return this.filteredContentOptions = payload;
+                    });
+                    this.dialogParentForm = this.fb.group({
+                        parentSelectorInput: this.data.nestParent
+                    });
+                    this.dialogParentForm
+                        .get('parentSelectorInput')
+                        .valueChanges
+                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isParentLoading = true), operators_1.switchMap(value => {
+                        if (_.isString(value)) {
+                            this.lastParentSelectorQuery = `/Api/MenuLink?q=${value}`;
+                        }
+                        else {
+                            this.data.nestParent = value;
+                        }
+                        return this.backend.get(this.lastParentSelectorQuery)
+                            .pipe(operators_1.finalize(() => this.isParentLoading = false));
+                    }))
+                        .subscribe(response => {
+                        if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                            return this.filteredParentOptions = [];
+                        }
+                        const payload = _.get(response.body, 'payload') || response.body;
+                        if (_.isEmpty(payload) || !Array.isArray(payload)) {
+                            return this.filteredParentOptions = [];
+                        }
+                        return this.filteredParentOptions = payload;
                     });
                 }
                 onCancelClick() {
                     this.dialogRef.close();
                 }
-                displayOption(option) {
+                displayVersionTitle(option) {
                     if (option) {
                         return _.get(option, 'version.title');
+                    }
+                }
+                displayName(option) {
+                    if (option) {
+                        return _.get(option, 'name');
                     }
                 }
             };
@@ -239,6 +271,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                             id: model.data.id || null,
                             name: model.data.name || '',
                             target: model.data.url ? 'url' : 'content',
+                            level: model.data.nestParent === null ? 'top' : 'child',
                             content: model.data.content || null,
                             url: model.data.url || null,
                             priority: model.data.priority || 0,
@@ -253,11 +286,15 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                         if (!result || _.isEmpty(result)) {
                             return;
                         }
+                        if (result.level && result.level === 'top') {
+                            result.nestParent = null;
+                        }
                         [
                             'name',
                             'content',
                             'url',
-                            'priority'
+                            'priority',
+                            'nestParent'
                         ].forEach(attr => {
                             if (!_.has(result, attr)) {
                                 return;
