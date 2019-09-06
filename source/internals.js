@@ -1014,22 +1014,23 @@ const rendererData = {
 }
 
 /**
- * @param full
+ * @param brief
  * @returns {*}
+ * @constructor
  */
-Stratus.Internals.Renderer = function (full) {
+Stratus.Internals.Renderer = function (brief) {
   if (rendererData.webgl) {
-    return full ? rendererData : rendererData.renderer
+    return brief ? rendererData.renderer : rendererData
   }
   const canvas = document.createElement('canvas')
   try {
     rendererData.webgl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
   } catch (e) {}
   if (!rendererData.webgl) {
-    return full ? rendererData : rendererData.renderer
+    return brief ? rendererData.renderer : rendererData
   }
   rendererData.debugInfo = rendererData.webgl.getExtension('WEBGL_debug_renderer_info')
   rendererData.vendor = rendererData.webgl.getParameter(rendererData.debugInfo.UNMASKED_VENDOR_WEBGL)
   rendererData.renderer = rendererData.webgl.getParameter(rendererData.debugInfo.UNMASKED_RENDERER_WEBGL)
-  return full ? rendererData : rendererData.renderer
+  return brief ? rendererData.renderer : rendererData
 }

@@ -462,7 +462,20 @@ Stratus.DOM.ready(function () {
 // Stratus Events are more accurate than the DOM, so nothing is added to this
 // stub.
 Stratus.DOM.complete(function () {
-  Stratus('body').removeClass('loading unloaded').addClass('loaded')
+  // Renderer Detection
+  const renderer = Stratus.Internals.Renderer()
+  Stratus.Environment.set('render', renderer)
+
+  // List Qualified Vendors
+  const qualifiedVendors = [
+    'NVIDIA Corporation'
+  ]
+
+  const quality = (renderer.vendor && qualifiedVendors.indexOf(renderer.vendor) >= 0) ? 'high' : 'low'
+  Stratus.Environment.set('quality', quality)
+
+  // Handle Classes (for Design Timing)
+  Stratus('body').removeClass('loading unloaded').addClass(`loaded quality-${quality}`)
 
   // Load Angular 8+
   if (!hamlet.isUndefined('System')) {
