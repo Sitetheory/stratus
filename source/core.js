@@ -467,11 +467,27 @@ Stratus.DOM.complete(function () {
   Stratus.Environment.set('render', renderer)
 
   // List Qualified Vendors
-  const qualifiedVendors = [
-    'NVIDIA Corporation'
-  ]
+  const qualified = {
+    vendors: [
+      'NVIDIA Corporation',
+      'ATI Technologies Inc.',
+      'Qualcomm'
+    ],
+    renderers: [
+      'NVIDIA',
+      'GeForce',
+      'AMD',
+      'ATI',
+      'Radeon',
+      'Adreno'
+    ]
+  }
 
-  const quality = (renderer.vendor && qualifiedVendors.indexOf(renderer.vendor) >= 0) ? 'high' : 'low'
+  const quality = (
+    (renderer.vendor && qualified.vendors.indexOf(renderer.vendor) >= 0) ||
+    (renderer.renderer && _.map(qualified.renderers, (renderer) => _.startsWith(renderer, renderer.renderer).length))
+  ) ? 'high' : 'low'
+
   Stratus.Environment.set('quality', quality)
 
   // Handle Classes (for Design Timing)
