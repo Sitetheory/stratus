@@ -76,9 +76,9 @@ const location = {
       'umd/header.js',
       'source/prototype.js',
       'source/external.js',
+      'source/selector.js',
       'source/prototypes.js',
       'source/internals.js',
-      'source/selector.js',
       'loaders/angular.bind.js',
       'source/core.js',
       'umd/footer.js'

@@ -146,6 +146,8 @@
             }
             // Execute Custom Methods
             onScreen()
+            // Success
+            return true
           } else {
             if (target.hasClass('on-screen')) {
               target.removeClass('on-screen')
@@ -155,6 +157,8 @@
             }
             // Execute Custom Methods
             offScreen()
+            // Failure
+            return false
           }
         }
 
@@ -162,6 +166,7 @@
         // Ensure OnScroll is listening
         Stratus.Internals.OnScroll()
 
+        // Listen for Screen Changes
         Stratus.Environment.on('change:viewPortChange', calculate)
         Stratus.Environment.on('change:lastScroll', function () {
           // If no scrolling has occurred remain false
@@ -207,6 +212,23 @@
             }
           }
         })
+
+        // Run Initial & Delayed Calculations
+        const limit = 8
+        let i = 0
+        const delayed = function () {
+          if (++i > limit) {
+            // console.log('exit:', target)
+            return
+          }
+          // console.log('attempt:', i, target)
+          if (calculate()) {
+            // console.log('success:', target, 'attempts:', i)
+            return
+          }
+          setTimeout(delayed, 250)
+        }
+        delayed()
       }
     }
   }
