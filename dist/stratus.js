@@ -1736,6 +1736,20 @@ Stratus.Internals.XHR = function (request) {
   return promise
 }
 
+// TODO: Compare this method with above
+// const XHR = (method, url, data) => new Promise((resolve, reject) => {
+//   const request = new XMLHttpRequest()
+//   request.onload = (event) => {
+//     (request.status >= 200 && request.status < 400) ? resolve(request.response) : reject(request)
+//   }
+//   request.onerror = (event) => {
+//     reject(request)
+//   }
+//   request.open(method, url, true)
+//   request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8')
+//   request.send(data)
+// })
+
 // Internal Anchor Capture
 // -----------------------
 
