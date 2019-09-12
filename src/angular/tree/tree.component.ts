@@ -378,15 +378,15 @@ export class TreeComponent {
         if (!tree || !tree.length) {
             return
         }
+        console.log('container.data:', event.container.data)
         event.container.element.nativeElement.classList.remove('active')
         if (this.canBeDropped(event)) {
             const movingItem: any = event.item.data
-            console.log(movingItem, event.container.data)
-            event.container.data.children.push(movingItem)
+            // event.container.data.children.push(movingItem)
             // event.previousContainer.data.children = event.previousContainer.data.children.filter((child) => child.uid !== movingItem.uid)
         } else {
             moveItemInArray(
-                event.container.data.children,
+                (event.container.data ? event.container.data.children : []) || [],
                 event.previousIndex,
                 event.currentIndex
             )
@@ -418,12 +418,12 @@ export class TreeComponent {
 
         return event.previousContainer.id !== event.container.id
             && this.isNotSelfDrop(event)
-            && !this.hasChild(movingNode, event.container.data)
+            && !this.hasChild(movingNode, event.item.data)
     }
 
     private isNotSelfDrop(event: CdkDragDrop<any> | CdkDragEnter<any> | CdkDragExit<any>): boolean {
-        console.log('isNotSelfDrop', event.container.data, event.item.data)
-        return !_.isEqual(event.container.data, event.item.data)
+        console.log('isNotSelfDrop', event.item.data, event.item.data)
+        return !_.isEqual(event.item.data, event.item.data)
     }
 
     // getChildren(model: any): any[] {

@@ -22,7 +22,8 @@ sa-tree .tree-node {
     background-color: white; }
   sa-tree .tree-node-drop-list {
     min-height: 20px;
-    border-radius: 4px; }
+    border-style: dashed !important;
+    border-radius: 4px !important; }
 
 sa-tree .tree-dialog-content .radio-group {
   display: flex;
@@ -33,7 +34,7 @@ sa-tree .tree-dialog-content .radio-button {
   margin: 5px; }
 
 sa-tree .tree.cdk-drop-list-dragging {
-  background: lightgreen; }
+  background: lightgreen !important; }
 
 sa-tree .tree.cdk-drop-list-receiving {
-  background: lightyellow; }
+  background: lightyellow !important; }

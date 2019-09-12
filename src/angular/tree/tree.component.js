@@ -238,14 +238,13 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     if (!tree || !tree.length) {
                         return;
                     }
+                    console.log('container.data:', event.container.data);
                     event.container.element.nativeElement.classList.remove('active');
                     if (this.canBeDropped(event)) {
                         const movingItem = event.item.data;
-                        console.log(movingItem, event.container.data);
-                        event.container.data.children.push(movingItem);
                     }
                     else {
-                        drag_drop_1.moveItemInArray(event.container.data.children, event.previousIndex, event.currentIndex);
+                        drag_drop_1.moveItemInArray((event.container.data ? event.container.data.children : []) || [], event.previousIndex, event.currentIndex);
                     }
                     console.log(`model drop: ${event.item.data.model.get('name')}`, `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`, `index change: ${event.previousIndex} -> ${event.currentIndex}`);
                 }
@@ -253,11 +252,11 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     const movingNode = event.item.data;
                     return event.previousContainer.id !== event.container.id
                         && this.isNotSelfDrop(event)
-                        && !this.hasChild(movingNode, event.container.data);
+                        && !this.hasChild(movingNode, event.item.data);
                 }
                 isNotSelfDrop(event) {
-                    console.log('isNotSelfDrop', event.container.data, event.item.data);
-                    return !_.isEqual(event.container.data, event.item.data);
+                    console.log('isNotSelfDrop', event.item.data, event.item.data);
+                    return !_.isEqual(event.item.data, event.item.data);
                 }
                 openDialog(model) {
                     if (!model || !_.has(model, 'data')) {
