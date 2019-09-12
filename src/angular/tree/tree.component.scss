@@ -1,7 +1,9 @@
 /* Based on Angular Material 8+ */
 sa-tree {
-  .tree-invisible {
-    display: none;
+  .full {
+    &-width {
+      width: 100%;
+    }
   }
   .tree {
     ul, li {
@@ -9,22 +11,51 @@ sa-tree {
       margin-bottom: 0;
       list-style-type: none;
     }
-  }
-  .tree-node {
-    display: block;
-    .tree-node {
-      padding-left: 40px;
+    &-invisible {
+      display: none;
     }
-  }
-  .radio-group {
-    display: flex;
-    flex-direction: column;
-    margin: 15px 0;
-  }
-  .radio-button {
-    margin: 5px;
-  }
-  .full-width {
-    width: 100%;
+    &-node {
+      display: block;
+      .tree-node { // be explicit for child padding
+        padding-left: 40px;
+      }
+      &-drag {
+        &-preview {
+          box-sizing: border-box;
+          border-radius: 4px;
+          padding: 10px;
+          box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+          background-color: white;
+        }
+      }
+      &-drop{
+        &-list {
+          min-height: 20px;
+          border-radius: 4px;
+        }
+      }
+    }
+    &-dialog {
+      &-content {
+        .radio{
+          &-group {
+            display: flex;
+            flex-direction: column;
+            margin: 15px 0;
+          }
+          &-button {
+            margin: 5px;
+          }
+        }
+      }
+    }
+    &.cdk-drop-list{
+      &-dragging {
+        background: lightgreen;
+      }
+      &-receiving {
+        background: lightyellow;
+      }
+    }
   }
 }

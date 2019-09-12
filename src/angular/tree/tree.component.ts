@@ -5,7 +5,7 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
 
 // CDK
 import {ArrayDataSource} from '@angular/cdk/collections'
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
+import { CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray } from '@angular/cdk/drag-drop'
 import {NestedTreeControl} from '@angular/cdk/tree'
 
 // Material
@@ -34,11 +34,15 @@ const moduleName = 'tree'
 
 export interface Node {
     model: any
-    child: Node[]
+    children: Node[]
 }
 
 export interface NodeMap {
     [key: number]: Node
+}
+
+export interface KeyMap {
+    [key: string]: boolean
 }
 
 // export interface Model {
@@ -71,10 +75,10 @@ export class TreeDialogComponent implements OnInit {
     isContentLoading = false
     lastContentSelectorQuery: string
 
-    filteredParentOptions: any[]
-    dialogParentForm: FormGroup
-    isParentLoading = false
-    lastParentSelectorQuery: string
+    // filteredParentOptions: any[]
+    // dialogParentForm: FormGroup
+    // isParentLoading = false
+    // lastParentSelectorQuery: string
 
     constructor(
         public dialogRef: MatDialogRef<TreeDialogComponent>,
@@ -119,39 +123,39 @@ export class TreeDialogComponent implements OnInit {
                 return this.filteredContentOptions = payload
             })
 
-        this.dialogParentForm = this.fb.group({
-            parentSelectorInput: this.data.nestParent
-        })
-
-        this.dialogParentForm
-            .get('parentSelectorInput')
-            .valueChanges
-            .pipe(
-                debounceTime(300),
-                tap(() => this.isParentLoading = true),
-                switchMap(value => {
-                        if (_.isString(value)) {
-                            this.lastParentSelectorQuery = `/Api/MenuLink?q=${value}`
-                        } else {
-                            this.data.nestParent = value
-                        }
-                        return this.backend.get(this.lastParentSelectorQuery)
-                            .pipe(
-                                finalize(() => this.isParentLoading = false),
-                            )
-                    }
-                )
-            )
-            .subscribe(response => {
-                if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                    return this.filteredParentOptions = []
-                }
-                const payload = _.get(response.body, 'payload') || response.body
-                if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                    return this.filteredParentOptions = []
-                }
-                return this.filteredParentOptions = payload
-            })
+        // this.dialogParentForm = this.fb.group({
+        //     parentSelectorInput: this.data.nestParent
+        // })
+        //
+        // this.dialogParentForm
+        //     .get('parentSelectorInput')
+        //     .valueChanges
+        //     .pipe(
+        //         debounceTime(300),
+        //         tap(() => this.isParentLoading = true),
+        //         switchMap(value => {
+        //                 if (_.isString(value)) {
+        //                     this.lastParentSelectorQuery = `/Api/MenuLink?q=${value}`
+        //                 } else {
+        //                     this.data.nestParent = value
+        //                 }
+        //                 return this.backend.get(this.lastParentSelectorQuery)
+        //                     .pipe(
+        //                         finalize(() => this.isParentLoading = false),
+        //                     )
+        //             }
+        //         )
+        //     )
+        //     .subscribe(response => {
+        //         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+        //             return this.filteredParentOptions = []
+        //         }
+        //         const payload = _.get(response.body, 'payload') || response.body
+        //         if (_.isEmpty(payload) || !Array.isArray(payload)) {
+        //             return this.filteredParentOptions = []
+        //         }
+        //         return this.filteredParentOptions = payload
+        //     })
     }
 
     onCancelClick(): void {
@@ -164,11 +168,11 @@ export class TreeDialogComponent implements OnInit {
         }
     }
 
-    displayName(option: any) {
-        if (option) {
-            return _.get(option, 'name')
-        }
-    }
+    // displayName(option: any) {
+    //     if (option) {
+    //         return _.get(option, 'name')
+    //     }
+    // }
 }
 
 /**
@@ -210,12 +214,16 @@ export class TreeComponent {
     onChange = new Subject()
     subscriber: Subscriber<any>
 
+    // Drag & Drop
+    dropListIds: string[] = []
+    dropListIdMap: KeyMap = {}
+
     // Tree Specific
     treeMap: NodeMap
-    // treeControl = new NestedTreeControl <any> (node => this.getChild(node));
-    treeControl = new NestedTreeControl <any> (node => node.child || [])
-    // hasChild = (index: number, node: any) => this.getChild(node).length > 0;
-    hasChild = (index: number, node: any) => node.child && node.child.length > 0
+    // treeControl = new NestedTreeControl <any> (node => this.getChildren(node));
+    treeControl = new NestedTreeControl <any> (node => node.children || [])
+    // hasChild = (index: number, node: any) => this.getChildren(node).length > 0;
+    hasChild = (index: number, node: any) => node.children && node.children.length > 0
 
     constructor(
         public iconRegistry: MatIconRegistry,
@@ -242,7 +250,7 @@ export class TreeComponent {
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
 
         // Hoist Context
-        const that = this
+        // const that = this
 
         // Data Connections
         this.fetchData()
@@ -268,14 +276,124 @@ export class TreeComponent {
 
         // Handling Pipes with Promises
         this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber))
+
+        // Initialize Drop List Map
+        this.dropListIdMap[`${this.uid}_drop_list`] = true
+        this.createDropListIds()
     }
 
-    drop(event: CdkDragDrop<string[]>) {
+    public remove(model: any) {
+        const models = this.dataRef()
+        if (!models || !models.length) {
+            return
+        }
+        // TODO: Handle Multi-Level Targeting
+        const index: number = models.indexOf(model)
+        if (index === -1) {
+            return
+        }
+        models.splice(index, 1)
+        this.model.trigger('change')
+    }
+
+    // Data Connections
+    public async fetchData(): Promise<any> {
+        if (!this.fetched) {
+            this.fetched = this.registry.fetch(Stratus.Select('#content-menu-primary'), this)
+        }
+        return this.fetched
+    }
+
+    private dataDefer(subscriber: Subscriber<any>) {
+        this.subscriber = subscriber
+        const tree = this.dataRef()
+        if (tree && tree.length) {
+            subscriber.next(tree)
+            return
+        }
+        setTimeout(() => this.dataDefer(subscriber), 200)
+    }
+
+    private dataRef(): Array<Node> {
+        if (!this.collection) {
+            return []
+        }
+        // TODO: Break away from the registry here...  It's not responsive enough.
+        const models = this.collection.models
+        if (!models || !_.isArray(models)) {
+            return []
+        }
+        // Convert Collection Models to Nested Tree to optimize references
+        this.treeMap = {}
+        const that = this
+        const tree: Array<Node> = []
+        _.each(models, model => {
+            const modelId = _.get(model, 'data.id')
+            const parentId = _.get(model, 'data.nestParent.id')
+            that.dropListIdMap[`${that.uid}_${modelId}_drop_list`] = true
+            if (!_.has(that.treeMap, modelId)) {
+                that.treeMap[modelId] = {
+                    model: null,
+                    children: []
+                }
+            }
+            that.treeMap[modelId].model = model
+            if (!parentId) {
+                tree.push(
+                    that.treeMap[modelId]
+                )
+            } else {
+                if (!_.has(that.treeMap, parentId)) {
+                    that.treeMap[parentId] = {
+                        model: null,
+                        children: []
+                    }
+                }
+                that.treeMap[parentId].children.push(
+                    that.treeMap[modelId]
+                )
+            }
+        })
+        this.createDropListIds()
+        return tree
+    }
+
+    private createDropListIds() {
+        this.dropListIds = _.keys(this.dropListIdMap)
+    }
+
+    public onDataChange(ref: ChangeDetectorRef) {
+        // that.prioritize();
+        this.dataDefer(this.subscriber)
+        ref.detectChanges()
+    }
+
+    // public get connectedDropListsIds(): string[] {
+    //     // We reverse ids here to respect items nesting hierarchy
+    //     return this.getIdsRecursive(this.parentItem).reverse()
+    // }
+
+    public onDragDrop(event: CdkDragDrop<any>) {
         const tree = this.dataRef()
         if (!tree || !tree.length) {
             return
         }
-        console.log('tree drop:', event)
+        event.container.element.nativeElement.classList.remove('active')
+        if (this.canBeDropped(event)) {
+            const movingItem: any = event.item.data
+            console.log(movingItem, event.container.data)
+            event.container.data.children.push(movingItem)
+            // event.previousContainer.data.children = event.previousContainer.data.children.filter((child) => child.uid !== movingItem.uid)
+        } else {
+            moveItemInArray(
+                event.container.data.children,
+                event.previousIndex,
+                event.currentIndex
+            )
+        }
+        console.log(`model drop: ${event.item.data.model.get('name')}`,
+            `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
+            `index change: ${event.previousIndex} -> ${event.currentIndex}`)
         // TODO: Allow Multi-Level Priorities
         // moveItemInArray(tree, event.previousIndex, event.currentIndex);
         // let priority = 0;
@@ -295,86 +413,20 @@ export class TreeComponent {
         // this.collection.throttleTrigger('change');
     }
 
-    remove(model: any) {
-        const models = this.dataRef()
-        if (!models || !models.length) {
-            return
-        }
-        // TODO: Handle Multi-Level Targeting
-        const index: number = models.indexOf(model)
-        if (index === -1) {
-            return
-        }
-        models.splice(index, 1)
-        this.model.trigger('change')
+    private canBeDropped(event: CdkDragDrop<any, any>): boolean {
+        const movingNode: any = event.item.data
+
+        return event.previousContainer.id !== event.container.id
+            && this.isNotSelfDrop(event)
+            && !this.hasChild(movingNode, event.container.data)
     }
 
-    // Data Connections
-    async fetchData(): Promise<any> {
-        if (!this.fetched) {
-            this.fetched = this.registry.fetch(Stratus.Select('#content-menu-primary'), this)
-        }
-        return this.fetched
+    private isNotSelfDrop(event: CdkDragDrop<any> | CdkDragEnter<any> | CdkDragExit<any>): boolean {
+        console.log('isNotSelfDrop', event.container.data, event.item.data)
+        return !_.isEqual(event.container.data, event.item.data)
     }
 
-    dataDefer(subscriber: Subscriber<any>) {
-        this.subscriber = subscriber
-        const tree = this.dataRef()
-        if (tree && tree.length) {
-            subscriber.next(tree)
-            return
-        }
-        setTimeout(() => this.dataDefer(subscriber), 500)
-    }
-
-    dataRef(): Array<Node> {
-        if (!this.collection) {
-            return []
-        }
-        const models = this.collection.models
-        if (!models || !_.isArray(models)) {
-            return []
-        }
-        // Convert Collection Models to Nested Tree to optimize references
-        this.treeMap = {}
-        const that = this
-        const tree: Array<Node> = []
-        _.each(models, model => {
-            const modelId = _.get(model, 'data.id')
-            const parentId = _.get(model, 'data.nestParent.id')
-            if (!_.has(that.treeMap, modelId)) {
-                that.treeMap[modelId] = {
-                    model: null,
-                    child: []
-                }
-            }
-            that.treeMap[modelId].model = model
-            if (!parentId) {
-                tree.push(
-                    that.treeMap[modelId]
-                )
-            } else {
-                if (!_.has(that.treeMap, parentId)) {
-                    that.treeMap[parentId] = {
-                        model: null,
-                        child: []
-                    }
-                }
-                that.treeMap[parentId].child.push(
-                    that.treeMap[modelId]
-                )
-            }
-        })
-        return tree
-    }
-
-    onDataChange(ref: ChangeDetectorRef) {
-        // that.prioritize();
-        this.dataDefer(this.subscriber)
-        ref.detectChanges()
-    }
-
-    // getChild(model: any): any[] {
+    // getChildren(model: any): any[] {
     //     if (!model) {
     //         return [];
     //     }
@@ -386,7 +438,7 @@ export class TreeComponent {
     //     })
     // }
 
-    openDialog(model: any): void {
+    public openDialog(model: any): void {
         if (!model || !_.has(model, 'data')) {
             return
         }

@@ -1,11 +1,32 @@
-<cdk-tree [dataSource]="dataSub | async" [treeControl]="treeControl" cdkDropList (cdkDropListDropped)="drop($event)">
+<cdk-tree cdkDropList
+          class="tree tree-node-drop-list"
+          [dataSource]="dataSub | async"
+          [treeControl]="treeControl"
+          [id]="uid + '_drop_list'"
+          [cdkDropListConnectedTo]="dropListsIds"
+          (cdkDropListDropped)="onDragDrop($event)">
     <!-- This is the tree node template for leaf nodes -->
-    <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="tree-node" cdkDrag>
+    <cdk-nested-tree-node cdkDrag
+                          class="tree-node"
+                          *cdkTreeNodeDef="let node"
+                          [id]="uid + '_' + node.id"
+                          [cdkDragData]="node">
         <!-- use a disabled button to provide padding for tree leaf -->
         <button mat-icon-button disabled></button>
 
         <!-- Display Clickable Name -->
-        <span (click)="openDialog(node.model)" [textContent]="node.model.data.name"></span>
+        <span [textContent]="node.model.data.name"
+              (click)="openDialog(node.model)"></span>
+
+        <div *cdkDragPreview
+             [textContent]="node.model.data.name"
+             class="tree-node-drag-preview"></div>
+
+        <div cdkDropList
+             class="tree-node-drop-list"
+             [id]="uid + '_' + node.id + '_drop_list'"
+             [cdkDropListConnectedTo]="dropListsIds"
+             (cdkDropListDropped)="onDragDrop($event)"></div>
 
         <!-- Display Name & Dialogue Button -->
 <!--        {{node.model.data.name}}&nbsp;-->
@@ -27,15 +48,32 @@
     </cdk-nested-tree-node>
 
     <!-- This is the tree node template for expandable nodes -->
-    <cdk-nested-tree-node *cdkTreeNodeDef="let node; when: hasChild" class="tree-node" cdkDrag>
-        <button mat-icon-button [attr.aria-label]="'toggle ' + node.model.data.name" cdkTreeNodeToggle>
+    <cdk-nested-tree-node cdkDrag
+                          class="tree-node"
+                          *cdkTreeNodeDef="let node; when: hasChild"
+                          [id]="uid + '_' + node.id"
+                          [cdkDragData]="node">
+        <button cdkTreeNodeToggle
+                mat-icon-button
+                [attr.aria-label]="'toggle ' + node.model.data.name">
             <mat-icon class="mat-icon-rtl-mirror">
                 {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
         </button>
 
         <!-- Display Clickable Name -->
-        <span (click)="openDialog(node.model)" [textContent]="node.model.data.name"></span>
+        <span [textContent]="node.model.data.name"
+              (click)="openDialog(node.model)"></span>
+
+        <div *cdkDragPreview
+             [textContent]="node.model.data.name"
+             class="tree-node-drag-preview"></div>
+
+        <div cdkDropList
+             class="tree-node-drop-list"
+             [id]="uid + '_' + node.id + '_drop_list'"
+             [cdkDropListConnectedTo]="dropListsIds"
+             (cdkDropListDropped)="onDragDrop($event)"></div>
 
         <!-- Display Name & Dialogue Button -->
 <!--        {{node.model.data.name}}&nbsp;-->

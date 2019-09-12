@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "rxjs/operators", "stratus", "lodash", "@stratus/angular/backend.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "rxjs/operators", "stratus", "lodash", "@stratus/angular/backend.service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20,7 +20,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, operators_1, Stratus, _, backend_service_1, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
+    var core_1, forms_1, drag_drop_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, operators_1, Stratus, _, backend_service_1, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -29,6 +29,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
             },
             function (forms_1_1) {
                 forms_1 = forms_1_1;
+            },
+            function (drag_drop_1_1) {
+                drag_drop_1 = drag_drop_1_1;
             },
             function (tree_1_1) {
                 tree_1 = tree_1_1;
@@ -69,7 +72,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                     this.fb = fb;
                     this.backend = backend;
                     this.isContentLoading = false;
-                    this.isParentLoading = false;
                 }
                 ngOnInit() {
                     this.dialogContentForm = this.fb.group({
@@ -99,32 +101,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                         }
                         return this.filteredContentOptions = payload;
                     });
-                    this.dialogParentForm = this.fb.group({
-                        parentSelectorInput: this.data.nestParent
-                    });
-                    this.dialogParentForm
-                        .get('parentSelectorInput')
-                        .valueChanges
-                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isParentLoading = true), operators_1.switchMap(value => {
-                        if (_.isString(value)) {
-                            this.lastParentSelectorQuery = `/Api/MenuLink?q=${value}`;
-                        }
-                        else {
-                            this.data.nestParent = value;
-                        }
-                        return this.backend.get(this.lastParentSelectorQuery)
-                            .pipe(operators_1.finalize(() => this.isParentLoading = false));
-                    }))
-                        .subscribe(response => {
-                        if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                            return this.filteredParentOptions = [];
-                        }
-                        const payload = _.get(response.body, 'payload') || response.body;
-                        if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                            return this.filteredParentOptions = [];
-                        }
-                        return this.filteredParentOptions = payload;
-                    });
                 }
                 onCancelClick() {
                     this.dialogRef.close();
@@ -132,11 +108,6 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                 displayVersionTitle(option) {
                     if (option) {
                         return _.get(option, 'version.title');
-                    }
-                }
-                displayName(option) {
-                    if (option) {
-                        return _.get(option, 'name');
                     }
                 }
             };
@@ -161,14 +132,15 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                     this.selectCtrl = new forms_1.FormControl();
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
-                    this.treeControl = new tree_1.NestedTreeControl(node => node.child || []);
-                    this.hasChild = (index, node) => node.child && node.child.length > 0;
+                    this.dropListIds = [];
+                    this.dropListIdMap = {};
+                    this.treeControl = new tree_1.NestedTreeControl(node => node.children || []);
+                    this.hasChild = (index, node) => node.children && node.children.length > 0;
                     this.uid = _.uniqueId('sa_tree_component_');
                     Stratus.Instances[this.uid] = this;
                     this._ = _;
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
-                    const that = this;
                     this.fetchData()
                         .then((data) => {
                         if (!data.on) {
@@ -184,13 +156,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                         ref.detectChanges();
                     });
                     this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
-                }
-                drop(event) {
-                    const tree = this.dataRef();
-                    if (!tree || !tree.length) {
-                        return;
-                    }
-                    console.log('tree drop:', event);
+                    this.dropListIdMap[`${this.uid}_drop_list`] = true;
+                    this.createDropListIds();
                 }
                 remove(model) {
                     const models = this.dataRef();
@@ -219,7 +186,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                         subscriber.next(tree);
                         return;
                     }
-                    setTimeout(() => this.dataDefer(subscriber), 500);
+                    setTimeout(() => this.dataDefer(subscriber), 200);
                 }
                 dataRef() {
                     if (!this.collection) {
@@ -235,10 +202,11 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                     _.each(models, model => {
                         const modelId = _.get(model, 'data.id');
                         const parentId = _.get(model, 'data.nestParent.id');
+                        that.dropListIdMap[`${that.uid}_${modelId}_drop_list`] = true;
                         if (!_.has(that.treeMap, modelId)) {
                             that.treeMap[modelId] = {
                                 model: null,
-                                child: []
+                                children: []
                             };
                         }
                         that.treeMap[modelId].model = model;
@@ -249,17 +217,47 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/tree", "@angul
                             if (!_.has(that.treeMap, parentId)) {
                                 that.treeMap[parentId] = {
                                     model: null,
-                                    child: []
+                                    children: []
                                 };
                             }
-                            that.treeMap[parentId].child.push(that.treeMap[modelId]);
+                            that.treeMap[parentId].children.push(that.treeMap[modelId]);
                         }
                     });
+                    this.createDropListIds();
                     return tree;
+                }
+                createDropListIds() {
+                    this.dropListIds = _.keys(this.dropListIdMap);
                 }
                 onDataChange(ref) {
                     this.dataDefer(this.subscriber);
                     ref.detectChanges();
+                }
+                onDragDrop(event) {
+                    const tree = this.dataRef();
+                    if (!tree || !tree.length) {
+                        return;
+                    }
+                    event.container.element.nativeElement.classList.remove('active');
+                    if (this.canBeDropped(event)) {
+                        const movingItem = event.item.data;
+                        console.log(movingItem, event.container.data);
+                        event.container.data.children.push(movingItem);
+                    }
+                    else {
+                        drag_drop_1.moveItemInArray(event.container.data.children, event.previousIndex, event.currentIndex);
+                    }
+                    console.log(`model drop: ${event.item.data.model.get('name')}`, `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`, `index change: ${event.previousIndex} -> ${event.currentIndex}`);
+                }
+                canBeDropped(event) {
+                    const movingNode = event.item.data;
+                    return event.previousContainer.id !== event.container.id
+                        && this.isNotSelfDrop(event)
+                        && !this.hasChild(movingNode, event.container.data);
+                }
+                isNotSelfDrop(event) {
+                    console.log('isNotSelfDrop', event.container.data, event.item.data);
+                    return !_.isEqual(event.container.data, event.item.data);
                 }
                 openDialog(model) {
                     if (!model || !_.has(model, 'data')) {
