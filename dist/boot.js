@@ -189,7 +189,7 @@
       })
     }
   }
-})(this)
+})(this);
 
 // Configuration
 // -------------
@@ -254,7 +254,7 @@
       // THIRD PARTY: NODE MODULES
 
       /* Underscore is used in most components */
-      underscore: boot.bundle + 'stratus/node_modules/underscore/underscore' + boot.dashSuffix,
+      //underscore: boot.bundle + 'stratus/node_modules/underscore/underscore' + boot.dashSuffix,
 
       /* Lodash is used in place of Underscore in most modern components */
       lodash: boot.bundle + 'stratus/node_modules/lodash/lodash' + boot.suffix,
@@ -405,7 +405,7 @@
 
     }
   })
-})(this)
+})(this);
 
 // Initializer
 // -----------
