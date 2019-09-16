@@ -63,7 +63,7 @@
 
       // Registry Connectivity
       if ($attrs.type) {
-        let request = {
+        const request = {
           target: $attrs.type,
           decouple: true,
           api: {

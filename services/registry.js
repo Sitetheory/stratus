@@ -76,7 +76,7 @@
         }
         /* */
         let completed = 0
-        let verify = function () {
+        const verify = function () {
           if (!_.isNumber(completed) || completed !== _.size(options)) {
             return
           }

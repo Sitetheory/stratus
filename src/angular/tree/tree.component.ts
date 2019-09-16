@@ -5,8 +5,8 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
 
 // CDK
 import {ArrayDataSource} from '@angular/cdk/collections'
-import { CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray } from '@angular/cdk/drag-drop'
-import {NestedTreeControl} from '@angular/cdk/tree'
+import {CdkDragDrop, CdkDragEnter, CdkDragExit, moveItemInArray} from '@angular/cdk/drag-drop'
+import {FlatTreeControl, NestedTreeControl} from '@angular/cdk/tree'
 
 // Material
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
@@ -33,6 +33,7 @@ const systemDir = '@stratus/angular'
 const moduleName = 'tree'
 
 export interface Node {
+    id: number
     model: any
     children: Node[]
 }
@@ -98,7 +99,7 @@ export class TreeDialogComponent implements OnInit {
             .pipe(
                 debounceTime(300),
                 tap(() => this.isContentLoading = true),
-                switchMap(value => {
+                switchMap((value: any) => {
                         if (_.isString(value)) {
                             this.lastContentSelectorQuery = `/Api/Content?q=${value}`
                         } else {
@@ -112,7 +113,7 @@ export class TreeDialogComponent implements OnInit {
                     }
                 )
             )
-            .subscribe(response => {
+            .subscribe((response: any) => {
                 if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
                     return this.filteredContentOptions = []
                 }
@@ -215,13 +216,20 @@ export class TreeComponent {
     subscriber: Subscriber<any>
 
     // Drag & Drop
-    dropListIds: string[] = []
-    dropListIdMap: KeyMap = {}
+    // dropListIds: string[] = []
+    // dropListIdMap: KeyMap = {}
+    expandedNodeSet = new Set<string>()
+    dragging = false
+    expandTimeout: any
+    expandDelay = 1000
 
     // Tree Specific
     treeMap: NodeMap
-    // treeControl = new NestedTreeControl <any> (node => this.getChildren(node));
-    treeControl = new NestedTreeControl <any> (node => node.children || [])
+    dataSource: ArrayDataSource<Node>
+    // treeControl = new NestedTreeControl <any> (node => this.getChildren(node))
+    treeControl = new NestedTreeControl <any> ((node: Node) => node.children || [])
+
+    // Methods
     // hasChild = (index: number, node: any) => this.getChildren(node).length > 0;
     hasChild = (index: number, node: any) => node.children && node.children.length > 0
 
@@ -268,6 +276,7 @@ export class TreeComponent {
                     // that.onDataChange(ref);
                     // that.dataDefer(that.subscriber);
                     ref.detectChanges()
+                    this.dataSource = new ArrayDataSource(this.dataRef())
                 })
                 // that.onDataChange(ref);
                 // that.dataDefer(that.subscriber);
@@ -275,11 +284,11 @@ export class TreeComponent {
             })
 
         // Handling Pipes with Promises
-        this.dataSub = new Observable((subscriber) => this.dataDefer(subscriber))
+        this.dataSub = new Observable((subscriber: Subscriber<any>) => this.dataDefer(subscriber))
 
         // Initialize Drop List Map
-        this.dropListIdMap[`${this.uid}_drop_list`] = true
-        this.createDropListIds()
+        // this.dropListIdMap[`${this.uid}_parent_drop_list`] = true
+        // this.createDropListIds()
     }
 
     public remove(model: any) {
@@ -327,12 +336,13 @@ export class TreeComponent {
         this.treeMap = {}
         const that = this
         const tree: Array<Node> = []
-        _.each(models, model => {
+        _.each(models, (model: any) => {
             const modelId = _.get(model, 'data.id')
             const parentId = _.get(model, 'data.nestParent.id')
-            that.dropListIdMap[`${that.uid}_${modelId}_drop_list`] = true
+            // that.dropListIdMap[`${that.uid}_node_${modelId}_drop_list`] = true
             if (!_.has(that.treeMap, modelId)) {
                 that.treeMap[modelId] = {
+                    id: modelId,
                     model: null,
                     children: []
                 }
@@ -345,6 +355,7 @@ export class TreeComponent {
             } else {
                 if (!_.has(that.treeMap, parentId)) {
                     that.treeMap[parentId] = {
+                        id: parentId,
                         model: null,
                         children: []
                     }
@@ -354,18 +365,41 @@ export class TreeComponent {
                 )
             }
         })
-        this.createDropListIds()
+        // this.createDropListIds()
         return tree
     }
 
-    private createDropListIds() {
-        this.dropListIds = _.keys(this.dropListIdMap)
-    }
+    // private createDropListIds() {
+    //     this.dropListIds = _.keys(this.dropListIdMap)
+    // }
 
     public onDataChange(ref: ChangeDetectorRef) {
         // that.prioritize();
         this.dataDefer(this.subscriber)
         ref.detectChanges()
+    }
+
+    /**
+     * Experimental - opening tree nodes as you drag over them
+     */
+    public onDragStart() {
+        this.dragging = true
+    }
+    public onDragEnd() {
+        this.dragging = false
+    }
+    public onDragHover(node: Node) {
+        if (this.dragging) {
+            clearTimeout(this.expandTimeout)
+            this.expandTimeout = setTimeout(() => {
+                this.treeControl.expand(node)
+            }, this.expandDelay)
+        }
+    }
+    public onDragHoverEnd() {
+        if (this.dragging) {
+            clearTimeout(this.expandTimeout)
+        }
     }
 
     // public get connectedDropListsIds(): string[] {
@@ -374,26 +408,40 @@ export class TreeComponent {
     // }
 
     public onDragDrop(event: CdkDragDrop<any>) {
+        // ignore drops outside of the tree
+        if (!event.isPointerOverContainer) {
+            return
+        }
+        // if (!this.dataSource) {
+        //     return
+        // }
+
         const tree = this.dataRef()
         if (!tree || !tree.length) {
             return
         }
-        console.log('container.data:', event.container.data)
-        event.container.element.nativeElement.classList.remove('active')
-        if (this.canBeDropped(event)) {
-            const movingItem: any = event.item.data
-            // event.container.data.children.push(movingItem)
-            // event.previousContainer.data.children = event.previousContainer.data.children.filter((child) => child.uid !== movingItem.uid)
-        } else {
-            moveItemInArray(
-                (event.container.data ? event.container.data.children : []) || [],
-                event.previousIndex,
-                event.currentIndex
-            )
-        }
+
+        // console.log('container.data:', event.container.data)
+        // event.container.element.nativeElement.classList.remove('active')
+        // if (this.canBeDropped(event)) {
+        //     const movingItem: any = event.item.data
+        //     event.container.data.children.push(movingItem)
+        //     event.previousContainer.data.children =
+        //         event.previousContainer.data.children.filter(
+        //             (child: Node) => child.id !== movingItem.id
+        //         )
+        // } else {
+        //     moveItemInArray(
+        //         (event.container.data ? event.container.data.children : []) || [],
+        //         event.previousIndex,
+        //         event.currentIndex
+        //     )
+        // }
+
         console.log(`model drop: ${event.item.data.model.get('name')}`,
-            `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
+            // `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
             `index change: ${event.previousIndex} -> ${event.currentIndex}`)
+
         // TODO: Allow Multi-Level Priorities
         // moveItemInArray(tree, event.previousIndex, event.currentIndex);
         // let priority = 0;
@@ -411,6 +459,14 @@ export class TreeComponent {
         // this.subscriber.next(tree);
         // this.ref.detectChanges();
         // this.collection.throttleTrigger('change');
+
+        console.log('onDragDrop:',
+            {
+                event,
+                parent,
+                dataSource: this.dataSource
+            }
+        )
     }
 
     private canBeDropped(event: CdkDragDrop<any, any>): boolean {
@@ -422,7 +478,7 @@ export class TreeComponent {
     }
 
     private isNotSelfDrop(event: CdkDragDrop<any> | CdkDragEnter<any> | CdkDragExit<any>): boolean {
-        console.log('isNotSelfDrop', event.item.data, event.item.data)
+        console.log('isNotSelfDrop:', event.item.data, event.item.data)
         return !_.isEqual(event.item.data, event.item.data)
     }
 
@@ -460,7 +516,7 @@ export class TreeComponent {
         })
         this.ref.detectChanges()
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result: DialogData) => {
             if (!result || _.isEmpty(result)) {
                 return
             }

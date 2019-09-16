@@ -46,7 +46,7 @@
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
-        let $element = element instanceof jQuery ? element : jQuery(element)
+        const $element = element instanceof jQuery ? element : jQuery(element)
         $scope.elementId = $element.elementId || $ctrl.uid
         $scope.initialized = false
 
@@ -56,8 +56,8 @@
         $scope.elementId = attrs.elementId || element.uid
 
         // event can be multiple listeners: reset
-        let event = attrs.event ? attrs.event.split(' ') : []
-        let target = attrs.target ? jQuery(attrs.target) : $element
+        const event = attrs.event ? attrs.event.split(' ') : []
+        const target = attrs.target ? jQuery(attrs.target) : $element
         let spy = attrs.spy ? jQuery(attrs.spy) : $element
         if (!spy.length) {
           spy = $element
@@ -80,25 +80,25 @@
         let wipeJob = null
 
         // The distance the spy element is allowed to enter the screen before triggering 'onscreen'
-        let offset = _.hydrate(attrs.offset) || 0
+        const offset = _.hydrate(attrs.offset) || 0
 
         // The location on the page that should trigger a reset (removal of all classes). Defaults to 0 (top of page)
-        let reset = _.hydrate(attrs.reset) || 0
+        const reset = _.hydrate(attrs.reset) || 0
 
         // Custom Methods for On/Off Screen
         // TODO: Add Parsing Here
-        let onScreen = function () {
+        const onScreen = function () {
           return attrs.onScreen && typeof attrs.onScreen === 'function' ? attrs.onScreen() : true
         }
-        let offScreen = function () {
+        const offScreen = function () {
           return attrs.offScreen && typeof attrs.offScreen === 'function' ? attrs.offScreen() : true
         }
-        let isOnScreen = function () {
+        const isOnScreen = function () {
           // FIXME: This needs to be converted to the Chronos structure.
           if (isWaiting) {
             return wasOnScreen
           }
-          let calculation = (new Date()).getTime()
+          const calculation = (new Date()).getTime()
           if (calculation - lastUpdate > update) {
             lastUpdate = calculation
             wasOnScreen = Stratus.Internals.IsOnScreen(spy, offset, partial)
@@ -111,7 +111,7 @@
           }
           return wasOnScreen
         }
-        let wipe = function (request) {
+        const wipe = function (request) {
           if (!animation) {
             return
           }
@@ -129,7 +129,7 @@
         }
 
         // Bind Angular to Environment
-        let calculate = function () {
+        const calculate = function () {
           // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
           if (event.indexOf('reset') !== -1 && ((reset > 0 && $element.offset().top <= reset) || jQuery(window).scrollTop() <= 0)) {
             target.removeClass('on-screen off-screen scroll-up scroll-down reveal conceal')
@@ -170,7 +170,7 @@
         Stratus.Environment.on('change:viewPortChange', calculate)
         Stratus.Environment.on('change:lastScroll', function () {
           // If no scrolling has occurred remain false
-          let lastScroll = Stratus.Environment.get('lastScroll')
+          const lastScroll = Stratus.Environment.get('lastScroll')
 
           // Add scroll classes no matter what, so you can target styles when the item is on or off screen depending on scroll action
           if (lastScroll === 'down' && !target.hasClass('reset')) {

@@ -88,7 +88,7 @@ _.mixin({
    * @returns {Array|{index: number, input: string}}
    */
   cookie: function (name, value, expires, path, domain) {
-    let request = {
+    const request = {
       name: name,
       value: value,
       expires: expires,
@@ -99,9 +99,9 @@ _.mixin({
       _.extend(request, name)
     }
     if (typeof request.value === 'undefined') {
-      let search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name +
+      const search = new RegExp('(?:^' + request.name + '|;\\s*' + request.name +
         ')=(.*?)(?:;|$)', 'g')
-      let data = search.exec(document.cookie)
+      const data = search.exec(document.cookie)
       return (data === null) ? null : data[1]
     } else {
       let cookie = request.name + '=' + escape(request.value) + ';'
@@ -137,7 +137,7 @@ _.mixin({
       method = 'min'
     }
     if (method === 'min') {
-      let lowest = _.min(list)
+      const lowest = _.min(list)
       return _.findKey(list, function (element) {
         return (element === lowest)
       })
@@ -207,7 +207,7 @@ _.mixin({
     if (typeof obj !== 'object') {
       return obj
     }
-    let shallow = _.clone(obj)
+    const shallow = _.clone(obj)
     _.each(shallow, function (value, key) {
       shallow[key] = _.cloneDeep(value)
     })
@@ -240,8 +240,8 @@ _.mixin({
    * @return {*}
    */
   getAnchorParams: function (key, url) {
-    let vars = {}
-    let tail = window.location.hash
+    const vars = {}
+    const tail = window.location.hash
     if (_.isEmpty(tail)) {
       return vars
     }
@@ -360,10 +360,10 @@ _.mixin({
   seconds: function (str) {
     let seconds = 0
     if (typeof str === 'string') {
-      let timePairs = str.match(
+      const timePairs = str.match(
         /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/gi)
       if (_.size(timePairs)) {
-        let digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
+        const digest = /([\d+.]*[\d+])(?=[sSmMhHdDwWyY]+)([sSmMhHdDwWyY]+)/i
         let time
         let unit
         let value
@@ -436,20 +436,24 @@ _.mixin({
     })
   },
   /**
+   * @BROKE
    * @param target
    * @param search
    * @returns {boolean}
    */
   startsWith: function (target, search) {
-    return (typeof target === 'string' && target.substr(0, search.length).toLowerCase() === search.toLowerCase())
+    return (typeof target === 'string' && typeof search === 'string' &&
+      target.substr(0, search.length).toLowerCase() === search.toLowerCase())
   },
   /**
+   * @BROKE
    * @param target
    * @param search
    * @returns {boolean}
    */
   endsWith: function (target, search) {
-    return (typeof target === 'string' && target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
+    return (typeof target === 'string' && typeof search === 'string' &&
+      target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
   },
   /**
    * @param newData
@@ -460,8 +464,8 @@ _.mixin({
     if (!_.isObject(newData) || !_.size(newData)) {
       return null
     }
-    let patch = {}
-    let processor = {
+    const patch = {}
+    const processor = {
       eax: undefined,
       ebx: undefined,
       ecx: undefined,
@@ -470,7 +474,7 @@ _.mixin({
     if (!_.isObject(priorData) || !_.size(priorData)) {
       console.error('bad prior:', priorData)
     } else {
-      let detect = function (value, key) {
+      const detect = function (value, key) {
         processor.eax = processor.ecx ? processor.ecx + '.' + key : key
         if (_.isObject(value)) {
           processor.ecx = processor.eax
@@ -520,11 +524,18 @@ _.mixin({
     return new Promise(check)
   },
   /**
+   * @BROKE
    * @param a
    * @param b
    * @returns {number}
    */
   strcmp: function (a, b) {
+    if (!a) {
+      return 1
+    }
+    if (!b) {
+      return -1
+    }
     a = a.toString()
     b = b.toString()
     let i, n
@@ -544,7 +555,7 @@ _.mixin({
     limit = limit || 100
     suffix = suffix || '...'
 
-    let arr = target.replace(/</g, '\n<')
+    const arr = target.replace(/</g, '\n<')
       .replace(/>/g, '>\n')
       .replace(/\n\n/g, '\n')
       .replace(/^\n/g, '')
@@ -557,14 +568,14 @@ _.mixin({
     let add
     let tagMatch
     let tagName
-    let tagStack = []
+    const tagStack = []
     // let more = false
 
     for (let i = 0; i < arr.length; i++) {
       row = arr[i]
 
       // count multiple spaces as one character
-      let rowCut = row.replace(/[ ]+/g, ' ')
+      const rowCut = row.replace(/[ ]+/g, ' ')
 
       if (!row.length) {
         continue

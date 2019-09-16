@@ -29,8 +29,8 @@
     config.cacheVersion = boot.cacheTime
     // config.configMain = '@empty'
     if (typeof config.paths === 'object' && config.paths) {
-      for (let path in config.paths) {
-        if (!config.paths.hasOwnProperty(path)) {
+      for (const path in config.paths) {
+        if (!Object.prototype.hasOwnProperty.call(config.paths, path)) {
           continue
         }
         config.paths[path] = config.paths[path] + '.js'

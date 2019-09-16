@@ -59,9 +59,9 @@
       const froalaConfig = angular.module('stratusApp').value('froalaConfig') || {}
 
       // Constants
-      let MANUAL = 'manual'
-      let AUTOMATIC = 'automatic'
-      let SPECIAL_TAGS = ['img', 'button', 'input', 'a']
+      const MANUAL = 'manual'
+      const AUTOMATIC = 'automatic'
+      const SPECIAL_TAGS = ['img', 'button', 'input', 'a']
 
       return {
         restrict: 'A',
@@ -95,7 +95,7 @@
             specialTag = true
           }
 
-          let ctrl = {
+          const ctrl = {
             editorInitialized: false
           }
 
@@ -160,16 +160,16 @@
             ngModel.$render = function () {
               if (ctrl.editorInitialized) {
                 if (specialTag) {
-                  let tags = scope.value
+                  const tags = scope.value
 
                   // add tags on element
                   if (tags) {
-                    for (let attr in tags) {
-                      if (tags.hasOwnProperty(attr) && attr !== innerHtmlAttr) {
+                    for (const attr in tags) {
+                      if (Object.prototype.hasOwnProperty.call(tags, attr) && attr !== innerHtmlAttr) {
                         element.attr(attr, tags[attr])
                       }
                     }
-                    if (tags.hasOwnProperty(innerHtmlAttr)) {
+                    if (Object.prototype.hasOwnProperty.call(tags, innerHtmlAttr)) {
                       element[0].innerHTML = tags[innerHtmlAttr]
                     }
                   }
@@ -203,7 +203,7 @@
               }
 
               // flush means to load ng-model into editor
-              let flushNgModel = function () {
+              const flushNgModel = function () {
                 ctrl.editorInitialized = true
                 ngModel.$render()
               }
@@ -219,8 +219,8 @@
 
               // Register events provided in the options
               // Registering events before initializing the editor will bind the initialized event correctly.
-              for (let eventName in ctrl.options.events) {
-                if (ctrl.options.events.hasOwnProperty(eventName)) {
+              for (const eventName in ctrl.options.events) {
+                if (Object.prototype.hasOwnProperty.call(ctrl.options.events, eventName)) {
                   ctrl.registerEventsWithCallbacks(eventName, ctrl.options.events[eventName])
                 }
               }
@@ -299,11 +299,11 @@
             let modelContent = null
 
             if (specialTag) {
-              let attributeNodes = element[0].attributes
-              let attrs = {}
+              const attributeNodes = element[0].attributes
+              const attrs = {}
 
               for (let i = 0; i < attributeNodes.length; i++) {
-                let attrName = attributeNodes[i].name
+                const attrName = attributeNodes[i].name
                 if (ctrl.options.angularIgnoreAttrs && ctrl.options.angularIgnoreAttrs.indexOf(attrName) !== -1) {
                   continue
                 }
@@ -314,7 +314,7 @@
               }
               modelContent = attrs
             } else {
-              let returnedHtml = element.froalaEditor('html.get')
+              const returnedHtml = element.froalaEditor('html.get')
               if (angular.isString(returnedHtml)) {
                 modelContent = returnedHtml
               }
@@ -332,8 +332,8 @@
           }
 
           if (scope.initMode === MANUAL) {
-            let _ctrl = ctrl
-            let controls = {
+            const _ctrl = ctrl
+            const controls = {
               initialize: ctrl.createEditor,
               destroy: function () {
                 if (_ctrl.froalaEditor) {
@@ -352,7 +352,7 @@
             if (data instanceof Model && !_.isEqual(data, scope.model)) {
               scope.model = data
               if (ctrl.initialized !== true) {
-                let unwatch = scope.$watch('model.data', function (dataCheck) {
+                const unwatch = scope.$watch('model.data', function (dataCheck) {
                   if (dataCheck !== undefined) {
                     unwatch() // Remove this watch as soon as it's run once
                     ctrl.init() // Initialize only after there is a model to work with
@@ -372,7 +372,7 @@
         element.addClass('fr-view')
         scope.$watch(attrs.froalaView, function (nv) {
           if (nv || nv === '') {
-            let explicitlyTrustedValue = $sce.trustAsHtml(nv)
+            const explicitlyTrustedValue = $sce.trustAsHtml(nv)
             element.html(explicitlyTrustedValue.toString())
           }
         })

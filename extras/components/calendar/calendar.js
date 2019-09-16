@@ -208,7 +208,7 @@
           fullUrl = `https://cors-anywhere.herokuapp.com/${url}`
         }
 
-        let response = await $http.get(fullUrl)
+        const response = await $http.get(fullUrl)
         if (!Stratus.Environment.get('production')) {
           console.log('fetched the events from:', url)
         }
@@ -260,9 +260,9 @@
           bindToController: true,
           controllerAs: 'ctrl',
           controller: function () { // $scope, $mdDialog unused
-            let dc = this
+            const dc = this
 
-            let close = function close () {
+            const close = function close () {
               if ($mdDialog) {
                 $mdDialog.hide()
               }
@@ -284,8 +284,8 @@
               if (
                 dc.eventData &&
                 !dc.eventData.descriptionHTML &&
-                dc.eventData.constructor.prototype.hasOwnProperty('extendedProps') &&
-                dc.eventData.extendedProps.hasOwnProperty('description')
+                Object.prototype.hasOwnProperty.call(dc.eventData.constructor.prototype, 'extendedProps') &&
+                  Object.prototype.hasOwnProperty.call(dc.eventData.extendedProps, 'description')
               ) {
                 dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.extendedProps.description)
               }
@@ -304,8 +304,8 @@
         if ($scope.options.header) {
           return
         }
-        let headerLeft = 'prev,next today'
-        let headerCenter = 'title'
+        const headerLeft = 'prev,next today'
+        const headerCenter = 'title'
         let headerRight = 'month,weekGrid,dayGrid'
         // All this is assuming tha the default Header is not customized
         if (_.isArray($scope.options.possibleViews)) {

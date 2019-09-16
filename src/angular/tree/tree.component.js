@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "rxjs/operators", "stratus", "lodash", "@stratus/angular/backend.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/cdk/collections", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "rxjs/operators", "stratus", "lodash", "@stratus/angular/backend.service"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20,7 +20,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, drag_drop_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, operators_1, Stratus, _, backend_service_1, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
+    var core_1, forms_1, collections_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, operators_1, Stratus, _, backend_service_1, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -30,8 +30,8 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
             function (forms_1_1) {
                 forms_1 = forms_1_1;
             },
-            function (drag_drop_1_1) {
-                drag_drop_1 = drag_drop_1_1;
+            function (collections_1_1) {
+                collections_1 = collections_1_1;
             },
             function (tree_1_1) {
                 tree_1 = tree_1_1;
@@ -80,7 +80,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.dialogContentForm
                         .get('contentSelectorInput')
                         .valueChanges
-                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isContentLoading = true), operators_1.switchMap(value => {
+                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isContentLoading = true), operators_1.switchMap((value) => {
                         if (_.isString(value)) {
                             this.lastContentSelectorQuery = `/Api/Content?q=${value}`;
                         }
@@ -91,7 +91,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                         return this.backend.get(this.lastContentSelectorQuery)
                             .pipe(operators_1.finalize(() => this.isContentLoading = false));
                     }))
-                        .subscribe(response => {
+                        .subscribe((response) => {
                         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
                             return this.filteredContentOptions = [];
                         }
@@ -132,9 +132,10 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.selectCtrl = new forms_1.FormControl();
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
-                    this.dropListIds = [];
-                    this.dropListIdMap = {};
-                    this.treeControl = new tree_1.NestedTreeControl(node => node.children || []);
+                    this.expandedNodeSet = new Set();
+                    this.dragging = false;
+                    this.expandDelay = 1000;
+                    this.treeControl = new tree_1.NestedTreeControl((node) => node.children || []);
                     this.hasChild = (index, node) => node.children && node.children.length > 0;
                     this.uid = _.uniqueId('sa_tree_component_');
                     Stratus.Instances[this.uid] = this;
@@ -152,12 +153,11 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                                 return;
                             }
                             ref.detectChanges();
+                            this.dataSource = new collections_1.ArrayDataSource(this.dataRef());
                         });
                         ref.detectChanges();
                     });
                     this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
-                    this.dropListIdMap[`${this.uid}_drop_list`] = true;
-                    this.createDropListIds();
                 }
                 remove(model) {
                     const models = this.dataRef();
@@ -199,12 +199,12 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                     this.treeMap = {};
                     const that = this;
                     const tree = [];
-                    _.each(models, model => {
+                    _.each(models, (model) => {
                         const modelId = _.get(model, 'data.id');
                         const parentId = _.get(model, 'data.nestParent.id');
-                        that.dropListIdMap[`${that.uid}_${modelId}_drop_list`] = true;
                         if (!_.has(that.treeMap, modelId)) {
                             that.treeMap[modelId] = {
+                                id: modelId,
                                 model: null,
                                 children: []
                             };
@@ -216,6 +216,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                         else {
                             if (!_.has(that.treeMap, parentId)) {
                                 that.treeMap[parentId] = {
+                                    id: parentId,
                                     model: null,
                                     children: []
                                 };
@@ -223,30 +224,45 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                             that.treeMap[parentId].children.push(that.treeMap[modelId]);
                         }
                     });
-                    this.createDropListIds();
                     return tree;
-                }
-                createDropListIds() {
-                    this.dropListIds = _.keys(this.dropListIdMap);
                 }
                 onDataChange(ref) {
                     this.dataDefer(this.subscriber);
                     ref.detectChanges();
                 }
+                onDragStart() {
+                    this.dragging = true;
+                }
+                onDragEnd() {
+                    this.dragging = false;
+                }
+                onDragHover(node) {
+                    if (this.dragging) {
+                        clearTimeout(this.expandTimeout);
+                        this.expandTimeout = setTimeout(() => {
+                            this.treeControl.expand(node);
+                        }, this.expandDelay);
+                    }
+                }
+                onDragHoverEnd() {
+                    if (this.dragging) {
+                        clearTimeout(this.expandTimeout);
+                    }
+                }
                 onDragDrop(event) {
+                    if (!event.isPointerOverContainer) {
+                        return;
+                    }
                     const tree = this.dataRef();
                     if (!tree || !tree.length) {
                         return;
                     }
-                    console.log('container.data:', event.container.data);
-                    event.container.element.nativeElement.classList.remove('active');
-                    if (this.canBeDropped(event)) {
-                        const movingItem = event.item.data;
-                    }
-                    else {
-                        drag_drop_1.moveItemInArray((event.container.data ? event.container.data.children : []) || [], event.previousIndex, event.currentIndex);
-                    }
-                    console.log(`model drop: ${event.item.data.model.get('name')}`, `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`, `index change: ${event.previousIndex} -> ${event.currentIndex}`);
+                    console.log(`model drop: ${event.item.data.model.get('name')}`, `index change: ${event.previousIndex} -> ${event.currentIndex}`);
+                    console.log('onDragDrop:', {
+                        event,
+                        parent,
+                        dataSource: this.dataSource
+                    });
                 }
                 canBeDropped(event) {
                     const movingNode = event.item.data;
@@ -255,7 +271,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                         && !this.hasChild(movingNode, event.item.data);
                 }
                 isNotSelfDrop(event) {
-                    console.log('isNotSelfDrop', event.item.data, event.item.data);
+                    console.log('isNotSelfDrop:', event.item.data, event.item.data);
                     return !_.isEqual(event.item.data, event.item.data);
                 }
                 openDialog(model) {
@@ -279,7 +295,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "@
                         }
                     });
                     this.ref.detectChanges();
-                    dialogRef.afterClosed().subscribe(result => {
+                    dialogRef.afterClosed().subscribe((result) => {
                         if (!result || _.isEmpty(result)) {
                             return;
                         }

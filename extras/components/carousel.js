@@ -159,7 +159,7 @@
         // Initialization by Event
         $ctrl.$onInit = function () {
           let initNow = true
-          if ($attrs.$attr.hasOwnProperty('initNow')) {
+          if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
             // TODO: This needs better logic to determine what is acceptably initialized
             initNow = _.isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
           }
@@ -189,10 +189,10 @@
            * @type {Array<SlideImage> || Array<String> || String}
            * @deprecated
            * */
-          let images = $ctrl.images ? $ctrl.images : [] // This is a deprecated reference saved for backwards compatibility
+          const images = $ctrl.images ? $ctrl.images : [] // This is a deprecated reference saved for backwards compatibility
           /** @type {Array<SlideImage> || Array<String> || String} */
           // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
-          let slides = $ctrl.slides ? $ctrl.slides : images // References images for temporary backwards compatibility
+          const slides = $ctrl.slides ? $ctrl.slides : images // References images for temporary backwards compatibility
 
           /** @type {String} */
           $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null
@@ -304,7 +304,7 @@
          */
         $scope.imageClick = function imageClick (slideImage) {
           // Clicking doesn't have to open new window. it does for now
-          if (slideImage && slideImage.hasOwnProperty('link')) {
+          if (slideImage && Object.prototype.hasOwnProperty.call(slideImage, 'link')) {
             $window.open(slideImage.link, $scope.imageLinkTarget || slideImage.target || '_self')
           }
         }
@@ -320,7 +320,7 @@
           }
           if (_.isArray(images)) {
             /** @type {Array<SlideImage>} */
-            let processedImages = []
+            const processedImages = []
             images.forEach(
               /** @param {String || SlideImage} image */
               function (image) {
@@ -330,7 +330,7 @@
                   // just urls were provided
                   preppedImage.src = image
                 } else if (typeof image === 'object') {
-                  if (image.hasOwnProperty('src')) {
+                  if (Object.prototype.hasOwnProperty.call(image, 'src')) {
                     preppedImage = image
                   }
                 }
@@ -390,19 +390,19 @@
             $ctrl.swiperParameters.pagination = {}
 
             if (typeof $scope.pagination === 'object') {
-              if ($scope.pagination.hasOwnProperty('el')) {
+              if (Object.prototype.hasOwnProperty.call($scope.pagination, 'el')) {
                 $ctrl.swiperPaginationEl = $ctrl.swiperContainer.getElementsByClassName($scope.pagination.el)[0]
               }
-              if ($scope.pagination.hasOwnProperty('clickable')) {
+              if (Object.prototype.hasOwnProperty.call($scope.pagination, 'clickable')) {
                 $ctrl.swiperParameters.pagination.clickable = $scope.pagination.clickable
               }
-              if ($scope.pagination.hasOwnProperty('dynamicBullets')) {
+              if (Object.prototype.hasOwnProperty.call($scope.pagination, 'dynamicBullets')) {
                 $ctrl.swiperParameters.pagination.dynamicBullets = $scope.pagination.dynamicBullets
               }
-              if ($scope.pagination.hasOwnProperty('dynamicMainBullets')) {
+              if (Object.prototype.hasOwnProperty.call($scope.pagination, 'dynamicMainBullets')) {
                 $ctrl.swiperParameters.pagination.dynamicMainBullets = $scope.pagination.dynamicMainBullets
               }
-              if ($scope.pagination.hasOwnProperty('render')) {
+              if (Object.prototype.hasOwnProperty.call($scope.pagination, 'render')) {
                 // TODO this is just a custom selectable for now, need more customization
                 switch ($scope.pagination.render) {
                   case 'fraction':
@@ -473,7 +473,7 @@
               if (typeof $scope.autoplay === 'boolean') {
                 $scope.autoplay = {}
               }
-              if (!$scope.autoplay.hasOwnProperty('stopOnLastSlide')) {
+              if (!Object.prototype.hasOwnProperty.call($scope.autoplay, 'stopOnLastSlide')) {
                 $scope.autoplay.stopOnLastSlide = true
               }
             }
@@ -489,15 +489,15 @@
             if ($scope.lazyLoad === true) {
               $scope.lazyLoad = {}
             }
-            if ($scope.lazyLoad && !$scope.lazyLoad.hasOwnProperty('loadPrevNext')) {
+            if ($scope.lazyLoad && !Object.prototype.hasOwnProperty.call($scope.lazyLoad, 'loadPrevNext')) {
               // preload the current, previous and next slides
               $scope.lazyLoad.loadPrevNext = true
             }
-            if ($scope.lazyLoad && !$scope.lazyLoad.hasOwnProperty('loadPrevNextAmount')) {
+            if ($scope.lazyLoad && !Object.prototype.hasOwnProperty.call($scope.lazyLoad, 'loadPrevNextAmount')) {
               // preload X number of slides ahead/behind
               $scope.lazyLoad.loadPrevNextAmount = 1
             }
-            if ($scope.lazyLoad && !$scope.lazyLoad.hasOwnProperty('loadOnTransitionStart')) {
+            if ($scope.lazyLoad && !Object.prototype.hasOwnProperty.call($scope.lazyLoad, 'loadOnTransitionStart')) {
               // begin to preload before the transition
               $scope.lazyLoad.loadOnTransitionStart = true
             }

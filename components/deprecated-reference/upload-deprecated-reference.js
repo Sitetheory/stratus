@@ -48,7 +48,7 @@
       // DropZone Builder
       $scope.dropzone = null
       $scope.interval = $window.setInterval(function () {
-        let $target = jQuery('#' + $scope.elementId)
+        const $target = jQuery('#' + $scope.elementId)
         if ($target.length && !$scope.dropzone &&
           (!$scope.mediaId || typeof $scope.mediaId === 'number')) {
           $scope.dropzone = new Dropzone($target[0], {

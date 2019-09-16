@@ -30,6 +30,7 @@
               this.fetch = this.fetch.bind(this)
               this.build = this.build.bind(this)
             }
+
             fetch ($element, $scope) {
               const that = this
               return new Promise(function (resolve, reject) {
@@ -76,6 +77,7 @@
                 })
               })
             }
+
             build (options, $scope) {
               if (options.selectedId) {
                 let targetUrl

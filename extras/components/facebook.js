@@ -37,33 +37,32 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
       $scope.initialized = false
 
       // Custom Variables
-      let facebookPageName = 'Test Page Name'
-      let facebookPageId = 'enterpagId'
-      let containerId = 'facebookPageContainer'
-      let relatedContainerId = 'currentMediaContainer'
-      let relatedContainerOffset = -150
+      const facebookPageName = 'Test Page Name'
+      const facebookPageId = 'enterpagId'
+      const containerId = 'facebookPageContainer'
+      const relatedContainerId = 'currentMediaContainer'
+      const relatedContainerOffset = -150
 
       // Setup
-      let container = document.getElementById(containerId)
-      let relatedContainer = document.getElementById(
+      const container = document.getElementById(containerId)
+      const relatedContainer = document.getElementById(
         (relatedContainerId || containerId))
-      let loadJob
 
       // Functions
       function resizePlugin () {
         // Manually resize Facebook Plugin's span and iframe to be 100%
-        let plugin = document.querySelector('.fb-page')
-        let containerSpan = plugin.querySelector('span')
+        const plugin = document.querySelector('.fb-page')
+        const containerSpan = plugin.querySelector('span')
         containerSpan.style.width = '100%'
-        let iframe = plugin.querySelector('iframe')
+        const iframe = plugin.querySelector('iframe')
         iframe.width = '100%'
         iframe.style.width = '100%'
 
         // FB has max 500px, scale if it's bigger so it fits in space at least
-        let maxWidth = 500
-        let width = container.offsetWidth
+        const maxWidth = 500
+        const width = container.offsetWidth
         if (width > maxWidth) {
-          let scale = width / maxWidth
+          const scale = width / maxWidth
           iframe.style.transform = 'scale(' + scale + ')'
           iframe.style['transform-origin'] = '0 0'
         }
@@ -74,13 +73,13 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
         let height = relatedContainer.offsetHeight
         height = height > 0 ? (height + relatedContainerOffset) : height
         let width = container.offsetWidth
-        let minHeight = 500
-        let minWidth = 500
+        const minHeight = 500
+        const minWidth = 500
         height = height < minHeight ? minHeight : height
         width = width < minWidth ? minWidth : width
 
         // Facebook Page Plugin Code
-        let content = '<div class="fb-page" data-href="https://www.facebook.com/' +
+        const content = '<div class="fb-page" data-href="https://www.facebook.com/' +
           facebookPageId + '" data-tabs="timeline" data-width="' + width +
           '" data-height="' + height +
           '" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"></div><blockquote cite="https://www.facebook.com/' +
@@ -108,7 +107,7 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
       // (HACK): LoadPlugin does not resize height correctly on Load because it
       // does not know the correct height so we delay it until the height is
       // set
-      loadJob = Stratus.Chronos.add(0.2, function () {
+      const loadJob = Stratus.Chronos.add(0.2, function () {
         // hard code a bit less than related contaier
         if (relatedContainer.offsetHeight > 0) {
           Stratus.Chronos.disable(loadJob)

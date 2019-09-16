@@ -16,8 +16,8 @@
     return {
       restrict: 'A',
       link: function ($scope, $element, $attr) {
-        let fn = $parse($attr.stratusSingleClick)
-        let delay = 300
+        const fn = $parse($attr.stratusSingleClick)
+        const delay = 300
         let clicks = 0
         let timer = null
         $element.on('click', function (event) {

@@ -213,7 +213,7 @@
           }
         }
 
-        if (options.hasOwnProperty('headers') && typeof options.headers === 'object') {
+        if (Object.prototype.hasOwnProperty.call(options, 'headers') && typeof options.headers === 'object') {
           Object.keys(options.headers).forEach(function (headerKey) {
             prototype.headers[headerKey] = options.headers[headerKey]
           })

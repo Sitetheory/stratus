@@ -16,7 +16,7 @@
  * @returns {NodeList|Node}
  * @constructor
  */
-let Stratus = {
+const Stratus = {
   /* Settings */
   Settings: {
     image: {

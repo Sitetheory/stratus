@@ -5,56 +5,57 @@ sa-tree {
       width: 100%;
     }
   }
+  ul, li {
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style-type: none;
+  }
   .tree {
-    ul, li {
-      margin-top: 0;
-      margin-bottom: 0;
-      list-style-type: none;
-    }
-    &-invisible {
-      display: none;
-    }
-    &-node {
-      display: block;
-      .tree-node { // be explicit for child padding
-        padding-left: 40px;
+    .tree {
+      &-invisible {
+        display: none;
       }
-      &-drag {
-        &-preview {
-          box-sizing: border-box;
-          border-radius: 4px;
-          padding: 10px;
-          box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-          background-color: white;
+      &-node {
+        display: block;
+        .tree-node { // be explicit for child padding
+          padding-left: 40px;
         }
-      }
-      &-drop{
-        &-list {
-          min-height: 20px;
-          border-style: dashed !important;
-          border-radius: 4px !important;
-        }
-      }
-    }
-    &-dialog {
-      &-content {
-        .radio{
-          &-group {
-            display: flex;
-            flex-direction: column;
-            margin: 15px 0;
+        &-drag {
+          &-preview {
+            box-sizing: border-box;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+            background-color: white;
           }
-          &-button {
-            margin: 5px;
+        }
+      }
+      &-dialog {
+        &-content {
+          .radio {
+            &-group {
+              display: flex;
+              flex-direction: column;
+              margin: 15px 0;
+            }
+            &-button {
+              margin: 5px;
+            }
           }
         }
       }
     }
-    &.cdk-drop-list{
+    .cdk-drop-list {
       &-dragging {
+        min-height: 20px;
+        border-style: dashed !important;
+        border-radius: 4px !important;
         background: lightgreen !important;
       }
       &-receiving {
+        min-height: 20px;
+        border-style: dashed !important;
+        border-radius: 4px !important;
         background: lightyellow !important;
       }
     }

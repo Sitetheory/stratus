@@ -318,7 +318,7 @@
           console.log('Prototype:', prototype)
         }
 
-        if (options.hasOwnProperty('headers') && typeof options.headers === 'object') {
+        if (Object.prototype.hasOwnProperty.call(options, 'headers') && typeof options.headers === 'object') {
           Object.keys(options.headers).forEach(function (headerKey) {
             prototype.headers[headerKey] = options.headers[headerKey]
           })
@@ -459,7 +459,9 @@
       const that = this
       that.meta.temp('api.options.apiSpecialAction', action)
       that.save()
-      if (that.meta.get('api') && that.meta.get('api').hasOwnProperty('options') && that.meta.get('api').options.hasOwnProperty('apiSpecialAction')) {
+      if (that.meta.get('api') &&
+        Object.prototype.hasOwnProperty.call(that.meta.get('api'), 'options') &&
+          Object.prototype.hasOwnProperty.call(that.meta.get('api').options, 'apiSpecialAction')) {
         delete that.meta.get('api').options.apiSpecialAction
       }
     }
