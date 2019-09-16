@@ -83,7 +83,7 @@
 
       // Handle Selected
       if ($scope.collection) {
-        let selected = {
+        const selected = {
           id: $element.attr('data-selected'),
           raw: $element.attr('data-raw')
         }

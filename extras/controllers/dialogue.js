@@ -24,7 +24,7 @@
     '$mdDialog',
     function ($scope, $element, $parse, $mdDialog) {
       // Store Instance
-      let uid = _.uniqueId('dialogue_')
+      const uid = _.uniqueId('dialogue_')
       Stratus.Instances[uid] = $scope
 
       // Digest Template

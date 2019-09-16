@@ -296,10 +296,14 @@ function compressMangle () {
     title: 'Compress Mangle:'
   }))
   /* */
+    // .pipe(sourcemaps.init())
     .pipe(babel(babelSettings))
     .pipe(terser({
       // preserveComments: 'license',
-      mangle: true
+      mangle: true,
+      sourceMap: {
+        url: 'inline'
+      }
     }))
     .pipe(gulpDest('.', {
       ext: '.min.js'
@@ -327,10 +331,14 @@ function compressExternal () {
       title: 'Compress External:'
     }))
     /* */
+    // .pipe(sourcemaps.init())
     .pipe(babel(babelSettings))
     .pipe(terser({
       // preserveComments: 'license',
-      mangle: true
+      mangle: true,
+      sourceMap: {
+        url: 'inline'
+      }
     }))
     .pipe(gulpDest('.', {
       ext: '.min.js'
@@ -354,11 +362,16 @@ function compressPreserve () {
       title: 'Compress Preserve:'
     }))
     /* */
+    // .pipe(sourcemaps.init())
     .pipe(babel(babelSettings))
     .pipe(terser({
       // preserveComments: 'license',
-      mangle: false
+      mangle: false,
+      sourceMap: {
+        url: 'inline'
+      }
     }))
+    // .pipe(sourcemaps.write())
     .pipe(gulpDest('.', {
       ext: '.min.js'
     }))

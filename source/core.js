@@ -44,9 +44,9 @@ class Aether extends Stratus.Prototypes.Model {
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Invoked!')
     }
-    let that = this
+    const that = this
     try {
-      let options = {
+      const options = {
         get passive () {
           that.passiveSupported = true
         }
@@ -58,6 +58,7 @@ class Aether extends Stratus.Prototypes.Model {
     }
     this.on('change', this.synchronize, this)
   }
+
   synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Aether Synchronizing...')
@@ -81,12 +82,13 @@ class Aether extends Stratus.Prototypes.Model {
       event.listening = true
     }, this)
   }
+
   /**
    * @param options
    */
   listen (options) {
     let uid = null
-    let event = new Stratus.Prototypes.Event(options)
+    const event = new Stratus.Prototypes.Event(options)
     if (!event.invalid) {
       uid = _.uniqueId('event_')
       this.set(uid, event)
@@ -109,6 +111,7 @@ class Chronos extends Stratus.Prototypes.Model {
     }
     this.on('change', this.synchronize, this)
   }
+
   synchronize () {
     if (!Stratus.Environment.get('production')) {
       console.info('Chronos Synchronizing...')
@@ -131,6 +134,7 @@ class Chronos extends Stratus.Prototypes.Model {
       }
     }, this)
   }
+
   /**
    * @param time
    * @param method
@@ -147,6 +151,7 @@ class Chronos extends Stratus.Prototypes.Model {
     Stratus.Instances[uid] = job
     return uid
   }
+
   /**
    * @param uid
    * @returns {boolean|*}
@@ -158,6 +163,7 @@ class Chronos extends Stratus.Prototypes.Model {
     this.set(uid + '.enabled', true)
     return true
   }
+
   /**
    * @param uid
    * @returns {boolean|*}
@@ -169,6 +175,7 @@ class Chronos extends Stratus.Prototypes.Model {
     this.set(uid + '.enabled', false)
     return true
   }
+
   /**
    * @param uid
    * @param value
@@ -338,7 +345,7 @@ Stratus.Events.once('finalize', function () {
   if (Stratus.Internals.Anchor.initialize) {
     Stratus.Internals.Anchor = Stratus.Internals.Anchor()
   }
-  let anchor = new Stratus.Internals.Anchor()
+  const anchor = new Stratus.Internals.Anchor()
   if (!Stratus.Environment.get('production')) {
     console.log('Anchor:', anchor)
   }
@@ -396,7 +403,7 @@ Stratus.Events.on('confirm', function (event, message, handler) {
 
 // This event allows a Notification to reach the browser.
 Stratus.Events.on('notification', function (event, message, title) {
-  let options = {}
+  const options = {}
   if (message && typeof message === 'object') {
     _.extend(options, message)
     options.message = options.message || 'Message'

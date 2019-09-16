@@ -42,7 +42,7 @@
         $scope.initialized = false
 
         // Get Masonry Options
-        let masonryOptions = $attrs.stratusMasonry && _.isJSON($attrs.stratusMasonry) ? JSON.parse($attrs.stratusMasonry) : {}
+        const masonryOptions = $attrs.stratusMasonry && _.isJSON($attrs.stratusMasonry) ? JSON.parse($attrs.stratusMasonry) : {}
 
         // Set Default Masonry Options
         masonryOptions.elementSelector = masonryOptions.elementSelector || '.grid'
@@ -55,7 +55,7 @@
         $ctrl.init = function () {
           // TODO: According to Masonry docs (https://masonry.desandro.com/) we should be able to pass in $element instead of the element selector (since that is a jQuery Lite Object), but that doesn't work. The problem with this method is that this will call on every instance of .grid on the page
           // var $grid = jQuery('.grid').masonry(masonryOptions)
-          let msnry = new Masonry(masonryOptions.elementSelector, masonryOptions)
+          const msnry = new Masonry(masonryOptions.elementSelector, masonryOptions)
           msnry.layout()
           $scope.initialized = true
         }
@@ -69,7 +69,7 @@
 
         // console.log('onInit setup function');
         // let initNow = true
-        // if ($attrs.$attr.hasOwnProperty('initNow')) {
+        // if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
         //   // TODO: This needs better logic to determine what is acceptably initialized
         //   initNow = _.isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
         // }

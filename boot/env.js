@@ -53,8 +53,8 @@
     if (destination === null || source === null) {
       return destination
     }
-    for (let key in source) {
-      if (!source.hasOwnProperty(key)) {
+    for (const key in source) {
+      if (!Object.prototype.hasOwnProperty.call(source, key)) {
         continue
       }
       if (Array.isArray(destination[key])) {
@@ -95,7 +95,7 @@
 
   // Initialization
   if (!hamlet.isUndefined('config')) {
-    let localConfig = typeof root.config === 'function' ? root.config(boot) : root.config
+    const localConfig = typeof root.config === 'function' ? root.config(boot) : root.config
     if (typeof localConfig === 'object' && localConfig) {
       boot.config(localConfig)
     }

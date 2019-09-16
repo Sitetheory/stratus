@@ -9,14 +9,14 @@ Stratus.Loaders.Angular = function () {
   let injection
 
   // This contains references for the auto-loader below
-  let container = {
+  const container = {
     requirement: [],
     module: [],
     stylesheet: []
   }
 
   // TODO: Add references to this prototype in the tree builder, accordingly
-  let injector = function (injection) {
+  const injector = function (injection) {
     injection = injection || {}
     _.each(injection, function (element, attribute) {
       container[attribute] = container[attribute] || []
@@ -49,7 +49,7 @@ Stratus.Loaders.Angular = function () {
           nodes = document.querySelectorAll(selector)
           element.length += nodes.length
           if (nodes.length) {
-            let name = selector.replace(/^\[/, '').replace(/]$/, '')
+            const name = selector.replace(/^\[/, '').replace(/]$/, '')
             requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
             if (_.has(boot.configuration.paths, requirement)) {
               injection = {
@@ -66,10 +66,10 @@ Stratus.Loaders.Angular = function () {
         nodes = document.querySelectorAll(element.selector)
         element.length = nodes.length
         if (nodes.length) {
-          let attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
+          const attribute = element.selector.replace(/^\[/, '').replace(/]$/, '')
           if (attribute && element.namespace) {
             _.each(nodes, function (node) {
-              let name = node.getAttribute(attribute)
+              const name = node.getAttribute(attribute)
               if (name) {
                 requirement = element.namespace + _.lcfirst(_.kebabToCamel(name.replace('Stratus', '')))
                 if (_.has(boot.configuration.paths, requirement)) {
@@ -152,7 +152,7 @@ Stratus.Loaders.Angular = function () {
     require(container.requirement, function () {
       // App Reference
       angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config(['$sceDelegateProvider', function ($sceDelegateProvider) {
-        let whitelist = [
+        const whitelist = [
           'self',
           'http://*.sitetheory.io/**',
           'https://*.sitetheory.io/**'
@@ -175,7 +175,7 @@ Stratus.Loaders.Angular = function () {
         jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
 
         // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
-        let buttons = [
+        const buttons = [
           'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
           'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
           'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
@@ -254,8 +254,8 @@ Stratus.Loaders.Angular = function () {
 
       // Load CSS
       // TODO: Move this reference to the stylesheets block above
-      let css = container.stylesheet
-      let cssLoaded = Stratus('link[satisfies]').map(function (node) {
+      const css = container.stylesheet
+      const cssLoaded = Stratus('link[satisfies]').map(function (node) {
         return node.getAttribute('satisfies')
       })
       if (!_.contains(cssLoaded, 'angular-material.css')) {

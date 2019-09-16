@@ -184,7 +184,7 @@
            * @returns {EventObject}
            */
           ICalExpander.prototype.flattenRecurringEvent = function (e) {
-            let event = this.flattenEvent(e.item)
+            const event = this.flattenEvent(e.item)
             event.recurrenceId = e.recurrenceId.toJSDate()
             event.startDate = e.startDate.toJSDate()
             event.endDate = e.endDate.toJSDate()
@@ -259,7 +259,7 @@
            * @returns {EventObject}
            */
           ICalExpander.prototype.flattenRecurringEventForFullCalendar = function (e) {
-            let event = this.flattenEventForFullCalendar(e.item)
+            const event = this.flattenEventForFullCalendar(e.item)
             event.start = e.startDate.toJSDate()
             event.end = e.endDate.toJSDate()
             return event

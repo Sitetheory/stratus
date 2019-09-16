@@ -113,15 +113,15 @@
       // console.log('parent scope is', this.$parentScope)
 
       // Create the CalendarCustomView Component
-      let calendarCustomViewComponent = this.viewSpec.options.$compile(`<stratus-calendar-custom-view data-template="${this.viewSpec.options.template}"></stratus-calendar-custom-view>`)
+      const calendarCustomViewComponent = this.viewSpec.options.$compile(`<stratus-calendar-custom-view data-template="${this.viewSpec.options.template}"></stratus-calendar-custom-view>`)
       this.componentEl = calendarCustomViewComponent(this.$parentScope)
 
       // Watch for scope to get ready
-      let that = this
-      let stopWatchingScope = this.$parentScope.$watch(`customViews`, function () {
+      const that = this
+      const stopWatchingScope = this.$parentScope.$watch(`customViews`, function () {
         if (
-          that.$parentScope.customViews.hasOwnProperty(uid) &&
-          Stratus.Instances.hasOwnProperty(uid)
+          Object.prototype.hasOwnProperty.call(that.$parentScope.customViews, uid) &&
+            Object.prototype.hasOwnProperty.call(Stratus.Instances, uid)
         ) {
           // that.$scope = that.$parentScope.customViews[uid] // Angular is not allowing the scoped to be passed in this way
           that.$scope = Stratus.Instances[uid]
@@ -164,7 +164,7 @@
      */
     renderEvents (eventStore, eventUiHash) {
       if (this.$scope) {
-        let that = this
+        const that = this
         this.updateEventScope(that.getEventsInRange(eventStore))
       } else {
         // If scope isn't ready yet, add the events to waiting
@@ -177,7 +177,7 @@
      * @param {fullcalendarCore.EventApi[]} events
      */
     updateEventScope (events) {
-      let that = this
+      const that = this
       that.$scope.$applyAsync(function () {
         that.$scope.events.length = 0
         that.$scope.events.push(...events)
@@ -191,23 +191,23 @@
      * @returns {fullcalendarCore.EventApi[]}
      */
     getEventsInRange (eventStore, eventUiBases) {
-      let that = this
+      const that = this
       eventStore = eventStore || this.props.eventStore
       eventUiBases = eventUiBases || this.props.eventUiBases
 
-      let events = []
-      let sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, that.props.dateProfile.activeRange, that.nextDayThreshold)
+      const events = []
+      const sliceEventObjects = fullcalendarCore.sliceEventStore(eventStore, eventUiBases, that.props.dateProfile.activeRange, that.nextDayThreshold)
       if (
-        sliceEventObjects.hasOwnProperty('fg') &&
+        Object.prototype.hasOwnProperty.call(sliceEventObjects, 'fg') &&
         _.isArray(sliceEventObjects.fg)
       ) {
         sliceEventObjects.fg.forEach(function (eventRaw) {
-          let event = new fullcalendarCore.EventApi(that.$parentScope.calendar, eventRaw.def, eventRaw.instance)
+          const event = new fullcalendarCore.EventApi(that.$parentScope.calendar, eventRaw.def, eventRaw.instance)
           if (
             event &&
             !event.descriptionHTML &&
-            event.constructor.prototype.hasOwnProperty('extendedProps') &&
-            event.extendedProps.hasOwnProperty('description')
+            Object.prototype.hasOwnProperty.call(event.constructor.prototype, 'extendedProps') &&
+              Object.prototype.hasOwnProperty.call(event.extendedProps, 'description')
           ) {
             event.descriptionHTML = that.viewSpec.options.$sce.trustAsHtml(event.extendedProps.description)
           }

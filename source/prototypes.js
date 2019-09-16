@@ -51,7 +51,7 @@ Stratus.Prototypes.EventManager = class EventManager {
   once (name, callback, context) {
     this.on(name, function (event, ...args) {
       event.enabled = false
-      let childArgs = _.clone(args)
+      const childArgs = _.clone(args)
       childArgs.unshift(event)
       callback.apply(event.scope || this, childArgs)
     }, context)
@@ -71,7 +71,7 @@ Stratus.Prototypes.EventManager = class EventManager {
       if (!event.enabled) {
         return
       }
-      let childArgs = _.clone(args)
+      const childArgs = _.clone(args)
       childArgs.unshift(event)
       event.method.apply(event.scope || this, childArgs)
     })
@@ -284,7 +284,7 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
    */
   set (attr, value) {
     if (attr && typeof attr === 'object') {
-      let that = this
+      const that = this
       _.each(attr, function (value, attr) {
         that.setAttribute(attr, value)
       }, this)
@@ -301,7 +301,7 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
     if (typeof attr === 'string') {
       if (attr.indexOf('.') !== -1) {
         let reference = this.data
-        let chain = attr.split('.')
+        const chain = attr.split('.')
         _.find(_.initial(chain), function (link) {
           if (!_.has(reference, link) || !reference[link]) {
             reference[link] = {}
@@ -315,7 +315,7 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
           }
         }, this)
         if (!_.isEqual(reference, this.data)) {
-          let link = _.last(chain)
+          const link = _.last(chain)
           if (reference && typeof reference === 'object' &&
             (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
             reference[link] = value
@@ -404,8 +404,8 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
    * Clear all internal data
    */
   clear () {
-    for (let attribute in this.data) {
-      if (this.data.hasOwnProperty(attribute)) {
+    for (const attribute in this.data) {
+      if (Object.prototype.hasOwnProperty.call(this.data, attribute)) {
         delete this.data[attribute]
       }
     }
@@ -415,8 +415,8 @@ Stratus.Prototypes.Model = class Model extends Stratus.Prototypes.EventManager {
    * Clear all temporary data
    */
   clearTemp () {
-    for (let attribute in this.temps) {
-      if (this.temps.hasOwnProperty(attribute)) {
+    for (const attribute in this.temps) {
+      if (Object.prototype.hasOwnProperty.call(this.temps, attribute)) {
         // delete this.data[attribute];
         // this.remove(attribute);
         delete this.temps[attribute]
@@ -456,6 +456,7 @@ Stratus.Prototypes.Sentinel = class Sentinel {
     this.permissions = this.permissions.bind(this)
     this.summary = this.summary.bind(this)
   }
+
   zero () {
     _.extend(this, {
       view: false,
@@ -468,6 +469,7 @@ Stratus.Prototypes.Sentinel = class Sentinel {
       master: false
     })
   }
+
   permissions (value) {
     if (!isNaN(value)) {
       _.each(value.toString(2).split('').reverse(), function (bit, key) {
@@ -520,8 +522,9 @@ Stratus.Prototypes.Sentinel = class Sentinel {
       return decimal
     }
   }
+
   summary () {
-    let output = []
+    const output = []
     _.each(this, function (value, key) {
       if (typeof value === 'boolean' && value) {
         output.push(_.ucfirst(key))

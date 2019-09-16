@@ -53,8 +53,8 @@
     if (destination === null || source === null) {
       return destination
     }
-    for (let key in source) {
-      if (!source.hasOwnProperty(key)) {
+    for (const key in source) {
+      if (!Object.prototype.hasOwnProperty.call(source, key)) {
         continue
       }
       if (Array.isArray(destination[key])) {
@@ -95,7 +95,7 @@
 
   // Initialization
   if (!hamlet.isUndefined('config')) {
-    let localConfig = typeof root.config === 'function' ? root.config(boot) : root.config
+    const localConfig = typeof root.config === 'function' ? root.config(boot) : root.config
     if (typeof localConfig === 'object' && localConfig) {
       boot.config(localConfig)
     }
@@ -189,7 +189,7 @@
       })
     }
   }
-})(this);
+})(this)
 
 // Configuration
 // -------------
@@ -224,10 +224,6 @@
     // Relative Paths
     paths: {
 
-      /* Require.js Plugins */
-      // This is used to load raw TEXT in templates (e.g. via require.js) -- in most cases we use Angular
-      text: boot.bundle + 'stratus/node_modules/requirejs-text/text',
-
       /* Stratus Core Library */
       stratus: boot.bundle + 'stratus/dist/stratus' + boot.suffix,
 
@@ -252,9 +248,6 @@
       'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
 
       // THIRD PARTY: NODE MODULES
-
-      /* Underscore is used in most components */
-      //underscore: boot.bundle + 'stratus/node_modules/underscore/underscore' + boot.dashSuffix,
 
       /* Lodash is used in place of Underscore in most modern components */
       lodash: boot.bundle + 'stratus/node_modules/lodash/lodash' + boot.suffix,
@@ -360,16 +353,16 @@
       // Angular Dependencies
       'core-js/*': boot.bundle + 'stratus/node_modules/core-js/*',
       'core-js/es7/reflect': boot.bundle + 'stratus/node_modules/core-js/proposals/reflect-metadata',
-      'hammerjs': boot.bundle + 'stratus/node_modules/hammerjs/hammer' + boot.suffix,
-      'rxjs': boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
+      hammerjs: boot.bundle + 'stratus/node_modules/hammerjs/hammer' + boot.suffix,
+      rxjs: boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
       'rxjs/operators': boot.bundle + 'stratus/extras/normalizers/rxjs.operators' + boot.suffix,
       'rxjs-compat': boot.bundle + 'stratus/node_modules/rxjs-compat/index',
       'web-animations-js': boot.bundle + 'stratus/node_modules/web-animations-js/web-animations.min',
       'zone.js/dist/zone': boot.bundle + 'stratus/node_modules/zone.js/dist/zone' + boot.suffix,
 
       // Quill Editor Support
-      'quill': boot.bundle + 'stratus/node_modules/quill/dist/quill',
-      'ngx-quill': boot.bundle + 'stratus/node_modules/ngx-quill/bundles/ngx-quill.umd',
+      quill: boot.bundle + 'stratus/node_modules/quill/dist/quill',
+      'ngx-quill': boot.bundle + 'stratus/node_modules/ngx-quill/bundles/ngx-quill.umd'
 
       // Angular
 
@@ -399,13 +392,9 @@
       // 'masonry-native': boot.bundle + 'stratus/node_modules/masonry-layout/dist/masonry.pkgd' + boot.suffix,
       // masonry: boot.bundle + 'stratus/extras/directives/masonry' + boot.suffix,
 
-      /* STRATUS Libraries: CodeMirror */
-      codemirror: boot.bundle + 'stratus/node_modules/codemirror/lib/codemirror',
-      'codemirror/*': boot.bundle + 'stratus/node_modules/codemirror/*'
-
     }
   })
-})(this);
+})(this)
 
 // Initializer
 // -----------
@@ -438,8 +427,8 @@
     config.cacheVersion = boot.cacheTime
     // config.configMain = '@empty'
     if (typeof config.paths === 'object' && config.paths) {
-      for (let path in config.paths) {
-        if (!config.paths.hasOwnProperty(path)) {
+      for (const path in config.paths) {
+        if (!Object.prototype.hasOwnProperty.call(config.paths, path)) {
           continue
         }
         config.paths[path] = config.paths[path] + '.js'

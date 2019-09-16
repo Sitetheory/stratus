@@ -53,7 +53,7 @@
           if (event.stopPropagation) {
             event.stopPropagation()
           } // stops the browser from redirecting... why???
-          let el = document.getElementById(event.dataTransfer.getData('Text'))
+          const el = document.getElementById(event.dataTransfer.getData('Text'))
           el.parentNode.removeChild(el)
           return false
         })

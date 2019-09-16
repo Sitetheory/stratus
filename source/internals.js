@@ -29,11 +29,11 @@ Stratus.Internals.XHR = function (request) {
 
   // Customize & Hoist
   _.extend(this, request)
-  let that = this
+  const that = this
 
   // Make Request
   this.xhr = new window.XMLHttpRequest()
-  let promise = new Promise(function (resolve, reject) {
+  const promise = new Promise(function (resolve, reject) {
     that.xhr.open(that.method, that.url, true)
     if (typeof that.type === 'string' && that.type.length) {
       that.xhr.setRequestHeader('Content-Type', that.type)
@@ -63,6 +63,20 @@ Stratus.Internals.XHR = function (request) {
   promise.then(that.success, that.error)
   return promise
 }
+
+// TODO: Compare this method with above
+// const XHR = (method, url, data) => new Promise((resolve, reject) => {
+//   const request = new XMLHttpRequest()
+//   request.onload = (event) => {
+//     (request.status >= 200 && request.status < 400) ? resolve(request.response) : reject(request)
+//   }
+//   request.onerror = (event) => {
+//     reject(request)
+//   }
+//   request.open(method, url, true)
+//   request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8')
+//   request.send(data)
+// })
 
 // Internal Anchor Capture
 // -----------------------
@@ -157,7 +171,7 @@ Stratus.Internals.Api = function (route, meta, payload) {
  * @constructor
  */
 Stratus.Internals.Compatibility = function () {
-  let profile = []
+  const profile = []
 
   // Operating System
   if (Stratus.Client.android) {
@@ -311,7 +325,7 @@ Stratus.Internals.CssLoader = function (url) {
     Stratus.CSS[url] = false
 
     /* Create Link */
-    let link = document.createElement('link')
+    const link = document.createElement('link')
     link.type = 'text/css'
     link.rel = 'stylesheet'
     link.href = url
@@ -351,12 +365,12 @@ Stratus.Internals.GetColWidth = function (el) {
   if (typeof el === 'undefined' || !el) {
     return false
   }
-  let classes = el.attr('class')
+  const classes = el.attr('class')
   if (typeof classes === 'undefined' || !classes) {
     return false
   }
-  let regexp = /col-.{2}-([0-9]*)/g
-  let match = regexp.exec(classes)
+  const regexp = /col-.{2}-([0-9]*)/g
+  const match = regexp.exec(classes)
   if (typeof match === 'undefined' || !match) {
     return false
   }
@@ -372,19 +386,19 @@ Stratus.Internals.GetColWidth = function (el) {
  */
 // FIXME: This would be better suited as non-jQuery, native logic in the selectors
 Stratus.Internals.GetScrollDir = function () {
-  let windowTop = jQuery(Stratus.Environment.get('viewPort') || window).scrollTop()
-  let lastWindowTop = Stratus.Environment.get('windowTop')
+  const windowTop = jQuery(Stratus.Environment.get('viewPort') || window).scrollTop()
+  const lastWindowTop = Stratus.Environment.get('windowTop')
   /* *
   let windowHeight = jQuery(Stratus.Environment.get('viewPort') || window).height()
   let documentHeight = jQuery(document).height()
   /* */
 
   // return NULL if there is no scroll, otherwise up or down
-  let down = lastWindowTop ? (windowTop > lastWindowTop) : false
+  const down = lastWindowTop ? (windowTop > lastWindowTop) : false
   /* *
   let up = lastWindowTop ? (windowTop < lastWindowTop && (windowTop + windowHeight) < documentHeight) : false
   /* */
-  let up = lastWindowTop ? (windowTop < lastWindowTop) : false
+  const up = lastWindowTop ? (windowTop < lastWindowTop) : false
   return down ? 'down' : (up ? 'up' : false)
 }
 
@@ -413,14 +427,14 @@ Stratus.Internals.IsOnScreen = function (el, offset, partial) {
   if (typeof partial !== 'boolean') {
     partial = true
   }
-  let viewPort = Stratus.Environment.get('viewPort') || window
+  const viewPort = Stratus.Environment.get('viewPort') || window
   let pageTop = jQuery(viewPort).scrollTop()
   let pageBottom = pageTop + jQuery(viewPort).height()
   let elementTop = el.offset().top
   if (viewPort !== window) {
     elementTop += pageTop
   }
-  let elementBottom = elementTop + el.height()
+  const elementBottom = elementTop + el.height()
   pageTop = pageTop + offset
   pageBottom = pageBottom - offset
   /* *
@@ -465,14 +479,14 @@ Stratus.Internals.LoadCss = function (urls) {
     if (typeof urls === 'string') {
       urls = [urls]
     }
-    let cssEntries = {
+    const cssEntries = {
       total: urls.length,
       iteration: 0
     }
     if (cssEntries.total > 0) {
       _.each(urls.reverse(), function (url) {
         cssEntries.iteration++
-        let cssEntry = _.uniqueId('css_')
+        const cssEntry = _.uniqueId('css_')
         cssEntries[cssEntry] = false
         if (typeof url === 'undefined' || !url) {
           cssEntries[cssEntry] = true
@@ -505,7 +519,7 @@ Stratus.Internals.LoadCss = function (urls) {
  * @constructor
  */
 Stratus.Internals.LoadEnvironment = function () {
-  let initialLoad = Stratus('body').attr('data-environment')
+  const initialLoad = Stratus('body').attr('data-environment')
   if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
     Stratus.Environment.set(initialLoad)
   }
@@ -543,7 +557,7 @@ Stratus.Internals.LoadImage = function (obj) {
     }, 500)
     return false
   }
-  let el = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
+  const el = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
   if (!el.length) {
     setTimeout(function () {
       Stratus.Internals.LoadImage(obj)
@@ -571,7 +585,7 @@ Stratus.Internals.LoadImage = function (obj) {
       // offscreen originally)
       let src = _.hydrate(el.attr('data-src')) || el.attr('src') || null
       // NOTE: Element can be either <img> or any element with background image in style
-      let type = el.prop('tagName').toLowerCase()
+      const type = el.prop('tagName').toLowerCase()
 
       // Handle precedence
       if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
@@ -614,18 +628,18 @@ Stratus.Internals.LoadImage = function (obj) {
           // So we need to find the first parent that is visible and use that width
           // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
           // so in some cases we need to flag to find the parent regardless of invisibility.
-          let visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-          let $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
+          const visibilitySelector = _.hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
+          const $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
           // let $visibleParent = obj.spy || el.parent()
           width = $visibleParent ? $visibleParent.width() : 0
 
           // If one of parents of the image (and child of the found parent) has
           // a bootstrap col-*-* set divide width by that in anticipation (e.g.
           // Carousel that has items grouped)
-          let $col = $visibleParent.find('[class*="col-"]')
+          const $col = $visibleParent.find('[class*="col-"]')
 
           if ($col.length > 0) {
-            let colWidth = Stratus.Internals.GetColWidth($col)
+            const colWidth = Stratus.Internals.GetColWidth($col)
             if (colWidth) {
               width = Math.round(width / colWidth)
             }
@@ -653,7 +667,7 @@ Stratus.Internals.LoadImage = function (obj) {
 
         // Return the first size that is bigger than container width
         size = _.findKey(Stratus.Settings.image.size, function (s) {
-          let ratio = s / width
+          const ratio = s / width
           return (ratio > 0.85 && ratio < 1.15) || s > width
         })
 
@@ -690,7 +704,7 @@ Stratus.Internals.LoadImage = function (obj) {
       // Start Loading
       el.addClass('loading')
 
-      let srcOriginProtocol = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
+      const srcOriginProtocol = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
 
       // Set up actions for onLoad and onError (if size doesn't exist, revert to srcOrigin)
       if (type === 'img') {
@@ -706,7 +720,7 @@ Stratus.Internals.LoadImage = function (obj) {
         })
       } else {
         // If Background Image Create a Test Image to Test Loading
-        let loadEl = jQuery('<img/>')
+        const loadEl = jQuery('<img/>')
         loadEl.attr('src', srcOriginProtocol)
         loadEl.on('load', function () {
           el.addClass('loaded').removeClass('loading')
@@ -722,7 +736,7 @@ Stratus.Internals.LoadImage = function (obj) {
       }
 
       // Change the Source to be the desired path (for image or background)
-      let srcProtocol = src.startsWith('//') ? window.location.protocol + src : src
+      const srcProtocol = src.startsWith('//') ? window.location.protocol + src : src
       el.attr('data-loading', _.dehydrate(false))
       el.attr('data-size', _.dehydrate(size))
       if (type === 'img') {
@@ -795,7 +809,7 @@ Stratus.Internals.OnScroll = _.once(function (elements) {
     // We must use the registered onScroll objects, because they get removed
     // in some cases (e.g. lazy load)
     // TODO: remove logic of RegisterGroup
-    let elements = Stratus.RegisterGroup.get('OnScroll')
+    const elements = Stratus.RegisterGroup.get('OnScroll')
 
     _.each(elements, function (obj) {
       if (typeof obj !== 'undefined' && _.has(obj, 'method')) {
@@ -884,7 +898,7 @@ Stratus.Internals.Resource = function (path, elementId) {
         data: null
       }
       Stratus.Events.once('resource:' + path, resolve)
-      let meta = { path: path, dataType: 'text' }
+      const meta = { path: path, dataType: 'text' }
       if (elementId !== undefined) {
         meta.elementId = elementId
       }
@@ -924,7 +938,7 @@ Stratus.Internals.SetUrlParams = function (params, url) {
  * @constructor
  */
 Stratus.Internals.TrackLocation = function () {
-  let envData = {}
+  const envData = {}
   // if (!Stratus.Environment.has('timezone'))
   envData.timezone = new Date().toString().match(/\((.*)\)/)[1]
   if (Stratus.Environment.get('trackLocation')) {
@@ -989,7 +1003,7 @@ Stratus.Internals.UpdateEnvironment = function (request) {
       data: request,
       type: 'application/json',
       success: function (response) {
-        let settings = response.payload || response
+        const settings = response.payload || response
         if (typeof settings === 'object') {
           _.each(Object.keys(settings), function (key) {
             Stratus.Environment.set(key, settings[key])
