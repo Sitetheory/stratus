@@ -40,7 +40,7 @@
  * @returns {NodeList|Node}
  * @constructor
  */
-const Stratus = {
+let Stratus = { // eslint-disable-line prefer-const
   /* Settings */
   Settings: {
     image: {
