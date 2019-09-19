@@ -9,10 +9,14 @@ import * as Stratus from 'stratus'
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
 const systemDir = '@stratus/angular'
 const moduleName = 'tree-node'
+const parentModuleName = 'tree'
 
+/**
+ * @title Node for Nested Tree
+ */
 @Component({
     selector: `sa-${moduleName}`,
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.html`,
+    templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeNodeComponent implements OnInit {
@@ -36,6 +40,6 @@ export class TreeNodeComponent implements OnInit {
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+        Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
     }
 }

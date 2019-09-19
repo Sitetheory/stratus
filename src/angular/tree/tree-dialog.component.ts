@@ -1,7 +1,7 @@
 // Angular Core
 import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core'
 import {FormBuilder, FormGroup} from '@angular/forms'
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 
 // RXJS
 import {debounceTime, finalize, switchMap, tap} from 'rxjs/operators'
@@ -12,11 +12,6 @@ import * as Stratus from 'stratus'
 
 // Services
 import {BackendService} from '@stratus/angular/backend.service'
-
-// Local Setup
-const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
-const systemDir = '@stratus/angular'
-const moduleName = 'tree-dialog'
 
 // Data Types
 export interface DialogData {
@@ -32,9 +27,18 @@ export interface DialogData {
     nestParent: any
 }
 
+// Local Setup
+const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
+const systemDir = '@stratus/angular'
+const moduleName = 'tree-dialog'
+const parentModuleName = 'tree'
+
+/**
+ * @title Dialog for Nested Tree
+ */
 @Component({
     selector: `sa-${moduleName}`,
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.html`,
+    templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeDialogComponent implements OnInit {
@@ -76,7 +80,7 @@ export class TreeDialogComponent implements OnInit {
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+        Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
 
         // TODO: Move this to its own AutoComplete Component
         // AutoComplete Logic

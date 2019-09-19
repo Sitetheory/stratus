@@ -27,11 +27,6 @@ import * as _ from 'lodash'
 // Child Components
 import {DialogData, TreeDialogComponent} from '@stratus/angular/tree/tree-dialog.component'
 
-// Local Setup
-const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
-const systemDir = '@stratus/angular'
-const moduleName = 'tree'
-
 // Data Types
 export interface Node {
     id: number
@@ -52,8 +47,13 @@ export interface ElementMap {
 //     data: object;
 // }
 
+// Local Setup
+const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
+const systemDir = '@stratus/angular'
+const moduleName = 'tree'
+
 /**
- * @title Tree with Nested Drag&Drop
+ * @title Tree with Nested Drag & Drop
  */
 @Component({
     selector: `sa-${moduleName}`,
