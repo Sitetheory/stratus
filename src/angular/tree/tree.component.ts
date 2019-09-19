@@ -17,170 +17,46 @@ import {MatIconRegistry} from '@angular/material/icon'
 
 // RXJS
 import {Observable, Subject, Subscriber} from 'rxjs'
-import {map, startWith, switchMap, debounceTime, tap, finalize} from 'rxjs/operators'
+import {map, switchMap, startWith, scan, debounceTime, tap, finalize} from 'rxjs/operators'
 import {SubjectSubscriber} from 'rxjs/internal/Subject'
 
 // External
 import * as Stratus from 'stratus'
 import * as _ from 'lodash'
 
-// Services
-import {BackendService} from '@stratus/angular/backend.service'
+// Child Components
+import {DialogData, TreeDialogComponent} from '@stratus/angular/tree/tree-dialog.component'
 
 // Local Setup
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
 const systemDir = '@stratus/angular'
 const moduleName = 'tree'
 
+// Data Types
 export interface Node {
     id: number
     model: any
     children: Node[]
 }
-
 export interface NodeMap {
     [key: number]: Node
 }
-
 export interface KeyMap {
     [key: string]: boolean
 }
-
+export interface ElementMap {
+    [key: string]: HTMLElement
+}
 // export interface Model {
 //     completed: boolean;
 //     data: object;
 // }
 
-export interface DialogData {
-    id: number
-    name: string
-    target: string
-    level: string
-    content: any
-    url: string
-    model: any
-    collection: any
-    parent: any
-    nestParent: any
-}
-
-@Component({
-    selector: 'sa-tree-dialog',
-    templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
-    changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class TreeDialogComponent implements OnInit {
-
-    filteredContentOptions: any[]
-    dialogContentForm: FormGroup
-    isContentLoading = false
-    lastContentSelectorQuery: string
-
-    // filteredParentOptions: any[]
-    // dialogParentForm: FormGroup
-    // isParentLoading = false
-    // lastParentSelectorQuery: string
-
-    constructor(
-        public dialogRef: MatDialogRef<TreeDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: DialogData,
-        private fb: FormBuilder,
-        private backend: BackendService
-    ) {}
-
-    ngOnInit() {
-        this.dialogContentForm = this.fb.group({
-            contentSelectorInput: this.data.content
-        })
-
-        this.dialogContentForm
-            .get('contentSelectorInput')
-            .valueChanges
-            .pipe(
-                debounceTime(300),
-                tap(() => this.isContentLoading = true),
-                switchMap((value: any) => {
-                        if (_.isString(value)) {
-                            this.lastContentSelectorQuery = `/Api/Content?q=${value}`
-                        } else {
-                            this.data.content = value
-                            this.data.url = null
-                        }
-                        return this.backend.get(this.lastContentSelectorQuery)
-                            .pipe(
-                                finalize(() => this.isContentLoading = false),
-                            )
-                    }
-                )
-            )
-            .subscribe((response: any) => {
-                if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                    return this.filteredContentOptions = []
-                }
-                const payload = _.get(response.body, 'payload') || response.body
-                if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                    return this.filteredContentOptions = []
-                }
-                return this.filteredContentOptions = payload
-            })
-
-        // this.dialogParentForm = this.fb.group({
-        //     parentSelectorInput: this.data.nestParent
-        // })
-        //
-        // this.dialogParentForm
-        //     .get('parentSelectorInput')
-        //     .valueChanges
-        //     .pipe(
-        //         debounceTime(300),
-        //         tap(() => this.isParentLoading = true),
-        //         switchMap(value => {
-        //                 if (_.isString(value)) {
-        //                     this.lastParentSelectorQuery = `/Api/MenuLink?q=${value}`
-        //                 } else {
-        //                     this.data.nestParent = value
-        //                 }
-        //                 return this.backend.get(this.lastParentSelectorQuery)
-        //                     .pipe(
-        //                         finalize(() => this.isParentLoading = false),
-        //                     )
-        //             }
-        //         )
-        //     )
-        //     .subscribe(response => {
-        //         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-        //             return this.filteredParentOptions = []
-        //         }
-        //         const payload = _.get(response.body, 'payload') || response.body
-        //         if (_.isEmpty(payload) || !Array.isArray(payload)) {
-        //             return this.filteredParentOptions = []
-        //         }
-        //         return this.filteredParentOptions = payload
-        //     })
-    }
-
-    onCancelClick(): void {
-        this.dialogRef.close()
-    }
-
-    displayVersionTitle(option: any) {
-        if (option) {
-            return _.get(option, 'version.title')
-        }
-    }
-
-    // displayName(option: any) {
-    //     if (option) {
-    //         return _.get(option, 'name')
-    //     }
-    // }
-}
-
 /**
  * @title Tree with Nested Drag&Drop
  */
 @Component({
-    selector: 'sa-tree',
+    selector: `sa-${moduleName}`,
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // templateUrl: `${systemDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
@@ -194,7 +70,7 @@ export class TreeDialogComponent implements OnInit {
 export class TreeComponent {
 
     // Basic Component Settings
-    title = 'tree-dnd'
+    title = moduleName + '_component'
     uid: string
 
     // Dependencies
@@ -216,18 +92,21 @@ export class TreeComponent {
     subscriber: Subscriber<any>
 
     // Drag & Drop
-    // dropListIds: string[] = []
-    // dropListIdMap: KeyMap = {}
+    dropLists: string[] = []
+    // dropLists: HTMLElement[] = []
+    dropListIdMap: KeyMap = {}
+    dropListMap: ElementMap = {}
     expandedNodeSet = new Set<string>()
     dragging = false
     expandTimeout: any
     expandDelay = 1000
 
     // Tree Specific
+    tree: Node[]
     treeMap: NodeMap
     dataSource: ArrayDataSource<Node>
     // treeControl = new NestedTreeControl <any> (node => this.getChildren(node))
-    treeControl = new NestedTreeControl <any> ((node: Node) => node.children || [])
+    treeControl = new NestedTreeControl<any>((node: Node) => node.children || [])
 
     // Methods
     // hasChild = (index: number, node: any) => this.getChildren(node).length > 0;
@@ -241,7 +120,7 @@ export class TreeComponent {
     ) {
 
         // Initialization
-        this.uid = _.uniqueId('sa_tree_component_')
+        this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
 
         // Dependencies
@@ -258,7 +137,7 @@ export class TreeComponent {
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
 
         // Hoist Context
-        // const that = this
+        const that = this
 
         // Data Connections
         this.fetchData()
@@ -269,26 +148,23 @@ export class TreeComponent {
                 }
                 // Manually render upon data change
                 // ref.detach();
-                data.on('change', () => {
+                const onDataChange = () => {
                     if (!data.completed) {
                         return
                     }
-                    // that.onDataChange(ref);
-                    // that.dataDefer(that.subscriber);
+                    that.dataDefer(that.subscriber)
                     ref.detectChanges()
-                    this.dataSource = new ArrayDataSource(this.dataRef())
-                })
-                // that.onDataChange(ref);
-                // that.dataDefer(that.subscriber);
-                ref.detectChanges()
+                }
+                data.on('change', onDataChange)
+                onDataChange()
             })
 
         // Handling Pipes with Promises
         this.dataSub = new Observable((subscriber: Subscriber<any>) => this.dataDefer(subscriber))
 
         // Initialize Drop List Map
-        // this.dropListIdMap[`${this.uid}_parent_drop_list`] = true
-        // this.createDropListIds()
+        this.dropListIdMap[`${this.uid}_parent_drop_list`] = true
+        this.trackDropLists()
     }
 
     public remove(model: any) {
@@ -323,7 +199,7 @@ export class TreeComponent {
         setTimeout(() => this.dataDefer(subscriber), 200)
     }
 
-    private dataRef(): Array<Node> {
+    private dataRef(force: boolean = false): Node[] {
         if (!this.collection) {
             return []
         }
@@ -332,51 +208,63 @@ export class TreeComponent {
         if (!models || !_.isArray(models)) {
             return []
         }
+        if (!force && this.tree && this.tree.length > 0) {
+            return this.tree
+        }
         // Convert Collection Models to Nested Tree to optimize references
         this.treeMap = {}
-        const that = this
-        const tree: Array<Node> = []
+        this.tree = []
         _.each(models, (model: any) => {
             const modelId = _.get(model, 'data.id')
             const parentId = _.get(model, 'data.nestParent.id')
-            // that.dropListIdMap[`${that.uid}_node_${modelId}_drop_list`] = true
-            if (!_.has(that.treeMap, modelId)) {
-                that.treeMap[modelId] = {
+            this.dropListIdMap[`${this.uid}_node_${modelId}_drop_list`] = true
+            if (!_.has(this.treeMap, modelId)) {
+                this.treeMap[modelId] = {
                     id: modelId,
                     model: null,
                     children: []
                 }
             }
-            that.treeMap[modelId].model = model
+            this.treeMap[modelId].model = model
             if (!parentId) {
-                tree.push(
-                    that.treeMap[modelId]
+                this.tree.push(
+                    this.treeMap[modelId]
                 )
             } else {
-                if (!_.has(that.treeMap, parentId)) {
-                    that.treeMap[parentId] = {
+                if (!_.has(this.treeMap, parentId)) {
+                    this.treeMap[parentId] = {
                         id: parentId,
                         model: null,
                         children: []
                     }
                 }
-                that.treeMap[parentId].children.push(
-                    that.treeMap[modelId]
+                this.treeMap[parentId].children.push(
+                    this.treeMap[modelId]
                 )
             }
         })
-        // this.createDropListIds()
-        return tree
+        this.trackDropLists()
+        return this.tree
     }
 
-    // private createDropListIds() {
-    //     this.dropListIds = _.keys(this.dropListIdMap)
-    // }
-
-    public onDataChange(ref: ChangeDetectorRef) {
-        // that.prioritize();
-        this.dataDefer(this.subscriber)
-        ref.detectChanges()
+    private trackDropLists() {
+        this.dropLists = []
+        _.each(this.dropListIdMap, (value, key) => {
+            if (!value) {
+                return
+            }
+            const cached = key in this.dropListMap
+            const element = cached ? this.dropListMap[key] : document.getElementById(key)
+            if (!element) {
+                return
+            }
+            this.dropLists.push(key)
+            // this.dropLists.push(element)
+            if (cached) {
+                return
+            }
+            this.dropListMap[key] = element
+        })
     }
 
     /**
@@ -385,9 +273,11 @@ export class TreeComponent {
     public onDragStart() {
         this.dragging = true
     }
+
     public onDragEnd() {
         this.dragging = false
     }
+
     public onDragHover(node: Node) {
         if (this.dragging) {
             clearTimeout(this.expandTimeout)
@@ -396,6 +286,7 @@ export class TreeComponent {
             }, this.expandDelay)
         }
     }
+
     public onDragHoverEnd() {
         if (this.dragging) {
             clearTimeout(this.expandTimeout)
@@ -438,35 +329,38 @@ export class TreeComponent {
         //     )
         // }
 
-        console.log(`model drop: ${event.item.data.model.get('name')}`,
-            // `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
-            `index change: ${event.previousIndex} -> ${event.currentIndex}`)
+        const movingNode: Node = event.item.data
+        console.log(`model drop: ${movingNode.model.get('name')}`,
+            `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
+            `index change: ${event.previousIndex} -> ${event.currentIndex}`,
+            `priority: ${movingNode.model.get('priority')}`,
+            'container:', event.container.data
+        )
+        // console.log('event:', event)
 
         // TODO: Allow Multi-Level Priorities
-        // moveItemInArray(tree, event.previousIndex, event.currentIndex);
-        // let priority = 0;
+        // moveItemInArray(tree, event.previousIndex, event.currentIndex)
+        // let priority = 0
         // _.each(tree, (node) => {
         //     if (!node.model || !node.model.set) {
-        //         return;
+        //         return
         //     }
-        //     const newPosition = priority++;
-        //     if (node.model.get('priority') === newPosition) {
-        //         return;
-        //     }
-        //     node.model.set('priority', newPosition);
-        //     node.model.save();
-        // });
-        // this.subscriber.next(tree);
-        // this.ref.detectChanges();
-        // this.collection.throttleTrigger('change');
+        //     const newPosition = priority++
+        //     // if (node.model.get('priority') === newPosition) {
+        //     //     return
+        //     // }
+        //     node.model.set('priority', newPosition)
+        //     // node.model.save()
+        // })
+        // console.log(`new priority: ${movingNode.model.get('priority')}`)
+        // movingNode.model.save()
+        //
+        // // update pipe
+        // this.subscriber.next(tree)
+        // this.ref.detectChanges()
 
-        console.log('onDragDrop:',
-            {
-                event,
-                parent,
-                dataSource: this.dataSource
-            }
-        )
+        // propagate change
+        // this.collection.throttleTrigger('change')
     }
 
     private canBeDropped(event: CdkDragDrop<any, any>): boolean {
@@ -536,13 +430,13 @@ export class TreeComponent {
                 // Normalize Content
                 if ('content' === attr) {
                     const value = _.get(result, attr)
-                    model.set(attr, !value ? null : { id: _.get(value, 'id') })
+                    model.set(attr, !value ? null : {id: _.get(value, 'id')})
                     return
                 }
                 model.set(attr, _.get(result, attr))
             })
             model.save()
-            // this.ref.detectChanges();
+            // this.ref.detectChanges()
         })
     }
 }

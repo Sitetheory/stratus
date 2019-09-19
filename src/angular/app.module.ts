@@ -14,7 +14,9 @@ import {BaseComponent} from '@stratus/angular/base/base.component'
 
 // Stratus Custom Components
 import {SelectorComponent} from '@stratus/angular/selector/selector.component'
-import {TreeComponent, TreeDialogComponent} from '@stratus/angular/tree/tree.component'
+import {TreeComponent} from '@stratus/angular/tree/tree.component'
+import {TreeDialogComponent} from '@stratus/angular/tree/tree-dialog.component'
+import {TreeNodeComponent} from '@stratus/angular/tree/tree-node.component'
 
 // Angular Components
 import {QuillModule} from 'ngx-quill'
@@ -84,12 +86,14 @@ import * as Stratus from 'stratus'
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,
+        TreeNodeComponent,
     ],
     declarations: [
         BaseComponent,
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,
+        TreeNodeComponent,
     ],
     // bootstrap,
     providers: []

@@ -1,12 +1,12 @@
 <div class="tree">
-<!--    [cdkDropListConnectedTo]="dropListsIds"-->
-<!--    [cdkDropListData]="uid"-->
-<!--    [dataSource]="dataSub | async"-->
+<!--    [cdkDropListConnectedTo]="dropLists"-->
     <cdk-tree cdkDropList
               [id]="uid + '_parent_drop_list'"
-              (cdkDropListDropped)="onDragDrop($event)"
-              [dataSource]="dataSource"
+              [dataSource]="dataSub | async"
               [treeControl]="treeControl"
+              [cdkDropListData]="node"
+              [cdkDropListDisabled]="false"
+              (cdkDropListDropped)="onDragDrop($event)"
               class="tree-node-drop-list">
         <!-- This is the tree node template for leaf nodes -->
         <cdk-nested-tree-node cdkDrag
@@ -22,19 +22,21 @@
             <button mat-icon-button disabled></button>
 
             <!-- Display Clickable Name -->
-            <span [textContent]="node.model.data.name"
+            <span cdkDragHandle
+                  [textContent]="node.model.data.name"
                   (click)="openDialog(node.model)"></span>
 
             <div *cdkDragPreview
                  [textContent]="node.model.data.name"
                  class="tree-node-drag-preview"></div>
 
-<!--            <div cdkDropList-->
-<!--                 class="tree-node-drop-list"-->
-<!--                 [id]="uid + '_node_' + node.model.data.id + '_drop_list'"-->
-<!--                 [cdkDropListConnectedTo]="dropListsIds"-->
-<!--                 [cdkDropListData]="node"-->
-<!--                 (cdkDropListDropped)="onDragDrop($event)"></div>-->
+<!--            [cdkDropListConnectedTo]="dropLists"-->
+            <div cdkDropList
+                 [id]="uid + '_node_' + node.model.data.id + '_drop_list'"
+                 [cdkDropListData]="node"
+                 [cdkDropListDisabled]="false"
+                 (cdkDropListDropped)="onDragDrop($event)"
+                 class="tree-node-drop-list"></div>
 
             <!-- Display Name & Dialogue Button -->
 <!--        {{node.model.data.name}}&nbsp;-->
@@ -74,18 +76,21 @@
             </button>
 
             <!-- Display Clickable Name -->
-            <span [textContent]="node.model.data.name"
+            <span cdkDragHandle
+                  [textContent]="node.model.data.name"
                   (click)="openDialog(node.model)"></span>
 
             <div *cdkDragPreview
                  [textContent]="node.model.data.name"
                  class="tree-node-drag-preview"></div>
+
+<!--            [cdkDropListConnectedTo]="dropLists"-->
 <!--            <div cdkDropList-->
-<!--                 class="tree-node-drop-list"-->
 <!--                 [id]="uid + '_node_' + node.model.data.id + '_drop_list'"-->
-<!--                 [cdkDropListConnectedTo]="dropListsIds"-->
 <!--                 [cdkDropListData]="node"-->
-<!--                 (cdkDropListDropped)="onDragDrop($event)"></div>-->
+<!--                 [cdkDropListDisabled]="false"-->
+<!--                 (cdkDropListDropped)="onDragDrop($event)"-->
+<!--                 class="tree-node-drop-list"></div>-->
 
             <!-- Display Name & Dialogue Button -->
 <!--        {{node.model.data.name}}&nbsp;-->
