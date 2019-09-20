@@ -1,0 +1,170 @@
+<!-- TODO needs a close button for small resolutions -->
+<div id="{{elementId}}" class="stratus-property-details" data-ng-cloak>
+	<div ng-if="model.pending" data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap>
+		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+	</div>
+	<div data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)">
+		<div class="details-container" data-md-whiteframe="1">
+			<div class="details-header dotted-spaced-underline" data-layout="row" data-layout-align="space-between start" data-layout-wrap>
+				<div class="address-container" data-flex="100" data-flex-gt-xs="80">
+					<h3 class="address">
+						<span data-ng-bind="::model.data.UnparsedAddress"></span><!--Address not yet available-->
+					</h3>
+					<div class="address2">
+						<span data-ng-bind="::model.data.City | lowercase"></span><span data-ng-if="::model.data.StateOrProvince">, <span data-ng-bind="::model.data.StateOrProvince"></span></span>
+						<span data-ng-bind="::model.data.PostalCode"></span>
+						<span data-ng-bind="::model.data.Country"></span>
+					</div>
+				</div>
+				<div class="contact-container" data-flex="100" data-flex-gt-xs="20">
+					<!-- TODO data-ng-click="return cms.obj.listtrac.track('lead');"-->
+					<!--a data-ng-href="/site/contact?comments={{::getFullAddress(true)}}" target="_blank">Contact</a-->
+					<md-button class="button" target="_blank" data-ng-href="/site/contact?comments={{::getFullAddress(true)}}">
+						Contact
+					</md-button>
+				</div>
+			</div>
+
+			<div class="open-house-section dotted-spaced-underline" data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length">
+				<h4 class="section-title">Open House</h4>
+				<div class="open-house-container dotted-spaced-sideline">
+					<span class="description" data-ng-if="::model.data.OpenHouses[0].OpenHouseRemarks" data-ng-bind="::model.data.OpenHouses[0].OpenHouseRemarks"></span>
+					<div class="open-house" id="{{'open_house_' + openHouse.OpenHouseId}}" data-ng-repeat="openHouse in model.data.OpenHouses">
+						<span data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}"></span>
+						<span data-ng-if="::openHouse.OpenHouseEndTime"> —
+							<span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
+						</span>
+						<span data-ng-if="::openHouse.ShowingAgentFirstName">
+							with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="image-specs-container" data-layout="row" data-layout-align="space-between start" data-layout-wrap>
+				<div class="image-container" data-flex="100" data-flex-gt-xs="75">
+					<div class="price-banner" data-ng-if="::model.data.ClosePrice || model.data.ListPrice">
+						<div class="price-banner-corner"></div>
+						<div class="list-price-container">
+							<span class="list-price-label" data-ng-bind="model.data.ClosePrice ? 'Sold for' : 'Listed at'"></span>
+							<span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)"></span>
+						</div>
+					</div>
+					<div class="details-image">
+						<img data-ng-src="{{model.data.Images[0].MediaURL ? model.data.Images[0].MediaURL : '/content/mls/images/no_photo_details.jpg'}}" alt="{{::model.data.UnparsedAddress}}">
+					</div>
+				</div>
+
+				<div class="details-specs-container" data-flex="100" data-flex-gt-xs="20">
+					<div class="details-specs">
+						Status: <span data-ng-bind="::model.data.MlsStatus"></span>
+						<span data-ng-if="::model.data.BedroomsTotal > 0"><br><span data-ng-bind="::model.data.BedroomsTotal"></span> Beds</span>
+						<span data-ng-if="::model.data.BathroomsFull > 0">
+							<br><span data-ng-bind="::model.data.BathroomsFull"></span> Baths
+							<span data-ng-if="::model.data.BathroomsHalf">
+								| <span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
+							</span>
+						</span>
+						<span data-ng-if="::model.data.BuildingAreaTotal"><br><span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet</span>
+						<span data-ng-if="::model.data.ListPrice"><br>Listed at $<span data-ng-bind="::model.data.ListPrice | number"></span></span>
+						<span data-ng-if="::model.data.DaysOnMarket"><br>Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span></span>
+						<span data-ng-if="::model.data.YearBuilt"><br>Built in <span data-ng-bind="::model.data.YearBuilt"></span></span>
+						<span data-ng-if="::model.data.LotSizeArea">
+							<br>Lot: <span data-ng-bind="::model.data.LotSizeArea | number"></span>
+							<span data-ng-if="::model.data.LotSizeUnits">
+								<span data-ng-bind="::model.data.LotSizeUnits"></span>
+							</span>
+						</span>
+						<span data-ng-if="!model.data.LotSizeArea && model.data.LotSizeAcres"><br>Lot: <span data-ng-bind="::model.data.LotSizeAcres"></span> Acres</span>
+						<!--{if !empty($data.standard.subdivision)}<br/>Subdivision: {$data.standard.subdivision}{/if}-->
+						<span data-ng-if="::model.data.PoolPrivateYN"><br>With Pool</span>
+						<span data-ng-if="::model.data.Stories"><br>Stories: <span data-ng-bind="::model.data.Stories"></span></span>
+						<!--span data-ng-if="::model.data.PetsAllowed"><br>Pets Allowed:
+							<ul>
+								<li data-ng-repeat="pets in ::model.data.PetsAllowed" data-ng-bind="::pets"></li>
+							</ul>
+						</span-->
+						<!--{if !empty($data.standard.sale_type) && !empty($data.standard.sale_type && $data.standard.sale_type != "NONE")}<br/>Sale Condition: {$data.standard.sale_type}{/if}-->
+						<span data-ng-if="::model.data.PropertyType"><br><span data-ng-bind="::model.data.PropertyType"></span></span>
+						<span data-ng-if="::model.data.PropertySubType"><br><span data-ng-bind="::model.data.PropertySubType"></span></span>
+					</div>
+
+
+					<div class="links-container dotted-spaced-underline" data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded">
+						<div class="response-link vtour" data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded">
+							<a data-ng-href="{{::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded}}" target="_blank">VTour</a>
+						</div>
+					</div>
+
+
+					<div class="mls-service-container">
+						<div class="mls-service" data-ng-if="::model.data.ListingKey">
+							<span data-ng-bind="getMLSName()"></span>#
+							<span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="additional-photos details-container" data-ng-if="model.data.Images && model.data.Images.length > 0" data-md-whiteframe="1">
+			<!-- FIXME stratus-carousel stopped working on latest stratus -->
+			<!--<stratus-carousel
+					init-now="model.completed"
+					images='{{::getSlideshowImages()}}'
+			></stratus-carousel>-->
+
+			<!-- autoplay="true" -->
+			<!-- pagination='{"clickable":true,"render":"numberBullet"}' -->
+		</div>
+
+		<div class="additional-details details-container" data-md-whiteframe="1">
+			<div class="description" data-ng-if="::model.data.PublicRemarks" data-ng-bind="::model.data.PublicRemarks"></div>
+
+			<!-- TODO Missing quite a number of minor details -->
+			<!-- TODO Wishlist, would love to replace sections with Masonry ability https://passy.github.io/angular-masonry/ -->
+
+			<div class="detail-sections">
+
+				<stratus-property-details-sub-section
+						ng-model="model"
+						data-ng-repeat="detail in ::minorDetails"
+						section-name="{{::detail.section}}"
+						items={{::detail.items}}
+				>
+				</stratus-property-details-sub-section>
+
+			</div>
+
+			<div class="agent-section">
+				<div class="agent dotted-spaced-underline underline-top" data-ng-if="getListAgentName()">
+					<strong>Listing Agent: </strong>
+					<span data-ng-bind="::getListAgentName()"></span><span data-ng-if="::model.data.ListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.ListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.ListOfficeName">, <span data-ng-bind="::model.data.ListOfficeName"></span></span>
+				</div>
+				<div class="agent dotted-spaced-underline underline-top" data-ng-if="getCoListAgentName()">
+					<strong>Co-Listing Agent: </strong>
+					<span data-ng-bind="::getCoListAgentName()"></span><span data-ng-if="::model.data.CoListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoListOfficeName">, <span data-ng-bind="::model.data.CoListOfficeName"></span></span>
+				</div>
+				<div class="agent dotted-spaced-underline underline-top" data-ng-if="getBuyerAgentName()">
+					<strong>Buyer Agent: </strong>
+					<span data-ng-bind="::getBuyerAgentName()"></span><span data-ng-if="::model.data.BuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.BuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.BuyerOfficeName">, <span data-ng-bind="::model.data.BuyerOfficeName"></span></span>
+				</div>
+				<div class="agent dotted-spaced-underline underline-top" data-ng-if="getCoBuyerAgentName()">
+					<strong>Co-Buyer Agent: </strong>
+					<span data-ng-bind="::getCoBuyerAgentName()"></span><span data-ng-if="::model.data.CoBuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoBuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoBuyerOfficeName">, <span data-ng-bind="::model.data.CoBuyerOfficeName"></span></span>
+				</div>
+			</div>
+		</div>
+
+		<div class="map-location details-container" data-md-whiteframe="1" data-ng-if="::getGoogleMapEmbedUrl() && model.data.UnparsedAddress">
+			<iframe data-ng-src="{{::getGoogleMapEmbedUrl()}}" style="border: 0;height:450px;width:100%;"></iframe>
+		</div>
+
+		<div class="disclaimer details-container dotted-spaced-underline underline-top" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+	</div>
+
+	<div data-ng-if="model.data.length == 0 || model.error" class="error details-container">
+		Sorry, the property you requested could not be found. Perhaps there was an error and trying again will solve the
+		problem.
+	</div>
+</div>
