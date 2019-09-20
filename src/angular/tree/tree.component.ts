@@ -334,6 +334,7 @@ export class TreeComponent {
         this.unsettled = true
 
         // Debug Data'
+        /* *
         console.group('onDragDrop()')
         _.each(
             [
@@ -344,6 +345,7 @@ export class TreeComponent {
             ],
             (message) => console.log(message)
         )
+        /* */
 
         // Handle Parent Change
         if (!this.nodeIsEqual(parentNode, pastParentNode)) {
@@ -367,7 +369,7 @@ export class TreeComponent {
                 })
             }
             targetNode.model.set('nestParent', !parentNode ? parentNode : parentPatch)
-            console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
+            // console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
         }
 
         // Set Priority
@@ -381,8 +383,10 @@ export class TreeComponent {
         })
 
         // Debug Data
+        /* *
         console.log('new priority:', targetNode.model.get('priority'))
         console.groupEnd()
+        /* */
 
         // Start XHR
         targetNode.model.save()
