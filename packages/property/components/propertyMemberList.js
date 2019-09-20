@@ -338,7 +338,7 @@
                 $timeout(propertyLoopback.unregisterDetailsInstance('property_member_detail_popup'), 10)
               })
           } else {
-            $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)
+            $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)
           }
         }
 
@@ -365,7 +365,7 @@
           $scope.variableSyncing = $attrs.variableSync && _.isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
 
           // console.log('variables syncing: ', $scope.variableSyncing)
-          let promises = []
+          // let promises = []
           Object.keys($scope.variableSyncing).forEach(function (elementId) {
             // promises.push(
             // $q(async function (resolve, reject) {
@@ -396,7 +396,7 @@
                 member.hasOwnProperty('MemberFullName')
               ) {
                 let nameArray = member['MemberFullName'].split(' ')
-                let firstName = nameArray.shift()
+                // let firstName = nameArray.shift()
                 let lastName = nameArray.join(' ')
                 varElement.val(lastName)
               }

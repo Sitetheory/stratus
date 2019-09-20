@@ -32,7 +32,7 @@
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
   }
-}(this, function (Stratus, _) {
+}(this, function (Stratus, _, angular) {
   const min = Stratus.Environment.get('production') ? '.min' : ''
 
   Stratus.Components.PropertySearch = {

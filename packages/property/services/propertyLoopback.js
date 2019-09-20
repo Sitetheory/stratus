@@ -76,6 +76,8 @@
  * @property {Number} BedroomsTotalMin
  */
 
+/* global define */
+
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
@@ -1174,7 +1176,8 @@
               ) {
                 let rawSearchOptions = matches[1]
                 // Time to separate all the values out in pairs between /'s
-                regex = /([^\/]+)\/([^\/]+)/g
+                // standard had me remove regex = /([^\/]+)\/([^\/]+)/g  (notice the missing \'s)
+                regex = /([^/]+)\/([^/]+)/g
                 while ((matches = regex.exec(rawSearchOptions)) != null) {
                   if (
                     matches[1] &&
@@ -1604,7 +1607,7 @@
               // options.where['ListType'] = ['House','Townhouse'];
               refresh = refresh || false
 
-              return await genericSearchCollection($scope, collectionVarName, options, refresh,
+              return genericSearchCollection($scope, collectionVarName, options, refresh,
                 'List',
                 'Properties',
                 compilePropertyFilter
@@ -1687,7 +1690,7 @@
               // options.where['ListType'] = ['House','Townhouse'];
               refresh = refresh || false
 
-              return await genericSearchCollection($scope, collectionVarName, options, refresh,
+              return genericSearchCollection($scope, collectionVarName, options, refresh,
                 options.listName,
                 'Members',
                 compileMemberFilter
@@ -1738,7 +1741,7 @@
               // options.where['ListType'] = ['House','Townhouse'];
               refresh = refresh || false
 
-              return await genericSearchCollection($scope, collectionVarName, options, refresh,
+              return genericSearchCollection($scope, collectionVarName, options, refresh,
                 'OfficeList',
                 'Offices',
                 compileOfficeFilter
