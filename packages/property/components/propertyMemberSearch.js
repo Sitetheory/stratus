@@ -16,7 +16,6 @@
 // For full details and documentation:
 // http://docs.sitetheory.io
 
-
 /* global define */
 
 // Define AMD, Require.js, or Contextual Scope
@@ -100,7 +99,6 @@
           //$scope.variableSync()
         }
 
-
         /**
          * Update a scope nest variable from a given string path.
          * Works with updateNestedPathValue
@@ -150,7 +148,6 @@
           return angular.element(document.getElementById(elementId))
         }
 
-
         /**
          * Sync Gutensite form variables to a Stratus scope
          * TODO move this to it's own directive/service
@@ -187,7 +184,6 @@
           })
           await $q.all(promises)
         }
-
 
         /**
          * Add a popup on screen using an existing element
@@ -230,11 +226,10 @@
           $scope.filterMenu.open()
         }*/
 
-
         /**
          * Call a List widget to perform a search
          */
-        $scope.searchMembers = function searchMembers() {
+        $scope.searchMembers = function searchMembers () {
           let listScope
           if ($scope.listId) {
             listScope = propertyLoopback.getListInstance($scope.listId, 'Member')
@@ -256,18 +251,18 @@
          * @param {ListingMember} member
          * @param {*=} ev - Click event
          */
-        $scope.displayMemberSelector = function displayMemberSelector() {
+        $scope.displayMemberSelector = function displayMemberSelector () {
           //Opening a popup will load the propertyDetails and adjust the hashbang URL
           let templateOptions = {
             //'element_id': 'property_member_detail_popup',
             'options': {},//JSON.stringify($scope.options),
             'template': 'mothership/propertyMemberSelector',
             'variable-sync': JSON.stringify({
-              "agent_fname": "MemberFirstName",
-              "agent_lname": "MemberLastName",
-              "agent_license": "MemberStateLicense",
-              "office_name": "OfficeName",
-              "office_id": "OfficeKey",
+              'agent_fname': 'MemberFirstName',
+              'agent_lname': 'MemberLastName',
+              'agent_license': 'MemberStateLicense',
+              'office_name': 'OfficeName',
+              'office_id': 'OfficeKey',
             }),
             //'page-title': true,//update the page title
           }

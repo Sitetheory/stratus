@@ -104,9 +104,9 @@
         $provide.factory('propertyLoopback', [
           '$http', '$injector', '$q', '$location', '$window', '$rootScope', 'Collection', 'Model', 'orderByFilter',
           function ($http, $injector, $q, $location, $window, $rootScope, Collection, Model, orderByFilter) {
-            let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'; // TODO need to allow setting own tokenRefreshURL
-            let refreshLoginTimer; //Timeout object
-            let defaultPageTitle;
+            let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken' // TODO need to allow setting own tokenRefreshURL
+            let refreshLoginTimer //Timeout object
+            let defaultPageTitle
 
             /** @type {{List: Object<scope>, Search: Object<scope>, Details: Object<scope>}} */
             const instance = {
@@ -119,25 +119,25 @@
               OfficeList: {},
               OfficeSearch: {},
               OfficeDetails: {},
-            };
+            }
 
             /** @type {{List: Object<[String]>, Search: Object<[String]>}} */
             const instanceLink = {
               List: {},
               Search: {}
-            };
+            }
 
             /** @type {{services: Array<MLSService>, lastCreated: Date, lastTtl: number}} */
             const session = {
               services: [],
               lastCreated: new Date(),
               lastTtl: 0
-            };
+            }
 
             const urlOptions = {
               Listing: {},
               Search: {}
-            };
+            }
 
             /**
              * The last where query that was sent we're holding on to. This is mostly so we can move from page to page properly.
@@ -147,7 +147,7 @@
               whereFilter: {},
               pages: [],
               perPage: 0
-            };
+            }
 
             /**
              * Add List instance to the service
@@ -155,17 +155,17 @@
              * @param $scope
              * @param {String=} listType - Property / Member / Office
              */
-            function registerListInstance(uid, $scope, listType) {
-              listType = listType || '';
+            function registerListInstance (uid, $scope, listType) {
+              listType = listType || ''
               if (listType === 'Property') {
-                listType = '';
+                listType = ''
               }
               if (!instance[listType + 'List']) {
-                instance[listType + 'List'] = {};
+                instance[listType + 'List'] = {}
               }
-              instance[listType + 'List'][uid] = $scope;
+              instance[listType + 'List'][uid] = $scope
               if (!instanceLink.List.hasOwnProperty(uid)) {
-                instanceLink.List[uid] = [];
+                instanceLink.List[uid] = []
               }
             }
 
@@ -176,21 +176,21 @@
              * @param {String=} listUid
              * @param {String=} listType - Property / Member / Office
              */
-            function registerSearchInstance(uid, $scope, listUid, listType) {
-              listType = listType || '';
+            function registerSearchInstance (uid, $scope, listUid, listType) {
+              listType = listType || ''
               if (listType === 'Property') {
-                listType = '';
+                listType = ''
               }
-              instance[listType + 'Search'][uid] = $scope;
+              instance[listType + 'Search'][uid] = $scope
               if (!instanceLink.Search.hasOwnProperty(uid)) {
-                instanceLink.Search[uid] = [];
+                instanceLink.Search[uid] = []
               }
               if (listUid) {
-                instanceLink.Search[uid].push(listUid);
+                instanceLink.Search[uid].push(listUid)
                 if (!instanceLink.List.hasOwnProperty(listUid)) {
-                  instanceLink.List[listUid] = [];
+                  instanceLink.List[listUid] = []
                 }
-                instanceLink.List[listUid].push(uid);
+                instanceLink.List[listUid].push(uid)
               }
             }
 
@@ -199,19 +199,19 @@
              * @param {String} uid - The elementId of a widget
              * @param $scope
              */
-            function registerDetailsInstance(uid, $scope) {
-              instance.Details[uid] = $scope;
+            function registerDetailsInstance (uid, $scope) {
+              instance.Details[uid] = $scope
             }
 
             /**
              * Destroy a reference and Instance of a Details widget
              * @param {String} uid - The elementId of a widget
              */
-            function unregisterDetailsInstance(uid) {
+            function unregisterDetailsInstance (uid) {
               if (instance.Details.hasOwnProperty(uid)) {
-                let detailUid = instance.Details[uid].getUid();
-                delete instance.Details[uid];
-                Stratus.Instances.Clean(detailUid);
+                let detailUid = instance.Details[uid].getUid()
+                delete instance.Details[uid]
+                Stratus.Instances.Clean(detailUid)
               }
             }
 
@@ -221,20 +221,20 @@
              * @param {String=} listType - Property / Member / Office
              * @returns {Array<scope>}
              */
-            function getSearchInstanceLinks(searchUid, listType) {
-              listType = listType || '';
+            function getSearchInstanceLinks (searchUid, listType) {
+              listType = listType || ''
               if (listType === 'Property') {
-                listType = '';
+                listType = ''
               }
-              let linkedLists = [];
+              let linkedLists = []
               if (instanceLink.Search.hasOwnProperty(searchUid)) {
                 instanceLink.Search[searchUid].forEach(function (listUid) {
                   if (instance[listType + 'List'].hasOwnProperty(listUid)) {
-                    linkedLists.push(instance[listType + 'List'][listUid]);
+                    linkedLists.push(instance[listType + 'List'][listUid])
                   }
                 })
               }
-              return linkedLists;
+              return linkedLists
             }
 
             /**
@@ -243,12 +243,12 @@
              * @param {String=} listType - Property / Member / Office
              * @returns {scope}
              */
-            function getListInstance(listUid, listType) {
-              listType = listType || '';
+            function getListInstance (listUid, listType) {
+              listType = listType || ''
               if (listType === 'Property') {
-                listType = '';
+                listType = ''
               }
-              return instanceLink.List.hasOwnProperty(listUid) ? instance[listType + 'List'][listUid] : null;
+              return instanceLink.List.hasOwnProperty(listUid) ? instance[listType + 'List'][listUid] : null
             }
 
             /**
@@ -257,37 +257,37 @@
              * @param {String=} listType - Property / Member / Office
              * @returns {Array<scope>}
              */
-            function getListInstanceLinks(listUid, listType) {
-              listType = listType || '';
+            function getListInstanceLinks (listUid, listType) {
+              listType = listType || ''
               if (listType === 'Property') {
-                listType = '';
+                listType = ''
               }
-              let linkedSearches = [];
+              let linkedSearches = []
               if (instanceLink.List.hasOwnProperty(listUid)) {
                 instanceLink.List[listUid].forEach(function (searchUid) {
                   if (instance[listType + 'Search'].hasOwnProperty(searchUid)) {
-                    linkedSearches.push(instance[listType + 'Search'][searchUid]);
+                    linkedSearches.push(instance[listType + 'Search'][searchUid])
                   }
                 })
               }
-              return linkedSearches;
+              return linkedSearches
             }
 
             /**
              * Apply a new Page title or revert to the original; page title
              * @param {String} title
              */
-            function setPageTitle(title) {
+            function setPageTitle (title) {
               if (!defaultPageTitle) {
                 // save default title first
-                defaultPageTitle = JSON.parse(JSON.stringify($window.document.title));
+                defaultPageTitle = JSON.parse(JSON.stringify($window.document.title))
               }
               if (!title) {
                 //Revert to default
-                $window.document.title = defaultPageTitle;
+                $window.document.title = defaultPageTitle
               } else {
                 //Apply new title
-                $window.document.title = title;
+                $window.document.title = title
               }
             }
 
@@ -295,8 +295,8 @@
              * Updates the token url to another path
              * @param {String} url
              */
-            function setTokenURL(url) {
-              tokenRefreshURL = url;
+            function setTokenURL (url) {
+              tokenRefreshURL = url
             }
 
             /**
@@ -304,23 +304,23 @@
              * @param {Boolean=} keepAlive
              * @returns {Promise<void>}
              */
-            function tokenKeepAuth(keepAlive) {
+            function tokenKeepAuth (keepAlive) {
               return $q(async function (resolve, reject) {
                 try {
                   if (
                     session.services.length < 1
                     || session.expires < new Date() //if expiring in the next 15 seconds
                   ) {
-                    await tokenRefresh(keepAlive);
-                    resolve();
+                    await tokenRefresh(keepAlive)
+                    resolve()
                   } else {
-                    resolve();
+                    resolve()
                   }
                 } catch (err) {
-                  console.error('error', err);
-                  reject(err);
+                  console.error('error', err)
+                  reject(err)
                 }
-              });
+              })
             }
 
             /**
@@ -328,28 +328,28 @@
              * @param {Boolean=} keepAlive
              * @returns {Promise<void>}
              */
-            function tokenRefresh(keepAlive) {
+            function tokenRefresh (keepAlive) {
               return $q(function (resolve, reject) {
                 $http({
                   method: 'GET',
                   url: tokenRefreshURL
-                }).then(function successCallback(response) {
+                }).then(function successCallback (response) {
                   if (
                     typeof response === 'object'
                     && response.hasOwnProperty('data')
                     && response.data.hasOwnProperty('services')
                     && response.data.services.hasOwnProperty('length')
                   ) {
-                    tokenHandleGoodResponse(response);
-                    resolve();
+                    tokenHandleGoodResponse(response)
+                    resolve()
                   } else {
-                    tokenHandleBadResponse(response);
-                    reject();
+                    tokenHandleBadResponse(response)
+                    reject()
                   }
-                }, function errorCallback(response) {
-                  tokenHandleBadResponse(response);
-                  reject();
-                });
+                }, function errorCallback (response) {
+                  tokenHandleBadResponse(response)
+                  reject()
+                })
               })
             }
 
@@ -361,21 +361,21 @@
              * @param {Boolean=} keepAlive
              * @param {Array<MLSService>} response.data.services
              */
-            function tokenHandleGoodResponse(response, keepAlive) {
-              session.services = [];
+            function tokenHandleGoodResponse (response, keepAlive) {
+              session.services = []
               response.data.services.forEach(
                 /** @param {MLSService} service */
                 function (service) {
                   if (service.hasOwnProperty('id')) {
-                    session.services[service.id] = service;
-                    session.lastCreated = new Date(service.created);//The object is a String being converted to Date
-                    session.lastTtl = service.ttl;
-                    session.expires = new Date(session.lastCreated.getTime() + (session.lastTtl - 15) * 1000);//Set to expire 15 secs before it actually does
+                    session.services[service.id] = service
+                    session.lastCreated = new Date(service.created)//The object is a String being converted to Date
+                    session.lastTtl = service.ttl
+                    session.expires = new Date(session.lastCreated.getTime() + (session.lastTtl - 15) * 1000)//Set to expire 15 secs before it actually does
                   }
                 }
-              );
+              )
               if (keepAlive) {
-                tokenEnableRefreshTimer();
+                tokenEnableRefreshTimer()
               }
             }
 
@@ -383,27 +383,27 @@
              * Functions to do if the token retrieval fails. For now it just outputs the errors
              * @param {Object} response
              */
-            function tokenHandleBadResponse(response) {
+            function tokenHandleBadResponse (response) {
               if (
                 typeof response === 'object'
                 && response.hasOwnProperty('data')
                 && response.data.hasOwnProperty('errors')
                 && response.data.errors.hasOwnProperty('length')
               ) {
-                console.error(response.data.errors);
+                console.error(response.data.errors)
               } else {
-                console.error(response);
+                console.error(response)
               }
             }
 
             /**
              * Set a timer to attempt to run a token fetch again 15 secs before the current tokens expire
              */
-            function tokenEnableRefreshTimer() {
-              clearTimeout(refreshLoginTimer);
+            function tokenEnableRefreshTimer () {
+              clearTimeout(refreshLoginTimer)
               refreshLoginTimer = setTimeout(function () {
-                tokenRefresh();
-              }, (session.lastTtl - 15) * 1000); //15 seconds before the token expires
+                tokenRefresh()
+              }, (session.lastTtl - 15) * 1000) //15 seconds before the token expires
             }
 
             /**
@@ -412,15 +412,15 @@
              * @param {Object} request - Standard Registry request object
              * @returns {Model}
              */
-            function createModel(request) {
+            function createModel (request) {
               //request.direct = true;
-              let model = new Model(request);
+              let model = new Model(request)
               if (request.api) {
                 model.meta.set('api', _.isJSON(request.api)
                   ? JSON.parse(request.api)
                   : request.api)
               }
-              return model;
+              return model
             }
 
             /**
@@ -429,15 +429,15 @@
              * @param {Object} request - Standard Registry request object
              * @returns {Model}
              */
-            function createCollection(request) {
-              request.direct = true;
-              let collection = new Collection(request);
+            function createCollection (request) {
+              request.direct = true
+              let collection = new Collection(request)
               if (request.api) {
                 collection.meta.set('api', _.isJSON(request.api)
                   ? JSON.parse(request.api)
                   : request.api)
               }
-              return collection;
+              return collection
             }
 
             /**
@@ -448,45 +448,45 @@
              * @param {Boolean} append
              * @returns {Promise<Collection>}
              */
-            async function fetchMergeCollections(originalCollection, collections, append) {
+            async function fetchMergeCollections (originalCollection, collections, append) {
               // The Collection is now doing something. Let's label it as such.
-              originalCollection.pending = true;
-              originalCollection.completed = false;
+              originalCollection.pending = true
+              originalCollection.completed = false
 
-              let totalCount = 0;
+              let totalCount = 0
 
               // Make Promises that each of the collections shall fetch their results
-              const fetchPromises = [];
+              const fetchPromises = []
               collections.forEach(function (collection) {
-                let options = {};
+                let options = {}
                 if (session.services[collection.serviceId].token !== null) {
                   options.headers = {
                     'Authorization': session.services[collection.serviceId].token
-                  };
+                  }
                 }
                 fetchPromises.push(
                   $q(function (resolve, reject) {
                     collection.fetch('POST', null, options)
                       .then(function (models) {
-                        resolve(models);
+                        resolve(models)
                       })
                       // Inject the local server's Service Id loaded from
                       .then(function () {
                         resolve(modelInjectProperty(collection.models, {
                           _ServiceId: collection.serviceId
-                        }));
+                        }))
                       })
                       .then(function () {
-                        let countRecords = collection.header.get('x-total-count');
+                        let countRecords = collection.header.get('x-total-count')
                         if (countRecords) {
-                          totalCount += parseInt(countRecords);
+                          totalCount += parseInt(countRecords)
                         }
                       })
                   }),
                 )
-              });
+              })
               if (!append) {
-                originalCollection.models.splice(0, originalCollection.models.length); //empties the array
+                originalCollection.models.splice(0, originalCollection.models.length) //empties the array
               }
               return $q.all(fetchPromises)
                 .then(
@@ -499,24 +499,24 @@
                     // Once all the Results are returned, starting merging them into the original Collection
                     fetchedData.forEach(function (models) {
                       if (_.isArray(models)) {
-                        originalCollection.models.push(...models);
+                        originalCollection.models.push(...models)
                       }
-                    });
-                    return originalCollection;
+                    })
+                    return originalCollection
                   }
                 )
                 .then(function () {
-                  originalCollection.header.set('x-total-count', totalCount);
-                  originalCollection.meta.set('fetchDate', new Date());
+                  originalCollection.header.set('x-total-count', totalCount)
+                  originalCollection.meta.set('fetchDate', new Date())
 
                   // The Collection is now ready, let's make sure we label it as such
-                  originalCollection.pending = false;
-                  originalCollection.completed = true;
-                  originalCollection.filtering = false;
-                  originalCollection.paginate = false;
+                  originalCollection.pending = false
+                  originalCollection.completed = true
+                  originalCollection.filtering = false
+                  originalCollection.paginate = false
 
-                  return originalCollection;
-                });
+                  return originalCollection
+                })
             }
 
             /**
@@ -526,18 +526,18 @@
              * @param {Model} newModel
              * @returns {Promise<Collection>}
              */
-            function fetchReplaceModel(originalModel, newModel) {
+            function fetchReplaceModel (originalModel, newModel) {
               // The Model is now doing something. Let's label it as such.
-              originalModel.pending = true;
-              originalModel.completed = false;
+              originalModel.pending = true
+              originalModel.completed = false
 
               // Make Promises that each of the Models shall fetch their results. We're only using a single one here
-              const fetchPromises = [];
-              let options = {};
+              const fetchPromises = []
+              let options = {}
               if (session.services[newModel.serviceId].token !== null) {
                 options.headers = {
                   'Authorization': session.services[newModel.serviceId].token
-                };
+                }
               }
               fetchPromises.push(
                 $q(function (resolve, reject) {
@@ -550,10 +550,10 @@
                     .then(function () {
                       resolve(modelInjectProperty([newModel.data], {
                         _ServiceId: newModel.serviceId
-                      }));
+                      }))
                     })
                 }),
-              );
+              )
               return $q.all(fetchPromises)
                 .then(
                   /**
@@ -564,20 +564,20 @@
                   function (fetchedData) {
                     // Once all the Results are returned, shove them into the original Model
                     fetchedData.forEach(function (data) {
-                      originalModel.data = data;
-                    });
-                    return originalModel;
+                      originalModel.data = data
+                    })
+                    return originalModel
                   }
                 )
                 .then(function () {
-                  originalModel.meta.set('fetchDate', new Date());
+                  originalModel.meta.set('fetchDate', new Date())
 
                   // The Model is now ready, let's make sure we label it as such
-                  originalModel.pending = false;
-                  originalModel.completed = true;
+                  originalModel.pending = false
+                  originalModel.completed = true
 
-                  return originalModel;
-                });
+                  return originalModel
+                })
             }
 
             /**
@@ -585,10 +585,10 @@
              * @param {Array<Object>} modelDatas (either collection.models || model.data)
              * @param {Object<String, *>} properties
              */
-            function modelInjectProperty(modelDatas, properties) {
+            function modelInjectProperty (modelDatas, properties) {
               modelDatas.forEach(function (modelData) {
-                _.extend(modelData, properties);
-              });
+                _.extend(modelData, properties)
+              })
             }
 
             /**
@@ -597,47 +597,47 @@
              * @param {String} scopedCollectionVarName
              * @returns {Collection}
              */
-            function createOrSyncCollectionVariable(instanceType, scopedCollectionVarName) {
-              let collection;
+            function createOrSyncCollectionVariable (instanceType, scopedCollectionVarName) {
+              let collection
               Object.keys(instance[instanceType]).forEach(function (listName) {
                 if (
                   !collection
                   && instance[instanceType].hasOwnProperty(listName)
                   && instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName)
                 ) {
-                  collection = instance[instanceType][listName][scopedCollectionVarName];
+                  collection = instance[instanceType][listName][scopedCollectionVarName]
                 }
-              });
+              })
               if (!collection) {
-                collection = new Collection();
+                collection = new Collection()
               }
               Object.keys(instance[instanceType]).forEach(function (listName) {
                 if (
                   !instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName)
                   || instance[instanceType][listName][scopedCollectionVarName] !== collection
                 ) {
-                  instance[instanceType][listName][scopedCollectionVarName] = collection;
+                  instance[instanceType][listName][scopedCollectionVarName] = collection
                 }
-              }, this);
-              return collection;
+              }, this)
+              return collection
             }
 
             /**
              * @param {WhereOptions} where
              * @returns {Object}
              */
-            function compilePropertyWhereFilter(where) {
-              let whereQuery = {};
+            function compilePropertyWhereFilter (where) {
+              let whereQuery = {}
               //ListingKey
               if (where.hasOwnProperty('ListingKey') && where.ListingKey !== '') {
-                whereQuery.ListingKey = where.ListingKey;
+                whereQuery.ListingKey = where.ListingKey
               }
               //ListType
               if (where.hasOwnProperty('ListingType') && where.ListingType !== '') {
                 if (typeof where.ListingType === 'string') {
                   where.ListingType = [where.ListingType]
                 }
-                whereQuery.ListingType = where.ListingType;
+                whereQuery.ListingType = where.ListingType
               }
               //Status
               if (where.hasOwnProperty('Status') && where.Status !== '') {
@@ -646,7 +646,7 @@
                 }
                 whereQuery.Status = {
                   inq: where.Status
-                };
+                }
               }
               //Agent License
               if (where.hasOwnProperty('AgentLicense') && where.AgentLicense !== '') {
@@ -654,7 +654,7 @@
                   where.AgentLicense = [where.AgentLicense]
                 }
                 if (where.AgentLicense.length > 0) {
-                  whereQuery.AgentLicense = where.AgentLicense;
+                  whereQuery.AgentLicense = where.AgentLicense
                 }
               }
               //City
@@ -662,11 +662,11 @@
                 whereQuery.City = {
                   like: where.City,
                   options: 'i'
-                };
+                }
               }
               //List Price Min
               if (where.hasOwnProperty('ListPriceMin') && where.ListPriceMin && where.ListPriceMin !== 0) {
-                whereQuery.ListPrice = {gte: parseInt(where.ListPriceMin, 10)};
+                whereQuery.ListPrice = { gte: parseInt(where.ListPriceMin, 10) }
               }
               //List Price Max
               if (where.hasOwnProperty('ListPriceMax') && where.ListPriceMax && where.ListPriceMax !== 0) {
@@ -681,78 +681,78 @@
                     ]
                   }
                 } else {
-                  whereQuery.ListPrice = {lte: parseInt(where.ListPriceMax, 10)};
+                  whereQuery.ListPrice = { lte: parseInt(where.ListPriceMax, 10) }
                 }
               }
               //Baths Min
               if (where.hasOwnProperty('BathroomsFullMin') && where.BathroomsFullMin && where.BathroomsFullMin !== 0) {
-                whereQuery.BathroomsFull = {gte: parseInt(where.BathroomsFullMin, 10)};
+                whereQuery.BathroomsFull = { gte: parseInt(where.BathroomsFullMin, 10) }
               }
               //Beds Min
               if (where.hasOwnProperty('BedroomsTotalMin') && where.BedroomsTotalMin && where.BedroomsTotalMin !== 0) {
-                whereQuery.BedroomsTotal = {gte: parseInt(where.BedroomsTotalMin, 10)};
+                whereQuery.BedroomsTotal = { gte: parseInt(where.BedroomsTotalMin, 10) }
               }
-              return whereQuery;
+              return whereQuery
             }
 
             /**
              * @param {WhereOptions} where
              * @returns {Object}
              */
-            function compileMemberWhereFilter(where) {
-              let whereQuery = {};
+            function compileMemberWhereFilter (where) {
+              let whereQuery = {}
               //MemberKey
               if (where.hasOwnProperty('MemberKey') && where.MemberKey !== '') {
-                whereQuery.MemberKey = where.MemberKey;
+                whereQuery.MemberKey = where.MemberKey
               }
               //MemberStateLicense
               if (where.hasOwnProperty('MemberStateLicense') && where.MemberStateLicense !== '') {
-                whereQuery.MemberStateLicense = where.MemberStateLicense;
+                whereQuery.MemberStateLicense = where.MemberStateLicense
               }
               //MemberNationalAssociationId
               if (where.hasOwnProperty('MemberNationalAssociationId') && where.MemberNationalAssociationId !== '') {
-                whereQuery.MemberNationalAssociationId = where.MemberNationalAssociationId;
+                whereQuery.MemberNationalAssociationId = where.MemberNationalAssociationId
               }
               //MemberStatus
               if (where.hasOwnProperty('MemberStatus') && where.MemberStatus !== '') {
-                whereQuery.MemberStatus = where.MemberStatus;
+                whereQuery.MemberStatus = where.MemberStatus
               }
               //MemberFullName
               if (where.hasOwnProperty('MemberFullName') && where.MemberFullName !== '') {
                 whereQuery.MemberFullName = {
                   like: where.MemberFullName,
                   options: 'i'
-                };
+                }
               }
-              return whereQuery;
+              return whereQuery
             }
 
             /**
              * @param {WhereOptions} where
              * @returns {Object}
              */
-            function compileOfficeWhereFilter(where) {
-              let whereQuery = {};
+            function compileOfficeWhereFilter (where) {
+              let whereQuery = {}
               //OfficeKey
               if (where.hasOwnProperty('OfficeKey') && where.OfficeKey !== '') {
-                whereQuery.OfficeKey = where.OfficeKey;
+                whereQuery.OfficeKey = where.OfficeKey
               }
               //OfficeNationalAssociationId
               if (where.hasOwnProperty('OfficeNationalAssociationId') && where.OfficeNationalAssociationId !== '') {
-                whereQuery.OfficeNationalAssociationId = where.OfficeNationalAssociationId;
+                whereQuery.OfficeNationalAssociationId = where.OfficeNationalAssociationId
               }
               //OfficeStatus
               if (where.hasOwnProperty('OfficeStatus') && where.OfficeStatus !== '') {
-                whereQuery.OfficeStatus = where.OfficeStatus;
+                whereQuery.OfficeStatus = where.OfficeStatus
               }
               //OfficeName
               if (where.hasOwnProperty('OfficeName') && where.OfficeName !== '') {
                 whereQuery.OfficeName = {
                   like: where.OfficeName,
                   options: 'i'
-                };
+                }
               }
-              return whereQuery;
+              return whereQuery
             }
 
             /**
@@ -760,21 +760,21 @@
              * @param {[String]} orderUnparsed
              * @returns {Object}
              */
-            function compileOrderFilter(orderUnparsed) {
+            function compileOrderFilter (orderUnparsed) {
               if (typeof orderUnparsed === 'string') {
-                orderUnparsed = orderUnparsed.split(',');
+                orderUnparsed = orderUnparsed.split(',')
               }
-              let orderQuery = [];
+              let orderQuery = []
 
               orderUnparsed.forEach(function (orderName) {
-                let direction = 'ASC';
+                let direction = 'ASC'
                 if (orderName.charAt(0) === '-') {
-                  orderName = orderName.substring(1, orderName.length);
-                  direction = 'DESC';
+                  orderName = orderName.substring(1, orderName.length)
+                  direction = 'DESC'
                 }
-                orderQuery.push(orderName + ' ' + direction);
-              });
-              return orderQuery;
+                orderQuery.push(orderName + ' ' + direction)
+              })
+              return orderQuery
             }
 
             /**
@@ -787,24 +787,24 @@
              * @param {Number=} options.images.limit
              * @param {[String]=} options.images.fields
              */
-            function compilePropertyFilter(options) {
-              let skip = 0;
+            function compilePropertyFilter (options) {
+              let skip = 0
               if (options.page) {
-                skip = (options.page - 1) * options.perPage;
+                skip = (options.page - 1) * options.perPage
               }
               let filterQuery = {
                 where: compilePropertyWhereFilter(options.where),
                 fields: options.fields,
                 limit: options.perPage,
                 skip: skip
-              };
+              }
 
               if (options.order && options.order.length > 0) {
-                filterQuery.order = compileOrderFilter(options.order);
+                filterQuery.order = compileOrderFilter(options.order)
               }
 
               //Handle included collections
-              let includes = [];
+              let includes = []
 
               //Included Images
               if (options.images) {
@@ -816,21 +816,21 @@
                       'MediaURL'
                     ]
                   },
-                };
+                }
                 if (typeof options.images === 'object') {
                   if (options.images.hasOwnProperty('limit')) {
-                    imageInclude.scope.limit = options.images.limit;
+                    imageInclude.scope.limit = options.images.limit
                   }
                   if (options.images.hasOwnProperty('fields')) {
-                    if (options.images.fields === "*") {
-                      delete imageInclude.scope.fields;
+                    if (options.images.fields === '*') {
+                      delete imageInclude.scope.fields
                     } else {
-                      imageInclude.scope.fields = options.images.fields;
+                      imageInclude.scope.fields = options.images.fields
                     }
                   }
                 }
 
-                includes.push(imageInclude);
+                includes.push(imageInclude)
               }
 
               //Included Open Houses
@@ -844,34 +844,34 @@
                       'OpenHouseEndTime'
                     ]
                   },
-                };
+                }
                 if (typeof options.openhouses === 'object') {
                   if (options.openhouses.hasOwnProperty('limit')) {
-                    openHouseInclude.scope.limit = options.openhouses.limit;
+                    openHouseInclude.scope.limit = options.openhouses.limit
                   }
                   if (options.openhouses.hasOwnProperty('fields')) {
-                    if (options.openhouses.fields === "*") {
-                      delete openHouseInclude.scope.fields;
+                    if (options.openhouses.fields === '*') {
+                      delete openHouseInclude.scope.fields
                     } else {
-                      openHouseInclude.scope.fields = options.openhouses.fields;
+                      openHouseInclude.scope.fields = options.openhouses.fields
                     }
                   }
                 }
 
-                includes.push(openHouseInclude);
+                includes.push(openHouseInclude)
               }
 
               if (includes.length === 1) {
-                filterQuery.include = includes[0];
+                filterQuery.include = includes[0]
               } else if (includes.length > 1) {
-                filterQuery.include = includes;
+                filterQuery.include = includes
               }
 
               if (filterQuery.fields.length <= 0) {
-                delete filterQuery.fields;
+                delete filterQuery.fields
               }
 
-              return filterQuery;
+              return filterQuery
             }
 
             /**
@@ -885,24 +885,24 @@
              * @param {[String]=} options.images.fields
              * @param {Boolean || Object =} options.office - Include Office data
              */
-            function compileMemberFilter(options) {
-              let skip = 0;
+            function compileMemberFilter (options) {
+              let skip = 0
               if (options.page) {
-                skip = (options.page - 1) * options.perPage;
+                skip = (options.page - 1) * options.perPage
               }
               let filterQuery = {
                 where: compileMemberWhereFilter(options.where),
                 fields: options.fields,
                 limit: options.perPage,
                 skip: skip
-              };
+              }
 
               if (options.order && options.order.length > 0) {
-                filterQuery.order = compileOrderFilter(options.order);
+                filterQuery.order = compileOrderFilter(options.order)
               }
 
               //Handle included collections
-              let includes = [];
+              let includes = []
 
               //Included Images
               if (options.images) {
@@ -914,21 +914,21 @@
                       'MediaURL'
                     ]
                   },
-                };
+                }
                 if (typeof options.images === 'object') {
                   if (options.images.hasOwnProperty('limit')) {
-                    imageInclude.scope.limit = options.images.limit;
+                    imageInclude.scope.limit = options.images.limit
                   }
                   if (options.images.hasOwnProperty('fields')) {
-                    if (options.images.fields === "*") {
-                      delete imageInclude.scope.fields;
+                    if (options.images.fields === '*') {
+                      delete imageInclude.scope.fields
                     } else {
-                      imageInclude.scope.fields = options.images.fields;
+                      imageInclude.scope.fields = options.images.fields
                     }
                   }
                 }
 
-                includes.push(imageInclude);
+                includes.push(imageInclude)
               }
 
               //Include Office
@@ -941,31 +941,31 @@
                       'OfficeKey',
                     ]
                   },
-                };
+                }
                 if (typeof options.office === 'object') {
                   if (options.office.hasOwnProperty('fields')) {
-                    if (options.office.fields === "*") {
-                      delete includeItem.scope.fields;
+                    if (options.office.fields === '*') {
+                      delete includeItem.scope.fields
                     } else {
-                      includeItem.scope.fields = options.office.fields;
+                      includeItem.scope.fields = options.office.fields
                     }
                   }
                 }
 
-                includes.push(includeItem);
+                includes.push(includeItem)
               }
 
               if (includes.length === 1) {
-                filterQuery.include = includes[0];
+                filterQuery.include = includes[0]
               } else if (includes.length > 1) {
-                filterQuery.include = includes;
+                filterQuery.include = includes
               }
 
               if (filterQuery.fields.length <= 0) {
-                delete filterQuery.fields;
+                delete filterQuery.fields
               }
 
-              return filterQuery;
+              return filterQuery
             }
 
             /**
@@ -982,24 +982,24 @@
              * @param {Number=} options.members.limit
              * @param {[String]=} options.members.fields
              */
-            function compileOfficeFilter(options) {
-              let skip = 0;
+            function compileOfficeFilter (options) {
+              let skip = 0
               if (options.page) {
-                skip = (options.page - 1) * options.perPage;
+                skip = (options.page - 1) * options.perPage
               }
               let filterQuery = {
                 where: compileOfficeWhereFilter(options.where),
                 fields: options.fields,
                 limit: options.perPage,
                 skip: skip
-              };
+              }
 
               if (options.order && options.order.length > 0) {
-                filterQuery.order = compileOrderFilter(options.order);
+                filterQuery.order = compileOrderFilter(options.order)
               }
 
               //Handle included collections
-              let includes = [];
+              let includes = []
 
               //Included Images
               if (options.images) {
@@ -1011,21 +1011,21 @@
                       'MediaURL'
                     ]
                   },
-                };
+                }
                 if (typeof options.images === 'object') {
                   if (options.images.hasOwnProperty('limit')) {
-                    imageInclude.scope.limit = options.images.limit;
+                    imageInclude.scope.limit = options.images.limit
                   }
                   if (options.images.hasOwnProperty('fields')) {
-                    if (options.images.fields === "*") {
-                      delete imageInclude.scope.fields;
+                    if (options.images.fields === '*') {
+                      delete imageInclude.scope.fields
                     } else {
-                      imageInclude.scope.fields = options.images.fields;
+                      imageInclude.scope.fields = options.images.fields
                     }
                   }
                 }
 
-                includes.push(imageInclude);
+                includes.push(imageInclude)
               }
 
               //Include Managing Broker Member Data
@@ -1039,18 +1039,18 @@
                       'MemberKey',
                     ]
                   },
-                };
+                }
                 if (typeof options.managingBroker === 'object') {
                   if (options.managingBroker.hasOwnProperty('fields')) {
-                    if (options.managingBroker.fields === "*") {
-                      delete includeItem.scope.fields;
+                    if (options.managingBroker.fields === '*') {
+                      delete includeItem.scope.fields
                     } else {
-                      includeItem.scope.fields = options.managingBroker.fields;
+                      includeItem.scope.fields = options.managingBroker.fields
                     }
                   }
                 }
 
-                includes.push(includeItem);
+                includes.push(includeItem)
               }
 
               //Include Members/Agents
@@ -1064,31 +1064,31 @@
                       'MemberKey',
                     ]
                   },
-                };
+                }
                 if (typeof options.members === 'object') {
                   if (options.members.hasOwnProperty('fields')) {
-                    if (options.members.fields === "*") {
-                      delete includeItem.scope.fields;
+                    if (options.members.fields === '*') {
+                      delete includeItem.scope.fields
                     } else {
-                      includeItem.scope.fields = options.members.fields;
+                      includeItem.scope.fields = options.members.fields
                     }
                   }
                 }
 
-                includes.push(includeItem);
+                includes.push(includeItem)
               }
 
               if (includes.length === 1) {
-                filterQuery.include = includes[0];
+                filterQuery.include = includes[0]
               } else if (includes.length > 1) {
-                filterQuery.include = includes;
+                filterQuery.include = includes
               }
 
               if (filterQuery.fields.length <= 0) {
-                delete filterQuery.fields;
+                delete filterQuery.fields
               }
 
-              return filterQuery;
+              return filterQuery
             }
 
             /**
@@ -1096,8 +1096,8 @@
              * @param {[Number]=} serviceIds - Specify a certain MLS Service get the variables from
              * @returns {Array<Object>}
              */
-            function getMLSVariables(serviceIds) {
-              let serviceList = [];
+            function getMLSVariables (serviceIds) {
+              let serviceList = []
               if (serviceIds && _.isArray(serviceIds)) {
                 serviceIds.forEach(function (service) {
                   if (session.services.hasOwnProperty(service)) {
@@ -1107,7 +1107,7 @@
                       disclaimer: session.services[service].disclaimer
                     }
                   }
-                });
+                })
               } else {
                 session.services.forEach(function (service) {
                   serviceList[service.id] = {
@@ -1115,10 +1115,10 @@
                     name: service.name,
                     disclaimer: service.disclaimer
                   }
-                });
+                })
               }
               //console.log('serviceList', serviceList);
-              return serviceList;
+              return serviceList
             }
 
             /**
@@ -1126,13 +1126,13 @@
              * TODO give options on different ways to parse? (e.g. Url formatting)
              * @returns {Object}
              */
-            function getOptionsFromUrl() {
-              let path = $location.path();
+            function getOptionsFromUrl () {
+              let path = $location.path()
 
-              path = getListingOptionsFromUrlString(path);
-              getSearchOptionsFromUrlString(path);
+              path = getListingOptionsFromUrlString(path)
+              getSearchOptionsFromUrlString(path)
 
-              return urlOptions;
+              return urlOptions
             }
 
             /**
@@ -1140,22 +1140,22 @@
              * Save variables in urlOptions.Listing
              * @returns {String} - Remaining unparsed hashbang variables
              */
-            function getListingOptionsFromUrlString(path) {
+            function getListingOptionsFromUrlString (path) {
               //FIXME can't read unless ListingKey must end with /
               // /Listing/1/81582540/8883-Rancho/
-              let regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/;
-              let matches = regex.exec(path);
-              path = path.replace(regex, '');
+              let regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
+              let matches = regex.exec(path)
+              path = path.replace(regex, '')
               if (
                 matches !== null
                 && matches[1]
                 && matches[2]
               ) {
                 // Save the variables inot
-                urlOptions.Listing.service = matches[1];
-                urlOptions.Listing.ListingKey = matches[2];
+                urlOptions.Listing.service = matches[1]
+                urlOptions.Listing.ListingKey = matches[2]
               }
-              return path;
+              return path
             }
 
             /**
@@ -1163,18 +1163,18 @@
              * Save variables in urlOptions.Search
              * @returns {String} - Remaining unparsed hangbang variables
              */
-            function getSearchOptionsFromUrlString(path) {
+            function getSearchOptionsFromUrlString (path) {
               // /Search/ListPriceMin/500000/SomeVar/aValue
-              let regex = /\/Search\/(.*)?\/?/;
-              let matches = regex.exec(path);
-              path = path.replace(regex, '');
+              let regex = /\/Search\/(.*)?\/?/
+              let matches = regex.exec(path)
+              path = path.replace(regex, '')
               if (
                 matches !== null
                 && matches[1]
               ) {
-                let rawSearchOptions = matches[1];
+                let rawSearchOptions = matches[1]
                 // Time to separate all the values out in pairs between /'s
-                regex = /([^\/]+)\/([^\/]+)/g;
+                regex = /([^\/]+)\/([^\/]+)/g
                 while (null != (matches = regex.exec(rawSearchOptions))) {
                   if (
                     matches[1]
@@ -1182,20 +1182,20 @@
                   ) {
                     // Check for a comma to break into an array. This might need to be altered as sometimes a comma might be used for something
                     if (matches[2].includes(',')) {
-                      matches[2] = matches[2].split(',');
+                      matches[2] = matches[2].split(',')
                     }
                     //S ave the pairing results into urlOptions.Search
-                    urlOptions.Search[matches[1]] = matches[2];
+                    urlOptions.Search[matches[1]] = matches[2]
                   }
                 }
               }
 
               //Math is performed in Page and needs to be converted
               if (urlOptions.Search.hasOwnProperty('Page')) {
-                urlOptions.Search.Page = parseInt(urlOptions.Search.Page);
+                urlOptions.Search.Page = parseInt(urlOptions.Search.Page)
               }
 
-              return path;
+              return path
             }
 
             /**
@@ -1203,8 +1203,8 @@
              * @param {'Listing'||'Search'} listingOrSearch
              * @param {Object} options
              */
-            function setUrlOptions(listingOrSearch, options) {
-              urlOptions[listingOrSearch] = options || {};
+            function setUrlOptions (listingOrSearch, options) {
+              urlOptions[listingOrSearch] = options || {}
               //console.log('updated urlOptions', listingOrSearch, options);
             }
 
@@ -1213,22 +1213,22 @@
              * @param {'Listing'||'Search'} listingOrSearch
              * @returns {Object}
              */
-            function getUrlOptions(listingOrSearch) {
-              return urlOptions[listingOrSearch];
+            function getUrlOptions (listingOrSearch) {
+              return urlOptions[listingOrSearch]
             }
 
             /**
              * Process the currently set options returns what the URL hashbang should be
              * @returns {string}
              */
-            function getUrlOptionsPath(defaultOptions) {
-              defaultOptions = defaultOptions || {};
-              let path = '';
+            function getUrlOptionsPath (defaultOptions) {
+              defaultOptions = defaultOptions || {}
+              let path = ''
 
               // Set the Search List url variables
-              let searchOptionNames = Object.keys(urlOptions.Search);
+              let searchOptionNames = Object.keys(urlOptions.Search)
               if (searchOptionNames.length > 0) {
-                let searchPath = '';
+                let searchPath = ''
                 searchOptionNames.forEach(function (searchOptionName) {
                   if (
                     urlOptions.Search.hasOwnProperty(searchOptionName)
@@ -1238,11 +1238,11 @@
                     && !_.isEqual(defaultOptions[searchOptionName], urlOptions.Search[searchOptionName])
                   ) {
                     //console.log(searchOptionName, defaultOptions[searchOptionName], urlOptions.Search[searchOptionName]);
-                    searchPath += searchOptionName + '/' + urlOptions.Search[searchOptionName] + '/';
+                    searchPath += searchOptionName + '/' + urlOptions.Search[searchOptionName] + '/'
                   }
-                });
+                })
                 if (searchPath !== '') {
-                  path += 'Search/' + searchPath;
+                  path += 'Search/' + searchPath
                 }
               }
 
@@ -1253,23 +1253,23 @@
                 && !isNaN(urlOptions.Listing.service)
                 && urlOptions.Listing.ListingKey
               ) {
-                path += 'Listing' + '/' + urlOptions.Listing.service + '/' + urlOptions.Listing.ListingKey + '/';
+                path += 'Listing' + '/' + urlOptions.Listing.service + '/' + urlOptions.Listing.ListingKey + '/'
                 if (
                   urlOptions.Listing.hasOwnProperty('address')
                   && urlOptions.Listing.address
                   && typeof urlOptions.Listing.address === 'string'
                 ) {
-                  path += urlOptions.Listing.address.replace(/ /g, '-') + '/';
+                  path += urlOptions.Listing.address.replace(/ /g, '-') + '/'
                 }
               }
-              return path;
+              return path
             }
 
             /**
              * Process the currently set options and update the URL with what should be known
              */
-            function refreshUrlOptions(defaultOptions) {
-              setLocationPath(getUrlOptionsPath(defaultOptions));
+            function refreshUrlOptions (defaultOptions) {
+              setLocationPath(getUrlOptionsPath(defaultOptions))
               //console.log('Refreshed url with', urlOptions, defaultOptions);
 
             }
@@ -1278,11 +1278,11 @@
              * Update the hashbang address bar. The path will always begin with #!/
              * @param {String} path
              */
-            function setLocationPath(path) {
+            function setLocationPath (path) {
               $rootScope.$applyAsync(function () {
-                $location.path(path).replace();
+                $location.path(path).replace()
                 //$location.path(path);
-              });
+              })
             }
 
             /**
@@ -1292,9 +1292,9 @@
              * @param {String || [String]} propertyNames - value(s) to reorder/sort by
              * @param {Boolean=} reverse - If it should reverse sort by the value
              */
-            function orderBy(collection, propertyNames, reverse) {
+            function orderBy (collection, propertyNames, reverse) {
               if (propertyNames && propertyNames !== []) {
-                collection.models = orderByFilter(collection.models, propertyNames, reverse);
+                collection.models = orderByFilter(collection.models, propertyNames, reverse)
               }
             }
 
@@ -1316,21 +1316,21 @@
              * @param {Function} compileFilterFunction
              * @returns {Promise<Collection>}
              */
-            async function genericSearchCollection($scope, collectionVarName, options, refresh, instanceName, apiModel, compileFilterFunction) {
-              options = options || {};
-              options.service = options.service || [];
-              options.where = options.where || {};
-              options.order = options.order || [];
-              options.page = options.page || 1;
-              options.perPage = options.perPage || 10;
-              options.images = options.images || false;
+            async function genericSearchCollection ($scope, collectionVarName, options, refresh, instanceName, apiModel, compileFilterFunction) {
+              options = options || {}
+              options.service = options.service || []
+              options.where = options.where || {}
+              options.order = options.order || []
+              options.page = options.page || 1
+              options.perPage = options.perPage || 10
+              options.images = options.images || false
               options.fields = options.fields || [
                 '_id'
-              ];
-              refresh = refresh || false;
+              ]
+              refresh = refresh || false
 
               if (typeof options.order === 'string') {
-                options.order = options.order.split(',');
+                options.order = options.order.split(',')
               }
 
               let apiModelSingular = ''
@@ -1350,13 +1350,13 @@
               }
 
               // Prepare the same Collection for each List
-              let collection = await createOrSyncCollectionVariable(instanceName, collectionVarName);
+              let collection = await createOrSyncCollectionVariable(instanceName, collectionVarName)
 
               // Set API paths to fetch listing data for each MLS Service
-              let filterQuery = compileFilterFunction(options);
+              let filterQuery = compileFilterFunction(options)
               // options.page items need to happen after here
 
-              const collections = [];
+              const collections = []
 
               //check if this filterQuery is any different from the 'last one' used
               //if this is a new query rather than a page change
@@ -1367,12 +1367,12 @@
                 || refresh
               ) {
                 //clear the current models to refresh a new batch
-                collection.models.splice(0, collection.models.length);
-                refresh = true;
-                lastQueries.pages = [];
-                filterQuery.count = true; //request the Total Count of all results
+                collection.models.splice(0, collection.models.length)
+                refresh = true
+                lastQueries.pages = []
+                filterQuery.count = true //request the Total Count of all results
               } else {
-                refresh = false;
+                refresh = false
               }
 
               //the page on doesn't have listings in buffer
@@ -1385,22 +1385,22 @@
                 ) {
                   //console.log('The previous pages weren\'t buffered yet');
                   //we'll need to load pages 1 through options.page
-                  filterQuery.limit = options.perPage * options.page;
-                  filterQuery.skip = 0;
+                  filterQuery.limit = options.perPage * options.page
+                  filterQuery.skip = 0
                   //add those page to lastQueries.pages
                   for (let addPage = 1; addPage < options.page; addPage++) {
                     //settings as loaded page {addPage}
                     //console.log('settings as loaded previous page #', addPage);
-                    lastQueries.pages.push(addPage);
+                    lastQueries.pages.push(addPage)
                   }
                 }
 
                 // fetch Tokens
-                await tokenKeepAuth();
+                await tokenKeepAuth()
 
                 // Fetch from each service allowed
                 if (options.service.length === 0) {
-                  options.service = Object.keys(session.services);
+                  options.service = Object.keys(session.services)
                 }
 
                 options.service.forEach(
@@ -1417,52 +1417,52 @@
                           filter: filterQuery,
                           // route and controller needed and only used by Sitetheory
                           meta: {
-                            method: "get",
-                            action: "search"
+                            method: 'get',
+                            action: 'search'
                           },
                           route: {
                             controller: apiModelSingular // There might be a better way to do this
                           }
                         }
-                      };
+                      }
 
                       collections.push(
                         createCollection(request)
-                      );
+                      )
                     }
                   }
-                );
+                )
 
                 // When using the same WHERE and only changing the page, results should pool together (append)
                 // Fetch and Merge all results together into single list
-                await fetchMergeCollections(collection, collections, !refresh);
+                await fetchMergeCollections(collection, collections, !refresh)
 
                 // If the query as updated, adjust the TotalRecords available
                 if (refresh) {
-                  let totalRecords = collection.header.get('x-total-count') || 0;
-                  collection.meta.set('totalRecords', totalRecords);
-                  collection.meta.set('totalPages', Math.ceil(totalRecords / options.perPage));
+                  let totalRecords = collection.header.get('x-total-count') || 0
+                  collection.meta.set('totalRecords', totalRecords)
+                  collection.meta.set('totalPages', Math.ceil(totalRecords / options.perPage))
                 }
 
                 //Sort once more on the front end to ensure it's ordered correctly
-                orderBy(collection, options.order);
+                orderBy(collection, options.order)
 
                 //Ensure the changes update on the DOM
                 Object.keys(instance[instanceName]).forEach(function (listName) {
                   //instance.List[listName].$digest(); // Digest to ensure the DOM/$watch updates with new model data
-                  instance[instanceName][listName].$applyAsync(); // Digest to ensure the DOM/$watch updates with new model data
-                });
+                  instance[instanceName][listName].$applyAsync() // Digest to ensure the DOM/$watch updates with new model data
+                })
 
               }
 
               //then save this in the last queries
-              lastQueries.whereFilter = _.clone(filterQuery.where);
-              lastQueries.order = options.order;
-              lastQueries.perPage = options.perPage;
-              lastQueries.pages.push(options.page);
+              lastQueries.whereFilter = _.clone(filterQuery.where)
+              lastQueries.order = options.order
+              lastQueries.perPage = options.perPage
+              lastQueries.pages.push(options.page)
               //console.log('lastQueries:', lastQueries);
 
-              return collection;
+              return collection
             }
 
             /**
@@ -1481,8 +1481,8 @@
              * @param {Function} compileFilterFunction
              * @returns {Promise<Model>}
              */
-            async function genericSearchModel($scope, modelVarName, options, apiModel, compileFilterFunction) {
-              await tokenKeepAuth();
+            async function genericSearchModel ($scope, modelVarName, options, apiModel, compileFilterFunction) {
+              await tokenKeepAuth()
 
               let apiModelSingular = ''
               switch (apiModel) {
@@ -1500,26 +1500,26 @@
                   break
               }
 
-              options = options || {};
-              options.service = options.service || 0;
-              options.where = options.where || {};
-              options.images = options.images || false;
-              options.fields = options.fields || [];
-              options.perPage = 1;
+              options = options || {}
+              options.service = options.service || 0
+              options.where = options.where || {}
+              options.images = options.images || false
+              options.fields = options.fields || []
+              options.perPage = 1
 
               // Prepare the Model and ensure we don't keep replacing it
-              let model;
+              let model
               if ($scope.hasOwnProperty(modelVarName)) {
-                model = $scope[modelVarName];
+                model = $scope[modelVarName]
               }
               if (!model) {
-                model = new Model();
+                model = new Model()
               }
               if (
                 !$scope.hasOwnProperty(modelVarName)
                 || $scope[modelVarName] !== model
               ) {
-                $scope[modelVarName] = model;
+                $scope[modelVarName] = model
               }
 
               if (
@@ -1536,25 +1536,25 @@
                     filter: compileFilterFunction(options),
                     // route and controller needed and only used by Sitetheory
                     meta: {
-                      method: "get",
-                      action: "search"
+                      method: 'get',
+                      action: 'search'
                     },
                     route: {
                       controller: apiModelSingular // There might be a better way to do this
                     }
                   }
-                };
+                }
 
-                let tempModel = createModel(request);
+                let tempModel = createModel(request)
 
                 fetchReplaceModel(model, tempModel)
                   .then(function () {
                     //$scope.$digest();
-                    $scope.$applyAsync();
-                  });
+                    $scope.$applyAsync()
+                  })
               }
 
-              return $scope[modelVarName];
+              return $scope[modelVarName]
             }
 
             /**
@@ -1575,14 +1575,14 @@
              * @param {Boolean=} refresh - Which Fields to return
              * @returns {Promise<Collection>}
              */
-            async function fetchProperties($scope, collectionVarName, options, refresh) {
-              options = options || {};
-              options.service = options.service || [];
-              options.where = options.where || urlOptions.Search || {}; //TODO may want to sanitize the urlOptions
-              options.order = options.order || urlOptions.Search.Order || [];
-              options.page = options.page || urlOptions.Search.Page || 1;
-              options.perPage = options.perPage || 10;
-              options.images = options.images || false;
+            async function fetchProperties ($scope, collectionVarName, options, refresh) {
+              options = options || {}
+              options.service = options.service || []
+              options.where = options.where || urlOptions.Search || {} //TODO may want to sanitize the urlOptions
+              options.order = options.order || urlOptions.Search.Order || []
+              options.page = options.page || urlOptions.Search.Page || 1
+              options.perPage = options.perPage || 10
+              options.images = options.images || false
               options.fields = options.fields || [
                 '_id',
                 '_Class',
@@ -1603,15 +1603,15 @@
                 'ListingKey',
                 'BathroomsFull',
                 'BedroomsTotal'
-              ];
+              ]
               //options.where['ListType'] = ['House','Townhouse'];
-              refresh = refresh || false;
+              refresh = refresh || false
 
               return await genericSearchCollection($scope, collectionVarName, options, refresh,
                 'List',
                 'Properties',
                 compilePropertyFilter
-              );
+              )
             }
 
             /**
@@ -1629,13 +1629,13 @@
              * @param {Boolean=} options.append - Append to currently loaded collection or fetch freshly
              * @returns {Promise<Model>}
              */
-            async function fetchProperty($scope, modelVarName, options) {
-              options = options || {};
-              options.service = options.service || null;
-              options.where = options.where || {};
-              options.images = options.images || false;
-              options.openhouses = options.openhouses || false;
-              options.fields = options.fields || [];
+            async function fetchProperty ($scope, modelVarName, options) {
+              options = options || {}
+              options.service = options.service || null
+              options.where = options.where || {}
+              options.images = options.images || false
+              options.openhouses = options.openhouses || false
+              options.fields = options.fields || []
 
               return genericSearchModel($scope, modelVarName, options,
                 'Properties',
@@ -1661,16 +1661,16 @@
              * @param {Boolean=} refresh - Which Fields to return
              * @returns {Promise<Collection>}
              */
-            async function fetchMembers($scope, collectionVarName, options, refresh) {
-              options = options || {};
-              options.service = options.service || [];
-              options.listName = options.listName || 'MemberList';
-              options.where = options.where || {};
-              options.order = options.order || [];
-              options.page = options.page || 1;
-              options.perPage = options.perPage || 10;
-              options.images = options.images || false;
-              options.office = options.office || false;
+            async function fetchMembers ($scope, collectionVarName, options, refresh) {
+              options = options || {}
+              options.service = options.service || []
+              options.listName = options.listName || 'MemberList'
+              options.where = options.where || {}
+              options.order = options.order || []
+              options.page = options.page || 1
+              options.perPage = options.perPage || 10
+              options.images = options.images || false
+              options.office = options.office || false
               options.fields = options.fields || [
                 '_id',
                 'MemberKey',
@@ -1686,15 +1686,15 @@
                 'OfficeName',
                 'OriginatingSystemName',
                 'SourceSystemName',
-              ];
+              ]
               //options.where['ListType'] = ['House','Townhouse'];
-              refresh = refresh || false;
+              refresh = refresh || false
 
               return await genericSearchCollection($scope, collectionVarName, options, refresh,
                 options.listName,
                 'Members',
                 compileMemberFilter
-              );
+              )
             }
 
             /**
@@ -1717,16 +1717,16 @@
              * @param {Boolean=} refresh - Which Fields to return
              * @returns {Promise<Collection>}
              */
-            async function fetchOffices($scope, collectionVarName, options, refresh) {
-              options = options || {};
-              options.service = options.service || [];
-              options.where = options.where || {};
-              options.order = options.order || [];
-              options.page = options.page || 1;
-              options.perPage = options.perPage || 10;
-              options.images = options.images || false;
-              options.managingBroker = options.managingBroker || false;
-              options.members = options.members || false;
+            async function fetchOffices ($scope, collectionVarName, options, refresh) {
+              options = options || {}
+              options.service = options.service || []
+              options.where = options.where || {}
+              options.order = options.order || []
+              options.page = options.page || 1
+              options.perPage = options.perPage || 10
+              options.images = options.images || false
+              options.managingBroker = options.managingBroker || false
+              options.members = options.members || false
               options.fields = options.fields || [
                 '_id',
                 'OfficeKey',
@@ -1737,15 +1737,15 @@
                 'OfficeAddress1',
                 'OfficePostalCode',
                 'OfficeBrokerKey',
-              ];
+              ]
               //options.where['ListType'] = ['House','Townhouse'];
-              refresh = refresh || false;
+              refresh = refresh || false
 
               return await genericSearchCollection($scope, collectionVarName, options, refresh,
                 'OfficeList',
                 'Offices',
                 compileOfficeFilter
-              );
+              )
             }
 
             return {
@@ -1770,6 +1770,6 @@
               refreshUrlOptions: refreshUrlOptions,
               unregisterDetailsInstance: unregisterDetailsInstance
             }
-          }]);
-      }];
-  }));
+          }])
+      }]
+  }))

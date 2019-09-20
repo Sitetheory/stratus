@@ -112,7 +112,6 @@
           propertyLoopback.registerListInstance($scope.elementId, $scope, 'MemberDetails')
           //console.log(this.uid)
 
-
           console.log('options', $scope.options, $attrs)
           $scope.fetchMember()
         }
@@ -134,11 +133,11 @@
           }
         })
 
-        $scope.getUid = function getUid() {
+        $scope.getUid = function getUid () {
           return $ctrl.uid
         }
 
-        $scope.fetchMember = function fetchMember() {
+        $scope.fetchMember = function fetchMember () {
           let memberQuery = {
             listName: 'MemberDetailsList',
             service: [$scope.options.service],
@@ -166,7 +165,7 @@
          * With the current collection results, parse $scope.memberMerged and $scope.memberCombined by joining the
          * Member object together for easier to read results. Note it may not always be ideal to use this data.
          */
-        $scope.individualMember = function individualMember() {
+        $scope.individualMember = function individualMember () {
           return new Promise(function (resolve) {
             if ($scope.collection && $scope.collection.completed && $scope.collection.models.length > 0) {
               $scope.memberMerged = {}
@@ -196,12 +195,11 @@
           })
         }
 
-
         /**
          * Display an MLS' Name
          * @returns {String|}
          */
-        $scope.getMLSName = function getMLSName() {
+        $scope.getMLSName = function getMLSName () {
           return propertyLoopback.getMLSVariables($scope.model.data._ServiceId).name
         }
 
@@ -210,7 +208,7 @@
          * @param {Boolean} html - if output should be HTML safe
          * @returns {String|}
          */
-        $scope.getMLSDisclaimer = function getMLSDisclaimer(html) {
+        $scope.getMLSDisclaimer = function getMLSDisclaimer (html) {
           let disclaimer = propertyLoopback.getMLSVariables($scope.collection.models[0]._ServiceId).disclaimer
           if ($scope.collection.models[0].ModificationTimestamp) {
             disclaimer = `Member last updated ${moment($scope.collection.models[0].ModificationTimestamp).format('M/D/YY HH:mm a')}. ${disclaimer}`
@@ -225,7 +223,7 @@
         /**
          * Function that runs when widget is destroyed
          */
-        $scope.remove = function remove() {
+        $scope.remove = function remove () {
         }
 
         /**

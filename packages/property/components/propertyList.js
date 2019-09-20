@@ -382,7 +382,7 @@ http://docs.sitetheory.io
           if ($scope.detailsLinkPopup === true) {
             //Opening a popup will load the propertyDetails and adjust the hashbang URL
             let templateOptions = {
-              'element_id': 'property_detail_popup_'+property.ListingKey,
+              'element_id': 'property_detail_popup_' + property.ListingKey,
               'service': property._ServiceId,
               'listing-key': property.ListingKey,
               'default-list-options': JSON.stringify($ctrl.defaultOptions),

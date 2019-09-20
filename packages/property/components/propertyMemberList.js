@@ -92,12 +92,11 @@
           $scope.options.order = $scope.options.order || null//will be set by Service
           $scope.options.page = $scope.options.page || null//will be set by Service
           $scope.options.perPage = $scope.options.perPage || 25
-          $scope.options.images = $scope.options.images || {limit: 1}
+          $scope.options.images = $scope.options.images || { limit: 1 }
 
           $scope.options.where = $scope.options.where || {}
           //Fixme, sometimes it's just MemberMlsAccessYN ....
           //$scope.options.where.MemberStatus = $scope.options.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
-
 
           //$scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
           //$scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
@@ -136,7 +135,7 @@
          * Inject the current URL settings into any attached Search widget
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
-        $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions() {
+        $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
           let searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId, 'Member')
           searchScopes.forEach(function (searchScope) {
             //FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
@@ -154,7 +153,7 @@
          * @param {Boolean} updateUrl
          * @returns {Promise<Collection>}
          */
-        $scope.searchMembers = async function searchMembers(options, refresh, updateUrl) {
+        $scope.searchMembers = async function searchMembers (options, refresh, updateUrl) {
           return $q(function (resolve, reject) {
             options = options || {}
             updateUrl = updateUrl === false ? updateUrl : true
@@ -165,15 +164,15 @@
             }
             //If search options sent, update the Widget. Otherwise use the widgets current where settings
             if (Object.keys(options).length > 0) {
-              delete($scope.options.where)
+              delete ($scope.options.where)
               $scope.options.where = options
               if ($scope.options.where.Page) {
                 $scope.options.page = $scope.options.where.Page
-                delete($scope.options.where.Page)
+                delete ($scope.options.where.Page)
               }
               if ($scope.options.where.Order) {
                 $scope.options.order = $scope.options.where.Order
-                delete($scope.options.where.Order)
+                delete ($scope.options.where.Order)
               }
 
             } else {
@@ -185,7 +184,7 @@
             }
             //Don't add Page/1 to the URL
             if (options.Page <= 1) {
-              delete(options.Page)
+              delete (options.Page)
             }
             if ($scope.options.order && $scope.options.order.length > 0) {
               options.Order = $scope.options.order
@@ -213,7 +212,7 @@
          * @param {Number} pageNumber
          * @param {*=} ev - Click event
          */
-        $scope.pageChange = function changePage(pageNumber, ev) {
+        $scope.pageChange = function changePage (pageNumber, ev) {
           if (ev) {
             ev.preventDefault()
           }
@@ -225,7 +224,7 @@
          * Move the displayed listings to the next page, keeping the current query
          * @param {*=} ev - Click event
          */
-        $scope.pageNext = function pageNext(ev) {
+        $scope.pageNext = function pageNext (ev) {
           if (!$scope.options.page) {
             $scope.options.page = 1
           }
@@ -238,7 +237,7 @@
          * Move the displayed listings to the previous page, keeping the current query
          * @param {*=} ev - Click event
          */
-        $scope.pagePrevious = function pagePrevious(ev) {
+        $scope.pagePrevious = function pagePrevious (ev) {
           if (!$scope.options.page) {
             $scope.options.page = 1
           }
@@ -253,7 +252,7 @@
          * @param {String || [String]} order
          * @param {*=} ev - Click event
          */
-        $scope.orderChange = function changePage(order, ev) {
+        $scope.orderChange = function changePage (order, ev) {
           if (ev) {
             ev.preventDefault()
           }
@@ -275,7 +274,7 @@
          * @param {Boolean} html - if output should be HTML safe
          * @returns {String || *}
          */
-        $scope.getMLSDisclaimer = function getMLSDisclaimer(html) {
+        $scope.getMLSDisclaimer = function getMLSDisclaimer (html) {
           let disclaimer = ''
           propertyLoopback.getMLSVariables($scope.options.service || null).forEach(function (service) {
             if (disclaimer) {
@@ -295,7 +294,7 @@
          * @param {ListingMember} member
          * @param {*=} ev - Click event
          */
-        $scope.displayMemberDetails = function displayMemberDetails(member, ev) {
+        $scope.displayMemberDetails = function displayMemberDetails (member, ev) {
           if (ev) {
             ev.preventDefault()
             //ev.stopPropagation()
@@ -345,7 +344,7 @@
           }
         }
 
-        $scope.injectMemberDetails = function injectMemberDetails(member, ev) {
+        $scope.injectMemberDetails = function injectMemberDetails (member, ev) {
           console.log('will add these details to a form', member)
           $scope.variableInject(member)
         }
@@ -406,7 +405,6 @@
 
               //varElement.val(member.MemberFullName)
 
-
               //let scopeVarPath = $scope.variableSyncing[elementId]
               //convert into a real var path and set the intial value from the exiting form value
               //await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
@@ -431,7 +429,7 @@
         /**
          * Destroy this widget
          */
-        $scope.remove = function remove() {
+        $scope.remove = function remove () {
 
         }
 

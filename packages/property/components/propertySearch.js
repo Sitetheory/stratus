@@ -90,26 +90,25 @@
           $scope.options.query = $scope.options.query || {}
           $scope.setQuery($scope.options.query)
 
-
           //Set default selections TODO may need some more universally set options to be able to use
           $scope.options.selection = $scope.options.selection || {}
           $scope.options.selection.BedroomsTotalMin = $scope.options.selection.BedroomsTotalMin || [
-            {name: '1+', value: 1},
-            {name: '2+', value: 2},
-            {name: '3+', value: 3},
-            {name: '4+', value: 4},
-            {name: '5+', value: 5}
+            { name: '1+', value: 1 },
+            { name: '2+', value: 2 },
+            { name: '3+', value: 3 },
+            { name: '4+', value: 4 },
+            { name: '5+', value: 5 }
           ]
           $scope.options.selection.BathroomsFullMin = $scope.options.selection.BathroomsFullMin || [
-            {name: '1+', value: 1},
-            {name: '2+', value: 2},
-            {name: '3+', value: 3},
-            {name: '4+', value: 4},
-            {name: '5+', value: 5}
+            { name: '1+', value: 1 },
+            { name: '2+', value: 2 },
+            { name: '3+', value: 3 },
+            { name: '4+', value: 4 },
+            { name: '5+', value: 5 }
           ]
           $scope.options.selection.Order = $scope.options.selection.Order || [
-            {name: 'Price (high to low)', value: '-ListPrice'},
-            {name: 'Price (low to high)', value: 'ListPrice'}
+            { name: 'Price (high to low)', value: '-ListPrice' },
+            { name: 'Price (low to high)', value: 'ListPrice' }
           ]
           $scope.options.selection.Status = $scope.options.selection.Status || {}
           $scope.options.selection.Status.default = $scope.options.selection.Status.default || {
@@ -141,22 +140,22 @@
           }
           //These are static and never change. merely map correct values
           $scope.options.selection.ListingType.All = $scope.options.selection.ListingType.All || [
-            {name: 'House', value: 'House', group: 'Residential', lease: false},
-            {name: 'Condo', value: 'Condo', group: 'Residential', lease: false},
-            {name: 'Townhouse', value: 'Townhouse', group: 'Residential', lease: false},
-            {name: 'Multi-Family', value: 'MultiFamily', group: 'Residential', lease: false},
-            {name: 'Manufactured', value: 'Manufactured', group: 'Residential', lease: false},
-            {name: 'Land', value: 'Land', group: 'Residential', lease: false},
-            {name: 'Other', value: 'Other', group: 'Residential', lease: false},
-            {name: 'Commercial', value: 'Commercial', group: 'Commercial', lease: false},
-            {name: 'Commercial Business Op', value: 'CommercialBusinessOp', group: 'Commercial', lease: false},
-            {name: 'Commercial Residential', value: 'CommercialResidential', group: 'Commercial', lease: false},
-            {name: 'Commercial Land', value: 'CommercialLand', group: 'Commercial', lease: false},
-            {name: 'House', value: 'LeaseHouse', group: 'Residential', lease: true},
-            {name: 'Condo', value: 'LeaseCondo', group: 'Residential', lease: true},
-            {name: 'Townhouse', value: 'LeaseTownhouse', group: 'Residential', lease: true},
-            {name: 'Other', value: 'LeaseOther', group: 'Residential', lease: true},
-            {name: 'Commercial', value: 'LeaseCommercial', group: 'Commercial', lease: true}
+            { name: 'House', value: 'House', group: 'Residential', lease: false },
+            { name: 'Condo', value: 'Condo', group: 'Residential', lease: false },
+            { name: 'Townhouse', value: 'Townhouse', group: 'Residential', lease: false },
+            { name: 'Multi-Family', value: 'MultiFamily', group: 'Residential', lease: false },
+            { name: 'Manufactured', value: 'Manufactured', group: 'Residential', lease: false },
+            { name: 'Land', value: 'Land', group: 'Residential', lease: false },
+            { name: 'Other', value: 'Other', group: 'Residential', lease: false },
+            { name: 'Commercial', value: 'Commercial', group: 'Commercial', lease: false },
+            { name: 'Commercial Business Op', value: 'CommercialBusinessOp', group: 'Commercial', lease: false },
+            { name: 'Commercial Residential', value: 'CommercialResidential', group: 'Commercial', lease: false },
+            { name: 'Commercial Land', value: 'CommercialLand', group: 'Commercial', lease: false },
+            { name: 'House', value: 'LeaseHouse', group: 'Residential', lease: true },
+            { name: 'Condo', value: 'LeaseCondo', group: 'Residential', lease: true },
+            { name: 'Townhouse', value: 'LeaseTownhouse', group: 'Residential', lease: true },
+            { name: 'Other', value: 'LeaseOther', group: 'Residential', lease: true },
+            { name: 'Commercial', value: 'LeaseCommercial', group: 'Commercial', lease: true }
           ]
 
           $scope.setQueryDefaults()
@@ -226,7 +225,6 @@
         $scope.getInput = function (elementId) {
           return angular.element(document.getElementById(elementId))
         }
-
 
         /**
          * Sync Gutensite form variables to a Stratus scope
@@ -342,7 +340,7 @@
 
             $scope.filterMenu = $mdPanel.create(config)
 
-            $scope.filterMenu.reposition = function reposition() {
+            $scope.filterMenu.reposition = function reposition () {
               $timeout(function () {
                 $scope.filterMenu.updatePosition(position)
               }, 100)
@@ -356,7 +354,7 @@
          * Update the entirety options.query in a safe manner to ensure undefined references are not produced
          * @param {Object} newQuery
          */
-        $scope.setQuery = function setQuery(newQuery) {
+        $scope.setQuery = function setQuery (newQuery) {
           $scope.options.query = newQuery || {}
           //Let's ensure these values always exist
           $scope.options.query.Status = $scope.options.query.Status || []
@@ -371,7 +369,7 @@
           //TODO need to search by Agent License
         }
 
-        $scope.setQueryDefaults = function setQuery() {
+        $scope.setQueryDefaults = function setQuery () {
           $scope.$applyAsync(function () {
             if ($scope.options.query.ListingType.length < 1) {
               $scope.options.query.ListingType = $scope.options.selection.ListingType.default.Sale.Residential
@@ -385,7 +383,7 @@
          *
          * @param {String=} listingGroup
          */
-        $scope.selectDefaultListingType = function defaultListingType(listingGroup) {
+        $scope.selectDefaultListingType = function defaultListingType (listingGroup) {
           if (!listingGroup) {
             listingGroup = 'Commercial'
             if (!$scope.options.selection.ListingType.group.Commercial) {
@@ -406,7 +404,7 @@
         /**
          * Call a List widget to perform a search
          */
-        $scope.searchProperties = function searchProperties() {
+        $scope.searchProperties = function searchProperties () {
           let listScope
           if ($scope.listId) {
             listScope = propertyLoopback.getListInstance($scope.listId)
@@ -423,12 +421,11 @@
         /**
          * Have the widget options refreshed form the Widget's end
          */
-        $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions() {
+        $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
           if ($scope.listId) {
             propertyLoopback.getListInstance($scope.listId).refreshSearchWidgetOptions()
           }
         }
-
 
       }],
     templateUrl:
