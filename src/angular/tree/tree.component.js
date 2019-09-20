@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/cdk/collections", "@angular/cdk/tree", "@angular/material/dialog", "@angular/platform-browser", "@angular/material/icon", "rxjs", "rxjs/operators", "stratus", "lodash", "@stratus/angular/backend.service"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/platform-browser", "@angular/material/icon", "rxjs", "stratus", "lodash"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,35 +9,27 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/collections", 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var __param = (this && this.__param) || function (paramIndex, decorator) {
-        return function (target, key) { decorator(target, key, paramIndex); }
-    };
     var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+        function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
         return new (P || (P = Promise))(function (resolve, reject) {
             function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
             function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-            function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+            function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, collections_1, tree_1, dialog_1, platform_browser_1, icon_1, rxjs_1, operators_1, Stratus, _, backend_service_1, localDir, systemDir, moduleName, TreeDialogComponent, TreeComponent;
+    var core_1, drag_drop_1, tree_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, localDir, systemDir, moduleName, TreeComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (forms_1_1) {
-                forms_1 = forms_1_1;
-            },
-            function (collections_1_1) {
-                collections_1 = collections_1_1;
+            function (drag_drop_1_1) {
+                drag_drop_1 = drag_drop_1_1;
             },
             function (tree_1_1) {
                 tree_1 = tree_1_1;
-            },
-            function (dialog_1_1) {
-                dialog_1 = dialog_1_1;
             },
             function (platform_browser_1_1) {
                 platform_browser_1 = platform_browser_1_1;
@@ -48,128 +40,74 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/collections", 
             function (rxjs_1_1) {
                 rxjs_1 = rxjs_1_1;
             },
-            function (operators_1_1) {
-                operators_1 = operators_1_1;
-            },
             function (Stratus_1) {
                 Stratus = Stratus_1;
             },
             function (_1) {
                 _ = _1;
-            },
-            function (backend_service_1_1) {
-                backend_service_1 = backend_service_1_1;
             }
         ],
         execute: function () {
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
             systemDir = '@stratus/angular';
             moduleName = 'tree';
-            TreeDialogComponent = class TreeDialogComponent {
-                constructor(dialogRef, data, fb, backend) {
-                    this.dialogRef = dialogRef;
-                    this.data = data;
-                    this.fb = fb;
-                    this.backend = backend;
-                    this.isContentLoading = false;
-                }
-                ngOnInit() {
-                    this.dialogContentForm = this.fb.group({
-                        contentSelectorInput: this.data.content
-                    });
-                    this.dialogContentForm
-                        .get('contentSelectorInput')
-                        .valueChanges
-                        .pipe(operators_1.debounceTime(300), operators_1.tap(() => this.isContentLoading = true), operators_1.switchMap((value) => {
-                        if (_.isString(value)) {
-                            this.lastContentSelectorQuery = `/Api/Content?q=${value}`;
-                        }
-                        else {
-                            this.data.content = value;
-                            this.data.url = null;
-                        }
-                        return this.backend.get(this.lastContentSelectorQuery)
-                            .pipe(operators_1.finalize(() => this.isContentLoading = false));
-                    }))
-                        .subscribe((response) => {
-                        if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                            return this.filteredContentOptions = [];
-                        }
-                        const payload = _.get(response.body, 'payload') || response.body;
-                        if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                            return this.filteredContentOptions = [];
-                        }
-                        return this.filteredContentOptions = payload;
-                    });
-                }
-                onCancelClick() {
-                    this.dialogRef.close();
-                }
-                displayVersionTitle(option) {
-                    if (option) {
-                        return _.get(option, 'version.title');
-                    }
-                }
-            };
-            TreeDialogComponent = __decorate([
-                core_1.Component({
-                    selector: 'sa-tree-dialog',
-                    templateUrl: `${localDir}/${moduleName}/${moduleName}.dialog.html`,
-                    changeDetection: core_1.ChangeDetectionStrategy.OnPush
-                }),
-                __param(1, core_1.Inject(dialog_1.MAT_DIALOG_DATA)),
-                __metadata("design:paramtypes", [dialog_1.MatDialogRef, Object, forms_1.FormBuilder,
-                    backend_service_1.BackendService])
-            ], TreeDialogComponent);
-            exports_1("TreeDialogComponent", TreeDialogComponent);
             TreeComponent = class TreeComponent {
-                constructor(iconRegistry, sanitizer, dialog, ref) {
+                constructor(iconRegistry, sanitizer, ref) {
                     this.iconRegistry = iconRegistry;
                     this.sanitizer = sanitizer;
-                    this.dialog = dialog;
                     this.ref = ref;
-                    this.title = 'tree-dnd';
-                    this.selectCtrl = new forms_1.FormControl();
+                    this.title = moduleName + '_component';
                     this.registry = new Stratus.Data.Registry();
                     this.onChange = new rxjs_1.Subject();
+                    this.unsettled = false;
+                    this.dropLists = [];
+                    this.dropListIdMap = {};
+                    this.dropListMap = {};
                     this.expandedNodeSet = new Set();
                     this.dragging = false;
                     this.expandDelay = 1000;
                     this.treeControl = new tree_1.NestedTreeControl((node) => node.children || []);
-                    this.hasChild = (index, node) => node.children && node.children.length > 0;
-                    this.uid = _.uniqueId('sa_tree_component_');
+                    this.uid = _.uniqueId(`sa_${moduleName}_component_`);
                     Stratus.Instances[this.uid] = this;
                     this._ = _;
                     iconRegistry.addSvgIcon('delete', sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg'));
                     Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`);
+                    const that = this;
                     this.fetchData()
                         .then((data) => {
                         if (!data.on) {
                             console.warn('Unable to bind data from Registry!');
                             return;
                         }
-                        data.on('change', () => {
-                            if (!data.completed) {
+                        const onDataChange = () => {
+                            if (that.unsettled || !data.completed) {
                                 return;
                             }
+                            that.dataDefer(that.subscriber);
                             ref.detectChanges();
-                            this.dataSource = new collections_1.ArrayDataSource(this.dataRef());
-                        });
-                        ref.detectChanges();
+                        };
+                        data.on('change', onDataChange);
+                        onDataChange();
                     });
                     this.dataSub = new rxjs_1.Observable((subscriber) => this.dataDefer(subscriber));
+                    this.dropListIdMap[`${this.uid}_parent_drop_list`] = true;
+                    this.trackDropLists();
                 }
                 remove(model) {
-                    const models = this.dataRef();
-                    if (!models || !models.length) {
-                        return;
-                    }
-                    const index = models.indexOf(model);
+                }
+                removeNode(list, node) {
+                    const index = list.indexOf(node);
                     if (index === -1) {
-                        return;
+                        return false;
                     }
-                    models.splice(index, 1);
-                    this.model.trigger('change');
+                    list.splice(index, 1);
+                    return true;
+                }
+                nodeIsEqual(node, other) {
+                    if (!node || !other) {
+                        return node === other;
+                    }
+                    return node.id === other.id;
                 }
                 fetchData() {
                     return __awaiter(this, void 0, void 0, function* () {
@@ -181,158 +119,132 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/collections", 
                 }
                 dataDefer(subscriber) {
                     this.subscriber = subscriber;
-                    const tree = this.dataRef();
+                    const tree = this.dataRef(true);
                     if (tree && tree.length) {
                         subscriber.next(tree);
                         return;
                     }
                     setTimeout(() => this.dataDefer(subscriber), 200);
                 }
-                dataRef() {
+                dataRef(force = false) {
                     if (!this.collection) {
                         return [];
                     }
-                    const models = this.collection.models;
+                    if (!force && this.tree && this.tree.length > 0) {
+                        return this.tree;
+                    }
+                    let models = this.collection.models;
                     if (!models || !_.isArray(models)) {
                         return [];
                     }
+                    models = _.sortBy(models, ['data.priority']);
                     this.treeMap = {};
-                    const that = this;
-                    const tree = [];
+                    this.tree = [];
                     _.each(models, (model) => {
                         const modelId = _.get(model, 'data.id');
                         const parentId = _.get(model, 'data.nestParent.id');
-                        if (!_.has(that.treeMap, modelId)) {
-                            that.treeMap[modelId] = {
+                        this.dropListIdMap[`${this.uid}_node_${modelId}_drop_list`] = true;
+                        if (!_.has(this.treeMap, modelId)) {
+                            this.treeMap[modelId] = {
                                 id: modelId,
                                 model: null,
-                                children: []
+                                children: [],
+                                expanded: true
                             };
                         }
-                        that.treeMap[modelId].model = model;
+                        this.treeMap[modelId].model = model;
                         if (!parentId) {
-                            tree.push(that.treeMap[modelId]);
+                            this.tree.push(this.treeMap[modelId]);
                         }
                         else {
-                            if (!_.has(that.treeMap, parentId)) {
-                                that.treeMap[parentId] = {
+                            if (!_.has(this.treeMap, parentId)) {
+                                this.treeMap[parentId] = {
                                     id: parentId,
                                     model: null,
-                                    children: []
+                                    children: [],
+                                    expanded: true
                                 };
                             }
-                            that.treeMap[parentId].children.push(that.treeMap[modelId]);
+                            this.treeMap[parentId].children.push(this.treeMap[modelId]);
                         }
                     });
-                    return tree;
+                    this.trackDropLists();
+                    return this.tree;
                 }
-                onDataChange(ref) {
-                    this.dataDefer(this.subscriber);
-                    ref.detectChanges();
-                }
-                onDragStart() {
-                    this.dragging = true;
-                }
-                onDragEnd() {
-                    this.dragging = false;
-                }
-                onDragHover(node) {
-                    if (this.dragging) {
-                        clearTimeout(this.expandTimeout);
-                        this.expandTimeout = setTimeout(() => {
-                            this.treeControl.expand(node);
-                        }, this.expandDelay);
-                    }
-                }
-                onDragHoverEnd() {
-                    if (this.dragging) {
-                        clearTimeout(this.expandTimeout);
-                    }
+                trackDropLists() {
+                    this.dropLists = [];
+                    _.each(this.dropListIdMap, (value, key) => {
+                        if (!value) {
+                            return;
+                        }
+                        const cached = key in this.dropListMap;
+                        const element = cached ? this.dropListMap[key] : document.getElementById(key);
+                        if (!element) {
+                            return;
+                        }
+                        this.dropLists.push(key);
+                        if (cached) {
+                            return;
+                        }
+                        this.dropListMap[key] = element;
+                    });
                 }
                 onDragDrop(event) {
                     if (!event.isPointerOverContainer) {
                         return;
                     }
-                    const tree = this.dataRef();
-                    if (!tree || !tree.length) {
+                    const targetNode = event.item.data;
+                    if (!targetNode) {
                         return;
                     }
-                    console.log(`model drop: ${event.item.data.model.get('name')}`, `index change: ${event.previousIndex} -> ${event.currentIndex}`);
-                    console.log('onDragDrop:', {
-                        event,
-                        parent,
-                        dataSource: this.dataSource
-                    });
-                }
-                canBeDropped(event) {
-                    const movingNode = event.item.data;
-                    return event.previousContainer.id !== event.container.id
-                        && this.isNotSelfDrop(event)
-                        && !this.hasChild(movingNode, event.item.data);
-                }
-                isNotSelfDrop(event) {
-                    console.log('isNotSelfDrop:', event.item.data, event.item.data);
-                    return !_.isEqual(event.item.data, event.item.data);
-                }
-                openDialog(model) {
-                    if (!model || !_.has(model, 'data')) {
+                    const parentNode = event.container.data;
+                    const pastParentNode = event.previousContainer.data;
+                    const tree = parentNode ? parentNode.children : this.dataRef();
+                    if (!tree) {
                         return;
                     }
-                    const dialogRef = this.dialog.open(TreeDialogComponent, {
-                        width: '250px',
-                        data: {
-                            id: model.data.id || null,
-                            name: model.data.name || '',
-                            target: model.data.url ? 'url' : 'content',
-                            level: model.data.nestParent === null ? 'top' : 'child',
-                            content: model.data.content || null,
-                            url: model.data.url || null,
-                            priority: model.data.priority || 0,
-                            model: model || null,
-                            collection: this.collection || null,
-                            parent: model.data.parent || null,
-                            nestParent: model.data.nestParent || null,
+                    this.unsettled = true;
+                    if (!this.nodeIsEqual(parentNode, pastParentNode)) {
+                        if (parentNode) {
+                            parentNode.children.push(targetNode);
                         }
-                    });
-                    this.ref.detectChanges();
-                    dialogRef.afterClosed().subscribe((result) => {
-                        if (!result || _.isEmpty(result)) {
+                        if (pastParentNode) {
+                            this.removeNode(pastParentNode.children, targetNode);
+                        }
+                        const parentPatch = {};
+                        if (parentNode) {
+                            [
+                                'id',
+                                'name'
+                            ].forEach((key) => {
+                                const value = _.get(parentNode, `model.data.${key}`);
+                                if (!value) {
+                                    return;
+                                }
+                                _.set(parentPatch, key, value);
+                            });
+                        }
+                        targetNode.model.set('nestParent', !parentNode ? parentNode : parentPatch);
+                    }
+                    drag_drop_1.moveItemInArray(tree, event.previousIndex, event.currentIndex);
+                    let priority = 0;
+                    _.each(tree, (node) => {
+                        if (!node.model || !node.model.set) {
                             return;
                         }
-                        if (result.level && result.level === 'top') {
-                            result.nestParent = null;
-                        }
-                        [
-                            'name',
-                            'content',
-                            'url',
-                            'priority',
-                            'nestParent'
-                        ].forEach(attr => {
-                            if (!_.has(result, attr)) {
-                                return;
-                            }
-                            if ('content' === attr) {
-                                const value = _.get(result, attr);
-                                model.set(attr, !value ? null : { id: _.get(value, 'id') });
-                                return;
-                            }
-                            model.set(attr, _.get(result, attr));
-                        });
-                        model.save();
+                        node.model.set('priority', ++priority);
                     });
+                    targetNode.model.save();
+                    this.unsettled = false;
                 }
             };
             TreeComponent = __decorate([
                 core_1.Component({
-                    selector: 'sa-tree',
+                    selector: `sa-${moduleName}`,
                     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
                     changeDetection: core_1.ChangeDetectionStrategy.OnPush
                 }),
-                __metadata("design:paramtypes", [icon_1.MatIconRegistry,
-                    platform_browser_1.DomSanitizer,
-                    dialog_1.MatDialog,
-                    core_1.ChangeDetectorRef])
+                __metadata("design:paramtypes", [icon_1.MatIconRegistry, platform_browser_1.DomSanitizer, core_1.ChangeDetectorRef])
             ], TreeComponent);
             exports_1("TreeComponent", TreeComponent);
         }
