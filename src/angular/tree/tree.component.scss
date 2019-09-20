@@ -1,5 +1,10 @@
 /* Based on Angular Material 8+ */
 .tree {
+  .display {
+    &-none {
+      display: none;
+    }
+  }
   .full {
     &-width {
       width: 100%;
@@ -11,9 +16,6 @@
     list-style-type: none;
   }
   .tree {
-    &-invisible {
-      display: none;
-    }
     &-node {
       display: block;
       .tree-node { // be explicit for child padding

@@ -1,5 +1,12 @@
 // Angular Core
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core'
+
+// Material
+import {MatDialog} from '@angular/material/dialog'
+
+// Tree Imports
+import {Node, TreeComponent} from '@stratus/angular/tree/tree.component'
+import {DialogData, TreeDialogComponent} from '@stratus/angular/tree/tree-dialog.component'
 
 // External
 import * as _ from 'lodash'
@@ -28,7 +35,17 @@ export class TreeNodeComponent implements OnInit {
     // Dependencies
     _: any
 
-    constructor() {}
+    // Inputs
+    @Input() tree: TreeComponent
+    @Input() parent: Node
+    @Input() node: Node
+
+    // Methods
+    hasChild = (node: Node) => node.children && node.children.length > 0
+    isExpanded = (node: Node) => node.expanded
+
+    constructor(public dialog: MatDialog, private ref: ChangeDetectorRef) {
+    }
 
     ngOnInit() {
         // Initialization
@@ -41,5 +58,63 @@ export class TreeNodeComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+    }
+
+    public getName(node: Node): string {
+        if (!node.model || !node.model.get || !node.model.get('name')) {
+            return 'Untitled'
+        }
+        return node.model.get('name')
+    }
+
+    public getDragPreview(node: Node): string {
+        return `name: ${this.getName(node)}<br>children: ${node.children ? node.children.length : 0}`
+    }
+
+    public openDialog(node: Node): void {
+        if (!node.model || !_.has(node.model, 'data')) {
+            return
+        }
+        const dialogRef = this.dialog.open(TreeDialogComponent, {
+            width: '250px',
+            data: {
+                id: node.model.data.id || null,
+                name: node.model.data.name || '',
+                target: node.model.data.url ? 'url' : 'content',
+                // level: node.model.data.nestParent === null ? 'top' : 'child',
+                content: node.model.data.content || null,
+                url: node.model.data.url || null,
+                // priority: node.model.data.priority || 0,
+                model: node.model || null,
+                collection: this.tree.collection || null,
+                parent: node.model.data.parent || null,
+                nestParent: node.model.data.nestParent || null,
+            }
+        })
+        // this.ref.detectChanges()
+
+        dialogRef.afterClosed().subscribe((result: DialogData) => {
+            if (!result || _.isEmpty(result)) {
+                return
+            }
+            [
+                'name',
+                'content',
+                'url'
+            ].forEach(attr => {
+                if (!_.has(result, attr)) {
+                    return
+                }
+                // Normalize Content
+                if ('content' === attr) {
+                    const value = _.get(result, attr)
+                    node.model.set(attr, !value ? null : {id: _.get(value, 'id')})
+                    return
+                }
+                node.model.set(attr, _.get(result, attr))
+            })
+            node.model.save()
+            // this.ref.detectChanges()
+        })
     }
 }
