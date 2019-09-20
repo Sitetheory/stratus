@@ -1,4 +1,4 @@
-System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/angular/material", "@stratus/angular/base/base.component", "@stratus/angular/selector/selector.component", "@stratus/angular/tree/tree.component", "ngx-quill", "lodash", "stratus"], function (exports_1, context_1) {
+System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@angular/material", "@angular/platform-browser", "@angular/platform-browser/animations", "@stratus/angular/material", "@stratus/angular/base/base.component", "@stratus/angular/selector/selector.component", "@stratus/angular/tree/tree.component", "@stratus/angular/tree/tree-dialog.component", "@stratus/angular/tree/tree-node.component", "ngx-quill", "lodash", "stratus"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -9,7 +9,7 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, selector_component_1, tree_component_1, ngx_quill_1, _, Stratus, AppModule;
+    var http_1, core_1, forms_1, material_1, platform_browser_1, animations_1, material_2, base_component_1, selector_component_1, tree_component_1, tree_dialog_component_1, tree_node_component_1, ngx_quill_1, _, Stratus, AppModule;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -42,6 +42,12 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
             },
             function (tree_component_1_1) {
                 tree_component_1 = tree_component_1_1;
+            },
+            function (tree_dialog_component_1_1) {
+                tree_dialog_component_1 = tree_dialog_component_1_1;
+            },
+            function (tree_node_component_1_1) {
+                tree_node_component_1 = tree_node_component_1_1;
             },
             function (ngx_quill_1_1) {
                 ngx_quill_1 = ngx_quill_1_1;
@@ -125,13 +131,15 @@ System.register(["@angular/common/http", "@angular/core", "@angular/forms", "@an
                         base_component_1.BaseComponent,
                         selector_component_1.SelectorComponent,
                         tree_component_1.TreeComponent,
-                        tree_component_1.TreeDialogComponent,
+                        tree_dialog_component_1.TreeDialogComponent,
+                        tree_node_component_1.TreeNodeComponent,
                     ],
                     declarations: [
                         base_component_1.BaseComponent,
                         selector_component_1.SelectorComponent,
                         tree_component_1.TreeComponent,
-                        tree_component_1.TreeDialogComponent,
+                        tree_dialog_component_1.TreeDialogComponent,
+                        tree_node_component_1.TreeNodeComponent,
                     ],
                     providers: []
                 }),

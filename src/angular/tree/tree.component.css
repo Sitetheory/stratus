@@ -1,42 +1,27 @@
 /* Based on Angular Material 8+ */
-sa-tree .full-width {
+.tree .display-none {
+  display: none; }
+
+.tree .full-width {
   width: 100%; }
 
-sa-tree ul, sa-tree li {
+.tree ul, .tree li {
   margin-top: 0;
   margin-bottom: 0;
   list-style-type: none; }
 
-sa-tree .tree .tree-invisible {
-  display: none; }
-
-sa-tree .tree .tree-node {
+.tree .tree-node {
   display: block; }
-  sa-tree .tree .tree-node .tree-node {
+  .tree .tree-node .tree-node {
     padding-left: 40px; }
-  sa-tree .tree .tree-node-drag-preview {
+  .tree .tree-node-drag-preview {
     box-sizing: border-box;
     border-radius: 4px;
     padding: 10px;
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
     background-color: white; }
 
-sa-tree .tree .tree-dialog-content .radio-group {
-  display: flex;
-  flex-direction: column;
-  margin: 15px 0; }
-
-sa-tree .tree .tree-dialog-content .radio-button {
-  margin: 5px; }
-
-sa-tree .tree .cdk-drop-list-dragging {
+.tree .cdk-drop-list-dragging {
   min-height: 20px;
   border-style: dashed !important;
-  border-radius: 4px !important;
-  background: lightgreen !important; }
-
-sa-tree .tree .cdk-drop-list-receiving {
-  min-height: 20px;
-  border-style: dashed !important;
-  border-radius: 4px !important;
-  background: lightyellow !important; }
+  border-radius: 4px !important; }
