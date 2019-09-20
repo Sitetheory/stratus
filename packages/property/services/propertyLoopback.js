@@ -80,7 +80,7 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
       'stratus.services.collection'
@@ -105,7 +105,7 @@
           '$http', '$injector', '$q', '$location', '$window', '$rootScope', 'Collection', 'Model', 'orderByFilter',
           function ($http, $injector, $q, $location, $window, $rootScope, Collection, Model, orderByFilter) {
             let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken' // TODO need to allow setting own tokenRefreshURL
-            let refreshLoginTimer //Timeout object
+            let refreshLoginTimer // Timeout object
             let defaultPageTitle
 
             /** @type {{List: Object<scope>, Search: Object<scope>, Details: Object<scope>}} */
@@ -118,7 +118,7 @@
               MemberDetails: {},
               OfficeList: {},
               OfficeSearch: {},
-              OfficeDetails: {},
+              OfficeDetails: {}
             }
 
             /** @type {{List: Object<[String]>, Search: Object<[String]>}} */
@@ -283,10 +283,10 @@
                 defaultPageTitle = JSON.parse(JSON.stringify($window.document.title))
               }
               if (!title) {
-                //Revert to default
+                // Revert to default
                 $window.document.title = defaultPageTitle
               } else {
-                //Apply new title
+                // Apply new title
                 $window.document.title = title
               }
             }
@@ -308,8 +308,8 @@
               return $q(async function (resolve, reject) {
                 try {
                   if (
-                    session.services.length < 1
-                    || session.expires < new Date() //if expiring in the next 15 seconds
+                    session.services.length < 1 ||
+                    session.expires < new Date() // if expiring in the next 15 seconds
                   ) {
                     await tokenRefresh(keepAlive)
                     resolve()
@@ -335,10 +335,10 @@
                   url: tokenRefreshURL
                 }).then(function successCallback (response) {
                   if (
-                    typeof response === 'object'
-                    && response.hasOwnProperty('data')
-                    && response.data.hasOwnProperty('services')
-                    && response.data.services.hasOwnProperty('length')
+                    typeof response === 'object' &&
+                    response.hasOwnProperty('data') &&
+                    response.data.hasOwnProperty('services') &&
+                    response.data.services.hasOwnProperty('length')
                   ) {
                     tokenHandleGoodResponse(response)
                     resolve()
@@ -368,9 +368,9 @@
                 function (service) {
                   if (service.hasOwnProperty('id')) {
                     session.services[service.id] = service
-                    session.lastCreated = new Date(service.created)//The object is a String being converted to Date
+                    session.lastCreated = new Date(service.created)// The object is a String being converted to Date
                     session.lastTtl = service.ttl
-                    session.expires = new Date(session.lastCreated.getTime() + (session.lastTtl - 15) * 1000)//Set to expire 15 secs before it actually does
+                    session.expires = new Date(session.lastCreated.getTime() + (session.lastTtl - 15) * 1000)// Set to expire 15 secs before it actually does
                   }
                 }
               )
@@ -385,10 +385,10 @@
              */
             function tokenHandleBadResponse (response) {
               if (
-                typeof response === 'object'
-                && response.hasOwnProperty('data')
-                && response.data.hasOwnProperty('errors')
-                && response.data.errors.hasOwnProperty('length')
+                typeof response === 'object' &&
+                response.hasOwnProperty('data') &&
+                response.data.hasOwnProperty('errors') &&
+                response.data.errors.hasOwnProperty('length')
               ) {
                 console.error(response.data.errors)
               } else {
@@ -403,7 +403,7 @@
               clearTimeout(refreshLoginTimer)
               refreshLoginTimer = setTimeout(function () {
                 tokenRefresh()
-              }, (session.lastTtl - 15) * 1000) //15 seconds before the token expires
+              }, (session.lastTtl - 15) * 1000) // 15 seconds before the token expires
             }
 
             /**
@@ -413,7 +413,7 @@
              * @returns {Model}
              */
             function createModel (request) {
-              //request.direct = true;
+              // request.direct = true;
               let model = new Model(request)
               if (request.api) {
                 model.meta.set('api', _.isJSON(request.api)
@@ -482,11 +482,11 @@
                           totalCount += parseInt(countRecords)
                         }
                       })
-                  }),
+                  })
                 )
               })
               if (!append) {
-                originalCollection.models.splice(0, originalCollection.models.length) //empties the array
+                originalCollection.models.splice(0, originalCollection.models.length) // empties the array
               }
               return $q.all(fetchPromises)
                 .then(
@@ -552,7 +552,7 @@
                         _ServiceId: newModel.serviceId
                       }))
                     })
-                }),
+                })
               )
               return $q.all(fetchPromises)
                 .then(
@@ -601,9 +601,9 @@
               let collection
               Object.keys(instance[instanceType]).forEach(function (listName) {
                 if (
-                  !collection
-                  && instance[instanceType].hasOwnProperty(listName)
-                  && instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName)
+                  !collection &&
+                  instance[instanceType].hasOwnProperty(listName) &&
+                  instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName)
                 ) {
                   collection = instance[instanceType][listName][scopedCollectionVarName]
                 }
@@ -613,8 +613,8 @@
               }
               Object.keys(instance[instanceType]).forEach(function (listName) {
                 if (
-                  !instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName)
-                  || instance[instanceType][listName][scopedCollectionVarName] !== collection
+                  !instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName) ||
+                  instance[instanceType][listName][scopedCollectionVarName] !== collection
                 ) {
                   instance[instanceType][listName][scopedCollectionVarName] = collection
                 }
@@ -628,18 +628,18 @@
              */
             function compilePropertyWhereFilter (where) {
               let whereQuery = {}
-              //ListingKey
+              // ListingKey
               if (where.hasOwnProperty('ListingKey') && where.ListingKey !== '') {
                 whereQuery.ListingKey = where.ListingKey
               }
-              //ListType
+              // ListType
               if (where.hasOwnProperty('ListingType') && where.ListingType !== '') {
                 if (typeof where.ListingType === 'string') {
                   where.ListingType = [where.ListingType]
                 }
                 whereQuery.ListingType = where.ListingType
               }
-              //Status
+              // Status
               if (where.hasOwnProperty('Status') && where.Status !== '') {
                 if (typeof where.Status === 'string') {
                   where.Status = [where.Status]
@@ -648,7 +648,7 @@
                   inq: where.Status
                 }
               }
-              //Agent License
+              // Agent License
               if (where.hasOwnProperty('AgentLicense') && where.AgentLicense !== '') {
                 if (typeof where.AgentLicense === 'string') {
                   where.AgentLicense = [where.AgentLicense]
@@ -657,22 +657,22 @@
                   whereQuery.AgentLicense = where.AgentLicense
                 }
               }
-              //City
+              // City
               if (where.hasOwnProperty('City') && where.City !== '') {
                 whereQuery.City = {
                   like: where.City,
                   options: 'i'
                 }
               }
-              //List Price Min
+              // List Price Min
               if (where.hasOwnProperty('ListPriceMin') && where.ListPriceMin && where.ListPriceMin !== 0) {
                 whereQuery.ListPrice = { gte: parseInt(where.ListPriceMin, 10) }
               }
-              //List Price Max
+              // List Price Max
               if (where.hasOwnProperty('ListPriceMax') && where.ListPriceMax && where.ListPriceMax !== 0) {
                 if (
-                  whereQuery.hasOwnProperty('ListPrice')
-                  && whereQuery.ListPrice.hasOwnProperty('gte')
+                  whereQuery.hasOwnProperty('ListPrice') &&
+                  whereQuery.ListPrice.hasOwnProperty('gte')
                 ) {
                   whereQuery.ListPrice = {
                     between: [
@@ -684,11 +684,11 @@
                   whereQuery.ListPrice = { lte: parseInt(where.ListPriceMax, 10) }
                 }
               }
-              //Baths Min
+              // Baths Min
               if (where.hasOwnProperty('BathroomsFullMin') && where.BathroomsFullMin && where.BathroomsFullMin !== 0) {
                 whereQuery.BathroomsFull = { gte: parseInt(where.BathroomsFullMin, 10) }
               }
-              //Beds Min
+              // Beds Min
               if (where.hasOwnProperty('BedroomsTotalMin') && where.BedroomsTotalMin && where.BedroomsTotalMin !== 0) {
                 whereQuery.BedroomsTotal = { gte: parseInt(where.BedroomsTotalMin, 10) }
               }
@@ -701,23 +701,23 @@
              */
             function compileMemberWhereFilter (where) {
               let whereQuery = {}
-              //MemberKey
+              // MemberKey
               if (where.hasOwnProperty('MemberKey') && where.MemberKey !== '') {
                 whereQuery.MemberKey = where.MemberKey
               }
-              //MemberStateLicense
+              // MemberStateLicense
               if (where.hasOwnProperty('MemberStateLicense') && where.MemberStateLicense !== '') {
                 whereQuery.MemberStateLicense = where.MemberStateLicense
               }
-              //MemberNationalAssociationId
+              // MemberNationalAssociationId
               if (where.hasOwnProperty('MemberNationalAssociationId') && where.MemberNationalAssociationId !== '') {
                 whereQuery.MemberNationalAssociationId = where.MemberNationalAssociationId
               }
-              //MemberStatus
+              // MemberStatus
               if (where.hasOwnProperty('MemberStatus') && where.MemberStatus !== '') {
                 whereQuery.MemberStatus = where.MemberStatus
               }
-              //MemberFullName
+              // MemberFullName
               if (where.hasOwnProperty('MemberFullName') && where.MemberFullName !== '') {
                 whereQuery.MemberFullName = {
                   like: where.MemberFullName,
@@ -733,19 +733,19 @@
              */
             function compileOfficeWhereFilter (where) {
               let whereQuery = {}
-              //OfficeKey
+              // OfficeKey
               if (where.hasOwnProperty('OfficeKey') && where.OfficeKey !== '') {
                 whereQuery.OfficeKey = where.OfficeKey
               }
-              //OfficeNationalAssociationId
+              // OfficeNationalAssociationId
               if (where.hasOwnProperty('OfficeNationalAssociationId') && where.OfficeNationalAssociationId !== '') {
                 whereQuery.OfficeNationalAssociationId = where.OfficeNationalAssociationId
               }
-              //OfficeStatus
+              // OfficeStatus
               if (where.hasOwnProperty('OfficeStatus') && where.OfficeStatus !== '') {
                 whereQuery.OfficeStatus = where.OfficeStatus
               }
-              //OfficeName
+              // OfficeName
               if (where.hasOwnProperty('OfficeName') && where.OfficeName !== '') {
                 whereQuery.OfficeName = {
                   like: where.OfficeName,
@@ -803,19 +803,19 @@
                 filterQuery.order = compileOrderFilter(options.order)
               }
 
-              //Handle included collections
+              // Handle included collections
               let includes = []
 
-              //Included Images
+              // Included Images
               if (options.images) {
                 let imageInclude = {
                   relation: 'Images',
                   scope: {
-                    order: 'Order', //FIXME should be ordered by default on db side (default scopes)
+                    order: 'Order', // FIXME should be ordered by default on db side (default scopes)
                     fields: [
                       'MediaURL'
                     ]
-                  },
+                  }
                 }
                 if (typeof options.images === 'object') {
                   if (options.images.hasOwnProperty('limit')) {
@@ -833,17 +833,17 @@
                 includes.push(imageInclude)
               }
 
-              //Included Open Houses
+              // Included Open Houses
               if (options.openhouses) {
                 let openHouseInclude = {
                   relation: 'OpenHouses',
                   scope: {
-                    order: 'OpenHouseStartTime', //FIXME should be ordered by default on db side (default scopes)
+                    order: 'OpenHouseStartTime', // FIXME should be ordered by default on db side (default scopes)
                     fields: [
                       'OpenHouseStartTime',
                       'OpenHouseEndTime'
                     ]
-                  },
+                  }
                 }
                 if (typeof options.openhouses === 'object') {
                   if (options.openhouses.hasOwnProperty('limit')) {
@@ -901,10 +901,10 @@
                 filterQuery.order = compileOrderFilter(options.order)
               }
 
-              //Handle included collections
+              // Handle included collections
               let includes = []
 
-              //Included Images
+              // Included Images
               if (options.images) {
                 let imageInclude = {
                   relation: 'Images',
@@ -913,7 +913,7 @@
                     fields: [
                       'MediaURL'
                     ]
-                  },
+                  }
                 }
                 if (typeof options.images === 'object') {
                   if (options.images.hasOwnProperty('limit')) {
@@ -931,16 +931,16 @@
                 includes.push(imageInclude)
               }
 
-              //Include Office
+              // Include Office
               if (options.office) {
                 let includeItem = {
                   relation: 'Office',
                   scope: {
                     fields: [
                       'OfficeName',
-                      'OfficeKey',
+                      'OfficeKey'
                     ]
-                  },
+                  }
                 }
                 if (typeof options.office === 'object') {
                   if (options.office.hasOwnProperty('fields')) {
@@ -998,10 +998,10 @@
                 filterQuery.order = compileOrderFilter(options.order)
               }
 
-              //Handle included collections
+              // Handle included collections
               let includes = []
 
-              //Included Images
+              // Included Images
               if (options.images) {
                 let imageInclude = {
                   relation: 'Images',
@@ -1010,7 +1010,7 @@
                     fields: [
                       'MediaURL'
                     ]
-                  },
+                  }
                 }
                 if (typeof options.images === 'object') {
                   if (options.images.hasOwnProperty('limit')) {
@@ -1028,7 +1028,7 @@
                 includes.push(imageInclude)
               }
 
-              //Include Managing Broker Member Data
+              // Include Managing Broker Member Data
               if (options.managingBroker) {
                 let includeItem = {
                   relation: 'Member',
@@ -1036,9 +1036,9 @@
                     fields: [
                       'MemberFullName',
                       'MemberStateLicense',
-                      'MemberKey',
+                      'MemberKey'
                     ]
-                  },
+                  }
                 }
                 if (typeof options.managingBroker === 'object') {
                   if (options.managingBroker.hasOwnProperty('fields')) {
@@ -1053,7 +1053,7 @@
                 includes.push(includeItem)
               }
 
-              //Include Members/Agents
+              // Include Members/Agents
               if (options.members) {
                 let includeItem = {
                   relation: 'Member',
@@ -1061,9 +1061,9 @@
                     fields: [
                       'MemberFullName',
                       'MemberStateLicense',
-                      'MemberKey',
+                      'MemberKey'
                     ]
-                  },
+                  }
                 }
                 if (typeof options.members === 'object') {
                   if (options.members.hasOwnProperty('fields')) {
@@ -1117,7 +1117,7 @@
                   }
                 })
               }
-              //console.log('serviceList', serviceList);
+              // console.log('serviceList', serviceList);
               return serviceList
             }
 
@@ -1141,15 +1141,15 @@
              * @returns {String} - Remaining unparsed hashbang variables
              */
             function getListingOptionsFromUrlString (path) {
-              //FIXME can't read unless ListingKey must end with /
+              // FIXME can't read unless ListingKey must end with /
               // /Listing/1/81582540/8883-Rancho/
               let regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
               let matches = regex.exec(path)
               path = path.replace(regex, '')
               if (
-                matches !== null
-                && matches[1]
-                && matches[2]
+                matches !== null &&
+                matches[1] &&
+                matches[2]
               ) {
                 // Save the variables inot
                 urlOptions.Listing.service = matches[1]
@@ -1169,28 +1169,28 @@
               let matches = regex.exec(path)
               path = path.replace(regex, '')
               if (
-                matches !== null
-                && matches[1]
+                matches !== null &&
+                matches[1]
               ) {
                 let rawSearchOptions = matches[1]
                 // Time to separate all the values out in pairs between /'s
                 regex = /([^\/]+)\/([^\/]+)/g
-                while (null != (matches = regex.exec(rawSearchOptions))) {
+                while ((matches = regex.exec(rawSearchOptions)) != null) {
                   if (
-                    matches[1]
-                    && matches[2]
+                    matches[1] &&
+                    matches[2]
                   ) {
                     // Check for a comma to break into an array. This might need to be altered as sometimes a comma might be used for something
                     if (matches[2].includes(',')) {
                       matches[2] = matches[2].split(',')
                     }
-                    //S ave the pairing results into urlOptions.Search
+                    // S ave the pairing results into urlOptions.Search
                     urlOptions.Search[matches[1]] = matches[2]
                   }
                 }
               }
 
-              //Math is performed in Page and needs to be converted
+              // Math is performed in Page and needs to be converted
               if (urlOptions.Search.hasOwnProperty('Page')) {
                 urlOptions.Search.Page = parseInt(urlOptions.Search.Page)
               }
@@ -1205,7 +1205,7 @@
              */
             function setUrlOptions (listingOrSearch, options) {
               urlOptions[listingOrSearch] = options || {}
-              //console.log('updated urlOptions', listingOrSearch, options);
+              // console.log('updated urlOptions', listingOrSearch, options);
             }
 
             /**
@@ -1231,13 +1231,13 @@
                 let searchPath = ''
                 searchOptionNames.forEach(function (searchOptionName) {
                   if (
-                    urlOptions.Search.hasOwnProperty(searchOptionName)
-                    && urlOptions.Search[searchOptionName] !== null
-                    //&& urlOptions.Search[searchOptionName] !== ''
-                    //&& urlOptions.Search[searchOptionName] !== 0// may need to correct this
-                    && !_.isEqual(defaultOptions[searchOptionName], urlOptions.Search[searchOptionName])
+                    urlOptions.Search.hasOwnProperty(searchOptionName) &&
+                    urlOptions.Search[searchOptionName] !== null &&
+                    // && urlOptions.Search[searchOptionName] !== ''
+                    // && urlOptions.Search[searchOptionName] !== 0// may need to correct this
+                    !_.isEqual(defaultOptions[searchOptionName], urlOptions.Search[searchOptionName])
                   ) {
-                    //console.log(searchOptionName, defaultOptions[searchOptionName], urlOptions.Search[searchOptionName]);
+                    // console.log(searchOptionName, defaultOptions[searchOptionName], urlOptions.Search[searchOptionName]);
                     searchPath += searchOptionName + '/' + urlOptions.Search[searchOptionName] + '/'
                   }
                 })
@@ -1248,16 +1248,16 @@
 
               // Set the Listing Details url variables
               if (
-                urlOptions.Listing.hasOwnProperty('service')
-                && urlOptions.Listing.hasOwnProperty('ListingKey')
-                && !isNaN(urlOptions.Listing.service)
-                && urlOptions.Listing.ListingKey
+                urlOptions.Listing.hasOwnProperty('service') &&
+                urlOptions.Listing.hasOwnProperty('ListingKey') &&
+                !isNaN(urlOptions.Listing.service) &&
+                urlOptions.Listing.ListingKey
               ) {
                 path += 'Listing' + '/' + urlOptions.Listing.service + '/' + urlOptions.Listing.ListingKey + '/'
                 if (
-                  urlOptions.Listing.hasOwnProperty('address')
-                  && urlOptions.Listing.address
-                  && typeof urlOptions.Listing.address === 'string'
+                  urlOptions.Listing.hasOwnProperty('address') &&
+                  urlOptions.Listing.address &&
+                  typeof urlOptions.Listing.address === 'string'
                 ) {
                   path += urlOptions.Listing.address.replace(/ /g, '-') + '/'
                 }
@@ -1270,8 +1270,7 @@
              */
             function refreshUrlOptions (defaultOptions) {
               setLocationPath(getUrlOptionsPath(defaultOptions))
-              //console.log('Refreshed url with', urlOptions, defaultOptions);
-
+              // console.log('Refreshed url with', urlOptions, defaultOptions);
             }
 
             /**
@@ -1281,7 +1280,7 @@
             function setLocationPath (path) {
               $rootScope.$applyAsync(function () {
                 $location.path(path).replace()
-                //$location.path(path);
+                // $location.path(path);
               })
             }
 
@@ -1358,39 +1357,39 @@
 
               const collections = []
 
-              //check if this filterQuery is any different from the 'last one' used
-              //if this is a new query rather than a page change
+              // check if this filterQuery is any different from the 'last one' used
+              // if this is a new query rather than a page change
               if (
-                !_.isEqual(lastQueries.whereFilter, filterQuery.where)
-                || lastQueries.order !== options.order
-                || lastQueries.perPage !== options.perPage
-                || refresh
+                !_.isEqual(lastQueries.whereFilter, filterQuery.where) ||
+                lastQueries.order !== options.order ||
+                lastQueries.perPage !== options.perPage ||
+                refresh
               ) {
-                //clear the current models to refresh a new batch
+                // clear the current models to refresh a new batch
                 collection.models.splice(0, collection.models.length)
                 refresh = true
                 lastQueries.pages = []
-                filterQuery.count = true //request the Total Count of all results
+                filterQuery.count = true // request the Total Count of all results
               } else {
                 refresh = false
               }
 
-              //the page on doesn't have listings in buffer
+              // the page on doesn't have listings in buffer
               if (collection.models.length < (options.page * options.perPage)) {
-                //need to fetch more
-                //need to also have all previous pages to ensure that sorting is correct (need to track previous pages loaded)
+                // need to fetch more
+                // need to also have all previous pages to ensure that sorting is correct (need to track previous pages loaded)
                 if (
-                  options.page > 1
-                  && !lastQueries.pages.includes(options.page - 1, options.page - 2)
+                  options.page > 1 &&
+                  !lastQueries.pages.includes(options.page - 1, options.page - 2)
                 ) {
-                  //console.log('The previous pages weren\'t buffered yet');
-                  //we'll need to load pages 1 through options.page
+                  // console.log('The previous pages weren\'t buffered yet');
+                  // we'll need to load pages 1 through options.page
                   filterQuery.limit = options.perPage * options.page
                   filterQuery.skip = 0
-                  //add those page to lastQueries.pages
+                  // add those page to lastQueries.pages
                   for (let addPage = 1; addPage < options.page; addPage++) {
-                    //settings as loaded page {addPage}
-                    //console.log('settings as loaded previous page #', addPage);
+                    // settings as loaded page {addPage}
+                    // console.log('settings as loaded previous page #', addPage);
                     lastQueries.pages.push(addPage)
                   }
                 }
@@ -1408,7 +1407,6 @@
                   function (serviceId) {
                     // Only load from a specific MLS Service
                     if (session.services.hasOwnProperty(serviceId)) {
-
                       let request = {
                         serviceId: serviceId,
                         urlRoot: session.services[serviceId].host,
@@ -1444,23 +1442,22 @@
                   collection.meta.set('totalPages', Math.ceil(totalRecords / options.perPage))
                 }
 
-                //Sort once more on the front end to ensure it's ordered correctly
+                // Sort once more on the front end to ensure it's ordered correctly
                 orderBy(collection, options.order)
 
-                //Ensure the changes update on the DOM
+                // Ensure the changes update on the DOM
                 Object.keys(instance[instanceName]).forEach(function (listName) {
-                  //instance.List[listName].$digest(); // Digest to ensure the DOM/$watch updates with new model data
+                  // instance.List[listName].$digest(); // Digest to ensure the DOM/$watch updates with new model data
                   instance[instanceName][listName].$applyAsync() // Digest to ensure the DOM/$watch updates with new model data
                 })
-
               }
 
-              //then save this in the last queries
+              // then save this in the last queries
               lastQueries.whereFilter = _.clone(filterQuery.where)
               lastQueries.order = options.order
               lastQueries.perPage = options.perPage
               lastQueries.pages.push(options.page)
-              //console.log('lastQueries:', lastQueries);
+              // console.log('lastQueries:', lastQueries);
 
               return collection
             }
@@ -1516,8 +1513,8 @@
                 model = new Model()
               }
               if (
-                !$scope.hasOwnProperty(modelVarName)
-                || $scope[modelVarName] !== model
+                !$scope.hasOwnProperty(modelVarName) ||
+                $scope[modelVarName] !== model
               ) {
                 $scope[modelVarName] = model
               }
@@ -1526,7 +1523,7 @@
                 session.services.hasOwnProperty(options.service)
               ) {
                 // Set API paths to fetch listing data for the specific MLS Service
-                //let filterQuery = compileFilterFunction(options);
+                // let filterQuery = compileFilterFunction(options);
 
                 let request = {
                   serviceId: options.service,
@@ -1549,7 +1546,7 @@
 
                 fetchReplaceModel(model, tempModel)
                   .then(function () {
-                    //$scope.$digest();
+                    // $scope.$digest();
                     $scope.$applyAsync()
                   })
               }
@@ -1578,7 +1575,7 @@
             async function fetchProperties ($scope, collectionVarName, options, refresh) {
               options = options || {}
               options.service = options.service || []
-              options.where = options.where || urlOptions.Search || {} //TODO may want to sanitize the urlOptions
+              options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
               options.order = options.order || urlOptions.Search.Order || []
               options.page = options.page || urlOptions.Search.Page || 1
               options.perPage = options.perPage || 10
@@ -1604,7 +1601,7 @@
                 'BathroomsFull',
                 'BedroomsTotal'
               ]
-              //options.where['ListType'] = ['House','Townhouse'];
+              // options.where['ListType'] = ['House','Townhouse'];
               refresh = refresh || false
 
               return await genericSearchCollection($scope, collectionVarName, options, refresh,
@@ -1685,9 +1682,9 @@
                 'OfficeKey',
                 'OfficeName',
                 'OriginatingSystemName',
-                'SourceSystemName',
+                'SourceSystemName'
               ]
-              //options.where['ListType'] = ['House','Townhouse'];
+              // options.where['ListType'] = ['House','Townhouse'];
               refresh = refresh || false
 
               return await genericSearchCollection($scope, collectionVarName, options, refresh,
@@ -1736,9 +1733,9 @@
                 'OfficePhone',
                 'OfficeAddress1',
                 'OfficePostalCode',
-                'OfficeBrokerKey',
+                'OfficeBrokerKey'
               ]
-              //options.where['ListType'] = ['House','Townhouse'];
+              // options.where['ListType'] = ['House','Townhouse'];
               refresh = refresh || false
 
               return await genericSearchCollection($scope, collectionVarName, options, refresh,

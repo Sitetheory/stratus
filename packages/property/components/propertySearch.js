@@ -23,11 +23,11 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
 
-      'stratus.services.propertyLoopback',
+      'stratus.services.propertyLoopback'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -86,11 +86,11 @@
           $scope.filterMenu = null
           $scope.options.forRent = false
 
-          //Set default queries
+          // Set default queries
           $scope.options.query = $scope.options.query || {}
           $scope.setQuery($scope.options.query)
 
-          //Set default selections TODO may need some more universally set options to be able to use
+          // Set default selections TODO may need some more universally set options to be able to use
           $scope.options.selection = $scope.options.selection || {}
           $scope.options.selection.BedroomsTotalMin = $scope.options.selection.BedroomsTotalMin || [
             { name: '1+', value: 1 },
@@ -113,13 +113,13 @@
           $scope.options.selection.Status = $scope.options.selection.Status || {}
           $scope.options.selection.Status.default = $scope.options.selection.Status.default || {
             Sale: ['Active', 'Contract'],
-            Lease: ['Active'],
+            Lease: ['Active']
           }
           $scope.options.selection.ListingType = $scope.options.selection.ListingType || {}
-          //These determine what ListingTypes options that should currently be 'shown' based on selections. Automatically updated with a watcher
+          // These determine what ListingTypes options that should currently be 'shown' based on selections. Automatically updated with a watcher
           $scope.options.selection.ListingType.group = $scope.options.selection.ListingType.group || {
             Residential: true,
-            Commercial: false,
+            Commercial: false
           }
           // TODO These values need to be supplied by the MLS' to ensure we dont show ones that don't exist
           $scope.options.selection.ListingType.list = $scope.options.selection.ListingType.list || {
@@ -127,7 +127,7 @@
             Commercial: ['Commercial', 'CommercialBusinessOp', 'CommercialResidential', 'CommercialLand', 'LeaseCommercial'],
             Lease: ['LeaseHouse', 'LeaseCondo', 'LeaseTownhouse', 'LeaseOther', 'LeaseCommercial']
           }
-          //These are the default selections and should be updated by the page on load(if needed)
+          // These are the default selections and should be updated by the page on load(if needed)
           $scope.options.selection.ListingType.default = $scope.options.selection.ListingType.default || {
             Sale: {
               Residential: ['House', 'Condo', 'Townhouse'],
@@ -138,7 +138,7 @@
               Commercial: ['LeaseCommercial']
             }
           }
-          //These are static and never change. merely map correct values
+          // These are static and never change. merely map correct values
           $scope.options.selection.ListingType.All = $scope.options.selection.ListingType.All || [
             { name: 'House', value: 'House', group: 'Residential', lease: false },
             { name: 'Condo', value: 'Condo', group: 'Residential', lease: false },
@@ -160,7 +160,7 @@
 
           $scope.setQueryDefaults()
 
-          //Register this Search with the Property service
+          // Register this Search with the Property service
           propertyLoopback.registerSearchInstance($scope.elementId, $scope, $scope.listId)
 
           $scope.variableSync()
@@ -168,12 +168,11 @@
 
         $scope.$watch('options.query.ListingType', function () {
           if ($scope.options.selection.ListingType.list) {
-
             $scope.options.selection.ListingType.group.Residential = $scope.arrayIntersect($scope.options.selection.ListingType.list.Residential, $scope.options.query.ListingType)
             $scope.options.selection.ListingType.group.Commercial = $scope.arrayIntersect($scope.options.selection.ListingType.list.Commercial, $scope.options.query.ListingType)
 
             $scope.options.forRent = $scope.arrayIntersect($scope.options.selection.ListingType.list.Lease, $scope.options.query.ListingType)
-            //console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
+            // console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
           }
         })
 
@@ -184,7 +183,7 @@
          * @param {*} value
          */
         $scope.updateScopeValuePath = async function (scopeVarPath, value) {
-          //console.log('Update', scopeVarPath, 'to', value, typeof value)
+          // console.log('Update', scopeVarPath, 'to', value, typeof value)
           let scopePieces = scopeVarPath.split('.')
           return $scope.updateNestedPathValue($scope, scopePieces, value)
         }
@@ -199,8 +198,8 @@
         $scope.updateNestedPathValue = async function (currentNest, pathPieces, value) {
           let currentPiece = pathPieces.shift()
           if (
-            currentPiece
-            && currentNest.hasOwnProperty(currentPiece)
+            currentPiece &&
+            currentNest.hasOwnProperty(currentPiece)
           ) {
             if (pathPieces[0]) {
               return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
@@ -208,7 +207,7 @@
               if (_.isArray(currentNest[currentPiece]) && !_.isArray(value)) {
                 value = value === '' ? [] : value.split(',')
               }
-              //console.log(currentPiece, 'updated to ', value)
+              // console.log(currentPiece, 'updated to ', value)
               currentNest[currentPiece] = value
               return value
             }
@@ -234,23 +233,23 @@
         $scope.variableSync = async function () {
           $scope.variableSyncing = $attrs.variableSync && _.isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
 
-          //console.log('variables syncing: ', $scope.variableSyncing)
+          // console.log('variables syncing: ', $scope.variableSyncing)
           let promises = []
           Object.keys($scope.variableSyncing).forEach(function (elementId) {
             promises.push(
               $q(async function (resolve, reject) {
                 let varElement = $scope.getInput(elementId)
                 if (varElement) {
-                  //Form Input exists
+                  // Form Input exists
                   let scopeVarPath = $scope.variableSyncing[elementId]
-                  //convert into a real var path and set the intial value from the exiting form value
+                  // convert into a real var path and set the intial value from the exiting form value
                   await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
 
-                  //Creating watcher to update the input when the scope changes
+                  // Creating watcher to update the input when the scope changes
                   $scope.$watch(
                     scopeVarPath,
                     function (value) {
-                      //console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
+                      // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
                       varElement.val(value)
                     },
                     true
@@ -271,10 +270,10 @@
          */
         $scope.inArray = function (item, array) {
           if (!_.isArray(array)) {
-            //console.warn('Array undefined, cannot search for', item)
+            // console.warn('Array undefined, cannot search for', item)
             return 0
           }
-          return (-1 !== array.indexOf(item))
+          return (array.indexOf(item) !== -1)
         }
 
         /**
@@ -285,13 +284,13 @@
          */
         $scope.arrayIntersect = function (itemArray, array) {
           if (
-            !_.isArray(array)
-            || !_.isArray(itemArray)
+            !_.isArray(array) ||
+            !_.isArray(itemArray)
           ) {
             console.warn('Array undefined, cannot search for', itemArray)
             return []
           }
-          return itemArray.filter(value => -1 !== array.indexOf(value)).length > 0
+          return itemArray.filter(value => array.indexOf(value) !== -1).length > 0
         }
 
         /**
@@ -356,7 +355,7 @@
          */
         $scope.setQuery = function setQuery (newQuery) {
           $scope.options.query = newQuery || {}
-          //Let's ensure these values always exist
+          // Let's ensure these values always exist
           $scope.options.query.Status = $scope.options.query.Status || []
           $scope.options.query.ListingType = $scope.options.query.ListingType || []
           $scope.options.query.Order = $scope.options.query.Order || null
@@ -366,14 +365,14 @@
           $scope.options.query.BathroomsFullMin = $scope.options.query.BathroomsFullMin || null
           $scope.options.query.BedroomsTotalMin = $scope.options.query.BedroomsTotalMin || null
           $scope.options.query.AgentLicense = $scope.options.query.AgentLicense || []
-          //TODO need to search by Agent License
+          // TODO need to search by Agent License
         }
 
         $scope.setQueryDefaults = function setQuery () {
           $scope.$applyAsync(function () {
             if ($scope.options.query.ListingType.length < 1) {
               $scope.options.query.ListingType = $scope.options.selection.ListingType.default.Sale.Residential
-              //console.log('updating', $scope.options.query.ListingType)
+              // console.log('updating', $scope.options.query.ListingType)
               $scope.selectDefaultListingType()
             }
           })
@@ -426,7 +425,6 @@
             propertyLoopback.getListInstance($scope.listId).refreshSearchWidgetOptions()
           }
         }
-
       }],
     templateUrl:
       function ($element, $attrs) {

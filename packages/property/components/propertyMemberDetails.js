@@ -27,14 +27,12 @@
  * @typedef {Model} $scope.model
  */
 
-
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
       'moment',
@@ -43,7 +41,7 @@
       'stratus.services.propertyLoopback',
 
       'stratus.filters.math',
-      'stratus.filters.moment',
+      'stratus.filters.moment'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -86,19 +84,19 @@
         )
 
         $ctrl.$onInit = function () {
-          //console.log('loaded!')
+          // console.log('loaded!')
           $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
           $scope.options.urlLoad = $attrs.urlLoad && _.isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
           $scope.options.pageTitle = $attrs.pageTitle && _.isJSON($attrs.pageTitle) ? JSON.parse($attrs.pageTitle) : false
           $scope.options.service = $attrs.service ? $attrs.service : null
           $scope.options.MemberKey = $attrs.memberKey ? $attrs.memberKey : null
           $scope.options.MemberStateLicense = $attrs.memberStateLicense ? $attrs.memberStateLicense : null
-          //Set default images and fields
+          // Set default images and fields
           $scope.options.images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : {
             fields: [
               'Order',
               'MediaURL',
-              'LongDescription',
+              'LongDescription'
             ]
           }
 
@@ -108,9 +106,9 @@
           $scope.memberMerged = {}
           $scope.memberCombined = {}
 
-          //Register this List with the Property service
+          // Register this List with the Property service
           propertyLoopback.registerListInstance($scope.elementId, $scope, 'MemberDetails')
-          //console.log(this.uid)
+          // console.log(this.uid)
 
           console.log('options', $scope.options, $attrs)
           $scope.fetchMember()
@@ -122,10 +120,10 @@
           await $scope.individualMember()
 
           if (
-            $scope.options.pageTitle
-            && (
-              $scope.memberMerged.hasOwnProperty('MemberFullName')
-              || $scope.memberMerged.hasOwnProperty('MemberFirstName')
+            $scope.options.pageTitle &&
+            (
+              $scope.memberMerged.hasOwnProperty('MemberFullName') ||
+              $scope.memberMerged.hasOwnProperty('MemberFirstName')
             )
           ) {
             // Update the page title
@@ -152,8 +150,8 @@
             memberQuery.images = $scope.options.images
           }
           if (
-            memberQuery.service
-            && (memberQuery.where.MemberKey || memberQuery.where.MemberStateLicense)
+            memberQuery.service &&
+            (memberQuery.where.MemberKey || memberQuery.where.MemberStateLicense)
           ) {
             propertyLoopback.fetchMembers($scope, 'collection', memberQuery, true)
           } else {
@@ -177,13 +175,13 @@
               $scope.memberCombined = {}
               $scope.collection.models.map(function (agent) {
                 Object.keys(agent).forEach(function (key) {
-                  //If not an empty array
+                  // If not an empty array
                   if (
-                    !_.isArray(agent[key])
-                    || (_.isArray(agent[key]) && agent[key].length > 0)
+                    !_.isArray(agent[key]) ||
+                    (_.isArray(agent[key]) && agent[key].length > 0)
                   ) {
                     $scope.memberCombined[key] = $scope.memberCombined[key] || []
-                    //If not already in the agentCombined
+                    // If not already in the agentCombined
                     if (!$scope.memberCombined[key].includes(agent[key])) {
                       $scope.memberCombined[key].push(agent[key])
                     }
@@ -236,7 +234,6 @@
             console.log(item1, item2)
           }
         }
-
       }],
     templateUrl:
       Stratus.BaseUrl +

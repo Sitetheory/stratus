@@ -24,7 +24,7 @@ http://docs.sitetheory.io
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
       'moment',
@@ -33,7 +33,7 @@ http://docs.sitetheory.io
 
       'stratus.services.propertyLoopback',
 
-      'stratus.components.propertyDetails'//requires to preload this...hmmm...stratus should handle this automatically...
+      'stratus.components.propertyDetails'// requires to preload this...hmmm...stratus should handle this automatically...
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -51,7 +51,7 @@ http://docs.sitetheory.io
       orderOptions: '@',
       googleApiKey: '@',
       options: '@',
-      template: '@',
+      template: '@'
     },
     controller: [
       '$scope',
@@ -71,7 +71,7 @@ http://docs.sitetheory.io
         Stratus.Internals.CssLoader(
           Stratus.BaseUrl +
           'content/property/stratus/components/' +
-          //'propertyList' +
+          // 'propertyList' +
           ($attrs.template || 'propertyList') +
           min + '.css'
         )
@@ -97,8 +97,8 @@ http://docs.sitetheory.io
 
           $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
-          $scope.options.order = $scope.options.order || null //will be set by Service
-          $scope.options.page = $scope.options.page || null //will be set by Service
+          $scope.options.order = $scope.options.order || null // will be set by Service
+          $scope.options.page = $scope.options.page || null // will be set by Service
           $scope.options.perPage = $scope.options.perPage || 25
           $scope.options.images = $scope.options.images || { limit: 1 }
 
@@ -108,7 +108,7 @@ http://docs.sitetheory.io
           $scope.options.where.ListingType = $scope.options.where.ListingType || ['House', 'Condo']
           $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []
 
-          $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where)) //Extend/clone doesn't work for arrays
+          $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where)) // Extend/clone doesn't work for arrays
 
           $scope.orderOptions = $scope.orderOptions || {
             'Price (high to low)': '-ListPrice',
@@ -128,8 +128,8 @@ http://docs.sitetheory.io
             urlOptions = propertyLoopback.getOptionsFromUrl()
             // If a specific listing is provided, be sure to pop it up as well
             if (
-              urlOptions.Listing.service
-              && urlOptions.Listing.ListingKey
+              urlOptions.Listing.service &&
+              urlOptions.Listing.ListingKey
             ) {
               $scope.displayPropertyDetails(urlOptions.Listing)
             }
@@ -145,11 +145,10 @@ http://docs.sitetheory.io
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
           let searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId)
           searchScopes.forEach(function (searchScope) {
-            //FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
+            // FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
             searchScope.setQuery(propertyLoopback.getUrlOptions('Search'))
             searchScope.listInitialized = true
           })
-
         }
 
         /**
@@ -165,11 +164,11 @@ http://docs.sitetheory.io
             options = options || {}
             updateUrl = updateUrl === false ? updateUrl : true
 
-            //If refreshing, reset to page 1
+            // If refreshing, reset to page 1
             if (refresh) {
               $scope.options.page = 1
             }
-            //If search options sent, update the Widget. Otherwise use the widgets current where settings
+            // If search options sent, update the Widget. Otherwise use the widgets current where settings
             if (Object.keys(options).length > 0) {
               delete ($scope.options.where)
               $scope.options.where = options
@@ -181,15 +180,14 @@ http://docs.sitetheory.io
                 $scope.options.order = $scope.options.where.Order
                 delete ($scope.options.where.Order)
               }
-
             } else {
               options = $scope.options.where || {}
             }
-            //If a different page, set it in the URL
+            // If a different page, set it in the URL
             if ($scope.options.page) {
               options.Page = $scope.options.page
             }
-            //Don't add Page/1 to the URL
+            // Don't add Page/1 to the URL
             if (options.Page <= 1) {
               delete (options.Page)
             }
@@ -199,14 +197,14 @@ http://docs.sitetheory.io
 
             // Set the URL options
             propertyLoopback.setUrlOptions('Search', options)
-            //TODO need to avoid adding default variables to URL (Status/order/etc)
+            // TODO need to avoid adding default variables to URL (Status/order/etc)
 
             // Display the URL options in the address bar
             if (updateUrl) {
               propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
             }
 
-            //Keep the Search widgets up to date
+            // Keep the Search widgets up to date
             $scope.refreshSearchWidgetOptions()
 
             // Grab the new property listings
@@ -284,18 +282,18 @@ http://docs.sitetheory.io
         $scope.getStreetAddress = function getStreetAddress (property) {
           let address = ''
           if (
-            property.hasOwnProperty('UnparsedAddress')
-            && property.UnparsedAddress !== ''
+            property.hasOwnProperty('UnparsedAddress') &&
+            property.UnparsedAddress !== ''
           ) {
             address = property.UnparsedAddress
-            //console.log('using unparsed ')
+            // console.log('using unparsed ')
           } else {
             let addressParts = [];
             [
               'StreetNumberNumeric',
               'StreetName',
               'StreetSuffix',
-              'UnitNumber' //Added Unit string?
+              'UnitNumber' // Added Unit string?
             ]
               .forEach(function (addressPart) {
                 if (property.hasOwnProperty(addressPart)) {
@@ -307,12 +305,12 @@ http://docs.sitetheory.io
               })
             address = addressParts.join(' ')
           }
-          //console.log('adress',  address)
+          // console.log('adress',  address)
           return address
         }
 
         $scope.getMLSVariables = function getMLSVariables () {
-          //TODO this might need to be reset at some point
+          // TODO this might need to be reset at some point
           if (!$ctrl.mlsVariables) {
             $ctrl.mlsVariables = propertyLoopback.getMLSVariables()
           }
@@ -377,16 +375,16 @@ http://docs.sitetheory.io
         $scope.displayPropertyDetails = function displayPropertyDetails (property, ev) {
           if (ev) {
             ev.preventDefault()
-            //ev.stopPropagation()
+            // ev.stopPropagation()
           }
           if ($scope.detailsLinkPopup === true) {
-            //Opening a popup will load the propertyDetails and adjust the hashbang URL
+            // Opening a popup will load the propertyDetails and adjust the hashbang URL
             let templateOptions = {
               'element_id': 'property_detail_popup_' + property.ListingKey,
               'service': property._ServiceId,
               'listing-key': property.ListingKey,
               'default-list-options': JSON.stringify($ctrl.defaultOptions),
-              'page-title': true,//update the page title
+              'page-title': true// update the page title
             }
             if ($scope.googleApiKey) {
               templateOptions['google-api-key'] = $scope.googleApiKey
@@ -418,9 +416,9 @@ http://docs.sitetheory.io
               }, function () {
                 propertyLoopback.setUrlOptions('Listing', {})
                 propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
-                //Revery page title back to what it was
+                // Revery page title back to what it was
                 propertyLoopback.setPageTitle()
-                //Let's destroy it to save memory
+                // Let's destroy it to save memory
                 $timeout(propertyLoopback.unregisterDetailsInstance('property_detail_popup'), 10)
               })
           } else {
@@ -434,11 +432,10 @@ http://docs.sitetheory.io
         $scope.remove = function remove () {
 
         }
-
       }],
     templateUrl:
       function ($element, $attrs) {
-        //let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
+        // let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
         return Stratus.BaseUrl +
           'content/property/stratus/components/' +
           ($attrs.template || 'propertyList') +

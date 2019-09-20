@@ -23,13 +23,13 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
 
       'stratus.services.propertyLoopback',
 
-      'stratus.components.propertyMemberList'//requires to preload this...hmmm...stratus should handle this automatically...
+      'stratus.components.propertyMemberList'// requires to preload this...hmmm...stratus should handle this automatically...
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -68,7 +68,7 @@
           'propertyMemberSearch' +
           min + '.css'
         )
-        //$scope.$mdConstant = $mdConstant
+        // $scope.$mdConstant = $mdConstant
 
         $ctrl.$onInit = function () {
           $scope.listId = $attrs.listId || null
@@ -77,26 +77,26 @@
           $scope.listLinkTarget = $attrs.listLinkTarget || '_self'
 
           // If the List hasn't updated this widget after 2 seconds, make sure it's checked again. A workaround for the race condition for now, up for suggestions
-          /*$timeout(function () {
+          /* $timeout(function () {
             if (!$scope.listInitialized) {
               $scope.refreshSearchWidgetOptions()
             }
-          }, 2000)*/
+          }, 2000) */
 
           $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
-          //Set default queries
+          // Set default queries
           $scope.options.query = $scope.options.query || {}
 
           if ($scope.options.tokenUrl) {
-            ///ajax/request?class=property.token_auth&method=getToken
+            /// ajax/request?class=property.token_auth&method=getToken
             propertyLoopback.setTokenURL($scope.options.tokenUrl)
           }
 
-          //Register this Search with the Property service
+          // Register this Search with the Property service
           propertyLoopback.registerSearchInstance($scope.elementId, $scope, $scope.listId, 'Member')
 
-          //$scope.variableSync()
+          // $scope.variableSync()
         }
 
         /**
@@ -106,7 +106,7 @@
          * @param {*} value
          */
         $scope.updateScopeValuePath = async function (scopeVarPath, value) {
-          //console.log('Update', scopeVarPath, 'to', value, typeof value)
+          // console.log('Update', scopeVarPath, 'to', value, typeof value)
           let scopePieces = scopeVarPath.split('.')
           return $scope.updateNestedPathValue($scope, scopePieces, value)
         }
@@ -121,8 +121,8 @@
         $scope.updateNestedPathValue = async function (currentNest, pathPieces, value) {
           let currentPiece = pathPieces.shift()
           if (
-            currentPiece
-            && currentNest.hasOwnProperty(currentPiece)
+            currentPiece &&
+            currentNest.hasOwnProperty(currentPiece)
           ) {
             if (pathPieces[0]) {
               return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
@@ -130,7 +130,7 @@
               if (_.isArray(currentNest[currentPiece]) && !_.isArray(value)) {
                 value = value === '' ? [] : value.split(',')
               }
-              //console.log(currentPiece, 'updated to ', value)
+              // console.log(currentPiece, 'updated to ', value)
               currentNest[currentPiece] = value
               return value
             }
@@ -156,23 +156,23 @@
         $scope.variableSync = async function () {
           $scope.variableSyncing = $attrs.variableSync && _.isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
 
-          //console.log('variables syncing: ', $scope.variableSyncing)
+          // console.log('variables syncing: ', $scope.variableSyncing)
           let promises = []
           Object.keys($scope.variableSyncing).forEach(function (elementId) {
             promises.push(
               $q(async function (resolve, reject) {
                 let varElement = $scope.getInput(elementId)
                 if (varElement) {
-                  //Form Input exists
+                  // Form Input exists
                   let scopeVarPath = $scope.variableSyncing[elementId]
-                  //convert into a real var path and set the intial value from the exiting form value
+                  // convert into a real var path and set the intial value from the exiting form value
                   await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
 
-                  //Creating watcher to update the input when the scope changes
+                  // Creating watcher to update the input when the scope changes
                   $scope.$watch(
                     scopeVarPath,
                     function (value) {
-                      //console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
+                      // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
                       varElement.val(value)
                     },
                     true
@@ -191,7 +191,7 @@
          * @param ev
          * @param {String} menuElement id or class of element to grab
          */
-        /*$scope.showInlinePopup = function (ev, menuElement) {
+        /* $scope.showInlinePopup = function (ev, menuElement) {
           if (!$scope.filterMenu) {
             let position = $mdPanel.newPanelPosition()
               .relativeTo(ev.srcElement)
@@ -224,7 +224,7 @@
           }
 
           $scope.filterMenu.open()
-        }*/
+        } */
 
         /**
          * Call a List widget to perform a search
@@ -237,10 +237,10 @@
           if (listScope) {
             $scope.options.query.Page = 1
             listScope.searchMembers($scope.options.query, true)
-            //TODO open popup
+            // TODO open popup
           } else {
-            //propertyLoopback.setUrlOptions('Search', $scope.options.query)
-            //$window.open($scope.listLinkUrl + '#!/' + propertyLoopback.getUrlOptionsPath(), $scope.listLinkTarget)
+            // propertyLoopback.setUrlOptions('Search', $scope.options.query)
+            // $window.open($scope.listLinkUrl + '#!/' + propertyLoopback.getUrlOptionsPath(), $scope.listLinkTarget)
             console.log('displaying popup')
             $scope.displayMemberSelector()
           }
@@ -252,23 +252,23 @@
          * @param {*=} ev - Click event
          */
         $scope.displayMemberSelector = function displayMemberSelector () {
-          //Opening a popup will load the propertyDetails and adjust the hashbang URL
+          // Opening a popup will load the propertyDetails and adjust the hashbang URL
           let templateOptions = {
-            //'element_id': 'property_member_detail_popup',
-            'options': {},//JSON.stringify($scope.options),
+            // 'element_id': 'property_member_detail_popup',
+            'options': {}, // JSON.stringify($scope.options),
             'template': 'mothership/propertyMemberSelector',
             'variable-sync': JSON.stringify({
               'agent_fname': 'MemberFirstName',
               'agent_lname': 'MemberLastName',
               'agent_license': 'MemberStateLicense',
               'office_name': 'OfficeName',
-              'office_id': 'OfficeKey',
-            }),
-            //'page-title': true,//update the page title
+              'office_id': 'OfficeKey'
+            })
+            // 'page-title': true,//update the page title
           }
           if ($scope.options.query) {
             let options = {
-              service: [$scope.options.service || 0], //TODO update service
+              service: [$scope.options.service || 0], // TODO update service
               where: $scope.options.query
             }
             templateOptions['options'] = JSON.stringify(options)
@@ -290,10 +290,10 @@
           $mdDialog.show({
             template: template,
             parent: angular.element(document.body),
-            //targetEvent: ev,
+            // targetEvent: ev,
             clickOutsideToClose: true,
             fullscreen: true, // Only for -xs, -sm breakpoints.
-            //bindToController: true,
+            // bindToController: true,
             controllerAs: 'ctrl',
             controller: function ($scope, $mdDialog) {
               let dc = this
@@ -311,19 +311,18 @@
           })
             .then(function () {
             }, function () {
-              //propertyLoopback.setUrlOptions('Listing', {})
-              //propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
-              //Revery page title back to what it was
-              //propertyLoopback.setPageTitle()
-              //Let's destroy it to save memory
-              //$timeout(propertyLoopback.unregisterDetailsInstance('property_member_detail_popup'), 10)
+              // propertyLoopback.setUrlOptions('Listing', {})
+              // propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
+              // Revery page title back to what it was
+              // propertyLoopback.setPageTitle()
+              // Let's destroy it to save memory
+              // $timeout(propertyLoopback.unregisterDetailsInstance('property_member_detail_popup'), 10)
             })
         }
-
       }],
     templateUrl:
       function ($element, $attrs) {
-        //let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
+        // let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
         return Stratus.BaseUrl +
           'content/property/stratus/components/' +
           ($attrs.template || 'propertyMemberSearch') +

@@ -27,17 +27,16 @@
  * @typedef {Model} $scope.model
  */
 
-
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
 
-      'stratus.services.model',
+      'stratus.services.model'
 
     ], factory)
   } else {
@@ -51,7 +50,7 @@
       ngModel: '=',
       items: '@',
       sectionName: '@',
-      className: '@',
+      className: '@'
 
     },
     controller: [
@@ -62,7 +61,7 @@
         // Initialize
         const $ctrl = this
 
-        //$scope.className = 'sub-detail-section'
+        // $scope.className = 'sub-detail-section'
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
         $scope.items = $attrs.items && _.isJSON($attrs.items) ? JSON.parse($attrs.items) : []
@@ -128,7 +127,6 @@
         $scope.isArray = function (item) {
           return _.isArray(item)
         }
-
       }],
     templateUrl:
       Stratus.BaseUrl +

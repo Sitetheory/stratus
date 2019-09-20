@@ -23,7 +23,7 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
       'moment',
@@ -32,7 +32,7 @@
 
       'stratus.services.propertyLoopback',
 
-      'stratus.components.propertyMemberDetails'//requires to preload this...hmmm...stratus should handle this automatically...
+      'stratus.components.propertyMemberDetails'// requires to preload this...hmmm...stratus should handle this automatically...
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -49,7 +49,7 @@
       orderOptions: '@',
       options: '@',
       template: '@',
-      variableSync: '@',
+      variableSync: '@'
     },
     controller: [
       '$scope',
@@ -89,32 +89,32 @@
 
           $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
-          $scope.options.order = $scope.options.order || null//will be set by Service
-          $scope.options.page = $scope.options.page || null//will be set by Service
+          $scope.options.order = $scope.options.order || null// will be set by Service
+          $scope.options.page = $scope.options.page || null// will be set by Service
           $scope.options.perPage = $scope.options.perPage || 25
           $scope.options.images = $scope.options.images || { limit: 1 }
 
           $scope.options.where = $scope.options.where || {}
-          //Fixme, sometimes it's just MemberMlsAccessYN ....
-          //$scope.options.where.MemberStatus = $scope.options.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
+          // Fixme, sometimes it's just MemberMlsAccessYN ....
+          // $scope.options.where.MemberStatus = $scope.options.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
 
-          //$scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
-          //$scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
+          // $scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
+          // $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
 
-          $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where))//Extend/clone doesn't work for arrays
+          $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where))// Extend/clone doesn't work for arrays
 
-          /*$scope.orderOptions = $scope.orderOptions || {
+          /* $scope.orderOptions = $scope.orderOptions || {
             'Price (high to low)': '-ListPrice',
             'Price (low to high)': 'ListPrice'
-          }*/
+          } */
 
-          //$scope.googleApiKey = $attrs.googleApiKey || null
+          // $scope.googleApiKey = $attrs.googleApiKey || null
 
           // Register this List with the Property service
           propertyLoopback.registerListInstance($scope.elementId, $scope, 'Member')
 
           let urlOptions = {}
-          /*if ($scope.urlLoad) {
+          /* if ($scope.urlLoad) {
             // first set the UrlOptions via defaults (cloning so it can't be altered)
             propertyLoopback.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
             // Load Options from the provided URL settings
@@ -126,7 +126,7 @@
             ) {
               $scope.displayPropertyDetails(urlOptions.Listing)
             }
-          }*/
+          } */
 
           $scope.searchMembers(urlOptions.Search, true, false)
         }
@@ -138,11 +138,10 @@
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
           let searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId, 'Member')
           searchScopes.forEach(function (searchScope) {
-            //FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
-            //searchScope.setQuery(propertyLoopback.getUrlOptions('Search'))
+            // FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
+            // searchScope.setQuery(propertyLoopback.getUrlOptions('Search'))
             searchScope.listInitialized = true
           })
-
         }
 
         /**
@@ -158,11 +157,11 @@
             options = options || {}
             updateUrl = updateUrl === false ? updateUrl : true
 
-            //If refreshing, reset to page 1
+            // If refreshing, reset to page 1
             if (refresh) {
               $scope.options.page = 1
             }
-            //If search options sent, update the Widget. Otherwise use the widgets current where settings
+            // If search options sent, update the Widget. Otherwise use the widgets current where settings
             if (Object.keys(options).length > 0) {
               delete ($scope.options.where)
               $scope.options.where = options
@@ -174,15 +173,14 @@
                 $scope.options.order = $scope.options.where.Order
                 delete ($scope.options.where.Order)
               }
-
             } else {
               options = $scope.options.where || {}
             }
-            //If a different page, set it in the URL
+            // If a different page, set it in the URL
             if ($scope.options.page) {
               options.Page = $scope.options.page
             }
-            //Don't add Page/1 to the URL
+            // Don't add Page/1 to the URL
             if (options.Page <= 1) {
               delete (options.Page)
             }
@@ -191,15 +189,15 @@
             }
 
             // Set the URL options
-            //propertyLoopback.setUrlOptions('Search', options)
+            // propertyLoopback.setUrlOptions('Search', options)
 
             // Display the URL options in the address bar
-            /*if (updateUrl) {
+            /* if (updateUrl) {
               propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
-            }*/
+            } */
 
-            //Keep the Search widgets up to date
-            //$scope.refreshSearchWidgetOptions()
+            // Keep the Search widgets up to date
+            // $scope.refreshSearchWidgetOptions()
 
             // Grab the new property listings
             console.log('fetching members:', $scope.options)
@@ -265,9 +263,9 @@
          * @param {ListingProperty} property
          * @returns {string}
          */
-        /*$scope.getDetailsURL = function getDetailsURLPath(property) {
+        /* $scope.getDetailsURL = function getDetailsURLPath(property) {
           return $scope.detailsLinkUrl + '#!/Listing/' + property._ServiceId + '/' + property.ListingKey + '/'
-        }*/
+        } */
 
         /**
          * Display an MLS' required legal disclaimer
@@ -297,15 +295,15 @@
         $scope.displayMemberDetails = function displayMemberDetails (member, ev) {
           if (ev) {
             ev.preventDefault()
-            //ev.stopPropagation()
+            // ev.stopPropagation()
           }
           if ($scope.detailsLinkPopup === true) {
-            //Opening a popup will load the propertyDetails and adjust the hashbang URL
+            // Opening a popup will load the propertyDetails and adjust the hashbang URL
             let templateOptions = {
               'element_id': 'property_member_detail_popup',
               'service': member._ServiceId,
               'member-key': member.MemberKey,
-              'page-title': true,//update the page title
+              'page-title': true// update the page title
             }
             if ($scope.googleApiKey) {
               templateOptions['google-api-key'] = $scope.googleApiKey
@@ -332,11 +330,11 @@
             })
               .then(function () {
               }, function () {
-                //propertyLoopback.setUrlOptions('Listing', {})
-                //propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
-                //Revery page title back to what it was
+                // propertyLoopback.setUrlOptions('Listing', {})
+                // propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
+                // Revery page title back to what it was
                 propertyLoopback.setPageTitle()
-                //Let's destroy it to save memory
+                // Let's destroy it to save memory
                 $timeout(propertyLoopback.unregisterDetailsInstance('property_member_detail_popup'), 10)
               })
           } else {
@@ -366,36 +364,36 @@
         $scope.variableInject = async function (member) {
           $scope.variableSyncing = $attrs.variableSync && _.isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
 
-          //console.log('variables syncing: ', $scope.variableSyncing)
+          // console.log('variables syncing: ', $scope.variableSyncing)
           let promises = []
           Object.keys($scope.variableSyncing).forEach(function (elementId) {
-            //promises.push(
-            //$q(async function (resolve, reject) {
+            // promises.push(
+            // $q(async function (resolve, reject) {
             let varElement = $scope.getInput(elementId)
             if (varElement) {
-              //Form Input exists
+              // Form Input exists
 
               if (member.hasOwnProperty($scope.variableSyncing[elementId])) {
                 varElement.val(member[$scope.variableSyncing[elementId]])
               } else if (
-                $scope.variableSyncing[elementId] === 'MemberFullName'
-                && member.hasOwnProperty('MemberFirstName')
-                && member.hasOwnProperty('MemberLastName')
+                $scope.variableSyncing[elementId] === 'MemberFullName' &&
+                member.hasOwnProperty('MemberFirstName') &&
+                member.hasOwnProperty('MemberLastName')
               ) {
                 varElement.val(member['MemberFirstName'] + ' ' + member['MemberLastName'])
               } else if (
-                $scope.variableSyncing[elementId] === 'MemberFirstName'
-                && !member.hasOwnProperty('MemberFirstName')
-                && member.hasOwnProperty('MemberFullName')
+                $scope.variableSyncing[elementId] === 'MemberFirstName' &&
+                !member.hasOwnProperty('MemberFirstName') &&
+                member.hasOwnProperty('MemberFullName')
               ) {
                 let nameArray = member['MemberFullName'].split(' ')
                 let firstName = nameArray.shift()
-                //let lastName = nameArray.join(' ')
+                // let lastName = nameArray.join(' ')
                 varElement.val(firstName)
               } else if (
-                $scope.variableSyncing[elementId] === 'MemberLastName'
-                && !member.hasOwnProperty('MemberLastName')
-                && member.hasOwnProperty('MemberFullName')
+                $scope.variableSyncing[elementId] === 'MemberLastName' &&
+                !member.hasOwnProperty('MemberLastName') &&
+                member.hasOwnProperty('MemberFullName')
               ) {
                 let nameArray = member['MemberFullName'].split(' ')
                 let firstName = nameArray.shift()
@@ -403,27 +401,27 @@
                 varElement.val(lastName)
               }
 
-              //varElement.val(member.MemberFullName)
+              // varElement.val(member.MemberFullName)
 
-              //let scopeVarPath = $scope.variableSyncing[elementId]
-              //convert into a real var path and set the intial value from the exiting form value
-              //await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
+              // let scopeVarPath = $scope.variableSyncing[elementId]
+              // convert into a real var path and set the intial value from the exiting form value
+              // await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
 
-              //Creating watcher to update the input when the scope changes
-              //$scope.$watch(
-              //scopeVarPath,
-              //function (value) {
-              //console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
-              //varElement.val(value)
-              //},
+              // Creating watcher to update the input when the scope changes
+              // $scope.$watch(
+              // scopeVarPath,
+              // function (value) {
+              // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
+              // varElement.val(value)
+              // },
               // true
-              //)
+              // )
             }
-            //resolve()
-            //})
-            //)
+            // resolve()
+            // })
+            // )
           })
-          //await $q.all(promises)
+          // await $q.all(promises)
         }
 
         /**
@@ -432,7 +430,6 @@
         $scope.remove = function remove () {
 
         }
-
       }],
     templateUrl:
       function ($element, $attrs) {

@@ -27,14 +27,12 @@
  * @typedef {Model} $scope.model
  */
 
-
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-
     define([
       'stratus',
-      //'underscore',
+      // 'underscore',
       'lodash',
       'angular',
       'moment',
@@ -45,8 +43,8 @@
       'stratus.filters.math',
       'stratus.filters.moment',
 
-      'stratus.components.carousel',//FIXME shouldn't require including another component
-      'stratus.components.propertyDetailsSubSection',//FIXME shouldn't require including another component
+      'stratus.components.carousel', // FIXME shouldn't require including another component
+      'stratus.components.propertyDetailsSubSection'// FIXME shouldn't require including another component
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -85,7 +83,7 @@
         Stratus.Internals.CssLoader(
           Stratus.BaseUrl +
           'content/property/stratus/components/' +
-          //'propertyDetails' +
+          // 'propertyDetails' +
           ($attrs.template || 'propertyDetails') +
           min + '.css'
         )
@@ -98,12 +96,12 @@
           $scope.options.service = $attrs.service && _.isJSON($attrs.service) ? JSON.parse($attrs.service) : null
           $scope.options.ListingKey = $attrs.listingKey && _.isJSON($attrs.listingKey) ? JSON.parse($attrs.listingKey) : null
           $scope.options.ListingId = $attrs.listingId && _.isJSON($attrs.listingId) ? JSON.parse($attrs.listingId) : null
-          //Set default images and fields
+          // Set default images and fields
           $scope.options.images = $attrs.images && _.isJSON($attrs.images) ? JSON.parse($attrs.images) : {
             fields: [
               'Order',
               'MediaURL',
-              'LongDescription',
+              'LongDescription'
             ]
           }
           $scope.options.openhouses = $attrs.openhouses && _.isJSON($attrs.openhouses) ? JSON.parse($attrs.openhouses) : {
@@ -118,7 +116,7 @@
             {
               section: 'Location',
               items: {
-                //Location fields ignored
+                // Location fields ignored
                 /*
                 CarrierRoute Field
                 PostalCity Field
@@ -157,7 +155,7 @@
                 StateOrProvince: 'State',
                 StateRegion: 'State Region',
                 PostalCode: 'Postal Code',
-                Country: 'Country',
+                Country: 'Country'
               }
             },
             {
@@ -185,7 +183,7 @@
             {
               section: 'Listing',
               items: {
-                //Characteristics fields ignored
+                // Characteristics fields ignored
                 /*
                 AnchorsCoTenants
                 LandLeaseAmount Field
@@ -225,15 +223,15 @@
                 View: 'View',
                 WaterfrontYN: { true: 'Has a Waterfront', false: '' },
                 WaterfrontFeatures: 'Waterfront',
-                WaterBodyName: 'Body of Water Name',
+                WaterBodyName: 'Body of Water Name'
               }
             },
             {
-              //last worked on
+              // last worked on
               section: 'Farming',
               items: {
-                //ignored fields
-                //FarmLandAreaUnits Field - string list?
+                // ignored fields
+                // FarmLandAreaUnits Field - string list?
                 CropsIncludedYN: { true: 'Crops Included', false: '' },
                 Vegetation: 'Vegetation',
                 FarmCreditServiceInclYN: { true: 'Farm Credit Service Shares Included', false: '' },
@@ -243,13 +241,13 @@
                 CultivatedArea: { name: 'Cultivated Area', comma: true },
                 PastureArea: { name: 'Pasture Area', comma: true },
                 RangeArea: { name: 'Range Area', comma: true },
-                WoodedArea: { name: 'Wooded Area', comma: true },
+                WoodedArea: { name: 'Wooded Area', comma: true }
               }
             },
             {
               section: 'Interior',
               items: {
-                //fields ignored
+                // fields ignored
                 /*
                 LivingAreaUnits Field
                  */
@@ -272,7 +270,7 @@
                 WindowFeatures: 'Windows',
                 DoorFeatures: 'DoorFeatures',
 
-                LivingArea: { name: 'Living Area', comma: true },//TODO need make use of another variable
+                LivingArea: { name: 'Living Area', comma: true }, // TODO need make use of another variable
 
                 FireplaceYN: { true: 'Has Fireplace', false: '' },
                 FireplacesTotal: '# of Fireplaces',
@@ -281,7 +279,7 @@
 
                 Appliances: 'Appliances',
                 SecurityFeatures: 'Security',
-                OtherEquipment: 'Equipment',
+                OtherEquipment: 'Equipment'
               }
             },
             {
@@ -292,7 +290,7 @@
                 Fencing: 'Fencing',
                 Topography: 'Topography',
                 FrontageType: 'Frontage',
-                FrontageLength: 'Frontage Length',
+                FrontageLength: 'Frontage Length'
               }
             },
 
@@ -315,13 +313,13 @@
                 CoolingYN: { true: 'Has Cooling', false: '' },
                 Cooling: 'Cooling',
                 HeatingYN: { true: 'Has Heating', false: '' },
-                Heating: 'Heating',
+                Heating: 'Heating'
               }
             },
             {
               section: 'Structure',
               items: {
-                //ignored fields
+                // ignored fields
                 /*
                 AboveGradeFinishedArea
                 AboveGradeFinishedAreaSource
@@ -349,12 +347,12 @@
                 PropertyAttachedYN: { true: 'Property Attached to Existing Structure', false: '' },
                 Stories: 'Stories',
 
-                MobileHomeRemainsYN: { true: 'Mobile Home Remains', false: '' },//mobile home
-                Make: 'Make', //Mobile houses
-                Model: 'Model', //Mobile houses
-                BodyType: 'Body Type', //Mobile houses
-                MobileLength: { name: 'Mobile Length', comma: true }, //Mobile houses
-                MobileWidth: { name: 'Mobile Width', comma: true }, //Mobile houses
+                MobileHomeRemainsYN: { true: 'Mobile Home Remains', false: '' }, // mobile home
+                Make: 'Make', // Mobile houses
+                Model: 'Model', // Mobile houses
+                BodyType: 'Body Type', // Mobile houses
+                MobileLength: { name: 'Mobile Length', comma: true }, // Mobile houses
+                MobileWidth: { name: 'Mobile Width', comma: true }, // Mobile houses
 
                 BuildingName: 'Building Name',
                 StoriesTotal: 'Complex Stories',
@@ -374,25 +372,25 @@
                 FoundationDetails: 'Foundation',
                 FoundationArea: 'Foundation',
                 OtherStructures: 'Other Structures',
-                BuildingAreaTotal: { name: 'Building Area', comma: true },//TODO need make use of another variable
+                BuildingAreaTotal: { name: 'Building Area', comma: true }, // TODO need make use of another variable
 
-                DOH1: 'DOH1', //Mobile houses
-                DOH2: 'DOH2', //Mobile houses
-                DOH3: 'DOH3', //Mobile houses
-                License1: 'License', //Mobile houses
-                License2: 'License', //Mobile houses
-                License3: 'License', //Mobile houses
-                RVParkingDimensions: 'RV Parking', //Mobile houses
-                SerialU: 'Serial U', //Mobile houses
-                SerialX: 'Serial X', //Mobile houses
-                SerialXX: 'Serial XX', //Mobile houses
-                Skirt: 'Skirt', //Mobile houses
+                DOH1: 'DOH1', // Mobile houses
+                DOH2: 'DOH2', // Mobile houses
+                DOH3: 'DOH3', // Mobile houses
+                License1: 'License', // Mobile houses
+                License2: 'License', // Mobile houses
+                License3: 'License', // Mobile houses
+                RVParkingDimensions: 'RV Parking', // Mobile houses
+                SerialU: 'Serial U', // Mobile houses
+                SerialX: 'Serial X', // Mobile houses
+                SerialXX: 'Serial XX', // Mobile houses
+                Skirt: 'Skirt' // Mobile houses
               }
             },
             {
               section: 'Parking',
               items: {
-                //ignored fields:
+                // ignored fields:
                 /*
                 OpenParkingYN Field
                  */
@@ -405,13 +403,13 @@
                 CoveredSpaces: '# of Covered Spaces',
                 OpenParkingSpaces: '# of Open Spaces',
                 OtherParking: 'Other Parking',
-                ParkingFeatures: 'Parking',
+                ParkingFeatures: 'Parking'
               }
             },
             {
               section: 'Utilities',
               items: {
-                //Distances ignored
+                // Distances ignored
                 /*
                 DistanceToBusComments Field
                 DistanceToBusNumeric Field
@@ -450,7 +448,7 @@
                 DistanceToWaterNumeric Field
                 DistanceToWaterUnits Field
                  */
-                //other ignored
+                // other ignored
                 /*
                 ElectricOnPropertyYN Field
                 PowerProduction
@@ -464,7 +462,7 @@
                 IrrigationWaterRightsAcres: { name: 'Irrigation Water Rights', append: ' Acres', comma: true },
                 NumberOfSeparateElectricMeters: { name: 'Number Of Separate Electric Meters', comma: true },
                 NumberOfSeparateGasMeters: { name: 'Number Of Separate Gas Meters', comma: true },
-                NumberOfSeparateWaterMeters: { name: 'Number Of Separate Water Meters', comma: true },
+                NumberOfSeparateWaterMeters: { name: 'Number Of Separate Water Meters', comma: true }
               }
             },
             {
@@ -475,7 +473,7 @@
                 MiddleOrJuniorSchool: 'Middle School',
                 MiddleOrJuniorSchoolDistrict: 'Middle School District',
                 HighSchoolt: 'High School',
-                HighSchoolDistrict: 'High School District',
+                HighSchoolDistrict: 'High School District'
               }
             },
             {
@@ -558,13 +556,13 @@
                 SpecialListingConditions: 'Special Listing Conditions',
                 CommonInterest: 'Common Interest',
                 CopyrightNotice: 'Copyright Notice',
-                Disclaimer: 'Disclaimer',
+                Disclaimer: 'Disclaimer'
               }
             },
             {
               section: 'Financial',
               items: {
-                //Ignored HOA
+                // Ignored HOA
                 /*
                 AssociationName Field
                 AssociationName2 Field
@@ -572,7 +570,7 @@
                 AssociationPhone2 Field
                 PetsAllowed Field - array
                  */
-                //Ignored Finance
+                // Ignored Finance
                 /*
                 CapRate Field
                 ExistingLeaseType Field
@@ -587,7 +585,7 @@
                 VacancyAllowanceRate Field
                 TotalActualRent Field
                  */
-                //Ignored Tax
+                // Ignored Tax
                 /*
                 PublicSurveyRange
                 PublicSurveySection Field
@@ -639,13 +637,13 @@
                 AdditionalParcelsYN: { true: 'Has Additional Prcels', false: '' },
                 AdditionalParcelsDescription: 'Parcels',
                 Zoning: 'Zoning',
-                ZoningDescription: 'Zoning',
+                ZoningDescription: 'Zoning'
               }
             },
             {
               section: 'Sources',
               items: {
-                //ignored fields
+                // ignored fields
                 /*
                  */
                 FinancialDataSource: 'Financial Data',
@@ -660,22 +658,22 @@
                 OriginatingSystemName: { name: 'Originating System' },
                 OriginatingSystemKey: { name: 'Originating System', prepend: '# ' }
               }
-            },
-            //Sections not added:
+            }
+            // Sections not added:
             /*
             UnitTypes Group
             OccupantOwner Group
              */
           ]
 
-          //Register this List with the Property service
+          // Register this List with the Property service
           propertyLoopback.registerDetailsInstance($scope.elementId, $scope)
-          //console.log(this.uid)
+          // console.log(this.uid)
 
           if (
-            $scope.urlLoad !== true
-            && $scope.service
-            && ($scope.ListingKey || $scope.ListingId)
+            $scope.urlLoad !== true &&
+            $scope.service &&
+            ($scope.ListingKey || $scope.ListingId)
           ) {
             $scope.urlLoad = false
           } else {
@@ -706,7 +704,6 @@
               // Update the page title
               propertyLoopback.setPageTitle(data.UnparsedAddress)
             }
-
           }
         })
 
@@ -731,8 +728,8 @@
             propertyQuery.openhouses = $scope.options.openhouses
           }
           if (
-            !isNaN(propertyQuery.service)
-            && (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
+            !isNaN(propertyQuery.service) &&
+            (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
           ) {
             propertyLoopback.fetchProperty($scope, 'model', propertyQuery)
           } else {
@@ -743,7 +740,7 @@
         $scope.getSlideshowImages = function getImages () {
           let images = []
           $scope.model.data.Images.forEach(function (image) {
-            //TODO need title/description variables
+            // TODO need title/description variables
             if (image.hasOwnProperty('MediaURL')) {
               images.push({ src: image.MediaURL })
             }
@@ -758,8 +755,8 @@
         $scope.getStreetAddress = function getStreetAddress () {
           let address = ''
           if (
-            $scope.model.data.hasOwnProperty('UnparsedAddress')
-            && $scope.model.data.UnparsedAddress !== ''
+            $scope.model.data.hasOwnProperty('UnparsedAddress') &&
+            $scope.model.data.UnparsedAddress !== ''
           ) {
             address = $scope.model.data.UnparsedAddress
           } else {
@@ -768,7 +765,7 @@
               'StreetNumberNumeric',
               'StreetName',
               'StreetSuffix',
-              'UnitNumber', //Added Unit string?
+              'UnitNumber' // Added Unit string?
             ]
               .forEach(function (addressPart) {
                 if ($scope.model.data.hasOwnProperty(addressPart)) {
@@ -876,11 +873,10 @@
             console.log(item1, item2)
           }
         }
-
       }],
     templateUrl:
       function ($element, $attrs) {
-        //let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
+        // let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
         return Stratus.BaseUrl +
           'content/property/stratus/components/' +
           ($attrs.template || 'propertyDetails') +
