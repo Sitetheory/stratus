@@ -1,5 +1,10 @@
 /* Based on Angular Material 8+ */
-sa-tree {
+.tree {
+  .display {
+    &-none {
+      display: none;
+    }
+  }
   .full {
     &-width {
       width: 100%;
@@ -11,53 +16,34 @@ sa-tree {
     list-style-type: none;
   }
   .tree {
-    .tree {
-      &-invisible {
-        display: none;
+    &-node {
+      display: block;
+      .tree-node { // be explicit for child padding
+        padding-left: 40px;
       }
-      &-node {
-        display: block;
-        .tree-node { // be explicit for child padding
-          padding-left: 40px;
-        }
-        &-drag {
-          &-preview {
-            box-sizing: border-box;
-            border-radius: 4px;
-            padding: 10px;
-            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-            background-color: white;
-          }
-        }
-      }
-      &-dialog {
-        &-content {
-          .radio {
-            &-group {
-              display: flex;
-              flex-direction: column;
-              margin: 15px 0;
-            }
-            &-button {
-              margin: 5px;
-            }
-          }
+      &-drag {
+        &-preview {
+          box-sizing: border-box;
+          border-radius: 4px;
+          padding: 10px;
+          box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+          background-color: white;
         }
       }
     }
-    .cdk-drop-list {
-      &-dragging {
-        min-height: 20px;
-        border-style: dashed !important;
-        border-radius: 4px !important;
-        background: lightgreen !important;
-      }
-      &-receiving {
-        min-height: 20px;
-        border-style: dashed !important;
-        border-radius: 4px !important;
-        background: lightyellow !important;
-      }
+  }
+  .cdk-drop-list {
+    &-dragging {
+      min-height: 20px;
+      border-style: dashed !important;
+      border-radius: 4px !important;
+      //background: lightgreen !important;
     }
+    //&-receiving {
+    //  min-height: 20px;
+    //  border-style: dashed !important;
+    //  border-radius: 4px !important;
+    //  background: lightyellow !important;
+    //}
   }
 }
