@@ -353,8 +353,21 @@ export class TreeComponent {
             if (pastParentNode) {
                 this.removeNode(pastParentNode.children, targetNode)
             }
-            targetNode.model.set('data.nestParent', _.get(parentNode, 'model.data') || parentNode)
-            console.log(`new parent: ${targetNode.model.get('data.nestParent.name') || null}`)
+            const parentPatch = {}
+            if (parentNode) {
+                [
+                    'id',
+                    'name'
+                ].forEach((key) => {
+                    const value = _.get(parentNode, `model.data.${key}`)
+                    if (!value) {
+                        return
+                    }
+                    _.set(parentPatch, key, value)
+                })
+            }
+            targetNode.model.set('nestParent', !parentNode ? parentNode : parentPatch)
+            console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
         }
 
         // Set Priority
