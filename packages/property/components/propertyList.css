@@ -1,0 +1,247 @@
+
+
+/* Generic dotted underline */
+.stratus-property-list .dotted-spaced-underline {
+    background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
+    background-position: bottom;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+}
+
+/* Generic Arrows */
+.stratus-property-list i.arrow {
+    display: inline-block;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    padding: 3px;
+    margin: 1px;
+}
+.stratus-property-list i.arrow.small {
+    border-width: 0 2px 2px 0;
+    padding: 2px;
+}
+.stratus-property-list i.arrow.large {
+    border-width: 0 4px 4px 0;
+    padding: 4px;
+}
+.stratus-property-list i.arrow.grey {
+    border-color: #aaa;
+}
+.stratus-property-list i.arrow.right {
+    transform: rotate(-45deg);
+}
+.stratus-property-list i.arrow.left {
+    transform: rotate(135deg);
+}
+.stratus-property-list i.arrow.up {
+    transform: rotate(-135deg);
+}
+.stratus-property-list i.arrow.down {
+    transform: rotate(45deg);
+}
+
+/* Sort Options Button */
+
+.stratus-property-list .sort-options-container {
+    float: right;
+}
+.stratus-property-list .sort-options-container .options-button,
+.stratus-property-list .sort-options-container .options-button a {
+    font-size: 13px;
+    font-weight: normal;
+    font-style: italic;
+    text-transform: none;
+    color: #444;
+}
+
+
+/* Property List */
+.stratus-property-list .list-container {
+    margin: 10px -1.5% 0;
+}
+.stratus-property-list .list-container .property-container {
+    position: relative;
+    padding-bottom: 24px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+.stratus-property-list .property-content {
+    padding: 30px;
+}
+md-card.property-item {
+    box-shadow: 0 0 1px 1px rgba(0,0,0,.15);
+}
+
+
+/* Status */
+
+.stratus-property-list .list-container .property-status {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 10;
+    display: table;
+    margin: 0 auto 20px;
+    padding: 2px 4px 2px 5px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    text-shadow: 0 0 2px 1px rgba(0,0,0,.8);
+    color: #FFF;
+    border: 1px solid rgba(255,255,255,.7);
+}
+.stratus-property-list .list-container .status-price-container .property-price {
+    float: right;
+    font-size: 14px;
+    font-weight: normal;
+    color: #333;
+    text-align: right;
+}
+
+/* mls images */
+.stratus-property-list .list-container .property-image {
+    background: #000;
+}
+
+.stratus-property-list .list-container .property-image img {
+    width: 100%;
+}
+.stratus-property-list .list-container .property-image a {
+    transition: all .2s ease-out;
+    display: block;
+}
+.stratus-property-list .list-container .property-image:hover a {
+    opacity: .8;
+}
+
+
+/* property address */
+
+.stratus-property-list .list-container .property-address {
+    margin: 0 0 20px;
+    padding: 0 0 20px;
+}
+.stratus-property-list .list-container .property-address h4 {
+    margin: 0;
+    min-width: 160px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #222;
+    letter-spacing: 1px;
+}
+.stratus-property-list .list-container .property-address a {
+    font-weight: bold;
+    color: #222;
+}
+.stratus-property-list .list-container .property-address a:hover {
+    color: #666;
+}
+
+/* city/bed/bath/type */
+.stratus-property-list .list-container .property-data {
+    padding: 0 7% 20px 7%;
+    font-size: 12px;
+    line-height: 2;
+}
+.stratus-property-list .list-container .property-city {
+    text-transform: capitalize;
+}
+
+/* Details button */
+
+.stratus-property-list .list-container .property-button-container .button {
+    margin: 0 auto;
+}
+
+/* MLS number number */
+.stratus-property-list .list-container .mls-service-name {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    font-size: 11px;
+    line-height: 1.8;
+    text-align: center;
+    color: #888;
+}
+
+/* TODO Need to size this based on column and window */
+/* FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized.*/
+/* Sizings */
+
+.stratus-property-list .list-container.columns-2 .property-container,
+.stratus-property-list .list-container.columns-3 .property-container {
+    width: 100%;
+}
+@media (min-width: 600px) {
+    .stratus-property-list .list-container.columns-2 .property-container {
+        width: 48.5%;
+    }
+
+    .stratus-property-list .list-container.columns-3 .property-container {
+        width: 32%;
+    }
+}
+
+
+/* List Pager */
+
+.stratus-property-list .pager-container {
+    margin: 50px 0;
+}
+.stratus-property-list .pager-section {
+    float: right;
+}
+.stratus-property-list .pager-button {
+    margin-right: 5px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 14px;
+    outline: none;
+}
+.stratus-property-list .pager-section .pager-button > .arrow {
+    border-color: #555;
+}
+.stratus-property-list .pager-section .pager-button:hover {
+    background-color: #666;
+    border-color: #666;
+}
+.stratus-property-list .pager-section .pager-button:hover > .arrow {
+    border-color: #fff;
+}
+.stratus-property-list .pager-section .pager-button.disabled,
+.stratus-property-list .pager-section .pager-button.disabled:hover {
+    background-color: #fff;
+    border-color: #eee;
+}
+.stratus-property-list .pager-section .pager-button.disabled > .arrow,
+.stratus-property-list .pager-section .pager-button.disabled > .arrow:hover {
+    border-color: #ddd;
+}
+.stratus-property-list .pager-section .pager-count {
+    float: left;
+    font-size: 11px;
+    font-weight: bold;
+    color: #222;
+    padding-top: 10px;
+}
+.stratus-property-list .pager-section .pager-totals {
+    font-style: italic;
+    font-weight: normal;
+    text-transform: none;
+    color: #666;
+    padding-right: 10px;
+}
+
+
+/* Disclaimer */
+.stratus-property-list .disclaimer-container {
+    clear: both;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,.25);
+    font-size: 12px;
+}

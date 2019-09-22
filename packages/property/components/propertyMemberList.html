@@ -1,0 +1,50 @@
+<div id="{{::elementId}}" class="stratus-property-member-list" data-ng-cloak>
+	<div class="header-section">
+		<div class="pager-section">
+			<div class="pager-button {{options.page > 1 && collection.completed ? '' : 'disabled'}}" data-ng-click="pagePrevious($event)">
+				<i class="arrow small left"></i>
+			</div>
+			<div class="pager-button {{options.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}" data-ng-click="pageNext($event)">
+				<i class="arrow small right"></i>
+			</div>
+			<div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
+				<span data-ng-bind="options.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
+				<span class="pager-totals">
+				( <span data-ng-bind="(options.page-1)*options.perPage+1"></span>-<span data-ng-bind="(options.page*options.perPage)|min:collection.meta.data.totalRecords"></span> of <span data-ng-bind="collection.meta.data.totalRecords"></span> members )
+				</span>
+			</div>
+		</div>
+
+		<!--div class="sort-options-container" data-ng-if="collection.meta.data.totalRecords">
+			<md-menu data-md-position-mode="target-right target" data-md-offset="0 30">
+				<div class=" options-button" data-ng-mouseenter="$mdMenu.open()" aria-label="Sort Options">
+					<i class="arrow small down grey"></i> <span class="options-name"><a href="">Sort Options</a></span>
+				</div>
+				<md-menu-content data-ng-mouseleave="$mdMenu.close()">
+					<md-menu-item data-ng-repeat="(name, order) in orderOptions">
+						<md-button data-ng-click="orderChange(order, $event)" data-ng-bind="::name" aria-label="{{::name}}"></md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+		</div-->
+	</div>
+
+	<div class="list-container">
+		<md-list>
+			<md-list-item class="md-1-line member-container" ng-if="collection.pending">
+				<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+			</md-list-item>
+			<md-list-item class="md-1-line member-container" data-ng-repeat="member in collection.models | limitTo:options.perPage:(options.page-1)*options.perPage" id="{{::elementId}}_{{::member._id}}" ng-click="displayMemberDetails(member, $event)" data-ng-cloak>
+				<div data-ng-bind="::member.MemberFullName"></div>
+				<div class="member-office-name" data-ng-if="::member.OfficeName">&nbsp-
+					<span data-ng-bind="::member.OfficeName"></span>
+				</div>
+				<div class="md-secondary member-license" data-ng-if="::member.MemberStateLicense">License:
+					<span data-ng-bind="::member.MemberStateLicense"></span>
+				</div>
+			</md-list-item>
+		</md-list>
+		<!-- TODO pagination -->
+		<div class="disclaimer-container" data-ng-if="collection.completed" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+	</div>
+</div>

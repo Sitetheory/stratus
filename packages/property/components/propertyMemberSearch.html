@@ -1,0 +1,17 @@
+<div id="{{elementId}}" class="stratus-property-member-search search-mini" data-layout="row"  data-ng-cloak>
+	<div class="search-row">
+		<div class="search-input">
+			<md-input-container class="md-block minimal">
+				<label>State License Number</label>
+				<input data-ng-model="options.query.MemberStateLicense" type="text" maxlength="250"
+				       data-ng-keyup="$event.keyCode == 13 && options.query.MemberStateLicense && searchMembers()"
+				       autocomplete="false"
+				>
+			</md-input-container>
+		</div>
+	</div>
+
+	<div class="search-row" data-layout="row" data-layout-align="space-around center">
+		<md-button class="button" data-ng-click="searchMembers()">Lookup</md-button>
+	</div>
+</div>
