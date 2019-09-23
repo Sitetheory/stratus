@@ -269,16 +269,16 @@ function distBoot () {
     .pipe(concat(location.boot.output))
     .pipe(dest('.'))
 }
+/* *
 function distStratus () {
   return src(location.stratus.source)
-    /* *
-    .pipe(debug({
-      title: 'Build Stratus:'
-    }))
-    /* */
+    // .pipe(debug({
+    //   title: 'Build Stratus:'
+    // }))
     .pipe(concat(location.stratus.output))
     .pipe(dest('.'))
 }
+/* */
 
 // Mangle Functions
 function cleanMangle () {
@@ -517,8 +517,8 @@ exports.clean = parallel(
 )
 exports.lint = lintJS
 exports.dist = parallel(
-  distBoot,
-  distStratus
+  distBoot
+  // distStratus
 )
 
 exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
