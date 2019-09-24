@@ -122,8 +122,8 @@
           if (
             $scope.options.pageTitle &&
             (
-              $scope.memberMerged.hasOwnProperty('MemberFullName') ||
-              $scope.memberMerged.hasOwnProperty('MemberFirstName')
+              Object.prototype.hasOwnProperty.call($scope.memberMerged, 'MemberFullName') ||
+              Object.prototype.hasOwnProperty.call($scope.memberMerged, 'MemberFirstName')
             )
           ) {
             // Update the page title
@@ -136,7 +136,7 @@
         }
 
         $scope.fetchMember = function fetchMember () {
-          let memberQuery = {
+          const memberQuery = {
             listName: 'MemberDetailsList',
             service: [$scope.options.service],
             where: {}
@@ -167,7 +167,7 @@
           return new Promise(function (resolve) {
             if ($scope.collection && $scope.collection.completed && $scope.collection.models.length > 0) {
               $scope.memberMerged = {}
-              let tempCollection = [].concat($scope.collection.models).reverse()
+              const tempCollection = [].concat($scope.collection.models).reverse()
               tempCollection.forEach(function (agent) {
                 _.extend($scope.memberMerged, agent)
               })

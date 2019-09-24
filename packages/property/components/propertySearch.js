@@ -184,7 +184,7 @@
          */
         $scope.updateScopeValuePath = async function (scopeVarPath, value) {
           // console.log('Update', scopeVarPath, 'to', value, typeof value)
-          let scopePieces = scopeVarPath.split('.')
+          const scopePieces = scopeVarPath.split('.')
           return $scope.updateNestedPathValue($scope, scopePieces, value)
         }
 
@@ -196,10 +196,10 @@
          * @param value
          */
         $scope.updateNestedPathValue = async function (currentNest, pathPieces, value) {
-          let currentPiece = pathPieces.shift()
+          const currentPiece = pathPieces.shift()
           if (
             currentPiece &&
-            currentNest.hasOwnProperty(currentPiece)
+            Object.prototype.hasOwnProperty.call(currentNest, currentPiece)
           ) {
             if (pathPieces[0]) {
               return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
@@ -234,14 +234,14 @@
           $scope.variableSyncing = $attrs.variableSync && _.isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
 
           // console.log('variables syncing: ', $scope.variableSyncing)
-          let promises = []
+          const promises = []
           Object.keys($scope.variableSyncing).forEach(function (elementId) {
             promises.push(
               $q(async function (resolve, reject) {
-                let varElement = $scope.getInput(elementId)
+                const varElement = $scope.getInput(elementId)
                 if (varElement) {
                   // Form Input exists
-                  let scopeVarPath = $scope.variableSyncing[elementId]
+                  const scopeVarPath = $scope.variableSyncing[elementId]
                   // convert into a real var path and set the intial value from the exiting form value
                   await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
 
@@ -300,7 +300,7 @@
          */
         $scope.toggleArrayElement = function (item, array) {
           array = array || []
-          let arrayIndex = array.indexOf(item)
+          const arrayIndex = array.indexOf(item)
           if (arrayIndex >= 0) {
             array.splice(arrayIndex, 1)
           } else {
@@ -316,11 +316,11 @@
          */
         $scope.showInlinePopup = function (ev, menuElement) {
           if (!$scope.filterMenu) {
-            let position = $mdPanel.newPanelPosition()
+            const position = $mdPanel.newPanelPosition()
               .relativeTo(ev.srcElement)
               .addPanelPosition($mdPanel.xPosition.CENTER, $mdPanel.yPosition.BELOW)
 
-            let animation = $mdPanel.newPanelAnimation()
+            const animation = $mdPanel.newPanelAnimation()
             animation.openFrom(position)
             animation.closeTo(position)
             animation.withAnimation($mdPanel.animation.FADE)
@@ -428,7 +428,7 @@
       }],
     templateUrl:
       function ($element, $attrs) {
-        let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
+        const templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
         return Stratus.BaseUrl +
           'content/property/stratus/components/' +
           ($attrs.template || 'propertySearch') +

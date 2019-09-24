@@ -91,7 +91,7 @@
             $scope.model = data
             Object.keys($scope.items).forEach(function (item) {
               if (
-                $scope.model.data.hasOwnProperty(item) &&
+                Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
                 $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
                 $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
               ) {

@@ -6,7 +6,7 @@
 // TODO later when implementing new data source types, refer to https://fullcalendar.io/docs/google-calendar as a plugin example
 
 // credit to https://github.com/leonaard/icalendar2fullcalendar for ics conversion
-/* global define */
+/* global define, boot */
 
 /**
  * @typedef {Object} fullcalendarCore

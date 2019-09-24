@@ -143,7 +143,7 @@ http://docs.sitetheory.io
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
-          let searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId)
+          const searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId)
           searchScopes.forEach(function (searchScope) {
             // FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
             searchScope.setQuery(propertyLoopback.getUrlOptions('Search'))
@@ -247,7 +247,7 @@ http://docs.sitetheory.io
             $scope.options.page = 1
           }
           if ($scope.collection.completed && $scope.options.page > 1) {
-            let prev = parseInt($scope.options.page) - 1 || 1
+            const prev = parseInt($scope.options.page) - 1 || 1
             $scope.pageChange(prev, ev)
           }
         }
@@ -282,13 +282,13 @@ http://docs.sitetheory.io
         $scope.getStreetAddress = function getStreetAddress (property) {
           let address = ''
           if (
-            property.hasOwnProperty('UnparsedAddress') &&
+            Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') &&
             property.UnparsedAddress !== ''
           ) {
             address = property.UnparsedAddress
             // console.log('using unparsed ')
           } else {
-            let addressParts = [];
+            const addressParts = [];
             [
               'StreetNumberNumeric',
               'StreetName',
@@ -296,7 +296,7 @@ http://docs.sitetheory.io
               'UnitNumber' // Added Unit string?
             ]
               .forEach(function (addressPart) {
-                if (property.hasOwnProperty(addressPart)) {
+                if (Object.prototype.hasOwnProperty.call(property, addressPart)) {
                   if (addressPart === 'UnitNumber') {
                     addressParts.push('Unit')
                   }
@@ -322,7 +322,7 @@ http://docs.sitetheory.io
          * @returns {String}
          */
         $scope.getMLSName = function getMLSName (serviceId) {
-          let services = $scope.getMLSVariables()
+          const services = $scope.getMLSVariables()
           let name = 'MLS'
           if (services[serviceId]) {
             name = services[serviceId].name
@@ -336,7 +336,7 @@ http://docs.sitetheory.io
          * @returns {String}
          */
         $scope.processMLSDisclaimer = function processMLSDisclaimer (html) {
-          let services = $scope.getMLSVariables()
+          const services = $scope.getMLSVariables()
           let disclaimer = ''
           services.forEach(function (service) {
             if (disclaimer) {
@@ -379,9 +379,9 @@ http://docs.sitetheory.io
           }
           if ($scope.detailsLinkPopup === true) {
             // Opening a popup will load the propertyDetails and adjust the hashbang URL
-            let templateOptions = {
-              'element_id': 'property_detail_popup_' + property.ListingKey,
-              'service': property._ServiceId,
+            const templateOptions = {
+              element_id: 'property_detail_popup_' + property.ListingKey,
+              service: property._ServiceId,
               'listing-key': property.ListingKey,
               'default-list-options': JSON.stringify($ctrl.defaultOptions),
               'page-title': true// update the page title
@@ -397,7 +397,7 @@ http://docs.sitetheory.io
               '<md-dialog aria-label="' + property.ListingKey + '">' +
               '<stratus-property-details '
             Object.keys(templateOptions).forEach(function (optionKey) {
-              if (templateOptions.hasOwnProperty(optionKey)) {
+              if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
                 template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
               }
             })
