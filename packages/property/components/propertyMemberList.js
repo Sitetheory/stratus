@@ -113,7 +113,7 @@
           // Register this List with the Property service
           propertyLoopback.registerListInstance($scope.elementId, $scope, 'Member')
 
-          let urlOptions = {}
+          const urlOptions = {}
           /* if ($scope.urlLoad) {
             // first set the UrlOptions via defaults (cloning so it can't be altered)
             propertyLoopback.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
@@ -136,7 +136,7 @@
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
-          let searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId, 'Member')
+          const searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId, 'Member')
           searchScopes.forEach(function (searchScope) {
             // FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
             // searchScope.setQuery(propertyLoopback.getUrlOptions('Search'))
@@ -240,7 +240,7 @@
             $scope.options.page = 1
           }
           if ($scope.collection.completed && $scope.options.page > 1) {
-            let prev = parseInt($scope.options.page) - 1 || 1
+            const prev = parseInt($scope.options.page) - 1 || 1
             $scope.pageChange(prev, ev)
           }
         }
@@ -299,9 +299,9 @@
           }
           if ($scope.detailsLinkPopup === true) {
             // Opening a popup will load the propertyDetails and adjust the hashbang URL
-            let templateOptions = {
-              'element_id': 'property_member_detail_popup',
-              'service': member._ServiceId,
+            const templateOptions = {
+              element_id: 'property_member_detail_popup',
+              service: member._ServiceId,
               'member-key': member.MemberKey,
               'page-title': true// update the page title
             }
@@ -313,7 +313,7 @@
               '<md-dialog aria-label="' + member.MemberKey + '">' +
               '<stratus-property-member-details '
             Object.keys(templateOptions).forEach(function (optionKey) {
-              if (templateOptions.hasOwnProperty(optionKey)) {
+              if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
                 template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
               }
             })
@@ -369,35 +369,35 @@
           Object.keys($scope.variableSyncing).forEach(function (elementId) {
             // promises.push(
             // $q(async function (resolve, reject) {
-            let varElement = $scope.getInput(elementId)
+            const varElement = $scope.getInput(elementId)
             if (varElement) {
               // Form Input exists
 
-              if (member.hasOwnProperty($scope.variableSyncing[elementId])) {
+              if (Object.prototype.hasOwnProperty.call(member, $scope.variableSyncing[elementId])) {
                 varElement.val(member[$scope.variableSyncing[elementId]])
               } else if (
                 $scope.variableSyncing[elementId] === 'MemberFullName' &&
-                member.hasOwnProperty('MemberFirstName') &&
-                member.hasOwnProperty('MemberLastName')
+                Object.prototype.hasOwnProperty.call(member, 'MemberFirstName') &&
+                Object.prototype.hasOwnProperty.call(member, 'MemberLastName')
               ) {
                 varElement.val(member['MemberFirstName'] + ' ' + member['MemberLastName'])
               } else if (
                 $scope.variableSyncing[elementId] === 'MemberFirstName' &&
-                !member.hasOwnProperty('MemberFirstName') &&
-                member.hasOwnProperty('MemberFullName')
+                !Object.prototype.hasOwnProperty.call(member, 'MemberFirstName') &&
+                Object.prototype.hasOwnProperty.call(member, 'MemberFullName')
               ) {
-                let nameArray = member['MemberFullName'].split(' ')
-                let firstName = nameArray.shift()
+                const nameArray = member['MemberFullName'].split(' ')
+                const firstName = nameArray.shift()
                 // let lastName = nameArray.join(' ')
                 varElement.val(firstName)
               } else if (
                 $scope.variableSyncing[elementId] === 'MemberLastName' &&
-                !member.hasOwnProperty('MemberLastName') &&
-                member.hasOwnProperty('MemberFullName')
+                !Object.prototype.hasOwnProperty.call(member, 'MemberLastName') &&
+                Object.prototype.hasOwnProperty.call(member, 'MemberFullName')
               ) {
-                let nameArray = member['MemberFullName'].split(' ')
+                const nameArray = member['MemberFullName'].split(' ')
                 // let firstName = nameArray.shift()
-                let lastName = nameArray.join(' ')
+                const lastName = nameArray.join(' ')
                 varElement.val(lastName)
               }
 
@@ -433,7 +433,7 @@
       }],
     templateUrl:
       function ($element, $attrs) {
-        let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
+        const templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
         return Stratus.BaseUrl +
           'content/property/stratus/components/' +
           ($attrs.template || 'propertyMemberList') +

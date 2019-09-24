@@ -682,8 +682,8 @@
 
           if ($scope.urlLoad) {
             // Load Options from the provided URL settings
-            let urlOptions = propertyLoopback.getOptionsFromUrl()
-            if (urlOptions.hasOwnProperty('Listing')) {
+            const urlOptions = propertyLoopback.getOptionsFromUrl()
+            if (Object.prototype.hasOwnProperty.call(urlOptions, 'Listing')) {
               _.extend($scope.options, urlOptions.Listing)
             }
           }
@@ -712,7 +712,7 @@
         }
 
         $scope.fetchProperty = function fetchProperty () {
-          let propertyQuery = {
+          const propertyQuery = {
             service: $scope.options.service,
             where: {}
           }
@@ -738,10 +738,10 @@
         }
 
         $scope.getSlideshowImages = function getImages () {
-          let images = []
+          const images = []
           $scope.model.data.Images.forEach(function (image) {
             // TODO need title/description variables
-            if (image.hasOwnProperty('MediaURL')) {
+            if (Object.prototype.hasOwnProperty.call(image, 'MediaURL')) {
               images.push({ src: image.MediaURL })
             }
           })
@@ -755,12 +755,12 @@
         $scope.getStreetAddress = function getStreetAddress () {
           let address = ''
           if (
-            $scope.model.data.hasOwnProperty('UnparsedAddress') &&
+            Object.prototype.hasOwnProperty.call($scope.model.data, 'UnparsedAddress') &&
             $scope.model.data.UnparsedAddress !== ''
           ) {
             address = $scope.model.data.UnparsedAddress
           } else {
-            let addressParts = [];
+            const addressParts = [];
             [
               'StreetNumberNumeric',
               'StreetName',
@@ -768,7 +768,7 @@
               'UnitNumber' // Added Unit string?
             ]
               .forEach(function (addressPart) {
-                if ($scope.model.data.hasOwnProperty(addressPart)) {
+                if (Object.prototype.hasOwnProperty.call($scope.model.data, addressPart)) {
                   if (addressPart === 'UnitNumber') {
                     addressParts.push('Unit')
                   }
@@ -781,7 +781,7 @@
         }
 
         $scope.getFullAddress = function getFullAddress (encode) {
-          let address = $scope.model.data.UnparsedAddress + ', ' + $scope.model.data.City + ' ' + $scope.model.data.StateOrProvince
+          const address = $scope.model.data.UnparsedAddress + ', ' + $scope.model.data.City + ' ' + $scope.model.data.StateOrProvince
           return encode ? encodeURIComponent(address) : address
         }
 

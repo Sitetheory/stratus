@@ -145,7 +145,7 @@
              * The last where query that was sent we're holding on to. This is mostly so we can move from page to page properly.
              * @type {{whereFilter: {}, pages: Array<Number>, perPage: number}}
              */
-            let lastQueries = {
+            const lastQueries = {
               whereFilter: {},
               pages: [],
               perPage: 0
@@ -166,7 +166,7 @@
                 instance[listType + 'List'] = {}
               }
               instance[listType + 'List'][uid] = $scope
-              if (!instanceLink.List.hasOwnProperty(uid)) {
+              if (!Object.prototype.hasOwnProperty.call(instanceLink.List, uid)) {
                 instanceLink.List[uid] = []
               }
             }
@@ -184,12 +184,12 @@
                 listType = ''
               }
               instance[listType + 'Search'][uid] = $scope
-              if (!instanceLink.Search.hasOwnProperty(uid)) {
+              if (!Object.prototype.hasOwnProperty.call(instanceLink.Search, uid)) {
                 instanceLink.Search[uid] = []
               }
               if (listUid) {
                 instanceLink.Search[uid].push(listUid)
-                if (!instanceLink.List.hasOwnProperty(listUid)) {
+                if (!Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
                   instanceLink.List[listUid] = []
                 }
                 instanceLink.List[listUid].push(uid)
@@ -210,8 +210,8 @@
              * @param {String} uid - The elementId of a widget
              */
             function unregisterDetailsInstance (uid) {
-              if (instance.Details.hasOwnProperty(uid)) {
-                let detailUid = instance.Details[uid].getUid()
+              if (Object.prototype.hasOwnProperty.call(instance.Details, uid)) {
+                const detailUid = instance.Details[uid].getUid()
                 delete instance.Details[uid]
                 Stratus.Instances.Clean(detailUid)
               }
@@ -228,10 +228,10 @@
               if (listType === 'Property') {
                 listType = ''
               }
-              let linkedLists = []
-              if (instanceLink.Search.hasOwnProperty(searchUid)) {
+              const linkedLists = []
+              if (Object.prototype.hasOwnProperty.call(instanceLink.Search, searchUid)) {
                 instanceLink.Search[searchUid].forEach(function (listUid) {
-                  if (instance[listType + 'List'].hasOwnProperty(listUid)) {
+                  if (Object.prototype.hasOwnProperty.call(instance[listType + 'List'], listUid)) {
                     linkedLists.push(instance[listType + 'List'][listUid])
                   }
                 })
@@ -250,7 +250,7 @@
               if (listType === 'Property') {
                 listType = ''
               }
-              return instanceLink.List.hasOwnProperty(listUid) ? instance[listType + 'List'][listUid] : null
+              return Object.prototype.hasOwnProperty.call(instanceLink.List, listUid) ? instance[listType + 'List'][listUid] : null
             }
 
             /**
@@ -264,10 +264,10 @@
               if (listType === 'Property') {
                 listType = ''
               }
-              let linkedSearches = []
-              if (instanceLink.List.hasOwnProperty(listUid)) {
+              const linkedSearches = []
+              if (Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
                 instanceLink.List[listUid].forEach(function (searchUid) {
-                  if (instance[listType + 'Search'].hasOwnProperty(searchUid)) {
+                  if (Object.prototype.hasOwnProperty.call(instance[listType + 'Search'], searchUid)) {
                     linkedSearches.push(instance[listType + 'Search'][searchUid])
                   }
                 })
@@ -338,9 +338,9 @@
                 }).then(function successCallback (response) {
                   if (
                     typeof response === 'object' &&
-                    response.hasOwnProperty('data') &&
-                    response.data.hasOwnProperty('services') &&
-                    response.data.services.hasOwnProperty('length')
+                    Object.prototype.hasOwnProperty.call(response, 'data') &&
+                    Object.prototype.hasOwnProperty.call(response.data, 'services') &&
+                    Object.prototype.hasOwnProperty.call(response.data.services, 'length')
                   ) {
                     tokenHandleGoodResponse(response)
                     resolve()
@@ -368,7 +368,7 @@
               response.data.services.forEach(
                 /** @param {MLSService} service */
                 function (service) {
-                  if (service.hasOwnProperty('id')) {
+                  if (Object.prototype.hasOwnProperty.call(service, 'id')) {
                     session.services[service.id] = service
                     session.lastCreated = new Date(service.created)// The object is a String being converted to Date
                     session.lastTtl = service.ttl
@@ -388,9 +388,9 @@
             function tokenHandleBadResponse (response) {
               if (
                 typeof response === 'object' &&
-                response.hasOwnProperty('data') &&
-                response.data.hasOwnProperty('errors') &&
-                response.data.errors.hasOwnProperty('length')
+                Object.prototype.hasOwnProperty.call(response, 'data') &&
+                Object.prototype.hasOwnProperty.call(response.data, 'errors') &&
+                Object.prototype.hasOwnProperty.call(response.data.errors, 'length')
               ) {
                 console.error(response.data.errors)
               } else {
@@ -416,7 +416,7 @@
              */
             function createModel (request) {
               // request.direct = true;
-              let model = new Model(request)
+              const model = new Model(request)
               if (request.api) {
                 model.meta.set('api', _.isJSON(request.api)
                   ? JSON.parse(request.api)
@@ -433,7 +433,7 @@
              */
             function createCollection (request) {
               request.direct = true
-              let collection = new Collection(request)
+              const collection = new Collection(request)
               if (request.api) {
                 collection.meta.set('api', _.isJSON(request.api)
                   ? JSON.parse(request.api)
@@ -460,10 +460,10 @@
               // Make Promises that each of the collections shall fetch their results
               const fetchPromises = []
               collections.forEach(function (collection) {
-                let options = {}
+                const options = {}
                 if (session.services[collection.serviceId].token !== null) {
                   options.headers = {
-                    'Authorization': session.services[collection.serviceId].token
+                    Authorization: session.services[collection.serviceId].token
                   }
                 }
                 fetchPromises.push(
@@ -479,7 +479,7 @@
                         }))
                       })
                       .then(function () {
-                        let countRecords = collection.header.get('x-total-count')
+                        const countRecords = collection.header.get('x-total-count')
                         if (countRecords) {
                           totalCount += parseInt(countRecords)
                         }
@@ -535,10 +535,10 @@
 
               // Make Promises that each of the Models shall fetch their results. We're only using a single one here
               const fetchPromises = []
-              let options = {}
+              const options = {}
               if (session.services[newModel.serviceId].token !== null) {
                 options.headers = {
-                  'Authorization': session.services[newModel.serviceId].token
+                  Authorization: session.services[newModel.serviceId].token
                 }
               }
               fetchPromises.push(
@@ -604,8 +604,8 @@
               Object.keys(instance[instanceType]).forEach(function (listName) {
                 if (
                   !collection &&
-                  instance[instanceType].hasOwnProperty(listName) &&
-                  instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName)
+                  Object.prototype.hasOwnProperty.call(instance[instanceType], listName) &&
+                  Object.prototype.hasOwnProperty.call(instance[instanceType][listName], scopedCollectionVarName)
                 ) {
                   collection = instance[instanceType][listName][scopedCollectionVarName]
                 }
@@ -615,7 +615,7 @@
               }
               Object.keys(instance[instanceType]).forEach(function (listName) {
                 if (
-                  !instance[instanceType][listName].hasOwnProperty(scopedCollectionVarName) ||
+                  !Object.prototype.hasOwnProperty.call(instance[instanceType][listName], scopedCollectionVarName) ||
                   instance[instanceType][listName][scopedCollectionVarName] !== collection
                 ) {
                   instance[instanceType][listName][scopedCollectionVarName] = collection
@@ -629,20 +629,20 @@
              * @returns {Object}
              */
             function compilePropertyWhereFilter (where) {
-              let whereQuery = {}
+              const whereQuery = {}
               // ListingKey
-              if (where.hasOwnProperty('ListingKey') && where.ListingKey !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'ListingKey') && where.ListingKey !== '') {
                 whereQuery.ListingKey = where.ListingKey
               }
               // ListType
-              if (where.hasOwnProperty('ListingType') && where.ListingType !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'ListingType') && where.ListingType !== '') {
                 if (typeof where.ListingType === 'string') {
                   where.ListingType = [where.ListingType]
                 }
                 whereQuery.ListingType = where.ListingType
               }
               // Status
-              if (where.hasOwnProperty('Status') && where.Status !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'Status') && where.Status !== '') {
                 if (typeof where.Status === 'string') {
                   where.Status = [where.Status]
                 }
@@ -651,7 +651,7 @@
                 }
               }
               // Agent License
-              if (where.hasOwnProperty('AgentLicense') && where.AgentLicense !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'AgentLicense') && where.AgentLicense !== '') {
                 if (typeof where.AgentLicense === 'string') {
                   where.AgentLicense = [where.AgentLicense]
                 }
@@ -660,21 +660,21 @@
                 }
               }
               // City
-              if (where.hasOwnProperty('City') && where.City !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'City') && where.City !== '') {
                 whereQuery.City = {
                   like: where.City,
                   options: 'i'
                 }
               }
               // List Price Min
-              if (where.hasOwnProperty('ListPriceMin') && where.ListPriceMin && where.ListPriceMin !== 0) {
+              if (Object.prototype.hasOwnProperty.call(where, 'ListPriceMin') && where.ListPriceMin && where.ListPriceMin !== 0) {
                 whereQuery.ListPrice = { gte: parseInt(where.ListPriceMin, 10) }
               }
               // List Price Max
-              if (where.hasOwnProperty('ListPriceMax') && where.ListPriceMax && where.ListPriceMax !== 0) {
+              if (Object.prototype.hasOwnProperty.call(where, 'ListPriceMax') && where.ListPriceMax && where.ListPriceMax !== 0) {
                 if (
-                  whereQuery.hasOwnProperty('ListPrice') &&
-                  whereQuery.ListPrice.hasOwnProperty('gte')
+                  Object.prototype.hasOwnProperty.call(whereQuery, 'ListPrice') &&
+                  Object.prototype.hasOwnProperty.call(whereQuery.ListPrice, 'gte')
                 ) {
                   whereQuery.ListPrice = {
                     between: [
@@ -687,11 +687,11 @@
                 }
               }
               // Baths Min
-              if (where.hasOwnProperty('BathroomsFullMin') && where.BathroomsFullMin && where.BathroomsFullMin !== 0) {
+              if (Object.prototype.hasOwnProperty.call(where, 'BathroomsFullMin') && where.BathroomsFullMin && where.BathroomsFullMin !== 0) {
                 whereQuery.BathroomsFull = { gte: parseInt(where.BathroomsFullMin, 10) }
               }
               // Beds Min
-              if (where.hasOwnProperty('BedroomsTotalMin') && where.BedroomsTotalMin && where.BedroomsTotalMin !== 0) {
+              if (Object.prototype.hasOwnProperty.call(where, 'BedroomsTotalMin') && where.BedroomsTotalMin && where.BedroomsTotalMin !== 0) {
                 whereQuery.BedroomsTotal = { gte: parseInt(where.BedroomsTotalMin, 10) }
               }
               return whereQuery
@@ -702,25 +702,25 @@
              * @returns {Object}
              */
             function compileMemberWhereFilter (where) {
-              let whereQuery = {}
+              const whereQuery = {}
               // MemberKey
-              if (where.hasOwnProperty('MemberKey') && where.MemberKey !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'MemberKey') && where.MemberKey !== '') {
                 whereQuery.MemberKey = where.MemberKey
               }
               // MemberStateLicense
-              if (where.hasOwnProperty('MemberStateLicense') && where.MemberStateLicense !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'MemberStateLicense') && where.MemberStateLicense !== '') {
                 whereQuery.MemberStateLicense = where.MemberStateLicense
               }
               // MemberNationalAssociationId
-              if (where.hasOwnProperty('MemberNationalAssociationId') && where.MemberNationalAssociationId !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'MemberNationalAssociationId') && where.MemberNationalAssociationId !== '') {
                 whereQuery.MemberNationalAssociationId = where.MemberNationalAssociationId
               }
               // MemberStatus
-              if (where.hasOwnProperty('MemberStatus') && where.MemberStatus !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'MemberStatus') && where.MemberStatus !== '') {
                 whereQuery.MemberStatus = where.MemberStatus
               }
               // MemberFullName
-              if (where.hasOwnProperty('MemberFullName') && where.MemberFullName !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'MemberFullName') && where.MemberFullName !== '') {
                 whereQuery.MemberFullName = {
                   like: where.MemberFullName,
                   options: 'i'
@@ -734,21 +734,21 @@
              * @returns {Object}
              */
             function compileOfficeWhereFilter (where) {
-              let whereQuery = {}
+              const whereQuery = {}
               // OfficeKey
-              if (where.hasOwnProperty('OfficeKey') && where.OfficeKey !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'OfficeKey') && where.OfficeKey !== '') {
                 whereQuery.OfficeKey = where.OfficeKey
               }
               // OfficeNationalAssociationId
-              if (where.hasOwnProperty('OfficeNationalAssociationId') && where.OfficeNationalAssociationId !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'OfficeNationalAssociationId') && where.OfficeNationalAssociationId !== '') {
                 whereQuery.OfficeNationalAssociationId = where.OfficeNationalAssociationId
               }
               // OfficeStatus
-              if (where.hasOwnProperty('OfficeStatus') && where.OfficeStatus !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'OfficeStatus') && where.OfficeStatus !== '') {
                 whereQuery.OfficeStatus = where.OfficeStatus
               }
               // OfficeName
-              if (where.hasOwnProperty('OfficeName') && where.OfficeName !== '') {
+              if (Object.prototype.hasOwnProperty.call(where, 'OfficeName') && where.OfficeName !== '') {
                 whereQuery.OfficeName = {
                   like: where.OfficeName,
                   options: 'i'
@@ -766,7 +766,7 @@
               if (typeof orderUnparsed === 'string') {
                 orderUnparsed = orderUnparsed.split(',')
               }
-              let orderQuery = []
+              const orderQuery = []
 
               orderUnparsed.forEach(function (orderName) {
                 let direction = 'ASC'
@@ -794,7 +794,7 @@
               if (options.page) {
                 skip = (options.page - 1) * options.perPage
               }
-              let filterQuery = {
+              const filterQuery = {
                 where: compilePropertyWhereFilter(options.where),
                 fields: options.fields,
                 limit: options.perPage,
@@ -806,11 +806,11 @@
               }
 
               // Handle included collections
-              let includes = []
+              const includes = []
 
               // Included Images
               if (options.images) {
-                let imageInclude = {
+                const imageInclude = {
                   relation: 'Images',
                   scope: {
                     order: 'Order', // FIXME should be ordered by default on db side (default scopes)
@@ -820,10 +820,10 @@
                   }
                 }
                 if (typeof options.images === 'object') {
-                  if (options.images.hasOwnProperty('limit')) {
+                  if (Object.prototype.hasOwnProperty.call(options.images, 'limit')) {
                     imageInclude.scope.limit = options.images.limit
                   }
-                  if (options.images.hasOwnProperty('fields')) {
+                  if (Object.prototype.hasOwnProperty.call(options.images, 'fields')) {
                     if (options.images.fields === '*') {
                       delete imageInclude.scope.fields
                     } else {
@@ -837,7 +837,7 @@
 
               // Included Open Houses
               if (options.openhouses) {
-                let openHouseInclude = {
+                const openHouseInclude = {
                   relation: 'OpenHouses',
                   scope: {
                     order: 'OpenHouseStartTime', // FIXME should be ordered by default on db side (default scopes)
@@ -848,10 +848,10 @@
                   }
                 }
                 if (typeof options.openhouses === 'object') {
-                  if (options.openhouses.hasOwnProperty('limit')) {
+                  if (Object.prototype.hasOwnProperty.call(options.openhouses, 'limit')) {
                     openHouseInclude.scope.limit = options.openhouses.limit
                   }
-                  if (options.openhouses.hasOwnProperty('fields')) {
+                  if (Object.prototype.hasOwnProperty.call(options.openhouses, 'fields')) {
                     if (options.openhouses.fields === '*') {
                       delete openHouseInclude.scope.fields
                     } else {
@@ -892,7 +892,7 @@
               if (options.page) {
                 skip = (options.page - 1) * options.perPage
               }
-              let filterQuery = {
+              const filterQuery = {
                 where: compileMemberWhereFilter(options.where),
                 fields: options.fields,
                 limit: options.perPage,
@@ -904,11 +904,11 @@
               }
 
               // Handle included collections
-              let includes = []
+              const includes = []
 
               // Included Images
               if (options.images) {
-                let imageInclude = {
+                const imageInclude = {
                   relation: 'Images',
                   scope: {
                     order: 'Order',
@@ -918,10 +918,10 @@
                   }
                 }
                 if (typeof options.images === 'object') {
-                  if (options.images.hasOwnProperty('limit')) {
+                  if (Object.prototype.hasOwnProperty.call(options.images, 'limit')) {
                     imageInclude.scope.limit = options.images.limit
                   }
-                  if (options.images.hasOwnProperty('fields')) {
+                  if (Object.prototype.hasOwnProperty.call(options.images, 'fields')) {
                     if (options.images.fields === '*') {
                       delete imageInclude.scope.fields
                     } else {
@@ -935,7 +935,7 @@
 
               // Include Office
               if (options.office) {
-                let includeItem = {
+                const includeItem = {
                   relation: 'Office',
                   scope: {
                     fields: [
@@ -945,7 +945,7 @@
                   }
                 }
                 if (typeof options.office === 'object') {
-                  if (options.office.hasOwnProperty('fields')) {
+                  if (Object.prototype.hasOwnProperty.call(options.office, 'fields')) {
                     if (options.office.fields === '*') {
                       delete includeItem.scope.fields
                     } else {
@@ -989,7 +989,7 @@
               if (options.page) {
                 skip = (options.page - 1) * options.perPage
               }
-              let filterQuery = {
+              const filterQuery = {
                 where: compileOfficeWhereFilter(options.where),
                 fields: options.fields,
                 limit: options.perPage,
@@ -1001,11 +1001,11 @@
               }
 
               // Handle included collections
-              let includes = []
+              const includes = []
 
               // Included Images
               if (options.images) {
-                let imageInclude = {
+                const imageInclude = {
                   relation: 'Images',
                   scope: {
                     order: 'Order',
@@ -1015,10 +1015,10 @@
                   }
                 }
                 if (typeof options.images === 'object') {
-                  if (options.images.hasOwnProperty('limit')) {
+                  if (Object.prototype.hasOwnProperty.call(options.images, 'limit')) {
                     imageInclude.scope.limit = options.images.limit
                   }
-                  if (options.images.hasOwnProperty('fields')) {
+                  if (Object.prototype.hasOwnProperty.call(options.images, 'fields')) {
                     if (options.images.fields === '*') {
                       delete imageInclude.scope.fields
                     } else {
@@ -1032,7 +1032,7 @@
 
               // Include Managing Broker Member Data
               if (options.managingBroker) {
-                let includeItem = {
+                const includeItem = {
                   relation: 'Member',
                   scope: {
                     fields: [
@@ -1043,7 +1043,7 @@
                   }
                 }
                 if (typeof options.managingBroker === 'object') {
-                  if (options.managingBroker.hasOwnProperty('fields')) {
+                  if (Object.prototype.hasOwnProperty.call(options.managingBroker, 'fields')) {
                     if (options.managingBroker.fields === '*') {
                       delete includeItem.scope.fields
                     } else {
@@ -1057,7 +1057,7 @@
 
               // Include Members/Agents
               if (options.members) {
-                let includeItem = {
+                const includeItem = {
                   relation: 'Member',
                   scope: {
                     fields: [
@@ -1068,7 +1068,7 @@
                   }
                 }
                 if (typeof options.members === 'object') {
-                  if (options.members.hasOwnProperty('fields')) {
+                  if (Object.prototype.hasOwnProperty.call(options.members, 'fields')) {
                     if (options.members.fields === '*') {
                       delete includeItem.scope.fields
                     } else {
@@ -1099,10 +1099,10 @@
              * @returns {Array<Object>}
              */
             function getMLSVariables (serviceIds) {
-              let serviceList = []
+              const serviceList = []
               if (serviceIds && _.isArray(serviceIds)) {
                 serviceIds.forEach(function (service) {
-                  if (session.services.hasOwnProperty(service)) {
+                  if (Object.prototype.hasOwnProperty.call(session.services, service)) {
                     serviceList[session.services[service].id] = {
                       id: session.services[service].id,
                       name: session.services[service].name,
@@ -1145,8 +1145,8 @@
             function getListingOptionsFromUrlString (path) {
               // FIXME can't read unless ListingKey must end with /
               // /Listing/1/81582540/8883-Rancho/
-              let regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
-              let matches = regex.exec(path)
+              const regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
+              const matches = regex.exec(path)
               path = path.replace(regex, '')
               if (
                 matches !== null &&
@@ -1174,7 +1174,7 @@
                 matches !== null &&
                 matches[1]
               ) {
-                let rawSearchOptions = matches[1]
+                const rawSearchOptions = matches[1]
                 // Time to separate all the values out in pairs between /'s
                 // standard had me remove regex = /([^\/]+)\/([^\/]+)/g  (notice the missing \'s)
                 regex = /([^/]+)\/([^/]+)/g
@@ -1194,7 +1194,7 @@
               }
 
               // Math is performed in Page and needs to be converted
-              if (urlOptions.Search.hasOwnProperty('Page')) {
+              if (Object.prototype.hasOwnProperty.call(urlOptions.Search, 'Page')) {
                 urlOptions.Search.Page = parseInt(urlOptions.Search.Page)
               }
 
@@ -1229,12 +1229,12 @@
               let path = ''
 
               // Set the Search List url variables
-              let searchOptionNames = Object.keys(urlOptions.Search)
+              const searchOptionNames = Object.keys(urlOptions.Search)
               if (searchOptionNames.length > 0) {
                 let searchPath = ''
                 searchOptionNames.forEach(function (searchOptionName) {
                   if (
-                    urlOptions.Search.hasOwnProperty(searchOptionName) &&
+                    Object.prototype.hasOwnProperty.call(urlOptions.Search, searchOptionName) &&
                     urlOptions.Search[searchOptionName] !== null &&
                     // && urlOptions.Search[searchOptionName] !== ''
                     // && urlOptions.Search[searchOptionName] !== 0// may need to correct this
@@ -1251,14 +1251,14 @@
 
               // Set the Listing Details url variables
               if (
-                urlOptions.Listing.hasOwnProperty('service') &&
-                urlOptions.Listing.hasOwnProperty('ListingKey') &&
+                Object.prototype.hasOwnProperty.call(urlOptions.Listing, 'service') &&
+                Object.prototype.hasOwnProperty.call(urlOptions.Listing, 'ListingKey') &&
                 !isNaN(urlOptions.Listing.service) &&
                 urlOptions.Listing.ListingKey
               ) {
                 path += 'Listing' + '/' + urlOptions.Listing.service + '/' + urlOptions.Listing.ListingKey + '/'
                 if (
-                  urlOptions.Listing.hasOwnProperty('address') &&
+                  Object.prototype.hasOwnProperty.call(urlOptions.Listing, 'address') &&
                   urlOptions.Listing.address &&
                   typeof urlOptions.Listing.address === 'string'
                 ) {
@@ -1352,10 +1352,10 @@
               }
 
               // Prepare the same Collection for each List
-              let collection = await createOrSyncCollectionVariable(instanceName, collectionVarName)
+              const collection = await createOrSyncCollectionVariable(instanceName, collectionVarName)
 
               // Set API paths to fetch listing data for each MLS Service
-              let filterQuery = compileFilterFunction(options)
+              const filterQuery = compileFilterFunction(options)
               // options.page items need to happen after here
 
               const collections = []
@@ -1409,8 +1409,8 @@
                   /** @param {Number} serviceId */
                   function (serviceId) {
                     // Only load from a specific MLS Service
-                    if (session.services.hasOwnProperty(serviceId)) {
-                      let request = {
+                    if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
+                      const request = {
                         serviceId: serviceId,
                         urlRoot: session.services[serviceId].host,
                         target: apiModel + '/search',
@@ -1440,7 +1440,7 @@
 
                 // If the query as updated, adjust the TotalRecords available
                 if (refresh) {
-                  let totalRecords = collection.header.get('x-total-count') || 0
+                  const totalRecords = collection.header.get('x-total-count') || 0
                   collection.meta.set('totalRecords', totalRecords)
                   collection.meta.set('totalPages', Math.ceil(totalRecords / options.perPage))
                 }
@@ -1509,26 +1509,26 @@
 
               // Prepare the Model and ensure we don't keep replacing it
               let model
-              if ($scope.hasOwnProperty(modelVarName)) {
+              if (Object.prototype.hasOwnProperty.call($scope, modelVarName)) {
                 model = $scope[modelVarName]
               }
               if (!model) {
                 model = new Model()
               }
               if (
-                !$scope.hasOwnProperty(modelVarName) ||
+                !Object.prototype.hasOwnProperty.call($scope, modelVarName) ||
                 $scope[modelVarName] !== model
               ) {
                 $scope[modelVarName] = model
               }
 
               if (
-                session.services.hasOwnProperty(options.service)
+                Object.prototype.hasOwnProperty.call(session.services, options.service)
               ) {
                 // Set API paths to fetch listing data for the specific MLS Service
                 // let filterQuery = compileFilterFunction(options);
 
-                let request = {
+                const request = {
                   serviceId: options.service,
                   urlRoot: session.services[options.service].host,
                   target: apiModel + '/search',
@@ -1545,7 +1545,7 @@
                   }
                 }
 
-                let tempModel = createModel(request)
+                const tempModel = createModel(request)
 
                 fetchReplaceModel(model, tempModel)
                   .then(function () {

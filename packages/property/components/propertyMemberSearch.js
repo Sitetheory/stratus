@@ -107,7 +107,7 @@
          */
         $scope.updateScopeValuePath = async function (scopeVarPath, value) {
           // console.log('Update', scopeVarPath, 'to', value, typeof value)
-          let scopePieces = scopeVarPath.split('.')
+          const scopePieces = scopeVarPath.split('.')
           return $scope.updateNestedPathValue($scope, scopePieces, value)
         }
 
@@ -119,10 +119,10 @@
          * @param value
          */
         $scope.updateNestedPathValue = async function (currentNest, pathPieces, value) {
-          let currentPiece = pathPieces.shift()
+          const currentPiece = pathPieces.shift()
           if (
             currentPiece &&
-            currentNest.hasOwnProperty(currentPiece)
+            Object.prototype.hasOwnProperty.call(currentNest, currentPiece)
           ) {
             if (pathPieces[0]) {
               return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
@@ -157,14 +157,14 @@
           $scope.variableSyncing = $attrs.variableSync && _.isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
 
           // console.log('variables syncing: ', $scope.variableSyncing)
-          let promises = []
+          const promises = []
           Object.keys($scope.variableSyncing).forEach(function (elementId) {
             promises.push(
               $q(async function (resolve, reject) {
-                let varElement = $scope.getInput(elementId)
+                const varElement = $scope.getInput(elementId)
                 if (varElement) {
                   // Form Input exists
-                  let scopeVarPath = $scope.variableSyncing[elementId]
+                  const scopeVarPath = $scope.variableSyncing[elementId]
                   // convert into a real var path and set the intial value from the exiting form value
                   await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
 
@@ -253,21 +253,21 @@
          */
         $scope.displayMemberSelector = function displayMemberSelector () {
           // Opening a popup will load the propertyDetails and adjust the hashbang URL
-          let templateOptions = {
+          const templateOptions = {
             // 'element_id': 'property_member_detail_popup',
-            'options': {}, // JSON.stringify($scope.options),
-            'template': 'mothership/propertyMemberSelector',
+            options: {}, // JSON.stringify($scope.options),
+            template: 'mothership/propertyMemberSelector',
             'variable-sync': JSON.stringify({
-              'agent_fname': 'MemberFirstName',
-              'agent_lname': 'MemberLastName',
-              'agent_license': 'MemberStateLicense',
-              'office_name': 'OfficeName',
-              'office_id': 'OfficeKey'
+              agent_fname: 'MemberFirstName',
+              agent_lname: 'MemberLastName',
+              agent_license: 'MemberStateLicense',
+              office_name: 'OfficeName',
+              office_id: 'OfficeKey'
             })
             // 'page-title': true,//update the page title
           }
           if ($scope.options.query) {
-            let options = {
+            const options = {
               service: [$scope.options.service || 0], // TODO update service
               where: $scope.options.query
             }
@@ -279,7 +279,7 @@
             '<md-button style="text-align: center" ng-click="ctrl.close()">Close and Accept</md-button>' +
             '<stratus-property-member-list '
           Object.keys(templateOptions).forEach(function (optionKey) {
-            if (templateOptions.hasOwnProperty(optionKey)) {
+            if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
               template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
             }
           })
@@ -296,7 +296,7 @@
             // bindToController: true,
             controllerAs: 'ctrl',
             controller: function ($scope, $mdDialog) {
-              let dc = this
+              const dc = this
 
               dc.$onInit = function () {
                 dc.close = close
