@@ -59,7 +59,7 @@
     "@material-ui/types": "^4.1.1",
     "@material-ui/utils": "^4.4.0",
     "@types/lodash": "^4.14.138",
-    "bowser": "^1.9.4, <2.0",
+    "bowser": "^2.6.1",
     "core-js": "^3.2.1",
     "hammerjs": "^2.0.8",
     "jquery": "^3.4.1",

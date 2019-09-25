@@ -14,13 +14,13 @@
       'lodash',
       'jquery', // TODO: Remove once phased out appropriately
       'bowser'
-    ], function (exports, _, jQuery, bowser) {
-      return (root.Stratus = factory(exports, _, jQuery, bowser))
+    ], function (exports, _, jQuery, Bowser) {
+      return (root.Stratus = factory(exports, _, jQuery, Bowser))
     })
   } else {
-    root.Stratus = factory(root.exports, root._, root.jQuery, root.bowser)
+    root.Stratus = factory(root.exports, root._, root.jQuery, root.Bowser)
   }
-}(this, function (exports, _, jQuery, bowser) {
+}(this, function (exports, _, jQuery, Bowser) {
   // Stratus Layer Prototype
   // -----------------------
 
@@ -89,7 +89,7 @@
     Services: {},
 
     /* Bowser */
-    Client: bowser,
+    Client: {},
 
     /* Stratus */
     CSS: {},
@@ -844,6 +844,13 @@
       return arr.join('\n').replace(/\n/g, '')
     }
   })
+
+  // Client Information
+
+  (function () {
+    const browser = Bowser.getParser(window.navigator.userAgent)
+    console.log(browser)
+  })()
 
   // Native Selector
   // ---------------
