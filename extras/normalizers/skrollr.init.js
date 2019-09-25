@@ -6,24 +6,32 @@
 // Usage: add this anywhere on the page <script>require(['skrollr'])</script>
 // <div stratus-skrollr data-0="transform: translateY(0px); opacity: 1;" data-600="transform: translateY(300px); opacity: .2;"></div>
 
-/* global define */
+/* global define, require */
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'skrollr-native'], factory)
+    define(['stratus'], factory)
   } else {
-    factory(root.Stratus, root.skrollr)
+    factory(root.Stratus)
   }
-}(this, function (Stratus, skrollr) {
-  Stratus.DOM.complete(function () {
-    // Disable Skrollr (parallax) for all mobile, it doesn't work on ios, safari, chrome or android chrome)
-    if (Stratus.Client.mobile) {
-      return
+}(this, function (Stratus, _) {
+  // Disable Skrollr (parallax) for all mobile, it doesn't work on ios, safari, chrome or android chrome)
+  if (Stratus.Client.mobile) {
+    return
+  }
+  (function (root, factory) {
+    if (typeof require === 'function') {
+      require(['skrollr-native'], factory)
+    } else {
+      factory(root.skrollr)
     }
-    skrollr.init({})
-    // HACK: This refresh is needed in order for certain areas to load
-    setTimeout(function () {
-      skrollr.get().refresh()
-    }, 3000)
-  })
+  }(this, function (skrollr) {
+    Stratus.DOM.complete(function () {
+      skrollr.init({})
+      // HACK: This refresh is needed in order for certain areas to load
+      setTimeout(function () {
+        skrollr.get().refresh()
+      }, 3000)
+    })
+  }))
 }))
