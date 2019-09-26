@@ -3012,7 +3012,7 @@ Stratus.Internals.Rebase = function (target, base) {
         })
         if (!_.contains(cssLoaded, 'angular-material.css') && 'angular-material' in boot.configuration.paths) {
           css.push(
-            Stratus.BaseUrl + boot.configuration.paths['angular-material'].replace(/\.[^.]+$/, '.css')
+            Stratus.BaseUrl + boot.configuration.paths['angular-material'].replace(/\.[^.]+$/, '') + (Stratus.Environment.get('production') ? '.min' : '') + '.css'
           )
         }
         if (Stratus.Directives.Froala || Stratus('[froala]').length) {
