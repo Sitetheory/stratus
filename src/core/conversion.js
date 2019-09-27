@@ -1,7 +1,33 @@
 System.register(["lodash"], function (exports_1, context_1) {
     "use strict";
-    var _, Conversion;
+    var _;
     var __moduleName = context_1 && context_1.id;
+    function camelToSnake(target) {
+        return target.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+    }
+    exports_1("camelToSnake", camelToSnake);
+    function snakeToCamel(target) {
+        return target.replace(/(_\w)/g, (m) => m[1].toUpperCase());
+    }
+    exports_1("snakeToCamel", snakeToCamel);
+    function camelToKebab(target) {
+        return target.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+    }
+    exports_1("camelToKebab", camelToKebab);
+    function kebabToCamel(target) {
+        return target.replace(/(-\w)/g, (m) => m[1].toUpperCase());
+    }
+    exports_1("kebabToCamel", kebabToCamel);
+    function sanitize(data) {
+        if (!_.isObject(data)) {
+            return data;
+        }
+        _.each(data, (value, key) => {
+            console.log(key, value);
+        });
+        return data;
+    }
+    exports_1("sanitize", sanitize);
     function seconds(str) {
         if (typeof str === 'number') {
             return str;
@@ -59,12 +85,6 @@ System.register(["lodash"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
-            Conversion = class Conversion {
-                constructor() {
-                    this.seconds = seconds;
-                }
-            };
-            exports_1("Conversion", Conversion);
         }
     };
 });

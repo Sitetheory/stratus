@@ -1,6 +1,34 @@
 // External
 import * as _ from 'lodash'
 
+// CamelCase String to Snake Case
+export function camelToSnake(target: string): string {
+    return target.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
+}
+
+// Snake Case String to CamelCase
+export function snakeToCamel(target: string): string {
+    return target.replace(/(_\w)/g, (m: string) => m[1].toUpperCase())
+}
+
+export function camelToKebab(target: any) {
+    return target.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+}
+
+export function kebabToCamel(target: any) {
+    return target.replace(/(-\w)/g, (m: any) => m[1].toUpperCase())
+}
+
+export function sanitize(data: any) {
+    if (!_.isObject(data)) {
+        return data
+    }
+    _.each(data, (value, key) => {
+        console.log(key, value)
+    })
+    return data
+}
+
 // Time to Seconds
 export function seconds(str: string): number {
     if (typeof str === 'number') {
@@ -50,8 +78,4 @@ export function seconds(str: string): number {
         data += value * unit
     })
     return data
-}
-
-export class Conversion {
-    seconds = seconds
 }

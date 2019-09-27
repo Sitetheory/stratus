@@ -41,7 +41,3 @@ export function cookie(name: any, value?: any, expires?: any, path?: any, domain
     }
     document.cookie = data
 }
-
-export class Environment {
-    cookie = cookie
-}
