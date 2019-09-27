@@ -29,7 +29,7 @@
         "dist/stratus"
       ],
       "stratus.services.*": [
-        "stratus/services/*"
+        "services/*"
       ],
       "core-js/es7/reflect": [
         "node_modules/core-js/proposals/reflect-metadata"
