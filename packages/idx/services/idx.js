@@ -102,7 +102,7 @@
     Stratus.Services.Idx = [
       '$provide',
       function ($provide) {
-        $provide.factory('idx', [
+        $provide.factory('Idx', [
           '$http', '$injector', '$q', '$location', '$window', '$rootScope', 'Collection', 'Model', 'orderByFilter',
           function ($http, $injector, $q, $location, $window, $rootScope, Collection, Model, orderByFilter) {
             let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken' // TODO need to allow setting own tokenRefreshURL

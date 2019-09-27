@@ -58,8 +58,8 @@
       '$timeout',
       '$q',
       '$sce',
-      'idx',
-      function ($scope, $attrs, $mdDialog, $window, $timeout, $q, $sce, idx) {
+      'Idx',
+      function ($scope, $attrs, $mdDialog, $window, $timeout, $q, $sce, Idx) {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_member_list_')
@@ -110,14 +110,14 @@
           // $scope.googleApiKey = $attrs.googleApiKey || null
 
           // Register this List with the Property service
-          idx.registerListInstance($scope.elementId, $scope, 'Member')
+          Idx.registerListInstance($scope.elementId, $scope, 'Member')
 
           const urlOptions = {}
           /* if ($scope.urlLoad) {
             // first set the UrlOptions via defaults (cloning so it can't be altered)
-            idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
+            Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
             // Load Options from the provided URL settings
-            urlOptions = idx.getOptionsFromUrl()
+            urlOptions = Idx.getOptionsFromUrl()
             // If a specific listing is provided, be sure to pop it up as well
             if (
               urlOptions.Listing.service
@@ -135,10 +135,10 @@
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
-          const searchScopes = idx.getListInstanceLinks($scope.elementId, 'Member')
+          const searchScopes = Idx.getListInstanceLinks($scope.elementId, 'Member')
           searchScopes.forEach(function (searchScope) {
             // FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
-            // searchScope.setQuery(idx.getUrlOptions('Search'))
+            // searchScope.setQuery(Idx.getUrlOptions('Search'))
             searchScope.listInitialized = true
           })
         }
@@ -188,11 +188,11 @@
             }
 
             // Set the URL options
-            // idx.setUrlOptions('Search', options)
+            // Idx.setUrlOptions('Search', options)
 
             // Display the URL options in the address bar
             /* if (updateUrl) {
-              idx.refreshUrlOptions($ctrl.defaultOptions)
+              Idx.refreshUrlOptions($ctrl.defaultOptions)
             } */
 
             // Keep the Search widgets up to date
@@ -200,7 +200,7 @@
 
             // Grab the new property listings
             console.log('fetching members:', $scope.options)
-            resolve(idx.fetchMembers($scope, 'collection', $scope.options, refresh))
+            resolve(Idx.fetchMembers($scope, 'collection', $scope.options, refresh))
           })
         }
 
@@ -273,7 +273,7 @@
          */
         $scope.getMLSDisclaimer = function getMLSDisclaimer (html) {
           let disclaimer = ''
-          idx.getMLSVariables($scope.options.service || null).forEach(function (service) {
+          Idx.getMLSVariables($scope.options.service || null).forEach(function (service) {
             if (disclaimer) {
               disclaimer += '<br>'
             }
@@ -329,12 +329,12 @@
             })
               .then(function () {
               }, function () {
-                // idx.setUrlOptions('Listing', {})
-                // idx.refreshUrlOptions($ctrl.defaultOptions)
+                // Idx.setUrlOptions('Listing', {})
+                // Idx.refreshUrlOptions($ctrl.defaultOptions)
                 // Revery page title back to what it was
-                idx.setPageTitle()
+                Idx.setPageTitle()
                 // Let's destroy it to save memory
-                $timeout(idx.unregisterDetailsInstance('property_member_detail_popup'), 10)
+                $timeout(Idx.unregisterDetailsInstance('property_member_detail_popup'), 10)
               })
           } else {
             $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)

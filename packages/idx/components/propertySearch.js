@@ -52,8 +52,8 @@
       '$mdConstant',
       '$q',
       '$mdPanel',
-      'idx',
-      function ($scope, $attrs, $window, $timeout, $mdConstant, $q, $mdPanel, idx) {
+      'Idx',
+      function ($scope, $attrs, $window, $timeout, $mdConstant, $q, $mdPanel, Idx) {
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_search_')
         Stratus.Instances[$ctrl.uid] = $scope
@@ -160,7 +160,7 @@
           $scope.setQueryDefaults()
 
           // Register this Search with the Property service
-          idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
+          Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
 
           $scope.variableSync()
         }
@@ -405,14 +405,14 @@
         $scope.searchProperties = function searchProperties () {
           let listScope
           if ($scope.listId) {
-            listScope = idx.getListInstance($scope.listId)
+            listScope = Idx.getListInstance($scope.listId)
           }
           if (listScope) {
             $scope.options.query.Page = 1
             listScope.searchProperties($scope.options.query, true)
           } else {
-            idx.setUrlOptions('Search', $scope.options.query)
-            $window.open($scope.listLinkUrl + '#!/' + idx.getUrlOptionsPath(), $scope.listLinkTarget)
+            Idx.setUrlOptions('Search', $scope.options.query)
+            $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
           }
         }
 
@@ -421,7 +421,7 @@
          */
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
           if ($scope.listId) {
-            idx.getListInstance($scope.listId).refreshSearchWidgetOptions()
+            Idx.getListInstance($scope.listId).refreshSearchWidgetOptions()
           }
         }
       }],

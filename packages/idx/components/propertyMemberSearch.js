@@ -55,8 +55,8 @@
       '$mdDialog',
       '$q',
       '$mdPanel',
-      'idx',
-      function ($scope, $attrs, $window, $timeout, $mdDialog, $q, $mdPanel, idx) {
+      'IDX',
+      function ($scope, $attrs, $window, $timeout, $mdDialog, $q, $mdPanel, IDX) {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_member_search_')
@@ -90,11 +90,11 @@
 
           if ($scope.options.tokenUrl) {
             /// ajax/request?class=property.token_auth&method=getToken
-            idx.setTokenURL($scope.options.tokenUrl)
+            IDX.setTokenURL($scope.options.tokenUrl)
           }
 
           // Register this Search with the Property service
-          idx.registerSearchInstance($scope.elementId, $scope, $scope.listId, 'Member')
+          IDX.registerSearchInstance($scope.elementId, $scope, $scope.listId, 'Member')
 
           // $scope.variableSync()
         }
@@ -232,15 +232,15 @@
         $scope.searchMembers = function searchMembers () {
           let listScope
           if ($scope.listId) {
-            listScope = idx.getListInstance($scope.listId, 'Member')
+            listScope = IDX.getListInstance($scope.listId, 'Member')
           }
           if (listScope) {
             $scope.options.query.Page = 1
             listScope.searchMembers($scope.options.query, true)
             // TODO open popup
           } else {
-            // idx.setUrlOptions('Search', $scope.options.query)
-            // $window.open($scope.listLinkUrl + '#!/' + idx.getUrlOptionsPath(), $scope.listLinkTarget)
+            // IDX.setUrlOptions('Search', $scope.options.query)
+            // $window.open($scope.listLinkUrl + '#!/' + IDX.getUrlOptionsPath(), $scope.listLinkTarget)
             console.log('displaying popup')
             $scope.displayMemberSelector()
           }
@@ -311,12 +311,12 @@
           })
             .then(function () {
             }, function () {
-              // idx.setUrlOptions('Listing', {})
-              // idx.refreshUrlOptions($ctrl.defaultOptions)
+              // IDX.setUrlOptions('Listing', {})
+              // IDX.refreshUrlOptions($ctrl.defaultOptions)
               // Revery page title back to what it was
-              // idx.setPageTitle()
+              // IDX.setPageTitle()
               // Let's destroy it to save memory
-              // $timeout(idx.unregisterDetailsInstance('property_member_detail_popup'), 10)
+              // $timeout(IDX.unregisterDetailsInstance('property_member_detail_popup'), 10)
             })
         }
       }],

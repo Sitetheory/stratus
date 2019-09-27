@@ -74,7 +74,7 @@
       '$location',
       'Model',
       'Idx',
-      function ($scope, $attrs, $sce, $location, Model, idx) {
+      function ($scope, $attrs, $sce, $location, Model, Idx) {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_details_')
@@ -667,7 +667,7 @@
           ]
 
           // Register this List with the Property service
-          idx.registerDetailsInstance($scope.elementId, $scope)
+          Idx.registerDetailsInstance($scope.elementId, $scope)
           // console.log(this.uid)
 
           if (
@@ -682,7 +682,7 @@
 
           if ($scope.urlLoad) {
             // Load Options from the provided URL settings
-            const urlOptions = idx.getOptionsFromUrl()
+            const urlOptions = Idx.getOptionsFromUrl()
             if (Object.prototype.hasOwnProperty.call(urlOptions, 'Listing')) {
               _.extend($scope.options, urlOptions.Listing)
             }
@@ -693,16 +693,16 @@
         $scope.$watch('model.data', function (data) {
           if (data) {
             $scope.devLog('Loaded Details Data:', data)
-            idx.setUrlOptions('Listing',
+            Idx.setUrlOptions('Listing',
               {
                 service: $scope.options.service,
                 ListingKey: data.ListingKey,
                 address: $scope.getStreetAddress()
               })
-            idx.refreshUrlOptions($scope.defaultListOptions)
+            Idx.refreshUrlOptions($scope.defaultListOptions)
             if ($scope.options.pageTitle) {
               // Update the page title
-              idx.setPageTitle(data.UnparsedAddress)
+              Idx.setPageTitle(data.UnparsedAddress)
             }
           }
         })
@@ -731,7 +731,7 @@
             !isNaN(propertyQuery.service) &&
             (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
           ) {
-            idx.fetchProperty($scope, 'model', propertyQuery)
+            Idx.fetchProperty($scope, 'model', propertyQuery)
           } else {
             console.error('No Service Id or Listing Key/Id is fetch from')
           }
@@ -811,7 +811,7 @@
 
         $scope.getMLSVariables = function getMLSVariables () {
           if (!$ctrl.mlsVariables) {
-            $ctrl.mlsVariables = idx.getMLSVariables([$scope.model.data._ServiceId])
+            $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])
           }
           return $ctrl.mlsVariables[$scope.model.data._ServiceId]
         }
