@@ -22,7 +22,7 @@ AngularJS idx/property Service and Components bundle to be used as an add on to 
 Within the project directory of Stratus
 
 Either Yarn install
-* `yarn install --production @stratusjs/idx`
+* `yarn add @stratusjs/idx`
 
 Or NPM install
 * `npm install @stratusjs/idx`
