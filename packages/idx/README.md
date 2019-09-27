@@ -1,4 +1,6 @@
 # @stratusjs/idx
+[![npm version](https://badge.fury.io/js/%40stratusjs%2Fidx.svg)](https://badge.fury.io/js/%40stratusjs%2Fidx "View this project on npm")
+
 AngularJS idx/property Service and Components bundle to be used as an add on to Stratus
 
 ## Usage
