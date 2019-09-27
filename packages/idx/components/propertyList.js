@@ -1,20 +1,21 @@
-// PropertyMemberList Component
+// PropertyList Component
 // ------------------
-//
-// Copyright (c) 2019 by Sitetheory, All Rights Reserved
-//
-// All information contained herein is, and remains the
-// property of Sitetheory and its suppliers, if any.
-// The intellectual and technical concepts contained herein
-// are proprietary to Sitetheory and its suppliers and may be
-// covered by U.S. and Foreign Patents, patents in process,
-// and are protected by trade secret or copyright law.
-// Dissemination of this information or reproduction of this
-// material is strictly forbidden unless prior written
-// permission is obtained from Sitetheory.
-//
-// For full details and documentation:
-// http://docs.sitetheory.io
+/*
+Copyright (c) 2019 by Sitetheory, All Rights Reserved
+
+All information contained herein is, and remains the
+property of Sitetheory and its suppliers, if any.
+The intellectual and technical concepts contained herein
+are proprietary to Sitetheory and its suppliers and may be
+covered by U.S. and Foreign Patents, patents in process,
+and are protected by trade secret or copyright law.
+Dissemination of this information or reproduction of this
+material is strictly forbidden unless prior written
+permission is obtained from Sitetheory.
+
+For full details and documentation:
+http://docs.sitetheory.io
+ */
 
 /* global define */
 
@@ -23,16 +24,15 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      // 'underscore',
       'lodash',
       'angular',
       'moment',
       'angular-sanitize',
       'angular-material',
 
-      'stratus.services.propertyLoopback',
+      'stratus.services.idx',
 
-      'stratus.components.propertyMemberDetails'// requires to preload this...hmmm...stratus should handle this automatically...
+      'stratus.components.propertyDetails'// requires to preload this...hmmm...stratus should handle this automatically...
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -40,16 +40,17 @@
 }(this, function (Stratus, _, angular, moment) {
   const min = Stratus.Environment.get('production') ? '.min' : ''
 
-  Stratus.Components.PropertyMemberList = {
+  Stratus.Components.PropertyList = {
     bindings: {
       elementId: '@',
       detailsLinkPopup: '@',
       detailsLinkUrl: '@',
       detailsLinkTarget: '@',
+      detailsTemplate: '@',
       orderOptions: '@',
+      googleApiKey: '@',
       options: '@',
-      template: '@',
-      variableSync: '@'
+      template: '@'
     },
     controller: [
       '$scope',
@@ -59,17 +60,18 @@
       '$timeout',
       '$q',
       '$sce',
-      'propertyLoopback',
-      function ($scope, $attrs, $mdDialog, $window, $timeout, $q, $sce, propertyLoopback) {
+      'idx',
+      function ($scope, $attrs, $mdDialog, $window, $timeout, $q, $sce, idx) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId('property_member_list_')
+        $ctrl.uid = _.uniqueId('property_list_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(
           Stratus.BaseUrl +
           'content/property/stratus/components/' +
-          'propertyMemberList' +
+          // 'propertyList' +
+          ($attrs.template || 'propertyList') +
           min + '.css'
         )
 
@@ -83,52 +85,56 @@
            * @type {boolean}
            */
           $scope.urlLoad = $attrs.urlLoad && _.isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
+          /** @type {boolean} */
           $scope.detailsLinkPopup = $attrs.detailsLinkPopup && _.isJSON($attrs.detailsLinkPopup) ? JSON.parse($attrs.detailsLinkPopup) : true
-          $scope.detailsLinkUrl = $attrs.detailsLinkUrl || '/property/member/details'
+          /** @type {string} */
+          $scope.detailsLinkUrl = $attrs.detailsLinkUrl || '/property/details'
+          /** @type {string} */
           $scope.detailsLinkTarget = $attrs.detailsLinkTarget || '_self'
+          /** @type {string|null} */
+          $scope.detailsTemplate = $attrs.detailsTemplate || null
 
           $scope.options = $attrs.options && _.isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
-          $scope.options.order = $scope.options.order || null// will be set by Service
-          $scope.options.page = $scope.options.page || null// will be set by Service
+          $scope.options.order = $scope.options.order || null // will be set by Service
+          $scope.options.page = $scope.options.page || null // will be set by Service
           $scope.options.perPage = $scope.options.perPage || 25
           $scope.options.images = $scope.options.images || { limit: 1 }
 
           $scope.options.where = $scope.options.where || {}
-          // Fixme, sometimes it's just MemberMlsAccessYN ....
-          // $scope.options.where.MemberStatus = $scope.options.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
+          $scope.options.where.City = $scope.options.where.City || ''
+          $scope.options.where.Status = $scope.options.where.Status || ['Active', 'Contract']
+          $scope.options.where.ListingType = $scope.options.where.ListingType || ['House', 'Condo']
+          $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []
 
-          // $scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
-          // $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
+          $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where)) // Extend/clone doesn't work for arrays
 
-          $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where))// Extend/clone doesn't work for arrays
-
-          /* $scope.orderOptions = $scope.orderOptions || {
+          $scope.orderOptions = $scope.orderOptions || {
             'Price (high to low)': '-ListPrice',
             'Price (low to high)': 'ListPrice'
-          } */
+          }
 
-          // $scope.googleApiKey = $attrs.googleApiKey || null
+          $scope.googleApiKey = $attrs.googleApiKey || null
 
           // Register this List with the Property service
-          propertyLoopback.registerListInstance($scope.elementId, $scope, 'Member')
+          idx.registerListInstance($scope.elementId, $scope)
 
-          const urlOptions = {}
-          /* if ($scope.urlLoad) {
+          let urlOptions = {}
+          if ($scope.urlLoad) {
             // first set the UrlOptions via defaults (cloning so it can't be altered)
-            propertyLoopback.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
+            idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
             // Load Options from the provided URL settings
-            urlOptions = propertyLoopback.getOptionsFromUrl()
+            urlOptions = idx.getOptionsFromUrl()
             // If a specific listing is provided, be sure to pop it up as well
             if (
-              urlOptions.Listing.service
-              && urlOptions.Listing.ListingKey
+              urlOptions.Listing.service &&
+              urlOptions.Listing.ListingKey
             ) {
               $scope.displayPropertyDetails(urlOptions.Listing)
             }
-          } */
+          }
 
-          $scope.searchMembers(urlOptions.Search, true, false)
+          $scope.searchProperties(urlOptions.Search, true, false)
         }
 
         /**
@@ -136,10 +142,10 @@
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
-          const searchScopes = propertyLoopback.getListInstanceLinks($scope.elementId, 'Member')
+          const searchScopes = idx.getListInstanceLinks($scope.elementId)
           searchScopes.forEach(function (searchScope) {
             // FIXME search widgets may only hold certain values. Later this needs to be adjust to only update the values in which a user can see/control
-            // searchScope.setQuery(propertyLoopback.getUrlOptions('Search'))
+            searchScope.setQuery(idx.getUrlOptions('Search'))
             searchScope.listInitialized = true
           })
         }
@@ -152,7 +158,7 @@
          * @param {Boolean} updateUrl
          * @returns {Promise<Collection>}
          */
-        $scope.searchMembers = async function searchMembers (options, refresh, updateUrl) {
+        $scope.searchProperties = async function searchProperties (options, refresh, updateUrl) {
           return $q(function (resolve, reject) {
             options = options || {}
             updateUrl = updateUrl === false ? updateUrl : true
@@ -189,19 +195,19 @@
             }
 
             // Set the URL options
-            // propertyLoopback.setUrlOptions('Search', options)
+            idx.setUrlOptions('Search', options)
+            // TODO need to avoid adding default variables to URL (Status/order/etc)
 
             // Display the URL options in the address bar
-            /* if (updateUrl) {
-              propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
-            } */
+            if (updateUrl) {
+              idx.refreshUrlOptions($ctrl.defaultOptions)
+            }
 
             // Keep the Search widgets up to date
-            // $scope.refreshSearchWidgetOptions()
+            $scope.refreshSearchWidgetOptions()
 
             // Grab the new property listings
-            console.log('fetching members:', $scope.options)
-            resolve(propertyLoopback.fetchMembers($scope, 'collection', $scope.options, refresh))
+            resolve(idx.fetchProperties($scope, 'collection', $scope.options, refresh))
           })
         }
 
@@ -215,7 +221,7 @@
             ev.preventDefault()
           }
           $scope.options.page = pageNumber
-          $scope.searchMembers()
+          $scope.searchProperties()
         }
 
         /**
@@ -255,7 +261,7 @@
             ev.preventDefault()
           }
           $scope.options.order = order
-          $scope.searchMembers(null, true, true)
+          $scope.searchProperties(null, true, true)
         }
 
         /**
@@ -263,23 +269,81 @@
          * @param {ListingProperty} property
          * @returns {string}
          */
-        /* $scope.getDetailsURL = function getDetailsURLPath(property) {
+        $scope.getDetailsURL = function getDetailsURLPath (property) {
           return $scope.detailsLinkUrl + '#!/Listing/' + property._ServiceId + '/' + property.ListingKey + '/'
-        } */
+        }
 
         /**
-         * Display an MLS' required legal disclaimer
-         * @param {Boolean} html - if output should be HTML safe
-         * @returns {String || *}
+         * Returns the processed street address
+         * @param {ListingProperty} property
+         * @returns {string}
          */
-        $scope.getMLSDisclaimer = function getMLSDisclaimer (html) {
+        $scope.getStreetAddress = function getStreetAddress (property) {
+          let address = ''
+          if (
+            Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') &&
+            property.UnparsedAddress !== ''
+          ) {
+            address = property.UnparsedAddress
+            // console.log('using unparsed ')
+          } else {
+            const addressParts = [];
+            [
+              'StreetNumberNumeric',
+              'StreetName',
+              'StreetSuffix',
+              'UnitNumber' // Added Unit string?
+            ]
+              .forEach(function (addressPart) {
+                if (Object.prototype.hasOwnProperty.call(property, addressPart)) {
+                  if (addressPart === 'UnitNumber') {
+                    addressParts.push('Unit')
+                  }
+                  addressParts.push(property[addressPart])
+                }
+              })
+            address = addressParts.join(' ')
+          }
+          // console.log('adress',  address)
+          return address
+        }
+
+        $scope.getMLSVariables = function getMLSVariables () {
+          // TODO this might need to be reset at some point
+          if (!$ctrl.mlsVariables) {
+            $ctrl.mlsVariables = idx.getMLSVariables()
+          }
+          return $ctrl.mlsVariables
+        }
+
+        /**
+         * Display an MLS' Name
+         * @returns {String}
+         */
+        $scope.getMLSName = function getMLSName (serviceId) {
+          const services = $scope.getMLSVariables()
+          let name = 'MLS'
+          if (services[serviceId]) {
+            name = services[serviceId].name
+          }
+          return name
+        }
+
+        /**
+         * Process an MLS' required legal disclaimer to later display
+         * @param {Boolean} html - if output should be HTML safe
+         * @returns {String}
+         */
+        $scope.processMLSDisclaimer = function processMLSDisclaimer (html) {
+          const services = $scope.getMLSVariables()
           let disclaimer = ''
-          propertyLoopback.getMLSVariables($scope.options.service || null).forEach(function (service) {
+          services.forEach(function (service) {
             if (disclaimer) {
               disclaimer += '<br>'
             }
             disclaimer += service.disclaimer
           })
+
           if ($scope.collection.meta.data.fetchDate) {
             disclaimer = `Last checked ${moment($scope.collection.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
           }
@@ -288,11 +352,26 @@
         }
 
         /**
+         * Display an MLS' required legal disclaimer
+         * @param {Boolean} html - if output should be HTML safe
+         * @returns {String}
+         */
+        $scope.getMLSDisclaimer = function getMLSDisclaimer (html) {
+          if (!$ctrl.disclaimerHTML) {
+            $ctrl.disclaimerHTML = $scope.processMLSDisclaimer(true)
+          }
+          if (!$ctrl.disclaimerString) {
+            $ctrl.disclaimerString = $scope.processMLSDisclaimer(false)
+          }
+          return html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
+        }
+
+        /**
          * Either popup or load a new page with the
-         * @param {ListingMember} member
+         * @param {ListingProperty} property
          * @param {*=} ev - Click event
          */
-        $scope.displayMemberDetails = function displayMemberDetails (member, ev) {
+        $scope.displayPropertyDetails = function displayPropertyDetails (property, ev) {
           if (ev) {
             ev.preventDefault()
             // ev.stopPropagation()
@@ -300,25 +379,29 @@
           if ($scope.detailsLinkPopup === true) {
             // Opening a popup will load the propertyDetails and adjust the hashbang URL
             const templateOptions = {
-              element_id: 'property_member_detail_popup',
-              service: member._ServiceId,
-              'member-key': member.MemberKey,
+              element_id: 'property_detail_popup_' + property.ListingKey,
+              service: property._ServiceId,
+              'listing-key': property.ListingKey,
+              'default-list-options': JSON.stringify($ctrl.defaultOptions),
               'page-title': true// update the page title
             }
             if ($scope.googleApiKey) {
               templateOptions['google-api-key'] = $scope.googleApiKey
             }
+            if ($scope.detailsTemplate) {
+              templateOptions['template'] = $scope.detailsTemplate
+            }
 
             let template =
-              '<md-dialog aria-label="' + member.MemberKey + '">' +
-              '<stratus-property-member-details '
+              '<md-dialog aria-label="' + property.ListingKey + '">' +
+              '<stratus-property-details '
             Object.keys(templateOptions).forEach(function (optionKey) {
               if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
                 template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
               }
             })
             template +=
-              '></stratus-property-member-details>' +
+              '></stratus-property-details>' +
               '</md-dialog>'
 
             $mdDialog.show({
@@ -330,98 +413,16 @@
             })
               .then(function () {
               }, function () {
-                // propertyLoopback.setUrlOptions('Listing', {})
-                // propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
+                idx.setUrlOptions('Listing', {})
+                idx.refreshUrlOptions($ctrl.defaultOptions)
                 // Revery page title back to what it was
-                propertyLoopback.setPageTitle()
+                idx.setPageTitle()
                 // Let's destroy it to save memory
-                $timeout(propertyLoopback.unregisterDetailsInstance('property_member_detail_popup'), 10)
+                $timeout(idx.unregisterDetailsInstance('property_detail_popup'), 10)
               })
           } else {
-            $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)
+            $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)
           }
-        }
-
-        $scope.injectMemberDetails = function injectMemberDetails (member, ev) {
-          console.log('will add these details to a form', member)
-          $scope.variableInject(member)
-        }
-
-        /**
-         * Get the Input element of a specified ID
-         * @param elementId
-         * @returns {*}
-         */
-        $scope.getInput = function (elementId) {
-          return angular.element(document.getElementById(elementId))
-        }
-
-        /**
-         * Sync Gutensite form variables to a Stratus scope
-         * TODO move this to it's own directive/service
-         * @returns {Promise<void>}
-         */
-        $scope.variableInject = async function (member) {
-          $scope.variableSyncing = $attrs.variableSync && _.isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
-
-          // console.log('variables syncing: ', $scope.variableSyncing)
-          // let promises = []
-          Object.keys($scope.variableSyncing).forEach(function (elementId) {
-            // promises.push(
-            // $q(async function (resolve, reject) {
-            const varElement = $scope.getInput(elementId)
-            if (varElement) {
-              // Form Input exists
-
-              if (Object.prototype.hasOwnProperty.call(member, $scope.variableSyncing[elementId])) {
-                varElement.val(member[$scope.variableSyncing[elementId]])
-              } else if (
-                $scope.variableSyncing[elementId] === 'MemberFullName' &&
-                Object.prototype.hasOwnProperty.call(member, 'MemberFirstName') &&
-                Object.prototype.hasOwnProperty.call(member, 'MemberLastName')
-              ) {
-                varElement.val(member['MemberFirstName'] + ' ' + member['MemberLastName'])
-              } else if (
-                $scope.variableSyncing[elementId] === 'MemberFirstName' &&
-                !Object.prototype.hasOwnProperty.call(member, 'MemberFirstName') &&
-                Object.prototype.hasOwnProperty.call(member, 'MemberFullName')
-              ) {
-                const nameArray = member['MemberFullName'].split(' ')
-                const firstName = nameArray.shift()
-                // let lastName = nameArray.join(' ')
-                varElement.val(firstName)
-              } else if (
-                $scope.variableSyncing[elementId] === 'MemberLastName' &&
-                !Object.prototype.hasOwnProperty.call(member, 'MemberLastName') &&
-                Object.prototype.hasOwnProperty.call(member, 'MemberFullName')
-              ) {
-                const nameArray = member['MemberFullName'].split(' ')
-                // let firstName = nameArray.shift()
-                const lastName = nameArray.join(' ')
-                varElement.val(lastName)
-              }
-
-              // varElement.val(member.MemberFullName)
-
-              // let scopeVarPath = $scope.variableSyncing[elementId]
-              // convert into a real var path and set the intial value from the exiting form value
-              // await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
-
-              // Creating watcher to update the input when the scope changes
-              // $scope.$watch(
-              // scopeVarPath,
-              // function (value) {
-              // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
-              // varElement.val(value)
-              // },
-              // true
-              // )
-            }
-            // resolve()
-            // })
-            // )
-          })
-          // await $q.all(promises)
         }
 
         /**
@@ -433,11 +434,11 @@
       }],
     templateUrl:
       function ($element, $attrs) {
-        const templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
+        // let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
         return Stratus.BaseUrl +
           'content/property/stratus/components/' +
-          ($attrs.template || 'propertyMemberList') +
-          (templateMin && min) + '.html'
+          ($attrs.template || 'propertyList') +
+          min + '.html'
       }
   }
 }))

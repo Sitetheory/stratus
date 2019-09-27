@@ -38,7 +38,7 @@
       'moment',
       'angular-sanitize',
 
-      'stratus.services.propertyLoopback',
+      'stratus.services.idx',
 
       'stratus.filters.math',
       'stratus.filters.moment',
@@ -73,8 +73,8 @@
       '$sce',
       '$location',
       'Model',
-      'propertyLoopback',
-      function ($scope, $attrs, $sce, $location, Model, propertyLoopback) {
+      'Idx',
+      function ($scope, $attrs, $sce, $location, Model, idx) {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_details_')
@@ -667,7 +667,7 @@
           ]
 
           // Register this List with the Property service
-          propertyLoopback.registerDetailsInstance($scope.elementId, $scope)
+          idx.registerDetailsInstance($scope.elementId, $scope)
           // console.log(this.uid)
 
           if (
@@ -682,7 +682,7 @@
 
           if ($scope.urlLoad) {
             // Load Options from the provided URL settings
-            const urlOptions = propertyLoopback.getOptionsFromUrl()
+            const urlOptions = idx.getOptionsFromUrl()
             if (Object.prototype.hasOwnProperty.call(urlOptions, 'Listing')) {
               _.extend($scope.options, urlOptions.Listing)
             }
@@ -693,16 +693,16 @@
         $scope.$watch('model.data', function (data) {
           if (data) {
             $scope.devLog('Loaded Details Data:', data)
-            propertyLoopback.setUrlOptions('Listing',
+            idx.setUrlOptions('Listing',
               {
                 service: $scope.options.service,
                 ListingKey: data.ListingKey,
                 address: $scope.getStreetAddress()
               })
-            propertyLoopback.refreshUrlOptions($scope.defaultListOptions)
+            idx.refreshUrlOptions($scope.defaultListOptions)
             if ($scope.options.pageTitle) {
               // Update the page title
-              propertyLoopback.setPageTitle(data.UnparsedAddress)
+              idx.setPageTitle(data.UnparsedAddress)
             }
           }
         })
@@ -731,7 +731,7 @@
             !isNaN(propertyQuery.service) &&
             (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
           ) {
-            propertyLoopback.fetchProperty($scope, 'model', propertyQuery)
+            idx.fetchProperty($scope, 'model', propertyQuery)
           } else {
             console.error('No Service Id or Listing Key/Id is fetch from')
           }
@@ -811,7 +811,7 @@
 
         $scope.getMLSVariables = function getMLSVariables () {
           if (!$ctrl.mlsVariables) {
-            $ctrl.mlsVariables = propertyLoopback.getMLSVariables([$scope.model.data._ServiceId])
+            $ctrl.mlsVariables = idx.getMLSVariables([$scope.model.data._ServiceId])
           }
           return $ctrl.mlsVariables[$scope.model.data._ServiceId]
         }

@@ -1,0 +1,45 @@
+{
+  "name": "@stratusjs/idx",
+  "version": "0.0.1",
+  "description": "AngularJS idx/property Service and Components bundle to be used as an add on to Stratus",
+  "main": "./components/propertySearch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sitetheory/stratus.git"
+  },
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "angularjs",
+    "lodash",
+    "javascript"
+  ],
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus#readme",
+  "dependencies": {
+    "angular": "^1.7.8",
+    "angular-animate": "^1.7.8",
+    "angular-aria": "^1.7.8",
+    "angular-chart.js": "^1.1.1",
+    "angular-drag-and-drop-lists": "^2.1.0",
+    "angular-froala-wysiwyg": "2.7.1",
+    "angular-material": "^1.1.19",
+    "angular-messages": "^1.7.8",
+    "angular-paging": "^2.2.2",
+    "angular-resource": "^1.7.8",
+    "angular-sanitize": "^1.7.8",
+    "angular-scroll-spy": "^1.0.0",
+    "angular-ui-tree": "^2.22.6",
+    "moment": "^2.24.0",
+    "moment-range": "^4.0.2",
+    "moment-timezone": "^0.5.25",
+    "swiper": "^4.5.0"
+  }
+}
