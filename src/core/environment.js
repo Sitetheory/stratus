@@ -1,6 +1,6 @@
 System.register(["@stratus/core/conversion", "lodash"], function (exports_1, context_1) {
     "use strict";
-    var conversion_1, _, Environment;
+    var conversion_1, _;
     var __moduleName = context_1 && context_1.id;
     function cookie(name, value, expires, path, domain) {
         const request = {
@@ -50,12 +50,6 @@ System.register(["@stratus/core/conversion", "lodash"], function (exports_1, con
             }
         ],
         execute: function () {
-            Environment = class Environment {
-                constructor() {
-                    this.cookie = cookie;
-                }
-            };
-            exports_1("Environment", Environment);
         }
     };
 });

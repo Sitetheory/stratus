@@ -1,6 +1,5 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var DOM;
     var __moduleName = context_1 && context_1.id;
     function DOMComplete() {
         return new Promise(resolve => {
@@ -11,12 +10,6 @@ System.register([], function (exports_1, context_1) {
     return {
         setters: [],
         execute: function () {
-            DOM = class DOM {
-                constructor() {
-                    this.complete = DOMComplete;
-                }
-            };
-            exports_1("DOM", DOM);
         }
     };
 });

@@ -60,7 +60,8 @@
       lodash: boot.bundle + 'stratus/node_modules/lodash/lodash' + boot.suffix,
 
       /* THIRD PARTY: Bowser */
-      bowser: boot.bundle + 'stratus/node_modules/bowser/bowser' + boot.suffix,
+      bowser: boot.bundle + 'stratus/node_modules/bowser/bundled',
+      'bowser-legacy': boot.bundle + 'stratus/node_modules/bowser-legacy/bowser' + boot.suffix,
 
       /* THIRD PARTY: Interpreters */
       // coffee: boot.bundle + 'stratus/node_modules/coffeescript/docs/v2/browser-compiler/coffeescript',
@@ -201,4 +202,4 @@
 
     }
   })
-})(this)
+})(this); // eslint-disable-line semi

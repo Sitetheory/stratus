@@ -4,7 +4,3 @@ export function DOMComplete(): Promise<void> {
         document.readyState === 'complete' ? resolve() : window.addEventListener('load', () => resolve())
     })
 }
-
-export class DOM {
-    complete = DOMComplete
-}

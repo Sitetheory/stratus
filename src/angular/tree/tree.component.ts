@@ -17,6 +17,9 @@ import {Observable, Subject, Subscriber} from 'rxjs'
 import * as Stratus from 'stratus'
 import * as _ from 'lodash'
 
+// Services
+import {Registry} from 'stratus.services.registry'
+
 // Data Types
 export interface Node {
     id: number
@@ -72,7 +75,7 @@ export class TreeComponent {
     _: any
 
     // Stratus Data Connectivity
-    registry = new Stratus.Data.Registry()
+    registry = new Registry()
     fetched: any
     data: any
     collection: any
