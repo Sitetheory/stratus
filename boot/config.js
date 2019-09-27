@@ -61,6 +61,7 @@
 
       /* THIRD PARTY: Bowser */
       bowser: boot.bundle + 'stratus/node_modules/bowser/bundled',
+      'bowser-legacy': boot.bundle + 'stratus/node_modules/bowser/bowser' + boot.suffix,
 
       /* THIRD PARTY: Interpreters */
       // coffee: boot.bundle + 'stratus/node_modules/coffeescript/docs/v2/browser-compiler/coffeescript',
