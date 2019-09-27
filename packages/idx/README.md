@@ -6,12 +6,12 @@ AngularJS idx/property Service and Components bundle to be used as an add on to 
 ## Usage
 
 ### Stratus HTML Components enabled
-* `<stratus-property-list></stratus-property-list>`
-* `<stratus-property-details></stratus-property-details>`
-* `<stratus-property-search></stratus-property-search>`
-* `<stratus-property-member-list></stratus-member-list>`
-* `<stratus-property-member-details></stratus-member-details>`
-* `<stratus-property-member-search></stratus-member-search>`
+  * `<stratus-property-list></stratus-property-list>`
+  * `<stratus-property-details></stratus-property-details>`
+  * `<stratus-property-search></stratus-property-search>`
+  * `<stratus-property-member-list></stratus-member-list>`
+  * `<stratus-property-member-details></stratus-member-details>`
+  * `<stratus-property-member-search></stratus-member-search>`
 
 [TODO]() More details and instructions
 
@@ -22,10 +22,10 @@ AngularJS idx/property Service and Components bundle to be used as an add on to 
 Within the project directory of Stratus
 
 Either Yarn install
-* `yarn add @stratusjs/idx`
+  * `yarn add @stratusjs/idx`
 
 Or NPM install
-* `npm install @stratusjs/idx`
+  * `npm install @stratusjs/idx`
 
 And include the the library paths into your stratus `config.js` such as
 ```js
@@ -47,23 +47,23 @@ boot.configuration.paths = {
 #### Dependencies
 All dependencies need to be installed within the same project along with your config paths define.
 (manually installed for the time being)
-* [stratus.js](https://www.npmjs.com/package/stratus.js)
-* angular
-* angular-animate
-* angular-aria
-* angular-chart.js
-* angular-drag-and-drop-lists
-* angular-froala-wysiwyg
-* angular-material
-* angular-messages
-* angular-paging
-* angular-resource
-* angular-sanitize
-* angular-scroll-spy
-* angular-ui-tree
-* moment
-* moment-range
-* moment-timezone
+  * [stratus.js](https://www.npmjs.com/package/stratus.js)
+  * angular
+  * angular-animate
+  * angular-aria
+  * angular-chart.js
+  * angular-drag-and-drop-lists
+  * angular-froala-wysiwyg
+  * angular-material
+  * angular-messages
+  * angular-paging
+  * angular-resource
+  * angular-sanitize
+  * angular-scroll-spy
+  * angular-ui-tree
+  * moment
+  * moment-range
+  * moment-timezone
 
 [TODO]() Items such as angular and moment should be automatically installed
 
