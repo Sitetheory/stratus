@@ -189,4 +189,4 @@
       })
     }
   }
-})(this)
+})(this); // eslint-disable-line semi
