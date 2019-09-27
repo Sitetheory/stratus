@@ -23,78 +23,97 @@ let mdToast: any = () => {
 }
 
 export class Collection extends Stratus.Prototypes.EventManager {
+    // Base Information
+    name = 'Collection'
+
+    // Environment
+    target?: any = null
+    direct = false
+    infinite = false
+    threshold = 0.5
+    qualifier = '' // ng-if
+    decay = 0
+    urlRoot = '/Api'
+
+    // Infrastructure
+    header = new Stratus.Prototypes.Model()
+    meta = new Stratus.Prototypes.Model()
+    model = Model
+    models: any = []
+    types: any = []
+
+    // Internals
+    pending = false
+    error = false
+    completed = false
+
+    // Action Flags
+    filtering = false
+    paginate = false
+
+    // Methods
     throttle = _.throttle(this.fetch, 1000)
 
     constructor(options: any) {
         super()
-        this.name = 'Collection'
-
-        // Environment
-        this.target = null
-        this.direct = false
-        this.infinite = false
-        this.threshold = 0.5
-        this.qualifier = '' // ng-if
-        this.decay = 0
-        this.urlRoot = '/Api'
 
         if (options && typeof options === 'object') {
             angular.extend(this, options)
         }
-
-        // Infrastructure
-        this.header = new Stratus.Prototypes.Model()
-        this.meta = new Stratus.Prototypes.Model()
-        this.model = Model
-        this.models = []
-        this.types = []
-
-        // Internals
-        this.pending = false
-        this.error = false
-        this.completed = false
-
-        // Action Flags
-        this.filtering = false
-        this.paginate = false
 
         // Generate URL
         if (this.target) {
             this.urlRoot += '/' + ucfirst(this.target)
         }
 
+        // Scope Binding
+        this.serialize = this.serialize.bind(this)
+        this.url = this.url.bind(this)
+        this.inject = this.inject.bind(this)
+        this.sync = this.sync.bind(this)
+        this.fetch = this.fetch.bind(this)
+        this.filter = this.filter.bind(this)
+        this.throttleFilter = this.throttleFilter.bind(this)
+        this.page = this.page.bind(this)
+        this.toJSON = this.toJSON.bind(this)
+        this.add = this.add.bind(this)
+        this.remove = this.remove.bind(this)
+        this.find = this.find.bind(this)
+        this.pluck = this.pluck.bind(this)
+        this.exists = this.exists.bind(this)
+
         // Infinite Scrolling
         /* *
-         this.infiniteModels = {
-         numLoaded_: 0,
-         toLoad_: 0,
-         // Required.
-         getItemAtIndex: function (index) {
-         if (index > this.numLoaded_) {
-         this.fetchMoreItems_(index)
-         return null
-         }
-         return index
-         },
-         // Required.
-         // For infinite scroll behavior, we always return a slightly higher
-         // number than the previously loaded items.
-         getLength: function () {
-         return this.numLoaded_ + 5
-         },
-         fetchMoreItems_: function (index) {
-         // For demo purposes, we simulate loading more items with a timed
-         // promise. In real code, this function would likely contain an
-         // $http request.
-         if (this.toLoad_ < index) {
-         this.toLoad_ += 20
-         $timeout(angular.noop, 300).then(angular.bind(this, function () {
-         this.numLoaded_ = this.toLoad_
-         }))
-         }
-         }
-         }
-         /* */
+        this.infiniteModels = {
+            numLoaded_: 0,
+            toLoad_: 0,
+            // Required.
+            getItemAtIndex: function(index) {
+                if (index > this.numLoaded_) {
+                    this.fetchMoreItems_(index)
+                    return null
+                }
+                return index
+            },
+            // Required.
+            // For infinite scroll behavior, we always return a slightly higher
+            // number than the previously loaded items.
+            getLength: function() {
+                return this.numLoaded_ + 5
+            },
+            fetchMoreItems_: function(index) {
+                // For demo purposes, we simulate loading more items with a timed
+                // promise. In real code, this function would likely contain an
+                // $http request.
+                if (this.toLoad_ < index) {
+                    this.toLoad_ += 20
+                    $timeout(angular.noop, 300).then(angular.bind(this, function() {
+                        this.numLoaded_ = this.toLoad_
+                    }))
+                }
+            }
+        }
+        /* */
     }
 
     serialize(obj: any, chain?: any) {
@@ -131,16 +150,15 @@ export class Collection extends Stratus.Prototypes.EventManager {
         if (!_.isArray(data)) {
             return
         }
-        const that = this
-        if (that.types.indexOf(type) === -1) {
-            that.types.push(type)
+        if (this.types && this.types.indexOf(type) === -1) {
+            this.types.push(type)
         }
         // TODO: Make this able to be flagged as direct entities
         data.forEach((target: any) => {
             // TODO: Add references to the Catalog when creating these
             // models
-            that.models.push(new Model({
-                collection: that,
+            this.models.push(new Model({
+                collection: this,
                 type: type || null
             }, target))
         })
@@ -151,8 +169,8 @@ export class Collection extends Stratus.Prototypes.EventManager {
         const that = this
 
         // Internals
-        that.pending = true
-        that.completed = false
+        this.pending = true
+        this.completed = false
 
         return new Promise((resolve: any, reject: any) => {
             action = action || 'GET'

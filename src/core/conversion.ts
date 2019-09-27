@@ -23,8 +23,11 @@ export function sanitize(data: any) {
     if (!_.isObject(data)) {
         return data
     }
-    _.each(data, (value, key) => {
-        console.log(key, value)
+    _.each(data, (value: any, key: string, list: {[key: string]: any}) => {
+        if (_.size(value) > 0) {
+            return
+        }
+        delete list[key]
     })
     return data
 }

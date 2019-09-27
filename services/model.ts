@@ -89,6 +89,30 @@ export class Model extends Stratus.Prototypes.Model {
             attr: /(^[^[]+)/
         }
 
+        // Scope Binding
+        this.watcher = this.watcher.bind(this)
+        this.getIdentifier = this.getIdentifier.bind(this)
+        this.getType = this.getType.bind(this)
+        this.getHash = this.getHash.bind(this)
+        this.url = this.url.bind(this)
+        this.serialize = this.serialize.bind(this)
+        this.sync = this.sync.bind(this)
+        this.fetch = this.fetch.bind(this)
+        this.save = this.save.bind(this)
+        this.specialAction = this.specialAction.bind(this)
+        this.throttleSave = this.throttleSave.bind(this)
+        this.toJSON = this.toJSON.bind(this)
+        this.toPatch = this.toPatch.bind(this)
+        this.buildPath = this.buildPath.bind(this)
+        this.get = this.get.bind(this)
+        this.find = this.find.bind(this)
+        this.set = this.set.bind(this)
+        this.setAttribute = this.setAttribute.bind(this)
+        this.toggle = this.toggle.bind(this)
+        this.pluck = this.pluck.bind(this)
+        this.exists = this.exists.bind(this)
+        this.destroy = this.destroy.bind(this)
+
         this.throttle = _.throttle(this.save, 2000)
 
         this.initialize = _.once(this.initialize || function() {
