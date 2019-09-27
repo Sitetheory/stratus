@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "rxjs", "@angular/platform-browser", "@angular/material/icon", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "rxjs", "@angular/platform-browser", "@angular/material/icon", "stratus", "lodash", "stratus.services.registry"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18,7 +18,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, forms_1, drag_drop_1, rxjs_1, platform_browser_1, icon_1, Stratus, _, localDir, systemDir, moduleName, has, SelectorComponent;
+    var core_1, forms_1, drag_drop_1, rxjs_1, platform_browser_1, icon_1, Stratus, _, stratus_services_registry_1, localDir, systemDir, moduleName, has, SelectorComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -45,6 +45,9 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
             },
             function (_1) {
                 _ = _1;
+            },
+            function (stratus_services_registry_1_1) {
+                stratus_services_registry_1 = stratus_services_registry_1_1;
             }
         ],
         execute: function () {
@@ -62,7 +65,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
                     this.has = has;
                     this.log = console.log;
                     this.selectCtrl = new forms_1.FormControl();
-                    this.registry = new Stratus.Data.Registry();
+                    this.registry = new stratus_services_registry_1.Registry();
                     this.onChange = new rxjs_1.Subject();
                     this.uid = _.uniqueId('sa_selector_component_');
                     Stratus.Instances[this.uid] = this;

@@ -13,9 +13,15 @@ import {map, startWith} from 'rxjs/operators'
 import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser'
 import {MatIconRegistry} from '@angular/material/icon'
 
+// RXJS
+import {SubjectSubscriber} from 'rxjs/internal/Subject'
+
+// External Dependencies
 import * as Stratus from 'stratus'
 import * as _ from 'lodash'
-import {SubjectSubscriber} from 'rxjs/internal/Subject'
+
+// Services
+import {Registry} from 'stratus.services.registry'
 
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
 const systemDir = '@stratus/angular'
@@ -66,7 +72,7 @@ export class SelectorComponent { // implements OnInit
     selectCtrl = new FormControl()
 
     // Stratus Data Connectivity
-    registry = new Stratus.Data.Registry()
+    registry = new Registry()
     fetched: any
     data: any
     collection: any

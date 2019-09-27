@@ -1,5 +1,7 @@
+// Angular Core
 import {ChangeDetectionStrategy, Component, Injectable} from '@angular/core'
 
+// External Dependencies
 import * as Stratus from 'stratus'
 import * as _ from 'lodash'
 
