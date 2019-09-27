@@ -2530,7 +2530,7 @@
     // Listen for Scrolling Updates
     // Note: You can't use event.preventDefault() in Passive Events
     const viewPort = Stratus.Select(Stratus.Environment.get('viewPort') || window)
-    const viewPortChangeHandler = _.throttle(function () {
+    const viewPortChangeHandler = function () {
       /* *
       if (!Stratus.Environment.get('production')) {
         console.log('scrolling:', Stratus.Internals.GetScrollDir())
@@ -2540,7 +2540,7 @@
         return
       }
       Stratus.Environment.set('viewPortChange', true)
-    }, 120)
+    }
     viewPort.addEventListener('scroll', viewPortChangeHandler, Stratus.Environment.get('passiveEventOptions'))
     // Resizing can change what's on screen so we need to check the scrolling
     viewPort.addEventListener('resize', viewPortChangeHandler, Stratus.Environment.get('passiveEventOptions'))
