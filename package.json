@@ -79,6 +79,7 @@
     "@angular/language-service": "^8.2.7",
     "@babel/parser": "^7.4.5",
     "@babel/types": "^7.4.4",
+    "@types/angular": "^1.6.56",
     "@types/jasmine": "^3.3.13",
     "@types/jasminewd2": "^2.0.6",
     "@types/jquery": "^3.3.31",
