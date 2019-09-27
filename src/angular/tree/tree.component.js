@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/platform-browser", "@angular/material/icon", "rxjs", "stratus", "lodash"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/cdk/tree", "@angular/platform-browser", "@angular/material/icon", "rxjs", "stratus", "lodash", "stratus.services.registry"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18,7 +18,7 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/cdk/tree",
             step((generator = generator.apply(thisArg, _arguments || [])).next());
         });
     };
-    var core_1, drag_drop_1, tree_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, localDir, systemDir, moduleName, TreeComponent;
+    var core_1, drag_drop_1, tree_1, platform_browser_1, icon_1, rxjs_1, Stratus, _, stratus_services_registry_1, localDir, systemDir, moduleName, TreeComponent;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -45,6 +45,9 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/cdk/tree",
             },
             function (_1) {
                 _ = _1;
+            },
+            function (stratus_services_registry_1_1) {
+                stratus_services_registry_1 = stratus_services_registry_1_1;
             }
         ],
         execute: function () {
@@ -57,7 +60,7 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/cdk/tree",
                     this.sanitizer = sanitizer;
                     this.ref = ref;
                     this.title = moduleName + '_component';
-                    this.registry = new Stratus.Data.Registry();
+                    this.registry = new stratus_services_registry_1.Registry();
                     this.onChange = new rxjs_1.Subject();
                     this.unsettled = false;
                     this.dropLists = [];
