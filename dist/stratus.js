@@ -2230,6 +2230,9 @@
     if (initialLoad && typeof initialLoad === 'object' && _.size(initialLoad)) {
       Stratus.Environment.set(initialLoad)
     }
+    if (Stratus.Client.mobile) {
+      Stratus.Environment.set('viewPort', null)
+    }
     // Environment Information
     let passiveEventOptions = false
     try {
