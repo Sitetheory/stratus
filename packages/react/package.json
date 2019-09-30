@@ -1,0 +1,39 @@
+{
+  "name": "@stratusjs/react",
+  "version": "0.1.0",
+  "description": "This is the react package for StratusJS.",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sitetheory/stratus.git"
+  },
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus",
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "underscore",
+    "lodash",
+    "javascript",
+    "typescript",
+    "react"
+  ],
+  "engines": {
+    "yarn": ">= 1.0.0"
+  },
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "^3.0.1",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "ts-node": "^8.3.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
+  }
+}

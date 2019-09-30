@@ -7,16 +7,16 @@ import {BrowserModule} from '@angular/platform-browser'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 
 // Stratus Modules
-import {MaterialModules} from '@stratus/angular/material'
+import {MaterialModules} from '@stratusjs/angular/material'
 
 // Stratus Core Components
-import {BaseComponent} from '@stratus/angular/base/base.component'
+import {BaseComponent} from '@stratusjs/angular/base/base.component'
 
 // Stratus Custom Components
-import {SelectorComponent} from '@stratus/angular/selector/selector.component'
-import {TreeComponent} from '@stratus/angular/tree/tree.component'
-import {TreeDialogComponent} from '@stratus/angular/tree/tree-dialog.component'
-import {TreeNodeComponent} from '@stratus/angular/tree/tree-node.component'
+import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
+import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
+import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
+import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
 
 // Angular Components
 import {QuillModule} from 'ngx-quill'

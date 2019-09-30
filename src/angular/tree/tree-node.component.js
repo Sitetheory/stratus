@@ -1,4 +1,4 @@
-System.register(["@angular/core", "@angular/material/dialog", "@stratus/angular/tree/tree.component", "@stratus/angular/tree/tree-dialog.component", "lodash", "stratus"], function (exports_1, context_1) {
+System.register(["@angular/core", "@angular/material/dialog", "@stratusjs/angular/tree/tree.component", "@stratusjs/angular/tree/tree-dialog.component", "lodash", "stratus"], function (exports_1, context_1) {
     "use strict";
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -34,7 +34,7 @@ System.register(["@angular/core", "@angular/material/dialog", "@stratus/angular/
         ],
         execute: function () {
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
-            systemDir = '@stratus/angular';
+            systemDir = '@stratusjs/angular';
             moduleName = 'tree-node';
             parentModuleName = 'tree';
             TreeNodeComponent = class TreeNodeComponent {

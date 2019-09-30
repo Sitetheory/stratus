@@ -1,4 +1,4 @@
-System.register(["@stratus/core/conversion", "lodash"], function (exports_1, context_1) {
+System.register(["@stratusjs/core/conversion", "lodash"], function (exports_1, context_1) {
     "use strict";
     var conversion_1, _;
     var __moduleName = context_1 && context_1.id;

@@ -47,7 +47,7 @@ export interface ElementMap {
 
 // Local Setup
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
-const systemDir = '@stratus/angular'
+const systemDir = '@stratusjs/angular'
 const moduleName = 'tree'
 
 /**

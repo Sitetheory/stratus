@@ -52,7 +52,7 @@ System.register(["@angular/core", "@angular/forms", "@angular/cdk/drag-drop", "r
         ],
         execute: function () {
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
-            systemDir = '@stratus/angular';
+            systemDir = '@stratusjs/angular';
             moduleName = 'selector';
             has = (object, path) => {
                 return _.has(object, path) && !_.isEmpty(_.get(object, path));

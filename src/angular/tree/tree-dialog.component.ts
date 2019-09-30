@@ -11,7 +11,7 @@ import * as _ from 'lodash'
 import * as Stratus from 'stratus'
 
 // Services
-import {BackendService} from '@stratus/angular/backend.service'
+import {BackendService} from '@stratusjs/angular/backend.service'
 
 // Data Types
 export interface DialogData {
@@ -29,7 +29,7 @@ export interface DialogData {
 
 // Local Setup
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
-const systemDir = '@stratus/angular'
+const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-dialog'
 const parentModuleName = 'tree'
 

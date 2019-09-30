@@ -5,8 +5,8 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} fr
 import {MatDialog} from '@angular/material/dialog'
 
 // Tree Imports
-import {Node, TreeComponent} from '@stratus/angular/tree/tree.component'
-import {DialogData, TreeDialogComponent} from '@stratus/angular/tree/tree-dialog.component'
+import {Node, TreeComponent} from '@stratusjs/angular/tree/tree.component'
+import {DialogData, TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
 
 // External
 import * as _ from 'lodash'
@@ -14,7 +14,7 @@ import * as Stratus from 'stratus'
 
 // Local Setup
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
-const systemDir = '@stratus/angular'
+const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-node'
 const parentModuleName = 'tree'
 

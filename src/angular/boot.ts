@@ -1,4 +1,4 @@
-import {DOMComplete} from '@stratus/core/dom'
+import {DOMComplete} from '@stratusjs/core/dom'
 
 // Fade out detection cycles
 let initialTimeout = 1000
@@ -45,7 +45,7 @@ function angularBoot() {
     // Lock Bootstrapper
     boot = true
     // Require Main
-    require('@stratus/angular/main')
+    require('@stratusjs/angular/main')
 }
 
 // Automatic Bootstrapping on DOM Complete

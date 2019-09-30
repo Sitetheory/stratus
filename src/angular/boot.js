@@ -1,4 +1,4 @@
-System.register(["@stratus/core/dom"], function (exports_1, context_1) {
+System.register(["@stratusjs/core/dom"], function (exports_1, context_1) {
     "use strict";
     var dom_1, initialTimeout, boot;
     var __moduleName = context_1 && context_1.id;
@@ -35,7 +35,7 @@ System.register(["@stratus/core/dom"], function (exports_1, context_1) {
             return;
         }
         boot = true;
-        require('@stratus/angular/main');
+        require('@stratusjs/angular/main');
     }
     return {
         setters: [

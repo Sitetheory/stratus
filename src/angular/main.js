@@ -1,4 +1,4 @@
-System.register(["@stratus/angular/polyfills", "@angular/core", "@angular/platform-browser-dynamic", "@stratus/angular/app.module", "@stratus/core/environment"], function (exports_1, context_1) {
+System.register(["@stratusjs/angular/polyfills", "@angular/core", "@angular/platform-browser-dynamic", "@stratusjs/angular/app.module", "@stratusjs/core/environment"], function (exports_1, context_1) {
     "use strict";
     var core_1, platform_browser_dynamic_1, app_module_1, environment_1;
     var __moduleName = context_1 && context_1.id;
@@ -25,9 +25,9 @@ System.register(["@stratus/angular/polyfills", "@angular/core", "@angular/platfo
             }
             platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule)
                 .then(module => {
-                console.log('@stratus/angular initialized successfully!');
+                console.log('@stratusjs/angular initialized successfully!');
             })
-                .catch(err => console.error('@stratus/angular failed to initialize!', err));
+                .catch(err => console.error('@stratusjs/angular failed to initialize!', err));
         }
     };
 });

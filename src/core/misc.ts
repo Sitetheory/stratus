@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import {seconds} from '@stratus/core/conversion'
+import {seconds} from '@stratusjs/core/conversion'
 
 // This function simply extracts the name of a function from code directly
 export function functionName(code: any) {

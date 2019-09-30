@@ -1,15 +1,15 @@
 // Normalizers
-import '@stratus/angular/polyfills'
+import '@stratusjs/angular/polyfills'
 
 // Angular Core
 import {enableProdMode} from '@angular/core'
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic'
 
 // Bootstrap
-import {AppModule} from '@stratus/angular/app.module'
+import {AppModule} from '@stratusjs/angular/app.module'
 
 // Stratus Core
-import {cookie} from '@stratus/core/environment'
+import {cookie} from '@stratusjs/core/environment'
 
 // Switch Environment Appropriately
 if (null === cookie('env')) {
@@ -19,8 +19,8 @@ if (null === cookie('env')) {
 // Start App Module
 platformBrowserDynamic().bootstrapModule(AppModule)
     .then(module => {
-        console.log('@stratus/angular initialized successfully!')
+        console.log('@stratusjs/angular initialized successfully!')
     })
-    // .then(module => console.log('@stratus/angular:', arguments))
-    .catch(err => console.error('@stratus/angular failed to initialize!', err))
+    // .then(module => console.log('@stratusjs/angular:', arguments))
+    .catch(err => console.error('@stratusjs/angular failed to initialize!', err))
 

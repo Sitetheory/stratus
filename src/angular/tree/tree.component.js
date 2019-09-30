@@ -52,7 +52,7 @@ System.register(["@angular/core", "@angular/cdk/drag-drop", "@angular/cdk/tree",
         ],
         execute: function () {
             localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular';
-            systemDir = '@stratus/angular';
+            systemDir = '@stratusjs/angular';
             moduleName = 'tree';
             TreeComponent = class TreeComponent {
                 constructor(iconRegistry, sanitizer, ref) {

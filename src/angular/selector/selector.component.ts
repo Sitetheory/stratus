@@ -24,7 +24,7 @@ import * as _ from 'lodash'
 import {Registry} from 'stratus.services.registry'
 
 const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
-const systemDir = '@stratus/angular'
+const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
 
 const has = (object: object, path: string): boolean => {
