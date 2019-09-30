@@ -23,11 +23,10 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      // 'underscore',
       'lodash',
       'angular',
 
-      'stratus.services.propertyLoopback'
+      'stratus.services.idx'
     ], factory)
   } else {
     factory(root.Stratus, root._, root.angular, root.moment)
@@ -53,8 +52,8 @@
       '$mdConstant',
       '$q',
       '$mdPanel',
-      'propertyLoopback',
-      function ($scope, $attrs, $window, $timeout, $mdConstant, $q, $mdPanel, propertyLoopback) {
+      'Idx',
+      function ($scope, $attrs, $window, $timeout, $mdConstant, $q, $mdPanel, Idx) {
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_search_')
         Stratus.Instances[$ctrl.uid] = $scope
@@ -161,7 +160,7 @@
           $scope.setQueryDefaults()
 
           // Register this Search with the Property service
-          propertyLoopback.registerSearchInstance($scope.elementId, $scope, $scope.listId)
+          Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
 
           $scope.variableSync()
         }
@@ -406,14 +405,14 @@
         $scope.searchProperties = function searchProperties () {
           let listScope
           if ($scope.listId) {
-            listScope = propertyLoopback.getListInstance($scope.listId)
+            listScope = Idx.getListInstance($scope.listId)
           }
           if (listScope) {
             $scope.options.query.Page = 1
             listScope.searchProperties($scope.options.query, true)
           } else {
-            propertyLoopback.setUrlOptions('Search', $scope.options.query)
-            $window.open($scope.listLinkUrl + '#!/' + propertyLoopback.getUrlOptionsPath(), $scope.listLinkTarget)
+            Idx.setUrlOptions('Search', $scope.options.query)
+            $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
           }
         }
 
@@ -422,7 +421,7 @@
          */
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
           if ($scope.listId) {
-            propertyLoopback.getListInstance($scope.listId).refreshSearchWidgetOptions()
+            Idx.getListInstance($scope.listId).refreshSearchWidgetOptions()
           }
         }
       }],

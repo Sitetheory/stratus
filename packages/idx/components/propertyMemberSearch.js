@@ -27,7 +27,7 @@
       'lodash',
       'angular',
 
-      'stratus.services.propertyLoopback',
+      'stratus.services.idx',
 
       'stratus.components.propertyMemberList'// requires to preload this...hmmm...stratus should handle this automatically...
     ], factory)
@@ -55,8 +55,8 @@
       '$mdDialog',
       '$q',
       '$mdPanel',
-      'propertyLoopback',
-      function ($scope, $attrs, $window, $timeout, $mdDialog, $q, $mdPanel, propertyLoopback) {
+      'IDX',
+      function ($scope, $attrs, $window, $timeout, $mdDialog, $q, $mdPanel, IDX) {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_member_search_')
@@ -90,11 +90,11 @@
 
           if ($scope.options.tokenUrl) {
             /// ajax/request?class=property.token_auth&method=getToken
-            propertyLoopback.setTokenURL($scope.options.tokenUrl)
+            IDX.setTokenURL($scope.options.tokenUrl)
           }
 
           // Register this Search with the Property service
-          propertyLoopback.registerSearchInstance($scope.elementId, $scope, $scope.listId, 'Member')
+          IDX.registerSearchInstance($scope.elementId, $scope, $scope.listId, 'Member')
 
           // $scope.variableSync()
         }
@@ -232,15 +232,15 @@
         $scope.searchMembers = function searchMembers () {
           let listScope
           if ($scope.listId) {
-            listScope = propertyLoopback.getListInstance($scope.listId, 'Member')
+            listScope = IDX.getListInstance($scope.listId, 'Member')
           }
           if (listScope) {
             $scope.options.query.Page = 1
             listScope.searchMembers($scope.options.query, true)
             // TODO open popup
           } else {
-            // propertyLoopback.setUrlOptions('Search', $scope.options.query)
-            // $window.open($scope.listLinkUrl + '#!/' + propertyLoopback.getUrlOptionsPath(), $scope.listLinkTarget)
+            // IDX.setUrlOptions('Search', $scope.options.query)
+            // $window.open($scope.listLinkUrl + '#!/' + IDX.getUrlOptionsPath(), $scope.listLinkTarget)
             console.log('displaying popup')
             $scope.displayMemberSelector()
           }
@@ -311,12 +311,12 @@
           })
             .then(function () {
             }, function () {
-              // propertyLoopback.setUrlOptions('Listing', {})
-              // propertyLoopback.refreshUrlOptions($ctrl.defaultOptions)
+              // IDX.setUrlOptions('Listing', {})
+              // IDX.refreshUrlOptions($ctrl.defaultOptions)
               // Revery page title back to what it was
-              // propertyLoopback.setPageTitle()
+              // IDX.setPageTitle()
               // Let's destroy it to save memory
-              // $timeout(propertyLoopback.unregisterDetailsInstance('property_member_detail_popup'), 10)
+              // $timeout(IDX.unregisterDetailsInstance('property_member_detail_popup'), 10)
             })
         }
       }],

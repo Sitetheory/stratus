@@ -1,4 +1,4 @@
-// PropertyLoopback Service
+// IDX Service
 // ------------------
 //
 // Copyright (c) 2019 by Sitetheory, All Rights Reserved
@@ -82,7 +82,6 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      // 'underscore',
       'lodash',
       'angular',
       'stratus.services.collection'
@@ -100,10 +99,10 @@
   function (Stratus, _, angular) {
     // This Collection Service handles data binding for multiple objects with the
     // $http Service
-    Stratus.Services.PropertyLoopback = [
+    Stratus.Services.Idx = [
       '$provide',
       function ($provide) {
-        $provide.factory('propertyLoopback', [
+        $provide.factory('Idx', [
           '$http', '$injector', '$q', '$location', '$window', '$rootScope', 'Collection', 'Model', 'orderByFilter',
           function ($http, $injector, $q, $location, $window, $rootScope, Collection, Model, orderByFilter) {
             let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken' // TODO need to allow setting own tokenRefreshURL

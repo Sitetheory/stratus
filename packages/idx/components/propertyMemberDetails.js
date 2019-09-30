@@ -32,13 +32,12 @@
   if (typeof define === 'function' && define.amd) {
     define([
       'stratus',
-      // 'underscore',
       'lodash',
       'angular',
       'moment',
       'angular-sanitize',
 
-      'stratus.services.propertyLoopback',
+      'stratus.services.idx',
 
       'stratus.filters.math',
       'stratus.filters.moment'
@@ -69,8 +68,8 @@
       '$sce',
       '$location',
       'Model',
-      'propertyLoopback',
-      function ($scope, $attrs, $sce, $location, Model, propertyLoopback) {
+      'Idx',
+      function ($scope, $attrs, $sce, $location, Model, Idx) {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId('property_member_details_')
@@ -107,7 +106,7 @@
           $scope.memberCombined = {}
 
           // Register this List with the Property service
-          propertyLoopback.registerListInstance($scope.elementId, $scope, 'MemberDetails')
+          Idx.registerListInstance($scope.elementId, $scope, 'MemberDetails')
           // console.log(this.uid)
 
           console.log('options', $scope.options, $attrs)
@@ -127,7 +126,7 @@
             )
           ) {
             // Update the page title
-            propertyLoopback.setPageTitle($scope.memberMerged.MemberFullName || ($scope.memberMerged.MemberFirstName + ' ' + $scope.memberMerged.MemberLastName))
+            Idx.setPageTitle($scope.memberMerged.MemberFullName || ($scope.memberMerged.MemberFirstName + ' ' + $scope.memberMerged.MemberLastName))
           }
         })
 
@@ -153,7 +152,7 @@
             memberQuery.service &&
             (memberQuery.where.MemberKey || memberQuery.where.MemberStateLicense)
           ) {
-            propertyLoopback.fetchMembers($scope, 'collection', memberQuery, true)
+            Idx.fetchMembers($scope, 'collection', memberQuery, true)
           } else {
             console.error('No Service Id or Member Key/License is fetch from')
           }
@@ -198,7 +197,7 @@
          * @returns {String|}
          */
         $scope.getMLSName = function getMLSName () {
-          return propertyLoopback.getMLSVariables($scope.model.data._ServiceId).name
+          return Idx.getMLSVariables($scope.model.data._ServiceId).name
         }
 
         /**
@@ -207,7 +206,7 @@
          * @returns {String|}
          */
         $scope.getMLSDisclaimer = function getMLSDisclaimer (html) {
-          let disclaimer = propertyLoopback.getMLSVariables($scope.collection.models[0]._ServiceId).disclaimer
+          let disclaimer = Idx.getMLSVariables($scope.collection.models[0]._ServiceId).disclaimer
           if ($scope.collection.models[0].ModificationTimestamp) {
             disclaimer = `Member last updated ${moment($scope.collection.models[0].ModificationTimestamp).format('M/D/YY HH:mm a')}. ${disclaimer}`
           }
