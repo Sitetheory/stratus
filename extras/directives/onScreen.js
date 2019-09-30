@@ -131,7 +131,7 @@
         // Bind Angular to Environment
         const calculate = function () {
           // remove all classes when the scroll is all the way back at the top of the page (or the spy is above a specific location specified location)
-          if (event.indexOf('reset') !== -1 && ((reset > 0 && $element.offset().top <= reset) || jQuery(window).scrollTop() <= 0)) {
+          if (event.indexOf('reset') !== -1 && ((reset > 0 && $element.offset().top <= reset) || jQuery(Stratus.Environment.get('viewPort') || window).scrollTop() <= 0)) {
             target.removeClass('on-screen off-screen scroll-up scroll-down reveal conceal')
             target.addClass('reset')
             return
