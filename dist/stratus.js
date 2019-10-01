@@ -3573,7 +3573,7 @@ Stratus.Internals.Rebase = function (target, base) {
     if (!hamlet.isUndefined('System')) {
       require([
         // 'quill',
-        '@stratus/angular/boot'
+        '@stratusjs/angular/boot'
       ])
     }
   })

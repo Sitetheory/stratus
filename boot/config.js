@@ -36,6 +36,7 @@
 
       // CONTROLLERS:
       // ------------
+      // 'stratus.controllers.*': boot.bundle + 'stratus/controllers/*' + boot.suffix,
       'stratus.controllers.generic': boot.bundle + 'stratus/controllers/generic' + boot.suffix,
 
       // SERVICES:
@@ -48,10 +49,12 @@
 
       // COMPONENTS:
       // -----------
+      // 'stratus.components.*': boot.bundle + 'stratus/components/*' + boot.suffix,
       'stratus.components.base': boot.bundle + 'stratus/components/base' + boot.suffix,
 
       // DIRECTIVES:
       // -----------
+      // 'stratus.directives.*': boot.bundle + 'stratus/directives/*' + boot.suffix,
       'stratus.directives.base': boot.bundle + 'stratus/directives/base' + boot.suffix,
 
       // THIRD PARTY: NODE MODULES
@@ -96,7 +99,7 @@
 
       /* STRATUS NORMALIZERS: */
       // NOTE: this sandboxes jquery into require so it's not in the window
-      jquery: boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix,
+      jquery: boot.bundle + 'stratus/extras/normalizers/jquery.sandbox' + boot.suffix
 
       /* STRATUS FILTERS */
       // 'stratus.filters.age': boot.bundle + 'stratus/extras/filters/age' + boot.suffix,
@@ -138,39 +141,43 @@
 
       /* STRATUS LIBRARY: Angular */
       // '@angular/*': boot.bundle + 'stratus/node_modules/@angular/*/bundles/*.umd' + boot.suffix,
-      '@angular/animations': boot.bundle + 'stratus/node_modules/@angular/animations/bundles/animations.umd' + boot.suffix,
-      '@angular/animations/*': boot.bundle + 'stratus/node_modules/@angular/animations/bundles/animations-*.umd' + boot.suffix,
-      '@angular/cdk': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk.umd' + boot.suffix,
-      '@angular/cdk/*': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-*.umd' + boot.suffix,
-      '@angular/common': boot.bundle + 'stratus/node_modules/@angular/common/bundles/common.umd' + boot.suffix,
-      '@angular/common/*': boot.bundle + 'stratus/node_modules/@angular/common/bundles/common-*.umd' + boot.suffix,
-      '@angular/compiler': boot.bundle + 'stratus/node_modules/@angular/compiler/bundles/compiler.umd' + boot.suffix,
-      '@angular/core': boot.bundle + 'stratus/node_modules/@angular/core/bundles/core.umd' + boot.suffix,
-      '@angular/flex-layout': boot.bundle + 'stratus/node_modules/@angular/flex-layout/bundles/flex-layout.umd' + boot.suffix,
-      '@angular/forms': boot.bundle + 'stratus/node_modules/@angular/forms/bundles/forms.umd' + boot.suffix,
-      '@angular/material': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material.umd' + boot.suffix,
-      '@angular/material/*': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-*.umd' + boot.suffix,
-      '@angular/material-moment-adapter': boot.bundle + 'stratus/node_modules/@angular/material-moment-adapter/bundles/material-moment-adapter.umd' + boot.suffix,
-      '@angular/platform-browser': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser.umd' + boot.suffix,
-      '@angular/platform-browser/*': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser-*.umd' + boot.suffix,
-      '@angular/platform-browser-dynamic': boot.bundle + 'stratus/node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd' + boot.suffix,
+      // '@angular/animations': boot.bundle + 'stratus/node_modules/@angular/animations/bundles/animations.umd' + boot.suffix,
+      // '@angular/animations/*': boot.bundle + 'stratus/node_modules/@angular/animations/bundles/animations-*.umd' + boot.suffix,
+      // '@angular/cdk': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk.umd' + boot.suffix,
+      // '@angular/cdk/*': boot.bundle + 'stratus/node_modules/@angular/cdk/bundles/cdk-*.umd' + boot.suffix,
+      // '@angular/common': boot.bundle + 'stratus/node_modules/@angular/common/bundles/common.umd' + boot.suffix,
+      // '@angular/common/*': boot.bundle + 'stratus/node_modules/@angular/common/bundles/common-*.umd' + boot.suffix,
+      // '@angular/compiler': boot.bundle + 'stratus/node_modules/@angular/compiler/bundles/compiler.umd' + boot.suffix,
+      // '@angular/core': boot.bundle + 'stratus/node_modules/@angular/core/bundles/core.umd' + boot.suffix,
+      // '@angular/flex-layout': boot.bundle + 'stratus/node_modules/@angular/flex-layout/bundles/flex-layout.umd' + boot.suffix,
+      // '@angular/forms': boot.bundle + 'stratus/node_modules/@angular/forms/bundles/forms.umd' + boot.suffix,
+      // '@angular/material': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material.umd' + boot.suffix,
+      // '@angular/material/*': boot.bundle + 'stratus/node_modules/@angular/material/bundles/material-*.umd' + boot.suffix,
+      // '@angular/material-moment-adapter': boot.bundle + 'stratus/node_modules/@angular/material-moment-adapter/bundles/material-moment-adapter.umd' + boot.suffix,
+      // '@angular/platform-browser': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser.umd' + boot.suffix,
+      // '@angular/platform-browser/*': boot.bundle + 'stratus/node_modules/@angular/platform-browser/bundles/platform-browser-*.umd' + boot.suffix,
+      // '@angular/platform-browser-dynamic': boot.bundle + 'stratus/node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd' + boot.suffix,
 
       // STRATUS SRC: All
-      '@stratus/*': boot.bundle + 'stratus/src/*' + boot.suffix,
+      // '@stratusjs/angular/*': 'node_modules/@stratusjs/angular/src/*' + boot.suffix,
+      // '@stratusjs/boot/*': 'node_modules/@stratusjs/boot/src/*' + boot.suffix,
+      // '@stratusjs/core/*': 'node_modules/@stratusjs/core/src/*' + boot.suffix,
+      // '@stratusjs/idx/*': 'node_modules/@stratusjs/idx/src/*' + boot.suffix,
+      // '@stratusjs/react/*': 'node_modules/@stratusjs/react/src/*' + boot.suffix,
 
       // Angular Dependencies
-      'core-js/*': boot.bundle + 'stratus/node_modules/core-js/*',
-      'core-js/es7/reflect': boot.bundle + 'stratus/node_modules/core-js/proposals/reflect-metadata',
-      hammerjs: boot.bundle + 'stratus/node_modules/hammerjs/hammer' + boot.suffix,
-      rxjs: boot.bundle + 'stratus/node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
-      'rxjs/operators': boot.bundle + 'stratus/extras/normalizers/rxjs.operators' + boot.suffix,
-      'rxjs-compat': boot.bundle + 'stratus/node_modules/rxjs-compat/index',
-      'web-animations-js': boot.bundle + 'stratus/node_modules/web-animations-js/web-animations.min',
-      'zone.js/dist/zone': boot.bundle + 'stratus/node_modules/zone.js/dist/zone' + boot.suffix,
+      // 'core-js/*': 'node_modules/core-js/*',
+      // 'core-js/es7/reflect': 'node_modules/core-js/proposals/reflect-metadata',
+      // hammerjs: 'node_modules/hammerjs/hammer' + boot.suffix,
+      // rxjs: 'node_modules/rxjs/bundles/rxjs.umd' + boot.suffix,
+      // 'rxjs/operators': 'extras/normalizers/rxjs.operators' + boot.suffix,
+      // 'rxjs-compat': 'node_modules/rxjs-compat/index',
+      // 'web-animations-js': 'node_modules/web-animations-js/web-animations.min',
+      // 'zone.js/dist/zone': 'node_modules/zone.js/dist/zone' + boot.suffix,
 
       // Quill Editor Support
-      quill: boot.bundle + 'stratus/node_modules/quill/dist/quill',
-      'ngx-quill': boot.bundle + 'stratus/node_modules/ngx-quill/bundles/ngx-quill.umd'
+      // quill: 'node_modules/quill/dist/quill',
+      // 'ngx-quill': 'node_modules/ngx-quill/bundles/ngx-quill.umd'
 
       // Angular
 

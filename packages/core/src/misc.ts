@@ -1,5 +1,4 @@
 import * as _ from 'lodash'
-import {seconds} from '@stratusjs/core/conversion'
 
 // This function simply extracts the name of a function from code directly
 export function functionName(code: any) {
@@ -79,16 +78,17 @@ export function hydrateString(str: string): string {
 }
 
 // This function utilizes tree building to clone an object.
-export function cloneDeep(obj: any) {
-    if (typeof obj !== 'object') {
-        return obj
-    }
-    const shallow = _.clone(obj)
-    _.each(shallow, (value: any, key: any) => {
-        shallow[key] = _.cloneDeep(value)
-    })
-    return shallow
-}
+// Note: This function already exists in Lodash
+// export function cloneDeep(obj: any) {
+//     if (typeof obj !== 'object') {
+//         return obj
+//     }
+//     const shallow = _.clone(obj)
+//     _.each(shallow, (value: any, key: any) => {
+//         shallow[key] = cloneDeep(value)
+//     })
+//     return shallow
+// }
 
 // This function utilizes tree building to clone an object.
 export function extendDeep(target: any, merger: any) {
