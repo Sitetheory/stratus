@@ -46,7 +46,7 @@ export interface ElementMap {
 // }
 
 // Local Setup
-const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
+const localDir = boot.configuration.paths['@stratusjs/angular/*'].replace(/\/(\*\.js)$/, '')
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree'
 

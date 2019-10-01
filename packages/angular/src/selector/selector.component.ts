@@ -23,7 +23,7 @@ import * as _ from 'lodash'
 // Services
 import {Registry} from 'stratus.services.registry'
 
-const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
+const localDir = boot.configuration.paths['@stratusjs/angular/*'].replace(/\/(\*\.js)$/, '')
 const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
 

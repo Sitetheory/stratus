@@ -13,7 +13,7 @@ import * as _ from 'lodash'
 import * as Stratus from 'stratus'
 
 // Local Setup
-const localDir = '/assets/1/0/bundles/sitetheorystratus/stratus/src/angular'
+const localDir = boot.configuration.paths['@stratusjs/angular/*'].replace(/\/(\*\.js)$/, '')
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-node'
 const parentModuleName = 'tree'
