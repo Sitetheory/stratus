@@ -24,7 +24,24 @@
       "*": [
         "node_modules/*"
       ],
-      "@stratus/*": [ "src/*" ],
+//      "@stratusjs/*": [
+//        "packages/*"
+//      ],
+      "@stratusjs/angular/*": [
+        "packages/angular/src/*"
+      ],
+      "@stratusjs/boot/*": [
+        "packages/boot/src/*"
+      ],
+      "@stratusjs/core/*": [
+        "packages/core/src/*"
+      ],
+      "@stratusjs/idx/*": [
+        "packages/idx/src/*"
+      ],
+      "@stratusjs/react/*": [
+        "packages/react/src/*"
+      ],
       "stratus": [
         "dist/stratus"
       ],

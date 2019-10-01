@@ -25,9 +25,10 @@ A Directive is only a decorator for an HTML tag, as opposed to Components which 
 We currently handle XHRs with our Data Service, inside your respective Component or Directive.
 
 ```typescript
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {BackendService} from '@stratus/angular/backend.service';
-import * as _ from 'lodash';
+import {Component, OnInit} from '@angular/core'
+import {FormBuilder, FormGroup} from '@angular/forms'
+import {BackendService} from '@stratusjs/angular/backend.service'
+import * as _ from 'lodash'
 
 @Component({
     selector: 'sa-data-component',

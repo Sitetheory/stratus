@@ -10,7 +10,7 @@ import * as angular from 'angular'
 import 'angular-material' // Reliant for $mdToast
 
 // Stratus Dependencies
-import {getAnchorParams, getUrlParams, patch, setUrlParams, strcmp, ucfirst} from '@stratus/core/misc'
+import {getAnchorParams, getUrlParams, patch, setUrlParams, strcmp, ucfirst} from '@stratusjs/core/misc'
 
 let http: any = () => {
     console.error('$$http not loaded!')

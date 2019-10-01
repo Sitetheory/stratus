@@ -1,0 +1,70 @@
+{
+  "name": "@stratusjs/angular",
+  "version": "0.1.2",
+  "description": "This is the angular package for StratusJS.",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sitetheory/stratus.git"
+  },
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus",
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "underscore",
+    "lodash",
+    "javascript",
+    "typescript",
+    "angular"
+  ],
+  "engines": {
+    "yarn": ">= 1.0.0"
+  },
+  "dependencies": {
+    "@angular/animations": "^8.2.7",
+    "@angular/cdk": "^8.2.0",
+    "@angular/common": "^8.2.7",
+    "@angular/compiler": "^8.2.7",
+    "@angular/core": "^8.2.7",
+    "@angular/flex-layout": "^8.0.0-beta.27",
+    "@angular/forms": "^8.2.7",
+    "@angular/material": "^8.2.0",
+    "@angular/material-moment-adapter": "^8.2.0",
+    "@angular/platform-browser": "^8.2.7",
+    "@angular/platform-browser-dynamic": "^8.2.7",
+    "@angular/router": "^8.2.7",
+    "@material-ui/codemod": "^4.3.0",
+    "@material-ui/core": "^4.4.2",
+    "@material-ui/icons": "^4.4.1",
+    "@material-ui/lab": "^4.0.0-alpha.26",
+    "@material-ui/styles": "^4.4.1",
+    "@material-ui/system": "^4.3.3",
+    "@material-ui/types": "^4.1.1",
+    "@material-ui/utils": "^4.4.0",
+    "core-js": "^3.2.1",
+    "hammerjs": "^2.0.8",
+    "lodash": "^4.17.15",
+    "ngx-quill": "^7.3.1",
+    "rxjs": "^6.5.3",
+    "rxjs-compat": "^6.5.3",
+    "tslib": "^1.10.0",
+    "web-animations-js": "^2.3.2",
+    "zone.js": "^0.10.2"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^0.803.4",
+    "@angular/cli": "^8.3.4",
+    "@angular/compiler-cli": "^8.2.7",
+    "@angular/language-service": "^8.2.7",
+    "@types/angular": "^1.6.56",
+    "@types/lodash": "^4.14.138",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
+  }
+}

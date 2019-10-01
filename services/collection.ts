@@ -13,7 +13,7 @@ import 'angular-material' // Reliant for $mdToast
 import {Model} from 'stratus.services.model'
 
 // Stratus Dependencies
-import {ucfirst} from '@stratus/core/misc'
+import {ucfirst} from '@stratusjs/core/misc'
 
 let http: any = () => {
     console.error('$$http not loaded!')

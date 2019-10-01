@@ -11,8 +11,8 @@
         }
       },
       "root": "",
-      "sourceRoot": "src",
-      "prefix": "angular",
+      "sourceRoot": "packages/angular/src",
+      "prefix": "",
       "architect": {
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",

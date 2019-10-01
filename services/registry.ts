@@ -11,8 +11,8 @@ import {Model} from 'stratus.services.model'
 import {Collection} from 'stratus.services.collection'
 
 // Stratus Dependencies
-import {sanitize} from '@stratus/core/conversion'
-import {isJSON, poll, ucfirst} from '@stratus/core/misc'
+import {sanitize} from '@stratusjs/core/conversion'
+import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
 
 let interpolate = (value: any, mustHaveExpression: any, trustedContext: any, allOrNothing: any) => {
     // console.log('interpolate:', {

@@ -1,4 +1,4 @@
-System.register(["lodash", "stratus", "angular", "angular-material", "stratus.services.model", "@stratus/core/misc"], function (exports_1, context_1) {
+System.register(["lodash", "stratus", "angular", "angular-material", "stratus.services.model", "@stratusjs/core/misc"], function (exports_1, context_1) {
     "use strict";
     var _, Stratus, angular, stratus_services_model_1, misc_1, http, mdToast, Collection;
     var __moduleName = context_1 && context_1.id;

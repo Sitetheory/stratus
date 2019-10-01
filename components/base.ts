@@ -15,7 +15,7 @@ import 'stratus.services.model'
 import 'stratus.services.collection'
 
 // Stratus Dependencies
-import {camelToSnake} from '@stratus/core/conversion'
+import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
