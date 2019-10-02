@@ -5,7 +5,7 @@ import {ChangeDetectionStrategy, Component, Injectable} from '@angular/core'
 import * as Stratus from 'stratus'
 import * as _ from 'lodash'
 
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/\/(\*\.js)$/, '')}`
+const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
 
 /**
  * @title Basic Load

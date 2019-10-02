@@ -28,7 +28,7 @@ export interface DialogData {
 }
 
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/\/(\*\.js)$/, '')}`
+const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-dialog'
 const parentModuleName = 'tree'
