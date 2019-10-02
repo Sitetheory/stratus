@@ -92,6 +92,7 @@ export class Model extends Stratus.Prototypes.Model {
         // Scope Binding
         this.watcher = this.watcher.bind(this)
         this.getIdentifier = this.getIdentifier.bind(this)
+        this.isNew = this.isNew.bind(this)
         this.getType = this.getType.bind(this)
         this.getHash = this.getHash.bind(this)
         this.url = this.url.bind(this)
@@ -210,6 +211,10 @@ export class Model extends Stratus.Prototypes.Model {
 
     getHash() {
         return this.getType() + (_.isNumber(this.getIdentifier()) ? this.getIdentifier().toString() : this.getIdentifier())
+    }
+
+    isNew() {
+        return !this.getIdentifier()
     }
 
     url() {
