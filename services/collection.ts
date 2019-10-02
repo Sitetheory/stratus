@@ -15,11 +15,19 @@ import {Model} from 'stratus.services.model'
 // Stratus Dependencies
 import {ucfirst} from '@stratusjs/core/misc'
 
+// TODO: Convert this to plain XHRs
 let http: any = () => {
     console.error('$$http not loaded!')
 }
 let mdToast: any = () => {
     console.error('$$mdToast not loaded!')
+}
+
+export interface HttpPrototype {
+    headers: any
+    method: string
+    url: string
+    data?: any
 }
 
 export class Collection extends Stratus.Prototypes.EventManager {
@@ -41,6 +49,7 @@ export class Collection extends Stratus.Prototypes.EventManager {
     model = Model
     models: any = []
     types: any = []
+    cache: any = {}
 
     // Internals
     pending = false
@@ -166,7 +175,7 @@ export class Collection extends Stratus.Prototypes.EventManager {
 
     // TODO: Abstract this deeper
     sync(action: string, data: any, options: any) {
-        const that = this
+        const that: Collection = this
 
         // Internals
         this.pending = true
@@ -175,7 +184,7 @@ export class Collection extends Stratus.Prototypes.EventManager {
         return new Promise((resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
-            const prototype: { headers: any; method: string; url: string; data?: any } = {
+            const prototype: HttpPrototype = {
                 method: action,
                 url: that.url(),
                 headers: {}
@@ -198,9 +207,15 @@ export class Collection extends Stratus.Prototypes.EventManager {
                 })
             }
 
-            http(prototype).then((response: any) => {
+            const queryHash = `${prototype.method}:${prototype.url}`
+            const handler = (response: any) => {
                 if (response.status === 200 && angular.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
+
+                    // Cache reference
+                    if (prototype.method === 'GET' && !(queryHash in that.cache)) {
+                        that.cache[queryHash] = response
+                    }
 
                     // Data
                     that.header.set(response.headers() || {})
@@ -255,13 +270,20 @@ export class Collection extends Stratus.Prototypes.EventManager {
 
                 // Trigger Change Event
                 that.throttleTrigger('change')
-            }).catch((error: any) => {
-                // (/(.*)\sReceived/i).exec(error.message)[1]
-                console.error('XHR: ' + prototype.method + ' ' + prototype.url)
-                that.throttleTrigger('change')
-                reject(error)
-                throw error
-            })
+            }
+            if (prototype.method === 'GET' && queryHash in that.cache) {
+                handler(that.cache[queryHash])
+                return
+            }
+            http(prototype)
+                .then(handler)
+                .catch((error: any) => {
+                    // (/(.*)\sReceived/i).exec(error.message)[1]
+                    console.error(`XHR: ${prototype.method} ${prototype.url}`)
+                    that.throttleTrigger('change')
+                    reject(error)
+                    throw error
+                })
         })
     }
 

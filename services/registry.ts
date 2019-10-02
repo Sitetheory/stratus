@@ -53,9 +53,14 @@ export class Registry {
                 api: 'data-api',
                 urlRoot: 'data-url-root'
             }
-            const options = sanitize(_.each(inputs, (value: string, key: string, list: any) => {
+            // FIXME: Sanitize function fails here in certain cases
+            const options = _.each(inputs, (value: string, key: string, list: any) => {
                 list[key] = $element.attr ? $element.attr(value) : $element[key]
-            }))
+                if (!isJSON(list[key])) {
+                    return
+                }
+                list[key] = JSON.parse(list[key])
+            })
             /* TODO: handle these sorts of shortcuts to the API that components are providing *
              $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
              const request = {
