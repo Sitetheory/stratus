@@ -1,0 +1,91 @@
+
+<div id="{{::elementId}}" class="stratus-property-list" data-ng-cloak>
+	<div class="header-section clearfix">
+		<div class="sort-options-container" data-ng-if="collection.meta.data.totalRecords">
+			<md-menu data-md-position-mode="target-right target" data-md-offset="0 30">
+				<div class=" options-button" data-ng-mouseenter="$mdMenu.open()" aria-label="Sort Options">
+					<i class="arrow small down grey"></i> <span class="options-name"><a href="">Sort Options</a></span>
+				</div>
+				<md-menu-content data-ng-mouseleave="$mdMenu.close()">
+					<md-menu-item data-ng-repeat="(name, order) in orderOptions">
+						<md-button data-ng-click="orderChange(order, $event)" data-ng-bind="::name" aria-label="{{::name}}"></md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+		</div>
+	</div>
+
+	<div class="list-container columns-2">
+		<div data-layout-gt-xs="row" data-layout-align-gt-xs="space-around center" data-layout-wrap>
+			<md-progress-linear ng-if="collection.pending" md-mode="indeterminate"></md-progress-linear>
+			<div data-ng-repeat="property in collection.models | limitTo:options.perPage:(options.page-1)*options.perPage" id="{{::elementId}}_{{::property._id}}" class="property-container" data-ng-cloak>
+				<md-card class="property-item">
+					<div class="property-image">
+						<div class="property-status font-secondary" data-ng-bind="::property.MlsStatus"></div>
+						<a data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
+
+							<div style="background: url('{{::property.Images[0].MediaURL}}') no-repeat center center; background-size: cover;">
+								<img data-ng-if="::property.Images.length > 0" data-ng-src="/content/property/stratus/components/images/stratus-property-shapeholder.png" alt="shapeholder" />
+								<img data-ng-if="::property.Images.length === 0" data-ng-src="/content/property/stratus/components/images/no-image.jpg">
+							</div>
+						</a>
+					</div>
+					<div class="property-content">
+						<md-card-title class="property-address dotted-spaced-underline">
+							<md-card-title-text>
+								<h4>
+									<a data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" data-ng-bind="::getStreetAddress(property)"></a>
+									<br>
+									<span class="city" data-ng-bind="::property.City"></span>
+								</h4>
+							</md-card-title-text>
+						</md-card-title>
+						<md-card-content class="property-data">
+							<div class="property-type">
+                                <span data-ng-if="::property.BedroomsTotal > 0">
+                                    <span data-ng-bind="::property.BedroomsTotal"></span> Beds |
+                                </span>
+								<span data-ng-if="::property.BathroomsFull > 0">
+                                    <span data-ng-bind="::property.BathroomsFull"></span><span data-ng-if="::property.BathroomsHalf">.<span data-ng-bind="::property.BathroomsHalf * 5"></span></span>
+                                    Baths |
+                                    </span>
+								<span data-ng-bind="::property.PropertySubType || property.PropertyType"></span>
+							</div>
+							<div class="property-price">
+								$<span data-ng-bind="::property.ListPrice || property.ClosePrice | number"></span>
+							</div>
+						</md-card-content>
+						<md-card-icon-actions>
+							<div class="property-button-container">
+								<md-button class="button btn" data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
+									Details
+								</md-button>
+							</div>
+						</md-card-icon-actions>
+						<div class="mls-service-name">
+							<span data-ng-bind="::getMLSName(property._ServiceId)"></span>#
+							<span data-ng-bind="::property.ListingId || property.ListingKey"></span>
+						</div>
+					</div>
+				</md-card>
+			</div>
+		</div>
+	</div>
+	<div class="pager-container clearfix">
+		<div class="pager-section" ng-if="collection.meta.data.totalPages >= 2">
+			<div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
+				<span data-ng-bind="options.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span> Pages
+				<span class="pager-totals">
+                ( <!--<span data-ng-bind="(options.page-1)*options.perPage+1"></span>-<span data-ng-bind="(options.page*options.perPage)|min:collection.meta.data.totalRecords"></span> of --><span data-ng-bind="collection.meta.data.totalRecords"></span> properties )
+                </span>
+			</div>
+			<a class="pager-button {{options.page > 1 && collection.completed ? '' : 'disabled'}}" data-ng-click="pagePrevious($event)">
+				<i class="arrow small left"></i>
+			</a>
+			<a class="pager-button {{options.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}" data-ng-click="pageNext($event)">
+				<i class="arrow small right"></i>
+			</a>
+		</div>
+	</div>
+	<div class="disclaimer-container" data-ng-if="collection.completed" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+</div>

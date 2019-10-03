@@ -38,5 +38,6 @@ packages/angular/**/*.js
 packages/angular/**/*.css
 packages/boot/**/*.js
 packages/core/**/*.js
+packages/idx/src/**/*.js
 packages/react/**/*.js
 packages/react/**/*.css
