@@ -1,0 +1,311 @@
+/* GENERAL */
+
+.stratus-property-details {
+
+}
+
+.stratus-property-details .details-container {
+    padding: 4% 5%;
+    margin-bottom: 12px;
+}
+
+/* Generic Button */
+.stratus-property-details .button,
+.stratus-property-details .button:link,
+.stratus-property-details .button:visited,
+.stratus-property-details .button:active {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #FFF;
+    background-color: #FF7A4D;
+}
+
+.stratus-property-details .button:hover {
+    color: #FFF;
+    background-color: #666;
+}
+
+/* Generic dotted underline/sideline */
+.stratus-property-details .dotted-spaced-underline {
+    background: linear-gradient(to right, #333 15%, rgba(255, 255, 255, 0) 0%) repeat-x bottom;
+    background-size: 5px 1px;
+}
+
+.stratus-property-details .dotted-spaced-underline.underline-top {
+    background-position: top;
+}
+
+.stratus-property-details .dotted-spaced-sideline {
+    background: linear-gradient(to bottom, #333 15%, rgba(255, 255, 255, 0) 0%) repeat-y left;
+    background-size: 1px 5px;
+}
+
+.stratus-property-details .dotted-spaced-sideline.sideline-right {
+    background-position: right;
+}
+
+/* Generic ng-repeat classes */
+.stratus-property-details .repeatedArray:first-child .hideFirstChild {
+    display: none;
+}
+
+.stratus-property-details .repeatedArray:last-child .hideLastChild {
+    display: none;
+}
+
+/* Header Section */
+
+.stratus-property-details .details-header {
+    text-align: center;
+    margin: 10px 0 20px 0;
+}
+
+.stratus-property-details .details-header h3 {
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #222;
+    margin: 0 0 8px 0;
+}
+
+.stratus-property-details .address-container .address2 {
+    text-transform: capitalize;
+    font-size: 12px;
+    padding-bottom: 22px;
+}
+
+.stratus-property-details .contact-container {
+    padding-bottom: 35px;
+}
+
+.stratus-property-details .open-house-section {
+    display: inline-block;
+    padding-bottom: 35px;
+    margin-bottom: 35px;
+}
+
+.stratus-property-details .open-house-section .section-title {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 1px;
+    margin: 25px auto;
+}
+
+.stratus-property-details .open-house-section .open-house-container {
+    font-size: 12px;
+    text-align: center;
+}
+
+.stratus-property-details .open-house-section .description {
+    font-style: italic;
+}
+
+.stratus-property-details .open-house-section .open-house {
+    text-transform: uppercase;
+}
+
+.stratus-property-details .open-house-section .open-house:first-of-type {
+    padding-top: 8px;
+}
+
+/* Header Image */
+
+.stratus-property-details .image-container {
+    position: relative;
+}
+
+.stratus-property-details .details-image img {
+    width: 100%;
+}
+
+.stratus-property-details .price-banner {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    min-width: 190px;
+    margin: 0 0 0 -4px;
+    padding: 3px 0;
+    display: table;
+}
+
+.stratus-property-details .price-banner .price-banner-corner {
+    position: absolute;
+    bottom: 0;
+    border-right: 6px solid #555;
+    border-bottom: 3px solid transparent;
+}
+
+.stratus-property-details .price-banner .list-price-container {
+    text-align: center;
+    background-color: #555;
+    padding: 14px 20px;
+}
+
+.stratus-property-details .price-banner .list-price-label {
+    font-size: 12px;
+    font-style: italic;
+    -webkit-font-smoothing: antialiased;
+    color: #FFF;
+    padding-right: 5px;
+}
+
+.stratus-property-details .price-banner .list-price {
+    font-size: 15px;
+    color: #FFF;
+    text-transform: uppercase;
+}
+
+/* Header Specs */
+
+.stratus-property-details .details-specs-container {
+    margin-top: 25px;
+}
+
+.stratus-property-details .details-specs {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: normal;
+    color: #444;
+    line-height: 2;
+    text-align: center;
+}
+
+.stratus-property-details .links-container {
+    margin: 20px auto;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.stratus-property-details .links-container .response-link {
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.stratus-property-details .mls-service-container .mls-service {
+    font-size: 11px;
+    color: #666666;
+    text-align: center;
+    margin: 15px 0;
+}
+
+/* Additional Photos */
+
+.stratus-property-details .additional-photos stratus-carousel .swiper-main {
+    max-height: 600px;
+}
+
+/* Additional Details */
+
+.stratus-property-details .additional-details {
+    text-align: center;
+    background-color: #f8f8f8;
+}
+
+.stratus-property-details .additional-details .description,
+.stratus-property-details .additional-details .detail-sections {
+    margin-bottom: 25px;
+    font-size: 12px;
+    color: #666666;
+    line-height: 1.5;
+}
+
+.stratus-property-details .additional-details .detail-sections {
+    column-count: 2;
+    column-gap: 1em;
+}
+
+.stratus-property-details .additional-details .detail-sections .sub-detail-section {
+    display: inline-block;
+    margin: 0 0 1em;
+    width: 100%;
+}
+
+.stratus-property-details .additional-details .agent-section .agent {
+    margin-top: 25px;
+    padding: 25px 0 10px 0;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.stratus-property-details .additional-details .agent-section .agent:not(:first-child) {
+    margin-top: 0;
+    padding-top: 0;
+    background: none;
+}
+
+/* Disclaimer Section */
+
+.stratus-property-details .disclaimer {
+    margin-top: 35px;
+}
+
+@media (min-width: 600px) {
+    .stratus-property-details .details-header {
+        text-align: left;
+        margin-bottom: 35px;
+    }
+
+    .stratus-property-details .address-container .address2 {
+        padding-bottom: 30px;
+    }
+
+    .stratus-property-details .contact-container {
+        padding-bottom: 0;
+    }
+
+    .stratus-property-details .contact-container .button {
+        float: right;
+    }
+
+    .stratus-property-details .open-house-section .section-title {
+        padding: 0;
+        margin-top: 0;
+        text-align: left;
+    }
+
+    .stratus-property-details .open-house-section .open-house-container {
+        padding-left: 25px;
+        text-align: left;
+    }
+
+    .stratus-property-details .details-specs-container {
+        margin-top: 0;
+    }
+
+    .stratus-property-details .details-specs {
+        text-align: left;
+    }
+
+    .stratus-property-details .links-container {
+        margin: 25px 0;
+        padding-bottom: 15px;
+        text-align: left;
+    }
+
+    .stratus-property-details .links-container .response-link {
+        padding-top: 6px;
+        margin-bottom: 9px;
+    }
+
+    .stratus-property-details .mls-service-container .mls-service {
+        text-align: left;
+        margin-bottom: 0;
+    }
+
+    .stratus-property-details .additional-details {
+        text-align: left;
+    }
+
+}
+
+@media (max-width: 599px) {
+    /* FIXME */
+    .stratus-property-details .open-house-section .open-house-container {
+        background: none;
+    }
+}
+
+
+
+

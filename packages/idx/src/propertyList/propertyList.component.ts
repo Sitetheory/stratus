@@ -7,8 +7,8 @@ import * as Stratus from 'stratus'
 import * as angular from 'angular'
 
 // Angular 1 Modules
-import 'angular-sanitize'
 import 'angular-material'
+import 'angular-sanitize'
 
 // Libraries
 import moment from 'moment'
@@ -64,7 +64,7 @@ Stratus.Components.PropertyList = {
             ($attrs.template || 'propertyList') +
             min + '.css'
         ) */
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.css`)
 
         /**
          * All actions that happen first when the component loads
@@ -423,12 +423,5 @@ Stratus.Components.PropertyList = {
 
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => {
-        // let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
-        /*return Stratus.BaseUrl +
-            'content/property/stratus/components/' +
-            ($attrs.template || 'propertyList') +
-            min + '.html'*/
-        return `${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.html`
-    }
+    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.html`
 }

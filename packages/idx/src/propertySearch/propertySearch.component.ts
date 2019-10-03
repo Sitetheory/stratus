@@ -7,7 +7,6 @@ import * as Stratus from 'stratus'
 import * as angular from 'angular'
 
 // Angular 1 Modules
-import 'angular-sanitize'
 import 'angular-material'
 
 // Services
@@ -48,7 +47,7 @@ Stratus.Components.PropertySearch = {
         $ctrl.uid = _.uniqueId(camelToSnake(moduleName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.css`)
 
         $scope.$mdConstant = $mdConstant
 
@@ -400,6 +399,6 @@ Stratus.Components.PropertySearch = {
             }
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.html`
+    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.html`
 
 }

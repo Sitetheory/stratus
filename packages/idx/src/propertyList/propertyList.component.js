@@ -1,4 +1,4 @@
-System.register(["lodash", "stratus", "angular", "angular-sanitize", "angular-material", "moment", "stratus.services.idx", "stratus.components.propertyDetails", "@stratusjs/core/misc", "@stratusjs/core/conversion"], function (exports_1, context_1) {
+System.register(["lodash", "stratus", "angular", "angular-material", "angular-sanitize", "moment", "stratus.services.idx", "stratus.components.propertyDetails", "@stratusjs/core/misc", "@stratusjs/core/conversion"], function (exports_1, context_1) {
     "use strict";
     var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
         function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -61,7 +61,7 @@ System.register(["lodash", "stratus", "angular", "angular-sanitize", "angular-ma
                     $ctrl.uid = _.uniqueId(conversion_1.camelToSnake(moduleName) + '_');
                     Stratus.Instances[$ctrl.uid] = $scope;
                     $scope.elementId = $attrs.elementId || $ctrl.uid;
-                    Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.css`);
+                    Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.css`);
                     $ctrl.$onInit = () => __awaiter(this, void 0, void 0, function* () {
                         $scope.urlLoad = $attrs.urlLoad && misc_1.isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true;
                         $scope.detailsLinkPopup = $attrs.detailsLinkPopup && misc_1.isJSON($attrs.detailsLinkPopup) ?
@@ -286,9 +286,7 @@ System.register(["lodash", "stratus", "angular", "angular-sanitize", "angular-ma
                     $scope.remove = function remove() {
                     };
                 },
-                templateUrl: ($element, $attrs) => {
-                    return `${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.html`;
-                }
+                templateUrl: ($element, $attrs) => `${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.html`
             };
         }
     };
