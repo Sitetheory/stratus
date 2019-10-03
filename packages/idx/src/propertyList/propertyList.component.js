@@ -256,12 +256,10 @@ System.register(["lodash", "stratus", "angular", "angular-sanitize", "angular-ma
                             if ($scope.detailsTemplate) {
                                 templateOptions.template = $scope.detailsTemplate;
                             }
-                            let template = '<md-dialog aria-label="' + property.ListingKey + '">' +
+                            let template = `<md-dialog aria-label="${property.ListingKey}">` +
                                 '<stratus-property-details ';
-                            Object.keys(templateOptions).forEach(optionKey => {
-                                if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
-                                    template += optionKey + '=\'' + templateOptions[optionKey] + '\' ';
-                                }
+                            _.each(templateOptions, (optionValue, optionKey) => {
+                                template += `${optionKey}='${optionValue}'`;
                             });
                             template +=
                                 '></stratus-property-details>' +

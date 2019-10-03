@@ -14,8 +14,8 @@ import 'angular-material'
 import moment from 'moment'
 
 // Services
-import 'stratus.services.idx'
-// import '@stratusjs/idx/services/idx' The reference for later
+// import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
+import 'stratus.services.idx' // import '@stratusjs/idx/services/idx' The reference for later
 
 // Component Preload
 import 'stratus.components.propertyDetails'
@@ -111,7 +111,7 @@ Stratus.Components.PropertyList = {
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
 
-            let urlOptions: object | any = {}
+            let urlOptions: object | any = {} // TODO idx needs to exports urlOptions interface
             if ($scope.urlLoad) {
                 // first set the UrlOptions via defaults (cloning so it can't be altered)
                 Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
@@ -147,6 +147,7 @@ Stratus.Components.PropertyList = {
         /**
          * Functionality called when a search widget runs a query after the page has loaded
          * may update the URL options, so it may not be ideal to use on page load
+         * TODO Idx needs to export search options interface
          * Returns Collection
          */
         $scope.searchProperties = async (options?: object | any, refresh?: boolean, updateUrl?: boolean) =>
@@ -256,6 +257,7 @@ Stratus.Components.PropertyList = {
 
         /**
          * Return a string path to a particular property listing
+         * TODO Idx needs a Property interface
          */
         $scope.getDetailsURL = (property: object | any): string =>
             $scope.detailsLinkUrl + '#!/Listing/' + property._ServiceId + '/' + property.ListingKey + '/'
@@ -316,6 +318,7 @@ Stratus.Components.PropertyList = {
         /**
          * Process an MLS' required legal disclaimer to later display
          * @param html - if output should be HTML safe
+         * TODO Idx needs to supply MLSVariables interface
          */
         $scope.processMLSDisclaimer = (html?: boolean): string => {
             const services: object[] | any[] = $scope.getMLSVariables()
@@ -360,7 +363,15 @@ Stratus.Components.PropertyList = {
             }
             if ($scope.detailsLinkPopup === true) {
                 // Opening a popup will load the propertyDetails and adjust the hashbang URL
-                const templateOptions: object | any = {
+                const templateOptions: {
+                    element_id: string,
+                    service: number,
+                    'listing-key': string,
+                    'default-list-options': string,
+                    'page-title': boolean,
+                    'google-api-key'?: string,
+                    template?: string,
+                } = {
                     element_id: 'property_detail_popup_' + property.ListingKey,
                     service: property._ServiceId,
                     'listing-key': property.ListingKey,
@@ -375,12 +386,10 @@ Stratus.Components.PropertyList = {
                 }
 
                 let template =
-                    '<md-dialog aria-label="' + property.ListingKey + '">' +
+                    `<md-dialog aria-label="${property.ListingKey}">` +
                     '<stratus-property-details '
-                Object.keys(templateOptions).forEach(optionKey => {
-                    if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
-                        template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
-                    }
+                _.each(templateOptions, (optionValue, optionKey) => {
+                    template += `${optionKey}='${optionValue}'`
                 })
                 template +=
                     '></stratus-property-details>' +
