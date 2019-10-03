@@ -1,6 +1,10 @@
 // External
 import * as _ from 'lodash'
 
+export interface PlainObject {
+    [key: string]: any
+}
+
 // CamelCase String to Snake Case
 export function camelToSnake(target: string): string {
     return target.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
@@ -23,13 +27,14 @@ export function sanitize(data: any) {
     if (!_.isObject(data)) {
         return data
     }
-    _.each(data, (value: any, key: string, list: {[key: string]: any}) => {
-        if (_.size(value) > 0) {
+    const shallow: PlainObject = {}
+    _.each(data, (value: any, key: string, list: PlainObject) => {
+        if (_.isArrayLike(value) && _.isEmpty(value)) {
             return
         }
-        delete list[key]
+        shallow[key] = value
     })
-    return data
+    return shallow
 }
 
 // Time to Seconds

@@ -61,6 +61,7 @@ export class Registry {
                 }
                 list[key] = JSON.parse(list[key])
             })
+            options.api = sanitize(options.api)
             /* TODO: handle these sorts of shortcuts to the API that components are providing *
              $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
              const request = {
