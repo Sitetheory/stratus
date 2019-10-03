@@ -421,7 +421,10 @@
          */
         $scope.refreshSearchWidgetOptions = function refreshSearchWidgetOptions () {
           if ($scope.listId) {
-            Idx.getListInstance($scope.listId).refreshSearchWidgetOptions()
+            let instance = Idx.getListInstance($scope.listId)
+            if (instance && instance.hasOwnProperty('refreshSearchWidgetOptions')) {
+              instance.refreshSearchWidgetOptions()
+            }
           }
         }
       }],
