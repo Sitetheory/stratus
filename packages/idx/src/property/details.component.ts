@@ -32,6 +32,7 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
+// const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
 // FIXME need to get relative
@@ -695,9 +696,10 @@ Stratus.Components.PropertyDetails = {
             }
         })
 
-        $scope.getUid = () => $ctrl.uid
+        $scope.getUid = (): string => $ctrl.uid
 
-        $scope.fetchProperty = () => {
+        // TODO await until done fetching?
+        $scope.fetchProperty = (): void => {
             // FIXME Idx export query Interface
             const propertyQuery: {
                 service: number,
@@ -843,13 +845,13 @@ Stratus.Components.PropertyDetails = {
         /**
          * Function that runs when widget is destroyed
          */
-        $scope.remove = () => {
+        $scope.remove = (): void => {
         }
 
         /**
          * Output console if not in production
          */
-        $scope.devLog = (item1: any, item2: any) => {
+        $scope.devLog = (item1: any, item2: any): void => {
             if (!Stratus.Environment.get('production')) {
                 console.log(item1, item2)
             }

@@ -9,9 +9,6 @@ import 'angular'
 // Services
 import 'stratus.services.model'
 
-// Component Preload
-import 'stratus.components.propertyDetails'
-
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
 
@@ -82,7 +79,7 @@ Stratus.Components.PropertyDetailsSubSection = {
             $scope.convertItemsToObject()
         }
 
-        $scope.convertItemsToObject = () => {
+        $scope.convertItemsToObject = (): void => {
             /*Object.keys($scope.items).forEach((item: string) => {
                 if (typeof $scope.items[item] === 'string') {
                     $scope.items[item] = {
@@ -99,9 +96,9 @@ Stratus.Components.PropertyDetailsSubSection = {
             })
         }
 
-        $scope.typeOf = (item: any): string =>  _.isArray(item) ? 'array' : typeof item
+        $scope.typeOf = (item: any): string => _.isArray(item) ? 'array' : typeof item
 
-        $scope.isArray = (item: any) => _.isArray(item)
+        $scope.isArray = (item: any): boolean => _.isArray(item)
     },
     templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
 }

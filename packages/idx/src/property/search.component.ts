@@ -18,6 +18,7 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
+// const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'search'
 // FIXME need to get relative
@@ -172,7 +173,7 @@ Stratus.Components.PropertySearch = {
          * Update a scope nest variable from a given string path.
          * Works with updateNestedPathValue
          */
-        $scope.updateScopeValuePath = async (scopeVarPath: string, value: any) => {
+        $scope.updateScopeValuePath = async (scopeVarPath: string, value: any): Promise<string | any> => {
             // console.log('Update', scopeVarPath, 'to', value, typeof value)
             const scopePieces = scopeVarPath.split('.')
             return $scope.updateNestedPathValue($scope, scopePieces, value)
@@ -182,7 +183,7 @@ Stratus.Components.PropertySearch = {
          * Nests further into a string path to update a value
          * Works from updateScopeValuePath
          */
-        $scope.updateNestedPathValue = async (currentNest: object | any, pathPieces: object | any, value: any) => {
+        $scope.updateNestedPathValue = async (currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any> => {
             const currentPiece = pathPieces.shift()
             if (
                 currentPiece &&
@@ -219,7 +220,7 @@ Stratus.Components.PropertySearch = {
             const promises: any[] = []
             Object.keys($scope.variableSyncing).forEach((elementId: string) => {
                 promises.push(
-                    $q(async (resolve: any) => {
+                    $q(async (resolve: void | any) => {
                         const varElement = $scope.getInput(elementId)
                         if (varElement) {
                             // Form Input exists
@@ -270,7 +271,7 @@ Stratus.Components.PropertySearch = {
         /**
          * Add or remove a certain element from an array
          */
-        $scope.toggleArrayElement = (item: any, array: any[]) => {
+        $scope.toggleArrayElement = (item: any, array: any[]): void => {
             array = array || []
             const arrayIndex = array.indexOf(item)
             if (arrayIndex >= 0) {
@@ -286,7 +287,7 @@ Stratus.Components.PropertySearch = {
          * @param ev - Click Event
          * @param menuElement id or class of element to grab
          */
-        $scope.showInlinePopup = (ev: any, menuElement: string) => {
+        $scope.showInlinePopup = (ev: any, menuElement: string): void => {
             if (!$scope.filterMenu) {
                 const position = $mdPanel.newPanelPosition()
                     .relativeTo(ev.srcElement)
@@ -325,7 +326,7 @@ Stratus.Components.PropertySearch = {
          * Update the entirety options.query in a safe manner to ensure undefined references are not produced
          * TODO Idx needs to export query interface
          */
-        $scope.setQuery = (newQuery?: object | any) => {
+        $scope.setQuery = (newQuery?: object | any): void => {
             $scope.options.query = newQuery || {}
             // Let's ensure these values always exist
             $scope.options.query.Status = $scope.options.query.Status || []
@@ -340,7 +341,7 @@ Stratus.Components.PropertySearch = {
             // TODO need to search by Agent License
         }
 
-        $scope.setQueryDefaults = () => {
+        $scope.setQueryDefaults = (): void => {
             $scope.$applyAsync(() => {
                 if ($scope.options.query.ListingType.length < 1) {
                     $scope.options.query.ListingType = $scope.options.selection.ListingType.default.Sale.Residential
@@ -350,7 +351,7 @@ Stratus.Components.PropertySearch = {
             })
         }
 
-        $scope.selectDefaultListingType = (listingGroup?: string) => {
+        $scope.selectDefaultListingType = (listingGroup?: string): void => {
             if (!listingGroup) {
                 listingGroup = 'Commercial'
                 if (!$scope.options.selection.ListingType.group.Commercial) {
@@ -373,8 +374,9 @@ Stratus.Components.PropertySearch = {
 
         /**
          * Call a List widget to perform a search
+         * TODO await until search is complete?
          */
-        $scope.searchProperties = () => {
+        $scope.searchProperties = (): void => {
             let listScope
             if ($scope.listId) {
                 listScope = Idx.getListInstance($scope.listId)
@@ -391,7 +393,7 @@ Stratus.Components.PropertySearch = {
         /**
          * Have the widget options refreshed form the Widget's end
          */
-        $scope.refreshSearchWidgetOptions = () => {
+        $scope.refreshSearchWidgetOptions = (): void => {
             if ($scope.listId) {
                 const instance = Idx.getListInstance($scope.listId)
                 if (instance && instance.hasOwnProperty('refreshSearchWidgetOptions')) {

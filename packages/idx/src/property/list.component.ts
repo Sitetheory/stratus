@@ -26,6 +26,7 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
+// const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
 // FIXME need to get relative
@@ -135,7 +136,7 @@ Stratus.Components.PropertyList = {
          * Inject the current URL settings into any attached Search widget
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
-        $scope.refreshSearchWidgetOptions = () => {
+        $scope.refreshSearchWidgetOptions = (): void => {
             const searchScopes: object[] | any[] = Idx.getListInstanceLinks($scope.elementId)
             searchScopes.forEach((searchScope) => {
                 // FIXME search widgets may only hold certain values. Later this needs to be adjust
@@ -151,7 +152,7 @@ Stratus.Components.PropertyList = {
          * TODO Idx needs to export search options interface
          * Returns Collection
          */
-        $scope.searchProperties = async (options?: object | any, refresh?: boolean, updateUrl?: boolean) =>
+        $scope.searchProperties = async (options?: object | any, refresh?: boolean, updateUrl?: boolean): Promise<any> =>
             $q((resolve: any) => {
                 options = options || {}
                 updateUrl = updateUrl === false ? updateUrl : true
@@ -208,7 +209,7 @@ Stratus.Components.PropertyList = {
          * @param pageNumber - The page number
          * @param ev - Click event
          */
-        $scope.pageChange = async (pageNumber: number, ev?: any) => {
+        $scope.pageChange = async (pageNumber: number, ev?: any): Promise<void> => {
             if (ev) {
                 ev.preventDefault()
             }
@@ -220,7 +221,7 @@ Stratus.Components.PropertyList = {
          * Move the displayed listings to the next page, keeping the current query
          * @param ev - Click event
          */
-        $scope.pageNext = async (ev?: any) => {
+        $scope.pageNext = async (ev?: any): Promise<void> => {
             if (!$scope.options.page) {
                 $scope.options.page = 1
             }
@@ -233,7 +234,7 @@ Stratus.Components.PropertyList = {
          * Move the displayed listings to the previous page, keeping the current query
          * @param ev - Click event
          */
-        $scope.pagePrevious = async (ev?: any) => {
+        $scope.pagePrevious = async (ev?: any): Promise<void> => {
             if (!$scope.options.page) {
                 $scope.options.page = 1
             }
@@ -248,7 +249,7 @@ Stratus.Components.PropertyList = {
          * @param order -
          * @param ev - Click event
          */
-        $scope.orderChange = async (order: string | string[], ev?: any) => {
+        $scope.orderChange = async (order: string | string[], ev?: any): Promise<void> => {
             if (ev) {
                 ev.preventDefault()
             }
@@ -357,7 +358,7 @@ Stratus.Components.PropertyList = {
          * @param property property object
          * @param ev - Click event
          */
-        $scope.displayPropertyDetails = (property: object | any, ev?: any) => {
+        $scope.displayPropertyDetails = (property: object | any, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -420,8 +421,7 @@ Stratus.Components.PropertyList = {
         /**
          * Destroy this widget
          */
-        $scope.remove = function remove() {
-
+        $scope.remove = (): void => {
         }
     },
     templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
