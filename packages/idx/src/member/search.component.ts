@@ -1,4 +1,4 @@
-// PropertyList Component
+// IdxMemberSearch Component
 // --------------
 
 // Runtime
@@ -193,7 +193,7 @@ Stratus.Components.PropertyMemberSearch = {  // FIXME should be just MemberSearc
             } = {
                 // 'element_id': 'property_member_detail_popup',
                 options: '', // JSON.stringify($scope.options),
-                template: 'mothership/propertyMemberSelector',
+                template: 'mothership/list.selector', // TODO attributes need to be able to select a template
                 'variable-sync': JSON.stringify({
                     agent_fname: 'MemberFirstName',
                     agent_lname: 'MemberLastName',

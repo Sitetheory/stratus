@@ -1,4 +1,4 @@
-// PropertyDetails Component
+// IdxPropertyDetails Component
 // --------------
 
 // Runtime

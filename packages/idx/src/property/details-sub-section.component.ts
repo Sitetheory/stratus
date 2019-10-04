@@ -1,4 +1,4 @@
-// PropertyDetailsSubSection Component
+// IdxPropertyDetailsSubSection Component
 // --------------
 
 // Runtime

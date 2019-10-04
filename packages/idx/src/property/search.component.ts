@@ -1,4 +1,4 @@
-// PropertyList Component
+// IdxPropertySearch Component
 // --------------
 
 // Runtime
