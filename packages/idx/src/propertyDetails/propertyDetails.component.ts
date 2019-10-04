@@ -1,4 +1,4 @@
-// PropertyList Component
+// PropertyDetails Component
 // --------------
 
 // Runtime
