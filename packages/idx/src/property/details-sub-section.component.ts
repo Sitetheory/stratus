@@ -17,8 +17,8 @@ import {isJSON} from '@stratusjs/core/misc'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-const parentModuleName = 'propertyDetails'
-const moduleName = 'propertyDetailsSubSection'
+const moduleName = 'property'
+const componentName = 'details-sub-section'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
@@ -103,5 +103,5 @@ Stratus.Components.PropertyDetailsSubSection = {
 
         $scope.isArray = (item: any) => _.isArray(item)
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}${parentModuleName}/${$attrs.template || moduleName}.component${min}.html`
+    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
 }

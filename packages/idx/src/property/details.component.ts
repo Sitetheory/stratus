@@ -32,7 +32,8 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-const moduleName = 'propertyDetails'
+const moduleName = 'property'
+const componentName = 'details'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
@@ -64,7 +65,7 @@ Stratus.Components.PropertyDetails = {
         $ctrl.uid = _.uniqueId(camelToSnake(moduleName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)
 
         /**
          * All actions that happen first when the component loads
@@ -854,5 +855,5 @@ Stratus.Components.PropertyDetails = {
             }
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || moduleName}.component${min}.html`
+    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
 }
