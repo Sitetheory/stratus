@@ -8,10 +8,71 @@ import * as angular from 'angular'
 // Services
 import 'stratus.services.collection'
 
+// Stratus Dependencies
+import {isJSON} from '@stratusjs/core/misc'
+
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+
+// Reusable Objects
+export interface WhereOptions {
+    // Property
+    ListingKey?: string,
+    ListingType?: string[] | string,
+    Status?: string[] | string,
+    City?: string,
+    ListPriceMin?: number | any,
+    ListPriceMax?: number | any,
+    BathroomsFullMin?: number | any,
+    BedroomsTotalMin?: number | any,
+    AgentLicense?: string[] | string,
+
+    // Member
+    MemberKey?: string,
+    MemberStateLicense?: string,
+    MemberNationalAssociationId?: string,
+    MemberStatus?: string,
+    MemberFullName?: string,
+
+    // Office
+    OfficeKey?: string,
+    OfficeNationalAssociationId?: string,
+    OfficeStatus?: string,
+    OfficeName?: string,
+}
+
+// Internal
+interface MongoWhereQuery {
+    [key: string]: string | string[] | number | {
+        inq?: string[] | number[],
+        between?: number[],
+        gte?: number,
+        lte?: number,
+        like?: string,
+        options?: string
+    }
+}
+
+interface MongoIncludeQuery {
+    relation: string,
+    scope: {
+        order: string,
+        fields: string[] | string,
+        limit?: number,
+    }
+}
+
+interface MongoFilterQuery {
+    where: object,
+    limit: number,
+    skip: number,
+    fields?: string[],
+    order?: string[],
+    include?: MongoIncludeQuery[] | MongoIncludeQuery,
+}
+
 
 Stratus.Services.Idx = [
     '$provide',
@@ -325,9 +386,9 @@ Stratus.Services.Idx = [
 
             /**
              * Functions to do if the token retrieval fails. For now it just outputs the errors
-             * @param {Object} response
+             * @param response -
              */
-            function tokenHandleBadResponse(response) {
+            function tokenHandleBadResponse(response: { data?: { errors?: any[] } } | any): void {
                 if (
                     typeof response === 'object' &&
                     Object.prototype.hasOwnProperty.call(response, 'data') &&
@@ -343,9 +404,9 @@ Stratus.Services.Idx = [
             /**
              * Set a timer to attempt to run a token fetch again 15 secs before the current tokens expire
              */
-            function tokenEnableRefreshTimer() {
+            function tokenEnableRefreshTimer(): void {
                 clearTimeout(refreshLoginTimer)
-                refreshLoginTimer = setTimeout(function () {
+                refreshLoginTimer = setTimeout(() => {
                     tokenRefresh()
                 }, (session.lastTtl - 15) * 1000) // 15 seconds before the token expires
             }
@@ -353,14 +414,14 @@ Stratus.Services.Idx = [
             /**
              * Collection constructor helper that will help properly create a new Collection.
              * Will do nothing else.
-             * @param {Object} request - Standard Registry request object
-             * @returns {Model}
+             * @param request - Standard Registry request object
+             * returns {Model}
              */
-            function createModel(request) {
+            function createModel(request: any): any { // TODO define type Request and Model
                 // request.direct = true;
                 const model = new Model(request)
                 if (request.api) {
-                    model.meta.set('api', _.isJSON(request.api)
+                    model.meta.set('api', isJSON(request.api)
                         ? JSON.parse(request.api)
                         : request.api)
                 }
@@ -370,14 +431,14 @@ Stratus.Services.Idx = [
             /**
              * Model constructor helper that will help properly create a new Model.
              * Will do nothing else.
-             * @param {Object} request - Standard Registry request object
-             * @returns {Model}
+             * @param request - Standard Registry request object
+             * returns {Model}
              */
-            function createCollection(request) {
+            function createCollection(request: any): any { // TODO define type Request and Model
                 request.direct = true
                 const collection = new Collection(request)
                 if (request.api) {
-                    collection.meta.set('api', _.isJSON(request.api)
+                    collection.meta.set('api', isJSON(request.api)
                         ? JSON.parse(request.api)
                         : request.api)
                 }
@@ -387,12 +448,12 @@ Stratus.Services.Idx = [
             /**
              * Fetch the results of multiple 'collections', then merge those results together into a single Collection
              * These resulting Collections may not be properly set up to perform their usual action and are only intended to hold Model data
-             * @param {Collection} originalCollection
-             * @param {Array<Collection>} collections
-             * @param {Boolean} append
-             * @returns {Promise<Collection>}
+             * @param originalCollection - {Collection}
+             * @param collections - {Array<Collection>}
+             * @param append -
+             * returns {Promise<Collection>}
              */
-            async function fetchMergeCollections(originalCollection, collections, append) {
+            async function fetchMergeCollections(originalCollection: any, collections: any[], append?: boolean): Promise<any> {
                 // The Collection is now doing something. Let's label it as such.
                 originalCollection.pending = true
                 originalCollection.completed = false
@@ -400,30 +461,32 @@ Stratus.Services.Idx = [
                 let totalCount = 0
 
                 // Make Promises that each of the collections shall fetch their results
-                const fetchPromises = []
-                collections.forEach(function (collection) {
-                    const options = {}
+                const fetchPromises: any[] = []
+                collections.forEach(collection => {
+                    const options: {
+                        headers?: object
+                    } = {}
                     if (session.services[collection.serviceId].token !== null) {
                         options.headers = {
                             Authorization: session.services[collection.serviceId].token
                         }
                     }
                     fetchPromises.push(
-                        $q(function (resolve, reject) {
+                        $q((resolve: any[] | any) => {
                             collection.fetch('POST', null, options)
-                                .then(function (models) {
+                                .then((models: any) => {
                                     resolve(models)
                                 })
                                 // Inject the local server's Service Id loaded from
-                                .then(function () {
+                                .then(() => {
                                     resolve(modelInjectProperty(collection.models, {
                                         _ServiceId: collection.serviceId
                                     }))
                                 })
-                                .then(function () {
+                                .then(() => {
                                     const countRecords = collection.header.get('x-total-count')
                                     if (countRecords) {
-                                        totalCount += parseInt(countRecords)
+                                        totalCount += parseInt(countRecords, 10)
                                     }
                                 })
                         })
@@ -435,13 +498,12 @@ Stratus.Services.Idx = [
                 return $q.all(fetchPromises)
                     .then(
                         /**
-                         * @param {Array<Array<Object>>} fetchedData - Array of models from other Collections
-                         * @param fetchedData
-                         * @returns {Collection}
+                         * @param fetchedData - Array of models from other Collections {Array<Array<Object>>}
+                         * returns {Collection}
                          */
-                        function (fetchedData) {
+                        (fetchedData: any[]): any => {
                             // Once all the Results are returned, starting merging them into the original Collection
-                            fetchedData.forEach(function (models) {
+                            fetchedData.forEach(models => {
                                 if (_.isArray(models)) {
                                     originalCollection.models.push(...models)
                                 }
@@ -449,7 +511,7 @@ Stratus.Services.Idx = [
                             return originalCollection
                         }
                     )
-                    .then(function () {
+                    .then(() => {
                         originalCollection.header.set('x-total-count', totalCount)
                         originalCollection.meta.set('fetchDate', new Date())
 
@@ -466,32 +528,34 @@ Stratus.Services.Idx = [
             /**
              * Fetch the results of one Model, then merge those results together into a single existing Model
              * These resulting Model may not be properly set up to perform their usual action and are only intended to hold Model data
-             * @param {Model} originalModel
-             * @param {Model} newModel
-             * @returns {Promise<Collection>}
+             * @param originalModel - {Model}
+             * @param newModel - {Model}
+             * returns {Promise<Collection>}
              */
-            function fetchReplaceModel(originalModel, newModel) {
+            function fetchReplaceModel(originalModel: object | any, newModel: object | any): object | any { // TODO define Model
                 // The Model is now doing something. Let's label it as such.
                 originalModel.pending = true
                 originalModel.completed = false
 
                 // Make Promises that each of the Models shall fetch their results. We're only using a single one here
                 const fetchPromises = []
-                const options = {}
+                const options: {
+                    headers?: object
+                } = {}
                 if (session.services[newModel.serviceId].token !== null) {
                     options.headers = {
                         Authorization: session.services[newModel.serviceId].token
                     }
                 }
                 fetchPromises.push(
-                    $q(function (resolve, reject) {
+                    $q((resolve: any[] | any) => {
                         console.log('sending fetchReplaceModel', newModel, options)
                         newModel.fetch('POST', null, options)
-                            .then(function (data) {
+                            .then((data: any) => {
                                 resolve(data)
                             })
                             // Inject the local server's Service Id loaded from
-                            .then(function () {
+                            .then(() => {
                                 resolve(modelInjectProperty([newModel.data], {
                                     _ServiceId: newModel.serviceId
                                 }))
@@ -501,19 +565,18 @@ Stratus.Services.Idx = [
                 return $q.all(fetchPromises)
                     .then(
                         /**
-                         * @param {Array<Array<Object>>} fetchedData - Array of data from other Models
-                         * @param fetchedData
-                         * @returns {Model}
+                         * @param fetchedData - Array of data from other Models {Array<Array<Object>>}
+                         * returns {Model}
                          */
-                        function (fetchedData) {
+                        (fetchedData: any[]): object | any => {
                             // Once all the Results are returned, shove them into the original Model
-                            fetchedData.forEach(function (data) {
+                            fetchedData.forEach(data => {
                                 originalModel.data = data
                             })
                             return originalModel
                         }
                     )
-                    .then(function () {
+                    .then(() => {
                         originalModel.meta.set('fetchDate', new Date())
 
                         // The Model is now ready, let's make sure we label it as such
@@ -526,24 +589,24 @@ Stratus.Services.Idx = [
 
             /**
              * Inject Data into an array of models
-             * @param {Array<Object>} modelDatas (either collection.models || model.data)
-             * @param {Object<String, *>} properties
+             * @param modelDatas (either collection.models || model.data) {Array<Object>}
+             * @param properties - {Object<String, *>}
              */
-            function modelInjectProperty(modelDatas, properties) {
-                modelDatas.forEach(function (modelData) {
+            function modelInjectProperty(modelDatas: object[], properties: { [key: string]: any }): void {
+                modelDatas.forEach(modelData => {
                     _.extend(modelData, properties)
                 })
             }
 
             /**
              * Sync a Collection with all members of a certain instance
-             * @param {String} instanceType
-             * @param {String} scopedCollectionVarName
-             * @returns {Collection}
+             * @param instanceType -
+             * @param scopedCollectionVarName -
+             * returns {Collection}
              */
-            function createOrSyncCollectionVariable(instanceType, scopedCollectionVarName) {
-                let collection
-                Object.keys(instance[instanceType]).forEach(function (listName) {
+            function createOrSyncCollectionVariable(instanceType: string, scopedCollectionVarName: string): any {
+                let collection: any | null // TODO define Collection
+                Object.keys(instance[instanceType]).forEach(listName => {
                     if (
                         !collection &&
                         Object.prototype.hasOwnProperty.call(instance[instanceType], listName) &&
@@ -555,7 +618,7 @@ Stratus.Services.Idx = [
                 if (!collection) {
                     collection = new Collection()
                 }
-                Object.keys(instance[instanceType]).forEach(function (listName) {
+                Object.keys(instance[instanceType]).forEach(listName => {
                     if (
                         !Object.prototype.hasOwnProperty.call(instance[instanceType][listName], scopedCollectionVarName) ||
                         instance[instanceType][listName][scopedCollectionVarName] !== collection
@@ -567,11 +630,11 @@ Stratus.Services.Idx = [
             }
 
             /**
-             * @param {WhereOptions} where
-             * @returns {Object}
+             * @param where - {WhereOptions}
+             * @eturns {Object}
              */
-            function compilePropertyWhereFilter(where) {
-                const whereQuery = {}
+            function compilePropertyWhereFilter(where: WhereOptions): { [key: string]: any } {
+                const whereQuery: MongoWhereQuery = {}
                 // ListingKey
                 if (Object.prototype.hasOwnProperty.call(where, 'ListingKey') && where.ListingKey !== '') {
                     whereQuery.ListingKey = where.ListingKey
@@ -629,22 +692,28 @@ Stratus.Services.Idx = [
                     }
                 }
                 // Baths Min
-                if (Object.prototype.hasOwnProperty.call(where, 'BathroomsFullMin') && where.BathroomsFullMin && where.BathroomsFullMin !== 0) {
+                if (
+                    Object.prototype.hasOwnProperty.call(where, 'BathroomsFullMin') &&
+                    where.BathroomsFullMin && where.BathroomsFullMin !== 0
+                ) {
                     whereQuery.BathroomsFull = {gte: parseInt(where.BathroomsFullMin, 10)}
                 }
                 // Beds Min
-                if (Object.prototype.hasOwnProperty.call(where, 'BedroomsTotalMin') && where.BedroomsTotalMin && where.BedroomsTotalMin !== 0) {
+                if (
+                    Object.prototype.hasOwnProperty.call(where, 'BedroomsTotalMin') &&
+                    where.BedroomsTotalMin && where.BedroomsTotalMin !== 0
+                ) {
                     whereQuery.BedroomsTotal = {gte: parseInt(where.BedroomsTotalMin, 10)}
                 }
                 return whereQuery
             }
 
             /**
-             * @param {WhereOptions} where
-             * @returns {Object}
+             * @param where - {WhereOptions}
+             * returns {Object}
              */
-            function compileMemberWhereFilter(where) {
-                const whereQuery = {}
+            function compileMemberWhereFilter(where: WhereOptions): { [key: string]: any } {
+                const whereQuery: MongoWhereQuery = {}
                 // MemberKey
                 if (Object.prototype.hasOwnProperty.call(where, 'MemberKey') && where.MemberKey !== '') {
                     whereQuery.MemberKey = where.MemberKey
@@ -654,7 +723,10 @@ Stratus.Services.Idx = [
                     whereQuery.MemberStateLicense = where.MemberStateLicense
                 }
                 // MemberNationalAssociationId
-                if (Object.prototype.hasOwnProperty.call(where, 'MemberNationalAssociationId') && where.MemberNationalAssociationId !== '') {
+                if (
+                    Object.prototype.hasOwnProperty.call(where, 'MemberNationalAssociationId') &&
+                    where.MemberNationalAssociationId !== ''
+                ) {
                     whereQuery.MemberNationalAssociationId = where.MemberNationalAssociationId
                 }
                 // MemberStatus
@@ -672,17 +744,20 @@ Stratus.Services.Idx = [
             }
 
             /**
-             * @param {WhereOptions} where
-             * @returns {Object}
+             * @param where - {WhereOptions}
+             * returns {Object}
              */
-            function compileOfficeWhereFilter(where) {
-                const whereQuery = {}
+            function compileOfficeWhereFilter(where: WhereOptions): { [key: string]: any } {
+                const whereQuery: MongoWhereQuery = {}
                 // OfficeKey
                 if (Object.prototype.hasOwnProperty.call(where, 'OfficeKey') && where.OfficeKey !== '') {
                     whereQuery.OfficeKey = where.OfficeKey
                 }
                 // OfficeNationalAssociationId
-                if (Object.prototype.hasOwnProperty.call(where, 'OfficeNationalAssociationId') && where.OfficeNationalAssociationId !== '') {
+                if (
+                    Object.prototype.hasOwnProperty.call(where, 'OfficeNationalAssociationId') &&
+                    where.OfficeNationalAssociationId !== ''
+                ) {
                     whereQuery.OfficeNationalAssociationId = where.OfficeNationalAssociationId
                 }
                 // OfficeStatus
@@ -701,16 +776,16 @@ Stratus.Services.Idx = [
 
             /**
              * Convert the human given Order parameters to Loopback filter usable
-             * @param {[String]} orderUnparsed
-             * @returns {Object}
+             * @param orderUnparsed - String[] and String delimited with a `,` comma
+             * returns {Object}
              */
-            function compileOrderFilter(orderUnparsed) {
+            function compileOrderFilter(orderUnparsed: string[] | string): string[] {
                 if (typeof orderUnparsed === 'string') {
                     orderUnparsed = orderUnparsed.split(',')
                 }
-                const orderQuery = []
+                const orderQuery: string[] = []
 
-                orderUnparsed.forEach(function (orderName) {
+                orderUnparsed.forEach(orderName => {
                     let direction = 'ASC'
                     if (orderName.charAt(0) === '-') {
                         orderName = orderName.substring(1, orderName.length)
@@ -723,24 +798,47 @@ Stratus.Services.Idx = [
 
             /**
              *
-             * @param {Object} options
-             * @param {WhereOptions} options.where
-             * @param {[String]=} options.order
-             * @param {[String]=} options.fields - Which Fields to return
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {[String]=} options.images.fields
+             * @param options - {Object}
+             * @param options.where - {WhereOptions}
+             * @param options.page -
+             * @param options.perPage -
+             * @param options.order - {[String]=}
+             * @param options.fields - Which Fields to return {[String]=}
+             * @param options.images - Include Image data {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
              */
-            function compilePropertyFilter(options) {
+            function compilePropertyFilter(options: {
+                where: WhereOptions,
+                page?: number,
+                perPage?: number | 20,
+                order?: string[],
+                fields: string[],
+                images?: boolean | {
+                    limit?: number,
+                    fields?: string[] | string,
+                }
+                openhouses?: boolean | {
+                    limit?: number,
+                    fields?: string[] | string,
+                }
+            }): MongoFilterQuery {
+                if (!options.perPage) {
+                    options.perPage = 20
+                }
+
                 let skip = 0
                 if (options.page) {
                     skip = (options.page - 1) * options.perPage
                 }
-                const filterQuery = {
+                const filterQuery: MongoFilterQuery = {
                     where: compilePropertyWhereFilter(options.where),
-                    fields: options.fields,
                     limit: options.perPage,
-                    skip: skip
+                    skip
+                }
+
+                if (options.fields) {
+                    filterQuery.fields = options.fields
                 }
 
                 if (options.order && options.order.length > 0) {
@@ -748,11 +846,11 @@ Stratus.Services.Idx = [
                 }
 
                 // Handle included collections
-                const includes = []
+                const includes: MongoIncludeQuery[] = []
 
                 // Included Images
                 if (options.images) {
-                    const imageInclude = {
+                    const imageInclude: MongoIncludeQuery = {
                         relation: 'Images',
                         scope: {
                             order: 'Order', // FIXME should be ordered by default on db side (default scopes)
@@ -779,7 +877,7 @@ Stratus.Services.Idx = [
 
                 // Included Open Houses
                 if (options.openhouses) {
-                    const openHouseInclude = {
+                    const openHouseInclude: MongoIncludeQuery = {
                         relation: 'OpenHouses',
                         scope: {
                             order: 'OpenHouseStartTime', // FIXME should be ordered by default on db side (default scopes)
