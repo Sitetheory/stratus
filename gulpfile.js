@@ -229,6 +229,7 @@ function lintJS () {
     '!node_modules/**/*.js',
     '!dist/**/*.js',
     '!components/**/*.js', // TypeScript supersedes Standard JS
+    '!extras/components/**/*.js', // TypeScript supersedes Standard JS
     '!packages/**/*.js', // TypeScript supersedes Standard JS
     '!services/**/*.js', // TypeScript supersedes Standard JS
     '!src/**/*.js', // TypeScript supersedes Standard JS
