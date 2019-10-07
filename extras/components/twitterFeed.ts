@@ -8,7 +8,7 @@ import 'angular'
 
 // Third Party Libraries
 // @ts-ignore
-import * as twitter from 'https://platform.twitter.com/widgets'
+import * as twitter from 'twitter'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -29,21 +29,22 @@ Stratus.Components.TwitterFeed = {
 
         // Twitter Options
         // https://developer.twitter.com/en/docs/twitter-for-websites/timelines/guides/parameter-reference
-        type: '<',
-        screenName: '<',
-        limit: '<',
-        lang: '<',
-        width: '<',
-        height: '<',
-        theme: '<',
-        linkColor: '<',
-        borderColor: '<',
-        ariaPolite: '<',
-        dnt: '<',
+        type: '=',
+        screenName: '=',
+        limit: '=',
+        lang: '=',
+        width: '=',
+        height: '=',
+        theme: '=',
+        linkColor: '=',
+        borderColor: '=',
+        ariaPolite: '=',
+        dnt: '=',
     },
     controller(
         $scope: any,
-        $attrs: any
+        $attrs: any,
+        $element: any
     ) {
         // Initialize
         const $ctrl = this
@@ -52,22 +53,43 @@ Stratus.Components.TwitterFeed = {
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.initialized = false
 
+        // Settings
+        $scope.feedOptions = {}
+
         // Delayed Initialization
         $scope.initialize = async () => {
             if ($scope.initialized) {
                 return
             }
             $scope.initialized = true
-            twitter.widgets.createTimeline(
+            _.each(Stratus.Components.TwitterFeed.bindings, (value, key) => {
+                _.set($scope.feedOptions, key, _.get($ctrl, key) || _.get($attrs, key))
+            })
+            console.log('feedOptions:', sanitize($scope.feedOptions))
+            // @ts-ignore
+            const timeline = await twttr.widgets.createTimeline(
                 {
-                    sourceType: 'list',
-                    ownerScreenName: $scope.screenName
+                    sourceType: $scope.feedOptions.type || 'profile',
+                    screenName: $scope.feedOptions.screenName,
                 },
-                document.getElementById($scope.elementId),
-                sanitize($attrs)
+                $element[0],
+                sanitize($scope.feedOptions) || {}
             )
         }
 
+        // Initialize if hydrated
+        if (!_.isEmpty($ctrl.screenName || $attrs.screenName)) {
+            $scope.initialize()
+            return
+        }
+
+        // Screen Name Watcher
+        $scope.$watch('$ctrl.screenName', (newVal: any, oldVal: any) => {
+            if (!newVal) {
+                return
+            }
+            $scope.initialize()
+        })
     },
     template: '<div id="{{ elementId }}"></div>'
 }
