@@ -43,7 +43,60 @@ export interface WhereOptions {
     OfficeName?: string,
 }
 
+export interface CompileFilterOptions {
+    where: WhereOptions,
+    page?: number,
+    perPage?: number | 20,
+    order?: string[],
+    fields?: string[],
+    images?: boolean | {
+        limit?: number,
+        fields?: string[] | string,
+    },
+    openhouses?: boolean | {
+        limit?: number,
+        fields?: string[] | string,
+    },
+    office?: boolean | {
+        limit?: number,
+        fields?: string[] | string,
+    },
+    managingBroker?: boolean | {
+        limit?: number,
+        fields?: string[] | string,
+    },
+    members?: boolean | {
+        limit?: number,
+        fields?: string[] | string,
+    }
+}
+
+export interface MLSService {
+    id: number,
+    name: string,
+    disclaimer: string,
+    token?: string,
+    created?: string,
+    ttl?: number,
+}
+
 // Internal
+interface Session {
+    services: MLSService[],
+    lastCreated: Date,
+    lastTtl: number,
+    expires?: Date
+}
+
+interface TokenResponse {
+    data: {
+        services?: MLSService[],
+        lastCreated: Date,
+        lastTtl: number,
+        errors?: any[]
+    }
+}
+
 interface MongoWhereQuery {
     [key: string]: string | string[] | number | {
         inq?: string[] | number[],
@@ -55,21 +108,26 @@ interface MongoWhereQuery {
     }
 }
 
+// type MongoOrderQuery = string[]
+interface MongoOrderQuery extends Array<string> {
+}
+
+
 interface MongoIncludeQuery {
     relation: string,
     scope: {
-        order: string,
         fields: string[] | string,
+        order?: string,
         limit?: number,
     }
 }
 
 interface MongoFilterQuery {
-    where: object,
+    where: MongoWhereQuery,
     limit: number,
     skip: number,
     fields?: string[],
-    order?: string[],
+    order?: MongoOrderQuery,
     include?: MongoIncludeQuery[] | MongoIncludeQuery,
 }
 
@@ -126,12 +184,7 @@ Stratus.Services.Idx = [
             }
 
             /** type {{services: Array<MLSService>, lastCreated: Date, lastTtl: number}} */
-            const session: {
-                services: any[],
-                lastCreated: Date,
-                lastTtl: number,
-                expires?: Date
-            } = {
+            const session: Session = {
                 services: [],
                 lastCreated: new Date(),
                 lastTtl: 0
@@ -339,7 +392,7 @@ Stratus.Services.Idx = [
                     $http({
                         method: 'GET',
                         url: tokenRefreshURL
-                    }).then((response: { data?: { services?: any[] } }) => { // TODO interface a response
+                    }).then((response: TokenResponse) => {
                         if (
                             typeof response === 'object' &&
                             Object.prototype.hasOwnProperty.call(response, 'data') &&
@@ -352,7 +405,7 @@ Stratus.Services.Idx = [
                             tokenHandleBadResponse(response)
                             reject()
                         }
-                    }, (response: { data?: { services?: any[] } }) => { // TODO interface a response
+                    }, (response: TokenResponse) => { // TODO interface a response
                         tokenHandleBadResponse(response)
                         reject()
                     })
@@ -365,12 +418,11 @@ Stratus.Services.Idx = [
              * @param response - valid token response
              * @param keepAlive -
              * @param response.data.services Array<MLSService>
-             *     TODO interface a response
              */
-            function tokenHandleGoodResponse(response: { data?: { services?: any[] } }, keepAlive?: boolean): void {
+            function tokenHandleGoodResponse(response: TokenResponse, keepAlive?: boolean): void {
                 session.services = []
                 /** {MLSService} service */
-                response.data.services.forEach((service: any) => {
+                response.data.services.forEach((service) => {
                     if (Object.prototype.hasOwnProperty.call(service, 'id')) {
                         session.services[service.id] = service
                         session.lastCreated = new Date(service.created)// The object is a String being converted to Date
@@ -388,7 +440,7 @@ Stratus.Services.Idx = [
              * Functions to do if the token retrieval fails. For now it just outputs the errors
              * @param response -
              */
-            function tokenHandleBadResponse(response: { data?: { errors?: any[] } } | any): void {
+            function tokenHandleBadResponse(response: TokenResponse | any): void {
                 if (
                     typeof response === 'object' &&
                     Object.prototype.hasOwnProperty.call(response, 'data') &&
@@ -406,8 +458,8 @@ Stratus.Services.Idx = [
              */
             function tokenEnableRefreshTimer(): void {
                 clearTimeout(refreshLoginTimer)
-                refreshLoginTimer = setTimeout(() => {
-                    tokenRefresh()
+                refreshLoginTimer = setTimeout(async () => {
+                    await tokenRefresh()
                 }, (session.lastTtl - 15) * 1000) // 15 seconds before the token expires
             }
 
@@ -416,8 +468,9 @@ Stratus.Services.Idx = [
              * Will do nothing else.
              * @param request - Standard Registry request object
              * returns {Model}
+             * TODO define type Request and Model
              */
-            function createModel(request: any): any { // TODO define type Request and Model
+            function createModel(request: any): any {
                 // request.direct = true;
                 const model = new Model(request)
                 if (request.api) {
@@ -531,8 +584,9 @@ Stratus.Services.Idx = [
              * @param originalModel - {Model}
              * @param newModel - {Model}
              * returns {Promise<Collection>}
+             * TODO define Model
              */
-            function fetchReplaceModel(originalModel: object | any, newModel: object | any): object | any { // TODO define Model
+            function fetchReplaceModel(originalModel: object | any, newModel: object | any): object | any {
                 // The Model is now doing something. Let's label it as such.
                 originalModel.pending = true
                 originalModel.completed = false
@@ -591,6 +645,7 @@ Stratus.Services.Idx = [
              * Inject Data into an array of models
              * @param modelDatas (either collection.models || model.data) {Array<Object>}
              * @param properties - {Object<String, *>}
+             * TODO define Model?
              */
             function modelInjectProperty(modelDatas: object[], properties: { [key: string]: any }): void {
                 modelDatas.forEach(modelData => {
@@ -603,6 +658,7 @@ Stratus.Services.Idx = [
              * @param instanceType -
              * @param scopedCollectionVarName -
              * returns {Collection}
+             * TODO define Collection
              */
             function createOrSyncCollectionVariable(instanceType: string, scopedCollectionVarName: string): any {
                 let collection: any | null // TODO define Collection
@@ -631,9 +687,8 @@ Stratus.Services.Idx = [
 
             /**
              * @param where - {WhereOptions}
-             * @eturns {Object}
              */
-            function compilePropertyWhereFilter(where: WhereOptions): { [key: string]: any } {
+            function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
                 const whereQuery: MongoWhereQuery = {}
                 // ListingKey
                 if (Object.prototype.hasOwnProperty.call(where, 'ListingKey') && where.ListingKey !== '') {
@@ -710,9 +765,8 @@ Stratus.Services.Idx = [
 
             /**
              * @param where - {WhereOptions}
-             * returns {Object}
              */
-            function compileMemberWhereFilter(where: WhereOptions): { [key: string]: any } {
+            function compileMemberWhereFilter(where: WhereOptions): MongoWhereQuery {
                 const whereQuery: MongoWhereQuery = {}
                 // MemberKey
                 if (Object.prototype.hasOwnProperty.call(where, 'MemberKey') && where.MemberKey !== '') {
@@ -745,9 +799,8 @@ Stratus.Services.Idx = [
 
             /**
              * @param where - {WhereOptions}
-             * returns {Object}
              */
-            function compileOfficeWhereFilter(where: WhereOptions): { [key: string]: any } {
+            function compileOfficeWhereFilter(where: WhereOptions): MongoWhereQuery {
                 const whereQuery: MongoWhereQuery = {}
                 // OfficeKey
                 if (Object.prototype.hasOwnProperty.call(where, 'OfficeKey') && where.OfficeKey !== '') {
@@ -777,13 +830,12 @@ Stratus.Services.Idx = [
             /**
              * Convert the human given Order parameters to Loopback filter usable
              * @param orderUnparsed - String[] and String delimited with a `,` comma
-             * returns {Object}
              */
-            function compileOrderFilter(orderUnparsed: string[] | string): string[] {
+            function compileOrderFilter(orderUnparsed: string[] | string): MongoOrderQuery {
                 if (typeof orderUnparsed === 'string') {
                     orderUnparsed = orderUnparsed.split(',')
                 }
-                const orderQuery: string[] = []
+                const orderQuery: MongoOrderQuery = []
 
                 orderUnparsed.forEach(orderName => {
                     let direction = 'ASC'
@@ -796,33 +848,10 @@ Stratus.Services.Idx = [
                 return orderQuery
             }
 
-            /**
-             *
-             * @param options - {Object}
-             * @param options.where - {WhereOptions}
-             * @param options.page -
-             * @param options.perPage -
-             * @param options.order - {[String]=}
-             * @param options.fields - Which Fields to return {[String]=}
-             * @param options.images - Include Image data {Boolean || Object =}
-             * @param options.images.limit - {Number=}
-             * @param options.images.fields - {[String]=}
-             */
-            function compilePropertyFilter(options: {
-                where: WhereOptions,
-                page?: number,
-                perPage?: number | 20,
-                order?: string[],
-                fields: string[],
-                images?: boolean | {
-                    limit?: number,
-                    fields?: string[] | string,
-                }
-                openhouses?: boolean | {
-                    limit?: number,
-                    fields?: string[] | string,
-                }
-            }): MongoFilterQuery {
+            function compileGenericFilter(
+                options: CompileFilterOptions,
+                filterFunction: (where: WhereOptions) => MongoWhereQuery
+            ): MongoFilterQuery {
                 if (!options.perPage) {
                     options.perPage = 20
                 }
@@ -832,7 +861,7 @@ Stratus.Services.Idx = [
                     skip = (options.page - 1) * options.perPage
                 }
                 const filterQuery: MongoFilterQuery = {
-                    where: compilePropertyWhereFilter(options.where),
+                    where: filterFunction(options.where),
                     limit: options.perPage,
                     skip
                 }
@@ -853,7 +882,7 @@ Stratus.Services.Idx = [
                     const imageInclude: MongoIncludeQuery = {
                         relation: 'Images',
                         scope: {
-                            order: 'Order', // FIXME should be ordered by default on db side (default scopes)
+                            order: 'Order',
                             fields: [
                                 'MediaURL'
                             ]
@@ -875,7 +904,7 @@ Stratus.Services.Idx = [
                     includes.push(imageInclude)
                 }
 
-                // Included Open Houses
+                // Included Open Houses (Property Only)
                 if (options.openhouses) {
                     const openHouseInclude: MongoIncludeQuery = {
                         relation: 'OpenHouses',
@@ -903,79 +932,9 @@ Stratus.Services.Idx = [
                     includes.push(openHouseInclude)
                 }
 
-                if (includes.length === 1) {
-                    filterQuery.include = includes[0]
-                } else if (includes.length > 1) {
-                    filterQuery.include = includes
-                }
-
-                if (filterQuery.fields.length <= 0) {
-                    delete filterQuery.fields
-                }
-
-                return filterQuery
-            }
-
-            /**
-             *
-             * @param {Object} options
-             * @param {WhereOptions} options.where
-             * @param {[String]=} options.order
-             * @param {[String]=} options.fields - Which Fields to return
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {[String]=} options.images.fields
-             * @param {Boolean || Object =} options.office - Include Office data
-             */
-            function compileMemberFilter(options) {
-                let skip = 0
-                if (options.page) {
-                    skip = (options.page - 1) * options.perPage
-                }
-                const filterQuery = {
-                    where: compileMemberWhereFilter(options.where),
-                    fields: options.fields,
-                    limit: options.perPage,
-                    skip: skip
-                }
-
-                if (options.order && options.order.length > 0) {
-                    filterQuery.order = compileOrderFilter(options.order)
-                }
-
-                // Handle included collections
-                const includes = []
-
-                // Included Images
-                if (options.images) {
-                    const imageInclude = {
-                        relation: 'Images',
-                        scope: {
-                            order: 'Order',
-                            fields: [
-                                'MediaURL'
-                            ]
-                        }
-                    }
-                    if (typeof options.images === 'object') {
-                        if (Object.prototype.hasOwnProperty.call(options.images, 'limit')) {
-                            imageInclude.scope.limit = options.images.limit
-                        }
-                        if (Object.prototype.hasOwnProperty.call(options.images, 'fields')) {
-                            if (options.images.fields === '*') {
-                                delete imageInclude.scope.fields
-                            } else {
-                                imageInclude.scope.fields = options.images.fields
-                            }
-                        }
-                    }
-
-                    includes.push(imageInclude)
-                }
-
-                // Include Office
+                // Include Office (Member Only)
                 if (options.office) {
-                    const includeItem = {
+                    const includeItem: MongoIncludeQuery = {
                         relation: 'Office',
                         scope: {
                             fields: [
@@ -997,82 +956,9 @@ Stratus.Services.Idx = [
                     includes.push(includeItem)
                 }
 
-                if (includes.length === 1) {
-                    filterQuery.include = includes[0]
-                } else if (includes.length > 1) {
-                    filterQuery.include = includes
-                }
-
-                if (filterQuery.fields.length <= 0) {
-                    delete filterQuery.fields
-                }
-
-                return filterQuery
-            }
-
-            /**
-             *
-             * @param {Object} options
-             * @param {WhereOptions} options.where
-             * @param {[String]=} options.order
-             * @param {[String]=} options.fields - Which Fields to return
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {[String]=} options.images.fields
-             * @param {Boolean || Object =} options.managingBroker - Include Managing Broker Member data
-             * @param {Boolean || Object =} options.members - Include Member data
-             * @param {Number=} options.members.limit
-             * @param {[String]=} options.members.fields
-             */
-            function compileOfficeFilter(options) {
-                let skip = 0
-                if (options.page) {
-                    skip = (options.page - 1) * options.perPage
-                }
-                const filterQuery = {
-                    where: compileOfficeWhereFilter(options.where),
-                    fields: options.fields,
-                    limit: options.perPage,
-                    skip: skip
-                }
-
-                if (options.order && options.order.length > 0) {
-                    filterQuery.order = compileOrderFilter(options.order)
-                }
-
-                // Handle included collections
-                const includes = []
-
-                // Included Images
-                if (options.images) {
-                    const imageInclude = {
-                        relation: 'Images',
-                        scope: {
-                            order: 'Order',
-                            fields: [
-                                'MediaURL'
-                            ]
-                        }
-                    }
-                    if (typeof options.images === 'object') {
-                        if (Object.prototype.hasOwnProperty.call(options.images, 'limit')) {
-                            imageInclude.scope.limit = options.images.limit
-                        }
-                        if (Object.prototype.hasOwnProperty.call(options.images, 'fields')) {
-                            if (options.images.fields === '*') {
-                                delete imageInclude.scope.fields
-                            } else {
-                                imageInclude.scope.fields = options.images.fields
-                            }
-                        }
-                    }
-
-                    includes.push(imageInclude)
-                }
-
-                // Include Managing Broker Member Data
+                // Include Managing Broker Member Data (Office Only)
                 if (options.managingBroker) {
-                    const includeItem = {
+                    const includeItem: MongoIncludeQuery = {
                         relation: 'Member',
                         scope: {
                             fields: [
@@ -1095,9 +981,9 @@ Stratus.Services.Idx = [
                     includes.push(includeItem)
                 }
 
-                // Include Members/Agents
+                // Include Members/Agents (Office Only)
                 if (options.members) {
-                    const includeItem = {
+                    const includeItem: MongoIncludeQuery = {
                         relation: 'Member',
                         scope: {
                             fields: [
@@ -1134,24 +1020,79 @@ Stratus.Services.Idx = [
             }
 
             /**
-             * Return the MLS' required variables
-             * @param {[Number]=} serviceIds - Specify a certain MLS Service get the variables from
-             * @returns {Array<Object>}
+             *
+             * @param options - {Object}
+             * @param options.where - {WhereOptions}
+             * @param options.page -
+             * @param options.perPage -
+             * @param options.order - {[String]=}
+             * @param options.fields - Which Fields to return {[String]=}
+             * @param options.images - Include Image data {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
              */
-            function getMLSVariables(serviceIds) {
-                const serviceList = []
+            function compilePropertyFilter(
+                options: Pick<CompileFilterOptions, 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>
+            ): MongoFilterQuery {
+                return compileGenericFilter(options, compilePropertyWhereFilter)
+            }
+
+            /**
+             *
+             * @param options -
+             * @param options.where -
+             * @param options.order - {[String]=}
+             * @param options.fields - Which Fields to return {[String]=}
+             * @param options.images - Include Image data {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
+             * @param options.office - Include Office data {Boolean || Object =}
+             * TODO interface these options and Extend?
+             */
+            function compileMemberFilter(
+                options: Pick<CompileFilterOptions, 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'office'>
+            ): MongoFilterQuery {
+                return compileGenericFilter(options, compileMemberWhereFilter)
+            }
+
+            /**
+             *
+             * @param options -
+             * @param options.where -
+             * @param options.order - {[String]=}
+             * @param options.fields - Which Fields to return - {[String]=}
+             * @param options.images - Include Image data - {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
+             * @param options.managingBroker - Include Managing Broker Member data - {Boolean || Object =}
+             * @param options.members - Include Member data - {Boolean || Object =}
+             * @param options.members.limit - {Number=}
+             * @param options.members.fields - {[String]=}
+             */
+            function compileOfficeFilter(
+                options: Pick<CompileFilterOptions, 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'managingBroker' | 'members'>
+            ): MongoFilterQuery {
+                return compileGenericFilter(options, compileOfficeWhereFilter)
+            }
+
+            /**
+             * Return the MLS' required variables
+             * @param serviceIds - Specify a certain MLS Service get the variables from. {[Number]=}
+             */
+            function getMLSVariables(serviceIds?: number[]): MLSService[] {
+                const serviceList: MLSService[] = []
                 if (serviceIds && _.isArray(serviceIds)) {
-                    serviceIds.forEach(function (service) {
-                        if (Object.prototype.hasOwnProperty.call(session.services, service)) {
-                            serviceList[session.services[service].id] = {
-                                id: session.services[service].id,
-                                name: session.services[service].name,
-                                disclaimer: session.services[service].disclaimer
+                    serviceIds.forEach(serviceId => {
+                        if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
+                            serviceList[session.services[serviceId].id] = {
+                                id: session.services[serviceId].id,
+                                name: session.services[serviceId].name,
+                                disclaimer: session.services[serviceId].disclaimer
                             }
                         }
                     })
                 } else {
-                    session.services.forEach(function (service) {
+                    session.services.forEach(service => {
                         serviceList[service.id] = {
                             id: service.id,
                             name: service.name,
