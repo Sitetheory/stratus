@@ -1,4 +1,6 @@
-// IdxPropertySearch Component @stratusjs/idx/property/search.component
+// IdxPropertySearch Component
+// @stratusjs/idx/property/search.component
+// <stratus-idx-property-search>
 // --------------
 
 // Runtime
@@ -18,13 +20,13 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-// const packageName = 'idx'
+const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'search'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
-Stratus.Components.PropertySearch = {
+Stratus.Components.IdxPropertySearch = {
     bindings: {
         elementId: '@',
         listId: '@',
@@ -46,7 +48,7 @@ Stratus.Components.PropertySearch = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(moduleName) + '_')
+        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)

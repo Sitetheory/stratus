@@ -1,4 +1,6 @@
-// IdxPropertyDetails Component @stratusjs/idx/property/details.component
+// IdxPropertyDetails Component
+// @stratusjs/idx/property/details.component
+// <stratus-idx-property-details>
 // --------------
 
 // Runtime
@@ -35,13 +37,13 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-// const packageName = 'idx'
+const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
-Stratus.Components.PropertyDetails = {
+Stratus.Components.IdxPropertyDetails = {
     bindings: {
         elementId: '@',
         urlLoad: '@',
@@ -67,7 +69,7 @@ Stratus.Components.PropertyDetails = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(moduleName) + '_')
+        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)

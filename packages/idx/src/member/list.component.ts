@@ -1,4 +1,6 @@
-// IdxMemberList Component @stratusjs/idx/member/list.component
+// IdxMemberList Component
+// @stratusjs/idx/member/list.component
+// <stratus-idx-member-list>
 // --------------
 
 // Runtime
@@ -27,13 +29,13 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-// const packageName = 'idx'
+const packageName = 'idx'
 const moduleName = 'member'
 const componentName = 'list'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
-Stratus.Components.PropertyMemberList = {
+Stratus.Components.IdxMemberList = {
     bindings: {
         elementId: '@',
         detailsLinkPopup: '@',
@@ -56,7 +58,7 @@ Stratus.Components.PropertyMemberList = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(moduleName) + '_')
+        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)
@@ -185,7 +187,7 @@ Stratus.Components.PropertyMemberList = {
                 // Keep the Search widgets up to date
                 // $scope.refreshSearchWidgetOptions()
 
-                // Grab the new property listings
+                // Grab the new member listings
                 console.log('fetching members:', $scope.options)
                 resolve(Idx.fetchMembers($scope, 'collection', $scope.options, refresh))
             })
@@ -293,12 +295,12 @@ Stratus.Components.PropertyMemberList = {
 
                 let template =
                     '<md-dialog aria-label="' + member.MemberKey + '">' +
-                    '<stratus-property-member-details '
+                    '<stratus-idx-member-details '
                 _.each(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
                 })
                 template +=
-                    '></stratus-property-member-details>' +
+                    '></stratus-idx-member-details>' +
                     '</md-dialog>'
 
                 $mdDialog.show({

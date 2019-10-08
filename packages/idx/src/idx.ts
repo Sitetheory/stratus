@@ -1,4 +1,5 @@
-// Idx Service @stratusjs/idx/idx
+// Idx Service
+// @stratusjs/idx/idx
 
 // Runtime
 import * as _ from 'lodash'

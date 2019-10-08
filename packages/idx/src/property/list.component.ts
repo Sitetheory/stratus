@@ -1,4 +1,6 @@
-// IdxPropertyList Component @stratusjs/idx/property/list.component
+// IdxPropertyList Component
+// @stratusjs/idx/property/list.component
+// <stratus-idx-property-list>
 // --------------
 
 // Runtime
@@ -29,13 +31,13 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-// const packageName = 'idx'
+const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
-Stratus.Components.PropertyList = {
+Stratus.Components.IdxPropertyList = {
     bindings: {
         elementId: '@',
         detailsLinkPopup: '@',
@@ -59,7 +61,7 @@ Stratus.Components.PropertyList = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(moduleName) + '_')
+        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         /* Stratus.Internals.CssLoader(
@@ -396,12 +398,12 @@ Stratus.Components.PropertyList = {
 
                 let template =
                     `<md-dialog aria-label="${property.ListingKey}">` +
-                    '<stratus-property-details '
+                    '<stratus-idx-property-details '
                 _.each(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
                 })
                 template +=
-                    '></stratus-property-details>' +
+                    '></stratus-idx-property-details>' +
                     '</md-dialog>'
 
                 $mdDialog.show({

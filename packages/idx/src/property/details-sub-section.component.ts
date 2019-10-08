@@ -1,4 +1,6 @@
-// IdxPropertyDetailsSubSection Component @stratusjs/idx/property/details-sub-section.component
+// IdxPropertyDetailsSubSection Component
+// @stratusjs/idx/property/details-sub-section.component
+// <stratus-idx-property-details-sub-section>
 // --------------
 
 // Runtime
@@ -14,12 +16,13 @@ import {isJSON} from '@stratusjs/core/misc'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
+// const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details-sub-section'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
-Stratus.Components.PropertyDetailsSubSection = {
+Stratus.Components.IdxPropertyDetailsSubSection = {
     bindings: {
         ngModel: '=',
         items: '@',
