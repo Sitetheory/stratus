@@ -122,7 +122,7 @@ Stratus.Components.PropertyMemberDetails = {
                 where: object | any,
                 images?: object[] | any[],
             } = {
-                listName: 'MemberDetailsList',
+                listName: 'MemberDetailsList', // FIXME should not be used here
                 service: [$scope.options.service],
                 where: {}
             }
@@ -138,7 +138,7 @@ Stratus.Components.PropertyMemberDetails = {
                 memberQuery.service &&
                 (memberQuery.where.MemberKey || memberQuery.where.MemberStateLicense)
             ) {
-                Idx.fetchMembers($scope, 'collection', memberQuery, true)
+                Idx.fetchMembers($scope, 'collection', memberQuery, true, 'MemberDetailsList')
             } else {
                 console.error('No Service Id or Member Key/License is fetch from')
             }

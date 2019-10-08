@@ -3,7 +3,7 @@
 // Runtime
 import * as _ from 'lodash'
 import * as Stratus from 'stratus'
-import * as angular from 'angular'
+import 'angular'
 
 // Services
 import 'stratus.services.collection'
@@ -12,9 +12,9 @@ import 'stratus.services.collection'
 import {isJSON} from '@stratusjs/core/misc'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+// const min = Stratus.Environment.get('production') ? '.min' : ''
 // FIXME need to get relative
-const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
 // Reusable Objects
 export interface WhereOptions {
@@ -45,7 +45,7 @@ export interface WhereOptions {
 
 export interface CompileFilterOptions {
     where?: WhereOptions,
-    service?: number[],
+    service?: number | number[],
     page?: number,
     perPage?: number | 20,
     order?: string | string[],
@@ -222,8 +222,7 @@ Stratus.Services.Idx = [
              * @param $scope - angular scope
              * @param listType - Property / Member / Office
              */
-            function registerListInstance(uid: string, $scope: any, listType?: string): void {
-                listType = listType || ''
+            function registerListInstance(uid: string, $scope: any, listType = ''): void {
                 if (listType === 'Property') {
                     listType = ''
                 }
@@ -244,8 +243,7 @@ Stratus.Services.Idx = [
              * @param listUid -  uid name
              * @param listType - Property / Member / Office
              */
-            function registerSearchInstance(uid: string, $scope: any, listUid?: string, listType?: string): void {
-                listType = listType || ''
+            function registerSearchInstance(uid: string, $scope: any, listUid?: string, listType = ''): void {
                 if (listType === 'Property') {
                     listType = ''
                 }
@@ -288,8 +286,7 @@ Stratus.Services.Idx = [
              * @param searchUid - uid of search component
              * @param listType - Property / Member / Office
              */
-            function getSearchInstanceLinks(searchUid: string, listType?: string): any[] {
-                listType = listType || ''
+            function getSearchInstanceLinks(searchUid: string, listType = ''): any[] {
                 if (listType === 'Property') {
                     listType = ''
                 }
@@ -309,8 +306,7 @@ Stratus.Services.Idx = [
              * @param listUid - uid of List
              * @param listType - Property / Member / Office
              */
-            function getListInstance(listUid: string, listType?: string): any | null {
-                listType = listType || ''
+            function getListInstance(listUid: string, listType = ''): any | null {
                 if (listType === 'Property') {
                     listType = ''
                 }
@@ -322,8 +318,7 @@ Stratus.Services.Idx = [
              * @param listUid - uid of list
              * @param listType - Property / Member / Office
              */
-            function getListInstanceLinks(listUid: string, listType?: string): any[] {
-                listType = listType || ''
+            function getListInstanceLinks(listUid: string, listType = ''): any[] {
                 if (listType === 'Property') {
                     listType = ''
                 }
@@ -368,7 +363,7 @@ Stratus.Services.Idx = [
              * Ensures there is a active session and performs token fetching if need be.
              * @param keepAlive -
              */
-            function tokenKeepAuth(keepAlive?: boolean): Promise<void> {
+            function tokenKeepAuth(keepAlive = false): Promise<void> {
                 return $q(async (resolve: void | any, reject: any) => {
                     try {
                         if (
@@ -391,7 +386,7 @@ Stratus.Services.Idx = [
              * Fetches a new set of Tokens for data fetching
              * @param keepAlive -
              */
-            function tokenRefresh(keepAlive?: boolean): Promise<void> {
+            function tokenRefresh(keepAlive = false): Promise<void> {
                 return $q((resolve: void | any, reject: void | any) => {
                     $http({
                         method: 'GET',
@@ -423,7 +418,7 @@ Stratus.Services.Idx = [
              * @param keepAlive -
              * @param response.data.services Array<MLSService>
              */
-            function tokenHandleGoodResponse(response: TokenResponse, keepAlive?: boolean): void {
+            function tokenHandleGoodResponse(response: TokenResponse, keepAlive = false): void {
                 session.services = []
                 /** {MLSService} service */
                 response.data.services.forEach((service) => {
@@ -510,7 +505,7 @@ Stratus.Services.Idx = [
              * @param append -
              * returns {Promise<Collection>}
              */
-            async function fetchMergeCollections(originalCollection: any, collections: any[], append?: boolean): Promise<any> {
+            async function fetchMergeCollections(originalCollection: any, collections: any[], append = false): Promise<any> {
                 // The Collection is now doing something. Let's label it as such.
                 originalCollection.pending = true
                 originalCollection.completed = false
@@ -1295,7 +1290,7 @@ Stratus.Services.Idx = [
              * TODO define Collection
              * TODO ensure 'orderByFilter' works
              */
-            function orderBy(collection: object | any, propertyNames: string | string[], reverse?: boolean): void {
+            function orderBy(collection: object | any, propertyNames: string | string[], reverse = false): void {
                 if (propertyNames && propertyNames !== []) {
                     collection.models = orderByFilter(collection.models, propertyNames, reverse)
                 }
@@ -1342,13 +1337,12 @@ Stratus.Services.Idx = [
             async function genericSearchCollection(
                 $scope: object | any,
                 collectionVarName: string,
-                options: CompileFilterOptions,
-                refresh: boolean,
+                options = {} as CompileFilterOptions,
+                refresh = false,
                 instanceName: string,
                 apiModel: string,
                 compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
             ): Promise<any> {
-                options = options || {}
                 options.service = options.service || []
                 options.where = options.where || {}
                 options.order = options.order || []
@@ -1358,10 +1352,13 @@ Stratus.Services.Idx = [
                 options.fields = options.fields || [
                     '_id'
                 ]
-                refresh = refresh || false
 
                 if (typeof options.order === 'string') {
                     options.order = options.order.split(',')
+                }
+
+                if (typeof options.service === 'number') {
+                    options.service = [options.service]
                 }
 
                 const apiModelSingular = getSingularApiModelName(apiModel)
@@ -1481,21 +1478,28 @@ Stratus.Services.Idx = [
 
             /**
              *
-             * @param {Object} $scope
-             * @param {String} modelVarName - The variable name assigned in the scope to hold the model results
-             * @param {Object=} options
-             * @param {Number} options.service - Specify a certain MLS Service to load from
-             * @param {WhereOptions=} options.where
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {Array<String>=} options.images.fields
-             * @param {Array<String>=} options.fields - Which Fields to return
-             * @param {Boolean=} options.append - Append to currently loaded collection or fetch freshly
-             * @param {String} apiModel
-             * @param {Function} compileFilterFunction
-             * @returns {Promise<Model>}
+             * @param $scope - {Object}
+             * @param modelVarName - The variable name assigned in the scope to hold the model results - {String}
+             * @param options - {Object=}
+             * @param options.service - Specify a certain MLS Service to load from - {Number}
+             * @param options.where - {WhereOptions=}
+             * @param options.images - Include Image data - {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {Array<String>=}
+             * @param options.fields - Which Fields to return - {Array<String>=}
+             * @param options.append - Append to currently loaded collection or fetch freshly - {Boolean=}
+             * @param apiModel - {String}
+             * @param compileFilterFunction - {Function}
+             * returns {Promise<Model>}
+             * TODO define Model
              */
-            async function genericSearchModel($scope, modelVarName, options, apiModel, compileFilterFunction) {
+            async function genericSearchModel(
+                $scope: object | any,
+                modelVarName: string,
+                options  = {} as CompileFilterOptions,
+                apiModel: string,
+                compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
+            ): Promise<any> {
                 await tokenKeepAuth()
 
                 options = options || {}
@@ -1504,6 +1508,10 @@ Stratus.Services.Idx = [
                 options.images = options.images || false
                 options.fields = options.fields || []
                 options.perPage = 1
+
+                if (_.isArray(options.service)) {
+                    options.service = options.service[0]
+                }
 
                 const apiModelSingular = getSingularApiModelName(apiModel)
 
@@ -1548,7 +1556,7 @@ Stratus.Services.Idx = [
                     const tempModel = createModel(request)
 
                     fetchReplaceModel(model, tempModel)
-                        .then(function () {
+                        .then(() => {
                             // $scope.$digest();
                             $scope.$applyAsync()
                         })
@@ -1559,24 +1567,31 @@ Stratus.Services.Idx = [
 
             /**
              *
-             * @param {Object} $scope
-             * @param {String} collectionVarName - The variable name assigned in the scope to hold the Collection results
-             * @param {Object=} options
-             * @param {[Number]=} options.service - Specify certain MLS Services to load from
-             * @param {WhereOptions=} options.where
-             * @param {[String]=} options.order
-             * @param {Number=} options.page
-             * @param {Number=} options.perPage
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {[String]=} options.images.fields
-             * @param {Boolean || Object =} options.openhouses - Include Openhouse data
-             * @param {[String]=} options.fields - Which Fields to return
-             * @param {Boolean=} refresh - Which Fields to return
-             * @returns {Promise<Collection>}
+             * @param $scope = {Object}
+             * @param collectionVarName - The variable name assigned in the scope to hold the Collection results = {String}
+             * @param options - {Object=}
+             * @param options.service - Specify certain MLS Services to load from - {[Number]=}
+             * @param options.where - {WhereOptions=}
+             * @param options.order - {[String]=}
+             * @param options.page - {Number=}
+             * @param options.perPage - {Number=}
+             * @param options.images - Include Image data - {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
+             * @param options.openhouses - Include Openhouse data - {Boolean || Object =}
+             * @param options.fields - Which Fields to return - {[String]=}
+             * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
+             * @param listName - instance to save data to
+             * returns {Promise<Collection>}
+             * TODO define Collection
              */
-            async function fetchProperties($scope, collectionVarName, options, refresh) {
-                options = options || {}
+            async function fetchProperties(
+                $scope: object | any,
+                collectionVarName: string,
+                options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
+                refresh = false,
+                listName = 'List' // FIXME should this be in a generic List..?
+            ) {
                 options.service = options.service || []
                 options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
                 options.order = options.order || urlOptions.Search.Order || []
@@ -1605,10 +1620,9 @@ Stratus.Services.Idx = [
                     'BedroomsTotal'
                 ]
                 // options.where['ListType'] = ['House','Townhouse'];
-                refresh = refresh || false
 
                 return genericSearchCollection($scope, collectionVarName, options, refresh,
-                    'List',
+                    listName,
                     'Properties',
                     compilePropertyFilter
                 )
@@ -1616,21 +1630,24 @@ Stratus.Services.Idx = [
 
             /**
              *
-             * @param {Object} $scope
-             * @param {String} modelVarName - The variable name assigned in the scope to hold the model results
-             * @param {Object=} options
-             * @param {Number} options.service - Specify a certain MLS Service to load from
-             * @param {WhereOptions=} options.where
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {Array<String>=} options.images.fields
-             * @param {Boolean || Object =} options.openhouses - Include Openhouse data
-             * @param {Array<String>=} options.fields - Which Fields to return
-             * @param {Boolean=} options.append - Append to currently loaded collection or fetch freshly
-             * @returns {Promise<Model>}
+             * @param $scope - {Object}
+             * @param modelVarName - The variable name assigned in the scope to hold the model results - {String}
+             * @param options - {Object=}
+             * @param options.service - Specify a certain MLS Service to load from - {Number}
+             * @param options.where - {WhereOptions=}
+             * @param options.images - Include Image data - {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {Array<String>=}
+             * @param options.openhouses - Include Openhouse data - {Boolean || Object =}
+             * @param options.fields - Which Fields to return - {Array<String>=}
+             * returns {Promise<Model>}
+             * TODO define Model
              */
-            async function fetchProperty($scope, modelVarName, options) {
-                options = options || {}
+            async function fetchProperty(
+                $scope: object | any,
+                modelVarName: string,
+                options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>,
+            ) {
                 options.service = options.service || null
                 options.where = options.where || {}
                 options.images = options.images || false
@@ -1645,26 +1662,32 @@ Stratus.Services.Idx = [
 
             /**
              *
-             * @param {Object} $scope
-             * @param {String} collectionVarName - The variable name assigned in the scope to hold the Collection results
-             * @param {Object=} options
-             * @param {[Number]=} options.service - Specify certain MLS Services to load from
-             * @param {WhereOptions=} options.where
-             * @param {[String]=} options.order
-             * @param {Number=} options.page
-             * @param {Number=} options.perPage
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {[String]=} options.images.fields
-             * @param {[String]=} options.fields - Which Fields to return
-             * @param {Boolean || Object =} options.office - Include Office data
-             * @param {Boolean=} refresh - Which Fields to return
-             * @returns {Promise<Collection>}
+             * @param $scope - {Object}
+             * @param collectionVarName - The variable name assigned in the scope to hold the Collection results - {String}
+             * @param options - {Object=}
+             * @param options.service - Specify certain MLS Services to load from - {[Number]=}
+             * @param options.where - {WhereOptions=}
+             * @param options.order - {[String]=}
+             * @param options.page - {Number=}
+             * @param options.perPage - {Number=}
+             * @param options.fields - Which Fields to return - {[String]=}
+             * @param options.images - Include Image data - {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
+             * @param options.office - Include Office data - {Boolean || Object =}
+             * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
+             * @param listName - instance to save data to
+             * returns {Promise<Collection>}
              */
-            async function fetchMembers($scope, collectionVarName, options, refresh) {
-                options = options || {}
+            async function fetchMembers(
+                $scope: object | any,
+                collectionVarName: string,
+                options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
+                refresh = false,
+                listName = 'MemberList'
+            ) {
                 options.service = options.service || []
-                options.listName = options.listName || 'MemberList'
+                // options.listName = options.listName || 'MemberList'
                 options.where = options.where || {}
                 options.order = options.order || []
                 options.page = options.page || 1
@@ -1688,10 +1711,9 @@ Stratus.Services.Idx = [
                     'SourceSystemName'
                 ]
                 // options.where['ListType'] = ['House','Townhouse'];
-                refresh = refresh || false
 
                 return genericSearchCollection($scope, collectionVarName, options, refresh,
-                    options.listName,
+                    listName,
                     'Members',
                     compileMemberFilter
                 )
@@ -1699,26 +1721,32 @@ Stratus.Services.Idx = [
 
             /**
              *
-             * @param {Object} $scope
-             * @param {String} collectionVarName - The variable name assigned in the scope to hold the Collection results
-             * @param {Object=} options
-             * @param {[Number]=} options.service - Specify certain MLS Services to load from
-             * @param {WhereOptions=} options.where
-             * @param {[String]=} options.order
-             * @param {Number=} options.page
-             * @param {Number=} options.perPage
-             * @param {[String]=} options.order
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {[String]=} options.images.fields
-             * @param {Boolean || Object =} options.managingBroker - Include Managing Broker Member data
-             * @param {Boolean || Object =} options.members - Include Member data
-             * @param {[String]=} options.fields - Which Fields to return
-             * @param {Boolean=} refresh - Which Fields to return
-             * @returns {Promise<Collection>}
+             * @param $scope - {Object}
+             * @param collectionVarName - The variable name assigned in the scope to hold the Collection results {String}
+             * @param options - {Object=}
+             * @param options.service - Specify certain MLS Services to load from {[Number]=}
+             * @param options.where - {WhereOptions=}
+             * @param options.order - {[String]=}
+             * @param options.page - {Number=}
+             * @param options.perPage - {Number=}
+             * @param options.images - Include Image data {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
+             * @param options.managingBroker - Include Managing Broker Member data {Boolean || Object =}
+             * @param options.members - Include Member data {Boolean || Object =}
+             * @param options.fields - Which Fields to return {[String]=}
+             * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
+             * @param listName - instance to save data to
+             * returns {Promise<Collection>}
+             * TODO define Collection
              */
-            async function fetchOffices($scope, collectionVarName, options, refresh) {
-                options = options || {}
+            async function fetchOffices(
+                $scope: object | any,
+                collectionVarName: string,
+                options  = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
+                refresh = false,
+                listName = 'OfficeList'
+            ) {
                 options.service = options.service || []
                 options.where = options.where || {}
                 options.order = options.order || []
@@ -1742,7 +1770,7 @@ Stratus.Services.Idx = [
                 refresh = refresh || false
 
                 return genericSearchCollection($scope, collectionVarName, options, refresh,
-                    'OfficeList',
+                    listName,
                     'Offices',
                     compileOfficeFilter
                 )
