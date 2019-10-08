@@ -6,7 +6,8 @@ import * as Stratus from 'stratus'
 import 'angular'
 
 // Services
-import 'stratus.services.collection'
+import 'stratus.services.collection' // Needed as $provider
+import {Collection} from 'stratus.services.collection' // Needed as Class
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -145,22 +146,11 @@ Stratus.Services.Idx = [
             $location: any,
             $window: any,
             $rootScope: any,
+            // tslint:disable-next-line:no-shadowed-variable
             Collection: any,
             Model: any,
             orderByFilter: any
             ) => {
-                // FIXME providers are not pasing through!
-                console.log({
-                    $http,
-                    $injector,
-                    $q,
-                    $location,
-                    $window,
-                    $rootScope,
-                    Collection,
-                    Model,
-                    orderByFilter
-                })
                 // TODO need to allow setting own tokenRefreshURL
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
@@ -498,9 +488,9 @@ Stratus.Services.Idx = [
                  * @param request - Standard Registry request object
                  * returns {Model}
                  */
-                function createCollection(request: any): any { // TODO define type Request and Model
+                function createCollection(request: any): Collection { // TODO define type Request and Model
                     request.direct = true
-                    const collection = new Collection(request)
+                    const collection = new Collection(request) as Collection
                     if (request.api) {
                         collection.meta.set('api', isJSON(request.api)
                             ? JSON.parse(request.api)
@@ -516,9 +506,12 @@ Stratus.Services.Idx = [
                  * @param originalCollection - {Collection}
                  * @param collections - {Array<Collection>}
                  * @param append -
-                 * returns {Promise<Collection>}
                  */
-                async function fetchMergeCollections(originalCollection: any, collections: any[], append = false): Promise<any> {
+                async function fetchMergeCollections(
+                    originalCollection: Collection,
+                    collections: Collection[],
+                    append = false
+                ): Promise<Collection> {
                     // The Collection is now doing something. Let's label it as such.
                     originalCollection.pending = true
                     originalCollection.completed = false
@@ -669,11 +662,9 @@ Stratus.Services.Idx = [
                  * Sync a Collection with all members of a certain instance
                  * @param instanceType -
                  * @param scopedCollectionVarName -
-                 * returns {Collection}
-                 * TODO define Collection
                  */
-                function createOrSyncCollectionVariable(instanceType: string, scopedCollectionVarName: string): any {
-                    let collection: any | null // TODO define Collection
+                function createOrSyncCollectionVariable(instanceType: string, scopedCollectionVarName: string): Collection {
+                    let collection: Collection // TODO define Collection
                     Object.keys(instance[instanceType]).forEach(listName => {
                         if (
                             !collection &&
@@ -684,7 +675,7 @@ Stratus.Services.Idx = [
                         }
                     })
                     if (!collection) {
-                        collection = new Collection()
+                        collection = new Collection() as Collection
                     }
                     Object.keys(instance[instanceType]).forEach(listName => {
                         if (
@@ -1300,10 +1291,9 @@ Stratus.Services.Idx = [
                  * @param collection - {Collection}
                  * @param propertyNames - value(s) to reorder/sort by. {String || [String]}
                  * @param reverse - If it should reverse sort by the value. {Boolean=}
-                 * TODO define Collection
                  * TODO ensure 'orderByFilter' works
                  */
-                function orderBy(collection: object | any, propertyNames: string | string[], reverse = false): void {
+                function orderBy(collection: Collection, propertyNames: string | string[], reverse = false): void {
                     if (propertyNames && propertyNames !== []) {
                         collection.models = orderByFilter(collection.models, propertyNames, reverse)
                     }
@@ -1344,8 +1334,6 @@ Stratus.Services.Idx = [
                  * @param instanceName - {String}
                  * @param apiModel - {String}
                  * @param compileFilterFunction - {Function}
-                 * returns {Promise<Collection>}
-                 * TODO define Collection
                  */
                 async function genericSearchCollection(
                     $scope: object | any,
@@ -1355,7 +1343,7 @@ Stratus.Services.Idx = [
                     instanceName: string,
                     apiModel: string,
                     compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
-                ): Promise<any> {
+                ): Promise<Collection> {
                     options.service = options.service || []
                     options.where = options.where || {}
                     options.order = options.order || []
@@ -1383,7 +1371,7 @@ Stratus.Services.Idx = [
                     const filterQuery = compileFilterFunction(options)
                     // options.page items need to happen after here
 
-                    const collections: any[] = [] // TODO define Collection
+                    const collections: Collection[] = [] // TODO define Collection
 
                     // check if this filterQuery is any different from the 'last one' used
                     // if this is a new query rather than a page change
@@ -1595,8 +1583,6 @@ Stratus.Services.Idx = [
                  * @param options.fields - Which Fields to return - {[String]=}
                  * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
                  * @param listName - instance to save data to
-                 * returns {Promise<Collection>}
-                 * TODO define Collection
                  */
                 async function fetchProperties(
                     $scope: object | any,
@@ -1604,7 +1590,7 @@ Stratus.Services.Idx = [
                     options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
                     refresh = false,
                     listName = 'List' // FIXME should this be in a generic List..?
-                ) {
+                ): Promise<Collection> {
                     options.service = options.service || []
                     options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
                     options.order = options.order || urlOptions.Search.Order || []
@@ -1690,7 +1676,6 @@ Stratus.Services.Idx = [
                  * @param options.office - Include Office data - {Boolean || Object =}
                  * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
                  * @param listName - instance to save data to
-                 * returns {Promise<Collection>}
                  */
                 async function fetchMembers(
                     $scope: object | any,
@@ -1698,7 +1683,7 @@ Stratus.Services.Idx = [
                     options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
                     refresh = false,
                     listName = 'MemberList'
-                ) {
+                ): Promise<Collection> {
                     options.service = options.service || []
                     // options.listName = options.listName || 'MemberList'
                     options.where = options.where || {}
@@ -1750,8 +1735,6 @@ Stratus.Services.Idx = [
                  * @param options.fields - Which Fields to return {[String]=}
                  * @param refresh - Append to currently loaded collection or fetch freshly - {Boolean=}
                  * @param listName - instance to save data to
-                 * returns {Promise<Collection>}
-                 * TODO define Collection
                  */
                 async function fetchOffices(
                     $scope: object | any,
@@ -1759,7 +1742,7 @@ Stratus.Services.Idx = [
                     options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
                     refresh = false,
                     listName = 'OfficeList'
-                ) {
+                ): Promise<Collection> {
                     options.service = options.service || []
                     options.where = options.where || {}
                     options.order = options.order || []
