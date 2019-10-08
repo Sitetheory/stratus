@@ -14,7 +14,7 @@ import 'angular-sanitize'
 import moment from 'moment'
 
 // Services
-// import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
+import {Collection} from 'stratus.services.collection' // Needed as Class
 import '@stratusjs/idx/idx'
 
 // Component Preload
@@ -138,7 +138,7 @@ Stratus.Components.PropertyMemberList = {
          * may update the URL options, so it may not be ideal to use on page load
          * TODO Idx needs to export search options interface
          */
-        $scope.searchMembers = async (options?: object | any, refresh?: boolean, updateUrl?: boolean): Promise<any> =>
+        $scope.searchMembers = async (options?: object | any, refresh?: boolean, updateUrl?: boolean): Promise<Collection> =>
             $q((resolve: any) => {
                 options = options || {}
                 updateUrl = updateUrl === false ? updateUrl : true

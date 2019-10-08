@@ -115,14 +115,12 @@ Stratus.Components.PropertyMemberDetails = {
 
         $scope.getUid = (): string => $ctrl.uid
 
-        $scope.fetchMember = (): void => {
+        $scope.fetchMember = async (): Promise<void> => {
             const memberQuery: {
-                listName: string,
                 service: number | any,
                 where: object | any,
                 images?: object[] | any[],
             } = {
-                listName: 'MemberDetailsList', // FIXME should not be used here
                 service: [$scope.options.service],
                 where: {}
             }
@@ -138,7 +136,7 @@ Stratus.Components.PropertyMemberDetails = {
                 memberQuery.service &&
                 (memberQuery.where.MemberKey || memberQuery.where.MemberStateLicense)
             ) {
-                Idx.fetchMembers($scope, 'collection', memberQuery, true, 'MemberDetailsList')
+                await Idx.fetchMembers($scope, 'collection', memberQuery, true, 'MemberDetailsList')
             } else {
                 console.error('No Service Id or Member Key/License is fetch from')
             }
@@ -148,7 +146,7 @@ Stratus.Components.PropertyMemberDetails = {
          * With the current collection results, parse $scope.memberMerged and $scope.memberCombined by joining the
          * Member object together for easier to read results. Note it may not always be ideal to use this data.
          */
-        $scope.individualMember = async (): Promise<void> => $q((resolve: void |any) => {
+        $scope.individualMember = async (): Promise<void> => $q((resolve: void | any) => {
             if ($scope.collection && $scope.collection.completed && $scope.collection.models.length > 0) {
                 $scope.memberMerged = {}
                 const tempCollection = [].concat($scope.collection.models).reverse()

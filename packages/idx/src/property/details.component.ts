@@ -14,8 +14,10 @@ import 'angular-sanitize'
 import moment from 'moment'
 
 // Services
-// import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
-import '@stratusjs/idx/idx' // The reference for later
+import 'stratus.services.model' // Needed as $provider
+import {Model} from 'stratus.services.model' // Needed as Class
+import '@stratusjs/idx/idx'
+import {MLSService} from '@stratusjs/idx/idx'
 
 // FIXME move filters to @stratusjs
 // Custom Filters
@@ -59,6 +61,7 @@ Stratus.Components.PropertyDetails = {
         $attrs: any,
         $sce: any,
         $location: any,
+        // tslint:disable-next-line:no-shadowed-variable
         Model: any,
         Idx: any,
     ) {
@@ -74,7 +77,7 @@ Stratus.Components.PropertyDetails = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         $ctrl.$onInit = () => {
-            $scope.model = new Model()
+            $scope.model = new Model() as Model
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
             $scope.options.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
             $scope.options.pageTitle = $attrs.pageTitle && isJSON($attrs.pageTitle) ? JSON.parse($attrs.pageTitle) : false
@@ -800,7 +803,7 @@ Stratus.Components.PropertyDetails = {
         ) : null
 
         // FIXME Idx needs to export MLSVariables Interface
-        $scope.getMLSVariables = (): object | any => {
+        $scope.getMLSVariables = (): MLSService => {
             if (!$ctrl.mlsVariables) {
                 $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])
             }

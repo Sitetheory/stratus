@@ -6,6 +6,8 @@ import * as Stratus from 'stratus'
 import 'angular'
 
 // Services
+import 'stratus.services.model' // Needed as $provider
+import {Model} from 'stratus.services.model' // Needed as Class
 import 'stratus.services.collection' // Needed as $provider
 import {Collection} from 'stratus.services.collection' // Needed as Class
 
@@ -148,6 +150,7 @@ Stratus.Services.Idx = [
             $rootScope: any,
             // tslint:disable-next-line:no-shadowed-variable
             Collection: any,
+            // tslint:disable-next-line:no-shadowed-variable
             Model: any,
             orderByFilter: any
             ) => {
@@ -465,15 +468,14 @@ Stratus.Services.Idx = [
                 }
 
                 /**
-                 * Collection constructor helper that will help properly create a new Collection.
+                 * Model constructor helper that will help properly create a new Model.
                  * Will do nothing else.
                  * @param request - Standard Registry request object
-                 * returns {Model}
-                 * TODO define type Request and Model
+                 * TODO define type Request
                  */
-                function createModel(request: any): any {
+                function createModel(request: any): Model {
                     // request.direct = true;
-                    const model = new Model(request)
+                    const model = new Model(request) as Model
                     if (request.api) {
                         model.meta.set('api', isJSON(request.api)
                             ? JSON.parse(request.api)
@@ -483,12 +485,12 @@ Stratus.Services.Idx = [
                 }
 
                 /**
-                 * Model constructor helper that will help properly create a new Model.
+                 * Collection constructor helper that will help properly create a new Collection.
                  * Will do nothing else.
                  * @param request - Standard Registry request object
-                 * returns {Model}
+                 * TODO define type Request
                  */
-                function createCollection(request: any): Collection { // TODO define type Request and Model
+                function createCollection(request: any): Collection {
                     request.direct = true
                     const collection = new Collection(request) as Collection
                     if (request.api) {
@@ -588,10 +590,8 @@ Stratus.Services.Idx = [
                  * These resulting Model may not be properly set up to perform their usual action and are only intended to hold Model data
                  * @param originalModel - {Model}
                  * @param newModel - {Model}
-                 * returns {Promise<Collection>}
-                 * TODO define Model
                  */
-                function fetchReplaceModel(originalModel: object | any, newModel: object | any): object | any {
+                function fetchReplaceModel(originalModel: Model, newModel: Model): Promise<Model> {
                     // The Model is now doing something. Let's label it as such.
                     originalModel.pending = true
                     originalModel.completed = false
@@ -1491,8 +1491,6 @@ Stratus.Services.Idx = [
                  * @param options.append - Append to currently loaded collection or fetch freshly - {Boolean=}
                  * @param apiModel - {String}
                  * @param compileFilterFunction - {Function}
-                 * returns {Promise<Model>}
-                 * TODO define Model
                  */
                 async function genericSearchModel(
                     $scope: object | any,
@@ -1500,10 +1498,9 @@ Stratus.Services.Idx = [
                     options = {} as CompileFilterOptions,
                     apiModel: string,
                     compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
-                ): Promise<any> {
+                ): Promise<Model> {
                     await tokenKeepAuth()
 
-                    options = options || {}
                     options.service = options.service || 0
                     options.where = options.where || {}
                     options.images = options.images || false
@@ -1517,12 +1514,12 @@ Stratus.Services.Idx = [
                     const apiModelSingular = getSingularApiModelName(apiModel)
 
                     // Prepare the Model and ensure we don't keep replacing it
-                    let model
+                    let model: Model
                     if (Object.prototype.hasOwnProperty.call($scope, modelVarName)) {
                         model = $scope[modelVarName]
                     }
                     if (!model) {
-                        model = new Model()
+                        model = new Model() as Model
                     }
                     if (
                         !Object.prototype.hasOwnProperty.call($scope, modelVarName) ||
@@ -1639,14 +1636,12 @@ Stratus.Services.Idx = [
                  * @param options.images.fields - {Array<String>=}
                  * @param options.openhouses - Include Openhouse data - {Boolean || Object =}
                  * @param options.fields - Which Fields to return - {Array<String>=}
-                 * returns {Promise<Model>}
-                 * TODO define Model
                  */
                 async function fetchProperty(
                     $scope: object | any,
                     modelVarName: string,
                     options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>,
-                ) {
+                ): Promise<Model> {
                     options.service = options.service || null
                     options.where = options.where || {}
                     options.images = options.images || false

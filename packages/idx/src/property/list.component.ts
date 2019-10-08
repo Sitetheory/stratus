@@ -15,7 +15,9 @@ import moment from 'moment'
 
 // Services
 // import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
+import {Collection} from 'stratus.services.collection' // Needed as Class
 import '@stratusjs/idx/idx'
+import {CompileFilterOptions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Component Preload
 // import 'stratus.components.propertyDetails'
@@ -153,7 +155,11 @@ Stratus.Components.PropertyList = {
          * TODO Idx needs to export search options interface
          * Returns Collection
          */
-        $scope.searchProperties = async (options?: object | any, refresh?: boolean, updateUrl?: boolean): Promise<any> =>
+        $scope.searchProperties = async (
+            options?: CompileFilterOptions | object | any,
+            refresh?: boolean,
+            updateUrl?: boolean
+        ): Promise<Collection> =>
             $q((resolve: any) => {
                 options = options || {}
                 updateUrl = updateUrl === false ? updateUrl : true
