@@ -1,4 +1,4 @@
-// IdxMemberList Component
+// IdxMemberList Component @stratusjs/idx/member/list.component
 // --------------
 
 // Runtime
@@ -15,10 +15,11 @@ import moment from 'moment'
 
 // Services
 // import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
-import 'stratus.services.idx' // import '@stratusjs/idx/services/idx' The reference for later
+import '@stratusjs/idx/idx'
 
 // Component Preload
-import 'stratus.components.propertyMemberDetails'
+// import 'stratus.components.propertyMemberDetails'
+import '@stratusjs/idx/member/details.component'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'

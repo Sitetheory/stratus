@@ -1,4 +1,4 @@
-// IdxMemberSearch Component
+// IdxMemberSearch Component @stratusjs/idx/member/search.component
 // --------------
 
 // Runtime
@@ -10,10 +10,10 @@ import * as angular from 'angular'
 // import 'angular-material'
 
 // Services
-import 'stratus.services.idx' // import '@stratusjs/idx/services/idx' The reference for later
+import '@stratusjs/idx/idx'
 
 // Component Preload
-import 'stratus.components.propertyMemberList'
+import '@stratusjs/idx/member/list.component'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'

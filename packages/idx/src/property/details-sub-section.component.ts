@@ -1,4 +1,4 @@
-// IdxPropertyDetailsSubSection Component
+// IdxPropertyDetailsSubSection Component @stratusjs/idx/property/details-sub-section.component
 // --------------
 
 // Runtime

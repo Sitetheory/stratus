@@ -1,4 +1,4 @@
-// IdxPropertyDetails Component
+// IdxPropertyDetails Component @stratusjs/idx/property/details.component
 // --------------
 
 // Runtime
@@ -15,7 +15,7 @@ import moment from 'moment'
 
 // Services
 // import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
-import 'stratus.services.idx' // import '@stratusjs/idx/services/idx' The reference for later
+import '@stratusjs/idx/idx' // The reference for later
 
 // FIXME move filters to @stratusjs
 // Custom Filters
@@ -23,7 +23,8 @@ import 'stratus.filters.math'
 import 'stratus.filters.moment'
 
 // Component Preload
-import 'stratus.components.propertyDetailsSubSection'
+// import 'stratus.components.propertyDetailsSubSection'
+import '@stratusjs/idx/property/details-sub-section.component'
 // stratus.components.carousel doesn't work
 
 // Stratus Dependencies
