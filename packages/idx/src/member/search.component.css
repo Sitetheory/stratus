@@ -1,0 +1,104 @@
+/* For some reason this is required to remove angular's css that breaks certain angular elements */
+body {
+    height: auto !important;
+}
+
+.stratus-property-member-search-menu {
+    max-width: 85%;
+}
+
+.stratus-property-member-search-menu .outer-padding {
+    max-width: 550px;
+    padding: 0 10px;
+}
+
+/* Generic Button */
+stratus-property-member-search .button,
+stratus-property-member-search .button:link,
+stratus-property-member-search .button:visited,
+stratus-property-member-search .button:active,
+.stratus-property-member-search-menu .button,
+.stratus-property-member-search-menu .button:link,
+.stratus-property-member-search-menu .button:visited,
+.stratus-property-member-search-menu .button:active {
+    font-size: 11px;
+    letter-spacing: 1px;
+    /*padding: 2px 28px;*/
+    color: #FFF;
+    background-color: #FF7A4D;
+}
+
+stratus-property-member-search .button:hover,
+.stratus-property-member-search-menu .button:hover {
+    color: #FFF;
+    background-color: #666;
+    border: none;
+}
+
+/* md-input-container adds a ton of spacing by default. This will remove it */
+stratus-property-member-search md-input-container.minimal,
+.stratus-property-member-search-menu md-input-container.minimal {
+    margin: 10px 0 5px 0;
+}
+
+stratus-property-member-search md-input-container.minimal .md-errors-spacer,
+.stratus-property-member-search-menu md-input-container.minimal .md-errors-spacer {
+    min-height: 0;
+}
+
+stratus-property-member-search .toggle-switch .option-choice,
+.stratus-property-member-search-menu .toggle-switch .option-choice {
+    display: contents;
+    font-weight: bold;
+    transition: color 0.25s ease-in;
+}
+
+stratus-property-member-search-menu .toggle-switch .option-choice.inactive,
+.stratus-property-member-search-menu .toggle-switch .option-choice.inactive {
+    color: #aaa;
+}
+
+stratus-property-member-search .toggle-switch md-switch,
+.stratus-property-member-search-menu .toggle-switch md-switch {
+    margin-left: 15px;
+    margin-right: 5px;
+}
+
+stratus-property-member-search .toggle-switch md-switch .md-ink-ripple,
+.stratus-property-member-search-menu .toggle-switch md-switch .md-ink-ripple {
+    color: rgb(108, 119, 255);
+}
+
+stratus-property-member-search .toggle-switch md-switch .md-thumb,
+.stratus-property-member-search-menu .toggle-switch md-switch .md-thumb {
+    background-color: rgb(108, 119, 255);
+}
+
+stratus-property-member-search .toggle-switch md-switch .md-bar,
+.stratus-property-member-search-menu .toggle-switch md-switch .md-bar {
+    background-color: rgba(108, 119, 255, 0.5);
+}
+
+stratus-property-member-search .toggle-switch md-switch.md-checked .md-ink-ripple,
+.stratus-property-member-search-menu .toggle-switch md-switch.md-checked .md-ink-ripple {
+    color: rgb(255, 64, 129);
+}
+
+stratus-property-member-search .toggle-switch md-switch.md-checked .md-thumb,
+.stratus-property-member-search-menu .toggle-switch md-switch.md-checked .md-thumb {
+    background-color: rgb(255, 64, 129);
+}
+
+stratus-property-member-search .toggle-switch md-switch.md-checked .md-bar,
+.stratus-property-member-search-menu .toggle-switch md-switch.md-checked .md-bar {
+    background-color: rgba(255, 64, 129, 0.5);
+}
+
+.stratus-property-member-search-menu {
+    padding: 10px;
+    background-color: #fff;
+}
+
+md-dialog.transparent {
+    background-color: rgba(255,255,255,0.60);
+}

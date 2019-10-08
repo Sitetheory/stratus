@@ -1,0 +1,143 @@
+.stratus-property-member-list {
+    display: inline-block;
+    width: 100%;
+}
+
+/* Generic Arrows */
+.stratus-property-member-list i.arrow {
+    display: inline-block;
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    padding: 3px;
+    margin: 1px;
+}
+
+.stratus-property-member-list i.arrow.small {
+    border-width: 0 2px 2px 0;
+    padding: 2px;
+}
+
+.stratus-property-member-list i.arrow.large {
+    border-width: 0 4px 4px 0;
+    padding: 4px;
+}
+
+.stratus-property-member-list i.arrow.grey {
+    border-color: #aaa;
+}
+
+.stratus-property-member-list i.arrow.right {
+    transform: rotate(-45deg);
+}
+
+.stratus-property-member-list i.arrow.left {
+    transform: rotate(135deg);
+}
+
+.stratus-property-member-list i.arrow.up {
+    transform: rotate(-135deg);
+}
+
+.stratus-property-member-list i.arrow.down {
+    transform: rotate(45deg);
+}
+
+/* Sort Options Button */
+
+.stratus-property-member-list .sort-options-container {
+    float: right;
+    margin-top: 9px;
+    display: table;
+}
+
+.stratus-property-member-list .sort-options-container .options-button,
+.stratus-property-member-list .sort-options-container .options-button a {
+    font-size: 13px;
+    font-weight: normal;
+    font-style: italic;
+    text-transform: none;
+    color: #444;
+}
+
+/* List Pager */
+.stratus-property-member-list .pager-section {
+    display: inline-block;
+}
+
+.stratus-property-member-list .pager-button {
+    margin-right: 5px;
+    float: left;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 14px;
+    outline: none;
+}
+
+.stratus-property-member-list .pager-section .pager-button > .arrow {
+    border-color: #555;
+}
+
+.stratus-property-member-list .pager-section .pager-button:hover {
+    background-color: #666;
+    border-color: #666;
+}
+
+.stratus-property-member-list .pager-section .pager-button:hover > .arrow {
+    border-color: #fff;
+}
+
+.stratus-property-member-list .pager-section .pager-button.disabled,
+.stratus-property-member-list .pager-section .pager-button.disabled:hover {
+    background-color: #fff;
+    border-color: #eee;
+}
+
+.stratus-property-member-list .pager-section .pager-button.disabled > .arrow,
+.stratus-property-member-list .pager-section .pager-button.disabled > .arrow:hover {
+    border-color: #ddd;
+}
+
+.stratus-property-member-list .pager-section .pager-count {
+    float: left;
+    font-size: 11px;
+    font-weight: bold;
+    color: #222;
+    text-transform: uppercase;
+    padding-top: 10px;
+}
+
+.stratus-property-member-list .pager-section .pager-totals {
+    font-style: italic;
+    text-transform: none;
+    color: #666;
+    padding-left: 5px;
+}
+
+/* bottom disclaimer */
+.stratus-property-member-list .disclaimer-container {
+    clear: both;
+    margin-top: 20px;
+}
+
+/* Property List */
+.stratus-property-member-list .list-container {
+    margin-top: 25px;
+    padding: 1%;
+    background-color: rgba(248, 248, 248, 0.5);
+    box-shadow: inset 0 0 3px -2px #000;
+}
+
+.stratus-property-member-list .list-container .member-container {
+    /*margin-bottom: 10px;
+    text-align: center;*/
+}
+.stratus-property-member-list .list-container .member-container:nth-of-type(even) {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* MLS number number */
+.stratus-property-member-list .list-container .mls-service-name {
+    font-size: 11px;
+    line-height: 1.8;
+    color: #888;
+}

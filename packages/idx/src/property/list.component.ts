@@ -1,4 +1,6 @@
-// PropertyList Component
+// IdxPropertyList Component
+// @stratusjs/idx/property/list.component
+// <stratus-idx-property-list>
 // --------------
 
 // Runtime
@@ -7,18 +9,21 @@ import * as Stratus from 'stratus'
 import * as angular from 'angular'
 
 // Angular 1 Modules
-import 'angular-sanitize'
 import 'angular-material'
+import 'angular-sanitize'
 
 // Libraries
 import moment from 'moment'
 
 // Services
 // import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
-import 'stratus.services.idx' // import '@stratusjs/idx/services/idx' The reference for later
+import {Collection} from 'stratus.services.collection' // Needed as Class
+import '@stratusjs/idx/idx'
+import {CompileFilterOptions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Component Preload
-import 'stratus.components.propertyDetails'
+// import 'stratus.components.propertyDetails'
+import '@stratusjs/idx/property/details.component'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -26,11 +31,13 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-const moduleName = 'propertyList'
+const packageName = 'idx'
+const moduleName = 'property'
+const componentName = 'list'
 // FIXME need to get relative
 const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
 
-Stratus.Components.PropertyList = {
+Stratus.Components.IdxPropertyList = {
     bindings: {
         elementId: '@',
         detailsLinkPopup: '@',
@@ -54,7 +61,7 @@ Stratus.Components.PropertyList = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(moduleName) + '_')
+        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         /* Stratus.Internals.CssLoader(
@@ -64,7 +71,7 @@ Stratus.Components.PropertyList = {
             ($attrs.template || 'propertyList') +
             min + '.css'
         ) */
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)
 
         /**
          * All actions that happen first when the component loads
@@ -134,13 +141,15 @@ Stratus.Components.PropertyList = {
          * Inject the current URL settings into any attached Search widget
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
-        $scope.refreshSearchWidgetOptions = () => {
-            const searchScopes: object[] | any[] = Idx.getListInstanceLinks($scope.elementId)
+        $scope.refreshSearchWidgetOptions = (): void => {
+            const searchScopes: any[] = Idx.getListInstanceLinks($scope.elementId)
             searchScopes.forEach((searchScope) => {
-                // FIXME search widgets may only hold certain values. Later this needs to be adjust
-                //  to only update the values in which a user can see/control
-                searchScope.setQuery(Idx.getUrlOptions('Search'))
-                searchScope.listInitialized = true
+                if (Object.prototype.hasOwnProperty.call(searchScope, 'setQuery')) {
+                    // FIXME search widgets may only hold certain values. Later this needs to be adjust
+                    //  to only update the values in which a user can see/control
+                    searchScope.setQuery(Idx.getUrlOptions('Search'))
+                    searchScope.listInitialized = true
+                }
             })
         }
 
@@ -150,7 +159,11 @@ Stratus.Components.PropertyList = {
          * TODO Idx needs to export search options interface
          * Returns Collection
          */
-        $scope.searchProperties = async (options?: object | any, refresh?: boolean, updateUrl?: boolean) =>
+        $scope.searchProperties = async (
+            options?: CompileFilterOptions | object | any,
+            refresh?: boolean,
+            updateUrl?: boolean
+        ): Promise<Collection> =>
             $q((resolve: any) => {
                 options = options || {}
                 updateUrl = updateUrl === false ? updateUrl : true
@@ -207,7 +220,7 @@ Stratus.Components.PropertyList = {
          * @param pageNumber - The page number
          * @param ev - Click event
          */
-        $scope.pageChange = async (pageNumber: number, ev?: any) => {
+        $scope.pageChange = async (pageNumber: number, ev?: any): Promise<void> => {
             if (ev) {
                 ev.preventDefault()
             }
@@ -219,7 +232,7 @@ Stratus.Components.PropertyList = {
          * Move the displayed listings to the next page, keeping the current query
          * @param ev - Click event
          */
-        $scope.pageNext = async (ev?: any) => {
+        $scope.pageNext = async (ev?: any): Promise<void> => {
             if (!$scope.options.page) {
                 $scope.options.page = 1
             }
@@ -232,7 +245,7 @@ Stratus.Components.PropertyList = {
          * Move the displayed listings to the previous page, keeping the current query
          * @param ev - Click event
          */
-        $scope.pagePrevious = async (ev?: any) => {
+        $scope.pagePrevious = async (ev?: any): Promise<void> => {
             if (!$scope.options.page) {
                 $scope.options.page = 1
             }
@@ -247,7 +260,7 @@ Stratus.Components.PropertyList = {
          * @param order -
          * @param ev - Click event
          */
-        $scope.orderChange = async (order: string | string[], ev?: any) => {
+        $scope.orderChange = async (order: string | string[], ev?: any): Promise<void> => {
             if (ev) {
                 ev.preventDefault()
             }
@@ -356,7 +369,7 @@ Stratus.Components.PropertyList = {
          * @param property property object
          * @param ev - Click event
          */
-        $scope.displayPropertyDetails = (property: object | any, ev?: any) => {
+        $scope.displayPropertyDetails = (property: object | any, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -387,12 +400,12 @@ Stratus.Components.PropertyList = {
 
                 let template =
                     `<md-dialog aria-label="${property.ListingKey}">` +
-                    '<stratus-property-details '
+                    '<stratus-idx-property-details '
                 _.each(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
                 })
                 template +=
-                    '></stratus-property-details>' +
+                    '></stratus-idx-property-details>' +
                     '</md-dialog>'
 
                 $mdDialog.show({
@@ -419,16 +432,8 @@ Stratus.Components.PropertyList = {
         /**
          * Destroy this widget
          */
-        $scope.remove = function remove() {
-
+        $scope.remove = (): void => {
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => {
-        // let templateMin = $attrs.templateMin && _.isJSON($attrs.templateMin) ? JSON.parse($attrs.templateMin) : true
-        /*return Stratus.BaseUrl +
-            'content/property/stratus/components/' +
-            ($attrs.template || 'propertyList') +
-            min + '.html'*/
-        return `${localDir}/${moduleName}/${$attrs.template || moduleName}.component${min}.html`
-    }
+    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
 }

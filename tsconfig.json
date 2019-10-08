@@ -6,7 +6,6 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "sourceMap": true,
     "inlineSourceMap": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
