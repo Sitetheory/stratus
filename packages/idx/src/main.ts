@@ -149,6 +149,18 @@ Stratus.Services.Idx = [
             Model: any,
             orderByFilter: any
         ) => {
+            // FIXME providers are not pasing through!
+            console.log({
+                $http,
+                $injector,
+                $q,
+                $location,
+                $window,
+                $rootScope,
+                Collection,
+                Model,
+                orderByFilter
+            })
             // TODO need to allow setting own tokenRefreshURL
             let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
             let refreshLoginTimer: any // Timeout object
