@@ -172,9 +172,9 @@ Stratus.Services.Idx = [
                     OfficeDetails: object
                 } */
                 const instance: any = { // FIXME theres a number of queries that need dynamic calls
-                    List: {},
-                    Search: {},
-                    Details: {},
+                    PropertyList: {},
+                    PropertySearch: {},
+                    PropertyDetails: {},
                     MemberList: {},
                     MemberSearch: {},
                     MemberDetails: {},
@@ -228,10 +228,7 @@ Stratus.Services.Idx = [
                  * @param $scope - angular scope
                  * @param listType - Property / Member / Office
                  */
-                function registerListInstance(uid: string, $scope: any, listType = ''): void {
-                    if (listType === 'Property') {
-                        listType = ''
-                    }
+                function registerListInstance(uid: string, $scope: any, listType = 'Property'): void {
                     // if (!instance[listType + 'List']) {
                     if (!Object.prototype.hasOwnProperty.call(instance, listType + 'List')) {
                         instance[listType + 'List'] = {}
@@ -249,10 +246,7 @@ Stratus.Services.Idx = [
                  * @param listUid -  uid name
                  * @param listType - Property / Member / Office
                  */
-                function registerSearchInstance(uid: string, $scope: any, listUid?: string, listType = ''): void {
-                    if (listType === 'Property') {
-                        listType = ''
-                    }
+                function registerSearchInstance(uid: string, $scope: any, listUid?: string, listType = 'Property'): void {
                     instance[listType + 'Search'][uid] = $scope
                     if (!Object.prototype.hasOwnProperty.call(instanceLink.Search, uid)) {
                         instanceLink.Search[uid] = []
@@ -270,19 +264,21 @@ Stratus.Services.Idx = [
                  * Add Search instance to the service
                  * @param uid - The elementId of a widget
                  * @param $scope - angular scope
+                 * @param listType - Property / Member / Office
                  */
-                function registerDetailsInstance(uid: string, $scope: any): void {
-                    instance.Details[uid] = $scope
+                function registerDetailsInstance(uid: string, $scope: any, listType = 'Property'): void {
+                    instance[listType + 'Details'][uid] = $scope
                 }
 
                 /**
                  * Destroy a reference and Instance of a Details widget
                  * @param uid - The elementId of a widget
+                 * @param listType - Property / Member / Office
                  */
-                function unregisterDetailsInstance(uid: string): void {
-                    if (Object.prototype.hasOwnProperty.call(instance.Details, uid)) {
-                        const detailUid = instance.Details[uid].getUid()
-                        delete instance.Details[uid]
+                function unregisterDetailsInstance(uid: string, listType = 'Property'): void {
+                    if (Object.prototype.hasOwnProperty.call(instance[listType + 'Details'], uid)) {
+                        const detailUid = instance[listType + 'Details'][uid].getUid()
+                        delete instance[listType + 'Details'][uid]
                         Stratus.Instances.Clean(detailUid)
                     }
                 }
@@ -292,10 +288,7 @@ Stratus.Services.Idx = [
                  * @param searchUid - uid of search component
                  * @param listType - Property / Member / Office
                  */
-                function getSearchInstanceLinks(searchUid: string, listType = ''): any[] {
-                    if (listType === 'Property') {
-                        listType = ''
-                    }
+                function getSearchInstanceLinks(searchUid: string, listType = 'Property'): any[] {
                     const linkedLists: any = []
                     if (Object.prototype.hasOwnProperty.call(instanceLink.Search, searchUid)) {
                         instanceLink.Search[searchUid].forEach((listUid: any) => {
@@ -312,10 +305,7 @@ Stratus.Services.Idx = [
                  * @param listUid - uid of List
                  * @param listType - Property / Member / Office
                  */
-                function getListInstance(listUid: string, listType = ''): any | null {
-                    if (listType === 'Property') {
-                        listType = ''
-                    }
+                function getListInstance(listUid: string, listType = 'Property'): any | null {
                     return Object.prototype.hasOwnProperty.call(instanceLink.List, listUid) ? instance[listType + 'List'][listUid] : null
                 }
 
@@ -324,10 +314,7 @@ Stratus.Services.Idx = [
                  * @param listUid - uid of list
                  * @param listType - Property / Member / Office
                  */
-                function getListInstanceLinks(listUid: string, listType = ''): any[] {
-                    if (listType === 'Property') {
-                        listType = ''
-                    }
+                function getListInstanceLinks(listUid: string, listType = 'Property'): any[] {
                     const linkedSearches: any[] = []
                     if (Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
                         instanceLink.List[listUid].forEach((searchUid: any) => {
@@ -1587,7 +1574,7 @@ Stratus.Services.Idx = [
                     collectionVarName: string,
                     options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
                     refresh = false,
-                    listName = 'List' // FIXME should this be in a generic List..?
+                    listName = 'PropertyList'
                 ): Promise<Collection> {
                     options.service = options.service || []
                     options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
