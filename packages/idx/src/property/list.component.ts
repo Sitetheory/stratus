@@ -142,12 +142,14 @@ Stratus.Components.IdxPropertyList = {
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
         $scope.refreshSearchWidgetOptions = (): void => {
-            const searchScopes: object[] | any[] = Idx.getListInstanceLinks($scope.elementId)
+            const searchScopes: any[] = Idx.getListInstanceLinks($scope.elementId)
             searchScopes.forEach((searchScope) => {
-                // FIXME search widgets may only hold certain values. Later this needs to be adjust
-                //  to only update the values in which a user can see/control
-                searchScope.setQuery(Idx.getUrlOptions('Search'))
-                searchScope.listInitialized = true
+                if (Object.prototype.hasOwnProperty.call(searchScope, 'setQuery')) {
+                    // FIXME search widgets may only hold certain values. Later this needs to be adjust
+                    //  to only update the values in which a user can see/control
+                    searchScope.setQuery(Idx.getUrlOptions('Search'))
+                    searchScope.listInitialized = true
+                }
             })
         }
 

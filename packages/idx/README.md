@@ -6,12 +6,12 @@ AngularJS idx/property Service and Components bundle to be used as an add on to 
 ## Usage
 
 ### Stratus HTML Components enabled
-*   `<stratus-property-list></stratus-property-list>`
-*   `<stratus-property-details></stratus-property-details>`
-*   `<stratus-property-search></stratus-property-search>`
-*   `<stratus-property-member-list></stratus-member-list>`
-*   `<stratus-property-member-details></stratus-member-details>`
-*   `<stratus-property-member-search></stratus-member-search>`
+*   `<stratus-idx-property-list></stratus-idx-property-list>`
+*   `<stratus-idx-property-details></stratus-idx-property-details>`
+*   `<stratus-idx-property-search></stratus-idx-property-search>`
+*   `<stratus-idx-member-list></stratus-idx-member-list>`
+*   `<stratus-idx-member-details></stratus-idx-member-details>`
+*   `<stratus-idx-member-search></stratus-idx-member-search>`
 
 [TODO]() More details and instructions
 
@@ -30,24 +30,25 @@ Or NPM install
 And include the the library paths into your stratus `config.js` such as
 ```js
 boot.configuration.paths = {
-  //Components
-  'stratus.components.propertyDetails': boot.bundle + '@stratusjs/idx/components/propertyDetails' + boot.suffix,
-  'stratus.components.propertyDetailsSubSection': boot.bundle + '@stratusjs/idx/components/propertyDetailsSubSection' + boot.suffix,
-  'stratus.components.propertyList': boot.bundle + '@stratusjs/idx/components/propertyList' + boot.suffix,
-  'stratus.components.propertySearch': boot.bundle + '@stratusjs/idx/components/propertySearch' + boot.suffix,
-  'stratus.components.propertyMemberList': boot.bundle + '@stratusjs/idx/components/propertyMemberList' + boot.suffix,
-  'stratus.components.propertyMemberDetails': boot.bundle + '@stratusjs/idx/components/propertyMemberDetails' + boot.suffix,
-  'stratus.components.propertyMemberSearch': boot.bundle + '@stratusjs/idx/components/propertyMemberSearch' + boot.suffix,
+  // Idx Package
+  '@stratusjs/idx/*': boot.bundle + '@stratusjs/idx/src/*' + boot.suffix,
 
-  //Services
-  'stratus.services.idx': boot.bundle + '@stratusjs/idx/services/idx' + boot.suffix
+  // Components
+  'stratus.components.idxPropertyDetails': boot.bundle + '@stratusjs/idx/src/property/details.component' + boot.suffix,
+  'stratus.components.idxPropertyDetailsSubSection': boot.bundle + '@stratusjs/idx/src/property/details-sub-section.component' + boot.suffix,
+  'stratus.components.idxPropertyList': boot.bundle + '@stratusjs/idx/src/property/list.component' + boot.suffix,
+  'stratus.components.idxPropertySearch': boot.bundle + '@stratusjs/idx/src/property/search.component' + boot.suffix,
+  'stratus.components.idxMemberList': boot.bundle + '@stratusjs/idx/src/member/list.component' + boot.suffix,
+  'stratus.components.idxMemberDetails': boot.bundle + '@stratusjs/idx/src/member/pdetails.component' + boot.suffix,
+  'stratus.components.idxMemberSearch': boot.bundle + '@stratusjs/idx/src/member/search.component' + boot.suffix,
 }
 ```
 
 #### Dependencies
 All dependencies need to be installed within the same project along with your config paths define.
 (manually installed for the time being)
-*   [stratus.js](https://www.npmjs.com/package/stratus.js)
+*   [stratus.js](https://www.npmjs.com/package/stratus.js) (while Stratus is converting)
+*   [@stratusjs/core](https://www.npmjs.com/package/@stratusjs/core)
 *   angular
 *   angular-animate
 *   angular-aria
