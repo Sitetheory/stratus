@@ -44,10 +44,11 @@ export interface WhereOptions {
 }
 
 export interface CompileFilterOptions {
-    where: WhereOptions,
+    where?: WhereOptions,
+    service?: number[],
     page?: number,
     perPage?: number | 20,
-    order?: string[],
+    order?: string | string[],
     fields?: string[],
     images?: boolean | {
         limit?: number,
@@ -78,13 +79,14 @@ export interface MLSService {
     token?: string,
     created?: string,
     ttl?: number,
+    host?: string
 }
 
 // Internal
 interface Session {
     services: MLSService[],
     lastCreated: Date,
-    lastTtl: number,
+    lastTtl: number
     expires?: Date
 }
 
@@ -129,6 +131,7 @@ interface MongoFilterQuery {
     fields?: string[],
     order?: MongoOrderQuery,
     include?: MongoIncludeQuery[] | MongoIncludeQuery,
+    count?: boolean,
 }
 
 
@@ -206,6 +209,7 @@ Stratus.Services.Idx = [
                 whereFilter: object | any,
                 pages: number[],
                 perPage: number
+                order?: string | string[]
             } = {
                 whereFilter: {},
                 pages: [],
@@ -1107,7 +1111,7 @@ Stratus.Services.Idx = [
             /**
              * Parse the hangbang Url for the serviceId and ListingKey of a listings
              * TODO give options on different ways to parse? (e.g. Url formatting)
-             * @returns {Object}
+             * returns {Object}
              */
             function getOptionsFromUrl() {
                 let path = $location.path()
@@ -1121,9 +1125,9 @@ Stratus.Services.Idx = [
             /**
              * Parse the hangbang Url for the serviceId and ListingKey of a listings
              * Save variables in urlOptions.Listing
-             * @returns {String} - Remaining unparsed hashbang variables
+             * returns {String} - Remaining unparsed hashbang variables
              */
-            function getListingOptionsFromUrlString(path) {
+            function getListingOptionsFromUrlString(path: string): string {
                 // FIXME can't read unless ListingKey must end with /
                 // /Listing/1/81582540/8883-Rancho/
                 const regex = /\/Listing\/(\d+?)\/(.*?)\/([\w-_]*)?\/?/
@@ -1144,9 +1148,9 @@ Stratus.Services.Idx = [
             /**
              * Parse the hangbang Url for any Search options
              * Save variables in urlOptions.Search
-             * @returns {String} - Remaining unparsed hangbang variables
+             * returns {String} - Remaining unparsed hangbang variables
              */
-            function getSearchOptionsFromUrlString(path) {
+            function getSearchOptionsFromUrlString(path: string): string {
                 // /Search/ListPriceMin/500000/SomeVar/aValue
                 let regex = /\/Search\/(.*)?\/?/
                 let matches = regex.exec(path)
@@ -1159,24 +1163,35 @@ Stratus.Services.Idx = [
                     // Time to separate all the values out in pairs between /'s
                     // standard had me remove regex = /([^\/]+)\/([^\/]+)/g  (notice the missing \'s)
                     regex = /([^/]+)\/([^/]+)/g
-                    while ((matches = regex.exec(rawSearchOptions)) != null) {
+
+                    const whileLoopAssignmentBypass = (regexp: RegExp, value: string) => {
+                        matches = regexp.exec(value)
+                        return matches
+                    }
+
+                    // while ((matches = regex.exec(rawSearchOptions)) != null) {
+                    while (whileLoopAssignmentBypass(regex, rawSearchOptions) != null) {
                         if (
                             matches[1] &&
                             matches[2]
                         ) {
-                            // Check for a comma to break into an array. This might need to be altered as sometimes a comma might be used for something
+                            // Check for a comma to break into an array.
+                            // This might need to be altered as sometimes a comma might be used for something
                             if (matches[2].includes(',')) {
-                                matches[2] = matches[2].split(',')
+                                // matches[2] = matches[2].split(',')
+                                // Save the pairing results into urlOptions.Search
+                                urlOptions.Search[matches[1]] = matches[2].split(',')
+                            } else {
+                                // Save the pairing results into urlOptions.Search
+                                urlOptions.Search[matches[1]] = matches[2]
                             }
-                            // S ave the pairing results into urlOptions.Search
-                            urlOptions.Search[matches[1]] = matches[2]
                         }
                     }
                 }
 
                 // Math is performed in Page and needs to be converted
                 if (Object.prototype.hasOwnProperty.call(urlOptions.Search, 'Page')) {
-                    urlOptions.Search.Page = parseInt(urlOptions.Search.Page)
+                    urlOptions.Search.Page = parseInt(urlOptions.Search.Page, 10)
                 }
 
                 return path
@@ -1184,28 +1199,30 @@ Stratus.Services.Idx = [
 
             /**
              * Internally set Listing or Search options to later update the URL
-             * @param {'Listing'||'Search'} listingOrSearch
-             * @param {Object} options
+             * @param listingOrSearch - {'Listing'||'Search'}
+             * @param options - {Object}
+             * TODO define options
              */
-            function setUrlOptions(listingOrSearch, options) {
+            function setUrlOptions(listingOrSearch: 'Listing' | 'Search', options: object | any) {
                 urlOptions[listingOrSearch] = options || {}
                 // console.log('updated urlOptions', listingOrSearch, options);
             }
 
             /**
              * Return either Listing or Search Options
-             * @param {'Listing'||'Search'} listingOrSearch
-             * @returns {Object}
+             * @param listingOrSearch - {'Listing'||'Search'}
+             * returns {Object}
              */
-            function getUrlOptions(listingOrSearch) {
+            function getUrlOptions(listingOrSearch: 'Listing' | 'Search') {
                 return urlOptions[listingOrSearch]
             }
 
             /**
              * Process the currently set options returns what the URL hashbang should be
-             * @returns {string}
+             * returns {string}
+             * TODO define defaultOptions
              */
-            function getUrlOptionsPath(defaultOptions) {
+            function getUrlOptionsPath(defaultOptions: object | any) {
                 defaultOptions = defaultOptions || {}
                 let path = ''
 
@@ -1213,7 +1230,7 @@ Stratus.Services.Idx = [
                 const searchOptionNames = Object.keys(urlOptions.Search)
                 if (searchOptionNames.length > 0) {
                     let searchPath = ''
-                    searchOptionNames.forEach(function (searchOptionName) {
+                    searchOptionNames.forEach(searchOptionName => {
                         if (
                             Object.prototype.hasOwnProperty.call(urlOptions.Search, searchOptionName) &&
                             urlOptions.Search[searchOptionName] !== null &&
@@ -1251,18 +1268,19 @@ Stratus.Services.Idx = [
 
             /**
              * Process the currently set options and update the URL with what should be known
+             * TODO define defaultOptions
              */
-            function refreshUrlOptions(defaultOptions) {
+            function refreshUrlOptions(defaultOptions: object | any): void {
                 setLocationPath(getUrlOptionsPath(defaultOptions))
                 // console.log('Refreshed url with', urlOptions, defaultOptions);
             }
 
             /**
              * Update the hashbang address bar. The path will always begin with #!/
-             * @param {String} path
+             * @param path - {String}
              */
-            function setLocationPath(path) {
-                $rootScope.$applyAsync(function () {
+            function setLocationPath(path: string): void {
+                $rootScope.$applyAsync(() => {
                     $location.path(path).replace()
                     // $location.path(path);
                 })
@@ -1271,35 +1289,65 @@ Stratus.Services.Idx = [
             /**
              * Reorder/sort a collection's models by a defined value
              * If using multiple property values, the first in the array take precedence
-             * @param {Collection} collection
-             * @param {String || [String]} propertyNames - value(s) to reorder/sort by
-             * @param {Boolean=} reverse - If it should reverse sort by the value
+             * @param collection - {Collection}
+             * @param propertyNames - value(s) to reorder/sort by. {String || [String]}
+             * @param reverse - If it should reverse sort by the value. {Boolean=}
+             * TODO define Collection
+             * TODO ensure 'orderByFilter' works
              */
-            function orderBy(collection, propertyNames, reverse) {
+            function orderBy(collection: object | any, propertyNames: string | string[], reverse?: boolean): void {
                 if (propertyNames && propertyNames !== []) {
                     collection.models = orderByFilter(collection.models, propertyNames, reverse)
                 }
             }
 
+            function getSingularApiModelName(name: string): string {
+                let apiModelSingular = ''
+                switch (name) {
+                    case 'Properties':
+                        apiModelSingular = 'Property'
+                        break
+                    case 'Members':
+                        apiModelSingular = 'Member'
+                        break
+                    case 'Offices':
+                        apiModelSingular = 'Office'
+                        break
+                    case 'OpenHouses':
+                        apiModelSingular = 'OpenHouse'
+                        break
+                }
+                return apiModelSingular
+            }
+
             /**
              *
-             * @param {Object} $scope
-             * @param {String} collectionVarName - The variable name assigned in the scope to hold the Collection results
-             * @param {Object=} options
-             * @param {[Number]=} options.service - Specify certain MLS Services to load from
-             * @param {WhereOptions=} options.where
-             * @param {[String]=} options.order
-             * @param {Boolean || Object =} options.images - Include Image data
-             * @param {Number=} options.images.limit
-             * @param {[String]=} options.images.fields
-             * @param {[String]=} options.fields - Which Fields to return
-             * @param {Boolean=} refresh - Which Fields to return
-             * @param {String} instanceName
-             * @param {String} apiModel
-             * @param {Function} compileFilterFunction
-             * @returns {Promise<Collection>}
+             * @param $scope - {Object}
+             * @param collectionVarName - The variable name assigned in the scope to hold the Collection results {String}
+             * @param options - {Object=}
+             * @param options.service - Specify certain MLS Services to load from - {[Number]=}
+             * @param options.where - {WhereOptions=}
+             * @param options.order - {[String]=}
+             * @param options.images - Include Image data {Boolean || Object =}
+             * @param options.images.limit - {Number=}
+             * @param options.images.fields - {[String]=}
+             * @param options.fields - Which Fields to return {[String]=}
+             * @param refresh - Which Fields to return {Boolean=}
+             * @param instanceName - {String}
+             * @param apiModel - {String}
+             * @param compileFilterFunction - {Function}
+             * returns {Promise<Collection>}
+             * TODO define Collection
              */
-            async function genericSearchCollection($scope, collectionVarName, options, refresh, instanceName, apiModel, compileFilterFunction) {
+            async function genericSearchCollection(
+                $scope: object | any,
+                collectionVarName: string,
+                options: CompileFilterOptions,
+                refresh: boolean,
+                instanceName: string,
+                apiModel: string,
+                compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
+            ): Promise<any> {
                 options = options || {}
                 options.service = options.service || []
                 options.where = options.where || {}
@@ -1316,21 +1364,7 @@ Stratus.Services.Idx = [
                     options.order = options.order.split(',')
                 }
 
-                let apiModelSingular = ''
-                switch (apiModel) {
-                    case 'Properties':
-                        apiModelSingular = 'Property'
-                        break
-                    case 'Members':
-                        apiModelSingular = 'Member'
-                        break
-                    case 'Offices':
-                        apiModelSingular = 'Office'
-                        break
-                    case 'OpenHouses':
-                        apiModelSingular = 'OpenHouse'
-                        break
-                }
+                const apiModelSingular = getSingularApiModelName(apiModel)
 
                 // Prepare the same Collection for each List
                 const collection = await createOrSyncCollectionVariable(instanceName, collectionVarName)
@@ -1339,7 +1373,7 @@ Stratus.Services.Idx = [
                 const filterQuery = compileFilterFunction(options)
                 // options.page items need to happen after here
 
-                const collections = []
+                const collections: any[] = [] // TODO define Collection
 
                 // check if this filterQuery is any different from the 'last one' used
                 // if this is a new query rather than a page change
@@ -1383,16 +1417,15 @@ Stratus.Services.Idx = [
 
                     // Fetch from each service allowed
                     if (options.service.length === 0) {
-                        options.service = Object.keys(session.services)
+                        options.service = Object.keys(session.services) as unknown as number[] // keys are numbers
                     }
 
                     options.service.forEach(
-                        /** @param {Number} serviceId */
-                        function (serviceId) {
+                        serviceId => {
                             // Only load from a specific MLS Service
                             if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
                                 const request = {
-                                    serviceId: serviceId,
+                                    serviceId,
                                     urlRoot: session.services[serviceId].host,
                                     target: apiModel + '/search',
                                     api: {
@@ -1430,7 +1463,7 @@ Stratus.Services.Idx = [
                     orderBy(collection, options.order)
 
                     // Ensure the changes update on the DOM
-                    Object.keys(instance[instanceName]).forEach(function (listName) {
+                    Object.keys(instance[instanceName]).forEach(listName => {
                         // instance.List[listName].$digest(); // Digest to ensure the DOM/$watch updates with new model data
                         instance[instanceName][listName].$applyAsync() // Digest to ensure the DOM/$watch updates with new model data
                     })
@@ -1465,28 +1498,14 @@ Stratus.Services.Idx = [
             async function genericSearchModel($scope, modelVarName, options, apiModel, compileFilterFunction) {
                 await tokenKeepAuth()
 
-                let apiModelSingular = ''
-                switch (apiModel) {
-                    case 'Properties':
-                        apiModelSingular = 'Property'
-                        break
-                    case 'Members':
-                        apiModelSingular = 'Member'
-                        break
-                    case 'Offices':
-                        apiModelSingular = 'Office'
-                        break
-                    case 'OpenHouses':
-                        apiModelSingular = 'OpenHouse'
-                        break
-                }
-
                 options = options || {}
                 options.service = options.service || 0
                 options.where = options.where || {}
                 options.images = options.images || false
                 options.fields = options.fields || []
                 options.perPage = 1
+
+                const apiModelSingular = getSingularApiModelName(apiModel)
 
                 // Prepare the Model and ensure we don't keep replacing it
                 let model
@@ -1730,26 +1749,26 @@ Stratus.Services.Idx = [
             }
 
             return {
-                fetchMembers: fetchMembers,
-                fetchOffices: fetchOffices,
-                fetchProperties: fetchProperties,
-                fetchProperty: fetchProperty,
-                getListInstance: getListInstance,
-                getListInstanceLinks: getListInstanceLinks,
-                getSearchInstanceLinks: getSearchInstanceLinks,
-                getUrlOptionsPath: getUrlOptionsPath,
-                getMLSVariables: getMLSVariables,
-                getOptionsFromUrl: getOptionsFromUrl,
-                getUrlOptions: getUrlOptions,
-                tokenKeepAuth: tokenKeepAuth,
-                registerListInstance: registerListInstance,
-                registerSearchInstance: registerSearchInstance,
-                registerDetailsInstance: registerDetailsInstance,
-                setPageTitle: setPageTitle,
-                setTokenURL: setTokenURL,
-                setUrlOptions: setUrlOptions,
-                refreshUrlOptions: refreshUrlOptions,
-                unregisterDetailsInstance: unregisterDetailsInstance
+                fetchMembers,
+                fetchOffices,
+                fetchProperties,
+                fetchProperty,
+                getListInstance,
+                getListInstanceLinks,
+                getSearchInstanceLinks,
+                getUrlOptionsPath,
+                getMLSVariables,
+                getOptionsFromUrl,
+                getUrlOptions,
+                tokenKeepAuth,
+                registerListInstance,
+                registerSearchInstance,
+                registerDetailsInstance,
+                setPageTitle,
+                setTokenURL,
+                setUrlOptions,
+                refreshUrlOptions,
+                unregisterDetailsInstance
             }
         }
         ])
