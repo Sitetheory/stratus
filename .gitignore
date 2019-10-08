@@ -34,11 +34,12 @@ packages/*/src/**/*.min.html
 packages/*/src/**/*.css.map
 
 # Package Compilations
-packages/angular/**/*.js
-packages/angular/**/*.css
-packages/boot/**/*.js
-packages/core/**/*.js
+packages/angular/src/**/*.js
+packages/angular/src/**/*.css
+packages/backend/src/**/*.js
+packages/boot/src/**/*.js
+packages/core/src/**/*.js
 packages/idx/src/**/*.js
 packages/idx/src/**/*.css
-packages/react/**/*.js
-packages/react/**/*.css
+packages/react/src/**/*.js
+packages/react/src/**/*.css

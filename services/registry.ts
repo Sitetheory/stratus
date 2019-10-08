@@ -221,7 +221,7 @@ Stratus.Services.Registry = [
             '$interpolate',
             'Collection',
             'Model',
-            ($interpolate: any, collection: Collection, model: Model) => {
+            ($interpolate: any, C: Collection, M: Model) => {
                 interpolate = $interpolate
                 return new Registry()
             }
