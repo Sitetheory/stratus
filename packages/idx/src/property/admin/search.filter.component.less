@@ -1,0 +1,141 @@
+/* Nothing should be outside 'stratus-idx-property-search' or it will leak into other modules */
+stratus-idx-property-search {
+  height: auto;
+
+  /* Generic dotted underline */
+  .dotted-spaced-underline {
+    background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
+    background-position: bottom;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+  md-input-container label,
+  md-input-container .md-input {
+    font-size: 15px;
+  }
+
+  /* md-input-container adds a ton of spacing by default. This will remove it */
+  md-input-container.minimal {
+    margin: 10px 2px 5px;
+  }
+  md-input-container.minimal .md-errors-spacer {
+    min-height: 0;
+  }
+
+  /***************
+   * Search Menu
+   **************/
+  .stratus-idx-property-search-menu {
+    background-color: #fff;
+    max-width: 85%;
+    .outer-padding {
+      max-width: 550px;
+      padding: 26px;
+    }
+    .toggle-switch {
+      margin-bottom: 20px;
+      .option-choice {
+        display: contents;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: bold;
+        &.inactive {
+          color: #aaa;
+          font-weight: normal;
+        }
+      }
+      md-switch {
+        margin: 0 5px 0 15px;
+        background: rgba(0, 0, 0, 0.2);
+        .md-bar {
+          background: rgba(0, 0, 0, 0.2);
+        }
+        .md-ink-ripple {
+          color: #666;
+        }
+        .md-thumb {
+          background-color: #222;
+        }
+      }
+    }
+    .md-button {
+      &.md-default-theme.md-primary.md-fab,
+      &.md-primary.md-fab,
+      &.md-default-theme.md-primary.md-raised,
+      &.md-primary.md-raised {
+        color: #fff;
+        background: #222;
+      }
+      &.md-default-theme.md-primary.md-fab:not([disabled]).md-focused,
+      &.md-primary.md-fab:not([disabled]).md-focused,
+      &.md-default-theme.md-primary.md-fab:not([disabled]):hover,
+      &.md-primary.md-fab:not([disabled]):hover,
+      &.md-default-theme.md-primary.md-raised:not([disabled]).md-focused,
+      &.md-primary.md-raised:not([disabled]).md-focused,
+      &.md-default-theme.md-primary.md-raised:not([disabled]):hover,
+      &.md-primary.md-raised:not([disabled]):hover {
+        color: #fff;
+        background: #999;
+      }
+    }
+    .property-zoning {
+      margin-bottom: 30px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      .md-button {
+        padding: 0 12px 4px;
+        margin: 0 0 -1px;
+        border-bottom: 2px solid transparent;
+        &.md-default-theme.md-primary,
+        &.md-primary {
+          font-weight: bold;
+          border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+        }
+      }
+    }
+    .sale-status-border {
+      margin-bottom: 5px;
+      height: 2px;
+      width: 100%;
+    }
+    .property-specs {
+      margin: 10px 0 30px 0;
+      width: 100%;
+    }
+    .show-under-contract {
+      margin-top: 6px;
+      font-size: 13px;
+    }
+    .agent-license {
+      margin-top: 5px;
+      .md-chips .md-chip-input-container input {
+        font-size: 13px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Gutensite only style, remove from repo
+
+/*
+.module_location_sidebar .stratus-property-search {
+  padding: 28px 20px;
+  box-shadow: 0 0 1px 1px rgba(0,0,0,.15);
+}
+.module_location_sidebar .stratus-property-search h2 {
+  margin-top: 0;
+  line-height: 1;
+}
+.module_location_sidebar .stratus-property-search .open-filters {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 13px;
+  text-align: center;
+}
+.module_location_sidebar .stratus-property-search .btn-submit {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+*/
