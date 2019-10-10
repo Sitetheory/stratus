@@ -29,6 +29,12 @@
       "@stratusjs/angular/*": [
         "packages/angular/src/*"
       ],
+      "@stratusjs/angularjs/*": [
+        "packages/angularjs/src/*"
+      ],
+      "@stratusjs/backend/*": [
+        "packages/backend/src/*"
+      ],
       "@stratusjs/boot/*": [
         "packages/boot/src/*"
       ],
