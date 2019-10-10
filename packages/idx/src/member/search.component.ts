@@ -216,7 +216,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
             let template =
                 '<md-dialog aria-label="Property Member Selector" class="transparent">' +
                 '<md-button style="text-align: center" ng-click="ctrl.close()">Close and Accept</md-button>' +
-                '<stratus-property-member-list '
+                '<stratus-idx-member-list '
             /*Object.keys(templateOptions).forEach(function (optionKey) {
                 if (Object.prototype.hasOwnProperty.call(templateOptions, optionKey)) {
                     template += optionKey + '=\'' + templateOptions[optionKey] + '\' '
@@ -226,7 +226,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
                 template += `${optionKey}='${optionValue}'`
             })
             template +=
-                '></stratus-property-member-list>' +
+                '></stratus-idx-member-list>' +
                 '</md-dialog>'
 
             $mdDialog.show({

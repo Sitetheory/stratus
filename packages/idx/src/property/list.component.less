@@ -1,0 +1,248 @@
+/*
+Nothing should be outside 'stratus-idx-property-list' or it will leak into other modules
+TODO Need to size this based on column and window
+FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized.
+*/
+@phone: ~"(min-width: 600px)";
+stratus-idx-property-list {
+  /* Generic dotted underline */
+  .dotted-spaced-underline {
+    background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
+    background-position: bottom;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+
+  /* Generic Arrows */
+  i {
+    &.arrow {
+      display: inline-block;
+      border: solid black;
+      border-width: 0 3px 3px 0;
+      padding: 3px;
+      margin: 1px;
+      &.small {
+        border-width: 0 2px 2px 0;
+        padding: 2px;
+      }
+      &.large {
+        border-width: 0 4px 4px 0;
+        padding: 4px;
+      }
+      &.grey {
+        border-color: #aaa;
+      }
+      &.right {
+        transform: rotate(-45deg);
+      }
+      &.left {
+        transform: rotate(135deg);
+      }
+      &.up {
+        transform: rotate(-135deg);
+      }
+      &.down {
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  /* Sort Options Button */
+  .sort-options-container {
+    float: right;
+    .options-button,
+    .options-button a {
+      font-size: 13px;
+      font-weight: normal;
+      font-style: italic;
+      text-transform: none;
+      color: #444;
+    }
+  }
+
+  /* Property List */
+  .list-container {
+    margin: 10px -1.5% 0;
+
+    /* Details button */
+    .property-button-container {
+      .button {
+        margin: 0 auto;
+      }
+    }
+
+    /* Property */
+    .property-container {
+      position: relative;
+      padding-bottom: 24px;
+      margin-bottom: 8px;
+      text-align: center;
+      md-card {
+        &.property-item {
+          box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
+
+          /* IDX Image */
+          .property-image {
+            background: #000;
+            img {
+              width: 100%;
+            }
+            a {
+              transition: all 0.2s ease-out;
+              display: block;
+            }
+            &:hover a {
+              opacity: 0.8;
+            }
+            .property-status {
+              position: absolute;
+              right: 20px;
+              top: 20px;
+              z-index: 10;
+              display: table;
+              margin: 0 auto 20px;
+              padding: 2px 4px 2px 5px;
+              font-size: 10px;
+              font-weight: bold;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              line-height: 1.4;
+              text-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.8);
+              color: #fff;
+              border: 1px solid rgba(255, 255, 255, 0.7);
+            }
+          }
+          .property-content {
+            padding: 30px;
+            .status-price-container .property-price {
+              float: right;
+              font-size: 14px;
+              font-weight: normal;
+              color: #333;
+              text-align: right;
+            }
+
+            /* Property Address */
+            .property-address {
+              margin: 0 0 20px;
+              padding: 0 0 20px;
+              h4 {
+                margin: 0;
+                min-width: 160px;
+                font-size: 11px;
+                text-transform: uppercase;
+                color: #222;
+                letter-spacing: 1px;
+              }
+              a {
+                font-weight: bold;
+                color: #222;
+                &:hover {
+                  color: #666;
+                }
+              }
+            }
+            .property-data {
+              padding: 0 7% 20px 7%;
+              font-size: 12px;
+              line-height: 2;
+            }
+
+            /* MLS service + number */
+            .mls-service-name {
+              position: absolute;
+              left: 0;
+              bottom: 0;
+              width: 100%;
+              font-size: 11px;
+              line-height: 1.8;
+              text-align: center;
+              color: #888;
+            }
+          }
+        }
+      }
+    }
+
+    /* 2 or 3 column */
+    &.columns-2 {
+      .property-container {
+        width: 100%;
+
+        @media @phone {
+          width: 48.5%;
+        }
+      }
+    }
+    &.columns-3 {
+      .property-container {
+        width: 100%;
+
+        @media @phone {
+          width: 32%;
+        }
+      }
+    }
+  }
+
+  /* List Pager */
+  .pager-container {
+    margin: 50px 0;
+    .pager-section {
+      float: right;
+      .pager-count {
+        float: left;
+        font-size: 11px;
+        font-weight: bold;
+        color: #222;
+        padding-top: 10px;
+        .pager-totals {
+          font-style: italic;
+          font-weight: normal;
+          text-transform: none;
+          color: #666;
+          padding-right: 10px;
+        }
+      }
+      .pager-button {
+        margin-right: 5px;
+        float: left;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 14px;
+        outline: none;
+        > .arrow {
+          border-color: #555;
+        }
+        &:hover {
+          background-color: #666;
+          border-color: #666;
+          > .arrow {
+            border-color: #fff;
+          }
+        }
+        &.disabled {
+          background-color: #fff;
+          border-color: #eee;
+          &:hover {
+            background-color: #fff;
+            border-color: #eee;
+          }
+          > .arrow,
+          > .arrow:hover {
+            border-color: #ddd;
+          }
+        }
+      }
+    }
+  }
+
+  /* Disclaimer */
+  .disclaimer-container {
+    clear: both;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.25);
+    font-size: 12px;
+  }
+}

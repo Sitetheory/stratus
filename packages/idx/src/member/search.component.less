@@ -1,0 +1,69 @@
+/*
+Nothing should be outside 'stratus-idx-member-search' or it will leak into other modules
+*/
+stratus-idx-member-search {
+  height: auto;
+
+  /* Generic Button */
+  .button {
+    &,
+    &:link,
+    &:visited,
+    &:active {
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: #fff;
+      background-color: #ff7a4d;
+    }
+    &:hover {
+      color: #fff;
+      background-color: #666;
+      border: none;
+    }
+  }
+  // md-input-container adds a ton of spacing by default. This will remove it
+  md-input-container {
+    &.minimal {
+      margin: 10px 0 5px 0;
+      .md-errors-spacer {
+        min-height: 0;
+      }
+    }
+  }
+  .toggle-switch {
+    md-switch {
+      margin-left: 15px;
+      margin-right: 5px;
+      .md-ink-ripple {
+        color: rgb(108, 119, 255);
+      }
+      .md-thumb {
+        background-color: rgb(108, 119, 255);
+      }
+      .md-bar {
+        background-color: rgba(108, 119, 255, 0.5);
+      }
+      &.md-checked {
+        .md-ink-ripple {
+          color: rgb(255, 64, 129);
+        }
+        .md-thumb {
+          background-color: rgb(255, 64, 129);
+        }
+        .md-bar {
+          background-color: rgba(255, 64, 129, 0.5);
+        }
+      }
+    }
+    .option-choice {
+      display: contents;
+      font-weight: bold;
+      transition: color 0.25s ease-in;
+    }
+  }
+  md-dialog {
+    .transparent {
+      background-color: rgba(255, 255, 255, 0.6);
+    }
+  }
+}

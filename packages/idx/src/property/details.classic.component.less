@@ -1,0 +1,289 @@
+/*
+Nothing should be outside 'stratus-idx-property-details' or it will leak into other modules
+*/
+@phone: ~"(min-width: 600px)";
+@desktop-only: ~"(max-width: 599px)";
+stratus-idx-property-details {
+  /* Generic Button */
+  .button {
+    &,
+    &:link,
+    &:visited,
+    &:active {
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: #fff;
+      background-color: #ff7a4d;
+    }
+    &:hover {
+      color: #fff;
+      background-color: #666;
+    }
+  }
+
+  /* Generic dotted underline/sideline */
+  .dotted-spaced-underline {
+    background: linear-gradient(to right, #333 15%, rgba(255, 255, 255, 0) 0%) repeat-x bottom;
+    background-size: 5px 1px;
+    &.underline-top {
+      background-position: top;
+    }
+  }
+  .dotted-spaced-sideline {
+    background: linear-gradient(to bottom, #333 15%, rgba(255, 255, 255, 0) 0%) repeat-y left;
+    background-size: 1px 5px;
+    &.sideline-right {
+      background-position: right;
+    }
+  }
+
+  /* Generic ng-repeat classes */
+  .repeatedArray {
+    &:first-child .hideFirstChild {
+      display: none;
+    }
+    &:last-child .hideLastChild {
+      display: none;
+    }
+  }
+  .details-container {
+    padding: 4% 5%;
+    margin-bottom: 12px;
+
+    /* Header Section */
+    .details-header {
+      text-align: center;
+      margin: 10px 0 20px 0;
+      h3 {
+        font-size: 24px;
+        text-transform: uppercase;
+        color: #222;
+        margin: 0 0 8px 0;
+      }
+      .address-container {
+        .address2 {
+          text-transform: capitalize;
+          font-size: 12px;
+          padding-bottom: 22px;
+
+          @media @phone {
+            padding-bottom: 30px;
+          }
+        }
+      }
+      .contact-container {
+        padding-bottom: 35px;
+
+        @media @phone {
+          padding-bottom: 0;
+          .button {
+            float: right;
+          }
+        }
+      }
+
+      @media @phone {
+        text-align: left;
+        margin-bottom: 35px;
+      }
+    }
+
+    /* Open House Section */
+    .open-house-section {
+      display: inline-block;
+      padding-bottom: 35px;
+      margin-bottom: 35px;
+      .section-title {
+        text-align: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: #333;
+        letter-spacing: 1px;
+        margin: 25px auto;
+
+        @media @phone {
+          padding: 0;
+          margin-top: 0;
+          text-align: left;
+        }
+      }
+      .open-house-container {
+        font-size: 12px;
+        text-align: center;
+        .description {
+          font-style: italic;
+        }
+        .open-house {
+          text-transform: uppercase;
+          &:first-of-type {
+            padding-top: 8px;
+          }
+        }
+
+        @media @phone {
+          padding-left: 25px;
+          text-align: left;
+        }
+
+        @media @desktop-only {
+          background: none;
+        }
+      }
+    }
+
+    /* Header Image */
+    .image-specs-container {
+      .image-container {
+        position: relative;
+        .price-banner {
+          position: absolute;
+          top: 20px;
+          left: 0;
+          min-width: 190px;
+          margin: 0 0 0 -4px;
+          padding: 3px 0;
+          display: table;
+          .price-banner-corner {
+            position: absolute;
+            bottom: 0;
+            border-right: 6px solid #555;
+            border-bottom: 3px solid transparent;
+          }
+          .list-price-container {
+            text-align: center;
+            background-color: #555;
+            padding: 14px 20px;
+            .list-price-label {
+              font-size: 12px;
+              font-style: italic;
+              -webkit-font-smoothing: antialiased;
+              color: #fff;
+              padding-right: 5px;
+            }
+            .list-price {
+              font-size: 15px;
+              color: #fff;
+              text-transform: uppercase;
+            }
+          }
+        }
+        .details-image {
+          img {
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    /* Header Specs */
+    .details-specs-container {
+      margin-top: 25px;
+      .details-specs {
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: normal;
+        color: #444;
+        line-height: 2;
+        text-align: center;
+
+        @media @phone {
+          text-align: left;
+        }
+      }
+      .links-container {
+        margin: 20px auto;
+        padding-bottom: 20px;
+        text-align: center;
+        .response-link {
+          font-size: 11px;
+          text-transform: uppercase;
+
+          @media @phone {
+            padding-top: 6px;
+            margin-bottom: 9px;
+          }
+        }
+
+        @media @phone {
+          margin: 25px 0;
+          padding-bottom: 15px;
+          text-align: left;
+        }
+      }
+      .mls-service-container {
+        .mls-service {
+          font-size: 11px;
+          color: #666;
+          text-align: center;
+          margin: 15px 0;
+
+          @media @phone {
+            text-align: left;
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      @media @phone {
+        margin-top: 0;
+      }
+    }
+
+    /* Additional Photos */
+    .additional-photos {
+      stratus-carousel {
+        .swiper-main {
+          max-height: 600px;
+        }
+      }
+    }
+
+    /* Additional Details */
+    .additional-details {
+      text-align: center;
+      background-color: #f8f8f8;
+      // stylelint-disable-next-line no-descending-specificity
+      .description,
+      .detail-sections {
+        margin-bottom: 25px;
+        font-size: 12px;
+        color: #666;
+        line-height: 1.5;
+      }
+      .detail-sections {
+        column-count: 2;
+        column-gap: 1em;
+        .sub-detail-section {
+          display: inline-block;
+          margin: 0 0 1em;
+          width: 100%;
+        }
+      }
+      .agent-section {
+        .agent {
+          margin-top: 25px;
+          padding: 25px 0 10px 0;
+          font-size: 11px;
+          text-transform: uppercase;
+          &:not(:first-child) {
+            margin-top: 0;
+            padding-top: 0;
+            background: none;
+          }
+        }
+      }
+
+      @media @phone {
+        text-align: left;
+      }
+    }
+
+    /* Map Section */
+    //.map-location {}
+
+    /* Disclaimer Section */
+    .disclaimer {
+      margin-top: 35px;
+    }
+  }
+}

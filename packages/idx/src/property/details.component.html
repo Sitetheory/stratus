@@ -1,10 +1,10 @@
 <!-- TODO needs a close button for small resolutions -->
-<div id="{{elementId}}" class="stratus-property-details" data-ng-cloak>
+<div id="{{elementId}}" data-ng-cloak>
 	<div ng-if="model.pending">
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	</div>
 	<!-- parallax-wrapper disabled, cannot use height altering on the entire widget -->
-	<div class="" data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)">
+	<div data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)">
 
 		<div class="details-header static-element">
 			<h1>
