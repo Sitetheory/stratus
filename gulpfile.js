@@ -65,9 +65,9 @@ const babelSettings = {
 const location = {
   boot: {
     source: [
-      'packages/boot/env.js',
-      'packages/boot/config.js',
-      'packages/boot/init.js'
+      'packages/boot/src/env.js',
+      'packages/boot/src/config.js',
+      'packages/boot/src/init.js'
     ],
     output: 'dist/boot.js'
   },
@@ -109,10 +109,8 @@ const location = {
   },
   preserve: {
     core: [
-      'boot/**/*.js',
       'components/**/*.js',
       'extras/components/**/*.js',
-      'controllers/**/*.js',
       'extras/controllers/**/*.js',
       'directives/**/*.js',
       'extras/directives/**/*.js',
@@ -120,10 +118,8 @@ const location = {
       'extras/filters/**/*.js'
     ],
     min: [
-      'boot/**/*.min.js',
       'components/**/*.min.js',
       'extras/components/**/*.min.js',
-      'controllers/**/*.min.js',
       'extras/controllers/**/*.min.js',
       'directives/**/*.min.js',
       'extras/directives/**/*.min.js',

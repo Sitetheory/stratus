@@ -39,7 +39,6 @@ packages/angular/src/**/*.css
 packages/angularjs/src/**/*.js
 packages/angularjs/src/**/*.css
 packages/backend/src/**/*.js
-packages/boot/src/**/*.js
 packages/core/src/**/*.js
 packages/idx/src/**/*.js
 packages/idx/src/**/*.css
