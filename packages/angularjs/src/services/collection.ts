@@ -10,7 +10,7 @@ import * as angular from 'angular'
 import 'angular-material' // Reliant for $mdToast
 
 // Services
-import {Model} from 'stratus.services.model'
+import {Model} from '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {ucfirst} from '@stratusjs/core/misc'

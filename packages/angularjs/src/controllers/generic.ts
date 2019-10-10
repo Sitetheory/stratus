@@ -13,9 +13,9 @@ import {ICompiledExpression, ILogService, IParseService, ISCEService, IScope} fr
 import 'angular-sanitize'
 
 // Services
-import {Registry} from 'stratus.services.registry'
-import {Model} from 'stratus.services.model'
-import {Collection} from 'stratus.services.collection'
+import {Registry} from '@stratusjs/angularjs/services/registry'
+import {Model} from '@stratusjs/angularjs/services/model'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Stratus Dependencies
 import {isJSON, setUrlParams} from '@stratusjs/core/misc'

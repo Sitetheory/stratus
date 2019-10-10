@@ -7,8 +7,8 @@ import * as Stratus from 'stratus'
 import * as angular from 'angular'
 
 // Services
-import {Model} from 'stratus.services.model'
-import {Collection} from 'stratus.services.collection'
+import {Model} from '@stratusjs/angularjs/services/model'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Stratus Dependencies
 import {sanitize} from '@stratusjs/core/conversion'

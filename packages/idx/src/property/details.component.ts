@@ -16,8 +16,8 @@ import 'angular-sanitize'
 import moment from 'moment'
 
 // Services
-import 'stratus.services.model' // Needed as $provider
-import {Model} from 'stratus.services.model' // Needed as Class
+import '@stratusjs/angularjs/services/model' // Needed as $provider
+import {Model} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/idx/idx'
 import {MLSService} from '@stratusjs/idx/idx'
 

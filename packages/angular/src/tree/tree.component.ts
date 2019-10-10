@@ -18,7 +18,7 @@ import * as Stratus from 'stratus'
 import * as _ from 'lodash'
 
 // Services
-import {Registry} from 'stratus.services.registry'
+import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Data Types
 export interface Node {
