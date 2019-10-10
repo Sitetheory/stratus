@@ -10,9 +10,9 @@ import 'angular'
 import 'angular-material'
 
 // Services
-import 'stratus.services.registry'
-import 'stratus.services.model'
-import 'stratus.services.collection'
+import '@stratusjs/angularjs/services/registry'
+import '@stratusjs/angularjs/services/model'
+import '@stratusjs/angularjs/services/collection'
 
 // Stratus Dependencies
 import {camelToSnake} from '@stratusjs/core/conversion'
