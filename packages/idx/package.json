@@ -41,7 +41,7 @@
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.25",
-    "stratus.js": "^0.9.1",
+    "stratus.js": "^0.9.2",
     "swiper": "^4.5.0"
   }
 }
