@@ -65,9 +65,9 @@ const babelSettings = {
 const location = {
   boot: {
     source: [
-      'boot/env.js',
-      'boot/config.js',
-      'boot/init.js'
+      'packages/boot/env.js',
+      'packages/boot/config.js',
+      'packages/boot/init.js'
     ],
     output: 'dist/boot.js'
   },
