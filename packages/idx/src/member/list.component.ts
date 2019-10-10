@@ -47,13 +47,13 @@ Stratus.Components.IdxMemberList = {
         variableSync: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $mdDialog: any,
-        $window: any,
-        $timeout: any,
-        $q: any,
-        $sce: any,
+        $attrs: angular.IAttributes,
+        $q: angular.IQService,
+        $mdDialog: angular.material.IDialogService,
+        $timeout: angular.ITimeoutService,
+        $sce: angular.ISCEService,
+        $scope: object | any, // angular.IScope breaks references so far
+        $window: angular.IWindowService,
         Idx: any,
     ) {
         // Initialize

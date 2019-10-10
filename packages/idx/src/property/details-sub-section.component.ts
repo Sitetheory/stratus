@@ -6,7 +6,7 @@
 // Runtime
 import * as _ from 'lodash'
 import * as Stratus from 'stratus'
-import 'angular'
+import * as angular from 'angular'
 
 // Services
 import 'stratus.services.model'
@@ -31,8 +31,8 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         template: '@',
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
+        $attrs: angular.IAttributes,
+        $scope: object | any, // angular.IScope breaks references so far
         Model: any,
     ) {
         // Initialize

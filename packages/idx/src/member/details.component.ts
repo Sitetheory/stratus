@@ -6,7 +6,7 @@
 // Runtime
 import * as _ from 'lodash'
 import * as Stratus from 'stratus'
-import 'angular'
+import * as angular from 'angular'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -51,11 +51,11 @@ Stratus.Components.IdxMemberDetails = {
         defaultListOptions: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $q: any,
-        $sce: any,
-        $location: any,
+        $attrs: angular.IAttributes,
+        $location: angular.ILocationService,
+        $q: angular.IQService,
+        $sce: angular.ISCEService,
+        $scope: object | any, // angular.IScope breaks references so far
         Model: any,
         Idx: any,
     ) {

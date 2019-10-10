@@ -37,13 +37,13 @@ Stratus.Components.IdxPropertySearch = {
         variableSync: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $window: any,
-        $timeout: any,
-        $mdConstant: any,
-        $q: any,
-        $mdPanel: any,
+        $attrs: angular.IAttributes,
+        $q: angular.IQService,
+        $mdConstant: any, // mdChips item
+        $mdPanel: angular.material.IPanelService,
+        $scope: object | any, // angular.IScope breaks references so far
+        $timeout: angular.ITimeoutService,
+        $window: angular.IWindowService,
         Idx: any,
     ) {
         // Initialize
@@ -291,7 +291,7 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.showInlinePopup = (ev: any, menuElement: string): void => {
             if (!$scope.filterMenu) {
-                const position = $mdPanel.newPanelPosition()
+                const position: angular.material.IPanelPosition | any = $mdPanel.newPanelPosition()
                     .relativeTo(ev.srcElement)
                     .addPanelPosition($mdPanel.xPosition.CENTER, $mdPanel.yPosition.BELOW)
 
@@ -300,7 +300,10 @@ Stratus.Components.IdxPropertySearch = {
                 animation.closeTo(position)
                 animation.withAnimation($mdPanel.animation.FADE)
 
-                const config = {
+                const config: angular.material.IPanelConfig & {
+                    contentElement: string,
+                    openFrom: any
+                } = {
                     animation,
                     attachTo: angular.element(document.body),
                     contentElement: menuElement,

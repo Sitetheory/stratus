@@ -40,13 +40,13 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         variableSync: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $window: any,
-        $timeout: any,
-        $mdDialog: any,
-        $q: any,
-        $mdPanel: any,
+        $attrs: angular.IAttributes,
+        $q: angular.IQService,
+        $mdDialog: angular.material.IDialogService,
+        $mdPanel: angular.material.IPanelService,
+        $scope: object | any, // angular.IScope breaks references so far
+        $timeout: angular.ITimeoutService,
+        $window: angular.IWindowService,
         Idx: any,
     ) {
         // Initialize

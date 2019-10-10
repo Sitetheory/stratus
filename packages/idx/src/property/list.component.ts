@@ -50,13 +50,13 @@ Stratus.Components.IdxPropertyList = {
         template: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $mdDialog: any,
-        $window: any,
-        $timeout: any,
-        $q: any,
-        $sce: any,
+        $attrs: angular.IAttributes,
+        $q: angular.IQService,
+        $mdDialog: angular.material.IDialogService,
+        $scope: object | any, // angular.IScope breaks references so far
+        $timeout: angular.ITimeoutService,
+        $window: angular.IWindowService,
+        $sce: angular.ISCEService,
         Idx: any,
     ) {
         // Initialize
