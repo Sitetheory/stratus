@@ -23,7 +23,7 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
 const name = 'base'
-const localPath = 'components'
+const localPath = '@stratusjs/angularjs/src/components'
 
 // This component is just a simple base.
 Stratus.Components.Base = {
@@ -148,5 +148,5 @@ Stratus.Components.Base = {
     //             <stratus-pagination></stratus-pagination> \
     //         </ul> \
     //     </div>',
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.html'
+    templateUrl: Stratus.BaseUrl + Stratus.DeploymentPath + localPath + '/' + name + min + '.html'
 }

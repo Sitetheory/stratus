@@ -15,7 +15,7 @@ import {camelToSnake} from '@stratusjs/core/conversion'
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
 const name = 'base'
-const localPath = 'directives'
+const localPath = '@stratusjs/angularjs/src/directives'
 
 // This directive intends to provide basic logic for extending
 // the Stratus Auto-Loader for various contextual uses.
