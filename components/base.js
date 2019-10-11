@@ -1,6 +1,6 @@
-System.register(["lodash", "stratus", "angular", "angular-material", "stratus.services.registry", "stratus.services.model", "stratus.services.collection", "@stratusjs/core/conversion"], function (exports_1, context_1) {
+System.register(["lodash", "stratus", "angular-material", "@stratusjs/angularjs/services/registry", "@stratusjs/angularjs/services/model", "@stratusjs/angularjs/services/collection", "@stratusjs/core/conversion"], function (exports_1, context_1) {
     "use strict";
-    var _, Stratus, conversion_1, min, name, localPath;
+    var _, Stratus, conversion_1, model_1, collection_1, min, name, localPath;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -14,11 +14,11 @@ System.register(["lodash", "stratus", "angular", "angular-material", "stratus.se
             },
             function (_3) {
             },
-            function (_4) {
+            function (model_1_1) {
+                model_1 = model_1_1;
             },
-            function (_5) {
-            },
-            function (_6) {
+            function (collection_1_1) {
+                collection_1 = collection_1_1;
             },
             function (conversion_1_1) {
                 conversion_1 = conversion_1_1;
@@ -46,7 +46,7 @@ System.register(["lodash", "stratus", "angular", "angular-material", "stratus.se
                     limit: '@',
                     options: '<'
                 },
-                controller($scope, $attrs, Registry, Model, Collection) {
+                controller($scope, $attrs, R, M, C) {
                     const $ctrl = this;
                     $ctrl.uid = _.uniqueId(conversion_1.camelToSnake(name) + '_');
                     Stratus.Instances[$ctrl.uid] = $scope;
@@ -58,13 +58,13 @@ System.register(["lodash", "stratus", "angular", "angular-material", "stratus.se
                     $scope.model = null;
                     $scope.collection = null;
                     if ($attrs.target) {
-                        Registry.fetch($attrs, $scope);
+                        R.fetch($attrs, $scope);
                     }
                     $scope.$watch('$ctrl.ngModel', (data) => {
-                        if (data instanceof Model && data !== $scope.model) {
+                        if (data instanceof model_1.Model && data !== $scope.model) {
                             $scope.model = data;
                         }
-                        else if (data instanceof Collection && data !== $scope.collection) {
+                        else if (data instanceof collection_1.Collection && data !== $scope.collection) {
                             $scope.collection = data;
                         }
                     });

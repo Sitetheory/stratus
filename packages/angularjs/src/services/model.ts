@@ -9,17 +9,20 @@ import * as angular from 'angular'
 // Modules
 import 'angular-material' // Reliant for $mdToast
 
+// Types
+import {IHttpBackendService, IRootScopeService} from 'angular'
+
 // Stratus Dependencies
 import {getAnchorParams, getUrlParams, patch, setUrlParams, strcmp, ucfirst} from '@stratusjs/core/misc'
 
-let http: any = () => {
-    console.error('$$http not loaded!')
+let http: IHttpBackendService|any = () => {
+    console.error('IHttpBackendService not loaded!')
 }
-let mdToast: any = () => {
+let mdToast: angular.material.IToastService|any = () => {
     console.error('$$mdToast not loaded!')
 }
-let rootScope: any = () => {
-    console.error('$rootScope not loaded!')
+let rootScope: IRootScopeService|any = () => {
+    console.error('IRootScopeService not loaded!')
 }
 
 export class Model extends Stratus.Prototypes.Model {
@@ -714,7 +717,7 @@ Stratus.Services.Model = [
             '$http',
             '$mdToast',
             '$rootScope',
-            ($http: any, $mdToast: any, $rootScope: any) => {
+            ($http: any, $mdToast: angular.material.IToastService, $rootScope: IRootScopeService) => {
                 http = $http
                 mdToast = $mdToast
                 rootScope = $rootScope

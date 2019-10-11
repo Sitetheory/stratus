@@ -9,6 +9,9 @@ import * as angular from 'angular'
 // Modules
 import 'angular-material' // Reliant for $mdToast
 
+// Types
+import {IHttpBackendService} from 'angular'
+
 // Services
 import {Model} from '@stratusjs/angularjs/services/model'
 
@@ -16,10 +19,10 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {ucfirst} from '@stratusjs/core/misc'
 
 // TODO: Convert this to plain XHRs
-let http: any = () => {
+let http: IHttpBackendService|any = () => {
     console.error('$$http not loaded!')
 }
-let mdToast: any = () => {
+let mdToast: angular.material.IToastService|any = () => {
     console.error('$$mdToast not loaded!')
 }
 
@@ -391,7 +394,7 @@ Stratus.Services.Collection = [
         $provide.factory('Collection', [
             '$http',
             '$mdToast',
-            ($http: any, $mdToast: any) => {
+            ($http: IHttpBackendService, $mdToast: angular.material.IToastService) => {
                 http = $http
                 mdToast = $mdToast
                 return Collection

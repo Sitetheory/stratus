@@ -4,7 +4,7 @@
 // Runtime
 import * as _ from 'lodash'
 import * as Stratus from 'stratus'
-import * as angular from 'angular'
+import 'angular'
 
 // Services
 import {Model} from '@stratusjs/angularjs/services/model'

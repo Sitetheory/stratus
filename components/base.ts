@@ -4,7 +4,7 @@
 // Runtime
 import * as _ from 'lodash'
 import * as Stratus from 'stratus'
-import 'angular'
+import {IAttributes, IScope} from 'angular'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -16,6 +16,9 @@ import '@stratusjs/angularjs/services/collection'
 
 // Stratus Dependencies
 import {camelToSnake} from '@stratusjs/core/conversion'
+import {Model} from '@stratusjs/angularjs/services/model'
+import {Registry} from '@stratusjs/angularjs/services/registry'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
@@ -58,11 +61,11 @@ Stratus.Components.Base = {
         options: '<'
     },
     controller(
-        $scope: any,
-        $attrs: any,
-        Registry: any,
-        Model: any,
-        Collection: any
+        $scope: IScope|any,
+        $attrs: IAttributes|any,
+        R: Registry,
+        M: Model,
+        C: Collection
     ) {
         // Initialize
         const $ctrl = this
@@ -84,7 +87,7 @@ Stratus.Components.Base = {
 
         // Registry Connectivity
         if ($attrs.target) {
-            Registry.fetch($attrs, $scope)
+            R.fetch($attrs, $scope)
         }
 
         // Symbiotic Data Connectivity
