@@ -4,7 +4,8 @@
 // Runtime
 import * as _ from 'lodash'
 import * as Stratus from 'stratus'
-import 'angular'
+import * as angular from 'angular'
+import {IPromise} from 'angular'
 
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
@@ -15,10 +16,11 @@ import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
 
+
 // Environment
 // const min = Stratus.Environment.get('production') ? '.min' : ''
-// FIXME need to get relative
-// const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// There is not a very consistent way of pathing in Stratus at the moment
+// const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 // Reusable Objects
 export interface WhereOptions {
@@ -143,12 +145,12 @@ Stratus.Services.Idx = [
     '$provide',
     ($provide: any) => {
         $provide.factory('Idx', (
-            $http: any,
-            $injector: any,
-            $q: any,
-            $location: any,
-            $window: any,
-            $rootScope: any,
+            $injector: angular.auto.IInjectorService,
+            $http: angular.IHttpService,
+            $location: angular.ILocationService,
+            $q: angular.IQService,
+            $rootScope: angular.IRootScopeService,
+            $window: angular.IWindowService,
             // tslint:disable-next-line:no-shadowed-variable
             Collection: any,
             // tslint:disable-next-line:no-shadowed-variable
@@ -356,7 +358,7 @@ Stratus.Services.Idx = [
                  * Ensures there is a active session and performs token fetching if need be.
                  * @param keepAlive -
                  */
-                function tokenKeepAuth(keepAlive = false): Promise<void> {
+                function tokenKeepAuth(keepAlive = false): IPromise<void> {
                     return $q(async (resolve: void | any, reject: any) => {
                         try {
                             if (
@@ -379,12 +381,13 @@ Stratus.Services.Idx = [
                  * Fetches a new set of Tokens for data fetching
                  * @param keepAlive -
                  */
-                function tokenRefresh(keepAlive = false): Promise<void> {
+                function tokenRefresh(keepAlive = false): IPromise<void> {
                     return $q((resolve: void | any, reject: void | any) => {
                         $http({
                             method: 'GET',
                             url: tokenRefreshURL
-                        }).then((response: TokenResponse) => {
+                        }).then((response: any) => {
+                            // response as TokenResponse
                             if (
                                 typeof response === 'object' &&
                                 Object.prototype.hasOwnProperty.call(response, 'data') &&
@@ -579,7 +582,7 @@ Stratus.Services.Idx = [
                  * @param originalModel - {Model}
                  * @param newModel - {Model}
                  */
-                function fetchReplaceModel(originalModel: Model, newModel: Model): Promise<Model> {
+                function fetchReplaceModel(originalModel: Model, newModel: Model): IPromise<Model> {
                     // The Model is now doing something. Let's label it as such.
                     originalModel.pending = true
                     originalModel.completed = false

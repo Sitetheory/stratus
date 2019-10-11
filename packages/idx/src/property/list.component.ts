@@ -34,8 +34,8 @@ const min = Stratus.Environment.get('production') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
-// FIXME need to get relative
-const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// There is not a very consistent way of pathing in Stratus at the moment
+const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxPropertyList = {
     bindings: {
@@ -50,13 +50,13 @@ Stratus.Components.IdxPropertyList = {
         template: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $mdDialog: any,
-        $window: any,
-        $timeout: any,
-        $q: any,
-        $sce: any,
+        $attrs: angular.IAttributes,
+        $q: angular.IQService,
+        $mdDialog: angular.material.IDialogService,
+        $scope: object | any, // angular.IScope breaks references so far
+        $timeout: angular.ITimeoutService,
+        $window: angular.IWindowService,
+        $sce: angular.ISCEService,
         Idx: any,
     ) {
         // Initialize
@@ -64,14 +64,7 @@ Stratus.Components.IdxPropertyList = {
         $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
-        /* Stratus.Internals.CssLoader(
-            Stratus.BaseUrl +
-            'content/property/stratus/components/' +
-            // 'propertyList' +
-            ($attrs.template || 'propertyList') +
-            min + '.css'
-        ) */
-        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         /**
          * All actions that happen first when the component loads
@@ -435,5 +428,5 @@ Stratus.Components.IdxPropertyList = {
         $scope.remove = (): void => {
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }
