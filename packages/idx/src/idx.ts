@@ -8,10 +8,10 @@ import * as angular from 'angular'
 import {IPromise} from 'angular'
 
 // Services
-import 'stratus.services.model' // Needed as $provider
-import {Model} from 'stratus.services.model' // Needed as Class
-import 'stratus.services.collection' // Needed as $provider
-import {Collection} from 'stratus.services.collection' // Needed as Class
+import '@stratusjs/angularjs/services/model' // Needed as $provider
+import {Model} from '@stratusjs/angularjs/services/model' // Needed as Class
+import '@stratusjs/angularjs/services/collection' // Needed as $provider
+import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'

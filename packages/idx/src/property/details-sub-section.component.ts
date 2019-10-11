@@ -9,7 +9,7 @@ import * as Stratus from 'stratus'
 import * as angular from 'angular'
 
 // Services
-import 'stratus.services.model'
+import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'

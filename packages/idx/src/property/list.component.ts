@@ -16,8 +16,8 @@ import 'angular-sanitize'
 import moment from 'moment'
 
 // Services
-// import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
-import {Collection} from 'stratus.services.collection' // Needed as Class
+// import {Collection} from '@stratusjs/angularjs/services/collection' // TODO not sure how to resolve type Promise<Collection>
+import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import '@stratusjs/idx/idx'
 import {CompileFilterOptions, WhereOptions} from '@stratusjs/idx/idx'
 
