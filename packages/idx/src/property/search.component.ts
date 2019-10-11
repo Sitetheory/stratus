@@ -23,8 +23,8 @@ const min = Stratus.Environment.get('production') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'search'
-// FIXME need to get relative
-const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// There is not a very consistent way of pathing in Stratus at the moment
+const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxPropertySearch = {
     bindings: {
@@ -37,13 +37,13 @@ Stratus.Components.IdxPropertySearch = {
         variableSync: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $window: any,
-        $timeout: any,
-        $mdConstant: any,
-        $q: any,
-        $mdPanel: any,
+        $attrs: angular.IAttributes,
+        $q: angular.IQService,
+        $mdConstant: any, // mdChips item
+        $mdPanel: angular.material.IPanelService,
+        $scope: object | any, // angular.IScope breaks references so far
+        $timeout: angular.ITimeoutService,
+        $window: angular.IWindowService,
         Idx: any,
     ) {
         // Initialize
@@ -51,7 +51,7 @@ Stratus.Components.IdxPropertySearch = {
         $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         $scope.$mdConstant = $mdConstant
 
@@ -291,7 +291,7 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.showInlinePopup = (ev: any, menuElement: string): void => {
             if (!$scope.filterMenu) {
-                const position = $mdPanel.newPanelPosition()
+                const position: angular.material.IPanelPosition | any = $mdPanel.newPanelPosition()
                     .relativeTo(ev.srcElement)
                     .addPanelPosition($mdPanel.xPosition.CENTER, $mdPanel.yPosition.BELOW)
 
@@ -300,7 +300,10 @@ Stratus.Components.IdxPropertySearch = {
                 animation.closeTo(position)
                 animation.withAnimation($mdPanel.animation.FADE)
 
-                const config = {
+                const config: angular.material.IPanelConfig & {
+                    contentElement: string,
+                    openFrom: any
+                } = {
                     animation,
                     attachTo: angular.element(document.body),
                     contentElement: menuElement,
@@ -404,6 +407,5 @@ Stratus.Components.IdxPropertySearch = {
             }
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
-
+    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

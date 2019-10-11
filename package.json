@@ -59,6 +59,7 @@
     "@stratusjs/idx": "^0.0.2",
     "@stratusjs/react": "^0.1.0",
     "@types/angular": "^1.6.56",
+    "@types/angular-material": "^1.1.68",
     "@types/jasmine": "^3.3.13",
     "@types/jasminewd2": "^2.0.6",
     "@types/jquery": "^3.3.31",

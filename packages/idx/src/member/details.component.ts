@@ -6,7 +6,7 @@
 // Runtime
 import * as _ from 'lodash'
 import * as Stratus from 'stratus'
-import 'angular'
+import * as angular from 'angular'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -16,7 +16,6 @@ import 'angular-sanitize'
 import moment from 'moment'
 
 // Services
-// import {Collection} from 'stratus.services.collection' // TODO not sure how to resolve type Promise<Collection>
 import '@stratusjs/idx/idx'
 
 // FIXME move filters to @stratusjs
@@ -33,8 +32,8 @@ const min = Stratus.Environment.get('production') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'member'
 const componentName = 'details'
-// FIXME need to get relative
-const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// There is not a very consistent way of pathing in Stratus at the moment
+const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxMemberDetails = {
     bindings: {
@@ -51,11 +50,11 @@ Stratus.Components.IdxMemberDetails = {
         defaultListOptions: '@'
     },
     controller(
-        $scope: object | any,
-        $attrs: any,
-        $q: any,
-        $sce: any,
-        $location: any,
+        $attrs: angular.IAttributes,
+        $location: angular.ILocationService,
+        $q: angular.IQService,
+        $sce: angular.ISCEService,
+        $scope: object | any, // angular.IScope breaks references so far
         Model: any,
         Idx: any,
     ) {
@@ -64,7 +63,7 @@ Stratus.Components.IdxMemberDetails = {
         $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         $ctrl.$onInit = () => {
             // console.log('loaded!')
@@ -212,5 +211,5 @@ Stratus.Components.IdxMemberDetails = {
             }
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }
