@@ -12,7 +12,7 @@
       'jquery',
       'angular',
       'froala',
-      'stratus.services.model',
+      '@stratusjs/angularjs/services/model',
       'codemirror/mode/htmlmixed/htmlmixed',
       'codemirror/addon/edit/matchbrackets',
       'codemirror',

@@ -19,7 +19,7 @@ import {camelToSnake, sanitize} from '@stratusjs/core/conversion'
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
 const name = 'twitterFeed'
-const localPath = 'extras/components'
+const localPath = '@stratusjs/angularjs-extras/src/components'
 
 // This component is just a simple twitter feed.
 Stratus.Components.TwitterFeed = {

@@ -33,7 +33,7 @@
       'fullcalendar/customView',
       'angular-material',
       'moment-range',
-      'stratus.services.iCal'
+      '@stratusjs/angularjs-extras/services/iCal'
     ], factory)
   } else {
     factory(
@@ -47,7 +47,7 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'calendar'
-  const localPath = 'extras/components/calendar'
+  const localPath = '@stratusjs/angularjs-extras/src/components/calendar'
 
   // This component is a simple calendar at this time.
   Stratus.Components.Calendar = {

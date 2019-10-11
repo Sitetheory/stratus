@@ -10,7 +10,7 @@
       'stratus',
       'lodash',
       'angular',
-      'stratus.services.model'
+      '@stratusjs/angularjs/services/model'
     ],
     factory)
   } else {

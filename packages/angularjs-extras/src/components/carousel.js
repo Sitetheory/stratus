@@ -25,9 +25,9 @@
       'swiper',
 
       // Services
-      'stratus.services.registry',
-      'stratus.services.model',
-      'stratus.services.collection',
+      '@stratusjs/angularjs/services/registry',
+      '@stratusjs/angularjs/services/model',
+      '@stratusjs/angularjs/services/collection',
 
       // Directives
       'stratus.directives.src'
@@ -39,7 +39,7 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'carousel'
-  const localPath = 'extras/components'
+  const localPath = '@stratusjs/angularjs-extras/src/components'
 
   // This component is just a simple base.
   Stratus.Components.Carousel = {

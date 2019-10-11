@@ -23,7 +23,7 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'customView'
-  const localPath = 'extras/components/calendar'
+  const localPath = '@stratusjs/angularjs-extras/src/components/calendar'
   const defaultTemplate = 'default'
   let uid = null
 

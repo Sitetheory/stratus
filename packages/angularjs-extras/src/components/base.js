@@ -17,9 +17,9 @@
       'angular-material',
 
       // Services
-      'stratus.services.registry',
-      'stratus.services.model',
-      'stratus.services.collection'
+      '@stratusjs/angularjs/services/registry',
+      '@stratusjs/angularjs/services/model',
+      '@stratusjs/angularjs/services/collection'
     ], factory)
   } else {
     // If there is no define then it starts the function instantly, but it wouldn't have any requirements, only root (window) available objects
@@ -32,7 +32,7 @@
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'base'
-  const localPath = 'components'
+  const localPath = '@stratusjs/angularjs-extras/src/components'
 
   // This component is just a simple base.
   Stratus.Components.Base = {

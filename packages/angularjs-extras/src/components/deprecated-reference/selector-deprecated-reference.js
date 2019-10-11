@@ -17,9 +17,9 @@
       'angular-material',
 
       // Services
-      'stratus.services.registry',
-      'stratus.services.model',
-      'stratus.services.collection',
+      '@stratusjs/angularjs/services/registry',
+      '@stratusjs/angularjs/services/model',
+      '@stratusjs/angularjs/services/collection',
 
       // Components
       'stratus.components.pagination',

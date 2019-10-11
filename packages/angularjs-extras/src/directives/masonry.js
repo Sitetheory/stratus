@@ -22,7 +22,7 @@
   const name = 'masonry'
 
   // const min = Stratus.Environment.get('production') ? '.min' : ''
-  // const localPath = 'extras/directives'
+  // const localPath = '@stratusjs/angularjs-extras/src/directives'
 
   // This directive intends to provide basic logic for extending
   // the Stratus Auto-Loader for various contextual uses.

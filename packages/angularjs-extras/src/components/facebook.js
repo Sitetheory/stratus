@@ -18,7 +18,7 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
   // Environment
   // const min = Stratus.Environment.get('production') ? '.min' : ''
   const name = 'facebook'
-  // const localPath = 'extras/components'
+  // const localPath = '@stratusjs/angularjs-extras/src/components'
 
   // This component intends to handle binding and
   // full pagination for the scope's collection.
