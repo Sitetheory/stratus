@@ -32,8 +32,8 @@ const min = Stratus.Environment.get('production') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'member'
 const componentName = 'list'
-// FIXME need to get relative
-const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// There is not a very consistent way of pathing in Stratus at the moment
+const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxMemberList = {
     bindings: {
@@ -61,7 +61,7 @@ Stratus.Components.IdxMemberList = {
         $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         /**
          * All actions that happen first when the component loads
@@ -402,5 +402,5 @@ Stratus.Components.IdxMemberList = {
         $scope.remove = (): void => {
         }
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

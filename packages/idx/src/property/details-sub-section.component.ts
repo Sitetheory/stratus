@@ -16,11 +16,11 @@ import {isJSON} from '@stratusjs/core/misc'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
-// const packageName = 'idx'
+const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details-sub-section'
-// FIXME need to get relative
-const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// There is not a very consistent way of pathing in Stratus at the moment
+const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxPropertyDetailsSubSection = {
     bindings: {
@@ -103,5 +103,5 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
 
         $scope.isArray = (item: any): boolean => _.isArray(item)
     },
-    templateUrl: ($element: any, $attrs: any): string => `${localDir}${moduleName}/${$attrs.template || componentName}.component${min}.html`
+    templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

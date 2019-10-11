@@ -19,8 +19,8 @@ import {isJSON} from '@stratusjs/core/misc'
 
 // Environment
 // const min = Stratus.Environment.get('production') ? '.min' : ''
-// FIXME need to get relative
-// const localDir = Stratus.BaseUrl + 'content/common/stratus_test/node_modules/@stratusjs/idx/src/'
+// There is not a very consistent way of pathing in Stratus at the moment
+// const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 // Reusable Objects
 export interface WhereOptions {
