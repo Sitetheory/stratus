@@ -27,9 +27,6 @@ yarn-error.log
 # Atom Sync
 .remote-sync.json
 
-# Legacy Minifications
-dist/**/*.min.js
-
 # Package Minifications
 packages/*/src/**/*.min.js
 packages/*/src/**/*.min.css
@@ -37,17 +34,9 @@ packages/*/src/**/*.min.html
 packages/*/src/**/*.css.map
 
 # Package Compilations
-packages/angular/src/**/*.js
-packages/angular/src/**/*.css
-packages/angularjs/src/**/*.js
-packages/angularjs/src/**/*.css
-packages/angularjs-extras/src/**/*.css
-packages/backend/src/**/*.js
-packages/core/src/**/*.js
-packages/idx/src/**/*.js
-packages/idx/src/**/*.css
-packages/react/src/**/*.js
-packages/react/src/**/*.css
-
-# TypeScript Supercedes
-packages/angularjs-extras/src/components/twitterFeed.js
+packages/angular/**/*.js
+packages/angular/**/*.css
+packages/boot/**/*.js
+packages/core/**/*.js
+packages/react/**/*.js
+packages/react/**/*.css
