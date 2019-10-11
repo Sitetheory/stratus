@@ -70,6 +70,7 @@
     /* Boot */
     BaseUrl: (boot && _.has(boot, 'configuration') ? boot.configuration.baseUrl : null) || '/',
     BundlePath: (boot && _.has(boot, 'configuration') ? boot.configuration.bundlePath : '') || '',
+    DeploymentPath: (boot && _.has(boot, 'configuration') ? boot.configuration.deploymentPath : '') || '',
 
     /* This is used internally for triggering events */
     Events: null,
