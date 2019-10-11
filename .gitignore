@@ -27,6 +27,9 @@ yarn-error.log
 # Atom Sync
 .remote-sync.json
 
+# Legacy Minifications
+dist/**/*.min.js
+
 # Package Minifications
 packages/*/src/**/*.min.js
 packages/*/src/**/*.min.css
