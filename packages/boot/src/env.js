@@ -39,6 +39,7 @@
   boot.cdn = boot.cdn || '/'
   boot.relative = boot.relative || ''
   boot.bundle = boot.bundle || ''
+  boot.deployment = boot.deployment || ''
 
   // Require.js
   boot.configuration = boot.configuration || {}
