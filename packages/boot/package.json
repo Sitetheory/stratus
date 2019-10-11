@@ -1,7 +1,8 @@
 {
   "name": "@stratusjs/boot",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "This is the boot package for StratusJS.",
+  "main": "dist/boot.min.js",
   "scripts": {},
   "repository": {
     "type": "git",

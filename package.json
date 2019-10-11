@@ -1,8 +1,8 @@
 {
   "name": "stratus.js",
-  "version": "0.9.3",
+  "version": "0.9.5",
   "description": "This platform intends to bridge the gap between Web Design and Development in a fast, flexible environment.",
-  "main": "stratus.html",
+  "main": "dist/stratus.min.js",
   "directories": {
     "test": "test"
   },
