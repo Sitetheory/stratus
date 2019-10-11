@@ -69,7 +69,7 @@ const location = {
       'packages/boot/src/config.js',
       'packages/boot/src/init.js'
     ],
-    output: 'dist/boot.js'
+    output: 'packages/boot/dist/boot.js'
   },
   stratus: {
     source: [
