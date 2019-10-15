@@ -181,9 +181,10 @@ export function isJSON(str: string) {
 }
 
 // Determines whether or not the element was selected from Angular
-// export function isAngular(element: any) {
-//     return typeof angular === 'object' && angular && angular.element && element instanceof angular.element
-// }
+export function isAngular(element: any) {
+    // @ts-ignore
+    return typeof angular === 'object' && angular && angular.element && element instanceof angular.element
+}
 
 // Determines whether or not the element was selected from Angular
 export function isjQuery(element: any) {
