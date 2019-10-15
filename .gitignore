@@ -51,4 +51,5 @@ packages/react/src/**/*.js
 packages/react/src/**/*.css
 
 # TypeScript Supercedes
+packages/angularjs-extras/src/components/image-carousel.js
 packages/angularjs-extras/src/components/twitterFeed.js
