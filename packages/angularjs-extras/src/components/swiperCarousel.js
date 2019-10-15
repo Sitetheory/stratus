@@ -1,4 +1,4 @@
-// Carousel Component
+// Swiper Carousel Component
 // -----------------------
 // Dependant on Swiper
 // See https://github.com/nolimits4web/Swiper
@@ -38,11 +38,11 @@
 }(this, function (Stratus, _, angular, Swiper) {
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
-  const name = 'carousel'
+  const name = 'swiperCarousel'
   const localPath = '@stratusjs/angularjs-extras/src/components'
 
   // This component is just a simple base.
-  Stratus.Components.Carousel = {
+  Stratus.Components.SwiperCarousel = {
     transclude: {
       slide: '?stratusCarouselSlide'
     },
