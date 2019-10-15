@@ -32,7 +32,6 @@
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.26",
     "stratus.js": "^0.9.6",
-    "swiper": "^5.0.4",
     "tslib": "^1.10.0"
   },
   "devDependencies": {

@@ -50,6 +50,9 @@
       "@stratusjs/react/*": [
         "packages/react/src/*"
       ],
+      "@stratusjs/swiper/*": [
+        "packages/swiper/src/*"
+      ],
       "stratus": [
         "dist/stratus"
       ],

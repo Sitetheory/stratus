@@ -1,0 +1,34 @@
+{
+  "name": "@stratusjs/swiper",
+  "version": "0.0.1",
+  "description": "AngularJS Swiper Carousel component to be used as an add on to StratusJS",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sitetheory/stratus.git"
+  },
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "angularjs",
+    "lodash",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus#readme",
+  "dependencies": {
+    "@stratusjs/core": "^0.1.2",
+    "@stratusjs/angularjs": "^0.1.3",
+    "@stratusjs/angularjs-extras": "^0.2.0",
+    "stratus.js": "^0.9.6",
+    "swiper": "^5.0.4"
+  }
+}
