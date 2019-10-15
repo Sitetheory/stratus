@@ -50,14 +50,14 @@
       "@stratusjs/react/*": [
         "packages/react/src/*"
       ],
+      "@stratusjs/runtime/*": [
+        "packages/runtime/src/*"
+      ],
       "@stratusjs/swiper/*": [
         "packages/swiper/src/*"
       ],
       "stratus": [
-        "dist/stratus"
-      ],
-      "stratus.services.*": [
-        "services/*"
+        "packages/runtime/src/stratus"
       ],
       "core-js/es7/reflect": [
         "node_modules/core-js/proposals/reflect-metadata"

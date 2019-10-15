@@ -26,6 +26,7 @@ let interpolate = (value: any, mustHaveExpression: any, trustedContext: any, all
     }
 }
 
+// TODO: Move this to the Backend Package
 export class Registry {
     constructor() {
         // Scope Binding
