@@ -25,12 +25,12 @@
   },
   "homepage": "https://github.com/Sitetheory/stratus#readme",
   "dependencies": {
-    "@stratusjs/core": "^0.1.2",
     "@stratusjs/angularjs": "^0.1.3",
     "@stratusjs/angularjs-extras": "^0.1.2",
+    "@stratusjs/core": "^0.1.2",
+    "@stratusjs/runtime": "^0.9.7",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
-    "moment-timezone": "^0.5.26",
-    "stratus.js": "^0.9.6"
+    "moment-timezone": "^0.5.26"
   }
 }

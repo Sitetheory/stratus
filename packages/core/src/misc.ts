@@ -62,7 +62,7 @@ export function repeat(fn: any, times: number) {
 }
 
 // This function dehydrates an Object, Boolean, or Null value, to a string.
-export function dehydrate(value: string) {
+export function dehydrate(value: any) {
     return typeof value === 'string' ? value : JSON.stringify(value)
 }
 
@@ -181,9 +181,10 @@ export function isJSON(str: string) {
 }
 
 // Determines whether or not the element was selected from Angular
-// export function isAngular(element: any) {
-//     return typeof angular === 'object' && angular && angular.element && element instanceof angular.element
-// }
+export function isAngular(element: any) {
+    // @ts-ignore
+    return typeof angular === 'object' && angular && angular.element && element instanceof angular.element
+}
 
 // Determines whether or not the element was selected from Angular
 export function isjQuery(element: any) {

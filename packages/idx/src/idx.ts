@@ -3,7 +3,7 @@
 
 // Runtime
 import * as _ from 'lodash'
-import * as Stratus from 'stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 import {IPromise} from 'angular'
 

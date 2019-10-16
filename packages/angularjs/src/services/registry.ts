@@ -3,8 +3,8 @@
 
 // Runtime
 import * as _ from 'lodash'
-import * as Stratus from 'stratus'
-import 'angular'
+import {Stratus} from '@stratusjs/runtime/stratus'
+import * as angular from 'angular'
 
 // Services
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -14,18 +14,13 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 import {sanitize} from '@stratusjs/core/conversion'
 import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
 
-let interpolate = (value: any, mustHaveExpression: any, trustedContext: any, allOrNothing: any) => {
-    // console.log('interpolate:', {
-    //     value,
-    //     mustHaveExpression,
-    //     trustedContext,
-    //     allOrNothing
-    // })
-    return (data: string) => {
-        console.error('$interpolate not loaded:', data)
-    }
-}
+// Angular Dependency Injector
+const injector = angular.element(document.body).injector()
 
+// Angular Services
+const $interpolate = injector.get('$interpolate')
+
+// TODO: Move this to the Backend Package
 export class Registry {
     constructor() {
         // Scope Binding
@@ -87,7 +82,7 @@ export class Registry {
                     verify()
                     return
                 }
-                const interpreter = interpolate(element, false, null, true)
+                const interpreter = $interpolate(element, false, null, true)
                 const initial = interpreter($scope.$parent)
                 if (typeof initial !== 'undefined') {
                     options[key] = initial
@@ -218,11 +213,9 @@ Stratus.Services.Registry = [
     '$provide',
     ($provide: any) => {
         $provide.factory('Registry', [
-            '$interpolate',
             'Collection',
             'Model',
-            ($interpolate: any, C: Collection, M: Model) => {
-                interpolate = $interpolate
+            (C: Collection, M: Model) => {
                 return new Registry()
             }
         ])

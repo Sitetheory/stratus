@@ -35,15 +35,6 @@
   "engines": {
     "yarn": ">= 1.0.0"
   },
-  "dependencies": {
-    "@mat-datetimepicker/core": "^3.0.0-beta.0",
-    "@mat-datetimepicker/moment": "^2.0.1",
-    "bowser": "^2.6.1",
-    "bowser-legacy": "npm:bowser@^1.9.4",
-    "jquery": "^3.4.1",
-    "lodash": "^4.17.15",
-    "tslib": "^1.10.0"
-  },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.803.6",
     "@angular/cli": "^8.3.6",
@@ -57,10 +48,11 @@
     "@stratusjs/angularjs": "latest",
     "@stratusjs/angularjs-extras": "latest",
     "@stratusjs/backend": "latest",
-    "@stratusjs/boot": "latest",
+    "@stratusjs/boot": "^0.1.5",
     "@stratusjs/core": "latest",
     "@stratusjs/idx": "latest",
     "@stratusjs/react": "latest",
+    "@stratusjs/runtime": "latest",
     "@types/angular": "^1.6.56",
     "@types/angular-material": "^1.1.68",
     "@types/jasmine": "^3.3.13",
@@ -72,6 +64,7 @@
     "angular": "^1.7.8",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
+    "bowser": "^2.7.0",
     "chai": "^4.2.0",
     "codelyzer": "^5.1.0",
     "csscomb": "^4.2.0",
@@ -94,6 +87,7 @@
     "gulp-typescript": "^5.0.1",
     "jasmine-core": "^3.4.0",
     "jasmine-spec-reporter": "^4.2.1",
+    "jquery": "^3.4.1",
     "karma": "^4.2.0",
     "karma-chrome-launcher": "^3.0.0",
     "karma-coverage-istanbul-reporter": "^2.0.5",
@@ -106,6 +100,7 @@
     "karma-requirejs": "^1.1.0",
     "karma-safari-launcher": "^1.0.0",
     "less": "^3.9.0",
+    "lodash": "^4.17.15",
     "mocha": "^6.2.0",
     "mochawesome": "^4.0.1",
     "protractor": "^5.4.2",
@@ -114,6 +109,7 @@
     "stylelint-config-standard": "^18.0.0",
     "terser": "^4.0.0",
     "ts-node": "^8.3.0",
+    "tslib": "^1.10.0",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3",
     "vinyl-paths": "^3.0.0"

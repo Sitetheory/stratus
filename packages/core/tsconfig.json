@@ -13,7 +13,7 @@
     "esModuleInterop": true,
     "baseUrl": "",
     "typeRoots": [
-      "node_modules/@types"
+      "../../node_modules/@types"
     ],
     "lib": [
       "es2018",
@@ -21,46 +21,40 @@
     ],
     "paths": {
       "*": [
-        "node_modules/*"
-      ],
-//      "@stratusjs/*": [
-//        "packages/*"
-//      ],
-      "@stratusjs/angular/*": [
-        "packages/angular/src/*"
-      ],
-      "@stratusjs/angularjs/*": [
-        "packages/angularjs/src/*"
-      ],
-      "@stratusjs/angularjs-extras/*": [
-        "packages/angularjs-extras/src/*"
-      ],
-      "@stratusjs/backend/*": [
-        "packages/backend/src/*"
-      ],
-      "@stratusjs/boot/*": [
-        "packages/boot/src/*"
-      ],
-      "@stratusjs/core/*": [
-        "packages/core/src/*"
-      ],
-      "@stratusjs/idx/*": [
-        "packages/idx/src/*"
-      ],
-      "@stratusjs/react/*": [
-        "packages/react/src/*"
-      ],
-      "@stratusjs/runtime/*": [
-        "packages/runtime/src/*"
-      ],
-      "@stratusjs/swiper/*": [
-        "packages/swiper/src/*"
-      ],
-      "stratus": [
-        "packages/runtime/src/stratus"
+        "../../node_modules/*"
       ],
       "core-js/es7/reflect": [
-        "node_modules/core-js/proposals/reflect-metadata"
+        "../../node_modules/core-js/proposals/reflect-metadata"
+      ],
+      "@stratusjs/angular/*": [
+        "../angular/src/*"
+      ],
+      "@stratusjs/angularjs/*": [
+        "../angularjs/src/*"
+      ],
+      "@stratusjs/angularjs-extras/*": [
+        "../angularjs-extras/src/*"
+      ],
+      "@stratusjs/backend/*": [
+        "../backend/src/*"
+      ],
+      "@stratusjs/boot/*": [
+        "../boot/src/*"
+      ],
+      "@stratusjs/core/*": [
+        "src/*"
+      ],
+      "@stratusjs/idx/*": [
+        "../idx/src/*"
+      ],
+      "@stratusjs/react/*": [
+        "../react/src/*"
+      ],
+      "@stratusjs/runtime/*": [
+        "../runtime/src/*"
+      ],
+      "stratus": [
+        "../../node_modules/stratus.js/dist/stratus"
       ]
     }
   },
