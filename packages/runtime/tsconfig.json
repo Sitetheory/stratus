@@ -13,7 +13,7 @@
     "esModuleInterop": true,
     "baseUrl": "",
     "typeRoots": [
-      "node_modules/@types"
+      "../../node_modules/@types"
     ],
     "lib": [
       "es2018",
@@ -21,10 +21,10 @@
     ],
     "paths": {
       "*": [
-        "node_modules/*"
+        "../../node_modules/*"
       ],
       "core-js/es7/reflect": [
-        "node_modules/core-js/proposals/reflect-metadata"
+        "../../node_modules/core-js/proposals/reflect-metadata"
       ],
       "@stratusjs/angular/*": [
         "../angular/src/*"
@@ -54,7 +54,7 @@
         "src/*"
       ],
       "stratus": [
-        "node_modules/stratus.js/dist/stratus"
+        "../../node_modules/stratus.js/dist/stratus"
       ]
     }
   },

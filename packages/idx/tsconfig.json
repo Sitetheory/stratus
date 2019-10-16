@@ -39,13 +39,13 @@
         "../backend/src/*"
       ],
       "@stratusjs/boot/*": [
-        "src/*"
+        "../boot/src/*"
       ],
       "@stratusjs/core/*": [
         "../core/src/*"
       ],
       "@stratusjs/idx/*": [
-        "../idx/src/*"
+        "src/*"
       ],
       "@stratusjs/react/*": [
         "../react/src/*"
