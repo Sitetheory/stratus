@@ -33,7 +33,7 @@
     paths: {
 
       /* Stratus Core Library */
-      stratus: boot.deployment + '@stratusjs/runtime/src/stratus' + boot.suffix,
+      stratus: boot.deployment + '@stratusjs/runtime/src/stratus.amd' + boot.suffix,
 
       // CONTROLLERS:
       // ------------
