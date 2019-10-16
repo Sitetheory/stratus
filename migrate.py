@@ -51,7 +51,7 @@ class Migrate:
             return g[0] + ': any' + g[1]
         # add types to function declarations
         untyped_function = re.fullmatch(
-            r'((?:[\s]+)?(?![if]|[else]|[switch])[\w]+(?:[\s]+)?\()((?:[\w\s:,]+)?)(\)(?:[\s]+)?{(?:[\s]+)?)',
+            r'((?:[\s]+)?(?!if|else|switch)(?:[\w]+)(?:[\s]+)?\()((?:[\w\s:,]+)?)(\)(?:[\s]+)?{(?:[\s]+)?)',
             content)
         if untyped_function:
             g = untyped_function.groups()
