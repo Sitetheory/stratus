@@ -29,6 +29,7 @@ import 'stratus.filters.moment'
 // Component Preload
 // import 'stratus.components.propertyDetailsSubSection'
 import '@stratusjs/idx/property/details-sub-section.component'
+import '@stratusjs/angularjs-extras/components/swiperCarousel'
 // stratus.components.carousel doesn't work
 
 // Stratus Dependencies
@@ -41,7 +42,7 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
-const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
+const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxPropertyDetails = {
     bindings: {
@@ -99,6 +100,7 @@ Stratus.Components.IdxPropertyDetails = {
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
+            $scope.images = []
 
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
                 JSON.parse($attrs.defaultListOptions) : {}
@@ -688,6 +690,9 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.$watch('model.data', (data?: any) => {
             if (data) {
                 $scope.devLog('Loaded Details Data:', data)
+                // prepare the images provided
+                $scope.images = $scope.getSlideshowImages()
+                console.log('IDX images is now', $scope.images)
                 Idx.setUrlOptions('Listing',
                     {
                         service: $scope.options.service,
