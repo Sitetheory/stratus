@@ -6,8 +6,7 @@ import * as _ from 'lodash'
 import {Cancelable} from 'lodash'
 import 'jquery'
 import * as bowser from 'bowser-legacy'
-import '@stratusjs/core/misc'
-import {cookie} from '../../core/src/environment'
+import {cookie} from '@stratusjs/core/environment'
 import {
     allTrue,
     converge,
@@ -31,8 +30,8 @@ import {
     strcmp,
     truncate,
     ucfirst
-} from '../../core/src/misc'
-import {camelToKebab, camelToSnake, kebabToCamel, seconds, snakeToCamel} from '../../core/src/conversion'
+} from '@stratusjs/core/misc'
+import {camelToKebab, camelToSnake, kebabToCamel, seconds, snakeToCamel} from '@stratusjs/core/conversion'
 
 declare var boot: any
 declare var hamlet: any
@@ -49,7 +48,7 @@ declare var angular: any
 // initialization routine, this Global Object gets mixed with a function that
 // allows for Native DOM Selectors with added functionality to ensure the core
 // Stratus files never require external DOM Libraries, such as jQuery.
-export declare let Stratus: {
+interface StratusRuntime {
     Controllers: {} | any
     BundlePath: string
     Modules: {
@@ -180,7 +179,7 @@ export declare let Stratus: {
     Routers?: BaseModel
     Aether?: Aether
 }
-Stratus = {
+export const Stratus: StratusRuntime = {
     /* Settings */
     Settings: {
         image: {
