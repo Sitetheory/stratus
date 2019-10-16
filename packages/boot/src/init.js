@@ -47,11 +47,11 @@
 
   // Begin Warm-Up
   if (typeof System !== 'undefined' && typeof System.import === 'function') {
-    System.import('stratus')
+    System.import('@stratusjs/runtime/stratus')
       .then(function () {
         console.log('Stratus initialized through Steal.js')
       })
   } else if (typeof require !== 'undefined') {
-    require(['stratus'])
+    require(['@stratusjs/runtime/stratus'])
   }
 })(this)
