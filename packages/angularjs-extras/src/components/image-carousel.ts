@@ -6,7 +6,7 @@
 
 // Runtime
 import * as _ from 'lodash'
-import * as Stratus from 'stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
 // Services
@@ -14,7 +14,7 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 // import {isJSON} from '@stratusjs/core/misc'
-import {camelToSnake} from "@stratusjs/core/conversion";
+import {camelToSnake} from '@stratusjs/core/conversion'
 
 // Environment
 const min = Stratus.Environment.get('production') ? '.min' : ''
