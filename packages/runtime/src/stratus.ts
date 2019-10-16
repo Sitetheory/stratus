@@ -53,8 +53,10 @@ export declare let Stratus: {
     Controllers: {} | any
     BundlePath: string
     Modules: {
-        ngMessages: boolean
-        ngMaterial: boolean
+        ngMaterial?: boolean
+        ngMessages?: boolean
+        ngSanitize?: boolean
+        [key: string]: boolean
     }
     History: {} | any
     Apps: {} | any

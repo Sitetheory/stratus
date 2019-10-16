@@ -62,7 +62,7 @@ export function repeat(fn: any, times: number) {
 }
 
 // This function dehydrates an Object, Boolean, or Null value, to a string.
-export function dehydrate(value: string) {
+export function dehydrate(value: any) {
     return typeof value === 'string' ? value : JSON.stringify(value)
 }
 

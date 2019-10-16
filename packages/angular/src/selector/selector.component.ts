@@ -17,7 +17,7 @@ import {MatIconRegistry} from '@angular/material/icon'
 import {SubjectSubscriber} from 'rxjs/internal/Subject'
 
 // External Dependencies
-import * as Stratus from 'stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import * as _ from 'lodash'
 
 // Services

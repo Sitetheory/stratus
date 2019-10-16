@@ -3,7 +3,7 @@ import {HttpClient, HttpResponse} from '@angular/common/http'
 import {Observable} from 'rxjs'
 
 // External
-import * as Stratus from 'stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 import * as _ from 'lodash'
 
 // Interfaces

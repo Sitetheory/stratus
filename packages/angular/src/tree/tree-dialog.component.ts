@@ -8,7 +8,7 @@ import {debounceTime, finalize, switchMap, tap} from 'rxjs/operators'
 
 // External
 import * as _ from 'lodash'
-import * as Stratus from 'stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Services
 import {BackendService} from '@stratusjs/angular/backend.service'

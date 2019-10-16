@@ -48,7 +48,7 @@
     "@stratusjs/angularjs": "latest",
     "@stratusjs/angularjs-extras": "latest",
     "@stratusjs/backend": "latest",
-    "@stratusjs/boot": "latest",
+    "@stratusjs/boot": "^0.1.5",
     "@stratusjs/core": "latest",
     "@stratusjs/idx": "latest",
     "@stratusjs/react": "latest",
