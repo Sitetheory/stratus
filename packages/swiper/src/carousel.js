@@ -1,10 +1,15 @@
-// Carousel Component
+// Swiper Carousel Component
 // -----------------------
 // Dependant on Swiper
 // See https://github.com/nolimits4web/Swiper
 // http://idangero.us/swiper/get-started/
 
 /* global define */
+
+import * as Stratus from "stratus"
+import * as _ from 'lodash'
+import { camelToSnake } from '@stratusjs/core/conversion'
+import Swiper from 'swiper'
 
 /**
  * @typedef {Object} SlideImage
@@ -15,6 +20,7 @@
  * @property {String} target
  */
 
+
 // Define AMD, Require.js, or Contextual Scope
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -22,10 +28,10 @@
       'stratus',
       'lodash',
       'angular',
-      'swiper',
+      // 'swiper',
 
       // Services
-      '@stratusjs/angularjs/services/registry',
+      // '@stratusjs/angularjs/services/registry',
       '@stratusjs/angularjs/services/model',
       '@stratusjs/angularjs/services/collection',
 
@@ -33,16 +39,28 @@
       'stratus.directives.src'
     ], factory)
   } else {
-    factory(root.Stratus, root._, root.angular, root.Swiper)
+    // factory(root.Stratus, root._, root.angular, root.Swiper)
+    factory(root.Stratus, root._, root.angular)
   }
-}(this, function (Stratus, _, angular, Swiper) {
+}(this, function (Stratus, _, angular) {
+  // Environment
+  //const min = Stratus.Environment.get('production') ? '.min' : ''
+  //const name = 'swiperCarousel'
+  //const localPath = '@stratusjs/angularjs-extras/src/components'
+  // console.log('LOADED CAROUSEL!!!')
+  // console.log('Swiper', Swiper)
+
   // Environment
   const min = Stratus.Environment.get('production') ? '.min' : ''
-  const name = 'carousel'
-  const localPath = '@stratusjs/angularjs-extras/src/components'
+  const packageName = 'swiper'
+  // const moduleName = 'components'
+  const componentName = 'carousel'
+// There is not a very consistent way of pathing in Stratus at the moment
+  // const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/${moduleName}/`
+  const localDir = `/${boot.deployment}@stratusjs/${packageName}/`
 
   // This component is just a simple base.
-  Stratus.Components.Carousel = {
+  Stratus.Components.SwiperCarousel = {
     transclude: {
       slide: '?stratusCarouselSlide'
     },
@@ -94,24 +112,24 @@
       '$attrs',
       '$window',
       '$element',
-      'Registry',
+      // 'Registry',
       'Model',
       'Collection',
-      function ($scope, $attrs, $window, $element, Registry, Model, Collection) {
+      function ($scope, $attrs, $window, $element, Model, Collection) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+        // $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Internals.CssLoader(
-          Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
-        )
+        // Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css')
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        Stratus.Internals.CssLoader(`${localDir}${componentName}${min}.css`)
         $scope.initialized = false
 
         // noinspection JSIgnoredPromiseFromCall
-        Stratus.Internals.CssLoader(
-          Stratus.BaseUrl + Stratus.BundlePath + 'node_modules/swiper/dist/css/swiper' + min + '.css'
-        )
+        // Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + 'node_modules/swiper/dist/css/swiper' + min + '.css')
+        Stratus.Internals.CssLoader(`/${boot.deployment}swiper/css/swiper${min}.css`)
 
         // Hoist Attributes
         $scope.property = $attrs.property || null
@@ -122,9 +140,11 @@
         $scope.collection = null
 
         // Registry Connectivity
+        /*
         if ($attrs.target) {
           Registry.fetch($attrs, $scope)
-        }
+        }(
+        */
 
         // Symbiotic Data Connectivity
         $scope.$watch('$ctrl.ngModel', function (data) {
@@ -170,6 +190,7 @@
           }
 
           $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
+            console.log('CAROUSEL initNow called later')
             if (initNow !== true) {
               return
             }
@@ -185,6 +206,7 @@
          * TODO allow for altering the variables and updating Swiper after init (live editing/inline changes)
          */
         function init () {
+          console.log('CAROUSEL initing with', $ctrl.images)
           /**
            * @type {Array<SlideImage> || Array<String> || String}
            * @deprecated
@@ -548,6 +570,7 @@
         }
       }
     ],
-    templateUrl: Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.html'
+    // templateUrl: Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.html'
+    templateUrl: `${localDir}${componentName}${min}.html`
   }
 }))

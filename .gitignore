@@ -49,6 +49,9 @@ packages/idx/src/**/*.js
 packages/idx/src/**/*.css
 packages/react/src/**/*.js
 packages/react/src/**/*.css
+packages/swiper/src/**/*.min.js
+packages/swiper/src/**/*.css
 
 # TypeScript Supercedes
+packages/angularjs-extras/src/components/image-carousel.js
 packages/angularjs-extras/src/components/twitterFeed.js
