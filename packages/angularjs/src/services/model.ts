@@ -2,45 +2,84 @@
 // -------------
 
 // Runtime
-import * as _ from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
+import _ from 'lodash'
+import angular from 'angular'
+import {
+    BaseModel,
+    Stratus
+} from '@stratusjs/runtime/stratus'
 
 // Modules
 import 'angular-material' // Reliant for $mdToast
 
 // Stratus Dependencies
-import {getAnchorParams, getUrlParams, patch, setUrlParams, strcmp, ucfirst} from '@stratusjs/core/misc'
-import { Cancelable } from 'lodash'
+import {
+    getAnchorParams,
+    getUrlParams,
+    patch,
+    setUrlParams,
+    strcmp,
+    ucfirst
+} from '@stratusjs/core/misc'
+import {Collection} from '@stratusjs/angularjs/services/collection'
+import {getInjector} from '@stratusjs/angularjs/injector'
 
 // Angular Dependency Injector
-const injector = angular.element(document.body).injector()
+// let injector = getInjector()
 
 // Angular Services
-const $http = injector.get('$http')
-const $rootScope = injector.get('$rootScope')
-const $mdToast: angular.material.IToastService = injector.get('$mdToast')
+// let $http: angular.IHttpService = injector ? injector.get('$http') : null
+let $http: angular.IHttpService
+// let $rootScope: angular.IRootScopeService = injector ? injector.get('$rootScope') : null
+let $rootScope: angular.IRootScopeService
+// let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
+let $mdToast: angular.material.IToastService
 
-export class Model extends Stratus.Prototypes.Model {
-    // private throttle: (() => Promise<unknown>) & Cancelable
+export class Model extends BaseModel {
+    // Base Information
+    name = 'Model'
+
+    // Environment
+    target?: any = null
+    type?: string = null
+    manifest = false
+    stagger = false
+    toast = false
+    identifier?: string|number = null
+    urlRoot = '/Api'
+    targetSuffix?: string = null
+    serviceId?: number = null
+
+    // Infrastructure
+    header = new BaseModel()
+    meta = new BaseModel()
+    collection?: Collection = null
+
+    // XHR Flags
+    pending = false
+    error = false
+    completed = false
+    saving = false
+
+    // XHR Data
+    status?: any = null
+
+    // Misc
+    bracket = {
+        match: /\[[\d+]]/,
+        search: /\[([\d+])]/g,
+        attr: /(^[^[]+)/
+    }
+
+    // Methods
+    throttle = _.throttle(this.fetch, 1000)
+    initialize?: () => void = null
+
     constructor(options: any, attributes: any) {
         super()
-        this.name = 'Model'
-
-        // Environment
-        this.target = null
-        this.manifest = false
-        this.stagger = false
-        this.toast = false
-        this.urlRoot = '/Api'
-        this.collection = null
 
         // Inject Options
         _.extend(this, (!options || typeof options !== 'object') ? {} : options)
-
-        // Infrastructure
-        this.identifier = null
-        this.data = {}
 
         // The data used to detect the data is changed.
         // this.initData = {}
@@ -59,7 +98,7 @@ export class Model extends Stratus.Prototypes.Model {
 
         // Handle Attributes (Typically from Collection Hydration)
         if (attributes && typeof attributes === 'object') {
-            angular.extend(this.data, attributes)
+            _.extend(this.data, attributes)
         }
 
         // Generate URL
@@ -67,27 +106,7 @@ export class Model extends Stratus.Prototypes.Model {
             this.urlRoot += '/' + ucfirst(this.target)
         }
 
-        // XHR Flags
-        this.pending = false
-        this.error = false
-        this.completed = false
-        this.status = null
-
         // TODO: Enable Auto-Save
-
-        // Auto-Saving Flags
-        this.changed = false
-        this.saving = false
-        this.watching = false
-
-        // Auto-Saving Logic
-        this.patch = {}
-
-        this.bracket = {
-            match: /\[[\d+]]/,
-            search: /\[([\d+])]/g,
-            attr: /(^[^[]+)/
-        }
 
         // Scope Binding
         this.watcher = this.watcher.bind(this)
@@ -116,8 +135,10 @@ export class Model extends Stratus.Prototypes.Model {
 
         this.throttle = _.throttle(this.save, 2000)
 
-        this.initialize = _.once(this.initialize || function() {
-            const that = this
+        // hoist context
+        const that: Model = this
+
+        this.initialize = _.once(this.initialize || function defaultInitializer() {
             // Bubble Event + Defer
             // that.on('change', function () {
             //   if (!that.collection) {
@@ -125,12 +146,12 @@ export class Model extends Stratus.Prototypes.Model {
             //   }
             //   that.collection.throttleTrigger('change')
             // })
-            if (this.manifest && !this.getIdentifier()) {
-                this.sync('POST', this.meta.has('api') ? {
-                    meta: this.meta.get('api'),
+            if (that.manifest && !that.getIdentifier()) {
+                that.sync('POST', that.meta.has('api') ? {
+                    meta: that.meta.get('api'),
                     payload: {}
                 } : {}).catch((message: any) => {
-                    if (that.toast) {
+                    if (that.toast && $mdToast) {
                         $mdToast.show(
                             $mdToast.simple()
                                 .textContent('Failure to Manifest!')
@@ -167,11 +188,9 @@ export class Model extends Stratus.Prototypes.Model {
             })
 
             // Set the origin data
-            /* *
-             if (_.isEmpty(that.initData)) {
-             angular.copy(that.data, that.initData)
-             }
-             /* */
+            // if (_.isEmpty(that.initData)) {
+            //     extendDeep(that.data, that.initData)
+            // }
 
             if (!patchData) {
                 return true
@@ -185,7 +204,7 @@ export class Model extends Stratus.Prototypes.Model {
 
             const version = getAnchorParams('version')
 
-            // that.changed = !angular.equals(newData, that.initData)
+            // that.changed = !_.isEqual(newData, that.initData)
             if ((newData.id && newData.id !== priorData.id) ||
                 (!_.isEmpty(version) && newData.version && parseInt(version, 10) !== newData.version.id)
             ) {
@@ -233,8 +252,8 @@ export class Model extends Stratus.Prototypes.Model {
         const that = this
         const str: any = []
         obj = obj || {}
-        angular.forEach(obj, (value: any, key: any) => {
-            if (angular.isObject(value)) {
+        _.forEach(obj, (value: any, key: any) => {
+            if (_.isObject(value)) {
                 if (chain) {
                     key = chain + '[' + key + ']'
                 }
@@ -266,9 +285,9 @@ export class Model extends Stratus.Prototypes.Model {
                 url: that.url(),
                 headers: {}
             }
-            if (angular.isDefined(data)) {
+            if (!_.isUndefined(data)) {
                 if (action === 'GET') {
-                    if (angular.isObject(data) && Object.keys(data).length) {
+                    if (_.isObject(data) && Object.keys(data).length) {
                         prototype.url += prototype.url.includes('?') ? '&' : '?'
                         prototype.url += that.serialize(data)
                     }
@@ -308,7 +327,7 @@ export class Model extends Stratus.Prototypes.Model {
                     }
                 }, 100)
 
-                if (response.status === 200 && angular.isObject(response.data)) {
+                if (response.status === 200 && _.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
                     // Data
                     that.header.set(response.headers() || {})
@@ -317,10 +336,10 @@ export class Model extends Stratus.Prototypes.Model {
                     const status: {code: string}[] = that.meta.get('status')
                     if (that.meta.has('status') && _.first(status).code !== 'SUCCESS') {
                         that.error = true
-                    } else if (angular.isArray(convoy) && convoy.length) {
+                    } else if (_.isArray(convoy) && convoy.length) {
                         that.data = _.first(convoy)
                         that.error = false
-                    } else if (angular.isObject(convoy) && !angular.isArray(convoy)) {
+                    } else if (_.isObject(convoy) && !_.isArray(convoy)) {
                         that.data = convoy
                         that.error = false
                     } else {
@@ -334,7 +353,7 @@ export class Model extends Stratus.Prototypes.Model {
                     }
 
                     // Promise
-                    // angular.copy(that.data, that.initData)
+                    // extendDeep(that.data, that.initData)
                     resolve(that.data)
                 } else {
                     // XHR Flags
@@ -369,7 +388,7 @@ export class Model extends Stratus.Prototypes.Model {
         const that = this
         return this.sync(action, data || this.meta.get('api'), options)
             .catch((message: any) => {
-                if (that.toast) {
+                if (that.toast && $mdToast) {
                     $mdToast.show(
                         $mdToast.simple()
                             .textContent('Failure to Fetch!')
@@ -392,7 +411,7 @@ export class Model extends Stratus.Prototypes.Model {
                 patch: true
             }))
             .catch((message: any) => {
-                if (that.toast) {
+                if (that.toast && $mdToast) {
                     $mdToast.show(
                         $mdToast.simple()
                             .textContent('Failure to Save!')
@@ -570,28 +589,28 @@ export class Model extends Stratus.Prototypes.Model {
         this.throttleTrigger(`change:${attr}`, value)
     }
 
-    toggle(attribute: any, item: any, options: any) {
+    toggle(attribute: any, item: any, options?: object|any) {
         const that = this
-        if (angular.isObject(options) &&
-            angular.isDefined(options.multiple) &&
-            angular.isUndefined(options.strict)) {
+        if (typeof options === 'object' &&
+            !_.isUndefined(options.multiple) &&
+            _.isUndefined(options.strict)) {
             options.strict = true
         }
         options = _.extend({
             multiple: true
-        }, angular.isObject(options) ? options : {})
+        }, _.isObject(options) ? options : {})
         /* TODO: After plucking has been tested, remove this log *
          console.log('toggle:', attribute, item, options);
          /* */
         const request = attribute.split('[].')
         let target = that.get(request.length > 1 ? request[0] : attribute)
-        if (angular.isUndefined(target) ||
-            (options.strict && angular.isArray(target) !==
+        if (_.isUndefined(target) ||
+            (options.strict && _.isArray(target) !==
                 options.multiple)) {
             target = options.multiple ? [] : null
             that.set(request.length > 1 ? request[0] : attribute, target)
         }
-        if (angular.isArray(target)) {
+        if (_.isArray(target)) {
             /* This is disabled, since hydration should not be forced by default *
              const hydrate = {}
              if (request.length > 1) {
@@ -602,24 +621,24 @@ export class Model extends Stratus.Prototypes.Model {
              hydrate.id = item
              }
              /* */
-            if (angular.isUndefined(item)) {
+            if (_.isUndefined(item)) {
                 that.set(attribute, null)
             } else if (!that.exists(attribute, item)) {
                 target.push(item)
             } else {
                 _.each(target, (element: any, key: any) => {
                     const child = (request.length > 1 &&
-                        angular.isObject(element) && request[1] in element)
+                        typeof element === 'object' && request[1] in element)
                                   ? element[request[1]]
                                   : element
-                    const childId = (angular.isObject(child) && child.id)
+                    const childId = (typeof child === 'object' && child.id)
                                     ? child.id
                                     : child
-                    const itemId = (angular.isObject(item) && item.id)
+                    const itemId = (typeof item === 'object' && item.id)
                                    ? item.id
                                    : item
                     if (childId === itemId || (
-                        angular.isString(childId) && angular.isString(itemId) && strcmp(childId, itemId) === 0
+                        _.isString(childId) && _.isString(itemId) && strcmp(childId, itemId) === 0
                     )) {
                         target.splice(key, 1)
                     }
@@ -628,7 +647,7 @@ export class Model extends Stratus.Prototypes.Model {
         } else if (typeof target === 'object' || typeof target === 'number') {
             // (item && typeof item !== 'object') ? { id: item } : item
             that.set(attribute, !that.exists(attribute, item) ? item : null)
-        } else if (angular.isUndefined(item)) {
+        } else if (_.isUndefined(item)) {
             that.set(attribute, !target)
         }
 
@@ -645,12 +664,12 @@ export class Model extends Stratus.Prototypes.Model {
             return undefined
         }
         attr = that.get(request[0])
-        if (!attr || !angular.isArray(attr)) {
+        if (!attr || !_.isArray(attr)) {
             return undefined
         }
         const list: any = []
         attr.forEach((element: any) => {
-            if (!angular.isObject(element) || !(request[1] in element)) {
+            if (typeof element !== 'object' || !(request[1] in element)) {
                 return
             }
             list.push(element[request[1]])
@@ -668,13 +687,13 @@ export class Model extends Stratus.Prototypes.Model {
             return typeof attribute !== 'undefined' && attribute
         } else if (typeof attribute === 'string' && item) {
             attribute = that.pluck(attribute)
-            if (angular.isArray(attribute)) {
+            if (_.isArray(attribute)) {
                 return typeof attribute.find((element: any) => element === item || (
-                    (angular.isObject(element) && element.id && element.id === item) || _.isEqual(element, item)
+                    (typeof element === 'object' && element.id && element.id === item) || _.isEqual(element, item)
                 )) !== 'undefined'
             } else {
                 return attribute === item || (
-                    angular.isObject(attribute) && attribute.id && (
+                    typeof attribute === 'object' && attribute.id && (
                         _.isEqual(attribute, item) || attribute.id === item
                     )
                 )
@@ -691,7 +710,7 @@ export class Model extends Stratus.Prototypes.Model {
         }
         if (this.getIdentifier()) {
             this.sync('DELETE', {}).catch((message: any) => {
-                if (that.toast) {
+                if (that.toast && $mdToast) {
                     $mdToast.show(
                         $mdToast.simple()
                             .textContent('Failure to Delete!')
@@ -711,7 +730,17 @@ export class Model extends Stratus.Prototypes.Model {
 Stratus.Services.Model = [
     '$provide', ($provide: any) => {
         $provide.factory('Model', [
-            () => {
+            '$http',
+            '$rootScope',
+            '$mdToast',
+            (
+                $h: angular.IHttpService,
+                $r: angular.IRootScopeService,
+                $m: angular.material.IToastService
+            ) => {
+                $http = $h
+                $rootScope = $r
+                $mdToast = $m
                 return Model
             }
         ])

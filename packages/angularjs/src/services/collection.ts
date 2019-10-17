@@ -2,9 +2,13 @@
 // ------------------
 
 // Runtime
-import * as _ from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
+import _ from 'lodash'
+import angular from 'angular'
+import {
+    BaseModel,
+    EventManager,
+    Stratus
+} from '@stratusjs/runtime/stratus'
 
 // Modules
 import 'angular-material' // Reliant for $mdToast
@@ -14,13 +18,16 @@ import {Model} from '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {ucfirst} from '@stratusjs/core/misc'
+import {getInjector} from '@stratusjs/angularjs/injector'
 
 // Angular Dependency Injector
-const injector = angular.element(document.body).injector()
+// let injector = getInjector()
 
 // Angular Services
-const $http = injector.get('$http') // TODO: Convert this to plain XHRs
-const $mdToast: angular.material.IToastService = injector.get('$mdToast')
+// let $http: angular.IHttpService = injector ? injector.get('$http') : null
+let $http: angular.IHttpService
+// let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
+let $mdToast: angular.material.IToastService
 
 export interface HttpPrototype {
     headers: any
@@ -29,7 +36,7 @@ export interface HttpPrototype {
     data?: any
 }
 
-export class Collection extends Stratus.Prototypes.EventManager {
+export class Collection extends EventManager {
     // Base Information
     name = 'Collection'
 
@@ -41,10 +48,12 @@ export class Collection extends Stratus.Prototypes.EventManager {
     qualifier = '' // ng-if
     decay = 0
     urlRoot = '/Api'
+    targetSuffix?: string = null
+    serviceId?: number = null
 
     // Infrastructure
-    header = new Stratus.Prototypes.Model()
-    meta = new Stratus.Prototypes.Model()
+    header = new BaseModel()
+    meta = new BaseModel()
     model = Model
     models: any = []
     types: any = []
@@ -290,6 +299,9 @@ export class Collection extends Stratus.Prototypes.EventManager {
         const that = this
         return that.sync(action, data || that.meta.get('api'), options).catch(
             (error: any) => {
+                if (!$mdToast) {
+                    return
+                }
                 $mdToast.show(
                     $mdToast.simple()
                         .textContent('Failure to Fetch!')
@@ -360,7 +372,7 @@ export class Collection extends Stratus.Prototypes.EventManager {
         }
     }
 
-    remove(target: string) {
+    remove(target: Model) {
         this.models.splice(this.models.indexOf(target), 1)
         this.throttleTrigger('change')
         return this
@@ -388,7 +400,16 @@ Stratus.Services.Collection = [
     '$provide',
     ($provide: angular.auto.IProvideService) => {
         $provide.factory('Collection', [
-            () => {
+            '$http',
+            '$mdToast',
+            'Model',
+            (
+                $h: angular.IHttpService,
+                $m: angular.material.IToastService,
+                M: Model
+            ) => {
+                $http = $h
+                $mdToast = $m
                 return Collection
             }
         ])

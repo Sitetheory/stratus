@@ -2,16 +2,15 @@
 // ----------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Cancelable} from 'lodash'
-import 'jquery'
-import * as bowser from 'bowser-legacy'
+import jQuery from 'jquery'
+import bowser from 'bowser-legacy'
 import {cookie} from '@stratusjs/core/environment'
 import {
     allTrue,
     converge,
     dehydrate,
-    endsWith,
     extendDeep,
     functionName,
     getAnchorParams,
@@ -26,7 +25,6 @@ import {
     poll,
     repeat,
     setUrlParams,
-    startsWith,
     strcmp,
     truncate,
     ucfirst
@@ -143,7 +141,9 @@ interface StratusRuntime {
     Catalog: {} | any
     Instances: {} | any
     Services: {} | any
-    Select?: {} | any
+    Select?: (selector: (string | any), context?: (Document | any)) => (
+        ({} & { selection: any; context: any; length: number; selector: any }) | any
+        )
     Environment: {
         country: any
         viewPort: any
@@ -179,6 +179,7 @@ interface StratusRuntime {
     Routers?: BaseModel
     Aether?: Aether
 }
+
 export const Stratus: StratusRuntime = {
     /* Settings */
     Settings: {
@@ -394,6 +395,7 @@ _.mixin({
     converge,
 
     // This synchronously repeats a function a certain number of times
+    // FIXME: This overwrites the core one
     repeat,
 
     // This function dehydrates an Object, Boolean, or Null value, to a string.
@@ -433,35 +435,40 @@ _.mixin({
     isjQuery,
 
     seconds,
-    camelToKebab,
-    kebabToCamel,
-    camelToSnake,
-    snakeToCamel,
-    startsWith,
-    endsWith,
+
+    // Legacy Case Switchers
+    camelToKebab: _.kebabCase,
+    kebabToCamel: _.camelCase,
+    camelToSnake: _.snakeCase,
+    snakeToCamel: _.camelCase,
+
     patch,
     poll,
     strcmp,
+
+    // FIXME: This overwrites the core one
     truncate
 })
 
 // Client Information
 // const browser: any = Bowser.getParser(window.navigator.userAgent)
-// console.log('Browser Information:', browser)
+// if (!Stratus.Environment.get('production')) {
+//     console.log('Browser Information:', browser)
+// }
 
 // Native Selector
 // ---------------
 
-Stratus.Select = (selector: string | any, context: Document | any) => {
+Stratus.Select = (selector: string | any, context?: Document | any) => {
     if (!context) {
         context = document
     }
     let selection: any = selector
     if (typeof selector === 'string') {
         let target
-        if (startsWith(selector, '.') || _.includes(selector, '[')) {
+        if (_.startsWith(selector, '.') || _.includes(selector, '[')) {
             target = 'querySelectorAll'
-        } else if (_.includes(['html', 'head', 'body'], selector) || startsWith(selector, '#')) {
+        } else if (_.includes(['html', 'head', 'body'], selector) || _.startsWith(selector, '#')) {
             target = 'querySelector'
         } else {
             target = 'querySelectorAll'
@@ -493,32 +500,32 @@ Stratus.Select = (selector: string | any, context: Document | any) => {
 // Selector Plugins
 // ----------------
 
-Stratus.Selector.attr = (attr: any, value: any) => {
+Stratus.Selector.attr = function attr(attribute: any, value: any) {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
-        console.warn('Unable to find "' + attr + '" for list:', that.selection)
+    if (that.selection instanceof NodeList) {
+        console.warn('Unable to find "' + attribute + '" for list:', that.selection)
         return null
     }
-    if (!attr) {
+    if (!attribute) {
         return this
     }
     if (typeof value === 'undefined') {
-        value = that.selection.getAttribute(attr)
+        value = that.selection.getAttribute(attribute)
         return hydrate(value)
     } else {
-        that.selection.setAttribute(attr, dehydrate(value))
+        that.selection.setAttribute(attribute, dehydrate(value))
     }
     return that
 }
 
-Stratus.Selector.addEventListener = (type: any, listener: any, options?: any) => {
+Stratus.Selector.addEventListener = function addEventListener(type: any, listener: any, options?: any) {
     const that: any = this
     if (!that.selection) {
         console.warn('Unable to add EventListener on empty selection.')
         return that
     }
     const listen: any = (node: Element) => node.addEventListener(type, listener, options)
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         _.forEach(that.selection, listen)
         return that
     }
@@ -530,22 +537,22 @@ Stratus.Selector.addEventListener = (type: any, listener: any, options?: any) =>
     return that
 }
 
-Stratus.Selector.each = (callable: any) => {
+Stratus.Selector.each = function each(callable: any) {
     const that: any = this
     if (typeof callable !== 'function') {
         callable = (element: any) => {
             console.warn('each running on element:', element)
         }
     }
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         _.forEach(that.selection, callable)
     }
     return that
 }
 
-Stratus.Selector.find = (selector: any) => {
+Stratus.Selector.find = function find(selector: any) {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to find "' + selector + '" for list:', that.selection)
     } else if (selector) {
         return Stratus.Select(selector, that.selection)
@@ -553,23 +560,23 @@ Stratus.Selector.find = (selector: any) => {
     return null
 }
 
-Stratus.Selector.map = (callable: any) => {
+Stratus.Selector.map = function map(callable: any) {
     const that: any = this
     if (typeof callable !== 'function') {
         callable = (element: any) => {
             console.warn('map running on element:', element)
         }
     }
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         return _.map(that.selection, callable)
     }
     return that
 }
 
 // TODO: Merge with prepend
-Stratus.Selector.append = (child: any) => {
+Stratus.Selector.append = function append(child: any) {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to append child:', child, 'to list:', that.selection)
     } else if (child) {
         that.selection.insertBefore(child, that.selection.lastChild)
@@ -578,9 +585,9 @@ Stratus.Selector.append = (child: any) => {
 }
 
 // TODO: Merge with append
-Stratus.Selector.prepend = (child: any) => {
+Stratus.Selector.prepend = function(child: any) {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to prepend child:', child, 'to list:', that.selection)
     } else if (child) {
         that.selection.insertBefore(child, that.selection.firstChild)
@@ -589,9 +596,9 @@ Stratus.Selector.prepend = (child: any) => {
 }
 
 // Design Plugins
-Stratus.Selector.addClass = (className: any) => {
+Stratus.Selector.addClass = function addClass(className: any) {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to add class "' + className + '" to list:', that.selection)
     } else {
         _.forEach(className.split(' '), (name: any) => {
@@ -605,9 +612,9 @@ Stratus.Selector.addClass = (className: any) => {
     return that
 }
 
-Stratus.Selector.removeClass = (className: string) => {
+Stratus.Selector.removeClass = function removeClass(className: string) {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to remove class "' + className + '" from list:', that.selection)
     } else if (that.selection.classList) {
         _.forEach(className.split(' '), name => {
@@ -621,39 +628,41 @@ Stratus.Selector.removeClass = (className: string) => {
     return that
 }
 
-Stratus.Selector.style = () => {
+Stratus.Selector.style = function style() {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to find style for list:', that.selection)
-    } else if (that.selection instanceof window.Node) {
+    } else if (that.selection instanceof Node) {
         return window.getComputedStyle(that.selection)
     }
     return null
 }
 
 // Positioning Plugins
-Stratus.Selector.height = () => {
+Stratus.Selector.height = function height() {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to find height for list:', that.selection)
         return null
     }
     return that.selection.offsetHeight || 0
 }
 
-Stratus.Selector.width = () => {
+Stratus.Selector.width = function width() {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to find width for list:', that.selection)
         return null
     }
-    // console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
+    // if (!Stratus.Environment.get('production')) {
+    //     console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
+    // }
     return that.selection.offsetWidth || 0
 }
 
-Stratus.Selector.offset = () => {
+Stratus.Selector.offset = function offset() {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to find offset for list:', that.selection)
     } else if (that.selection.getBoundingClientRect) {
         const rect: any = that.selection.getBoundingClientRect()
@@ -668,9 +677,9 @@ Stratus.Selector.offset = () => {
     }
 }
 
-Stratus.Selector.parent = () => {
+Stratus.Selector.parent = function parent() {
     const that: any = this
-    if (that.selection instanceof window.NodeList) {
+    if (that.selection instanceof NodeList) {
         console.warn('Unable to find offset for list:', that.selection)
         return null
     }
@@ -681,7 +690,7 @@ Stratus.Selector.parent = () => {
 // --------------
 
 // This constructor builds events for various methods.
-class StratusEvent {
+export class StratusEvent {
     public enabled: boolean
     public hook: any
     public target: any
@@ -730,21 +739,21 @@ Stratus.Prototypes.Event = StratusEvent
 // Stratus Event System
 // --------------------
 
-class EventManager {
-    protected name: string
+export class EventManager {
+    protected name = 'EventManager'
     public listeners: {
         [key: string]: Array<StratusEvent>
-    }
+    } = {}
     public throttleTrigger: ((name: any, ...args: any[]) => (this)) & Cancelable
 
     constructor(throttle?: any) {
-        this.name = 'EventManager'
-        this.listeners = {}
         this.throttleTrigger = _.throttle(this.trigger, throttle || 100)
     }
 
     off(name: any, callback: any, context: any) {
-        console.log('off:', name, callback, context)
+        if (!Stratus.Environment.get('production')) {
+            console.log('off:', name, callback, context)
+        }
         return this
     }
 
@@ -797,7 +806,7 @@ Stratus.Events = new EventManager()
 // Error Prototype
 // ---------------
 
-class StratusError {
+export class StratusError {
     public code: string
     public message: string
     public chain: Array<any>
@@ -823,7 +832,7 @@ Stratus.Prototypes.Error = StratusError
 // --------------
 
 // This constructor builds jobs for various methods.
-class Job {
+export class Job {
     public enabled: boolean
     public time: any
     public method: any
@@ -850,25 +859,20 @@ Stratus.Prototypes.Job = Job
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-class BaseModel extends EventManager {
-    public data: {} | any
-    public temps: {} | any
-    public changed: boolean | any
-    public watching: boolean
-    public patch: {} | any
+export class BaseModel extends EventManager {
+    name = 'BaseModel'
+
+    // Infrastructure
+    data: any = {}
+    temps: any = {}
+
+    // Diff Detection
+    changed: boolean|any = false
+    watching = false
+    patch: any = {}
 
     constructor(data?: any, options?: any) {
         super()
-        this.name = 'Model'
-
-        this.data = {}
-
-        this.temps = {}
-
-        // Diff Detection
-        this.changed = false
-        this.watching = false
-        this.patch = {}
 
         // Evaluate object or array
         if (data) {
@@ -925,7 +929,7 @@ class BaseModel extends EventManager {
         return _.size(this.data)
     }
 
-    set(attr: any, value: any) {
+    set(attr: string|object, value?: any) {
         if (attr && typeof attr === 'object') {
             const that: any = this
             _.forEach(attr, (valueDeep, attrDeep) => {
@@ -1010,7 +1014,9 @@ class BaseModel extends EventManager {
             // values (these should be separate functions)
             this.data[attr] = _.without(this.data[attr], value)
         }
-        // console.log('removed:', this.data[attr])
+        // if (!Stratus.Environment.get('production')) {
+        //     console.log('removed:', this.data[attr])
+        // }
         return this.data[attr]
     }
 
@@ -1198,7 +1204,7 @@ interface XHRRequest {
     error?: (response: any) => any
 }
 
-class XHR {
+export class XHR {
     public method: string
     public url: string
     public data: {} | any
@@ -1602,21 +1608,19 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
     const elementBottom: any = elementTop + el.height()
     pageTop = pageTop + offset
     pageBottom = pageBottom - offset
-    /* *
-     if (!Stratus.Environment.get('production')) {
-     console.log('onScreen:',
-     {
-     el: el,
-     pageTop: pageTop,
-     pageBottom: pageBottom,
-     elementTop: elementTop,
-     elementBottom: elementBottom,
-     offset: offset
-     },
-     partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
-     )
-     }
-     /* */
+    // if (!Stratus.Environment.get('production')) {
+    //     console.log('onScreen:',
+    //         {
+    //             el,
+    //             pageTop,
+    //             pageBottom,
+    //             elementTop,
+    //             elementBottom,
+    //             offset
+    //         },
+    //         partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
+    //     )
+    // }
     return partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
 }
 
@@ -1653,14 +1657,14 @@ Stratus.Internals.LoadCss = (urls: any) => {
                 if (typeof url === 'undefined' || !url) {
                     cssEntries[cssEntry] = true
                     if (cssEntries.total === cssEntries.iteration &&
-                        allTrue(cssEntries)) {
+                        _.every(cssEntries)) {
                         resolve(cssEntries)
                     }
                 } else {
                     Stratus.Internals.CssLoader(url).then((entry: any) => {
                         cssEntries[cssEntry] = true
                         if (cssEntries.total === cssEntries.iteration &&
-                            allTrue(cssEntries)) {
+                            _.every(cssEntries)) {
                             resolve(cssEntries)
                         }
                     }, reject)
@@ -1833,11 +1837,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // find a size
                 size = size || 'hq'
 
-                /* *
-                 if (!Stratus.Environment.get('production')) {
-                 console.log('size:', size, width, el)
-                 }
-                 /* */
+                // if (!Stratus.Environment.get('production')) {
+                //     console.log('size:', size, width, el)
+                // }
 
                 // Fail-safe for images that are sized too early
                 if (size === 'xs') {
@@ -1874,7 +1876,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     // TODO: Go down in sizes before reaching the origin
                     el.attr('data-loading', dehydrate(false))
                     el.attr('src', srcOriginProtocol)
-                    console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+                    if (!Stratus.Environment.get('production')) {
+                        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+                    }
                 })
             } else {
                 // If Background Image Create a Test Image to Test Loading
@@ -1889,7 +1893,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     // Standardize src
                     el.attr('data-loading', dehydrate(false))
                     el.css('background-image', 'url(' + srcOriginProtocol + ')')
-                    console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
+                    if (!Stratus.Environment.get('production')) {
+                        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
+                    }
                 })
             }
 
@@ -1973,11 +1979,9 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
     // Note: You can't use event.preventDefault() in Passive Events
     const viewPort: any = Stratus.Select(Stratus.Environment.get('viewPort') || window)
     const viewPortChangeHandler: any = () => {
-        /* *
-         if (!Stratus.Environment.get('production')) {
-         console.log('scrolling:', Stratus.Internals.GetScrollDir())
-         }
-         /* */
+        // if (!Stratus.Environment.get('production')) {
+        //     console.log('scrolling:', Stratus.Internals.GetScrollDir())
+        // }
         if (Stratus.Environment.get('viewPortChange')) {
             return
         }
@@ -2169,7 +2173,7 @@ Stratus.Internals.Renderer = (brief: any) => {
 }
 
 // TODO: Move to a module that loads separately
-Stratus.Loaders.Angular = () => {
+Stratus.Loaders.Angular = function AngularLoader() {
     let requirement: any
     let nodes: any
     let injection: any
@@ -2202,7 +2206,9 @@ Stratus.Loaders.Angular = () => {
             if (_.isUndefined(element.selector) && element.namespace) {
                 element.selector = _.filter(
                     _.map(boot.configuration.paths, (path: any, pathKey: any) => {
-                        // if (_.isString(pathKey)) console.log(pathKey.match(/([a-zA-Z]+)/g));
+                        // if (_.isString(pathKey) && !Stratus.Environment.get('production')) {
+                        //     console.log(pathKey.match(/([a-zA-Z]+)/g))
+                        // }
                         return _.startsWith(pathKey, element.namespace)
                                ? (element.type === 'attribute' ? '[' : '') +
                                    camelToKebab(pathKey.replace(element.namespace, 'stratus-')) +
@@ -2318,7 +2324,9 @@ Stratus.Loaders.Angular = () => {
             container.requirement.push(value)
         })
 
-        // console.log('requirements:', container.requirement)
+        // if (!Stratus.Environment.get('production')) {
+        //     console.log('requirements:', container.requirement)
+        // }
 
         require(container.requirement, () => {
             // App Reference
@@ -2470,11 +2478,11 @@ Stratus.Loaders.Angular = () => {
                             if (++counter !== css.length) {
                                 return
                             }
-                            angular.bootstrap(document.querySelector('html'), ['stratusApp'])
+                            const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
                         })
                 })
             } else {
-                angular.bootstrap(document.querySelector('html'), ['stratusApp'])
+                const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
             }
         })
     }
@@ -2510,7 +2518,7 @@ Stratus.Instances.Clean = (instances: any) => {
 // --------------
 
 // This model handles all event related logic.
-class Aether extends BaseModel {
+export class Aether extends BaseModel {
     public passiveSupported: boolean
 
     constructor(data?: any, options?: any) {
@@ -2579,7 +2587,7 @@ Stratus.Aether = new Aether()
 // --------------
 
 // This model handles all time related jobs.
-class Chronos extends BaseModel {
+export class Chronos extends BaseModel {
     constructor(data?: any, options?: any) {
         super(data, options)
         if (!Stratus.Environment.get('production')) {
@@ -2701,7 +2709,9 @@ Stratus.LocalStorage.Listen = (key: any, fn: any) => {
 // When an event arrives from any source, we will handle it
 // appropriately.
 Stratus.LocalStorage.Listen('stratus-core', (data: any) => {
-    // console.log('LocalStorage:', data)
+    // if (!Stratus.Environment.get('production')) {
+    //     console.log('LocalStorage:', data)
+    // }
 })
 // localStorage.setItem('stratus-core', 'foo')
 
@@ -2857,18 +2867,18 @@ Stratus.Events.on('notification', (event: any, message: any, title: any) => {
     let notification
     if (!('Notification' in window)) {
         console.info('This browser does not support desktop notifications.  You should switch to a modern browser.')
-    } else if (window.Notification.permission === 'granted') {
-        notification = new window.Notification(options.title, {
+    } else if (Notification.permission === 'granted') {
+        notification = new Notification(options.title, {
             body: options.message,
             icon: options.icon
         })
         if (!Stratus.Environment.get('production')) {
             console.log(notification)
         }
-    } else if (window.Notification.permission !== 'denied') {
-        window.Notification.requestPermission((permission: any) => {
+    } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission((permission: any) => {
             if (permission === 'granted') {
-                notification = new window.Notification(options.title, {
+                notification = new Notification(options.title, {
                     body: options.message,
                     icon: options.icon
                 })
