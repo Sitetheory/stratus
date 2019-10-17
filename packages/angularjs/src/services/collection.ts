@@ -4,30 +4,61 @@
 // Runtime
 import _ from 'lodash'
 import angular from 'angular'
-import {
-    BaseModel,
-    EventManager,
-    Stratus
-} from '@stratusjs/runtime/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
+
+// Stratus Core
+import {ModelBase} from '@stratusjs/core/datastore/modelBase'
+import {EventManager} from '@stratusjs/core/events/eventManager'
+import {cookie} from '@stratusjs/core/environment'
+import {ucfirst} from '@stratusjs/core/misc'
 
 // Modules
 import 'angular-material' // Reliant for $mdToast
 
-// Services
-import {Model} from '@stratusjs/angularjs/services/model'
-
-// Stratus Dependencies
-import {ucfirst} from '@stratusjs/core/misc'
+// AngularJS Dependency Injector
 import {getInjector} from '@stratusjs/angularjs/injector'
 
-// Angular Dependency Injector
-// let injector = getInjector()
+// AngularJS Services
+import {Model} from '@stratusjs/angularjs/services/model'
+
+// Instantiate Injector
+let injector = getInjector()
 
 // Angular Services
 // let $http: angular.IHttpService = injector ? injector.get('$http') : null
 let $http: angular.IHttpService
 // let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
 let $mdToast: angular.material.IToastService
+
+// Service Verification Function
+const serviceVerify = async () => {
+    return new Promise(async (resolve, reject) => {
+        if ($http && $mdToast) {
+            resolve(true)
+            return
+        }
+        if (!injector) {
+            injector = getInjector()
+        }
+        if (injector) {
+            $http = injector.get('$http')
+            $mdToast = injector.get('$mdToast')
+        }
+        if ($http && $mdToast) {
+            resolve(true)
+            return
+        }
+        setTimeout(() => {
+            if (cookie('env')) {
+                console.log('wait for $http & $mdToast service:', {
+                    $http,
+                    $mdToast
+                })
+            }
+            serviceVerify().then(resolve)
+        }, 250)
+    })
+}
 
 export interface HttpPrototype {
     headers: any
@@ -52,8 +83,8 @@ export class Collection extends EventManager {
     serviceId?: number = null
 
     // Infrastructure
-    header = new BaseModel()
-    meta = new BaseModel()
+    header = new ModelBase()
+    meta = new ModelBase()
     model = Model
     models: any = []
     types: any = []
@@ -101,36 +132,36 @@ export class Collection extends EventManager {
 
         // Infinite Scrolling
         /* *
-        this.infiniteModels = {
-            numLoaded_: 0,
-            toLoad_: 0,
-            // Required.
-            getItemAtIndex: function(index) {
-                if (index > this.numLoaded_) {
-                    this.fetchMoreItems_(index)
-                    return null
-                }
-                return index
-            },
-            // Required.
-            // For infinite scroll behavior, we always return a slightly higher
-            // number than the previously loaded items.
-            getLength: function() {
-                return this.numLoaded_ + 5
-            },
-            fetchMoreItems_: function(index) {
-                // For demo purposes, we simulate loading more items with a timed
-                // promise. In real code, this function would likely contain an
-                // $http request.
-                if (this.toLoad_ < index) {
-                    this.toLoad_ += 20
-                    $timeout(angular.noop, 300).then(angular.bind(this, function() {
-                        this.numLoaded_ = this.toLoad_
-                    }))
-                }
-            }
-        }
-        /* */
+         this.infiniteModels = {
+         numLoaded_: 0,
+         toLoad_: 0,
+         // Required.
+         getItemAtIndex: function(index) {
+         if (index > this.numLoaded_) {
+         this.fetchMoreItems_(index)
+         return null
+         }
+         return index
+         },
+         // Required.
+         // For infinite scroll behavior, we always return a slightly higher
+         // number than the previously loaded items.
+         getLength: function() {
+         return this.numLoaded_ + 5
+         },
+         fetchMoreItems_: function(index) {
+         // For demo purposes, we simulate loading more items with a timed
+         // promise. In real code, this function would likely contain an
+         // $http request.
+         if (this.toLoad_ < index) {
+         this.toLoad_ += 20
+         $timeout(angular.noop, 300).then(angular.bind(this, function() {
+         this.numLoaded_ = this.toLoad_
+         }))
+         }
+         }
+         }
+         /* */
     }
 
     serialize(obj: any, chain?: any) {
@@ -189,7 +220,7 @@ export class Collection extends EventManager {
         this.pending = true
         this.completed = false
 
-        return new Promise((resolve: any, reject: any) => {
+        return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
             const prototype: HttpPrototype = {
@@ -283,6 +314,9 @@ export class Collection extends EventManager {
                 handler(that.cache[queryHash])
                 return
             }
+            if (!$http) {
+                const wait = await serviceVerify()
+            }
             $http(prototype)
                 .then(handler)
                 .catch((error: any) => {
@@ -297,21 +331,21 @@ export class Collection extends EventManager {
 
     fetch(action?: string, data?: any, options?: any) {
         const that = this
-        return that.sync(action, data || that.meta.get('api'), options).catch(
-            (error: any) => {
-                if (!$mdToast) {
-                    return
+        return that.sync(action, data || that.meta.get('api'), options)
+            .catch(async (error: any) => {
+                    if (!$mdToast) {
+                        const wait = await serviceVerify()
+                    }
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Failure to Fetch!')
+                            .toastClass('errorMessage')
+                            .position('top right')
+                            .hideDelay(3000)
+                    )
+                    console.error('FETCH:', error)
                 }
-                $mdToast.show(
-                    $mdToast.simple()
-                        .textContent('Failure to Fetch!')
-                        .toastClass('errorMessage')
-                        .position('top right')
-                        .hideDelay(3000)
-                )
-                console.error('FETCH:', error)
-            }
-        )
+            )
     }
 
     filter(query: string) {
@@ -400,16 +434,16 @@ Stratus.Services.Collection = [
     '$provide',
     ($provide: angular.auto.IProvideService) => {
         $provide.factory('Collection', [
-            '$http',
-            '$mdToast',
-            'Model',
+            // '$http',
+            // '$mdToast',
+            // 'Model',
             (
-                $h: angular.IHttpService,
-                $m: angular.material.IToastService,
-                M: Model
+                // $h: angular.IHttpService,
+                // $m: angular.material.IToastService,
+                // M: Model
             ) => {
-                $http = $h
-                $mdToast = $m
+                // $http = $h
+                // $mdToast = $m
                 return Collection
             }
         ])

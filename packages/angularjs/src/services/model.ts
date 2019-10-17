@@ -4,15 +4,9 @@
 // Runtime
 import _ from 'lodash'
 import angular from 'angular'
-import {
-    BaseModel,
-    Stratus
-} from '@stratusjs/runtime/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 
-// Modules
-import 'angular-material' // Reliant for $mdToast
-
-// Stratus Dependencies
+// Stratus Core
 import {
     getAnchorParams,
     getUrlParams,
@@ -21,11 +15,20 @@ import {
     strcmp,
     ucfirst
 } from '@stratusjs/core/misc'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {ModelBase} from '@stratusjs/core/datastore/modelBase'
+import {cookie} from '@stratusjs/core/environment'
+
+// Modules
+import 'angular-material' // Reliant for $mdToast
+
+// AngularJS Dependency Injector
 import {getInjector} from '@stratusjs/angularjs/injector'
 
-// Angular Dependency Injector
-// let injector = getInjector()
+// AngularJS Services
+import {Collection} from '@stratusjs/angularjs/services/collection'
+
+// Instantiate Injector
+let injector = getInjector()
 
 // Angular Services
 // let $http: angular.IHttpService = injector ? injector.get('$http') : null
@@ -35,7 +38,39 @@ let $rootScope: angular.IRootScopeService
 // let $mdToast: angular.material.IToastService = injector ? injector.get('$mdToast') : null
 let $mdToast: angular.material.IToastService
 
-export class Model extends BaseModel {
+// Service Verification Function
+const serviceVerify = async () => {
+    return new Promise(async (resolve, reject) => {
+        if ($http && $rootScope && $mdToast) {
+            resolve(true)
+            return
+        }
+        if (!injector) {
+            injector = getInjector()
+        }
+        if (injector) {
+            $http = injector.get('$http')
+            $rootScope = injector.get('$rootScope')
+            $mdToast = injector.get('$mdToast')
+        }
+        if ($http && $rootScope && $mdToast) {
+            resolve(true)
+            return
+        }
+        setTimeout(() => {
+            if (cookie('env')) {
+                console.log('wait for $http, $rootScope, & $mdToast service:', {
+                    $http,
+                    $rootScope,
+                    $mdToast
+                })
+            }
+            serviceVerify().then(resolve)
+        }, 250)
+    })
+}
+
+export class Model extends ModelBase {
     // Base Information
     name = 'Model'
 
@@ -51,8 +86,8 @@ export class Model extends BaseModel {
     serviceId?: number = null
 
     // Infrastructure
-    header = new BaseModel()
-    meta = new BaseModel()
+    header = new ModelBase()
+    meta = new ModelBase()
     collection?: Collection = null
 
     // XHR Flags
@@ -150,17 +185,21 @@ export class Model extends BaseModel {
                 that.sync('POST', that.meta.has('api') ? {
                     meta: that.meta.get('api'),
                     payload: {}
-                } : {}).catch((message: any) => {
-                    if (that.toast && $mdToast) {
-                        $mdToast.show(
-                            $mdToast.simple()
-                                .textContent('Failure to Manifest!')
-                                .toastClass('errorMessage')
-                                .position('top right')
-                                .hideDelay(3000)
-                        )
-                    }
+                } : {}).catch(async (message: any) => {
                     console.error('MANIFEST:', message)
+                    if (!that.toast) {
+                        return
+                    }
+                    if (!$mdToast) {
+                        const wait = await serviceVerify()
+                    }
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Failure to Manifest!')
+                            .toastClass('errorMessage')
+                            .position('top right')
+                            .hideDelay(3000)
+                    )
                 })
             }
         })
@@ -171,12 +210,15 @@ export class Model extends BaseModel {
     }
 
     // Watch for Data Changes
-    watcher() {
+    async watcher() {
         if (this.watching) {
             return true
         }
         this.watching = true
         const that = this
+        if (!$rootScope) {
+            const wait = await serviceVerify()
+        }
         $rootScope.$watch(() => that.data,
             (newData: any, priorData: any) => {
             const patchData = patch(newData, priorData)
@@ -277,7 +319,7 @@ export class Model extends BaseModel {
     sync(action?: any, data?: any, options?: any) {
         const that: Model = this
         this.pending = true
-        return new Promise((resolve: any, reject: any) => {
+        return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
             const prototype: any = {
@@ -307,6 +349,9 @@ export class Model extends BaseModel {
                 })
             }
 
+            if (!$http) {
+                const wait = await serviceVerify()
+            }
             $http(prototype).then((response: any) => {
                 // XHR Flags
                 that.pending = false
@@ -387,19 +432,23 @@ export class Model extends BaseModel {
     fetch(action?: any, data?: any, options?: any) {
         const that = this
         return this.sync(action, data || this.meta.get('api'), options)
-            .catch((message: any) => {
-                if (that.toast && $mdToast) {
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Fetch!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
-                }
+            .catch(async (message: any) => {
                 that.status = 500
                 that.error = true
                 console.error('FETCH:', message)
+                if (!that.toast) {
+                    return
+                }
+                if (!$mdToast) {
+                    const wait = await serviceVerify()
+                }
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Failure to Fetch!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                )
             })
     }
 
@@ -410,18 +459,22 @@ export class Model extends BaseModel {
             that.toJSON({
                 patch: true
             }))
-            .catch((message: any) => {
-                if (that.toast && $mdToast) {
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Save!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
-                }
+            .catch(async (message: any) => {
                 that.error = true
                 console.error('SAVE:', message)
+                if (!that.toast) {
+                    return
+                }
+                if (!$mdToast) {
+                    const wait = await serviceVerify()
+                }
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Failure to Save!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                )
             })
     }
 
@@ -709,17 +762,21 @@ export class Model extends BaseModel {
             this.collection.remove(this)
         }
         if (this.getIdentifier()) {
-            this.sync('DELETE', {}).catch((message: any) => {
-                if (that.toast && $mdToast) {
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Delete!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
-                }
+            this.sync('DELETE', {}).catch(async (message: any) => {
                 console.error('DESTROY:', message)
+                if (!that.toast) {
+                    return
+                }
+                if (!$mdToast) {
+                    const wait = await serviceVerify()
+                }
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Failure to Delete!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                )
             })
         }
     }
@@ -730,17 +787,17 @@ export class Model extends BaseModel {
 Stratus.Services.Model = [
     '$provide', ($provide: any) => {
         $provide.factory('Model', [
-            '$http',
-            '$rootScope',
-            '$mdToast',
+            // '$http',
+            // '$rootScope',
+            // '$mdToast',
             (
-                $h: angular.IHttpService,
-                $r: angular.IRootScopeService,
-                $m: angular.material.IToastService
+                // $h: angular.IHttpService,
+                // $r: angular.IRootScopeService,
+                // $m: angular.material.IToastService
             ) => {
-                $http = $h
-                $rootScope = $r
-                $mdToast = $m
+                // $http = $h
+                // $rootScope = $r
+                // $mdToast = $m
                 return Model
             }
         ])
