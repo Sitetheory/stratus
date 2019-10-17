@@ -6,11 +6,11 @@
 // Enable noConflict to ensure this version's jQuery globals aren't set in Require.js
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['jquery-native'], factory)
+    define(['exports', 'jquery-native'], factory)
   } else {
     factory()
   }
-}(this, function (jQuery) {
+}(this, function (exports, jQuery) {
   jQuery = jQuery || this.jQuery || window.jQuery
   if (typeof jQuery === 'undefined') {
     console.error('jQuery is undefined!')
@@ -41,6 +41,7 @@
     return !jQuery(event.target).closest(this.selector).length && !jQuery(event.target).parents(this.selector).length
   }
 
-  // Return jQuery Sandbox for assigning local variables
+  // Export & Return jQuery Sandbox for assigning local variables
+  exports.jQuery = jQuery
   return jQuery
 }))

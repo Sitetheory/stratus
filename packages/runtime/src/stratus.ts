@@ -2,10 +2,10 @@
 // ----------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Cancelable} from 'lodash'
-import 'jquery'
-import * as bowser from 'bowser-legacy'
+import jQuery from 'jquery'
+import bowser from 'bowser-legacy'
 import {cookie} from '@stratusjs/core/environment'
 import {
     allTrue,
@@ -435,10 +435,13 @@ _.mixin({
     isjQuery,
 
     seconds,
-    camelToKebab,
-    kebabToCamel,
-    camelToSnake,
-    snakeToCamel,
+
+    // Legacy Case Switchers
+    camelToKebab: _.kebabCase,
+    kebabToCamel: _.camelCase,
+    camelToSnake: _.snakeCase,
+    snakeToCamel: _.camelCase,
+
     patch,
     poll,
     strcmp,
@@ -449,7 +452,9 @@ _.mixin({
 
 // Client Information
 // const browser: any = Bowser.getParser(window.navigator.userAgent)
-// console.log('Browser Information:', browser)
+// if (!Stratus.Environment.get('production')) {
+//     console.log('Browser Information:', browser)
+// }
 
 // Native Selector
 // ---------------
@@ -649,7 +654,9 @@ Stratus.Selector.width = function width() {
         console.warn('Unable to find width for list:', that.selection)
         return null
     }
-    // console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
+    // if (!Stratus.Environment.get('production')) {
+    //     console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
+    // }
     return that.selection.offsetWidth || 0
 }
 
@@ -683,7 +690,7 @@ Stratus.Selector.parent = function parent() {
 // --------------
 
 // This constructor builds events for various methods.
-class StratusEvent {
+export class StratusEvent {
     public enabled: boolean
     public hook: any
     public target: any
@@ -732,21 +739,21 @@ Stratus.Prototypes.Event = StratusEvent
 // Stratus Event System
 // --------------------
 
-class EventManager {
-    protected name: string
+export class EventManager {
+    protected name = 'EventManager'
     public listeners: {
         [key: string]: Array<StratusEvent>
-    }
+    } = {}
     public throttleTrigger: ((name: any, ...args: any[]) => (this)) & Cancelable
 
     constructor(throttle?: any) {
-        this.name = 'EventManager'
-        this.listeners = {}
         this.throttleTrigger = _.throttle(this.trigger, throttle || 100)
     }
 
     off(name: any, callback: any, context: any) {
-        console.log('off:', name, callback, context)
+        if (!Stratus.Environment.get('production')) {
+            console.log('off:', name, callback, context)
+        }
         return this
     }
 
@@ -799,7 +806,7 @@ Stratus.Events = new EventManager()
 // Error Prototype
 // ---------------
 
-class StratusError {
+export class StratusError {
     public code: string
     public message: string
     public chain: Array<any>
@@ -825,7 +832,7 @@ Stratus.Prototypes.Error = StratusError
 // --------------
 
 // This constructor builds jobs for various methods.
-class Job {
+export class Job {
     public enabled: boolean
     public time: any
     public method: any
@@ -852,25 +859,20 @@ Stratus.Prototypes.Job = Job
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-class BaseModel extends EventManager {
-    public data: {} | any
-    public temps: {} | any
-    public changed: boolean | any
-    public watching: boolean
-    public patch: {} | any
+export class BaseModel extends EventManager {
+    name = 'BaseModel'
+
+    // Infrastructure
+    data: any = {}
+    temps: any = {}
+
+    // Diff Detection
+    changed: boolean|any = false
+    watching = false
+    patch: any = {}
 
     constructor(data?: any, options?: any) {
         super()
-        this.name = 'Model'
-
-        this.data = {}
-
-        this.temps = {}
-
-        // Diff Detection
-        this.changed = false
-        this.watching = false
-        this.patch = {}
 
         // Evaluate object or array
         if (data) {
@@ -927,7 +929,7 @@ class BaseModel extends EventManager {
         return _.size(this.data)
     }
 
-    set(attr: any, value: any) {
+    set(attr: string|object, value?: any) {
         if (attr && typeof attr === 'object') {
             const that: any = this
             _.forEach(attr, (valueDeep, attrDeep) => {
@@ -1012,7 +1014,9 @@ class BaseModel extends EventManager {
             // values (these should be separate functions)
             this.data[attr] = _.without(this.data[attr], value)
         }
-        // console.log('removed:', this.data[attr])
+        // if (!Stratus.Environment.get('production')) {
+        //     console.log('removed:', this.data[attr])
+        // }
         return this.data[attr]
     }
 
@@ -1200,7 +1204,7 @@ interface XHRRequest {
     error?: (response: any) => any
 }
 
-class XHR {
+export class XHR {
     public method: string
     public url: string
     public data: {} | any
@@ -1604,21 +1608,19 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
     const elementBottom: any = elementTop + el.height()
     pageTop = pageTop + offset
     pageBottom = pageBottom - offset
-    /* *
-     if (!Stratus.Environment.get('production')) {
-     console.log('onScreen:',
-     {
-     el: el,
-     pageTop: pageTop,
-     pageBottom: pageBottom,
-     elementTop: elementTop,
-     elementBottom: elementBottom,
-     offset: offset
-     },
-     partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
-     )
-     }
-     /* */
+    // if (!Stratus.Environment.get('production')) {
+    //     console.log('onScreen:',
+    //         {
+    //             el,
+    //             pageTop,
+    //             pageBottom,
+    //             elementTop,
+    //             elementBottom,
+    //             offset
+    //         },
+    //         partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
+    //     )
+    // }
     return partial ? (elementTop <= pageBottom && elementBottom >= pageTop) : (pageTop < elementTop && pageBottom > elementBottom)
 }
 
@@ -1835,11 +1837,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // find a size
                 size = size || 'hq'
 
-                /* *
-                 if (!Stratus.Environment.get('production')) {
-                 console.log('size:', size, width, el)
-                 }
-                 /* */
+                // if (!Stratus.Environment.get('production')) {
+                //     console.log('size:', size, width, el)
+                // }
 
                 // Fail-safe for images that are sized too early
                 if (size === 'xs') {
@@ -1876,7 +1876,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     // TODO: Go down in sizes before reaching the origin
                     el.attr('data-loading', dehydrate(false))
                     el.attr('src', srcOriginProtocol)
-                    console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+                    if (!Stratus.Environment.get('production')) {
+                        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+                    }
                 })
             } else {
                 // If Background Image Create a Test Image to Test Loading
@@ -1891,7 +1893,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     // Standardize src
                     el.attr('data-loading', dehydrate(false))
                     el.css('background-image', 'url(' + srcOriginProtocol + ')')
-                    console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
+                    if (!Stratus.Environment.get('production')) {
+                        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
+                    }
                 })
             }
 
@@ -1975,11 +1979,9 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
     // Note: You can't use event.preventDefault() in Passive Events
     const viewPort: any = Stratus.Select(Stratus.Environment.get('viewPort') || window)
     const viewPortChangeHandler: any = () => {
-        /* *
-         if (!Stratus.Environment.get('production')) {
-         console.log('scrolling:', Stratus.Internals.GetScrollDir())
-         }
-         /* */
+        // if (!Stratus.Environment.get('production')) {
+        //     console.log('scrolling:', Stratus.Internals.GetScrollDir())
+        // }
         if (Stratus.Environment.get('viewPortChange')) {
             return
         }
@@ -2204,7 +2206,9 @@ Stratus.Loaders.Angular = function AngularLoader() {
             if (_.isUndefined(element.selector) && element.namespace) {
                 element.selector = _.filter(
                     _.map(boot.configuration.paths, (path: any, pathKey: any) => {
-                        // if (_.isString(pathKey)) console.log(pathKey.match(/([a-zA-Z]+)/g));
+                        // if (_.isString(pathKey) && !Stratus.Environment.get('production')) {
+                        //     console.log(pathKey.match(/([a-zA-Z]+)/g))
+                        // }
                         return _.startsWith(pathKey, element.namespace)
                                ? (element.type === 'attribute' ? '[' : '') +
                                    camelToKebab(pathKey.replace(element.namespace, 'stratus-')) +
@@ -2320,7 +2324,9 @@ Stratus.Loaders.Angular = function AngularLoader() {
             container.requirement.push(value)
         })
 
-        // console.log('requirements:', container.requirement)
+        // if (!Stratus.Environment.get('production')) {
+        //     console.log('requirements:', container.requirement)
+        // }
 
         require(container.requirement, () => {
             // App Reference
@@ -2472,11 +2478,11 @@ Stratus.Loaders.Angular = function AngularLoader() {
                             if (++counter !== css.length) {
                                 return
                             }
-                            angular.bootstrap(document.querySelector('html'), ['stratusApp'])
+                            const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
                         })
                 })
             } else {
-                angular.bootstrap(document.querySelector('html'), ['stratusApp'])
+                const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
             }
         })
     }
@@ -2512,7 +2518,7 @@ Stratus.Instances.Clean = (instances: any) => {
 // --------------
 
 // This model handles all event related logic.
-class Aether extends BaseModel {
+export class Aether extends BaseModel {
     public passiveSupported: boolean
 
     constructor(data?: any, options?: any) {
@@ -2581,7 +2587,7 @@ Stratus.Aether = new Aether()
 // --------------
 
 // This model handles all time related jobs.
-class Chronos extends BaseModel {
+export class Chronos extends BaseModel {
     constructor(data?: any, options?: any) {
         super(data, options)
         if (!Stratus.Environment.get('production')) {
@@ -2703,7 +2709,9 @@ Stratus.LocalStorage.Listen = (key: any, fn: any) => {
 // When an event arrives from any source, we will handle it
 // appropriately.
 Stratus.LocalStorage.Listen('stratus-core', (data: any) => {
-    // console.log('LocalStorage:', data)
+    // if (!Stratus.Environment.get('production')) {
+    //     console.log('LocalStorage:', data)
+    // }
 })
 // localStorage.setItem('stratus-core', 'foo')
 
@@ -2903,7 +2911,6 @@ Stratus.Events.on('toast', (event: any, message: any, title: any, priority: any,
 // On DOM Ready, add browser compatible CSS classes and digest DOM data-entity
 // attributes.
 Stratus.DOM.ready(() => {
-    console.log(Stratus.Select('body'))
     Stratus.Select('body').removeClass('loaded unloaded').addClass('loading')
     Stratus.Events.trigger('initialize')
 })

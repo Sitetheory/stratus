@@ -20,6 +20,11 @@ import * as _ from 'lodash'
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
 
+// Force Dependent Services
+import '@stratusjs/angularjs/services/registry'
+import '@stratusjs/angularjs/services/collection'
+import '@stratusjs/angularjs/services/model'
+
 // Data Types
 export interface Node {
     id: number

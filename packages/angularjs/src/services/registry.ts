@@ -2,9 +2,9 @@
 // ----------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
+import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as angular from 'angular'
 
 // Services
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -13,12 +13,27 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 // Stratus Dependencies
 import {sanitize} from '@stratusjs/core/conversion'
 import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
+import {getInjector} from '@stratusjs/angularjs/injector'
 
 // Angular Dependency Injector
-const injector = angular.element(document.body).injector()
+// let injector = getInjector()
 
 // Angular Services
-const $interpolate = injector.get('$interpolate')
+// let $interpolate: angular.IInterpolateService = injector ? injector.get('$interpolate') : null
+let $interpolate: angular.IInterpolateService
+
+const serviceVerify = async () => {
+    return new Promise(async (resolve, reject) => {
+        if ($interpolate) {
+            resolve(true)
+            return
+        }
+        setTimeout(() => {
+            console.log('look for $interpolate service:', $interpolate)
+            serviceVerify().then(resolve)
+        }, 250)
+    })
+}
 
 // TODO: Move this to the Backend Package
 export class Registry {
@@ -32,7 +47,7 @@ export class Registry {
     // Inverse the parent and child objects the same way Doctrine does
     // TODO: PushState Handling like: #/media/p/2
     fetch($element: any, $scope: any) {
-        return new Promise((resolve: any, reject: any) => {
+        return new Promise(async (resolve, reject) => {
             if (typeof $element === 'string') {
                 $element = {
                     target: $element
@@ -76,7 +91,10 @@ export class Registry {
                 }
                 resolve(this.build(options, $scope))
             }
-            _.each(options, (element, key) => {
+            if (!$interpolate) {
+                const wait = await serviceVerify()
+            }
+            _.forEach(options, (element, key) => {
                 if (!element || typeof element !== 'string') {
                     completed++
                     verify()
@@ -213,9 +231,15 @@ Stratus.Services.Registry = [
     '$provide',
     ($provide: any) => {
         $provide.factory('Registry', [
+            '$interpolate',
             'Collection',
             'Model',
-            (C: Collection, M: Model) => {
+            (
+                $i: angular.IInterpolateService,
+                C: Collection,
+                M: Model
+            ) => {
+                $interpolate = $i
                 return new Registry()
             }
         ])

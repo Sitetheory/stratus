@@ -19,8 +19,11 @@
     root.Stratus = factory(root.exports)
   }
 }(this, function (exports, module_stratus) {
+  // Handle Module
+  // ------------
+
+  // This pulls the Stratus object from Stratus for Backwards Compatibility with AMD Define
   const {Stratus} = module_stratus
-  console.log('stratus.amd:', Stratus)
 
   // Handle Scope
   // ------------

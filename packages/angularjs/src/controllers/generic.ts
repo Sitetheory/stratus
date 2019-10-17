@@ -6,11 +6,13 @@ import * as _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
-// Types
-import {ICompiledExpression, ILogService, IParseService, ISCEService, IScope} from 'angular'
-
 // Modules
 import 'angular-sanitize'
+
+// Forced Dependent Service Load
+import '@stratusjs/angularjs/services/registry'
+import '@stratusjs/angularjs/services/model'
+import '@stratusjs/angularjs/services/collection'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -32,7 +34,14 @@ Stratus.Controllers.Generic = [
     '$sce',
     '$parse',
     'Registry',
-    async ($scope: IScope|any, $element: JQLite, $log: ILogService, $sce: ISCEService, $parse: IParseService, R: Registry) => {
+    async (
+        $scope: angular.IScope|any,
+        $element: JQLite,
+        $log: angular.ILogService,
+        $sce: angular.ISCEService,
+        $parse: angular.IParseService,
+        R: Registry
+    ) => {
         // Store Instance
         Stratus.Instances[_.uniqueId('generic_')] = $scope
 
@@ -49,11 +58,11 @@ Stratus.Controllers.Generic = [
         $scope.Stratus = Stratus
         $scope._ = _
         $scope.setUrlParams = (options: any) => {
-            if (angular.isObject(options)) {
+            if (_.isObject(options)) {
                 let substance = false
-                angular.forEach(options, (value: any) => {
-                    if (angular.isDefined(value) && value !== null) {
-                        if (!angular.isString(value)) {
+                _.forEach(options, (value: any) => {
+                    if (!_.isUndefined(value) && value !== null) {
+                        if (!_.isString(value)) {
                             substance = true
                         } else if (value.length > 0) {
                             substance = true
@@ -68,54 +77,63 @@ Stratus.Controllers.Generic = [
         $scope.$log = $log
 
         // Inject Javascript Objects
-        $scope.Math = window.Math
+        $scope.Math = Math
 
         // Type Checks
-        $scope.isArray = angular.isArray
-        $scope.isDate = angular.isDate
-        $scope.isDefined = angular.isDefined
-        $scope.isElement = angular.isElement
-        $scope.isFunction = angular.isFunction
-        $scope.isNumber = angular.isNumber
-        $scope.isObject = angular.isObject
-        $scope.isString = angular.isString
-        $scope.isUndefined = angular.isUndefined
+        $scope.isArray = _.isArray
+        $scope.isDate = _.isDate
+        $scope.isDefined = (value: any) => !_.isUndefined(value)
+        $scope.isElement = _.isElement
+        $scope.isFunction = _.isFunction
+        $scope.isNumber = _.isNumber
+        $scope.isObject = _.isObject
+        $scope.isString = _.isString
+        $scope.isUndefined = _.isUndefined
 
         // Angular Wrappers
         $scope.getHTML = $sce.trustAsHtml
 
         // Handle Selected
-        if ($scope.collection) {
-            const selected: { raw: string; id: string, model?: Model|ICompiledExpression, value?: any } = {
-                id: $element.attr('data-selected'),
-                raw: $element.attr('data-raw')
-            }
-            if (selected.id) {
-                if (angular.isString(selected.id)) {
-                    if (isJSON(selected.id)) {
-                        selected.id = JSON.parse(selected.id)
-                        $scope.$watch('collection.models', (models: Array<Model>) => {
-                            if (!$scope.selected && !$scope.selectedInit) {
-                                angular.forEach(models, (model: Model) => {
-                                    if (selected.id === model.getIdentifier()) {
-                                        $scope.selected = selected.raw ? model.data : model
-                                        $scope.selectedInit = true
-                                    }
-                                })
-                            }
-                        })
-                    } else {
-                        selected.model = $parse(selected.id)
-                        selected.value = selected.model($scope.$parent)
-                        if (angular.isArray(selected.value)) {
-                            selected.value = selected.value.filter((n: any) => n)
-                            if (selected.value.length) {
-                                $scope.selected = _.first(selected.value)
-                            }
-                        }
-                    }
+        if (!$scope.collection) {
+            return
+        }
+        const selected: {
+            raw: string;
+            id: string,
+            model?: Model|angular.ICompiledExpression,
+            value?: any
+        } = {
+            id: $element.attr('data-selected'),
+            raw: $element.attr('data-raw')
+        }
+        if (!selected.id || !_.isString(selected.id)) {
+            return
+        }
+        if (isJSON(selected.id)) {
+            selected.id = JSON.parse(selected.id)
+            $scope.$watch('collection.models', (models: Array<Model>) => {
+                if ($scope.selected || $scope.selectedInit) {
+                    return
                 }
+                _.forEach(models, (model: Model) => {
+                    if (selected.id !== model.getIdentifier()) {
+                        return
+                    }
+                    $scope.selected = selected.raw ? model.data : model
+                    $scope.selectedInit = true
+                })
+            })
+        } else {
+            selected.model = $parse(selected.id)
+            selected.value = selected.model($scope.$parent)
+            if (!_.isArray(selected.value)) {
+                return
             }
+            selected.value = selected.value.filter((n: any) => n)
+            if (selected.value.length) {
+                return
+            }
+            $scope.selected = _.first(selected.value)
         }
     }
 ]

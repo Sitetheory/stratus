@@ -369,3 +369,8 @@ export function truncate(target: any, limit?: any, suffix?: any) {
 
     return arr.join('\n').replace(/\n/g, '')
 }
+
+// Interfaces
+export interface LooseObject {
+    [key: string]: any
+}
