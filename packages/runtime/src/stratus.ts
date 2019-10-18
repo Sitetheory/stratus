@@ -3,9 +3,10 @@
 
 // Runtime
 import _ from 'lodash'
-import {Cancelable} from 'lodash'
 import jQuery from 'jquery'
 import bowser from 'bowser-legacy'
+
+// Stratus Core
 import {cookie} from '@stratusjs/core/environment'
 import {
     allTrue,
@@ -29,7 +30,22 @@ import {
     truncate,
     ucfirst
 } from '@stratusjs/core/misc'
-import {camelToKebab, camelToSnake, kebabToCamel, seconds, snakeToCamel} from '@stratusjs/core/conversion'
+import {
+    camelToKebab,
+    camelToSnake,
+    kebabToCamel,
+    seconds,
+    snakeToCamel
+} from '@stratusjs/core/conversion'
+
+// Specific Types
+import {ModelBase} from '@stratusjs/core/datastore/modelBase'
+import {XHR, XHRRequest} from '@stratusjs/core/datastore/xhr'
+import {ErrorBase} from '@stratusjs/core/errors/errorBase'
+import {Aether} from '@stratusjs/core/events/aether'
+import {Job, Chronos} from '@stratusjs/core/events/chronos'
+import {EventBase} from '@stratusjs/core/events/eventBase'
+import {EventManager} from '@stratusjs/core/events/eventManager'
 
 declare var boot: any
 declare var hamlet: any
@@ -135,7 +151,11 @@ interface StratusRuntime {
     Compendium: {} | any
     CSS: {} | any
     DOM: {} | any
-    Chronos?: {} | any
+    Aether: Aether
+    Chronos: Chronos
+    Collections: ModelBase
+    Models: ModelBase
+    Routers: ModelBase
     Loaders: {} | any
     Data: {} | any
     Catalog: {} | any
@@ -144,40 +164,13 @@ interface StratusRuntime {
     Select?: (selector: (string | any), context?: (Document | any)) => (
         ({} & { selection: any; context: any; length: number; selector: any }) | any
         )
-    Environment: {
-        country: any
-        viewPort: any
-        lng: any
-        viewPortChange: boolean
-        production: boolean
-        city: any
-        timezone: any
-        ip: any
-        contextMasterSiteId: any
-        postalCode: any
-        debugNest: boolean
-        contextId: any
-        language: string
-        masterSiteId: any
-        trackLocation: number
-        lastScroll: boolean
-        liveEdit: boolean
-        trackLocationConsent: number
-        context: any
-        siteId: any
-        region: any
-        lat: any
-    } | any
+    Environment: ModelBase
     Resources: {} | any
     Api: {
         GoogleMaps: string
         Froala: string
     }
     Key: {} | any
-    Collections?: BaseModel
-    Models?: BaseModel
-    Routers?: BaseModel
-    Aether?: Aether
 }
 
 export const Stratus: StratusRuntime = {
@@ -217,7 +210,7 @@ export const Stratus: StratusRuntime = {
     DeploymentPath: (boot && _.has(boot, 'configuration') ? boot.configuration.deploymentPath : '') || '',
 
     /* This is used internally for triggering events */
-    Events: null,
+    Events: new EventManager(),
 
     /* Angular */
     Apps: {},
@@ -239,9 +232,13 @@ export const Stratus: StratusRuntime = {
 
     /* Stratus */
     CSS: {},
-    Chronos: null,
+    Aether: new Aether(),
+    Chronos: new Chronos(),
     Data: {},
-    Environment: {
+    Collections: new ModelBase(),
+    Models: new ModelBase(),
+    Routers: new ModelBase(),
+    Environment: new ModelBase({
         ip: null,
         production: !(typeof document.cookie === 'string' &&
             document.cookie.indexOf('env=') !== -1),
@@ -265,12 +262,20 @@ export const Stratus: StratusRuntime = {
         viewPortChange: false,
         viewPort: null,
         lastScroll: false
-    },
+    }),
     History: {},
     Instances: {},
-    Internals: {},
+    Internals: {
+        XHR: (request?: XHRRequest) => (new XHR(request)).send()
+    },
     Loaders: {},
-    Prototypes: {},
+    Prototypes: {
+        Event: EventBase,
+        EventManager,
+        Error: ErrorBase,
+        Job,
+        Model: ModelBase,
+    },
     Resources: {},
     Roster: {
 
@@ -339,7 +344,7 @@ export const Stratus: StratusRuntime = {
 }
 
 // Declare Warm Up
-if (!Stratus.Environment.production) {
+if (!Stratus.Environment.get('production')) {
     console.group('Stratus Warm Up')
 }
 
@@ -686,380 +691,6 @@ Stratus.Selector.parent = function parent() {
     return Stratus.Select(that.selection.parentNode)
 }
 
-// Event Prototype
-// --------------
-
-// This constructor builds events for various methods.
-export class StratusEvent {
-    public enabled: boolean
-    public hook: any
-    public target: any
-    public scope: any
-    public debounce: any
-    public throttle: any
-    public method: () => any
-    public listening: boolean
-    public invalid: boolean
-
-    constructor(options?: any) {
-        this.enabled = false
-        this.hook = null
-        this.target = null
-        this.scope = null
-        this.debounce = null
-        this.throttle = null
-        this.method = () => {
-            console.warn('No method:', this)
-        }
-        if (options && typeof options === 'object') {
-            _.extend(this, options)
-        }
-        this.listening = false
-        this.invalid = false
-        if (typeof this.hook !== 'string') {
-            console.error('Unsupported hook:', this.hook)
-            this.invalid = true
-        }
-        if (this.target !== undefined && this.target !== null && !(this.target instanceof EventTarget)) {
-            console.error('Unsupported target:', this.target)
-            this.invalid = true
-        }
-        if (typeof this.method !== 'function') {
-            console.error('Unsupported method:', this.method)
-            this.invalid = true
-        }
-        if (this.invalid) {
-            this.enabled = false
-        }
-    }
-}
-
-Stratus.Prototypes.Event = StratusEvent
-
-// Stratus Event System
-// --------------------
-
-export class EventManager {
-    protected name = 'EventManager'
-    public listeners: {
-        [key: string]: Array<StratusEvent>
-    } = {}
-    public throttleTrigger: ((name: any, ...args: any[]) => (this)) & Cancelable
-
-    constructor(throttle?: any) {
-        this.throttleTrigger = _.throttle(this.trigger, throttle || 100)
-    }
-
-    off(name: any, callback: any, context: any) {
-        if (!Stratus.Environment.get('production')) {
-            console.log('off:', name, callback, context)
-        }
-        return this
-    }
-
-    on(name: any, callback: any, context: any) {
-        const event: any = (name instanceof StratusEvent) ? name : new StratusEvent({
-            enabled: true,
-            hook: name,
-            method: callback,
-            scope: context || null
-        })
-        name = event.hook
-        if (!(name in this.listeners)) {
-            this.listeners[name] = []
-        }
-        this.listeners[name].push(event)
-        return this
-    }
-
-    once(name: any, callback: any, context: any) {
-        this.on(name, (event: any, ...args: any) => {
-            event.enabled = false
-            const childArgs: any = _.clone(args)
-            childArgs.unshift(event)
-            callback.apply(event.scope || this, childArgs)
-        }, context)
-        return this
-    }
-
-    trigger(name: any, ...args: any[]) {
-        if (!(name in this.listeners)) {
-            return this
-        }
-        this.listeners[name].forEach((event: any) => {
-            if (!event.enabled) {
-                return
-            }
-            const childArgs: any = _.clone(args)
-            childArgs.unshift(event)
-            event.method.apply(event.scope || this, childArgs)
-        })
-        return this
-    }
-}
-
-Stratus.Prototypes.EventManager = EventManager
-
-// Global Instantiation
-Stratus.Events = new EventManager()
-
-// Error Prototype
-// ---------------
-
-export class StratusError {
-    public code: string
-    public message: string
-    public chain: Array<any>
-
-    constructor(error: any, chain: any) {
-        this.code = 'Internal'
-        this.message = 'No discernible data received.'
-        this.chain = []
-
-        if (typeof error === 'string') {
-            this.message = error
-        } else if (error && typeof error === 'object') {
-            _.extend(this, error)
-        }
-
-        this.chain.push(chain)
-    }
-}
-
-Stratus.Prototypes.Error = StratusError
-
-// Chronos System
-// --------------
-
-// This constructor builds jobs for various methods.
-export class Job {
-    public enabled: boolean
-    public time: any
-    public method: any
-    public scope: any
-
-    constructor(time?: any, method?: any, scope?: any) {
-        this.enabled = false
-        if (time && typeof time === 'object') {
-            _.extend(this, time)
-        } else {
-            this.time = time
-            this.method = method
-            this.scope = scope
-        }
-        this.time = seconds(this.time)
-        this.scope = this.scope || window
-    }
-}
-
-Stratus.Prototypes.Job = Job
-
-// Model Prototype
-// ---------------
-
-// This function is meant to be extended models that want to use internal data
-// in a native Backbone way.
-export class BaseModel extends EventManager {
-    name = 'BaseModel'
-
-    // Infrastructure
-    data: any = {}
-    temps: any = {}
-
-    // Diff Detection
-    changed: boolean|any = false
-    watching = false
-    patch: any = {}
-
-    constructor(data?: any, options?: any) {
-        super()
-
-        // Evaluate object or array
-        if (data) {
-            // TODO: Evaluate object or array into a string of sets
-            /* *
-             data = _.defaults(_.extend({}, defaults, data), defaults)
-             this.set(data, options)
-             /* */
-            _.extend(this.data, data)
-        }
-
-        // Scope Binding
-        this.toObject = this.toObject.bind(this)
-        this.toJSON = this.toJSON.bind(this)
-        this.each = this.each.bind(this)
-        this.get = this.get.bind(this)
-        this.has = this.has.bind(this)
-        this.size = this.size.bind(this)
-        this.set = this.set.bind(this)
-        this.setAttribute = this.setAttribute.bind(this)
-        this.temp = this.temp.bind(this)
-        this.add = this.add.bind(this)
-        this.remove = this.remove.bind(this)
-        this.iterate = this.iterate.bind(this)
-        this.clear = this.clear.bind(this)
-        this.clearTemp = this.clearTemp.bind(this)
-    }
-
-    toObject(options: any) {
-        return _.clone(this.data)
-    }
-
-    toJSON(options: any) {
-        return _.clone(this.data)
-    }
-
-    each(callback: any, scope: any) {
-        _.forEach.apply((scope === undefined) ? this : scope,
-            _.union([this.data], arguments))
-    }
-
-    get(attr: any) {
-        return _.reduce(typeof attr === 'string' ? attr.split('.') : [],
-            (attrs: any, a: any) => {
-                return attrs && attrs[a]
-            }, this.data)
-    }
-
-    has(attr: any) {
-        return (typeof this.get(attr) !== 'undefined')
-    }
-
-    size() {
-        return _.size(this.data)
-    }
-
-    set(attr: string|object, value?: any) {
-        if (attr && typeof attr === 'object') {
-            const that: any = this
-            _.forEach(attr, (valueDeep, attrDeep) => {
-                that.setAttribute(attrDeep, valueDeep)
-            })
-        } else {
-            this.setAttribute(attr, value)
-        }
-    }
-
-    setAttribute(attr: any, value: any) {
-        if (typeof attr === 'string') {
-            if (attr.indexOf('.') !== -1) {
-                let reference: any = this.data
-                const chain: any = attr.split('.')
-                _.find(_.initial(chain), (link: any) => {
-                    if (!_.has(reference, link) || !reference[link]) {
-                        reference[link] = {}
-                    }
-                    if (typeof reference !== 'undefined' && reference &&
-                        typeof reference === 'object') {
-                        reference = reference[link]
-                    } else {
-                        reference = this.data
-                        return true
-                    }
-                })
-                if (!_.isEqual(reference, this.data)) {
-                    const link: any = _.last(chain)
-                    if (reference && typeof reference === 'object' &&
-                        (!_.has(reference, link) || !_.isEqual(reference[link], value))) {
-                        reference[link] = value
-                        this.trigger('change:' + attr, this)
-                        this.trigger('change', this)
-                    }
-                }
-            } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
-                this.data[attr] = value
-                this.trigger('change:' + attr, this)
-                this.trigger('change', this)
-            }
-        }
-    }
-
-    temp(attr: any, value: any) {
-        this.set(attr, value)
-        if (attr && typeof attr === 'object') {
-            _.forEach(attr, (v: any, k: any) => {
-                this.temps[k] = v
-            })
-        } else {
-            this.temps[attr] = value
-        }
-    }
-
-    add(attr: any, value: any) {
-        // Ensure a placeholder exists
-        if (!this.has(attr)) {
-            this.set(attr, [])
-        }
-
-        // only add value if it's supplied (sometimes we want to create an empty
-        // placeholder first)
-        if (typeof value !== 'undefined' && !_.includes(this.data[attr], value)) {
-            this.data[attr].push(value)
-            return value
-        }
-    }
-
-    remove(attr: any, value: any) {
-        // Note:
-        // This needs to tree build into dot notation strings
-        // then delete the keys for the values or remove an
-        // element from an array.
-
-        // console.log('remove:', attr, value === undefined ? 'straight' : 'element')
-        if (value === undefined) {
-            // FIXME: This needs to remove the dot notation references
-            // delete this.data[attr];
-        } else {
-            // TODO: use dot notation for nested removal or _.without for array
-            // values (these should be separate functions)
-            this.data[attr] = _.without(this.data[attr], value)
-        }
-        // if (!Stratus.Environment.get('production')) {
-        //     console.log('removed:', this.data[attr])
-        // }
-        return this.data[attr]
-    }
-
-    iterate(attr: any) {
-        if (!this.has(attr)) {
-            this.set(attr, 0)
-        }
-        return ++this.data[attr]
-    }
-
-    /**
-     * Clear all internal data
-     */
-    clear() {
-        for (const attribute in this.data) {
-            if (Object.prototype.hasOwnProperty.call(this.data, attribute)) {
-                delete this.data[attribute]
-            }
-        }
-    }
-
-    /**
-     * Clear all temporary data
-     */
-    clearTemp() {
-        for (const attribute in this.temps) {
-            if (Object.prototype.hasOwnProperty.call(this.temps, attribute)) {
-                // delete this.data[attribute];
-                // this.remove(attribute);
-                delete this.temps[attribute]
-            }
-        }
-    }
-}
-
-Stratus.Prototypes.Model = BaseModel
-
-// Internal Collections
-Stratus.Collections = new BaseModel()
-Stratus.Models = new BaseModel()
-Stratus.Routers = new BaseModel()
-Stratus.Environment = new BaseModel(Stratus.Environment)
-
 // Sentinel Prototype
 // ------------------
 
@@ -1193,86 +824,6 @@ Stratus.Prototypes.Toast = class Toast {
         }
         this.settings.timeout = this.settings.timeout || 10000
     }
-}
-
-interface XHRRequest {
-    method?: string
-    url?: string
-    data?: {} | any
-    type?: string
-    success?: (response: any) => any
-    error?: (response: any) => any
-}
-
-export class XHR {
-    public method: string
-    public url: string
-    public data: {} | any
-    public type: string
-    public success: (response: any) => any
-    public error: (response: any) => any
-    private xhr: XMLHttpRequest
-
-    constructor(request?: XHRRequest) {
-        // Defaults
-        this.method = 'GET'
-        this.url = '/Api'
-        this.data = {}
-        this.type = ''
-
-        this.success = (response: any) => {
-            return response
-        }
-
-        this.error = (response: any) => {
-            return response
-        }
-
-        // Customize Settings
-        _.extend(this, request)
-    }
-
-    send() {
-        // Hoist Context
-        const that: any = this
-
-        // Make Request
-        this.xhr = new XMLHttpRequest()
-        const promise: any = new Promise((resolve: any, reject: any) => {
-            that.xhr.open(that.method, that.url, true)
-            if (typeof that.type === 'string' && that.type.length) {
-                that.xhr.setRequestHeader('Content-Type', that.type)
-            }
-            that.xhr.onload = () => {
-                if (that.xhr.status >= 200 && that.xhr.status < 400) {
-                    let response: any = that.xhr.responseText
-                    if (isJSON(response)) {
-                        response = JSON.parse(response)
-                    }
-                    resolve(response)
-                } else {
-                    reject(that.xhr)
-                }
-            }
-
-            that.xhr.onerror = () => {
-                reject(that.xhr)
-            }
-
-            if (Object.keys(that.data).length) {
-                that.xhr.send(JSON.stringify(that.data))
-            } else {
-                that.xhr.send()
-            }
-        })
-        promise.then(that.success, that.error)
-        return promise
-    }
-}
-
-Stratus.Internals.XHR = (request?: XHRRequest) => {
-    const xhr = new XHR(request)
-    return xhr.send()
 }
 
 // TODO: Compare this method with above
@@ -2514,149 +2065,6 @@ Stratus.Instances.Clean = (instances: any) => {
     }
 }
 
-// Aether System
-// --------------
-
-// This model handles all event related logic.
-export class Aether extends BaseModel {
-    public passiveSupported: boolean
-
-    constructor(data?: any, options?: any) {
-        super(data, options)
-
-        this.passiveSupported = false
-
-        if (!Stratus.Environment.get('production')) {
-            console.info('Aether Invoked!')
-        }
-        const that: any = this
-        try {
-            const eventOptions: any = {
-                get passive() {
-                    that.passiveSupported = true
-                    return true
-                }
-            }
-            window.addEventListener('test', eventOptions, eventOptions)
-            window.removeEventListener('test', eventOptions, eventOptions)
-        } catch (err) {
-            that.passiveSupported = false
-        }
-        this.on('change', this.synchronize, this)
-    }
-
-    synchronize() {
-        if (!Stratus.Environment.get('production')) {
-            console.info('Aether Synchronizing...')
-        }
-        if (_.isEmpty(this.data)) {
-            console.warn('synchronize: no data!')
-        }
-        _.forEach(this.data, (event: any, key: any) => {
-            if (event.listening || !event.enabled) {
-                return
-            }
-            if (Stratus.Environment.get('viewPort')) {
-                console.warn('Aether does not support custom viewPorts:', Stratus.Environment.get('viewPort'))
-            }
-            (event.target || window).addEventListener(event.hook, event.method,
-                this.passiveSupported ? {
-                    capture: true,
-                    passive: true
-                } : false
-            )
-            event.listening = true
-        })
-    }
-
-    listen(options: any) {
-        let uid: any = null
-        const event: any = new Stratus.Prototypes.Event(options)
-        if (!event.invalid) {
-            uid = _.uniqueId('event_')
-            this.set(uid, event)
-            Stratus.Instances[uid] = event
-        }
-        return uid
-    }
-}
-
-Stratus.Aether = new Aether()
-
-// Chronos System
-// --------------
-
-// This model handles all time related jobs.
-export class Chronos extends BaseModel {
-    constructor(data?: any, options?: any) {
-        super(data, options)
-        if (!Stratus.Environment.get('production')) {
-            console.info('Chronos Invoked!')
-        }
-        this.on('change', this.synchronize, this)
-    }
-
-    synchronize() {
-        if (!Stratus.Environment.get('production')) {
-            console.info('Chronos Synchronizing...')
-        }
-        if (_.isEmpty(this.changed)) {
-            console.warn('synchronize: empty changeset!')
-        }
-        _.forEach(this.changed, (job: any, key: any) => {
-            if (typeof key === 'string' && key.indexOf('.') !== -1) {
-                key = _.first(key.split('.'))
-                job = this.get(key)
-            }
-            if (!job.code && job.enabled) {
-                job.code = setInterval(() => {
-                    job.method.call(job.scope)
-                }, job.time * 1000, job)
-            } else if (job.code && !job.enabled) {
-                clearInterval(job.code)
-                job.code = 0
-            }
-        })
-    }
-
-    queue(time: any, method: any, scope: any) {
-        const job: any = time instanceof Stratus.Prototypes.Job ? time : new Stratus.Prototypes.Job(time, method, scope)
-        if (job.time === null || typeof job.method !== 'function') {
-            return null
-        }
-        const uid: any = _.uniqueId('job_')
-        this.set(uid, job)
-        Stratus.Instances[uid] = job
-        return uid
-    }
-
-    enable(uid: any) {
-        if (!this.has(uid)) {
-            return false
-        }
-        this.set(uid + '.enabled', true)
-        return true
-    }
-
-    disable(uid: any) {
-        if (!this.has(uid)) {
-            return false
-        }
-        this.set(uid + '.enabled', false)
-        return true
-    }
-
-    toggle(uid: any, value: any) {
-        if (!this.has(uid)) {
-            return false
-        }
-        this.set(uid + '.enabled', typeof value === 'boolean' ? value : !this.get(uid + '.enabled'))
-        return true
-    }
-}
-
-Stratus.Chronos = new Chronos()
-
 // Post Message Handling
 // ---------------------
 
@@ -2760,7 +2168,7 @@ Stratus.Events.once('initialize', () => {
     }
     Stratus.Internals.LoadEnvironment()
     Stratus.Internals.Compatibility()
-    Stratus.RegisterGroup = new BaseModel()
+    Stratus.RegisterGroup = new ModelBase()
 
     // Handle Location
     Stratus.Internals.TrackLocation()

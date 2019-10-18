@@ -6,30 +6,46 @@ import _ from 'lodash'
 import angular from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
-// Services
+// Stratus Core
+import {sanitize} from '@stratusjs/core/conversion'
+import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
+import {cookie} from '@stratusjs/core/environment'
+
+// AngularJS Dependency Injector
+import {getInjector} from '@stratusjs/angularjs/injector'
+
+// AngularJS Services
 import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
-// Stratus Dependencies
-import {sanitize} from '@stratusjs/core/conversion'
-import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
-import {getInjector} from '@stratusjs/angularjs/injector'
-
-// Angular Dependency Injector
-// let injector = getInjector()
+// Instantiate Injector
+let injector = getInjector()
 
 // Angular Services
 // let $interpolate: angular.IInterpolateService = injector ? injector.get('$interpolate') : null
 let $interpolate: angular.IInterpolateService
 
+// Service Verification Function
 const serviceVerify = async () => {
     return new Promise(async (resolve, reject) => {
         if ($interpolate) {
             resolve(true)
             return
         }
+        if (!injector) {
+            injector = getInjector()
+        }
+        if (injector) {
+            $interpolate = injector.get('$interpolate')
+        }
+        if ($interpolate) {
+            resolve(true)
+            return
+        }
         setTimeout(() => {
-            console.log('look for $interpolate service:', $interpolate)
+            if (cookie('env')) {
+                console.log('wait for $interpolate service:', $interpolate)
+            }
             serviceVerify().then(resolve)
         }, 250)
     })
@@ -231,15 +247,15 @@ Stratus.Services.Registry = [
     '$provide',
     ($provide: any) => {
         $provide.factory('Registry', [
-            '$interpolate',
-            'Collection',
-            'Model',
+            // '$interpolate',
+            // 'Collection',
+            // 'Model',
             (
-                $i: angular.IInterpolateService,
-                C: Collection,
-                M: Model
+                // $i: angular.IInterpolateService,
+                // C: Collection,
+                // M: Model
             ) => {
-                $interpolate = $i
+                // $interpolate = $i
                 return new Registry()
             }
         ])
