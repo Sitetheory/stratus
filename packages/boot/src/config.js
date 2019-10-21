@@ -19,7 +19,7 @@
 
     // Version Location (Disabled During Beta Testing)
     baseUrl: ((boot.dev || boot.local) ? boot.host + '/' : boot.cdn) + boot.relative,
-    bundlePath: (boot.bundle || '') + 'stratus/',
+    bundlePath: boot.bundle || '',
     deploymentPath: boot.deployment || '',
 
     /* Dependencies */
