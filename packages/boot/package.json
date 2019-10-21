@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/boot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "This is the boot package for StratusJS.",
   "main": "dist/boot.min.js",
   "scripts": {},
