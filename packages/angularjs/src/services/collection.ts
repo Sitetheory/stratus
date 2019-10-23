@@ -115,57 +115,54 @@ export class Collection extends EventManager {
         }
 
         // Scope Binding
-        this.serialize = this.serialize.bind(this)
-        this.url = this.url.bind(this)
-        this.inject = this.inject.bind(this)
-        this.sync = this.sync.bind(this)
-        this.fetch = this.fetch.bind(this)
-        this.filter = this.filter.bind(this)
-        this.throttleFilter = this.throttleFilter.bind(this)
-        this.page = this.page.bind(this)
-        this.toJSON = this.toJSON.bind(this)
-        this.add = this.add.bind(this)
-        this.remove = this.remove.bind(this)
-        this.find = this.find.bind(this)
-        this.pluck = this.pluck.bind(this)
-        this.exists = this.exists.bind(this)
+        // this.serialize = this.serialize.bind(this)
+        // this.url = this.url.bind(this)
+        // this.inject = this.inject.bind(this)
+        // this.sync = this.sync.bind(this)
+        // this.fetch = this.fetch.bind(this)
+        // this.filter = this.filter.bind(this)
+        // this.throttleFilter = this.throttleFilter.bind(this)
+        // this.page = this.page.bind(this)
+        // this.toJSON = this.toJSON.bind(this)
+        // this.add = this.add.bind(this)
+        // this.remove = this.remove.bind(this)
+        // this.find = this.find.bind(this)
+        // this.pluck = this.pluck.bind(this)
+        // this.exists = this.exists.bind(this)
 
         // Infinite Scrolling
-        /* *
-         this.infiniteModels = {
-         numLoaded_: 0,
-         toLoad_: 0,
-         // Required.
-         getItemAtIndex: function(index) {
-         if (index > this.numLoaded_) {
-         this.fetchMoreItems_(index)
-         return null
-         }
-         return index
-         },
-         // Required.
-         // For infinite scroll behavior, we always return a slightly higher
-         // number than the previously loaded items.
-         getLength: function() {
-         return this.numLoaded_ + 5
-         },
-         fetchMoreItems_: function(index) {
-         // For demo purposes, we simulate loading more items with a timed
-         // promise. In real code, this function would likely contain an
-         // $http request.
-         if (this.toLoad_ < index) {
-         this.toLoad_ += 20
-         $timeout(angular.noop, 300).then(angular.bind(this, function() {
-         this.numLoaded_ = this.toLoad_
-         }))
-         }
-         }
-         }
-         /* */
+        // this.infiniteModels = {
+        //     numLoaded_: 0,
+        //     toLoad_: 0,
+        //     // Required.
+        //     getItemAtIndex: function(index) {
+        //         if (index > this.numLoaded_) {
+        //             this.fetchMoreItems_(index)
+        //             return null
+        //         }
+        //         return index
+        //     },
+        //     // Required.
+        //     // For infinite scroll behavior, we always return a slightly higher
+        //     // number than the previously loaded items.
+        //     getLength: function() {
+        //         return this.numLoaded_ + 5
+        //     },
+        //     fetchMoreItems_: function(index) {
+        //         // For demo purposes, we simulate loading more items with a timed
+        //         // promise. In real code, this function would likely contain an
+        //         // $http request.
+        //         if (this.toLoad_ < index) {
+        //             this.toLoad_ += 20
+        //             $timeout(angular.noop, 300).then(angular.bind(this, function() {
+        //                 this.numLoaded_ = this.toLoad_
+        //             }))
+        //         }
+        //     }
+        // }
     }
 
     serialize(obj: any, chain?: any) {
-        const that = this
         const str: string[] = []
         obj = obj || {}
         _.forEach(obj, (value: any, key: any) => {
@@ -173,7 +170,7 @@ export class Collection extends EventManager {
                 if (chain) {
                     key = chain + '[' + key + ']'
                 }
-                str.push(that.serialize(value, key))
+                str.push(this.serialize(value, key))
             } else {
                 let encoded = ''
                 if (chain) {
@@ -190,8 +187,7 @@ export class Collection extends EventManager {
     }
 
     url() {
-        const that = this
-        return that.urlRoot + (that.targetSuffix || '')
+        return this.urlRoot + (this.targetSuffix || '')
     }
 
     inject(data: any, type?: any) {
@@ -214,7 +210,6 @@ export class Collection extends EventManager {
 
     // TODO: Abstract this deeper
     sync(action: string, data: any, options: any) {
-        const that: Collection = this
 
         // Internals
         this.pending = true
@@ -225,14 +220,14 @@ export class Collection extends EventManager {
             options = options || {}
             const prototype: HttpPrototype = {
                 method: action,
-                url: that.url(),
+                url: this.url(),
                 headers: {}
             }
             if (!_.isUndefined(data)) {
                 if (action === 'GET') {
                     if (_.isObject(data) && Object.keys(data).length) {
                         prototype.url += prototype.url.includes('?') ? '&' : '?'
-                        prototype.url += that.serialize(data)
+                        prototype.url += this.serialize(data)
                     }
                 } else {
                     prototype.headers['Content-Type'] = 'application/json'
@@ -252,42 +247,46 @@ export class Collection extends EventManager {
                     // TODO: Make this into an over-writable function
 
                     // Cache reference
-                    if (prototype.method === 'GET' && !(queryHash in that.cache)) {
-                        that.cache[queryHash] = response
+                    if (prototype.method === 'GET' && !(queryHash in this.cache)) {
+                        this.cache[queryHash] = response
                     }
 
                     // Data
-                    that.header.set(response.headers() || {})
-                    that.meta.set(response.data.meta || {})
-                    that.models = []
+                    this.header.set(response.headers() || {})
+                    this.meta.set(response.data.meta || {})
+                    this.models = []
                     const recv = response.data.payload || response.data
-                    if (that.direct) {
-                        that.models = recv
+                    console.log('collection:', this, this)
+                    if (this.direct) {
+                        this.models = recv
                     } else if (_.isArray(recv)) {
-                        that.inject(recv)
+                        this.inject(recv)
                     } else if (_.isObject(recv)) {
-                        _.each(recv, that.inject)
+                        // Note: this is explicitly stated due to context binding
+                        _.forEach(recv, (value: any, key: any) => {
+                            this.inject(value, key)
+                        })
                     } else {
                         console.error('malformed payload:', recv)
                     }
 
                     // XHR Flags
-                    that.pending = false
-                    that.completed = true
+                    this.pending = false
+                    this.completed = true
 
                     // Action Flags
-                    that.filtering = false
-                    that.paginate = false
+                    this.filtering = false
+                    this.paginate = false
 
                     // Trigger Change Event
-                    that.throttleTrigger('change')
+                    this.throttleTrigger('change')
 
                     // Promise
-                    resolve(that.models)
+                    resolve(this.models)
                 } else {
                     // XHR Flags
-                    that.pending = false
-                    that.error = true
+                    this.pending = false
+                    this.error = true
 
                     // Build Report
                     const error = new Stratus.Prototypes.Error()
@@ -301,17 +300,17 @@ export class Collection extends EventManager {
                     }
 
                     // Trigger Change Event
-                    that.throttleTrigger('change')
+                    this.throttleTrigger('change')
 
                     // Promise
                     reject(error)
                 }
 
                 // Trigger Change Event
-                that.throttleTrigger('change')
+                this.throttleTrigger('change')
             }
-            if (prototype.method === 'GET' && queryHash in that.cache) {
-                handler(that.cache[queryHash])
+            if (prototype.method === 'GET' && queryHash in this.cache) {
+                handler(this.cache[queryHash])
                 return
             }
             if (!$http) {
@@ -322,7 +321,7 @@ export class Collection extends EventManager {
                 .catch((error: any) => {
                     // (/(.*)\sReceived/i).exec(error.message)[1]
                     console.error(`XHR: ${prototype.method} ${prototype.url}`)
-                    that.throttleTrigger('change')
+                    this.throttleTrigger('change')
                     reject(error)
                     throw error
                 })
@@ -330,9 +329,9 @@ export class Collection extends EventManager {
     }
 
     fetch(action?: string, data?: any, options?: any) {
-        const that = this
-        return that.sync(action, data || that.meta.get('api'), options)
+        return this.sync(action, data || this.meta.get('api'), options)
             .catch(async (error: any) => {
+                    console.error('FETCH:', error)
                     if (!$mdToast) {
                         const wait = await serviceVerify()
                     }
@@ -343,7 +342,6 @@ export class Collection extends EventManager {
                             .position('top right')
                             .hideDelay(3000)
                     )
-                    console.error('FETCH:', error)
                 }
             )
     }
@@ -357,9 +355,8 @@ export class Collection extends EventManager {
 
     throttleFilter(query: string) {
         this.meta.set('api.q', !_.isUndefined(query) ? query : '')
-        const that = this
         return new Promise((resolve: any, reject: any) => {
-            const request = that.throttle()
+            const request = this.throttle()
             if (!Stratus.Environment.get('production')) {
                 console.log('request:', request)
             }
@@ -395,12 +392,11 @@ export class Collection extends EventManager {
         if (!options || typeof options !== 'object') {
             options = {}
         }
-        const that = this
         target = (target instanceof Model) ? target : new Model({
-            collection: that
+            collection: this
         }, target)
-        that.models.push(target)
-        that.throttleTrigger('change')
+        this.models.push(target)
+        this.throttleTrigger('change')
         if (options.save) {
             target.save()
         }
