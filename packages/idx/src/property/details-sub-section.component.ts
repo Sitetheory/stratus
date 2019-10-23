@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -13,9 +13,10 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details-sub-section'
@@ -90,7 +91,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                     }
                 }
             })*/
-            _.each($scope.items, (itemValue: any, itemKey: string) => {
+            _.forEach($scope.items, (itemValue: any, itemKey: string) => {
                 if (typeof itemValue === 'string') {
                     $scope.items[itemKey] = {
                         name: itemValue

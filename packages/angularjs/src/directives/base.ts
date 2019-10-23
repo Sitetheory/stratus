@@ -2,7 +2,7 @@
 // --------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import {IAttributes, IScope} from 'angular'
 
@@ -10,10 +10,10 @@ import {IAttributes, IScope} from 'angular'
 import 'angular-material'
 
 // Stratus Dependencies
-import {camelToSnake} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const name = 'base'
 const localPath = '@stratusjs/angularjs/src/directives'
 
@@ -27,7 +27,7 @@ Stratus.Directives.Base = () => ({
     link: ($scope: IScope|any, $element: JQLite|any, $attrs: IAttributes|any) => {
         // Initialize
         const $ctrl: any = this
-        $ctrl.uid = _.uniqueId(camelToSnake(name) + '_')
+        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $element.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(

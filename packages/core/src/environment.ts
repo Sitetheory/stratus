@@ -2,7 +2,7 @@
 import {seconds} from '@stratusjs/core/conversion'
 
 // External
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 // Cookie Getter & Setter
 export function cookie(name: any, value?: any, expires?: any, path?: any, domain?: any) {

@@ -55,7 +55,7 @@ const serviceVerify = async () => {
 export class Registry {
     constructor() {
         // Scope Binding
-        this.fetch = this.fetch.bind(this)
+        // this.fetch = this.fetch.bind(this)
     }
 
     // TODO: Handle Version Routing through Angular
@@ -80,7 +80,7 @@ export class Registry {
                 urlRoot: 'data-url-root'
             }
             // FIXME: Sanitize function fails here in certain cases
-            const options = _.each(inputs, (value: string, key: string, list: any) => {
+            const options = _.forEach(inputs, (value: string, key: string, list: any) => {
                 list[key] = $element.attr ? $element.attr(value) : $element[key]
                 if (!isJSON(list[key])) {
                     return
@@ -124,13 +124,13 @@ export class Registry {
                     verify()
                     return
                 }
-                if (!Stratus.Environment.get('production')) {
+                if (cookie('env')) {
                     console.log('poll attribute:', key)
                 }
                 // TODO: Check if this ever hits a timeout
                 poll(() => interpreter($scope.$parent), 7500, 250)
                     .then((value: any) => {
-                        if (!Stratus.Environment.get('production')) {
+                        if (cookie('env')) {
                             console.log('interpreted:', value)
                         }
                         if (typeof value === 'undefined') {

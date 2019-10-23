@@ -32,20 +32,20 @@ export class ModelBase extends EventManager {
         }
 
         // Scope Binding
-        this.toObject = this.toObject.bind(this)
-        this.toJSON = this.toJSON.bind(this)
-        this.each = this.each.bind(this)
-        this.get = this.get.bind(this)
-        this.has = this.has.bind(this)
-        this.size = this.size.bind(this)
-        this.set = this.set.bind(this)
-        this.setAttribute = this.setAttribute.bind(this)
-        this.temp = this.temp.bind(this)
-        this.add = this.add.bind(this)
-        this.remove = this.remove.bind(this)
-        this.iterate = this.iterate.bind(this)
-        this.clear = this.clear.bind(this)
-        this.clearTemp = this.clearTemp.bind(this)
+        // this.toObject = this.toObject.bind(this)
+        // this.toJSON = this.toJSON.bind(this)
+        // this.each = this.each.bind(this)
+        // this.get = this.get.bind(this)
+        // this.has = this.has.bind(this)
+        // this.size = this.size.bind(this)
+        // this.set = this.set.bind(this)
+        // this.setAttribute = this.setAttribute.bind(this)
+        // this.temp = this.temp.bind(this)
+        // this.add = this.add.bind(this)
+        // this.remove = this.remove.bind(this)
+        // this.iterate = this.iterate.bind(this)
+        // this.clear = this.clear.bind(this)
+        // this.clearTemp = this.clearTemp.bind(this)
     }
 
     toObject(options: any) {
@@ -78,9 +78,8 @@ export class ModelBase extends EventManager {
 
     set(attr: string|object, value?: any) {
         if (attr && typeof attr === 'object') {
-            const that: any = this
             _.forEach(attr, (valueDeep, attrDeep) => {
-                that.setAttribute(attrDeep, valueDeep)
+                this.setAttribute(attrDeep, valueDeep)
             })
         } else {
             this.setAttribute(attr, value)

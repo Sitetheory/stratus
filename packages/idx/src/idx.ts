@@ -2,7 +2,7 @@
 // @stratusjs/idx/idx
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 import {IPromise} from 'angular'
@@ -18,7 +18,7 @@ import {isJSON} from '@stratusjs/core/misc'
 
 
 // Environment
-// const min = Stratus.Environment.get('production') ? '.min' : ''
+// const min = !cookie('env') ? '.min' : ''
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 

@@ -2,7 +2,7 @@
 // ---------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -10,11 +10,11 @@ import * as angular from 'angular'
 import 'angular-material'
 
 // Stratus Dependencies
-import {camelToSnake, sanitize} from '@stratusjs/core/conversion'
-import {IAttributes} from 'angular'
+import {sanitize} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const name = 'embed'
 const localPath = '@stratusjs/angularjs-extras/src/components'
 
@@ -34,7 +34,7 @@ Stratus.Components.TwitterFeed = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(name) + '_')
+        $ctrl.uid = _.uniqueId(_.camelCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.initialized = false

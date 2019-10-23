@@ -1,4 +1,4 @@
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 // This function simply extracts the name of a function from code directly
 export function functionName(code: any) {
@@ -84,7 +84,7 @@ export function hydrateString(str: string): string {
 //         return obj
 //     }
 //     const shallow = _.clone(obj)
-//     _.each(shallow, (value: any, key: any) => {
+//     _.forEach(shallow, (value: any, key: any) => {
 //         shallow[key] = cloneDeep(value)
 //     })
 //     return shallow
@@ -94,7 +94,7 @@ export function hydrateString(str: string): string {
 export function extendDeep(target: any, merger: any) {
     let shallow = _.clone(target)
     if (merger && typeof merger === 'object') {
-        _.each(merger, (value: any, key: any) => {
+        _.forEach(merger, (value: any, key: any) => {
             if (shallow && typeof shallow === 'object') {
                 shallow[key] = (key in shallow) ? extendDeep(shallow[key],
                     merger[key]) : merger[key]
@@ -214,7 +214,7 @@ export function patch(newData: any, priorData: any): any {
             processor.eax = processor.ecx ? processor.ecx + '.' + key : key
             if (_.isObject(value)) {
                 processor.ecx = processor.eax
-                _.each(value, detect)
+                _.forEach(value, detect)
                 processor.ecx = processor.ecx === key
                                 ? undefined
                                 : processor.ecx.substring(0, processor.ecx.lastIndexOf('.'))
@@ -232,7 +232,7 @@ export function patch(newData: any, priorData: any): any {
                 processor.edx = undefined
             }
         }
-        _.each(newData, detect)
+        _.forEach(newData, detect)
     }
     return (!data || !_.size(data)) ? null : data
 }

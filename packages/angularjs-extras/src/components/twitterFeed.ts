@@ -2,7 +2,7 @@
 // ----------------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import 'angular'
 
@@ -14,10 +14,11 @@ import * as twitter from 'twitter'
 import 'angular-material'
 
 // Stratus Dependencies
-import {camelToSnake, sanitize} from '@stratusjs/core/conversion'
+import {sanitize} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const name = 'twitterFeed'
 const localPath = '@stratusjs/angularjs-extras/src/components'
 
@@ -48,7 +49,7 @@ Stratus.Components.TwitterFeed = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(name) + '_')
+        $ctrl.uid = _.uniqueId(_.camelCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.initialized = false
@@ -62,7 +63,7 @@ Stratus.Components.TwitterFeed = {
                 return
             }
             $scope.initialized = true
-            _.each(Stratus.Components.TwitterFeed.bindings, (value, key) => {
+            _.forEach(Stratus.Components.TwitterFeed.bindings, (value, key) => {
                 _.set($scope.feedOptions, key, _.get($ctrl, key) || _.get($attrs, key))
             })
             console.log('feedOptions:', sanitize($scope.feedOptions))

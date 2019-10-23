@@ -22,7 +22,7 @@ import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
 import {QuillModule} from 'ngx-quill'
 
 // External Dependencies
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // let roster: {};
@@ -120,7 +120,7 @@ export class AppModule {
         return currentTimeout
     }
     detectBoot(appRef: ApplicationRef) {
-        _.each(this.modules, (module, selector) => {
+        _.forEach(this.modules, (module, selector) => {
             // if (!(module instanceof ComponentFactory)) {
             //     return;
             // }
@@ -128,7 +128,7 @@ export class AppModule {
             if (!elements || !elements.length) {
                 return
             }
-            _.each(elements, (node) => {
+            _.forEach(elements, (node) => {
                 if (node.hasAttribute('ng-version')) {
                     return
                 }

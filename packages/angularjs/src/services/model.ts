@@ -80,7 +80,7 @@ export class Model extends ModelBase {
     manifest = false
     stagger = false
     toast = false
-    identifier?: string|number = null
+    identifier?: string | number = null
     urlRoot = '/Api'
     targetSuffix?: string = null
     serviceId?: number = null
@@ -144,50 +144,47 @@ export class Model extends ModelBase {
         // TODO: Enable Auto-Save
 
         // Scope Binding
-        this.watcher = this.watcher.bind(this)
-        this.getIdentifier = this.getIdentifier.bind(this)
-        this.isNew = this.isNew.bind(this)
-        this.getType = this.getType.bind(this)
-        this.getHash = this.getHash.bind(this)
-        this.url = this.url.bind(this)
-        this.serialize = this.serialize.bind(this)
-        this.sync = this.sync.bind(this)
-        this.fetch = this.fetch.bind(this)
-        this.save = this.save.bind(this)
-        this.specialAction = this.specialAction.bind(this)
-        this.throttleSave = this.throttleSave.bind(this)
-        this.toJSON = this.toJSON.bind(this)
-        this.toPatch = this.toPatch.bind(this)
-        this.buildPath = this.buildPath.bind(this)
-        this.get = this.get.bind(this)
-        this.find = this.find.bind(this)
-        this.set = this.set.bind(this)
-        this.setAttribute = this.setAttribute.bind(this)
-        this.toggle = this.toggle.bind(this)
-        this.pluck = this.pluck.bind(this)
-        this.exists = this.exists.bind(this)
-        this.destroy = this.destroy.bind(this)
+        // this.watcher = this.watcher.bind(this)
+        // this.getIdentifier = this.getIdentifier.bind(this)
+        // this.isNew = this.isNew.bind(this)
+        // this.getType = this.getType.bind(this)
+        // this.getHash = this.getHash.bind(this)
+        // this.url = this.url.bind(this)
+        // this.serialize = this.serialize.bind(this)
+        // this.sync = this.sync.bind(this)
+        // this.fetch = this.fetch.bind(this)
+        // this.save = this.save.bind(this)
+        // this.specialAction = this.specialAction.bind(this)
+        // this.throttleSave = this.throttleSave.bind(this)
+        // this.toJSON = this.toJSON.bind(this)
+        // this.toPatch = this.toPatch.bind(this)
+        // this.buildPath = this.buildPath.bind(this)
+        // this.get = this.get.bind(this)
+        // this.find = this.find.bind(this)
+        // this.set = this.set.bind(this)
+        // this.setAttribute = this.setAttribute.bind(this)
+        // this.toggle = this.toggle.bind(this)
+        // this.pluck = this.pluck.bind(this)
+        // this.exists = this.exists.bind(this)
+        // this.destroy = this.destroy.bind(this)
 
-        this.throttle = _.throttle(this.save, 2000)
-
-        // hoist context
-        const that: Model = this
+        // this.throttle = _.throttle(this.save, 2000)
 
         this.initialize = _.once(this.initialize || function defaultInitializer() {
             // Bubble Event + Defer
-            // that.on('change', function () {
-            //   if (!that.collection) {
+            // this.on('change', function () {
+            //   if (!this.collection) {
             //     return
             //   }
-            //   that.collection.throttleTrigger('change')
+            //   this.collection.throttleTrigger('change')
             // })
-            if (that.manifest && !that.getIdentifier()) {
-                that.sync('POST', that.meta.has('api') ? {
-                    meta: that.meta.get('api'),
+            if (this.manifest && !this.getIdentifier()) {
+                this.sync('POST', this.meta.has('api') ? {
+                    meta: this.meta.get('api'),
                     payload: {}
                 } : {}).catch(async (message: any) => {
                     console.error('MANIFEST:', message)
-                    if (!that.toast) {
+                    if (!this.toast) {
                         return
                     }
                     if (!$mdToast) {
@@ -215,51 +212,50 @@ export class Model extends ModelBase {
             return true
         }
         this.watching = true
-        const that = this
         if (!$rootScope) {
             const wait = await serviceVerify()
         }
-        $rootScope.$watch(() => that.data,
+        $rootScope.$watch(() => this.data,
             (newData: any, priorData: any) => {
-            const patchData = patch(newData, priorData)
+                const patchData = patch(newData, priorData)
 
-            _.each(_.keys(patchData), (key: any) => {
-                if (_.endsWith(key, '$$hashKey')) {
-                    delete patchData[key]
+                _.forEach(_.keys(patchData), (key: any) => {
+                    if (_.endsWith(key, '$$hashKey')) {
+                        delete patchData[key]
+                    }
+                })
+
+                // Set the origin data
+                // if (_.isEmpty(this.initData)) {
+                //     extendDeep(this.data, this.initData)
+                // }
+
+                if (!patchData) {
+                    return true
                 }
-            })
 
-            // Set the origin data
-            // if (_.isEmpty(that.initData)) {
-            //     extendDeep(that.data, that.initData)
-            // }
+                if (cookie('env')) {
+                    console.log('Patch:', patchData)
+                }
 
-            if (!patchData) {
-                return true
-            }
+                this.changed = true
 
-            if (!Stratus.Environment.get('production')) {
-                console.log('Patch:', patchData)
-            }
+                const version = getAnchorParams('version')
 
-            that.changed = true
-
-            const version = getAnchorParams('version')
-
-            // that.changed = !_.isEqual(newData, that.initData)
-            if ((newData.id && newData.id !== priorData.id) ||
-                (!_.isEmpty(version) && newData.version && parseInt(version, 10) !== newData.version.id)
-            ) {
-                // console.warn('replacing version...')
-                window.location.replace(
-                    setUrlParams({
-                        id: newData.id
-                    })
-                )
-            }
-            that.patch = _.extend(that.patch, patchData)
-            that.throttleTrigger('change')
-        }, true)
+                // this.changed = !_.isEqual(newData, this.initData)
+                if ((newData.id && newData.id !== priorData.id) ||
+                    (!_.isEmpty(version) && newData.version && parseInt(version, 10) !== newData.version.id)
+                ) {
+                    // console.warn('replacing version...')
+                    window.location.replace(
+                        setUrlParams({
+                            id: newData.id
+                        })
+                    )
+                }
+                this.patch = _.extend(this.patch, patchData)
+                this.throttleTrigger('change')
+            }, true)
     }
 
     getIdentifier() {
@@ -291,7 +287,6 @@ export class Model extends ModelBase {
     }
 
     serialize(obj: any, chain?: any) {
-        const that = this
         const str: any = []
         obj = obj || {}
         _.forEach(obj, (value: any, key: any) => {
@@ -299,7 +294,7 @@ export class Model extends ModelBase {
                 if (chain) {
                     key = chain + '[' + key + ']'
                 }
-                str.push(that.serialize(value, key))
+                str.push(this.serialize(value, key))
             } else {
                 let encoded = ''
                 if (chain) {
@@ -317,21 +312,20 @@ export class Model extends ModelBase {
 
     // TODO: Abstract this deeper
     sync(action?: any, data?: any, options?: any) {
-        const that: Model = this
         this.pending = true
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
             const prototype: any = {
                 method: action,
-                url: that.url(),
+                url: this.url(),
                 headers: {}
             }
             if (!_.isUndefined(data)) {
                 if (action === 'GET') {
                     if (_.isObject(data) && Object.keys(data).length) {
                         prototype.url += prototype.url.includes('?') ? '&' : '?'
-                        prototype.url += that.serialize(data)
+                        prototype.url += this.serialize(data)
                     }
                 } else {
                     prototype.headers['Content-Type'] = 'application/json'
@@ -339,7 +333,7 @@ export class Model extends ModelBase {
                 }
             }
 
-            if (!Stratus.Environment.get('production')) {
+            if (cookie('env')) {
                 console.log('Prototype:', prototype)
             }
 
@@ -354,55 +348,55 @@ export class Model extends ModelBase {
             }
             $http(prototype).then((response: any) => {
                 // XHR Flags
-                that.pending = false
-                that.completed = true
+                this.pending = false
+                this.completed = true
 
                 // Data Stores
-                that.status = response.status
+                this.status = response.status
 
                 // Begin Watching
-                that.watcher()
+                this.watcher()
 
                 // Reset status model
                 setTimeout(() => {
-                    that.changed = false
-                    that.throttleTrigger('change')
-                    if (that.collection) {
-                        that.collection.throttleTrigger('change')
+                    this.changed = false
+                    this.throttleTrigger('change')
+                    if (this.collection) {
+                        this.collection.throttleTrigger('change')
                     }
                 }, 100)
 
                 if (response.status === 200 && _.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
                     // Data
-                    that.header.set(response.headers() || {})
-                    that.meta.set(response.data.meta || {})
+                    this.header.set(response.headers() || {})
+                    this.meta.set(response.data.meta || {})
                     const convoy = response.data.payload || response.data
-                    const status: {code: string}[] = that.meta.get('status')
-                    if (that.meta.has('status') && _.first(status).code !== 'SUCCESS') {
-                        that.error = true
+                    const status: { code: string }[] = this.meta.get('status')
+                    if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
+                        this.error = true
                     } else if (_.isArray(convoy) && convoy.length) {
-                        that.data = _.first(convoy)
-                        that.error = false
+                        this.data = _.first(convoy)
+                        this.error = false
                     } else if (_.isObject(convoy) && !_.isArray(convoy)) {
-                        that.data = convoy
-                        that.error = false
+                        this.data = convoy
+                        this.error = false
                     } else {
-                        that.error = true
+                        this.error = true
                     }
 
-                    if (!that.error) {
+                    if (!this.error) {
                         // Auto-Saving Settings
-                        that.saving = false
-                        that.patch = {}
+                        this.saving = false
+                        this.patch = {}
                     }
 
                     // Promise
-                    // extendDeep(that.data, that.initData)
-                    resolve(that.data)
+                    // extendDeep(this.data, this.initData)
+                    resolve(this.data)
                 } else {
                     // XHR Flags
-                    that.error = true
+                    this.error = true
 
                     // Build Report
                     const error = new Stratus.Prototypes.Error()
@@ -421,8 +415,8 @@ export class Model extends ModelBase {
             }).catch((message: any) => {
                 // (/(.*)\sReceived/i).exec(error.message)[1]
                 // Treat a fatal error like 500 (our UI code relies on this distinction)
-                that.status = 500
-                that.error = true
+                this.status = 500
+                this.error = true
                 console.error(`XHR: ${prototype.method} ${prototype.url}`, message)
                 reject.call(message)
             })
@@ -430,13 +424,12 @@ export class Model extends ModelBase {
     }
 
     fetch(action?: any, data?: any, options?: any) {
-        const that = this
         return this.sync(action, data || this.meta.get('api'), options)
             .catch(async (message: any) => {
-                that.status = 500
-                that.error = true
+                this.status = 500
+                this.error = true
                 console.error('FETCH:', message)
-                if (!that.toast) {
+                if (!this.toast) {
                     return
                 }
                 if (!$mdToast) {
@@ -453,16 +446,15 @@ export class Model extends ModelBase {
     }
 
     save() {
-        const that = this
-        that.saving = true
-        return that.sync(that.getIdentifier() ? 'PUT' : 'POST',
-            that.toJSON({
+        this.saving = true
+        return this.sync(this.getIdentifier() ? 'PUT' : 'POST',
+            this.toJSON({
                 patch: true
             }))
             .catch(async (message: any) => {
-                that.error = true
+                this.error = true
                 console.error('SAVE:', message)
-                if (!that.toast) {
+                if (!this.toast) {
                     return
                 }
                 if (!$mdToast) {
@@ -483,20 +475,20 @@ export class Model extends ModelBase {
      * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
      */
     specialAction(action: any) {
-        const that = this
-        that.meta.temp('api.options.apiSpecialAction', action)
-        that.save()
-        if (that.meta.get('api') &&
-            Object.prototype.hasOwnProperty.call(that.meta.get('api'), 'options') &&
-            Object.prototype.hasOwnProperty.call(that.meta.get('api').options, 'apiSpecialAction')) {
-            delete that.meta.get('api').options.apiSpecialAction
+
+        this.meta.temp('api.options.apiSpecialAction', action)
+        this.save()
+        if (this.meta.get('api') &&
+            Object.prototype.hasOwnProperty.call(this.meta.get('api'), 'options') &&
+            Object.prototype.hasOwnProperty.call(this.meta.get('api').options, 'apiSpecialAction')) {
+            delete this.meta.get('api').options.apiSpecialAction
         }
     }
 
     throttleSave() {
-        const that = this
+
         return new Promise((resolve: any, reject: any) => {
-            const request = that.throttle()
+            const request = this.throttle()
             console.log('throttle request:', request)
             request.then((data: any) => {
                 console.log('throttle received:', data)
@@ -515,7 +507,7 @@ export class Model extends ModelBase {
          /* */
         let data
 
-        // options.patch ? that.toPatch() :
+        // options.patch ? this.toPatch() :
         data = this.data
         data = this.meta.has('api') ? {
             meta: this.meta.get('api'),
@@ -536,14 +528,13 @@ export class Model extends ModelBase {
         if (!_.isString(path)) {
             return acc
         }
-        const that = this
         let cur
         let search
-        _.each(path.split('.'), (link: any) => {
+        _.forEach(path.split('.'), (link: any) => {
             // handle bracket chains
-            if (link.match(that.bracket.match)) {
+            if (link.match(this.bracket.match)) {
                 // extract attribute
-                cur = that.bracket.attr.exec(link)
+                cur = this.bracket.attr.exec(link)
                 if (cur !== null) {
                     acc.push(cur[1])
                     cur = null
@@ -552,7 +543,7 @@ export class Model extends ModelBase {
                 }
 
                 // extract cells
-                search = that.bracket.search.exec(link)
+                search = this.bracket.search.exec(link)
                 while (search !== null) {
                     if (cur !== false) {
                         cur = parseInt(search[1], 10)
@@ -562,7 +553,7 @@ export class Model extends ModelBase {
                             cur = false
                         }
                     }
-                    search = that.bracket.search.exec(link)
+                    search = this.bracket.search.exec(link)
                 }
             } else {
                 // normal attributes
@@ -578,11 +569,10 @@ export class Model extends ModelBase {
     get(attr: string) {
         if (typeof attr !== 'string' || !this.data || typeof this.data !== 'object') {
             return undefined
-        } else {
-            return this.buildPath(attr).reduce(
-                (attrs: any, link: any) => attrs && attrs[link], this.data
-            )
         }
+        return this.buildPath(attr).reduce(
+            (attrs: any, link: any) => attrs && attrs[link], this.data
+        )
     }
 
     /**
@@ -592,23 +582,18 @@ export class Model extends ModelBase {
         if (typeof attr === 'string') {
             attr = this.get(attr)
         }
-
-        if (!(attr instanceof Array)) {
-            return attr
-        } else {
-            return attr.find((obj: any) => obj[key] === value)
-        }
+        return !_.isArray(attr) ? attr : attr.find((obj: any) => obj[key] === value)
     }
 
     set(attr: any, value: any) {
-        const that = this
         if (!attr) {
             console.warn('No attr for model.set()!')
             return this
         }
         if (typeof attr === 'object') {
-            _.each(attr, (valueChain: any, attrChain: any) => {
-                that.setAttribute(attrChain, valueChain)
+
+            _.forEach(attr, (valueChain: any, attrChain: any) => {
+                this.setAttribute(attrChain, valueChain)
             })
             return this
         }
@@ -642,8 +627,7 @@ export class Model extends ModelBase {
         this.throttleTrigger(`change:${attr}`, value)
     }
 
-    toggle(attribute: any, item: any, options?: object|any) {
-        const that = this
+    toggle(attribute: any, item: any, options?: object | any) {
         if (typeof options === 'object' &&
             !_.isUndefined(options.multiple) &&
             _.isUndefined(options.strict)) {
@@ -656,12 +640,12 @@ export class Model extends ModelBase {
          console.log('toggle:', attribute, item, options);
          /* */
         const request = attribute.split('[].')
-        let target = that.get(request.length > 1 ? request[0] : attribute)
+        let target = this.get(request.length > 1 ? request[0] : attribute)
         if (_.isUndefined(target) ||
             (options.strict && _.isArray(target) !==
                 options.multiple)) {
             target = options.multiple ? [] : null
-            that.set(request.length > 1 ? request[0] : attribute, target)
+            this.set(request.length > 1 ? request[0] : attribute, target)
         }
         if (_.isArray(target)) {
             /* This is disabled, since hydration should not be forced by default *
@@ -675,11 +659,11 @@ export class Model extends ModelBase {
              }
              /* */
             if (_.isUndefined(item)) {
-                that.set(attribute, null)
-            } else if (!that.exists(attribute, item)) {
+                this.set(attribute, null)
+            } else if (!this.exists(attribute, item)) {
                 target.push(item)
             } else {
-                _.each(target, (element: any, key: any) => {
+                _.forEach(target, (element: any, key: any) => {
                     const child = (request.length > 1 &&
                         typeof element === 'object' && request[1] in element)
                                   ? element[request[1]]
@@ -699,64 +683,52 @@ export class Model extends ModelBase {
             }
         } else if (typeof target === 'object' || typeof target === 'number') {
             // (item && typeof item !== 'object') ? { id: item } : item
-            that.set(attribute, !that.exists(attribute, item) ? item : null)
+            this.set(attribute, !this.exists(attribute, item) ? item : null)
         } else if (_.isUndefined(item)) {
-            that.set(attribute, !target)
+            this.set(attribute, !target)
         }
 
-        return that.get(attribute)
+        return this.get(attribute)
     }
 
     pluck(attr: string) {
-        const that = this
         if (typeof attr !== 'string' || attr.indexOf('[].') === -1) {
-            return that.get(attr)
+            return this.get(attr)
         }
         const request = attr.split('[].')
         if (request.length <= 1) {
             return undefined
         }
-        attr = that.get(request[0])
+        attr = this.get(request[0])
         if (!attr || !_.isArray(attr)) {
             return undefined
         }
-        const list: any = []
-        attr.forEach((element: any) => {
-            if (typeof element !== 'object' || !(request[1] in element)) {
-                return
-            }
-            list.push(element[request[1]])
-        })
-        if (!list.length) {
-            return undefined
-        }
-        return list
+        const list: Array<any> = _.filter(_.map(attr, (element: any) => _.get(element, request[1])))
+        return list.length ? list : undefined
     }
 
     exists(attribute: any, item: any) {
-        const that = this
         if (!item) {
-            attribute = that.get(attribute)
+            attribute = this.get(attribute)
             return typeof attribute !== 'undefined' && attribute
-        } else if (typeof attribute === 'string' && item) {
-            attribute = that.pluck(attribute)
+        }
+        if (typeof attribute === 'string' && item) {
+            attribute = this.pluck(attribute)
             if (_.isArray(attribute)) {
                 return typeof attribute.find((element: any) => element === item || (
                     (typeof element === 'object' && element.id && element.id === item) || _.isEqual(element, item)
                 )) !== 'undefined'
-            } else {
-                return attribute === item || (
-                    typeof attribute === 'object' && attribute.id && (
-                        _.isEqual(attribute, item) || attribute.id === item
-                    )
-                )
             }
+            return attribute === item || (
+                typeof attribute === 'object' && attribute.id && (
+                    _.isEqual(attribute, item) || attribute.id === item
+                )
+            )
         }
         return false
     }
 
     destroy() {
-        const that = this
         // TODO: Add a confirmation option here
         if (this.collection) {
             this.collection.remove(this)
@@ -764,7 +736,7 @@ export class Model extends ModelBase {
         if (this.getIdentifier()) {
             this.sync('DELETE', {}).catch(async (message: any) => {
                 console.error('DESTROY:', message)
-                if (!that.toast) {
+                if (!this.toast) {
                     return
                 }
                 if (!$mdToast) {

@@ -4,7 +4,7 @@ import {Observable} from 'rxjs'
 
 // External
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 // Interfaces
 export interface Query {

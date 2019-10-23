@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -25,10 +25,10 @@ import 'stratus.filters.moment'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
-import {camelToSnake} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'member'
 const componentName = 'details'
@@ -60,7 +60,7 @@ Stratus.Components.IdxMemberDetails = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
+        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
@@ -206,7 +206,7 @@ Stratus.Components.IdxMemberDetails = {
          * Output console if not in production
          */
         $scope.devLog = (item1?: any, item2?: any): void => {
-            if (!Stratus.Environment.get('production')) {
+            if (cookie('env')) {
                 console.log(item1, item2)
             }
         }

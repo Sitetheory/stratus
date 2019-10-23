@@ -5,7 +5,7 @@
 // FIXME this is completely broken, don't try using it
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -14,10 +14,10 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 // import {isJSON} from '@stratusjs/core/misc'
-import {camelToSnake} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'angularjs-extras'
 const moduleName = 'components'
 const componentName = 'image-carousel'
@@ -38,7 +38,7 @@ Stratus.Components.ImageCarousel = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
+        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}${min}.css`)

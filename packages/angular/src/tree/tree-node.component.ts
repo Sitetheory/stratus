@@ -9,7 +9,7 @@ import {Node, TreeComponent} from '@stratusjs/angular/tree/tree.component'
 import {DialogData, TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
 
 // External
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Local Setup

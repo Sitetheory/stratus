@@ -3,7 +3,7 @@ import {ChangeDetectionStrategy, Component, Injectable} from '@angular/core'
 
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
 
