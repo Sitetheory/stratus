@@ -15,13 +15,13 @@ import '@stratusjs/angularjs/services/model'
 import '@stratusjs/angularjs/services/collection'
 
 // Stratus Dependencies
-import {camelToSnake} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 import {Model} from '@stratusjs/angularjs/services/model'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const name = 'base'
 const localPath = '@stratusjs/angularjs/src/components'
 
@@ -69,7 +69,7 @@ Stratus.Components.Base = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(name) + '_')
+        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(
@@ -133,7 +133,7 @@ Stratus.Components.Base = {
         })
 
         // Display Complete Build
-        if (!Stratus.Environment.get('production')) {
+        if (cookie('env')) {
             console.log(name, 'component:', $scope, $attrs)
         }
     },

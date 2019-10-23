@@ -256,7 +256,6 @@ export class Collection extends EventManager {
                     this.meta.set(response.data.meta || {})
                     this.models = []
                     const recv = response.data.payload || response.data
-                    console.log('collection:', this, this)
                     if (this.direct) {
                         this.models = recv
                     } else if (_.isArray(recv)) {
@@ -357,11 +356,11 @@ export class Collection extends EventManager {
         this.meta.set('api.q', !_.isUndefined(query) ? query : '')
         return new Promise((resolve: any, reject: any) => {
             const request = this.throttle()
-            if (!Stratus.Environment.get('production')) {
+            if (cookie('env')) {
                 console.log('request:', request)
             }
             request.then((models: any) => {
-                if (!Stratus.Environment.get('production')) {
+                if (cookie('env')) {
                     // TODO: Finish handling throttled data
                     /* *
                      console.log('throttled:', _.map(models, function (model: Model) {

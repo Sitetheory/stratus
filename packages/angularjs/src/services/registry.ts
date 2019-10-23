@@ -124,13 +124,13 @@ export class Registry {
                     verify()
                     return
                 }
-                if (!Stratus.Environment.get('production')) {
+                if (cookie('env')) {
                     console.log('poll attribute:', key)
                 }
                 // TODO: Check if this ever hits a timeout
                 poll(() => interpreter($scope.$parent), 7500, 250)
                     .then((value: any) => {
-                        if (!Stratus.Environment.get('production')) {
+                        if (cookie('env')) {
                             console.log('interpreted:', value)
                         }
                         if (typeof value === 'undefined') {

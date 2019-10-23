@@ -234,7 +234,7 @@ export class Model extends ModelBase {
                     return true
                 }
 
-                if (!Stratus.Environment.get('production')) {
+                if (cookie('env')) {
                     console.log('Patch:', patchData)
                 }
 
@@ -333,7 +333,7 @@ export class Model extends ModelBase {
                 }
             }
 
-            if (!Stratus.Environment.get('production')) {
+            if (cookie('env')) {
                 console.log('Prototype:', prototype)
             }
 
