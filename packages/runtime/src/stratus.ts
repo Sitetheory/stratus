@@ -380,7 +380,7 @@ _.mixin({
     object: _.zipObject,
     omit: _.omitBy,
     pairs: _.toPairs,
-    pluck: _.map,
+    // pluck: _.map,
     where: _.filter,
 
     // This function simply extracts the name of a function from code directly
@@ -717,9 +717,9 @@ Stratus.Prototypes.Sentinel = class Sentinel {
         this.master = false
 
         // Scope Binding
-        this.zero = this.zero.bind(this)
-        this.permissions = this.permissions.bind(this)
-        this.summary = this.summary.bind(this)
+        // this.zero = this.zero.bind(this)
+        // this.permissions = this.permissions.bind(this)
+        // this.summary = this.summary.bind(this)
     }
 
     zero() {

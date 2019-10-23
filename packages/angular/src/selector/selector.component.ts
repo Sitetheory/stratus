@@ -18,7 +18,7 @@ import {SubjectSubscriber} from 'rxjs/internal/Subject'
 
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -164,7 +164,7 @@ export class SelectorComponent { // implements OnInit
         }
         moveItemInArray(models, event.previousIndex, event.currentIndex)
         let priority = 0
-        _.each(models, (model) => model.priority = priority++)
+        _.forEach(models, (model) => model.priority = priority++)
         this.model.trigger('change')
     }
 
@@ -266,7 +266,7 @@ export class SelectorComponent { // implements OnInit
             return
         }
         let priority = 0
-        _.each(models, (model) => model.priority = priority++)
+        _.forEach(models, (model) => model.priority = priority++)
     }
 
     // findImage(model: any): string {

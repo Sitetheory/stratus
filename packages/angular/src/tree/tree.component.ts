@@ -15,7 +15,7 @@ import {Observable, Subject, Subscriber} from 'rxjs'
 
 // External
 import {Stratus} from '@stratusjs/runtime/stratus'
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -227,7 +227,7 @@ export class TreeComponent {
         // Convert Collection Models to Nested Tree to optimize references
         this.treeMap = {}
         this.tree = []
-        _.each(models, (model: any) => {
+        _.forEach(models, (model: any) => {
             const modelId = _.get(model, 'data.id')
             const parentId = _.get(model, 'data.nestParent.id')
             this.dropListIdMap[`${this.uid}_node_${modelId}_drop_list`] = true
@@ -264,7 +264,7 @@ export class TreeComponent {
 
     private trackDropLists() {
         this.dropLists = []
-        _.each(this.dropListIdMap, (value: boolean, key: string) => {
+        _.forEach(this.dropListIdMap, (value: boolean, key: string) => {
             if (!value) {
                 return
             }
@@ -344,7 +344,7 @@ export class TreeComponent {
         // Debug Data'
         /* *
         console.group('onDragDrop()')
-        _.each(
+        _.forEach(
             [
                 `model drop: ${targetNode.model.get('name')}`,
                 `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
@@ -383,7 +383,7 @@ export class TreeComponent {
         // Set Priority
         moveItemInArray(tree, event.previousIndex, event.currentIndex)
         let priority = 0
-        _.each(tree, (node) => {
+        _.forEach(tree, (node) => {
             if (!node.model || !node.model.set) {
                 return
             }

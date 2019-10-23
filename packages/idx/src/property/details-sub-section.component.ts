@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -90,7 +90,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                     }
                 }
             })*/
-            _.each($scope.items, (itemValue: any, itemKey: string) => {
+            _.forEach($scope.items, (itemValue: any, itemKey: string) => {
                 if (typeof itemValue === 'string') {
                     $scope.items[itemKey] = {
                         name: itemValue

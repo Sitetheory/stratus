@@ -2,7 +2,7 @@
 // ----------------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import 'angular'
 
@@ -62,7 +62,7 @@ Stratus.Components.TwitterFeed = {
                 return
             }
             $scope.initialized = true
-            _.each(Stratus.Components.TwitterFeed.bindings, (value, key) => {
+            _.forEach(Stratus.Components.TwitterFeed.bindings, (value, key) => {
                 _.set($scope.feedOptions, key, _.get($ctrl, key) || _.get($attrs, key))
             })
             console.log('feedOptions:', sanitize($scope.feedOptions))

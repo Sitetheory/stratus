@@ -4,7 +4,7 @@
 // --------------
 
 // Runtime
-import * as _ from 'lodash'
+import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
@@ -394,7 +394,7 @@ Stratus.Components.IdxPropertyList = {
                 let template =
                     `<md-dialog aria-label="${property.ListingKey}">` +
                     '<stratus-idx-property-details '
-                _.each(templateOptions, (optionValue, optionKey) => {
+                _.forEach(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
                 })
                 template +=
