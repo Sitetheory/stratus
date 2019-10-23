@@ -57,7 +57,7 @@ import Swiper from 'swiper'
   const componentName = 'carousel'
 // There is not a very consistent way of pathing in Stratus at the moment
   // const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/${moduleName}/`
-  const localDir = `/${boot.deployment}@stratusjs/${packageName}/`
+  const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/`
 
   // This component is just a simple base.
   Stratus.Components.SwiperCarousel = {
@@ -119,7 +119,7 @@ import Swiper from 'swiper'
         // Initialize
         const $ctrl = this
         // $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
-        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
+        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         // Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css')
@@ -190,7 +190,7 @@ import Swiper from 'swiper'
           }
 
           $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', function (initNow) {
-            console.log('CAROUSEL initNow called later')
+            // console.log('CAROUSEL initNow called later')
             if (initNow !== true) {
               return
             }
@@ -206,7 +206,7 @@ import Swiper from 'swiper'
          * TODO allow for altering the variables and updating Swiper after init (live editing/inline changes)
          */
         function init () {
-          console.log('CAROUSEL initing with', $ctrl.images)
+          // console.log('CAROUSEL initing with', $ctrl.images)
           /**
            * @type {Array<SlideImage> || Array<String> || String}
            * @deprecated
