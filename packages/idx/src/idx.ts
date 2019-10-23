@@ -18,7 +18,7 @@ import {isJSON} from '@stratusjs/core/misc'
 
 
 // Environment
-// const min = Stratus.Environment.get('production') ? '.min' : ''
+// const min = !cookie('env') ? '.min' : ''
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 

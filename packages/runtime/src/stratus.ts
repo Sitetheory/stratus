@@ -31,11 +31,7 @@ import {
     ucfirst
 } from '@stratusjs/core/misc'
 import {
-    camelToKebab,
-    camelToSnake,
-    kebabToCamel,
     seconds,
-    snakeToCamel
 } from '@stratusjs/core/conversion'
 
 // Specific Types
@@ -344,7 +340,7 @@ export const Stratus: StratusRuntime = {
 }
 
 // Declare Warm Up
-if (!Stratus.Environment.get('production')) {
+if (cookie('env')) {
     console.group('Stratus Warm Up')
 }
 
@@ -457,7 +453,7 @@ _.mixin({
 
 // Client Information
 // const browser: any = Bowser.getParser(window.navigator.userAgent)
-// if (!Stratus.Environment.get('production')) {
+// if (cookie('env')) {
 //     console.log('Browser Information:', browser)
 // }
 
@@ -659,7 +655,7 @@ Stratus.Selector.width = function width() {
         console.warn('Unable to find width for list:', that.selection)
         return null
     }
-    // if (!Stratus.Environment.get('production')) {
+    // if (cookie('env')) {
     //     console.log('width:', that.selection.scrollWidth, that.selection.clientWidth, that.selection.offsetWidth)
     // }
     return that.selection.offsetWidth || 0
@@ -1159,7 +1155,7 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
     const elementBottom: any = elementTop + el.height()
     pageTop = pageTop + offset
     pageBottom = pageBottom - offset
-    // if (!Stratus.Environment.get('production')) {
+    // if (cookie('env')) {
     //     console.log('onScreen:',
     //         {
     //             el,
@@ -1388,7 +1384,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // find a size
                 size = size || 'hq'
 
-                // if (!Stratus.Environment.get('production')) {
+                // if (cookie('env')) {
                 //     console.log('size:', size, width, el)
                 // }
 
@@ -1427,7 +1423,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     // TODO: Go down in sizes before reaching the origin
                     el.attr('data-loading', dehydrate(false))
                     el.attr('src', srcOriginProtocol)
-                    if (!Stratus.Environment.get('production')) {
+                    if (cookie('env')) {
                         console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
                     }
                 })
@@ -1444,7 +1440,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     // Standardize src
                     el.attr('data-loading', dehydrate(false))
                     el.css('background-image', 'url(' + srcOriginProtocol + ')')
-                    if (!Stratus.Environment.get('production')) {
+                    if (cookie('env')) {
                         console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
                     }
                 })
@@ -1467,7 +1463,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             // Remove from registration
             // TODO: remove this
             Stratus.RegisterGroup.remove('OnScroll', obj)
-            // if (!Stratus.Environment.get('production')) {
+            // if (cookie('env')) {
             //   console.log('Remove RegisterGroup:', obj)
             // }
         })
@@ -1530,7 +1526,7 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
     // Note: You can't use event.preventDefault() in Passive Events
     const viewPort: any = Stratus.Select(Stratus.Environment.get('viewPort') || window)
     const viewPortChangeHandler: any = () => {
-        // if (!Stratus.Environment.get('production')) {
+        // if (cookie('env')) {
         //     console.log('scrolling:', Stratus.Internals.GetScrollDir())
         // }
         if (Stratus.Environment.get('viewPortChange')) {
@@ -1757,12 +1753,12 @@ Stratus.Loaders.Angular = function AngularLoader() {
             if (_.isUndefined(element.selector) && element.namespace) {
                 element.selector = _.filter(
                     _.map(boot.configuration.paths, (path: any, pathKey: any) => {
-                        // if (_.isString(pathKey) && !Stratus.Environment.get('production')) {
+                        // if (_.isString(pathKey) && cookie('env')) {
                         //     console.log(pathKey.match(/([a-zA-Z]+)/g))
                         // }
                         return _.startsWith(pathKey, element.namespace)
                                ? (element.type === 'attribute' ? '[' : '') +
-                                   camelToKebab(pathKey.replace(element.namespace, 'stratus-')) +
+                                   _.kebabCase(pathKey.replace(element.namespace, 'stratus-')) +
                                    (element.type === 'attribute' ? ']' : '')
                                : null
                     })
@@ -1777,14 +1773,14 @@ Stratus.Loaders.Angular = function AngularLoader() {
                     element.length += nodes.length
                     if (nodes.length) {
                         const name: any = selector.replace(/^\[/, '').replace(/]$/, '')
-                        requirement = element.namespace + lcfirst(kebabToCamel(name.replace(/^stratus/, '').replace(/^ng/, '')))
+                        requirement = element.namespace + lcfirst(_.camelCase(name.replace(/^stratus/, '').replace(/^ng/, '')))
                         if (_.has(boot.configuration.paths, requirement)) {
                             injection = {
                                 requirement
                             }
                             if (element.module) {
                                 injection.module =
-                                    _.isString(element.module) ? element.module : lcfirst(kebabToCamel(name + (element.suffix || '')))
+                                    _.isString(element.module) ? element.module : lcfirst(_.camelCase(name + (element.suffix || '')))
                             }
                             injector(injection)
                         }
@@ -1799,7 +1795,7 @@ Stratus.Loaders.Angular = function AngularLoader() {
                         _.forEach(nodes, (node: any) => {
                             const name: any = node.getAttribute(attribute)
                             if (name) {
-                                requirement = element.namespace + lcfirst(kebabToCamel(name.replace('Stratus', '')))
+                                requirement = element.namespace + lcfirst(_.camelCase(name.replace('Stratus', '')))
                                 if (_.has(boot.configuration.paths, requirement)) {
                                     injector({
                                         requirement
@@ -1813,7 +1809,7 @@ Stratus.Loaders.Angular = function AngularLoader() {
                         injection = {}
                         if (element.module) {
                             injection.module =
-                                _.isString(element.module) ? element.module : lcfirst(kebabToCamel(attribute + (element.suffix || '')))
+                                _.isString(element.module) ? element.module : lcfirst(_.camelCase(attribute + (element.suffix || '')))
                         }
                         if (element.stylesheet) {
                             injection.stylesheet = element.stylesheet
@@ -1875,7 +1871,7 @@ Stratus.Loaders.Angular = function AngularLoader() {
             container.requirement.push(value)
         })
 
-        // if (!Stratus.Environment.get('production')) {
+        // if (cookie('env')) {
         //     console.log('requirements:', container.requirement)
         // }
 
@@ -2117,7 +2113,7 @@ Stratus.LocalStorage.Listen = (key: any, fn: any) => {
 // When an event arrives from any source, we will handle it
 // appropriately.
 Stratus.LocalStorage.Listen('stratus-core', (data: any) => {
-    // if (!Stratus.Environment.get('production')) {
+    // if (cookie('env')) {
     //     console.log('LocalStorage:', data)
     // }
 })
@@ -2162,7 +2158,7 @@ Stratus.Key.Escape = 27
 // and custom script(s) progressively add Objects within the Stratus Layer.
 
 Stratus.Events.once('initialize', () => {
-    if (!Stratus.Environment.get('production')) {
+    if (cookie('env')) {
         console.groupEnd()
         console.group('Stratus Initialize')
     }
@@ -2179,7 +2175,7 @@ Stratus.Events.once('initialize', () => {
     // Load Views
     /* *
      Stratus.Internals.Loader().then((views: any) => {
-     if (!Stratus.Environment.get('production')) {
+     if (cookie('env')) {
      console.info('Views:', views)
      }
      window.views = views
@@ -2195,7 +2191,7 @@ Stratus.Events.once('initialize', () => {
      /* */
 })
 Stratus.Events.once('finalize', () => {
-    if (!Stratus.Environment.get('production')) {
+    if (cookie('env')) {
         console.groupEnd()
         console.group('Stratus Finalize')
     }
@@ -2206,7 +2202,7 @@ Stratus.Events.once('finalize', () => {
     //     Stratus.Internals.Anchor = Stratus.Internals.Anchor()
     // }
     // const anchor: any = new Stratus.Internals.Anchor()
-    // if (!Stratus.Environment.get('production')) {
+    // if (cookie('env')) {
     //     console.log('Anchor:', anchor)
     // }
 
@@ -2218,7 +2214,7 @@ Stratus.Events.once('finalize', () => {
             if (_.has(Stratus.Internals, key)) {
                 Stratus.Internals[key](objs)
                 // TODO: remove
-                if (!Stratus.Environment.get('production')) {
+                if (cookie('env')) {
                     console.log('Register Group: remove - ', key, objs)
                 }
             }
@@ -2226,7 +2222,7 @@ Stratus.Events.once('finalize', () => {
     }
 })
 Stratus.Events.once('terminate', () => {
-    if (!Stratus.Environment.get('production')) {
+    if (cookie('env')) {
         console.groupEnd()
         console.group('Stratus Terminate')
     }
@@ -2280,7 +2276,7 @@ Stratus.Events.on('notification', (event: any, message: any, title: any) => {
             body: options.message,
             icon: options.icon
         })
-        if (!Stratus.Environment.get('production')) {
+        if (cookie('env')) {
             console.log(notification)
         }
     } else if (Notification.permission !== 'denied') {
@@ -2290,7 +2286,7 @@ Stratus.Events.on('notification', (event: any, message: any, title: any) => {
                     body: options.message,
                     icon: options.icon
                 })
-                if (!Stratus.Environment.get('production')) {
+                if (cookie('env')) {
                     console.log(notification)
                 }
             }
@@ -2304,7 +2300,7 @@ Stratus.Events.on('toast', (event: any, message: any, title: any, priority: any,
     if (!(message instanceof Stratus.Prototypes.Toast)) {
         message = new Stratus.Prototypes.Toast(message, title, priority, settings)
     }
-    if (!Stratus.Environment.get('production')) {
+    if (cookie('env')) {
         console.log('Toast:', message)
     }
     // if (typeof jQuery !== 'undefined' && jQuery.toaster) {

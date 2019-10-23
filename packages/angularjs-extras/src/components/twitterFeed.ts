@@ -14,10 +14,11 @@ import * as twitter from 'twitter'
 import 'angular-material'
 
 // Stratus Dependencies
-import {camelToSnake, sanitize} from '@stratusjs/core/conversion'
+import {sanitize} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const name = 'twitterFeed'
 const localPath = '@stratusjs/angularjs-extras/src/components'
 
@@ -48,7 +49,7 @@ Stratus.Components.TwitterFeed = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(name) + '_')
+        $ctrl.uid = _.uniqueId(_.camelCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.initialized = false

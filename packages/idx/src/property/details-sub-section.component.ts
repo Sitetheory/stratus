@@ -13,9 +13,10 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details-sub-section'

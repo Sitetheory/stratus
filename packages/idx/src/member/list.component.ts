@@ -25,10 +25,10 @@ import '@stratusjs/idx/member/details.component'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
-import {camelToSnake} from '@stratusjs/core/conversion'
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = Stratus.Environment.get('production') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'member'
 const componentName = 'list'
@@ -58,7 +58,7 @@ Stratus.Components.IdxMemberList = {
     ) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(camelToSnake(packageName) + '_' + camelToSnake(moduleName) + '_' + camelToSnake(componentName) + '_')
+        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
