@@ -1,4 +1,4 @@
-// import * as _ from 'lodash';
+// import _ from 'lodash';
 // import * as jQuery from 'jquery';
 // import * as bowser from 'bowser';
 

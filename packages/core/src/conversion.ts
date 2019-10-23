@@ -1,5 +1,5 @@
 // External
-import * as _ from 'lodash'
+import _ from 'lodash'
 
 export interface PlainObject {
     [key: string]: any
@@ -28,7 +28,7 @@ export function sanitize(data: any) {
         return data
     }
     const shallow: PlainObject = {}
-    _.each(data, (value: any, key: string, list: PlainObject) => {
+    _.forEach(data, (value: any, key: string, list: PlainObject) => {
         if (_.isArrayLike(value) && _.isEmpty(value)) {
             return
         }
@@ -54,7 +54,7 @@ export function seconds(str: string): number {
     let unit
     let value
     let data = 0
-    _.each(timePairs, (timePair: string) => {
+    _.forEach(timePairs, (timePair: string) => {
         time = digest.exec(timePair)
         value = parseFloat(time[1])
         unit = time[2]
