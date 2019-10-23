@@ -161,7 +161,7 @@ Stratus.Services.Idx = [
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
                 let defaultPageTitle: string
-                console.log('Idx Service inited')
+                // console.log('Idx Service inited')
                 /* const instance: {
                     List: object,
                     Search: object,

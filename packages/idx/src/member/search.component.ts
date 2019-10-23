@@ -14,12 +14,12 @@ import * as angular from 'angular'
 // Services
 import '@stratusjs/idx/idx'
 
-// Component Preload
-import '@stratusjs/idx/member/list.component'
-
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+
+// Component Preload
+import '@stratusjs/idx/member/list.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -32,6 +32,7 @@ const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${mo
 Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or IdxMemberSearch
     bindings: {
         elementId: '@',
+        tokenUrl: '@',
         listId: '@',
         listLinkUrl: '@',
         listLinkTarget: '@',
@@ -54,6 +55,9 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        if ($attrs.tokenUrl) {
+            Idx.setTokenURL($attrs.tokenUrl)
+        }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         $ctrl.$onInit = () => {

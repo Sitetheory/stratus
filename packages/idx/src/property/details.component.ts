@@ -7,19 +7,21 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
+import moment from 'moment'
 
 // Angular 1 Modules
 import 'angular-material'
 import 'angular-sanitize'
 
-// Libraries
-import moment from 'moment'
-
 // Services
-import '@stratusjs/angularjs/services/model' // Needed as $provider
-import {Model} from '@stratusjs/angularjs/services/model' // Needed as Class
+import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
+
+// Stratus Dependencies
+import {Model} from '@stratusjs/angularjs/services/model'
 import {MLSService} from '@stratusjs/idx/idx'
+import {isJSON} from '@stratusjs/core/misc'
+import {cookie} from '@stratusjs/core/environment'
 
 // FIXME move filters to @stratusjs
 // Custom Filters
@@ -27,14 +29,8 @@ import 'stratus.filters.math'
 import 'stratus.filters.moment'
 
 // Component Preload
-// import 'stratus.components.propertyDetailsSubSection'
 import '@stratusjs/idx/property/details-sub-section.component'
-import '@stratusjs/angularjs-extras/components/swiperCarousel'
-// stratus.components.carousel doesn't work
-
-// Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
-import {cookie} from '@stratusjs/core/environment'
+import '@stratusjs/swiper/carousel'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -47,6 +43,7 @@ const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/${moduleName}
 Stratus.Components.IdxPropertyDetails = {
     bindings: {
         elementId: '@',
+        tokenUrl: '@',
         urlLoad: '@',
         pageTitle: '@',
         service: '@',
@@ -73,6 +70,9 @@ Stratus.Components.IdxPropertyDetails = {
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        if ($attrs.tokenUrl) {
+            Idx.setTokenURL($attrs.tokenUrl)
+        }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         /**
@@ -667,15 +667,9 @@ Stratus.Components.IdxPropertyDetails = {
             Idx.registerDetailsInstance($scope.elementId, $scope)
             // console.log(this.uid)
 
-            if (
-                $scope.urlLoad !== true &&
+            $scope.urlLoad = !($scope.urlLoad !== true &&
                 $scope.service &&
-                ($scope.ListingKey || $scope.ListingId)
-            ) {
-                $scope.urlLoad = false
-            } else {
-                $scope.urlLoad = true
-            }
+                ($scope.ListingKey || $scope.ListingId))
 
             if ($scope.urlLoad) {
                 // Load Options from the provided URL settings
@@ -688,11 +682,15 @@ Stratus.Components.IdxPropertyDetails = {
         }
 
         $scope.$watch('model.data', (data?: any) => {
-            if (data) {
+            if (
+                data &&
+                data.hasOwnProperty('_ServiceId')
+            ) {
+                // Check if empty
                 $scope.devLog('Loaded Details Data:', data)
                 // prepare the images provided
                 $scope.images = $scope.getSlideshowImages()
-                console.log('IDX images is now', $scope.images)
+                // console.log('IDX images is now', $scope.images)
                 Idx.setUrlOptions('Listing',
                     {
                         service: $scope.options.service,
@@ -747,12 +745,14 @@ Stratus.Components.IdxPropertyDetails = {
 
         $scope.getSlideshowImages = (): { src: string }[] => {
             const images: { src: string }[] = []
-            $scope.model.data.Images.forEach((image: { MediaURL?: string }) => {
-                // TODO need title/description variables
-                if (Object.prototype.hasOwnProperty.call(image, 'MediaURL')) {
-                    images.push({src: image.MediaURL})
-                }
-            })
+            if ($scope.model.data.Images) {
+                $scope.model.data.Images.forEach((image: { MediaURL?: string }) => {
+                    // TODO need title/description variables
+                    if (Object.prototype.hasOwnProperty.call(image, 'MediaURL')) {
+                        images.push({src: image.MediaURL})
+                    }
+                })
+            }
             return images
         }
 
