@@ -7,25 +7,22 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
+import moment from 'moment'
 
 // Angular 1 Modules
 import 'angular-material'
 import 'angular-sanitize'
 
-// Libraries
-import moment from 'moment'
-
 // Services
-import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import '@stratusjs/idx/idx'
 
-// Component Preload
-// import 'stratus.components.propertyMemberDetails'
-import '@stratusjs/idx/member/details.component'
-
 // Stratus Dependencies
+import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+
+// Component Preload
+import '@stratusjs/idx/member/details.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -38,6 +35,7 @@ const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${mo
 Stratus.Components.IdxMemberList = {
     bindings: {
         elementId: '@',
+        tokenUrl: '@',
         detailsLinkPopup: '@',
         detailsLinkUrl: '@',
         detailsLinkTarget: '@',
@@ -61,6 +59,9 @@ Stratus.Components.IdxMemberList = {
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        if ($attrs.tokenUrl) {
+            Idx.setTokenURL($attrs.tokenUrl)
+        }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         /**

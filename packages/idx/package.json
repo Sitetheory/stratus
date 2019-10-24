@@ -1,8 +1,8 @@
 {
   "name": "@stratusjs/idx",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "AngularJS idx/property Service and Components bundle to be used as an add on to StratusJS",
-  "main": "./components/propertySearch.js",
+  "main": "./src/idx.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,12 +25,9 @@
   },
   "homepage": "https://github.com/Sitetheory/stratus#readme",
   "dependencies": {
-    "@stratusjs/angularjs": "^0.1.3",
-    "@stratusjs/angularjs-extras": "^0.1.2",
-    "@stratusjs/core": "^0.1.2",
-    "@stratusjs/runtime": "^0.9.7",
-    "moment": "^2.24.0",
-    "moment-range": "^4.0.2",
-    "moment-timezone": "^0.5.26"
+    "@stratusjs/angularjs": "^0.2.4",
+    "@stratusjs/angularjs-extras": "^0.2.2",
+    "@stratusjs/runtime": "^0.10.0",
+    "@stratusjs/swiper": "^0.0.2"
   }
 }

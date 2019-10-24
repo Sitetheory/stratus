@@ -29,6 +29,7 @@ const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${mo
 Stratus.Components.IdxPropertySearch = {
     bindings: {
         elementId: '@',
+        tokenUrl: '@',
         listId: '@',
         listLinkUrl: '@',
         listLinkTarget: '@',
@@ -51,6 +52,9 @@ Stratus.Components.IdxPropertySearch = {
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        if ($attrs.tokenUrl) {
+            Idx.setTokenURL($attrs.tokenUrl)
+        }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         $scope.$mdConstant = $mdConstant

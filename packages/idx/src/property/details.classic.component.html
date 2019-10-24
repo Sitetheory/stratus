@@ -110,10 +110,10 @@
 
 		<div class="additional-photos details-container" data-ng-if="model.data.Images && model.data.Images.length > 0" data-md-whiteframe="1">
 			<!-- FIXME stratus-carousel stopped working on latest stratus -->
-			<!--<stratus-carousel
+			<stratus-swiper-carousel
 					init-now="model.completed"
-					images='{{::getSlideshowImages()}}'
-			></stratus-carousel>-->
+					images="images"
+			></stratus-swiper-carousel>
 
 			<!-- autoplay="true" -->
 			<!-- pagination='{"clickable":true,"render":"numberBullet"}' -->

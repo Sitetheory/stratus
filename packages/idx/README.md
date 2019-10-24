@@ -47,26 +47,10 @@ boot.configuration.paths = {
 #### Dependencies
 All dependencies need to be installed within the same project along with your config paths define.
 (manually installed for the time being)
-*   [stratus.js](https://www.npmjs.com/package/stratus.js) (while Stratus is converting)
-*   [@stratusjs/core](https://www.npmjs.com/package/@stratusjs/core)
-*   angular
-*   angular-animate
-*   angular-aria
-*   angular-chart.js
-*   angular-drag-and-drop-lists
-*   angular-froala-wysiwyg
-*   angular-material
-*   angular-messages
-*   angular-paging
-*   angular-resource
-*   angular-sanitize
-*   angular-scroll-spy
-*   angular-ui-tree
-*   moment
-*   moment-range
-*   moment-timezone
-
-[TODO]() Items such as angular and moment should be automatically installed
+*   [@stratusjs/runtime](https://www.npmjs.com/package/@stratusjs/runtime)
+*   [@stratusjs/angularjs](https://www.npmjs.com/package/@stratusjs/angularjs)
+*   [@stratusjs/angularjs-extras](https://www.npmjs.com/package/@stratusjs/angularjs-extras)
+*   [@stratusjs/swiper](https://www.npmjs.com/package/@stratusjs/swiper)
 
 ---
 ## License
