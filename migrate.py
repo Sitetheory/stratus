@@ -41,7 +41,10 @@ class Migrate:
     def convert(self, content: str) -> str:
         # upgrade to arrow functions
         if any([re.fullmatch(detector, content) for detector in self.function_detectors]):
-            g = re.fullmatch(r'(.*)function\s?\(((?:[\w\s:,]+)?)?\)\s?{(.*)', content).groups()
+            m = re.fullmatch(r'(.*)function\s?\(((?:[\w\s:,]+)?)?\)\s?{(.*)', content)
+            if m is None:
+                return content
+            g = m.groups()
             d = ', '
             return g[0] + '(' + d.join([x + ': any' for x in g[1].split(d)]) + ') => {' + g[2]
         # add types to var declarations
