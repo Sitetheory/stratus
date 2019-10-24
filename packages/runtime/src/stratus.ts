@@ -1828,211 +1828,208 @@ Stratus.Loaders.Angular = function AngularLoader() {
     })
 
     // Angular Injector
-    if (container.requirement.length) {
-        // Deprecated the use of the 'froala' directive for stratus-froala
-        /* *
-         if (_.includes(container.requirement, 'angular-froala')) {
-         [
-         'codemirror/mode/htmlmixed/htmlmixed',
-         'codemirror/addon/edit/matchbrackets',
-         'codemirror',
-         'froala-align',
-         'froala-code-beautifier',
-         'froala-code-view',
-         'froala-draggable',
-         'froala-entities',
-         'froala-file',
-         'froala-forms',
-         'froala-fullscreen',
-         'froala-help',
-         'froala-image',
-         'froala-image-manager',
-         'froala-inline-style',
-         'froala-link',
-         'froala-lists',
-         'froala-paragraph-format',
-         'froala-paragraph-style',
-         'froala-quick-insert',
-         'froala-quote',
-         'froala-table',
-         'froala-url',
-         'froala-video',
-         'froala-word-paste'
-         ].forEach((requirement: any) => {
-         container.requirement.push(requirement);
-         });
-         }
-         /* */
+    // if (container.requirement.length) {
+    //     // Deprecated the use of the 'froala' directive for stratus-froala
+    //     if (_.includes(container.requirement, 'angular-froala')) {
+    //         [
+    //             'codemirror/mode/htmlmixed/htmlmixed',
+    //             'codemirror/addon/edit/matchbrackets',
+    //             'codemirror',
+    //             'froala-align',
+    //             'froala-code-beautifier',
+    //             'froala-code-view',
+    //             'froala-draggable',
+    //             'froala-entities',
+    //             'froala-file',
+    //             'froala-forms',
+    //             'froala-fullscreen',
+    //             'froala-help',
+    //             'froala-image',
+    //             'froala-image-manager',
+    //             'froala-inline-style',
+    //             'froala-link',
+    //             'froala-lists',
+    //             'froala-paragraph-format',
+    //             'froala-paragraph-style',
+    //             'froala-quick-insert',
+    //             'froala-quote',
+    //             'froala-table',
+    //             'froala-url',
+    //             'froala-video',
+    //             'froala-word-paste'
+    //         ].forEach((r: any) => {
+    //             container.requirement.push(r)
+    //         })
+    //     }
 
-        // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
-        Object.keys(boot.configuration.paths).filter((path: any) => {
-            return _.startsWith(path, 'stratus.filters.')
-        }).forEach((value) => {
-            container.requirement.push(value)
-        })
+    // We are currently forcing all filters to load because we don't have a selector to find them on the DOM, yet.
+    Object.keys(boot.configuration.paths).filter((path: any) => {
+        return _.startsWith(path, 'stratus.filters.')
+    }).forEach((value) => {
+        container.requirement.push(value)
+    })
 
-        // if (cookie('env')) {
-        //     console.log('requirements:', container.requirement)
-        // }
+    // if (cookie('env')) {
+    //     console.log('requirements:', container.requirement)
+    // }
 
-        require(container.requirement, () => {
-            // App Reference
-            angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config([
-                '$sceDelegateProvider', ($sceDelegateProvider: any) => {
-                    const whitelist: any = [
-                        'self',
-                        'http://*.sitetheory.io/**',
-                        'https://*.sitetheory.io/**'
-                    ]
-                    if (boot.host) {
-                        if (_.startsWith(boot.host, '//')) {
-                            _.forEach(['https:', 'http:'], (proto: any) => {
-                                whitelist.push(proto + boot.host + '/**')
-                            })
-                        } else {
-                            whitelist.push(boot.host + '/**')
-                        }
-                    }
-                    $sceDelegateProvider.resourceUrlWhitelist(whitelist)
-                }
-            ])
-
-            // TODO: Make Dynamic
-            // Froala Configuration
-            // @ts-ignore
-            if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.FroalaEditor) {
-                // @ts-ignore
-                jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
-
-                // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
-                const buttons: any = [
-                    'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
-                    'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
-                    'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
-                    'insertTable', '|', 'undo', 'redo', 'removeFormat', 'wordPaste', 'help', 'html', 'fullscreen'
+    require(container.requirement, () => {
+        // App Reference
+        angular.module('stratusApp', _.union(Object.keys(Stratus.Modules), container.module)).config([
+            '$sceDelegateProvider', ($sceDelegateProvider: any) => {
+                const whitelist: any = [
+                    'self',
+                    'http://*.sitetheory.io/**',
+                    'https://*.sitetheory.io/**'
                 ]
-                angular.module('stratusApp').value('froalaConfig', {
-                    codeBeautifierOptions: {
-                        end_with_newline: true,
-                        indent_inner_html: true,
-                        extra_liners: '[\'p\', \'h1\', \'h2\', \'h3\', \'h4\', \'h5\', \'h6\', \'blockquote\', \'pre\', \'ul\', \'ol\', \'table\', \'dl\']',
-                        brace_style: 'expand',
-                        indent_char: ' ',
-                        indent_size: 4,
-                        wrap_line_length: 0
-                    },
-                    codeMirror: true,
-                    codeMirrorOptions: {
-                        indentWithTabs: false,
-                        lineNumbers: true,
-                        lineWrapping: true,
-                        mode: 'text/html',
-                        tabMode: 'space',
-                        tabSize: 4
-                    },
-                    fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + cookie('SITETHEORY'),
-                    htmlAllowedAttrs: ['.*'],
-                    htmlAllowedEmptyTags: [
-                        'textarea', 'a', '.fa',
-                        'iframe', 'object', 'video',
-                        'style', 'script', 'div'
-                    ],
-                    htmlAllowedTags: ['.*'],
-                    htmlRemoveTags: [''],
-                    htmlUntouched: true,
-                    imageManagerPageSize: 20,
-                    imageManagerScrollOffset: 10,
-                    imageManagerLoadURL: '/Api/Media?payload-only=true',
-                    imageManagerLoadMethod: 'GET',
-                    imageManagerDeleteMethod: 'DELETE',
-                    multiLine: true,
-                    pasteDeniedAttrs: [''],
-                    pasteDeniedTags: [''],
-                    pastePlain: false,
-                    toolbarSticky: false,
-                    toolbarButtons: buttons,
-                    toolbarButtonsMD: buttons,
-                    toolbarButtonsSM: buttons,
-                    toolbarButtonsXS: buttons
-                })
-            }
-
-            // Services
-            _.forEach(Stratus.Services, (service: any) => {
-                angular.module('stratusApp').config(service)
-            })
-
-            // Components
-            _.forEach(Stratus.Components, (component: any, name: any) => {
-                angular.module('stratusApp').component('stratus' + ucfirst(name), component)
-            })
-
-            // Directives
-            _.forEach(Stratus.Directives, (directive: any, name: any) => {
-                angular.module('stratusApp').directive('stratus' + ucfirst(name), directive)
-            })
-
-            // Filters
-            _.forEach(Stratus.Filters, (filter: any, name: any) => {
-                angular.module('stratusApp').filter(lcfirst(name), filter)
-            })
-
-            // Controllers
-            _.forEach(Stratus.Controllers, (controller: any, name: any) => {
-                angular.module('stratusApp').controller(name, controller)
-            })
-
-            // Load CSS
-            // TODO: Move this reference to the stylesheets block above
-            const css: any = container.stylesheet
-            const cssLoaded: any = Stratus.Select('link[satisfies]').map((node: Element) => node.getAttribute('satisfies'))
-            if (!_.includes(cssLoaded, 'angular-material.css') && 'angular-material' in boot.configuration.paths) {
-                css.push(
-                    Stratus.BaseUrl + boot.configuration.paths['angular-material'].replace(/\.js$/, '') + '.css'
-                )
-            }
-            if (Stratus.Directives.Froala || Stratus.Select('[froala]').length) {
-                const froalaPath: any = boot.configuration.paths.froala.replace(/\/[^/]+\/?[^/]+\/?$/, '')
-                _.forEach([
-                        // FIXME this is sitetheory only
-                        Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
-                        Stratus.BaseUrl + boot.configuration.paths.codemirror.replace(/\/([^/]+)\/?$/, '') + '/codemirror.css',
-                        Stratus.BaseUrl + froalaPath + '/css/froala_editor.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/froala_style.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/code_view.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/draggable.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/file.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/fullscreen.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/help.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/image.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/image_manager.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/quick_insert.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/special_characters.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/table.min.css',
-                        Stratus.BaseUrl + froalaPath + '/css/plugins/video.min.css'
-                    ],
-                    stylesheet => css.push(stylesheet)
-                )
-            }
-
-            // FIXME: What is above this line is not great
-
-            if (css.length) {
-                let counter: any = 0
-                css.forEach((url: any) => {
-                    Stratus.Internals.CssLoader(url)
-                        .then(() => {
-                            if (++counter !== css.length) {
-                                return
-                            }
-                            const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+                if (boot.host) {
+                    if (_.startsWith(boot.host, '//')) {
+                        _.forEach(['https:', 'http:'], (proto: any) => {
+                            whitelist.push(proto + boot.host + '/**')
                         })
-                })
-            } else {
-                const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+                    } else {
+                        whitelist.push(boot.host + '/**')
+                    }
+                }
+                $sceDelegateProvider.resourceUrlWhitelist(whitelist)
             }
+        ])
+
+        // TODO: Make Dynamic
+        // Froala Configuration
+        // @ts-ignore
+        if (typeof jQuery !== 'undefined' && jQuery.fn && jQuery.FroalaEditor) {
+            // @ts-ignore
+            jQuery.FroalaEditor.DEFAULTS.key = Stratus.Api.Froala
+
+            // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
+            const buttons: any = [
+                'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
+                'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
+                'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
+                'insertTable', '|', 'undo', 'redo', 'removeFormat', 'wordPaste', 'help', 'html', 'fullscreen'
+            ]
+            angular.module('stratusApp').value('froalaConfig', {
+                codeBeautifierOptions: {
+                    end_with_newline: true,
+                    indent_inner_html: true,
+                    extra_liners: '[\'p\', \'h1\', \'h2\', \'h3\', \'h4\', \'h5\', \'h6\', \'blockquote\', \'pre\', \'ul\', \'ol\', \'table\', \'dl\']',
+                    brace_style: 'expand',
+                    indent_char: ' ',
+                    indent_size: 4,
+                    wrap_line_length: 0
+                },
+                codeMirror: true,
+                codeMirrorOptions: {
+                    indentWithTabs: false,
+                    lineNumbers: true,
+                    lineWrapping: true,
+                    mode: 'text/html',
+                    tabMode: 'space',
+                    tabSize: 4
+                },
+                fileUploadURL: 'https://app.sitetheory.io:3000/?session=' + cookie('SITETHEORY'),
+                htmlAllowedAttrs: ['.*'],
+                htmlAllowedEmptyTags: [
+                    'textarea', 'a', '.fa',
+                    'iframe', 'object', 'video',
+                    'style', 'script', 'div'
+                ],
+                htmlAllowedTags: ['.*'],
+                htmlRemoveTags: [''],
+                htmlUntouched: true,
+                imageManagerPageSize: 20,
+                imageManagerScrollOffset: 10,
+                imageManagerLoadURL: '/Api/Media?payload-only=true',
+                imageManagerLoadMethod: 'GET',
+                imageManagerDeleteMethod: 'DELETE',
+                multiLine: true,
+                pasteDeniedAttrs: [''],
+                pasteDeniedTags: [''],
+                pastePlain: false,
+                toolbarSticky: false,
+                toolbarButtons: buttons,
+                toolbarButtonsMD: buttons,
+                toolbarButtonsSM: buttons,
+                toolbarButtonsXS: buttons
+            })
+        }
+
+        // Services
+        _.forEach(Stratus.Services, (service: any) => {
+            angular.module('stratusApp').config(service)
         })
-    }
+
+        // Components
+        _.forEach(Stratus.Components, (component: any, name: any) => {
+            angular.module('stratusApp').component('stratus' + ucfirst(name), component)
+        })
+
+        // Directives
+        _.forEach(Stratus.Directives, (directive: any, name: any) => {
+            angular.module('stratusApp').directive('stratus' + ucfirst(name), directive)
+        })
+
+        // Filters
+        _.forEach(Stratus.Filters, (filter: any, name: any) => {
+            angular.module('stratusApp').filter(lcfirst(name), filter)
+        })
+
+        // Controllers
+        _.forEach(Stratus.Controllers, (controller: any, name: any) => {
+            angular.module('stratusApp').controller(name, controller)
+        })
+
+        // Load CSS
+        // TODO: Move this reference to the stylesheets block above
+        const css: any = container.stylesheet
+        const cssLoaded: any = Stratus.Select('link[satisfies]').map((node: Element) => node.getAttribute('satisfies'))
+        if (!_.includes(cssLoaded, 'angular-material.css') && 'angular-material' in boot.configuration.paths) {
+            css.push(
+                Stratus.BaseUrl + boot.configuration.paths['angular-material'].replace(/\.js$/, '') + '.css'
+            )
+        }
+        if (Stratus.Directives.Froala || Stratus.Select('[froala]').length) {
+            const froalaPath: any = boot.configuration.paths.froala.replace(/\/[^/]+\/?[^/]+\/?$/, '')
+            _.forEach([
+                    // FIXME this is sitetheory only
+                    Stratus.BaseUrl + 'sitetheorycore/css/sitetheory.codemirror.css',
+                    Stratus.BaseUrl + boot.configuration.paths.codemirror.replace(/\/([^/]+)\/?$/, '') + '/codemirror.css',
+                    Stratus.BaseUrl + froalaPath + '/css/froala_editor.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/froala_style.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/code_view.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/draggable.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/file.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/fullscreen.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/help.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/image.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/image_manager.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/quick_insert.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/special_characters.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/table.min.css',
+                    Stratus.BaseUrl + froalaPath + '/css/plugins/video.min.css'
+                ],
+                stylesheet => css.push(stylesheet)
+            )
+        }
+
+        // FIXME: What is above this line is not great
+
+        if (css.length) {
+            let counter: any = 0
+            css.forEach((url: any) => {
+                Stratus.Internals.CssLoader(url)
+                    .then(() => {
+                        if (++counter !== css.length) {
+                            return
+                        }
+                        const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+                    })
+            })
+        } else {
+            const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+        }
+    })
 }
 
 // Instance Clean
