@@ -7,8 +7,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import 'angular'
 
 // Third Party Libraries
-// @ts-ignore
-import * as twitter from 'twitter'
+import 'twitter'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -66,7 +65,9 @@ Stratus.Components.TwitterFeed = {
             _.forEach(Stratus.Components.TwitterFeed.bindings, (value, key) => {
                 _.set($scope.feedOptions, key, _.get($ctrl, key) || _.get($attrs, key))
             })
-            console.log('feedOptions:', sanitize($scope.feedOptions))
+            if (cookie('env')) {
+                console.log('feedOptions:', sanitize($scope.feedOptions))
+            }
             // @ts-ignore
             const timeline = await twttr.widgets.createTimeline(
                 {

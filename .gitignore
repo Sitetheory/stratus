@@ -57,6 +57,7 @@ packages/swiper/src/**/*.css
 packages/angularjs-extras/src/components/embed.js
 packages/angularjs-extras/src/components/image-carousel.js
 packages/angularjs-extras/src/components/twitterFeed.js
+packages/angularjs-extras/src/directives/froala.js
 
 # JavaScript Supercedes
 !packages/runtime/src/stratus.amd.js
