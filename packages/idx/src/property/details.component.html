@@ -17,7 +17,7 @@
 			<stratus-carousel init-now="model.completed" images="{{::getSlideshowImages()}}"></stratus-carousel>
 		</div>
 		<div class="gallery-fallback">
-			<img data-ng-if="!model.data.Images" data-ng-src="/content/property/stratus/components/images/no-image.jpg">
+			<img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image.jpg">
 		</div>
 
 
@@ -204,9 +204,10 @@
 			</a>
 			<div class="image-dimmer"></div>
 			<!-- parallax-content disabled, cannot use height altering on the entire widget -->
+            <!-- FIXME {} can't be used in inline styles as it won't resolve before the page loads (or may not exist) -->
 			<div class="" style="background: url('{{model.data.Images[0].MediaURL}}') no-repeat center center; background-size: cover;">
-				<img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="/content/property/stratus/components/images/stratus-property-shapeholder.png" alt="{{::model.data.UnparsedAddress}}"/>
-				<img data-ng-if="!model.data.Images" data-ng-src="/content/property/stratus/components/images/no-image-simple.jpg">
+				<img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::model.data.UnparsedAddress}}"/>
+				<img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg">
 			</div>
 		</div>
 
@@ -223,7 +224,7 @@
 					<div class="schematics-image floorplan-image">
 						<a href="">
 							<data-md-tooltip>Click to enlarge</data-md-tooltip>
-							<img src="/content/property/stratus/components/images/temporary-floorplan.png" alt="Site Plan"/>
+							<img data-ng-src="{{::localDir}}images/temporary-floorplan.png" alt="Site Plan"/>
 						</a>
 					</div>
 					<h4>Floorplan</h4>
@@ -235,7 +236,7 @@
 					<div class="schematics-image siteplan-image">
 						<a href="">
 							<data-md-tooltip>Click to enlarge</data-md-tooltip>
-							<img src="/content/property/stratus/components/images/temporary-siteplan.png" alt="Site Plan"/>
+							<img data-ng-src="{{::localDir}}images/temporary-siteplan.png" alt="Site Plan"/>
 						</a>
 					</div>
 					<h4>Siteplan</h4>
