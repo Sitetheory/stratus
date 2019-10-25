@@ -127,7 +127,7 @@ import Swiper from 'swiper'
 
         // noinspection JSIgnoredPromiseFromCall
         // Stratus.Internals.CssLoader(Stratus.BaseUrl + Stratus.BundlePath + 'node_modules/swiper/dist/css/swiper' + min + '.css')
-        Stratus.Internals.CssLoader(`${Stratus.BaseUrl}${Stratus.DeploymentPath}swiper/css/swiper${min}.css`)
+        Stratus.Internals.CssLoader(`${Stratus.BaseUrl}${Stratus.DeploymentPath}swiper/dist/css/swiper${min}.css`)
 
         // Hoist Attributes
         $scope.property = $attrs.property || null
