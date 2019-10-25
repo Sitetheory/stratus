@@ -38,7 +38,7 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
-const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/${moduleName}/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxPropertyDetails = {
     bindings: {

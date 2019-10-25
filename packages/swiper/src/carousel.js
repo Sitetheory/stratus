@@ -55,9 +55,7 @@ import Swiper from 'swiper'
   const packageName = 'swiper'
   // const moduleName = 'components'
   const componentName = 'carousel'
-// There is not a very consistent way of pathing in Stratus at the moment
-  // const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/${moduleName}/`
-  const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/`
+  const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
   // This component is just a simple base.
   Stratus.Components.SwiperCarousel = {
