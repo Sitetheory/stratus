@@ -31,8 +31,7 @@ const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
-// There is not a very consistent way of pathing in Stratus at the moment
-const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxPropertyList = {
     bindings: {
@@ -62,6 +61,7 @@ Stratus.Components.IdxPropertyList = {
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.localDir = localDir
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }

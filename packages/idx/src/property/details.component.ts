@@ -38,7 +38,7 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
-const localDir = `/${boot.deployment}@stratusjs/${packageName}/src/${moduleName}/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Components.IdxPropertyDetails = {
     bindings: {
@@ -70,6 +70,7 @@ Stratus.Components.IdxPropertyDetails = {
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.localDir = localDir
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -745,7 +746,10 @@ Stratus.Components.IdxPropertyDetails = {
 
         $scope.getSlideshowImages = (): { src: string }[] => {
             const images: { src: string }[] = []
-            if ($scope.model.data.Images) {
+            if (
+                $scope.model.data.Images &&
+                _.isArray($scope.model.data.Images)
+            ) {
                 $scope.model.data.Images.forEach((image: { MediaURL?: string }) => {
                     // TODO need title/description variables
                     if (Object.prototype.hasOwnProperty.call(image, 'MediaURL')) {

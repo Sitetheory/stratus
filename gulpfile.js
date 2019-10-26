@@ -88,11 +88,15 @@ const location = {
   preserve: {
     core: [
       'packages/angularjs/src/**/*.js',
-      'packages/angularjs-extras/src/**/*.js'
+      'packages/angularjs-extras/src/**/*.js',
+      'packages/idx/src/**/*.js',
+      'packages/swiper/src/**/*.js'
     ],
     min: [
       'packages/angularjs/src/**/*.min.js',
-      'packages/angularjs-extras/src/**/*.min.js'
+      'packages/angularjs-extras/src/**/*.min.js',
+      'packages/idx/src/**/*.min.js',
+      'packages/swiper/src/**/*.min.js'
     ]
   },
   less: {
