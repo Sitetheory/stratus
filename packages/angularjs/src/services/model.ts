@@ -312,7 +312,9 @@ export class Model extends ModelBase {
 
     // TODO: Abstract this deeper
     sync(action?: any, data?: any, options?: any) {
+        // XHR Flags
         this.pending = true
+
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
@@ -347,10 +349,6 @@ export class Model extends ModelBase {
                 const wait = await serviceVerify()
             }
             $http(prototype).then((response: any) => {
-                // XHR Flags
-                this.pending = false
-                this.completed = true
-
                 // Data Stores
                 this.status = response.status
 
@@ -391,6 +389,10 @@ export class Model extends ModelBase {
                         this.patch = {}
                     }
 
+                    // XHR Flags
+                    this.pending = false
+                    this.completed = true
+
                     // Promise
                     // extendDeep(this.data, this.initData)
                     resolve(this.data)
@@ -408,6 +410,10 @@ export class Model extends ModelBase {
                     } else {
                         error.message = 'Unknown Model error!'
                     }
+
+                    // XHR Flags
+                    this.pending = false
+                    this.completed = true
 
                     // Promise
                     reject(error)
