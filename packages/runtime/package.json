@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/runtime",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "This is the runtime package for StratusJS.",
   "scripts": {},
   "repository": {
