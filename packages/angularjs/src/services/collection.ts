@@ -210,10 +210,8 @@ export class Collection extends EventManager {
 
     // TODO: Abstract this deeper
     sync(action: string, data: any, options: any) {
-
-        // Internals
+        // XHR Flags
         this.pending = true
-        this.completed = false
 
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
@@ -272,6 +270,7 @@ export class Collection extends EventManager {
                     // XHR Flags
                     this.pending = false
                     this.completed = true
+                    this.error = false
 
                     // Action Flags
                     this.filtering = false
@@ -285,7 +284,7 @@ export class Collection extends EventManager {
                 } else {
                     // XHR Flags
                     this.pending = false
-                    this.error = true
+
 
                     // Build Report
                     const error = new Stratus.Prototypes.Error()
@@ -297,6 +296,11 @@ export class Collection extends EventManager {
                     } else {
                         error.message = 'Unknown AngularCollection error!'
                     }
+
+                    // XHR Flags
+                    this.pending = false
+                    this.completed = true
+                    this.error = true
 
                     // Trigger Change Event
                     this.throttleTrigger('change')
