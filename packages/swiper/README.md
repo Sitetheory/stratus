@@ -26,18 +26,20 @@ And include the the library paths into your stratus `config.js` such as
 ```js
 boot.configuration.paths = {
   // Swiper Package
-  'swiper': boot.bundle + 'swiper/js/swiper.esm.browser.bundle' + boot.suffix,
+  'swiper': boot.deployment + 'swiper/js/swiper.esm.browser.bundle' + boot.suffix,
 
-  // Components
-  'stratus.components.swiperCarousel': boot.bundle + '@stratusjs/swiper/src/carousel' + boot.suffix
+  // STRATUS SRC: Swiper
+  '@stratusjs/swiper/*': boot.deployment + '@stratusjs/swiper/src/*' + boot.suffix,
+
+  // Components (Until Converted to Angular 8+)
+  'stratus.components.swiperCarousel': boot.deployment + '@stratusjs/swiper/src/carousel.component' + boot.suffix
 }
 ```
 
 #### Dependencies
 All dependencies need to be installed within the same project along with your config paths define.
 (manually installed for the time being)
-*   [stratus.js](https://www.npmjs.com/package/stratus.js) (while Stratus is converting)
-*   [@stratusjs/core](https://www.npmjs.com/package/@stratusjs/core)
+*   [@stratusjs/runtime](https://www.npmjs.com/package/@stratusjs/runtime)
 *   [@stratusjs/angularjs](https://www.npmjs.com/package/@stratusjs/angularjs)
 *   [@stratusjs/angularjs-extras](https://www.npmjs.com/package/@stratusjs/angularjs-extras)
 *   [swiper](https://www.npmjs.com/package/swiper)

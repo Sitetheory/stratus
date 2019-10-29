@@ -50,7 +50,7 @@ packages/idx/src/**/*.css
 packages/react/src/**/*.js
 packages/react/src/**/*.css
 packages/runtime/src/**/*.js
-packages/swiper/src/**/*.min.js
+packages/swiper/src/**/*.js
 packages/swiper/src/**/*.css
 
 # TypeScript Supercedes
