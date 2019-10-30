@@ -55,9 +55,8 @@
                         <li data-ng-if="::model.data.DaysOnMarket">
                             Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
                         </li>
-                        <li>
-                            <!-- TODO find Style -->
-                            Style: Mediterranean
+                        <li data-ng-if="::model.data.ArchitecturalStyle">
+                            Days on Market: <span data-ng-bind="::model.data.ArchitecturalStyle | number"></span>
                         </li>
                         <li data-ng-if="::model.data.YearBuilt">
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
@@ -83,7 +82,7 @@
                         <li data-ng-if="::model.data.PropertySubType">
                             <span data-ng-bind="::model.data.PropertySubType"></span>
                         </li>
-                        <li class="mls-service" data-ng-if="::model.data.ListingKey || ::model.data.ListingId">
+                        <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey">
                             <span data-ng-bind="getMLSName()"></span>#
                             <span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>
                         </li>
@@ -183,8 +182,10 @@
             <div class="image-dimmer"></div>
             <!-- parallax-content disabled, cannot use height altering on the entire widget -->
             <!-- FIXME {} can't be used in inline styles as it won't resolve before the page loads (or may not exist) -->
-            <div class="" style="background: url('{{model.data.Images[0].MediaURL}}') no-repeat center center; background-size: cover;">
-                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::model.data.UnparsedAddress}}"/>
+            <div data-ng-if="model.data.Images"
+                 style="background: url('{{::model.data.Images[0].MediaURL}}') no-repeat center center; background-size: cover;"
+            >
+                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::getStreetAddress()}}"/>
                 <img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg">
             </div>
         </div>
@@ -232,64 +233,154 @@
 
             <div>
                 <div class="detail-sections">
-                    <ul class="primary_font">
-                        <li><h4>Size & Style</h4></li>
-                        <li><strong>Built: </strong>1994</li>
-                        <li><strong>Stories: </strong>1994</li>
-                        <li><strong>Building Type: </strong>1994</li>
-                        <li><strong>Living SqFt: </strong>5270</li>
-                        <li><strong>Lot Acres: </strong>0.551</li>
-                        <li><strong>Horse Property: </strong>No</li>
+                    <stratus-idx-property-details-sub-section
+                            ng-model="model"
+                            section-name="Size & Style"
+                            items='{
+                                "YearBuilt": "Built",
+                                "Stories": "Stories",
+                                "StructureType": "Structure Type",
+                                "LivingArea": {"name": "Living Area", "comma": true},
+                                "LotSizeAcres": {"name": "Lot Size", "append": " Acres", "comma": true},
+                                "LotSizeSquareFeet": {"name": "Lot Size", "append": " SqFt", "comma": true},
+                                "LotSizeArea": {"name": "Lot Size", "comma": true},
+                                "HorseYN": {"true": "Horse Property: Yes", "false": ""}
+                            }'
+                    >
+                    </stratus-idx-property-details-sub-section>
+                    <stratus-idx-property-details-sub-section
+                            ng-model="model"
+                            section-name="Materials"
+                            items='{
+                                "Roof": "Roof",
+                                "Flooring": "Flooring",
+                                "Flooring": "Flooring",
+                                "WindowFeatures": "Windows",
+                                "DoorFeatures": "Doors",
+                                "FoundationDetails": "Foundation",
+                                "FoundationArea": "Foundation",
+                                "ConstructionMaterials": "Construction"
+                            }'
+                    >
+                    </stratus-idx-property-details-sub-section>
+                    <stratus-idx-property-details-sub-section
+                            ng-model="model"
+                            section-name="Utilities"
+                            items='{
+                                "CoolingYN": {"true": "Cooling: Yes", "false": ""},
+                                "Cooling": "Cooling",
+                                "HeatingYN": {"true": "Heating: Yes", "false": ""},
+                                "Heating": "Heating",
+                                "Utilities": "Utilities",
+                                "Electric": "Electric",
+                                "WaterSource": "Water",
+                                "Sewer": "Sewer Septic"
+                            }'
+                    >
+                    </stratus-idx-property-details-sub-section>
+                    <stratus-idx-property-details-sub-section
+                            ng-model="model"
+                            section-name="Area"
+                            items='{
+                                "CrossStreet": "Cross Street",
+                                "PostalCode": "Postal Code",
+                                "CityRegion": "City Region",
+                                "Township": "Township",
+                                "CountyOrParish": "County",
+                                "MLSAreaMajor": "Area",
+                                "SubdivisionName": "Subdivision",
+                                "StateOrProvince": "State",
+                                "StateRegion": "State Region"
+                            }'
+                    >
+                    </stratus-idx-property-details-sub-section>
+                    <stratus-idx-property-details-sub-section
+                            ng-model="model"
+                            section-name="Features"
+                            items='{
+                                "HorseAmenities": "Horse Amenities",
+                                "PoolPrivateYN": {"true": "Pool: Yes", "false": ""},
+                                "PoolFeatures": "Pool",
+                                "SpaYN": {"true": "Spa: Yes", "false": ""},
+                                "SpaFeatures": "Spa",
+                                "LaundryFeatures": "Laundry",
+                                "Appliances": "Appliances",
+                                "FireplaceYN": {"true": "Fireplace: Yes", "false": ""},
+                                "FireplaceFeatures": "Fireplace",
+                                "FireplacesTotal": "Fireplaces",
+                                "YearBuilt": "Additional Rooms",
+                                "InteriorFeatures": "Interior Features",
+                                "SecurityFeatures": "Security Features",
+                                "ExteriorFeatures": "Exterior Features",
+                                "BuildingFeatures": "Building Features",
+                                "AccessibilityFeatures": "Accessibility",
+                                "PatioAndPorchFeatures": "Patio And Porch",
+                                "Fencing": "Fencing",
+                                "FrontageType": "Frontage",
+                                "OtherEquipment": "Equipment",
+                                "CommunityFeatures": "Community"
+                            }'
+                    >
+                    </stratus-idx-property-details-sub-section>
+                    <stratus-idx-property-details-sub-section
+                            ng-model="model"
+                            section-name="Parking"
+                            items='{
+                                "ParkingTotal": "Parking Spaces",
+                                "GarageYN": {"true": "Garage: Yes", "false": ""},
+                                "GarageSpaces": "Garage Spaces",
+                                "AttachedGarageYN": {"true": "Attached Garage", "false": ""},
+                                "CarportYN": {"true": "Carport: Yes", "false": ""},
+                                "CarportSpaces": "Carport Spaces",
+                                "CoveredSpaces": "Covered Spaces",
+                                "OpenParkingSpaces": "Open Spaces",
+                                "OtherParking": "Other Parking",
+                                "ParkingFeatures": "Parking"
+                            }'
+                    >
+                    </stratus-idx-property-details-sub-section>
+                    <stratus-idx-property-details-sub-section
+                            ng-model="model"
+                            section-name="Sources"
+                            items='{
+                                "FinancialDataSource": "Financial Data",
+                                "LotSizeSource": "Lot Size",
+                                "LotDimensionsSource": "Lot Dimensions",
+                                "LivingAreaSource": "Living Area",
+                                "BuildingAreaSource": "Building Area",
+                                "FarmLandAreaSource": "Farm Land Area",
+                                "YearBuiltSource": "Year Built",
+                                "MapCoordinateSource": "Map Coordinate",
+                                "ListAOR": {"name": "Listing AOR"},
+                                "OriginatingSystemName": {"name": "Originating System"},
+                                "OriginatingSystemKey": {"name": "Originating System", "prepend": "# "}
+                            }'
+                    >
+                    </stratus-idx-property-details-sub-section>
 
-                        <li><h4>Materials</h4></li>
-                        <li><strong>Roof: </strong>Tile</li>
-                        <li><strong>Flooring: </strong>Marble, Hardwood</li>
-                        <li><strong>Foundation: </strong>Concrete perimeter and slab</li>
+                    <!-- Agent section -->
+                    <div class="property-details-sub-section">
+                        <div class="sub-detail-section">
+                            <div class="section-name">Agent</div>
+                            <div class="sub-detail" data-ng-if="getListAgentName()">
+                                <span class="item-label">Listing Agent: </span>
+                                <span data-ng-bind="::getListAgentName()"></span><span data-ng-if="::model.data.ListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.ListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.ListOfficeName">, <span data-ng-bind="::model.data.ListOfficeName"></span></span>
+                            </div>
+                            <div class="sub-detail" data-ng-if="getCoListAgentName()">
+                                <span class="item-label">Co-Listing Agent: </span>
+                                <span data-ng-bind="::getCoListAgentName()"></span><span data-ng-if="::model.data.CoListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoListOfficeName">, <span data-ng-bind="::model.data.CoListOfficeName"></span></span>
+                            </div>
+                            <div class="sub-detail" data-ng-if="getBuyerAgentName()">
+                                <span class="item-label">Buyer Agent: </span>
+                                <span data-ng-bind="::getBuyerAgentName()"></span><span data-ng-if="::model.data.BuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.BuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.BuyerOfficeName">, <span data-ng-bind="::model.data.BuyerOfficeName"></span></span>
+                            </div>
+                            <div class="sub-detail" data-ng-if="getCoBuyerAgentName()">
+                                <span class="item-label">Co-Buyer Agent: </span>
+                                <span data-ng-bind="::getCoBuyerAgentName()"></span><span data-ng-if="::model.data.CoBuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoBuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoBuyerOfficeName">, <span data-ng-bind="::model.data.CoBuyerOfficeName"></span></span>
+                            </div>
+                        </div>
+                    </div>
 
-                        <li><h4>Utilities</h4></li>
-                        <li><strong>Cooling: </strong>None</li>
-                        <li><strong>Heating: </strong>Central Forced Air</li>
-                        <li><strong>Utilities: </strong>Public Utilities</li>
-                        <li><strong>Water: </strong>Public</li>
-                        <li><strong>Sewer Septic: </strong>Public</li>
-
-                        <li><h4>Area</h4></li>
-                        <li><strong>Cross Street: </strong>Privet</li>
-                        <li><strong>Postal Code: </strong>91234</li>
-                        <li><strong>Area ID: </strong>451</li>
-                        <li><strong>Area Text: </strong>Hillsborough Hills, Etc.</li>
-
-                        <li><h4>Features</h4></li>
-                        <li><strong>Kitchen: </strong>
-                            Dishwasher, Freezer, Garbage Disposal, Hood Over Range, Oven Range - Built-In, Gas,
-                            Countertop - Granite, Island with Sink, Cooktop - Gas, Wine Refrigerator, Pantry, Oven -
-                            Double, Trash Compactor, Refrigerator
-                        </li>
-                        <li><strong>Dining Room: </strong>Eat in Kitchen, Formal Dining Room</li>
-                        <li><strong>Family Room: </strong>Kitchen / Family Room Combo, Separate Family Room</li>
-                        <li><strong>Laundry: </strong>Inside, Washer / Dryer</li>
-                        <li><strong>Fireplaces: </strong>Master Bedroom, Living Room, Gas Starter, Family Room</li>
-                        <li><strong>Additional Rooms: </strong>Den / Study / Office</li>
-                        <li><strong>Security Features: </strong>Security Fence, Secured Garage / Parking</li>
-                        <li><strong>Amenities Misc: </strong>High Ceiling , Walk-in Closet , Built-in Vacuum, Bay
-                            Window, Security Gate
-                        </li>
-                        <li><strong>Garage Parking Features: </strong>Off-Street Parking, Attached Garage, Gate / Door
-                            Opener, Enclosed, Electric Gate
-                        </li>
-                        <li><strong>Garage Spaces: </strong>3</li>
-                        <li><strong>Garage Max: </strong>3</li>
-
-                        <li><h4>Agent</h4></li>
-                        <li><strong>Listing Agent: </strong><a href="" target="_blank">Matt Murdock, Murdock Nelson &
-                            Page</a></li>
-                        <li><strong>Co-Listing Agent: </strong><a href="" target="_blank">Karen Page, Murdock Nelson &
-                            Page</a></li>
-                        <li><strong>Buyer Agent: </strong><a href="" target="_blank">Foggy Nelson, Murdock Nelson &
-                            Page</a></li>
-                        <li><strong>Co-Buyer Agent: </strong><a href="" target="_blank">Jessica Jones, Murdock Nelson &
-                            Page</a></li>
-                    </ul>
                 </div>
             </div>
 
@@ -311,9 +402,6 @@
                     <strong>Co-Buyer Agent: </strong>
                     <span data-ng-bind="::getCoBuyerAgentName()"></span><span data-ng-if="::model.data.CoBuyerOfficeName">, <span data-ng-bind="::model.data.CoBuyerOfficeName"></span></span>
                 </div>
-            </div>
-            <div class="detail-sections">
-                <stratus-idx-property-details-sub-section ng-model="model"data-ng-repeat="detail in ::minorDetails"section-name="{{::detail.section}}"items="{{::detail.items}}"></stratus-idx-property-details-sub-section>
             </div>-->
 
 

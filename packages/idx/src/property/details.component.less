@@ -1,8 +1,8 @@
 /*
 Nothing should be outside 'stratus-idx-property-details' or it will leak into other modules
 */
-@tablet: ~"(min-width: 959px)";
-@phone: ~"(min-width: 600px)";
+@tablet: ~"(max-width: 959px)";
+@phone: ~"(max-width: 600px)";
 stratus-idx-property-details {
   position: relative;
   md-progress-circular {
@@ -38,11 +38,11 @@ stratus-idx-property-details {
 
   /* Generic ng-repeat classes */
   .repeatedArray {
-    &:first-child,
-    &:last-child {
-      .hideFirstChild {
-        display: none;
-      }
+    &:first-child .hideFirstChild {
+      display: none;
+    }
+    &:last-child .hideLastChild {
+      display: none;
     }
   }
 
@@ -382,6 +382,28 @@ stratus-idx-property-details {
 
         @media @phone {
           column-count: 1;
+        }
+        .property-details-sub-section,
+        stratus-idx-property-details-sub-section {
+          // stylelint-disable-next-line no-descending-specificity
+          .sub-detail-section {
+            display: inline-block;
+            margin: 0 0 1em;
+            width: 100%;
+            // stylelint-disable-next-line no-descending-specificity
+            .section-name {
+              margin: 46px 0 20px;
+              font-size: 12px;
+              font-weight: bold;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              color: #9e9e9e;
+            }
+            // stylelint-disable-next-line no-descending-specificity
+            .item-label {
+              font-weight: bolder;
+            }
+          }
         }
       }
     }

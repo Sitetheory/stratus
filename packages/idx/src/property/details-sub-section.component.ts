@@ -42,9 +42,25 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
         $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : []
+        console.log('items was', $attrs.items)
+        console.log('items was json', JSON.parse($attrs.items))
+        console.log('items set to', _.clone($scope.items))
 
         $scope.visibleFields = false
         $scope.model = null
+
+        const checkForVisibleFields = () => {
+            console.log('checkForVisibleFields', $scope.model)
+            Object.keys($scope.items).forEach((item: string) => {
+                if (
+                    Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
+                    $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
+                    $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
+                ) {
+                    $scope.visibleFields = true
+                }
+            })
+        }
 
         if ($scope.sectionName.startsWith('{')) {
             $scope.stopWatchingSectionName = $scope.$watch('$ctrl.sectionName', (data: string) => {
@@ -66,15 +82,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
             // TODO might wanna check something else just to not import Model
             if (data instanceof Model && data !== $scope.model) {
                 $scope.model = data
-                Object.keys($scope.items).forEach((item: string) => {
-                    if (
-                        Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
-                        $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
-                        $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
-                    ) {
-                        $scope.visibleFields = true
-                    }
-                })
+                checkForVisibleFields()
                 $scope.stopWatchingModel()
             }
         })
@@ -84,6 +92,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         }
 
         $scope.convertItemsToObject = (): void => {
+            console.log('convertItemsToObject', _.clone($scope.items))
             /*Object.keys($scope.items).forEach((item: string) => {
                 if (typeof $scope.items[item] === 'string') {
                     $scope.items[item] = {
