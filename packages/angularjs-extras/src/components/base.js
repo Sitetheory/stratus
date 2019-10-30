@@ -72,7 +72,7 @@
     controller: function ($scope, $attrs, Registry, Model, Collection) {
       // Initialize
       const $ctrl = this
-      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
       Stratus.Internals.CssLoader(
