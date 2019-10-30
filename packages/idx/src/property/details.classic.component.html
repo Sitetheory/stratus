@@ -99,7 +99,7 @@
 
 
 					<div class="mls-service-container">
-						<div class="mls-service" data-ng-if="::model.data.ListingKey">
+						<div class="mls-service" data-ng-if="::model.data.ListingKey || ::model.data.ListingId">
 							<span data-ng-bind="getMLSName()"></span>#
 							<span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>
 						</div>
@@ -109,7 +109,6 @@
 		</div>
 
 		<div class="additional-photos details-container" data-ng-if="model.data.Images && model.data.Images.length > 0" data-md-whiteframe="1">
-			<!-- FIXME stratus-carousel stopped working on latest stratus -->
 			<stratus-swiper-carousel
 					init-now="model.completed"
 					images="images"
