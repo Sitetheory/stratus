@@ -8,7 +8,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
 import {sanitize} from '@stratusjs/core/conversion'
-import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
+import {extendDeep, isJSON, poll, ucfirst} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // AngularJS Dependency Injector
@@ -88,18 +88,17 @@ export class Registry {
                 list[key] = JSON.parse(list[key])
             })
             options.api = sanitize(options.api)
-            /* TODO: handle these sorts of shortcuts to the API that components are providing *
-             $scope.api = _.isJSON($attrs.api) ? JSON.parse($attrs.api) : false
-             const request = {
-             api: {
-             options: this.options ? this.options : {},
-             limit: _.isJSON($attrs.limit) ? JSON.parse($attrs.limit) : 40
-             }
-             }
-             if ($scope.api && _.isObject($scope.api)) {
-             request.api = _.extendDeep(request.api, $scope.api)
-             }
-             /* */
+            // TODO: handle these sorts of shortcuts to the API that components are providing
+            // $scope.api = isJSON(options.api) ? JSON.parse(options.api) : false
+            // const request = {
+            //     api: {
+            //         options: options || {},
+            //         limit: isJSON(options.limit) ? JSON.parse(options.limit) : 40
+            //     }
+            // }
+            // if ($scope.api && _.isObject($scope.api)) {
+            //     request.api = extendDeep(request.api, $scope.api)
+            // }
             let completed = 0
             const verify = () => {
                 if (!_.isNumber(completed) || completed !== _.size(options)) {
@@ -110,7 +109,7 @@ export class Registry {
             if (!$interpolate) {
                 const wait = await serviceVerify()
             }
-            _.forEach(options, (element, key) => {
+            _.forEach(options, async (element, key) => {
                 if (!element || typeof element !== 'string') {
                     completed++
                     verify()
@@ -125,24 +124,26 @@ export class Registry {
                     return
                 }
                 if (cookie('env')) {
-                    console.log('poll attribute:', key)
+                    console.log(`poll (${key}): start`)
                 }
                 // TODO: Check if this ever hits a timeout
-                poll(() => interpreter($scope.$parent), 7500, 250)
-                    .then((value: any) => {
-                        if (cookie('env')) {
-                            console.log('interpreted:', value)
-                        }
-                        if (typeof value === 'undefined') {
-                            return
-                        }
-                        options[key] = value
-                        completed++
-                        verify()
-                    })
-                    .catch((message: any) => {
-                        console.error(message)
-                    })
+                let value: any
+                try {
+                    value = await poll(() => interpreter($scope.$parent), 1500, 250)
+                } catch (err) {
+                    if (
+                        cookie('env') ||
+                        err.name !== 'Timeout'
+                    ) {
+                        console.error(err)
+                    }
+                }
+                if (cookie('env')) {
+                    console.log(`poll (${key}):`, value)
+                }
+                options[key] = value
+                completed++
+                verify()
             })
         })
     }
@@ -207,9 +208,7 @@ export class Registry {
 
             // Filter if Necessary
             if (options.api) {
-                data.meta.set('api', isJSON(options.api)
-                                     ? JSON.parse(options.api)
-                                     : options.api)
+                data.meta.set('api', isJSON(options.api) ? JSON.parse(options.api) : options.api)
             }
 
             // Handle Staggered
@@ -245,7 +244,7 @@ export class Registry {
 // This Registry Service handles data binding for an element
 Stratus.Services.Registry = [
     '$provide',
-    ($provide: any) => {
+    ($provide: angular.auto.IProvideService) => {
         $provide.factory('Registry', [
             // '$interpolate',
             // 'Collection',

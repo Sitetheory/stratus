@@ -31,7 +31,7 @@ NOTE: this was used by Brand New Congress and needs to be customized so values c
     controller: function ($scope, $attrs, $http) {
       // Initialize
       const $ctrl = this
-      $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+      $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
       $scope.initialized = false

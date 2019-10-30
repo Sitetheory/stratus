@@ -54,10 +54,13 @@ packages/swiper/src/**/*.js
 packages/swiper/src/**/*.css
 
 # TypeScript Supercedes
+packages/angularjs-extras/src/components/calendar/calendar.js
+packages/angularjs-extras/src/components/calendar/customView.js
 packages/angularjs-extras/src/components/embed.js
 packages/angularjs-extras/src/components/image-carousel.js
 packages/angularjs-extras/src/components/twitterFeed.js
 packages/angularjs-extras/src/directives/froala.js
+packages/angularjs-extras/src/services/iCal.js
 
 # JavaScript Supercedes
 !packages/runtime/src/stratus.amd.js

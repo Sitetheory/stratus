@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/runtime",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "This is the runtime package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -26,16 +26,15 @@
     "yarn": ">= 1.0.0"
   },
   "dependencies": {
-    "@stratusjs/core": "^0.2.0",
-    "bowser": "^2.6.1",
+    "@stratusjs/core": "^0.2.2",
     "bowser-legacy": "npm:bowser@^1.9.4",
     "jquery": "^3.4.1",
     "lodash": "^4.17.15",
     "tslib": "^1.10.0"
   },
   "devDependencies": {
-    "ts-node": "^8.3.0",
+    "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.4"
   }
 }

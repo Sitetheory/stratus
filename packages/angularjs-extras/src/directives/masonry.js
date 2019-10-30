@@ -36,7 +36,7 @@
       link: function ($scope, $element, $attrs) {
         // Initialize
         const $ctrl = this
-        $ctrl.uid = _.uniqueId(_.camelToSnake(name) + '_')
+        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $element.elementId || $ctrl.uid
         $scope.initialized = false
