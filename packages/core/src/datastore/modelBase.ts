@@ -3,6 +3,7 @@
 
 import _ from 'lodash'
 import {EventManager} from '@stratusjs/core/events/eventManager'
+import {LooseObject, poll} from '@stratusjs/core/misc'
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
@@ -10,13 +11,14 @@ export class ModelBase extends EventManager {
     name = 'ModelBase'
 
     // Infrastructure
-    data: any = {}
-    temps: any = {}
+    data: LooseObject = {}
+    temps: LooseObject = {}
 
     // Diff Detection
     changed: boolean|any = false
+    watch = false
     watching = false
-    patch: any = {}
+    patch: LooseObject = {}
 
     constructor(data?: any, options?: any) {
         super()
@@ -30,22 +32,20 @@ export class ModelBase extends EventManager {
              /* */
             _.extend(this.data, data)
         }
+    }
 
-        // Scope Binding
-        // this.toObject = this.toObject.bind(this)
-        // this.toJSON = this.toJSON.bind(this)
-        // this.each = this.each.bind(this)
-        // this.get = this.get.bind(this)
-        // this.has = this.has.bind(this)
-        // this.size = this.size.bind(this)
-        // this.set = this.set.bind(this)
-        // this.setAttribute = this.setAttribute.bind(this)
-        // this.temp = this.temp.bind(this)
-        // this.add = this.add.bind(this)
-        // this.remove = this.remove.bind(this)
-        // this.iterate = this.iterate.bind(this)
-        // this.clear = this.clear.bind(this)
-        // this.clearTemp = this.clearTemp.bind(this)
+    // Watch for Data Changes
+    async watcher() {
+        if (this.watching) {
+            return true
+        }
+        this.watching = true
+        const interval = 250
+        const check = () => {
+            // if (_.isEqual(this.data)) {
+            // }
+            setTimeout(check, interval)
+        }
     }
 
     toObject(options: any) {
