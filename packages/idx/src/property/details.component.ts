@@ -30,7 +30,7 @@ import 'stratus.filters.moment'
 
 // Component Preload
 import '@stratusjs/idx/property/details-sub-section.component'
-import '@stratusjs/swiper/carousel'
+import '@stratusjs/swiper/carousel.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
