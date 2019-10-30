@@ -2,23 +2,29 @@
 // --------------
 
 // Runtime
-import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
-import {IAttributes, IScope} from 'angular'
+
+// Libraries
+import _ from 'lodash'
+import angular from 'angular'
+import 'angular'
+import 'jquery'
 
 // Angular 1 Modules
 import 'angular-material'
 
 // Services
-import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/angularjs/services/collection'
+import '@stratusjs/angularjs/services/registry'
 
-// Stratus Dependencies
-import {cookie} from '@stratusjs/core/environment'
+// Services
 import {Model} from '@stratusjs/angularjs/services/model'
-import {Registry} from '@stratusjs/angularjs/services/registry'
 import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Registry} from '@stratusjs/angularjs/services/registry'
+
+// Stratus Utilities
+import {cookie} from '@stratusjs/core/environment'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -61,11 +67,8 @@ Stratus.Components.Base = {
         options: '<'
     },
     controller(
-        $scope: IScope|any,
-        $attrs: IAttributes|any,
-        R: Registry,
-        M: Model,
-        C: Collection
+        $scope: angular.IScope & any,
+        $attrs: angular.IAttributes & any
     ) {
         // Initialize
         const $ctrl = this
@@ -87,7 +90,8 @@ Stratus.Components.Base = {
 
         // Registry Connectivity
         if ($attrs.target) {
-            R.fetch($attrs, $scope)
+            $scope.registry = $scope.registry || new Registry()
+            $scope.registry.fetch($attrs, $scope)
         }
 
         // Symbiotic Data Connectivity
