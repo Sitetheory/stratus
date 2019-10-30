@@ -243,13 +243,17 @@ export function poll(fn: any, timeout?: any, interval?: any) {
     const threshold = Number(new Date()) + timeout
     const check = (resolve: any, reject: any) => {
         const cond = fn()
-        if (cond) {
+        if (typeof cond !== 'undefined') {
             resolve(cond)
-        } else if (Number(new Date()) < threshold) {
-            setTimeout(check, interval, resolve, reject)
-        } else {
-            reject(new Error('Timeout ' + fn))
+            return
         }
+        if (Number(new Date()) > threshold) {
+            const err = new Error(fn)
+            err.name = 'Timeout'
+            reject(err)
+            return
+        }
+        setTimeout(check, interval, resolve, reject)
     }
 
     return new Promise(check)
