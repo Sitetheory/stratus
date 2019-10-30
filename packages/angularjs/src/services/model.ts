@@ -96,6 +96,9 @@ export class Model extends ModelBase {
     completed = false
     saving = false
 
+    // Temporarily force watching to all direct models
+    watch = true
+
     // XHR Data
     status?: any = null
 
@@ -142,31 +145,6 @@ export class Model extends ModelBase {
         }
 
         // TODO: Enable Auto-Save
-
-        // Scope Binding
-        // this.watcher = this.watcher.bind(this)
-        // this.getIdentifier = this.getIdentifier.bind(this)
-        // this.isNew = this.isNew.bind(this)
-        // this.getType = this.getType.bind(this)
-        // this.getHash = this.getHash.bind(this)
-        // this.url = this.url.bind(this)
-        // this.serialize = this.serialize.bind(this)
-        // this.sync = this.sync.bind(this)
-        // this.fetch = this.fetch.bind(this)
-        // this.save = this.save.bind(this)
-        // this.specialAction = this.specialAction.bind(this)
-        // this.throttleSave = this.throttleSave.bind(this)
-        // this.toJSON = this.toJSON.bind(this)
-        // this.toPatch = this.toPatch.bind(this)
-        // this.buildPath = this.buildPath.bind(this)
-        // this.get = this.get.bind(this)
-        // this.find = this.find.bind(this)
-        // this.set = this.set.bind(this)
-        // this.setAttribute = this.setAttribute.bind(this)
-        // this.toggle = this.toggle.bind(this)
-        // this.pluck = this.pluck.bind(this)
-        // this.exists = this.exists.bind(this)
-        // this.destroy = this.destroy.bind(this)
 
         // this.throttle = _.throttle(this.save, 2000)
 
@@ -215,6 +193,7 @@ export class Model extends ModelBase {
         if (!$rootScope) {
             const wait = await serviceVerify()
         }
+        // FIXME: The performance here is horrendous
         $rootScope.$watch(() => this.data,
             (newData: any, priorData: any) => {
                 const patchData = patch(newData, priorData)
@@ -353,7 +332,9 @@ export class Model extends ModelBase {
                 this.status = response.status
 
                 // Begin Watching
-                this.watcher()
+                if (this.watch) {
+                    this.watcher()
+                }
 
                 // Reset status model
                 setTimeout(() => {
