@@ -376,7 +376,7 @@ _.mixin({
     object: _.zipObject,
     omit: _.omitBy,
     pairs: _.toPairs,
-    // pluck: _.map,
+    pluck: _.map,
     where: _.filter,
 
     // This function simply extracts the name of a function from code directly
