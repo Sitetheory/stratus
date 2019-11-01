@@ -41,8 +41,11 @@ Stratus.Components.IdxPropertyList = {
         detailsLinkUrl: '@',
         detailsLinkTarget: '@',
         detailsTemplate: '@',
-        orderOptions: '@',
+        contactEmail: '@',
+        contactName: '@',
+        contactPhone: '@',
         googleApiKey: '@',
+        orderOptions: '@',
         options: '@',
         template: '@'
     },
@@ -108,6 +111,9 @@ Stratus.Components.IdxPropertyList = {
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
+            $scope.contactName = $attrs.contactName || null
+            $scope.contactEmail = $attrs.contactEmail || null
+            $scope.contactPhone = $attrs.contactPhone || null
 
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
@@ -371,15 +377,18 @@ Stratus.Components.IdxPropertyList = {
             if ($scope.detailsLinkPopup === true) {
                 // Opening a popup will load the propertyDetails and adjust the hashbang URL
                 const templateOptions: {
-                    element_id: string,
+                    'element-id': string,
                     service: number,
                     'listing-key': string,
                     'default-list-options': string,
                     'page-title': boolean,
                     'google-api-key'?: string,
+                    'contact-name'?: string,
+                    'contact-email'?: string,
+                    'contact-phone'?: string,
                     template?: string,
                 } = {
-                    element_id: 'property_detail_popup_' + property.ListingKey,
+                    'element-id': 'property_detail_popup_' + property.ListingKey,
                     service: property._ServiceId,
                     'listing-key': property.ListingKey,
                     'default-list-options': JSON.stringify($ctrl.defaultOptions),
@@ -387,6 +396,15 @@ Stratus.Components.IdxPropertyList = {
                 }
                 if ($scope.googleApiKey) {
                     templateOptions['google-api-key'] = $scope.googleApiKey
+                }
+                if ($scope.contactName) {
+                    templateOptions['contact-name'] = $scope.contactName
+                }
+                if ($scope.contactEmail) {
+                    templateOptions['contact-email'] = $scope.contactEmail
+                }
+                if ($scope.contactPhone) {
+                    templateOptions['contact-phone'] = $scope.contactPhone
                 }
                 if ($scope.detailsTemplate) {
                     templateOptions.template = $scope.detailsTemplate
@@ -396,7 +414,7 @@ Stratus.Components.IdxPropertyList = {
                     `<md-dialog aria-label="${property.ListingKey}">` +
                     '<stratus-idx-property-details '
                 _.forEach(templateOptions, (optionValue, optionKey) => {
-                    template += `${optionKey}='${optionValue}'`
+                    template += `data-${optionKey}='${optionValue}'`
                 })
                 template +=
                     '></stratus-idx-property-details>' +

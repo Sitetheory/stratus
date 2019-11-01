@@ -52,6 +52,9 @@ Stratus.Components.IdxPropertyDetails = {
         images: '@',
         openhouses: '@',
         googleApiKey: '@',
+        contactEmail: '@',
+        contactName: '@',
+        contactPhone: '@',
         options: '@',
         template: '@',
         defaultListOptions: '@'
@@ -101,6 +104,9 @@ Stratus.Components.IdxPropertyDetails = {
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
+            $scope.contactName = $attrs.contactName || null
+            $scope.contactEmail = $attrs.contactEmail || null
+            $scope.contactPhone = $attrs.contactPhone || null
             $scope.images = []
 
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?

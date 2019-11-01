@@ -42,15 +42,11 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
         $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : []
-        console.log('items was', $attrs.items)
-        console.log('items was json', JSON.parse($attrs.items))
-        console.log('items set to', _.clone($scope.items))
 
         $scope.visibleFields = false
         $scope.model = null
 
         const checkForVisibleFields = () => {
-            console.log('checkForVisibleFields', $scope.model)
             Object.keys($scope.items).forEach((item: string) => {
                 if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
@@ -92,7 +88,6 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         }
 
         $scope.convertItemsToObject = (): void => {
-            console.log('convertItemsToObject', _.clone($scope.items))
             /*Object.keys($scope.items).forEach((item: string) => {
                 if (typeof $scope.items[item] === 'string') {
                     $scope.items[item] = {

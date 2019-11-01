@@ -56,7 +56,7 @@
                             Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
                         </li>
                         <li data-ng-if="::model.data.ArchitecturalStyle">
-                            Days on Market: <span data-ng-bind="::model.data.ArchitecturalStyle | number"></span>
+                            Style: <span data-ng-bind="::model.data.ArchitecturalStyle"></span>
                         </li>
                         <li data-ng-if="::model.data.YearBuilt">
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
@@ -90,20 +90,24 @@
 
                 </div>
                 <div class="details-right">
-                    <div class="list-price font-secondary" data-ng-if="::model.data.ListPrice">Listed at
-                        $<span data-ng-bind="::model.data.ListPrice | number"></span></div>
+                    <div class="list-price font-secondary" data-ng-if="::model.data.ClosePrice || model.data.ListPrice">
+                        <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? 'Sold for' : 'Listed at'"></span>
+                        <span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)"></span>
+                    </div>
+                    <!-- FIXME -->
                     <h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3>
                     <div class="font-body description" data-ng-if="::model.data.PublicRemarks" data-ng-bind="::model.data.PublicRemarks"></div>
                     <div class="response-container">
                         <a class="vtour btn btn-alt" data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded" data-ng-href="{{::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded}}" target="_blank">VTour</a>
-                        <a class="download-PDF btn btn-alt" href="">Download PDF</a>
+                        <!-- TODO no support for files other than files at this time -->
+                        <!--a class="download-PDF btn btn-alt" href="">Download PDF</a-->
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Temporary Open House -->
-        <div class="open-house-container details-container accent_bg_color static-element">
+        <div class="open-house-container details-container accent-bg-color static-element">
             <div class="open-house">
                 <div class="clearfix">
                     <div class="details-left">
@@ -154,7 +158,7 @@
             </div>
 
             <!-- Real open house
-            <div class="details-container open-house-section accent_bg_color" data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length">
+            <div class="details-container open-house-section accent-bg-color" data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length">
                 <h2>Open</h2>
                 <div class="open-house-container dotted-spaced-sideline">
                     <span class="primary_font" data-ng-if="::model.data.OpenHouses[0].OpenHouseRemarks" data-ng-bind="::model.data.OpenHouses[0].OpenHouseRemarks"></span>
@@ -182,7 +186,7 @@
             <div class="image-dimmer"></div>
             <!-- parallax-content disabled, cannot use height altering on the entire widget -->
             <!-- FIXME {} can't be used in inline styles as it won't resolve before the page loads (or may not exist) -->
-            <div data-ng-if="model.data.Images"
+            <div data-ng-if="model.data.Images && model.data.Images[0]"
                  style="background: url('{{::model.data.Images[0].MediaURL}}') no-repeat center center; background-size: cover;"
             >
                 <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::getStreetAddress()}}"/>
@@ -190,14 +194,16 @@
             </div>
         </div>
 
-        <div class="map-location details-container static-element" data-ng-if="::getGoogleMapEmbedUrl() && model.data.UnparsedAddress">
+        <div class="map-location details-container static-element" data-ng-if="::getFullAddress()">
             <h2 class="dotted-spaced-underline">Location</h2>
-            <iframe data-ng-src="{{::getGoogleMapEmbedUrl()}}" style="border: 0;height:450px;width:100%;"></iframe>
+            <iframe data-ng-src="{{::getGoogleMapEmbedUrl()}}" class="google-map-embed"></iframe>
         </div>
         <!-- TODO: Should only show if it's a personal listing and sitemap or floorplan exist -->
+        <!-- TODO: data-layout and data-flex should only exist if both floorplan and siteplan exist -->
+        <!--
         <div class="schematics details-container static-element">
             <h2>Schematics</h2>
-            <!-- TODO: data-layout and data-flex should only exist if both floorplan and siteplan exist -->
+
             <div class="schematics-container clearfix">
                 <div class="schematics-column floorplan">
                     <div class="schematics-image floorplan-image">
@@ -225,6 +231,7 @@
                 </div>
             </div>
         </div>
+        -->
 
         <div class="additional-details details-container static-element">
             <h2 class="dotted-spaced-underline">More</h2>
@@ -408,10 +415,18 @@
         </div>
 
         <!-- Contact area needs dynamic variables -->
-        <div class="contact-container details-container static-element">
+        <div class="contact-container details-container static-element"
+             data-ng-show="::contactName || contactPhoneNumber || contactEmail"
+        >
             <h2>Contact</h2>
             <p class="primary_font">
-                <span class="site-name">Site Name Here</span><span class="phone"><a href="tel://{$HOSTING_VARS->phone}">123.456.7890</a></span><span class="email"><a href="">myemail@mydomain.com</a></span>
+                <span class="site-name" data-ng-show="::contactName" data-ng-bind="::contactName"></span>
+                <span class="phone" data-ng-show="::contactPhone">
+                    <a data-ng-href="tel:{{::contactPhone}}" data-ng-bind="::contactPhone"></a>
+                </span>
+                <span class="email" data-ng-show="::contactEmail">
+                    <a data-ng-href="mailto:{{::contactEmail}}" data-ng-bind="::contactEmail" target="_blank"></a>
+                </span>
             </p>
         </div>
 
