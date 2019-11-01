@@ -60,12 +60,18 @@
 					<div class="details-specs">
 						Status: <span data-ng-bind="::model.data.MlsStatus"></span>
 						<span data-ng-if="::model.data.BedroomsTotal > 0"><br><span data-ng-bind="::model.data.BedroomsTotal"></span> Beds</span>
-						<span data-ng-if="::model.data.BathroomsFull > 0">
-							<br><span data-ng-bind="::model.data.BathroomsFull"></span> Baths
-							<span data-ng-if="::model.data.BathroomsHalf">
-								| <span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
-							</span>
-						</span>
+                        <span data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span> Baths
+                        </span>
+                        <span data-ng-if="::model.data.BathroomsHalf > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
+                        </span>
+                        <span data-ng-if="::model.data.BathroomsOneQuarter > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
+                        </span>
+                        <span data-ng-if="::model.data.BathroomsPartial > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
+                        </span>
 						<span data-ng-if="::model.data.BuildingAreaTotal"><br><span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet</span>
 						<span data-ng-if="::model.data.ListPrice"><br>Listed at $<span data-ng-bind="::model.data.ListPrice | number"></span></span>
 						<span data-ng-if="::model.data.DaysOnMarket"><br>Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span></span>
