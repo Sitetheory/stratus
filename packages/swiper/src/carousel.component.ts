@@ -368,6 +368,12 @@ Stratus.Components.SwiperCarousel = {
             if ($scope.pagination) {
                 $ctrl.swiperParameters.pagination = {}
 
+                if (typeof $scope.pagination === 'string') {
+                    $scope.pagination = {
+                        render: $scope.pagination
+                    }
+                }
+
                 if (typeof $scope.pagination === 'object') {
                     if (Object.prototype.hasOwnProperty.call($scope.pagination, 'el')) {
                         $ctrl.swiperPaginationEl = $ctrl.swiperContainer.getElementsByClassName($scope.pagination.el)[0]
