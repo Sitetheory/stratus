@@ -277,6 +277,8 @@ Stratus.Components.IdxPropertyList = {
 
         /**
          * Returns the processed street address
+         * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
+         * +  StreetDirSuffix + 'Unit' + UnitNumber
          */
         $scope.getStreetAddress = (property: object | any): string => {
             let address = ''
@@ -287,12 +289,25 @@ Stratus.Components.IdxPropertyList = {
                 address = property.UnparsedAddress
                 // console.log('using unparsed ')
             } else {
-                const addressParts: string[] = [];
+                const addressParts: string[] = []
+                if (
+                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumberNumeric') &&
+                    !_.isEmpty($scope.model.data.StreetNumberNumeric)
+                ) {
+                    addressParts.push($scope.model.data.StreetNumberNumeric)
+                } else if (
+                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumber') &&
+                    !_.isEmpty($scope.model.data.StreetNumber)
+                ) {
+                    addressParts.push($scope.model.data.StreetNumber)
+                }
                 [
-                    'StreetNumberNumeric',
+                    'StreetDirPrefix',
                     'StreetName',
                     'StreetSuffix',
-                    'UnitNumber' // Added Unit string?
+                    'StreetSuffixModifier',
+                    'StreetDirSuffix',
+                    'UnitNumber'
                 ]
                     .forEach((addressPart) => {
                         if (Object.prototype.hasOwnProperty.call(property, addressPart)) {
