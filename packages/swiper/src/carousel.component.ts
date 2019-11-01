@@ -57,10 +57,10 @@ Stratus.Components.SwiperCarousel = {
 
         // Carousel Specific
         initNow: '=',
-        /** @deprecated */
-        images: '<',
         slides: '<',
+        /** @deprecated */
         imageLinkTarget: '@', // shortcut
+        slideLinkTarget: '@', // shortcut
         direction: '@',
         transitionEffect: '@',
         roundLengths: '@',
@@ -182,17 +182,13 @@ Stratus.Components.SwiperCarousel = {
          */
         const init = (): void => {
             // console.log('CAROUSEL initing with', $ctrl.images)
-            /**
-             * type {Array<SlideImage> || Array<String> || String}
-             * @deprecated
-             */
-            const images = $ctrl.images ? $ctrl.images : [] // This is a deprecated reference saved for backwards compatibility
             // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
             /** type {Array<SlideImage> || Array<String> || String} */
-            const slides = $ctrl.slides ? $ctrl.slides : images // References images for temporary backwards compatibility
+            const slides = $ctrl.slides ? $ctrl.slides : [] // References images for temporary backwards compatibility
 
-            /** type {String} */
+            /** @deprecated */
             $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null
+            $scope.slideLinkTarget = $attrs.slideLinkTarget ? $attrs.slideLinkTarget : $scope.imageLinkTarget
 
             /**
              * type {String}
@@ -329,7 +325,7 @@ Stratus.Components.SwiperCarousel = {
         $scope.imageClick = (slideImage: SlideImage): void => {
             // Clicking doesn't have to open new window. it does for now
             if (slideImage && Object.prototype.hasOwnProperty.call(slideImage, 'link')) {
-                $window.open(slideImage.link, $scope.imageLinkTarget || slideImage.target || '_self')
+                $window.open(slideImage.link, $scope.slideLinkTarget || slideImage.target || '_self')
             }
         }
 

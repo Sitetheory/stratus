@@ -8,7 +8,7 @@ AngularJS Swiper Carousel component to be used as an add on to StratusJS
 ### Stratus HTML Components enabled
 *   `<stratus-swiper-carousel></stratus-swiper-carousel>`
 
-[TODO]() More details and instructions
+See [the wiki](https://github.com/Sitetheory/stratus/wiki/Swiper-Package) for further instructions
 
 ---
 ## Frameworks & Libraries
@@ -39,12 +39,10 @@ boot.configuration.paths = {
 #### Dependencies
 All dependencies need to be installed within the same project along with your config paths define.
 (manually installed for the time being)
-*   [@stratusjs/runtime](https://www.npmjs.com/package/@stratusjs/runtime)
 *   [@stratusjs/angularjs](https://www.npmjs.com/package/@stratusjs/angularjs)
 *   [@stratusjs/angularjs-extras](https://www.npmjs.com/package/@stratusjs/angularjs-extras)
+*   [@stratusjs/runtime](https://www.npmjs.com/package/@stratusjs/runtime)
 *   [swiper](https://www.npmjs.com/package/swiper)
-
-[TODO]() Items such as angularjs should be automatically installed
 
 ---
 ## License
