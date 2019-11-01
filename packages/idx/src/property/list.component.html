@@ -44,8 +44,8 @@
                                 <span data-ng-if="::property.BedroomsTotal > 0">
                                     <span data-ng-bind="::property.BedroomsTotal"></span> Beds |
                                 </span>
-								<span data-ng-if="::property.BathroomsFull > 0">
-                                    <span data-ng-bind="::property.BathroomsFull"></span><span data-ng-if="::property.BathroomsHalf">.<span data-ng-bind="::property.BathroomsHalf * 5"></span></span>
+								<span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0">
+                                    <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
                                     Baths |
                                     </span>
 								<span data-ng-bind="::property.PropertySubType || property.PropertyType"></span>

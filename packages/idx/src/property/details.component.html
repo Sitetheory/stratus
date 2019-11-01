@@ -36,19 +36,24 @@
 
                     <ul class="details-specs primary_font">
                         <li>
+                            <!-- TODO need a prettier word for the status and a detail of real status -->
                             <span data-ng-bind="::model.data.MlsStatus"></span>
                         </li>
                         <li data-ng-if="::model.data.BedroomsTotal > 0">
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
-                            <!-- TODO the following delimiter needs an ng-if -->
-                            <span>&nbsp;|&nbsp;</span>
-                            <span data-ng-if="::model.data.BathroomsFull > 0">
-                                <span data-ng-bind="::model.data.BathroomsFull"></span>
-                                <!-- TODO the number of half baths needs to be divided by 2 --><span data-ng-if="::model.data.BathroomsHalf">.<span data-ng-bind="::model.data.BathroomsHalf"></span>
-                                </span> Baths
-                            </span>
                         </li>
-
+                        <li data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0">
+                            <span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span> Baths
+                        </li>
+                        <li data-ng-if="::model.data.BathroomsHalf > 0">
+                            <span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
+                        </li>
+                        <li data-ng-if="::model.data.BathroomsOneQuarter > 0">
+                            <span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
+                        </li>
+                        <li data-ng-if="::model.data.BathroomsPartial > 0">
+                            <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
+                        </li>
                         <li data-ng-if="::model.data.BuildingAreaTotal">
                             <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet
                         </li>
@@ -431,7 +436,10 @@
         </div>
 
         <div class="disclaimer-container details-container static-element">
-            <div class="disclaimer" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+            <div class="disclaimer"
+                 data-ng-class="{'border-top': (contactName || contactPhoneNumber || contactEmail)}"
+                 data-ng-bind-html="::getMLSDisclaimer(true)"
+            ></div>
         </div>
     </div>
     <div data-ng-if="model.data.length == 0 || model.error" class="error details-container">
