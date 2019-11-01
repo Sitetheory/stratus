@@ -3,6 +3,12 @@
     <div ng-if="model.pending" data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap>
         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
     </div>
+    <div data-ng-if="model.completed && !model.pending && !model.data.ListingId && !model.data.ListingKey"
+         class="no-results"
+         data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap
+    >
+        This listing is no longer available
+    </div>
     <!-- parallax-wrapper disabled, cannot use height altering on the entire popup widget -->
     <div data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)">
 
