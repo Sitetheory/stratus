@@ -291,15 +291,15 @@ Stratus.Components.IdxPropertyList = {
             } else {
                 const addressParts: string[] = []
                 if (
-                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumberNumeric') &&
-                    !_.isEmpty($scope.model.data.StreetNumberNumeric)
+                    Object.prototype.hasOwnProperty.call(property, 'StreetNumberNumeric') &&
+                    !_.isEmpty(property.StreetNumberNumeric)
                 ) {
-                    addressParts.push($scope.model.data.StreetNumberNumeric)
+                    addressParts.push(property.StreetNumberNumeric)
                 } else if (
-                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumber') &&
-                    !_.isEmpty($scope.model.data.StreetNumber)
+                    Object.prototype.hasOwnProperty.call(property, 'StreetNumber') &&
+                    !_.isEmpty(property.StreetNumber)
                 ) {
-                    addressParts.push($scope.model.data.StreetNumber)
+                    addressParts.push(property.StreetNumber)
                 }
                 [
                     'StreetDirPrefix',
@@ -426,7 +426,10 @@ Stratus.Components.IdxPropertyList = {
                 }
 
                 let template =
-                    `<md-dialog aria-label="${property.ListingKey}">` +
+                    `<md-dialog aria-label="${property.ListingKey}" class="stratus-idx-property-list-dialog">` +
+                    `<div class="popup-close-button-container">` +
+                    `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()"></div>` +
+                    `</div>` +
                     '<stratus-idx-property-details '
                 _.forEach(templateOptions, (optionValue, optionKey) => {
                     template += `data-${optionKey}='${optionValue}'`
@@ -440,7 +443,23 @@ Stratus.Components.IdxPropertyList = {
                     parent: angular.element(document.body),
                     targetEvent: ev,
                     clickOutsideToClose: true,
-                    fullscreen: true // Only for -xs, -sm breakpoints.
+                    fullscreen: true, // Only for -xs, -sm breakpoints.
+                    scope: $scope,
+                    preserveScope: true,
+                    // tslint:disable-next-line:no-shadowed-variable
+                    controller: ($scope: object | any, $mdDialog: angular.material.IDialogService) => {
+                        $scope.closePopup = () => {
+                            if ($mdDialog) {
+                                $mdDialog.hide()
+                                Idx.setUrlOptions('Listing', {})
+                                Idx.refreshUrlOptions($ctrl.defaultOptions)
+                                // Revery page title back to what it was
+                                Idx.setPageTitle()
+                                // Let's destroy it to save memory
+                                $timeout(Idx.unregisterDetailsInstance('property_detail_popup'), 10)
+                            }
+                        }
+                    }
                 })
                     .then(() => {
                     }, () => {

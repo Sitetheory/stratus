@@ -105,12 +105,12 @@
                         <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? 'Sold for' : 'Listed at'"></span>
                         <span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)"></span>
                     </div>
-                    <!-- FIXME -->
-                    <h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3>
+                    <!-- TODO need a decent way to make a title for Property listings -->
+                    <!--h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3-->
                     <div class="font-body description" data-ng-if="::model.data.PublicRemarks" data-ng-bind="::model.data.PublicRemarks"></div>
                     <div class="response-container">
                         <a class="vtour btn btn-alt" data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded" data-ng-href="{{::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded}}" target="_blank">VTour</a>
-                        <!-- TODO no support for files other than files at this time -->
+                        <!-- TODO no support for files other than images at this time -->
                         <!--a class="download-PDF btn btn-alt" href="">Download PDF</a-->
                     </div>
                 </div>

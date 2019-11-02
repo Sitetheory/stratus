@@ -3,7 +3,9 @@ Nothing should be outside 'stratus-idx-property-list' or it will leak into other
 TODO Need to size this based on column and window
 FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized.
 */
-@phone: ~"(min-width: 600px)";
+@tablet: ~"(max-width: 959px)";
+@phone: ~"(max-width: 600px)";
+@desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-list {
   /* Generic dotted underline */
   .dotted-spaced-underline {
@@ -168,7 +170,7 @@ stratus-idx-property-list {
       .property-container {
         width: 100%;
 
-        @media @phone {
+        @media @desktop-only {
           width: 48.5%;
         }
       }
@@ -177,7 +179,7 @@ stratus-idx-property-list {
       .property-container {
         width: 100%;
 
-        @media @phone {
+        @media @desktop-only {
           width: 32%;
         }
       }
@@ -243,5 +245,29 @@ stratus-idx-property-list {
     padding-top: 20px;
     border-top: 1px solid rgba(0, 0, 0, 0.25);
     font-size: 12px;
+  }
+}
+
+/* Dialog box */
+.stratus-idx-property-list-dialog {
+  .popup-close-button-container {
+    display: none;
+    width: 100%;
+
+    @media @tablet {
+      display: block;
+    }
+    .close-button {
+      min-width: 20px;
+      min-height: 20px;
+      float: right;
+      margin: 5px;
+      padding: 12px;
+      background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z'/%3E%3C/svg%3E ");
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 1px solid #000;
+      border-radius: 25px;
+    }
   }
 }
