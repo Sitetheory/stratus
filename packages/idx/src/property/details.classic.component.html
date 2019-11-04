@@ -3,6 +3,12 @@
 	<div ng-if="model.pending" data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap>
 		<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	</div>
+    <div data-ng-if="model.completed && !model.pending && !model.data.ListingId && !model.data.ListingKey"
+         class="no-results"
+         data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap
+    >
+        This listing is no longer available
+    </div>
 	<div data-ng-if="model.completed && (model.data.ListingId || model.data.ListingKey)">
 		<div class="details-container" data-md-whiteframe="1">
 			<div class="details-header dotted-spaced-underline" data-layout="row" data-layout-align="space-between start" data-layout-wrap>
@@ -60,12 +66,18 @@
 					<div class="details-specs">
 						Status: <span data-ng-bind="::model.data.MlsStatus"></span>
 						<span data-ng-if="::model.data.BedroomsTotal > 0"><br><span data-ng-bind="::model.data.BedroomsTotal"></span> Beds</span>
-						<span data-ng-if="::model.data.BathroomsFull > 0">
-							<br><span data-ng-bind="::model.data.BathroomsFull"></span> Baths
-							<span data-ng-if="::model.data.BathroomsHalf">
-								| <span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
-							</span>
-						</span>
+                        <span data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span> Baths
+                        </span>
+                        <span data-ng-if="::model.data.BathroomsHalf > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
+                        </span>
+                        <span data-ng-if="::model.data.BathroomsOneQuarter > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
+                        </span>
+                        <span data-ng-if="::model.data.BathroomsPartial > 0">
+                            <br><span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
+                        </span>
 						<span data-ng-if="::model.data.BuildingAreaTotal"><br><span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet</span>
 						<span data-ng-if="::model.data.ListPrice"><br>Listed at $<span data-ng-bind="::model.data.ListPrice | number"></span></span>
 						<span data-ng-if="::model.data.DaysOnMarket"><br>Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span></span>
@@ -111,7 +123,7 @@
 		<div class="additional-photos details-container" data-ng-if="model.data.Images && model.data.Images.length > 0" data-md-whiteframe="1">
 			<stratus-swiper-carousel
 					init-now="model.completed"
-					images="images"
+					slides="images"
 			></stratus-swiper-carousel>
 
 			<!-- autoplay="true" -->
@@ -157,7 +169,7 @@
 		</div>
 
 		<div class="map-location details-container" data-md-whiteframe="1" data-ng-if="::getFullAddress()">
-			<iframe data-ng-src="{{::getGoogleMapEmbedUrl()}}" style="border: 0;height:450px;width:100%;"></iframe>
+			<iframe data-ng-src="{{::getGoogleMapEmbedUrl()}}" class="google-map-embed"></iframe>
 		</div>
 
 		<div class="disclaimer details-container dotted-spaced-underline underline-top" data-ng-bind-html="::getMLSDisclaimer(true)"></div>

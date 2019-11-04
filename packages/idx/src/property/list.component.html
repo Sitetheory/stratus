@@ -17,7 +17,12 @@
 	<div class="list-container columns-2">
 		<div data-layout-gt-xs="row" data-layout-align-gt-xs="space-around center" data-layout-wrap>
 			<md-progress-linear ng-if="collection.pending" md-mode="indeterminate"></md-progress-linear>
-			<div data-ng-repeat="property in collection.models | limitTo:options.perPage:(options.page-1)*options.perPage" id="{{::elementId}}_{{::property._id}}" class="property-container" data-ng-cloak>
+            <div ng-if="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
+                There are no listings that fit your search. Perhaps try less specific or different criteria.
+            </div>
+			<div data-ng-repeat="property in collection.models | limitTo:options.perPage:(options.page-1)*options.perPage" id="{{::elementId}}_{{::property._id}}"
+                 class="property-container" data-ng-cloak
+            >
 				<md-card class="property-item">
 					<div class="property-image">
 						<div class="property-status font-secondary" data-ng-bind="::property.MlsStatus"></div>
@@ -44,8 +49,8 @@
                                 <span data-ng-if="::property.BedroomsTotal > 0">
                                     <span data-ng-bind="::property.BedroomsTotal"></span> Beds |
                                 </span>
-								<span data-ng-if="::property.BathroomsFull > 0">
-                                    <span data-ng-bind="::property.BathroomsFull"></span><span data-ng-if="::property.BathroomsHalf">.<span data-ng-bind="::property.BathroomsHalf * 5"></span></span>
+								<span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0">
+                                    <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
                                     Baths |
                                     </span>
 								<span data-ng-bind="::property.PropertySubType || property.PropertyType"></span>

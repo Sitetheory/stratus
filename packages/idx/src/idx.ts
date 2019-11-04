@@ -1603,7 +1603,10 @@ Stratus.Services.Idx = [
                         'ClosePrice',
                         'ListingId',
                         'ListingKey',
+                        'BathroomsTotalInteger',
                         'BathroomsFull',
+                        'BathroomsOneQuarter',
+                        'BathroomsPartial',
                         'BedroomsTotal'
                     ]
                     // options.where['ListType'] = ['House','Townhouse'];

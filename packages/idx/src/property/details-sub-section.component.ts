@@ -46,6 +46,18 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
         $scope.visibleFields = false
         $scope.model = null
 
+        const checkForVisibleFields = () => {
+            Object.keys($scope.items).forEach((item: string) => {
+                if (
+                    Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
+                    $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
+                    $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
+                ) {
+                    $scope.visibleFields = true
+                }
+            })
+        }
+
         if ($scope.sectionName.startsWith('{')) {
             $scope.stopWatchingSectionName = $scope.$watch('$ctrl.sectionName', (data: string) => {
                 $scope.sectionName = data
@@ -66,15 +78,7 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
             // TODO might wanna check something else just to not import Model
             if (data instanceof Model && data !== $scope.model) {
                 $scope.model = data
-                Object.keys($scope.items).forEach((item: string) => {
-                    if (
-                        Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
-                        $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
-                        $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
-                    ) {
-                        $scope.visibleFields = true
-                    }
-                })
+                checkForVisibleFields()
                 $scope.stopWatchingModel()
             }
         })

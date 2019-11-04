@@ -52,6 +52,9 @@ Stratus.Components.IdxPropertyDetails = {
         images: '@',
         openhouses: '@',
         googleApiKey: '@',
+        contactEmail: '@',
+        contactName: '@',
+        contactPhone: '@',
         options: '@',
         template: '@',
         defaultListOptions: '@'
@@ -101,6 +104,9 @@ Stratus.Components.IdxPropertyDetails = {
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
+            $scope.contactName = $attrs.contactName || null
+            $scope.contactEmail = $attrs.contactEmail || null
+            $scope.contactPhone = $attrs.contactPhone || null
             $scope.images = []
 
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
@@ -762,6 +768,8 @@ Stratus.Components.IdxPropertyDetails = {
 
         /**
          * Returns the processed street address
+         * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
+         * +  StreetDirSuffix + 'Unit' + UnitNumber
          */
         $scope.getStreetAddress = (): string => {
             let address = ''
@@ -771,12 +779,25 @@ Stratus.Components.IdxPropertyDetails = {
             ) {
                 address = $scope.model.data.UnparsedAddress
             } else {
-                const addressParts: string[] = [];
+                const addressParts: string[] = []
+                if (
+                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumberNumeric') &&
+                    !_.isEmpty($scope.model.data.StreetNumberNumeric)
+                ) {
+                    addressParts.push($scope.model.data.StreetNumberNumeric)
+                } else if (
+                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumber') &&
+                    !_.isEmpty($scope.model.data.StreetNumber)
+                ) {
+                    addressParts.push($scope.model.data.StreetNumber)
+                }
                 [
-                    'StreetNumberNumeric',
+                    'StreetDirPrefix',
                     'StreetName',
                     'StreetSuffix',
-                    'UnitNumber' // Added Unit string?
+                    'StreetSuffixModifier',
+                    'StreetDirSuffix',
+                    'UnitNumber'
                 ]
                     .forEach(addressPart => {
                         if (Object.prototype.hasOwnProperty.call($scope.model.data, addressPart)) {

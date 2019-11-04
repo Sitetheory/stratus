@@ -41,8 +41,11 @@ Stratus.Components.IdxPropertyList = {
         detailsLinkUrl: '@',
         detailsLinkTarget: '@',
         detailsTemplate: '@',
-        orderOptions: '@',
+        contactEmail: '@',
+        contactName: '@',
+        contactPhone: '@',
         googleApiKey: '@',
+        orderOptions: '@',
         options: '@',
         template: '@'
     },
@@ -108,6 +111,9 @@ Stratus.Components.IdxPropertyList = {
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
+            $scope.contactName = $attrs.contactName || null
+            $scope.contactEmail = $attrs.contactEmail || null
+            $scope.contactPhone = $attrs.contactPhone || null
 
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
@@ -271,6 +277,8 @@ Stratus.Components.IdxPropertyList = {
 
         /**
          * Returns the processed street address
+         * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
+         * +  StreetDirSuffix + 'Unit' + UnitNumber
          */
         $scope.getStreetAddress = (property: object | any): string => {
             let address = ''
@@ -281,12 +289,25 @@ Stratus.Components.IdxPropertyList = {
                 address = property.UnparsedAddress
                 // console.log('using unparsed ')
             } else {
-                const addressParts: string[] = [];
+                const addressParts: string[] = []
+                if (
+                    Object.prototype.hasOwnProperty.call(property, 'StreetNumberNumeric') &&
+                    !_.isEmpty(property.StreetNumberNumeric)
+                ) {
+                    addressParts.push(property.StreetNumberNumeric)
+                } else if (
+                    Object.prototype.hasOwnProperty.call(property, 'StreetNumber') &&
+                    !_.isEmpty(property.StreetNumber)
+                ) {
+                    addressParts.push(property.StreetNumber)
+                }
                 [
-                    'StreetNumberNumeric',
+                    'StreetDirPrefix',
                     'StreetName',
                     'StreetSuffix',
-                    'UnitNumber' // Added Unit string?
+                    'StreetSuffixModifier',
+                    'StreetDirSuffix',
+                    'UnitNumber'
                 ]
                     .forEach((addressPart) => {
                         if (Object.prototype.hasOwnProperty.call(property, addressPart)) {
@@ -371,15 +392,18 @@ Stratus.Components.IdxPropertyList = {
             if ($scope.detailsLinkPopup === true) {
                 // Opening a popup will load the propertyDetails and adjust the hashbang URL
                 const templateOptions: {
-                    element_id: string,
+                    'element-id': string,
                     service: number,
                     'listing-key': string,
                     'default-list-options': string,
                     'page-title': boolean,
                     'google-api-key'?: string,
+                    'contact-name'?: string,
+                    'contact-email'?: string,
+                    'contact-phone'?: string,
                     template?: string,
                 } = {
-                    element_id: 'property_detail_popup_' + property.ListingKey,
+                    'element-id': 'property_detail_popup_' + property.ListingKey,
                     service: property._ServiceId,
                     'listing-key': property.ListingKey,
                     'default-list-options': JSON.stringify($ctrl.defaultOptions),
@@ -388,15 +412,27 @@ Stratus.Components.IdxPropertyList = {
                 if ($scope.googleApiKey) {
                     templateOptions['google-api-key'] = $scope.googleApiKey
                 }
+                if ($scope.contactName) {
+                    templateOptions['contact-name'] = $scope.contactName
+                }
+                if ($scope.contactEmail) {
+                    templateOptions['contact-email'] = $scope.contactEmail
+                }
+                if ($scope.contactPhone) {
+                    templateOptions['contact-phone'] = $scope.contactPhone
+                }
                 if ($scope.detailsTemplate) {
                     templateOptions.template = $scope.detailsTemplate
                 }
 
                 let template =
-                    `<md-dialog aria-label="${property.ListingKey}">` +
+                    `<md-dialog aria-label="${property.ListingKey}" class="stratus-idx-property-list-dialog">` +
+                    `<div class="popup-close-button-container">` +
+                    `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()"></div>` +
+                    `</div>` +
                     '<stratus-idx-property-details '
                 _.forEach(templateOptions, (optionValue, optionKey) => {
-                    template += `${optionKey}='${optionValue}'`
+                    template += `data-${optionKey}='${optionValue}'`
                 })
                 template +=
                     '></stratus-idx-property-details>' +
@@ -407,7 +443,23 @@ Stratus.Components.IdxPropertyList = {
                     parent: angular.element(document.body),
                     targetEvent: ev,
                     clickOutsideToClose: true,
-                    fullscreen: true // Only for -xs, -sm breakpoints.
+                    fullscreen: true, // Only for -xs, -sm breakpoints.
+                    scope: $scope,
+                    preserveScope: true,
+                    // tslint:disable-next-line:no-shadowed-variable
+                    controller: ($scope: object | any, $mdDialog: angular.material.IDialogService) => {
+                        $scope.closePopup = () => {
+                            if ($mdDialog) {
+                                $mdDialog.hide()
+                                Idx.setUrlOptions('Listing', {})
+                                Idx.refreshUrlOptions($ctrl.defaultOptions)
+                                // Revery page title back to what it was
+                                Idx.setPageTitle()
+                                // Let's destroy it to save memory
+                                $timeout(Idx.unregisterDetailsInstance('property_detail_popup'), 10)
+                            }
+                        }
+                    }
                 })
                     .then(() => {
                     }, () => {

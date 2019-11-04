@@ -1,8 +1,9 @@
 /*
 Nothing should be outside 'stratus-idx-property-details' or it will leak into other modules
 */
-@tablet: ~"(min-width: 959px)";
-@phone: ~"(min-width: 600px)";
+@tablet: ~"(max-width: 959px)";
+@phone: ~"(max-width: 600px)";
+@desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-details {
   position: relative;
   md-progress-circular {
@@ -29,6 +30,9 @@ stratus-idx-property-details {
     padding: 0;
     margin: 0;
   }
+  .accent-bg-color {
+    background-color: #546d00;
+  }
 
   /* Generic dotted underline/sideline */
   .dotted-spaced-underline {
@@ -38,11 +42,11 @@ stratus-idx-property-details {
 
   /* Generic ng-repeat classes */
   .repeatedArray {
-    &:first-child,
-    &:last-child {
-      .hideFirstChild {
-        display: none;
-      }
+    &:first-child .hideFirstChild {
+      display: none;
+    }
+    &:last-child .hideLastChild {
+      display: none;
     }
   }
 
@@ -128,16 +132,14 @@ stratus-idx-property-details {
       padding: 50px 8%;
     }
 
-    /* Columns */
-    .details-left {
-      @media @phone {
+    @media @desktop-only {
+      /* Columns */
+      .details-left {
         float: left;
         width: 28%;
         margin-right: 5%;
       }
-    }
-    .details-right {
-      @media @phone {
+      .details-right {
         float: left;
         width: 67%;
       }
@@ -272,6 +274,11 @@ stratus-idx-property-details {
         padding-bottom: 30px;
         margin-bottom: 30px;
       }
+      .google-map-embed {
+        border: 0;
+        height: 450px;
+        width: 100%;
+      }
     }
 
     /* Schematics */
@@ -383,6 +390,28 @@ stratus-idx-property-details {
         @media @phone {
           column-count: 1;
         }
+        .property-details-sub-section,
+        stratus-idx-property-details-sub-section {
+          // stylelint-disable-next-line no-descending-specificity
+          .sub-detail-section {
+            display: inline-block;
+            margin: 0 0 1em;
+            width: 100%;
+            // stylelint-disable-next-line no-descending-specificity
+            .section-name {
+              margin: 46px 0 20px;
+              font-size: 12px;
+              font-weight: bold;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              color: #9e9e9e;
+            }
+            // stylelint-disable-next-line no-descending-specificity
+            .item-label {
+              font-weight: bolder;
+            }
+          }
+        }
       }
     }
 
@@ -435,9 +464,13 @@ stratus-idx-property-details {
     &.disclaimer-container {
       padding-top: 0;
       background: #fff;
+      color: #666;
+      font-size: 7pt;
       .disclaimer {
         padding-top: 60px;
-        border-top: 1px solid rgba(0, 0, 0, 0.15);
+        &.border-top {
+          border-top: 1px solid rgba(0, 0, 0, 0.15);
+        }
       }
     }
   }

@@ -19,8 +19,6 @@ See [the wiki](https://github.com/Sitetheory/stratus/wiki/Idx-Package) for furth
 ## Frameworks & Libraries
 
 ### Installation
-Within the project directory of Stratus
-
 Either Yarn install
 *   `yarn add @stratusjs/idx`
 
@@ -46,9 +44,9 @@ boot.configuration.paths = {
 
 #### Dependencies
 The following dependencies will be installed
-*   [@stratusjs/runtime](https://www.npmjs.com/package/@stratusjs/runtime)
 *   [@stratusjs/angularjs](https://www.npmjs.com/package/@stratusjs/angularjs)
 *   [@stratusjs/angularjs-extras](https://www.npmjs.com/package/@stratusjs/angularjs-extras)
+*   [@stratusjs/runtime](https://www.npmjs.com/package/@stratusjs/runtime)
 *   [@stratusjs/swiper](https://www.npmjs.com/package/@stratusjs/swiper)
 
 ---
