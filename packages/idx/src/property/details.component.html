@@ -90,7 +90,7 @@
                         <li data-ng-if="::model.data.PropertyType">
                             <span data-ng-bind="::model.data.PropertyType"></span>
                         </li>
-                        <li data-ng-if="::model.data.PropertySubType">
+                        <li data-ng-if="::model.data.PropertySubType && model.data.PropertySubType != model.data.PropertyType">
                             <span data-ng-bind="::model.data.PropertySubType"></span>
                         </li>
                         <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey">
@@ -118,7 +118,9 @@
         </div>
 
         <!-- Temporary Open House -->
-        <div class="open-house-container details-container accent-bg-color static-element">
+        <div class="open-house-container details-container accent-bg-color static-element"
+             data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length"
+        >
             <div class="open-house">
                 <div class="clearfix">
                     <div class="details-left">
@@ -128,7 +130,7 @@
                         </p>
                     </div>
                     <div class="details-right">
-                        <!-- repeat -->
+                        <!-- repeat
                         <div class="open-house-item">
                             <div class="month primary_font">
                                 February
@@ -145,8 +147,6 @@
                                 </a>
                             </div>
                         </div>
-
-                        <!-- repeat -->
                         <div class="open-house-item">
                             <div class="month primary_font">
                                 February
@@ -161,6 +161,37 @@
                                 <a class="add-to-calendar btn btn-alt">
                                     Add to Calendar
                                 </a>
+                            </div>
+                        </div>
+                        -->
+
+                        <div class="open-house-item"
+                             data-ng-repeat="openHouse in model.data.OpenHouses"
+                             id="{{'open_house_' + openHouse.OpenHouseKey}}"
+                        >
+                            <!-- FIXME Daniela, do we wish to show the Open House descriptions that are possible on each open house? -->
+                            <div class="month primary_font"
+                                 data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'MMMM'}"
+                            ></div>
+                            <div data-layout-gt-xs="row" data-layout-align-gt-xs="space-between center">
+                                <div class="primary_font" data-layout="row" data-layout-align="space-between center">
+                                    <div class="day" data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'D'}"></div>
+                                    <div class="day-weekday-time-agent">
+                                        <span data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}"></span>
+                                        <span data-ng-if="::openHouse.OpenHouseEndTime"> —
+                                            <span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
+                                        </span>
+                                        <span data-ng-if="::openHouse.ShowingAgentFirstName">
+                                            <br/>
+                                            with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- TODO Need to create ics functionality
+                                <a class="add-to-calendar btn btn-alt">
+                                    Add to Calendar
+                                </a>
+                                -->
                             </div>
                         </div>
 
