@@ -18,14 +18,15 @@
             </h1>
             <h4>
                 <span data-ng-bind="::model.data.City"></span>
-                <!-- If not CA, what about model.data.StateOrProvince? -->
+                <!-- TODO If not CA, what about model.data.StateOrProvince? -->
             </h4>
         </div>
 
         <div class="gallery-video-container static-element" data-ng-if="model.data.Images && model.data.Images.length > 0">
             <stratus-swiper-carousel
-                    init-now="model.completed"
-                    slides="images"
+                    data-init-now="model.completed"
+                    data-slides="images"
+                    data-autoplay="true"
             ></stratus-swiper-carousel>
             <!-- autoplay="true" -->
             <!-- pagination='{"clickable":true,"render":"numberBullet"}' -->
@@ -67,7 +68,7 @@
                             Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
                         </li>
                         <li data-ng-if="::model.data.ArchitecturalStyle">
-                            Style: <span data-ng-bind="::model.data.ArchitecturalStyle"></span>
+                            Style: <span data-ng-repeat="item in ::model.data.ArchitecturalStyle" class="repeatedArray"><span data-ng-bind="::item"></span><span class="hideLastChild">, </span></span>
                         </li>
                         <li data-ng-if="::model.data.YearBuilt">
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
@@ -117,7 +118,7 @@
             </div>
         </div>
 
-        <!-- Temporary Open House -->
+        <!-- Open Houses -->
         <div class="open-house-container details-container accent-bg-color static-element"
              data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length"
         >
@@ -220,8 +221,7 @@
         <!-- This needs to display the second image in the slideshow or maybe the last image? -->
         <!-- parallax-element disabled, cannot use height altering on the entire widget -->
         <div class="secondary-image-container">
-            <!-- TODO data-ng-click="return cms.obj.listtrac.track('lead');"-->
-            <!--a data-ng-href="/site/contact?comments={{::getFullAddress(true)}}" target="_blank">Contact</a-->
+            <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
             <a class="btn btn-alt btn-contact" target="_blank" data-ng-href="/site/contact?comments={{::getFullAddress(true)}}">
                 Contact
             </a>
@@ -357,7 +357,7 @@
                                 "FireplaceYN": {"true": "Fireplace: Yes", "false": ""},
                                 "FireplaceFeatures": "Fireplace",
                                 "FireplacesTotal": "Fireplaces",
-                                "YearBuilt": "Additional Rooms",
+                                "Basement": "Basement",
                                 "InteriorFeatures": "Interior Features",
                                 "SecurityFeatures": "Security Features",
                                 "ExteriorFeatures": "Exterior Features",
