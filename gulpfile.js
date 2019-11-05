@@ -22,7 +22,7 @@ const babel = require('gulp-babel')
 const less = require('gulp-less')
 const sass = require('gulp-sass')
 const coffee = require('gulp-coffee')
-// const sourcemaps = require('gulp-sourcemaps')
+const sourcemaps = require('gulp-sourcemaps')
 const ts = require('gulp-typescript')
 
 // Project
@@ -136,7 +136,9 @@ const location = {
     core: [
       'packages/*/src/**/*.ts'
     ],
-    compile: []
+    compile: [
+      // 'packages/*/src/**/*.js.map'
+    ]
   },
   template: {
     core: [
@@ -416,10 +418,14 @@ function compileTypeScript () {
   }
   return src(_.union(location.typescript.core, nullify(location.typescript.compile)), { base: '.' })
     // .pipe(debug({ title: 'Compile TypeScript:' }))
-    // .pipe(sourcemaps.init())
+    .pipe(sourcemaps.init())
     .pipe(tsProject())
-    // .pipe(sourcemaps.write())
-    .pipe(gulpDest('.', { ext: '.js' }))
+    .pipe(sourcemaps.mapSources((sourcePath, file) => sourcePath.substring(sourcePath.lastIndexOf('/') + 1)))
+    .pipe(sourcemaps.write('.', {
+      includeContent: false
+      // sourceRoot: '.'
+    }))
+    // .pipe(gulpDest('.', { ext: '.js' }))
     .pipe(dest('.'))
 }
 
