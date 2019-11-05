@@ -25,8 +25,8 @@
   },
   "homepage": "https://github.com/Sitetheory/stratus#readme",
   "dependencies": {
-    "@stratusjs/angularjs": "^0.2.5",
-    "@stratusjs/angularjs-extras": "^0.2.3",
+    "@stratusjs/angularjs": "^0.2.8",
+    "@stratusjs/angularjs-extras": "^0.2.5",
     "@stratusjs/runtime": "^0.10.1",
     "swiper": "^5.2.0"
   },
