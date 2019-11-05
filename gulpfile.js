@@ -71,10 +71,10 @@ const location = {
     ],
     output: 'packages/boot/dist/boot.js'
   },
-  external: {
-    core: [],
-    min: []
-  },
+  // external: {
+  //   core: [],
+  //   min: []
+  // },
   mangle: {
     core: [
       'dist/**/*.js',
@@ -223,11 +223,17 @@ function compressMangle () {
     // .pipe(sourcemaps.init())
     .pipe(babel(babelSettings))
     .pipe(terser({
-      // preserveComments: 'license',
+      // parse: {},
+      // compress: {},
       mangle: true,
-      sourceMap: {
-        url: 'inline'
+      output: {
+        comments: false,
+        ecma: 5,
+        wrap_func_args: false
       }
+      // sourceMap: {
+      //   url: 'inline'
+      // }
     }))
     .pipe(gulpDest('.', {
       ext: '.min.js'
@@ -236,39 +242,45 @@ function compressMangle () {
 }
 
 // External Functions
-function cleanExternal () {
-  if (!location.external.min.length) {
-    return Promise.resolve('No files selected.')
-  }
-  return del(location.external.min)
-}
-function compressExternal () {
-  if (!location.external.core.length) {
-    return Promise.resolve('No files selected.')
-  }
-
-  return src(_.union(location.external.core, nullify(location.external.min)), {
-    base: '.'
-  })
-    /* *
-    .pipe(debug({
-      title: 'Compress External:'
-    }))
-    /* */
-    // .pipe(sourcemaps.init())
-    .pipe(babel(babelSettings))
-    .pipe(terser({
-      // preserveComments: 'license',
-      mangle: true,
-      sourceMap: {
-        url: 'inline'
-      }
-    }))
-    .pipe(gulpDest('.', {
-      ext: '.min.js'
-    }))
-    .pipe(dest('.'))
-}
+// function cleanExternal () {
+//   if (!location.external.min.length) {
+//     return Promise.resolve('No files selected.')
+//   }
+//   return del(location.external.min)
+// }
+// function compressExternal () {
+//   if (!location.external.core.length) {
+//     return Promise.resolve('No files selected.')
+//   }
+//
+//   return src(_.union(location.external.core, nullify(location.external.min)), {
+//     base: '.'
+//   })
+//     /* *
+//     .pipe(debug({
+//       title: 'Compress External:'
+//     }))
+//     /* */
+//     // .pipe(sourcemaps.init())
+//     .pipe(babel(babelSettings))
+//     .pipe(terser({
+//       // parse: {},
+//       // compress: {},
+//       mangle: true,
+//       output: {
+//         comments: false,
+//         ecma: 5,
+//         wrap_func_args: false,
+//       },
+//       // sourceMap: {
+//       //   url: 'inline'
+//       // }
+//     }))
+//     .pipe(gulpDest('.', {
+//       ext: '.min.js'
+//     }))
+//     .pipe(dest('.'))
+// }
 
 // Preserve Functions
 function cleanPreserve () {
@@ -292,11 +304,17 @@ function compressPreserve () {
     // .pipe(sourcemaps.init())
     .pipe(babel(babelSettings))
     .pipe(terser({
-      // preserveComments: 'license',
+      // parse: {},
+      // compress: {},
       mangle: false,
-      sourceMap: {
-        url: 'inline'
+      output: {
+        comments: false,
+        ecma: 5,
+        wrap_func_args: false
       }
+      // sourceMap: {
+      //   url: 'inline'
+      // }
     }))
     // .pipe(sourcemaps.write())
     .pipe(gulpDest('.', {
@@ -446,8 +464,8 @@ exports.compress = parallel(
   series(cleanMangle, compressMangle),
   series(cleanPreserve, compressPreserve),
   series(cleanCSS, compressCSS),
-  series(cleanTemplate, compressTemplate),
-  series(cleanExternal, compressExternal)
+  series(cleanTemplate, compressTemplate)
+  // series(cleanExternal, compressExternal)
 )
 exports.clean = parallel(
   cleanMangle,
@@ -457,8 +475,8 @@ exports.clean = parallel(
   cleanCSS,
   cleanCoffee,
   cleanTypeScript,
-  cleanTemplate,
-  cleanExternal
+  cleanTemplate
+  // cleanExternal
 )
 exports.lint = lintJS
 exports.dist = parallel(
