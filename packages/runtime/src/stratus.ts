@@ -460,34 +460,36 @@ _.mixin({
 // Native Selector
 // ---------------
 
-Stratus.Select = (selector: string | any, context?: Document | any) => {
+Stratus.Select = (selector: string | Element | JQuery, context?: Document) => {
     if (!context) {
         context = document
     }
     let selection: any = selector
     if (typeof selector === 'string') {
-        let target
-        if (_.startsWith(selector, '.') || _.includes(selector, '[')) {
-            target = 'querySelectorAll'
-        } else if (_.includes(['html', 'head', 'body'], selector) || _.startsWith(selector, '#')) {
-            target = 'querySelector'
-        } else {
-            target = 'querySelectorAll'
-        }
-        selection = context[target](selector)
+        // let target
+        // if (_.startsWith(selector, '.') || _.includes(selector, '[')) {
+        //     target = 'querySelectorAll'
+        // } else if (_.includes(['html', 'head', 'body'], selector) || _.startsWith(selector, '#')) {
+        //     target = 'querySelector'
+        // } else {
+        //     target = 'querySelectorAll'
+        // }
+        // selection = context[target](selector)
+        selection = (_.includes(['html', 'head', 'body'], selector) || _.startsWith(selector, '#'))
+                    ? context.querySelector(selector) : context.querySelectorAll(selector)
     }
-    if (selection && typeof selection === 'object') {
-        if (isAngular(selection) || isjQuery(selection)) {
-            selection = selection.length ? _.first(selection) : {}
-        }
-        return _.extend({}, Stratus.Selector, {
-            context: this,
-            length: _.size(selection),
-            selection,
-            selector
-        })
+    if (!selection || typeof selection !== 'object') {
+        return selection
     }
-    return selection
+    if (isAngular(selection) || isjQuery(selection)) {
+        selection = selection.length ? _.first(selection) : {}
+    }
+    return _.extend({}, Stratus.Selector, {
+        context: this,
+        length: _.size(selection),
+        selection,
+        selector
+    })
 }
 
 // TODO: Remove the following hack

@@ -103,7 +103,7 @@ export class AppModule {
     initialTimeout = 1000
     instances = {}
     modules = {
-        // 'sa-base': BaseComponent,
+        'sa-base': BaseComponent,
         'sa-selector': SelectorComponent,
         'sa-tree': TreeComponent
     }

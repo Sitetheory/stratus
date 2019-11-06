@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core'
 
 // CDK
 import {ArrayDataSource} from '@angular/cdk/collections'
@@ -19,11 +19,15 @@ import _ from 'lodash'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
+import {cookie} from '@stratusjs/core/environment'
 
 // Force Dependent Services
 import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/model'
+import {EventManager} from '@stratusjs/core/events/eventManager'
+import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Model} from '@stratusjs/angularjs/services/model'
 
 // Data Types
 export interface Node {
@@ -70,18 +74,28 @@ const moduleName = 'tree'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class TreeComponent {
+export class TreeComponent { // implements OnInit
 
     // Basic Component Settings
     title = moduleName + '_component'
     uid: string
 
+    // Registry Attributes
+    @Input() target: string
+    @Input() targetSuffix: string
+    @Input() id: number
+    @Input() manifest: boolean
+    @Input() decouple: boolean
+    @Input() direct: boolean
+    @Input() api: object
+    @Input() urlRoot: object
+
     // Dependencies
-    _: any
+    _ = _
 
     // Stratus Data Connectivity
     registry = new Registry()
-    fetched: any
+    fetched: Promise<boolean|Collection|Model>
     data: any
     collection: any
     model: any
@@ -113,14 +127,16 @@ export class TreeComponent {
     // hasChild = (index: number, node: any) => this.getChildren(node).length > 0;
     // hasChild = (index: number, node: any) => node.children && node.children.length > 0
 
-    constructor(public iconRegistry: MatIconRegistry, public sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
+    constructor(
+        public iconRegistry: MatIconRegistry,
+        public sanitizer: DomSanitizer,
+        private ref: ChangeDetectorRef,
+        private elementRef: ElementRef
+    ) {
 
         // Initialization
         this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
-
-        // Dependencies
-        this._ = _
 
         // SVG Icons
         iconRegistry.addSvgIcon(
@@ -132,24 +148,21 @@ export class TreeComponent {
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
 
-        // Hoist Context
-        const that = this
-
         // Data Connections
         this.fetchData()
-            .then((data: any) => {
-                if (!data.on) {
+            .then(data => {
+                if (!data || !(data instanceof EventManager)) {
                     console.warn('Unable to bind data from Registry!')
                     return
                 }
                 // Manually render upon data change
                 // ref.detach();
                 const onDataChange = () => {
-                    if (that.unsettled || !data.completed) {
+                    if (this.unsettled || !data.completed) {
                         return
                     }
-                    that.dataDefer(that.subscriber)
-                    ref.detectChanges()
+                    this.dataDefer(this.subscriber)
+                    this.ref.detectChanges()
                 }
                 data.on('change', onDataChange)
                 onDataChange()
@@ -162,6 +175,10 @@ export class TreeComponent {
         this.dropListIdMap[`${this.uid}_parent_drop_list`] = true
         this.trackDropLists()
     }
+
+    // async ngOnInit() {
+    //     console.info('tree.ngOnInit')
+    // }
 
     public remove(model: any) {
         // const models = this.dataRef()
@@ -194,11 +211,14 @@ export class TreeComponent {
     }
 
     // Data Connections
-    public async fetchData(): Promise<any> {
-        if (!this.fetched) {
-            this.fetched = this.registry.fetch(Stratus.Select('#content-menu-primary'), this)
+    public async fetchData() {
+        if (this.fetched) {
+            return this.fetched
         }
-        return this.fetched
+        return this.fetched = this.registry.fetch(
+            Stratus.Select(this.elementRef.nativeElement),
+            this
+        )
     }
 
     private dataDefer(subscriber: Subscriber<any>) {
@@ -383,7 +403,7 @@ export class TreeComponent {
         // Set Priority
         moveItemInArray(tree, event.previousIndex, event.currentIndex)
         let priority = 0
-        _.forEach(tree, (node) => {
+        _.forEach(tree, (node: Node) => {
             if (!node.model || !node.model.set) {
                 return
             }

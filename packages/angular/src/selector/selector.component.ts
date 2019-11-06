@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, Output} from '@angular/core'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, Output} from '@angular/core'
 import {FormControl} from '@angular/forms'
 
 // CDK
@@ -22,14 +22,16 @@ import _ from 'lodash'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
+import {cookie} from '@stratusjs/core/environment'
+import { EventManager } from '@stratusjs/core/events/eventManager'
+import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Model} from '@stratusjs/angularjs/services/model'
 
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
 const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
 
-const has = (object: object, path: string): boolean => {
-    return _.has(object, path) && !_.isEmpty(_.get(object, path))
-}
+const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
 
 // export interface Model {
 //     completed: boolean;
@@ -51,18 +53,24 @@ const has = (object: object, path: string): boolean => {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class SelectorComponent { // implements OnInit
+export class SelectorComponent { // implements OnInit, OnChanges
 
     // Basic Component Settings
     title = 'selector-dnd'
     uid: string
 
-    // Element Attributes
+    // Registry Attributes
     @Input() target: string
+    @Input() targetSuffix: string
     @Input() id: number
     @Input() manifest: boolean
+    @Input() decouple: boolean
+    @Input() direct: boolean
     @Input() api: object
-    @Input() searchQuery: object
+    @Input() urlRoot: object
+
+    // Component Attributes
+    // @Input() foo: object
 
     // Dependencies
     _ = _
@@ -73,7 +81,7 @@ export class SelectorComponent { // implements OnInit
 
     // Stratus Data Connectivity
     registry = new Registry()
-    fetched: any
+    fetched: Promise<boolean|Collection|Model>
     data: any
     collection: any
     // @Output() model: any;
@@ -89,14 +97,16 @@ export class SelectorComponent { // implements OnInit
     // filteredModels: Observable<[]>;
     // filteredModels: any;
 
-    constructor(iconRegistry: MatIconRegistry, sanitizer: DomSanitizer, private ref: ChangeDetectorRef) {
+    constructor(
+        iconRegistry: MatIconRegistry,
+        sanitizer: DomSanitizer,
+        private ref: ChangeDetectorRef,
+        private elementRef: ElementRef
+    ) {
 
         // Initialization
         this.uid = _.uniqueId('sa_selector_component_')
         Stratus.Instances[this.uid] = this
-
-        // Hoist Context
-        const that = this
 
         // Dependencies
         this.sanitizer = sanitizer
@@ -111,33 +121,29 @@ export class SelectorComponent { // implements OnInit
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
 
-        console.log('inputs:', this.target, this.id, this.manifest, this.api)
-
-        if (_.isUndefined(this.target)) {
-            this.target = 'Content'
-        }
-
-        // Declare Observable with Subscriber (Only Happens Once)
-        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
-
         // Data Connections
         this.fetchData()
-            .then((data: any) => {
-                if (!data.on) {
+            .then(data => {
+                if (!data || !(data instanceof EventManager)) {
                     console.warn('Unable to bind data from Registry!')
                     return
                 }
                 // Manually render upon model change
-                // ref.detach();
-                data.on('change', () => {
-                    // that.onDataChange(ref);
-                    that.dataDefer(that.subscriber)
-                    ref.detectChanges()
-                })
-                // that.onDataChange(ref);
-                that.dataDefer(that.subscriber)
-                ref.detectChanges()
+                // this.ref.detach();
+                const onDataChange = () => {
+                    if (!data.completed) {
+                        return
+                    }
+                    // this.onDataChange(ref);
+                    this.dataDefer(this.subscriber)
+                    this.ref.detectChanges()
+                }
+                data.on('change', onDataChange)
+                onDataChange()
             })
+
+        // Declare Observable with Subscriber (Only Happens Once)
+        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
 
         // AutoComplete Binding
         // this.filteredModels = this.selectCtrl.valueChanges
@@ -149,8 +155,25 @@ export class SelectorComponent { // implements OnInit
         // console.info('constructor!');
     }
 
-    // ngOnInit(): void {
-    //     console.info('selector.ngOnInit');
+    // ngOnInit() {
+    //     console.info('selector.ngOnInit')
+    // }
+
+    // ngOnChanges() {
+    //     // Display Inputs
+    //     if (!cookie('env')) {
+    //         return
+    //     }
+    //     console.log('inputs:', {
+    //         target: this.target,
+    //         targetSuffix: this.targetSuffix,
+    //         id: this.id,
+    //         manifest: this.manifest,
+    //         decouple: this.decouple,
+    //         direct: this.direct,
+    //         api: this.api,
+    //         urlRoot: this.urlRoot,
+    //     })
     // }
 
     // ngDoCheck(): void {
@@ -183,11 +206,24 @@ export class SelectorComponent { // implements OnInit
     }
 
     // Data Connections
-    async fetchData(): Promise<any> {
-        if (!this.fetched) {
-            this.fetched = this.registry.fetch(Stratus.Select('#widget-edit-entity'), this)
+    fetchData() {
+        if (this.fetched) {
+            return this.fetched
         }
-        return this.fetched
+        return this.fetched = this.registry.fetch(
+            Stratus.Select(this.elementRef.nativeElement),
+            this
+        )
+        // return this.fetched = this.registry.fetch({
+        //     target: this.target,
+        //     targetSuffix: this.targetSuffix,
+        //     id: this.id,
+        //     manifest: this.manifest,
+        //     decouple: this.decouple,
+        //     direct: this.direct,
+        //     api: this.api,
+        //     urlRoot: this.urlRoot,
+        // }, this)
     }
 
     // Ensures Data is populated before hitting the Subscriber

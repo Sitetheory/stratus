@@ -6,6 +6,9 @@ import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 
+// Forced Runtime Load
+import 'angular'
+
 // Modules
 import 'angular-sanitize'
 
@@ -58,20 +61,20 @@ Stratus.Controllers.Generic = [
         $scope.Stratus = Stratus
         $scope._ = _
         $scope.setUrlParams = (options: any) => {
-            if (_.isObject(options)) {
-                let substance = false
-                _.forEach(options, (value: any) => {
-                    if (!_.isUndefined(value) && value !== null) {
-                        if (!_.isString(value)) {
-                            substance = true
-                        } else if (value.length > 0) {
-                            substance = true
-                        }
-                    }
-                })
-                if (substance) {
-                    window.location.replace(setUrlParams(options))
+            if (!_.isObject(options)) {
+                return
+            }
+            let substance = false
+            _.forEach(options, (value: any) => {
+                if (_.isUndefined(value) || value === null) {
+                    return
                 }
+                if (!_.isString(value) || value.length > 0) {
+                    substance = true
+                }
+            })
+            if (substance) {
+                window.location.replace(setUrlParams(options))
             }
         }
         $scope.$log = $log

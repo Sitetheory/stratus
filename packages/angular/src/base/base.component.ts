@@ -12,7 +12,7 @@ const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/ang
  */
 @Component({
     selector: 'sa-base',
-    template: '',
+    template: '<ng-content></ng-content>',
     // templateUrl: `${localDir}/base/base.component.html`,
     // styleUrls: [`${localDir}/base/base.component.css`],
     // viewProviders: [BaseComponent]
