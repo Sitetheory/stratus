@@ -62,7 +62,7 @@ export class Registry {
     // Maintain all models in Namespace
     // Inverse the parent and child objects the same way Doctrine does
     // TODO: PushState Handling like: #/media/p/2
-    fetch($element: any, $scope: any) {
+    fetch($element: any, $scope: any): Promise<boolean|Collection|Model> {
         return new Promise(async (resolve, reject) => {
             if (typeof $element === 'string') {
                 $element = {
@@ -110,7 +110,7 @@ export class Registry {
                 const wait = await serviceVerify()
             }
             _.forEach(options, async (element, key) => {
-                if (!element || typeof element !== 'string') {
+                if (!element || typeof element !== 'string' || !$scope || !$scope.$parent) {
                     completed++
                     verify()
                     return
@@ -148,7 +148,7 @@ export class Registry {
         })
     }
 
-    build(options: any, $scope: any) {
+    build(options: any, $scope: any): Collection | Model {
         let data
         if (options.target) {
             options.target = ucfirst(options.target)
