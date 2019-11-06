@@ -31,8 +31,8 @@ export interface WhereOptions {
     City?: string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
-    BathroomsFullMin?: number | any,
-    BedroomsTotalMin?: number | any,
+    Bathrooms?: number | any, // Previously BathroomsFullMin
+    Bedrooms?: number | any, // Previously BedroomsTotalMin
     AgentLicense?: string[] | string,
 
     // Member
@@ -105,6 +105,7 @@ interface TokenResponse {
     }
 }
 
+// FIXME unable to add an array of MongoWhereQuery to and/or
 interface MongoWhereQuery {
     [key: string]: string | string[] | number | {
         inq?: string[] | number[],
@@ -114,7 +115,11 @@ interface MongoWhereQuery {
         like?: string,
         options?: string
     }
+    // and?: MongoWhereQuery[]
+    // or?: MongoWhereQuery[]
 }
+
+
 
 // type MongoOrderQuery = string[]
 interface MongoOrderQuery extends Array<string> {
@@ -382,6 +387,7 @@ Stratus.Services.Idx = [
                  * @param keepAlive -
                  */
                 function tokenRefresh(keepAlive = false): IPromise<void> {
+                    // TODO request only certain service_ids (&service_id=0,1,9 or &service_id[]=0&service_id[]=9)
                     return $q((resolve: void | any, reject: void | any) => {
                         $http({
                             method: 'GET',
@@ -742,17 +748,26 @@ Stratus.Services.Idx = [
                     }
                     // Baths Min
                     if (
-                        Object.prototype.hasOwnProperty.call(where, 'BathroomsFullMin') &&
-                        where.BathroomsFullMin && where.BathroomsFullMin !== 0
+                        Object.prototype.hasOwnProperty.call(where, 'Bathrooms') &&
+                        where.Bathrooms && where.Bathrooms !== 0
                     ) {
-                        whereQuery.BathroomsFull = {gte: parseInt(where.BathroomsFullMin, 10)}
+                        whereQuery.Bathrooms = {gte: parseInt(where.Bathrooms, 10)}
+                        /*if (!Object.prototype.hasOwnProperty.call(whereQuery, 'and')) {
+                            whereQuery.and = []
+                        }
+                        whereQuery.and.push({
+                            or: [
+                                {BathroomsFull: {gte: parseInt(where.BathroomsFullMin, 10)}},
+                                {BathroomsTotalInteger: {gte: parseInt(where.BathroomsFullMin, 10)}}
+                            ]
+                        })*/
                     }
                     // Beds Min
                     if (
-                        Object.prototype.hasOwnProperty.call(where, 'BedroomsTotalMin') &&
-                        where.BedroomsTotalMin && where.BedroomsTotalMin !== 0
+                        Object.prototype.hasOwnProperty.call(where, 'Bedrooms') &&
+                        where.Bedrooms && where.Bedrooms !== 0
                     ) {
-                        whereQuery.BedroomsTotal = {gte: parseInt(where.BedroomsTotalMin, 10)}
+                        whereQuery.BedroomsTotal = {gte: parseInt(where.Bedrooms, 10)}
                     }
                     return whereQuery
                 }
