@@ -50,6 +50,7 @@ export interface WhereOptions {
 }
 
 export interface CompileFilterOptions {
+    [key: string]: any,
     where?: WhereOptions,
     service?: number | number[],
     page?: number,
@@ -115,10 +116,15 @@ interface MongoWhereQuery {
         like?: string,
         options?: string
     }
+
     // and?: MongoWhereQuery[]
     // or?: MongoWhereQuery[]
 }
 
+// Used locally to store a number of index prepared queries
+interface IncludeOptions {
+    [key: string]: MongoIncludeQuery
+}
 
 
 // type MongoOrderQuery = string[]
@@ -129,8 +135,8 @@ interface MongoOrderQuery extends Array<string> {
 interface MongoIncludeQuery {
     relation: string,
     scope: {
-        fields: string[] | string,
         order?: string,
+        fields?: '*' | string[],
         limit?: number,
     }
 }
@@ -885,10 +891,8 @@ Stratus.Services.Idx = [
 
                     // Handle included collections
                     const includes: MongoIncludeQuery[] = []
-
-                    // Included Images
-                    if (options.images) {
-                        const imageInclude: MongoIncludeQuery = {
+                    const includeOptions: IncludeOptions = {
+                        images: {
                             relation: 'Images',
                             scope: {
                                 order: 'Order',
@@ -896,26 +900,8 @@ Stratus.Services.Idx = [
                                     'MediaURL'
                                 ]
                             }
-                        }
-                        if (typeof options.images === 'object') {
-                            if (Object.prototype.hasOwnProperty.call(options.images, 'limit')) {
-                                imageInclude.scope.limit = options.images.limit
-                            }
-                            if (Object.prototype.hasOwnProperty.call(options.images, 'fields')) {
-                                if (options.images.fields === '*') {
-                                    delete imageInclude.scope.fields
-                                } else {
-                                    imageInclude.scope.fields = options.images.fields
-                                }
-                            }
-                        }
-
-                        includes.push(imageInclude)
-                    }
-
-                    // Included Open Houses (Property Only)
-                    if (options.openhouses) {
-                        const openHouseInclude: MongoIncludeQuery = {
+                        },
+                        openhouses: {
                             relation: 'OpenHouses',
                             scope: {
                                 order: 'OpenHouseStartTime', // FIXME should be ordered by default on db side (default scopes)
@@ -924,26 +910,8 @@ Stratus.Services.Idx = [
                                     'OpenHouseEndTime'
                                 ]
                             }
-                        }
-                        if (typeof options.openhouses === 'object') {
-                            if (Object.prototype.hasOwnProperty.call(options.openhouses, 'limit')) {
-                                openHouseInclude.scope.limit = options.openhouses.limit
-                            }
-                            if (Object.prototype.hasOwnProperty.call(options.openhouses, 'fields')) {
-                                if (options.openhouses.fields === '*') {
-                                    delete openHouseInclude.scope.fields
-                                } else {
-                                    openHouseInclude.scope.fields = options.openhouses.fields
-                                }
-                            }
-                        }
-
-                        includes.push(openHouseInclude)
-                    }
-
-                    // Include Office (Member Only)
-                    if (options.office) {
-                        const includeItem: MongoIncludeQuery = {
+                        },
+                        office: {
                             relation: 'Office',
                             scope: {
                                 fields: [
@@ -951,23 +919,18 @@ Stratus.Services.Idx = [
                                     'OfficeKey'
                                 ]
                             }
-                        }
-                        if (typeof options.office === 'object') {
-                            if (Object.prototype.hasOwnProperty.call(options.office, 'fields')) {
-                                if (options.office.fields === '*') {
-                                    delete includeItem.scope.fields
-                                } else {
-                                    includeItem.scope.fields = options.office.fields
-                                }
+                        },
+                        managingBroker: {
+                            relation: 'Member',
+                            scope: {
+                                fields: [
+                                    'MemberFullName',
+                                    'MemberStateLicense',
+                                    'MemberKey'
+                                ]
                             }
-                        }
-
-                        includes.push(includeItem)
-                    }
-
-                    // Include Managing Broker Member Data (Office Only)
-                    if (options.managingBroker) {
-                        const includeItem: MongoIncludeQuery = {
+                        },
+                        members: {
                             relation: 'Member',
                             scope: {
                                 fields: [
@@ -977,43 +940,26 @@ Stratus.Services.Idx = [
                                 ]
                             }
                         }
-                        if (typeof options.managingBroker === 'object') {
-                            if (Object.prototype.hasOwnProperty.call(options.managingBroker, 'fields')) {
-                                if (options.managingBroker.fields === '*') {
-                                    delete includeItem.scope.fields
-                                } else {
-                                    includeItem.scope.fields = options.managingBroker.fields
-                                }
-                            }
-                        }
-
-                        includes.push(includeItem)
                     }
 
-                    // Include Members/Agents (Office Only)
-                    if (options.members) {
-                        const includeItem: MongoIncludeQuery = {
-                            relation: 'Member',
-                            scope: {
-                                fields: [
-                                    'MemberFullName',
-                                    'MemberStateLicense',
-                                    'MemberKey'
-                                ]
-                            }
-                        }
-                        if (typeof options.members === 'object') {
-                            if (Object.prototype.hasOwnProperty.call(options.members, 'fields')) {
-                                if (options.members.fields === '*') {
-                                    delete includeItem.scope.fields
-                                } else {
-                                    includeItem.scope.fields = options.members.fields
+                    // Included Images, Open Houses (Property Only), Office (Member Only),
+                    // Managing Broker Member Data (Office Only), Members/Agents (Office Only)
+                    Object.entries(includeOptions).forEach(([optionName, includeItem]) => {
+                        if (Object.prototype.hasOwnProperty.call(options, optionName)) {
+                            const option: any = options[optionName]
+                            if (typeof option === 'object') {
+                                if (Object.prototype.hasOwnProperty.call(option, 'fields')) {
+                                    if (option.fields === '*') {
+                                        delete includeItem.scope.fields
+                                    } else {
+                                        includeItem.scope.fields = option.fields
+                                    }
                                 }
                             }
-                        }
 
-                        includes.push(includeItem)
-                    }
+                            includes.push(includeItem)
+                        }
+                    })
 
                     if (includes.length === 1) {
                         filterQuery.include = includes[0]
