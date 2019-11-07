@@ -88,14 +88,14 @@ Stratus.Components.IdxPropertySearch = {
 
             // Set default selections TODO may need some more universally set options to be able to use
             $scope.options.selection = $scope.options.selection || {}
-            $scope.options.selection.BedroomsTotalMin = $scope.options.selection.BedroomsTotalMin || [
+            $scope.options.selection.Bedrooms = $scope.options.selection.Bedrooms || [
                 {name: '1+', value: 1},
                 {name: '2+', value: 2},
                 {name: '3+', value: 3},
                 {name: '4+', value: 4},
                 {name: '5+', value: 5}
             ]
-            $scope.options.selection.BathroomsFullMin = $scope.options.selection.BathroomsFullMin || [
+            $scope.options.selection.Bathrooms = $scope.options.selection.Bathrooms || [
                 {name: '1+', value: 1},
                 {name: '2+', value: 2},
                 {name: '3+', value: 3},
@@ -344,8 +344,8 @@ Stratus.Components.IdxPropertySearch = {
             $scope.options.query.City = $scope.options.query.City || ''
             $scope.options.query.ListPriceMin = $scope.options.query.ListPriceMin || null
             $scope.options.query.ListPriceMax = $scope.options.query.ListPriceMax || null
-            $scope.options.query.BathroomsFullMin = $scope.options.query.BathroomsFullMin || null
-            $scope.options.query.BedroomsTotalMin = $scope.options.query.BedroomsTotalMin || null
+            $scope.options.query.Bathrooms = $scope.options.query.Bathrooms || null
+            $scope.options.query.Bedrooms = $scope.options.query.Bedrooms || null
             $scope.options.query.AgentLicense = $scope.options.query.AgentLicense || []
             // TODO need to search by Agent License
         }

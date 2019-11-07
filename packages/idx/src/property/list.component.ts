@@ -275,6 +275,33 @@ Stratus.Components.IdxPropertyList = {
         $scope.getDetailsURL = (property: object | any): string =>
             $scope.detailsLinkUrl + '#!/Listing/' + property._ServiceId + '/' + property.ListingKey + '/'
 
+        $scope.getFriendlyStatus = (property: object | any): string => {
+            let statusName = ''
+            if (
+                Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
+                property.MlsStatus !== ''
+            ) {
+                statusName = property.MlsStatus
+                switch (statusName) {
+                    case 'Act Cont Release':
+                    case 'Act Cont Show':
+                    case 'Contingent - Release':
+                    case 'Contingent - Show':
+                    case 'Contingent-Release':
+                    case 'Contingent-Show': {
+                        statusName = 'Contingent'
+                        break
+                    }
+                    case 'Leased/Option':
+                    case 'Leased/Rented': {
+                        statusName = 'Closed'
+                        break
+                    }
+                }
+            }
+            return statusName
+        }
+
         /**
          * Returns the processed street address
          * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
