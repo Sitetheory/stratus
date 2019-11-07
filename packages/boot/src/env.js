@@ -135,9 +135,9 @@
         // start polling at an interval until the data is found at the global
         const poll = async function () {
           const delay = await hamlet.delay(100)
-          if (debug) {
-            console.log(`${requirements} poll:`, delay)
-          }
+          // if (debug) {
+          //   console.log(`${requirements} poll:`, delay)
+          // }
           const data = cache[requirements]
           if (!data) {
             return poll()

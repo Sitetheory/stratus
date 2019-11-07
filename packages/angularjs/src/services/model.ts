@@ -9,11 +9,12 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Stratus Core
 import {
     getAnchorParams,
-    getUrlParams,
+    getUrlParams, LooseObject,
     patch,
     setUrlParams,
     strcmp,
-    ucfirst
+    ucfirst,
+    extendDeep
 } from '@stratusjs/core/misc'
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {cookie} from '@stratusjs/core/environment'
@@ -68,6 +69,13 @@ const serviceVerify = async () => {
             serviceVerify().then(resolve)
         }, 250)
     })
+}
+
+export interface HttpPrototype {
+    headers: LooseObject
+    method: string
+    url: string
+    data?: string
 }
 
 export class Model extends ModelBase {
@@ -194,47 +202,56 @@ export class Model extends ModelBase {
             const wait = await serviceVerify()
         }
         // FIXME: The performance here is horrendous
-        $rootScope.$watch(() => this.data,
-            (newData: any, priorData: any) => {
-                const patchData = patch(newData, priorData)
+        $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(priorData), true)
+    }
 
-                _.forEach(_.keys(patchData), (key: any) => {
-                    if (_.endsWith(key, '$$hashKey')) {
-                        delete patchData[key]
-                    }
-                })
+    sanitizePatch(patchData: LooseObject) {
+        _.forEach(_.keys(patchData), (key: any) => {
+            if (_.endsWith(key, '$$hashKey')) {
+                delete patchData[key]
+            }
+        })
+        return patchData
+    }
 
-                // Set the origin data
-                // if (_.isEmpty(this.initData)) {
-                //     extendDeep(this.data, this.initData)
-                // }
+    handleChanges(priorData: LooseObject) {
+        const changeSet = this.sanitizePatch(
+            patch(this.data, priorData)
+        )
 
-                if (!patchData) {
-                    return true
-                }
+        // Set the origin data
+        // if (_.isEmpty(this.initData)) {
+        //     extendDeep(this.data, this.initData)
+        // }
 
-                if (cookie('env')) {
-                    console.log('Patch:', patchData)
-                }
+        if (!changeSet) {
+            return true
+        }
 
-                this.changed = true
+        // const patchData = this.sanitizePatch(
+        //     patch(this.data, this.recv)
+        // )
 
-                const version = getAnchorParams('version')
+        if (cookie('env')) {
+            console.log('Changed:', changeSet)
+            // console.log('Patch:', patchData)
+        }
 
-                // this.changed = !_.isEqual(newData, this.initData)
-                if ((newData.id && newData.id !== priorData.id) ||
-                    (!_.isEmpty(version) && newData.version && parseInt(version, 10) !== newData.version.id)
-                ) {
-                    // console.warn('replacing version...')
-                    window.location.replace(
-                        setUrlParams({
-                            id: newData.id
-                        })
-                    )
-                }
-                this.patch = _.extend(this.patch, patchData)
-                this.throttleTrigger('change')
-            }, true)
+        const version = getAnchorParams('version')
+
+        // this.changed = !_.isEqual(this.data, this.initData)
+        if (changeSet.id || (!_.isEmpty(version) && changeSet.version && parseInt(version, 10) !== changeSet.version.id)) {
+            // console.warn('replacing version...')
+            const newUrl = setUrlParams({
+                id: this.data.id
+            })
+            if (newUrl !== document.location.href) {
+                window.location.replace(newUrl)
+            }
+        }
+        this.patch = _.extend(this.patch, changeSet)
+        this.throttleTrigger('change')
+        this.changed = !_.isEmpty(this.patch)
     }
 
     getIdentifier() {
@@ -297,7 +314,7 @@ export class Model extends ModelBase {
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
-            const prototype: any = {
+            const prototype: HttpPrototype = {
                 method: action,
                 url: this.url(),
                 headers: {}
@@ -336,6 +353,7 @@ export class Model extends ModelBase {
                     this.watcher()
                 }
 
+                // FIXME: This hack should not be necessary
                 // Reset status model
                 setTimeout(() => {
                     this.changed = false
@@ -364,9 +382,11 @@ export class Model extends ModelBase {
                         this.error = true
                     }
 
+                    // Diff Settings
                     if (!this.error) {
-                        // Auto-Saving Settings
+                        this.changed = false
                         this.saving = false
+                        // this.recv = extendDeep({}, this.data)
                         this.patch = {}
                     }
 

@@ -106,6 +106,7 @@ export function extendDeep(target: any, merger: any) {
     return shallow
 }
 
+// TODO: Move this to a new PushState Handler Class
 // Get more params which is shown after anchor '#' anchor in the url.
 export function getAnchorParams(key: any, url?: any) {
     const vars: any = {}
@@ -201,7 +202,7 @@ export function endsWith(target: any, search: any) {
         target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
 }
 
-export function patch(newData: any, priorData: any): any {
+export function patch(newData: any, priorData: any): LooseObject {
     if (!_.isObject(newData) || !_.size(newData)) {
         return null
     }
@@ -378,3 +379,7 @@ export function truncate(target: any, limit?: any, suffix?: any) {
 export interface LooseObject {
     [key: string]: any
 }
+
+// TODO: Add a PushState Handler for document.location.hash
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/hashchange_event
+// https://developer.mozilla.org/en-US/docs/Web/API/History/pushState

@@ -10,7 +10,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {cookie} from '@stratusjs/core/environment'
-import {ucfirst} from '@stratusjs/core/misc'
+import {LooseObject, ucfirst} from '@stratusjs/core/misc'
 
 // Modules
 import 'angular-material' // Reliant for $mdToast
@@ -61,10 +61,10 @@ const serviceVerify = async () => {
 }
 
 export interface HttpPrototype {
-    headers: any
+    headers: LooseObject
     method: string
     url: string
-    data?: any
+    data?: string
 }
 
 export class Collection extends EventManager {
