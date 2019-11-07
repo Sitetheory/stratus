@@ -236,7 +236,7 @@ export class SelectorComponent { // implements OnInit, OnChanges
             }, 500)
             return
         }
-        console.log('pushed models to subscriber.')
+        // console.log('pushed models to subscriber.')
         subscriber.next(models)
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
