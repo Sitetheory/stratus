@@ -95,6 +95,7 @@ Stratus.Controllers.Generic = [
 
         // Angular Wrappers
         $scope.getHTML = $sce.trustAsHtml
+        $scope.getURL = $sce.trustAsResourceUrl
 
         // Handle Selected
         if (!$scope.collection) {
