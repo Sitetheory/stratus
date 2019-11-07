@@ -15,9 +15,10 @@ export class ModelBase extends EventManager {
     temps: LooseObject = {}
 
     // Diff Detection
-    changed: boolean|any = false
+    changed = false
     watch = false
     watching = false
+    recv: LooseObject = {}
     patch: LooseObject = {}
 
     constructor(data?: any, options?: any) {

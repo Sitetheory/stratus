@@ -44,7 +44,7 @@ export class Chronos extends ModelBase {
         if (_.isEmpty(this.changed)) {
             console.warn('synchronize: empty changeset!')
         }
-        _.forEach(this.changed, (job: any, key: any) => {
+        _.forEach(this.patch, (job: any, key: any) => {
             if (typeof key === 'string' && key.indexOf('.') !== -1) {
                 key = _.first(key.split('.'))
                 job = this.get(key)
