@@ -374,7 +374,7 @@ Stratus.Services.Idx = [
                         try {
                             if (
                                 session.services.length < 1 ||
-                                session.expires < new Date() // if expiring in the next 15 seconds
+                                session.expires < new Date(Date.now() + (5 * 1000)) // if expiring in the next 5 seconds
                             ) {
                                 await tokenRefresh(keepAlive)
                                 resolve()
@@ -406,7 +406,7 @@ Stratus.Services.Idx = [
                                 Object.prototype.hasOwnProperty.call(response.data, 'services') &&
                                 Object.prototype.hasOwnProperty.call(response.data.services, 'length')
                             ) {
-                                tokenHandleGoodResponse(response)
+                                tokenHandleGoodResponse(response, keepAlive)
                                 resolve()
                             } else {
                                 tokenHandleBadResponse(response)

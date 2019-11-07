@@ -674,9 +674,11 @@ Stratus.Components.IdxPropertyDetails = {
             Idx.registerDetailsInstance($scope.elementId, $scope)
             // console.log(this.uid)
 
-            $scope.urlLoad = !($scope.urlLoad !== true &&
+            $scope.urlLoad = !(
+                $scope.urlLoad !== true &&
                 $scope.service &&
-                ($scope.ListingKey || $scope.ListingId))
+                ($scope.ListingKey || $scope.ListingId)
+            )
 
             if ($scope.urlLoad) {
                 // Load Options from the provided URL settings
