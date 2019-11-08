@@ -422,28 +422,6 @@ Stratus.Components.IdxPropertySearch = {
                 }
             }
         }
-
-        /**
-         * Placeholder for future auto complete
-         */
-        $scope.autoCompleteCity = (query: string): any[] => {
-            const test = [
-                {
-                    value: 'test',
-                    display: 'Test'
-                },
-                {
-                    value: 'concord',
-                    display: 'Concord'
-                },
-                {
-                    value: 'fremont',
-                    display: 'Fremont'
-                }
-            ]
-            return query ? test.filter(createFilterFor(query)) : []
-            // return ['Test', 'Concord', 'Fremont']
-        }
     },
     templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
 }

@@ -9,26 +9,6 @@
 					   autocomplete="off"
 				>
 			</md-input-container>
-
-            <md-autocomplete
-                 md-min-length="0"
-                 md-max-length="250"
-                 md-search-text="options.query.City"
-                 md-items="item in autoCompleteCity(options.query.City)"
-                 md-item-text="item.display"
-                 md-selected-item="options.query.City"
-                 md-floating-label="Enter City"
-                 md-clear-button="true"
-                 data-ng-keyup="$event.keyCode == 13 && options.query.City && searchProperties()"
-                 autocomplete="off"
-             >
-                <md-item-template>
-                    <span>{{item.display}}</span>
-                </md-item-template>
-                <md-not-found>
-                    Nothing found
-                </md-not-found>
-            </md-autocomplete>
 		</div>
 	</div>
 
