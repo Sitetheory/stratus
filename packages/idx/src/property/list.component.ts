@@ -90,7 +90,10 @@ Stratus.Components.IdxPropertyList = {
             /** type {string|null} */
             $scope.detailsTemplate = $attrs.detailsTemplate || null
 
-            $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
+            // TODO added backwards compatible options <--> query parameter until the next version
+            $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) :
+                $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+            // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
             $scope.query.order = $scope.query.order || null // will be set by Service
             $scope.query.page = $scope.query.page || null // will be set by Service
