@@ -169,7 +169,6 @@ Stratus.Components.IdxPropertyList = {
         ): Promise<Collection> =>
             $q((resolve: any) => {
                 query = query || {}
-                console.log('set to search ', query)
                 updateUrl = updateUrl === false ? updateUrl : true
 
                 // If refreshing, reset to page 1
@@ -215,7 +214,6 @@ Stratus.Components.IdxPropertyList = {
                 // Keep the Search widgets up to date
                 $scope.refreshSearchWidgetOptions()
 
-                console.log('will search ', $scope.query)
                 // Grab the new property listings
                 resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
             })
