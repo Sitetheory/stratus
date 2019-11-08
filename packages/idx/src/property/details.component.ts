@@ -709,7 +709,7 @@ Stratus.Components.IdxPropertyDetails = {
                 Idx.refreshUrlOptions($scope.defaultListOptions)
                 if ($scope.options.pageTitle) {
                     // Update the page title
-                    Idx.setPageTitle(data.UnparsedAddress)
+                    Idx.setPageTitle($scope.getStreetAddress())
                 }
             }
         })

@@ -164,6 +164,9 @@ Stratus.Components.IdxPropertySearch = {
         }
         $scope.$watch('options.query.ListingType', () => {
             if ($scope.options.selection.ListingType.list) {
+                if (!_.isArray($scope.options.query.ListingType)) {
+                    $scope.options.query.ListingType = [$scope.options.query.ListingType]
+                }
                 $scope.options.selection.ListingType.group.Residential =
                     $scope.arrayIntersect($scope.options.selection.ListingType.list.Residential, $scope.options.query.ListingType)
                 $scope.options.selection.ListingType.group.Commercial =
@@ -279,7 +282,7 @@ Stratus.Components.IdxPropertySearch = {
                 !_.isArray(array) ||
                 !_.isArray(itemArray)
             ) {
-                console.warn('Array undefined, cannot search for', itemArray)
+                console.warn('Array undefined, cannot search for', itemArray, 'in', array)
                 // return []
                 return false
             }

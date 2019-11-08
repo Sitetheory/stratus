@@ -46,7 +46,7 @@ Stratus.Components.IdxPropertyList = {
         contactPhone: '@',
         googleApiKey: '@',
         orderOptions: '@',
-        options: '@',
+        query: '@',
         template: '@'
     },
     controller(
@@ -76,7 +76,7 @@ Stratus.Components.IdxPropertyList = {
          */
         $ctrl.$onInit = async () => {
             /**
-             * Allow options to be loaded initially from the URL
+             * Allow query to be loaded initially from the URL
              * type {boolean}
              */
             $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
@@ -90,20 +90,20 @@ Stratus.Components.IdxPropertyList = {
             /** type {string|null} */
             $scope.detailsTemplate = $attrs.detailsTemplate || null
 
-            $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+            $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
-            $scope.options.order = $scope.options.order || null // will be set by Service
-            $scope.options.page = $scope.options.page || null // will be set by Service
-            $scope.options.perPage = $scope.options.perPage || 25
-            $scope.options.images = $scope.options.images || {limit: 1}
+            $scope.query.order = $scope.query.order || null // will be set by Service
+            $scope.query.page = $scope.query.page || null // will be set by Service
+            $scope.query.perPage = $scope.query.perPage || 25
+            $scope.query.images = $scope.query.images || {limit: 1}
 
-            $scope.options.where = $scope.options.where || {}
-            $scope.options.where.City = $scope.options.where.City || ''
-            $scope.options.where.Status = $scope.options.where.Status || ['Active', 'Contract']
-            $scope.options.where.ListingType = $scope.options.where.ListingType || ['House', 'Condo']
-            $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []
+            $scope.query.where = $scope.query.where || {}
+            $scope.query.where.City = $scope.query.where.City || ''
+            $scope.query.where.Status = $scope.query.where.Status || ['Active', 'Contract']
+            $scope.query.where.ListingType = $scope.query.where.ListingType || ['House', 'Condo']
+            $scope.query.where.AgentLicense = $scope.query.where.AgentLicense || []
 
-            $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where)) // Extend/clone doesn't work for arrays
+            $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
 
             $scope.orderOptions = $scope.orderOptions || {
                 'Price (high to low)': '-ListPrice',
@@ -118,23 +118,23 @@ Stratus.Components.IdxPropertyList = {
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
 
-            let urlOptions: object | any = {} // TODO idx needs to exports urlOptions interface
+            let urlQuery: object | any = {} // TODO idx needs to exports urlQuery interface
             if ($scope.urlLoad) {
-                // first set the UrlOptions via defaults (cloning so it can't be altered)
-                Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
-                // Load Options from the provided URL settings
-                urlOptions = Idx.getOptionsFromUrl()
+                // first set the UrlQuery via defaults (cloning so it can't be altered)
+                Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultQuery)))
+                // Load Query from the provided URL settings
+                urlQuery = Idx.getOptionsFromUrl()
                 // If a specific listing is provided, be sure to pop it up as well
                 if (
-                    // urlOptions.hasOwnProperty('Listing') &&
-                    urlOptions.Listing.service &&
-                    urlOptions.Listing.ListingKey
+                    // urlQuery.hasOwnProperty('Listing') &&
+                    urlQuery.Listing.service &&
+                    urlQuery.Listing.ListingKey
                 ) {
-                    $scope.displayPropertyDetails(urlOptions.Listing)
+                    $scope.displayPropertyDetails(urlQuery.Listing)
                 }
             }
 
-            await $scope.searchProperties(urlOptions.Search, true, false)
+            await $scope.searchProperties(urlQuery.Search, true, false)
         }
 
         /**
@@ -155,64 +155,66 @@ Stratus.Components.IdxPropertyList = {
 
         /**
          * Functionality called when a search widget runs a query after the page has loaded
-         * may update the URL options, so it may not be ideal to use on page load
-         * TODO Idx needs to export search options interface
+         * may update the URL query, so it may not be ideal to use on page load
+         * TODO Idx needs to export search query interface
          * Returns Collection
          */
         $scope.searchProperties = async (
-            options?: CompileFilterOptions | object | any,
+            query?: CompileFilterOptions | object | any,
             refresh?: boolean,
             updateUrl?: boolean
         ): Promise<Collection> =>
             $q((resolve: any) => {
-                options = options || {}
+                query = query || {}
+                console.log('set to search ', query)
                 updateUrl = updateUrl === false ? updateUrl : true
 
                 // If refreshing, reset to page 1
                 if (refresh) {
-                    $scope.options.page = 1
+                    $scope.query.page = 1
                 }
-                // If search options sent, update the Widget. Otherwise use the widgets current where settings
-                if (Object.keys(options).length > 0) {
-                    delete ($scope.options.where)
-                    $scope.options.where = options
-                    if ($scope.options.where.Page) {
-                        $scope.options.page = $scope.options.where.Page
-                        delete ($scope.options.where.Page)
+                // If search query sent, update the Widget. Otherwise use the widgets current where settings
+                if (Object.keys(query).length > 0) {
+                    delete ($scope.query.where)
+                    $scope.query.where = query
+                    if ($scope.query.where.Page) {
+                        $scope.query.page = $scope.query.where.Page
+                        delete ($scope.query.where.Page)
                     }
-                    if ($scope.options.where.Order) {
-                        $scope.options.order = $scope.options.where.Order
-                        delete ($scope.options.where.Order)
+                    if ($scope.query.where.Order) {
+                        $scope.query.order = $scope.query.where.Order
+                        delete ($scope.query.where.Order)
                     }
                 } else {
-                    options = $scope.options.where || {}
+                    query = $scope.query.where || {}
                 }
                 // If a different page, set it in the URL
-                if ($scope.options.page) {
-                    options.Page = $scope.options.page
+                if ($scope.query.page) {
+                    query.Page = $scope.query.page
                 }
                 // Don't add Page/1 to the URL
-                if (options.Page <= 1) {
-                    delete (options.Page)
+                if (query.Page <= 1) {
+                    delete (query.Page)
                 }
-                if ($scope.options.order && $scope.options.order.length > 0) {
-                    options.Order = $scope.options.order
+                if ($scope.query.order && $scope.query.order.length > 0) {
+                    query.Order = $scope.query.order
                 }
 
-                // Set the URL options
-                Idx.setUrlOptions('Search', options)
+                // Set the URL query
+                Idx.setUrlOptions('Search', query)
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
-                // Display the URL options in the address bar
+                // Display the URL query in the address bar
                 if (updateUrl) {
-                    Idx.refreshUrlOptions($ctrl.defaultOptions)
+                    Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }
 
                 // Keep the Search widgets up to date
                 $scope.refreshSearchWidgetOptions()
 
+                console.log('will search ', $scope.query)
                 // Grab the new property listings
-                resolve(Idx.fetchProperties($scope, 'collection', $scope.options, refresh))
+                resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
             })
 
         /**
@@ -224,7 +226,7 @@ Stratus.Components.IdxPropertyList = {
             if (ev) {
                 ev.preventDefault()
             }
-            $scope.options.page = pageNumber
+            $scope.query.page = pageNumber
             await $scope.searchProperties()
         }
 
@@ -233,11 +235,11 @@ Stratus.Components.IdxPropertyList = {
          * @param ev - Click event
          */
         $scope.pageNext = async (ev?: any): Promise<void> => {
-            if (!$scope.options.page) {
-                $scope.options.page = 1
+            if (!$scope.query.page) {
+                $scope.query.page = 1
             }
-            if ($scope.collection.completed && $scope.options.page < $scope.collection.meta.data.totalPages) {
-                await $scope.pageChange($scope.options.page + 1, ev)
+            if ($scope.collection.completed && $scope.query.page < $scope.collection.meta.data.totalPages) {
+                await $scope.pageChange($scope.query.page + 1, ev)
             }
         }
 
@@ -246,11 +248,11 @@ Stratus.Components.IdxPropertyList = {
          * @param ev - Click event
          */
         $scope.pagePrevious = async (ev?: any): Promise<void> => {
-            if (!$scope.options.page) {
-                $scope.options.page = 1
+            if (!$scope.query.page) {
+                $scope.query.page = 1
             }
-            if ($scope.collection.completed && $scope.options.page > 1) {
-                const prev = parseInt($scope.options.page, 10) - 1 || 1
+            if ($scope.collection.completed && $scope.query.page > 1) {
+                const prev = parseInt($scope.query.page, 10) - 1 || 1
                 await $scope.pageChange(prev, ev)
             }
         }
@@ -264,7 +266,7 @@ Stratus.Components.IdxPropertyList = {
             if (ev) {
                 ev.preventDefault()
             }
-            $scope.options.order = order
+            $scope.query.order = order
             await $scope.searchProperties(null, true, true)
         }
 
@@ -433,7 +435,7 @@ Stratus.Components.IdxPropertyList = {
                     'element-id': 'property_detail_popup_' + property.ListingKey,
                     service: property._ServiceId,
                     'listing-key': property.ListingKey,
-                    'default-list-options': JSON.stringify($ctrl.defaultOptions),
+                    'default-list-options': JSON.stringify($ctrl.defaultQuery),
                     'page-title': true// update the page title
                 }
                 if ($scope.googleApiKey) {
@@ -479,7 +481,7 @@ Stratus.Components.IdxPropertyList = {
                             if ($mdDialog) {
                                 $mdDialog.hide()
                                 Idx.setUrlOptions('Listing', {})
-                                Idx.refreshUrlOptions($ctrl.defaultOptions)
+                                Idx.refreshUrlOptions($ctrl.defaultQuery)
                                 // Revery page title back to what it was
                                 Idx.setPageTitle()
                                 // Let's destroy it to save memory
@@ -491,7 +493,7 @@ Stratus.Components.IdxPropertyList = {
                     .then(() => {
                     }, () => {
                         Idx.setUrlOptions('Listing', {})
-                        Idx.refreshUrlOptions($ctrl.defaultOptions)
+                        Idx.refreshUrlOptions($ctrl.defaultQuery)
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory

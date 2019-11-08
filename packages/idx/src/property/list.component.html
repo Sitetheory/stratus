@@ -20,7 +20,7 @@
             <div ng-if="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
                 There are no listings that fit your search. Perhaps try less specific or different criteria.
             </div>
-			<div data-ng-repeat="property in collection.models | limitTo:options.perPage:(options.page-1)*options.perPage" id="{{::elementId}}_{{::property._id}}"
+			<div data-ng-repeat="property in collection.models | limitTo:query.perPage:(query.page-1)*query.perPage" id="{{::elementId}}_{{::property._id}}"
                  class="property-container" data-ng-cloak
             >
 				<md-card class="property-item">
@@ -78,15 +78,15 @@
 	<div class="pager-container clearfix">
 		<div class="pager-section" ng-if="collection.meta.data.totalPages >= 2">
 			<div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
-				<span data-ng-bind="options.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span> Pages
+				<span data-ng-bind="query.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span> Pages
 				<span class="pager-totals">
-                ( <!--<span data-ng-bind="(options.page-1)*options.perPage+1"></span>-<span data-ng-bind="(options.page*options.perPage)|min:collection.meta.data.totalRecords"></span> of --><span data-ng-bind="collection.meta.data.totalRecords"></span> properties )
+                ( <!--<span data-ng-bind="(query.page-1)*query.perPage+1"></span>-<span data-ng-bind="(query.page*query.perPage)|min:collection.meta.data.totalRecords"></span> of --><span data-ng-bind="collection.meta.data.totalRecords"></span> properties )
                 </span>
 			</div>
-			<a class="pager-button {{options.page > 1 && collection.completed ? '' : 'disabled'}}" data-ng-click="pagePrevious($event)">
+			<a class="pager-button {{query.page > 1 && collection.completed ? '' : 'disabled'}}" data-ng-click="pagePrevious($event)">
 				<i class="arrow small left"></i>
 			</a>
-			<a class="pager-button {{options.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}" data-ng-click="pageNext($event)">
+			<a class="pager-button {{query.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}" data-ng-click="pageNext($event)">
 				<i class="arrow small right"></i>
 			</a>
 		</div>
