@@ -268,7 +268,7 @@ Stratus.Components.Calendar = {
                 },
                 bindToController: true,
                 controllerAs: 'ctrl',
-                controller: () => { // $scope, $mdDialog unused
+                controller() { // $scope, $mdDialog unused
                     const dc = this
 
                     const close = () => {
@@ -285,12 +285,7 @@ Stratus.Components.Calendar = {
                         }
 
                         // The event saves misc data to the 'extendedProps' field. So we'll merge this in
-                        if (
-                            dc.eventData &&
-                            !dc.eventData.descriptionHTML &&
-                            _.has(dc.eventData.constructor.prototype, 'extendedProps') &&
-                            _.has(dc.eventData.extendedProps, 'description')
-                        ) {
+                        if (!dc.eventData.descriptionHTML && _.has(dc.eventData, 'extendedProps.description')) {
                             dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.extendedProps.description)
                         }
 
