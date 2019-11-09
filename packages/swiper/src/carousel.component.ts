@@ -96,7 +96,7 @@ Stratus.Components.SwiperCarousel = {
         Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`)
         $scope.initialized = false
 
-        Stratus.Internals.CssLoader(`${Stratus.BaseUrl}${Stratus.DeploymentPath}swiper/dist/css/swiper${min}.css`)
+        Stratus.Internals.CssLoader(`${Stratus.BaseUrl}${Stratus.DeploymentPath}swiper/css/swiper${min}.css`)
 
         // Hoist Attributes
         $scope.property = $attrs.property || null
