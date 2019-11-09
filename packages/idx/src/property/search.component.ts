@@ -164,6 +164,9 @@ Stratus.Components.IdxPropertySearch = {
         }
         $scope.$watch('options.query.ListingType', () => {
             if ($scope.options.selection.ListingType.list) {
+                if (!_.isArray($scope.options.query.ListingType)) {
+                    $scope.options.query.ListingType = [$scope.options.query.ListingType]
+                }
                 $scope.options.selection.ListingType.group.Residential =
                     $scope.arrayIntersect($scope.options.selection.ListingType.list.Residential, $scope.options.query.ListingType)
                 $scope.options.selection.ListingType.group.Commercial =
@@ -174,6 +177,18 @@ Stratus.Components.IdxPropertySearch = {
                 // console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
             }
         })
+
+        /**
+         * Create filter function for a query string
+         */
+        const createFilterFor = (query: string) => {
+            const lowercaseQuery = query.toLowerCase()
+
+            return (hay: any) => {
+                return (hay.value.indexOf(lowercaseQuery) === 0)
+            }
+
+        }
 
         /**
          * Update a scope nest variable from a given string path.
@@ -267,7 +282,7 @@ Stratus.Components.IdxPropertySearch = {
                 !_.isArray(array) ||
                 !_.isArray(itemArray)
             ) {
-                console.warn('Array undefined, cannot search for', itemArray)
+                console.warn('Array undefined, cannot search for', itemArray, 'in', array)
                 // return []
                 return false
             }

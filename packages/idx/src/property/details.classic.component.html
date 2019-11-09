@@ -111,7 +111,7 @@
 
 
 					<div class="mls-service-container">
-						<div class="mls-service" data-ng-if="::model.data.ListingKey || ::model.data.ListingId">
+						<div class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey">
 							<span data-ng-bind="getMLSName()"></span>#
 							<span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>
 						</div>
