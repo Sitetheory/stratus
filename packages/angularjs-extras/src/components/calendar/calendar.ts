@@ -280,17 +280,26 @@ Stratus.Components.Calendar = {
                     dc.$onInit = () => {
                         // Set a timezone that's easy to grab
                         dc.timeZone = ''
-                        if (_.get(dc, 'eventData._calendar.dateEnv.timeZone') !== 'local') {
+                        if (
+                            dc.eventData &&
+                            dc.eventData._calendar &&
+                            dc.eventData._calendar.dateEnv &&
+                            dc.eventData._calendar.dateEnv.timeZone !== 'local'
+                        ) {
                             dc.timeZone = dc.eventData._calendar.dateEnv.timeZone
                         }
 
                         // The event saves misc data to the 'extendedProps' field. So we'll merge this in
-                        if (!dc.eventData.descriptionHTML && _.has(dc.eventData, 'extendedProps.description')) {
+                        if (
+                            dc.eventData &&
+                            !dc.eventData.descriptionHTML &&
+                            Object.prototype.hasOwnProperty.call(dc.eventData.constructor.prototype, 'extendedProps') &&
+                            Object.prototype.hasOwnProperty.call(dc.eventData.extendedProps, 'description')
+                        ) {
                             dc.eventData.descriptionHTML = $sce.trustAsHtml(dc.eventData.extendedProps.description)
                         }
 
                         dc.close = close
-                        // console.log('event', $scope, dc)
                     }
                 }
             })
