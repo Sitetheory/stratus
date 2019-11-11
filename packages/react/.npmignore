@@ -2,6 +2,3 @@
 .idea
 node_modules
 yarn.lock
-
-# Archived Directory
-_archive/
