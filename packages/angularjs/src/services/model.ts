@@ -202,7 +202,22 @@ export class Model extends ModelBase {
             const wait = await serviceVerify()
         }
         // FIXME: The performance here is horrendous
-        $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(priorData), true)
+        $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(newData, priorData), true)
+    }
+
+    flatten(data: LooseObject, flatData?: LooseObject, chain?: string): LooseObject {
+        flatData = flatData || {}
+        const delimiter = chain ? '.' : ''
+        chain = chain || ''
+        _.forEach(data, (value: any, key: string|number) => {
+            const location = `${chain}${delimiter}${key}`
+            if (typeof value === 'object' && value) {
+                this.flatten(value, flatData, location)
+                return
+            }
+            flatData[location] = value
+        })
+        return flatData
     }
 
     sanitizePatch(patchData: LooseObject) {
@@ -214,9 +229,9 @@ export class Model extends ModelBase {
         return patchData
     }
 
-    handleChanges(priorData: LooseObject) {
+    handleChanges(newData: LooseObject, priorData: LooseObject) {
         const changeSet = this.sanitizePatch(
-            patch(this.data, priorData)
+            patch(newData, priorData)
         )
 
         // Set the origin data
@@ -250,7 +265,20 @@ export class Model extends ModelBase {
             }
         }
         this.patch = _.extend(this.patch, changeSet)
+        // removes items from patch if they match what we've received from the most recent XHR
+        _.forEach(this.patch, (value: any, key: string) => {
+            if (value !== this.recv[key]) {
+                return
+            }
+            delete this.patch[key]
+        })
+        if (cookie('env')) {
+            console.log('Patch:', this.patch)
+        }
         this.throttleTrigger('change')
+        if (this.collection) {
+            this.collection.throttleTrigger('change')
+        }
         this.changed = !_.isEmpty(this.patch)
     }
 
@@ -353,15 +381,15 @@ export class Model extends ModelBase {
                     this.watcher()
                 }
 
-                // FIXME: This hack should not be necessary
+                // TODO: Remove this unnecessary hack, when new patch is confirmed as accurate
                 // Reset status model
-                setTimeout(() => {
-                    this.changed = false
-                    this.throttleTrigger('change')
-                    if (this.collection) {
-                        this.collection.throttleTrigger('change')
-                    }
-                }, 100)
+                // setTimeout(() => {
+                //     this.changed = false
+                //     this.throttleTrigger('change')
+                //     if (this.collection) {
+                //         this.collection.throttleTrigger('change')
+                //     }
+                // }, 100)
 
                 if (response.status === 200 && _.isObject(response.data)) {
                     // TODO: Make this into an over-writable function
@@ -386,7 +414,7 @@ export class Model extends ModelBase {
                     if (!this.error) {
                         this.changed = false
                         this.saving = false
-                        // this.recv = extendDeep({}, this.data)
+                        this.recv = this.flatten(this.data)
                         this.patch = {}
                     }
 

@@ -92,17 +92,18 @@ export function hydrateString(str: string): string {
 
 // This function utilizes tree building to clone an object.
 export function extendDeep(target: any, merger: any) {
-    let shallow = _.clone(target)
-    if (merger && typeof merger === 'object') {
-        _.forEach(merger, (value: any, key: any) => {
-            if (shallow && typeof shallow === 'object') {
-                shallow[key] = (key in shallow) ? extendDeep(shallow[key],
-                    merger[key]) : merger[key]
-            }
-        })
-    } else {
-        shallow = merger
+    const shallow = _.clone(target)
+    if (!merger || typeof merger !== 'object') {
+        return merger
     }
+    _.forEach(merger, (value: any, key: number|string) => {
+        if (!shallow || typeof shallow !== 'object') {
+            return
+        }
+        shallow[key] = (key in shallow) ?
+                       extendDeep(shallow[key], merger[key]) :
+                       merger[key]
+    })
     return shallow
 }
 
