@@ -51,6 +51,7 @@ export interface WhereOptions {
 
 export interface CompileFilterOptions {
     [key: string]: any,
+
     where?: WhereOptions,
     service?: number | number[],
     page?: number,
@@ -168,7 +169,7 @@ Stratus.Services.Idx = [
             Model: any,
             orderByFilter: any
             ) => {
-                // TODO need to allow setting own tokenRefreshURL
+                let idxServicesEnabled: number[] = []
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
                 let defaultPageTitle: string
@@ -358,6 +359,21 @@ Stratus.Services.Idx = [
                 }
 
                 /**
+                 * Retrieve what services that we are fetching tokens for
+                 */
+                function getIdxServices(): number[] {
+                    return idxServicesEnabled
+                }
+
+                /**
+                 * Updates what services that we are fetching tokens for
+                 * @param services = services to fetches the tokens and search listings for
+                 */
+                function setIdxServices(services: number[]): void {
+                    idxServicesEnabled = services
+                }
+
+                /**
                  * Updates the token url to another path
                  * @param url = URL to change to
                  */
@@ -395,9 +411,17 @@ Stratus.Services.Idx = [
                 function tokenRefresh(keepAlive = false): IPromise<void> {
                     // TODO request only certain service_ids (&service_id=0,1,9 or &service_id[]=0&service_id[]=9)
                     return $q((resolve: void | any, reject: void | any) => {
+                        let additionalServices = ''
+                        // Fetch from each service allowed
+                        if (idxServicesEnabled.length !== 0) {
+                            idxServicesEnabled.forEach((service) => {
+                                additionalServices += `&service[]=${service}`
+                            })
+                        }
+
                         $http({
                             method: 'GET',
-                            url: tokenRefreshURL
+                            url: tokenRefreshURL + additionalServices
                         }).then((response: any) => {
                             // response as TokenResponse
                             if (
@@ -1361,6 +1385,12 @@ Stratus.Services.Idx = [
                                 lastQueries.pages.push(addPage)
                             }
                         }
+                        // Fetch from each service allowed
+                        if (options.service.length !== 0) {
+                            setIdxServices(options.service)
+                        } else {
+                            options.service = getIdxServices()
+                        }
 
                         // fetch Tokens
                         await tokenKeepAuth()
@@ -1727,6 +1757,7 @@ Stratus.Services.Idx = [
                     fetchOffices,
                     fetchProperties,
                     fetchProperty,
+                    getIdxServices,
                     getListInstance,
                     getListInstanceLinks,
                     getSearchInstanceLinks,
@@ -1738,6 +1769,7 @@ Stratus.Services.Idx = [
                     registerListInstance,
                     registerSearchInstance,
                     registerDetailsInstance,
+                    setIdxServices,
                     setPageTitle,
                     setTokenURL,
                     setUrlOptions,
