@@ -729,15 +729,21 @@ Stratus.Services.Idx = [
                         if (typeof where.ListingType === 'string') {
                             where.ListingType = [where.ListingType]
                         }
-                        whereQuery.ListingType = where.ListingType
+                        if (where.ListingType.length > 0) {
+                            whereQuery.ListingType = {
+                                inq: where.ListingType
+                            }
+                        }
                     }
                     // Status
                     if (Object.prototype.hasOwnProperty.call(where, 'Status') && where.Status !== '') {
                         if (typeof where.Status === 'string') {
                             where.Status = [where.Status]
                         }
-                        whereQuery.Status = {
-                            inq: where.Status
+                        if (where.Status.length > 0) {
+                            whereQuery.Status = {
+                                inq: where.Status
+                            }
                         }
                     }
                     // Agent License
@@ -746,7 +752,9 @@ Stratus.Services.Idx = [
                             where.AgentLicense = [where.AgentLicense]
                         }
                         if (where.AgentLicense.length > 0) {
-                            whereQuery.AgentLicense = where.AgentLicense
+                            whereQuery.AgentLicense = {
+                                inq: where.AgentLicense
+                            }
                         }
                     }
                     // City
