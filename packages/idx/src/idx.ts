@@ -90,12 +90,21 @@ export interface MLSService {
     host?: string
 }
 
+export interface WidgetContact {
+    name: string[],
+    phone: string[],
+    email: string[],
+    location: string[],
+    url: string[]
+}
+
 // Internal
 interface Session {
     services: MLSService[],
     lastCreated: Date,
     lastTtl: number
     expires?: Date
+    contacts: WidgetContact[]
 }
 
 interface TokenResponse {
@@ -210,7 +219,8 @@ Stratus.Services.Idx = [
                 const session: Session = {
                     services: [],
                     lastCreated: new Date(),
-                    lastTtl: 0
+                    lastTtl: 0,
+                    contacts: []
                 }
 
                 const urlOptions: {
@@ -462,6 +472,9 @@ Stratus.Services.Idx = [
                             session.expires = new Date(session.lastCreated.getTime() + (session.lastTtl - 15) * 1000)
                         }
                     })
+
+                    // TODO need to compile session.contact
+
                     if (keepAlive) {
                         tokenEnableRefreshTimer()
                     }
@@ -1089,6 +1102,13 @@ Stratus.Services.Idx = [
                     }
                     // console.log('serviceList', serviceList);
                     return serviceList
+                }
+
+                /**
+                 * Return currently supply feed owner's contact information (if any)
+                 */
+                function getContactVariables(): WidgetContact[] {
+                    return session.contacts
                 }
 
                 /**
@@ -1765,6 +1785,7 @@ Stratus.Services.Idx = [
                     fetchOffices,
                     fetchProperties,
                     fetchProperty,
+                    getContactVariables,
                     getIdxServices,
                     getListInstance,
                     getListInstanceLinks,
