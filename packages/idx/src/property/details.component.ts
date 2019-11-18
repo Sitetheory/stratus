@@ -55,6 +55,7 @@ Stratus.Components.IdxPropertyDetails = {
         contactEmail: '@',
         contactName: '@',
         contactPhone: '@',
+        contactWebsiteUrl: '@',
         options: '@',
         template: '@',
         defaultListOptions: '@'
@@ -104,14 +105,29 @@ Stratus.Components.IdxPropertyDetails = {
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
-            $scope.contactName = $attrs.contactName || null
-            $scope.contactEmail = $attrs.contactEmail || null
-            $scope.contactPhone = $attrs.contactPhone || null
+            // $scope.contactName = $attrs.contactName || null
+            // $scope.contactEmail = $attrs.contactEmail || null
+            // $scope.contactPhone = $attrs.contactPhone || null
             $scope.images = []
+            $scope.contactWebsiteUrl = $attrs.contactWebsiteUrl || null
+
+            $scope.contact = []
+            if ($attrs.contactName || $attrs.contactPhone || $attrs.contactEmail || $attrs.contactWebsiteUrl) {
+                $scope.contact.push({
+                    name: [$attrs.contactName] || [],
+                    phone: [$attrs.contactPhone] || [],
+                    email: [$attrs.contactEmail] || [],
+                    location: [],
+                    url: []
+                })
+            }
 
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
                 JSON.parse($attrs.defaultListOptions) : {}
 
+            /**
+             * An optional pre-compiled set data for the sub-section component to display fields
+             */
             $scope.minorDetails = [
                 {
                     section: 'Location',
@@ -717,7 +733,7 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getUid = (): string => $ctrl.uid
 
         // TODO await until done fetching?
-        $scope.fetchProperty = (): void => {
+        $scope.fetchProperty = async (): Promise<void> => {
             // FIXME Idx export query Interface
             const propertyQuery: {
                 service: number,
@@ -746,7 +762,8 @@ Stratus.Components.IdxPropertyDetails = {
                 !isNaN(propertyQuery.service) &&
                 (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
             ) {
-                Idx.fetchProperty($scope, 'model', propertyQuery)
+                await Idx.fetchProperty($scope, 'model', propertyQuery)
+                // TODO Idx.getContactVariables()
             } else {
                 console.error('No Service Id or Listing Key/Id is fetch from')
             }
