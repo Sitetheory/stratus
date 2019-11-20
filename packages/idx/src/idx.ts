@@ -402,7 +402,8 @@ Stratus.Services.Idx = [
                                 session.services.length < 1 ||
                                 session.expires < new Date(Date.now() + (5 * 1000)) // if expiring in the next 5 seconds
                             ) {
-                                await tokenRefresh(keepAlive)
+                                // need to send ?cacheReset=true to ensure the token is new
+                                await tokenRefresh(keepAlive, true)
                                 resolve()
                             } else {
                                 resolve()
@@ -417,21 +418,25 @@ Stratus.Services.Idx = [
                 /**
                  * Fetches a new set of Tokens for data fetching
                  * @param keepAlive -
+                 * @param cacheReset - if the cache needs to forcibly be reset and ensure this is a fresh token
                  */
-                function tokenRefresh(keepAlive = false): IPromise<void> {
+                function tokenRefresh(keepAlive: boolean = false, cacheReset: boolean = false): IPromise<void> {
                     // TODO request only certain service_ids (&service_id=0,1,9 or &service_id[]=0&service_id[]=9)
                     return $q((resolve: void | any, reject: void | any) => {
-                        let additionalServices = ''
+                        let additionalQueries = ''
                         // Fetch from each service allowed
                         if (idxServicesEnabled.length !== 0) {
                             idxServicesEnabled.forEach((service) => {
-                                additionalServices += `&service[]=${service}`
+                                additionalQueries += `&service[]=${service}`
                             })
+                        }
+                        if (cacheReset) {
+                            additionalQueries += '&cacheReset=true'
                         }
 
                         $http({
                             method: 'GET',
-                            url: tokenRefreshURL + additionalServices
+                            url: tokenRefreshURL + additionalQueries
                         }).then((response: any) => {
                             // response as TokenResponse
                             if (
