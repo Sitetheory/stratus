@@ -19,7 +19,7 @@ import '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Model} from '@stratusjs/angularjs/services/model'
-import {MLSService} from '@stratusjs/idx/idx'
+import {MLSService, WidgetContact} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -109,10 +109,10 @@ Stratus.Components.IdxPropertyDetails = {
             // $scope.contactEmail = $attrs.contactEmail || null
             // $scope.contactPhone = $attrs.contactPhone || null
             $scope.images = []
-            $scope.contactWebsiteUrl = $attrs.contactWebsiteUrl || null
+            $scope.widgetContactUrl = $attrs.contactWebsiteUrl || '' // Will also attempt to fetch from api
 
-            $scope.contact = []
-            if ($attrs.contactName || $attrs.contactPhone || $attrs.contactEmail || $attrs.contactWebsiteUrl) {
+            /*$scope.contact = []
+            if ($attrs.contactName || $attrs.contactPhone || $attrs.contactEmail) {
                 $scope.contact.push({
                     name: [$attrs.contactName] || [],
                     phone: [$attrs.contactPhone] || [],
@@ -120,6 +120,22 @@ Stratus.Components.IdxPropertyDetails = {
                     location: [],
                     url: []
                 })
+            }*/
+
+            // Use the manually input contact info first (when we fetch, we'll grab a new contact if it was given)
+            $scope.contact = {
+                name: $attrs.contactName || '',
+                emails: {},
+                locations: {}, // not set manually
+                phones: {},
+                socialUrls: {}, // not set manually
+                urls: {},
+            }
+            if ($attrs.contactEmail) {
+                $scope.contact.emails.main = $attrs.contactEmail
+            }
+            if ($attrs.contactPhone) {
+                $scope.contact.phones.main = $attrs.contactPhone
             }
 
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
@@ -732,6 +748,28 @@ Stratus.Components.IdxPropertyDetails = {
 
         $scope.getUid = (): string => $ctrl.uid
 
+        /**
+         * Get the latest contact info that was have been given from the api (if any)
+         * If there is none, we'll use what we already have
+         */
+        $scope.updateWidgetContact = (): void => {
+            const contact = Idx.getWidgetContact()
+            if (contact) {
+                $scope.contact = contact
+            }
+        }
+
+        /**
+         * Get the latest contact info that was have been given from the api (if any)
+         * If there is none, we'll use what we already have
+         */
+        $scope.updateWidgetContactUrl = (): void => {
+            const url = Idx.getWidgetContactUrl()
+            if (url !== '') {
+                $scope.contactWebsiteUrl = url
+            }
+        }
+
         // TODO await until done fetching?
         $scope.fetchProperty = async (): Promise<void> => {
             // FIXME Idx export query Interface
@@ -763,7 +801,7 @@ Stratus.Components.IdxPropertyDetails = {
                 (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
             ) {
                 await Idx.fetchProperty($scope, 'model', propertyQuery)
-                // TODO Idx.getContactVariables()
+                $scope.updateWidgetContact()
             } else {
                 console.error('No Service Id or Listing Key/Id is fetch from')
             }
