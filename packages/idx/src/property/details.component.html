@@ -60,8 +60,11 @@
                         <li data-ng-if="::model.data.BathroomsPartial > 0">
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
-                        <li data-ng-if="::model.data.BuildingAreaTotal">
-                            <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet
+                        <li data-ng-if="::model.data.CloseDate">
+                            Closed on <span data-ng-bind="::model.CloseDate | moment:{unix:false,format:'MMM Do YY'}"></span>
+                        </li>
+                        <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
+                            Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
                         </li>
                         <li data-ng-if="::model.data.DaysOnMarket">
                             Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
@@ -71,6 +74,9 @@
                         </li>
                         <li data-ng-if="::model.data.YearBuilt">
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
+                        </li>
+                        <li data-ng-if="::model.data.BuildingAreaTotal">
+                            <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet
                         </li>
                         <li data-ng-if="::model.data.LotSizeArea">
                             Lot: <span data-ng-bind="::model.data.LotSizeArea | number"></span>
