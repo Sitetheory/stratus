@@ -109,6 +109,22 @@ export interface WidgetContact {
     }
 }
 
+export interface WidgetIntegrations {
+    analytics?: {
+        googleAnalytics?: {
+            accountId: string
+        },
+        listTrac?: {
+            accountId: string
+        }
+    },
+    maps?: {
+        googleMaps?: {
+            accountId: string
+        }
+    }
+}
+
 // Internal
 interface Session {
     services: MLSService[],
@@ -129,10 +145,11 @@ interface TokenResponse {
         },
         contactName?: string,
         contactUrl?: string,
-        errors?: any[]
+        errors?: any[],
+        integrations?: WidgetIntegrations,
         lastCreated: Date,
         lastTtl: number,
-        services?: MLSService[]
+        services?: MLSService[],
         site?: string,
     }
 }
@@ -203,8 +220,8 @@ Stratus.Services.Idx = [
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
                 let defaultPageTitle: string
-                let widgetContactUrl = '/Contact-Us'
-                let widgetContact: WidgetContact | null
+                let contactUrl = '/Contact-Us'
+                let contact: WidgetContact | null
                 // console.log('Idx Service inited')
                 /* const instance: {
                     List: object,
@@ -267,6 +284,11 @@ Stratus.Services.Idx = [
                     whereFilter: {},
                     pages: [],
                     perPage: 0
+                }
+
+                const integrations: WidgetIntegrations = {
+                    analytics: {},
+                    maps: {}
                 }
 
                 /**
@@ -506,12 +528,12 @@ Stratus.Services.Idx = [
                         Object.prototype.hasOwnProperty.call(response.data, 'contactUrl')
                         && response.data.contactUrl !== ''
                     ) {
-                        widgetContactUrl = response.data.contactUrl
+                        contactUrl = response.data.contactUrl
                     }
 
                     // Compile a contact from the response if it exists
                     if (Object.prototype.hasOwnProperty.call(response.data, 'contact')) {
-                        widgetContact = {
+                        contact = {
                             name: '',
                             emails: {},
                             locations: {},
@@ -525,44 +547,85 @@ Stratus.Services.Idx = [
                             && _.isString(response.data.site)
                             && response.data.site !== ''
                         ) {
-                            widgetContact.name = response.data.site
+                            contact.name = response.data.site
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data, 'contactName')
                             && _.isString(response.data.contactName)
                             && response.data.site !== ''
                         ) {
-                            widgetContact.name = response.data.contactName
+                            contact.name = response.data.contactName
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'emails')
                             && _.isPlainObject(response.data.contact.emails)
                         ) {
-                            widgetContact.emails = response.data.contact.emails
+                            contact.emails = response.data.contact.emails
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'locations')
                             && _.isPlainObject(response.data.contact.locations)
                         ) {
-                            widgetContact.locations = response.data.contact.locations
+                            contact.locations = response.data.contact.locations
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'phones')
                             && _.isPlainObject(response.data.contact.phones)
                         ) {
-                            widgetContact.phones = response.data.contact.phones
+                            contact.phones = response.data.contact.phones
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'socialUrls')
                             && _.isPlainObject(response.data.contact.socialUrls)
                         ) {
-                            widgetContact.socialUrls = response.data.contact.socialUrls
+                            contact.socialUrls = response.data.contact.socialUrls
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'urls')
                             && _.isPlainObject(response.data.contact.urls)
                         ) {
-                            widgetContact.urls = response.data.contact.urls
+                            contact.urls = response.data.contact.urls
+                        }
+                    }
+
+                    // Compile a contact from the response if it exists
+                    if (Object.prototype.hasOwnProperty.call(response.data, 'integrations')) {
+                        if (Object.prototype.hasOwnProperty.call(response.data.integrations, 'analytics')) {
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'googleAnalytics')) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(response.data.integrations.analytics.googleAnalytics, 'accountId')
+                                    && _.isString(response.data.integrations.analytics.googleAnalytics.accountId)
+                                    && response.data.integrations.analytics.googleAnalytics.accountId !== ''
+                                ) {
+                                    integrations.analytics.googleAnalytics = {
+                                        accountId: response.data.integrations.analytics.googleAnalytics.accountId
+                                    }
+                                }
+                            }
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listTrac')) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(response.data.integrations.analytics.listTrac, 'accountId')
+                                    && _.isString(response.data.integrations.analytics.listTrac.accountId)
+                                    && response.data.integrations.analytics.listTrac.accountId !== ''
+                                ) {
+                                    integrations.analytics.listTrac = {
+                                        accountId: response.data.integrations.analytics.listTrac.accountId
+                                    }
+                                }
+                            }
+                        }
+                        if (Object.prototype.hasOwnProperty.call(response.data.integrations, 'maps')) {
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.maps, 'googleMaps')) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(response.data.integrations.maps.googleMaps, 'accountId')
+                                    && _.isString(response.data.integrations.maps.googleMaps.accountId)
+                                    && response.data.integrations.maps.googleMaps.accountId !== ''
+                                ) {
+                                    integrations.analytics.googleAnalytics = {
+                                        accountId: response.data.integrations.maps.googleMaps.accountId
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -596,20 +659,6 @@ Stratus.Services.Idx = [
                     refreshLoginTimer = setTimeout(async () => {
                         await tokenRefresh()
                     }, (session.lastTtl - 15) * 1000) // 15 seconds before the token expires
-                }
-
-                /**
-                 * Supply the current contact supplied by the api
-                 */
-                function getWidgetContact(): WidgetContact | null {
-                    return widgetContact
-                }
-
-                /**
-                 * Supply the current curl to send a message to the owner of the widget. Can be either full url, or a root reference ('/')
-                 */
-                function getWidgetContactUrl(): string {
-                    return widgetContactUrl
                 }
 
                 /**
@@ -1890,6 +1939,8 @@ Stratus.Services.Idx = [
                     fetchOffices,
                     fetchProperties,
                     fetchProperty,
+                    contact,
+                    contactUrl,
                     getContactVariables,
                     getIdxServices,
                     getListInstance,
@@ -1899,6 +1950,7 @@ Stratus.Services.Idx = [
                     getMLSVariables,
                     getOptionsFromUrl,
                     getUrlOptions,
+                    integrations,
                     tokenKeepAuth,
                     registerListInstance,
                     registerSearchInstance,
