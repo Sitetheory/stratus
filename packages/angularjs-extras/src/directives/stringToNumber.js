@@ -27,30 +27,6 @@
       link: function ($scope, $element, $attrs, ngModel) {
         Stratus.Instances[_.uniqueId(_.snakeCase(name) + '_')] = $scope
 
-        /**
-         * @credits to Ben K at https://jsfiddle.net/benlk/4dto9738/
-         */
-        if ($attrs.stratusStringToNumber === 'comma') {
-          // Keep the number comma parsed while processing as a number
-
-          ngModel.$formatters.push(function (modelValue) {
-            return setDisplayNumber(modelValue, true)
-          })
-
-          ngModel.$parsers.push(function (viewValue) {
-            setDisplayNumber(viewValue)
-            return setModelNumber(viewValue)
-          })
-        } else {
-          // Default to standard behavior
-          ngModel.$parsers.push(function (value) {
-            return '' + value
-          })
-          ngModel.$formatters.push(function (value) {
-            return parseFloat(value)
-          })
-        }
-
         function setDisplayNumber (val, formatter) {
           let valStr
           let displayValue
@@ -116,6 +92,30 @@
             modelNum = Math.abs(modelNum)
           }
           return modelNum
+        }
+
+        /**
+         * @credits to Ben K at https://jsfiddle.net/benlk/4dto9738/
+         */
+        if ($attrs.stratusStringToNumber === 'comma') {
+          // Keep the number comma parsed while processing as a number
+
+          ngModel.$formatters.push(function (modelValue) {
+            return setDisplayNumber(modelValue, true)
+          })
+
+          ngModel.$parsers.push(function (viewValue) {
+            setDisplayNumber(viewValue)
+            return setModelNumber(viewValue)
+          })
+        } else {
+          // Default to standard behavior
+          ngModel.$parsers.push(function (value) {
+            return '' + value
+          })
+          ngModel.$formatters.push(function (value) {
+            return parseFloat(value)
+          })
         }
 
       }
