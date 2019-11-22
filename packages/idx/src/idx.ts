@@ -127,11 +127,13 @@ interface TokenResponse {
             socialUrls?: {},
             urls?: {},
         },
-        contactUrl: string,
+        contactName?: string,
+        contactUrl?: string,
+        errors?: any[]
         lastCreated: Date,
         lastTtl: number,
-        errors?: any[]
         services?: MLSService[]
+        site?: string,
     }
 }
 
@@ -458,7 +460,7 @@ Stratus.Services.Idx = [
                         $http({
                             method: 'GET',
                             url: tokenRefreshURL + additionalQueries
-                        }).then((response: any) => {
+                        }).then((response: TokenResponse | any) => {
                             // response as TokenResponse
                             if (
                                 typeof response === 'object' &&
@@ -518,6 +520,20 @@ Stratus.Services.Idx = [
                             urls: {},
                         }
 
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data, 'site')
+                            && _.isString(response.data.site)
+                            && response.data.site !== ''
+                        ) {
+                            widgetContact.name = response.data.site
+                        }
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data, 'contactName')
+                            && _.isString(response.data.contactName)
+                            && response.data.site !== ''
+                        ) {
+                            widgetContact.name = response.data.contactName
+                        }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'emails')
                             && _.isPlainObject(response.data.contact.emails)
