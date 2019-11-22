@@ -123,23 +123,25 @@ Stratus.Components.IdxPropertyDetails = {
             }*/
 
             // Use the manually input contact info first (when we fetch, we'll grab a new contact if it was given)
-            $scope.contact = {
-                name: $attrs.contactName || '',
-                emails: {},
-                locations: {}, // not set manually
-                phones: {},
-                socialUrls: {}, // not set manually
-                urls: {},
-            }
-            if ($attrs.contactEmail) {
-                $scope.contact.emails.main = $attrs.contactEmail
-            }
-            if ($attrs.contactPhone) {
-                $scope.contact.phones.main = $attrs.contactPhone
-            }
+            if ($attrs.contactName || $attrs.contactEmail || $attrs.contactPhone) {
+                $scope.defaultContact = {
+                    name: $attrs.contactName || '',
+                    emails: {},
+                    locations: {}, // not set manually
+                    phones: {},
+                    socialUrls: {}, // not set manually
+                    urls: {},
+                }
+                if ($attrs.contactEmail) {
+                    $scope.defaultContact.emails.main = $attrs.contactEmail
+                }
+                if ($attrs.contactPhone) {
+                    $scope.defaultContact.phones.main = $attrs.contactPhone
+                }
 
-            $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
-                JSON.parse($attrs.defaultListOptions) : {}
+                $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
+                    JSON.parse($attrs.defaultListOptions) : {}
+            }
 
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
@@ -753,9 +755,13 @@ Stratus.Components.IdxPropertyDetails = {
          * If there is none, we'll use what we already have
          */
         $scope.updateWidgetContact = (): void => {
-            const contact = Idx.getWidgetContact()
-            if (contact) {
-                $scope.contact = contact
+            if ($scope.defaultContact) {
+                $scope.contact = _.clone($scope.defaultContact)
+            } else {
+                const contact = Idx.getWidgetContact()
+                if (contact) {
+                    $scope.contact = contact
+                }
             }
         }
 
