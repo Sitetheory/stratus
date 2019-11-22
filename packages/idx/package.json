@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/idx",
-  "version": "0.3.9-beta.3",
+  "version": "0.3.9-beta.4",
   "description": "AngularJS idx/property Service and Components bundle to be used as an add on to StratusJS",
   "main": "./src/idx.js",
   "scripts": {
