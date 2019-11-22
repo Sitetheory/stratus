@@ -167,6 +167,8 @@ interface StratusRuntime {
         Froala: string
     }
     Key: {} | any
+    Integrations: any
+    [key: string]: any
 }
 
 export const Stratus: StratusRuntime = {
@@ -336,7 +338,8 @@ export const Stratus: StratusRuntime = {
     Api: {
         GoogleMaps: 'AIzaSyBatGvzPR7u7NZ3tsCy93xj4gEBfytffyA',
         Froala: 'KybxhzguB-7j1jC3A-16y=='
-    }
+    },
+    Integrations: null
 }
 
 // Declare Warm Up
