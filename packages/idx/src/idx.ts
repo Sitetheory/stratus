@@ -91,11 +91,38 @@ export interface MLSService {
 }
 
 export interface WidgetContact {
-    name: string[],
-    phone: string[],
-    email: string[],
-    location: string[],
-    url: string[]
+    name: string,
+    emails: {
+        main?: string
+    },
+    locations: {
+        main?: string
+    },
+    phones: {
+        main?: string
+    },
+    socialUrls: {
+        main?: string
+    },
+    urls: {
+        main?: string
+    }
+}
+
+export interface WidgetIntegrations {
+    analytics?: {
+        googleAnalytics?: {
+            accountId: string
+        },
+        listTrac?: {
+            accountId: string
+        }
+    },
+    maps?: {
+        googleMaps?: {
+            accountId: string
+        }
+    }
 }
 
 // Internal
@@ -109,10 +136,21 @@ interface Session {
 
 interface TokenResponse {
     data: {
-        services?: MLSService[],
+        contact?: {
+            emails?: { main?: string },
+            locations?: { main?: string },
+            phones?: { main?: string },
+            socialUrls?: {},
+            urls?: {},
+        },
+        contactName?: string,
+        contactUrl?: string,
+        errors?: any[],
+        integrations?: WidgetIntegrations,
         lastCreated: Date,
         lastTtl: number,
-        errors?: any[]
+        services?: MLSService[],
+        site?: string,
     }
 }
 
@@ -182,6 +220,8 @@ Stratus.Services.Idx = [
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
                 let defaultPageTitle: string
+                let contactUrl = '/Contact-Us'
+                let contact: WidgetContact | null
                 // console.log('Idx Service inited')
                 /* const instance: {
                     List: object,
@@ -244,6 +284,11 @@ Stratus.Services.Idx = [
                     whereFilter: {},
                     pages: [],
                     perPage: 0
+                }
+
+                const integrations: WidgetIntegrations = {
+                    analytics: {},
+                    maps: {}
                 }
 
                 /**
@@ -402,7 +447,8 @@ Stratus.Services.Idx = [
                                 session.services.length < 1 ||
                                 session.expires < new Date(Date.now() + (5 * 1000)) // if expiring in the next 5 seconds
                             ) {
-                                await tokenRefresh(keepAlive)
+                                // need to send ?cacheReset=true to ensure the token is new
+                                await tokenRefresh(keepAlive, true)
                                 resolve()
                             } else {
                                 resolve()
@@ -417,22 +463,26 @@ Stratus.Services.Idx = [
                 /**
                  * Fetches a new set of Tokens for data fetching
                  * @param keepAlive -
+                 * @param cacheReset - if the cache needs to forcibly be reset and ensure this is a fresh token
                  */
-                function tokenRefresh(keepAlive = false): IPromise<void> {
+                function tokenRefresh(keepAlive: boolean = false, cacheReset: boolean = false): IPromise<void> {
                     // TODO request only certain service_ids (&service_id=0,1,9 or &service_id[]=0&service_id[]=9)
                     return $q((resolve: void | any, reject: void | any) => {
-                        let additionalServices = ''
+                        let additionalQueries = ''
                         // Fetch from each service allowed
                         if (idxServicesEnabled.length !== 0) {
                             idxServicesEnabled.forEach((service) => {
-                                additionalServices += `&service[]=${service}`
+                                additionalQueries += `&service[]=${service}`
                             })
+                        }
+                        if (cacheReset) {
+                            additionalQueries += '&cacheReset=true'
                         }
 
                         $http({
                             method: 'GET',
-                            url: tokenRefreshURL + additionalServices
-                        }).then((response: any) => {
+                            url: tokenRefreshURL + additionalQueries
+                        }).then((response: TokenResponse | any) => {
                             // response as TokenResponse
                             if (
                                 typeof response === 'object' &&
@@ -473,7 +523,111 @@ Stratus.Services.Idx = [
                         }
                     })
 
-                    // TODO need to compile session.contact
+                    // Compile a contact from the response if it exists
+                    if (
+                        Object.prototype.hasOwnProperty.call(response.data, 'contactUrl')
+                        && response.data.contactUrl !== ''
+                    ) {
+                        contactUrl = response.data.contactUrl
+                    }
+
+                    // Compile a contact from the response if it exists
+                    if (Object.prototype.hasOwnProperty.call(response.data, 'contact')) {
+                        contact = {
+                            name: '',
+                            emails: {},
+                            locations: {},
+                            phones: {},
+                            socialUrls: {},
+                            urls: {},
+                        }
+
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data, 'site')
+                            && _.isString(response.data.site)
+                            && response.data.site !== ''
+                        ) {
+                            contact.name = response.data.site
+                        }
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data, 'contactName')
+                            && _.isString(response.data.contactName)
+                            && response.data.site !== ''
+                        ) {
+                            contact.name = response.data.contactName
+                        }
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data.contact, 'emails')
+                            && _.isPlainObject(response.data.contact.emails)
+                        ) {
+                            contact.emails = response.data.contact.emails
+                        }
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data.contact, 'locations')
+                            && _.isPlainObject(response.data.contact.locations)
+                        ) {
+                            contact.locations = response.data.contact.locations
+                        }
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data.contact, 'phones')
+                            && _.isPlainObject(response.data.contact.phones)
+                        ) {
+                            contact.phones = response.data.contact.phones
+                        }
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data.contact, 'socialUrls')
+                            && _.isPlainObject(response.data.contact.socialUrls)
+                        ) {
+                            contact.socialUrls = response.data.contact.socialUrls
+                        }
+                        if (
+                            Object.prototype.hasOwnProperty.call(response.data.contact, 'urls')
+                            && _.isPlainObject(response.data.contact.urls)
+                        ) {
+                            contact.urls = response.data.contact.urls
+                        }
+                    }
+
+                    // Compile a contact from the response if it exists
+                    if (Object.prototype.hasOwnProperty.call(response.data, 'integrations')) {
+                        if (Object.prototype.hasOwnProperty.call(response.data.integrations, 'analytics')) {
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'googleAnalytics')) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(response.data.integrations.analytics.googleAnalytics, 'accountId')
+                                    && _.isString(response.data.integrations.analytics.googleAnalytics.accountId)
+                                    && response.data.integrations.analytics.googleAnalytics.accountId !== ''
+                                ) {
+                                    integrations.analytics.googleAnalytics = {
+                                        accountId: response.data.integrations.analytics.googleAnalytics.accountId
+                                    }
+                                }
+                            }
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listTrac')) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(response.data.integrations.analytics.listTrac, 'accountId')
+                                    && _.isString(response.data.integrations.analytics.listTrac.accountId)
+                                    && response.data.integrations.analytics.listTrac.accountId !== ''
+                                ) {
+                                    integrations.analytics.listTrac = {
+                                        accountId: response.data.integrations.analytics.listTrac.accountId
+                                    }
+                                }
+                            }
+                        }
+                        if (Object.prototype.hasOwnProperty.call(response.data.integrations, 'maps')) {
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.maps, 'googleMaps')) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(response.data.integrations.maps.googleMaps, 'accountId')
+                                    && _.isString(response.data.integrations.maps.googleMaps.accountId)
+                                    && response.data.integrations.maps.googleMaps.accountId !== ''
+                                ) {
+                                    integrations.analytics.googleAnalytics = {
+                                        accountId: response.data.integrations.maps.googleMaps.accountId
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     if (keepAlive) {
                         tokenEnableRefreshTimer()
@@ -1785,6 +1939,8 @@ Stratus.Services.Idx = [
                     fetchOffices,
                     fetchProperties,
                     fetchProperty,
+                    contact,
+                    contactUrl,
                     getContactVariables,
                     getIdxServices,
                     getListInstance,
@@ -1794,6 +1950,7 @@ Stratus.Services.Idx = [
                     getMLSVariables,
                     getOptionsFromUrl,
                     getUrlOptions,
+                    integrations,
                     tokenKeepAuth,
                     registerListInstance,
                     registerSearchInstance,

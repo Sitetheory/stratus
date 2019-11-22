@@ -221,8 +221,8 @@
         <!-- parallax-element disabled, cannot use height altering on the entire widget -->
         <div class="secondary-image-container">
             <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
-            <a class="btn btn-alt btn-contact" data-ng-show="::contactWebsiteUrl"
-               target="_blank" data-ng-href="{{::contactWebsiteUrl}}}?comments={{::getFullAddress(true)}}">
+            <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.contactUrl"
+               target="_blank" data-ng-href="{{::contactUrl || Idx.contactUrl}}}?comments={{::getFullAddress(true)}}">
                 Contact
             </a>
             <div class="image-dimmer"></div>
@@ -236,7 +236,7 @@
             </div>
         </div>
 
-        <div class="map-location details-container static-element" data-ng-if="::getFullAddress()">
+        <div class="map-location details-container static-element" data-ng-if="::getGoogleMapEmbedUrl()">
             <h2 class="dotted-spaced-underline">Location</h2>
             <iframe data-ng-src="{{::getGoogleMapEmbedUrl()}}" class="google-map-embed"></iframe>
         </div>
@@ -458,23 +458,23 @@
 
         <!-- Contact area needs dynamic variables -->
         <div class="contact-container details-container static-element"
-             data-ng-show="::contact[0] && (contact[0].name || contact[0].phone || contact[0].email)"
+             data-ng-show="::contact || Idx.contact"
         >
             <h2>Contact</h2>
             <p class="primary_font">
-                <span class="site-name" data-ng-show="::contact[0] && contact[0].name" data-ng-bind="::contact.name[0]"></span>
-                <span class="phone" data-ng-show="::contact[0] && contact[0].phone">
-                    <a data-ng-href="tel:{{::contact[0].phone[0]}}" data-ng-bind="::contact[0].phone[0]"></a>
+                <span class="site-name" data-ng-show="::contact.name && Idx.contact.name" data-ng-bind="::contact.name || Idx.contact.name"></span>
+                <span class="phone" data-ng-show="(contact.phones && contact.phones.main) || (Idx.contact.phones && Idx.contact.phones.main)">
+                    <a data-ng-href="tel:{{::contact.phones.main || Idx.contact.phones.main}}" data-ng-bind="::contact.phones.main || Idx.contact.phones.main"></a>
                 </span>
-                <span class="email" data-ng-show="::contact[0] && contact[0].email">
-                    <a data-ng-href="mailto:{{::contact[0].email[0]}}" data-ng-bind="::contact[0].email[0]" target="_blank"></a>
+                <span class="email" data-ng-show="(contact.emails && contact.emails.main) || (Idx.contact.emails && Idx.contact.emails.main)">
+                    <a data-ng-href="mailto:{{::contact.emails.main || Idx.contact.emails.main}}" data-ng-bind="::contact.emails.main || Idx.contact.emails.main" target="_blank"></a>
                 </span>
             </p>
         </div>
 
         <div class="disclaimer-container details-container static-element">
             <div class="disclaimer"
-                 data-ng-class="{'border-top': (contact[0] && (contact[0].name || contact[0].phone || contact[0].email))}"
+                 data-ng-class="{'border-top': (contact || Idx.contact)}"
                  data-ng-bind-html="::getMLSDisclaimer(true)"
             ></div>
         </div>

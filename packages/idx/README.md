@@ -31,6 +31,9 @@ boot.configuration.paths = {
   // Idx Package
   '@stratusjs/idx/*': boot.deployment + '@stratusjs/idx/src/*' + boot.suffix,
 
+  // Directives (Until upgraded to Angular 8+)
+  'stratus.directives.stringToNumber': boot.deployment + '@stratusjs/angularjs-extras/src/directives/stringToNumber' + boot.suffix,
+
   // Components (Until upgraded to Angular 8+)
   'stratus.components.idxPropertyDetails': boot.deployment + '@stratusjs/idx/src/property/details.component' + boot.suffix,
   'stratus.components.idxPropertyDetailsSubSection': boot.deployment + '@stratusjs/idx/src/property/details-sub-section.component' + boot.suffix,

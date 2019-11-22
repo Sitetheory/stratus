@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angularjs-extras",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "This is the AngularJS Extras package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -32,8 +32,8 @@
     "@fullcalendar/moment": "^4.2.0",
     "@fullcalendar/moment-timezone": "^4.2.0",
     "@fullcalendar/timegrid": "^4.1.0",
-    "@stratusjs/angularjs": "^0.2.8",
-    "@stratusjs/core": "^0.2.4",
+    "@stratusjs/angularjs": "^0.2.11",
+    "@stratusjs/core": "^0.2.5",
     "@stratusjs/runtime": "^0.10.3",
     "ical.js": "^1.3.0",
     "moment": "^2.24.0",

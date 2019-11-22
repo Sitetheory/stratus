@@ -86,6 +86,7 @@ Stratus.Components.IdxPropertyDetails = {
          */
         $ctrl.$onInit = () => {
             $scope.model = new Model() as Model
+            $scope.Idx = Idx
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
             $scope.options.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
             $scope.options.pageTitle = $attrs.pageTitle && isJSON($attrs.pageTitle) ? JSON.parse($attrs.pageTitle) : false
@@ -104,15 +105,13 @@ Stratus.Components.IdxPropertyDetails = {
                 fields: '*'// show all OH details
             }
 
-            $scope.googleApiKey = $attrs.googleApiKey || null
-            // $scope.contactName = $attrs.contactName || null
-            // $scope.contactEmail = $attrs.contactEmail || null
-            // $scope.contactPhone = $attrs.contactPhone || null
             $scope.images = []
-            $scope.contactWebsiteUrl = $attrs.contactWebsiteUrl || null
+            $scope.contact = null
+            $scope.contactUrl = $attrs.contactWebsiteUrl || null // Will also attempt to fetch from api
+            $scope.integrations = null
 
-            $scope.contact = []
-            if ($attrs.contactName || $attrs.contactPhone || $attrs.contactEmail || $attrs.contactWebsiteUrl) {
+            /*$scope.contact = []
+            if ($attrs.contactName || $attrs.contactPhone || $attrs.contactEmail) {
                 $scope.contact.push({
                     name: [$attrs.contactName] || [],
                     phone: [$attrs.contactPhone] || [],
@@ -120,10 +119,38 @@ Stratus.Components.IdxPropertyDetails = {
                     location: [],
                     url: []
                 })
+            }*/
+
+            // Use the manually input contact info first (when we fetch, we'll grab a new contact if it was given)
+            if ($attrs.contactName || $attrs.contactEmail || $attrs.contactPhone) {
+                $scope.contact = {
+                    name: $attrs.contactName || '',
+                    emails: {},
+                    locations: {}, // not set manually
+                    phones: {},
+                    socialUrls: {}, // not set manually
+                    urls: {},
+                }
+                if ($attrs.contactEmail) {
+                    $scope.contact.emails.main = $attrs.contactEmail
+                }
+                if ($attrs.contactPhone) {
+                    $scope.contact.phones.main = $attrs.contactPhone
+                }
+
+                $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
+                    JSON.parse($attrs.defaultListOptions) : {}
             }
 
-            $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
-                JSON.parse($attrs.defaultListOptions) : {}
+            if ($attrs.googleApiKey) {
+                $scope.integrations = {
+                    maps: {
+                        googleMaps: {
+                            accountId: $attrs.googleApiKey
+                        }
+                    }
+                }
+            }
 
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
@@ -732,6 +759,17 @@ Stratus.Components.IdxPropertyDetails = {
 
         $scope.getUid = (): string => $ctrl.uid
 
+        /**
+         * Get the latest contact info that was have been given from the api (if any)
+         * If there is none, we'll use what we already have
+         */
+        $scope.updateWidgetContactUrl = (): void => {
+            const url = Idx.getWidgetContactUrl()
+            if (url !== '') {
+                $scope.contactWebsiteUrl = url
+            }
+        }
+
         // TODO await until done fetching?
         $scope.fetchProperty = async (): Promise<void> => {
             // FIXME Idx export query Interface
@@ -763,7 +801,6 @@ Stratus.Components.IdxPropertyDetails = {
                 (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
             ) {
                 await Idx.fetchProperty($scope, 'model', propertyQuery)
-                // TODO Idx.getContactVariables()
             } else {
                 console.error('No Service Id or Listing Key/Id is fetch from')
             }
@@ -849,11 +886,30 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getCoBuyerAgentName = (): string => $scope.model.data.CoBuyerAgentFullName || ($scope.model.data.CoBuyerAgentFirstName ?
             $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null)
 
-        $scope.getGoogleMapEmbedUrl = (): string | null => $scope.googleApiKey ? $sce.trustAsResourceUrl(
-            `https://www.google.com/maps/embed/v1/place?key=${$scope.googleApiKey}&q=${$scope.getFullAddress(true)}`
-        ) : null
+        $scope.getGoogleMapEmbedUrl = (): string | null => {
+            let googleApiKey = null
+            if (
+                $scope.integrations
+                && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
+                && $scope.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = $scope.integrations.maps.googleMaps
+            } else if (
+                Idx.integrations
+                && Object.prototype.hasOwnProperty.call(Idx.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call(Idx.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call(Idx.integrations.maps.googleMaps, 'accountId')
+                && Idx.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = Idx.integrations.maps.googleMaps
+            }
+            return googleApiKey ? $sce.trustAsResourceUrl(
+                `https://www.google.com/maps/embed/v1/place?key=${$scope.googleApiKey}&q=${$scope.getFullAddress(true)}`
+            ) : null
+        }
 
-        // FIXME Idx needs to export MLSVariables Interface
         $scope.getMLSVariables = (): MLSService => {
             if (!$ctrl.mlsVariables) {
                 $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])

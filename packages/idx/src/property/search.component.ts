@@ -17,6 +17,8 @@ import '@stratusjs/idx/idx'
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+// FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
+import 'stratus.directives.stringToNumber'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''

@@ -75,13 +75,14 @@
 						<div class="search-input" data-flex="50" data-flex-gt-sm="25">
 							<md-input-container class="md-block minimal">
 								<label>Min Price</label>
-								<input data-ng-model="options.query.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
+                                <!-- https://stackoverflow.com/questions/36091421/how-to-add-thousand-separating-commas-for-numbers-in-angularjs/36091637 -->
+								<input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
 							</md-input-container>
 						</div>
 						<div class="search-input" data-flex="50" data-flex-gt-sm="25">
 							<md-input-container class="md-block minimal">
 								<label>Max Price</label>
-								<input data-ng-model="options.query.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
+								<input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
 							</md-input-container>
 						</div>
 						<div class="search-input" data-flex="50" data-flex-gt-sm="25">
