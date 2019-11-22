@@ -60,8 +60,12 @@
                         <li data-ng-if="::model.data.BathroomsPartial > 0">
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
-                        <li data-ng-if="::model.data.CloseDate">
-                            Closed on <span data-ng-bind="::model.CloseDate | moment:{unix:false,format:'MMM Do YY'}"></span>
+                        <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model) == 'Closed'">
+                            Closed on <span data-ng-bind="::model.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                        </li>
+                        <!-- FIXME moment filter is not working correctly? (setting a 2018 date to be date.now() ) -->
+                        <li data-ng-if="::model.data.OnMarketDate">
+                            Listed on <span data-ng-bind="::model.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
                         <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
                             Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
@@ -204,23 +208,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Real open house
-            <div class="details-container open-house-section accent-bg-color" data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length">
-                <h2>Open</h2>
-                <div class="open-house-container dotted-spaced-sideline">
-                    <span class="primary_font" data-ng-if="::model.data.OpenHouses[0].OpenHouseRemarks" data-ng-bind="::model.data.OpenHouses[0].OpenHouseRemarks"></span>
-                    <div class="open-house" id="{{'open_house_' + openHouse.OpenHouseId}}" data-ng-repeat="openHouse in model.data.OpenHouses">
-                        <span data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}"></span>
-                        <span data-ng-if="::openHouse.OpenHouseEndTime"> —
-                                <span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
-                            </span>
-                        <span data-ng-if="::openHouse.ShowingAgentFirstName">
-                                with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
-                            </span>
-                    </div>
-                </div>
-            </div>-->
         </div>
 
         <!-- This needs to display the second image in the slideshow or maybe the last image? -->

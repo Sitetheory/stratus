@@ -1934,6 +1934,38 @@ Stratus.Services.Idx = [
                     )
                 }
 
+                /**
+                 * Grabs a shorten more human and code friendly name of the property's status
+                 * @param property - Proeprty Object
+                 * @returns 'Active' | 'Contingent' | 'Closed'
+                 */
+                function getFriendlyStatus(property: object | any): string {
+                    let statusName = ''
+                    if (
+                        Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
+                        property.MlsStatus !== ''
+                    ) {
+                        statusName = property.MlsStatus
+                        switch (statusName) {
+                            case 'Act Cont Release':
+                            case 'Act Cont Show':
+                            case 'Contingent - Release':
+                            case 'Contingent - Show':
+                            case 'Contingent-Release':
+                            case 'Contingent-Show': {
+                                statusName = 'Contingent'
+                                break
+                            }
+                            case 'Leased/Option':
+                            case 'Leased/Rented': {
+                                statusName = 'Closed'
+                                break
+                            }
+                        }
+                    }
+                    return statusName
+                }
+
                 return {
                     fetchMembers,
                     fetchOffices,
@@ -1942,6 +1974,7 @@ Stratus.Services.Idx = [
                     contact,
                     contactUrl,
                     getContactVariables,
+                    getFriendlyStatus,
                     getIdxServices,
                     getListInstance,
                     getListInstanceLinks,
