@@ -157,6 +157,424 @@ Stratus.Components.IdxPropertyDetails = {
              */
             $scope.minorDetails = [
                 {
+                    section: 'Size & Style',
+                    items: {
+                        YearBuilt: 'Built',
+                        Stories: 'Stories',
+                        StructureType: 'Structure Type',
+                        LivingArea: {name: 'Living Area', comma: true},
+                        LotSizeAcres: {name: 'Lot Size', append: ' Acres', comma: true},
+                        LotSizeSquareFeet: {name: 'Lot Size', append: ' SqFt', comma: true},
+                        LotSizeArea: {name: 'Lot Size', comma: true},
+                        HorseYN: {true: 'Horse Property: Yes', false: ''}
+                    }
+                },
+                {
+                    section: 'Materials',
+                    items: {
+                        Roof: 'Roof',
+                        Flooring: 'Flooring',
+                        WindowFeatures: 'Windows',
+                        DoorFeatures: 'Doors',
+                        FoundationDetails: 'Foundation',
+                        FoundationArea: 'Foundation',
+                        ConstructionMaterials: 'Construction'
+                    }
+                },
+                {
+                    section: 'Utilities',
+                    items: {
+                        // Distances ignored
+                        /*
+                        DistanceToBusComments Field
+                        DistanceToBusNumeric Field
+                        DistanceToBusUnits Field
+                        DistanceToElectricComments Field
+                        DistanceToElectricNumeric Field
+                        DistanceToElectricUnits Field
+                        DistanceToFreewayComments Field
+                        DistanceToFreewayNumeric Field
+                        DistanceToFreewayUnits Field
+                        DistanceToGasComments Field
+                        DistanceToGasNumeric Field
+                        DistanceToGasUnits Field
+                        DistanceToPhoneServiceComments Field
+                        DistanceToPhoneServiceNumeric Field
+                        DistanceToPhoneServiceUnits Field
+                        DistanceToPlaceofWorshipComments Field
+                        DistanceToPlaceofWorshipNumeric Field
+                        DistanceToPlaceofWorshipUnits Field
+                        DistanceToSchoolBusComments Field
+                        DistanceToSchoolBusNumeric Field
+                        DistanceToSchoolBusUnits Field
+                        DistanceToSchoolsComments Field
+                        DistanceToSchoolsNumeric Field
+                        DistanceToSchoolsUnits Field
+                        DistanceToSewerComments Field
+                        DistanceToSewerNumeric Field
+                        DistanceToSewerUnits Field
+                        DistanceToShoppingComments Field
+                        DistanceToShoppingNumeric Field
+                        DistanceToShoppingUnits Field
+                        DistanceToStreetComments Field
+                        DistanceToStreetNumeric Field
+                        DistanceToStreetUnits Field
+                        DistanceToWaterComments Field
+                        DistanceToWaterNumeric Field
+                        DistanceToWaterUnits Field
+                         */
+                        // other ignored
+                        /*
+                        ElectricOnPropertyYN Field
+                        PowerProduction
+                         */
+                        CoolingYN: {true: 'Cooling: Yes', false: ''},
+                        Cooling: 'Cooling',
+                        HeatingYN: {true: 'Heating: Yes', false: ''},
+                        Heating: 'Heating',
+                        Utilities: 'Utilities',
+                        Electric: 'Electric',
+                        WaterSource: 'Water',
+                        Sewer: 'Sewer Septic',
+                        // Used for Businesses
+                        NumberOfSeparateElectricMeters: {name: 'Number Of Separate Electric Meters', comma: true},
+                        NumberOfSeparateGasMeters: {name: 'Number Of Separate Gas Meters', comma: true},
+                        NumberOfSeparateWaterMeters: {name: 'Number Of Separate Water Meters', comma: true}
+                    }
+                },
+                {
+                    section: 'Area',
+                    items: {
+                        // Location fields ignored
+                        /*
+                        CarrierRoute Field
+                        PostalCity Field
+                        PostalCodePlus4 Field
+                        StreetAdditionalInfo Field
+                        StreetDirPrefix Field
+                        StreetDirSuffix Field
+                        StreetName Field
+                        StreetNumber Field
+                        StreetNumberNumeric Field
+                        StreetSuffix Field
+                        StreetSuffixModifier Field
+                        UnparsedAddress Field
+
+                        ContinentRegion Field
+                        CountryRegion Field
+                        MLSAreaMinor Field
+
+                        CrossStreet Field
+                        Directions Field
+                        Elevation Field
+                        ElevationUnits Field
+                        Latitude Field
+                        Longitude Field
+                        MapCoordinate Field
+                        MapCoordinateSource Field
+                        MapURL Field
+                         */
+                        CrossStreet: 'Cross Street',
+                        UnitNumber: 'Unit',
+                        PostalCode: 'Postal Code',
+                        City: 'City',
+                        CityRegion: 'City Region',
+                        Township: 'Township',
+                        CountyOrParish: 'County',
+                        MLSAreaMajor: 'Area',
+                        SubdivisionName: 'Subdivision',
+                        StateRegion: 'Region',
+                        StateOrProvince: 'State'
+                    }
+                },
+                {
+                    section: 'Business',
+                    items: {
+                        BusinessName: 'Business Name',
+                        BusinessType: 'Type',
+                        OwnershipType: 'Ownership',
+                        SeatingCapacity: {name: 'Seating Capacity', comma: true},
+                        YearEstablished: 'Year Established',
+                        YearsCurrentOwner: {name: 'Years with Current Owner', comma: true},
+                        HoursDaysOfOperation: 'Hours Of Operation',
+                        HoursDaysOfOperationDescription: 'Hours Of Operation',
+                        NumberOfFullTimeEmployees: {name: 'Full-Time Employees', comma: true},
+                        NumberOfPartTimeEmployees: {name: 'Part-Time Employees', comma: true},
+                        LaborInformation: 'Labor Info',
+                        SpecialLicenses: 'SpecialLicenses',
+                        LeaseAmount: {name: 'LeaseAmount', prepend: '$', comma: true},
+                        LeaseAmountFrequency: 'Lease Frequency',
+                        LeaseAssignableYN: {true: 'Lease Assignable', false: ''},
+                        LeaseExpiration: 'Lease Expiration',
+                        LeaseRenewalOptionYN: {true: 'Lease Renewable', false: ''}
+                    }
+                },
+                {
+                    section: 'Farming',
+                    items: {
+                        // ignored fields
+                        // FarmLandAreaUnits Field - string list?
+                        CropsIncludedYN: {true: 'Crops Included', false: ''},
+                        Vegetation: 'Vegetation',
+                        FarmCreditServiceInclYN: {true: 'Farm Credit Service Shares Included', false: ''},
+                        GrazingPermitsBlmYN: {true: 'Grazing Permitted - BLM', false: ''},
+                        GrazingPermitsForestServiceYN: {true: 'Grazing Permitted - Forestry Service', false: ''},
+                        GrazingPermitsPrivateYN: {true: 'Private Grazing Permitted', false: ''},
+                        CultivatedArea: {name: 'Cultivated Area', comma: true},
+                        PastureArea: {name: 'Pasture Area', comma: true},
+                        RangeArea: {name: 'Range Area', comma: true},
+                        WoodedArea: {name: 'Wooded Area', comma: true},
+                        IrrigationSource: 'IrrigationSource',
+                        IrrigationWaterRightsYN: {true: 'Has Irrigation Water Rights', false: ''},
+                        IrrigationWaterRightsAcres: {name: 'Irrigation Water Rights', append: ' Acres', comma: true}
+                    }
+                },
+                {
+                    section: 'Features',
+                    items: {
+                        HorseAmenities: 'Horse Amenities',
+                        PoolPrivateYN: {true: 'Pool: Yes', false: ''},
+                        PoolFeatures: 'Pool',
+                        SpaYN: {true: 'Spa: Yes', false: ''},
+                        SpaFeatures: 'Spa',
+                        LaundryFeatures: 'Laundry',
+                        Appliances: 'Appliances',
+                        FireplaceYN: {true: 'Fireplace: Yes', false: ''},
+                        FireplaceFeatures: 'Fireplace',
+                        FireplacesTotal: 'Fireplaces',
+                        Basement: 'Basement',
+                        InteriorFeatures: 'Interior Features',
+                        SecurityFeatures: 'Security Features',
+                        ExteriorFeatures: 'Exterior Features',
+                        BuildingFeatures: 'Building Features',
+                        AccessibilityFeatures: 'Accessibility',
+                        PatioAndPorchFeatures: 'Patio And Porch',
+                        Fencing: 'Fencing',
+                        FrontageType: 'Frontage',
+                        OtherEquipment: 'Equipment',
+                        CommunityFeatures: 'Community'
+                    }
+                },
+                {
+                    section: 'Parking',
+                    items: {
+                        // ignored fields:
+                        /*
+                        OpenParkingYN Field
+                         */
+                        ParkingTotal: 'Parking Spaces',
+                        GarageYN: {true: 'Garage: Yes', false: ''},
+                        GarageSpaces: 'Garage Spaces',
+                        AttachedGarageYN: {true: 'Attached Garage', false: ''},
+                        CarportYN: {true: 'Carport: Yes', false: ''},
+                        CarportSpaces: 'Carport Spaces',
+                        CoveredSpaces: 'Covered Spaces',
+                        OpenParkingSpaces: 'Open Spaces',
+                        OtherParking: 'Other Parking',
+                        ParkingFeatures: 'Parking'
+                    }
+                },
+                {
+                    section: 'School',
+                    items: {
+                        ElementarySchool: 'Elementary School',
+                        ElementarySchoolDistrict: 'Elementary School District',
+                        MiddleOrJuniorSchool: 'Middle School',
+                        MiddleOrJuniorSchoolDistrict: 'Middle School District',
+                        HighSchool: 'High School',
+                        HighSchoolDistrict: 'High School District'
+                    }
+                },
+                {
+                    section: 'Contract',
+                    items: {
+                        // Listing fields ignored
+                        /*
+                        AgentOffice group
+                        Compensation Group
+                        Showing Group // see openhouses
+
+                        BuyerFinancing
+                        ConcessionsAmount
+                        ConcessionsComments Field
+                        Concessions Field
+                        Possession
+                        CurrentFinancing
+
+                        CancelationDate Field
+                        CloseDate Field
+                        ContingentDate Field
+                        ContractStatusChangeDate Field
+                        CumulativeDaysOnMarket Field
+                        DaysOnMarket Field
+                        ExpirationDate Field
+                        ListingContractDate Field
+                        MajorChangeTimestamp Field
+                        MajorChangeType Field
+                        ModificationTimestamp Field
+                        OffMarketDate Field
+                        OffMarketTimestamp Field
+                        OriginalEntryTimestamp Field
+                        PendingTimestamp Field
+                        PriceChangeTimestamp Field
+                        PurchaseContractDate Field
+                        StatusChangeTimestamp Field
+                        WithdrawnDate Field
+                        DocumentsChangeTimestamp Field
+                        PhotosChangeTimestamp Field
+                        VideosChangeTimestamp Field
+
+                        InternetAddressDisplayYN Field
+                        InternetAutomatedValuationDisplayYN Field
+                        InternetConsumerCommentYN Field
+                        InternetEntireListingDisplayYN Field
+                        SignOnPropertyYN Field
+                        SyndicateTo Field
+                        VirtualTourURLBranded Field
+                        VirtualTourURLUnbranded Field
+                        PhotosCount Field
+                        DocumentsCount Field
+                        VideosCount Field
+                        MlsStatus Field
+
+                        ClosePrice Field
+                        ListPrice Field
+                        ListPriceLow Field
+                        OriginalListPrice Field
+                        PreviousListPrice Field
+                        PublicRemarks Field
+                        SyndicationRemarks Field
+                        SourceSystemName Field
+                        StandardStatus Field
+
+                        Disclaimer: 'Disclaimer',
+                        CopyrightNotice: 'Copyright Notice'
+                         */
+                        AvailabilityDate: 'Availability', // todo need to handle dates
+                        PetsAllowed: {name: 'PetsAllowed'},
+                        HomeWarrantyYN: {true: 'Home Warranty Included', false: ''},
+                        LeaseConsideredYN: {true: 'Leasing Considered', false: ''},
+                        ListingAgreement: 'Listing Agreement',
+                        ListingService: 'Service',
+                        DocumentsAvailable: 'Documents Available',
+                        Ownership: 'Ownership',
+                        Contingencies: 'Contingencies',
+                        Disclosures: 'Disclosures',
+                        Exclusions: 'Exclusions',
+                        Inclusions: 'Inclusions',
+                        ListingTerms: 'ListingTerms',
+                        SpecialListingConditions: 'Special Listing Conditions',
+                        CommonInterest: 'Common Interest'
+                    }
+                },
+                {
+                    section: 'Financial',
+                    items: {
+                        // Ignored HOA
+                        /*
+                        AssociationName Field
+                        AssociationName2 Field
+                        AssociationPhone Field
+                        AssociationPhone2 Field
+                        PetsAllowed Field - array
+                         */
+                        // Ignored Finance
+                        /*
+                        CapRate Field
+                        ExistingLeaseType Field
+                        GrossIncome Field
+                        GrossScheduledIncome Field
+                        IncomeIncludes Field
+                        NetOperatingIncome Field
+                        NumberOfUnitsLeased Field
+                        NumberOfUnitsMoMo Field
+                        NumberOfUnitsVacant Field
+                        VacancyAllowance Field
+                        VacancyAllowanceRate Field
+                        TotalActualRent Field
+                         */
+                        // Ignored Tax
+                        /*
+                        PublicSurveyRange
+                        PublicSurveySection Field
+                        PublicSurveyTownship Field
+                        TaxBlock
+                        TaxLot
+                        TaxLegalDescription
+                        TaxTract
+                        TaxBookNumber
+                        TaxMapNumber
+                         */
+                        RentControlYN: {true: 'Rent Control', false: ''},
+                        TenantPays: 'Tenant Pays',
+                        OwnerPays: 'Owner Pays',
+                        RentIncludes: 'Rent Includes',
+                        AssociationYN: {true: 'Has HOA', false: 'No HOA'},
+                        AssociationFee: {name: 'HOA Fee', prepend: '$', comma: true},
+                        AssociationFeeFrequency: 'HOA Frequency',
+                        AssociationFeeIncludes: 'HOA Includes',
+                        AssociationFee2: {name: 'Additional HOA Fee', prepend: '$', comma: true},
+                        AssociationFeeFrequency2: 'Additional HOA Frequency',
+                        CableTvExpense: {name: 'Cable Tv Expense', prepend: '$', comma: true},
+                        ElectricExpense: {name: 'Electric Expense', prepend: '$', comma: true},
+                        FuelExpense: {name: 'Fuel Expense', prepend: '$', comma: true},
+                        FurnitureReplacementExpense: {name: 'Furniture Replacement Expense', prepend: '$', comma: true},
+                        GardenerExpense: {name: 'Gardener Expense', prepend: '$', comma: true},
+                        InsuranceExpense: {name: 'Insurance Expense', prepend: '$', comma: true},
+                        LicensesExpense: {name: 'Licenses Expense', prepend: '$', comma: true},
+                        MaintenanceExpense: {name: 'Maintenance Expense', prepend: '$', comma: true},
+                        ManagerExpense: {name: 'Manager Expense', prepend: '$', comma: true},
+                        NewTaxesExpense: {name: 'New Taxes Expense', prepend: '$', comma: true},
+                        OperatingExpense: {name: 'Operating Expense', prepend: '$', comma: true},
+                        OperatingExpenseIncludes: 'Operating Expense Includes',
+                        OtherExpense: {name: 'Other Expense', prepend: '$', comma: true},
+                        PestControlExpense: {name: 'Pest Control Expense', prepend: '$', comma: true},
+                        PoolExpense: {name: 'Pool Expense', prepend: '$', comma: true},
+                        ProfessionalManagementExpense: {
+                            name: 'Professional Management Expense',
+                            prepend: '$',
+                            comma: true
+                        },
+                        SuppliesExpense: {name: 'Supplies Expense', prepend: '$', comma: true},
+                        TrashExpense: {name: 'Trash Expense', prepend: '$', comma: true},
+                        WaterSewerExpense: {name: 'Water Sewer Expense', prepend: '$', comma: true},
+                        WorkmansCompensationExpense: {name: 'Workmans Compensation Expense', prepend: '$', comma: true},
+                        TaxAnnualAmount: {name: 'Annual Tax', prepend: '$', comma: true},
+                        TaxOtherAnnualAssessmentAmount: {name: 'Other Annual Tax', prepend: '$', comma: true},
+                        TaxAssessedValue: {name: 'Tax Assessed Value', prepend: '$', comma: true},
+                        TaxYear: 'Tax Year Assessed',
+                        TaxStatusCurrent: 'Tax Status',
+                        TaxParcelLetter: 'Tax Parcel Letter',
+                        ParcelNumber: 'Parcel Number',
+                        AdditionalParcelsYN: {true: 'Has Additional Prcels', false: ''},
+                        AdditionalParcelsDescription: 'Parcels',
+                        Zoning: 'Zoning',
+                        ZoningDescription: 'Zoning'
+                    }
+                },
+                {
+                    section: 'Sources',
+                    items: {
+                        FinancialDataSource: 'Financial Data',
+                        LotSizeSource: 'Lot Size',
+                        LotDimensionsSource: 'Lot Dimensions',
+                        LivingAreaSource: 'Living Area',
+                        BuildingAreaSource: 'Building Area',
+                        FarmLandAreaSource: 'Farm Land Area',
+                        YearBuiltSource: 'Year Built',
+                        MapCoordinateSource: 'Map Coordinate',
+                        ListAOR: {name: 'Listing AOR'},
+                        OriginatingSystemName: {name: 'Originating System'},
+                        OriginatingSystemKey: {name: 'Originating System', prepend: '# '}
+                    }
+                },
+            ]
+
+            /**
+             * An optional pre-compiled set data for the sub-section component to display fields
+             */
+            $scope.alternateMinorDetails = [
+                {
                     section: 'Location',
                     items: {
                         // Location fields ignored
@@ -515,7 +933,7 @@ Stratus.Components.IdxPropertyDetails = {
                         ElementarySchoolDistrict: 'Elementary School District',
                         MiddleOrJuniorSchool: 'Middle School',
                         MiddleOrJuniorSchoolDistrict: 'Middle School District',
-                        HighSchoolt: 'High School',
+                        HighSchool: 'High School',
                         HighSchoolDistrict: 'High School District'
                     }
                 },
@@ -582,6 +1000,9 @@ Stratus.Components.IdxPropertyDetails = {
                         SyndicationRemarks Field
                         SourceSystemName Field
                         StandardStatus Field
+
+                        Disclaimer: 'Disclaimer',
+                        CopyrightNotice: 'Copyright Notice'
                          */
                         AvailabilityDate: 'Availability', // todo need to handle dates
                         PetsAllowed: {name: 'PetsAllowed'},
@@ -597,9 +1018,7 @@ Stratus.Components.IdxPropertyDetails = {
                         Inclusions: 'Inclusions',
                         ListingTerms: 'ListingTerms',
                         SpecialListingConditions: 'Special Listing Conditions',
-                        CommonInterest: 'Common Interest',
-                        CopyrightNotice: 'Copyright Notice',
-                        Disclaimer: 'Disclaimer'
+                        CommonInterest: 'Common Interest'
                     }
                 },
                 {

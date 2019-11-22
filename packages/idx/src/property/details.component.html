@@ -140,40 +140,6 @@
                         </p>
                     </div>
                     <div class="details-right">
-                        <!-- repeat
-                        <div class="open-house-item">
-                            <div class="month primary_font">
-                                February
-                            </div>
-                            <div data-layout-gt-xs="row" data-layout-align-gt-xs="space-between center">
-                                <div class="primary_font" data-layout="row" data-layout-align="space-between center">
-                                    <div class="day">8</div>
-                                    <div class="day-weekday-time-agent">
-                                        Saturday @ 11:30pm - 4:30pm <br>with Mads Mikkelson
-                                    </div>
-                                </div>
-                                <a class="add-to-calendar btn btn-alt">
-                                    Add to Calendar
-                                </a>
-                            </div>
-                        </div>
-                        <div class="open-house-item">
-                            <div class="month primary_font">
-                                February
-                            </div>
-                            <div data-layout-gt-xs="row" data-layout-align-gt-xs="space-between center">
-                                <div class="primary_font" data-layout="row" data-layout-align="space-between center">
-                                    <div class="day">9</div>
-                                    <div class="day-weekday-time-agent">
-                                        Saturday @ 11:30pm - 4:30pm
-                                    </div>
-                                </div>
-                                <a class="add-to-calendar btn btn-alt">
-                                    Add to Calendar
-                                </a>
-                            </div>
-                        </div>
-                        -->
 
                         <div class="open-house-item"
                              data-ng-repeat="openHouse in model.data.OpenHouses"
@@ -277,130 +243,13 @@
                 <div class="detail-sections">
                     <stratus-idx-property-details-sub-section
                             ng-model="model"
-                            section-name="Size & Style"
-                            items='{
-                                "YearBuilt": "Built",
-                                "Stories": "Stories",
-                                "StructureType": "Structure Type",
-                                "LivingArea": {"name": "Living Area", "comma": true},
-                                "LotSizeAcres": {"name": "Lot Size", "append": " Acres", "comma": true},
-                                "LotSizeSquareFeet": {"name": "Lot Size", "append": " SqFt", "comma": true},
-                                "LotSizeArea": {"name": "Lot Size", "comma": true},
-                                "HorseYN": {"true": "Horse Property: Yes", "false": ""}
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Materials"
-                            items='{
-                                "Roof": "Roof",
-                                "Flooring": "Flooring",
-                                "Flooring": "Flooring",
-                                "WindowFeatures": "Windows",
-                                "DoorFeatures": "Doors",
-                                "FoundationDetails": "Foundation",
-                                "FoundationArea": "Foundation",
-                                "ConstructionMaterials": "Construction"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Utilities"
-                            items='{
-                                "CoolingYN": {"true": "Cooling: Yes", "false": ""},
-                                "Cooling": "Cooling",
-                                "HeatingYN": {"true": "Heating: Yes", "false": ""},
-                                "Heating": "Heating",
-                                "Utilities": "Utilities",
-                                "Electric": "Electric",
-                                "WaterSource": "Water",
-                                "Sewer": "Sewer Septic"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Area"
-                            items='{
-                                "CrossStreet": "Cross Street",
-                                "PostalCode": "Postal Code",
-                                "CityRegion": "City Region",
-                                "Township": "Township",
-                                "CountyOrParish": "County",
-                                "MLSAreaMajor": "Area",
-                                "SubdivisionName": "Subdivision",
-                                "StateOrProvince": "State",
-                                "StateRegion": "State Region"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Features"
-                            items='{
-                                "HorseAmenities": "Horse Amenities",
-                                "PoolPrivateYN": {"true": "Pool: Yes", "false": ""},
-                                "PoolFeatures": "Pool",
-                                "SpaYN": {"true": "Spa: Yes", "false": ""},
-                                "SpaFeatures": "Spa",
-                                "LaundryFeatures": "Laundry",
-                                "Appliances": "Appliances",
-                                "FireplaceYN": {"true": "Fireplace: Yes", "false": ""},
-                                "FireplaceFeatures": "Fireplace",
-                                "FireplacesTotal": "Fireplaces",
-                                "Basement": "Basement",
-                                "InteriorFeatures": "Interior Features",
-                                "SecurityFeatures": "Security Features",
-                                "ExteriorFeatures": "Exterior Features",
-                                "BuildingFeatures": "Building Features",
-                                "AccessibilityFeatures": "Accessibility",
-                                "PatioAndPorchFeatures": "Patio And Porch",
-                                "Fencing": "Fencing",
-                                "FrontageType": "Frontage",
-                                "OtherEquipment": "Equipment",
-                                "CommunityFeatures": "Community"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Parking"
-                            items='{
-                                "ParkingTotal": "Parking Spaces",
-                                "GarageYN": {"true": "Garage: Yes", "false": ""},
-                                "GarageSpaces": "Garage Spaces",
-                                "AttachedGarageYN": {"true": "Attached Garage", "false": ""},
-                                "CarportYN": {"true": "Carport: Yes", "false": ""},
-                                "CarportSpaces": "Carport Spaces",
-                                "CoveredSpaces": "Covered Spaces",
-                                "OpenParkingSpaces": "Open Spaces",
-                                "OtherParking": "Other Parking",
-                                "ParkingFeatures": "Parking"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Sources"
-                            items='{
-                                "FinancialDataSource": "Financial Data",
-                                "LotSizeSource": "Lot Size",
-                                "LotDimensionsSource": "Lot Dimensions",
-                                "LivingAreaSource": "Living Area",
-                                "BuildingAreaSource": "Building Area",
-                                "FarmLandAreaSource": "Farm Land Area",
-                                "YearBuiltSource": "Year Built",
-                                "MapCoordinateSource": "Map Coordinate",
-                                "ListAOR": {"name": "Listing AOR"},
-                                "OriginatingSystemName": {"name": "Originating System"},
-                                "OriginatingSystemKey": {"name": "Originating System", "prepend": "# "}
-                            }'
+                            data-ng-repeat="detail in ::minorDetails"
+                            section-name="{{::detail.section}}"
+                            items={{::detail.items}}
                     >
                     </stratus-idx-property-details-sub-section>
 
-                    <!-- Agent section -->
+                    <!-- Agent section (not advanced enough to process automatically yet) -->
                     <div class="property-details-sub-section">
                         <div class="sub-detail-section">
                             <div class="section-name">Agent</div>
