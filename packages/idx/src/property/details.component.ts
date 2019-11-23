@@ -104,6 +104,8 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.options.openhouses = $attrs.openhouses && isJSON($attrs.openhouses) ? JSON.parse($attrs.openhouses) : {
                 fields: '*'// show all OH details
             }
+            $scope.disclaimerString = 'Loading...'
+            $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
 
             $scope.images = []
             $scope.contact = null
@@ -1220,6 +1222,10 @@ Stratus.Components.IdxPropertyDetails = {
                 (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
             ) {
                 await Idx.fetchProperty($scope, 'model', propertyQuery)
+                console.log('got property')
+                // $scope.disclaimer = _.clone($scope.getMLSDisclaimer(false))
+                // $scope.disclaimerHTML = _.clone($scope.getMLSDisclaimer(true))
+                $scope.getMLSDisclaimer()
             } else {
                 console.error('No Service Id or Listing Key/Id is fetch from')
             }
@@ -1330,32 +1336,37 @@ Stratus.Components.IdxPropertyDetails = {
         }
 
         $scope.getMLSVariables = (): MLSService => {
-            if (!$ctrl.mlsVariables) {
-                $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])
-            }
+            console.log('getMLSVariables for', _.clone($scope.model.data._ServiceId))
+            // if (!$ctrl.mlsVariables) {
+            $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])
+            // }
+            console.log('getMLSVariables returning', _.clone($ctrl.mlsVariables[$scope.model.data._ServiceId]))
             return $ctrl.mlsVariables[$scope.model.data._ServiceId]
         }
 
         /**
          * Display an MLS' Name
          */
-        $scope.getMLSName = (): string => $scope.getMLSVariables().name
+        $scope.getMLSName = (): string => $ctrl.mlsVariables.name
 
         /**
          * Process an MLS' required legal disclaimer to later display
          * @param html - if output should be HTML safe
          */
         $scope.processMLSDisclaimer = (html?: boolean): string => {
-            let disclaimer = $scope.getMLSVariables().disclaimer
+            const mlsVars = $scope.getMLSVariables()
+            console.log('processMLSDisclaimer ', _.clone(mlsVars))
 
             if ($scope.model.data.ModificationTimestamp) {
-                disclaimer = `Listing last updated ${moment($scope.model.data.ModificationTimestamp).format('M/D/YY HH:mm a')}. ${disclaimer}`
+                mlsVars.disclaimer = `Listing last updated ${moment($scope.model.data.ModificationTimestamp).format('M/D/YY HH:mm a')}. ${mlsVars.disclaimer}`
             }
-            if ($scope.model.meta.data.fetchDate) {
-                disclaimer = `Last checked ${moment($scope.model.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
+            if (mlsVars.fetchTime.Property) {
+                mlsVars.disclaimer = `Last checked ${moment(mlsVars.fetchTime.Property).format('M/D/YY HH:mm a')}. ${mlsVars.disclaimer}`
+            } else if ($scope.model.meta.data.fetchDate) {
+                mlsVars.disclaimer = `Last checked ${moment($scope.model.meta.data.fetchDate).format('M/D/YY')}. ${mlsVars.disclaimer}`
             }
 
-            return html ? $sce.trustAsHtml(disclaimer) : disclaimer
+            return html ? $sce.trustAsHtml(mlsVars.disclaimer) : mlsVars.disclaimer
         }
 
         /**
@@ -1363,13 +1374,14 @@ Stratus.Components.IdxPropertyDetails = {
          * @param html - if output should be HTML safe
          */
         $scope.getMLSDisclaimer = (html?: boolean): string => {
-            if (!$ctrl.disclaimerHTML) {
-                $ctrl.disclaimerHTML = $scope.processMLSDisclaimer(true)
-            }
-            if (!$ctrl.disclaimerString) {
-                $ctrl.disclaimerString = $scope.processMLSDisclaimer(false)
-            }
-            return html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
+            console.log('getMLSDisclaimer')
+            // if (!$ctrl.disclaimerHTML) {
+            $scope.disclaimerHTML = $scope.processMLSDisclaimer(true)
+            // }
+            // if (!$ctrl.disclaimerString) {
+            $scope.disclaimerString = $scope.processMLSDisclaimer(false)
+            // }
+            return html ? $scope.disclaimerHTML : $scope.disclaimerString
         }
 
         /**

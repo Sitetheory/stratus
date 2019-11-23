@@ -87,7 +87,14 @@ export interface MLSService {
     token?: string,
     created?: string,
     ttl?: number,
-    host?: string
+    host?: string,
+    fetchTime: {
+        Property: Date | null,
+        Media: Date | null,
+        Member: Date | null,
+        Office: Date | null,
+        OpenHouse: Date | null
+    }
 }
 
 export interface WidgetContact {
@@ -515,6 +522,15 @@ Stratus.Services.Idx = [
                     /** {MLSService} service */
                     response.data.services.forEach((service) => {
                         if (Object.prototype.hasOwnProperty.call(service, 'id')) {
+                            if (!Object.prototype.hasOwnProperty.call(service, 'fetchTime')) {
+                                service.fetchTime = {
+                                    Property: null,
+                                    Media: null,
+                                    Member: null,
+                                    Office: null,
+                                    OpenHouse: null
+                                }
+                            }
                             session.services[service.id] = service
                             session.lastCreated = new Date(service.created)// The object is a String being converted to Date
                             session.lastTtl = service.ttl
@@ -701,11 +717,13 @@ Stratus.Services.Idx = [
                  * intended to hold Model data
                  * @param originalCollection - {Collection}
                  * @param collections - {Array<Collection>}
+                 * @param modelName - {'Property'/'Office','Member'}
                  * @param append -
                  */
                 async function fetchMergeCollections(
                     originalCollection: Collection,
                     collections: Collection[],
+                    modelName: 'Property' | 'Member' | 'Office' | 'OpenHouse',
                     append = false
                 ): Promise<Collection> {
                     // The Collection is now doing something. Let's label it as such.
@@ -738,6 +756,11 @@ Stratus.Services.Idx = [
                                         }))
                                     })
                                     .then(() => {
+                                        // TODO save collection.header.get('x-fetch-time') to MLSVariables
+                                        const fetchTime = collection.header.get('x-fetch-time')
+                                        if (fetchTime) {
+                                            session.services[collection.serviceId].fetchTime[modelName] = new Date(fetchTime)
+                                        }
                                         const countRecords = collection.header.get('x-total-count')
                                         if (countRecords) {
                                             totalCount += parseInt(countRecords, 10)
@@ -784,8 +807,13 @@ Stratus.Services.Idx = [
                  * These resulting Model may not be properly set up to perform their usual action and are only intended to hold Model data
                  * @param originalModel - {Model}
                  * @param newModel - {Model}
+                 * @param modelName - {string}
                  */
-                function fetchReplaceModel(originalModel: Model, newModel: Model): IPromise<Model> {
+                function fetchReplaceModel(
+                    originalModel: Model,
+                    newModel: Model,
+                    modelName: 'Property' | 'Member' | 'Office' | 'OpenHouse'
+                ): IPromise<Model> {
                     // The Model is now doing something. Let's label it as such.
                     originalModel.pending = true
                     originalModel.completed = false
@@ -812,6 +840,10 @@ Stratus.Services.Idx = [
                                     resolve(modelInjectProperty([newModel.data], {
                                         _ServiceId: newModel.serviceId
                                     }))
+                                    const fetchTime = newModel.header.get('x-fetch-time')
+                                    if (fetchTime) {
+                                        session.services[newModel.serviceId].fetchTime[modelName] = new Date(fetchTime)
+                                    }
                                 })
                         })
                     )
@@ -1234,6 +1266,7 @@ Stratus.Services.Idx = [
                  * @param serviceIds - Specify a certain MLS Service get the variables from. {[Number]=}
                  */
                 function getMLSVariables(serviceIds?: number[]): MLSService[] {
+                    console.log('IDX getMLSVariables for ', serviceIds)
                     const serviceList: MLSService[] = []
                     if (serviceIds && _.isArray(serviceIds)) {
                         serviceIds.forEach(serviceId => {
@@ -1241,7 +1274,8 @@ Stratus.Services.Idx = [
                                 serviceList[session.services[serviceId].id] = {
                                     id: session.services[serviceId].id,
                                     name: session.services[serviceId].name,
-                                    disclaimer: session.services[serviceId].disclaimer
+                                    disclaimer: session.services[serviceId].disclaimer,
+                                    fetchTime: session.services[serviceId].fetchTime
                                 }
                             }
                         })
@@ -1250,10 +1284,12 @@ Stratus.Services.Idx = [
                             serviceList[service.id] = {
                                 id: service.id,
                                 name: service.name,
-                                disclaimer: service.disclaimer
+                                disclaimer: service.disclaimer,
+                                fetchTime: service.fetchTime
                             }
                         })
                     }
+                    console.log('IDX getMLSVariables for ', serviceIds, _.clone(serviceList))
                     // console.log('serviceList', serviceList);
                     return serviceList
                 }
@@ -1457,8 +1493,8 @@ Stratus.Services.Idx = [
                     }
                 }
 
-                function getSingularApiModelName(name: string): string {
-                    let apiModelSingular = ''
+                function getSingularApiModelName(name: string): 'Property' | 'Member' | 'Office' | 'OpenHouse' {
+                    let apiModelSingular: 'Property' | 'Member' | 'Office' | 'OpenHouse' = 'Property'
                     switch (name) {
                         case 'Properties':
                             apiModelSingular = 'Property'
@@ -1612,7 +1648,7 @@ Stratus.Services.Idx = [
 
                         // When using the same WHERE and only changing the page, results should pool together (append)
                         // Fetch and Merge all results together into single list
-                        await fetchMergeCollections(collection, collections, !refresh)
+                        await fetchMergeCollections(collection, collections, apiModelSingular, !refresh)
 
                         // If the query as updated, adjust the TotalRecords available
                         if (refresh) {
@@ -1717,7 +1753,7 @@ Stratus.Services.Idx = [
 
                         const tempModel = createModel(request)
 
-                        fetchReplaceModel(model, tempModel)
+                        fetchReplaceModel(model, tempModel, apiModelSingular)
                             .then(() => {
                                 // $scope.$digest();
                                 $scope.$applyAsync()
