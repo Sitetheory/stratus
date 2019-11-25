@@ -1353,10 +1353,10 @@ Stratus.Components.IdxPropertyDetails = {
             let disclaimer = mlsVars.disclaimer
 
             if ($scope.model.data.ModificationTimestamp) {
-                disclaimer = `Listing last updated ${moment($scope.model.data.ModificationTimestamp).format('M/D/YY HH:mm a')}. ${disclaimer}`
+                disclaimer = `Listing last updated ${moment($scope.model.data.ModificationTimestamp).format('M/D/YY h:mm a')}. ${disclaimer}`
             }
             if (mlsVars.fetchTime.Property) {
-                disclaimer = `Last checked ${moment(mlsVars.fetchTime.Property).format('M/D/YY HH:mm a')}. ${disclaimer}`
+                disclaimer = `Last checked ${moment(mlsVars.fetchTime.Property).format('M/D/YY h:mm a')}. ${disclaimer}`
             } else if ($scope.model.meta.data.fetchDate) {
                 disclaimer = `Last checked ${moment($scope.model.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
             }
@@ -1371,9 +1371,7 @@ Stratus.Components.IdxPropertyDetails = {
          * Display an MLS' required legal disclaimer
          * @param html - if output should be HTML safe
          */
-        $scope.getMLSDisclaimer = (html?: boolean): string => {
-            return html ? $scope.disclaimerHTML : $scope.disclaimerString
-        }
+        $scope.getMLSDisclaimer = (html?: boolean): string =>  html ? $scope.disclaimerHTML : $scope.disclaimerString
 
         /**
          * Function that runs when widget is destroyed

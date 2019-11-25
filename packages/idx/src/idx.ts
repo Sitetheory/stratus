@@ -1267,7 +1267,6 @@ Stratus.Services.Idx = [
                  * @param serviceIds - Specify a certain MLS Service get the variables from. {[Number]=}
                  */
                 function getMLSVariables(serviceIds?: number[]): MLSService[] {
-                    console.log('IDX getMLSVariables for ', serviceIds)
                     const serviceList: MLSService[] = []
                     if (serviceIds && _.isArray(serviceIds)) {
                         serviceIds.forEach(serviceId => {
@@ -1290,8 +1289,6 @@ Stratus.Services.Idx = [
                             }
                         })
                     }
-                    console.log('IDX getMLSVariables for ', serviceIds, _.clone(serviceList))
-                    // console.log('serviceList', serviceList);
                     return serviceList
                 }
 
