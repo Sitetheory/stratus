@@ -15,6 +15,7 @@ import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
+import {cookie} from '@stratusjs/core/environment'
 
 
 // Environment
@@ -228,7 +229,7 @@ Stratus.Services.Idx = [
                 let refreshLoginTimer: any // Timeout object
                 let defaultPageTitle: string
                 let contactUrl = '/Contact-Us'
-                let contact: WidgetContact | null
+                let contact: WidgetContact | null = null
                 // console.log('Idx Service inited')
                 /* const instance: {
                     List: object,
@@ -1460,6 +1461,15 @@ Stratus.Services.Idx = [
                 }
 
                 /**
+                 * Output console if not in production
+                 */
+                function devLog(item1: any, item2: any): void {
+                    if (cookie('env')) {
+                        console.log(item1, item2)
+                    }
+                }
+
+                /**
                  * Process the currently set options and update the URL with what should be known
                  * TODO define defaultOptions
                  */
@@ -2009,6 +2019,7 @@ Stratus.Services.Idx = [
                     fetchProperty,
                     contact,
                     contactUrl,
+                    devLog,
                     getContactVariables,
                     getFriendlyStatus,
                     getIdxServices,

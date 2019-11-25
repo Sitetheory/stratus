@@ -1136,7 +1136,6 @@ Stratus.Components.IdxPropertyDetails = {
 
             // Register this List with the Property service
             Idx.registerDetailsInstance($scope.elementId, $scope)
-            // console.log(this.uid)
 
             $scope.urlLoad = !(
                 $scope.urlLoad !== true &&
@@ -1159,11 +1158,12 @@ Stratus.Components.IdxPropertyDetails = {
                 data &&
                 data.hasOwnProperty('_ServiceId')
             ) {
+                $ctrl.processMLSDisclaimer()
                 // Check if empty
-                $scope.devLog('Loaded Details Data:', data)
+                Idx.devLog('Loaded Details Data:', data)
                 // prepare the images provided
                 $scope.images = $scope.getSlideshowImages()
-                // console.log('IDX images is now', $scope.images)
+                // Idx.devLog('IDX images is now', $scope.images)
                 Idx.setUrlOptions('Listing',
                     {
                         service: $scope.options.service,
@@ -1222,10 +1222,6 @@ Stratus.Components.IdxPropertyDetails = {
                 (propertyQuery.where.ListingKey || propertyQuery.where.ListingId)
             ) {
                 await Idx.fetchProperty($scope, 'model', propertyQuery)
-                console.log('got property')
-                // $scope.disclaimer = _.clone($scope.getMLSDisclaimer(false))
-                // $scope.disclaimerHTML = _.clone($scope.getMLSDisclaimer(true))
-                $scope.getMLSDisclaimer()
             } else {
                 console.error('No Service Id or Listing Key/Id is fetch from')
             }
@@ -1336,12 +1332,10 @@ Stratus.Components.IdxPropertyDetails = {
         }
 
         $scope.getMLSVariables = (): MLSService => {
-            console.log('getMLSVariables for', _.clone($scope.model.data._ServiceId))
-            // if (!$ctrl.mlsVariables) {
-            $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])
-            // }
-            console.log('getMLSVariables returning', _.clone($ctrl.mlsVariables[$scope.model.data._ServiceId]))
-            return $ctrl.mlsVariables[$scope.model.data._ServiceId]
+            if (!$ctrl.mlsVariables) {
+                $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])[$scope.model.data._ServiceId]
+            }
+            return $ctrl.mlsVariables
         }
 
         /**
@@ -1353,20 +1347,24 @@ Stratus.Components.IdxPropertyDetails = {
          * Process an MLS' required legal disclaimer to later display
          * @param html - if output should be HTML safe
          */
-        $scope.processMLSDisclaimer = (html?: boolean): string => {
+        $ctrl.processMLSDisclaimer = (html?: boolean): string => {
             const mlsVars = $scope.getMLSVariables()
-            console.log('processMLSDisclaimer ', _.clone(mlsVars))
+
+            let disclaimer = mlsVars.disclaimer
 
             if ($scope.model.data.ModificationTimestamp) {
-                mlsVars.disclaimer = `Listing last updated ${moment($scope.model.data.ModificationTimestamp).format('M/D/YY HH:mm a')}. ${mlsVars.disclaimer}`
+                disclaimer = `Listing last updated ${moment($scope.model.data.ModificationTimestamp).format('M/D/YY HH:mm a')}. ${disclaimer}`
             }
             if (mlsVars.fetchTime.Property) {
-                mlsVars.disclaimer = `Last checked ${moment(mlsVars.fetchTime.Property).format('M/D/YY HH:mm a')}. ${mlsVars.disclaimer}`
+                disclaimer = `Last checked ${moment(mlsVars.fetchTime.Property).format('M/D/YY HH:mm a')}. ${disclaimer}`
             } else if ($scope.model.meta.data.fetchDate) {
-                mlsVars.disclaimer = `Last checked ${moment($scope.model.meta.data.fetchDate).format('M/D/YY')}. ${mlsVars.disclaimer}`
+                disclaimer = `Last checked ${moment($scope.model.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
             }
 
-            return html ? $sce.trustAsHtml(mlsVars.disclaimer) : mlsVars.disclaimer
+            $scope.disclaimerString = disclaimer
+            $scope.disclaimerHTML = $sce.trustAsHtml(disclaimer)
+
+            return html ? $scope.disclaimerHTML : $scope.disclaimerString
         }
 
         /**
@@ -1374,13 +1372,6 @@ Stratus.Components.IdxPropertyDetails = {
          * @param html - if output should be HTML safe
          */
         $scope.getMLSDisclaimer = (html?: boolean): string => {
-            console.log('getMLSDisclaimer')
-            // if (!$ctrl.disclaimerHTML) {
-            $scope.disclaimerHTML = $scope.processMLSDisclaimer(true)
-            // }
-            // if (!$ctrl.disclaimerString) {
-            $scope.disclaimerString = $scope.processMLSDisclaimer(false)
-            // }
             return html ? $scope.disclaimerHTML : $scope.disclaimerString
         }
 
@@ -1388,15 +1379,6 @@ Stratus.Components.IdxPropertyDetails = {
          * Function that runs when widget is destroyed
          */
         $scope.remove = (): void => {
-        }
-
-        /**
-         * Output console if not in production
-         */
-        $scope.devLog = (item1: any, item2: any): void => {
-            if (cookie('env')) {
-                console.log(item1, item2)
-            }
         }
     },
     templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
