@@ -831,7 +831,7 @@ Stratus.Services.Idx = [
                     }
                     fetchPromises.push(
                         $q((resolve: any[] | any) => {
-                            console.log('sending fetchReplaceModel', newModel, options)
+                            // console.log('sending fetchReplaceModel', newModel, options)
                             newModel.fetch('POST', null, options)
                                 .then((data: any) => {
                                     resolve(data)
