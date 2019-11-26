@@ -37,13 +37,29 @@
       this.unix = true
       this.ago = true
       this.since = false
+      this.diff = null // Difference between two dates (as a number).
+      this.from = null // Difference between two dates (with human grammar)
       this.relative = '1w'
+      this.duration = 'days' // Used with 'diff' to display the incremental between: seconds, minutes, hours, days, weeks, months, years
       this.format = 'MMM Do YYYY, h:mma'
       if (angular.isObject(options)) angular.extend(this, options)
       if (this.relative && typeof this.relative === 'string' && Math.round(new Date().getTime() / 1000) > (input + _.seconds(this.relative))) this.since = false
       let time = this.unix ? moment.unix(input) : moment(input)
       time = this.tz ? time.tz(this.tz) : time
-      return (!this.since) ? time.format(this.format) : time.fromNow(!this.ago)
+
+      if (this.diff) {
+        let until = this.unix ? moment.unix(this.diff) : this.diff === true ? moment() : moment(this.diff)
+        until = this.tz ? until.tz(this.tz) : until
+        // console.log('between', time, 'and', until)
+        return until.diff(time, this.duration)
+      } else if (this.from) {
+        let from = this.unix ? moment.unix(this.from) : moment(this.from)
+        from = this.tz ? from.tz(this.tz) : from
+        // console.log('from', from, 'to', time)
+        return time.from(from, true)
+      } else {
+        return (!this.since) ? time.format(this.format) : time.fromNow(!this.ago)
+      }
     }
   }
 }))
