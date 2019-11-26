@@ -1999,6 +1999,7 @@ Stratus.Services.Idx = [
                                 statusName = 'Contingent'
                                 break
                             }
+                            case 'Sold':
                             case 'Leased/Option':
                             case 'Leased/Rented': {
                                 statusName = 'Closed'

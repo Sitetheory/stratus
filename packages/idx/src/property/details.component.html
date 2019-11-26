@@ -60,17 +60,25 @@
                         <li data-ng-if="::model.data.BathroomsPartial > 0">
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
-                        <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model) == 'Closed'">
-                            Closed on <span data-ng-bind="::model.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                        <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
+                            Closed on <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
-                        <!-- FIXME moment filter is not working correctly? (setting a 2018 date to be date.now() ) -->
                         <li data-ng-if="::model.data.OnMarketDate">
-                            Listed on <span data-ng-bind="::model.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                            Listed on <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
                         <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
                             Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
                         </li>
-                        <li data-ng-if="::model.data.DaysOnMarket">
+                        <li data-ng-if="::model.data.OnMarketDate && model.data.CloseDate">
+                            <!-- Closed with start and end Dates. Give number of days between -->
+                            Days on Market: <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:model.data.CloseDate,duration:'days'}"></span>
+                        </li>
+                        <li data-ng-if="::model.data.OnMarketDate && Idx.getFriendlyStatus(model.data) !== 'Closed'">
+                            <!-- Not Closed Yet, Days since open -->
+                            Days on Market: <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:true,duration:'days'}"></span>
+                        </li>
+                        <li data-ng-if="::model.data.DaysOnMarket && !model.data.OnMarketDate">
+                            <!-- MLS provides DaysOnMarket, but we weren't given a Start time, use MLS provided times (may be inaccurate) -->
                             Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
                         </li>
                         <li data-ng-if="::model.data.ArchitecturalStyle">
