@@ -224,12 +224,22 @@ Stratus.Services.Idx = [
             Model: any,
             orderByFilter: any
             ) => {
+                const sharedValues: {
+                    contactUrl: string | null,
+                    contact: WidgetContact | null,
+                    integrations: WidgetIntegrations
+                } = {
+                    contactUrl: null,
+                    contact: null,
+                    integrations: {
+                        analytics: {},
+                        maps: {}
+                    }
+                }
                 let idxServicesEnabled: number[] = []
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
                 let defaultPageTitle: string
-                let contactUrl = '/Contact-Us'
-                let contact: WidgetContact | null = null
                 // console.log('Idx Service inited')
                 /* const instance: {
                     List: object,
@@ -292,11 +302,6 @@ Stratus.Services.Idx = [
                     whereFilter: {},
                     pages: [],
                     perPage: 0
-                }
-
-                const integrations: WidgetIntegrations = {
-                    analytics: {},
-                    maps: {}
                 }
 
                 /**
@@ -545,12 +550,12 @@ Stratus.Services.Idx = [
                         Object.prototype.hasOwnProperty.call(response.data, 'contactUrl')
                         && response.data.contactUrl !== ''
                     ) {
-                        contactUrl = response.data.contactUrl
+                        sharedValues.contactUrl = response.data.contactUrl
                     }
 
                     // Compile a contact from the response if it exists
                     if (Object.prototype.hasOwnProperty.call(response.data, 'contact')) {
-                        contact = {
+                        sharedValues.contact = {
                             name: '',
                             emails: {},
                             locations: {},
@@ -564,44 +569,44 @@ Stratus.Services.Idx = [
                             && _.isString(response.data.site)
                             && response.data.site !== ''
                         ) {
-                            contact.name = response.data.site
+                            sharedValues.contact.name = response.data.site
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data, 'contactName')
                             && _.isString(response.data.contactName)
                             && response.data.site !== ''
                         ) {
-                            contact.name = response.data.contactName
+                            sharedValues.contact.name = response.data.contactName
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'emails')
                             && _.isPlainObject(response.data.contact.emails)
                         ) {
-                            contact.emails = response.data.contact.emails
+                            sharedValues.contact.emails = response.data.contact.emails
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'locations')
                             && _.isPlainObject(response.data.contact.locations)
                         ) {
-                            contact.locations = response.data.contact.locations
+                            sharedValues.contact.locations = response.data.contact.locations
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'phones')
                             && _.isPlainObject(response.data.contact.phones)
                         ) {
-                            contact.phones = response.data.contact.phones
+                            sharedValues.contact.phones = response.data.contact.phones
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'socialUrls')
                             && _.isPlainObject(response.data.contact.socialUrls)
                         ) {
-                            contact.socialUrls = response.data.contact.socialUrls
+                            sharedValues.contact.socialUrls = response.data.contact.socialUrls
                         }
                         if (
                             Object.prototype.hasOwnProperty.call(response.data.contact, 'urls')
                             && _.isPlainObject(response.data.contact.urls)
                         ) {
-                            contact.urls = response.data.contact.urls
+                            sharedValues.contact.urls = response.data.contact.urls
                         }
                     }
 
@@ -614,7 +619,7 @@ Stratus.Services.Idx = [
                                     && _.isString(response.data.integrations.analytics.googleAnalytics.accountId)
                                     && response.data.integrations.analytics.googleAnalytics.accountId !== ''
                                 ) {
-                                    integrations.analytics.googleAnalytics = {
+                                    sharedValues.integrations.analytics.googleAnalytics = {
                                         accountId: response.data.integrations.analytics.googleAnalytics.accountId
                                     }
                                 }
@@ -625,7 +630,7 @@ Stratus.Services.Idx = [
                                     && _.isString(response.data.integrations.analytics.listTrac.accountId)
                                     && response.data.integrations.analytics.listTrac.accountId !== ''
                                 ) {
-                                    integrations.analytics.listTrac = {
+                                    sharedValues.integrations.analytics.listTrac = {
                                         accountId: response.data.integrations.analytics.listTrac.accountId
                                     }
                                 }
@@ -638,7 +643,7 @@ Stratus.Services.Idx = [
                                     && _.isString(response.data.integrations.maps.googleMaps.accountId)
                                     && response.data.integrations.maps.googleMaps.accountId !== ''
                                 ) {
-                                    integrations.analytics.googleAnalytics = {
+                                    sharedValues.integrations.analytics.googleAnalytics = {
                                         accountId: response.data.integrations.maps.googleMaps.accountId
                                     }
                                 }
@@ -2015,8 +2020,6 @@ Stratus.Services.Idx = [
                     fetchOffices,
                     fetchProperties,
                     fetchProperty,
-                    contact,
-                    contactUrl,
                     devLog,
                     getContactVariables,
                     getFriendlyStatus,
@@ -2028,7 +2031,6 @@ Stratus.Services.Idx = [
                     getMLSVariables,
                     getOptionsFromUrl,
                     getUrlOptions,
-                    integrations,
                     tokenKeepAuth,
                     registerListInstance,
                     registerSearchInstance,
@@ -2037,6 +2039,7 @@ Stratus.Services.Idx = [
                     setPageTitle,
                     setTokenURL,
                     setUrlOptions,
+                    sharedValues,
                     refreshUrlOptions,
                     unregisterDetailsInstance
                 }
