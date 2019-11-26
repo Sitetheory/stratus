@@ -60,10 +60,25 @@
                         <li data-ng-if="::model.data.BathroomsPartial > 0">
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
-                        <li data-ng-if="::model.data.BuildingAreaTotal">
-                            <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet
+                        <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
+                            Closed on <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
-                        <li data-ng-if="::model.data.DaysOnMarket">
+                        <li data-ng-if="::model.data.OnMarketDate">
+                            Listed on <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                        </li>
+                        <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
+                            Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
+                        </li>
+                        <li data-ng-if="::model.data.OnMarketDate && model.data.CloseDate">
+                            <!-- Closed with start and end Dates. Give number of days between -->
+                            Days on Market: <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:model.data.CloseDate,duration:'days'}"></span>
+                        </li>
+                        <li data-ng-if="::model.data.OnMarketDate && Idx.getFriendlyStatus(model.data) !== 'Closed'">
+                            <!-- Not Closed Yet, Days since open -->
+                            Days on Market: <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:true,duration:'days'}"></span>
+                        </li>
+                        <li data-ng-if="::model.data.DaysOnMarket && !model.data.OnMarketDate">
+                            <!-- MLS provides DaysOnMarket, but we weren't given a Start time, use MLS provided times (may be inaccurate) -->
                             Days on Market: <span data-ng-bind="::model.data.DaysOnMarket | number"></span>
                         </li>
                         <li data-ng-if="::model.data.ArchitecturalStyle">
@@ -71,6 +86,9 @@
                         </li>
                         <li data-ng-if="::model.data.YearBuilt">
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
+                        </li>
+                        <li data-ng-if="::model.data.BuildingAreaTotal">
+                            <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span> Square Feet
                         </li>
                         <li data-ng-if="::model.data.LotSizeArea">
                             Lot: <span data-ng-bind="::model.data.LotSizeArea | number"></span>
@@ -130,40 +148,6 @@
                         </p>
                     </div>
                     <div class="details-right">
-                        <!-- repeat
-                        <div class="open-house-item">
-                            <div class="month primary_font">
-                                February
-                            </div>
-                            <div data-layout-gt-xs="row" data-layout-align-gt-xs="space-between center">
-                                <div class="primary_font" data-layout="row" data-layout-align="space-between center">
-                                    <div class="day">8</div>
-                                    <div class="day-weekday-time-agent">
-                                        Saturday @ 11:30pm - 4:30pm <br>with Mads Mikkelson
-                                    </div>
-                                </div>
-                                <a class="add-to-calendar btn btn-alt">
-                                    Add to Calendar
-                                </a>
-                            </div>
-                        </div>
-                        <div class="open-house-item">
-                            <div class="month primary_font">
-                                February
-                            </div>
-                            <div data-layout-gt-xs="row" data-layout-align-gt-xs="space-between center">
-                                <div class="primary_font" data-layout="row" data-layout-align="space-between center">
-                                    <div class="day">9</div>
-                                    <div class="day-weekday-time-agent">
-                                        Saturday @ 11:30pm - 4:30pm
-                                    </div>
-                                </div>
-                                <a class="add-to-calendar btn btn-alt">
-                                    Add to Calendar
-                                </a>
-                            </div>
-                        </div>
-                        -->
 
                         <div class="open-house-item"
                              data-ng-repeat="openHouse in model.data.OpenHouses"
@@ -198,23 +182,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Real open house
-            <div class="details-container open-house-section accent-bg-color" data-ng-if="model.data.OpenHouses && model.data.OpenHouses.length">
-                <h2>Open</h2>
-                <div class="open-house-container dotted-spaced-sideline">
-                    <span class="primary_font" data-ng-if="::model.data.OpenHouses[0].OpenHouseRemarks" data-ng-bind="::model.data.OpenHouses[0].OpenHouseRemarks"></span>
-                    <div class="open-house" id="{{'open_house_' + openHouse.OpenHouseId}}" data-ng-repeat="openHouse in model.data.OpenHouses">
-                        <span data-ng-bind="::openHouse.OpenHouseStartTime | moment:{unix:false,format:'dddd MMM Do, h:mm a'}"></span>
-                        <span data-ng-if="::openHouse.OpenHouseEndTime"> —
-                                <span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
-                            </span>
-                        <span data-ng-if="::openHouse.ShowingAgentFirstName">
-                                with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
-                            </span>
-                    </div>
-                </div>
-            </div>-->
         </div>
 
         <!-- This needs to display the second image in the slideshow or maybe the last image? -->
@@ -284,130 +251,13 @@
                 <div class="detail-sections">
                     <stratus-idx-property-details-sub-section
                             ng-model="model"
-                            section-name="Size & Style"
-                            items='{
-                                "YearBuilt": "Built",
-                                "Stories": "Stories",
-                                "StructureType": "Structure Type",
-                                "LivingArea": {"name": "Living Area", "comma": true},
-                                "LotSizeAcres": {"name": "Lot Size", "append": " Acres", "comma": true},
-                                "LotSizeSquareFeet": {"name": "Lot Size", "append": " SqFt", "comma": true},
-                                "LotSizeArea": {"name": "Lot Size", "comma": true},
-                                "HorseYN": {"true": "Horse Property: Yes", "false": ""}
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Materials"
-                            items='{
-                                "Roof": "Roof",
-                                "Flooring": "Flooring",
-                                "Flooring": "Flooring",
-                                "WindowFeatures": "Windows",
-                                "DoorFeatures": "Doors",
-                                "FoundationDetails": "Foundation",
-                                "FoundationArea": "Foundation",
-                                "ConstructionMaterials": "Construction"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Utilities"
-                            items='{
-                                "CoolingYN": {"true": "Cooling: Yes", "false": ""},
-                                "Cooling": "Cooling",
-                                "HeatingYN": {"true": "Heating: Yes", "false": ""},
-                                "Heating": "Heating",
-                                "Utilities": "Utilities",
-                                "Electric": "Electric",
-                                "WaterSource": "Water",
-                                "Sewer": "Sewer Septic"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Area"
-                            items='{
-                                "CrossStreet": "Cross Street",
-                                "PostalCode": "Postal Code",
-                                "CityRegion": "City Region",
-                                "Township": "Township",
-                                "CountyOrParish": "County",
-                                "MLSAreaMajor": "Area",
-                                "SubdivisionName": "Subdivision",
-                                "StateOrProvince": "State",
-                                "StateRegion": "State Region"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Features"
-                            items='{
-                                "HorseAmenities": "Horse Amenities",
-                                "PoolPrivateYN": {"true": "Pool: Yes", "false": ""},
-                                "PoolFeatures": "Pool",
-                                "SpaYN": {"true": "Spa: Yes", "false": ""},
-                                "SpaFeatures": "Spa",
-                                "LaundryFeatures": "Laundry",
-                                "Appliances": "Appliances",
-                                "FireplaceYN": {"true": "Fireplace: Yes", "false": ""},
-                                "FireplaceFeatures": "Fireplace",
-                                "FireplacesTotal": "Fireplaces",
-                                "Basement": "Basement",
-                                "InteriorFeatures": "Interior Features",
-                                "SecurityFeatures": "Security Features",
-                                "ExteriorFeatures": "Exterior Features",
-                                "BuildingFeatures": "Building Features",
-                                "AccessibilityFeatures": "Accessibility",
-                                "PatioAndPorchFeatures": "Patio And Porch",
-                                "Fencing": "Fencing",
-                                "FrontageType": "Frontage",
-                                "OtherEquipment": "Equipment",
-                                "CommunityFeatures": "Community"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Parking"
-                            items='{
-                                "ParkingTotal": "Parking Spaces",
-                                "GarageYN": {"true": "Garage: Yes", "false": ""},
-                                "GarageSpaces": "Garage Spaces",
-                                "AttachedGarageYN": {"true": "Attached Garage", "false": ""},
-                                "CarportYN": {"true": "Carport: Yes", "false": ""},
-                                "CarportSpaces": "Carport Spaces",
-                                "CoveredSpaces": "Covered Spaces",
-                                "OpenParkingSpaces": "Open Spaces",
-                                "OtherParking": "Other Parking",
-                                "ParkingFeatures": "Parking"
-                            }'
-                    >
-                    </stratus-idx-property-details-sub-section>
-                    <stratus-idx-property-details-sub-section
-                            ng-model="model"
-                            section-name="Sources"
-                            items='{
-                                "FinancialDataSource": "Financial Data",
-                                "LotSizeSource": "Lot Size",
-                                "LotDimensionsSource": "Lot Dimensions",
-                                "LivingAreaSource": "Living Area",
-                                "BuildingAreaSource": "Building Area",
-                                "FarmLandAreaSource": "Farm Land Area",
-                                "YearBuiltSource": "Year Built",
-                                "MapCoordinateSource": "Map Coordinate",
-                                "ListAOR": {"name": "Listing AOR"},
-                                "OriginatingSystemName": {"name": "Originating System"},
-                                "OriginatingSystemKey": {"name": "Originating System", "prepend": "# "}
-                            }'
+                            data-ng-repeat="detail in ::minorDetails"
+                            section-name="{{::detail.section}}"
+                            items={{::detail.items}}
                     >
                     </stratus-idx-property-details-sub-section>
 
-                    <!-- Agent section -->
+                    <!-- Agent section (not advanced enough to process automatically yet) -->
                     <div class="property-details-sub-section">
                         <div class="sub-detail-section">
                             <div class="section-name">Agent</div>
@@ -475,7 +325,7 @@
         <div class="disclaimer-container details-container static-element">
             <div class="disclaimer"
                  data-ng-class="{'border-top': (contact || Idx.contact)}"
-                 data-ng-bind-html="::getMLSDisclaimer(true)"
+                 data-ng-bind-html="disclaimerHTML"
             ></div>
         </div>
     </div>

@@ -19,7 +19,7 @@ import '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {CompileFilterOptions, WhereOptions} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, MLSService, WhereOptions} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -75,6 +75,7 @@ Stratus.Components.IdxPropertyList = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         $ctrl.$onInit = async () => {
+            $scope.Idx = Idx
             /**
              * Allow query to be loaded initially from the URL
              * type {boolean}
@@ -118,6 +119,9 @@ Stratus.Components.IdxPropertyList = {
             $scope.contactEmail = $attrs.contactEmail || null
             $scope.contactPhone = $attrs.contactPhone || null
 
+            $scope.disclaimerString = 'Loading...'
+            $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
+
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
 
@@ -139,6 +143,12 @@ Stratus.Components.IdxPropertyList = {
 
             await $scope.searchProperties(urlQuery.Search, true, false)
         }
+
+        $scope.$watch('collection.models', (models?: []) => {
+            if ($scope.collection.completed) {
+                $ctrl.processMLSDisclaimer() // TODO force reset with true?
+            }
+        })
 
         /**
          * Inject the current URL settings into any attached Search widget
@@ -278,33 +288,6 @@ Stratus.Components.IdxPropertyList = {
         $scope.getDetailsURL = (property: object | any): string =>
             $scope.detailsLinkUrl + '#!/Listing/' + property._ServiceId + '/' + property.ListingKey + '/'
 
-        $scope.getFriendlyStatus = (property: object | any): string => {
-            let statusName = ''
-            if (
-                Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
-                property.MlsStatus !== ''
-            ) {
-                statusName = property.MlsStatus
-                switch (statusName) {
-                    case 'Act Cont Release':
-                    case 'Act Cont Show':
-                    case 'Contingent - Release':
-                    case 'Contingent - Show':
-                    case 'Contingent-Release':
-                    case 'Contingent-Show': {
-                        statusName = 'Contingent'
-                        break
-                    }
-                    case 'Leased/Option':
-                    case 'Leased/Rented': {
-                        statusName = 'Closed'
-                        break
-                    }
-                }
-            }
-            return statusName
-        }
-
         /**
          * Returns the processed street address
          * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
@@ -353,9 +336,12 @@ Stratus.Components.IdxPropertyList = {
             return address
         }
 
-        $scope.getMLSVariables = (): object => {
+        /**
+         * @param reset - set true to force reset
+         */
+        $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
             // TODO this might need to be reset at some point
-            if (!$ctrl.mlsVariables) {
+            if (!$ctrl.mlsVariables || reset) {
                 $ctrl.mlsVariables = Idx.getMLSVariables()
             }
             return $ctrl.mlsVariables
@@ -375,39 +361,33 @@ Stratus.Components.IdxPropertyList = {
 
         /**
          * Process an MLS' required legal disclaimer to later display
-         * @param html - if output should be HTML safe
+         * @param reset - set true to force reset
          * TODO Idx needs to supply MLSVariables interface
          */
-        $scope.processMLSDisclaimer = (html?: boolean): string => {
-            const services: object[] | any[] = $scope.getMLSVariables()
+        $ctrl.processMLSDisclaimer = (reset?: boolean): void => {
+            const services: MLSService[] = $scope.getMLSVariables(reset)
             let disclaimer = ''
             services.forEach(service => {
                 if (disclaimer) {
                     disclaimer += '<br>'
                 }
+                if (service.fetchTime.Property) {
+                    disclaimer += `Last checked ${moment(service.fetchTime.Property).format('M/D/YY h:mm a')}. `
+                } else if ($scope.collection.meta.data.fetchDate) {
+                    disclaimer += `Last checked ${moment($scope.collection.meta.data.fetchDate).format('M/D/YY')}. `
+                }
                 disclaimer += service.disclaimer
             })
 
-            if ($scope.collection.meta.data.fetchDate) {
-                disclaimer = `Last checked ${moment($scope.collection.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
-            }
-
-            return html ? $sce.trustAsHtml(disclaimer) : disclaimer
+            $scope.disclaimerString = disclaimer
+            $scope.disclaimerHTML = $sce.trustAsHtml(disclaimer)
         }
 
         /**
          * Display an MLS' required legal disclaimer
          * @param html - if output should be HTML safe
          */
-        $scope.getMLSDisclaimer = (html?: boolean): string => {
-            if (!$ctrl.disclaimerHTML) {
-                $ctrl.disclaimerHTML = $scope.processMLSDisclaimer(true)
-            }
-            if (!$ctrl.disclaimerString) {
-                $ctrl.disclaimerString = $scope.processMLSDisclaimer(false)
-            }
-            return html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
-        }
+        $scope.getMLSDisclaimer = (html?: boolean): string =>  html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
 
         /**
          * Either popup or load a new page with the
