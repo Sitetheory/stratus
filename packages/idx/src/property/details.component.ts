@@ -1318,13 +1318,13 @@ Stratus.Components.IdxPropertyDetails = {
             ) {
                 googleApiKey = $scope.integrations.maps.googleMaps
             } else if (
-                Idx.integrations
-                && Object.prototype.hasOwnProperty.call(Idx.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call(Idx.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call(Idx.integrations.maps.googleMaps, 'accountId')
-                && Idx.integrations.maps.googleMaps.accountId !== ''
+                Idx.sharedValues.integrations
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
+                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
             ) {
-                googleApiKey = Idx.integrations.maps.googleMaps
+                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps
             }
             return googleApiKey ? $sce.trustAsResourceUrl(
                 `https://www.google.com/maps/embed/v1/place?key=${$scope.googleApiKey}&q=${$scope.getFullAddress(true)}`

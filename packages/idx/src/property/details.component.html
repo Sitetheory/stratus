@@ -188,8 +188,8 @@
         <!-- parallax-element disabled, cannot use height altering on the entire widget -->
         <div class="secondary-image-container">
             <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
-            <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.contactUrl"
-               target="_blank" data-ng-href="{{::contactUrl || Idx.contactUrl}}}?comments={{::getFullAddress(true)}}">
+            <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.sharedValues.contactUrl"
+               target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}}?comments={{::getFullAddress(true)}}">
                 Contact
             </a>
             <div class="image-dimmer"></div>
@@ -308,23 +308,23 @@
 
         <!-- Contact area needs dynamic variables -->
         <div class="contact-container details-container static-element"
-             data-ng-show="::contact || Idx.contact"
+             data-ng-show="::contact || Idx.sharedValues.contact"
         >
             <h2>Contact</h2>
             <p class="primary_font">
-                <span class="site-name" data-ng-show="::contact.name && Idx.contact.name" data-ng-bind="::contact.name || Idx.contact.name"></span>
-                <span class="phone" data-ng-show="(contact.phones && contact.phones.main) || (Idx.contact.phones && Idx.contact.phones.main)">
-                    <a data-ng-href="tel:{{::contact.phones.main || Idx.contact.phones.main}}" data-ng-bind="::contact.phones.main || Idx.contact.phones.main"></a>
+                <span class="site-name" data-ng-show="::contact.name && Idx.sharedValues.contact.name" data-ng-bind="::contact.name || Idx.sharedValues.contact.name"></span>
+                <span class="phone" data-ng-show="(contact.phones && contact.phones.main) || (Idx.sharedValues.contact.phones && Idx.sharedValues.contact.phones.main)">
+                    <a data-ng-href="tel:{{::contact.phones.main || Idx.sharedValues.contact.phones.main}}" data-ng-bind="::contact.phones.main || Idx.sharedValues.contact.phones.main"></a>
                 </span>
-                <span class="email" data-ng-show="(contact.emails && contact.emails.main) || (Idx.contact.emails && Idx.contact.emails.main)">
-                    <a data-ng-href="mailto:{{::contact.emails.main || Idx.contact.emails.main}}" data-ng-bind="::contact.emails.main || Idx.contact.emails.main" target="_blank"></a>
+                <span class="email" data-ng-show="(contact.emails && contact.emails.main) || (Idx.sharedValues.contact.emails && Idx.sharedValues.contact.emails.main)">
+                    <a data-ng-href="mailto:{{::contact.emails.main || Idx.sharedValues.contact.emails.main}}" data-ng-bind="::contact.emails.main || Idx.sharedValues.contact.emails.main" target="_blank"></a>
                 </span>
             </p>
         </div>
 
         <div class="disclaimer-container details-container static-element">
             <div class="disclaimer"
-                 data-ng-class="{'border-top': (contact || Idx.contact)}"
+                 data-ng-class="{'border-top': (contact || Idx.sharedValues.contact)}"
                  data-ng-bind-html="disclaimerHTML"
             ></div>
         </div>
