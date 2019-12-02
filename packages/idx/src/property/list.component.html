@@ -28,7 +28,11 @@
 						<div class="property-status font-secondary" data-ng-bind="::Idx.getFriendlyStatus(property)"></div>
 						<a data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
 
-							<div style="background: url('{{::property.Images[0].MediaURL}}') no-repeat center center; background-size: cover;">
+								<div class="button btn" data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
+									Details
+								</div>
+
+							<div class="image-wrapper" style="background: url('{{::property.Images[0].MediaURL}}') no-repeat center center; background-size: cover;">
 								<img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="shapeholder" />
 								<img data-ng-if="::property.Images.length === 0" data-ng-src="{{::localDir}}images/no-image.jpg">
 							</div>
@@ -45,27 +49,27 @@
 							</md-card-title-text>
 						</md-card-title>
 						<md-card-content class="property-data">
-							<div class="property-type">
+							<div class="property-type font-body">
                                 <span data-ng-if="::property.BedroomsTotal > 0">
-                                    <span data-ng-bind="::property.BedroomsTotal"></span> Beds |
+                                    <span data-ng-bind="::property.BedroomsTotal"></span> Beds
                                 </span>
 								<span data-ng-if="::property.BathroomsFull > 0 || property.BathroomsTotalInteger > 0">
                                     <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
-                                    Baths |
+                                    Baths
                                     </span>
 								<span data-ng-bind="::property.PropertySubType || property.PropertyType"></span>
-							</div>
-							<div class="property-price">
+								<span class="property-price">
 								$<span data-ng-bind="::property.ListPrice || property.ClosePrice | number"></span>
+							</span>
 							</div>
 						</md-card-content>
-						<md-card-icon-actions>
-							<div class="property-button-container">
-								<md-button class="button btn" data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
-									Details
-								</md-button>
-							</div>
-						</md-card-icon-actions>
+						<!--<md-card-icon-actions>-->
+							<!--<div class="property-button-container">-->
+								<!--<md-button class="button btn" data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">-->
+									<!--Details-->
+								<!--</md-button>-->
+							<!--</div>-->
+						<!--</md-card-icon-actions>-->
 						<div class="mls-service-name">
 							<span data-ng-bind="::getMLSName(property._ServiceId)"></span>#
 							<span data-ng-bind="::property.ListingId || property.ListingKey"></span>
