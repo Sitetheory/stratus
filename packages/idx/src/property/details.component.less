@@ -4,16 +4,32 @@ Nothing should be outside 'stratus-idx-property-details' or it will leak into ot
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
+
+body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
+  background: rgba(255,255,255,1.0);
+  opacity: .9;
+}
+.stratus-idx-property-list-dialog {
+  transform: none !important;
+  -webkit-transform: none !important;
+  max-width: 95%;
+  max-height: 95%;
+}
+
 stratus-idx-property-details {
   position: relative;
   md-progress-circular {
     margin: 30px auto;
+    &.md-default-theme path,
+    path {
+      stroke: rgb(33,33,33);
+    }
   }
   h2 {
     margin: 0 0 20px;
     font-size: 40px;
     text-transform: uppercase;
-    letter-spacing: 5px;
+    letter-spacing: 2px;
     color: #dadada;
     line-height: 1;
 
@@ -80,7 +96,7 @@ stratus-idx-property-details {
   .gallery-video-container {
     max-width: 1400px;
     margin: 0 auto;
-    background: #000;
+    background: #F4F4F4;
 
     /* Tabs */
     md-content,
@@ -117,10 +133,29 @@ stratus-idx-property-details {
       }
     }
 
-    /* Tabs Content */
+    /* Navigation */
+    .swiper-button-prev,
+    .swiper-container-rtl .swiper-button-next,
+    .swiper-button-next,
+    .swiper-container-rtl .swiper-button-prev {
+      &::after {
+        transition: all .2s ease-out;
+        color: #FFF;
+        padding: 0 12px;
+        background: rgba(0,0,0,.05);
+      }
+      &:hover {
+        &::after {
+          color: #FFF;
+          padding: 0 12px;
+          background: rgba(0, 0, 0, .15);
+        }
+      }
+    }
+      /* Tabs Content */
     .swiper-zoom-container > img {
       height: auto;
-      max-height: 800px;
+      max-height: 90vh;
     }
   }
 
@@ -147,6 +182,7 @@ stratus-idx-property-details {
     .list-price {
       margin: 0 0 50px;
       font-size: 16px;
+      font-weight: bold;
       color: #1d1d1d;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -160,7 +196,8 @@ stratus-idx-property-details {
       text-transform: none;
     }
     .description {
-      font-size: 15px;
+      font-size: 16px;
+      line-height: 1.6;
     }
 
     /* About Container */
@@ -168,14 +205,14 @@ stratus-idx-property-details {
       background: #fff;
       ul.details-specs {
         display: block;
-        margin-top: 60px;
+        margin-top: 50px;
         font-size: 12px;
         text-transform: uppercase;
         font-weight: normal;
         color: #555;
         letter-spacing: 1px;
         li {
-          margin-bottom: 16px;
+          margin-bottom: 10px;
           &:last-child {
             margin-bottom: 0;
           }
@@ -194,8 +231,10 @@ stratus-idx-property-details {
       }
       .response-container {
         a {
-          margin: 20px 14px 0 0;
+          margin: 30px 14px 0 0;
+          padding: 8px 30px;
           display: inline-block;
+          font-size: 14px;
         }
       }
     }
@@ -395,11 +434,14 @@ stratus-idx-property-details {
           // stylelint-disable-next-line no-descending-specificity
           .sub-detail-section {
             display: inline-block;
-            margin: 0 0 1em;
+            margin: 0 0 40px;
             width: 100%;
+            //&:last-child {
+            //  margin-bottom: 0;
+            //}
             // stylelint-disable-next-line no-descending-specificity
             .section-name {
-              margin: 46px 0 20px;
+              margin: 0 0 12px;
               font-size: 12px;
               font-weight: bold;
               text-transform: uppercase;
@@ -409,6 +451,9 @@ stratus-idx-property-details {
             // stylelint-disable-next-line no-descending-specificity
             .item-label {
               font-weight: bolder;
+            }
+            &:last-child .sub-detail-section {
+              margin-bottom: 0;
             }
           }
         }
@@ -426,7 +471,7 @@ stratus-idx-property-details {
         vertical-align: top;
 
         @media (max-width: 1199px) {
-          display: block;
+          //display: block;
           margin: 0 0 10px;
           border: none;
         }
@@ -437,17 +482,22 @@ stratus-idx-property-details {
         padding-right: 30px;
         border-right: 1px solid rgba(0, 0, 0, 0.3);
       }
-      span {
-        padding-right: 30px;
-      }
       p {
         margin-block-start: 0;
         margin-block-end: 0;
-        padding-top: 12px;
+        //padding-top: 12px;
         text-transform: uppercase;
         font-size: 11px;
         letter-spacing: 1px;
         span {
+          &::after {
+            display: inline;
+            content: '/';
+            padding: 0 8px;
+          }
+          &:last-child::after {
+            content: '';
+          }
           @media @phone {
             display: block;
             margin-bottom: 12px;
@@ -488,8 +538,10 @@ stratus-idx-property-details {
       &.btn-alt {
         margin: 0;
         color: #fff;
-        font-size: 40px;
+        font-size: 30px;
+        padding: 10px 40px;
         border: 1px solid #fff;
+        background: none;
         &.btn-contact {
           z-index: 100;
           transform: translate(-50%, -50%);
