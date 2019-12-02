@@ -8,9 +8,9 @@ stratus-idx-property-details {
   position: relative;
   md-progress-circular {
     margin: 30px auto;
-    &.md-default-theme path,
-    path {
-      stroke: rgb(33,33,33);
+    path,
+    &.md-default-theme path {
+      stroke: rgb(33, 33, 33);
     }
   }
   h2 {
@@ -84,7 +84,7 @@ stratus-idx-property-details {
   .gallery-video-container {
     max-width: 1400px;
     margin: 0 auto;
-    background: #F4F4F4;
+    background: #f4f4f4;
 
     /* Tabs */
     md-content,
@@ -122,25 +122,24 @@ stratus-idx-property-details {
     }
 
     /* Navigation */
+    .swiper-button-next,
     .swiper-button-prev,
     .swiper-container-rtl .swiper-button-next,
-    .swiper-button-next,
     .swiper-container-rtl .swiper-button-prev {
       &::after {
-        transition: all .2s ease-out;
-        color: #FFF;
+        transition: all 0.2s ease-out;
+        color: #fff;
         padding: 0 12px;
-        background: rgba(0,0,0,.05);
+        background: rgba(0, 0, 0, 0.05);
       }
       &:hover {
         &::after {
-          color: #FFF;
-          padding: 0 12px;
-          background: rgba(0, 0, 0, .15);
+          background: rgba(0, 0, 0, 0.15);
         }
       }
     }
-      /* Tabs Content */
+
+    /* Tabs Content */
     .swiper-zoom-container > img {
       height: auto;
       max-height: 90vh;
@@ -420,13 +419,14 @@ stratus-idx-property-details {
         .property-details-sub-section,
         stratus-idx-property-details-sub-section {
           // stylelint-disable-next-line no-descending-specificity
+          &:last-child .sub-detail-section {
+            margin-bottom: 0;
+          }
+          // stylelint-disable-next-line no-descending-specificity
           .sub-detail-section {
             display: inline-block;
             margin: 0 0 40px;
             width: 100%;
-            //&:last-child {
-            //  margin-bottom: 0;
-            //}
             // stylelint-disable-next-line no-descending-specificity
             .section-name {
               margin: 0 0 12px;
@@ -439,9 +439,6 @@ stratus-idx-property-details {
             // stylelint-disable-next-line no-descending-specificity
             .item-label {
               font-weight: bolder;
-            }
-            &:last-child .sub-detail-section {
-              margin-bottom: 0;
             }
           }
         }
@@ -486,6 +483,7 @@ stratus-idx-property-details {
           &:last-child::after {
             content: '';
           }
+
           @media @phone {
             display: block;
             margin-bottom: 12px;
