@@ -113,7 +113,7 @@ stratus-idx-property-list {
                 left: 50%;
                 opacity: 0;
                 color: #fff;
-                z-index: 100;
+                z-index: 1;
                 background: none;
                 border: 1px solid #fff;
                 //&:hover {
@@ -313,11 +313,13 @@ stratus-idx-property-list {
   -webkit-transform: none !important;
   max-width: 95%;
   max-height: 95%;
+
+  /* Keep Close Button floating at top right */
   .popup-close-button-container {
     transition: all 0.2s ease-out;
     -webkit-transition: all 0.2s ease-out;
     position: fixed;
-    z-index: 100;
+    z-index: 2;
     top: 5%;
     right: 5%;
     padding: 6px;
