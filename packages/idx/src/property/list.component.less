@@ -1,7 +1,8 @@
 /*
 Nothing should be outside 'stratus-idx-property-list' or it will leak into other modules
+z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
 TODO Need to size this based on column and window
-FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized.
+FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized. (if used as modular widgets)
 */
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
@@ -90,6 +91,7 @@ stratus-idx-property-list {
 
           /* IDX Image */
           .property-image {
+            position: relative;
             background: #000;
             img {
               width: 100%;
@@ -133,12 +135,12 @@ stratus-idx-property-list {
               }
             }
             .property-status {
-              z-index: 100;
+              z-index: 1;
               position: absolute;
-              right: 20px;
-              top: 20px;
+              right: 10px;
+              top: 10px;
               display: table;
-              margin: 0 auto 20px;
+              margin: 0 auto;
               padding: 2px 4px 2px 5px;
               font-size: 10px;
               font-weight: bold;
@@ -303,7 +305,7 @@ stratus-idx-property-list {
 
 /* Dialog box */
 .stratus-idx-property-list-dialog {
-  /* FIXME transforms intentionally added via popup box
+  /* FIXME transforms programmatically added via angular popup box
   // md-dialog will open and close coming from the list item that they were click from
   // this removes angular animation and cuts element to the location instead
   */
