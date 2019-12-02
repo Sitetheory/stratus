@@ -303,9 +303,17 @@ stratus-idx-property-list {
 
 /* Dialog box */
 .stratus-idx-property-list-dialog {
+  /* FIXME transforms intentionally added via popup box
+  // md-dialog will open and close coming from the list item that they were click from
+  // this removes angular animation and cuts element to the location instead
+  */
+  transform: none !important;
+  -webkit-transform: none !important;
+  max-width: 95%;
+  max-height: 95%;
   .popup-close-button-container {
-    transition: all .2s ease-out;
-    -webkit-transition: all .2s ease-out;
+    transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
     position: fixed;
     z-index: 100;
     top: 5%;
@@ -330,4 +338,10 @@ stratus-idx-property-list {
       }
     }
   }
+}
+
+/* This will only affect pages directly from SitetheoryPropertyBundle-PropertyFilter */
+body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
+  background: rgba(255, 255, 255, 1);
+  opacity: 0.9;
 }
