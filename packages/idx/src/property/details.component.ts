@@ -23,7 +23,6 @@ import {MLSService} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// FIXME move filters to @stratusjs
 // Custom Filters
 import 'stratus.filters.math'
 import 'stratus.filters.moment'
@@ -1259,12 +1258,13 @@ Stratus.Components.IdxPropertyDetails = {
                 const addressParts: string[] = []
                 if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumberNumeric') &&
-                    !_.isEmpty($scope.model.data.StreetNumberNumeric)
+                    _.isNumber($scope.model.data.StreetNumberNumeric) &&
+                    $scope.model.data.StreetNumberNumeric > 0
                 ) {
                     addressParts.push($scope.model.data.StreetNumberNumeric)
                 } else if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumber') &&
-                    !_.isEmpty($scope.model.data.StreetNumber)
+                    $scope.model.data.StreetNumber !== ''
                 ) {
                     addressParts.push($scope.model.data.StreetNumber)
                 }
