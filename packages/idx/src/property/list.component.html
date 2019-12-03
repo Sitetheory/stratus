@@ -27,11 +27,9 @@
 					<div class="property-image">
 						<div class="property-status font-secondary" data-ng-bind="::Idx.getFriendlyStatus(property)"></div>
 						<a data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
-
-								<div class="button btn" data-ng-click="displayPropertyDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
-									Details
-								</div>
-
+                            <div class="button btn" data-ng-href="{{::getDetailsURL(property)}}">
+                                Details
+                            </div>
 							<div class="image-wrapper" style="background: url('{{::property.Images[0].MediaURL}}') no-repeat center center; background-size: cover;">
 								<img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="shapeholder" />
 								<img data-ng-if="::property.Images.length === 0" data-ng-src="{{::localDir}}images/no-image.jpg">

@@ -12,6 +12,7 @@ import '@stratusjs/angularjs/services/model' // Needed as $provider
 import {Model} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/angularjs/services/collection' // Needed as $provider
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
+// import '@stratusjs/idx/listTrac' // TODO ListTrac on hold
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -220,6 +221,7 @@ Stratus.Services.Idx = [
             $window: angular.IWindowService,
             // tslint:disable-next-line:no-shadowed-variable
             Collection: any,
+            // ListTrac: any,
             // tslint:disable-next-line:no-shadowed-variable
             Model: any,
             orderByFilter: any
@@ -303,6 +305,8 @@ Stratus.Services.Idx = [
                     pages: [],
                     perPage: 0
                 }
+
+                // ListTrac.setAccountId('x_xxx')
 
                 /**
                  * Add List instance to the service
@@ -643,7 +647,7 @@ Stratus.Services.Idx = [
                                     && _.isString(response.data.integrations.maps.googleMaps.accountId)
                                     && response.data.integrations.maps.googleMaps.accountId !== ''
                                 ) {
-                                    sharedValues.integrations.analytics.googleAnalytics = {
+                                    sharedValues.integrations.maps.googleMaps = {
                                         accountId: response.data.integrations.maps.googleMaps.accountId
                                     }
                                 }

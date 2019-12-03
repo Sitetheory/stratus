@@ -305,12 +305,13 @@ Stratus.Components.IdxPropertyList = {
                 const addressParts: string[] = []
                 if (
                     Object.prototype.hasOwnProperty.call(property, 'StreetNumberNumeric') &&
-                    !_.isEmpty(property.StreetNumberNumeric)
+                    _.isNumber(property.StreetNumberNumeric) &&
+                    property.StreetNumberNumeric > 0
                 ) {
                     addressParts.push(property.StreetNumberNumeric)
                 } else if (
                     Object.prototype.hasOwnProperty.call(property, 'StreetNumber') &&
-                    !_.isEmpty(property.StreetNumber)
+                    property.StreetNumber !== ''
                 ) {
                     addressParts.push(property.StreetNumber)
                 }

@@ -23,7 +23,6 @@ import {MLSService} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// FIXME move filters to @stratusjs
 // Custom Filters
 import 'stratus.filters.math'
 import 'stratus.filters.moment'
@@ -1259,12 +1258,13 @@ Stratus.Components.IdxPropertyDetails = {
                 const addressParts: string[] = []
                 if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumberNumeric') &&
-                    !_.isEmpty($scope.model.data.StreetNumberNumeric)
+                    _.isNumber($scope.model.data.StreetNumberNumeric) &&
+                    $scope.model.data.StreetNumberNumeric > 0
                 ) {
                     addressParts.push($scope.model.data.StreetNumberNumeric)
                 } else if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumber') &&
-                    !_.isEmpty($scope.model.data.StreetNumber)
+                    $scope.model.data.StreetNumber !== ''
                 ) {
                     addressParts.push($scope.model.data.StreetNumber)
                 }
@@ -1308,27 +1308,31 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null)
 
         $scope.getGoogleMapEmbedUrl = (): string | null => {
-            let googleApiKey = null
-            if (
-                $scope.integrations
-                && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
-                && $scope.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = $scope.integrations.maps.googleMaps
-            } else if (
-                Idx.sharedValues.integrations
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
-                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps
+            if (!$ctrl.googleMapEmbed) {
+                let googleApiKey = null
+                if (
+                    $scope.integrations
+                    && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
+                    && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
+                    && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
+                    && $scope.integrations.maps.googleMaps.accountId !== ''
+                ) {
+                    googleApiKey = $scope.integrations.maps.googleMaps.accountId
+                } else if (
+                    Idx.sharedValues.integrations
+                    && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
+                    && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
+                    && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
+                    && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
+                ) {
+                    googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
+                }
+
+                $ctrl.googleMapEmbed = googleApiKey ? $sce.trustAsResourceUrl(
+                    `https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${$scope.getFullAddress(true)}`
+                ) : null
             }
-            return googleApiKey ? $sce.trustAsResourceUrl(
-                `https://www.google.com/maps/embed/v1/place?key=${$scope.googleApiKey}&q=${$scope.getFullAddress(true)}`
-            ) : null
+            return $ctrl.googleMapEmbed
         }
 
         $scope.getMLSVariables = (): MLSService => {

@@ -1,28 +1,17 @@
 /*
 Nothing should be outside 'stratus-idx-property-details' or it will leak into other modules
+z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
 */
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
-
-body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
-  background: rgba(255,255,255,1.0);
-  opacity: .9;
-}
-.stratus-idx-property-list-dialog {
-  transform: none !important;
-  -webkit-transform: none !important;
-  max-width: 95%;
-  max-height: 95%;
-}
-
 stratus-idx-property-details {
   position: relative;
   md-progress-circular {
     margin: 30px auto;
-    &.md-default-theme path,
-    path {
-      stroke: rgb(33,33,33);
+    path,
+    &.md-default-theme path {
+      stroke: rgb(33, 33, 33);
     }
   }
   h2 {
@@ -96,7 +85,7 @@ stratus-idx-property-details {
   .gallery-video-container {
     max-width: 1400px;
     margin: 0 auto;
-    background: #F4F4F4;
+    background: #f4f4f4;
 
     /* Tabs */
     md-content,
@@ -134,25 +123,24 @@ stratus-idx-property-details {
     }
 
     /* Navigation */
+    .swiper-button-next,
     .swiper-button-prev,
     .swiper-container-rtl .swiper-button-next,
-    .swiper-button-next,
     .swiper-container-rtl .swiper-button-prev {
       &::after {
-        transition: all .2s ease-out;
-        color: #FFF;
+        transition: all 0.2s ease-out;
+        color: #fff;
         padding: 0 12px;
-        background: rgba(0,0,0,.05);
+        background: rgba(0, 0, 0, 0.05);
       }
       &:hover {
         &::after {
-          color: #FFF;
-          padding: 0 12px;
-          background: rgba(0, 0, 0, .15);
+          background: rgba(0, 0, 0, 0.15);
         }
       }
     }
-      /* Tabs Content */
+
+    /* Tabs Content */
     .swiper-zoom-container > img {
       height: auto;
       max-height: 90vh;
@@ -432,13 +420,14 @@ stratus-idx-property-details {
         .property-details-sub-section,
         stratus-idx-property-details-sub-section {
           // stylelint-disable-next-line no-descending-specificity
+          &:last-child .sub-detail-section {
+            margin-bottom: 0;
+          }
+          // stylelint-disable-next-line no-descending-specificity
           .sub-detail-section {
             display: inline-block;
             margin: 0 0 40px;
             width: 100%;
-            //&:last-child {
-            //  margin-bottom: 0;
-            //}
             // stylelint-disable-next-line no-descending-specificity
             .section-name {
               margin: 0 0 12px;
@@ -451,9 +440,6 @@ stratus-idx-property-details {
             // stylelint-disable-next-line no-descending-specificity
             .item-label {
               font-weight: bolder;
-            }
-            &:last-child .sub-detail-section {
-              margin-bottom: 0;
             }
           }
         }
@@ -498,6 +484,7 @@ stratus-idx-property-details {
           &:last-child::after {
             content: '';
           }
+
           @media @phone {
             display: block;
             margin-bottom: 12px;
@@ -543,7 +530,7 @@ stratus-idx-property-details {
         border: 1px solid #fff;
         background: none;
         &.btn-contact {
-          z-index: 100;
+          z-index: 1;
           transform: translate(-50%, -50%);
           position: absolute;
           top: 50%;

@@ -1,7 +1,8 @@
 /*
 Nothing should be outside 'stratus-idx-property-list' or it will leak into other modules
+z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
 TODO Need to size this based on column and window
-FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized.
+FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized. (if used as modular widgets)
 */
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
@@ -90,6 +91,7 @@ stratus-idx-property-list {
 
           /* IDX Image */
           .property-image {
+            position: relative;
             background: #000;
             img {
               width: 100%;
@@ -97,25 +99,26 @@ stratus-idx-property-list {
             a {
               &,
               * {
-                transition: all .2s ease-out;
-                -webkit-transition: all .2s ease-out;
+                transition: all 0.2s ease-out;
+                -webkit-transition: all 0.2s ease-out;
               }
+
               display: block;
               position: relative;
               .btn {
-                transform: translate(-50%,-50%) scale(.5);
-                -wekbit-transform: translate(-50%,-50%) scale(.5);
+                transform: translate(-50%, -50%) scale(0.5);
+                -webkit-transform: translate(-50%, -50%) scale(0.5);
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 opacity: 0;
-                color: #FFF;
-                z-index: 100;
+                color: #fff;
+                z-index: 1;
                 background: none;
-                border: 1px solid #FFF;
+                border: 1px solid #fff;
                 //&:hover {
                 //  transform: translate(-50%,-50%) scale(1);
-                //  -wekbit-transform: translate(-50%,-50%) scale(1);
+                //  -webkit-transform: translate(-50%,-50%) scale(1);
                 //  color: #222;
                 //  background: #FFF;
                 //}
@@ -126,18 +129,18 @@ stratus-idx-property-list {
                 opacity: 0.3;
               }
               .btn {
-                transform: translate(-50%,-50%) scale(1);
-                -wekbit-transform: translate(-50%,-50%) scale(1);
+                transform: translate(-50%, -50%) scale(1);
+                -webkit-transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
               }
             }
             .property-status {
-              z-index: 100;
+              z-index: 1;
               position: absolute;
-              right: 20px;
-              top: 20px;
+              right: 10px;
+              top: 10px;
               display: table;
-              margin: 0 auto 20px;
+              margin: 0 auto;
               padding: 2px 4px 2px 5px;
               font-size: 10px;
               font-weight: bold;
@@ -194,7 +197,6 @@ stratus-idx-property-list {
                   display: inline;
                   content: '|';
                   padding: 0 2px;
-
                 }
                 &:last-child::after {
                   content: '';
@@ -303,21 +305,31 @@ stratus-idx-property-list {
 
 /* Dialog box */
 .stratus-idx-property-list-dialog {
+  /* FIXME transforms programmatically added via angular popup box
+  // md-dialog will open and close coming from the list item that they were click from
+  // this removes angular animation and cuts element to the location instead
+  */
+  transform: none !important;
+  -webkit-transform: none !important;
+  max-width: 95%;
+  max-height: 95%;
+
+  /* Keep Close Button floating at top right */
   .popup-close-button-container {
-    transition: all .2s ease-out;
-    -webkit-transition: all .2s ease-out;
+    transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
     position: fixed;
-    z-index: 100;
+    z-index: 2;
     top: 5%;
     right: 5%;
     padding: 6px;
     background: transparent;
     border-radius: 50%;
     &:hover {
-      background: #FFF;
+      background: #fff;
     }
     .close-button {
-      transition: all .2s ease-out;
+      transition: all 0.2s ease-out;
       width: 30px;
       height: 30px;
       background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z'/%3E%3C/svg%3E ");
@@ -326,8 +338,14 @@ stratus-idx-property-list {
       border: 1px solid #000;
       border-radius: 25px;
       &:hover {
-        opacity: .8;
+        opacity: 0.8;
       }
     }
   }
+}
+
+/* This will only affect pages directly from SitetheoryPropertyBundle-PropertyFilter */
+body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
+  background: rgba(255, 255, 255, 1);
+  opacity: 0.9;
 }
