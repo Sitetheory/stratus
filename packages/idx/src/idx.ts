@@ -647,7 +647,7 @@ Stratus.Services.Idx = [
                                     && _.isString(response.data.integrations.maps.googleMaps.accountId)
                                     && response.data.integrations.maps.googleMaps.accountId !== ''
                                 ) {
-                                    sharedValues.integrations.analytics.googleAnalytics = {
+                                    sharedValues.integrations.maps.googleMaps = {
                                         accountId: response.data.integrations.maps.googleMaps.accountId
                                     }
                                 }
