@@ -102,19 +102,19 @@ export interface MLSService {
 export interface WidgetContact {
     name: string,
     emails: {
-        main?: string
+        Main?: string
     },
     locations: {
-        main?: string
+        Main?: string
     },
     phones: {
-        main?: string
+        Main?: string
     },
     socialUrls: {
-        main?: string
+        Main?: string
     },
     urls: {
-        main?: string
+        Main?: string
     }
 }
 
@@ -146,9 +146,9 @@ interface Session {
 interface TokenResponse {
     data: {
         contact?: {
-            emails?: { main?: string },
-            locations?: { main?: string },
-            phones?: { main?: string },
+            emails?: { Main?: string },
+            locations?: { Main?: string },
+            phones?: { Main?: string },
             socialUrls?: {},
             urls?: {},
         },

@@ -133,10 +133,10 @@ Stratus.Components.IdxPropertyDetails = {
                     urls: {},
                 }
                 if ($attrs.contactEmail) {
-                    $scope.contact.emails.main = $attrs.contactEmail
+                    $scope.contact.emails.Main = $attrs.contactEmail
                 }
                 if ($attrs.contactPhone) {
-                    $scope.contact.phones.main = $attrs.contactPhone
+                    $scope.contact.phones.Main = $attrs.contactPhone
                 }
 
                 $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
@@ -1307,7 +1307,7 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getCoBuyerAgentName = (): string => $scope.model.data.CoBuyerAgentFullName || ($scope.model.data.CoBuyerAgentFirstName ?
             $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null)
 
-        $scope.getGoogleMapEmbedUrl = (): string | null => {
+        $scope.getGoogleMapEmbed = (): string | null => {
             if (!$ctrl.googleMapEmbed) {
                 let googleApiKey = null
                 if (
