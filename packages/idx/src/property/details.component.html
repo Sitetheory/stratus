@@ -69,7 +69,7 @@
                         <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
                             Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
                         </li>
-                        <li data-ng-if="::model.data.OnMarketDate && model.data.CloseDate">
+                        <li data-ng-if="::model.data.OnMarketDate && Idx.getFriendlyStatus(model.data) === 'Closed' && model.data.CloseDate">
                             <!-- Closed with start and end Dates. Give number of days between -->
                             Days on Market: <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:model.data.CloseDate,duration:'days'}"></span>
                         </li>
