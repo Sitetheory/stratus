@@ -81,6 +81,7 @@ Stratus.Components.SwiperCarousel = {
         $attrs: angular.IAttributes,
         $element: angular.IRootElementService,
         $scope: object | any, // angular.IScope breaks references so far
+        $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         // tslint:disable-next-line:no-shadowed-variable
         Collection: any,
@@ -181,10 +182,10 @@ Stratus.Components.SwiperCarousel = {
          * TODO allow for altering the variables and updating Swiper after init (live editing/inline changes)
          */
         const init = (): void => {
-            // console.log('CAROUSEL initing with', $ctrl.images)
             // NOTE: slides can be an expression, so we need to reference $ctrl, where they've already been parsed
             /** type {Array<SlideImage> || Array<String> || String} */
             const slides = $ctrl.slides ? $ctrl.slides : [] // References images for temporary backwards compatibility
+            // console.log('CAROUSEL initing with', slides)
 
             /** @deprecated */
             $scope.imageLinkTarget = $attrs.imageLinkTarget ? $attrs.imageLinkTarget : null
@@ -333,10 +334,11 @@ Stratus.Components.SwiperCarousel = {
          * Setup and load Swiper using the previously defined variables
          */
         $scope.initSwiper = (): void => {
-            // TODO shouldn't be querying global, need to select like this: probably need to get away from className however
+            // TODO need to select like this: probably need to get away from className however
             $ctrl.swiperContainer = $element[0].querySelector('.swiper-container')
 
             $ctrl.swiperParameters = {
+                init: false,
                 // Optional parameters
                 direction: $scope.direction,
                 zoom: $scope.allowZoom,
@@ -494,8 +496,25 @@ Stratus.Components.SwiperCarousel = {
             // console.log('swiperParameters', $ctrl.swiperParameters)
 
             $scope.$applyAsync(() => {
-                // console.log('parameters:', $ctrl.swiperParameters)
+                // $applyAsync is causing this function to run twice. Adding check to make sure it doesn't
+                if ($ctrl.swiper) {
+                    // console.log('swiper already exists, canceling')
+                    return
+                }
+                // console.log('parameters:', $ctrl.swiperParameters, $ctrl)
                 $ctrl.swiper = new Swiper($ctrl.swiperContainer, $ctrl.swiperParameters)
+                /*
+                Issue: When loading a page, the first time a set of Swiper slideshows are called, it will load fine.
+                However, if a set is loaded a second time, the slides seem to fail to initialize and the next/prev buttons do not register.
+                This issue seems to resolve itself when the Window is resized or swiper is forcibly updated (swiper.update())
+                Below are attempts at a workaround to ensure swiper continues to work after second load by causing a delayed update
+                */
+                $ctrl.swiper.on('init', () => {
+                    $timeout(() => {
+                        $ctrl.swiper.update()
+                    }, 100)
+                })
+
                 if ($scope.gallery) {
                     $ctrl.galleryContainer = $element[0].getElementsByClassName('swiper-gallery')[0].getElementsByClassName('swiper-container')[0]
                     // Looping does not work correctly with gallery, so it will need to be disabled
@@ -529,6 +548,8 @@ Stratus.Components.SwiperCarousel = {
                     $ctrl.swiper.controller.control = $ctrl.gallerySwiper
                     $ctrl.gallerySwiper.controller.control = $ctrl.swiper
                 }
+                // initializing manually to allow on init events
+                $ctrl.swiper.init()
             })
         }
 
@@ -536,6 +557,8 @@ Stratus.Components.SwiperCarousel = {
          * Destroy this widget
          */
         $scope.remove = (): void => {
+            // console.log('destroying swiper widget... after destroying, still doenst work')
+            delete $ctrl.swiper
         }
     },
     templateUrl: (): string => `${localDir}${componentName}.component${min}.html`
