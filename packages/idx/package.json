@@ -28,6 +28,6 @@
     "@stratusjs/angularjs": "^0.2.11",
     "@stratusjs/angularjs-extras": "^0.3.0",
     "@stratusjs/runtime": "^0.10.4",
-    "@stratusjs/swiper": "^0.1.4"
+    "@stratusjs/swiper": "^0.1.5"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/swiper",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "AngularJS Swiper Carousel component to be used as an add on to StratusJS",
   "main": "",
   "scripts": {
@@ -26,9 +26,9 @@
   "homepage": "https://github.com/Sitetheory/stratus#readme",
   "dependencies": {
     "@stratusjs/angularjs": "^0.2.11",
-    "@stratusjs/angularjs-extras": "^0.2.6",
+    "@stratusjs/angularjs-extras": "^0.3.0",
     "@stratusjs/runtime": "^0.10.3",
-    "swiper": "^5.2.0"
+    "swiper": "^5.2.1"
   },
   "devDependencies": {
     "@types/swiper": "^5.2.0"
