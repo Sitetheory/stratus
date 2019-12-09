@@ -1381,6 +1381,7 @@ Stratus.Components.IdxPropertyDetails = {
          * Function that runs when widget is destroyed
          */
         $scope.remove = (): void => {
+            // TODO need to kill any attached slideshows
         }
     },
     templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`
