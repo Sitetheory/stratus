@@ -32,7 +32,7 @@
                             </div>
 							<div class="image-wrapper" style="background: url('{{::property.Images[0].MediaURL}}') no-repeat center center; background-size: cover;">
 								<img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="shapeholder" />
-								<img data-ng-if="::property.Images.length === 0" data-ng-src="{{::localDir}}images/no-image.jpg">
+								<img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg">
 							</div>
 						</a>
 					</div>
