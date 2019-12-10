@@ -1404,8 +1404,8 @@ Stratus.Services.Idx = [
                  * TODO define options
                  */
                 function setUrlOptions(listingOrSearch: 'Listing' | 'Search', options: object | any) {
+                    // console.log('setUrlOptions ', listingOrSearch, _.clone(options))
                     urlOptions[listingOrSearch] = options || {}
-                    // console.log('updated urlOptions', listingOrSearch, options);
                 }
 
                 /**
@@ -1424,10 +1424,12 @@ Stratus.Services.Idx = [
                  */
                 function getUrlOptionsPath(defaultOptions: object | any) {
                     defaultOptions = defaultOptions || {}
+                    // console.log('getUrlOptionsPath defaultOptions', _.clone(defaultOptions))
                     let path = ''
 
                     // Set the Search List url variables
                     const searchOptionNames = Object.keys(urlOptions.Search)
+                    // console.log('getUrlOptionsPath searchOptionNames', _.clone(searchOptionNames))
                     if (searchOptionNames.length > 0) {
                         let searchPath = ''
                         searchOptionNames.forEach(searchOptionName => {
@@ -1480,6 +1482,8 @@ Stratus.Services.Idx = [
                  * TODO define defaultOptions
                  */
                 function refreshUrlOptions(defaultOptions: object | any): void {
+                    // console.log('refreshUrlOptions', _.clone(defaultOptions))
+                    // console.log('refreshUrlOptions getUrlOptionsPath', _.clone(getUrlOptionsPath(defaultOptions)))
                     setLocationPath(getUrlOptionsPath(defaultOptions))
                     // console.log('Refreshed url with', urlOptions, defaultOptions);
                 }
@@ -1489,6 +1493,7 @@ Stratus.Services.Idx = [
                  * @param path - {String}
                  */
                 function setLocationPath(path: string): void {
+                    // console.log('setLocationPath', path)
                     $rootScope.$applyAsync(() => {
                         $location.path(path).replace()
                         // $location.path(path);

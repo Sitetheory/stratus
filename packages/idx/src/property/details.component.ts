@@ -103,6 +103,11 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.options.openhouses = $attrs.openhouses && isJSON($attrs.openhouses) ? JSON.parse($attrs.openhouses) : {
                 fields: '*'// show all OH details
             }
+
+            // The List's default query is needed to avoid showing the entire Query in the URL
+            $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
+                JSON.parse($attrs.defaultListOptions) : {}
+
             $scope.disclaimerString = 'Loading...'
             $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
 
@@ -138,9 +143,6 @@ Stratus.Components.IdxPropertyDetails = {
                 if ($attrs.contactPhone) {
                     $scope.contact.phones.Main = $attrs.contactPhone
                 }
-
-                $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
-                    JSON.parse($attrs.defaultListOptions) : {}
             }
 
             if ($attrs.googleApiKey) {
@@ -1375,7 +1377,7 @@ Stratus.Components.IdxPropertyDetails = {
          * Display an MLS' required legal disclaimer
          * @param html - if output should be HTML safe
          */
-        $scope.getMLSDisclaimer = (html?: boolean): string =>  html ? $scope.disclaimerHTML : $scope.disclaimerString
+        $scope.getMLSDisclaimer = (html?: boolean): string => html ? $scope.disclaimerHTML : $scope.disclaimerString
 
         /**
          * Function that runs when widget is destroyed
