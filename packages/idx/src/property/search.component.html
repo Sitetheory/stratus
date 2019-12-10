@@ -22,7 +22,7 @@
 			<div class="stratus-idx-property-search-menu md-whiteframe-z2">
 				<div class="outer-padding" data-layout="column" data-layout-align="space-around center">
 
-					<div class="toggle-switch" data-layout="row" data-layout-align="center center">
+					<div class="toggle-switch" data-layout="row" data-layout-align="center center" aria-label="Listings to Buy or Rent">
 						<div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}" data-flex>
 							Buy
 						</div>
@@ -38,7 +38,7 @@
 						</div>
 					</div>
 
-					<div data-layout="row" data-ng-show="!options.forRent" data-layout-align="space-around center">
+					<div data-layout="row" data-ng-show="!options.forRent" data-layout-align="space-around center" aria-label="Listing Status">
 						<md-button class="md-raised font-primary"
 								   data-ng-class="{'md-primary': inArray('Active', options.query.Status)}"
 								   data-ng-click="options.query.Status = ['Active', 'Contract'];"
@@ -123,7 +123,7 @@
                         </div>
                     </div>-->
 
-					<div class="property-zoning" data-layout="row" data-layout-align="space-around center">
+					<div class="property-zoning" data-layout="row" data-layout-align="space-around center" aria-label="Listing Zoning">
 						<md-button
 								class="font-primary"
 								data-ng-class="{'md-primary': options.selection.ListingType.group.Residential}"
@@ -144,7 +144,7 @@
 						</md-button>
 					</div>
 
-					<div data-layout="row" data-layout-align="center center" data-layout-wrap>
+					<div data-layout="row" data-layout-align="center center" aria-label="Listing Types" data-layout-wrap>
 						<md-button
 								data-ng-repeat="listType in ::options.selection.ListingType.All"
 								class="md-raised font-primary"
@@ -160,6 +160,7 @@
 					<div data-layout="row" data-layout-align="space-around center">
 						<md-chips
 								class="agent-license font-secondary"
+                                aria-label="Agent License(s) to Search"
 								data-ng-model="options.query.AgentLicense"
 								data-md-enable-chip-edit="true"
 								data-md-add-on-blur="true"
