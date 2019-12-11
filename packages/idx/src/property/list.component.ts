@@ -101,6 +101,14 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.perPage = $scope.query.perPage || 25
             $scope.query.images = $scope.query.images || {limit: 1}
 
+            // Remove invalid variable types to prevent breaking formating
+            if (_.isArray($scope.query.order)) {
+                delete $scope.query.order
+            }
+            if (_.isArray($scope.query.where)) {
+                delete $scope.query.where
+            }
+            /** type {object} */
             $scope.query.where = $scope.query.where || {}
             $scope.query.where.City = $scope.query.where.City || ''
             $scope.query.where.Status = $scope.query.where.Status || ['Active', 'Contract']
@@ -158,8 +166,9 @@ Stratus.Components.IdxPropertyList = {
             const searchScopes: any[] = Idx.getListInstanceLinks($scope.elementId)
             searchScopes.forEach((searchScope) => {
                 if (Object.prototype.hasOwnProperty.call(searchScope, 'setQuery')) {
-                    // FIXME search widgets may only hold certain values. Later this needs to be adjust
+                    // FIXME search widgets may only hold certain values. Later this needs to be adjusted
                     //  to only update the values in which a user can see/control
+                    // console.log('refreshSearchWidgetOptions Idx.getUrlOptions', _.clone(Idx.getUrlOptions('Search')))
                     searchScope.setQuery(Idx.getUrlOptions('Search'))
                     searchScope.listInitialized = true
                 }
@@ -388,7 +397,7 @@ Stratus.Components.IdxPropertyList = {
          * Display an MLS' required legal disclaimer
          * @param html - if output should be HTML safe
          */
-        $scope.getMLSDisclaimer = (html?: boolean): string =>  html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
+        $scope.getMLSDisclaimer = (html?: boolean): string => html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
 
         /**
          * Either popup or load a new page with the
@@ -439,7 +448,7 @@ Stratus.Components.IdxPropertyList = {
                 let template =
                     `<md-dialog aria-label="${property.ListingKey}" class="stratus-idx-property-list-dialog">` +
                     `<div class="popup-close-button-container">` +
-                    `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()"></div>` +
+                    `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()" aria-label="Close Details Popup"></div>` +
                     `</div>` +
                     '<stratus-idx-property-details '
                 _.forEach(templateOptions, (optionValue, optionKey) => {
