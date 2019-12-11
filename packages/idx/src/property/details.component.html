@@ -206,6 +206,7 @@
             <!-- parallax-content disabled, cannot use height altering on the entire widget -->
             <!-- FIXME {} can't be used in inline styles as it won't resolve before the page loads (or may not exist) -->
             <div data-ng-if="model.data.Images && model.data.Images[0]"
+                 data-stratus-src
                  style="background: url('{{::model.data.Images[0].MediaURL}}') no-repeat center center; background-size: cover;"
                  aria-label="Background Image of the Listing"
             >
