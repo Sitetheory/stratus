@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/swiper",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "AngularJS Swiper Carousel component to be used as an add on to StratusJS",
   "main": "",
   "scripts": {

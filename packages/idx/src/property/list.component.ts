@@ -23,6 +23,9 @@ import {CompileFilterOptions, MLSService, WhereOptions} from '@stratusjs/idx/idx
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
+// Stratus Directives
+import 'stratus.directives.src'
+
 // Component Preload
 import '@stratusjs/idx/property/details.component'
 

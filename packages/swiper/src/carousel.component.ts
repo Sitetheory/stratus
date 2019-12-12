@@ -14,6 +14,9 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
+// Stratus Directives
+import 'stratus.directives.src'
+
 // Reusable Objects
 export interface SlideImage {
     src?: string,

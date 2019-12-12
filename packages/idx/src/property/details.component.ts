@@ -23,7 +23,10 @@ import {MLSService} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
-// Custom Filters
+// Stratus Directives
+import 'stratus.directives.src'
+
+// Stratus Filters
 import 'stratus.filters.math'
 import 'stratus.filters.moment'
 
