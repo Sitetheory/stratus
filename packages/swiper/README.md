@@ -26,7 +26,7 @@ And include the the library paths into your stratus `config.js` such as
 ```js
 boot.configuration.paths = {
   // Swiper Package
-  'swiper': boot.deployment + 'swiper/js/swiper.esm.browser.bundle' + boot.suffix,
+  'swiper': boot.deployment + 'swiper/js/swiper.esm.browser.bundle',
 
   // STRATUS SRC: Swiper
   '@stratusjs/swiper/*': boot.deployment + '@stratusjs/swiper/src/*' + boot.suffix,
