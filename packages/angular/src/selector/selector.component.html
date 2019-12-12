@@ -31,18 +31,18 @@
                     <div class="image position-all"
                          *ngIf="has(selectedModel, 'version.images') || has(selectedModel, 'version.shellImages')"
                          stratus-src
-                         [ngStyle]="{'background': 'url(' + (has(selectedModel, 'version.images') ? selectedModel.version.images[0].src : has(selectedModel, 'version.shellImages') ? selectedModel.version.shellImages[0].src : null) + ') no-repeat center center', 'background-size': 'cover'}">
+                         [ngStyle]="{'background': 'url(' + (_.get(selectedModel, 'version.images[0].src') || _.get(selectedModel, 'version.shellImages[0].src')) + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <div class="image position-all"
                          *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.shellImages') && has(selectedModel, 'version.videos')"
-                         [ngStyle]="{'background': 'url(' + selectedModel.version.videos[0].src + ') no-repeat center center', 'background-size': 'cover'}">
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.videos[0].src') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
                     <div class="no-image-icon position-all"
                          *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.videos') && !has(selectedModel, 'version.shellImages')"
-                         [ngClass]="selectedModel.contentType.class + '-background-color'">
+                         [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
 
                         <!-- TODO: Make this icon work -->
                         <!--<mat-icon class="content-type-icon position-center" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
@@ -53,14 +53,19 @@
                 
                 </div>
                 <div class="column-title">
-                    <div class="content-type" *ngIf="selectedModel.contentType.iconResource">
+                    <div class="content-type" *ngIf="has(selectedModel, 'contentType.iconResource')">
                         <!-- TODO: path needs to be marked as safe with DomSanitizer: https://material.angular.io/components/icon/overview#svg-icons -->
                         <!--<mat-icon  class="content-type-icon" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
-                        <span class="comment content-type-name font-body" [ngClass]="(selectedModel.contentType.name | lowercase) + '-color'" [innerHTML]="selectedModel.contentType.name"></span>
+                        <span class="comment content-type-name font-body"
+                              [ngClass]="(_.get(selectedModel, 'contentType.name') | lowercase) + '-color'"
+                              [innerHTML]="_.get(selectedModel, 'contentType.name')">
+                        </span>
                     </div>
 
-                    <h3 [innerHTML]="selectedModel.version.title || (selectedModel.contentType.controller === 'Content\\Module' ? selectedModel.version.meta.identifier : 'Untitled ' + selectedModel.contentType.name + ' (' + selectedModel.id + ')')"></h3>
-                    <span class="routing" [textContent]="has(selectedModel, 'routing') ? ('/' + _.first(selectedModel.routing).url) : ''"></span>
+                    <h3 [innerHTML]="_.get(selectedModel, 'version.title') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>
+                    <span class="routing"
+                          [textContent]="has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : ''">
+                    </span>
                 </div>
                 <div class="column-action">
                     <button mat-button
