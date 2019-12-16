@@ -1465,9 +1465,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
             el.attr('data-size', dehydrate(size))
 
             // Preload this image first. Ensures speed to display and image is valid
-            const loadEl: any = jQuery('<img/>')
-            loadEl.attr('src', srcProtocol)
-            loadEl.on('load', () => {
+            const preFetchEl: any = jQuery('<img/>')
+            preFetchEl.attr('src', srcProtocol)
+            preFetchEl.on('load', () => {
                 el.addClass('loaded').removeClass('loading')
                 if (type === 'img') {
                     el.attr('src', srcProtocol)
@@ -1476,7 +1476,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 }
                 jQuery(this).remove() // prevent memory leaks
             })
-            loadEl.on('error', () => {
+            preFetchEl.on('error', () => {
                 // Image failed, dont try to use this url
                 // TODO: Go down in sizes before reaching the origin
                 if (cookie('env')) {
