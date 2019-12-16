@@ -1444,6 +1444,8 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 const loadEl: any = jQuery('<img/>')
                 loadEl.attr('src', srcOriginProtocol)
                 loadEl.on('load', () => {
+                    // If the image wasn't set in the background yet, set it now
+                    el.css('background-image', 'url(' + srcOriginProtocol + ')')
                     el.addClass('loaded').removeClass('loading')
                     jQuery(this).remove() // prevent memory leaks
                 })
