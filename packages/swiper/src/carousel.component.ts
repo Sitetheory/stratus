@@ -195,11 +195,8 @@ Stratus.Components.SwiperCarousel = {
                             // just urls were provided
                             preppedImage.src = image
                         } else if (typeof image === 'object') {
-                            if (Object.prototype.hasOwnProperty.call(image, 'src')) {
-                                if (
-                                    Object.prototype.hasOwnProperty.call(image, 'lazy')
-                                    && image.lazy === 'stratus-src'
-                                ) {
+                            if (_.has(image, 'src')) {
+                                if (_.get(image, 'lazy') === 'stratus-src') {
                                     image.src = replaceImageSizeSrc(image.src, sizeName)
                                     // console.log('image upgraded to ', image.src)
                                 }
