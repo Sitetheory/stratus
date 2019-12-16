@@ -1271,7 +1271,8 @@ Stratus.Internals.LoadImage = (obj: any) => {
         }, 500)
         return false
     }
-    const el: any = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
+    // const el: any = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
+    const el: any = obj.el instanceof angular.element ? obj.el : angular.element(obj.el)
     if (!el.length) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
@@ -1282,6 +1283,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         el.addClass('placeholder')
         el.on('load', () => {
             el.removeClass('placeholder')
+            jQuery(this).remove() // prevent memory leaks
         })
     }
     if (Stratus.Internals.IsOnScreen(obj.spy || el) && !hydrate(el.attr('data-loading'))) {
@@ -1318,9 +1320,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 let unit: any = null
                 let percentage: any = null
 
-                if (el.width()) {
+                // if (el.width()) {
+                if (el.offsetWidth || el.clientWidth) {
                     // Check if there is CSS width hard coded on the element
-                    width = el.width()
+                    // width = el.width()
+                    width = el.offsetWidth || el.clientWidth
                 } else if (el.attr('width')) {
                     width = el.attr('width')
                 }
@@ -1343,6 +1347,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
                     // so in some cases we need to flag to find the parent regardless of invisibility.
                     const visibilitySelector: any = hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
+                    // TODO need a replacement for jQuery().parents() and jQuery().find() with class
                     const $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
                     // let $visibleParent = obj.spy || el.parent()
                     width = $visibleParent ? $visibleParent.width() : 0
@@ -1404,9 +1409,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             // Change Source to right size (get the base and extension and ignore
             // size)
-            const srcOrigin: any = src
-            const srcRegex: any = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-            const srcMatch: any = srcRegex.exec(src)
+            const srcOrigin: string = src
+            const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+            const srcMatch: RegExpExecArray = srcRegex.exec(src)
             if (srcMatch !== null) {
                 src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
             } else {
@@ -1418,11 +1423,13 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             const srcOriginProtocol: any = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
 
+            // FIXME need to fix background-image fallbacks to original
             // Set up actions for onLoad and onError (if size doesn't exist, revert to srcOrigin)
             if (type === 'img') {
                 // Add Listeners (Only once per Element!)
                 el.on('load', () => {
                     el.addClass('loaded').removeClass('loading')
+                    jQuery(this).remove() // prevent memory leaks
                 })
                 el.on('error', () => {
                     // TODO: Go down in sizes before reaching the origin
@@ -1431,6 +1438,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     if (cookie('env')) {
                         console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
                     }
+                    jQuery(this).remove() // prevent memory leaks
                 })
             } else {
                 // If Background Image Create a Test Image to Test Loading
@@ -1448,6 +1456,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     if (cookie('env')) {
                         console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
                     }
+                    jQuery(this).remove() // prevent memory leaks
                 })
             }
 

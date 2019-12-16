@@ -90,6 +90,8 @@
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,
+            // Could be replaced with spy: $element.data('spy') ? $document[0].querySelector($element.data('spy')) : $element
+            // TODO need spy examples to test with
             spy: $element.data('spy') ? jQuery($element.data('spy')) : $element
           }
           Stratus.Internals.OnScroll()
