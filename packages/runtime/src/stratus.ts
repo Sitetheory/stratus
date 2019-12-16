@@ -1423,8 +1423,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             const srcOriginProtocol: any = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
 
-            // FIXME need to fix background-image fallbacks to original
-            // Set up actions for onLoad and onError (if size doesn't exist, revert to srcOrigin)
+            // Set up actions for to load the smallest image first.
             if (type === 'img') {
                 // Add Listeners (Only once per Element!)
                 el.on('load', () => {
@@ -1432,11 +1431,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     jQuery(this).remove() // prevent memory leaks
                 })
                 el.on('error', () => {
-                    // TODO: Go down in sizes before reaching the origin
+                    // This is the smallest size, so there is nothing to fallback to. Let's hope a bigger size below fixes the image
                     el.attr('data-loading', dehydrate(false))
-                    el.attr('src', srcOriginProtocol)
+                    // el.attr('src', srcOriginProtocol)
                     if (cookie('env')) {
-                        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', el.attr('src'))
+                        console.log('LoadImage() Unable to load', size.toUpperCase(), 'size.', srcOriginProtocol)
                     }
                     jQuery(this).remove() // prevent memory leaks
                 })
@@ -1449,26 +1448,42 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     jQuery(this).remove() // prevent memory leaks
                 })
                 loadEl.on('error', () => {
-                    // TODO: Go down in sizes before reaching the origin
-                    // Standardize src
+                    // This is the smallest size, so there is nothing to fallback to. Let's hope a bigger size below fixes the image
                     el.attr('data-loading', dehydrate(false))
-                    el.css('background-image', 'url(' + srcOriginProtocol + ')')
                     if (cookie('env')) {
-                        console.log('Unable to load', size.toUpperCase(), 'size.', 'Restored:', srcOriginProtocol)
+                        console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at ', srcOriginProtocol)
                     }
                     jQuery(this).remove() // prevent memory leaks
                 })
             }
 
+            // Set up actions to preload and replace the small image with the desire size.
+            // onLoad and onError (if size doesn't exist, just don't use the prefetched image)
             // Change the Source to be the desired path (for image or background)
             const srcProtocol: any = src.startsWith('//') ? window.location.protocol + src : src
             el.attr('data-loading', dehydrate(false))
             el.attr('data-size', dehydrate(size))
-            if (type === 'img') {
-                el.attr('src', srcProtocol)
-            } else {
-                el.css('background-image', 'url(' + srcProtocol + ')')
-            }
+
+            // Preload this image first. Ensures speed to display and image is valid
+            const loadEl: any = jQuery('<img/>')
+            loadEl.attr('src', srcProtocol)
+            loadEl.on('load', () => {
+                el.addClass('loaded').removeClass('loading')
+                if (type === 'img') {
+                    el.attr('src', srcProtocol)
+                } else {
+                    el.css('background-image', 'url(' + srcProtocol + ')')
+                }
+                jQuery(this).remove() // prevent memory leaks
+            })
+            loadEl.on('error', () => {
+                // Image failed, dont try to use this url
+                // TODO: Go down in sizes before reaching the origin
+                if (cookie('env')) {
+                    console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at', srcProtocol)
+                }
+                jQuery(this).remove() // prevent memory leaks
+            })
 
             // FIXME: This is a mess that we shouldn't need to maintain.
             // RegisterGroups should just use Native Logic instead of
