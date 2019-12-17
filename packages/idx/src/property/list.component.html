@@ -31,8 +31,8 @@
                                 Details
                             </div>
                             <div class="image-wrapper"
-                                 data-stratus-src
-                                 style="background: url('{{::property.Images[0].MediaURL}}') no-repeat center center; background-size: cover;"
+                                 data-stratus-src-load="{{::property.Images[0].Lazy == 'stratus-src'}}"
+                                 data-stratus-src="{{::property.Images[0].MediaURL}}"
                             >
                                 <img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="shapeholder"/>
                                 <img data-ng-if="::property.Images.length === 0 || !property.Images" data-ng-src="{{::localDir}}images/no-image.jpg">
