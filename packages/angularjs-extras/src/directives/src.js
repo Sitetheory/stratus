@@ -22,6 +22,7 @@
       restrict: 'A',
       scope: {
         src: '@src',
+        stratusSrcLoad: '@stratusSrcLoad',
         stratusSrc: '@stratusSrc',
         style: '@style'
       },
@@ -45,18 +46,43 @@
           $scope.register()
         })
 
+        /**
+         * Sets the image src/css background on a tag
+         * @param {string} tagType
+         * @param {string} src
+         */
+        $scope.setSrc = function(tagType, src) {
+          if (tagType === 'img') {
+            $element.attr('src', src)
+          } else {
+            $element.css('background-image', `url(${src})`)
+          }
+        }
+
         // Group Registration
         $scope.registered = false
         $scope.register = function () {
           // find background image in CSS if there is no src (e.g. for div)
           let backgroundImage = null
-          if ($element.prop('tagName').toLowerCase() !== 'img') {
+          const type = $element.prop('tagName').toLowerCase()
+          if (type !== 'img') {
             backgroundImage = $element.css('background-image') || null
             if (backgroundImage) {
               backgroundImage = backgroundImage.slice(4, -1).replace(/"/g, '')
             }
           }
           const src = $attr.stratusSrc || $attr.src || backgroundImage
+
+          // Prevent Progressive loading if set to false
+          if(
+            $attr.stratusSrcLoad === 'false' ||
+            $attr.stratusSrcLoad === false
+          ) {
+            // Requested to not progressive load
+            // Set it's suggested image and exit
+            $scope.setSrc(type, src)
+            return true
+          }
 
           // Get Extension
           let ext = src ? src.match(/\.([0-9a-z]+)(\?.*)?$/i) : null
@@ -69,6 +95,8 @@
             return ext === value
           })
           if (!_.size($scope.filter)) {
+            // Set it's suggested image and exit
+            $scope.setSrc(type, src)
             return true
           }
 
@@ -90,6 +118,8 @@
           $scope.group = {
             method: Stratus.Internals.LoadImage,
             el: $element,
+            // Could be replaced with spy: $element.data('spy') ? $document[0].querySelector($element.data('spy')) : $element
+            // TODO need spy examples to test with
             spy: $element.data('spy') ? jQuery($element.data('spy')) : $element
           }
           Stratus.Internals.OnScroll()

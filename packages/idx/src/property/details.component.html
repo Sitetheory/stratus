@@ -197,7 +197,7 @@
         <div class="secondary-image-container">
             <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
             <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.sharedValues.contactUrl"
-               target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}}?comments={{::getFullAddress(true)}}"
+               target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}?comments={{::getFullAddress(true)}}"
                aria-label="Contact an Agent Link"
             >
                 Contact
@@ -205,9 +205,10 @@
             <div class="image-dimmer"></div>
             <!-- parallax-content disabled, cannot use height altering on the entire widget -->
             <!-- FIXME {} can't be used in inline styles as it won't resolve before the page loads (or may not exist) -->
-            <div data-ng-if="model.data.Images && model.data.Images[0]"
-                 data-stratus-src
-                 style="background: url('{{::model.data.Images[0].MediaURL}}') no-repeat center center; background-size: cover;"
+            <div class="image-wrapper"
+                 data-ng-if="model.data.Images && model.data.Images[0]"
+                 data-stratus-src-load="{{::model.data.Images[0].Lazy == 'stratus-src'}}"
+                 data-stratus-src="{{::model.data.Images[0].MediaURL}}"
                  aria-label="Background Image of the Listing"
             >
                 <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::getStreetAddress()}}"/>

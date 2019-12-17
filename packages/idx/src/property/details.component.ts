@@ -22,6 +22,7 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {MLSService} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import {SlideImage} from '@stratusjs/swiper/carousel.component'
 
 // Stratus Directives
 import 'stratus.directives.src'
@@ -1231,16 +1232,20 @@ Stratus.Components.IdxPropertyDetails = {
             }
         }
 
-        $scope.getSlideshowImages = (): { src: string }[] => {
-            const images: { src: string }[] = []
+        $scope.getSlideshowImages = (): SlideImage[] => {
+            const images: SlideImage[] = []
             if (
                 $scope.model.data.Images &&
                 _.isArray($scope.model.data.Images)
             ) {
-                $scope.model.data.Images.forEach((image: { MediaURL?: string }) => {
+                $scope.model.data.Images.forEach((image: { MediaURL?: string, Lazy?: string }) => {
                     // TODO need title/description variables
                     if (Object.prototype.hasOwnProperty.call(image, 'MediaURL')) {
-                        images.push({src: image.MediaURL})
+                        const imageObject: SlideImage = {src: image.MediaURL}
+                        if (Object.prototype.hasOwnProperty.call(image, 'Lazy')) {
+                            imageObject.lazy = image.Lazy
+                        }
+                        images.push(imageObject)
                     }
                 })
             }

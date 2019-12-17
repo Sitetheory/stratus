@@ -8,12 +8,10 @@ import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
 import Swiper from 'swiper'
-
 // Stratus Dependencies
 import {Model} from '@stratusjs/angularjs/services/model'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
-
 // Stratus Directives
 import 'stratus.directives.src'
 
@@ -23,7 +21,8 @@ export interface SlideImage {
     title?: string,
     description?: string,
     link?: string,
-    target?: string
+    target?: string,
+    lazy?: string
 }
 
 // Environment
@@ -144,6 +143,39 @@ Stratus.Components.SwiperCarousel = {
         )
 
         /**
+         * Determines the size a particular element and returns the applicable image size name to be used to load image files
+         * @param selector - An element
+         * @param columns - Number of columns within the element that is except to calculate for size
+         */
+        const getImageSizeName = (selector: Element|any, columns?: number): 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string => {
+            const el = Stratus.Select(selector)
+            const width = el.width() / (columns || 1)
+            // console.log('width', width, el)
+            return _.findKey(Stratus.Settings.image.size, (s: number) => {
+                const ratio: number = s / width
+                return (ratio > 0.85 && ratio < 1.15) || s > width
+            })
+        }
+
+        /**
+         * Determines the new url for the image size specified and returns proper string url
+         * @param src - Original Url to update
+         * @param sizeName - Size name to append to image url
+         */
+        const replaceImageSizeSrc = (src: 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string, sizeName: string): string => {
+            const srcOrigin = src
+            const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+            const srcMatch: RegExpExecArray = srcRegex.exec(src)
+            if (srcMatch !== null) {
+                src = srcMatch[1] + '-' + sizeName + '.' + srcMatch[3]
+            } else {
+                console.error('Unable to find file name for image src:', srcOrigin)
+            }
+
+            return src
+        }
+
+        /**
          * Prep and process a list of images for Swiper's use
          * TODO later process non-image based slides
          */
@@ -152,6 +184,9 @@ Stratus.Components.SwiperCarousel = {
                 images = [images]
             }
             if (_.isArray(images)) {
+                // The main element doesn't have a size ever, so use the inner container
+                const thisEl = $element[0].querySelector('.swiper-container')
+                const sizeName = getImageSizeName(thisEl)
                 const processedImages: SlideImage[] = []
                 images.forEach(
                     (image: string | SlideImage) => {
@@ -160,7 +195,11 @@ Stratus.Components.SwiperCarousel = {
                             // just urls were provided
                             preppedImage.src = image
                         } else if (typeof image === 'object') {
-                            if (Object.prototype.hasOwnProperty.call(image, 'src')) {
+                            if (_.has(image, 'src')) {
+                                if (_.get(image, 'lazy') === 'stratus-src') {
+                                    image.src = replaceImageSizeSrc(image.src, sizeName)
+                                    // console.log('image upgraded to ', image.src)
+                                }
                                 preppedImage = image
                             }
                         }
