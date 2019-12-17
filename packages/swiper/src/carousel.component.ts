@@ -143,17 +143,32 @@ Stratus.Components.SwiperCarousel = {
         )
 
         /**
+         * Finds the current element's size, or it's recursive parent's size
+         * @param el - An element
+         * @param columns - Number of columns within the element that is except to calculate for size
+         */
+        const getElementSize = (el: Element | any, columns?: number): number => {
+            // const el = Stratus.Select(selector)
+            let width = el.width() / (columns || 1)
+            if (width <= 0) {
+                // console.log('no width found, looking for parent')
+                const parent = el.parent()
+                width = getElementSize(parent, columns || 1)
+            }
+            return width
+        }
+
+        /**
          * Determines the size a particular element and returns the applicable image size name to be used to load image files
          * @param selector - An element
          * @param columns - Number of columns within the element that is except to calculate for size
          */
-        const getImageSizeName = (selector: Element|any, columns?: number): 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string => {
+        const getImageSizeName = (selector: Element | any, columns?: number): 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string => {
             const el = Stratus.Select(selector)
-            const width = el.width() / (columns || 1)
-            // console.log('width', width, el)
+            const width = getElementSize(el, columns)
+            // console.log('final width', width, el)
             return _.findKey(Stratus.Settings.image.size, (s: number) => {
-                const ratio: number = s / width
-                return (ratio > 0.85 && ratio < 1.15) || s > width
+                return (s >= width)
             })
         }
 
@@ -162,7 +177,7 @@ Stratus.Components.SwiperCarousel = {
          * @param src - Original Url to update
          * @param sizeName - Size name to append to image url
          */
-        const replaceImageSizeSrc = (src: 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string, sizeName: string): string => {
+        const replaceImageSizeSrc = (src: string, sizeName: 'xs' | 's' | 'm' | 'l' | 'xl' | 'hq' | string): string => {
             const srcOrigin = src
             const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
             const srcMatch: RegExpExecArray = srcRegex.exec(src)
@@ -209,6 +224,7 @@ Stratus.Components.SwiperCarousel = {
                     })
 
                 if (processedImages.length > 0) {
+                    // console.log('processedImages', processedImages)
                     $scope.images = processedImages
                     // There is no extra images so remove the looping
                     if ($scope.images.length < 2) {
