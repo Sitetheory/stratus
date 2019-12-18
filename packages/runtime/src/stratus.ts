@@ -1304,6 +1304,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             const type: any = el.prop('tagName').toLowerCase()
 
             // Handle precedence
+            // TODO: @deprecated - we don't need to support "lazy" since that is the same as empty
             if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
                 src = el.attr('src')
             }
