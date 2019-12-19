@@ -71,7 +71,6 @@
               backgroundImage = backgroundImage.slice(4, -1).replace(/"/g, '')
             }
           }
-          const src = $attr.stratusSrc || $attr.src || backgroundImage
 
           // Prevent Progressive loading if set to false
           if(
@@ -80,9 +79,22 @@
           ) {
             // Requested to not progressive load
             // Set it's suggested image and exit
-            $scope.setSrc(type, src)
+            $scope.setSrc(type, $attr.stratusSrc || $attr.src || backgroundImage)
             return true
           }
+
+          // Prevent Progressive loading if set to false
+          if(
+            $attr.stratusSrc === 'false' ||
+            $attr.stratusSrc === false
+          ) {
+            // Requested to not progressive load
+            // Set it's suggested image and exit
+            $scope.setSrc(type, $attr.src || backgroundImage)
+            return true
+          }
+
+          const src = $attr.stratusSrc || $attr.src || backgroundImage
 
           // Get Extension
           let ext = src ? src.match(/\.([0-9a-z]+)(\?.*)?$/i) : null
