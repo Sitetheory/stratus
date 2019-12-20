@@ -24,6 +24,9 @@
     "url": "https://github.com/Sitetheory/stratus/issues"
   },
   "homepage": "https://github.com/Sitetheory/stratus#readme",
+  "engines": {
+    "yarn": ">= 1.21.1"
+  },
   "dependencies": {
     "@stratusjs/angularjs": "^0.2.11",
     "@stratusjs/angularjs-extras": "^0.3.0",

@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angularjs-extras",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "AngularJS Calendar component and iCAL service to be used as an add on to StratusJS. Makes use of fullcalendar and iCAL",
   "scripts": {},
   "repository": {
@@ -21,10 +21,11 @@
     "javascript",
     "typescript",
     "angularjs",
-    "fullcalendar"
+    "fullcalendar",
+    "ical"
   ],
   "engines": {
-    "yarn": ">= 1.0.0"
+    "yarn": ">= 1.21.1"
   },
   "dependencies": {
     "@fullcalendar/core": "^4.1.0",
@@ -34,13 +35,9 @@
     "@fullcalendar/moment-timezone": "^4.2.0",
     "@fullcalendar/timegrid": "^4.1.0",
     "@stratusjs/angularjs": "^0.2.11",
-    "@stratusjs/angularjs-extras": "^0.3.4",
-    "@stratusjs/core": "^0.2.5",
+    "@stratusjs/angularjs-extras": "^0.4.0",
     "@stratusjs/runtime": "^0.10.6",
-    "ical.js": "^1.3.0",
-    "moment": "^2.24.0",
-    "moment-range": "^4.0.2",
-    "moment-timezone": "^0.5.27"
+    "ical.js": "^1.3.0"
   },
   "devDependencies": {
   }

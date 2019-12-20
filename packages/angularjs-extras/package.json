@@ -24,7 +24,7 @@
     "moment"
   ],
   "engines": {
-    "yarn": ">= 1.0.0"
+    "yarn": ">= 1.21.1"
   },
   "dependencies": {
     "@stratusjs/angularjs": "^0.2.11",
