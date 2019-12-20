@@ -154,6 +154,7 @@ interface TokenResponse {
         },
         contactName?: string,
         contactUrl?: string,
+        contactCommentVariable?: string,
         errors?: any[],
         integrations?: WidgetIntegrations,
         lastCreated: Date,
@@ -228,10 +229,12 @@ Stratus.Services.Idx = [
             ) => {
                 const sharedValues: {
                     contactUrl: string | null,
+                    contactCommentVariable: string | null,
                     contact: WidgetContact | null,
                     integrations: WidgetIntegrations
                 } = {
                     contactUrl: null,
+                    contactCommentVariable: null,
                     contact: null,
                     integrations: {
                         analytics: {},
@@ -555,6 +558,13 @@ Stratus.Services.Idx = [
                         && response.data.contactUrl !== ''
                     ) {
                         sharedValues.contactUrl = response.data.contactUrl
+                    }
+
+                    if (
+                        Object.prototype.hasOwnProperty.call(response.data, 'contactCommentVariable')
+                        && response.data.contactCommentVariable !== ''
+                    ) {
+                        sharedValues.contactCommentVariable = response.data.contactCommentVariable
                     }
 
                     // Compile a contact from the response if it exists

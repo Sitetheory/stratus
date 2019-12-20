@@ -50,7 +50,8 @@
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
                         </li>
                         <li data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0">
-                            <span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span> Baths
+                            <span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span>
+                            Baths
                         </li>
                         <li data-ng-if="::model.data.BathroomsHalf > 0">
                             <span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
@@ -62,21 +63,25 @@
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
                         <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
-                            Closed on <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                            Closed on
+                            <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
                         <li data-ng-if="::model.data.OnMarketDate">
-                            Listed on <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
+                            Listed on
+                            <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
                         <li data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
                             Listed at <span data-ng-bind="'$' + (model.data.ListPrice | number)"></span>
                         </li>
                         <li data-ng-if="::model.data.OnMarketDate && Idx.getFriendlyStatus(model.data) === 'Closed' && model.data.CloseDate">
                             <!-- Closed with start and end Dates. Give number of days between -->
-                            Days on Market: <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:model.data.CloseDate,duration:'days'}"></span>
+                            Days on Market:
+                            <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:model.data.CloseDate,duration:'days'}"></span>
                         </li>
                         <li data-ng-if="::model.data.OnMarketDate && Idx.getFriendlyStatus(model.data) !== 'Closed'">
                             <!-- Not Closed Yet, Days since open -->
-                            Days on Market: <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:true,duration:'days'}"></span>
+                            Days on Market:
+                            <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,diff:true,duration:'days'}"></span>
                         </li>
                         <li data-ng-if="::model.data.DaysOnMarket && !model.data.OnMarketDate">
                             <!-- MLS provides DaysOnMarket, but we weren't given a Start time, use MLS provided times (may be inaccurate) -->
@@ -130,7 +135,7 @@
                     <div class="response-container">
                         <a data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded"
                            data-ng-href="{{::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded}}"
-                           class="vtour btn btn-alt"  target="_blank" aria-label="Virtual Tour Link"
+                           class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
                         >
                             VTour
                         </a>
@@ -197,7 +202,7 @@
         <div class="secondary-image-container">
             <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
             <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.sharedValues.contactUrl"
-               target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}?comments={{::getFullAddress(true)}}"
+               target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}{{(Idx.sharedValues.contactCommentVariable ? '?' + Idx.sharedValues.contactCommentVariable + '=' + getFullAddress(true) : '')}}"
                aria-label="Contact an Agent Link"
             >
                 Contact

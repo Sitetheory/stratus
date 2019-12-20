@@ -1185,17 +1185,6 @@ Stratus.Components.IdxPropertyDetails = {
 
         $scope.getUid = (): string => $ctrl.uid
 
-        /**
-         * Get the latest contact info that was have been given from the api (if any)
-         * If there is none, we'll use what we already have
-         */
-        $scope.updateWidgetContactUrl = (): void => {
-            const url = Idx.getWidgetContactUrl()
-            if (url !== '') {
-                $scope.contactWebsiteUrl = url
-            }
-        }
-
         // TODO await until done fetching?
         $scope.fetchProperty = async (): Promise<void> => {
             // FIXME Idx export query Interface

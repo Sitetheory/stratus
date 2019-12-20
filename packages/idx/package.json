@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/idx",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "AngularJS idx/property Service and Components bundle to be used as an add on to StratusJS",
   "main": "./src/idx.js",
   "scripts": {
@@ -26,7 +26,7 @@
   "homepage": "https://github.com/Sitetheory/stratus#readme",
   "dependencies": {
     "@stratusjs/angularjs": "^0.2.11",
-    "@stratusjs/angularjs-extras": "^0.3.3",
+    "@stratusjs/angularjs-extras": "^0.3.4",
     "@stratusjs/runtime": "^0.10.6",
     "@stratusjs/swiper": "^0.1.8"
   }
