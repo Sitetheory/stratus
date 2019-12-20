@@ -49,6 +49,7 @@
     "@stratusjs/angularjs-extras": "file:packages/angularjs-extras",
     "@stratusjs/backend": "file:packages/backend",
     "@stratusjs/boot": "file:packages/boot",
+    "@stratusjs/calendar": "file:packages/calendar",
     "@stratusjs/core": "file:packages/core",
     "@stratusjs/idx": "file:packages/idx",
     "@stratusjs/react": "file:packages/react",
