@@ -33,7 +33,7 @@ import 'angular-material'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/registry'
-import '@stratusjs/angularjs-extras/services/iCal'
+import '@stratusjs/calendar/iCal'
 
 // Services
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -41,18 +41,18 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Components
-import * as fullCalendarCustomViewPlugin from '@stratusjs/angularjs-extras/components/calendar/customView'
+import * as fullCalendarCustomViewPlugin from '@stratusjs/calendar/customView'
 
 // Stratus Utilities
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON} from '@stratusjs/core/misc'
 import {Calendar, EventApi} from '@fullcalendar/core'
-import {ICalExpander} from '@stratusjs/angularjs-extras/services/iCal'
+import {ICalExpander} from '@stratusjs/calendar/iCal'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const name = 'calendar'
-const localPath = '@stratusjs/angularjs-extras/src/components/calendar'
+const localPath = '@stratusjs/calendar/src'
 
 // This component is a simple calendar at this time.
 Stratus.Components.Calendar = {
@@ -235,7 +235,10 @@ Stratus.Components.Calendar = {
                 console.log('fetched the events from:', url)
             }
             const iCalExpander: any = new ICalExpander(response.data, {maxIterations: 0})
-            const events: any = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2020-01-26T00:00:00.000Z'))
+            // TODO need options oh how to handle a date range.
+            // Note that accepting ALL events could lead to running out of memory due to the vast size of some calendars
+            // or the fact they could have infinite reoccurring events
+            const events: any = iCalExpander.jsonEventsForFullCalendar(new Date('2018-01-24T00:00:00.000Z'), new Date('2023-01-26T00:00:00.000Z'))
             $scope.calendar.addEventSource({
                 events
                 // TODO give Sitetheory options to color each event source

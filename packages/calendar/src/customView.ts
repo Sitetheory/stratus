@@ -35,7 +35,7 @@ import {EventUi, EventUiHash} from '@fullcalendar/core/component/event-ui'
 // Environment
 const min: any = !cookie('env') ? '.min' : ''
 const name: any = 'customView'
-const localPath: any = '@stratusjs/angularjs-extras/src/components/calendar'
+const localPath: any = '@stratusjs/calendar/src'
 const defaultTemplate: any = 'default'
 
 Stratus.Components.CalendarCustomView = {
@@ -170,8 +170,13 @@ export class CustomView extends View {
      */
     destroy() {
         super.destroy()
-        this.$scope.$destroy()
-        // TODO in the future, instead of creating new Vies, could recreate the existing one
+        if (
+            Object.prototype.hasOwnProperty.call(this, '$scope') &&
+            Object.prototype.hasOwnProperty.call(this.$scope, '$destroy')
+        ) {
+            this.$scope.$destroy()
+        }
+        // TODO in the future, instead of creating new Views, could recreate the existing one
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -207,7 +212,7 @@ export class CustomView extends View {
 
         const events: any = []
         const sliceEventObjects = sliceEventStore(eventStore, eventUiBases, that.props.dateProfile.activeRange, that.nextDayThreshold)
-        if (!_.has(sliceEventObjects, 'fg') || !_.isArray(sliceEventObjects.fg)) {
+        if (!Object.prototype.hasOwnProperty.call(sliceEventObjects, 'fg') || !_.isArray(sliceEventObjects.fg)) {
             return events
         }
         sliceEventObjects.fg.forEach((eventRaw: any) => {
@@ -215,8 +220,8 @@ export class CustomView extends View {
             if (
                 event &&
                 !event.descriptionHTML &&
-                _.has(event.constructor.prototype, 'extendedProps') &&
-                _.has(event.extendedProps, 'description')
+                Object.prototype.hasOwnProperty.call(event.constructor.prototype, 'extendedProps') &&
+                Object.prototype.hasOwnProperty.call(event.extendedProps, 'description')
             ) {
                 event.descriptionHTML = that.viewSpec.options.$sce.trustAsHtml(event.extendedProps.description)
             }

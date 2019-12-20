@@ -22,7 +22,7 @@
     "typescript"
   ],
   "engines": {
-    "yarn": ">= 1.0.0"
+    "yarn": ">= 1.21.1"
   },
   "dependencies": {
     "lodash": "^4.17.15",

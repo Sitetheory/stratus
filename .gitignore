@@ -48,6 +48,9 @@ packages/backend/src/**/*.js
 packages/backend/src/**/*.js.map
 packages/boot/dist/**/*.js
 packages/boot/dist/**/*.js.map
+packages/calendar/src/**/*.js
+packages/calendar/src/**/*.js.map
+packages/calendar/src/**/*.css
 packages/core/src/**/*.js
 packages/core/src/**/*.js.map
 packages/idx/src/**/*.js

@@ -42,6 +42,9 @@
       "@stratusjs/boot/*": [
         "packages/boot/src/*"
       ],
+      "@stratusjs/calendar/*": [
+        "packages/calendar/src/*"
+      ],
       "@stratusjs/core/*": [
         "packages/core/src/*"
       ],
