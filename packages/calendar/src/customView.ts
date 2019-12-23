@@ -40,7 +40,8 @@ const defaultTemplate: any = 'default'
 
 Stratus.Components.CalendarCustomView = {
     bindings: {
-        template: '@'
+        template: '@',
+        uid: '@'
     },
     controller(
         $scope: angular.IScope & any,
@@ -48,8 +49,10 @@ Stratus.Components.CalendarCustomView = {
     ) {
         // Initialize
         const $ctrl = this
-        // uid should have be created b the View. Rely on that instead
-        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
+
+        // WARNING DO NOT force a new uid if it was already provided by the parent or else it'll break the connection
+        // uid should have be created by the View. Rely on that instead
+        $ctrl.uid = $attrs.uid && !_.isEmpty($attrs.uid) ? $attrs.uid : _.uniqueId(_.snakeCase(name) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $ctrl.uid
         $scope.template = $attrs.template && !_.isEmpty($attrs.template) ? $attrs.template : defaultTemplate
@@ -63,7 +66,8 @@ Stratus.Components.CalendarCustomView = {
         $scope.events = []
         // Make sure we reference our current scope, or events may not be updated
         $scope.$applyAsync(() => {
-            $scope.$parent.customViews[this.uid] = $scope.template
+            $scope.$parent.customViews[$ctrl.uid] = $scope.template
+            // console.log('$scope.$parent.customViews.' + $ctrl.uid, 'set to:', $scope.template)
         })
 
         // Will be given access to
@@ -75,7 +79,8 @@ Stratus.Components.CalendarCustomView = {
         // $scope.render()
 
         $ctrl.$onInit = () => {
-            // console.log('init inited')
+            // console.log('CalendarCustomView inited')
+            // console.log('$scope.$parent', $scope.$parent)
         }
 
         /**
@@ -95,12 +100,12 @@ Stratus.Components.CalendarCustomView = {
         }
 
         $scope.destroy = () => {
-            delete $scope.$parent.customViews[this.uid]
-            if (typeof Stratus.Instances[this.uid].remove === 'function') {
-                Stratus.Instances[this.uid].remove()
+            delete $scope.$parent.customViews[$ctrl.uid]
+            if (typeof Stratus.Instances[$ctrl.uid].remove === 'function') {
+                Stratus.Instances[$ctrl.uid].remove()
             }
             $scope.$destroy()
-            delete Stratus.Instances[this.uid]
+            delete Stratus.Instances[$ctrl.uid]
         }
     },
     templateUrl(
@@ -129,21 +134,22 @@ export class CustomView extends View {
         // console.log('this.viewSpec.options', this.viewSpec.options)
         this.$parentScope = this.viewSpec.options.$scope
 
-        // console.log('parent scope is', this.$parentScope)
+        // console.log('this.$parentScope scope is', this.$parentScope)
 
         // Create the CalendarCustomView Component
-        const calendarCustomViewComponent: any = this.viewSpec.options.$compile(`<stratus-calendar-custom-view data-template="${this.viewSpec.options.template}"></stratus-calendar-custom-view>`)
+        const calendarCustomViewComponent: any = this.viewSpec.options.$compile(`<stratus-calendar-custom-view data-uid="${this.uid}" data-template="${this.viewSpec.options.template}"></stratus-calendar-custom-view>`)
         this.componentEl = calendarCustomViewComponent(this.$parentScope)
 
         // Watch for scope to get ready
         const that: any = this
         const stopWatchingScope = this.$parentScope.$watch(`customViews`, () => {
             if (
-                Object.prototype.hasOwnProperty.call(that.$parentScope.customViews, this.uid) &&
-                Object.prototype.hasOwnProperty.call(Stratus.Instances, this.uid)
+                Object.prototype.hasOwnProperty.call(that.$parentScope.customViews, that.uid) &&
+                Object.prototype.hasOwnProperty.call(Stratus.Instances, that.uid)
             ) {
                 // that.$scope = that.$parentScope.customViews[this.uid] // Angular is not allowing the scoped to be passed in this way
-                that.$scope = Stratus.Instances[this.uid]
+                that.$scope = Stratus.Instances[that.uid]
+                // console.log('CustomView found scope for', this.uid, that.$scope)
                 that.$scope.options = that.viewSpec.options
                 that.$scope.view = that
                 if (that.eventsWaiting) {
@@ -153,7 +159,7 @@ export class CustomView extends View {
             }
         }, true)
 
-        appendToElement(this.el, this.componentEl)
+        appendToElement(that.el, that.componentEl)
     }
 
     // render OOP:
