@@ -239,6 +239,11 @@ function compressMangle () {
       //   url: 'inline'
       // }
     }))
+    // .pipe(sourcemaps.mapSources((sourcePath, file) => sourcePath.substring(sourcePath.lastIndexOf('/') + 1)))
+    // .pipe(sourcemaps.write('.', {
+    //   includeContent: false
+    //   // sourceRoot: '.'
+    // }))
     .pipe(gulpDest('.', {
       ext: '.min.js'
     }))
