@@ -45,7 +45,7 @@
       if (angular.isObject(options)) angular.extend(this, options)
       if (this.relative && typeof this.relative === 'string' && Math.round(new Date().getTime() / 1000) > (input + _.seconds(this.relative))) this.since = false
       let time = this.unix ? moment.unix(input) : moment(input)
-      time = this.tz ? time.tz(this.tz) : time
+      time = this.tz && this.tz !== 'local' ? time.tz(this.tz) : time
 
       if (this.diff) {
         let until = this.unix ? moment.unix(this.diff) : this.diff === true ? moment() : moment(this.diff)
