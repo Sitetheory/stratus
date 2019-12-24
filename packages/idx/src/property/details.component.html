@@ -44,7 +44,7 @@
                     <ul class="details-specs primary_font">
                         <li>
                             <!-- TODO need a prettier word for the status and a detail of real status -->
-                            <span data-ng-bind="::model.data.MlsStatus" aria-label="Status"></span>
+                            <span data-ng-bind="::model.data.MlsStatus || model.data.StandardStatus" aria-label="Status"></span>
                         </li>
                         <li data-ng-if="::model.data.BedroomsTotal > 0">
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
