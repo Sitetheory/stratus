@@ -5,6 +5,11 @@ export interface PlainObject {
     [key: string]: any
 }
 
+// Anything to Title Case
+export function titleCase(target: string): string {
+    return target.replace(/\w\S*/g, (m: string) => m.charAt(0).toUpperCase() + m.substr(1).toLowerCase())
+}
+
 // CamelCase String to Snake Case
 export function camelToSnake(target: string): string {
     return target.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()

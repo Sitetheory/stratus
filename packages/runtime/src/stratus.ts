@@ -32,6 +32,7 @@ import {
 } from '@stratusjs/core/misc'
 import {
     seconds,
+    titleCase,
 } from '@stratusjs/core/conversion'
 
 // Specific Types
@@ -439,6 +440,9 @@ _.mixin({
     isjQuery,
 
     seconds,
+
+    // Case Switchers
+    titleCase,
 
     // Legacy Case Switchers
     camelToKebab: _.kebabCase,
