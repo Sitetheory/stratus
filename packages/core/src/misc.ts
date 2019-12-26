@@ -214,6 +214,28 @@ export function patch(newData: any, priorData: any): LooseObject {
     } else {
         const detect = (value: any, key: any) => {
             processor.eax = processor.ecx ? processor.ecx + '.' + key : key
+            // This is based on the algorithm from the new patch system,
+            // built inside the legacy one for an MVP workflow, for now.
+            if (_.isArray(value)) {
+                const priorList = _.get(priorData, processor.eax)
+                if (_.size(value) < _.size(priorList)) {
+                    if (!_.size(value) && _.size(priorList)) {
+                        data[processor.eax] = priorList
+                    } else {
+                        _.forEach(priorList, (priorValue: any, priorKey: number) => {
+                            let exists = false
+                            _.forEach(value, (currentValue: any, currentKey: number) => {
+                                if (_.isEqual(priorValue, currentValue)) {
+                                    exists = true
+                                }
+                            })
+                            if (!exists) {
+                                data[`${processor.eax}[${key}]`] = priorValue
+                            }
+                        })
+                    }
+                }
+            }
             if (_.isObject(value)) {
                 processor.ecx = processor.eax
                 _.forEach(value, detect)
@@ -237,6 +259,62 @@ export function patch(newData: any, priorData: any): LooseObject {
         _.forEach(newData, detect)
     }
     return (!data || !_.size(data)) ? null : data
+}
+
+// This is a new, unstable simplified Patch Function to allow patching of Array Differences
+export function patchArray(newData: any, priorData: any): LooseObject {
+    if (!_.isObject(newData) || !_.size(newData)) {
+        return null
+    }
+    if (!_.isObject(priorData) || !_.size(priorData)) {
+        console.error('bad prior:', priorData)
+        return null
+    }
+    const tree: LooseObject = {}
+    let acc: string = null
+    let base: any = null
+    let chain: string = null
+    let branch: any = null
+    function detect(value: any, key: string, list: any) {
+        // acc = (chain !== null) ? (_.isArray(list) ? `${chain}[${key}]` : `${chain}.${key}`) : key
+        acc = chain ? chain + '.' + key : key
+        if (_.isObject(value)) {
+            chain = acc
+            if (_.isArray(value)) {
+                const priorList = _.get(priorData, acc)
+                if (_.size(value) < _.size(priorList)) {
+                    if (!_.size(value) && _.size(priorList)) {
+                        tree[acc] = priorList
+                    } else {
+                        _.forEach(priorList, (priorValue: any, priorKey: number) => {
+                            let exists = false
+                            _.forEach(value, (currentValue: any, currentKey: number) => {
+                                if (_.isEqual(priorValue, currentValue)) {
+                                    exists = true
+                                }
+                            })
+                            if (!exists) {
+                                tree[`${acc}[${key}]`] = priorValue
+                            }
+                        })
+                    }
+                }
+            }
+            _.forEach(value, detect)
+            chain = (chain === key || !_.isString(chain)) ? undefined : chain.substring(0, chain.lastIndexOf('.'))
+        } else {
+            base = _.reduce(acc.split('.'), (x: any, a: any) => x && x[a], priorData)
+            if (base !== value) {
+                branch = value
+            }
+        }
+        if (branch !== undefined) {
+            tree[acc] = value
+            branch = undefined
+        }
+    }
+    _.forEach(newData, detect)
+    return (!tree || !_.size(tree)) ? null : tree
 }
 
 export function poll(fn: any, timeout?: any, interval?: any) {
