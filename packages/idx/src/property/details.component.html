@@ -44,7 +44,7 @@
                     <ul class="details-specs primary_font">
                         <li>
                             <!-- TODO need a prettier word for the status and a detail of real status -->
-                            <span data-ng-bind="::model.data.MlsStatus" aria-label="Status"></span>
+                            <span data-ng-bind="::model.data.MlsStatus || model.data.StandardStatus" aria-label="Status"></span>
                         </li>
                         <li data-ng-if="::model.data.BedroomsTotal > 0">
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
@@ -117,6 +117,9 @@
                         <li data-ng-if="::model.data.PropertySubType && model.data.PropertySubType != model.data.PropertyType">
                             <span data-ng-bind="::model.data.PropertySubType" aria-label="Property Sub Type"></span>
                         </li>
+                        <li data-ng-if="::!model.data.PropertyType && !model.data.PropertySubType">
+                            <span data-ng-bind="::model.data._Class" aria-label="Property Class (Type)"></span>
+                        </li>
                         <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey" aria-label="MLS Number">
                             <span data-ng-bind="getMLSName()"></span>#
                             <span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>
@@ -178,6 +181,7 @@
                                         <span data-ng-if="::openHouse.OpenHouseEndTime"> —
                                             <span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
                                         </span>
+                                        <span data-ng-if="::openHouse.OpenHouseStatus && openHouse.OpenHouseStatus !== 'Active'"> (<span data-ng-bind="::openHouse.OpenHouseStatus">)</span>
                                         <span data-ng-if="::openHouse.ShowingAgentFirstName" aria-label="Open House Shown by Agent">
                                             <br/>
                                             with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>

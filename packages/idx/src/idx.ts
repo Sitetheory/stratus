@@ -2013,6 +2013,13 @@ Stratus.Services.Idx = [
                         property.MlsStatus !== ''
                     ) {
                         statusName = property.MlsStatus
+                    } else if (
+                        Object.prototype.hasOwnProperty.call(property, 'StandardStatus') &&
+                        property.StandardStatus !== ''
+                    ) {
+                        statusName = property.StandardStatus
+                    }
+                    if (statusName !== '') {
                         switch (statusName) {
                             case 'Act Cont Release':
                             case 'Act Cont Show':
