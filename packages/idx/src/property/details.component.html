@@ -117,6 +117,9 @@
                         <li data-ng-if="::model.data.PropertySubType && model.data.PropertySubType != model.data.PropertyType">
                             <span data-ng-bind="::model.data.PropertySubType" aria-label="Property Sub Type"></span>
                         </li>
+                        <li data-ng-if="::!model.data.PropertyType && !model.data.PropertySubType">
+                            <span data-ng-bind="::model.data._Class" aria-label="Property Class (Type)"></span>
+                        </li>
                         <li class="mls-service" data-ng-if="::model.data.ListingId || model.data.ListingKey" aria-label="MLS Number">
                             <span data-ng-bind="getMLSName()"></span>#
                             <span data-ng-bind="::model.data.ListingId || model.data.ListingKey"></span>

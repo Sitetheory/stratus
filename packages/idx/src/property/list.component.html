@@ -58,7 +58,7 @@
                                     <span data-ng-bind="::property.BathroomsFull || property.BathroomsTotalInteger"></span><span data-ng-if="::property.BathroomsHalf || property.BathroomsOneQuarter || property.BathroomsPartial">+</span>
                                     Baths
                                     </span>
-                                <span data-ng-bind="::property.PropertySubType || property.PropertyType" aria-label="Type"></span>
+                                <span data-ng-bind="::property.PropertySubType || property.PropertyType || property._Class" aria-label="Type"></span>
                                 <span class="property-price" data-ng-if="::property.ListPrice || property.ClosePrice" aria-label="Price">
 								    $<span data-ng-bind="::property.ListPrice || property.ClosePrice | number"></span>
 							    </span>
