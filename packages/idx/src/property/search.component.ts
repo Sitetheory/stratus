@@ -37,7 +37,8 @@ Stratus.Components.IdxPropertySearch = {
         listLinkTarget: '@',
         options: '@',
         template: '@',
-        variableSync: '@'
+        variableSync: '@',
+        widgetName: '@'
     },
     controller(
         $attrs: angular.IAttributes,
@@ -66,6 +67,7 @@ Stratus.Components.IdxPropertySearch = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         $ctrl.$onInit = async () => {
+            $scope.widgetName = $attrs.widgetName || ''
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
             $scope.listLinkUrl = $attrs.listLinkUrl || '/property/list'
@@ -197,7 +199,14 @@ Stratus.Components.IdxPropertySearch = {
          * Works with updateNestedPathValue
          */
         $scope.updateScopeValuePath = async (scopeVarPath: string, value: any): Promise<string | any> => {
-            // console.log('Update', scopeVarPath, 'to', value, typeof value)
+            if (
+                value == null ||
+                value === ''
+            ) {
+                return false
+            }
+            // FIXME need some way to check if the variable is meant to be a object or something other than a string
+            console.log('Update updateScopeValuePath', scopeVarPath, 'to', value, typeof value)
             const scopePieces = scopeVarPath.split('.')
             return $scope.updateNestedPathValue($scope, scopePieces, value)
         }
@@ -218,8 +227,14 @@ Stratus.Components.IdxPropertySearch = {
                     if (_.isArray(currentNest[currentPiece]) && !_.isArray(value)) {
                         value = value === '' ? [] : value.split(',')
                     }
-                    // console.log(currentPiece, 'updated to ', value)
-                    currentNest[currentPiece] = value
+                    console.log(currentPiece, 'updated to ', value)
+                    // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
+                    // This is mostly just to allow a whole object to be passed in and saved
+                    if (_.isObject(currentNest[currentPiece])) {
+                        currentNest[currentPiece] = JSON.parse(value)
+                    } else {
+                        currentNest[currentPiece] = value
+                    }
                     return value
                 }
             } else {
@@ -248,15 +263,24 @@ Stratus.Components.IdxPropertySearch = {
                         if (varElement) {
                             // Form Input exists
                             const scopeVarPath = $scope.variableSyncing[elementId]
-                            // convert into a real var path and set the intial value from the exiting form value
+                            // convert into a real var path and set the initial value from the exiting form value
                             await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
 
                             // Creating watcher to update the input when the scope changes
                             $scope.$watch(
                                 scopeVarPath,
                                 (value: any) => {
-                                    // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
-                                    varElement.val(value)
+                                    if (
+                                        _.isString(value) ||
+                                        _.isNumber(value) ||
+                                        value == null
+                                    ) {
+                                        console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
+                                        varElement.val(value)
+                                    } else {
+                                        console.log('updating json', scopeVarPath, 'value to', value, 'was', varElement.val())
+                                        varElement.val(JSON.stringify(value))
+                                    }
                                 },
                                 true
                             )
