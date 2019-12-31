@@ -50,7 +50,9 @@ Stratus.Components.IdxPropertyList = {
         googleApiKey: '@',
         orderOptions: '@',
         query: '@',
-        template: '@'
+        searchOnLoad: '@',
+        template: '@',
+        urlLoad: '@'
     },
     controller(
         $attrs: angular.IAttributes,
@@ -79,11 +81,13 @@ Stratus.Components.IdxPropertyList = {
          */
         $ctrl.$onInit = async () => {
             $scope.Idx = Idx
+            $scope.collection = new Collection({}) as Collection // set a default collection for variable safety
             /**
              * Allow query to be loaded initially from the URL
              * type {boolean}
              */
             $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
+            $scope.searchOnLoad = $attrs.searchOnLoad && isJSON($attrs.searchOnLoad) ? JSON.parse($attrs.searchOnLoad) : true
             /** type {boolean} */
             $scope.detailsLinkPopup = $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ?
                 JSON.parse($attrs.detailsLinkPopup) : true
@@ -152,7 +156,9 @@ Stratus.Components.IdxPropertyList = {
                 }
             }
 
-            await $scope.searchProperties(urlQuery.Search, true, false)
+            if ($scope.searchOnLoad) {
+                await $scope.searchProperties(urlQuery.Search, true, false)
+            }
         }
 
         $scope.$watch('collection.models', (models?: []) => {
@@ -191,7 +197,8 @@ Stratus.Components.IdxPropertyList = {
         ): Promise<Collection> =>
             $q((resolve: any) => {
                 query = query || {}
-                updateUrl = updateUrl === false ? updateUrl : true
+                // updateUrl = updateUrl === false ? updateUrl : true
+                updateUrl = updateUrl === false ? updateUrl : $scope.urlLoad === false ? $scope.urlLoad : true
 
                 // If refreshing, reset to page 1
                 if (refresh) {
@@ -228,8 +235,8 @@ Stratus.Components.IdxPropertyList = {
                 Idx.setUrlOptions('Search', query)
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
-                // Display the URL query in the address bar
                 if (updateUrl) {
+                    // Display the URL query in the address bar
                     Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }
 
@@ -425,12 +432,14 @@ Stratus.Components.IdxPropertyList = {
                     'contact-email'?: string,
                     'contact-phone'?: string,
                     template?: string,
+                    'url-load'?: boolean,
                 } = {
                     'element-id': 'property_detail_popup_' + property.ListingKey,
                     service: property._ServiceId,
                     'listing-key': property.ListingKey,
                     'default-list-options': JSON.stringify($ctrl.defaultQuery),
-                    'page-title': true// update the page title
+                    'page-title': true, // update the page title
+                    'url-load': $scope.urlLoad
                 }
                 if ($scope.googleApiKey) {
                     templateOptions['google-api-key'] = $scope.googleApiKey
@@ -475,8 +484,10 @@ Stratus.Components.IdxPropertyList = {
                             if ($mdDialog) {
                                 $mdDialog.hide()
                                 Idx.setUrlOptions('Listing', {})
-                                Idx.refreshUrlOptions($ctrl.defaultQuery)
-                                // Revery page title back to what it was
+                                if ($scope.urlLoad) {
+                                    Idx.refreshUrlOptions($ctrl.defaultQuery)
+                                }
+                                // Revert page title back to what it was
                                 Idx.setPageTitle()
                                 // Let's destroy it to save memory
                                 $timeout(Idx.unregisterDetailsInstance('property_detail_popup'), 10)
@@ -487,8 +498,10 @@ Stratus.Components.IdxPropertyList = {
                     .then(() => {
                     }, () => {
                         Idx.setUrlOptions('Listing', {})
-                        Idx.refreshUrlOptions($ctrl.defaultQuery)
-                        // Revery page title back to what it was
+                        if ($scope.urlLoad) {
+                            Idx.refreshUrlOptions($ctrl.defaultQuery)
+                        }
+                        // Revert page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
                         $timeout(Idx.unregisterDetailsInstance('property_detail_popup'), 10)
