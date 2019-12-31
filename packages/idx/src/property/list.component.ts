@@ -171,7 +171,7 @@ Stratus.Components.IdxPropertyList = {
          * Inject the current URL settings into any attached Search widget
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
-        $scope.refreshSearchWidgetOptions = (): void => {
+        $scope.refreshSearchWidgetOptions = async (): Promise<void> => {
             const searchScopes: any[] = Idx.getListInstanceLinks($scope.elementId)
             searchScopes.forEach((searchScope) => {
                 if (Object.prototype.hasOwnProperty.call(searchScope, 'setQuery')) {

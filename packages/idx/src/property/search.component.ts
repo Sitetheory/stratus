@@ -73,13 +73,15 @@ Stratus.Components.IdxPropertySearch = {
             $scope.listLinkUrl = $attrs.listLinkUrl || '/property/list'
             $scope.listLinkTarget = $attrs.listLinkTarget || '_self'
 
-            // If the List hasn't updated this widget after 2 seconds, make sure it's checked again. A workaround for
+            // If the List hasn't updated this widget after 1 second, make sure it's checked again. A workaround for
             // the race condition for now, up for suggestions
-            $timeout(() => {
+            $timeout(async () => {
                 if (!$scope.listInitialized) {
-                    $scope.refreshSearchWidgetOptions()
+                    await $scope.refreshSearchWidgetOptions()
                 }
-            }, 2000)
+                // Sync needs to happen here so that the List and still connect with the Search widget
+                await $scope.variableSync()
+            }, 1000)
 
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
@@ -164,7 +166,7 @@ Stratus.Components.IdxPropertySearch = {
             // Register this Search with the Property service
             Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
 
-            await $scope.variableSync()
+            // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
         }
         $scope.$watch('options.query.ListingType', () => {
             if ($scope.options.selection.ListingType.list) {
@@ -205,8 +207,7 @@ Stratus.Components.IdxPropertySearch = {
             ) {
                 return false
             }
-            // FIXME need some way to check if the variable is meant to be a object or something other than a string
-            console.log('Update updateScopeValuePath', scopeVarPath, 'to', value, typeof value)
+            // console.log('Update updateScopeValuePath', scopeVarPath, 'to', value, typeof value)
             const scopePieces = scopeVarPath.split('.')
             return $scope.updateNestedPathValue($scope, scopePieces, value)
         }
@@ -227,7 +228,7 @@ Stratus.Components.IdxPropertySearch = {
                     if (_.isArray(currentNest[currentPiece]) && !_.isArray(value)) {
                         value = value === '' ? [] : value.split(',')
                     }
-                    console.log(currentPiece, 'updated to ', value)
+                    // console.log(currentPiece, 'updated to ', value)
                     // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
                     // This is mostly just to allow a whole object to be passed in and saved
                     if (_.isObject(currentNest[currentPiece])) {
@@ -275,10 +276,10 @@ Stratus.Components.IdxPropertySearch = {
                                         _.isNumber(value) ||
                                         value == null
                                     ) {
-                                        console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
+                                        // console.log('updating', scopeVarPath, 'value to', value, 'was', varElement.val())
                                         varElement.val(value)
                                     } else {
-                                        console.log('updating json', scopeVarPath, 'value to', value, 'was', varElement.val())
+                                        // console.log('updating json', scopeVarPath, 'value to', value, 'was', varElement.val())
                                         varElement.val(JSON.stringify(value))
                                     }
                                 },
@@ -443,11 +444,11 @@ Stratus.Components.IdxPropertySearch = {
         /**
          * Have the widget options refreshed form the Widget's end
          */
-        $scope.refreshSearchWidgetOptions = (): void => {
+        $scope.refreshSearchWidgetOptions = async (): Promise<void> => {
             if ($scope.listId) {
                 const instance = Idx.getListInstance($scope.listId)
                 if (instance && instance.hasOwnProperty('refreshSearchWidgetOptions')) {
-                    instance.refreshSearchWidgetOptions()
+                    await instance.refreshSearchWidgetOptions()
                 }
             }
         }
