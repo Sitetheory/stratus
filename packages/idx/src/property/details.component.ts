@@ -90,9 +90,9 @@ Stratus.Components.IdxPropertyDetails = {
         $ctrl.$onInit = () => {
             $scope.model = new Model() as Model
             $scope.Idx = Idx
+            $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
+            $scope.pageTitle = $attrs.pageTitle && isJSON($attrs.pageTitle) ? JSON.parse($attrs.pageTitle) : false
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
-            $scope.options.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
-            $scope.options.pageTitle = $attrs.pageTitle && isJSON($attrs.pageTitle) ? JSON.parse($attrs.pageTitle) : false
             $scope.options.service = $attrs.service && isJSON($attrs.service) ? JSON.parse($attrs.service) : null
             $scope.options.ListingKey = $attrs.listingKey && isJSON($attrs.listingKey) ? JSON.parse($attrs.listingKey) : null
             $scope.options.ListingId = $attrs.listingId && isJSON($attrs.listingId) ? JSON.parse($attrs.listingId) : null
@@ -1142,11 +1142,12 @@ Stratus.Components.IdxPropertyDetails = {
             // Register this List with the Property service
             Idx.registerDetailsInstance($scope.elementId, $scope)
 
-            $scope.urlLoad = !(
-                $scope.urlLoad !== true &&
-                $scope.service &&
-                ($scope.ListingKey || $scope.ListingId)
-            )
+            if (!$scope.options.service || // if there is a service
+                !($scope.options.ListingKey || $scope.options.ListingId)
+            ) {
+                // If there is no Service or Listing Id/Key set, force url loading
+                $scope.urlLoad = true
+            }
 
             if ($scope.urlLoad) {
                 // Load Options from the provided URL settings
@@ -1175,8 +1176,10 @@ Stratus.Components.IdxPropertyDetails = {
                         ListingKey: data.ListingKey,
                         address: $scope.getStreetAddress()
                     })
-                Idx.refreshUrlOptions($scope.defaultListOptions)
-                if ($scope.options.pageTitle) {
+                if ($scope.urlLoad) {
+                    Idx.refreshUrlOptions($scope.defaultListOptions)
+                }
+                if ($scope.pageTitle) {
                     // Update the page title
                     Idx.setPageTitle($scope.getStreetAddress())
                 }
