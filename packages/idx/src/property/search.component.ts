@@ -282,6 +282,8 @@ Stratus.Components.IdxPropertySearch = {
                                         // console.log('updating json', scopeVarPath, 'value to', value, 'was', varElement.val())
                                         varElement.val(JSON.stringify(value))
                                     }
+                                    // varElement.fireEvent('onchange') // deprecated and no longer works
+                                    varElement[0].dispatchEvent(new Event('change'))
                                 },
                                 true
                             )
