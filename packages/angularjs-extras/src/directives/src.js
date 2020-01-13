@@ -22,8 +22,9 @@
       restrict: 'A',
       scope: {
         src: '@src',
-        stratusSrcLoad: '@stratusSrcLoad',
         stratusSrc: '@stratusSrc',
+        // stratusSrcSizes: '@stratusSrcSizes', // Unused at this time
+        stratusSrcVersion: '@stratusSrcVersion',
         style: '@style'
       },
       link: function ($scope, $element, $attr) {
@@ -72,10 +73,10 @@
             }
           }
 
-          // Prevent Progressive loading if set to false
+          // Prevent Progressive loading if set to false. Will not continue any further
           if(
-            $attr.stratusSrcLoad === 'false' ||
-            $attr.stratusSrcLoad === false
+            $attr.stratusSrcVersion === 'false' ||
+            $attr.stratusSrcVersion === false
           ) {
             // Requested to not progressive load
             // Set it's suggested image and exit
@@ -90,7 +91,8 @@
           ) {
             // Requested to not progressive load
             // Set it's suggested image and exit
-            $scope.setSrc(type, $attr.src || backgroundImage)
+            // $scope.setSrc(type, $attr.src || backgroundImage)
+            // New: if set to false, don' do stratus-src at all. see https://app.asana.com/0/348823217261712/1149917100747392
             return true
           }
 

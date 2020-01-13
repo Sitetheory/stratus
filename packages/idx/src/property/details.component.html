@@ -234,7 +234,7 @@
             <!-- FIXME {} can't be used in inline styles as it won't resolve before the page loads (or may not exist) -->
             <div class="image-wrapper"
                  data-ng-if="model.data.Images && model.data.Images[0]"
-                 data-stratus-src-load="{{::model.data.Images[0].Lazy == 'stratus-src'}}"
+                 data-stratus-src-version="{{::(model.data.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                  data-stratus-src="{{::model.data.Images[0].MediaURL}}"
                  aria-label="Background Image of the Listing"
             >
