@@ -1,29 +1,15 @@
 // ListTrac Service
 // @stratusjs/idx/listTrac
-// TODO ListTrac on hold
 
 // Runtime
 // import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-// import {IPromise} from 'angular'
 import {DOMComplete} from '@stratusjs/core/dom'
 
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
-// import {Model} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/angularjs/services/collection'
-// import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-
-// Stratus Dependencies
-// import {isJSON} from '@stratusjs/core/misc'
-// import {cookie} from '@stratusjs/core/environment'
-
-
-// Environment
-// const min = !cookie('env') ? '.min' : ''
-// There is not a very consistent way of pathing in Stratus at the moment
-// const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
 Stratus.Services.ListTrac = [
     '$provide',
@@ -34,7 +20,6 @@ Stratus.Services.ListTrac = [
             $q: angular.IQService,
             $window: angular.IWindowService,
             ) => {
-                console.log('ListTrac service initting')
                 const eventQueue: Array<() => void> = []
                 let listTracLoaded = false
                 let listTracPending = false
@@ -43,16 +28,6 @@ Stratus.Services.ListTrac = [
                 let eventTypes: {
                     [key: string]: number
                 } = {}
-                /*import('https://code.listtrac.com/monitor.ashx?acct=x_100633&nonjq=1').then(test => {
-                    console.log('imported')
-                })*/
-                /*DOMComplete().then(() => {
-                    require(`https://code.listtrac.com/monitor.ashx?nonjq=1&acct=${listTracAccountId}`).then(() => {
-                        console.log('imported ListTrac')
-                    })
-                })*/
-
-                // loadListTrac()
 
                 async function loadListTrac() {
                     if (!listTracAccountId) {
@@ -107,16 +82,6 @@ Stratus.Services.ListTrac = [
                     // console.log('setting up Event', eventName)
                     await loadListTrac()
                     const promiseFunction = () => {
-                        /*
-                        console.log('will run LT._trackEvent(',
-                            eventTypes[eventName],
-                            mlsId,
-                            postalCode,
-                            agentId,
-                            ')'
-                        )
-                         */
-
                         LT._trackEvent(
                             eventTypes[eventName],
                             mlsId,
