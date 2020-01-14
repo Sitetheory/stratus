@@ -12,7 +12,7 @@ import '@stratusjs/angularjs/services/model' // Needed as $provider
 import {Model} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/angularjs/services/collection' // Needed as $provider
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-// import '@stratusjs/idx/listTrac' // TODO ListTrac on hold
+import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -96,7 +96,8 @@ export interface MLSService {
         Member: Date | null,
         Office: Date | null,
         OpenHouse: Date | null
-    }
+    },
+    analyticsEnabled: string[]
 }
 
 export interface WidgetContact {
@@ -124,6 +125,9 @@ export interface WidgetIntegrations {
             accountId: string
         },
         listTrac?: {
+            accountId: string
+        },
+        listtracAnalytics?: { // FIXME: Need to remove this name and rename to listTrac (Sitetheory side)
             accountId: string
         }
     },
@@ -222,7 +226,7 @@ Stratus.Services.Idx = [
             $window: angular.IWindowService,
             // tslint:disable-next-line:no-shadowed-variable
             Collection: any,
-            // ListTrac: any,
+            ListTrac: any,
             // tslint:disable-next-line:no-shadowed-variable
             Model: any,
             orderByFilter: any
@@ -308,8 +312,6 @@ Stratus.Services.Idx = [
                     pages: [],
                     perPage: 0
                 }
-
-                // ListTrac.setAccountId('x_xxx')
 
                 /**
                  * Add List instance to the service
@@ -544,6 +546,12 @@ Stratus.Services.Idx = [
                                     OpenHouse: null
                                 }
                             }
+                            if (
+                                !Object.prototype.hasOwnProperty.call(service, 'analyticsEnabled') ||
+                                service.analyticsEnabled === null
+                            ) {
+                                service.analyticsEnabled = []
+                            }
                             session.services[service.id] = service
                             session.lastCreated = new Date(service.created)// The object is a String being converted to Date
                             session.lastTtl = service.ttl
@@ -638,15 +646,19 @@ Stratus.Services.Idx = [
                                     }
                                 }
                             }
-                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listTrac')) {
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listtracAnalytics')) {
                                 if (
-                                    Object.prototype.hasOwnProperty.call(response.data.integrations.analytics.listTrac, 'accountId')
-                                    && _.isString(response.data.integrations.analytics.listTrac.accountId)
-                                    && response.data.integrations.analytics.listTrac.accountId !== ''
+                                    Object.prototype.hasOwnProperty.call(
+                                        response.data.integrations.analytics.listtracAnalytics, 'accountId'
+                                    )
+                                    && _.isString(response.data.integrations.analytics.listtracAnalytics.accountId)
+                                    && response.data.integrations.analytics.listtracAnalytics.accountId !== ''
                                 ) {
                                     sharedValues.integrations.analytics.listTrac = {
-                                        accountId: response.data.integrations.analytics.listTrac.accountId
+                                        accountId: response.data.integrations.analytics.listtracAnalytics.accountId
                                     }
+                                    ListTrac.setAccountId(sharedValues.integrations.analytics.listTrac.accountId)
+                                    // FIXME we only need to load ListTrac/send an event when the the MLS is whitelisted for it
                                 }
                             }
                         }
@@ -1294,7 +1306,8 @@ Stratus.Services.Idx = [
                                     id: session.services[serviceId].id,
                                     name: session.services[serviceId].name,
                                     disclaimer: session.services[serviceId].disclaimer,
-                                    fetchTime: session.services[serviceId].fetchTime
+                                    fetchTime: session.services[serviceId].fetchTime,
+                                    analyticsEnabled: session.services[serviceId].analyticsEnabled
                                 }
                             }
                         })
@@ -1304,7 +1317,8 @@ Stratus.Services.Idx = [
                                 id: service.id,
                                 name: service.name,
                                 disclaimer: service.disclaimer,
-                                fetchTime: service.fetchTime
+                                fetchTime: service.fetchTime,
+                                analyticsEnabled: service.analyticsEnabled
                             }
                         })
                     }

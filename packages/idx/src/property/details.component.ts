@@ -16,6 +16,7 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
+import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -68,6 +69,7 @@ Stratus.Components.IdxPropertyDetails = {
         $location: angular.ILocationService,
         $sce: angular.ISCEService,
         $scope: object | any, // angular.IScope breaks references so far
+        ListTrac: any,
         // tslint:disable-next-line:no-shadowed-variable
         Model: any,
         Idx: any,
@@ -1187,12 +1189,20 @@ Stratus.Components.IdxPropertyDetails = {
                     // Update the page title
                     Idx.setPageTitle($scope.getStreetAddress())
                 }
+                if (
+                    // true
+                    $scope.getMLSVariables().analyticsEnabled.includes('ListTrac')
+                ) {
+                    ListTrac.track('view', $scope.model.data.ListingId, $scope.model.data.PostalCode, $scope.model.data.ListAgentKey)
+                }
             }
         })
 
         $scope.getUid = (): string => $ctrl.uid
 
-        // TODO await until done fetching?
+        /**
+         * Will perform a fetch request in the background. Results will be known once watcher for 'model.data' notices
+         */
         $scope.fetchProperty = async (): Promise<void> => {
             // FIXME Idx export query Interface
             const propertyQuery: {
@@ -1344,6 +1354,7 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getMLSVariables = (): MLSService => {
             if (!$ctrl.mlsVariables) {
                 $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])[$scope.model.data._ServiceId]
+                // console.log('$ctrl.mlsVariables', $ctrl.mlsVariables)
             }
             return $ctrl.mlsVariables
         }
