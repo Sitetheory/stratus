@@ -177,7 +177,7 @@ interface TokenResponse {
 
 // FIXME unable to add an array of MongoWhereQuery to and/or
 interface MongoWhereQuery {
-    [key: string]: string | string[] | number | any[] | {
+    [key: string]: string | string[] | number | MongoWhereQuery[] | {
         inq?: string[] | number[],
         between?: number[],
         gte?: number,
@@ -187,9 +187,6 @@ interface MongoWhereQuery {
         and?: MongoWhereQuery[],
         or?: MongoWhereQuery[]
     }
-
-    // and?: MongoWhereQuery[]
-    // or?: MongoWhereQuery[]
 }
 
 // Used locally to store a number of index prepared queries
@@ -960,6 +957,7 @@ Stratus.Services.Idx = [
                  */
                 function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
                     const whereQuery: MongoWhereQuery = {}
+                    const andStatement: MongoWhereQuery[] = [] // TS detecting [] as string[] otherwise
                     // ListingKey
                     if (Object.prototype.hasOwnProperty.call(where, 'ListingKey') && where.ListingKey !== '') {
                         whereQuery.ListingKey = where.ListingKey
@@ -1066,15 +1064,14 @@ Stratus.Services.Idx = [
                         whereQuery.BedroomsTotal = {gte: parseInt(where.Bedrooms, 10)}
                     }
 
-
                     // ---------------------
                     // Generic Search Fields
                     // ---------------------
-                    whereQuery.and = []
+
                     // Location
                     if (Object.prototype.hasOwnProperty.call(where, 'Location') && where.Location !== '') {
 
-                        whereQuery.and.push({
+                        andStatement.push({
                             or: [
                                 {
                                     City: {
@@ -1106,7 +1103,7 @@ Stratus.Services.Idx = [
                     // Neighborhood
                     if (Object.prototype.hasOwnProperty.call(where, 'Neighborhood') && where.Neighborhood !== '') {
 
-                        whereQuery.and.push({
+                        andStatement.push({
                             or: [
                                 {
                                     CityRegion: {
@@ -1124,6 +1121,9 @@ Stratus.Services.Idx = [
                         })
                     }
 
+                    if (!_.isEmpty(andStatement)) {
+                        whereQuery.and = andStatement
+                    }
 
 
                     return whereQuery
