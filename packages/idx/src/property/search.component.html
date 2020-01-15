@@ -109,6 +109,16 @@
                         </div>
                     </div>
 
+                    <div class="property-neighborhood" data-layout="row" data-layout-align="space-around center" aria-label="Listing Zoning">
+                        <md-input-container class="md-block minimal">
+                            <label>Neighborhood</label>
+                            <input data-ng-model="options.query.Neighborhood" type="text" maxlength="250"
+                                   data-ng-keyup="$event.keyCode == 13 && options.query.Neighborhood && searchProperties()"
+                                   autocomplete="off"
+                            >
+                        </md-input-container>
+                    </div>
+
                     <!--
                     <div data-layout="row" data-layout-align="space-around center">
                         <div class="search-input">
