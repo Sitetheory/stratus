@@ -117,7 +117,13 @@ Stratus.Components.IdxPropertyList = {
             }
             /** type {object} */
             $scope.query.where = $scope.query.where || {}
+            $scope.query.where.ListingId = $scope.query.where.ListingId || ''
             $scope.query.where.City = $scope.query.where.City || ''
+            $scope.query.where.CityRegion = $scope.query.where.CityRegion || ''
+            $scope.query.where.MLSAreaMajor = $scope.query.where.MLSAreaMajor || ''
+            // NOTE: this is a generic field meant to combine in the API
+            $scope.query.where.Neighborhood = $scope.query.where.Neighborhood || ''
+            $scope.query.where.Location = $scope.query.where.Location || ''
             $scope.query.where.Status = $scope.query.where.Status || ['Active', 'Contract']
             $scope.query.where.ListingType = $scope.query.where.ListingType || ['House', 'Condo']
             $scope.query.where.AgentLicense = $scope.query.where.AgentLicense || []

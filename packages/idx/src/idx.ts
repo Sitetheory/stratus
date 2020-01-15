@@ -28,9 +28,12 @@ import {cookie} from '@stratusjs/core/environment'
 export interface WhereOptions {
     // Property
     ListingKey?: string,
+    ListingId?: string,
     ListingType?: string[] | string,
     Status?: string[] | string,
     City?: string,
+    CityRegion?: string,
+    MLSAreaMajor?: string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
@@ -49,6 +52,10 @@ export interface WhereOptions {
     OfficeNationalAssociationId?: string,
     OfficeStatus?: string,
     OfficeName?: string,
+
+    // Generic: Search Multiple Fields
+    Location?: string,
+    Neighborhood?: string,
 }
 
 export interface CompileFilterOptions {
@@ -170,13 +177,15 @@ interface TokenResponse {
 
 // FIXME unable to add an array of MongoWhereQuery to and/or
 interface MongoWhereQuery {
-    [key: string]: string | string[] | number | {
+    [key: string]: string | string[] | number | any[] | {
         inq?: string[] | number[],
         between?: number[],
         gte?: number,
         lte?: number,
         like?: string,
-        options?: string
+        options?: string,
+        and?: MongoWhereQuery[],
+        or?: MongoWhereQuery[]
     }
 
     // and?: MongoWhereQuery[]
@@ -955,6 +964,10 @@ Stratus.Services.Idx = [
                     if (Object.prototype.hasOwnProperty.call(where, 'ListingKey') && where.ListingKey !== '') {
                         whereQuery.ListingKey = where.ListingKey
                     }
+                    // ListingId
+                    if (Object.prototype.hasOwnProperty.call(where, 'ListingId') && where.ListingId !== '') {
+                        whereQuery.ListingId = where.ListingId
+                    }
                     // ListType
                     if (Object.prototype.hasOwnProperty.call(where, 'ListingType') && where.ListingType !== '') {
                         if (typeof where.ListingType === 'string') {
@@ -992,6 +1005,20 @@ Stratus.Services.Idx = [
                     if (Object.prototype.hasOwnProperty.call(where, 'City') && where.City !== '') {
                         whereQuery.City = {
                             like: where.City,
+                            options: 'i'
+                        }
+                    }
+                    // CityRegion
+                    if (Object.prototype.hasOwnProperty.call(where, 'CityRegion') && where.CityRegion !== '') {
+                        whereQuery.CityRegion = {
+                            like: where.CityRegion,
+                            options: 'i'
+                        }
+                    }
+                    // MLSAreaMajor
+                    if (Object.prototype.hasOwnProperty.call(where, 'MLSAreaMajor') && where.MLSAreaMajor !== '') {
+                        whereQuery.MLSAreaMajor = {
+                            like: where.MLSAreaMajor,
                             options: 'i'
                         }
                     }
@@ -1038,6 +1065,67 @@ Stratus.Services.Idx = [
                     ) {
                         whereQuery.BedroomsTotal = {gte: parseInt(where.Bedrooms, 10)}
                     }
+
+
+                    // ---------------------
+                    // Generic Search Fields
+                    // ---------------------
+                    whereQuery.and = []
+                    // Location
+                    if (Object.prototype.hasOwnProperty.call(where, 'Location') && where.Location !== '') {
+
+                        whereQuery.and.push({
+                            or: [
+                                {
+                                    City: {
+                                        like: where.Location,
+                                        options: 'i'
+                                    }
+                                },
+                                {
+                                    CityRegion: {
+                                        like: where.Location,
+                                        options: 'i'
+                                    }
+                                },
+                                {
+                                    MLSAreaMajor: {
+                                        like: where.Location,
+                                        options: 'i'
+                                    }
+                                },
+                                {
+                                    PostalCode: {
+                                        like: where.Location,
+                                        options: 'i'
+                                    }
+                                }
+                            ]
+                        })
+                    }
+                    // Neighborhood
+                    if (Object.prototype.hasOwnProperty.call(where, 'Neighborhood') && where.Neighborhood !== '') {
+
+                        whereQuery.and.push({
+                            or: [
+                                {
+                                    CityRegion: {
+                                        like: where.Neighborhood,
+                                        options: 'i'
+                                    }
+                                },
+                                {
+                                    MLSAreaMajor: {
+                                        like: where.Neighborhood,
+                                        options: 'i'
+                                    }
+                                }
+                            ]
+                        })
+                    }
+
+
+
                     return whereQuery
                 }
 
@@ -1851,6 +1939,8 @@ Stratus.Services.Idx = [
                         'StreetSuffix',
                         'UnitNumber',
                         'City',
+                        'CityRegion',
+                        'MLSAreaMajor',
                         'CountyOrParish',
                         'StateOrProvince',
                         'ListPrice',

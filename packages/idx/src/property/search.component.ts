@@ -383,9 +383,16 @@ Stratus.Components.IdxPropertySearch = {
             $scope.options.query = newQuery || {}
             // Let's ensure these values always exist
             $scope.options.query.Status = $scope.options.query.Status || []
+            $scope.options.query.ListingId = $scope.options.query.ListingId || ''
             $scope.options.query.ListingType = $scope.options.query.ListingType || []
             $scope.options.query.Order = $scope.options.query.Order || null
             $scope.options.query.City = $scope.options.query.City || ''
+            // NOTE: Neighborhood is a generic field, and we should probably be able to pass this to the API generically and the API turns this into an OR
+            $scope.options.query.CityRegion = $scope.options.query.CityRegion || ''
+            $scope.options.query.MLSAreaMajor = $scope.options.query.MLSAreaMajor || ''
+            // NOTE: this is a generic field meant to send to the APi to search CityRegion and MLSAreaMajor
+            $scope.options.query.Location = $scope.options.query.Location || ''
+            $scope.options.query.Neighborhood = $scope.options.query.Neighborhood || ''
             $scope.options.query.ListPriceMin = $scope.options.query.ListPriceMin || null
             $scope.options.query.ListPriceMax = $scope.options.query.ListPriceMax || null
             $scope.options.query.Bathrooms = $scope.options.query.Bathrooms || null
