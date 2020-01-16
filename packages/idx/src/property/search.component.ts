@@ -394,6 +394,8 @@ Stratus.Components.IdxPropertySearch = {
             // NOTE: this is a generic field meant to send to the APi to search CityRegion and MLSAreaMajor
             // $scope.options.query.Location = $scope.options.query.Location || ''
             // $scope.options.query.Neighborhood = $scope.options.query.Neighborhood || ''
+            $scope.options.query.PostalCode = $scope.options.query.PostalCode || []
+            $scope.options.query.AreaId = $scope.options.query.AreaId || []
             $scope.options.query.ListPriceMin = $scope.options.query.ListPriceMin || null
             $scope.options.query.ListPriceMax = $scope.options.query.ListPriceMax || null
             $scope.options.query.Bathrooms = $scope.options.query.Bathrooms || null

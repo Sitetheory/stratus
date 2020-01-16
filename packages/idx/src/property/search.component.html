@@ -3,7 +3,7 @@
         <h2 data-ng-show="widgetName" data-ng-bind="widgetName"></h2>
         <div class="search-input">
             <md-input-container class="md-block minimal">
-                <label>Enter city</label>
+                <label>City, Neighborhood, Zip</label>
                 <input data-ng-model="options.query.City" type="text" maxlength="250"
                        data-ng-keyup="$event.keyCode == 13 && options.query.City && searchProperties()"
                        autocomplete="off"
@@ -14,13 +14,51 @@
 
     <div class="search-row" data-layout="row" data-layout-align="space-around center">
 
-        <a class="open-filters" ng-click="showInlinePopup($event, '.stratus-idx-property-search-menu')">
-            Show More Filters
-        </a>
-
         <div style="display: none; visibility: hidden;">
             <div class="stratus-idx-property-search-menu md-whiteframe-z2">
                 <div class="outer-padding" data-layout="column" data-layout-align="space-around center">
+
+
+                    <div class="property-specs" data-layout="row">
+                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                            <md-input-container class="md-block minimal">
+                                <label>Min Price</label>
+                                <!-- https://stackoverflow.com/questions/36091421/how-to-add-thousand-separating-commas-for-numbers-in-angularjs/36091637 -->
+                                <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
+                            </md-input-container>
+                        </div>
+                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                            <md-input-container class="md-block minimal">
+                                <label>Max Price</label>
+                                <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
+                            </md-input-container>
+                        </div>
+                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                            <md-input-container class="md-block minimal">
+                                <label>Beds</label>
+                                <md-select data-ng-model="options.query.Bedrooms">
+                                    <md-option></md-option>
+                                    <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
+                                        {{option.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                            <md-input-container class="md-block minimal">
+                                <label>Baths</label>
+                                <md-select data-ng-model="options.query.Bathrooms">
+                                    <md-option></md-option>
+                                    <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
+                                        {{option.name}}
+                                    </md-option>
+                                </md-select>
+                            </md-input-container>
+                        </div>
+                    </div>
+
+                    <div class="property-specs-border dotted-spaced-underline"></div>
+
 
                     <div class="toggle-switch" data-layout="row" data-layout-align="center center" aria-label="Listings to Buy or Rent">
                         <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}" data-flex>
@@ -70,44 +108,6 @@
                     </div>
 
                     <div class="sale-status-border dotted-spaced-underline"></div>
-
-                    <div class="property-specs" data-layout="row">
-                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                            <md-input-container class="md-block minimal">
-                                <label>Min Price</label>
-                                <!-- https://stackoverflow.com/questions/36091421/how-to-add-thousand-separating-commas-for-numbers-in-angularjs/36091637 -->
-                                <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
-                            </md-input-container>
-                        </div>
-                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                            <md-input-container class="md-block minimal">
-                                <label>Max Price</label>
-                                <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
-                            </md-input-container>
-                        </div>
-                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                            <md-input-container class="md-block minimal">
-                                <label>Beds</label>
-                                <md-select data-ng-model="options.query.Bedrooms">
-                                    <md-option></md-option>
-                                    <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
-                                        {{option.name}}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div>
-                        <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                            <md-input-container class="md-block minimal">
-                                <label>Baths</label>
-                                <md-select data-ng-model="options.query.Bathrooms">
-                                    <md-option></md-option>
-                                    <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
-                                        {{option.name}}
-                                    </md-option>
-                                </md-select>
-                            </md-input-container>
-                        </div>
-                    </div>
 
                     <!--<div class="property-neighborhood" data-layout="row" data-layout-align="space-around center" aria-label="Listing Zoning">
                         <md-input-container class="md-block minimal">
@@ -167,6 +167,7 @@
                         ></md-button>
                     </div>
 
+                    <!-- Not needed for public search
                     <div data-layout="row" data-layout-align="space-around center">
                         <md-chips
                                 class="agent-license font-secondary"
@@ -181,6 +182,7 @@
                                 data-delete-hint="Press delete to remove License"
                         ></md-chips>
                     </div>
+                    -->
 
                     <div data-layout="row" data-layout-align="space-around center">
                         <a class="btn" data-ng-click="searchProperties();filterMenu.close();">Search</a>
@@ -189,6 +191,11 @@
                 </div>
             </div>
         </div>
+
+        <a class="open-filters" ng-click="showInlinePopup($event, '.stratus-idx-property-search-menu')">
+        Show More Filters
+        </a>
+
     </div>
 
     <div class="search-row" data-layout="row" data-layout-align="space-around center">
