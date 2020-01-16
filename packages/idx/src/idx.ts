@@ -34,6 +34,8 @@ export interface WhereOptions {
     City?: string,
     CityRegion?: string,
     MLSAreaMajor?: string,
+    PostalCode?: string[] | string,
+    AreaId?: string[] | string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
@@ -1021,6 +1023,28 @@ Stratus.Services.Idx = [
                             options: 'i'
                         }
                     }
+                    // PostalCode
+                    if (Object.prototype.hasOwnProperty.call(where, 'PostalCode') && where.PostalCode !== '') {
+                        if (typeof where.PostalCode === 'string') {
+                            where.PostalCode = [where.PostalCode]
+                        }
+                        if (where.PostalCode.length > 0) {
+                            whereQuery.PostalCode = {
+                                inq: where.PostalCode
+                            }
+                        }
+                    }
+                    // AreaId
+                    if (Object.prototype.hasOwnProperty.call(where, 'AreaId') && where.AreaId !== '') {
+                        if (typeof where.AreaId === 'string') {
+                            where.AreaId = [where.AreaId]
+                        }
+                        if (where.AreaId.length > 0) {
+                            whereQuery.AreaId = {
+                                inq: where.AreaId
+                            }
+                        }
+                    }
                     // CityRegion
                     if (Object.prototype.hasOwnProperty.call(where, 'CityRegion') && where.CityRegion !== '') {
                         whereQuery.CityRegion = {
@@ -1954,6 +1978,7 @@ Stratus.Services.Idx = [
                         'StreetSuffix',
                         'UnitNumber',
                         'City',
+                        'PostalCode',
                         'CityRegion',
                         'MLSAreaMajor',
                         'CountyOrParish',

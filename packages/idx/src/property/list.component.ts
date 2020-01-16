@@ -124,9 +124,12 @@ Stratus.Components.IdxPropertyList = {
             // NOTE: this is a generic field meant to combine in the API
             // $scope.query.where.Neighborhood = $scope.query.where.Neighborhood || ''
             // $scope.query.where.Location = $scope.query.where.Location || ''
+            $scope.query.where.PostalCode = $scope.query.where.PostalCode || []
+            $scope.query.where.AreaId = $scope.query.where.AreaId || []
             $scope.query.where.Status = $scope.query.where.Status || ['Active', 'Contract']
             $scope.query.where.ListingType = $scope.query.where.ListingType || ['House', 'Condo']
             $scope.query.where.AgentLicense = $scope.query.where.AgentLicense || []
+
 
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
 
