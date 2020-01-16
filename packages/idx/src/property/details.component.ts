@@ -172,13 +172,16 @@ Stratus.Components.IdxPropertyDetails = {
                         Stories: 'Stories',
                         StructureType: 'Structure Type',
                         // TODO: append LivingAreaUnits
-                        LivingArea: {name: 'Living Area', append: '$LivingAreaUnits', comma: true},
+                        // LivingArea: {name: 'Living Area', append: '$LivingAreaUnits', comma: true},
+                        LivingArea: {name: 'Living Area', comma: true},
                         // TODO: append LeasableAreaUnits
-                        LeasableArea: {name: 'Living Area', append: '$LeasableAreaUnits', comma: true},
+                        // LeasableArea: {name: 'Living Area', append: '$LeasableAreaUnits', comma: true},
+                        LeasableArea: {name: 'Living Area', comma: true},
                         LotSizeAcres: {name: 'Lot Size', append: ' Acres', comma: true},
                         LotSizeSquareFeet: {name: 'Lot Size', append: ' SqFt', comma: true},
                         // TODO: append LotSizeAreaUnits
-                        LotSizeArea: {name: 'Lot Size', append: '$LotSizeAreaUnits', comma: true},
+                        // LotSizeArea: {name: 'Lot Size', append: '$LotSizeAreaUnits', comma: true},
+                        LotSizeArea: {name: 'Lot Size', comma: true},
                         HorseYN: {true: 'Horse Property: Yes', false: ''}
                     }
                 },

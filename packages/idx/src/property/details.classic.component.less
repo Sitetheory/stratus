@@ -233,9 +233,27 @@ stratus-idx-property-details {
 
     /* Additional Photos */
     &.additional-photos {
-      stratus-carousel {
+      stratus-swiper-carousel {
         .swiper-main {
-          max-height: 600px;
+          max-height: 800px;
+        }
+
+        /* Navigation */
+        .swiper-button-next,
+        .swiper-button-prev,
+        .swiper-container-rtl .swiper-button-next,
+        .swiper-container-rtl .swiper-button-prev {
+          &::after {
+            transition: all 0.2s ease-out;
+            color: #fff;
+            padding: 0 12px;
+            background: rgba(0, 0, 0, 0.08);
+          }
+          &:hover {
+            &::after {
+              background: rgba(0, 0, 0, 0.15);
+            }
+          }
         }
       }
     }

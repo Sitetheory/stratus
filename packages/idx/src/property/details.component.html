@@ -94,27 +94,42 @@
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
                         </li>
                         <li data-ng-if="::model.data.LivingArea" aria-label="Living Area">
+                            Living Area:
                             <span data-ng-bind="::model.data.LivingArea | number"></span>
                             <span data-ng-if="::model.data.LivingAreaUnits">
 								<span data-ng-bind="::model.data.LivingAreaUnits"></span>
 							</span>
+                            <span data-ng-if="::!model.data.LivingAreaUnits">
+								Square Feet
+							</span>
                         </li>
                         <li data-ng-if="::model.data.LeasableArea" aria-label="Leasable Area">
+                            Leasable:
                             <span data-ng-bind="::model.data.LeasableArea | number"></span>
                             <span data-ng-if="::model.data.LeasableAreaUnits">
 								<span data-ng-bind="::model.data.LeasableAreaUnits"></span>
 							</span>
+                            <span data-ng-if="::!model.data.LeasableAreaUnits">
+								Square Feet
+							</span>
                         </li>
                         <li data-ng-if="::model.data.BuildingAreaTotal" aria-label="Building Area">
+                            Building:
                             <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span>
                             <span data-ng-if="::model.data.BuildingAreaUnits">
 								<span data-ng-bind="::model.data.BuildingAreaUnits"></span>
+							</span>
+                            <span data-ng-if="::!model.data.BuildingAreaUnits">
+								Square Feet
 							</span>
                         </li>
                         <li data-ng-if="::model.data.LotSizeArea" aria-label="Lot Size">
                             Lot: <span data-ng-bind="::model.data.LotSizeArea | number"></span>
                             <span data-ng-if="::model.data.LotSizeUnits">
 								<span data-ng-bind="::model.data.LotSizeUnits"></span>
+							</span>
+                            <span data-ng-if="::!model.data.LotSizeUnits">
+								Square Feet
 							</span>
                         </li>
                         <li data-ng-if="!model.data.LotSizeArea && model.data.LotSizeAcres" aria-label="Lot Size Acres">
