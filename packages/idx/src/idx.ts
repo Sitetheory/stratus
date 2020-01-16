@@ -652,7 +652,22 @@ Stratus.Services.Idx = [
                                     }
                                 }
                             }
-                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listtracAnalytics')) {
+                            if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listTrac')) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(
+                                        response.data.integrations.analytics.listTrac, 'accountId'
+                                    )
+                                    && _.isString(response.data.integrations.analytics.listTrac.accountId)
+                                    && response.data.integrations.analytics.listTrac.accountId !== ''
+                                ) {
+                                    sharedValues.integrations.analytics.listTrac = {
+                                        accountId: response.data.integrations.analytics.listTrac.accountId
+                                    }
+                                    ListTrac.setAccountId(sharedValues.integrations.analytics.listTrac.accountId)
+                                    // FIXME we only need to load ListTrac/send an event when the the MLS is whitelisted for it
+                                }
+                            } else if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listtracAnalytics')) {
+                                // FIXME this is a placeholder until Sitetheory is fixed (listtracAnalytics changed to listTrac)
                                 if (
                                     Object.prototype.hasOwnProperty.call(
                                         response.data.integrations.analytics.listtracAnalytics, 'accountId'
