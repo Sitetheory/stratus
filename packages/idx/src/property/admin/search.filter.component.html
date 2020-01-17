@@ -242,6 +242,21 @@
                         </md-select>
                     </md-input-container>
                 </div>
+                <div class="search-input">
+                    <md-input-container flex>
+                        <label>Restrict Data Source</label>
+                        <!-- TODO fetch the allowed services. Will add a option to request a token on load
+                        (normally this widget waits until there is a search to perform to prevent unneeded loading) -->
+                        <md-select data-ng-model="options.service" placeholder="Restrict Data Source" multiple>
+                            <md-option value="0">Exclusive (personal)</md-option>
+                            <md-option value="1">MLS Listings Inc</md-option>
+                            <md-option value="2">SFARMLS</md-option>
+                            <md-option value="3">BAREIS</md-option>
+                            <md-option value="8">CCAR</md-option>
+                            <md-option value="9">Bridge MLS</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
             </div>
 
         </div>
