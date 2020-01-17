@@ -35,7 +35,7 @@ export interface WhereOptions {
     CityRegion?: string,
     MLSAreaMajor?: string,
     PostalCode?: string[] | string,
-    AreaId?: string[] | string,
+    AreaId?: string[] | string, // MLSL only
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
@@ -181,6 +181,7 @@ interface TokenResponse {
 interface MongoWhereQuery {
     [key: string]: string | string[] | number | MongoWhereQuery[] | {
         inq?: string[] | number[],
+        in?: string[] | number[], // Only for nested queries
         between?: number[],
         gte?: number,
         lte?: number,
@@ -1034,14 +1035,14 @@ Stratus.Services.Idx = [
                             }
                         }
                     }
-                    // AreaId
+                    // AreaId (MLSL only)
                     if (Object.prototype.hasOwnProperty.call(where, 'AreaId') && where.AreaId !== '') {
                         if (typeof where.AreaId === 'string') {
                             where.AreaId = [where.AreaId]
                         }
                         if (where.AreaId.length > 0) {
-                            whereQuery.AreaId = {
-                                inq: where.AreaId
+                            whereQuery['_unmapped.AreaID'] = {
+                                in: where.AreaId // Note: only 'in' seems to work as a replacement for inq when nested in another object
                             }
                         }
                     }
@@ -1978,7 +1979,6 @@ Stratus.Services.Idx = [
                         'StreetSuffix',
                         'UnitNumber',
                         'City',
-                        'PostalCode',
                         'CityRegion',
                         'MLSAreaMajor',
                         'CountyOrParish',

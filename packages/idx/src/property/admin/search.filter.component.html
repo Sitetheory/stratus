@@ -9,8 +9,8 @@
             <div class="location-specs" data-layout="row">
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-input-container class="md-block minimal">
-                        <label>City</label>
-                        <input data-ng-model="options.query.City"
+                        <label>City, Neighborhood, Zip</label>
+                        <input data-ng-model="options.query.Location"
                                type="text"
                                maxlength="250"
                                autocomplete="off">
@@ -41,7 +41,7 @@
                             data-md-enable-chip-edit="true"
                             data-md-add-on-blur="true"
                             data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
-                            data-placeholder="Area ID"
+                            data-placeholder="Area ID (MLSL Only)"
                             data-secondary-placeholder="+AreaID"
                             data-delete-button-label="Remove ID"
                             data-delete-hint="Press delete to remove ID"
@@ -79,7 +79,6 @@
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-input-container class="md-block minimal">
                         <label>Min Price</label>
-                        <!-- https://stackoverflow.com/questions/36091421/how-to-add-thousand-separating-commas-for-numbers-in-angularjs/36091637 -->
                         <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
                     </md-input-container>
                 </div>
