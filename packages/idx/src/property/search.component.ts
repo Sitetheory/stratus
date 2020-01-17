@@ -168,8 +168,12 @@ Stratus.Components.IdxPropertySearch = {
 
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
         }
+
         $scope.$watch('options.query.ListingType', () => {
-            if ($scope.options.selection.ListingType.list) {
+            // TODO: Consider Better solution? I just added the check to see if $scope.options.query is set
+            // because there are cases where $scope.options.query is not defined (null). This happens on admin
+            // edit page load  for a new record where nothing has been set on a page yet.
+            if ($scope.options.query && $scope.options.query.ListingType && $scope.options.selection.ListingType.list) {
                 if (!_.isArray($scope.options.query.ListingType)) {
                     $scope.options.query.ListingType = [$scope.options.query.ListingType]
                 }
