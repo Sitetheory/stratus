@@ -173,7 +173,11 @@ Stratus.Components.IdxPropertySearch = {
             // TODO: Consider Better solution? I just added the check to see if $scope.options.query is set
             // because there are cases where $scope.options.query is not defined (null). This happens on admin
             // edit page load  for a new record where nothing has been set on a page yet.
-            if ($scope.options.query && $scope.options.query.ListingType && $scope.options.selection.ListingType.list) {
+            // Davis: removed check for $scope.options.query.ListingType as if it's not an Array will create it
+            if ($scope.options.query && $scope.options.selection.ListingType.list) {
+                if (!Object.prototype.hasOwnProperty.call($scope.options.query, 'ListingType')) {
+                    $scope.options.query.ListingType = []
+                }
                 if (!_.isArray($scope.options.query.ListingType)) {
                     $scope.options.query.ListingType = [$scope.options.query.ListingType]
                 }

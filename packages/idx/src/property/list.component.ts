@@ -115,15 +115,14 @@ Stratus.Components.IdxPropertyList = {
             if (_.isArray($scope.query.where)) {
                 delete $scope.query.where
             }
-            /** type {object} */
+            /* List of default or blank values */
             $scope.query.where = $scope.query.where || {}
-            // $scope.query.where.ListingId = $scope.query.where.ListingId || ''
+            $scope.query.where.ListingId = $scope.query.where.ListingId || ''
             $scope.query.where.City = $scope.query.where.City || ''
-            // $scope.query.where.CityRegion = $scope.query.where.CityRegion || ''
-            // $scope.query.where.MLSAreaMajor = $scope.query.where.MLSAreaMajor || ''
-            // NOTE: this is a generic field meant to combine in the API
-            // $scope.query.where.Neighborhood = $scope.query.where.Neighborhood || ''
-            // $scope.query.where.Location = $scope.query.where.Location || ''
+            $scope.query.where.CityRegion = $scope.query.where.CityRegion || ''
+            $scope.query.where.MLSAreaMajor = $scope.query.where.MLSAreaMajor || '' // Not setup
+            $scope.query.where.Neighborhood = $scope.query.where.Neighborhood || ''
+            $scope.query.where.Location = $scope.query.where.Location || ''
             $scope.query.where.PostalCode = $scope.query.where.PostalCode || []
             $scope.query.where.AreaId = $scope.query.where.AreaId || []
             $scope.query.where.Status = $scope.query.where.Status || ['Active', 'Contract']
@@ -245,6 +244,7 @@ Stratus.Components.IdxPropertyList = {
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
                 if (updateUrl) {
+                    // console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
                     // Display the URL query in the address bar
                     Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }

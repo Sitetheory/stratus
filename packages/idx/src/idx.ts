@@ -26,6 +26,8 @@ import {cookie} from '@stratusjs/core/environment'
 
 // Reusable Objects
 export interface WhereOptions {
+    [key: string]: any,
+
     // Property
     ListingKey?: string,
     ListingId?: string,
@@ -976,189 +978,200 @@ Stratus.Services.Idx = [
                 function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
                     const whereQuery: MongoWhereQuery = {}
                     const andStatement: MongoWhereQuery[] = [] // TS detecting [] as string[] otherwise
-                    // ListingKey
-                    if (Object.prototype.hasOwnProperty.call(where, 'ListingKey') && where.ListingKey !== '') {
-                        whereQuery.ListingKey = where.ListingKey
+
+                    /**
+                     * List of Fields we can search for within the Widget's URL and option on List pages
+                     * The key is the field that the Widget accepts/expects
+                     * The apiField is the key that the microIdx can accept
+                     */
+                    const searchPossibilities: {
+                        [key: string]: {
+                            type: 'stringEquals' |
+                                'stringLike' |
+                                'stringIncludesArray' |
+                                'stringIncludesArrayAlternative' |
+                                'numberEqualGreater' |
+                                'numberEqualLess' |
+                                'andOr',
+                            apiField?: string, // Used if the widgetField name is different from the field in database
+                            andOr?: Array<{
+                                apiField: string,
+                                type: 'stringLike'
+                                // | 'stringEquals'
+                            }>,
+                        }
+                    } = {
+                        ListingKey: {
+                            type: 'stringEquals'
+                        },
+                        ListingId: {
+                            type: 'stringEquals'
+                        },
+                        ListingType: {
+                            type: 'stringIncludesArray'
+                        },
+                        Status: {
+                            type: 'stringIncludesArray'
+                        },
+                        ListPriceMin: {
+                            type: 'numberEqualGreater',
+                            apiField: 'ListPrice'
+                        },
+                        ListPriceMax: {
+                            type: 'numberEqualLess',
+                            apiField: 'ListPrice'
+                        },
+                        Bathrooms: {
+                            type: 'numberEqualGreater'
+                        },
+                        Bedrooms: {
+                            type: 'numberEqualGreater',
+                            apiField: 'BedroomsTotal'
+                        },
+                        AgentLicense: {
+                            type: 'stringIncludesArray'
+                        },
+                        City: {
+                            type: 'stringLike'
+                        },
+                        CityRegion: {
+                            type: 'stringLike'
+                        },
+                        MLSAreaMajor: {
+                            type: 'stringLike'
+                        },
+                        PostalCode: {
+                            type: 'stringIncludesArray'
+                        },
+                        AreaId: {
+                            // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                            type: 'stringIncludesArray',
+                            apiField: '_unmapped.AreaID'
+                        },
+                        Location: {
+                            type: 'andOr',
+                            andOr: [
+                                {apiField: 'City', type: 'stringLike'},
+                                {apiField: 'CityRegion', type: 'stringLike'},
+                                {apiField: 'MLSMajorArea', type: 'stringLike'},
+                                {apiField: 'PostalCode', type: 'stringLike'}
+                            ]
+                        },
+                        Neighborhood: {
+                            type: 'andOr',
+                            andOr: [
+                                {apiField: 'CityRegion', type: 'stringLike'},
+                                {apiField: 'MLSMajorArea', type: 'stringLike'}
+                            ]
+                        }
                     }
-                    // ListingId
-                    if (Object.prototype.hasOwnProperty.call(where, 'ListingId') && where.ListingId !== '') {
-                        whereQuery.ListingId = where.ListingId
-                    }
-                    // ListType
-                    if (Object.prototype.hasOwnProperty.call(where, 'ListingType') && where.ListingType !== '') {
-                        if (typeof where.ListingType === 'string') {
-                            where.ListingType = [where.ListingType]
+
+                    // This loops through all the set Fields above to convert into a where query
+                    for (const [widgetField, searchValue] of Object.entries(searchPossibilities)) {
+                        if (!Object.prototype.hasOwnProperty.call(searchValue, 'apiField')) {
+                            searchValue.apiField = widgetField
                         }
-                        if (where.ListingType.length > 0) {
-                            whereQuery.ListingType = {
-                                inq: where.ListingType
-                            }
-                        }
-                    }
-                    // Status
-                    if (Object.prototype.hasOwnProperty.call(where, 'Status') && where.Status !== '') {
-                        if (typeof where.Status === 'string') {
-                            where.Status = [where.Status]
-                        }
-                        if (where.Status.length > 0) {
-                            whereQuery.Status = {
-                                inq: where.Status
-                            }
-                        }
-                    }
-                    // Agent License
-                    if (Object.prototype.hasOwnProperty.call(where, 'AgentLicense') && where.AgentLicense !== '') {
-                        if (typeof where.AgentLicense === 'string') {
-                            where.AgentLicense = [where.AgentLicense]
-                        }
-                        if (where.AgentLicense.length > 0) {
-                            whereQuery.AgentLicense = {
-                                inq: where.AgentLicense
-                            }
-                        }
-                    }
-                    // City
-                    if (Object.prototype.hasOwnProperty.call(where, 'City') && where.City !== '') {
-                        whereQuery.City = {
-                            like: where.City,
-                            options: 'i'
-                        }
-                    }
-                    // PostalCode
-                    if (Object.prototype.hasOwnProperty.call(where, 'PostalCode') && where.PostalCode !== '') {
-                        if (typeof where.PostalCode === 'string') {
-                            where.PostalCode = [where.PostalCode]
-                        }
-                        if (where.PostalCode.length > 0) {
-                            whereQuery.PostalCode = {
-                                inq: where.PostalCode
-                            }
-                        }
-                    }
-                    // AreaId (MLSL only)
-                    if (Object.prototype.hasOwnProperty.call(where, 'AreaId') && where.AreaId !== '') {
-                        if (typeof where.AreaId === 'string') {
-                            where.AreaId = [where.AreaId]
-                        }
-                        if (where.AreaId.length > 0) {
-                            whereQuery['_unmapped.AreaID'] = {
-                                in: where.AreaId // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                            }
-                        }
-                    }
-                    // CityRegion
-                    if (Object.prototype.hasOwnProperty.call(where, 'CityRegion') && where.CityRegion !== '') {
-                        whereQuery.CityRegion = {
-                            like: where.CityRegion,
-                            options: 'i'
-                        }
-                    }
-                    // MLSAreaMajor
-                    if (Object.prototype.hasOwnProperty.call(where, 'MLSAreaMajor') && where.MLSAreaMajor !== '') {
-                        whereQuery.MLSAreaMajor = {
-                            like: where.MLSAreaMajor,
-                            options: 'i'
-                        }
-                    }
-                    // List Price Min
-                    if (Object.prototype.hasOwnProperty.call(where, 'ListPriceMin') && where.ListPriceMin && where.ListPriceMin !== 0) {
-                        whereQuery.ListPrice = {gte: parseInt(where.ListPriceMin, 10)}
-                    }
-                    // List Price Max
-                    if (Object.prototype.hasOwnProperty.call(where, 'ListPriceMax') && where.ListPriceMax && where.ListPriceMax !== 0) {
+
                         if (
-                            Object.prototype.hasOwnProperty.call(whereQuery, 'ListPrice') &&
-                            Object.prototype.hasOwnProperty.call(whereQuery.ListPrice, 'gte')
+                            searchValue.type === 'stringEquals' &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] !== ''
                         ) {
-                            whereQuery.ListPrice = {
-                                between: [
-                                    parseInt(where.ListPriceMin, 10),
-                                    parseInt(where.ListPriceMax, 10)
-                                ]
+                            whereQuery[searchValue.apiField] = where.ListingKey
+                        } else if (
+                            searchValue.type === 'stringLike' &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] !== ''
+                        ) {
+                            whereQuery[searchValue.apiField] = {
+                                like: where[widgetField],
+                                options: 'i'
                             }
-                        } else {
-                            whereQuery.ListPrice = {lte: parseInt(where.ListPriceMax, 10)}
-                        }
-                    }
-                    // Baths Min
-                    if (
-                        Object.prototype.hasOwnProperty.call(where, 'Bathrooms') &&
-                        where.Bathrooms && where.Bathrooms !== 0
-                    ) {
-                        whereQuery.Bathrooms = {gte: parseInt(where.Bathrooms, 10)}
-                        /*if (!Object.prototype.hasOwnProperty.call(whereQuery, 'and')) {
-                            whereQuery.and = []
-                        }
-                        whereQuery.and.push({
-                            or: [
-                                {BathroomsFull: {gte: parseInt(where.BathroomsFullMin, 10)}},
-                                {BathroomsTotalInteger: {gte: parseInt(where.BathroomsFullMin, 10)}}
-                            ]
-                        })*/
-                    }
-                    // Beds Min
-                    if (
-                        Object.prototype.hasOwnProperty.call(where, 'Bedrooms') &&
-                        where.Bedrooms && where.Bedrooms !== 0
-                    ) {
-                        whereQuery.BedroomsTotal = {gte: parseInt(where.Bedrooms, 10)}
-                    }
-
-                    // ---------------------
-                    // Generic Search Fields
-                    // ---------------------
-
-                    // Location
-                    if (Object.prototype.hasOwnProperty.call(where, 'Location') && where.Location !== '') {
-
-                        andStatement.push({
-                            or: [
-                                {
-                                    City: {
-                                        like: where.Location,
-                                        options: 'i'
-                                    }
-                                },
-                                {
-                                    CityRegion: {
-                                        like: where.Location,
-                                        options: 'i'
-                                    }
-                                },
-                                {
-                                    MLSAreaMajor: {
-                                        like: where.Location,
-                                        options: 'i'
-                                    }
-                                },
-                                {
-                                    PostalCode: {
-                                        like: where.Location,
-                                        options: 'i'
-                                    }
+                        } else if (
+                            searchValue.type === 'stringIncludesArray' &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] !== ''
+                        ) {
+                            if (typeof where[widgetField] === 'string') {
+                                where[widgetField] = [where[widgetField]]
+                            }
+                            if (where[widgetField].length > 0) {
+                                whereQuery[searchValue.apiField] = {
+                                    inq: where[widgetField]
                                 }
-                            ]
-                        })
-                    }
-                    // Neighborhood
-                    if (Object.prototype.hasOwnProperty.call(where, 'Neighborhood') && where.Neighborhood !== '') {
-
-                        andStatement.push({
-                            or: [
-                                {
-                                    CityRegion: {
-                                        like: where.Neighborhood,
-                                        options: 'i'
-                                    }
-                                },
-                                {
-                                    MLSAreaMajor: {
-                                        like: where.Neighborhood,
-                                        options: 'i'
-                                    }
+                            }
+                        } else if (
+                            searchValue.type === 'stringIncludesArrayAlternative' &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] !== ''
+                        ) {
+                            // For some reason, `inq` doesn't work in certain situations. This is to overcome that
+                            if (typeof where[widgetField] === 'string') {
+                                where[widgetField] = [where[widgetField]]
+                            }
+                            if (where[widgetField].length > 0) {
+                                whereQuery[searchValue.apiField] = {
+                                    in: where[widgetField]
                                 }
-                            ]
-                        })
+                            }
+                        } else if (
+                            searchValue.type === 'numberEqualGreater' &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] &&
+                            where[widgetField] !== 0
+                        ) {
+                            if (
+                                Object.prototype.hasOwnProperty.call(whereQuery, searchValue.apiField) &&
+                                Object.prototype.hasOwnProperty.call(whereQuery[searchValue.apiField], 'lte')
+                            ) {
+                                // If a Less than already is being searched
+                                whereQuery[searchValue.apiField] = {
+                                    between: [
+                                        parseInt(where[widgetField], 10),
+                                        parseInt(_.get(whereQuery[searchValue.apiField], 'lte'), 10)
+                                    ]
+                                }
+                            } else {
+                                whereQuery[searchValue.apiField] = {gte: parseInt(where[widgetField], 10)}
+                            }
+                        } else if (
+                            searchValue.type === 'numberEqualLess' &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] &&
+                            where[widgetField] !== 0
+                        ) {
+                            if (
+                                Object.prototype.hasOwnProperty.call(whereQuery, searchValue.apiField) &&
+                                Object.prototype.hasOwnProperty.call(whereQuery[searchValue.apiField], 'gte')
+                            ) {
+                                // If a Greater than already is being searched
+                                whereQuery[searchValue.apiField] = {
+                                    between: [
+                                        parseInt(_.get(whereQuery[searchValue.apiField], 'gte'), 10),
+                                        parseInt(where[widgetField], 10)
+                                    ]
+                                }
+                            } else {
+                                whereQuery[searchValue.apiField] = {lte: parseInt(where[widgetField], 10)}
+                            }
+                        } else if (
+                            searchValue.type === 'andOr' &&
+                            Object.prototype.hasOwnProperty.call(searchValue, 'andOr') &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] !== ''
+                        ) {
+                            const orStatement: MongoWhereQuery[] = []
+                            searchValue.andOr.forEach((orObject) => {
+                                orStatement.push({
+                                    [orObject.apiField]: {
+                                        like: where[widgetField],
+                                        options: 'i'
+                                    }
+                                })
+                            })
+
+                            andStatement.push({or: orStatement})
+                        }
                     }
 
                     if (!_.isEmpty(andStatement)) {
