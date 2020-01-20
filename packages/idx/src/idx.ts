@@ -37,7 +37,7 @@ export interface WhereOptions {
     CityRegion?: string,
     MLSAreaMajor?: string,
     PostalCode?: string[] | string,
-    AreaId?: string[] | string, // MLSL only
+    AreaId?: string[] | string, // MLSL only @deprecated should use MLSAreaMajor
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin

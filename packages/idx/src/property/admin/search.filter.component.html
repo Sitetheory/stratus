@@ -9,17 +9,8 @@
             <div class="location-specs" data-layout="row">
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-input-container class="md-block minimal">
-                        <label>City, Neighborhood, Zip</label>
-                        <input data-ng-model="options.query.Location"
-                               type="text"
-                               maxlength="250"
-                               autocomplete="off">
-                    </md-input-container>
-                </div>
-                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                    <md-input-container class="md-block minimal">
-                        <label>Neighborhood</label>
-                        <input data-ng-model="options.query.Neighborhood"
+                        <label>City</label>
+                        <input data-ng-model="options.query.City"
                                type="text"
                                maxlength="250"
                                autocomplete="off">
@@ -28,12 +19,27 @@
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <!--
                     <md-input-container class="md-block minimal">
-                        <label>Area ID</label>
-                        <input data-ng-model="options.query.AreaId"
+                        <label>Neighborhood</label>
+                        <input data-ng-model="options.query.Neighborhood"
                                type="text"
-                               maxlength="250" autocomplete="off">
+                               maxlength="250"
+                               autocomplete="off">
                     </md-input-container>
                     -->
+                    <md-chips
+                            class="area-id font-secondary"
+                            aria-label="Neighborhoods to Limit"
+                            data-ng-model="options.query.Neighborhood"
+                            data-md-enable-chip-edit="true"
+                            data-md-add-on-blur="true"
+                            data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                            data-placeholder="Area ID (MLSL Only)"
+                            data-secondary-placeholder="+Neighborhood"
+                            data-delete-button-label="Remove Neighborhood"
+                            data-delete-hint="Press delete to remove Neighborhood"
+                    ></md-chips>
+                </div>
+                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-chips
                             class="area-id font-secondary"
                             aria-label="Area ID(s) to Limit"
@@ -48,15 +54,6 @@
                     ></md-chips>
                 </div>
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                    <!--
-                    <md-input-container class="md-block minimal">
-                        <label>Postal Code</label>
-                        <input data-ng-model="options.query.PostalCode"
-                               type="text"
-                               maxlength="250"
-                               autocomplete="off">
-                    </md-input-container>
-                    -->
                     <md-chips
                             class="postal-code font-secondary"
                             aria-label="Postal Code(s) to Limit"
