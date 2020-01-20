@@ -86,6 +86,7 @@ Stratus.Components.IdxPropertySearch = {
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
             $scope.filterMenu = null
+            $scope.options.service = $scope.options.service || []
             $scope.options.forRent = false
 
             // Set default queries
@@ -173,7 +174,11 @@ Stratus.Components.IdxPropertySearch = {
             // TODO: Consider Better solution? I just added the check to see if $scope.options.query is set
             // because there are cases where $scope.options.query is not defined (null). This happens on admin
             // edit page load  for a new record where nothing has been set on a page yet.
-            if ($scope.options.query && $scope.options.query.ListingType && $scope.options.selection.ListingType.list) {
+            // Davis: removed check for $scope.options.query.ListingType as if it's not an Array will create it
+            if ($scope.options.query && $scope.options.selection.ListingType.list) {
+                if (!Object.prototype.hasOwnProperty.call($scope.options.query, 'ListingType')) {
+                    $scope.options.query.ListingType = []
+                }
                 if (!_.isArray($scope.options.query.ListingType)) {
                     $scope.options.query.ListingType = [$scope.options.query.ListingType]
                 }
@@ -226,6 +231,7 @@ Stratus.Components.IdxPropertySearch = {
                 currentPiece &&
                 Object.prototype.hasOwnProperty.call(currentNest, currentPiece)
             ) {
+                // console.log('checking piece', currentPiece, 'in', currentNest)
                 if (pathPieces[0]) {
                     return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
                 } else {
@@ -243,6 +249,7 @@ Stratus.Components.IdxPropertySearch = {
                     return value
                 }
             } else {
+                console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', currentNest, 'It may need to be initialized first')
                 return null
             }
         }
@@ -258,7 +265,6 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.variableSync = async (): Promise<void> => {
             $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
-
             // console.log('variables syncing: ', $scope.variableSyncing)
             const promises: any[] = []
             Object.keys($scope.variableSyncing).forEach((elementId: string) => {
@@ -266,6 +272,7 @@ Stratus.Components.IdxPropertySearch = {
                     $q(async (resolve: void | any) => {
                         const varElement = $scope.getInput(elementId)
                         if (varElement) {
+                            // console.log('got input', varElement, _.clone(varElement.val()))
                             // Form Input exists
                             const scopeVarPath = $scope.variableSyncing[elementId]
                             // convert into a real var path and set the initial value from the exiting form value
@@ -275,6 +282,7 @@ Stratus.Components.IdxPropertySearch = {
                             $scope.$watch(
                                 scopeVarPath,
                                 (value: any) => {
+                                    // console.log('detecting', scopeVarPath, 'as', value)
                                     if (
                                         _.isString(value) ||
                                         _.isNumber(value) ||

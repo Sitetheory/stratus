@@ -228,11 +228,11 @@
             <h3>Display Options</h3>
 
             <div class="display-specs"
-                 data-layout="row"
-                 data-layout-align="left"
                  aria-label="Display Specs">
                 <!-- TODO Order Options -->
-                <div class="search-input">
+                <div class="search-input"
+                     data-layout="row"
+                >
                     <md-input-container class="md-block minimal">
                         <label>Sort</label>
                         <md-select data-ng-model="options.query.Order">
@@ -242,7 +242,9 @@
                         </md-select>
                     </md-input-container>
                 </div>
-                <div class="search-input">
+                <div class="search-input"
+                     data-layout="row"
+                >
                     <md-input-container flex>
                         <label>Restrict Data Source</label>
                         <!-- TODO fetch the allowed services. Will add a option to request a token on load
@@ -253,7 +255,8 @@
                             <md-option value="2">SFARMLS</md-option>
                             <md-option value="3">BAREIS</md-option>
                             <md-option value="8">CCAR</md-option>
-                            <md-option value="9">Bridge MLS</md-option>
+                            <md-option value="9">bridgeMLS</md-option>
+                            <md-option value="11">CRMLS</md-option>
                         </md-select>
                     </md-input-container>
                 </div>
