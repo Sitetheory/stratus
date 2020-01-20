@@ -1001,13 +1001,13 @@ Stratus.Services.Idx = [
                      */
                     const searchPossibilities: {
                         [key: string]: {
-                            type: 'stringEquals' |
-                                'stringLike' |
-                                'stringIncludesArray' |
-                                'stringIncludesArrayAlternative' |
-                                'numberEqualGreater' |
-                                'numberEqualLess' |
-                                'andOr',
+                            type: 'stringEquals' | // Input is a string, needs to equal another string or number field
+                                'stringLike' | // Input is a string, needs to be similar to another string field
+                                'stringIncludesArray' | // Input is a string, needs to be contained in 1 of a number of string fields
+                                'stringIncludesArrayAlternative' | // Input is a string, needs to be contained in 1 of a number of string fields
+                                'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
+                                'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
+                                'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
                             apiField?: string, // Used if the widgetField name is different from the field in database
                             andOr?: Array<{
                                 apiField: string,
@@ -1068,7 +1068,7 @@ Stratus.Services.Idx = [
                             andOr: [
                                 {apiField: 'City', type: 'stringLike'},
                                 {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSMajorArea', type: 'stringLike'},
+                                {apiField: 'MLSAreaMajor', type: 'stringLike'},
                                 {apiField: 'PostalCode', type: 'stringLike'}
                             ]
                         },
@@ -1076,7 +1076,7 @@ Stratus.Services.Idx = [
                             type: 'andOr',
                             andOr: [
                                 {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSMajorArea', type: 'stringLike'}
+                                {apiField: 'MLSAreaMajor', type: 'stringLike'}
                             ]
                         }
                     }
