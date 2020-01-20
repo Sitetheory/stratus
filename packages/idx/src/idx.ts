@@ -1177,12 +1177,17 @@ Stratus.Services.Idx = [
                         ) {
                             const orStatement: MongoWhereQuery[] = []
                             searchValue.andOr.forEach((orObject) => {
-                                orStatement.push({
-                                    [orObject.apiField]: {
-                                        like: where[widgetField],
-                                        options: 'i'
-                                    }
-                                })
+                                if (
+                                    Object.prototype.hasOwnProperty.call(orObject, 'type') &&
+                                    orObject.apiField === 'stringLike'
+                                ) {
+                                    orStatement.push({
+                                        [orObject.apiField]: {
+                                            like: where[widgetField],
+                                            options: 'i'
+                                        }
+                                    })
+                                }
                             })
 
                             andStatement.push({or: orStatement})
