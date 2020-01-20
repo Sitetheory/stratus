@@ -256,6 +256,14 @@ Stratus.Services.Idx = [
                         maps: {}
                     }
                 }
+                // Blank options to initialize arrays
+                const defaultWhereOptions: WhereOptions = {
+                    Status: [],
+                    ListingType: [],
+                    PostalCode: [],
+                    AreaId: [],
+                    AgentLicense: []
+                }
                 let idxServicesEnabled: number[] = []
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
@@ -383,6 +391,13 @@ Stratus.Services.Idx = [
                         delete instance[listType + 'Details'][uid]
                         Stratus.Instances.Clean(detailUid)
                     }
+                }
+
+                /**
+                 * Return Blank options to initialize arrays
+                 */
+                function getDefaultWhereOptions(): WhereOptions {
+                    return _.clone(defaultWhereOptions)
                 }
 
                 /**
@@ -2205,24 +2220,25 @@ Stratus.Services.Idx = [
                     fetchProperty,
                     devLog,
                     getContactVariables,
+                    getDefaultWhereOptions,
                     getFriendlyStatus,
                     getIdxServices,
                     getListInstance,
                     getListInstanceLinks,
-                    getSearchInstanceLinks,
-                    getUrlOptionsPath,
                     getMLSVariables,
                     getOptionsFromUrl,
+                    getSearchInstanceLinks,
                     getUrlOptions,
-                    tokenKeepAuth,
+                    getUrlOptionsPath,
+                    registerDetailsInstance,
                     registerListInstance,
                     registerSearchInstance,
-                    registerDetailsInstance,
                     setIdxServices,
                     setPageTitle,
                     setTokenURL,
                     setUrlOptions,
                     sharedValues,
+                    tokenKeepAuth,
                     refreshUrlOptions,
                     unregisterDetailsInstance
                 }

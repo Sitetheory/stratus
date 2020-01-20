@@ -116,19 +116,11 @@ Stratus.Components.IdxPropertyList = {
                 delete $scope.query.where
             }
             /* List of default or blank values */
-            $scope.query.where = $scope.query.where || {}
-            $scope.query.where.ListingId = $scope.query.where.ListingId || ''
-            $scope.query.where.City = $scope.query.where.City || ''
-            $scope.query.where.CityRegion = $scope.query.where.CityRegion || ''
-            $scope.query.where.MLSAreaMajor = $scope.query.where.MLSAreaMajor || '' // Not setup
-            $scope.query.where.Neighborhood = $scope.query.where.Neighborhood || ''
-            $scope.query.where.Location = $scope.query.where.Location || ''
-            $scope.query.where.PostalCode = $scope.query.where.PostalCode || []
-            $scope.query.where.AreaId = $scope.query.where.AreaId || []
-            $scope.query.where.Status = $scope.query.where.Status || ['Active', 'Contract']
-            $scope.query.where.ListingType = $scope.query.where.ListingType || ['House', 'Condo']
-            $scope.query.where.AgentLicense = $scope.query.where.AgentLicense || []
-
+            const startingQuery = $scope.query.where || {}
+            // If these are blank, set some defaults
+            startingQuery.Status = startingQuery.Status || ['Active', 'Contract']
+            startingQuery.ListingType = startingQuery.ListingType || ['House', 'Condo']
+            $scope.query.where = _.extend(Idx.getDefaultWhereOptions(), startingQuery || {})
 
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
 
