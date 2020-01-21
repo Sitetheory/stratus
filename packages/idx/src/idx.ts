@@ -24,8 +24,9 @@ import {cookie} from '@stratusjs/core/environment'
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
-// Reusable Objects
+// Reusable Objects. Keys listed are not required, but help programmers define what exists/is possible
 export interface WhereOptions {
+    // Wildcard for anything
     [key: string]: any,
 
     // Property
@@ -179,11 +180,10 @@ interface TokenResponse {
     }
 }
 
-// FIXME unable to add an array of MongoWhereQuery to and/or
 interface MongoWhereQuery {
     [key: string]: string | string[] | number | MongoWhereQuery[] | {
         inq?: string[] | number[],
-        in?: string[] | number[], // Only for nested queries
+        in?: string[] | number[], // Only for nested queries (alternative to inq)
         between?: number[],
         gte?: number,
         lte?: number,
@@ -1005,16 +1005,19 @@ Stratus.Services.Idx = [
                         [key: string]: {
                             type: 'stringEquals' | // Input is a string, needs to equal another string or number field
                                 'stringLike' | // Input is a string, needs to be similar to another string field
-                                'stringIncludesArray' | // Input is a string, needs to be contained in 1 of a number of string fields
-                                'stringIncludesArrayAlternative' | // Input is a string, needs to be contained in 1 of a number of string fields
+                                'stringLikeArray' | // Input is a string or array, one of which needs to be found similar to db string field
+                                'stringIncludesArray' | // Input is a string or array, one of which needs to be found equal to db string field
+                                'stringIncludesArrayAlternative' | // Input is a string or array, one of which needs to be found equal to db string field
                                 'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
                                 'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
                                 'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
                             apiField?: string, // Used if the widgetField name is different from the field in database
                             andOr?: Array<{
                                 apiField: string,
-                                type: 'stringLike'
-                                // | 'stringEquals'
+                                type: 'stringEquals'
+                                    | 'stringLike'
+                                    // | 'stringLikeArray'
+                                    | 'stringIncludesArray'
                             }>,
                         }
                     } = {
@@ -1090,6 +1093,7 @@ Stratus.Services.Idx = [
                         }
                     }
 
+                    // TODO this all needs to be optimized for consumption
                     // This loops through all the set Fields above to convert into a where query
                     for (const [widgetField, searchValue] of Object.entries(searchPossibilities)) {
                         if (!Object.prototype.hasOwnProperty.call(searchValue, 'apiField')) {
@@ -1101,7 +1105,7 @@ Stratus.Services.Idx = [
                             Object.prototype.hasOwnProperty.call(where, widgetField) &&
                             where[widgetField] !== ''
                         ) {
-                            whereQuery[searchValue.apiField] = where.ListingKey
+                            whereQuery[searchValue.apiField] = where[widgetField]
                         } else if (
                             searchValue.type === 'stringLike' &&
                             Object.prototype.hasOwnProperty.call(where, widgetField) &&
@@ -1110,6 +1114,27 @@ Stratus.Services.Idx = [
                             whereQuery[searchValue.apiField] = {
                                 like: where[widgetField],
                                 options: 'i'
+                            }
+                        } else if (
+                            searchValue.type === 'stringLikeArray' &&
+                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
+                            where[widgetField] !== ''
+                        ) {
+                            if (typeof where[widgetField] === 'string') {
+                                where[widgetField] = [where[widgetField]]
+                            }
+
+                            const stringLikeArrayOrStatement: MongoWhereQuery[] = []
+                            where[widgetField].forEach((requestedValue: string) => {
+                                stringLikeArrayOrStatement.push({
+                                    [searchValue.apiField]: {
+                                        like: requestedValue,
+                                        options: 'i'
+                                    }
+                                })
+                            })
+                            if (!_.isEmpty(stringLikeArrayOrStatement)) {
+                                andStatement.push({or: stringLikeArrayOrStatement})
                             }
                         } else if (
                             searchValue.type === 'stringIncludesArray' &&
@@ -1184,22 +1209,46 @@ Stratus.Services.Idx = [
                             Object.prototype.hasOwnProperty.call(where, widgetField) &&
                             where[widgetField] !== ''
                         ) {
-                            const orStatement: MongoWhereQuery[] = []
+                            // andOr works similar to the queries above, where the types are just nested ORs
+                            const andOrOrStatement: MongoWhereQuery[] = []
                             searchValue.andOr.forEach((orObject) => {
                                 if (
                                     Object.prototype.hasOwnProperty.call(orObject, 'type') &&
+                                    orObject.type === 'stringEquals'
+                                ) {
+                                    andOrOrStatement.push({
+                                        [orObject.apiField]: where[widgetField]
+                                    })
+                                } else if (
+                                    Object.prototype.hasOwnProperty.call(orObject, 'type') &&
                                     orObject.type === 'stringLike'
                                 ) {
-                                    orStatement.push({
+                                    andOrOrStatement.push({
                                         [orObject.apiField]: {
                                             like: where[widgetField],
                                             options: 'i'
                                         }
                                     })
+                                } else if (
+                                    Object.prototype.hasOwnProperty.call(orObject, 'type') &&
+                                    orObject.type === 'stringIncludesArray'
+                                ) {
+                                    if (typeof where[widgetField] === 'string') {
+                                        where[widgetField] = [where[widgetField]]
+                                    }
+                                    if (where[widgetField].length > 0) {
+                                        andOrOrStatement.push({
+                                            [orObject.apiField]: {
+                                                inq: where[widgetField]
+                                            }
+                                        })
+                                    }
                                 }
                             })
 
-                            andStatement.push({or: orStatement})
+                            if (!_.isEmpty(andOrOrStatement)) {
+                                andStatement.push({or: andOrOrStatement})
+                            }
                         }
                     }
 
