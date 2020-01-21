@@ -416,6 +416,22 @@ export class TreeComponent { // implements OnInit
         console.groupEnd()
         /* */
 
+        // Handle Propagation
+        // let settledModel = false
+        // targetNode.model.on('complete', () => {
+        //     if (settledModel) {
+        //         return
+        //     }
+        //     settledModel = true
+        //
+        //     // update pipe
+        //     // this.subscriber.next(tree)
+        //     // this.ref.detectChanges()
+        //
+        //     // propagate change
+        //     // this.collection.throttleTrigger('change')
+        // })
+
         // Start XHR
         targetNode.model.save()
 

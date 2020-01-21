@@ -422,6 +422,15 @@ export class Model extends ModelBase {
                     this.pending = false
                     this.completed = true
 
+                    // Events
+                    this.trigger('success', this)
+                    this.trigger('complete', this)
+
+                    // Propagate Collection Change Event
+                    if (this.collection instanceof Collection) {
+                        this.collection.throttleTrigger('change')
+                    }
+
                     // Promise
                     // extendDeep(this.data, this.initData)
                     resolve(this.data)
@@ -443,6 +452,15 @@ export class Model extends ModelBase {
                     // XHR Flags
                     this.pending = false
                     this.completed = true
+
+                    // Events
+                    this.trigger('error', this)
+                    this.trigger('complete', this)
+
+                    // Propagate Collection Change Event
+                    if (this.collection instanceof Collection) {
+                        this.collection.throttleTrigger('change')
+                    }
 
                     // Promise
                     reject(error)
