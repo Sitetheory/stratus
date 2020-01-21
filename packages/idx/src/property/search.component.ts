@@ -19,6 +19,7 @@ import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
 import 'stratus.directives.stringToNumber'
+import {WhereOptions} from '@stratusjs/idx/idx'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -212,6 +213,7 @@ Stratus.Components.IdxPropertySearch = {
         $scope.updateScopeValuePath = async (scopeVarPath: string, value: any): Promise<string | any> => {
             if (
                 value == null ||
+                value === 'null' ||
                 value === ''
             ) {
                 return false
@@ -389,31 +391,11 @@ Stratus.Components.IdxPropertySearch = {
 
         /**
          * Update the entirety options.query in a safe manner to ensure undefined references are not produced
-         * TODO Idx needs to export query interface
          */
-        $scope.setQuery = (newQuery?: object | any): void => {
-            $scope.options.query = newQuery || {}
-            // Let's ensure these values always exist
-            $scope.options.query.Status = $scope.options.query.Status || []
-            // $scope.options.query.ListingId = $scope.options.query.ListingId || ''
-            $scope.options.query.ListingType = $scope.options.query.ListingType || []
-            $scope.options.query.Order = $scope.options.query.Order || null
-            $scope.options.query.City = $scope.options.query.City || ''
-            // NOTE: Neighborhood is a generic field, and we should probably be able to pass this to the
-            // API generically and the API turns this into an OR
-            // $scope.options.query.CityRegion = $scope.options.query.CityRegion || ''
-            $scope.options.query.MLSAreaMajor = $scope.options.query.MLSAreaMajor || ''
-            // NOTE: this is a generic field meant to send to the APi to search CityRegion and MLSAreaMajor
-            // $scope.options.query.Location = $scope.options.query.Location || ''
-            // $scope.options.query.Neighborhood = $scope.options.query.Neighborhood || ''
-            $scope.options.query.PostalCode = $scope.options.query.PostalCode || []
-            $scope.options.query.AreaId = $scope.options.query.AreaId || []
-            $scope.options.query.ListPriceMin = $scope.options.query.ListPriceMin || null
-            $scope.options.query.ListPriceMax = $scope.options.query.ListPriceMax || null
-            $scope.options.query.Bathrooms = $scope.options.query.Bathrooms || null
-            $scope.options.query.Bedrooms = $scope.options.query.Bedrooms || null
-            $scope.options.query.AgentLicense = $scope.options.query.AgentLicense || []
-            // TODO need to search by Agent License
+        $scope.setQuery = (newQuery?: WhereOptions): void => {
+            newQuery = newQuery || {}
+            // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
+            $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
         }
 
         $scope.setQueryDefaults = (): void => {

@@ -256,6 +256,14 @@ Stratus.Services.Idx = [
                         maps: {}
                     }
                 }
+                // Blank options to initialize arrays
+                const defaultWhereOptions: WhereOptions = {
+                    Status: [],
+                    ListingType: [],
+                    PostalCode: [],
+                    AreaId: [],
+                    AgentLicense: []
+                }
                 let idxServicesEnabled: number[] = []
                 let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
                 let refreshLoginTimer: any // Timeout object
@@ -383,6 +391,13 @@ Stratus.Services.Idx = [
                         delete instance[listType + 'Details'][uid]
                         Stratus.Instances.Clean(detailUid)
                     }
+                }
+
+                /**
+                 * Return Blank options to initialize arrays
+                 */
+                function getDefaultWhereOptions(): WhereOptions {
+                    return _.clone(defaultWhereOptions)
                 }
 
                 /**
@@ -986,13 +1001,13 @@ Stratus.Services.Idx = [
                      */
                     const searchPossibilities: {
                         [key: string]: {
-                            type: 'stringEquals' |
-                                'stringLike' |
-                                'stringIncludesArray' |
-                                'stringIncludesArrayAlternative' |
-                                'numberEqualGreater' |
-                                'numberEqualLess' |
-                                'andOr',
+                            type: 'stringEquals' | // Input is a string, needs to equal another string or number field
+                                'stringLike' | // Input is a string, needs to be similar to another string field
+                                'stringIncludesArray' | // Input is a string, needs to be contained in 1 of a number of string fields
+                                'stringIncludesArrayAlternative' | // Input is a string, needs to be contained in 1 of a number of string fields
+                                'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
+                                'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
+                                'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
                             apiField?: string, // Used if the widgetField name is different from the field in database
                             andOr?: Array<{
                                 apiField: string,
@@ -1053,7 +1068,7 @@ Stratus.Services.Idx = [
                             andOr: [
                                 {apiField: 'City', type: 'stringLike'},
                                 {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSMajorArea', type: 'stringLike'},
+                                {apiField: 'MLSAreaMajor', type: 'stringLike'},
                                 {apiField: 'PostalCode', type: 'stringLike'}
                             ]
                         },
@@ -1061,7 +1076,7 @@ Stratus.Services.Idx = [
                             type: 'andOr',
                             andOr: [
                                 {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSMajorArea', type: 'stringLike'}
+                                {apiField: 'MLSAreaMajor', type: 'stringLike'}
                             ]
                         }
                     }
@@ -1162,12 +1177,17 @@ Stratus.Services.Idx = [
                         ) {
                             const orStatement: MongoWhereQuery[] = []
                             searchValue.andOr.forEach((orObject) => {
-                                orStatement.push({
-                                    [orObject.apiField]: {
-                                        like: where[widgetField],
-                                        options: 'i'
-                                    }
-                                })
+                                if (
+                                    Object.prototype.hasOwnProperty.call(orObject, 'type') &&
+                                    orObject.apiField === 'stringLike'
+                                ) {
+                                    orStatement.push({
+                                        [orObject.apiField]: {
+                                            like: where[widgetField],
+                                            options: 'i'
+                                        }
+                                    })
+                                }
                             })
 
                             andStatement.push({or: orStatement})
@@ -2205,24 +2225,25 @@ Stratus.Services.Idx = [
                     fetchProperty,
                     devLog,
                     getContactVariables,
+                    getDefaultWhereOptions,
                     getFriendlyStatus,
                     getIdxServices,
                     getListInstance,
                     getListInstanceLinks,
-                    getSearchInstanceLinks,
-                    getUrlOptionsPath,
                     getMLSVariables,
                     getOptionsFromUrl,
+                    getSearchInstanceLinks,
                     getUrlOptions,
-                    tokenKeepAuth,
+                    getUrlOptionsPath,
+                    registerDetailsInstance,
                     registerListInstance,
                     registerSearchInstance,
-                    registerDetailsInstance,
                     setIdxServices,
                     setPageTitle,
                     setTokenURL,
                     setUrlOptions,
                     sharedValues,
+                    tokenKeepAuth,
                     refreshUrlOptions,
                     unregisterDetailsInstance
                 }
