@@ -425,7 +425,11 @@ export class Model extends ModelBase {
                     // Events
                     this.trigger('success', this)
                     this.trigger('complete', this)
-                    this.collection.throttleTrigger('change')
+
+                    // Propagate Collection Change Event
+                    if (this.collection instanceof Collection) {
+                        this.collection.throttleTrigger('change')
+                    }
 
                     // Promise
                     // extendDeep(this.data, this.initData)
@@ -452,7 +456,11 @@ export class Model extends ModelBase {
                     // Events
                     this.trigger('error', this)
                     this.trigger('complete', this)
-                    this.collection.throttleTrigger('change')
+
+                    // Propagate Collection Change Event
+                    if (this.collection instanceof Collection) {
+                        this.collection.throttleTrigger('change')
+                    }
 
                     // Promise
                     reject(error)
