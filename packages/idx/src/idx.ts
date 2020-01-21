@@ -33,11 +33,11 @@ export interface WhereOptions {
     ListingId?: string,
     ListingType?: string[] | string,
     Status?: string[] | string,
+    UnparsedAddress?: string,
     City?: string,
-    CityRegion?: string,
-    MLSAreaMajor?: string,
     PostalCode?: string[] | string,
-    AreaId?: string[] | string, // MLSL only @deprecated should use MLSAreaMajor
+    CityRegion?: string[] | string,
+    MLSAreaMajor?: string[] | string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
@@ -261,7 +261,9 @@ Stratus.Services.Idx = [
                     Status: [],
                     ListingType: [],
                     PostalCode: [],
-                    AreaId: [],
+                    MLSAreaMajor: [],
+                    // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
+                    CityRegion: [],
                     AgentLicense: []
                 }
                 let idxServicesEnabled: number[] = []
@@ -1046,22 +1048,24 @@ Stratus.Services.Idx = [
                         AgentLicense: {
                             type: 'stringIncludesArray'
                         },
+                        // TODO: replace this with a generic API field that supports all MLS (which may not have
+                        // TODO: Unparsed Address but instead have StreetName, StreetNumber, etc.
+                        UnparsedAddress: {
+                            type: 'stringLike'
+                        },
                         City: {
-                            type: 'stringLike'
-                        },
-                        CityRegion: {
-                            type: 'stringLike'
-                        },
-                        MLSAreaMajor: {
                             type: 'stringLike'
                         },
                         PostalCode: {
                             type: 'stringIncludesArray'
                         },
-                        AreaId: {
+                        MLSAreaMajor: {
                             // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                            type: 'stringIncludesArray',
-                            apiField: '_unmapped.AreaID'
+                            type: 'stringIncludesArray'
+                        },
+                        CityRegion: {
+                            // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                            type: 'stringIncludesArray'
                         },
                         Location: {
                             type: 'andOr',
@@ -1069,7 +1073,12 @@ Stratus.Services.Idx = [
                                 {apiField: 'City', type: 'stringLike'},
                                 {apiField: 'CityRegion', type: 'stringLike'},
                                 {apiField: 'MLSAreaMajor', type: 'stringLike'},
-                                {apiField: 'PostalCode', type: 'stringLike'}
+                                {apiField: 'PostalCode', type: 'stringLike'},
+                                // TODO: in the future we should pass in a generic field like Address (that will
+                                // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
+                                // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
+                                // TODO: and all those are LIKE (but all must match LIKE)
+                                {apiField: 'UnparsedAddress', type: 'stringLike'},
                             ]
                         },
                         Neighborhood: {
@@ -1179,7 +1188,7 @@ Stratus.Services.Idx = [
                             searchValue.andOr.forEach((orObject) => {
                                 if (
                                     Object.prototype.hasOwnProperty.call(orObject, 'type') &&
-                                    orObject.apiField === 'stringLike'
+                                    orObject.type === 'stringLike'
                                 ) {
                                     orStatement.push({
                                         [orObject.apiField]: {
@@ -1654,6 +1663,7 @@ Stratus.Services.Idx = [
                 }
 
                 /**
+                 * TODO: Remove
                  * Output console if not in production
                  */
                 function devLog(item1: any, item2: any): void {
