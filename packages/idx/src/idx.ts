@@ -44,6 +44,8 @@ export interface WhereOptions {
     Bathrooms?: number | any, // Previously BathroomsFullMin
     Bedrooms?: number | any, // Previously BedroomsTotalMin
     AgentLicense?: string[] | string,
+    Location?: string,
+    Neighborhood?: string[] | string,
 
     // Member
     MemberKey?: string,
@@ -57,10 +59,6 @@ export interface WhereOptions {
     OfficeNationalAssociationId?: string,
     OfficeStatus?: string,
     OfficeName?: string,
-
-    // Generic: Search Multiple Fields
-    Location?: string,
-    Neighborhood?: string,
 }
 
 export interface CompileFilterOptions {
@@ -262,6 +260,7 @@ Stratus.Services.Idx = [
                     ListingType: [],
                     PostalCode: [],
                     MLSAreaMajor: [],
+                    Neighborhood: [],
                     // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
                     CityRegion: [],
                     AgentLicense: []
@@ -1011,7 +1010,7 @@ Stratus.Services.Idx = [
                             apiField: string,
                             type: 'stringEquals'
                                 | 'stringLike'
-                                // | 'stringLikeArray'
+                                | 'stringLikeArray'
                                 | 'stringIncludesArray'
                         }>
                     }
@@ -1074,22 +1073,22 @@ Stratus.Services.Idx = [
                         Location: {
                             type: 'andOr',
                             andOr: [
-                                {apiField: 'City', type: 'stringLike'},
-                                {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSAreaMajor', type: 'stringLike'},
-                                {apiField: 'PostalCode', type: 'stringLike'},
+                                {apiField: 'City', type: 'stringLikeArray'},
+                                {apiField: 'CityRegion', type: 'stringLikeArray'},
+                                {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
+                                {apiField: 'PostalCode', type: 'stringLikeArray'},
                                 // TODO: in the future we should pass in a generic field like Address (that will
                                 // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
                                 // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
                                 // TODO: and all those are LIKE (but all must match LIKE)
-                                {apiField: 'UnparsedAddress', type: 'stringLike'},
+                                {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
                             ]
                         },
                         Neighborhood: {
                             type: 'andOr',
                             andOr: [
-                                {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSAreaMajor', type: 'stringLike'}
+                                {apiField: 'CityRegion', type: 'stringLikeArray'},
+                                {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
                             ]
                         }
                     }
@@ -1195,6 +1194,18 @@ Stratus.Services.Idx = [
                                                 options: 'i'
                                             }
                                         })
+                                    } else if (orObject.type === 'stringLikeArray') {
+                                        value = typeof value === 'string' ? [value] : value
+                                        if (value.length > 0) {
+                                            value.forEach((requestedValue: string) => {
+                                                andOrOrStatement.push({
+                                                    [orObject.apiField]: {
+                                                        like: requestedValue,
+                                                        options: 'i'
+                                                    }
+                                                })
+                                            })
+                                            }
                                     } else if (orObject.type === 'stringIncludesArray') {
                                         value = typeof value === 'string' ? [value] : value
                                         if (value.length > 0) {
