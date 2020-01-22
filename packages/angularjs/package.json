@@ -1,0 +1,48 @@
+{
+  "name": "@stratusjs/angularjs",
+  "version": "0.2.12",
+  "description": "This is the AngularJS package for StratusJS.",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sitetheory/stratus.git"
+  },
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus",
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "underscore",
+    "lodash",
+    "javascript",
+    "typescript",
+    "angularjs"
+  ],
+  "engines": {
+    "yarn": ">= 1.21.1"
+  },
+  "dependencies": {
+    "@stratusjs/core": "^0.2.5",
+    "@stratusjs/runtime": "^0.10.3",
+    "angular": "^1.7.8",
+    "angular-animate": "^1.7.8",
+    "angular-aria": "^1.7.8",
+    "angular-material": "^1.1.20",
+    "angular-messages": "^1.7.8",
+    "angular-paging": "^2.2.2",
+    "angular-resource": "^1.7.8",
+    "angular-sanitize": "^1.7.8",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/angular": "^1.6.56",
+    "@types/angular-material": "^1.1.69",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}

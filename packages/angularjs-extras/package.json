@@ -1,0 +1,45 @@
+{
+  "name": "@stratusjs/angularjs-extras",
+  "version": "0.4.3",
+  "description": "This is the AngularJS Extras package for StratusJS.",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sitetheory/stratus.git"
+  },
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus",
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "underscore",
+    "lodash",
+    "javascript",
+    "typescript",
+    "angularjs",
+    "moment"
+  ],
+  "engines": {
+    "yarn": ">= 1.21.1"
+  },
+  "dependencies": {
+    "@stratusjs/angularjs": "^0.2.11",
+    "@stratusjs/core": "^0.2.5",
+    "@stratusjs/runtime": "^0.10.6",
+    "moment": "^2.24.0",
+    "moment-range": "^4.0.2",
+    "moment-timezone": "^0.5.27",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/angular": "^1.6.56",
+    "@types/angular-material": "^1.1.69",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}

@@ -1,0 +1,357 @@
+/*
+Nothing should be outside 'stratus-idx-property-list' or it will leak into other modules
+z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
+TODO Need to size this based on column and window
+FIXME we CANNOT rely of media queries, it needs to know the sizing of the element or else widgets may never get properly sized. (if used as modular widgets)
+*/
+@tablet: ~"(max-width: 959px)";
+@phone: ~"(max-width: 600px)";
+@desktop-only: ~"(min-width: 600px)";
+stratus-idx-property-list {
+  /* Generic dotted underline */
+  .dotted-spaced-underline {
+    background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
+    background-position: bottom;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+
+  /* Generic Arrows */
+  i {
+    &.arrow {
+      display: inline-block;
+      border: solid black;
+      border-width: 0 3px 3px 0;
+      padding: 3px;
+      margin: 1px;
+      &.small {
+        border-width: 0 2px 2px 0;
+        padding: 2px;
+      }
+      &.large {
+        border-width: 0 4px 4px 0;
+        padding: 4px;
+      }
+      &.grey {
+        border-color: #aaa;
+      }
+      &.right {
+        transform: rotate(-45deg);
+      }
+      &.left {
+        transform: rotate(135deg);
+      }
+      &.up {
+        transform: rotate(-135deg);
+      }
+      &.down {
+        transform: rotate(45deg);
+      }
+    }
+  }
+
+  /* Sort Options Button */
+  .sort-options-container {
+    float: right;
+    .options-button,
+    .options-button a {
+      font-size: 13px;
+      font-weight: normal;
+      font-style: italic;
+      text-transform: none;
+      color: #444;
+    }
+  }
+
+  /* Filters */
+  .search-mini {
+    max-width: 50%;
+  }
+
+  /* Property List */
+  .list-container {
+    margin: 10px -1.5% 0;
+
+    /* Details button */
+    .property-button-container {
+      .button {
+        margin: 0 auto;
+      }
+    }
+
+    /* Property */
+    .property-container {
+      position: relative;
+      padding-bottom: 24px;
+      margin-bottom: 16px;
+      text-align: center;
+      md-card {
+        &.property-item {
+          box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
+
+          /* IDX Image */
+          .property-image {
+            position: relative;
+            background: #000;
+            .image-wrapper {
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: cover;
+            }
+            img {
+              width: 100%;
+            }
+            a {
+              &,
+              * {
+                transition: all 0.2s ease-out;
+                -webkit-transition: all 0.2s ease-out;
+              }
+
+              display: block;
+              position: relative;
+              .btn {
+                transform: translate(-50%, -50%) scale(0.5);
+                -webkit-transform: translate(-50%, -50%) scale(0.5);
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                opacity: 0;
+                color: #fff;
+                z-index: 1;
+                background: none;
+                border: 1px solid #fff;
+                //&:hover {
+                //  transform: translate(-50%,-50%) scale(1);
+                //  -webkit-transform: translate(-50%,-50%) scale(1);
+                //  color: #222;
+                //  background: #FFF;
+                //}
+              }
+            }
+            &:hover a {
+              .image-wrapper {
+                opacity: 0.3;
+              }
+              .btn {
+                transform: translate(-50%, -50%) scale(1);
+                -webkit-transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+              }
+            }
+            .property-status {
+              z-index: 1;
+              position: absolute;
+              right: 10px;
+              top: 10px;
+              display: table;
+              margin: 0 auto;
+              padding: 2px 4px 2px 5px;
+              font-size: 10px;
+              font-weight: bold;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              line-height: 1.4;
+              text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+              background-color: rgba(0, 0, 0, 0.6);
+              color: #fff;
+              border: 1px solid rgba(255, 255, 255, 0.7);
+            }
+          }
+          .property-content {
+            padding: 40px;
+            .status-price-container .property-price {
+              float: right;
+              font-size: 14px;
+              font-weight: normal;
+              color: #333;
+              text-align: right;
+            }
+
+            /* Property Address */
+            .property-address {
+              margin: 0 0 24px;
+              padding: 0 0 24px;
+              h4 {
+                margin: 0;
+                min-width: 160px;
+                font-size: 14px;
+                text-transform: uppercase;
+                color: #222;
+                letter-spacing: 1px;
+                .city {
+                  margin-top: 10px;
+                  font-size: 10px;
+                  letter-spacing: 1px;
+                  display: block;
+                }
+              }
+              a {
+                font-weight: bold;
+                color: #222;
+                &:hover {
+                  color: #666;
+                }
+              }
+            }
+            .property-data {
+              padding: 0;
+              font-size: 13px;
+              line-height: 2;
+              .property-type > span {
+                &::after {
+                  display: inline;
+                  content: '|';
+                  padding: 0 2px;
+                }
+                &:last-child::after {
+                  content: '';
+                }
+              }
+            }
+
+            /* MLS service + number */
+            .mls-service-name {
+              position: absolute;
+              left: 0;
+              bottom: 0;
+              width: 100%;
+              font-size: 11px;
+              line-height: 1.8;
+              text-align: center;
+              color: #888;
+            }
+          }
+        }
+      }
+    }
+
+    /* 2 or 3 column */
+    &.columns-2 {
+      .property-container {
+        width: 100%;
+
+        @media @desktop-only {
+          width: 49.5%;
+        }
+      }
+    }
+    &.columns-3 {
+      .property-container {
+        width: 100%;
+
+        @media @desktop-only {
+          width: 32%;
+        }
+      }
+    }
+  }
+
+  /* List Pager */
+  .pager-container {
+    margin: 50px 0;
+    .pager-section {
+      float: right;
+      .pager-count {
+        float: left;
+        font-size: 11px;
+        font-weight: bold;
+        color: #222;
+        padding-top: 10px;
+        .pager-totals {
+          font-style: italic;
+          font-weight: normal;
+          text-transform: none;
+          color: #666;
+          padding-right: 10px;
+        }
+      }
+      .pager-button {
+        margin-right: 5px;
+        float: left;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 14px;
+        outline: none;
+        > .arrow {
+          border-color: #555;
+        }
+        &:hover {
+          background-color: #666;
+          border-color: #666;
+          > .arrow {
+            border-color: #fff;
+          }
+        }
+        &.disabled {
+          background-color: #fff;
+          border-color: #eee;
+          &:hover {
+            background-color: #fff;
+            border-color: #eee;
+          }
+          > .arrow,
+          > .arrow:hover {
+            border-color: #ddd;
+          }
+        }
+      }
+    }
+  }
+
+  /* Disclaimer */
+  .disclaimer-container {
+    clear: both;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.25);
+    font-size: 12px;
+  }
+}
+
+/* Dialog box */
+.stratus-idx-property-list-dialog {
+  /* FIXME transforms programmatically added via angular popup box
+  // md-dialog will open and close coming from the list item that they were click from
+  // this removes angular animation and cuts element to the location instead
+  */
+  transform: none !important;
+  -webkit-transform: none !important;
+  max-width: 95%;
+  max-height: 95%;
+
+  /* Keep Close Button floating at top right */
+  .popup-close-button-container {
+    transition: all 0.2s ease-out;
+    -webkit-transition: all 0.2s ease-out;
+    position: fixed;
+    z-index: 2;
+    top: 5%;
+    right: 5%;
+    padding: 6px;
+    background: transparent;
+    border-radius: 50%;
+    &:hover {
+      background: #fff;
+    }
+    .close-button {
+      transition: all 0.2s ease-out;
+      width: 30px;
+      height: 30px;
+      background-image: url("data:image/svg+xml, %3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cpath d='M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z'/%3E%3C/svg%3E ");
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 1px solid #000;
+      border-radius: 25px;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+/* This will only affect pages directly from SitetheoryPropertyBundle-PropertyFilter */
+body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
+  background: rgba(255, 255, 255, 1);
+  opacity: 0.9;
+}

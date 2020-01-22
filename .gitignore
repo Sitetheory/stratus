@@ -26,3 +26,60 @@ yarn-error.log
 
 # Atom Sync
 .remote-sync.json
+
+# Legacy Minifications
+dist/**/*.min.js
+
+# Package Minifications
+packages/*/src/**/*.min.js
+packages/*/src/**/*.min.css
+packages/*/src/**/*.min.html
+packages/*/src/**/*.css.map
+
+# Package Compilations
+packages/angular/src/**/*.js
+packages/angular/src/**/*.js.map
+packages/angular/src/**/*.css
+packages/angularjs/src/**/*.js
+packages/angularjs/src/**/*.js.map
+packages/angularjs/src/**/*.css
+packages/angularjs-extras/src/**/*.css
+packages/backend/src/**/*.js
+packages/backend/src/**/*.js.map
+packages/boot/dist/**/*.js
+packages/boot/dist/**/*.js.map
+packages/calendar/src/**/*.js
+packages/calendar/src/**/*.js.map
+packages/calendar/src/**/*.css
+packages/core/src/**/*.js
+packages/core/src/**/*.js.map
+packages/idx/src/**/*.js
+packages/idx/src/**/*.js.map
+packages/idx/src/**/*.css
+packages/react/src/**/*.js
+packages/react/src/**/*.js.map
+packages/react/src/**/*.css
+packages/runtime/src/**/*.js
+packages/runtime/src/**/*.js.map
+packages/swiper/src/**/*.js
+packages/swiper/src/**/*.js.map
+packages/swiper/src/**/*.css
+
+# TypeScript Supercedes
+packages/angularjs-extras/src/components/calendar/calendar.js
+packages/angularjs-extras/src/components/calendar/calendar.js.map
+packages/angularjs-extras/src/components/calendar/customView.js
+packages/angularjs-extras/src/components/calendar/customView.js.map
+packages/angularjs-extras/src/components/embed.js
+packages/angularjs-extras/src/components/embed.js.map
+packages/angularjs-extras/src/components/image-carousel.js
+packages/angularjs-extras/src/components/image-carousel.js.map
+packages/angularjs-extras/src/components/twitterFeed.js
+packages/angularjs-extras/src/components/twitterFeed.js.map
+packages/angularjs-extras/src/directives/froala.js
+packages/angularjs-extras/src/directives/froala.js.map
+packages/angularjs-extras/src/services/iCal.js
+packages/angularjs-extras/src/services/iCal.js.map
+
+# JavaScript Supercedes
+!packages/runtime/src/stratus.amd.js

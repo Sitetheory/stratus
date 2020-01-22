@@ -1,0 +1,129 @@
+<h1 mat-dialog-title>Menu Link Editor</h1>
+<div mat-dialog-content class="tree-dialog-content">
+    <mat-form-field class="form-field">
+        <input matInput type="text" placeholder="Name"
+               [(ngModel)]="data.name">
+        <button mat-button matSuffix mat-icon-button aria-label="Clear"
+                *ngIf="data.name"
+                (click)="data.name=''">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <!-- Target Selector -->
+    <h4><label id="link-type-label">Link Type:</label></h4>
+    <mat-radio-group class="radio-group"
+            aria-labelledby="link-type-label"
+            [(ngModel)]="data.target">
+        <mat-radio-button class="radio-button" value="content">
+            Content
+        </mat-radio-button>
+        <mat-radio-button class="radio-button" value="url">
+            URL
+        </mat-radio-button>
+    </mat-radio-group>
+
+    <!-- Target Editor -->
+    <form class="dialog-form" [formGroup]='dialogContentForm'>
+        <ng-container *ngIf="data.target == 'content'">
+            <mat-form-field class="form-field">
+                <input matInput placeholder="Link Content" aria-label="Link Content" [matAutocomplete]="auto" formControlName='contentSelectorInput'>
+            </mat-form-field>
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayVersionTitle">
+                <mat-option *ngIf="isContentLoading" class="is-loading">
+                    <mat-spinner diameter="50"></mat-spinner>
+                </mat-option>
+                <ng-container *ngIf="!isContentLoading">
+                    <mat-option *ngFor="let option of filteredContentOptions" [value]="option" [innerHTML]="option.version.title"></mat-option>
+                </ng-container>
+            </mat-autocomplete>
+        </ng-container>
+    </form>
+
+    <mat-form-field class="form-field" *ngIf="data.target == 'url'">
+        <input matInput type="text" placeholder="URL" [(ngModel)]="data.url">
+        <button mat-button *ngIf="data.url" matSuffix mat-icon-button aria-label="Clear" (click)="data.url=''">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <!-- Target Display -->
+    <h4>Linked To:</h4>
+
+    <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? data.content.routing[0].url : 'Nothing yet!'"></span>
+    <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
+
+    <!-- Priority Control - deprecated once we have DnD -->
+<!--    <h4>Priority:</h4>-->
+<!--    <mat-form-field class="form-field">-->
+<!--        <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">-->
+<!--        <button mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
+<!--                (click)="data.priority = data.priority + 1">-->
+<!--            <mat-icon>expand_less</mat-icon>-->
+<!--        </button>-->
+<!--        <button mat-button matSuffix mat-icon-button aria-label="Decrease Priority"-->
+<!--                (click)="data.priority = data.priority - 1">-->
+<!--            <mat-icon>expand_more</mat-icon>-->
+<!--        </button>-->
+<!--    </mat-form-field>-->
+
+    <!-- Level Selector -->
+<!--    <h4><label id="link-level-label">Link Level:</label></h4>-->
+<!--    <mat-radio-group class="radio-group"-->
+<!--                     aria-labelledby="link-level-label"-->
+<!--                     [(ngModel)]="data.level">-->
+<!--        <mat-radio-button class="radio-button" value="top">-->
+<!--            Top-Level-->
+<!--        </mat-radio-button>-->
+<!--        <mat-radio-button class="radio-button" value="child">-->
+<!--            Child-->
+<!--        </mat-radio-button>-->
+<!--    </mat-radio-group>-->
+
+    <!-- Parent Editor -->
+    <!--<form class="dialog-form dialog-parent-form" [formGroup]='dialogParentForm'>
+        <ng-container *ngIf="data.level == 'child'">
+            <mat-form-field class="form-field">
+                <input matInput placeholder="Parent Link" aria-label="Parent Link" [matAutocomplete]="auto" formControlName='parentSelectorInput'>
+            </mat-form-field>
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
+                <mat-option *ngIf="isParentLoading" class="is-loading">
+                    <mat-spinner diameter="50"></mat-spinner>
+                </mat-option>
+                <ng-container *ngIf="!isParentLoading">
+                    <mat-option *ngFor="let option of filteredParentOptions" [value]="option" [innerHTML]="option.name"></mat-option>
+                </ng-container>
+            </mat-autocomplete>
+        </ng-container>
+    </form>-->
+
+    <!-- Parent Display -->
+<!--    <h4 *ngIf="data.nestParent !== null">-->
+<!--        Nested Under:-->
+<!--    </h4>-->
+
+<!--    <span *ngIf="data.nestParent !== null"-->
+<!--          [textContent]="data.nestParent.name || 'Untitled Parent'"></span>-->
+
+    <!-- Misc Buttons -->
+    <h4>Actions:</h4>
+
+    <button mat-button
+            (click)="data.model.destroy(); onCancelClick()">
+        Delete (Completely)
+    </button>
+    <button mat-button
+            (click)="data.collection.add({name:'Untitled Child', parent: data.parent, nestParent: data.id},{save: true})">
+        Add Child
+    </button>
+
+    <mat-divider></mat-divider>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onCancelClick()">
+        Cancel
+    </button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>
+        Ok
+    </button>
+</div>

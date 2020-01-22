@@ -1,0 +1,94 @@
+ <!--
+<mat-form-field class="full-width">
+    <input matInput [placeholder]="'Add ' + target + ': Not Connected Yet!'" aria-label="Selector AutoComplete" [matAutocomplete]="auto" [formControl]="selectCtrl">
+    <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let selectModel of filteredModels | async" [value]="selectModel">
+            {{ selectModel.version.title }}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>
+-->
+
+<div class="selected-list">
+    <div class="selected-list-header border-default border-default-bottom">
+        <h3 [textContent]="'Selected ' + target + ' Items'"></h3>
+        <p class="note">Drag to reorder</p>
+    </div>
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
+        <!--<span class="selectedModels" style="display: none" [textContent]="dataSub | async | json"></span>-->
+        <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
+        <div class="selected-list-row selected-box" *ngFor="let selectedModel of dataSub | async" cdkDrag>
+            <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
+            <div class="selected-list-container">
+                <div class="column-image position-anchor">
+
+                    <!--<div class="image" no-flex stratus-src-->
+                         <!--[ngStyle]="{'background': 'url(' + findImage(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}"-->
+                    <!--&gt;-->
+                        <!--<img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">-->
+                    <!--</div>-->
+
+                    <div class="image position-all"
+                         *ngIf="has(selectedModel, 'version.images') || has(selectedModel, 'version.shellImages')"
+                         stratus-src
+                         [ngStyle]="{'background': 'url(' + (_.get(selectedModel, 'version.images[0].src') || _.get(selectedModel, 'version.shellImages[0].src')) + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
+
+                    <div class="image position-all"
+                         *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.shellImages') && has(selectedModel, 'version.videos')"
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.videos[0].src') + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
+
+                    <!-- Icon for items with no image -->
+                    <div class="no-image-icon position-all"
+                         *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.videos') && !has(selectedModel, 'version.shellImages')"
+                         [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
+
+                        <!-- TODO: Make this icon work -->
+                        <!--<mat-icon class="content-type-icon position-center" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
+                    </div>
+
+                    <!-- Shapeholder -->
+                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+                
+                </div>
+                <div class="column-title">
+                    <div class="content-type" *ngIf="has(selectedModel, 'contentType.iconResource')">
+                        <!-- TODO: path needs to be marked as safe with DomSanitizer: https://material.angular.io/components/icon/overview#svg-icons -->
+                        <!--<mat-icon  class="content-type-icon" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
+                        <span class="comment content-type-name font-body"
+                              [ngClass]="(_.get(selectedModel, 'contentType.name') | lowercase) + '-color'"
+                              [innerHTML]="_.get(selectedModel, 'contentType.name')">
+                        </span>
+                    </div>
+
+                    <h3 [innerHTML]="_.get(selectedModel, 'version.title') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>
+                    <span class="routing"
+                          [textContent]="has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : ''">
+                    </span>
+                </div>
+                <div class="column-action">
+                    <button mat-button
+                            [matTooltip]="'Delete ' + target"
+                            aria-label="Delete Item"
+                            class="btn btn-delete"
+                            (click)="remove(selectedModel)">
+                        <!--<mat-icon svgIcon="delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>-->
+                        <svg viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linear-gradient-icon-delete">
+                                    <stop class="stop1" stop-color="#666666" offset="0%"></stop>
+                                    <stop class="stop2" stop-color="#666666" offset="100%"></stop>
+                                </linearGradient>
+                            </defs>
+                            <g id="icon-delete" class="action-button" fill="url(#linear-gradient-icon-delete)">
+                                <path d="M9.98721875,40 C9.98721875,42.209 11.736676,43.99 13.8951228,43.99 L36.092096,43.99 C38.2564134,43.99 40,42.204 40,40 L40,15 L10,15 L9.98721875,40 Z M16.9936094,21.904 L18.9872188,21.904 L18.9872188,38.0891113 L16.9936094,38.0891113 L16.9936094,21.904 Z M23.9286042,21.904 L25.9872188,21.904 L25.9872188,38.0891113 L23.9286042,38.0891113 L23.9286042,21.904 Z M30.9936094,21.904 L32.9872188,21.904 L32.9872188,38.0891113 L30.9936094,38.0891113 L30.9936094,21.904 Z" id="trash-base"></path>
+                                <path d="M29.2875402,7.05695537 L29.2875402,3 L20.7124598,3 L20.7124598,7.05695537 L13.20584,7.05695537 C11.4407276,7.05695537 9.99360938,8.41852994 9.99360938,10.0985149 L9.98721875,13 L40,13 L40.0063906,10.0985149 C40.0063906,8.42223238 38.5680784,7.05695537 36.79416,7.05695537 L29.2875402,7.05695537 Z M22.8562299,5.02801488 L27.1437701,5.02801488 L27.1437701,7.05602976 L22.8562299,7.05602976 L22.8562299,5.02801488 Z" id="trash-lid"></path>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

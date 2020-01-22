@@ -1,0 +1,246 @@
+<div id="{{elementId}}" class="search-mini font-primary" data-ng-cloak>
+    <h2 data-ng-show="widgetName" data-ng-bind="widgetName"></h2>
+
+    <div class="search-row">
+
+        <div class="stratus-idx-property-search-menu">
+
+            <h3>Location</h3>
+            <div class="location-specs" data-layout="row">
+                <div class="search-input" data-flex="33" data-flex-gt-sm="50">
+                    <md-input-container class="md-block minimal">
+                        <label>City</label>
+                        <input data-ng-model="options.query.City"
+                               type="text"
+                               maxlength="250"
+                               autocomplete="off">
+                    </md-input-container>
+                </div>
+                <div class="search-input" data-flex="33" data-flex-gt-sm="50">
+                    <md-chips
+                            class="area-id font-secondary"
+                            aria-label="Neighborhoods to Limit"
+                            data-ng-model="options.query.MLSAreaMajor"
+                            data-md-enable-chip-edit="true"
+                            data-md-add-on-blur="true"
+                            data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                            data-placeholder="Neighborhood"
+                            data-secondary-placeholder="+Neighborhood"
+                            data-delete-button-label="Remove Neighborhood"
+                            data-delete-hint="Press delete to remove Neighborhood"
+                    ></md-chips>
+                </div>
+                <div class="search-input" data-flex="33" data-flex-gt-sm="50">
+                    <md-chips
+                            class="postal-code font-secondary"
+                            aria-label="Postal Code(s) to Limit"
+                            data-ng-model="options.query.PostalCode"
+                            data-md-enable-chip-edit="true"
+                            data-md-add-on-blur="true"
+                            data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                            data-placeholder="Postal Code"
+                            data-secondary-placeholder="+PostalCode"
+                            data-delete-button-label="Remove Postal Code"
+                            data-delete-hint="Press delete to remove Postal Code"
+                    ></md-chips>
+                </div>
+
+            </div>
+
+            <!-- FIXME alignment problems due to sitetheory css: https://app.asana.com/0/1154407311832843/1155341970037633 -->
+            <h3>Specs</h3>
+            <div class="property-specs" data-layout="row">
+                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                    <md-input-container class="md-block minimal">
+                        <label>Min Price</label>
+                        <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
+                    </md-input-container>
+                </div>
+                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                    <md-input-container class="md-block minimal">
+                        <label>Max Price</label>
+                        <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
+                    </md-input-container>
+                </div>
+                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                    <md-input-container class="md-block minimal">
+                        <label>Beds</label>
+                        <md-select data-ng-model="options.query.Bedrooms">
+                            <md-option></md-option>
+                            <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
+                                {{option.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                    <md-input-container class="md-block minimal">
+                        <label>Baths</label>
+                        <md-select data-ng-model="options.query.Bathrooms">
+                            <md-option></md-option>
+                            <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
+                                {{option.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+
+            <div class="toggle-switch"
+                 data-layout="row"
+                 aria-label="Listings to Buy or Rent"
+                 data-layout-align="center center">
+                <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}" data-flex>
+                    Buy
+                </div>
+                <md-switch
+                        data-ng-model="options.forRent"
+                        data-ng-change="selectDefaultListingType()"
+                        aria-label="Buy or Rent"
+                        data-flex>
+                </md-switch>
+                <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}" data-flex>
+                    Rent
+                </div>
+            </div>
+
+            <div data-layout="row"
+                 data-ng-show="!options.forRent"
+                 data-layout-align="left"
+                 aria-label="Listing Status">
+                <md-button class="md-raised font-primary"
+                           data-ng-class="{'md-primary': inArray('Active', options.query.Status)}"
+                           data-ng-click="options.query.Status = ['Active', 'Contract'];"
+                           aria-label="For Sale"
+                           data-md-prevent-menu-close
+                >
+                    For Sale
+                </md-button>
+                <md-button class="md-raised font-primary"
+                           data-ng-class="{'md-primary': inArray('Closed', options.query.Status)}"
+                           data-ng-click="options.query.Status = ['Closed']"
+                           aria-label="Sold"
+                           data-md-prevent-menu-close
+                >
+                    Sold
+                </md-button>
+                <div data-ng-show="!options.forRent && inArray('Active', options.query.Status)"
+                     data-layout="row"
+                     data-layout-align="left">
+                    <md-checkbox
+                            class="show-under-contract font-secondary"
+                            data-ng-checked="inArray('Contract', options.query.Status)"
+                            data-ng-click="toggleArrayElement('Contract', options.query.Status)"
+                            aria-label="Under Contract"
+                            data-md-prevent-menu-close
+                    >
+                        Show Under Contract
+                    </md-checkbox>
+                </div>
+            </div>
+
+            <div class="property-zoning"
+                 data-layout="row"
+                 data-layout-align="left" aria-label="Listing Zoning">
+                <md-button
+                        class="font-primary"
+                        data-ng-class="{'md-primary': options.selection.ListingType.group.Residential}"
+                        data-ng-click="selectDefaultListingType('Residential')"
+                        aria-label="Residential"
+                        data-md-prevent-menu-close
+                >
+                    Residential
+                </md-button>
+                <md-button
+                        class="font-primary"
+                        data-ng-class="{'md-primary': options.selection.ListingType.group.Commercial}"
+                        data-ng-click="selectDefaultListingType('Commercial')"
+                        aria-label="Commercial"
+                        data-md-prevent-menu-close
+                >
+                    Commercial
+                </md-button>
+            </div>
+
+            <div data-layout="row"
+                 data-layout-align="left"
+                 aria-label="Listing Types"
+                 data-layout-wrap>
+                <md-button
+                        data-ng-repeat="listType in ::options.selection.ListingType.All"
+                        class="md-raised font-primary"
+                        data-ng-show="options.forRent === listType.lease && options.selection.ListingType.group[listType.group]"
+                        data-ng-class="{'md-primary': inArray(listType.value, options.query.ListingType)}"
+                        data-ng-click="toggleArrayElement(listType.value, options.query.ListingType)"
+                        aria-label="{{::listType.name}}"
+                        data-md-prevent-menu-close
+                        data-ng-bind="::listType.name"
+                ></md-button>
+            </div>
+
+            <h3>Agent</h3>
+            <div class="agent-specs"
+                 data-layout="row"
+                 data-layout-align="left"
+                 aria-label="Agent Specs">
+                <md-chips
+                        class="agent-license font-secondary"
+                        aria-label="Agent License(s) to Search"
+                        data-ng-model="options.query.AgentLicense"
+                        data-md-enable-chip-edit="true"
+                        data-md-add-on-blur="true"
+                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                        data-placeholder="Agent License"
+                        data-secondary-placeholder="+License"
+                        data-delete-button-label="Remove License"
+                        data-delete-hint="Press delete to remove License"
+                ></md-chips>
+            </div>
+
+            <div class="agent-specs-border dotted-spaced-underline"></div>
+
+            <h3>Display Options</h3>
+
+            <div class="display-specs"
+                 aria-label="Display Specs">
+                <!-- TODO Order Options -->
+                <div class="search-input"
+                     data-layout="row"
+                >
+                    <md-input-container class="md-block minimal">
+                        <label>Sort</label>
+                        <md-select data-ng-model="options.query.Order">
+                            <md-option data-ng-repeat="option in options.selection.Order" data-ng-value="option.value">
+                                {{option.name}}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+                <div class="search-input"
+                     data-layout="row"
+                >
+                    <md-input-container flex>
+                        <label>Restrict Data Source</label>
+                        <!-- TODO fetch the allowed services. Will add a option to request a token on load
+                        (normally this widget waits until there is a search to perform to prevent unneeded loading) -->
+                        <md-select data-ng-model="options.service" placeholder="Restrict Data Source" multiple>
+                            <md-option value="0">Exclusive (personal)</md-option>
+                            <md-option value="1">MLS Listings Inc</md-option>
+                            <md-option value="2">SFARMLS</md-option>
+                            <md-option value="3">BAREIS</md-option>
+                            <md-option value="8">CCAR</md-option>
+                            <md-option value="9">bridgeMLS</md-option>
+                            <md-option value="11">CRMLS</md-option>
+                        </md-select>
+                    </md-input-container>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="search-row" data-layout="row" data-layout-align="space-around left">
+        <a class="btn btn-submit" data-ng-click="searchProperties()">Preview Results</a>
+    </div>
+</div>

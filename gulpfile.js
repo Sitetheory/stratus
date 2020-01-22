@@ -1,26 +1,37 @@
 // Dependencies
-const gulp = require('gulp')
-const pump = require('pump')
+const { src, dest, series, parallel } = require('gulp')
 const concat = require('gulp-concat')
 // const debug = require('gulp-debug')
-const dest = require('gulp-dest')
+const gulpDest = require('gulp-dest')
 const terser = require('gulp-terser')
 const del = require('del')
-const vinylPaths = require('vinyl-paths')
-const _ = require('underscore')
+const _ = require('lodash')
+
+// Unit Testing
+// const mocha = require('mocha')
+// const chai = require('chai')
 
 // Task Specific
-const babel = require('gulp-babel')
 const standard = require('gulp-standard')
-const gulpStylelint = require('gulp-stylelint')
-const less = require('gulp-less')
-const cleanCSS = require('gulp-clean-css')
+// const gulpStylelint = require('gulp-stylelint')
+const minCSS = require('gulp-clean-css')
 const htmlmin = require('gulp-htmlmin')
+
+// Interpreters
+const babel = require('gulp-babel')
+const less = require('gulp-less')
+const sass = require('gulp-sass')
+const coffee = require('gulp-coffee')
+const sourcemaps = require('gulp-sourcemaps')
+const ts = require('gulp-typescript')
+
+// Project
+const tsProject = ts.createProject('tsconfig.json')
 
 // Helper Functions
 const nullify = function (proto) {
   proto = proto || []
-  let clone = _.clone(proto)
+  const clone = _.clone(proto)
   if (_.size(proto)) {
     _.each(clone, function (value, key, list) {
       list[key] = '!' + value
@@ -54,158 +65,123 @@ const babelSettings = {
 const location = {
   boot: {
     source: [
-      'boot/env.js',
-      'boot/config.js',
-      'boot/init.js'
+      'packages/boot/src/env.js',
+      'packages/boot/src/config.js',
+      'packages/boot/src/init.js'
     ],
-    output: 'dist/boot.js'
+    output: 'packages/boot/dist/boot.js'
   },
-  stratus: {
-    source: [
-      'umd/header.js',
-      'source/prototype.js',
-      'source/external.js',
-      'source/event.js',
-      'source/prototypes.js',
-      'source/internals.js',
-      'source/selector.js',
-      'loaders/backbone.bind.js',
-      'loaders/angular.bind.js',
-      'source/core.js',
-      'umd/footer.js'
-    ],
-    output: 'dist/stratus.js'
-  },
-  external: {
-    core: [
-      'bower_components/requirejs/require.js'
-    ],
-    min: [
-      'bower_components/requirejs/require.min.js'
-    ]
-  },
+  // external: {
+  //   core: [],
+  //   min: []
+  // },
   mangle: {
     core: [
-      'normalizers/*.js',
-      'routers/*.js',
-      'services/*.js',
-      'legacy/**/*.js'
+      'dist/**/*.js',
+      'packages/*/src/**/*.js'
     ],
     min: [
-      'normalizers/*.min.js',
-      'routers/*.min.js',
-      'services/*.min.js',
-      'legacy/**/*.min.js'
+      'dist/**/*.min.js',
+      'packages/*/src/**/*.min.js'
     ]
   },
   preserve: {
     core: [
-      'boot/*.js',
-      'components/*.js',
-      'controllers/*.js',
-      'directives/*.js',
-      'filters/*.js'
+      'packages/angularjs/src/**/*.js',
+      'packages/angularjs-extras/src/**/*.js',
+      'packages/calendar/src/**/*.js',
+      'packages/idx/src/**/*.js',
+      'packages/swiper/src/**/*.js'
     ],
     min: [
-      'boot/*.min.js',
-      'components/*.min.js',
-      'controllers/*.min.js',
-      'directives/*.min.js',
-      'filters/*.min.js'
+      'packages/angularjs/src/**/*.min.js',
+      'packages/angularjs-extras/src/**/*.min.js',
+      'packages/calendar/src/**/*.min.js',
+      'packages/idx/src/**/*.min.js',
+      'packages/swiper/src/**/*.min.js'
     ]
   },
   less: {
     core: [
       // 'stratus.less',
-      'components/*.less'
+      'packages/*/src/**/*.less'
+    ],
+    compile: []
+  },
+  sass: {
+    core: [
+      // 'stratus.scss',
+      'packages/*/src/**/*.scss'
     ],
     compile: []
   },
   css: {
     core: [
       // 'stratus.css',
-      'components/*.css',
-      'directives/*.css'
+      'packages/*/src/**/*.css'
     ],
     min: [
       // 'stratus.min.css',
-      'components/*.min.css',
-      'directives/*.min.css'
+      'packages/*/src/**/*.min.css'
+    ],
+    nonstandard: [
+      'packages/*/src/**/*.css'
+    ]
+  },
+  coffee: {
+    core: [
+      'packages/*/src/**/*.coffee'
+    ],
+    compile: []
+  },
+  typescript: {
+    core: [
+      'packages/*/src/**/*.ts'
+    ],
+    compile: [
+      // 'packages/*/src/**/*.js.map'
     ]
   },
   template: {
     core: [
-      'components/*.html',
-      'directives/*.html'
+      'packages/*/src/**/*.html'
     ],
     min: [
-      'components/*.min.html',
-      'directives/*.min.html'
+      'packages/*/src/**/*.min.html'
     ]
   }
 }
 
-// Blanket Functions
-gulp.task('default', [
-  'dist',
-  'compile',
-  'compress'
-])
-gulp.task('compile', [
-  'compile:less'
-])
-gulp.task('compress', [
-  'compress:mangle',
-  'compress:preserve',
-  'compress:css',
-  'compress:template',
-  'compress:external',
-  'dist:compress'
-])
-gulp.task('clean', [
-  'clean:mangle',
-  'clean:preserve',
-  'clean:less',
-  'clean:css',
-  'clean:template',
-  'clean:external'
-])
-gulp.task('dist', [
-  'dist:boot',
-  'dist:stratus'
-])
-gulp.task('lint', [
-  'lint:js'
-  // 'lint:css'
-])
-
 // Code Linters
-gulp.task('lint:js', function () {
-  return gulp.src([
+function lintJS () {
+  return src([
     '**/*.js',
     '!**/*.min.js',
-    '!bower_components/**/*.js',
     '!node_modules/**/*.js',
     '!dist/**/*.js',
-    '!legacy/**/*.js',
+    '!packages/**/*.js', // TypeScript supersedes Standard JS
     '!reports/**/*.js',
     '!umd/**/*.js'
   ])
-    /* *
-    .pipe(debug({
-      title: 'Standardize:'
-    }))
-    /* */
+  /* *
+  .pipe(debug({
+    title: 'Lint JS:'
+  }))
+  /* */
     .pipe(standard())
     .pipe(standard.reporter('default', {
+      fix: true,
       breakOnError: true,
       breakOnWarning: true,
       showRuleNames: true
     }))
-})
-
-gulp.task('lint:css', function lintCssTask () {
-  return gulp.src(_.union(location.css.core, nullify(location.css.min)))
+}
+/* *
+function lintCSS () {
+  return src(_.union(location.css.core, nullify(location.css.min), nullify(location.css.nonstandard)))
+    .pipe(debug({
+      title: 'Lint CSS:'
+    }))
     .pipe(gulpStylelint({
       // fix: true,
       reporters: [
@@ -214,258 +190,311 @@ gulp.task('lint:css', function lintCssTask () {
           console: true
         }]
     }))
-})
+}
+/* */
 
 // Distribution Functions
-gulp.task('dist:boot', function (callback) {
-  return gulp.src(location.boot.source, {
-    base: '.'
-  })
-    .pipe(concat(location.boot.output))
-    .pipe(gulp.dest('.'))
-})
-gulp.task('dist:stratus', function (callback) {
-  return gulp.src(location.stratus.source, {
-    base: '.'
-  })
-    .pipe(concat(location.stratus.output))
-    .pipe(gulp.dest('.'))
-})
-gulp.task('dist:compress', function (callback) {
-  return gulp.src([location.boot.output, location.stratus.output], {
-    base: '.'
-  })
+function distBoot () {
+  return src(location.boot.source)
     /* *
     .pipe(debug({
-      title: 'Mangle:'
+      title: 'Build Boot:'
     }))
     /* */
-    .pipe(terser({
-      // preserveComments: 'license',
-      mangle: true
-    }))
-    .pipe(dest('.', {
-      ext: '.min.js'
-    }))
-    .pipe(gulp.dest('.'))
-})
+    .pipe(concat(location.boot.output))
+    .pipe(dest('.'))
+}
 
 // Mangle Functions
-gulp.task('clean:mangle', function () {
-  return gulp.src(location.mangle.min, {
-    base: '.',
-    read: false
+function cleanMangle () {
+  if (!location.mangle.min.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(_.union(location.mangle.min, nullify(location.preserve.min)))
+}
+function compressMangle () {
+  if (!location.mangle.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.mangle.core, nullify(location.mangle.min), nullify(location.preserve.core)), {
+    base: '.'
   })
-    /* *
-    .pipe(debug({
-      title: 'Clean:'
+  /* *
+  .pipe(debug({
+    title: 'Compress Mangle:'
+  }))
+  /* */
+    // .pipe(sourcemaps.init())
+    .pipe(babel(babelSettings))
+    .pipe(terser({
+      // parse: {},
+      // compress: {},
+      mangle: true,
+      output: {
+        comments: false,
+        ecma: 5,
+        wrap_func_args: false
+      }
+      // sourceMap: {
+      //   url: 'inline'
+      // }
     }))
-    /* */
-    .pipe(vinylPaths(del))
-})
-gulp.task('compress:mangle', ['clean:mangle'], function (callback) {
-  pump([
-    gulp.src(_.union(location.mangle.core, nullify(location.mangle.min)), {
-      base: '.'
-    }),
-    /* *
-    debug({
-      title: 'Mangle:'
-    }),
-    /* */
-    babel(babelSettings),
-    terser({
-      // preserveComments: 'license',
-      mangle: true
-    }),
-    dest('.', {
+    // .pipe(sourcemaps.mapSources((sourcePath, file) => sourcePath.substring(sourcePath.lastIndexOf('/') + 1)))
+    // .pipe(sourcemaps.write('.', {
+    //   includeContent: false
+    //   // sourceRoot: '.'
+    // }))
+    .pipe(gulpDest('.', {
       ext: '.min.js'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
-})
+    }))
+    .pipe(dest('.'))
+}
 
 // External Functions
-gulp.task('clean:external', function () {
-  return gulp.src(location.external.min, {
-    base: '.',
-    read: false
-  })
-    /* *
-    .pipe(debug({
-      title: 'Clean:'
-    }))
-    /* */
-    .pipe(vinylPaths(del))
-})
-gulp.task('compress:external', ['clean:external'], function (callback) {
-  pump([
-    gulp.src(_.union(location.external.core, nullify(location.external.min)), {
-      base: '.'
-    }),
-    /* *
-    debug({
-      title: 'External:'
-    }),
-    /* */
-    babel(babelSettings),
-    terser({
-      // preserveComments: 'license',
-      mangle: true
-    }),
-    dest('.', {
-      ext: '.min.js'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
-})
+// function cleanExternal () {
+//   if (!location.external.min.length) {
+//     return Promise.resolve('No files selected.')
+//   }
+//   return del(location.external.min)
+// }
+// function compressExternal () {
+//   if (!location.external.core.length) {
+//     return Promise.resolve('No files selected.')
+//   }
+//
+//   return src(_.union(location.external.core, nullify(location.external.min)), {
+//     base: '.'
+//   })
+//     /* *
+//     .pipe(debug({
+//       title: 'Compress External:'
+//     }))
+//     /* */
+//     // .pipe(sourcemaps.init())
+//     .pipe(babel(babelSettings))
+//     .pipe(terser({
+//       // parse: {},
+//       // compress: {},
+//       mangle: true,
+//       output: {
+//         comments: false,
+//         ecma: 5,
+//         wrap_func_args: false,
+//       },
+//       // sourceMap: {
+//       //   url: 'inline'
+//       // }
+//     }))
+//     .pipe(gulpDest('.', {
+//       ext: '.min.js'
+//     }))
+//     .pipe(dest('.'))
+// }
 
 // Preserve Functions
-gulp.task('clean:preserve', function () {
-  return gulp.src(location.preserve.min, {
-    base: '.',
-    read: false
+function cleanPreserve () {
+  if (!location.preserve.min.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(_.union(location.preserve.min, nullify(location.mangle.min)))
+}
+function compressPreserve () {
+  if (!location.preserve.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.preserve.core, nullify(location.preserve.min), nullify(location.mangle.min)), {
+    base: '.'
   })
     /* *
     .pipe(debug({
-      title: 'Clean:'
+      title: 'Compress Preserve:'
     }))
     /* */
-    .pipe(vinylPaths(del))
-})
-gulp.task('compress:preserve', ['clean:preserve'], function (callback) {
-  pump([
-    gulp.src(_.union(location.preserve.core, nullify(location.preserve.min)), {
-      base: '.'
-    }),
-    /* *
-    debug({
-      title: 'Compress:'
-    }),
-    /* */
-    babel(babelSettings),
-    terser({
-      // preserveComments: 'license',
-      mangle: false
-    }),
-    dest('.', {
+    // .pipe(sourcemaps.init())
+    .pipe(babel(babelSettings))
+    .pipe(terser({
+      // parse: {},
+      // compress: {},
+      mangle: false,
+      output: {
+        comments: false,
+        ecma: 5,
+        wrap_func_args: false
+      }
+      // sourceMap: {
+      //   url: 'inline'
+      // }
+    }))
+    // .pipe(sourcemaps.write())
+    .pipe(gulpDest('.', {
       ext: '.min.js'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
-})
+    }))
+    .pipe(dest('.'))
+}
 
 // LESS Functions
-gulp.task('clean:less', function () {
-  return gulp.src(location.less.compile, {
-    base: '.',
-    read: false
-  })
-    /* *
-    .pipe(debug({
-      title: 'Clean:'
+const cleanLESS = function () {
+  if (!location.less.compile.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(location.less.compile)
+}
+function compileLESS () {
+  if (!location.less.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.less.core, nullify(location.less.compile)), { base: '.' })
+  // .pipe(debug({ title: 'Compile LESS:' }))
+    .pipe(less({
+      globalVars: {
+        asset: "'/assets/1/0'"
+      }
     }))
-    /* */
-    .pipe(vinylPaths(del))
-})
-gulp.task('compile:less', ['clean:less'], function (callback) {
-  pump([
-    gulp.src(_.union(location.less.core, nullify(location.less.compile)), {
-      base: '.'
-    }),
-    /* *
-    debug({
-      title: 'LESS:'
-    }),
-    /* */
-    less({}),
-    dest('.', {
-      ext: '.css'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
-})
+    .pipe(gulpDest('.', { ext: '.css' }))
+    .pipe(dest('.'))
+}
+
+// SASS Functions
+function cleanSASS () {
+  if (!location.sass.compile.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(location.sass.compile)
+}
+function compileSASS () {
+  if (!location.sass.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.sass.core, nullify(location.sass.compile)), { base: '.' })
+  // .pipe(debug({ title: 'Compile SASS:' }))
+    .pipe(sass.sync().on('error', sass.logError))
+    .pipe(gulpDest('.', { ext: '.css' }))
+    .pipe(dest('.'))
+}
 
 // CSS Functions
-gulp.task('clean:css', function () {
-  return gulp.src(location.css.min, {
-    base: '.',
-    read: false
-  })
-    /* *
-    .pipe(debug({
-      title: 'Clean:'
-    }))
-    /* */
-    .pipe(vinylPaths(del))
-})
-gulp.task('compress:css', ['clean:css'], function (callback) {
-  pump([
-    gulp.src(_.union(location.css.core, nullify(location.css.min)), {
-      base: '.'
-    }),
-    /* *
-    debug({
-      title: 'CSS:'
-    }),
-    /* */
-    cleanCSS({
+function cleanCSS () {
+  if (!location.css.min.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(location.css.min)
+}
+function compressCSS () {
+  if (!location.css.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.css.core, nullify(location.css.min)), { base: '.' })
+  // .pipe(debug({ title: 'Compress CSS:' }))
+    .pipe(minCSS({
       compatibility: '*',
       inline: ['none'],
-      rebaseTo: 'none' // FIXME: This is a temporary hack I created by
-      // breaking some code in CleanCSS to get back relative
-      // urls
-    }),
-    dest('.', {
-      ext: '.min.css'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
-})
+      rebaseTo: 'none' // FIXME: This is a temporary hack I created by breaking some code in CleanCSS to get back relative urls
+    }))
+    .pipe(gulpDest('.', { ext: '.min.css' }))
+    .pipe(dest('.'))
+}
+
+// CoffeeScript Functions
+function cleanCoffee () {
+  if (!location.coffee.compile.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(location.coffee.compile)
+}
+function compileCoffee () {
+  if (!location.coffee.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.coffee.core, nullify(location.coffee.compile)), { base: '.' })
+  // .pipe(debug({ title: 'Compile Coffee:' }))
+    .pipe(coffee({}))
+    .pipe(gulpDest('.', { ext: '.js' }))
+    .pipe(dest('.'))
+}
+
+// TypeScript Functions
+function cleanTypeScript () {
+  if (!location.typescript.compile.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(location.typescript.compile)
+}
+function compileTypeScript () {
+  if (!location.typescript.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.typescript.core, nullify(location.typescript.compile)), { base: '.' })
+    // .pipe(debug({ title: 'Compile TypeScript:' }))
+    .pipe(sourcemaps.init())
+    .pipe(tsProject())
+    .pipe(sourcemaps.mapSources((sourcePath, file) => sourcePath.substring(sourcePath.lastIndexOf('/') + 1)))
+    .pipe(sourcemaps.write('.', {
+      includeContent: false
+      // sourceRoot: '.'
+    }))
+    // .pipe(gulpDest('.', { ext: '.js' }))
+    .pipe(dest('.'))
+}
 
 // Template Functions
-gulp.task('clean:template', function () {
-  return gulp.src(location.template.min, {
-    base: '.',
-    read: false
+const cleanTemplate = function () {
+  if (!location.template.min.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return del(location.template.min)
+}
+function compressTemplate () {
+  if (!location.template.core.length) {
+    return Promise.resolve('No files selected.')
+  }
+  return src(_.union(location.template.core, nullify(location.template.min)), {
+    base: '.'
   })
-    /* *
-    .pipe(debug({
-      title: 'Clean:'
-    }))
-    /* */
-    .pipe(vinylPaths(del))
-})
-gulp.task('compress:template', ['clean:template'], function (callback) {
-  pump([
-    gulp.src(_.union(location.template.core, nullify(location.template.min)), {
-      base: '.'
-    }),
-    /* *
-    debug({
-      title: 'Template:'
-    }),
-    /* */
-    htmlmin({
+  /* *
+  .pipe(debug({
+    title: 'Compress Template:'
+  }))
+  /* */
+    .pipe(htmlmin({
       collapseWhitespace: true,
       removeComments: true,
       removeEmptyAttributes: true
-    }),
-    dest('.', {
+    }))
+    .pipe(gulpDest('.', {
       ext: '.min.html'
-    }),
-    gulp.dest('.')
-  ],
-  callback
-  )
-})
+    }))
+    .pipe(dest('.'))
+}
+
+// Module Exports
+exports.compile = parallel(
+  series(cleanLESS, compileLESS),
+  series(cleanSASS, compileSASS),
+  series(cleanCoffee, compileCoffee),
+  series(cleanTypeScript, compileTypeScript)
+)
+exports.compress = parallel(
+  series(cleanMangle, compressMangle),
+  series(cleanPreserve, compressPreserve),
+  series(cleanCSS, compressCSS),
+  series(cleanTemplate, compressTemplate)
+  // series(cleanExternal, compressExternal)
+)
+exports.clean = parallel(
+  cleanMangle,
+  cleanPreserve,
+  cleanLESS,
+  cleanSASS,
+  cleanCSS,
+  cleanCoffee,
+  cleanTypeScript,
+  cleanTemplate
+  // cleanExternal
+)
+exports.lint = lintJS
+exports.dist = parallel(
+  distBoot
+  // distStratus
+)
+
+exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)

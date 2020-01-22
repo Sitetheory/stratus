@@ -1,0 +1,42 @@
+{
+  "name": "@stratusjs/runtime",
+  "version": "0.10.7",
+  "description": "This is the runtime package for StratusJS.",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sitetheory/stratus.git"
+  },
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus",
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "underscore",
+    "lodash",
+    "javascript",
+    "typescript",
+    "runtime"
+  ],
+  "engines": {
+    "yarn": ">= 1.21.1"
+  },
+  "dependencies": {
+    "@stratusjs/core": "^0.2.6",
+    "bowser-legacy": "npm:bowser@^1.9.4",
+    "jquery": "^3.4.1",
+    "lodash": "^4.17.15",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.31",
+    "@types/lodash": "^4.14.138",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}

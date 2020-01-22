@@ -1,8 +1,15 @@
-# Stratus - [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Sitetheory/stratus/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Sitetheory/stratus/?branch=master) [![Build Status](https://travis-ci.org/Sitetheory/stratus.svg?branch=master)](https://travis-ci.org/Sitetheory/stratus) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) [![Join the chat at https://gitter.im/Sitetheory/stratus](https://badges.gitter.im/Sitetheory/stratus.svg)](https://gitter.im/Sitetheory/stratus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Stratus - Web Design Platform
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/30b4795862414ba4b3337ddafb3fc6f6)](https://app.codacy.com/app/Sitetheory/stratus?utm_source=github.com&utm_medium=referral&utm_content=Sitetheory/stratus&utm_campaign=Badge_Grade_Dashboard)
+[![codecov](https://codecov.io/gh/Sitetheory/stratus/branch/master/graph/badge.svg)](https://codecov.io/gh/Sitetheory/stratus)
+[![Coverage Status](https://coveralls.io/repos/github/Sitetheory/stratus/badge.svg?branch=master)](https://coveralls.io/github/Sitetheory/stratus?branch=master)
+[![Build Status](https://travis-ci.org/Sitetheory/stratus.svg?branch=master)](https://travis-ci.org/Sitetheory/stratus)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![Join the chat at https://gitter.im/Sitetheory/stratus](https://badges.gitter.im/Sitetheory/stratus.svg)](https://gitter.im/Sitetheory/stratus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
 ## Thesis
 
-The Designer always comes first in the Stratus Layer.  [Read More...](docs/Thesis.md)
+This is a minimalistic framework that becomes progressively more complex on-demand.  [Read More...](docs/Thesis.md)
 
 ## Goals
 
@@ -16,40 +23,35 @@ The Designer always comes first in the Stratus Layer.  [Read More...](docs/Thesi
 
 ##### Dependent
 
-* Underscore.js
+* Lodash
 
 ##### Recommended
 
-* Require.js
+* AMD, CJS, System.js, or equivalent loader
 
 ##### Optional
 
-* Angular.js
-* Backbone.js
-* React.js
+* Angular
+* AngularJS
+* React
 
 ## Usage
 
 #### Deployment
 
-Stratus is built to run within a Require.js Asynchronous Environment with Promises.  For an independent implementation without Require.js, further functionality involving auto-loading dependencies will not be present, so these javascript dependencies and templates will need to be defined directly on the DOM. 
-
-```js
-// These examples will be expanded
-if (tbd) console.log('tbd');
-```
+Stratus is built to run within an AMD or equivalent environment with Async/Await or Promises.  For an independent implementation without an asset loader, further functionality involving auto-loading dependencies will not be present, so any javascript dependencies and templates will need to be defined directly on the DOM. 
 
 #### Angular
 
-[Read More...](docs/Angular.md)
+Angular is in heavy development.  [Read More...](docs/Angular.md)
 
-#### Backbone
+#### AngularJS
 
-[Read More...](docs/Backbone.md)
+AngularJS is stable and takes additions with ease.  [Read More...](docs/AngularJS.md)
 
 #### React
 
-We don't have any data bindings or Auto-Loading built for React, yet. [Read More...](docs/React.md)
+We don't have any data bindings or Auto-Loading built for React, yet.  [Read More...](docs/React.md)
 
 ## Contributions
 

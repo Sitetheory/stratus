@@ -1,0 +1,74 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "system",
+    "moduleResolution": "node",
+//    "outDir": "dist",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "inlineSourceMap": false,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "baseUrl": "",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "*": [
+        "node_modules/*"
+      ],
+//      "@stratusjs/*": [
+//        "packages/*"
+//      ],
+      "@stratusjs/angular/*": [
+        "packages/angular/src/*"
+      ],
+      "@stratusjs/angularjs/*": [
+        "packages/angularjs/src/*"
+      ],
+      "@stratusjs/angularjs-extras/*": [
+        "packages/angularjs-extras/src/*"
+      ],
+      "@stratusjs/backend/*": [
+        "packages/backend/src/*"
+      ],
+      "@stratusjs/boot/*": [
+        "packages/boot/src/*"
+      ],
+      "@stratusjs/calendar/*": [
+        "packages/calendar/src/*"
+      ],
+      "@stratusjs/core/*": [
+        "packages/core/src/*"
+      ],
+      "@stratusjs/idx/*": [
+        "packages/idx/src/*"
+      ],
+      "@stratusjs/react/*": [
+        "packages/react/src/*"
+      ],
+      "@stratusjs/runtime/*": [
+        "packages/runtime/src/*"
+      ],
+      "@stratusjs/swiper/*": [
+        "packages/swiper/src/*"
+      ],
+      "stratus": [
+        "packages/runtime/src/stratus"
+      ],
+      "core-js/es7/reflect": [
+        "node_modules/core-js/proposals/reflect-metadata"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

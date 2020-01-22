@@ -1,0 +1,21 @@
+<div class="tree">
+    <div cdkDropList
+         [id]="uid + '_parent_drop_list'"
+         [cdkDropListConnectedTo]="dropLists"
+         [cdkDropListData]="null"
+         [cdkDropListDisabled]="false"
+         (cdkDropListDropped)="onDragDrop($event)"
+         class="tree-node-drop-list">
+        <!--[id]="uid + '_node_' + node.model.data.id"-->
+        <!--(mouseenter)="onDragHover(node)"-->
+        <!--(mouseleave)="onDragHoverEnd()"-->
+        <!--(cdkDragStarted)="onDragStart()"-->
+        <!--(cdkDragReleased)="onDragEnd()"-->
+        <sa-tree-node cdkDrag
+                      *ngFor="let rootNode of dataSub | async"
+                      [cdkDragData]="rootNode"
+                      [tree]="this"
+                      [node]="rootNode"
+                      class="tree-node"></sa-tree-node>
+    </div>
+</div>

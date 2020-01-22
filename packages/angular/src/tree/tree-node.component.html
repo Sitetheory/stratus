@@ -1,0 +1,45 @@
+<div class="tree-node-content">
+    <!-- use a disabled button to provide padding for tree leaf -->
+    <button mat-icon-button
+            *ngIf="!hasChild(node)"
+            disabled></button>
+
+    <!-- use a regular button to control expandable nodes -->
+    <button mat-icon-button
+            *ngIf="hasChild(node)"
+            [attr.aria-label]="'toggle ' + getName(node)">
+        <mat-icon class="mat-icon-rtl-mirror">
+            {{isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+        </mat-icon>
+    </button>
+
+    <!-- clickable name is also the drag handle -->
+    <span cdkDragHandle
+          [innerHTML]="getName(node)"
+          (click)="openDialog(node)"></span>
+
+    <!-- drag preview is all that is viewable when dragging -->
+    <span *cdkDragPreview
+          [innerHTML]="getDragPreview(node)"
+          class="tree-node-drag-preview"></span>
+
+    <!-- display children for expandable nodes -->
+    <div cdkDropList
+         [id]="tree.uid + '_node_' + node.id + '_drop_list'"
+         [cdkDropListConnectedTo]="tree.dropLists"
+         [cdkDropListData]="node"
+         [cdkDropListDisabled]="false"
+         (cdkDropListDropped)="tree.onDragDrop($event)"
+         class="tree-node-drop-list">
+        <div *ngIf="hasChild(node)"
+             [class.display-none]="!isExpanded(node)">
+            <sa-tree-node cdkDrag
+                          *ngFor="let child of node.children"
+                          [cdkDragData]="child"
+                          [tree]="tree"
+                          [parent]="node"
+                          [node]="child"
+                          class="tree-node"></sa-tree-node>
+        </div>
+    </div>
+</div>
