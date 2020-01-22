@@ -24,8 +24,9 @@ import {cookie} from '@stratusjs/core/environment'
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
-// Reusable Objects
+// Reusable Objects. Keys listed are not required, but help programmers define what exists/is possible
 export interface WhereOptions {
+    // Wildcard for anything
     [key: string]: any,
 
     // Property
@@ -43,6 +44,8 @@ export interface WhereOptions {
     Bathrooms?: number | any, // Previously BathroomsFullMin
     Bedrooms?: number | any, // Previously BedroomsTotalMin
     AgentLicense?: string[] | string,
+    Location?: string,
+    Neighborhood?: string[] | string,
 
     // Member
     MemberKey?: string,
@@ -56,10 +59,6 @@ export interface WhereOptions {
     OfficeNationalAssociationId?: string,
     OfficeStatus?: string,
     OfficeName?: string,
-
-    // Generic: Search Multiple Fields
-    Location?: string,
-    Neighborhood?: string,
 }
 
 export interface CompileFilterOptions {
@@ -179,11 +178,10 @@ interface TokenResponse {
     }
 }
 
-// FIXME unable to add an array of MongoWhereQuery to and/or
 interface MongoWhereQuery {
     [key: string]: string | string[] | number | MongoWhereQuery[] | {
         inq?: string[] | number[],
-        in?: string[] | number[], // Only for nested queries
+        in?: string[] | number[], // Only for nested queries (alternative to inq)
         between?: number[],
         gte?: number,
         lte?: number,
@@ -262,6 +260,7 @@ Stratus.Services.Idx = [
                     ListingType: [],
                     PostalCode: [],
                     MLSAreaMajor: [],
+                    Neighborhood: [],
                     // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
                     CityRegion: [],
                     AgentLicense: []
@@ -994,30 +993,34 @@ Stratus.Services.Idx = [
                  */
                 function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
                     const whereQuery: MongoWhereQuery = {}
+                    // andStatement is the collection of query's nested in an And filter
                     const andStatement: MongoWhereQuery[] = [] // TS detecting [] as string[] otherwise
+
+                    interface SearchObject {
+                        type: 'stringEquals' | // Input is a string, needs to equal another string or number field
+                            'stringLike' | // Input is a string, needs to be similar to another string field
+                            'stringLikeArray' | // Input is a string or array, one of which needs to be found similar to db string field
+                            'stringIncludesArray' | // Input is a string or array, one of which needs to be found equal to db string field
+                            'stringIncludesArrayAlternative' | // Input is a string or array, one of which needs to be found equal to db string field
+                            'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
+                            'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
+                            'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
+                        apiField?: string, // Used if the widgetField name is different from the field in database
+                        andOr?: Array<{
+                            apiField: string,
+                            type: 'stringEquals'
+                                | 'stringLike'
+                                | 'stringLikeArray'
+                                | 'stringIncludesArray'
+                        }>
+                    }
 
                     /**
                      * List of Fields we can search for within the Widget's URL and option on List pages
                      * The key is the field that the Widget accepts/expects
                      * The apiField is the key that the microIdx can accept
                      */
-                    const searchPossibilities: {
-                        [key: string]: {
-                            type: 'stringEquals' | // Input is a string, needs to equal another string or number field
-                                'stringLike' | // Input is a string, needs to be similar to another string field
-                                'stringIncludesArray' | // Input is a string, needs to be contained in 1 of a number of string fields
-                                'stringIncludesArrayAlternative' | // Input is a string, needs to be contained in 1 of a number of string fields
-                                'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
-                                'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
-                                'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
-                            apiField?: string, // Used if the widgetField name is different from the field in database
-                            andOr?: Array<{
-                                apiField: string,
-                                type: 'stringLike'
-                                // | 'stringEquals'
-                            }>,
-                        }
-                    } = {
+                    const searchPossibilities: { [key: string]: SearchObject } = {
                         ListingKey: {
                             type: 'stringEquals'
                         },
@@ -1070,136 +1073,171 @@ Stratus.Services.Idx = [
                         Location: {
                             type: 'andOr',
                             andOr: [
-                                {apiField: 'City', type: 'stringLike'},
-                                {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSAreaMajor', type: 'stringLike'},
-                                {apiField: 'PostalCode', type: 'stringLike'},
-                                // TODO: in the future we should pass in a generic field like Address (that will
+                                {apiField: 'City', type: 'stringLikeArray'},
+                                {apiField: 'CityRegion', type: 'stringLikeArray'},
+                                {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
+                                {apiField: 'PostalCode', type: 'stringLikeArray'},
+                                // TODO: in the future we should pass in a new defined field like Address (that will
                                 // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
                                 // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
                                 // TODO: and all those are LIKE (but all must match LIKE)
-                                {apiField: 'UnparsedAddress', type: 'stringLike'},
+                                {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
                             ]
                         },
                         Neighborhood: {
                             type: 'andOr',
                             andOr: [
-                                {apiField: 'CityRegion', type: 'stringLike'},
-                                {apiField: 'MLSAreaMajor', type: 'stringLike'}
+                                {apiField: 'CityRegion', type: 'stringLikeArray'},
+                                {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
                             ]
                         }
                     }
 
+                    // The type of search functions used by the above options
+                    // TODO since is still not fully optimized, but it's now much clean to look at and works faster
+                    // TODO whereQuery was not added
+                    const searchFunctions: {
+                        [key: string]: (searchObject: SearchObject, value: any) => void
+                    } = {
+                        stringEquals: (searchObject, value) => {
+                            whereQuery[searchObject.apiField] = value
+                        },
+                        stringLike: (searchObject, value) => {
+                            whereQuery[searchObject.apiField] = {
+                                like: value,
+                                options: 'i'
+                            }
+                        },
+                        stringLikeArray: (searchObject, value) => {
+                            value = typeof value === 'string' ? [value] : value
+                            const stringLikeArrayOrStatement: MongoWhereQuery[] = []
+                            value.forEach((requestedValue: string) => {
+                                stringLikeArrayOrStatement.push({
+                                    [searchObject.apiField]: {
+                                        like: requestedValue,
+                                        options: 'i'
+                                    }
+                                })
+                            })
+                            if (!_.isEmpty(stringLikeArrayOrStatement)) {
+                                andStatement.push({or: stringLikeArrayOrStatement})
+                            }
+                        },
+                        stringIncludesArray: (searchObject, value) => {
+                            value = typeof value === 'string' ? [value] : value
+                            if (value.length > 0) {
+                                whereQuery[searchObject.apiField] = {
+                                    inq: value
+                                }
+                            }
+                        },
+                        stringIncludesArrayAlternative: (searchObject, value) => {
+                            // For some reason, `inq` doesn't work in certain situations. This is to overcome that
+                            value = typeof value === 'string' ? [value] : value
+                            if (value.length > 0) {
+                                whereQuery[searchObject.apiField] = {
+                                    in: value
+                                }
+                            }
+                        },
+                        numberEqualGreater: (searchObject, value) => {
+                            if (value && value !== 0) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(whereQuery, searchObject.apiField) &&
+                                    Object.prototype.hasOwnProperty.call(whereQuery[searchObject.apiField], 'lte')
+                                ) {
+                                    // If a Less than already is being searched
+                                    whereQuery[searchObject.apiField] = {
+                                        between: [
+                                            parseInt(value, 10),
+                                            parseInt(_.get(whereQuery[searchObject.apiField], 'lte'), 10)
+                                        ]
+                                    }
+                                } else {
+                                    whereQuery[searchObject.apiField] = {gte: parseInt(value, 10)}
+                                }
+                            }
+                        },
+                        numberEqualLess: (searchObject, value) => {
+                            if (value && value !== 0) {
+                                if (
+                                    Object.prototype.hasOwnProperty.call(whereQuery, searchObject.apiField) &&
+                                    Object.prototype.hasOwnProperty.call(whereQuery[searchObject.apiField], 'gte')
+                                ) {
+                                    // If a Greater than already is being searched
+                                    whereQuery[searchObject.apiField] = {
+                                        between: [
+                                            parseInt(_.get(whereQuery[searchObject.apiField], 'gte'), 10),
+                                            parseInt(value, 10)
+                                        ]
+                                    }
+                                } else {
+                                    whereQuery[searchObject.apiField] = {lte: parseInt(value, 10)}
+                                }
+                            }
+                        },
+                        andOr: (searchObject, value) => {
+                            if (Object.prototype.hasOwnProperty.call(searchObject, 'andOr')) {
+                                // andOr works similar to the queries above, where the types are just nested ORs
+                                // andOrOrStatement is the collection of query's nested in an Or filter
+                                // that will later be added to andStatement
+                                const andOrOrStatement: MongoWhereQuery[] = []
+                                searchObject.andOr.forEach((orObject) => {
+                                    if (orObject.type === 'stringEquals') {
+                                        andOrOrStatement.push({
+                                            [orObject.apiField]: value
+                                        })
+                                    } else if (orObject.type === 'stringLike') {
+                                        andOrOrStatement.push({
+                                            [orObject.apiField]: {
+                                                like: value,
+                                                options: 'i'
+                                            }
+                                        })
+                                    } else if (orObject.type === 'stringLikeArray') {
+                                        value = typeof value === 'string' ? [value] : value
+                                        if (value.length > 0) {
+                                            value.forEach((requestedValue: string) => {
+                                                andOrOrStatement.push({
+                                                    [orObject.apiField]: {
+                                                        like: requestedValue,
+                                                        options: 'i'
+                                                    }
+                                                })
+                                            })
+                                            }
+                                    } else if (orObject.type === 'stringIncludesArray') {
+                                        value = typeof value === 'string' ? [value] : value
+                                        if (value.length > 0) {
+                                            andOrOrStatement.push({
+                                                [orObject.apiField]: {
+                                                    inq: value
+                                                }
+                                            })
+                                        }
+                                    }
+                                })
+
+                                if (!_.isEmpty(andOrOrStatement)) {
+                                    andStatement.push({or: andOrOrStatement})
+                                }
+                            }
+                        }
+                    }
+
                     // This loops through all the set Fields above to convert into a where query
-                    for (const [widgetField, searchValue] of Object.entries(searchPossibilities)) {
-                        if (!Object.prototype.hasOwnProperty.call(searchValue, 'apiField')) {
-                            searchValue.apiField = widgetField
+                    for (const [widgetField, searchObject] of Object.entries(searchPossibilities)) {
+                        // Ensure each searchObject has a apiField targeted by default
+                        if (!Object.prototype.hasOwnProperty.call(searchObject, 'apiField')) {
+                            searchObject.apiField = widgetField
                         }
 
                         if (
-                            searchValue.type === 'stringEquals' &&
+                            Object.prototype.hasOwnProperty.call(searchFunctions, searchObject.type) &&
                             Object.prototype.hasOwnProperty.call(where, widgetField) &&
                             where[widgetField] !== ''
                         ) {
-                            whereQuery[searchValue.apiField] = where.ListingKey
-                        } else if (
-                            searchValue.type === 'stringLike' &&
-                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
-                            where[widgetField] !== ''
-                        ) {
-                            whereQuery[searchValue.apiField] = {
-                                like: where[widgetField],
-                                options: 'i'
-                            }
-                        } else if (
-                            searchValue.type === 'stringIncludesArray' &&
-                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
-                            where[widgetField] !== ''
-                        ) {
-                            if (typeof where[widgetField] === 'string') {
-                                where[widgetField] = [where[widgetField]]
-                            }
-                            if (where[widgetField].length > 0) {
-                                whereQuery[searchValue.apiField] = {
-                                    inq: where[widgetField]
-                                }
-                            }
-                        } else if (
-                            searchValue.type === 'stringIncludesArrayAlternative' &&
-                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
-                            where[widgetField] !== ''
-                        ) {
-                            // For some reason, `inq` doesn't work in certain situations. This is to overcome that
-                            if (typeof where[widgetField] === 'string') {
-                                where[widgetField] = [where[widgetField]]
-                            }
-                            if (where[widgetField].length > 0) {
-                                whereQuery[searchValue.apiField] = {
-                                    in: where[widgetField]
-                                }
-                            }
-                        } else if (
-                            searchValue.type === 'numberEqualGreater' &&
-                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
-                            where[widgetField] &&
-                            where[widgetField] !== 0
-                        ) {
-                            if (
-                                Object.prototype.hasOwnProperty.call(whereQuery, searchValue.apiField) &&
-                                Object.prototype.hasOwnProperty.call(whereQuery[searchValue.apiField], 'lte')
-                            ) {
-                                // If a Less than already is being searched
-                                whereQuery[searchValue.apiField] = {
-                                    between: [
-                                        parseInt(where[widgetField], 10),
-                                        parseInt(_.get(whereQuery[searchValue.apiField], 'lte'), 10)
-                                    ]
-                                }
-                            } else {
-                                whereQuery[searchValue.apiField] = {gte: parseInt(where[widgetField], 10)}
-                            }
-                        } else if (
-                            searchValue.type === 'numberEqualLess' &&
-                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
-                            where[widgetField] &&
-                            where[widgetField] !== 0
-                        ) {
-                            if (
-                                Object.prototype.hasOwnProperty.call(whereQuery, searchValue.apiField) &&
-                                Object.prototype.hasOwnProperty.call(whereQuery[searchValue.apiField], 'gte')
-                            ) {
-                                // If a Greater than already is being searched
-                                whereQuery[searchValue.apiField] = {
-                                    between: [
-                                        parseInt(_.get(whereQuery[searchValue.apiField], 'gte'), 10),
-                                        parseInt(where[widgetField], 10)
-                                    ]
-                                }
-                            } else {
-                                whereQuery[searchValue.apiField] = {lte: parseInt(where[widgetField], 10)}
-                            }
-                        } else if (
-                            searchValue.type === 'andOr' &&
-                            Object.prototype.hasOwnProperty.call(searchValue, 'andOr') &&
-                            Object.prototype.hasOwnProperty.call(where, widgetField) &&
-                            where[widgetField] !== ''
-                        ) {
-                            const orStatement: MongoWhereQuery[] = []
-                            searchValue.andOr.forEach((orObject) => {
-                                if (
-                                    Object.prototype.hasOwnProperty.call(orObject, 'type') &&
-                                    orObject.type === 'stringLike'
-                                ) {
-                                    orStatement.push({
-                                        [orObject.apiField]: {
-                                            like: where[widgetField],
-                                            options: 'i'
-                                        }
-                                    })
-                                }
-                            })
-
-                            andStatement.push({or: orStatement})
+                            searchFunctions[searchObject.type](searchObject, where[widgetField])
                         }
                     }
 
