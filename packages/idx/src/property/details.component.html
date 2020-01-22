@@ -280,7 +280,9 @@
                     </stratus-idx-property-details-sub-section>
 
                     <!-- Agent section (not advanced enough to process automatically yet) -->
-                    <div class="property-details-sub-section">
+                    <div class="property-details-sub-section"
+                         data-ng-if="::getListAgentName() || getCoListAgentName() || getBuyerAgentName() || getCoBuyerAgentName()"
+                    >
                         <div class="sub-detail-section">
                             <div class="section-name">Agent</div>
                             <div class="sub-detail" data-ng-if="getListAgentName()">

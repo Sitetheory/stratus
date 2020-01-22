@@ -51,7 +51,12 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                 if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
                     $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
-                    $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
+                    $scope.model.data[item] !== '' && // ensure we skip blanks or empty sections can appear
+                    // ensure we skip false booleans that have no false value (blank)
+                    !(
+                        $scope.model.data[item] === false &&
+                        _.get($scope.items[item], 'false') === ''
+                    )
                 ) {
                     $scope.visibleFields = true
                 }
