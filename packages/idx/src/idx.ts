@@ -1077,7 +1077,7 @@ Stratus.Services.Idx = [
                                 {apiField: 'CityRegion', type: 'stringLikeArray'},
                                 {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
                                 {apiField: 'PostalCode', type: 'stringLikeArray'},
-                                // TODO: in the future we should pass in a generic field like Address (that will
+                                // TODO: in the future we should pass in a new defined field like Address (that will
                                 // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
                                 // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
                                 // TODO: and all those are LIKE (but all must match LIKE)
