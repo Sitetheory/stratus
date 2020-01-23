@@ -13,13 +13,13 @@ import 'angular-material'
 
 // Services
 import '@stratusjs/idx/idx'
+import {ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
 import 'stratus.directives.stringToNumber'
-import {WhereOptions} from '@stratusjs/idx/idx'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -28,6 +28,21 @@ const moduleName = 'property'
 const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxPropertySearchScope = angular.IScope & ObjectWithFunctions & {
+    elementId: string
+    localDir: string
+    model: any
+    Idx: any
+    widgetName: string
+    listId: string
+    listInitialized: boolean
+    listLinkUrl: string
+    listLinkTarget: string
+    options: object | any // TODO need to specify
+    variableSyncing: object | any
+    filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
+}
 
 Stratus.Components.IdxPropertySearch = {
     bindings: {
@@ -46,7 +61,8 @@ Stratus.Components.IdxPropertySearch = {
         $q: angular.IQService,
         $mdConstant: any, // mdChips item
         $mdPanel: angular.material.IPanelService,
-        $scope: object | any, // angular.IScope breaks references so far
+        // $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxPropertySearchScope,
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         Idx: any,

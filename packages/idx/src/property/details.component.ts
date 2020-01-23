@@ -16,6 +16,7 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
+import {ObjectWithFunctions} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
@@ -45,6 +46,26 @@ const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+export type IdxPropertyDetailsScope = angular.IScope & ObjectWithFunctions & {
+    elementId: string
+    localDir: string
+    model: any
+    Idx: any
+    urlLoad: boolean
+    pageTitle: string
+    options: any // TODO ned to specify
+    defaultListOptions: object
+    disclaimerString: string
+    disclaimerHTML: any
+    images: object[]
+    contact?: object | any
+    contactUrl?: string
+    integrations?: object | any
+    minorDetails: SubSectionOptions[]
+    alternateMinorDetails: SubSectionOptions[]
+}
+
+
 Stratus.Components.IdxPropertyDetails = {
     bindings: {
         elementId: '@',
@@ -69,7 +90,7 @@ Stratus.Components.IdxPropertyDetails = {
         $attrs: angular.IAttributes,
         $location: angular.ILocationService,
         $sce: angular.ISCEService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxPropertyDetailsScope,
         ListTrac: any,
         // tslint:disable-next-line:no-shadowed-variable
         Model: any,
@@ -1286,14 +1307,14 @@ Stratus.Components.IdxPropertyDetails = {
          * Returns the processed street address
          * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
          * +  StreetDirSuffix + 'Unit' + UnitNumber
+         * TODO can combine with other function so its not duplicate
          */
         $scope.getStreetAddress = (): string => {
-            let address = ''
             if (
                 Object.prototype.hasOwnProperty.call($scope.model.data, 'UnparsedAddress') &&
                 $scope.model.data.UnparsedAddress !== ''
             ) {
-                address = $scope.model.data.UnparsedAddress
+                return $scope.model.data.UnparsedAddress
             } else {
                 const addressParts: string[] = []
                 if (
@@ -1324,9 +1345,8 @@ Stratus.Components.IdxPropertyDetails = {
                             addressParts.push($scope.model.data[addressPart])
                         }
                     })
-                address = addressParts.join(' ')
+                return addressParts.join(' ')
             }
-            return address
         }
 
         $scope.getFullAddress = (encode?: boolean): string => {

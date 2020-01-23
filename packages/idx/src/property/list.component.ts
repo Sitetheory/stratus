@@ -19,7 +19,7 @@ import '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {CompileFilterOptions, MLSService, WhereOptions} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, MLSService, ObjectWithFunctions} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -35,6 +35,28 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
+    elementId: string
+    localDir: string
+    model: any
+    Idx: any
+    collection: Collection
+    urlLoad: boolean
+    searchOnLoad: boolean
+    detailsLinkPopup: boolean
+    detailsLinkUrl: string
+    detailsLinkTarget: '_self' | '_blank'
+    detailsTemplate?: string
+    query: object | any // TODO need to specify
+    orderOptions: object | any // TODO need to specify
+    googleApiKey?: string
+    contactName: string
+    contactEmail?: string
+    contactPhone: string
+    disclaimerString: string
+    disclaimerHTML: any
+}
 
 Stratus.Components.IdxPropertyList = {
     bindings: {
@@ -58,7 +80,7 @@ Stratus.Components.IdxPropertyList = {
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxPropertyListScope,
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         $sce: angular.ISCEService,
@@ -81,7 +103,7 @@ Stratus.Components.IdxPropertyList = {
          */
         $ctrl.$onInit = async () => {
             $scope.Idx = Idx
-            $scope.collection = new Collection({}) as Collection // set a default collection for variable safety
+            $scope.collection = new Collection({})
             /**
              * Allow query to be loaded initially from the URL
              * type {boolean}
@@ -161,7 +183,7 @@ Stratus.Components.IdxPropertyList = {
             }
         }
 
-        $scope.$watch('collection.models', (models?: []) => {
+        $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
             }
@@ -314,12 +336,12 @@ Stratus.Components.IdxPropertyList = {
          * +  StreetDirSuffix + 'Unit' + UnitNumber
          */
         $scope.getStreetAddress = (property: object | any): string => {
-            let address = ''
             if (
                 Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') &&
                 property.UnparsedAddress !== ''
             ) {
-                address = property.UnparsedAddress
+                return property.UnparsedAddress
+                // address = property.UnparsedAddress
                 // console.log('using unparsed ')
             } else {
                 const addressParts: string[] = []
@@ -351,10 +373,8 @@ Stratus.Components.IdxPropertyList = {
                             addressParts.push(property[addressPart])
                         }
                     })
-                address = addressParts.join(' ')
+                return addressParts.join(' ')
             }
-            // console.log('address',  address)
-            return address
         }
 
         /**

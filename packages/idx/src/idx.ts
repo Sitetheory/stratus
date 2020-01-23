@@ -24,6 +24,11 @@ import {cookie} from '@stratusjs/core/environment'
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
+/** Allow an Object to contain any number of unspecified functions, useful in $scope */
+export interface ObjectWithFunctions {
+    [key: string]: ((...args: any) => any)
+}
+
 // Reusable Objects. Keys listed are not required, but help programmers define what exists/is possible
 export interface WhereOptions {
     // Wildcard for anything
@@ -281,7 +286,12 @@ Stratus.Services.Idx = [
                     OfficeSearch: object,
                     OfficeDetails: object
                 } */
-                const instance: any = { // FIXME theres a number of queries that need dynamic calls
+                // any
+                const instance: {
+                    [instanceName: string]: {
+                        [uid: string]: angular.IScope & any
+                    }
+                } = { // FIXME theres a number of queries that need dynamic calls
                     PropertyList: {},
                     PropertySearch: {},
                     PropertyDetails: {},
@@ -295,8 +305,12 @@ Stratus.Services.Idx = [
 
                 /** type {{List: Object<[String]>, Search: Object<[String]>}} */
                 const instanceLink: {
-                    List: object | any,
-                    Search: object | any
+                    List: {
+                        [uid: string]: string[]
+                    }
+                    Search: {
+                        [uid: string]: string[]
+                    }
                 } = {
                     List: {},
                     Search: {}
@@ -448,7 +462,7 @@ Stratus.Services.Idx = [
                  * Apply a new Page title or revert to the original; page title
                  * @param title - Page Title
                  */
-                function setPageTitle(title: string): void {
+                function setPageTitle(title?: string): void {
                     if (!defaultPageTitle) {
                         // save default title first
                         defaultPageTitle = JSON.parse(JSON.stringify($window.document.title))
