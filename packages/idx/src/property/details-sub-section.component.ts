@@ -23,6 +23,28 @@ const componentName = 'details-sub-section'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+export interface SubSectionOptions {
+    section: string,
+    items: SubSectionOptionItems
+}
+
+interface SubSectionOptionItems {
+    [key: string]: string | {
+        name?: string,
+        prepend?: string, // Adds a text string to the front of a value
+        append?: string, // Adds a text string to the end of a value (appendField/appendFieldBackup defaults to this)
+        appendField?: string, // Attempts to find this Field and append it to end of a value (if it exists)
+        // If appendField is not found, attempts to find this Field and append it to end of a value (if it exists)
+        appendFieldBackup?: string,
+        comma?: boolean, // Only for Numbers, If true, will add a grammatical comma for thousands
+        true?: string, // Only used for booleans. If true, display this text. Defaults to 'Yes'
+        false?: string, // Only used for booleans. If true, display this text. Defaults to 'No'
+        // Only used for booleans. If value is false text is empty (''), hide the element. Enabled by default
+        hideEmpty?: false
+        hide?: true // Only to be used by this component to forcible hide this element at all times (set with hideEmpty)
+    }
+}
+
 Stratus.Components.IdxPropertyDetailsSubSection = {
     bindings: {
         ngModel: '=',
@@ -41,7 +63,8 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
 
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
-        $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : []
+        const defaultItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
+        $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : defaultItems
 
         $scope.visibleFields = false
         $scope.model = null
@@ -53,7 +76,33 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                     $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
                     $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
                 ) {
-                    $scope.visibleFields = true
+                    if (!(
+                        $scope.model.data[item] === false &&
+                        _.get($scope.items[item], 'false') === ''
+                    )) {
+                        $scope.visibleFields = true
+
+                        // Adjust the text being appended if there is a appendField being set
+                        if (
+                            Object.prototype.hasOwnProperty.call($scope.items[item], 'appendField') &&
+                            Object.prototype.hasOwnProperty.call($scope.model.data, $scope.items[item].appendField) &&
+                            $scope.model.data[$scope.items[item].appendField] !== ''
+                        ) {
+                            $scope.items[item].append = ' ' + $scope.model.data[$scope.items[item].appendField]
+                        } else if (
+                            Object.prototype.hasOwnProperty.call($scope.items[item], 'appendFieldBackup') &&
+                            Object.prototype.hasOwnProperty.call($scope.model.data, $scope.items[item].appendFieldBackup) &&
+                            $scope.model.data[$scope.items[item].appendFieldBackup] !== ''
+                        ) {
+                            $scope.items[item].append = ' ' + $scope.model.data[$scope.items[item].appendFieldBackup]
+                        }
+
+                    } else if (
+                        $scope.model.data[item] === false &&
+                        _.get($scope.items[item], 'hideEmpty') !== false
+                    ) {
+                        $scope.items[item].hide = true
+                    }
                 }
             })
         }
@@ -64,10 +113,12 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                 $scope.stopWatchingSectionName()
             })
         }
-        if ($scope.items.length === 0) {
+
+        if (Object.keys($scope.items).length === 0) {
             $scope.stopWatchingItems = $scope.$watch('$ctrl.items', (data: string) => {
-                if ($scope.items.length === 0) {
-                    $scope.items = data && isJSON(data) ? JSON.parse(data) : []
+                if (Object.keys($scope.items).length === 0) {
+                    const blankItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
+                    $scope.items = data && isJSON(data) ? JSON.parse(data) : blankItems
                     $scope.convertItemsToObject()
                 }
                 $scope.stopWatchingItems()

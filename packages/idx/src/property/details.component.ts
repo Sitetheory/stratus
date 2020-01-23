@@ -34,6 +34,7 @@ import 'stratus.filters.moment'
 
 // Component Preload
 import '@stratusjs/idx/property/details-sub-section.component'
+import {SubSectionOptions} from '@stratusjs/idx/property/details-sub-section.component'
 import '@stratusjs/swiper/carousel.component'
 
 // Environment
@@ -163,26 +164,40 @@ Stratus.Components.IdxPropertyDetails = {
 
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
+             * TODO add option to not show a element if another element exists
              */
-            $scope.minorDetails = [
+            const minorDetails: SubSectionOptions[] = [
                 {
                     section: 'Size & Style',
                     items: {
                         YearBuilt: 'Built',
                         Stories: 'Stories',
                         StructureType: 'Structure Type',
-                        // TODO: append LivingAreaUnits
-                        // LivingArea: {name: 'Living Area', append: '$LivingAreaUnits', comma: true},
-                        LivingArea: {name: 'Living Area', comma: true},
-                        // TODO: append LeasableAreaUnits
-                        // LeasableArea: {name: 'Living Area', append: '$LeasableAreaUnits', comma: true},
-                        LeasableArea: {name: 'Living Area', comma: true},
+                        // LivingAreaUnits doesn't exist in MLSL
+                        LivingArea: {
+                            name: 'Living Area',
+                            comma: true,
+                            appendField: 'LivingAreaUnits',
+                            appendFieldBackup: 'LotSizeUnits',
+                            append: ' SqFt'
+                        },
+                        LeasableArea: {
+                            name: 'Living Area',
+                            comma: true,
+                            appendField: 'LeasableAreaUnits',
+                            appendFieldBackup: 'LivingAreaUnits',
+                            append: ' SqFt'
+                        },
                         LotSizeAcres: {name: 'Lot Size', append: ' Acres', comma: true},
                         LotSizeSquareFeet: {name: 'Lot Size', append: ' SqFt', comma: true},
-                        // TODO: append LotSizeAreaUnits
-                        // LotSizeArea: {name: 'Lot Size', append: '$LotSizeAreaUnits', comma: true},
-                        LotSizeArea: {name: 'Lot Size', comma: true},
-                        HorseYN: {true: 'Horse Property: Yes', false: ''}
+                        LotSizeArea: {
+                            name: 'Lot Size',
+                            comma: true,
+                            appendField: 'LotSizeUnits',
+                            appendFieldBackup: 'LivingAreaUnits',
+                            append: ' SqFt'
+                        },
+                        HorseYN: {name: 'Horse Property', false: ''}
                     }
                 },
                 {
@@ -244,9 +259,9 @@ Stratus.Components.IdxPropertyDetails = {
                         ElectricOnPropertyYN Field
                         PowerProduction
                          */
-                        CoolingYN: {true: 'Cooling: Yes', false: ''},
+                        CoolingYN: {name: 'Cooling', false: ''},
                         Cooling: 'Cooling',
-                        HeatingYN: {true: 'Heating: Yes', false: ''},
+                        HeatingYN: {name: 'Heating', false: ''},
                         Heating: 'Heating',
                         Utilities: 'Utilities',
                         Electric: 'Electric',
@@ -320,9 +335,9 @@ Stratus.Components.IdxPropertyDetails = {
                         SpecialLicenses: 'SpecialLicenses',
                         LeaseAmount: {name: 'LeaseAmount', prepend: '$', comma: true},
                         LeaseAmountFrequency: 'Lease Frequency',
-                        LeaseAssignableYN: {true: 'Lease Assignable', false: ''},
+                        LeaseAssignableYN: {name: 'Lease Assignable', false: ''},
                         LeaseExpiration: 'Lease Expiration',
-                        LeaseRenewalOptionYN: {true: 'Lease Renewable', false: ''}
+                        LeaseRenewalOptionYN: {name: 'Lease Renewable', false: ''}
                     }
                 },
                 {
@@ -330,18 +345,18 @@ Stratus.Components.IdxPropertyDetails = {
                     items: {
                         // ignored fields
                         // FarmLandAreaUnits Field - string list?
-                        CropsIncludedYN: {true: 'Crops Included', false: ''},
+                        CropsIncludedYN: {name: 'Crops Included', false: ''},
                         Vegetation: 'Vegetation',
-                        FarmCreditServiceInclYN: {true: 'Farm Credit Service Shares Included', false: ''},
-                        GrazingPermitsBlmYN: {true: 'Grazing Permitted - BLM', false: ''},
-                        GrazingPermitsForestServiceYN: {true: 'Grazing Permitted - Forestry Service', false: ''},
-                        GrazingPermitsPrivateYN: {true: 'Private Grazing Permitted', false: ''},
+                        FarmCreditServiceInclYN: {name: 'Farm Credit Service', true: 'Shares Included', false: ''},
+                        GrazingPermitsBlmYN: {name: 'Grazing', true: 'BLM Permitted', false: ''},
+                        GrazingPermitsForestServiceYN: {name: 'Grazing', true: 'Forestry Service Permitted', false: ''},
+                        GrazingPermitsPrivateYN: {name: 'Grazing', true: 'Private Permitted', false: ''},
                         CultivatedArea: {name: 'Cultivated Area', comma: true},
                         PastureArea: {name: 'Pasture Area', comma: true},
                         RangeArea: {name: 'Range Area', comma: true},
                         WoodedArea: {name: 'Wooded Area', comma: true},
                         IrrigationSource: 'IrrigationSource',
-                        IrrigationWaterRightsYN: {true: 'Has Irrigation Water Rights', false: ''},
+                        IrrigationWaterRightsYN: {name: 'Irrigation Water Rights', false: ''},
                         IrrigationWaterRightsAcres: {name: 'Irrigation Water Rights', append: ' Acres', comma: true}
                     }
                 },
@@ -349,13 +364,13 @@ Stratus.Components.IdxPropertyDetails = {
                     section: 'Features',
                     items: {
                         HorseAmenities: 'Horse Amenities',
-                        PoolPrivateYN: {true: 'Pool: Yes', false: ''},
+                        PoolPrivateYN: {name: 'Pool', false: ''},
                         PoolFeatures: 'Pool',
                         SpaYN: {true: 'Spa: Yes', false: ''},
                         SpaFeatures: 'Spa',
                         LaundryFeatures: 'Laundry',
                         Appliances: 'Appliances',
-                        FireplaceYN: {true: 'Fireplace: Yes', false: ''},
+                        FireplaceYN: {name: 'Fireplace', false: ''},
                         FireplaceFeatures: 'Fireplace',
                         FireplacesTotal: 'Fireplaces',
                         Basement: 'Basement',
@@ -379,10 +394,10 @@ Stratus.Components.IdxPropertyDetails = {
                         OpenParkingYN Field
                          */
                         ParkingTotal: 'Parking Spaces',
-                        GarageYN: {true: 'Garage: Yes', false: ''},
+                        GarageYN: {name: 'Garage', false: ''},
+                        AttachedGarageYN: {name: 'Garage', true: 'Attached', false: ''},
                         GarageSpaces: 'Garage Spaces',
-                        AttachedGarageYN: {true: 'Attached Garage', false: ''},
-                        CarportYN: {true: 'Carport: Yes', false: ''},
+                        CarportYN: {name: 'Carport', false: ''},
                         CarportSpaces: 'Carport Spaces',
                         CoveredSpaces: 'Covered Spaces',
                         OpenParkingSpaces: 'Open Spaces',
@@ -467,9 +482,9 @@ Stratus.Components.IdxPropertyDetails = {
                         CopyrightNotice: 'Copyright Notice'
                          */
                         AvailabilityDate: 'Availability', // todo need to handle dates
-                        PetsAllowed: {name: 'PetsAllowed'},
-                        HomeWarrantyYN: {true: 'Home Warranty Included', false: ''},
-                        LeaseConsideredYN: {true: 'Leasing Considered', false: ''},
+                        PetsAllowed: {name: 'Pets Allowed'},
+                        HomeWarrantyYN: {name: 'Home Warranty', true: 'Included', false: ''},
+                        LeaseConsideredYN: {name: 'Leasing Considered', false: ''},
                         ListingAgreement: 'Listing Agreement',
                         ListingService: 'Service',
                         DocumentsAvailable: 'Documents Available',
@@ -521,11 +536,11 @@ Stratus.Components.IdxPropertyDetails = {
                         TaxBookNumber
                         TaxMapNumber
                          */
-                        RentControlYN: {true: 'Rent Control', false: ''},
+                        RentControlYN: {name: 'Rent Control', false: ''},
                         TenantPays: 'Tenant Pays',
                         OwnerPays: 'Owner Pays',
                         RentIncludes: 'Rent Includes',
-                        AssociationYN: {true: 'Has HOA', false: 'No HOA'},
+                        AssociationYN: {name: 'HOA', false: ''},
                         AssociationFee: {name: 'HOA Fee', prepend: '$', comma: true},
                         AssociationFeeFrequency: 'HOA Frequency',
                         AssociationFeeIncludes: 'HOA Includes',
@@ -562,7 +577,7 @@ Stratus.Components.IdxPropertyDetails = {
                         TaxStatusCurrent: 'Tax Status',
                         TaxParcelLetter: 'Tax Parcel Letter',
                         ParcelNumber: 'Parcel Number',
-                        AdditionalParcelsYN: {true: 'Has Additional Prcels', false: ''},
+                        AdditionalParcelsYN: {name: 'Additional Parcels', false: ''},
                         AdditionalParcelsDescription: 'Parcels',
                         Zoning: 'Zoning',
                         ZoningDescription: 'Zoning'
@@ -589,7 +604,7 @@ Stratus.Components.IdxPropertyDetails = {
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
              */
-            $scope.alternateMinorDetails = [
+            const alternateMinorDetails: SubSectionOptions[] = [
                 {
                     section: 'Location',
                     items: {
@@ -1147,6 +1162,12 @@ Stratus.Components.IdxPropertyDetails = {
                 OccupantOwner Group
                  */
             ]
+
+            /**
+             * An optional pre-compiled set data for the sub-section component to display fields
+             */
+            $scope.minorDetails = minorDetails
+            $scope.alternateMinorDetails = alternateMinorDetails
 
             // Register this List with the Property service
             Idx.registerDetailsInstance($scope.elementId, $scope)
