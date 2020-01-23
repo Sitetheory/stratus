@@ -1,7 +1,7 @@
 <div data-ng-class="::className" data-ng-if="visibleFields">
 	<div data-ng-bind="::sectionName" class="section-name" aria-label="{{::sectionName}} Details"></div>
 	<div data-ng-repeat="(itemVariable, item) in ::items" class="sub-detail">
-		<div data-ng-if="::model.data.hasOwnProperty(itemVariable)" data-ng-switch="::typeOf(model.data[itemVariable])">
+		<div data-ng-if="::!item.hide &&model.data.hasOwnProperty(itemVariable)" data-ng-switch="::typeOf(model.data[itemVariable])">
 			<div data-ng-switch-when="array">
 				<span data-ng-if="::item.name" data-ng-bind="::item.name + ':'" class="item-label"></span>
 				<span data-ng-repeat="item in ::model.data[itemVariable]" class="repeatedArray"><span data-ng-bind="::item"></span><span class="hideLastChild">, </span></span>

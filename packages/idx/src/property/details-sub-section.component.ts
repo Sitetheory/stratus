@@ -23,6 +23,25 @@ const componentName = 'details-sub-section'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+export interface SubSectionOptions {
+    section: string,
+    items: SubSectionOptionItems
+}
+
+interface SubSectionOptionItems {
+    [key: string]: string | {
+        name?: string,
+        prepend?: string,
+        append?: string,
+        comma?: boolean,
+        true?: string, // Only used for booleans. If true, display this text. Defaults to 'Yes'
+        false?: string, // Only used for booleans. If true, display this text. Defaults to 'No'
+        // Only used for booleans. If value is false text is empty (''), hide the element. Enabled by default
+        hideEmpty?: false
+        hide?: true // Only to be used by this component to forcible hide this element at all times (set with hideEmpty)
+    }
+}
+
 Stratus.Components.IdxPropertyDetailsSubSection = {
     bindings: {
         ngModel: '=',
@@ -41,7 +60,8 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
 
         $scope.className = $attrs.className || 'sub-detail-section'
         $scope.sectionName = $attrs.sectionName || ''
-        $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : []
+        const defaultItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
+        $scope.items = $attrs.items && isJSON($attrs.items) ? JSON.parse($attrs.items) : defaultItems
 
         $scope.visibleFields = false
         $scope.model = null
@@ -51,14 +71,19 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                 if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
                     $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
-                    $scope.model.data[item] !== '' && // ensure we skip blanks or empty sections can appear
-                    // ensure we skip false booleans that have no false value (blank)
-                    !(
+                    $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
+                ) {
+                    if (!(
                         $scope.model.data[item] === false &&
                         _.get($scope.items[item], 'false') === ''
-                    )
-                ) {
-                    $scope.visibleFields = true
+                    )) {
+                        $scope.visibleFields = true
+                    } else if (
+                        $scope.model.data[item] === false &&
+                        _.get($scope.items[item], 'hideEmpty') !== false
+                    ) {
+                        $scope.items[item].hide = true
+                    }
                 }
             })
         }
@@ -69,10 +94,12 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                 $scope.stopWatchingSectionName()
             })
         }
-        if ($scope.items.length === 0) {
+
+        if (Object.keys($scope.items).length === 0) {
             $scope.stopWatchingItems = $scope.$watch('$ctrl.items', (data: string) => {
-                if ($scope.items.length === 0) {
-                    $scope.items = data && isJSON(data) ? JSON.parse(data) : []
+                if (Object.keys($scope.items).length === 0) {
+                    const blankItems: SubSectionOptionItems = {} // Simply to type cast into SubSectionOptionItems
+                    $scope.items = data && isJSON(data) ? JSON.parse(data) : blankItems
                     $scope.convertItemsToObject()
                 }
                 $scope.stopWatchingItems()
