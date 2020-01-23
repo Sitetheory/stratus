@@ -31,9 +31,12 @@ export interface SubSectionOptions {
 interface SubSectionOptionItems {
     [key: string]: string | {
         name?: string,
-        prepend?: string,
-        append?: string,
-        comma?: boolean,
+        prepend?: string, // Adds a text string to the front of a value
+        append?: string, // Adds a text string to the end of a value (appendField/appendFieldBackup defaults to this)
+        appendField?: string, // Attempts to find this Field and append it to end of a value (if it exists)
+        // If appendField is not found, attempts to find this Field and append it to end of a value (if it exists)
+        appendFieldBackup?: string,
+        comma?: boolean, // Only for Numbers, If true, will add a grammatical comma for thousands
         true?: string, // Only used for booleans. If true, display this text. Defaults to 'Yes'
         false?: string, // Only used for booleans. If true, display this text. Defaults to 'No'
         // Only used for booleans. If value is false text is empty (''), hide the element. Enabled by default
@@ -78,6 +81,22 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
                         _.get($scope.items[item], 'false') === ''
                     )) {
                         $scope.visibleFields = true
+
+                        // Adjust the text being appended if there is a appendField being set
+                        if (
+                            Object.prototype.hasOwnProperty.call($scope.items[item], 'appendField') &&
+                            Object.prototype.hasOwnProperty.call($scope.model.data, $scope.items[item].appendField) &&
+                            $scope.model.data[$scope.items[item].appendField] !== ''
+                        ) {
+                            $scope.items[item].append = ' ' + $scope.model.data[$scope.items[item].appendField]
+                        } else if (
+                            Object.prototype.hasOwnProperty.call($scope.items[item], 'appendFieldBackup') &&
+                            Object.prototype.hasOwnProperty.call($scope.model.data, $scope.items[item].appendFieldBackup) &&
+                            $scope.model.data[$scope.items[item].appendFieldBackup] !== ''
+                        ) {
+                            $scope.items[item].append = ' ' + $scope.model.data[$scope.items[item].appendFieldBackup]
+                        }
+
                     } else if (
                         $scope.model.data[item] === false &&
                         _.get($scope.items[item], 'hideEmpty') !== false

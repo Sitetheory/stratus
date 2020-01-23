@@ -164,6 +164,7 @@ Stratus.Components.IdxPropertyDetails = {
 
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
+             * TODO add option to not show a element if another element exists
              */
             const minorDetails: SubSectionOptions[] = [
                 {
@@ -172,17 +173,30 @@ Stratus.Components.IdxPropertyDetails = {
                         YearBuilt: 'Built',
                         Stories: 'Stories',
                         StructureType: 'Structure Type',
-                        // TODO: append LivingAreaUnits
-                        // LivingArea: {name: 'Living Area', append: '$LivingAreaUnits', comma: true},
-                        LivingArea: {name: 'Living Area', comma: true},
-                        // TODO: append LeasableAreaUnits
-                        // LeasableArea: {name: 'Living Area', append: '$LeasableAreaUnits', comma: true},
-                        LeasableArea: {name: 'Living Area', comma: true},
+                        // LivingAreaUnits doesn't exist in MLSL
+                        LivingArea: {
+                            name: 'Living Area',
+                            comma: true,
+                            appendField: 'LivingAreaUnits',
+                            appendFieldBackup: 'LotSizeUnits',
+                            append: ' SqFt'
+                        },
+                        LeasableArea: {
+                            name: 'Living Area',
+                            comma: true,
+                            appendField: 'LeasableAreaUnits',
+                            appendFieldBackup: 'LivingAreaUnits',
+                            append: ' SqFt'
+                        },
                         LotSizeAcres: {name: 'Lot Size', append: ' Acres', comma: true},
                         LotSizeSquareFeet: {name: 'Lot Size', append: ' SqFt', comma: true},
-                        // TODO: append LotSizeAreaUnits
-                        // LotSizeArea: {name: 'Lot Size', append: '$LotSizeAreaUnits', comma: true},
-                        LotSizeArea: {name: 'Lot Size', comma: true},
+                        LotSizeArea: {
+                            name: 'Lot Size',
+                            comma: true,
+                            appendField: 'LotSizeUnits',
+                            appendFieldBackup: 'LivingAreaUnits',
+                            append: ' SqFt'
+                        },
                         HorseYN: {name: 'Horse Property', false: ''}
                     }
                 },
