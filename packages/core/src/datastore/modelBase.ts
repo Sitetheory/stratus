@@ -19,6 +19,7 @@ export class ModelBase extends EventManager {
     watch = false
     watching = false
     recv: LooseObject = {}
+    recvChain: LooseObject = {}
     patch: LooseObject = {}
 
     constructor(data?: any, options?: any) {
