@@ -389,7 +389,7 @@ export class Collection extends EventManager {
         return this.models.map((model: Model) => model.toJSON())
     }
 
-    add(target: any, options: any, addAtFirst: boolean = false) {
+    add(target: any, options: any) {
         if (!_.isObject(target)) {
             return
         }
@@ -399,7 +399,7 @@ export class Collection extends EventManager {
         target = (target instanceof Model) ? target : new Model({
             collection: this
         }, target)
-        if (addAtFirst) {
+        if (options.prepend) {
             this.models.unshift(target)
         } else {
             this.models.push(target)

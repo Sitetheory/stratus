@@ -145,6 +145,8 @@ export class Model extends ModelBase {
         // Handle Attributes (Typically from Collection Hydration)
         if (attributes && typeof attributes === 'object') {
             _.extend(this.data, attributes)
+            this.recv = _.cloneDeep(this.data)
+            this.recvChain = this.flatten(this.data)
         }
 
         // Generate URL
@@ -267,7 +269,7 @@ export class Model extends ModelBase {
         this.patch = _.extend(this.patch, changeSet)
         // removes items from patch if they match what we've received from the most recent XHR
         _.forEach(this.patch, (value: any, key: string) => {
-            if (value !== this.recv[key]) {
+            if (value !== this.recvChain[key]) {
                 return
             }
             delete this.patch[key]
@@ -414,7 +416,8 @@ export class Model extends ModelBase {
                     if (!this.error) {
                         this.changed = false
                         this.saving = false
-                        this.recv = this.flatten(this.data)
+                        this.recv = _.cloneDeep(this.data)
+                        this.recvChain = this.flatten(this.data)
                         this.patch = {}
                     }
 
@@ -553,15 +556,7 @@ export class Model extends ModelBase {
     // Attribute Functions
 
     toJSON(options?: any) {
-        /* *
-         options = _.extend(options || {}, {
-         patch: false
-         });
-         /* */
-        let data
-
-        // options.patch ? this.toPatch() :
-        data = this.data
+        let data = options.patch ? this.toPatch() : this.data
         data = this.meta.has('api') ? {
             meta: this.meta.get('api'),
             payload: data
@@ -573,7 +568,14 @@ export class Model extends ModelBase {
     }
 
     toPatch() {
-        return this.patch
+        const patchData = {}
+        const changeSet = this.sanitizePatch(
+            patch(this.data, this.recv)
+        )
+        _.forEach(changeSet, (value, key) => {
+            _.set(patchData, key, value)
+        })
+        return patchData
     }
 
     buildPath(path: string): any {
