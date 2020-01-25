@@ -29,10 +29,27 @@ export interface ObjectWithFunctions {
     [key: string]: ((...args: any) => any)
 }
 
+export interface UrlsOptionsObject {
+    Listing: UrlWhereOptions // TODO convert to UrlWhereOptions
+    Search: UrlWhereOptions
+}
+
+// This is what can be passed to the URL and useable options
+export interface UrlWhereOptions extends Omit<WhereOptions, 'Page' | 'Order'> {
+    Page?: number
+    Order?: any // TODO specify order
+}
+
 // Reusable Objects. Keys listed are not required, but help programmers define what exists/is possible
 export interface WhereOptions {
     // Wildcard for anything
     [key: string]: any,
+
+    page?: undefined // Key being added to wrong type
+    Page?: undefined // Key being added to wrong type
+    order?: undefined // Key being added to wrong type
+    Order?: undefined // Key being added to wrong type
+    where?: undefined // Key being added to wrong type
 
     // Property
     ListingKey?: string,
@@ -324,10 +341,7 @@ Stratus.Services.Idx = [
                     contacts: []
                 }
 
-                const urlOptions: {
-                    Listing: object | any,
-                    Search: object | any
-                } = {
+                const urlOptions: UrlsOptionsObject = {
                     Listing: {},
                     Search: {}
                 }
@@ -1219,7 +1233,7 @@ Stratus.Services.Idx = [
                                                     }
                                                 })
                                             })
-                                            }
+                                        }
                                     } else if (orObject.type === 'stringIncludesArray') {
                                         value = typeof value === 'string' ? [value] : value
                                         if (value.length > 0) {
@@ -1559,7 +1573,7 @@ Stratus.Services.Idx = [
                  * TODO give options on different ways to parse? (e.g. Url formatting)
                  * returns {Object}
                  */
-                function getOptionsFromUrl() {
+                function getOptionsFromUrl(): UrlsOptionsObject {
                     let path = $location.path()
 
                     path = getListingOptionsFromUrlString(path)
@@ -1637,7 +1651,9 @@ Stratus.Services.Idx = [
 
                     // Math is performed in Page and needs to be converted
                     if (Object.prototype.hasOwnProperty.call(urlOptions.Search, 'Page')) {
-                        urlOptions.Search.Page = parseInt(urlOptions.Search.Page, 10)
+                        if (_.isString(urlOptions.Search.Page)) {
+                            urlOptions.Search.Page = parseInt(urlOptions.Search.Page, 10)
+                        }
                     }
 
                     return path
@@ -2057,7 +2073,19 @@ Stratus.Services.Idx = [
                     listName = 'PropertyList'
                 ): Promise<Collection> {
                     options.service = options.service || []
-                    options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
+                    // options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
+                    if (
+                        !options.where &&
+                        !_.isEmpty(urlOptions.Search)
+                    ) {
+                        // Do fancy, since UrlWhereOptions isn't allowed
+                        const whereReAssign: WhereOptions = urlOptions.Search as WhereOptions
+                        delete urlOptions.Search.Page
+                        delete urlOptions.Search.Order
+
+                        options.where = whereReAssign
+                    }
+                    options.where = options.where || {}
                     options.order = options.order || urlOptions.Search.Order || []
                     options.page = options.page || urlOptions.Search.Page || 1
                     options.perPage = options.perPage || 10

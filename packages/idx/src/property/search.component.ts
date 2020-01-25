@@ -13,7 +13,7 @@ import 'angular-material'
 
 // Services
 import '@stratusjs/idx/idx'
-import {ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -39,7 +39,11 @@ export type IdxPropertySearchScope = angular.IScope & ObjectWithFunctions & {
     listInitialized: boolean
     listLinkUrl: string
     listLinkTarget: string
-    options: object | any // TODO need to specify
+    // options: object | any // TODO need to specify
+    options: {
+        [key: string]: object | any
+        query: CompileFilterOptions
+    }
     variableSyncing: object | any
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
 }
@@ -107,8 +111,11 @@ Stratus.Components.IdxPropertySearch = {
             $scope.options.forRent = false
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {}
-            $scope.setQuery($scope.options.query)
+            $scope.options.query = $scope.options.query || {
+                where: {}
+            }
+            // $scope.setQuery($scope.options.query)
+            $scope.setWhere($scope.options.query.where)
 
             // Set default selections TODO may need some more universally set options to be able to use
             $scope.options.selection = $scope.options.selection || {}
@@ -179,7 +186,7 @@ Stratus.Components.IdxPropertySearch = {
                 {name: 'Commercial', value: 'LeaseCommercial', group: 'Commercial', lease: true}
             ]
 
-            $scope.setQueryDefaults()
+            $scope.setWhereDefaults()
 
             // Register this Search with the Property service
             Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
@@ -187,31 +194,33 @@ Stratus.Components.IdxPropertySearch = {
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
         }
 
-        $scope.$watch('options.query.ListingType', () => {
+        $scope.$watch('options.query.where.ListingType', () => {
             // TODO: Consider Better solution? I just added the check to see if $scope.options.query is set
             // because there are cases where $scope.options.query is not defined (null). This happens on admin
             // edit page load  for a new record where nothing has been set on a page yet.
             // Davis: removed check for $scope.options.query.ListingType as if it's not an Array will create it
-            if ($scope.options.query && $scope.options.selection.ListingType.list) {
-                if (!Object.prototype.hasOwnProperty.call($scope.options.query, 'ListingType')) {
-                    $scope.options.query.ListingType = []
+            if ($scope.options.query && $scope.options.query.where && $scope.options.selection.ListingType.list) {
+                if (!Object.prototype.hasOwnProperty.call($scope.options.query.where, 'ListingType')) {
+                    $scope.options.query.where.ListingType = []
                 }
-                if (!_.isArray($scope.options.query.ListingType)) {
-                    $scope.options.query.ListingType = [$scope.options.query.ListingType]
+                // FIXME needs to be moved to query.where
+                if (!_.isArray($scope.options.query.where.ListingType)) {
+                    $scope.options.query.where.ListingType = [$scope.options.query.where.ListingType]
                 }
                 $scope.options.selection.ListingType.group.Residential =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Residential, $scope.options.query.ListingType)
+                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Residential, $scope.options.query.where.ListingType)
                 $scope.options.selection.ListingType.group.Commercial =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Commercial, $scope.options.query.ListingType)
+                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Commercial, $scope.options.query.where.ListingType)
 
                 $scope.options.forRent =
-                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Lease, $scope.options.query.ListingType)
+                    $scope.arrayIntersect($scope.options.selection.ListingType.list.Lease, $scope.options.query.where.ListingType)
                 // console.log('watched ListingType', $scope.options.query.ListingType, $scope.options.selection.ListingType.group)
             }
         })
 
         /**
          * Create filter function for a query string
+         * TODO whats this used for?
          */
         const createFilterFor = (query: string) => {
             const lowercaseQuery = query.toLowerCase()
@@ -408,17 +417,32 @@ Stratus.Components.IdxPropertySearch = {
         /**
          * Update the entirety options.query in a safe manner to ensure undefined references are not produced
          */
-        $scope.setQuery = (newQuery?: WhereOptions): void => {
+        $scope.setQuery = (newQuery?: CompileFilterOptions): void => {
             newQuery = newQuery || {}
+            newQuery.where = newQuery.where || {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
-            $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
+            // $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
+            $scope.options.query = _.clone(newQuery)
+            $scope.setWhere($scope.options.query.where)
         }
 
-        $scope.setQueryDefaults = (): void => {
+        /**
+         * Update the entirety options.query.where in a safe manner to ensure undefined references are not produced
+         */
+        $scope.setWhere = (newWhere?: WhereOptions): void => {
+            console.log('setWhere', _.clone(newWhere))
+            newWhere = newWhere || {}
+            // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
+            // FIXME do we set anything outside where?
+            $scope.options.query.where = _.extend(Idx.getDefaultWhereOptions(), newWhere)
+        }
+
+        $scope.setWhereDefaults = (): void => {
             $scope.$applyAsync(() => {
-                if ($scope.options.query.ListingType.length < 1) {
-                    $scope.options.query.ListingType = $scope.options.selection.ListingType.default.Sale.Residential
-                    // console.log('updating', $scope.options.query.ListingType)
+                // FIXME needs to be moved to query.where
+                if ($scope.options.query.where.ListingType.length < 1) {
+                    $scope.options.query.where.ListingType = $scope.options.selection.ListingType.default.Sale.Residential
+                    // console.log('updating', $scope.options.query.where.ListingType)
                     $scope.selectDefaultListingType()
                 }
             })
@@ -431,17 +455,17 @@ Stratus.Components.IdxPropertySearch = {
                     listingGroup = 'Residential'
                 }
             }
-            $scope.options.query.ListingType = $scope.options.forRent ?
+            $scope.options.query.where.ListingType = $scope.options.forRent ?
                 $scope.options.selection.ListingType.default.Lease[listingGroup] :
                 $scope.options.selection.ListingType.default.Sale[listingGroup]
             if ($scope.filterMenu) {
                 $scope.filterMenu.reposition()
             }
             if ($scope.options.forRent) {
-                $scope.options.query.Status = $scope.options.selection.Status.default.Lease
+                $scope.options.query.where.Status = $scope.options.selection.Status.default.Lease
             } else {
-                $scope.options.query.Status = ($scope.options.query.Status && $scope.options.query.Status.length > 0) ?
-                    $scope.options.query.Status : $scope.options.selection.Status.default.Lease
+                $scope.options.query.where.Status = ($scope.options.query.where.Status && $scope.options.query.where.Status.length > 0) ?
+                    $scope.options.query.where.Status : $scope.options.selection.Status.default.Lease
             }
         }
 
@@ -455,10 +479,18 @@ Stratus.Components.IdxPropertySearch = {
                 listScope = Idx.getListInstance($scope.listId)
             }
             if (listScope) {
-                $scope.options.query.Page = 1
+                // $scope.options.query.where.Page = 1 // just a fall back, as it gets 'Page 2'
+                $scope.options.query.page = 1 // just a fall back, as it gets 'Page 2'
+                console.log('sending search', _.clone($scope.options.query))
+
+                /* const searchQuery: CompileFilterOptions = {
+                    where: _.clone($scope.options.query.where)
+                }*/
+                // FIXME need to ensure only where options
+                // console.log('but suppose to send', _.clone($scope.options.query))
                 listScope.searchProperties($scope.options.query, true)
             } else {
-                Idx.setUrlOptions('Search', $scope.options.query)
+                Idx.setUrlOptions('Search', $scope.options.query.where) // TODO may need to set Page and stuff?
                 $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
             }
         }
