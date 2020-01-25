@@ -138,6 +138,7 @@ Stratus.Components.IdxPropertyList = {
                 $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
+            $scope.query.service = $scope.query.service || []
             $scope.query.order = $scope.query.order || null // will be set by Service
             $scope.query.page = $scope.query.page || null // will be set by Service
             $scope.query.perPage = $scope.query.perPage || 25
@@ -295,6 +296,11 @@ Stratus.Components.IdxPropertyList = {
                 }
                 if ($scope.query.order && $scope.query.order.length > 0) {
                     where.Order = $scope.query.order
+                }
+
+                if (query.service) {
+                    // service does not affect URLs as it's a page specific thing
+                    $scope.query.service = query.service
                 }
 
                 // FIXME handle service

@@ -41,8 +41,10 @@ export type IdxPropertySearchScope = angular.IScope & ObjectWithFunctions & {
     listLinkTarget: string
     // options: object | any // TODO need to specify
     options: {
-        [key: string]: object | any
+        // [key: string]: object | any
         query: CompileFilterOptions
+        selection: object | any // TODO need to specify
+        forRent: boolean
     }
     variableSyncing: object | any
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
@@ -94,6 +96,22 @@ Stratus.Components.IdxPropertySearch = {
             $scope.listLinkUrl = $attrs.listLinkUrl || '/property/list'
             $scope.listLinkTarget = $attrs.listLinkTarget || '_self'
 
+            $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+
+            $scope.filterMenu = null
+            $scope.options.forRent = false
+
+            // Set default queries
+            $scope.options.query = $scope.options.query || {
+                where: {}
+            }
+            $scope.options.query.service = $scope.options.query.service || []
+
+            // $scope.setQuery($scope.options.query)
+            $scope.setWhere($scope.options.query.where)
+
+            console.log('$scope.options.query is starting at ', _.clone($scope.options.query))
+
             // If the List hasn't updated this widget after 1 second, make sure it's checked again. A workaround for
             // the race condition for now, up for suggestions
             $timeout(async () => {
@@ -103,19 +121,6 @@ Stratus.Components.IdxPropertySearch = {
                 // Sync needs to happen here so that the List and still connect with the Search widget
                 await $scope.variableSync()
             }, 1000)
-
-            $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
-
-            $scope.filterMenu = null
-            $scope.options.service = $scope.options.service || []
-            $scope.options.forRent = false
-
-            // Set default queries
-            $scope.options.query = $scope.options.query || {
-                where: {}
-            }
-            // $scope.setQuery($scope.options.query)
-            $scope.setWhere($scope.options.query.where)
 
             // Set default selections TODO may need some more universally set options to be able to use
             $scope.options.selection = $scope.options.selection || {}
@@ -276,7 +281,7 @@ Stratus.Components.IdxPropertySearch = {
                     return value
                 }
             } else {
-                console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', currentNest, 'It may need to be initialized first')
+                console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', _.clone(currentNest), 'It may need to be initialized first')
                 return null
             }
         }
@@ -424,6 +429,7 @@ Stratus.Components.IdxPropertySearch = {
             // $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
             $scope.options.query = _.clone(newQuery)
             $scope.setWhere($scope.options.query.where)
+            console.log('setQuery $scope.options.query to ', _.clone($scope.options.query))
         }
 
         /**
@@ -479,8 +485,9 @@ Stratus.Components.IdxPropertySearch = {
                 listScope = Idx.getListInstance($scope.listId)
             }
             if (listScope) {
+                // $scope.options.query.service = [1]
                 // $scope.options.query.where.Page = 1 // just a fall back, as it gets 'Page 2'
-                $scope.options.query.page = 1 // just a fall back, as it gets 'Page 2'
+                // $scope.options.query.page = 1 // just a fall back, as it gets 'Page 2'
                 console.log('sending search', _.clone($scope.options.query))
 
                 /* const searchQuery: CompileFilterOptions = {
