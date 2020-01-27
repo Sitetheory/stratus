@@ -15,18 +15,19 @@ import 'angular-sanitize'
 
 // Services
 import '@stratusjs/idx/idx'
-
-
-// Stratus Dependencies
-import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import {
     CompileFilterOptions,
+    IdxService,
     MLSService,
     ObjectWithFunctions,
     WhereOptions,
     UrlWhereOptions,
     UrlsOptionsObject
 } from '@stratusjs/idx/idx'
+
+// Stratus Dependencies
+import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
+
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -97,7 +98,7 @@ Stratus.Components.IdxPropertyList = {
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         $sce: angular.ISCEService,
-        Idx: any,
+        Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
@@ -571,7 +572,7 @@ Stratus.Components.IdxPropertyList = {
                                 // Revert page title back to what it was
                                 Idx.setPageTitle()
                                 // Let's destroy it to save memory
-                                $timeout(Idx.unregisterDetailsInstance('property_detail_popup'), 10)
+                                $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup'), 10)
                             }
                         }
                     }
@@ -585,7 +586,7 @@ Stratus.Components.IdxPropertyList = {
                         // Revert page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
-                        $timeout(Idx.unregisterDetailsInstance('property_detail_popup'), 10)
+                        $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup'), 10)
                     })
             } else {
                 $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)

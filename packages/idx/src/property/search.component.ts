@@ -13,7 +13,7 @@ import 'angular-material'
 
 // Services
 import '@stratusjs/idx/idx'
-import {CompileFilterOptions, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, IdxService, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -71,7 +71,7 @@ Stratus.Components.IdxPropertySearch = {
         $scope: IdxPropertySearchScope,
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
-        Idx: any,
+        Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
@@ -436,11 +436,12 @@ Stratus.Components.IdxPropertySearch = {
          * Update the entirety options.query.where in a safe manner to ensure undefined references are not produced
          */
         $scope.setWhere = (newWhere?: WhereOptions): void => {
-            console.log('setWhere', _.clone(newWhere))
+            // console.log('setWhere', _.clone(newWhere))
             newWhere = newWhere || {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
-            // FIXME do we set anything outside where?
             $scope.options.query.where = _.extend(Idx.getDefaultWhereOptions(), newWhere)
+            // TODO find the objects that aren't arrays and convert to arrays
+            // let defaultWhereOptions: WhereOptions = Idx.getDefaultWhereOptions()
         }
 
         $scope.setWhereDefaults = (): void => {

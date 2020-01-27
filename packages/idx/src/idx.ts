@@ -24,9 +24,52 @@ import {cookie} from '@stratusjs/core/environment'
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
+export type AnyFunction = (...args: any) => any
+
 /** Allow an Object to contain any number of unspecified functions, useful in $scope */
 export interface ObjectWithFunctions {
-    [key: string]: ((...args: any) => any)
+    [key: string]: AnyFunction
+}
+
+export interface IdxService {
+    [key: string]: AnyFunction | IdxSharedValue
+
+    // Variables
+    sharedValues: IdxSharedValue
+
+    // Functions
+    fetchMembers: (
+        $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>, refresh?: boolean, listName?: string
+    ) => Promise<Collection>
+    fetchOffices: (
+        $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>, refresh?: boolean, listName?: string
+    ) => Promise<Collection>
+    fetchProperties: (
+        $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>, refresh?: boolean, listName?: string
+    ) => Promise<Collection>
+    fetchProperty: ($scope: any, modelVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>) => Promise<Model>
+    devLog: (arg: any, arg2: any) => void
+    getContactVariables: () => WidgetContact[]
+    getDefaultWhereOptions: () => WhereOptions
+    getFriendlyStatus: (property: any) => string // TODO replace with property object
+    getIdxServices: () => number[]
+    getListInstance: (listUid: string, listType?: string) => any // TODO return with a scope
+    getListInstanceLinks: (listUid: string, listType?: string) => any[] // TODO return with a scope[]
+    getMLSVariables: (serviceIds?: number[]) => MLSService[]
+    getOptionsFromUrl: () => UrlsOptionsObject
+    getSearchInstanceLinks: (searchUid: string, listType?: string) => any[] // TODO return with a scope[]
+    getUrlOptions: (listingOrSearch: 'Search' | 'Listing') => UrlWhereOptions
+    getUrlOptionsPath: (defaultOptions?: any) => string
+    registerDetailsInstance: (uid: string, $scope: any, listType?: string) => void
+    registerListInstance: (uid: string, $scope: any, listType?: string) => void
+    registerSearchInstance: (uid: string, $scope: any, listUid?: string, listType?: string) => void
+    setIdxServices: (property: number[]) => void
+    setPageTitle: (title?: string) => void
+    setTokenURL: (url: string) => void
+    setUrlOptions: (listingOrSearch: 'Search' | 'Listing', options: any) => void
+    tokenKeepAuth: (keepAlive?: boolean) => IPromise<void>
+    refreshUrlOptions: (defaultOptions: any) => void
+    unregisterDetailsInstance: (uid: string, listType?: string) => void
 }
 
 export interface UrlsOptionsObject {
@@ -170,6 +213,13 @@ export interface WidgetIntegrations {
     }
 }
 
+interface IdxSharedValue {
+    contactUrl: string | null,
+    contactCommentVariable: string | null,
+    contact: WidgetContact | null,
+    integrations: WidgetIntegrations
+}
+
 // Internal
 interface Session {
     services: MLSService[],
@@ -248,7 +298,7 @@ interface MongoFilterQuery {
 Stratus.Services.Idx = [
     '$provide',
     ($provide: any) => {
-        $provide.factory('Idx', (
+        const angularJsService = (
             $injector: angular.auto.IInjectorService,
             $http: angular.IHttpService,
             $location: angular.ILocationService,
@@ -261,13 +311,8 @@ Stratus.Services.Idx = [
             // tslint:disable-next-line:no-shadowed-variable
             Model: any,
             orderByFilter: any
-            ) => {
-                const sharedValues: {
-                    contactUrl: string | null,
-                    contactCommentVariable: string | null,
-                    contact: WidgetContact | null,
-                    integrations: WidgetIntegrations
-                } = {
+            ): IdxService => {
+                const sharedValues: IdxSharedValue = {
                     contactUrl: null,
                     contactCommentVariable: null,
                     contact: null,
@@ -1684,7 +1729,7 @@ Stratus.Services.Idx = [
                  * returns {string}
                  * TODO define defaultOptions
                  */
-                function getUrlOptionsPath(defaultOptions: object | any) {
+                function getUrlOptionsPath(defaultOptions?: object | any) {
                     defaultOptions = defaultOptions || {}
                     // console.log('getUrlOptionsPath defaultOptions', _.clone(defaultOptions))
                     let path = ''
@@ -2270,7 +2315,7 @@ Stratus.Services.Idx = [
 
                 /**
                  * Grabs a shorten more human and code friendly name of the property's status
-                 * @param property - Proeprty Object
+                 * @param property - Property Object
                  * @returns 'Active' | 'Contingent' | 'Closed'
                  */
                 function getFriendlyStatus(property: object | any): string {
@@ -2338,6 +2383,7 @@ Stratus.Services.Idx = [
                     unregisterDetailsInstance
                 }
             }
-        )
+
+        $provide.factory('Idx', angularJsService)
     }
 ]

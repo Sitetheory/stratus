@@ -15,6 +15,7 @@ import 'angular-sanitize'
 
 // Services
 import '@stratusjs/idx/idx'
+import {IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
@@ -52,7 +53,7 @@ Stratus.Components.IdxMemberList = {
         $sce: angular.ISCEService,
         $scope: object | any, // angular.IScope breaks references so far
         $window: angular.IWindowService,
-        Idx: any,
+        Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
@@ -318,7 +319,7 @@ Stratus.Components.IdxMemberList = {
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
-                        $timeout(Idx.unregisterDetailsInstance('property_member_detail_popup'), 10)
+                        $timeout(() => Idx.unregisterDetailsInstance('property_member_detail_popup'), 10)
                     })
             } else {
                 $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)

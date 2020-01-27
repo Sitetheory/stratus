@@ -15,6 +15,7 @@ import 'angular-sanitize'
 
 // Services
 import '@stratusjs/idx/idx'
+import {CompileFilterOptions, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -54,7 +55,7 @@ Stratus.Components.IdxMemberDetails = {
         $sce: angular.ISCEService,
         $scope: object | any, // angular.IScope breaks references so far
         Model: any,
-        Idx: any,
+        Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
@@ -118,11 +119,14 @@ Stratus.Components.IdxMemberDetails = {
         $scope.getUid = (): string => $ctrl.uid
 
         $scope.fetchMember = async (): Promise<void> => {
-            const memberQuery: {
+            /*
+            {
                 service: number | any,
                 where: object | any,
                 images?: object[] | any[],
-            } = {
+            }
+             */
+            const memberQuery: CompileFilterOptions = {
                 service: [$scope.options.service],
                 where: {}
             }
@@ -179,14 +183,15 @@ Stratus.Components.IdxMemberDetails = {
         /**
          * Display an MLS' Name
          */
-        $scope.getMLSName = (): string => Idx.getMLSVariables($scope.model.data._ServiceId).name
+        $scope.getMLSName = (): string => Idx.getMLSVariables($scope.model.data._ServiceId)[0].name // FIXME more checks need to happen here
 
         /**
          * Display an MLS' required legal disclaimer
          * @param html - if output should be HTML safe
          */
         $scope.getMLSDisclaimer = (html?: boolean): string => {
-            let disclaimer = Idx.getMLSVariables($scope.collection.models[0]._ServiceId).disclaimer
+            // FIXME more checks need to happen here
+            let disclaimer = Idx.getMLSVariables($scope.collection.models[0]._ServiceId)[0].disclaimer
             if ($scope.collection.models[0].ModificationTimestamp) {
                 disclaimer = `Member last updated ${moment($scope.collection.models[0].ModificationTimestamp).format('M/D/YY HH:mm a')}. ${disclaimer}`
             }
