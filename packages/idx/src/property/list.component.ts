@@ -19,7 +19,14 @@ import '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {CompileFilterOptions, MLSService, WhereOptions} from '@stratusjs/idx/idx'
+import {
+    CompileFilterOptions,
+    MLSService,
+    ObjectWithFunctions,
+    WhereOptions,
+    UrlWhereOptions,
+    UrlsOptionsObject
+} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -35,6 +42,34 @@ const packageName = 'idx'
 const moduleName = 'property'
 const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
+    elementId: string
+    localDir: string
+    model: any
+    Idx: any
+    collection: Collection
+    urlLoad: boolean
+    searchOnLoad: boolean
+    detailsLinkPopup: boolean
+    detailsLinkUrl: string
+    detailsLinkTarget: '_self' | '_blank'
+    detailsTemplate?: string
+    query: CompileFilterOptions
+    orderOptions: object | any // TODO need to specify
+    googleApiKey?: string
+    contactName: string
+    contactEmail?: string
+    contactPhone: string
+    disclaimerString: string
+    disclaimerHTML: any
+
+    searchProperties(
+        query?: CompileFilterOptions,
+        refresh?: boolean,
+        updateUrl?: boolean
+    ): Promise<Collection>
+}
 
 Stratus.Components.IdxPropertyList = {
     bindings: {
@@ -58,7 +93,7 @@ Stratus.Components.IdxPropertyList = {
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxPropertyListScope,
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         $sce: angular.ISCEService,
@@ -81,7 +116,7 @@ Stratus.Components.IdxPropertyList = {
          */
         $ctrl.$onInit = async () => {
             $scope.Idx = Idx
-            $scope.collection = new Collection({}) as Collection // set a default collection for variable safety
+            $scope.collection = new Collection({})
             /**
              * Allow query to be loaded initially from the URL
              * type {boolean}
@@ -103,6 +138,7 @@ Stratus.Components.IdxPropertyList = {
                 $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
+            $scope.query.service = $scope.query.service || []
             $scope.query.order = $scope.query.order || null // will be set by Service
             $scope.query.page = $scope.query.page || null // will be set by Service
             $scope.query.perPage = $scope.query.perPage || 25
@@ -116,7 +152,7 @@ Stratus.Components.IdxPropertyList = {
                 delete $scope.query.where
             }
             /* List of default or blank values */
-            const startingQuery = $scope.query.where || {}
+            const startingQuery: WhereOptions = $scope.query.where || {}
             // If these are blank, set some defaults
             startingQuery.Status = startingQuery.Status || ['Active', 'Contract']
             startingQuery.ListingType = startingQuery.ListingType || ['House', 'Condo']
@@ -140,7 +176,11 @@ Stratus.Components.IdxPropertyList = {
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
 
-            let urlQuery: object | any = {} // TODO idx needs to exports urlQuery interface
+            let urlQuery: UrlsOptionsObject = {
+                Listing: {},
+                Search: {}
+            }
+
             if ($scope.urlLoad) {
                 // first set the UrlQuery via defaults (cloning so it can't be altered)
                 Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultQuery)))
@@ -157,11 +197,16 @@ Stratus.Components.IdxPropertyList = {
             }
 
             if ($scope.searchOnLoad) {
-                await $scope.searchProperties(urlQuery.Search, true, false)
+                const searchQuery: CompileFilterOptions = {
+                    where: _.clone(urlQuery.Search) as WhereOptions
+                }
+                delete searchQuery.where.Page
+                delete searchQuery.where.Order
+                await $scope.searchProperties(searchQuery, true, false)
             }
         }
 
-        $scope.$watch('collection.models', (models?: []) => {
+        $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
             }
@@ -178,7 +223,8 @@ Stratus.Components.IdxPropertyList = {
                     // FIXME search widgets may only hold certain values. Later this needs to be adjusted
                     //  to only update the values in which a user can see/control
                     // console.log('refreshSearchWidgetOptions Idx.getUrlOptions', _.clone(Idx.getUrlOptions('Search')))
-                    searchScope.setQuery(Idx.getUrlOptions('Search'))
+                    // searchScope.setWhere(Idx.getUrlOptions('Search')) // FIXME this needs to just set query.where
+                    searchScope.setQuery($scope.query)
                     searchScope.listInitialized = true
                 }
             })
@@ -191,52 +237,82 @@ Stratus.Components.IdxPropertyList = {
          * Returns Collection
          */
         $scope.searchProperties = async (
-            query?: CompileFilterOptions | object | any,
+            query?: CompileFilterOptions,
             refresh?: boolean,
             updateUrl?: boolean
         ): Promise<Collection> =>
             $q((resolve: any) => {
-                query = query || {}
+                query = query || _.clone($scope.query) || {}
+                query.where = query.where || {}
+                console.log('searchProperties 1')
+
+                let where: UrlWhereOptions = _.clone(query.where) || {}
                 // updateUrl = updateUrl === false ? updateUrl : true
                 updateUrl = updateUrl === false ? updateUrl : $scope.urlLoad === false ? $scope.urlLoad : true
+                console.log('searchProperties 2')
 
+                // If search query sent, update the Widget. Otherwise use the widgets current where settings
+                if (Object.keys(query.where).length > 0) {
+                    delete ($scope.query.where) // Remove the current settings
+                    console.log('searchProperties had a query.where with keys')
+                    console.log('searchProperties $scope.query', _.clone($scope.query))
+                    console.log('searchProperties query.where', _.clone(query.where))
+                    $scope.query.where = query.where // Add the new settings
+                    // FIXME ensure Page doesn't get added here anymore
+                    /* if ($scope.query.where.Page) { // removing
+                        $scope.query.page = $scope.query.where.Page
+                        delete ($scope.query.where.Page)
+                    } */
+
+                    // FIXME ensure Order doesn't get added here anymore
+                    /* if ($scope.query.where.Order) {
+                        $scope.query.order = $scope.query.where.Order
+                        delete ($scope.query.where.Order)
+                    } */
+                } else {
+                    where = _.clone($scope.query.where) || {}
+                }
+
+                // Page checks
+                // If a different page, set it in the URL
+                if (query.page) {
+                    $scope.query.page = query.page
+                }
                 // If refreshing, reset to page 1
                 if (refresh) {
                     $scope.query.page = 1
                 }
-                // If search query sent, update the Widget. Otherwise use the widgets current where settings
-                if (Object.keys(query).length > 0) {
-                    delete ($scope.query.where)
-                    $scope.query.where = query
-                    if ($scope.query.where.Page) {
-                        $scope.query.page = $scope.query.where.Page
-                        delete ($scope.query.where.Page)
-                    }
-                    if ($scope.query.where.Order) {
-                        $scope.query.order = $scope.query.where.Order
-                        delete ($scope.query.where.Order)
-                    }
-                } else {
-                    query = $scope.query.where || {}
-                }
-                // If a different page, set it in the URL
                 if ($scope.query.page) {
-                    query.Page = $scope.query.page
+                    where.Page = $scope.query.page
                 }
                 // Don't add Page/1 to the URL
-                if (query.Page <= 1) {
-                    delete (query.Page)
-                }
-                if ($scope.query.order && $scope.query.order.length > 0) {
-                    query.Order = $scope.query.order
+                if (where.Page <= 1) {
+                    delete (where.Page)
                 }
 
+                if (query.order) {
+                    $scope.query.order = query.order
+                    // delete ($scope.query.where.Order)
+                }
+                if ($scope.query.order && $scope.query.order.length > 0) {
+                    where.Order = $scope.query.order
+                }
+
+                if (query.service) {
+                    // service does not affect URLs as it's a page specific thing
+                    $scope.query.service = query.service
+                }
+
+                // FIXME handle service
+
+                console.log('setting this URL', _.clone(where))
+                console.log('$scope.query.where ending with', _.clone($scope.query.where))
                 // Set the URL query
-                Idx.setUrlOptions('Search', query)
+                Idx.setUrlOptions('Search', where)
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
                 if (updateUrl) {
-                    // console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
+                    console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
                     // Display the URL query in the address bar
                     Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }
@@ -270,6 +346,9 @@ Stratus.Components.IdxPropertyList = {
                 $scope.query.page = 1
             }
             if ($scope.collection.completed && $scope.query.page < $scope.collection.meta.data.totalPages) {
+                if (_.isString($scope.query.page)) {
+                    $scope.query.page = parseInt($scope.query.page, 10)
+                }
                 await $scope.pageChange($scope.query.page + 1, ev)
             }
         }
@@ -283,7 +362,10 @@ Stratus.Components.IdxPropertyList = {
                 $scope.query.page = 1
             }
             if ($scope.collection.completed && $scope.query.page > 1) {
-                const prev = parseInt($scope.query.page, 10) - 1 || 1
+                if (_.isString($scope.query.page)) {
+                    $scope.query.page = parseInt($scope.query.page, 10)
+                }
+                const prev = $scope.query.page - 1 || 1
                 await $scope.pageChange(prev, ev)
             }
         }
@@ -314,12 +396,12 @@ Stratus.Components.IdxPropertyList = {
          * +  StreetDirSuffix + 'Unit' + UnitNumber
          */
         $scope.getStreetAddress = (property: object | any): string => {
-            let address = ''
             if (
                 Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') &&
                 property.UnparsedAddress !== ''
             ) {
-                address = property.UnparsedAddress
+                return property.UnparsedAddress
+                // address = property.UnparsedAddress
                 // console.log('using unparsed ')
             } else {
                 const addressParts: string[] = []
@@ -351,10 +433,8 @@ Stratus.Components.IdxPropertyList = {
                             addressParts.push(property[addressPart])
                         }
                     })
-                address = addressParts.join(' ')
+                return addressParts.join(' ')
             }
-            // console.log('address',  address)
-            return address
         }
 
         /**

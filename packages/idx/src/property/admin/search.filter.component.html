@@ -10,7 +10,7 @@
                 <div class="search-input" data-flex="33" data-flex-gt-sm="50">
                     <md-input-container class="md-block minimal">
                         <label>City</label>
-                        <input data-ng-model="options.query.City"
+                        <input data-ng-model="options.query.where.City"
                                type="text"
                                maxlength="250"
                                autocomplete="off">
@@ -20,7 +20,7 @@
                     <md-chips
                             class="area-id font-secondary"
                             aria-label="Neighborhoods to Limit"
-                            data-ng-model="options.query.MLSAreaMajor"
+                            data-ng-model="options.query.where.MLSAreaMajor"
                             data-md-enable-chip-edit="true"
                             data-md-add-on-blur="true"
                             data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
@@ -34,7 +34,7 @@
                     <md-chips
                             class="postal-code font-secondary"
                             aria-label="Postal Code(s) to Limit"
-                            data-ng-model="options.query.PostalCode"
+                            data-ng-model="options.query.where.PostalCode"
                             data-md-enable-chip-edit="true"
                             data-md-add-on-blur="true"
                             data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
@@ -53,19 +53,19 @@
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-input-container class="md-block minimal">
                         <label>Min Price</label>
-                        <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
+                        <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
                     </md-input-container>
                 </div>
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-input-container class="md-block minimal">
                         <label>Max Price</label>
-                        <input stratus-string-to-number="comma" data-ng-model="options.query.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
+                        <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
                     </md-input-container>
                 </div>
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-input-container class="md-block minimal">
                         <label>Beds</label>
-                        <md-select data-ng-model="options.query.Bedrooms">
+                        <md-select data-ng-model="options.query.where.Bedrooms">
                             <md-option></md-option>
                             <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
                                 {{option.name}}
@@ -76,7 +76,7 @@
                 <div class="search-input" data-flex="50" data-flex-gt-sm="25">
                     <md-input-container class="md-block minimal">
                         <label>Baths</label>
-                        <md-select data-ng-model="options.query.Bathrooms">
+                        <md-select data-ng-model="options.query.where.Bathrooms">
                             <md-option></md-option>
                             <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
                                 {{option.name}}
@@ -109,28 +109,28 @@
                  data-layout-align="left"
                  aria-label="Listing Status">
                 <md-button class="md-raised font-primary"
-                           data-ng-class="{'md-primary': inArray('Active', options.query.Status)}"
-                           data-ng-click="options.query.Status = ['Active', 'Contract'];"
+                           data-ng-class="{'md-primary': inArray('Active', options.query.where.Status)}"
+                           data-ng-click="options.query.where.Status = ['Active', 'Contract'];"
                            aria-label="For Sale"
                            data-md-prevent-menu-close
                 >
                     For Sale
                 </md-button>
                 <md-button class="md-raised font-primary"
-                           data-ng-class="{'md-primary': inArray('Closed', options.query.Status)}"
-                           data-ng-click="options.query.Status = ['Closed']"
+                           data-ng-class="{'md-primary': inArray('Closed', options.query.where.Status)}"
+                           data-ng-click="options.query.where.Status = ['Closed']"
                            aria-label="Sold"
                            data-md-prevent-menu-close
                 >
                     Sold
                 </md-button>
-                <div data-ng-show="!options.forRent && inArray('Active', options.query.Status)"
+                <div data-ng-show="!options.forRent && inArray('Active', options.query.where.Status)"
                      data-layout="row"
                      data-layout-align="left">
                     <md-checkbox
                             class="show-under-contract font-secondary"
-                            data-ng-checked="inArray('Contract', options.query.Status)"
-                            data-ng-click="toggleArrayElement('Contract', options.query.Status)"
+                            data-ng-checked="inArray('Contract', options.query.where.Status)"
+                            data-ng-click="toggleArrayElement('Contract', options.query.where.Status)"
                             aria-label="Under Contract"
                             data-md-prevent-menu-close
                     >
@@ -170,8 +170,8 @@
                         data-ng-repeat="listType in ::options.selection.ListingType.All"
                         class="md-raised font-primary"
                         data-ng-show="options.forRent === listType.lease && options.selection.ListingType.group[listType.group]"
-                        data-ng-class="{'md-primary': inArray(listType.value, options.query.ListingType)}"
-                        data-ng-click="toggleArrayElement(listType.value, options.query.ListingType)"
+                        data-ng-class="{'md-primary': inArray(listType.value, options.query.where.ListingType)}"
+                        data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType)"
                         aria-label="{{::listType.name}}"
                         data-md-prevent-menu-close
                         data-ng-bind="::listType.name"
@@ -186,7 +186,7 @@
                 <md-chips
                         class="agent-license font-secondary"
                         aria-label="Agent License(s) to Search"
-                        data-ng-model="options.query.AgentLicense"
+                        data-ng-model="options.query.where.AgentLicense"
                         data-md-enable-chip-edit="true"
                         data-md-add-on-blur="true"
                         data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
@@ -209,7 +209,7 @@
                 >
                     <md-input-container class="md-block minimal">
                         <label>Sort</label>
-                        <md-select data-ng-model="options.query.Order">
+                        <md-select data-ng-model="options.query.where.Order">
                             <md-option data-ng-repeat="option in options.selection.Order" data-ng-value="option.value">
                                 {{option.name}}
                             </md-option>
@@ -223,7 +223,7 @@
                         <label>Restrict Data Source</label>
                         <!-- TODO fetch the allowed services. Will add a option to request a token on load
                         (normally this widget waits until there is a search to perform to prevent unneeded loading) -->
-                        <md-select data-ng-model="options.service" placeholder="Restrict Data Source" multiple>
+                        <md-select data-ng-model="options.query.service" placeholder="Restrict Data Source" multiple>
                             <md-option value="0">Exclusive (personal)</md-option>
                             <md-option value="1">MLS Listings Inc</md-option>
                             <md-option value="2">SFARMLS</md-option>

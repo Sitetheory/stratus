@@ -24,10 +24,32 @@ import {cookie} from '@stratusjs/core/environment'
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
 
+/** Allow an Object to contain any number of unspecified functions, useful in $scope */
+export interface ObjectWithFunctions {
+    [key: string]: ((...args: any) => any)
+}
+
+export interface UrlsOptionsObject {
+    Listing: UrlWhereOptions // TODO convert to UrlWhereOptions
+    Search: UrlWhereOptions
+}
+
+// This is what can be passed to the URL and useable options
+export interface UrlWhereOptions extends Omit<WhereOptions, 'Page' | 'Order'> {
+    Page?: number
+    Order?: any // TODO specify order
+}
+
 // Reusable Objects. Keys listed are not required, but help programmers define what exists/is possible
 export interface WhereOptions {
     // Wildcard for anything
     [key: string]: any,
+
+    page?: undefined // Key being added to wrong type
+    Page?: undefined // Key being added to wrong type
+    order?: undefined // Key being added to wrong type
+    Order?: undefined // Key being added to wrong type
+    where?: undefined // Key being added to wrong type
 
     // Property
     ListingKey?: string,
@@ -281,7 +303,12 @@ Stratus.Services.Idx = [
                     OfficeSearch: object,
                     OfficeDetails: object
                 } */
-                const instance: any = { // FIXME theres a number of queries that need dynamic calls
+                // any
+                const instance: {
+                    [instanceName: string]: {
+                        [uid: string]: angular.IScope & any
+                    }
+                } = { // FIXME theres a number of queries that need dynamic calls
                     PropertyList: {},
                     PropertySearch: {},
                     PropertyDetails: {},
@@ -295,8 +322,12 @@ Stratus.Services.Idx = [
 
                 /** type {{List: Object<[String]>, Search: Object<[String]>}} */
                 const instanceLink: {
-                    List: object | any,
-                    Search: object | any
+                    List: {
+                        [uid: string]: string[]
+                    }
+                    Search: {
+                        [uid: string]: string[]
+                    }
                 } = {
                     List: {},
                     Search: {}
@@ -310,10 +341,7 @@ Stratus.Services.Idx = [
                     contacts: []
                 }
 
-                const urlOptions: {
-                    Listing: object | any,
-                    Search: object | any
-                } = {
+                const urlOptions: UrlsOptionsObject = {
                     Listing: {},
                     Search: {}
                 }
@@ -448,7 +476,7 @@ Stratus.Services.Idx = [
                  * Apply a new Page title or revert to the original; page title
                  * @param title - Page Title
                  */
-                function setPageTitle(title: string): void {
+                function setPageTitle(title?: string): void {
                     if (!defaultPageTitle) {
                         // save default title first
                         defaultPageTitle = JSON.parse(JSON.stringify($window.document.title))
@@ -1205,7 +1233,7 @@ Stratus.Services.Idx = [
                                                     }
                                                 })
                                             })
-                                            }
+                                        }
                                     } else if (orObject.type === 'stringIncludesArray') {
                                         value = typeof value === 'string' ? [value] : value
                                         if (value.length > 0) {
@@ -1545,7 +1573,7 @@ Stratus.Services.Idx = [
                  * TODO give options on different ways to parse? (e.g. Url formatting)
                  * returns {Object}
                  */
-                function getOptionsFromUrl() {
+                function getOptionsFromUrl(): UrlsOptionsObject {
                     let path = $location.path()
 
                     path = getListingOptionsFromUrlString(path)
@@ -1623,7 +1651,9 @@ Stratus.Services.Idx = [
 
                     // Math is performed in Page and needs to be converted
                     if (Object.prototype.hasOwnProperty.call(urlOptions.Search, 'Page')) {
-                        urlOptions.Search.Page = parseInt(urlOptions.Search.Page, 10)
+                        if (_.isString(urlOptions.Search.Page)) {
+                            urlOptions.Search.Page = parseInt(urlOptions.Search.Page, 10)
+                        }
                     }
 
                     return path
@@ -2043,7 +2073,19 @@ Stratus.Services.Idx = [
                     listName = 'PropertyList'
                 ): Promise<Collection> {
                     options.service = options.service || []
-                    options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
+                    // options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
+                    if (
+                        !options.where &&
+                        !_.isEmpty(urlOptions.Search)
+                    ) {
+                        // Do fancy, since UrlWhereOptions isn't allowed
+                        const whereReAssign: WhereOptions = urlOptions.Search as WhereOptions
+                        delete urlOptions.Search.Page
+                        delete urlOptions.Search.Order
+
+                        options.where = whereReAssign
+                    }
+                    options.where = options.where || {}
                     options.order = options.order || urlOptions.Search.Order || []
                     options.page = options.page || urlOptions.Search.Page || 1
                     options.perPage = options.perPage || 10
