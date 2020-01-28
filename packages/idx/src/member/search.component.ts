@@ -13,6 +13,7 @@ import * as angular from 'angular'
 
 // Services
 import '@stratusjs/idx/idx'
+import {IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -48,7 +49,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         $scope: object | any, // angular.IScope breaks references so far
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
-        Idx: any,
+        Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this

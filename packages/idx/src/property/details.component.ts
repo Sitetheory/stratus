@@ -16,7 +16,7 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
-import {ObjectWithFunctions} from '@stratusjs/idx/idx'
+import {IdxService, ObjectWithFunctions} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
@@ -94,7 +94,7 @@ Stratus.Components.IdxPropertyDetails = {
         ListTrac: any,
         // tslint:disable-next-line:no-shadowed-variable
         Model: any,
-        Idx: any,
+        Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this

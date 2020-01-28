@@ -13,7 +13,7 @@ import 'angular-material'
 
 // Services
 import '@stratusjs/idx/idx'
-import {CompileFilterOptions, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, IdxService, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -48,6 +48,11 @@ export type IdxPropertySearchScope = angular.IScope & ObjectWithFunctions & {
     }
     variableSyncing: object | any
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
+
+    // Functions
+    setQuery: (newQuery?: CompileFilterOptions) => void
+    setWhere: (newWhere?: WhereOptions) => void
+    setWhereDefaults: () => void
 }
 
 Stratus.Components.IdxPropertySearch = {
@@ -71,7 +76,7 @@ Stratus.Components.IdxPropertySearch = {
         $scope: IdxPropertySearchScope,
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
-        Idx: any,
+        Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
@@ -110,7 +115,7 @@ Stratus.Components.IdxPropertySearch = {
             // $scope.setQuery($scope.options.query)
             $scope.setWhere($scope.options.query.where)
 
-            console.log('$scope.options.query is starting at ', _.clone($scope.options.query))
+            // console.log('$scope.options.query is starting at ', _.clone($scope.options.query))
 
             // If the List hasn't updated this widget after 1 second, make sure it's checked again. A workaround for
             // the race condition for now, up for suggestions
@@ -208,7 +213,7 @@ Stratus.Components.IdxPropertySearch = {
                 if (!Object.prototype.hasOwnProperty.call($scope.options.query.where, 'ListingType')) {
                     $scope.options.query.where.ListingType = []
                 }
-                // FIXME needs to be moved to query.where
+
                 if (!_.isArray($scope.options.query.where.ListingType)) {
                     $scope.options.query.where.ListingType = [$scope.options.query.where.ListingType]
                 }
@@ -309,6 +314,7 @@ Stratus.Components.IdxPropertySearch = {
                             const scopeVarPath = $scope.variableSyncing[elementId]
                             // convert into a real var path and set the initial value from the exiting form value
                             await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
+                            $scope.setWhere($scope.options.query.where) // ensure the basic items are always set
 
                             // Creating watcher to update the input when the scope changes
                             $scope.$watch(
@@ -429,18 +435,28 @@ Stratus.Components.IdxPropertySearch = {
             // $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
             $scope.options.query = _.clone(newQuery)
             $scope.setWhere($scope.options.query.where)
-            console.log('setQuery $scope.options.query to ', _.clone($scope.options.query))
+            // console.log('setQuery $scope.options.query to ', _.clone($scope.options.query))
         }
 
         /**
          * Update the entirety options.query.where in a safe manner to ensure undefined references are not produced
          */
         $scope.setWhere = (newWhere?: WhereOptions): void => {
-            console.log('setWhere', _.clone(newWhere))
+            // console.log('setWhere', _.clone(newWhere))
             newWhere = newWhere || {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
-            // FIXME do we set anything outside where?
             $scope.options.query.where = _.extend(Idx.getDefaultWhereOptions(), newWhere)
+            // find the objects that aren't arrays and convert to arrays as require to prevent future and current errors
+            _.map(Idx.getDefaultWhereOptions(), (value, key: string) => {
+                if (
+                    _.isArray(value) &&
+                    Object.prototype.hasOwnProperty.call($scope.options.query.where, key) &&
+                    !_.isArray($scope.options.query.where[key])
+                ) {
+                    $scope.options.query.where[key] = [$scope.options.query.where[key]]
+                }
+            })
+            // console.log('setWhere', _.clone($scope.options.query.where))
         }
 
         $scope.setWhereDefaults = (): void => {
@@ -488,7 +504,7 @@ Stratus.Components.IdxPropertySearch = {
                 // $scope.options.query.service = [1]
                 // $scope.options.query.where.Page = 1 // just a fall back, as it gets 'Page 2'
                 // $scope.options.query.page = 1 // just a fall back, as it gets 'Page 2'
-                console.log('sending search', _.clone($scope.options.query))
+                // console.log('sending search', _.clone($scope.options.query))
 
                 /* const searchQuery: CompileFilterOptions = {
                     where: _.clone($scope.options.query.where)
