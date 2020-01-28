@@ -110,7 +110,7 @@ Stratus.Components.IdxPropertySearch = {
             // $scope.setQuery($scope.options.query)
             $scope.setWhere($scope.options.query.where)
 
-            console.log('$scope.options.query is starting at ', _.clone($scope.options.query))
+            // console.log('$scope.options.query is starting at ', _.clone($scope.options.query))
 
             // If the List hasn't updated this widget after 1 second, make sure it's checked again. A workaround for
             // the race condition for now, up for suggestions
@@ -429,7 +429,7 @@ Stratus.Components.IdxPropertySearch = {
             // $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
             $scope.options.query = _.clone(newQuery)
             $scope.setWhere($scope.options.query.where)
-            console.log('setQuery $scope.options.query to ', _.clone($scope.options.query))
+            // console.log('setQuery $scope.options.query to ', _.clone($scope.options.query))
         }
 
         /**
@@ -489,7 +489,7 @@ Stratus.Components.IdxPropertySearch = {
                 // $scope.options.query.service = [1]
                 // $scope.options.query.where.Page = 1 // just a fall back, as it gets 'Page 2'
                 // $scope.options.query.page = 1 // just a fall back, as it gets 'Page 2'
-                console.log('sending search', _.clone($scope.options.query))
+                // console.log('sending search', _.clone($scope.options.query))
 
                 /* const searchQuery: CompileFilterOptions = {
                     where: _.clone($scope.options.query.where)

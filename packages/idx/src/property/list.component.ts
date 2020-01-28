@@ -245,19 +245,17 @@ Stratus.Components.IdxPropertyList = {
             $q((resolve: any) => {
                 query = query || _.clone($scope.query) || {}
                 query.where = query.where || {}
-                console.log('searchProperties 1')
 
                 let where: UrlWhereOptions = _.clone(query.where) || {}
                 // updateUrl = updateUrl === false ? updateUrl : true
                 updateUrl = updateUrl === false ? updateUrl : $scope.urlLoad === false ? $scope.urlLoad : true
-                console.log('searchProperties 2')
 
                 // If search query sent, update the Widget. Otherwise use the widgets current where settings
                 if (Object.keys(query.where).length > 0) {
                     delete ($scope.query.where) // Remove the current settings
-                    console.log('searchProperties had a query.where with keys')
-                    console.log('searchProperties $scope.query', _.clone($scope.query))
-                    console.log('searchProperties query.where', _.clone(query.where))
+                    // console.log('searchProperties had a query.where with keys')
+                    // console.log('searchProperties $scope.query', _.clone($scope.query))
+                    // console.log('searchProperties query.where', _.clone(query.where))
                     $scope.query.where = query.where // Add the new settings
                     // FIXME ensure Page doesn't get added here anymore
                     /* if ($scope.query.where.Page) { // removing
@@ -306,14 +304,14 @@ Stratus.Components.IdxPropertyList = {
 
                 // FIXME handle service
 
-                console.log('setting this URL', _.clone(where))
-                console.log('$scope.query.where ending with', _.clone($scope.query.where))
+                // console.log('setting this URL', _.clone(where))
+                // console.log('$scope.query.where ending with', _.clone($scope.query.where))
                 // Set the URL query
                 Idx.setUrlOptions('Search', where)
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
                 if (updateUrl) {
-                    console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
+                    // console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
                     // Display the URL query in the address bar
                     Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }
