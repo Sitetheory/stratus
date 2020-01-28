@@ -9,7 +9,7 @@ import {IPromise} from 'angular'
 
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
-import {Model} from '@stratusjs/angularjs/services/model' // Needed as Class
+import {Model, ModelOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/angularjs/services/collection' // Needed as $provider
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import '@stratusjs/idx/listTrac'
@@ -302,7 +302,7 @@ const angularJsService = (
     ListTrac: any,
     // tslint:disable-next-line:no-shadowed-variable
     Model: any, // FIXME type 'Model' is invalid, need to fix
-    orderByFilter: any
+    orderByFilter: angular.IFilterOrderBy
 ): IdxService => {
     const sharedValues: IdxSharedValue = {
         contactUrl: null,
@@ -822,7 +822,7 @@ const angularJsService = (
      * @param request - Standard Registry request object
      * TODO define type Request
      */
-    function createModel(request: any): Model {
+    function createModel(request: ModelOptions & LooseObject): Model {
         // request.direct = true;
         const model = new Model(request) as Model
         if (request.api) {
@@ -2055,7 +2055,7 @@ const angularJsService = (
             // Set API paths to fetch listing data for the specific MLS Service
             // let filterQuery = compileFilterFunction(options);
 
-            const request = {
+            const request: ModelOptions & LooseObject = {
                 serviceId: options.service,
                 urlRoot: session.services[options.service].host,
                 target: apiModel + '/search',
@@ -2378,7 +2378,7 @@ const angularJsService = (
 
 Stratus.Services.Idx = [
     '$provide',
-    ($provide: any) => {
+    ($provide: angular.auto.IProvideService) => {
         $provide.factory('Idx', angularJsService)
     }
 ]
