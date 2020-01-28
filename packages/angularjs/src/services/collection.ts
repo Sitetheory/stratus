@@ -203,6 +203,7 @@ export class Collection extends EventManager {
             // models
             this.models.push(new Model({
                 collection: this,
+                received: true,
                 watch: false,
                 type: type || null
             }, target))

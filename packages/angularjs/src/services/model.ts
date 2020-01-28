@@ -78,6 +78,18 @@ export interface HttpPrototype {
     data?: string
 }
 
+export interface ModelOptions {
+    collection?: Collection,
+    manifest?: string,
+    received?: boolean,
+    stagger?: boolean,
+    target?: string,
+    targetSuffix?: string,
+    type?: string
+    urlRoot?: string,
+    watch?: boolean,
+}
+
 export class Model extends ModelBase {
     // Base Information
     name = 'Model'
@@ -121,7 +133,7 @@ export class Model extends ModelBase {
     throttle = _.throttle(this.fetch, 1000)
     initialize?: () => void = null
 
-    constructor(options: any, attributes: any) {
+    constructor(options?: ModelOptions, attributes?: LooseObject) {
         super()
 
         // Inject Options
@@ -145,9 +157,11 @@ export class Model extends ModelBase {
         // Handle Attributes (Typically from Collection Hydration)
         if (attributes && typeof attributes === 'object') {
             _.extend(this.data, attributes)
-            this.recv = _.cloneDeep(this.data)
-            this.recvChain = this.flatten(this.data)
         }
+
+        // Handle Data Flagged as Received from XHR
+        this.recv = options.received ? _.cloneDeep(this.data) : {}
+        this.recvChain = options.received ? this.flatten(this.data) : {}
 
         // Generate URL
         if (this.target) {

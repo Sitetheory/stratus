@@ -15,7 +15,7 @@ import {cookie} from '@stratusjs/core/environment'
 import {getInjector} from '@stratusjs/angularjs/injector'
 
 // AngularJS Services
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Instantiate Injector
@@ -160,7 +160,7 @@ export class Registry {
                 }
                 const id = options.id || 'manifest'
                 if (options.decouple || !Stratus.Catalog[options.target][id]) {
-                    const modelOptions: any = {
+                    const modelOptions: ModelOptions = {
                         target: options.target,
                         manifest: options.manifest,
                         stagger: true
