@@ -133,11 +133,15 @@ export class Model extends ModelBase {
     throttle = _.throttle(this.fetch, 1000)
     initialize?: () => void = null
 
-    constructor(options?: ModelOptions, attributes?: LooseObject) {
+    constructor(options: ModelOptions = {}, attributes?: LooseObject) {
         super()
 
+        // Initialize required options
+        options = typeof options !== 'object' ? {} : options
+        options.received = options.received || false
+
         // Inject Options
-        _.extend(this, (!options || typeof options !== 'object') ? {} : options)
+        _.extend(this, options)
 
         // The data used to detect the data is changed.
         // this.initData = {}
