@@ -48,6 +48,11 @@ export type IdxPropertySearchScope = angular.IScope & ObjectWithFunctions & {
     }
     variableSyncing: object | any
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
+
+    // Functions
+    setQuery: (newQuery?: CompileFilterOptions) => void
+    setWhere: (newWhere?: WhereOptions) => void
+    setWhereDefaults: () => void
 }
 
 Stratus.Components.IdxPropertySearch = {
@@ -208,7 +213,7 @@ Stratus.Components.IdxPropertySearch = {
                 if (!Object.prototype.hasOwnProperty.call($scope.options.query.where, 'ListingType')) {
                     $scope.options.query.where.ListingType = []
                 }
-                // FIXME needs to be moved to query.where
+
                 if (!_.isArray($scope.options.query.where.ListingType)) {
                     $scope.options.query.where.ListingType = [$scope.options.query.where.ListingType]
                 }
@@ -309,6 +314,7 @@ Stratus.Components.IdxPropertySearch = {
                             const scopeVarPath = $scope.variableSyncing[elementId]
                             // convert into a real var path and set the initial value from the exiting form value
                             await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
+                            $scope.setWhere($scope.options.query.where) // ensure the basic items are always set
 
                             // Creating watcher to update the input when the scope changes
                             $scope.$watch(
@@ -440,8 +446,17 @@ Stratus.Components.IdxPropertySearch = {
             newWhere = newWhere || {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
             $scope.options.query.where = _.extend(Idx.getDefaultWhereOptions(), newWhere)
-            // TODO find the objects that aren't arrays and convert to arrays
-            // let defaultWhereOptions: WhereOptions = Idx.getDefaultWhereOptions()
+            // find the objects that aren't arrays and convert to arrays as require to prevent future and current errors
+            _.map(Idx.getDefaultWhereOptions(), (value, key: string) => {
+                if (
+                    _.isArray(value) &&
+                    Object.prototype.hasOwnProperty.call($scope.options.query.where, key) &&
+                    !_.isArray($scope.options.query.where[key])
+                ) {
+                    $scope.options.query.where[key] = [$scope.options.query.where[key]]
+                }
+            })
+            // console.log('setWhere', _.clone($scope.options.query.where))
         }
 
         $scope.setWhereDefaults = (): void => {

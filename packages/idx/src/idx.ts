@@ -326,7 +326,7 @@ Stratus.Services.Idx = [
                     Status: [],
                     ListingType: [],
                     PostalCode: [],
-                    MLSAreaMajor: [],
+                    MLSAreaMajor: ["test"],
                     Neighborhood: [],
                     // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
                     CityRegion: [],
