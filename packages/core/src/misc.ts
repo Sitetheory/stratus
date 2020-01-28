@@ -203,13 +203,13 @@ export function endsWith(target: any, search: any) {
         target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
 }
 
-export function patch(newData: any, priorData: any): LooseObject {
+export function patch(newData: LooseObject, priorData: LooseObject): LooseObject {
     if (!_.isObject(newData) || !_.size(newData)) {
         return null
     }
     const data: any = {}
     const processor: { edx?: any; ebx?: any; ecx?: any; eax?: any } = {}
-    if (!_.isObject(priorData) || !_.size(priorData)) {
+    if (!_.isObject(priorData)) {
         console.error('bad prior:', priorData)
     } else {
         const detect = (value: any, key: any) => {
@@ -262,11 +262,11 @@ export function patch(newData: any, priorData: any): LooseObject {
 }
 
 // This is a new, unstable simplified Patch Function to allow patching of Array Differences
-export function patchArray(newData: any, priorData: any): LooseObject {
+export function patchArray(newData: Array<any>, priorData: Array<any>): LooseObject {
     if (!_.isObject(newData) || !_.size(newData)) {
         return null
     }
-    if (!_.isObject(priorData) || !_.size(priorData)) {
+    if (!_.isObject(priorData)) {
         console.error('bad prior:', priorData)
         return null
     }
