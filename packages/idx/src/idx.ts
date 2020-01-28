@@ -1137,7 +1137,7 @@ Stratus.Services.Idx = [
                         },
                         MLSAreaMajor: {
                             // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                            type: 'stringIncludesArray'
+                            type: 'stringLikeArray'
                         },
                         CityRegion: {
                             // Note: only 'in' seems to work as a replacement for inq when nested in another object
