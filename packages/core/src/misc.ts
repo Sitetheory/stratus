@@ -203,116 +203,52 @@ export function endsWith(target: any, search: any) {
         target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
 }
 
-export function patch(newData: LooseObject, priorData: LooseObject): LooseObject {
+// This is a new simplified Patch Function to allow Difference between Object and Nested Arrays
+// Note: We are currently using LooseObject because the tree below outputs as such
+export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys?: Array<string>): LooseObject {
     if (!_.isObject(newData) || !_.size(newData)) {
         return null
     }
-    const data: any = {}
-    const processor: { edx?: any; ebx?: any; ecx?: any; eax?: any } = {}
-    if (!_.isObject(priorData)) {
-        console.error('bad prior:', priorData)
-    } else {
-        const detect = (value: any, key: any) => {
-            processor.eax = processor.ecx ? processor.ecx + '.' + key : key
-            // This is based on the algorithm from the new patch system,
-            // built inside the legacy one for an MVP workflow, for now.
-            if (_.isArray(value)) {
-                const priorList: Array<any> =  _.get(priorData, processor.eax)
-                if (!_.isEqual(value, priorList)) {
-                    data[processor.eax] = value
-                }
-                if (_.size(value) < _.size(priorList)) {
-                    if (!_.size(value) && _.size(priorList)) {
-                        data[processor.eax] = priorList
-                    // } else {
-                    //     _.forEach(priorList, (priorValue: any, priorKey: number) => {
-                    //         let exists = false
-                    //         _.forEach(value, (currentValue: any, currentKey: number) => {
-                    //             if (_.isEqual(priorValue, currentValue)) {
-                    //                 exists = true
-                    //             }
-                    //         })
-                    //         if (!exists) {
-                    //             data[`${processor.eax}[${key}]`] = priorValue
-                    //         }
-                    //     })
-                    }
-                }
-            }
-            if (_.isObject(value)) {
-                processor.ecx = processor.eax
-                if (!_.isArray(value)) {
-                    _.forEach(value, detect)
-                }
-                processor.ecx = processor.ecx === key
-                                ? undefined
-                                : processor.ecx.substring(0, processor.ecx.lastIndexOf('.'))
-            } else {
-                processor.ebx = _.reduce(processor.eax.split('.'),
-                    (x: any, a: any) => x && x[a],
-                priorData
-            )
-                if (processor.ebx !== value) {
-                    processor.edx = value
-                }
-            }
-            if (processor.edx !== undefined) {
-                data[processor.eax] = value
-                processor.edx = undefined
-            }
-        }
-        _.forEach(newData, detect)
+    if (!_.size(newData) || !_.isObject(priorData) || !_.size(priorData)) {
+        return newData
     }
-    return (!data || !_.size(data)) ? null : data
-}
-
-// This is a new, unstable simplified Patch Function to allow patching of Array Differences
-export function patchArray(newData: LooseObject, priorData: LooseObject): LooseObject {
-    if (!_.isObject(newData) || !_.size(newData)) {
-        return null
-    }
-    if (!_.isObject(priorData)) {
-        console.error('bad prior:', priorData)
-        return null
-    }
+    // Note: once we allow the tree to be an array, we must allow LooseObject|Array<any> to the parameters above.
+    // const tree: LooseObject = _.isArray(newData) ? [] : {}
     const tree: LooseObject = {}
-    let branch: any = null
-    // FIXME: This gives too many positives in comparison to the normal patch() above
     function detect(value: any, key: string, list: LooseObject|Array<any>, chain?: string) {
-        const acc = (chain !== null && chain !== undefined) ? (_.isArray(list) ? `${chain}[${key}]` : `${chain}.${key}`) : key
+        if (_.includes(ignoreKeys, key)) {
+            return
+        }
+        const acc = (chain === null || chain === undefined) ? key : (_.isArray(list) ? `${chain}[${key}]` : `${chain}.${key}`)
+        const priorValue: LooseObject|Array<any>|any =  _.get(priorData, acc)
+        if (value === priorValue) {
+            return
+        }
         if (_.isObject(value)) {
-            chain = acc
             if (_.isArray(value)) {
-                const priorList = _.get(priorData, acc)
-                if (_.size(value) < _.size(priorList)) {
-                    if (!_.size(value) && _.size(priorList)) {
-                        tree[acc] = priorList
-                    } else {
-                        _.forEach(priorList, (priorValue: any, priorKey: number) => {
-                            let exists = false
-                            _.forEach(value, (currentValue: any, currentKey: number) => {
-                                if (_.isEqual(priorValue, currentValue)) {
-                                    exists = true
-                                }
-                            })
-                            if (!exists) {
-                                tree[`${acc}[${key}]`] = priorValue
-                            }
-                        })
-                    }
+                if (!priorValue || _.size(value) !== _.size(priorValue)) {
+                    tree[acc] = value
+                    return
                 }
+                _.forEach(value, (v: any, k: number) => {
+                    const priorEl = _.get(priorValue, k)
+                    if (v === priorEl) {
+                        return
+                    }
+                    if (_.size(patch(v, priorEl, ignoreKeys))) {
+                        // This shows only the changed cell, which would be more efficient if Sitetheory allowed persistence of array keys
+                        // tree[`${acc}[${k}]`] = v
+                        // Store entire array in patch and break from forEach to preserve other elements
+                        tree[acc] = value
+                        return false
+                    }
+                })
+                return
             }
-            _.forEach(value, (v: any, k: string, l: LooseObject|Array<any>) => detect(v, k, l, chain))
-        } else {
-            const base = _.get(priorData, chain)
-            if (base !== value) {
-                branch = value
-            }
+            _.forEach(value, (v: any, k: string, l: LooseObject|Array<any>) => detect(v, k, l, acc))
+            return
         }
-        if (branch !== undefined) {
-            tree[acc] = value
-            branch = undefined
-        }
+        tree[acc] = value
     }
     _.forEach(newData, detect)
     return (!tree || !_.size(tree)) ? null : tree

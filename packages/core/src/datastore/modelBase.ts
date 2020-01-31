@@ -21,6 +21,7 @@ export class ModelBase extends EventManager {
     recv: LooseObject = {}
     recvChain: LooseObject = {}
     patch: LooseObject = {}
+    ignoreKeys: Array<string> = []
 
     constructor(data?: any, options?: any) {
         super()
