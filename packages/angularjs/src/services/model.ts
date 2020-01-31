@@ -14,7 +14,7 @@ import {
     setUrlParams,
     strcmp,
     ucfirst,
-    extendDeep
+    patchArray
 } from '@stratusjs/core/misc'
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {cookie} from '@stratusjs/core/environment'
@@ -585,14 +585,24 @@ export class Model extends ModelBase {
         return data
     }
 
-    toPatch() {
+    toPatch(algorithm?: number) {
         const patchData = {}
         const changeSet = this.sanitizePatch(
+            algorithm === 1 ? patchArray(this.data, this.recv) :
             patch(this.data, this.recv)
         )
-        _.forEach(changeSet, (value, key) => {
+        console.log(changeSet)
+        // FIXME: This is a temporary bit of logic for hydration of arrays instead of allowing only their changed cells to persist.
+        // const changedArrays: Array<string> = []
+        _.forEach(changeSet, (value: any, key: string) => {
             _.set(patchData, key, value)
+            // Mark Key for Array Targeting
+            // if (_.isArray(_.get(patchData, key))) {
+            //     changedArrays.push(key)
+            // }
         })
+        // Hydrate Array from Latest Data
+        // _.forEach(changedArrays, (value: any, key: string) => _.set(patchData, key, _.get(this.data, key)))
         return patchData
     }
 
