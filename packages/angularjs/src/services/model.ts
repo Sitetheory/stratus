@@ -13,8 +13,7 @@ import {
     patch,
     setUrlParams,
     strcmp,
-    ucfirst,
-    patchArray
+    ucfirst
 } from '@stratusjs/core/misc'
 import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {cookie} from '@stratusjs/core/environment'
@@ -80,6 +79,7 @@ export interface HttpPrototype {
 
 export interface ModelOptions {
     collection?: Collection,
+    ignoreKeys?: Array<string>,
     manifest?: string,
     received?: boolean,
     stagger?: boolean,
@@ -167,6 +167,9 @@ export class Model extends ModelBase {
         this.recv = options.received ? _.cloneDeep(this.data) : {}
         this.recvChain = options.received ? this.flatten(this.data) : {}
 
+        // Handle Keys we wish to ignore in patch
+        this.ignoreKeys = options.ignoreKeys || ['$$hashKey']
+
         // Generate URL
         if (this.target) {
             this.urlRoot += '/' + ucfirst(this.target)
@@ -240,32 +243,23 @@ export class Model extends ModelBase {
         return flatData
     }
 
-    sanitizePatch(patchData: LooseObject) {
-        _.forEach(_.keys(patchData), (key: any) => {
-            if (_.endsWith(key, '$$hashKey')) {
-                delete patchData[key]
-            }
-        })
-        return patchData
-    }
+    // sanitizePatch(patchData: LooseObject) {
+    //     _.forEach(_.keys(patchData), (key: any) => {
+    //         if (_.endsWith(key, '$$hashKey')) {
+    //             delete patchData[key]
+    //         }
+    //     })
+    //     return patchData
+    // }
 
     handleChanges(newData: LooseObject, priorData: LooseObject) {
-        const changeSet = this.sanitizePatch(
-            patch(newData, priorData)
-        )
-
-        // Set the origin data
-        // if (_.isEmpty(this.initData)) {
-        //     extendDeep(this.data, this.initData)
-        // }
+        const changeSet = patch(newData, priorData, this.ignoreKeys)
 
         if (!changeSet) {
             return true
         }
 
-        // const patchData = this.sanitizePatch(
-        //     patch(this.data, this.recv)
-        // )
+        // const patchData = patch(this.data, this.recv, this.ignoreKeys)
 
         if (cookie('env')) {
             console.log('Changed:', changeSet)
@@ -585,13 +579,10 @@ export class Model extends ModelBase {
         return data
     }
 
-    toPatch(algorithm?: number) {
+    toPatch() {
         const patchData = {}
-        const changeSet = this.sanitizePatch(
-            algorithm === 1 ? patchArray(this.data, this.recv) :
-            patch(this.data, this.recv)
-        )
-        console.log(changeSet)
+        const changeSet = patch(this.data, this.recv, this.ignoreKeys)
+        console.log('changeSet:', changeSet)
         // FIXME: This is a temporary bit of logic for hydration of arrays instead of allowing only their changed cells to persist.
         // const changedArrays: Array<string> = []
         _.forEach(changeSet, (value: any, key: string) => {
