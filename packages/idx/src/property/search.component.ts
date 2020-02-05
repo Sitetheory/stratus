@@ -265,12 +265,17 @@ Stratus.Components.IdxPropertySearch = {
         $scope.updateNestedPathValue = async (currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any> => {
             const currentPiece = pathPieces.shift()
             if (
-                currentPiece &&
-                Object.prototype.hasOwnProperty.call(currentNest, currentPiece)
+                // Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
+                currentPiece
             ) {
                 // console.log('checking piece', currentPiece, 'in', currentNest)
                 if (pathPieces[0]) {
                     return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
+                } else if (
+                    Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
+                    (!_.isArray(currentNest[currentPiece]) && _.isArray(value))
+                ) {
+                    console.warn('updateNestedPathValue couldn\'t connect', currentPiece, ' as value given is array, but value stored is not: ', _.clone(currentNest), 'It may need to be initialized first (as an array)')
                 } else {
                     if (_.isArray(currentNest[currentPiece]) && !_.isArray(value)) {
                         value = value === '' ? [] : value.split(',')
