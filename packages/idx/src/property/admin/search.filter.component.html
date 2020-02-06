@@ -209,7 +209,7 @@
                 >
                     <md-input-container class="md-block minimal">
                         <label>Sort</label>
-                        <md-select data-ng-model="options.query.where.Order">
+                        <md-select data-ng-model="options.query.Order">
                             <md-option data-ng-repeat="option in options.selection.Order" data-ng-value="option.value">
                                 {{option.name}}
                             </md-option>
@@ -240,7 +240,8 @@
 
     </div>
 
-    <div class="search-row" data-layout="row" data-layout-align="space-around left">
+    <!-- Preview Results will not appear if a list list isn't defined -->
+    <div class="search-row" data-layout="row" data-layout-align="space-around left" data-ng-if="listId">
         <a class="btn btn-submit" data-ng-click="searchProperties()">Preview Results</a>
     </div>
 </div>
