@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core'
 import {FormBuilder, FormGroup} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 
@@ -66,8 +66,11 @@ export class TreeDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<TreeDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
         private fb: FormBuilder,
-        private backend: BackendService
+        private backend: BackendService,
+        private ref: ChangeDetectorRef
     ) {
+        // Manually render upon data change
+        // ref.detach()
     }
 
     ngOnInit() {
@@ -100,6 +103,7 @@ export class TreeDialogComponent implements OnInit {
                             this.data.content = value
                             this.data.url = null
                         }
+                        this.ref.detectChanges()
                         return this.backend.get(this.lastContentSelectorQuery)
                             .pipe(
                                 finalize(() => this.isContentLoading = false),
@@ -109,12 +113,14 @@ export class TreeDialogComponent implements OnInit {
             )
             .subscribe((response: any) => {
                 if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                    this.ref.detectChanges()
                     return this.filteredContentOptions = []
                 }
                 const payload = _.get(response.body, 'payload') || response.body
                 if (_.isEmpty(payload) || !Array.isArray(payload)) {
                     return this.filteredContentOptions = []
                 }
+                this.ref.detectChanges()
                 return this.filteredContentOptions = payload
             })
 
@@ -151,10 +157,13 @@ export class TreeDialogComponent implements OnInit {
         //         }
         //         return this.filteredParentOptions = payload
         //     })
+
+        this.ref.detectChanges()
     }
 
     onCancelClick(): void {
         this.dialogRef.close()
+        this.ref.detectChanges()
     }
 
     displayVersionTitle(option: any) {

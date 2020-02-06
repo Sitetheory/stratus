@@ -1,5 +1,8 @@
 /* Based on Angular Material 8+ */
 .tree {
+  //margin: 0 25px 25px 0;
+  //display: inline-block;
+  //vertical-align: top;
   .display {
     &-none {
       display: none;
@@ -15,35 +18,74 @@
     margin-bottom: 0;
     list-style-type: none;
   }
-  .tree {
-    &-node {
-      display: block;
-      .tree-node { // be explicit for child padding
-        padding-left: 40px;
+  .tree-node {
+    //display: block;
+    //padding: 20px 10px;
+    //border-bottom: solid 1px #ccc;
+    //color: rgba(0, 0, 0, 0.87);
+    display: flex;
+    //flex-direction: row;
+    //align-items: center;
+    //justify-content: space-between;
+    //box-sizing: border-box;
+    cursor: move;
+    .tree-node { // be explicit for child padding
+      padding-left: 40px;
+      //border-left: dashed 1px #222222;
+    }
+    &-drag {
+      &-preview {
+        box-sizing: border-box;
+        border-radius: 4px;
+        padding: 10px;
+        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
       }
-      &-drag {
-        &-preview {
-          box-sizing: border-box;
-          border-radius: 4px;
-          padding: 10px;
-          box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-          background-color: white;
-        }
+    }
+    &-drop-list {
+      //border: solid 1px #ccc;
+      //min-height: 20px;
+      //border-radius: 4px;
+      //overflow: hidden;
+      //display: block;
+    }
+    &.cdk-drop-list-dragging {
+      .tree-node:not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
       }
+    }
+    &:last-child {
+      //border: none;
     }
   }
-  .cdk-drop-list {
-    &-dragging {
-      min-height: 20px;
-      border-style: dashed !important;
-      border-radius: 4px !important;
-      //background: lightgreen !important;
+  .cdk {
+    &-drag {
+      &-preview {
+        box-sizing: border-box;
+        border-radius: 4px;
+        box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+        0 8px 10px 1px rgba(0, 0, 0, 0.14),
+        0 3px 14px 2px rgba(0, 0, 0, 0.12);
+      }
+      &-placeholder {
+        opacity: 0;
+      }
+      &-animating {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      }
     }
-    //&-receiving {
-    //  min-height: 20px;
-    //  border-style: dashed !important;
-    //  border-radius: 4px !important;
-    //  background: lightyellow !important;
-    //}
+    &-drop-list {
+      &-dragging {
+        min-height: 20px;
+        border-style: dashed !important;
+        border-radius: 4px !important;
+        //background: lightgreen !important;
+      }
+      &-receiving {
+        //min-height: 20px;
+        //border-style: dashed !important;
+        //border-radius: 4px !important;
+        //background: lightyellow !important;
+      }
+    }
   }
 }
