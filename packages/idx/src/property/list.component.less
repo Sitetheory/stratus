@@ -199,9 +199,10 @@ stratus-idx-property-list {
               font-size: 13px;
               line-height: 2;
               .property-type > span {
+                /* \0a is for '&nbsp', which is need if this the template is minified and spans spaces are removed */
                 &::after {
                   display: inline;
-                  content: '|';
+                  content: '\0a|\0a';
                   padding: 0 2px;
                 }
                 &:last-child::after {
