@@ -440,7 +440,6 @@ Stratus.Components.IdxPropertyList = {
          * @param reset - set true to force reset
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
-            // TODO this might need to be reset at some point
             if (!$ctrl.mlsVariables || reset) {
                 $ctrl.mlsVariables = Idx.getMLSVariables()
             }
