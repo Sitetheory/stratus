@@ -156,7 +156,7 @@ export class TreeComponent { // implements OnInit
                     return
                 }
                 // Manually render upon data change
-                // ref.detach();
+                ref.detach()
                 const onDataChange = () => {
                     if (this.unsettled || !data.completed) {
                         return
@@ -256,7 +256,7 @@ export class TreeComponent { // implements OnInit
                     id: modelId,
                     model: null,
                     children: [],
-                    expanded: true
+                    expanded: false
                 }
             }
             this.treeMap[modelId].model = model
@@ -270,7 +270,7 @@ export class TreeComponent { // implements OnInit
                         id: parentId,
                         model: null,
                         children: [],
-                        expanded: true
+                        expanded: false
                     }
                 }
                 this.treeMap[parentId].children.push(

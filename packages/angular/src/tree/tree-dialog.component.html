@@ -29,7 +29,7 @@
             <mat-form-field class="form-field">
                 <input matInput placeholder="Link Content" aria-label="Link Content" [matAutocomplete]="auto" formControlName='contentSelectorInput'>
             </mat-form-field>
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayVersionTitle">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayContentText">
                 <mat-option *ngIf="isContentLoading" class="is-loading">
                     <mat-spinner diameter="50"></mat-spinner>
                 </mat-option>
@@ -50,7 +50,7 @@
     <!-- Target Display -->
     <h4>Linked To:</h4>
 
-    <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? data.content.routing[0].url : 'Nothing yet!'"></span>
+    <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? ('/' + data.content.routing[0].url) : 'Nothing yet!'"></span>
     <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
 
     <!-- Priority Control - deprecated once we have DnD -->

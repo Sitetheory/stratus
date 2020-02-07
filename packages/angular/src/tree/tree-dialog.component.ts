@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, OnChanges} from '@angular/core'
 import {FormBuilder, FormGroup} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 
@@ -12,6 +12,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Services
 import {BackendService} from '@stratusjs/angular/backend.service'
+import {LooseObject} from '@stratusjs/core/misc'
 
 // Data Types
 export interface DialogData {
@@ -25,6 +26,13 @@ export interface DialogData {
     collection: any
     parent: any
     nestParent: any
+}
+export interface Content extends LooseObject {
+    id?: number
+    route?: string
+    version?: {
+        title?: string
+    }
 }
 
 // Local Setup
@@ -66,8 +74,11 @@ export class TreeDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<TreeDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
         private fb: FormBuilder,
-        private backend: BackendService
+        private backend: BackendService,
+        private ref: ChangeDetectorRef
     ) {
+        // Manually render upon data change
+        // ref.detach()
     }
 
     ngOnInit() {
@@ -109,13 +120,31 @@ export class TreeDialogComponent implements OnInit {
             )
             .subscribe((response: any) => {
                 if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                    return this.filteredContentOptions = []
+                    this.filteredContentOptions = []
+                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
+                    // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+                    this.ref.detach()
+                    this.ref.detectChanges()
+                    this.ref.reattach()
+                    return this.filteredContentOptions
                 }
                 const payload = _.get(response.body, 'payload') || response.body
                 if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                    return this.filteredContentOptions = []
+                    this.filteredContentOptions = []
+                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
+                    // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+                    this.ref.detach()
+                    this.ref.detectChanges()
+                    this.ref.reattach()
+                    return this.filteredContentOptions
                 }
-                return this.filteredContentOptions = payload
+                this.filteredContentOptions = payload
+                // FIXME: We have to go in this roundabout way to force changes to be detected since the
+                // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+                this.ref.detach()
+                this.ref.detectChanges()
+                this.ref.reattach()
+                return this.filteredContentOptions
             })
 
         // this.dialogParentForm = this.fb.group({
@@ -151,16 +180,36 @@ export class TreeDialogComponent implements OnInit {
         //         }
         //         return this.filteredParentOptions = payload
         //     })
+
+        // FIXME: We have to go in this roundabout way to force changes to be detected since the
+        // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+        this.ref.detach()
+        this.ref.detectChanges()
+        this.ref.reattach()
     }
 
     onCancelClick(): void {
         this.dialogRef.close()
+        // FIXME: We have to go in this roundabout way to force changes to be detected since the
+        // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+        this.ref.detach()
+        this.ref.detectChanges()
+        this.ref.reattach()
     }
 
-    displayVersionTitle(option: any) {
-        if (option) {
-            return _.get(option, 'version.title')
+    displayContentText(content: Content) {
+        // Ensure Content is Selected before Display Text
+        if (!content) {
+            return
         }
+        // Routing Fallback
+        const routing = _.get(content, 'routing[0].url')
+        const routingText = routing ? `/${routing}` : null
+        // ContentId Fallback
+        const contentId = _.get(content, 'id')
+        const contentIdText = contentId ? `Content: ${contentId}` : null
+        // Return Version Title or Fallback Text
+        return _.get(content, 'version.title') || routingText || contentIdText
     }
 
     // displayName(option: any) {

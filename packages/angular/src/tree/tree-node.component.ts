@@ -44,7 +44,12 @@ export class TreeNodeComponent implements OnInit {
     hasChild = (node: Node) => node.children && node.children.length > 0
     isExpanded = (node: Node) => node.expanded
 
-    constructor(public dialog: MatDialog, private ref: ChangeDetectorRef) {
+    constructor(
+        public dialog: MatDialog,
+        private ref: ChangeDetectorRef
+    ) {
+        // Manually render upon data change
+        ref.detach()
     }
 
     ngOnInit() {
@@ -58,6 +63,9 @@ export class TreeNodeComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+
+        // Force UI Redraw
+        this.ref.detectChanges()
     }
 
     public getName(node: Node): string {
@@ -69,6 +77,11 @@ export class TreeNodeComponent implements OnInit {
 
     public getDragPreview(node: Node): string {
         return `name: ${this.getName(node)}<br>children: ${node.children ? node.children.length : 0}`
+    }
+
+    public toggleExpanded(node: Node): void {
+        node.expanded = !node.expanded
+        this.ref.detectChanges()
     }
 
     public openDialog(node: Node): void {
@@ -91,8 +104,9 @@ export class TreeNodeComponent implements OnInit {
                 nestParent: node.model.data.nestParent || null,
             }
         })
-        // this.ref.detectChanges()
+        this.ref.detectChanges()
 
+        const ref = this.ref
         dialogRef.afterClosed().subscribe((result: DialogData) => {
             if (!result || _.isEmpty(result)) {
                 return
@@ -112,9 +126,9 @@ export class TreeNodeComponent implements OnInit {
                     return
                 }
                 node.model.set(attr, _.get(result, attr))
+                ref.detectChanges()
             })
             node.model.save()
-            // this.ref.detectChanges()
         })
     }
 }
