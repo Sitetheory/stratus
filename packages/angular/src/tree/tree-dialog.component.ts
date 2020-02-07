@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit} from '@angular/core'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, OnChanges} from '@angular/core'
 import {FormBuilder, FormGroup} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 
@@ -103,7 +103,6 @@ export class TreeDialogComponent implements OnInit {
                             this.data.content = value
                             this.data.url = null
                         }
-                        this.ref.detectChanges()
                         return this.backend.get(this.lastContentSelectorQuery)
                             .pipe(
                                 finalize(() => this.isContentLoading = false),
@@ -113,15 +112,31 @@ export class TreeDialogComponent implements OnInit {
             )
             .subscribe((response: any) => {
                 if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+                    this.filteredContentOptions = []
+                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
+                    // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+                    this.ref.detach()
                     this.ref.detectChanges()
-                    return this.filteredContentOptions = []
+                    this.ref.reattach()
+                    return this.filteredContentOptions
                 }
                 const payload = _.get(response.body, 'payload') || response.body
                 if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                    return this.filteredContentOptions = []
+                    this.filteredContentOptions = []
+                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
+                    // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+                    this.ref.detach()
+                    this.ref.detectChanges()
+                    this.ref.reattach()
+                    return this.filteredContentOptions
                 }
+                this.filteredContentOptions = payload
+                // FIXME: We have to go in this roundabout way to force changes to be detected since the
+                // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+                this.ref.detach()
                 this.ref.detectChanges()
-                return this.filteredContentOptions = payload
+                this.ref.reattach()
+                return this.filteredContentOptions
             })
 
         // this.dialogParentForm = this.fb.group({
@@ -158,12 +173,20 @@ export class TreeDialogComponent implements OnInit {
         //         return this.filteredParentOptions = payload
         //     })
 
+        // FIXME: We have to go in this roundabout way to force changes to be detected since the
+        // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+        this.ref.detach()
         this.ref.detectChanges()
+        this.ref.reattach()
     }
 
     onCancelClick(): void {
         this.dialogRef.close()
+        // FIXME: We have to go in this roundabout way to force changes to be detected since the
+        // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+        this.ref.detach()
         this.ref.detectChanges()
+        this.ref.reattach()
     }
 
     displayVersionTitle(option: any) {

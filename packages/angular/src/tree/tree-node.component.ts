@@ -106,6 +106,7 @@ export class TreeNodeComponent implements OnInit {
         })
         this.ref.detectChanges()
 
+        const ref = this.ref
         dialogRef.afterClosed().subscribe((result: DialogData) => {
             if (!result || _.isEmpty(result)) {
                 return
@@ -125,16 +126,9 @@ export class TreeNodeComponent implements OnInit {
                     return
                 }
                 node.model.set(attr, _.get(result, attr))
+                ref.detectChanges()
             })
-            node.model.save().then(
-                () => {
-                    this.ref.detectChanges()
-                }
-            ).catch(
-                () => {
-                    this.ref.detectChanges()
-                }
-            )
+            node.model.save()
         })
     }
 }
