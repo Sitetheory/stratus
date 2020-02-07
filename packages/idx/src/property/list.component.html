@@ -81,7 +81,7 @@
         </div>
     </div>
     <div class="pager-container clearfix">
-        <div class="pager-section" ng-if="collection.meta.data.totalPages >= 2">
+        <div class="pager-section" data-ng-if="collection.meta.data.totalPages >= 2">
             <div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
                 <span data-ng-bind="query.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
                 Pages

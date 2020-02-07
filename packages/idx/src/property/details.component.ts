@@ -63,6 +63,8 @@ export type IdxPropertyDetailsScope = angular.IScope & ObjectWithFunctions & {
     integrations?: object | any
     minorDetails: SubSectionOptions[]
     alternateMinorDetails: SubSectionOptions[]
+
+    getPublicRemarksHTML(): any
 }
 
 
@@ -1281,6 +1283,14 @@ Stratus.Components.IdxPropertyDetails = {
             } else {
                 console.error('No Service Id or Listing Key/Id is fetch from')
             }
+        }
+
+        $scope.getPublicRemarksHTML = (): any => {
+            let publicRemarks = ''
+            if (Object.prototype.hasOwnProperty.call($scope.model.data, 'PublicRemarks')) {
+                publicRemarks = $scope.model.data.PublicRemarks
+            }
+            return $sce.trustAsHtml(publicRemarks)
         }
 
         $scope.getSlideshowImages = (): SlideImage[] => {
