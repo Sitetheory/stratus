@@ -12,6 +12,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Services
 import {BackendService} from '@stratusjs/angular/backend.service'
+import {LooseObject} from '@stratusjs/core/misc'
 
 // Data Types
 export interface DialogData {
@@ -25,6 +26,13 @@ export interface DialogData {
     collection: any
     parent: any
     nestParent: any
+}
+export interface Content extends LooseObject {
+    id?: number
+    route?: string
+    version?: {
+        title?: string
+    }
 }
 
 // Local Setup
@@ -189,10 +197,19 @@ export class TreeDialogComponent implements OnInit {
         this.ref.reattach()
     }
 
-    displayVersionTitle(option: any) {
-        if (option) {
-            return _.get(option, 'version.title')
+    displayContentText(content: Content) {
+        // Ensure Content is Selected before Display Text
+        if (!content) {
+            return
         }
+        // Routing Fallback
+        const routing = _.get(content, 'routing[0].url')
+        const routingText = routing ? `/${routing}` : null
+        // ContentId Fallback
+        const contentId = _.get(content, 'id')
+        const contentIdText = contentId ? `Content: ${contentId}` : null
+        // Return Version Title or Fallback Text
+        return _.get(content, 'version.title') || routingText || contentIdText
     }
 
     // displayName(option: any) {
