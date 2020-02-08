@@ -163,7 +163,9 @@ Stratus.Components.IdxPropertyList = {
 
             $scope.orderOptions = $scope.orderOptions || {
                 'Price (high to low)': '-ListPrice',
-                'Price (low to high)': 'ListPrice'
+                'Price (low to high)': 'ListPrice',
+                'Recently Updated': '-ModificationTimestamp',
+                'Recently Sold': '-CloseDate',
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null

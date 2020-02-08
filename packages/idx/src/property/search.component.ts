@@ -146,7 +146,9 @@ Stratus.Components.IdxPropertySearch = {
             ]
             $scope.options.selection.Order = $scope.options.selection.Order || [
                 {name: 'Price (high to low)', value: '-ListPrice'},
-                {name: 'Price (low to high)', value: 'ListPrice'}
+                {name: 'Price (low to high)', value: 'ListPrice'},
+                {name: 'Recently Updated', value: '-ModificationTimestamp'},
+                {name: 'Recently Sold', value: '-CloseDate'}
             ]
             $scope.options.selection.Status = $scope.options.selection.Status || {}
             $scope.options.selection.Status.default = $scope.options.selection.Status.default || {
