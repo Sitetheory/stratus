@@ -13,7 +13,7 @@ import 'angular-material'
 
 // Services
 import '@stratusjs/idx/idx'
-import {CompileFilterOptions, IdxService, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, IdxService, MLSService, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -59,6 +59,7 @@ Stratus.Components.IdxPropertySearch = {
     bindings: {
         elementId: '@',
         tokenUrl: '@',
+        tokenOnLoad: '@',
         listId: '@',
         listLinkUrl: '@',
         listLinkTarget: '@',
@@ -86,6 +87,7 @@ Stratus.Components.IdxPropertySearch = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
+
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         $scope.$mdConstant = $mdConstant
@@ -107,9 +109,8 @@ Stratus.Components.IdxPropertySearch = {
             $scope.options.forRent = false
 
             // Set default queries
-            $scope.options.query = $scope.options.query || {
-                where: {}
-            }
+            $scope.options.query = $scope.options.query || {}
+            $scope.options.query.where = $scope.options.query.where || {}
             $scope.options.query.service = $scope.options.query.service || []
 
             // $scope.setQuery($scope.options.query)
@@ -145,7 +146,9 @@ Stratus.Components.IdxPropertySearch = {
             ]
             $scope.options.selection.Order = $scope.options.selection.Order || [
                 {name: 'Price (high to low)', value: '-ListPrice'},
-                {name: 'Price (low to high)', value: 'ListPrice'}
+                {name: 'Price (low to high)', value: 'ListPrice'},
+                {name: 'Recently Updated', value: '-ModificationTimestamp'},
+                {name: 'Recently Sold', value: '-CloseDate'}
             ]
             $scope.options.selection.Status = $scope.options.selection.Status || {}
             $scope.options.selection.Status.default = $scope.options.selection.Status.default || {
@@ -200,6 +203,11 @@ Stratus.Components.IdxPropertySearch = {
 
             // Register this Search with the Property service
             Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
+
+            if ($attrs.tokenOnLoad) {
+                await Idx.tokenKeepAuth()
+                $scope.getMLSVariables(true)
+            }
 
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
         }
@@ -431,6 +439,16 @@ Stratus.Components.IdxPropertySearch = {
         }
 
         /**
+         * @param reset - set true to force reset
+         */
+        $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
+            if (!$ctrl.mlsVariables || reset) {
+                $ctrl.mlsVariables = Idx.getMLSVariables()
+            }
+            return $ctrl.mlsVariables
+        }
+
+        /**
          * Update the entirety options.query in a safe manner to ensure undefined references are not produced
          */
         $scope.setQuery = (newQuery?: CompileFilterOptions): void => {
@@ -466,7 +484,6 @@ Stratus.Components.IdxPropertySearch = {
 
         $scope.setWhereDefaults = (): void => {
             $scope.$applyAsync(() => {
-                // FIXME needs to be moved to query.where
                 if ($scope.options.query.where.ListingType.length < 1) {
                     $scope.options.query.where.ListingType = $scope.options.selection.ListingType.default.Sale.Residential
                     // console.log('updating', $scope.options.query.where.ListingType)

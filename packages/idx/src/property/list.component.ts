@@ -163,7 +163,9 @@ Stratus.Components.IdxPropertyList = {
 
             $scope.orderOptions = $scope.orderOptions || {
                 'Price (high to low)': '-ListPrice',
-                'Price (low to high)': 'ListPrice'
+                'Price (low to high)': 'ListPrice',
+                'Recently Updated': '-ModificationTimestamp',
+                'Recently Sold': '-CloseDate',
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
@@ -440,7 +442,6 @@ Stratus.Components.IdxPropertyList = {
          * @param reset - set true to force reset
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
-            // TODO this might need to be reset at some point
             if (!$ctrl.mlsVariables || reset) {
                 $ctrl.mlsVariables = Idx.getMLSVariables()
             }

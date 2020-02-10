@@ -31,7 +31,7 @@
                                 Details
                             </div>
                             <div class="image-wrapper"
-                                 data-stratus-src-load="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
+                                 data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                                  data-stratus-src="{{::property.Images[0].MediaURL}}"
                             >
                                 <img data-ng-if="::property.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="shapeholder"/>
@@ -81,7 +81,7 @@
         </div>
     </div>
     <div class="pager-container clearfix">
-        <div class="pager-section" ng-if="collection.meta.data.totalPages >= 2">
+        <div class="pager-section" data-ng-if="collection.meta.data.totalPages >= 2">
             <div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
                 <span data-ng-bind="query.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
                 Pages
