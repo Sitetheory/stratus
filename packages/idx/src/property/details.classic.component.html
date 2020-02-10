@@ -58,7 +58,12 @@
 						</div>
 					</div>
 					<div class="details-image">
-						<img data-ng-src="{{model.data.Images[0].MediaURL ? model.data.Images[0].MediaURL : '/content/mls/images/no_photo_details.jpg'}}" alt="{{::model.data.UnparsedAddress}}">
+						<img
+                                data-stratus-src="{{model.data.Images[0].MediaURL ? model.data.Images[0].MediaURL : '/content/mls/images/no_photo_details.jpg'}}"
+                                data-stratus-src-version="{{::(model.data.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
+                                alt="{{::model.data.UnparsedAddress}}"
+                                aria-label="Main Image of the Listing"
+                        >
 					</div>
 				</div>
 
