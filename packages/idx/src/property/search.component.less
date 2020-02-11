@@ -6,51 +6,134 @@ stratus-idx-property-search,
 .md-panel.stratus-idx-property-search-menu {
   height: auto;
 
-  /* Generic dotted underline */
-  .dotted-spaced-underline {
-    background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
-    background-position: bottom;
-    background-size: 4px 1px;
-    background-repeat: repeat-x;
-  }
-  md-input-container label,
-  md-input-container .md-input {
-    font-size: 15px;
-  }
-
   /* md-input-container adds a ton of spacing by default. This will remove it */
   md-input-container.minimal {
     margin: 10px 2px 5px;
+    &:first-child {
+      &,
+      input,
+      label {
+        padding-left: 0;
+      }
+    }
   }
   md-input-container.minimal .md-errors-spacer {
     min-height: 0;
   }
 }
+
+.idx-search-component {
+  margin-bottom: 20px;
+  //padding-bottom: 10px;
+  //border-bottom: 1px solid rgba(0,0,0,.15);
+  .search-header {
+    position: relative;
+    z-index: 100;
+    h4,
+    .basic-advanced {
+      display: inline-block;
+    }
+    h4 {
+      margin-right: 20px;
+    }
+    h4,
+    a {
+      font-weight: bold;
+      font-size: 13px;
+    }
+    a {
+      &,
+      &:link,
+      &:visited,
+      &:active {
+        color: #999;
+      }
+      &:hover {
+        color: #111;
+      }
+    }
+    .close-filters-link {
+      padding-right: 10px;
+    }
+    .open-filters-link {
+      padding-left: 6px;
+    }
+  }
+  &.filters-open {
+    .open-filters-link {
+      &,
+      &:link,
+      &:visited,
+      &:active,
+      &:hover {
+        color: #111;
+        cursor: default;
+      }
+    }
+  }
+  &.filters-closed {
+    .close-filters-link {
+      &,
+      &:link,
+      &:visited,
+      &:active,
+      &:hover {
+        color: #111;
+        cursor: default;
+      }
+    }
+  }
+  //&.search-full {
+  //  md-input-container label,
+  //  md-input-container .md-input {
+  //    font-size: 18px;
+  //  }
+  //}
+  .submit-row {
+    text-align: right;
+    .btn {
+      &.btn-submit {
+        margin-left: 10px;
+      }
+    }
+  }
+  .open-filters-row {
+    transition: all .3s ease-out;
+    -webkit-transition: all .3s ease-out;
+    opacity: 0;
+    margin-top: 20px;
+  }
+  &.filters-open {
+    .open-filters-row {
+      opacity: 1;
+    }
+  }
+}
+
+
+
+
+
+
 stratus-idx-property-search {
   &.sidebar {
-    .search-mini {
-      padding: 28px 20px;
-      box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
-      h2 {
-        margin-top: 0;
-        line-height: 1;
-      }
+    .idx-search-component {
       .open-filters {
         margin-top: 10px;
         font-weight: bold;
         font-size: 13px;
-        text-align: center;
       }
-      .btn {
-        &.btn-submit {
-          width: 100%;
-          padding-left: 0;
-          padding-right: 0;
-        }
-      }
+
     }
   }
 }
+
+.listing-types {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0,0,0,.15);
+}
+
 
 /***************
  * Search Menu
@@ -90,41 +173,42 @@ stratus-idx-property-search {
       }
     }
   }
-  .md-button {
-    &.md-default-theme.md-primary.md-fab,
-    &.md-primary.md-fab,
-    &.md-default-theme.md-primary.md-raised,
-    &.md-primary.md-raised {
-      color: #fff;
-      background: #222;
-    }
-    &.md-default-theme.md-primary.md-fab:not([disabled]).md-focused,
-    &.md-primary.md-fab:not([disabled]).md-focused,
-    &.md-default-theme.md-primary.md-fab:not([disabled]):hover,
-    &.md-primary.md-fab:not([disabled]):hover,
-    &.md-default-theme.md-primary.md-raised:not([disabled]).md-focused,
-    &.md-primary.md-raised:not([disabled]).md-focused,
-    &.md-default-theme.md-primary.md-raised:not([disabled]):hover,
-    &.md-primary.md-raised:not([disabled]):hover {
-      color: #fff;
-      background: #999;
-    }
-  }
-  .property-zoning {
-    margin-bottom: 30px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    // stylelint-disable-next-line no-descending-specificity
-    .md-button {
-      padding: 0 12px 4px;
-      margin: 0 0 -1px;
-      border-bottom: 2px solid transparent;
-      &.md-default-theme.md-primary,
-      &.md-primary {
-        font-weight: bold;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.8);
-      }
-    }
-  }
+
+  //.md-button {
+  //  &.md-default-theme.md-primary.md-fab,
+  //  &.md-primary.md-fab,
+  //  &.md-default-theme.md-primary.md-raised,
+  //  &.md-primary.md-raised {
+  //    color: #fff;
+  //    background: #222;
+  //  }
+  //  &.md-default-theme.md-primary.md-fab:not([disabled]).md-focused,
+  //  &.md-primary.md-fab:not([disabled]).md-focused,
+  //  &.md-default-theme.md-primary.md-fab:not([disabled]):hover,
+  //  &.md-primary.md-fab:not([disabled]):hover,
+  //  &.md-default-theme.md-primary.md-raised:not([disabled]).md-focused,
+  //  &.md-primary.md-raised:not([disabled]).md-focused,
+  //  &.md-default-theme.md-primary.md-raised:not([disabled]):hover,
+  //  &.md-primary.md-raised:not([disabled]):hover {
+  //    color: #fff;
+  //    background: #999;
+  //  }
+  //}
+  //.property-zoning {
+  //  margin-bottom: 30px;
+  //  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  //  // stylelint-disable-next-line no-descending-specificity
+  //  .md-button {
+  //    padding: 0 12px 4px;
+  //    margin: 0 0 -1px;
+  //    border-bottom: 2px solid transparent;
+  //    &.md-default-theme.md-primary,
+  //    &.md-primary {
+  //      font-weight: bold;
+  //      border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+  //    }
+  //  }
+  //}
   .sale-status-border {
     margin-bottom: 5px;
     height: 2px;
@@ -146,27 +230,3 @@ stratus-idx-property-search {
     }
   }
 }
-
-// Gutensite only style, remove from repo
-
-/*
-.module_location_sidebar .stratus-property-search {
-  padding: 28px 20px;
-  box-shadow: 0 0 1px 1px rgba(0,0,0,.15);
-}
-.module_location_sidebar .stratus-property-search h2 {
-  margin-top: 0;
-  line-height: 1;
-}
-.module_location_sidebar .stratus-property-search .open-filters {
-  margin-top: 10px;
-  font-weight: bold;
-  font-size: 13px;
-  text-align: center;
-}
-.module_location_sidebar .stratus-property-search .btn-submit {
-  width: 100%;
-  padding-left: 0;
-  padding-right: 0;
-}
-*/
