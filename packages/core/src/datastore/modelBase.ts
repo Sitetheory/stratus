@@ -3,7 +3,13 @@
 
 import _ from 'lodash'
 import {EventManager} from '@stratusjs/core/events/eventManager'
-import {LooseObject, poll} from '@stratusjs/core/misc'
+import {getAnchorParams, LooseObject, patch, poll, setUrlParams} from '@stratusjs/core/misc'
+import {cookie} from '@stratusjs/core/environment'
+
+export interface ModelBaseOptions {
+    ignoreKeys?: Array<string>,
+    received?: boolean
+}
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
@@ -19,15 +25,15 @@ export class ModelBase extends EventManager {
     watch = false
     watching = false
     recv: LooseObject = {}
-    recvChain: LooseObject = {}
     patch: LooseObject = {}
     ignoreKeys: Array<string> = []
 
-    constructor(data?: any, options?: any) {
+    // FIXME: The AngularJS Package's Model and the Core ModelBase differ in terms of parameter order
+    constructor(data?: LooseObject, options?: ModelBaseOptions) {
         super()
 
         // Evaluate object or array
-        if (data) {
+        if (data && typeof data === 'object') {
             // TODO: Evaluate object or array into a string of sets
             /* *
              data = _.defaults(_.extend({}, defaults, data), defaults)
@@ -35,28 +41,75 @@ export class ModelBase extends EventManager {
              /* */
             _.extend(this.data, data)
         }
+
+        // Handle Initial Data Flagged as Received from DataStore, XHR, etc
+        this.recv = _.cloneDeep(this.data)
+
+        // Handle Keys we wish to ignore in patch
+        if (_.isObject(options) && _.isArray(options.ignoreKeys)) {
+            this.ignoreKeys = options.ignoreKeys
+        }
     }
 
     // Watch for Data Changes
     async watcher() {
+        // Ensure we only watch once
         if (this.watching) {
             return true
         }
         this.watching = true
+
+        // Begin Change Detection
         const interval = 250
         const check = () => {
-            // if (_.isEqual(this.data)) {
-            // }
+            this.handleChanges()
             setTimeout(check, interval)
         }
     }
 
-    toObject(options: any) {
+    // Handles new Changes, if any are present
+    handleChanges(): LooseObject {
+        // Determine Changes since last XHR payload
+        const changeSet = this.toPatch()
+
+        // Always keep the latest patch information
+        this.patch = changeSet
+        this.changed = !_.isEmpty(this.patch)
+
+        // Ensure ChangeSet is valid
+        if (!changeSet || _.isEmpty(changeSet)) {
+            return changeSet
+        }
+
+        // Console Info for New ChangeSets
+        if (cookie('env')) {
+            console.log('Changed:', changeSet)
+        }
+
+        // Dispatch Events
+        this.throttleTrigger('change', changeSet)
+
+        // Return ChangeSet, as it's useful for other workflows
+        return changeSet
+    }
+
+    toObject(options?: any) {
         return _.clone(this.data)
     }
 
-    toJSON(options: any) {
-        return _.clone(this.data)
+    toJSON(options?: any) {
+        options = options || {}
+        return _.clone(options.patch ? (this.toPatch() || {}) : this.data)
+    }
+
+    toPatch(): LooseObject {
+        const patchData = {}
+        const changeSet = patch(this.data, this.recv, this.ignoreKeys)
+        if (!changeSet || _.isEmpty(changeSet)) {
+            return patchData
+        }
+        _.forEach(changeSet, (value: any, key: string) => _.set(patchData, key, _.get(this.data, key)))
+        return patchData
     }
 
     each(callback: any, scope: any) {
