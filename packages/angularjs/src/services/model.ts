@@ -15,7 +15,7 @@ import {
     strcmp,
     ucfirst
 } from '@stratusjs/core/misc'
-import {ModelBase} from '@stratusjs/core/datastore/modelBase'
+import {ModelBase, ModelBaseOptions} from '@stratusjs/core/datastore/modelBase'
 import {cookie} from '@stratusjs/core/environment'
 
 // Modules
@@ -77,11 +77,9 @@ export interface HttpPrototype {
     data?: string
 }
 
-export interface ModelOptions {
+export interface ModelOptions extends ModelBaseOptions {
     collection?: Collection,
-    ignoreKeys?: Array<string>,
     manifest?: string,
-    received?: boolean,
     stagger?: boolean,
     target?: string,
     targetSuffix?: string,
@@ -134,7 +132,8 @@ export class Model extends ModelBase {
     initialize?: () => void = null
 
     constructor(options: ModelOptions = {}, attributes?: LooseObject) {
-        super()
+        // Trickle down handling for Attributes (Typically from Collection Hydration) and Basic Options
+        super(attributes)
 
         // Initialize required options
         options = typeof options !== 'object' ? {} : options
@@ -159,13 +158,13 @@ export class Model extends ModelBase {
         }
 
         // Handle Attributes (Typically from Collection Hydration)
-        if (attributes && typeof attributes === 'object') {
-            _.extend(this.data, attributes)
-        }
+        // Note: This is commented out because it doesn't differ from what happens in the ModelBase Constructor
+        // if (attributes && typeof attributes === 'object') {
+        //     _.extend(this.data, attributes)
+        // }
 
         // Handle Data Flagged as Received from XHR
         this.recv = options.received ? _.cloneDeep(this.data) : {}
-        this.recvChain = options.received ? this.flatten(this.data) : {}
 
         // Handle Keys we wish to ignore in patch
         this.ignoreKeys = options.ignoreKeys || ['$$hashKey']
@@ -176,9 +175,9 @@ export class Model extends ModelBase {
         }
 
         // TODO: Enable Auto-Save
-
         // this.throttle = _.throttle(this.save, 2000)
 
+        const that = this
         this.initialize = _.once(this.initialize || function defaultInitializer() {
             // Bubble Event + Defer
             // this.on('change', function () {
@@ -187,13 +186,13 @@ export class Model extends ModelBase {
             //   }
             //   this.collection.throttleTrigger('change')
             // })
-            if (this.manifest && !this.getIdentifier()) {
-                this.sync('POST', this.meta.has('api') ? {
-                    meta: this.meta.get('api'),
+            if (that.manifest && !that.getIdentifier()) {
+                that.sync('POST', that.meta.has('api') ? {
+                    meta: that.meta.get('api'),
                     payload: {}
                 } : {}).catch(async (message: any) => {
                     console.error('MANIFEST:', message)
-                    if (!this.toast) {
+                    if (!that.toast) {
                         return
                     }
                     if (!$mdToast) {
@@ -217,15 +216,22 @@ export class Model extends ModelBase {
 
     // Watch for Data Changes
     async watcher() {
+        // Ensure we only watch once
         if (this.watching) {
             return true
         }
         this.watching = true
+
+        // Verify AngularJS Services
         if (!$rootScope) {
             const wait = await serviceVerify()
         }
+
         // FIXME: The performance here is horrendous
-        $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(newData, priorData), true)
+        // We utilize the AngularJS Watcher for now, because it forces a redraw
+        // as we change values in comparison to the native setTimeout() watcher
+        // in the ModelBase.
+        $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(), true)
     }
 
     flatten(data: LooseObject, flatData?: LooseObject, chain?: string): LooseObject {
@@ -252,22 +258,17 @@ export class Model extends ModelBase {
     //     return patchData
     // }
 
-    handleChanges(newData: LooseObject, priorData: LooseObject) {
-        const changeSet = patch(newData, priorData, this.ignoreKeys)
+    // TODO: A simpler version should exist on the ModelBase
+    handleChanges(): LooseObject {
+        const changeSet = super.handleChanges()
 
-        if (!changeSet) {
-            return true
+        // Ensure ChangeSet is valid
+        if (!changeSet || _.isEmpty(changeSet)) {
+            return changeSet
         }
 
-        // const patchData = patch(this.data, this.recv, this.ignoreKeys)
-
-        if (cookie('env')) {
-            console.log('Changed:', changeSet)
-            // console.log('Patch:', patchData)
-        }
-
+        // Handle Version Changes
         const version = getAnchorParams('version')
-
         // this.changed = !_.isEqual(this.data, this.initData)
         if (changeSet.id || (!_.isEmpty(version) && changeSet.version && parseInt(version, 10) !== changeSet.version.id)) {
             // console.warn('replacing version...')
@@ -278,22 +279,14 @@ export class Model extends ModelBase {
                 window.location.replace(newUrl)
             }
         }
-        this.patch = _.extend(this.patch, changeSet)
-        // removes items from patch if they match what we've received from the most recent XHR
-        _.forEach(this.patch, (value: any, key: string) => {
-            if (value !== this.recvChain[key]) {
-                return
-            }
-            delete this.patch[key]
-        })
-        if (cookie('env')) {
-            console.log('Patch:', this.patch)
-        }
-        this.throttleTrigger('change')
+
+        // Dispatch Collection Events
         if (this.collection) {
             this.collection.throttleTrigger('change')
         }
-        this.changed = !_.isEmpty(this.patch)
+
+        // Ensure the ChangeSet bubbles
+        return changeSet
     }
 
     getIdentifier() {
@@ -429,7 +422,6 @@ export class Model extends ModelBase {
                         this.changed = false
                         this.saving = false
                         this.recv = _.cloneDeep(this.data)
-                        this.recvChain = this.flatten(this.data)
                         this.patch = {}
                     }
 
@@ -568,33 +560,18 @@ export class Model extends ModelBase {
     // Attribute Functions
 
     toJSON(options?: any) {
-        let data = options.patch ? this.toPatch() : this.data
-        data = this.meta.has('api') ? {
-            meta: this.meta.get('api'),
-            payload: data
-        } : data
+        let data = super.toJSON(options)
+        const metaData = this.meta.get('api')
+        if (metaData) {
+            data = {
+                meta: metaData,
+                payload: data
+            }
+        }
         if (this.meta.size() > 0) {
             this.meta.clearTemp()
         }
         return data
-    }
-
-    toPatch() {
-        const patchData = {}
-        const changeSet = patch(this.data, this.recv, this.ignoreKeys)
-        console.log('changeSet:', changeSet)
-        // FIXME: This is a temporary bit of logic for hydration of arrays instead of allowing only their changed cells to persist.
-        // const changedArrays: Array<string> = []
-        _.forEach(changeSet, (value: any, key: string) => {
-            _.set(patchData, key, value)
-            // Mark Key for Array Targeting
-            // if (_.isArray(_.get(patchData, key))) {
-            //     changedArrays.push(key)
-            // }
-        })
-        // Hydrate Array from Latest Data
-        // _.forEach(changedArrays, (value: any, key: string) => _.set(patchData, key, _.get(this.data, key)))
-        return patchData
     }
 
     buildPath(path: string): any {
