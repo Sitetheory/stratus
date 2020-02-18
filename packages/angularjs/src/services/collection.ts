@@ -401,6 +401,7 @@ export class Collection extends EventManager {
         target = (target instanceof Model) ? target : new Model({
             collection: this
         }, target)
+        target.collection = this
         if (options.prepend) {
             this.models.unshift(target)
         } else {
