@@ -88,9 +88,10 @@ export class Collection extends EventManager {
     model = Model
     models: any = []
     types: any = []
-    cache: any = {}
+    cacheRequest: any = {}
 
     // Internals
+    cache = false
     pending = false
     error = false
     completed = false
@@ -247,8 +248,8 @@ export class Collection extends EventManager {
                     // TODO: Make this into an over-writable function
 
                     // Cache reference
-                    if (prototype.method === 'GET' && !(queryHash in this.cache)) {
-                        this.cache[queryHash] = response
+                    if (this.cache && prototype.method === 'GET' && !(queryHash in this.cacheRequest)) {
+                        this.cacheRequest[queryHash] = response
                     }
 
                     // Data
@@ -314,8 +315,8 @@ export class Collection extends EventManager {
                 // Trigger Change Event
                 this.throttleTrigger('change')
             }
-            if (prototype.method === 'GET' && queryHash in this.cache) {
-                handler(this.cache[queryHash])
+            if (this.cache && prototype.method === 'GET' && queryHash in this.cacheRequest) {
+                handler(this.cacheRequest[queryHash])
                 return
             }
             if (!$http) {
