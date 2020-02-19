@@ -9,8 +9,8 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Stratus Core
 import {
     getAnchorParams,
-    getUrlParams, LooseObject,
-    patch,
+    getUrlParams,
+    LooseObject,
     setUrlParams,
     strcmp,
     ucfirst
@@ -163,6 +163,7 @@ export class Model extends ModelBase {
         //     _.extend(this.data, attributes)
         // }
 
+        // TODO: Analyze possibility for options.received to be replaced with a !this.isNew()
         // Handle Data Flagged as Received from XHR
         this.recv = options.received ? _.cloneDeep(this.data) : {}
 
@@ -234,21 +235,6 @@ export class Model extends ModelBase {
         $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(), true)
     }
 
-    flatten(data: LooseObject, flatData?: LooseObject, chain?: string): LooseObject {
-        flatData = flatData || {}
-        const delimiter = chain ? '.' : ''
-        chain = chain || ''
-        _.forEach(data, (value: any, key: string|number) => {
-            const location = `${chain}${delimiter}${key}`
-            if (typeof value === 'object' && value) {
-                this.flatten(value, flatData, location)
-                return
-            }
-            flatData[location] = value
-        })
-        return flatData
-    }
-
     // sanitizePatch(patchData: LooseObject) {
     //     _.forEach(_.keys(patchData), (key: any) => {
     //         if (_.endsWith(key, '$$hashKey')) {
@@ -270,7 +256,9 @@ export class Model extends ModelBase {
         // Handle Version Changes
         const version = getAnchorParams('version')
         // this.changed = !_.isEqual(this.data, this.initData)
-        if (changeSet.id || (!_.isEmpty(version) && changeSet.version && parseInt(version, 10) !== changeSet.version.id)) {
+        if (_.get(changeSet, 'id') ||
+            (!_.isEmpty(version) && parseInt(version, 10) !== _.get(changeSet, 'version.id'))
+        ) {
             // console.warn('replacing version...')
             const newUrl = setUrlParams({
                 id: this.data.id
@@ -421,6 +409,7 @@ export class Model extends ModelBase {
                     if (!this.error) {
                         this.changed = false
                         this.saving = false
+                        this.handleChanges()
                         this.recv = _.cloneDeep(this.data)
                         this.patch = {}
                     }
@@ -560,6 +549,8 @@ export class Model extends ModelBase {
     // Attribute Functions
 
     toJSON(options?: any) {
+        // Ensure Patch only Saves on Persistent Models
+        options.patch = (options.patch && !this.isNew())
         let data = super.toJSON(options)
         const metaData = this.meta.get('api')
         if (metaData) {

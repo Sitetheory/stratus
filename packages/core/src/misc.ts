@@ -203,6 +203,21 @@ export function endsWith(target: any, search: any) {
         target.substr(target.length - search.length, target.length).toLowerCase() === search.toLowerCase())
 }
 
+export function flatten(data: LooseObject, flatData?: LooseObject, chain?: string): LooseObject {
+    flatData = flatData || {}
+    const delimiter = chain ? '.' : ''
+    chain = chain || ''
+    _.forEach(data, (value: any, key: string|number) => {
+        const location = `${chain}${delimiter}${key}`
+        if (typeof value === 'object' && value) {
+            flatten(value, flatData, location)
+            return
+        }
+        flatData[location] = value
+    })
+    return flatData
+}
+
 // This is a new simplified Patch Function to allow Difference between Object and Nested Arrays
 // Note: We are currently using LooseObject because the tree below outputs as such
 export function patch(newData: LooseObject, priorData: LooseObject, ignoreKeys?: Array<string>): LooseObject {
