@@ -9,8 +9,8 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Stratus Core
 import {
     getAnchorParams,
-    getUrlParams, LooseObject,
-    patch,
+    getUrlParams,
+    LooseObject,
     setUrlParams,
     strcmp,
     ucfirst
@@ -163,6 +163,7 @@ export class Model extends ModelBase {
         //     _.extend(this.data, attributes)
         // }
 
+        // TODO: Analyze possibility for options.received to be replaced with a !this.isNew()
         // Handle Data Flagged as Received from XHR
         this.recv = options.received ? _.cloneDeep(this.data) : {}
 
@@ -232,21 +233,6 @@ export class Model extends ModelBase {
         // as we change values in comparison to the native setTimeout() watcher
         // in the ModelBase.
         $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(), true)
-    }
-
-    flatten(data: LooseObject, flatData?: LooseObject, chain?: string): LooseObject {
-        flatData = flatData || {}
-        const delimiter = chain ? '.' : ''
-        chain = chain || ''
-        _.forEach(data, (value: any, key: string|number) => {
-            const location = `${chain}${delimiter}${key}`
-            if (typeof value === 'object' && value) {
-                this.flatten(value, flatData, location)
-                return
-            }
-            flatData[location] = value
-        })
-        return flatData
     }
 
     // sanitizePatch(patchData: LooseObject) {
@@ -560,6 +546,8 @@ export class Model extends ModelBase {
     // Attribute Functions
 
     toJSON(options?: any) {
+        // Ensure Patch only Saves on Persistent Models
+        options.patch = (options.patch && !this.isNew())
         let data = super.toJSON(options)
         const metaData = this.meta.get('api')
         if (metaData) {
