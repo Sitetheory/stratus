@@ -31,8 +31,8 @@
    * so that they are not executed in an inconsistent state.
    */
   const forceAsyncEvents = {
-    'blur': true,
-    'focus': true
+    'focusin': true,
+    'focusout': true
   }
 
   directiveEvents.forEach(function (eventName) {
