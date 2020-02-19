@@ -256,7 +256,9 @@ export class Model extends ModelBase {
         // Handle Version Changes
         const version = getAnchorParams('version')
         // this.changed = !_.isEqual(this.data, this.initData)
-        if (changeSet.id || (!_.isEmpty(version) && changeSet.version && parseInt(version, 10) !== changeSet.version.id)) {
+        if (_.get(changeSet, 'id') ||
+            (!_.isEmpty(version) && parseInt(version, 10) !== _.get(changeSet, 'version.id'))
+        ) {
             // console.warn('replacing version...')
             const newUrl = setUrlParams({
                 id: this.data.id
@@ -407,6 +409,7 @@ export class Model extends ModelBase {
                     if (!this.error) {
                         this.changed = false
                         this.saving = false
+                        this.handleChanges()
                         this.recv = _.cloneDeep(this.data)
                         this.patch = {}
                     }
