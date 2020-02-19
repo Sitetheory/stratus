@@ -37,12 +37,5 @@
     "angular-resource": "^1.7.8",
     "angular-sanitize": "^1.7.8",
     "tslib": "^1.10.0"
-  },
-  "devDependencies": {
-    "@types/angular": "^1.6.56",
-    "@types/angular-material": "^1.1.69",
-    "ts-node": "^8.4.1",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.4"
   }
 }
