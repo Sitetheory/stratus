@@ -13,7 +13,7 @@
   } else {
     factory(root.Stratus, root.angular)
   }
-}(this, function (Stratus) {
+}(this, function (Stratus, angular) {
   // Angular ToArray Filter
   // ---------------------
 
