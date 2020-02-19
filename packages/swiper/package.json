@@ -32,8 +32,5 @@
     "@stratusjs/angularjs-extras": "^0.3.0",
     "@stratusjs/runtime": "^0.10.3",
     "swiper": "^5.2.1"
-  },
-  "devDependencies": {
-    "@types/swiper": "^5.2.0"
   }
 }

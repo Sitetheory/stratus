@@ -27,14 +27,5 @@
   },
   "dependencies": {
     "tslib": "^1.10.0"
-  },
-  "devDependencies": {
-    "@types/systemjs": "^0.20.6",
-    "requirejs": "^2.3.6",
-    "steal": "^2.2.3",
-    "systemjs": "^6.1.4",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
   }
 }
