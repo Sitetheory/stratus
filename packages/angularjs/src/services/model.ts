@@ -120,6 +120,11 @@ export class Model extends ModelBase {
     // XHR Data
     status?: any = null
 
+    // Auto-Save Logic
+    autoSave = true
+    autoSaveInterval = 2500
+    autoSaveTimeout: any = null
+
     // Misc
     bracket = {
         match: /\[[\d+]]/,
@@ -166,6 +171,7 @@ export class Model extends ModelBase {
         // TODO: Analyze possibility for options.received to be replaced with a !this.isNew()
         // Handle Data Flagged as Received from XHR
         this.recv = options.received ? _.cloneDeep(this.data) : {}
+        this.sent = {}
 
         // Handle Keys we wish to ignore in patch
         this.ignoreKeys = options.ignoreKeys || ['$$hashKey']
@@ -253,7 +259,10 @@ export class Model extends ModelBase {
             return changeSet
         }
 
-        // Handle Version Changes
+        // Trigger Queue for Auto-Save
+        this.saveIdle()
+
+        // Handle ID or Version Changes
         const version = getAnchorParams('version')
         // this.changed = !_.isEqual(this.data, this.initData)
         if (_.get(changeSet, 'id') ||
@@ -334,6 +343,10 @@ export class Model extends ModelBase {
         // XHR Flags
         this.pending = true
 
+        // Diff Information
+        this.sent = _.cloneDeep(this.data)
+
+        // Execute XHR
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
@@ -517,6 +530,22 @@ export class Model extends ModelBase {
                         .hideDelay(3000)
                 )
             })
+    }
+
+    saveIdle() {
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout)
+        }
+        if (this.pending || !this.completed || _.isEmpty(this.toPatch())) {
+            return
+        }
+        this.autoSaveTimeout = setTimeout(() => {
+            if (!this.autoSave || this.isNew()) {
+                this.saveIdle()
+                return
+            }
+            this.save()
+        },  this.autoSaveInterval)
     }
 
     /**
