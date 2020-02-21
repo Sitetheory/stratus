@@ -25,6 +25,7 @@ export class ModelBase extends EventManager {
     watch = false
     watching = false
     recv: LooseObject = {}
+    sent: LooseObject = {}
     patch: LooseObject = {}
     ignoreKeys: Array<string> = []
 
@@ -44,6 +45,7 @@ export class ModelBase extends EventManager {
 
         // Handle Initial Data Flagged as Received from DataStore, XHR, etc
         this.recv = _.cloneDeep(this.data)
+        this.sent = {}
 
         // Handle Keys we wish to ignore in patch
         if (_.isObject(options) && _.isArray(options.ignoreKeys)) {
