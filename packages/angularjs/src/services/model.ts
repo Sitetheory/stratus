@@ -11,6 +11,7 @@ import {
     getAnchorParams,
     getUrlParams,
     LooseObject,
+    patch,
     setUrlParams,
     strcmp,
     ucfirst
@@ -123,6 +124,7 @@ export class Model extends ModelBase {
     // Auto-Save Logic
     autoSave = true
     autoSaveInterval = 2500
+    autoSaveHalt = true
     autoSaveTimeout: any = null
 
     // Misc
@@ -409,10 +411,10 @@ export class Model extends ModelBase {
                     if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
                         this.error = true
                     } else if (_.isArray(convoy) && convoy.length) {
-                        this.data = _.first(convoy)
+                        this.recv = _.first(convoy)
                         this.error = false
                     } else if (_.isObject(convoy) && !_.isArray(convoy)) {
-                        this.data = convoy
+                        this.recv = convoy
                         this.error = false
                     } else {
                         this.error = true
@@ -420,10 +422,27 @@ export class Model extends ModelBase {
 
                     // Diff Settings
                     if (!this.error) {
+                        // This is the ChangeSet coming from alterations between what is sent and received (i.e. new version)
+                        // const recvChangeSet = _.cloneDeep(patch(this.recv, this.sent))
+                        // console.log('recvChangeSet:', recvChangeSet)
+
+                        // This is the ChangeSet generated from what has changed during the save
+                        const intermediateData = _.cloneDeep(this.recv)
+                        const intermediateChangeSet = _.cloneDeep(patch(this.data, this.sent))
+                        if (!_.isEmpty(intermediateChangeSet)) {
+                            if (cookie('env')) {
+                                console.log('Intermediate ChangeSet detected:', intermediateChangeSet)
+                            }
+                            _.forEach(intermediateChangeSet, (element: any, key: any) => {
+                                _.set(intermediateData, key, element)
+                            })
+                        }
+
+                        // Propagate Changes
+                        this.data = _.cloneDeep(intermediateData)
                         this.changed = false
                         this.saving = false
                         this.handleChanges()
-                        this.recv = _.cloneDeep(this.data)
                         this.patch = {}
                     }
 
@@ -536,11 +555,14 @@ export class Model extends ModelBase {
         if (this.autoSaveTimeout) {
             clearTimeout(this.autoSaveTimeout)
         }
-        if (this.pending || !this.completed || _.isEmpty(this.toPatch())) {
+        if (this.pending || !this.completed || this.isNew() || _.isEmpty(this.toPatch())) {
+            return
+        }
+        if (this.autoSaveHalt && !this.autoSave) {
             return
         }
         this.autoSaveTimeout = setTimeout(() => {
-            if (!this.autoSave || this.isNew()) {
+            if (!this.autoSaveHalt && !this.autoSave) {
                 this.saveIdle()
                 return
             }
