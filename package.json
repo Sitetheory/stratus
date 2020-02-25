@@ -118,5 +118,8 @@
     "tslint": "^5.20.0",
     "typescript": "^3.7.4",
     "vinyl-paths": "^3.0.1"
+  },
+  "dependencies": {
+    "ts-transformer-keys": "^0.4.1"
   }
 }
