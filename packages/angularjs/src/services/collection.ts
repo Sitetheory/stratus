@@ -71,18 +71,15 @@ export interface HttpPrototype {
 }
 
 export interface CollectionOptions {
-    autoSave?: boolean,
-    autoSaveInterval?: number,
-    autoSaveHalt?: boolean,
-    collection?: Collection,
-    manifest?: string,
-    stagger?: boolean,
+    cache?: boolean,
+    // decay?: number
+    direct?: boolean,
+    // infinite?: boolean,
+    // qualifier?: string,
     target?: string,
     targetSuffix?: string,
-    type?: string
+    // threshold?: number,
     urlRoot?: string,
-    urlSync?: boolean,
-    watch?: boolean,
 }
 
 export const CollectionOptionKeys = keys<CollectionOptions>()
@@ -92,15 +89,19 @@ export class Collection extends EventManager {
     name = 'Collection'
 
     // Environment
-    target?: any = null
     direct = false
+    target?: any = null
+    targetSuffix?: string = null
+    urlRoot = '/Api'
+
+    // Unsure usage
+    qualifier = '' // ng-if
+    serviceId?: number = null
+
+    // Infinite Scrolling
     infinite = false
     threshold = 0.5
-    qualifier = '' // ng-if
     decay = 0
-    urlRoot = '/Api'
-    targetSuffix?: string = null
-    serviceId?: number = null
 
     // Infrastructure
     header = new ModelBase()
@@ -123,7 +124,7 @@ export class Collection extends EventManager {
     // Methods
     throttle = _.throttle(this.fetch, 1000)
 
-    constructor(options: any) {
+    constructor(options: CollectionOptions) {
         super()
 
         if (options && typeof options === 'object') {

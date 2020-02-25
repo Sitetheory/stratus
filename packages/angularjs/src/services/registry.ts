@@ -69,16 +69,15 @@ export class Registry {
                     target: $element
                 }
             }
-            const inputs = {
-                target: 'data-target',
-                targetSuffix: 'data-target-suffix',
-                id: 'data-id',
-                manifest: 'data-manifest',
-                decouple: 'data-decouple',
-                direct: 'data-direct',
-                api: 'data-api',
-                urlRoot: 'data-url-root'
-            }
+            const inputs = {}
+            const baseInputs = [
+                'id',
+                'decouple'
+            ]
+            _.forEach(
+                _.union(ModelOptionKeys, CollectionOptionKeys, baseInputs),
+                (option: string) => _.set(inputs, option, 'data-' + _.kebabCase(option))
+            )
             // FIXME: Sanitize function fails here in certain cases
             const options = _.forEach(inputs, (value: string, key: string, list: any) => {
                 list[key] = $element.attr ? $element.attr(value) : $element[key]
