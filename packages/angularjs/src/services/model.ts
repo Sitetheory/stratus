@@ -90,7 +90,7 @@ export interface ModelOptions extends ModelBaseOptions {
     stagger?: boolean,
     target?: string,
     targetSuffix?: string,
-    type?: string
+    type?: string,
     urlRoot?: string,
     urlSync?: boolean,
     watch?: boolean,
