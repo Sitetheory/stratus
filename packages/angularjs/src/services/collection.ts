@@ -71,6 +71,8 @@ export interface HttpPrototype {
 }
 
 export interface CollectionOptions {
+    autoSave?: boolean,
+    autoSaveInterval?: number,
     cache?: boolean,
     // decay?: number
     direct?: boolean,
@@ -80,6 +82,7 @@ export interface CollectionOptions {
     targetSuffix?: string,
     // threshold?: number,
     urlRoot?: string,
+    watch?: boolean,
 }
 
 export const CollectionOptionKeys = keys<CollectionOptions>()
@@ -120,6 +123,13 @@ export class Collection extends EventManager {
     // Action Flags
     filtering = false
     paginate = false
+
+    // Allow watching models
+    watch = false
+
+    // Allow AutoSaving
+    autoSave = false
+    autoSaveInterval = 2500
 
     // Methods
     throttle = _.throttle(this.fetch, 1000)
@@ -224,11 +234,13 @@ export class Collection extends EventManager {
             // TODO: Add references to the Catalog when creating these
             // models
             this.models.push(new Model({
+                autoSave: this.autoSave,
+                autoSaveInterval: this.autoSaveInterval,
                 collection: this,
                 completed: true,
                 received: true,
                 type: type || null,
-                watch: false
+                watch: this.watch
             }, target))
         })
     }
