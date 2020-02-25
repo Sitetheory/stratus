@@ -1,6 +1,9 @@
 // Model Service
 // -------------
 
+// Transformers
+import { keys } from 'ts-transformer-keys'
+
 // Runtime
 import _ from 'lodash'
 import angular from 'angular'
@@ -79,15 +82,21 @@ export interface HttpPrototype {
 }
 
 export interface ModelOptions extends ModelBaseOptions {
+    autoSave?: boolean,
+    autoSaveInterval?: number,
+    autoSaveHalt?: boolean,
     collection?: Collection,
     manifest?: string,
     stagger?: boolean,
     target?: string,
     targetSuffix?: string,
-    type?: string
+    type?: string,
     urlRoot?: string,
+    urlSync?: boolean,
     watch?: boolean,
 }
+
+export const ModelOptionKeys = keys<ModelOptions>()
 
 export class Model extends ModelBase {
     // Base Information
@@ -122,10 +131,13 @@ export class Model extends ModelBase {
     status?: any = null
 
     // Auto-Save Logic
-    autoSave = true
+    autoSave = false
     autoSaveInterval = 2500
     autoSaveHalt = true
     autoSaveTimeout: any = null
+
+    // URL Controls
+    urlSync = false
 
     // Misc
     bracket = {
@@ -265,17 +277,18 @@ export class Model extends ModelBase {
         this.saveIdle()
 
         // Handle ID or Version Changes
-        const version = getAnchorParams('version')
-        // this.changed = !_.isEqual(this.data, this.initData)
-        if (_.get(changeSet, 'id') ||
-            (!_.isEmpty(version) && parseInt(version, 10) !== _.get(changeSet, 'version.id'))
-        ) {
-            // console.warn('replacing version...')
-            const newUrl = setUrlParams({
-                id: this.data.id
-            })
-            if (newUrl !== document.location.href) {
-                window.location.replace(newUrl)
+        if (this.urlSync) {
+            const version = getAnchorParams('version')
+            const versionId = !_.isEmpty(version) ? parseInt(version, 10) : 0
+            // this.changed = !_.isEqual(this.data, this.initData)
+            if (_.get(changeSet, 'id') || (versionId && versionId !== _.get(changeSet, 'version.id'))) {
+                // console.warn('replacing version...')
+                const newUrl = setUrlParams({
+                    id: this.data.id
+                })
+                if (newUrl !== document.location.href) {
+                    window.location.replace(newUrl)
+                }
             }
         }
 

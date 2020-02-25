@@ -25,8 +25,17 @@ const coffee = require('gulp-coffee')
 const sourcemaps = require('gulp-sourcemaps')
 const ts = require('gulp-typescript')
 
+// TypeScript Transformers
+const keysTransformer = require('ts-transformer-keys/transformer').default
+
 // Project
-const tsProject = ts.createProject('tsconfig.json')
+const tsProject = ts.createProject('tsconfig.json', {
+  getCustomTransformers: (program) => ({
+    before: [
+      keysTransformer(program)
+    ]
+  })
+})
 
 // Helper Functions
 const nullify = function (proto) {
