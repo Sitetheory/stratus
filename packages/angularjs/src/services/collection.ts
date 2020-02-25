@@ -225,9 +225,10 @@ export class Collection extends EventManager {
             // models
             this.models.push(new Model({
                 collection: this,
+                completed: true,
                 received: true,
-                watch: false,
-                type: type || null
+                type: type || null,
+                watch: false
             }, target))
         })
     }
