@@ -2,7 +2,7 @@
 // -------------
 
 // Transformers
-import { keys } from 'ts-transformer-keys'
+import {keys} from 'ts-transformer-keys'
 
 // Runtime
 import _ from 'lodash'
@@ -86,6 +86,7 @@ export interface ModelOptions extends ModelBaseOptions {
     autoSaveInterval?: number,
     autoSaveHalt?: boolean,
     collection?: Collection,
+    completed?: boolean, // Fetch/injected model can already be completed
     manifest?: string,
     stagger?: boolean,
     target?: string,
@@ -200,6 +201,11 @@ export class Model extends ModelBase {
 
         const that = this
         this.initialize = _.once(this.initialize || function defaultInitializer() {
+            // Begin Watching if already completed
+            if (that.completed && that.watch) {
+                that.watcher()
+            }
+
             // Bubble Event + Defer
             // this.on('change', function () {
             //   if (!this.collection) {
@@ -580,7 +586,7 @@ export class Model extends ModelBase {
                 return
             }
             this.save()
-        },  this.autoSaveInterval)
+        }, this.autoSaveInterval)
     }
 
     /**
@@ -719,7 +725,7 @@ export class Model extends ModelBase {
                     future = index + 1
                     if (!_.has(attrs, link)) {
                         attrs[link] = _.has(chain, future) &&
-                                      _.isNumber(chain[future]) ? [] : {}
+                        _.isNumber(chain[future]) ? [] : {}
                     }
                     if (!_.has(chain, future)) {
                         attrs[link] = value
@@ -772,14 +778,14 @@ export class Model extends ModelBase {
                 _.forEach(target, (element: any, key: any) => {
                     const child = (request.length > 1 &&
                         typeof element === 'object' && request[1] in element)
-                                  ? element[request[1]]
-                                  : element
+                        ? element[request[1]]
+                        : element
                     const childId = (typeof child === 'object' && child.id)
-                                    ? child.id
-                                    : child
+                        ? child.id
+                        : child
                     const itemId = (typeof item === 'object' && item.id)
-                                   ? item.id
-                                   : item
+                        ? item.id
+                        : item
                     if (childId === itemId || (
                         _.isString(childId) && _.isString(itemId) && strcmp(childId, itemId) === 0
                     )) {
