@@ -16,7 +16,7 @@ import {getInjector} from '@stratusjs/angularjs/injector'
 
 // AngularJS Services
 import {Model, ModelOptionKeys, ModelOptions} from '@stratusjs/angularjs/services/model'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Collection, CollectionOptionKeys, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -186,16 +186,14 @@ export class Registry {
                 }
                 if (options.decouple ||
                     !Stratus[registry][options.target].collection) {
-                    const collectionOptions: any = {
-                        target: options.target,
-                        direct: !!options.direct
-                    }
-                    if (options.urlRoot) {
-                        collectionOptions.urlRoot = options.urlRoot
-                    }
-                    if (options.targetSuffix) {
-                        collectionOptions.targetSuffix = options.targetSuffix
-                    }
+                    const collectionOptions: CollectionOptions = {}
+                    _.forEach(CollectionOptionKeys, (element) => {
+                        const optionValue = _.get(options, element)
+                        if (_.isUndefined(optionValue)) {
+                            return
+                        }
+                        _.set(collectionOptions, element, optionValue)
+                    })
                     data = new Collection(collectionOptions)
                     if (!options.decouple) {
                         Stratus[registry][options.target].collection = data

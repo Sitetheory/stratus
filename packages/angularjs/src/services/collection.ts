@@ -1,6 +1,9 @@
 // Collection Service
 // ------------------
 
+// Transformers
+import { keys } from 'ts-transformer-keys'
+
 // Runtime
 import _ from 'lodash'
 import angular from 'angular'
@@ -66,6 +69,23 @@ export interface HttpPrototype {
     url: string
     data?: string
 }
+
+export interface CollectionOptions {
+    autoSave?: boolean,
+    autoSaveInterval?: number,
+    autoSaveHalt?: boolean,
+    collection?: Collection,
+    manifest?: string,
+    stagger?: boolean,
+    target?: string,
+    targetSuffix?: string,
+    type?: string
+    urlRoot?: string,
+    urlSync?: boolean,
+    watch?: boolean,
+}
+
+export const CollectionOptionKeys = keys<CollectionOptions>()
 
 export class Collection extends EventManager {
     // Base Information
