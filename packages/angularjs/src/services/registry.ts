@@ -72,6 +72,7 @@ export class Registry {
             const inputs = {}
             const baseInputs = [
                 'id',
+                'api',
                 'decouple'
             ]
             _.forEach(
