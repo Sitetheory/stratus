@@ -60,16 +60,5 @@
     "tslib": "^1.10.0",
     "web-animations-js": "^2.3.2",
     "zone.js": "^0.10.2"
-  },
-  "devDependencies": {
-    "@angular-devkit/build-angular": "^0.803.4",
-    "@angular/cli": "^8.3.4",
-    "@angular/compiler-cli": "^8.2.7",
-    "@angular/language-service": "^8.2.7",
-    "@types/angular": "^1.6.56",
-    "@types/lodash": "^4.14.138",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.3"
   }
 }

@@ -15,8 +15,8 @@ import {cookie} from '@stratusjs/core/environment'
 import {getInjector} from '@stratusjs/angularjs/injector'
 
 // AngularJS Services
-import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {Model, ModelOptionKeys, ModelOptions} from '@stratusjs/angularjs/services/model'
+import {Collection, CollectionOptionKeys, CollectionOptions} from '@stratusjs/angularjs/services/collection'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -69,16 +69,15 @@ export class Registry {
                     target: $element
                 }
             }
-            const inputs = {
-                target: 'data-target',
-                targetSuffix: 'data-target-suffix',
-                id: 'data-id',
-                manifest: 'data-manifest',
-                decouple: 'data-decouple',
-                direct: 'data-direct',
-                api: 'data-api',
-                urlRoot: 'data-url-root'
-            }
+            const inputs = {}
+            const baseInputs = [
+                'id',
+                'decouple'
+            ]
+            _.forEach(
+                _.union(ModelOptionKeys, CollectionOptionKeys, baseInputs),
+                (option: string) => _.set(inputs, option, 'data-' + _.kebabCase(option))
+            )
             // FIXME: Sanitize function fails here in certain cases
             const options = _.forEach(inputs, (value: string, key: string, list: any) => {
                 list[key] = $element.attr ? $element.attr(value) : $element[key]
@@ -161,16 +160,15 @@ export class Registry {
                 const id = options.id || 'manifest'
                 if (options.decouple || !Stratus.Catalog[options.target][id]) {
                     const modelOptions: ModelOptions = {
-                        target: options.target,
-                        manifest: options.manifest,
                         stagger: true
                     }
-                    if (options.urlRoot) {
-                        modelOptions.urlRoot = options.urlRoot
-                    }
-                    if (options.targetSuffix) {
-                        modelOptions.targetSuffix = options.targetSuffix
-                    }
+                    _.forEach(ModelOptionKeys, (element) => {
+                        const optionValue = _.get(options, element)
+                        if (_.isUndefined(optionValue)) {
+                            return
+                        }
+                        _.set(modelOptions, element, optionValue)
+                    })
                     data = new Model(modelOptions, {
                         id: options.id
                     })
@@ -187,16 +185,14 @@ export class Registry {
                 }
                 if (options.decouple ||
                     !Stratus[registry][options.target].collection) {
-                    const collectionOptions: any = {
-                        target: options.target,
-                        direct: !!options.direct
-                    }
-                    if (options.urlRoot) {
-                        collectionOptions.urlRoot = options.urlRoot
-                    }
-                    if (options.targetSuffix) {
-                        collectionOptions.targetSuffix = options.targetSuffix
-                    }
+                    const collectionOptions: CollectionOptions = {}
+                    _.forEach(CollectionOptionKeys, (element) => {
+                        const optionValue = _.get(options, element)
+                        if (_.isUndefined(optionValue)) {
+                            return
+                        }
+                        _.set(collectionOptions, element, optionValue)
+                    })
                     data = new Collection(collectionOptions)
                     if (!options.decouple) {
                         Stratus[registry][options.target].collection = data

@@ -1,6 +1,9 @@
 // Model Service
 // -------------
 
+// Transformers
+import {keys} from 'ts-transformer-keys'
+
 // Runtime
 import _ from 'lodash'
 import angular from 'angular'
@@ -9,7 +12,8 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Stratus Core
 import {
     getAnchorParams,
-    getUrlParams, LooseObject,
+    getUrlParams,
+    LooseObject,
     patch,
     setUrlParams,
     strcmp,
@@ -78,15 +82,22 @@ export interface HttpPrototype {
 }
 
 export interface ModelOptions extends ModelBaseOptions {
+    autoSave?: boolean,
+    autoSaveInterval?: number,
+    autoSaveHalt?: boolean,
     collection?: Collection,
+    completed?: boolean, // Fetch/injected model can already be completed
     manifest?: string,
     stagger?: boolean,
     target?: string,
     targetSuffix?: string,
-    type?: string
+    type?: string,
     urlRoot?: string,
+    urlSync?: boolean,
     watch?: boolean,
 }
+
+export const ModelOptionKeys = keys<ModelOptions>()
 
 export class Model extends ModelBase {
     // Base Information
@@ -119,6 +130,15 @@ export class Model extends ModelBase {
 
     // XHR Data
     status?: any = null
+
+    // Auto-Save Logic
+    autoSave = false
+    autoSaveInterval = 2500
+    autoSaveHalt = true
+    autoSaveTimeout: any = null
+
+    // URL Controls
+    urlSync = false
 
     // Misc
     bracket = {
@@ -163,8 +183,10 @@ export class Model extends ModelBase {
         //     _.extend(this.data, attributes)
         // }
 
+        // TODO: Analyze possibility for options.received to be replaced with a !this.isNew()
         // Handle Data Flagged as Received from XHR
         this.recv = options.received ? _.cloneDeep(this.data) : {}
+        this.sent = {}
 
         // Handle Keys we wish to ignore in patch
         this.ignoreKeys = options.ignoreKeys || ['$$hashKey']
@@ -179,6 +201,11 @@ export class Model extends ModelBase {
 
         const that = this
         this.initialize = _.once(this.initialize || function defaultInitializer() {
+            // Begin Watching if already completed
+            if (that.completed && that.watch) {
+                that.watcher()
+            }
+
             // Bubble Event + Defer
             // this.on('change', function () {
             //   if (!this.collection) {
@@ -234,21 +261,6 @@ export class Model extends ModelBase {
         $rootScope.$watch(() => this.data, (newData: LooseObject, priorData: LooseObject) => this.handleChanges(), true)
     }
 
-    flatten(data: LooseObject, flatData?: LooseObject, chain?: string): LooseObject {
-        flatData = flatData || {}
-        const delimiter = chain ? '.' : ''
-        chain = chain || ''
-        _.forEach(data, (value: any, key: string|number) => {
-            const location = `${chain}${delimiter}${key}`
-            if (typeof value === 'object' && value) {
-                this.flatten(value, flatData, location)
-                return
-            }
-            flatData[location] = value
-        })
-        return flatData
-    }
-
     // sanitizePatch(patchData: LooseObject) {
     //     _.forEach(_.keys(patchData), (key: any) => {
     //         if (_.endsWith(key, '$$hashKey')) {
@@ -267,16 +279,22 @@ export class Model extends ModelBase {
             return changeSet
         }
 
-        // Handle Version Changes
-        const version = getAnchorParams('version')
-        // this.changed = !_.isEqual(this.data, this.initData)
-        if (changeSet.id || (!_.isEmpty(version) && changeSet.version && parseInt(version, 10) !== changeSet.version.id)) {
-            // console.warn('replacing version...')
-            const newUrl = setUrlParams({
-                id: this.data.id
-            })
-            if (newUrl !== document.location.href) {
-                window.location.replace(newUrl)
+        // Trigger Queue for Auto-Save
+        this.saveIdle()
+
+        // Handle ID or Version Changes
+        if (this.urlSync) {
+            const version = getAnchorParams('version')
+            const versionId = !_.isEmpty(version) ? parseInt(version, 10) : 0
+            // this.changed = !_.isEqual(this.data, this.initData)
+            if (_.get(changeSet, 'id') || (versionId && versionId !== _.get(changeSet, 'version.id'))) {
+                // console.warn('replacing version...')
+                const newUrl = setUrlParams({
+                    id: this.data.id
+                })
+                if (newUrl !== document.location.href) {
+                    window.location.replace(newUrl)
+                }
             }
         }
 
@@ -346,6 +364,10 @@ export class Model extends ModelBase {
         // XHR Flags
         this.pending = true
 
+        // Diff Information
+        this.sent = _.cloneDeep(this.data)
+
+        // Execute XHR
         return new Promise(async (resolve: any, reject: any) => {
             action = action || 'GET'
             options = options || {}
@@ -408,10 +430,10 @@ export class Model extends ModelBase {
                     if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
                         this.error = true
                     } else if (_.isArray(convoy) && convoy.length) {
-                        this.data = _.first(convoy)
+                        this.recv = _.first(convoy)
                         this.error = false
                     } else if (_.isObject(convoy) && !_.isArray(convoy)) {
-                        this.data = convoy
+                        this.recv = convoy
                         this.error = false
                     } else {
                         this.error = true
@@ -419,9 +441,27 @@ export class Model extends ModelBase {
 
                     // Diff Settings
                     if (!this.error) {
+                        // This is the ChangeSet coming from alterations between what is sent and received (i.e. new version)
+                        // const recvChangeSet = _.cloneDeep(patch(this.recv, this.sent))
+                        // console.log('recvChangeSet:', recvChangeSet)
+
+                        // This is the ChangeSet generated from what has changed during the save
+                        const intermediateData = _.cloneDeep(this.recv)
+                        const intermediateChangeSet = _.cloneDeep(patch(this.data, this.sent))
+                        if (!_.isEmpty(intermediateChangeSet)) {
+                            if (cookie('env')) {
+                                console.log('Intermediate ChangeSet detected:', intermediateChangeSet)
+                            }
+                            _.forEach(intermediateChangeSet, (element: any, key: any) => {
+                                _.set(intermediateData, key, element)
+                            })
+                        }
+
+                        // Propagate Changes
+                        this.data = _.cloneDeep(intermediateData)
                         this.changed = false
                         this.saving = false
-                        this.recv = _.cloneDeep(this.data)
+                        this.handleChanges()
                         this.patch = {}
                     }
 
@@ -530,6 +570,25 @@ export class Model extends ModelBase {
             })
     }
 
+    saveIdle() {
+        if (this.autoSaveTimeout) {
+            clearTimeout(this.autoSaveTimeout)
+        }
+        if (this.pending || !this.completed || this.isNew() || _.isEmpty(this.toPatch())) {
+            return
+        }
+        if (this.autoSaveHalt && !this.autoSave) {
+            return
+        }
+        this.autoSaveTimeout = setTimeout(() => {
+            if (!this.autoSaveHalt && !this.autoSave) {
+                this.saveIdle()
+                return
+            }
+            this.save()
+        }, this.autoSaveInterval)
+    }
+
     /**
      * TODO: Ensure the meta temp locations get cleared appropriately before removing function
      * @deprecated This is specific to the Sitetheory 1.0 API and will be removed entirely
@@ -560,6 +619,8 @@ export class Model extends ModelBase {
     // Attribute Functions
 
     toJSON(options?: any) {
+        // Ensure Patch only Saves on Persistent Models
+        options.patch = (options.patch && !this.isNew())
         let data = super.toJSON(options)
         const metaData = this.meta.get('api')
         if (metaData) {
@@ -664,7 +725,7 @@ export class Model extends ModelBase {
                     future = index + 1
                     if (!_.has(attrs, link)) {
                         attrs[link] = _.has(chain, future) &&
-                                      _.isNumber(chain[future]) ? [] : {}
+                        _.isNumber(chain[future]) ? [] : {}
                     }
                     if (!_.has(chain, future)) {
                         attrs[link] = value
@@ -717,14 +778,14 @@ export class Model extends ModelBase {
                 _.forEach(target, (element: any, key: any) => {
                     const child = (request.length > 1 &&
                         typeof element === 'object' && request[1] in element)
-                                  ? element[request[1]]
-                                  : element
+                        ? element[request[1]]
+                        : element
                     const childId = (typeof child === 'object' && child.id)
-                                    ? child.id
-                                    : child
+                        ? child.id
+                        : child
                     const itemId = (typeof item === 'object' && item.id)
-                                   ? item.id
-                                   : item
+                        ? item.id
+                        : item
                     if (childId === itemId || (
                         _.isString(childId) && _.isString(itemId) && strcmp(childId, itemId) === 0
                     )) {

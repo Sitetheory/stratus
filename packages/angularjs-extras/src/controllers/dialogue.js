@@ -18,24 +18,24 @@
   // This Controller handles simple dialogue display
   // with bindings for the associated model
   Stratus.Controllers.Dialogue = [
-    '$scope',
-    '$element',
-    '$parse',
+    '$attrs',
     '$mdDialog',
-    function ($scope, $element, $parse, $mdDialog) {
+    '$parse',
+    '$scope',
+    function ($attrs, $mdDialog, $parse, $scope) {
       // Store Instance
       const uid = _.uniqueId('dialogue_')
       Stratus.Instances[uid] = $scope
 
       // Digest Template
-      $scope.template = $element.attr('template') || null
+      $scope.template = $attrs.template || null
       $scope.template = $scope.template ? document.querySelector(
         $scope.template) : null
       $scope.template = $scope.template ? $scope.template.innerHTML : null
 
       // Digest Model Bindings
       $scope.model = null
-      $scope.$parent.$watch($element.attr('ng-model'), function (model) {
+      $scope.$parent.$watch($attrs.ngModel, function (model) {
         if (model && typeof model === 'object') {
           $scope.model = model
         }

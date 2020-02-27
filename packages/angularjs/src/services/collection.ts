@@ -1,6 +1,9 @@
 // Collection Service
 // ------------------
 
+// Transformers
+import { keys } from 'ts-transformer-keys'
+
 // Runtime
 import _ from 'lodash'
 import angular from 'angular'
@@ -67,20 +70,41 @@ export interface HttpPrototype {
     data?: string
 }
 
+export interface CollectionOptions {
+    autoSave?: boolean,
+    autoSaveInterval?: number,
+    cache?: boolean,
+    // decay?: number
+    direct?: boolean,
+    // infinite?: boolean,
+    // qualifier?: string,
+    target?: string,
+    targetSuffix?: string,
+    // threshold?: number,
+    urlRoot?: string,
+    watch?: boolean,
+}
+
+export const CollectionOptionKeys = keys<CollectionOptions>()
+
 export class Collection extends EventManager {
     // Base Information
     name = 'Collection'
 
     // Environment
-    target?: any = null
     direct = false
+    target?: any = null
+    targetSuffix?: string = null
+    urlRoot = '/Api'
+
+    // Unsure usage
+    qualifier = '' // ng-if
+    serviceId?: number = null
+
+    // Infinite Scrolling
     infinite = false
     threshold = 0.5
-    qualifier = '' // ng-if
     decay = 0
-    urlRoot = '/Api'
-    targetSuffix?: string = null
-    serviceId?: number = null
 
     // Infrastructure
     header = new ModelBase()
@@ -88,9 +112,10 @@ export class Collection extends EventManager {
     model = Model
     models: any = []
     types: any = []
-    cache: any = {}
+    cacheRequest: any = {}
 
     // Internals
+    cache = false
     pending = false
     error = false
     completed = false
@@ -99,10 +124,17 @@ export class Collection extends EventManager {
     filtering = false
     paginate = false
 
+    // Allow watching models
+    watch = false
+
+    // Allow AutoSaving
+    autoSave = false
+    autoSaveInterval = 2500
+
     // Methods
     throttle = _.throttle(this.fetch, 1000)
 
-    constructor(options: any) {
+    constructor(options: CollectionOptions) {
         super()
 
         if (options && typeof options === 'object') {
@@ -202,10 +234,13 @@ export class Collection extends EventManager {
             // TODO: Add references to the Catalog when creating these
             // models
             this.models.push(new Model({
+                autoSave: this.autoSave,
+                autoSaveInterval: this.autoSaveInterval,
                 collection: this,
+                completed: true,
                 received: true,
-                watch: false,
-                type: type || null
+                type: type || null,
+                watch: this.watch
             }, target))
         })
     }
@@ -247,8 +282,8 @@ export class Collection extends EventManager {
                     // TODO: Make this into an over-writable function
 
                     // Cache reference
-                    if (prototype.method === 'GET' && !(queryHash in this.cache)) {
-                        this.cache[queryHash] = response
+                    if (this.cache && prototype.method === 'GET' && !(queryHash in this.cacheRequest)) {
+                        this.cacheRequest[queryHash] = response
                     }
 
                     // Data
@@ -314,8 +349,8 @@ export class Collection extends EventManager {
                 // Trigger Change Event
                 this.throttleTrigger('change')
             }
-            if (prototype.method === 'GET' && queryHash in this.cache) {
-                handler(this.cache[queryHash])
+            if (this.cache && prototype.method === 'GET' && queryHash in this.cacheRequest) {
+                handler(this.cacheRequest[queryHash])
                 return
             }
             if (!$http) {
@@ -400,6 +435,7 @@ export class Collection extends EventManager {
         target = (target instanceof Model) ? target : new Model({
             collection: this
         }, target)
+        target.collection = this
         if (options.prepend) {
             this.models.unshift(target)
         } else {
