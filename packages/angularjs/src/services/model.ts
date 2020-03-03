@@ -547,10 +547,18 @@ export class Model extends ModelBase {
 
     save() {
         this.saving = true
-        return this.sync(this.getIdentifier() ? 'PUT' : 'POST',
-            this.toJSON({
-                patch: true
-            }))
+        const data = this.toJSON({
+            patch: true
+        })
+        // Avoid sending empty XHRs for Persisted Entities
+        if (this.getIdentifier() && _.isEmpty(data)) {
+            console.warn('Blocked attempt to save empty payload to persisted model')
+            return new Promise((resolve, reject) => {
+                this.saving = false
+                resolve(this.data)
+            })
+        }
+        return this.sync(this.getIdentifier() ? 'PUT' : 'POST', data)
             .catch(async (message: any) => {
                 this.error = true
                 console.error('SAVE:', message)
