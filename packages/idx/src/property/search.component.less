@@ -9,7 +9,9 @@ stratus-idx-property-search,
   /* md-input-container adds a ton of spacing by default. This will remove it */
   md-input-container.minimal {
     margin: 10px 2px 5px;
+    // stylelint-disable-next-line no-descending-specificity
     &:first-child {
+      // stylelint-disable-next-line no-descending-specificity
       &,
       input,
       label {
@@ -22,101 +24,91 @@ stratus-idx-property-search,
     min-height: 0;
   }
 }
-
-.idx-search-component {
-  margin-bottom: 20px;
-  //padding-bottom: 10px;
-  //border-bottom: 1px solid rgba(0,0,0,.15);
-  .search-header {
-    position: relative;
-    z-index: 100;
-    h4,
-    .basic-advanced {
-      display: inline-block;
-    }
-    h4 {
-      margin-right: 20px;
-    }
-    h4,
-    a {
-      font-weight: bold;
-      font-size: 14px;
-    }
-    a {
-      &,
-      &:link,
-      &:visited,
-      &:active {
-        color: #999;
-      }
-      &:hover {
-        color: #111;
-      }
-    }
-    .close-filters-link {
-      padding-right: 10px;
-    }
-    .open-filters-link {
-      padding-left: 6px;
-    }
-  }
-  &.filters-open {
-    .open-filters-link {
-      &,
-      &:link,
-      &:visited,
-      &:active,
-      &:hover {
-        color: #111;
-        cursor: default;
-      }
-    }
-  }
-  &.filters-closed {
-    .close-filters-link {
-      &,
-      &:link,
-      &:visited,
-      &:active,
-      &:hover {
-        color: #111;
-        cursor: default;
-      }
-    }
-  }
-  //&.search-full {
-  //  md-input-container label,
-  //  md-input-container .md-input {
-  //    font-size: 18px;
-  //  }
-  //}
-  .submit-row {
-    text-align: right;
-    .btn {
-      &.btn-submit {
-        margin-left: 10px;
-      }
-    }
-  }
-  .open-filters-row {
-    transition: all .3s ease-out;
-    -webkit-transition: all .3s ease-out;
-    opacity: 0;
-    margin-top: 20px;
-  }
-  &.filters-open {
-    .open-filters-row {
-      opacity: 1;
-    }
-  }
-}
-
-
-
-
-
-
 stratus-idx-property-search {
+  .idx-search-component {
+    margin-bottom: 20px;
+    //padding-bottom: 10px;
+    //border-bottom: 1px solid rgba(0,0,0,.15);
+    .search-header {
+      position: relative;
+      z-index: 100;
+      h4,
+      .basic-advanced {
+        display: inline-block;
+      }
+      h4 {
+        margin-right: 20px;
+      }
+      h4,
+      a {
+        font-weight: bold;
+        font-size: 14px;
+      }
+      a {
+        &,
+        &:link,
+        &:visited,
+        &:active {
+          color: #999;
+        }
+        &:hover {
+          color: #111;
+        }
+      }
+      .close-filters-link {
+        padding-right: 10px;
+      }
+      .open-filters-link {
+        padding-left: 6px;
+      }
+    }
+    .open-filters-row {
+      transition: all 0.3s ease-out;
+      -webkit-transition: all 0.3s ease-out;
+      opacity: 0;
+      margin-top: 20px;
+      .listing-types {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(0, 0, 0, 0.15);
+      }
+    }
+    &.filters-open {
+      .open-filters-link {
+        &,
+        &:link,
+        &:visited,
+        &:active,
+        &:hover {
+          color: #111;
+          cursor: default;
+        }
+      }
+      .open-filters-row {
+        opacity: 1;
+      }
+    }
+    &.filters-closed {
+      .close-filters-link {
+        &,
+        &:link,
+        &:visited,
+        &:active,
+        &:hover {
+          color: #111;
+          cursor: default;
+        }
+      }
+    }
+    .submit-row {
+      text-align: right;
+      .btn {
+        &.btn-submit {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
   &.sidebar {
     .idx-search-component {
       .open-filters {
@@ -124,17 +116,9 @@ stratus-idx-property-search {
         font-weight: bold;
         font-size: 13px;
       }
-
     }
   }
 }
-
-.listing-types {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(0,0,0,.15);
-}
-
 
 /***************
  * Search Menu
@@ -175,41 +159,43 @@ stratus-idx-property-search {
     }
   }
 
-  //.md-button {
-  //  &.md-default-theme.md-primary.md-fab,
-  //  &.md-primary.md-fab,
-  //  &.md-default-theme.md-primary.md-raised,
-  //  &.md-primary.md-raised {
-  //    color: #fff;
-  //    background: #222;
-  //  }
-  //  &.md-default-theme.md-primary.md-fab:not([disabled]).md-focused,
-  //  &.md-primary.md-fab:not([disabled]).md-focused,
-  //  &.md-default-theme.md-primary.md-fab:not([disabled]):hover,
-  //  &.md-primary.md-fab:not([disabled]):hover,
-  //  &.md-default-theme.md-primary.md-raised:not([disabled]).md-focused,
-  //  &.md-primary.md-raised:not([disabled]).md-focused,
-  //  &.md-default-theme.md-primary.md-raised:not([disabled]):hover,
-  //  &.md-primary.md-raised:not([disabled]):hover {
-  //    color: #fff;
-  //    background: #999;
-  //  }
-  //}
-  //.property-zoning {
-  //  margin-bottom: 30px;
-  //  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  //  // stylelint-disable-next-line no-descending-specificity
-  //  .md-button {
-  //    padding: 0 12px 4px;
-  //    margin: 0 0 -1px;
-  //    border-bottom: 2px solid transparent;
-  //    &.md-default-theme.md-primary,
-  //    &.md-primary {
-  //      font-weight: bold;
-  //      border-bottom: 2px solid rgba(0, 0, 0, 0.8);
-  //    }
-  //  }
-  //}
+  /*
+    .md-button {
+      &.md-default-theme.md-primary.md-fab,
+      &.md-primary.md-fab,
+      &.md-default-theme.md-primary.md-raised,
+      &.md-primary.md-raised {
+        color: #fff;
+        background: #222;
+      }
+      &.md-default-theme.md-primary.md-fab:not([disabled]).md-focused,
+      &.md-primary.md-fab:not([disabled]).md-focused,
+      &.md-default-theme.md-primary.md-fab:not([disabled]):hover,
+      &.md-primary.md-fab:not([disabled]):hover,
+      &.md-default-theme.md-primary.md-raised:not([disabled]).md-focused,
+      &.md-primary.md-raised:not([disabled]).md-focused,
+      &.md-default-theme.md-primary.md-raised:not([disabled]):hover,
+      &.md-primary.md-raised:not([disabled]):hover {
+        color: #fff;
+        background: #999;
+      }
+    }
+    .property-zoning {
+      margin-bottom: 30px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+      // stylelint-disable-next-line no-descending-specificity
+      .md-button {
+        padding: 0 12px 4px;
+        margin: 0 0 -1px;
+        border-bottom: 2px solid transparent;
+        &.md-default-theme.md-primary,
+        &.md-primary {
+          font-weight: bold;
+          border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+        }
+      }
+    }
+  */
   .sale-status-border {
     margin-bottom: 5px;
     height: 2px;
@@ -225,6 +211,7 @@ stratus-idx-property-search {
   }
   .agent-license {
     margin: 5px 0 20px;
+    // stylelint-disable-next-line no-descending-specificity
     .md-chips .md-chip-input-container input {
       font-size: 13px;
       text-align: center;
