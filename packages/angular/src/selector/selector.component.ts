@@ -1,5 +1,15 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, Output} from '@angular/core'
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SecurityContext
+} from '@angular/core'
 import {FormControl} from '@angular/forms'
 
 // CDK
@@ -70,7 +80,9 @@ export class SelectorComponent { // implements OnInit, OnChanges
     @Input() urlRoot: object
 
     // Component Attributes
-    // @Input() foo: object
+    @Input() type: string
+    @Input() property: string
+    @Input() endpoint: string
 
     // Dependencies
     _ = _
@@ -120,6 +132,34 @@ export class SelectorComponent { // implements OnInit, OnChanges
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+
+        // Hydrate Root App Inputs
+        // TODO: Make this dynamic
+        const inputs = [
+            'target',
+            'targetSuffix',
+            'id',
+            'manifest',
+            'decouple',
+            'direct',
+            'api',
+            'urlRoot',
+            'property',
+            'type',
+            'endpoint',
+        ]
+        _.forEach(inputs, (value: string) => {
+            const attr = _.kebabCase('value')
+            const variants = [
+                attr,
+                'data-' + attr
+            ]
+            const variant = _.find(variants, (v) => elementRef.nativeElement.hasAttribute(v))
+            if (_.isEmpty(variant)) {
+                return
+            }
+            _.set(this, value, sanitizer.sanitize(SecurityContext.HTML, elementRef.nativeElement.getAttribute(variant)))
+        })
 
         // Data Connections
         this.fetchData()
@@ -245,7 +285,7 @@ export class SelectorComponent { // implements OnInit, OnChanges
         if (!this.model) {
             return []
         }
-        const models = _.get(this.model, 'data.version.modules')
+        const models = _.get(this.model.data, this.property)
         if (!models || !_.isArray(models)) {
             return []
         }

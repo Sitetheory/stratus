@@ -114,9 +114,15 @@ export class AppModule {
         this.detectBoot(appRef)
     }
     // Fade out detection cycles
-    exponentialTimeout() {
+    exponentialTimeout(limit?: number) {
+        if (_.isNumber(limit) && limit < this.initialTimeout) {
+            return limit
+        }
+        // store current
         const currentTimeout = this.initialTimeout
+        // increase amount
         this.initialTimeout = this.initialTimeout * 1.01
+        // return
         return currentTimeout
     }
     detectBoot(appRef: ApplicationRef) {
@@ -140,6 +146,6 @@ export class AppModule {
         })
         setTimeout(() => {
             this.detectBoot(appRef)
-        }, this.exponentialTimeout())
+        }, this.exponentialTimeout(4000))
     }
 }
