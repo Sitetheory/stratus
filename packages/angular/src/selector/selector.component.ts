@@ -77,7 +77,7 @@ export class SelectorComponent { // implements OnInit, OnChanges
     @Input() decouple: boolean
     @Input() direct: boolean
     @Input() api: object
-    @Input() urlRoot: object
+    @Input() urlRoot: string
 
     // Component Attributes
     @Input() type: string

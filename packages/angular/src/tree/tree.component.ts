@@ -1,5 +1,5 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, SecurityContext} from '@angular/core'
 
 // CDK
 import {ArrayDataSource} from '@angular/cdk/collections'
@@ -88,7 +88,11 @@ export class TreeComponent { // implements OnInit
     @Input() decouple: boolean
     @Input() direct: boolean
     @Input() api: object
-    @Input() urlRoot: object
+    @Input() urlRoot: string
+
+    // Component Attributes
+    @Input() type: string
+    @Input() property: string
 
     // Dependencies
     _ = _
@@ -147,6 +151,33 @@ export class TreeComponent { // implements OnInit
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+
+        // Hydrate Root App Inputs
+        // TODO: Make this dynamic
+        const inputs = [
+            'target',
+            'targetSuffix',
+            'id',
+            'manifest',
+            'decouple',
+            'direct',
+            'api',
+            'urlRoot',
+            'property',
+            'type'
+        ]
+        _.forEach(inputs, (value: string) => {
+            const attr = _.kebabCase('value')
+            const variants = [
+                attr,
+                'data-' + attr
+            ]
+            const variant = _.find(variants, (v) => elementRef.nativeElement.hasAttribute(v))
+            if (_.isEmpty(variant)) {
+                return
+            }
+            _.set(this, value, sanitizer.sanitize(SecurityContext.HTML, elementRef.nativeElement.getAttribute(variant)))
+        })
 
         // Data Connections
         this.fetchData()
