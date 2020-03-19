@@ -11,7 +11,7 @@
 
 <div class="selected-list">
     <div class="selected-list-header border-default border-default-bottom">
-        <h3 [textContent]="'Selected ' + target + ' Items'"></h3>
+        <h3 [textContent]="'Selected ' + (type || 'Items')"></h3>
         <p class="note">Drag to reorder</p>
     </div>
     <div cdkDropList (cdkDropListDropped)="drop($event)">

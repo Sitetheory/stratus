@@ -1,5 +1,15 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, Output} from '@angular/core'
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SecurityContext
+} from '@angular/core'
 import {FormControl} from '@angular/forms'
 
 // CDK
@@ -19,6 +29,10 @@ import {SubjectSubscriber} from 'rxjs/internal/Subject'
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
+import {keys} from 'ts-transformer-keys'
+
+// Components
+import {RootComponent} from '@stratusjs/angular/root/root.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -27,6 +41,7 @@ import { EventManager } from '@stratusjs/core/events/eventManager'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {Model} from '@stratusjs/angularjs/services/model'
 
+// Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
 const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
@@ -43,7 +58,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
  */
 @Component({
     // selector: 'sa-selector-component',
-    selector: 'sa-selector',
+    selector: `sa-${moduleName}`,
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
@@ -53,10 +68,10 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class SelectorComponent { // implements OnInit, OnChanges
+export class SelectorComponent extends RootComponent { // implements OnInit, OnChanges
 
     // Basic Component Settings
-    title = 'selector-dnd'
+    title = moduleName + '_component'
     uid: string
 
     // Registry Attributes
@@ -67,10 +82,12 @@ export class SelectorComponent { // implements OnInit, OnChanges
     @Input() decouple: boolean
     @Input() direct: boolean
     @Input() api: object
-    @Input() urlRoot: object
+    @Input() urlRoot: string
 
     // Component Attributes
-    // @Input() foo: object
+    @Input() type: string
+    @Input() property: string
+    @Input() endpoint: string
 
     // Dependencies
     _ = _
@@ -103,6 +120,8 @@ export class SelectorComponent { // implements OnInit, OnChanges
         private ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
+        // Chain constructor
+        super()
 
         // Initialization
         this.uid = _.uniqueId('sa_selector_component_')
@@ -120,6 +139,9 @@ export class SelectorComponent { // implements OnInit, OnChanges
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+
+        // Hydrate Root App Inputs
+        this.hydrate(elementRef, sanitizer, keys<SelectorComponent>())
 
         // Data Connections
         this.fetchData()
@@ -245,7 +267,7 @@ export class SelectorComponent { // implements OnInit, OnChanges
         if (!this.model) {
             return []
         }
-        const models = _.get(this.model, 'data.version.modules')
+        const models = _.get(this.model.data, this.property)
         if (!models || !_.isArray(models)) {
             return []
         }

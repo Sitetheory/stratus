@@ -202,7 +202,7 @@ export class Model extends ModelBase {
         const that = this
         this.initialize = _.once(this.initialize || function defaultInitializer() {
             // Begin Watching if already completed
-            if (that.completed && that.watch) {
+            if (that.completed && (that.watch || that.autoSave)) {
                 that.watcher()
             }
 
@@ -406,7 +406,7 @@ export class Model extends ModelBase {
                 this.status = response.status
 
                 // Begin Watching
-                if (this.watch) {
+                if (this.watch || this.autoSave) {
                     this.watcher()
                 }
 

@@ -1,5 +1,11 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit} from '@angular/core'
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    Input,
+} from '@angular/core'
 
 // CDK
 import {ArrayDataSource} from '@angular/cdk/collections'
@@ -16,18 +22,23 @@ import {Observable, Subject, Subscriber} from 'rxjs'
 // External
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
+import {keys} from 'ts-transformer-keys'
+
+// Components
+import {RootComponent} from '@stratusjs/angular/root/root.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {cookie} from '@stratusjs/core/environment'
+import {EventManager} from '@stratusjs/core/events/eventManager'
+import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
+import {Model} from '@stratusjs/angularjs/services/model'
+import {LooseObject} from '@stratusjs/core/misc'
 
 // Force Dependent Services
 import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/model'
-import {EventManager} from '@stratusjs/core/events/eventManager'
-import {Collection} from '@stratusjs/angularjs/services/collection'
-import {Model} from '@stratusjs/angularjs/services/model'
 
 // Data Types
 export interface Node {
@@ -74,7 +85,7 @@ const moduleName = 'tree'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class TreeComponent { // implements OnInit
+export class TreeComponent extends RootComponent { // implements OnInit
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -88,7 +99,11 @@ export class TreeComponent { // implements OnInit
     @Input() decouple: boolean
     @Input() direct: boolean
     @Input() api: object
-    @Input() urlRoot: object
+    @Input() urlRoot: string
+
+    // Component Attributes
+    @Input() type: string
+    @Input() property: string
 
     // Dependencies
     _ = _
@@ -133,6 +148,8 @@ export class TreeComponent { // implements OnInit
         private ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
+        // Chain constructor
+        super()
 
         // Initialization
         this.uid = _.uniqueId(`sa_${moduleName}_component_`)
@@ -147,6 +164,9 @@ export class TreeComponent { // implements OnInit
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+
+        // Hydrate Root App Inputs
+        this.hydrate(elementRef, sanitizer, keys<TreeComponent>())
 
         // Data Connections
         this.fetchData()
