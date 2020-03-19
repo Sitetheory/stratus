@@ -29,6 +29,10 @@ import {SubjectSubscriber} from 'rxjs/internal/Subject'
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
+import {keys} from 'ts-transformer-keys'
+
+// Components
+import {RootComponent} from '@stratusjs/angular/root/root.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -37,6 +41,7 @@ import { EventManager } from '@stratusjs/core/events/eventManager'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 import {Model} from '@stratusjs/angularjs/services/model'
 
+// Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
 const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
@@ -53,7 +58,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
  */
 @Component({
     // selector: 'sa-selector-component',
-    selector: 'sa-selector',
+    selector: `sa-${moduleName}`,
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
     // require the steal-css module
@@ -63,10 +68,10 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class SelectorComponent { // implements OnInit, OnChanges
+export class SelectorComponent extends RootComponent { // implements OnInit, OnChanges
 
     // Basic Component Settings
-    title = 'selector-dnd'
+    title = moduleName + '_component'
     uid: string
 
     // Registry Attributes
@@ -115,6 +120,8 @@ export class SelectorComponent { // implements OnInit, OnChanges
         private ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
+        // Chain constructor
+        super()
 
         // Initialization
         this.uid = _.uniqueId('sa_selector_component_')
@@ -134,32 +141,7 @@ export class SelectorComponent { // implements OnInit, OnChanges
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
 
         // Hydrate Root App Inputs
-        // TODO: Make this dynamic
-        const inputs = [
-            'target',
-            'targetSuffix',
-            'id',
-            'manifest',
-            'decouple',
-            'direct',
-            'api',
-            'urlRoot',
-            'property',
-            'type',
-            'endpoint',
-        ]
-        _.forEach(inputs, (value: string) => {
-            const attr = _.kebabCase('value')
-            const variants = [
-                attr,
-                'data-' + attr
-            ]
-            const variant = _.find(variants, (v) => elementRef.nativeElement.hasAttribute(v))
-            if (_.isEmpty(variant)) {
-                return
-            }
-            _.set(this, value, sanitizer.sanitize(SecurityContext.HTML, elementRef.nativeElement.getAttribute(variant)))
-        })
+        this.hydrate(elementRef, sanitizer, keys<SelectorComponent>())
 
         // Data Connections
         this.fetchData()
