@@ -2,7 +2,11 @@ import {DOMComplete} from '@stratusjs/core/dom'
 
 // Fade out detection cycles
 let initialTimeout = 1000
+const limitTimeout = 5000
 function exponentialTimeout() {
+    if (initialTimeout > limitTimeout) {
+        return limitTimeout
+    }
     const currentTimeout = initialTimeout
     initialTimeout = initialTimeout * 1.2
     return currentTimeout

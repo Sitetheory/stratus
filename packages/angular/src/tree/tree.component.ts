@@ -8,9 +8,16 @@ import {
 } from '@angular/core'
 
 // CDK
-import {ArrayDataSource} from '@angular/cdk/collections'
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
-import {NestedTreeControl} from '@angular/cdk/tree'
+import {
+    ArrayDataSource
+} from '@angular/cdk/collections'
+import {
+    CdkDragDrop,
+    moveItemInArray,
+} from '@angular/cdk/drag-drop'
+import {
+    NestedTreeControl
+} from '@angular/cdk/tree'
 
 // SVG Icons
 import {DomSanitizer} from '@angular/platform-browser'
@@ -30,10 +37,18 @@ import {RootComponent} from '@stratusjs/angular/root/root.component'
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {cookie} from '@stratusjs/core/environment'
-import {EventManager} from '@stratusjs/core/events/eventManager'
-import {Collection, CollectionOptions} from '@stratusjs/angularjs/services/collection'
-import {Model} from '@stratusjs/angularjs/services/model'
 import {LooseObject} from '@stratusjs/core/misc'
+
+// Core Classes
+import {EventManager} from '@stratusjs/core/events/eventManager'
+
+// AngularJS Classes
+import {
+    Collection
+} from '@stratusjs/angularjs/services/collection'
+import {
+    Model
+} from '@stratusjs/angularjs/services/model'
 
 // Force Dependent Services
 import '@stratusjs/angularjs/services/registry'
