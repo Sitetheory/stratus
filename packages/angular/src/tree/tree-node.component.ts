@@ -1,12 +1,26 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit} from '@angular/core'
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnInit,
+} from '@angular/core'
 
 // Material
-import {MatDialog} from '@angular/material/dialog'
+import {
+    MatDialog
+} from '@angular/material/dialog'
 
 // Tree Imports
-import {Node, TreeComponent} from '@stratusjs/angular/tree/tree.component'
-import {DialogData, TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
+import {
+    Node,
+    TreeComponent
+} from '@stratusjs/angular/tree/tree.component'
+import {
+    DialogData,
+    TreeDialogComponent
+} from '@stratusjs/angular/tree/tree-dialog.component'
 
 // External
 import _ from 'lodash'

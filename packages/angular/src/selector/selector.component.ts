@@ -5,10 +5,10 @@ import {
     Component,
     ElementRef,
     Input,
-    OnChanges,
-    OnInit,
-    Output,
-    SecurityContext
+    // OnChanges,
+    // OnInit,
+    // Output,
+    // SecurityContext
 } from '@angular/core'
 import {FormControl} from '@angular/forms'
 
@@ -17,7 +17,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
 
 // External
 import {Observable, Subject, Subscriber} from 'rxjs'
-import {map, startWith} from 'rxjs/operators'
+// import {map, startWith} from 'rxjs/operators'
 
 // SVG Icons
 import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser'
@@ -37,9 +37,15 @@ import {RootComponent} from '@stratusjs/angular/root/root.component'
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {cookie} from '@stratusjs/core/environment'
-import { EventManager } from '@stratusjs/core/events/eventManager'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+
+// Core Classes
+import {EventManager} from '@stratusjs/core/events/eventManager'
+import {ModelBase} from '@stratusjs/core/datastore/modelBase'
+import {EventBase} from '@stratusjs/core/events/eventBase'
+
+// AngularJS Classes
 import {Model} from '@stratusjs/angularjs/services/model'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
@@ -100,9 +106,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     registry = new Registry()
     fetched: Promise<boolean|Collection|Model>
     data: any
-    collection: any
+    collection?: EventBase
     // @Output() model: any;
-    model: any
+    model?: ModelBase
 
     // Observable Connection
     dataSub: Observable<[]>
@@ -124,7 +130,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         super()
 
         // Initialization
-        this.uid = _.uniqueId('sa_selector_component_')
+        this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
 
         // Dependencies
@@ -267,7 +273,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         if (!this.model) {
             return []
         }
-        const models = _.get(this.model.data, this.property)
+        const models = this.model.get(this.property)
         if (!models || !_.isArray(models)) {
             return []
         }
