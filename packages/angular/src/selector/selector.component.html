@@ -45,7 +45,11 @@
                          [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
 
                         <!-- TODO: Make this icon work -->
-                        <!--<mat-icon class="content-type-icon position-center" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
+                        <!--
+                        <mat-icon class="content-type-icon position-center"
+                                  svgIcon="{{ addSVG('/Api/Resource?path=' + (_.get(selectedModel, 'contentType.iconResource') || _.get(selectedModel, 'iconResource'))) }}">
+                        </mat-icon>
+                        -->
                     </div>
 
                     <!-- Shapeholder -->
@@ -53,18 +57,18 @@
                 
                 </div>
                 <div class="column-title">
-                    <div class="content-type" *ngIf="has(selectedModel, 'contentType.iconResource')">
+                    <div class="content-type" *ngIf="has(selectedModel, 'iconResource') || has(selectedModel, 'contentType.iconResource')">
                         <!-- TODO: path needs to be marked as safe with DomSanitizer: https://material.angular.io/components/icon/overview#svg-icons -->
                         <!--<mat-icon  class="content-type-icon" svgIcon="/Api/Resource?path={{ selectedModel.contentType.iconResource}}"></mat-icon>-->
                         <span class="comment content-type-name font-body"
-                              [ngClass]="(_.get(selectedModel, 'contentType.name') | lowercase) + '-color'"
-                              [innerHTML]="_.get(selectedModel, 'contentType.name')">
+                              [ngClass]="((_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) | lowercase) + '-color'"
+                              [innerHTML]="_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')">
                         </span>
                     </div>
 
-                    <h3 [innerHTML]="_.get(selectedModel, 'version.title') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>
+                    <h3 [innerHTML]="_.get(selectedModel, 'version.title') || _.get(selectedModel, 'version.name') || _.get(selectedModel, 'name') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>
                     <span class="routing"
-                          [textContent]="has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : ''">
+                          [textContent]="(has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : null) || _.get(selectedModel, 'description') || ''">
                     </span>
                 </div>
                 <div class="column-action">
@@ -73,7 +77,7 @@
                             aria-label="Delete Item"
                             class="btn btn-delete"
                             (click)="remove(selectedModel)">
-                        <!--<mat-icon svgIcon="delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>-->
+                        <!--<mat-icon svgIcon="selector:delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>-->
                         <svg viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <defs>
                                 <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linear-gradient-icon-delete">

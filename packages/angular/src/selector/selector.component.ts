@@ -99,7 +99,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     _ = _
     has = has
     log = console.log
-    sanitizer: DomSanitizer
     selectCtrl = new FormControl()
 
     // Stratus Data Connectivity
@@ -120,9 +119,14 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     // filteredModels: Observable<[]>;
     // filteredModels: any;
 
+    // Icon Localization
+    svgIcons: {
+        [key: string]: string
+    } = {}
+
     constructor(
-        iconRegistry: MatIconRegistry,
-        sanitizer: DomSanitizer,
+        private iconRegistry: MatIconRegistry,
+        private sanitizer: DomSanitizer,
         private ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
@@ -133,12 +137,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
 
-        // Dependencies
-        this.sanitizer = sanitizer
-
         // SVG Icons
         iconRegistry.addSvgIcon(
-            'delete',
+            'selector:delete',
             sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg')
         )
 
@@ -331,6 +332,27 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }
         let priority = 0
         _.forEach(models, (model) => model.priority = priority++)
+    }
+
+    getSVG(url: string) {
+        console.log('get:', url)
+        return this.iconRegistry.getSvgIconFromUrl(
+            this.sanitizer.bypassSecurityTrustResourceUrl(url)
+        )
+    }
+
+    addSVG(url: string, options?: object) {
+        console.log('add:', url)
+        if (url in this.svgIcons) {
+            return this.svgIcons[url]
+        }
+        if (!options) {
+            options = {}
+        }
+        this.svgIcons[url] = _.uniqueId('selector:')
+        const safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url)
+        this.iconRegistry.addSvgIcon(this.svgIcons[url], safeUrl, options)
+        return this.svgIcons[url]
     }
 
     // findImage(model: any): string {
