@@ -1,0 +1,249 @@
+
+/* Styles for Both Selector and Selected Areas */
+
+.admin-select-content,
+.autocomplete-option,
+.sa-selector,
+.cdk-drag-preview {
+  .content-type {
+    margin-bottom: 2px;
+    md-icon{
+      margin-right: 4px;
+      height: 14px;
+      width: 14px;
+      min-height: 14px;
+      min-width: 14px;
+    }
+    .content-type-name {
+      font-weight: bold;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+  .no-image-icon {
+    md-icon {
+      height: 28px;
+      width: 28px;
+      min-height: 28px;
+      min-width: 28px;
+      svg g {
+        fill: #FFF;
+      }
+    }
+  }
+}
+.content-selector-autocomplete,
+.admin-select-content,
+.cdk-drag-preview {
+  .column-title h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+  }
+}
+
+
+
+/* Selector Autocomplete Options */
+md-autocomplete,
+.content-selector {
+  margin-top: 12px;
+}
+.selector-filter md-checkbox {
+  padding-right: 10px;
+}
+.md-autocomplete-suggestions li {
+  height: 80px;
+}
+.content-selector-autocomplete {
+  .autocomplete-row {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    * {
+      line-height: 1.4;
+    }
+    .column-image {
+      .image-container {
+        margin-right: 18px;
+      }
+    }
+    h3 {
+      font-size: 14px;
+    }
+    .routing {
+      font-size: 13px;
+    }
+  }
+  .selected {
+    .image,
+    .column-title {
+      opacity: .3;
+    }
+    md-icon.selected-icon {
+      z-index: 5;
+      height: 40px;
+      width: 40px;
+      min-height: 40px;
+      min-width: 40px;
+      svg {
+        filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+        -webkit-filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.5));
+        g {
+          fill: #FFF;
+        }
+      }
+    }
+  }
+}
+
+
+
+/* Draggable Selected List */
+
+.selector-wrapper {
+  background: rgba(255,255,255,.4);
+  margin-top: 20px;
+  padding: 40px;
+}
+
+/* Based on Angular Material 8+ */
+.selected-list {
+  margin: 0 auto;
+  max-width: 600px;
+  min-height: 60px;
+  display: block;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.selected-box {
+  padding: 12px 16px;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+  font-size: 14px;
+}
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 2px 2px 4px rgba(0,0,0,.3)
+}
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.selected-box:last-child {
+  border: none;
+}
+.selected-list.cdk-drop-list-dragging .selected-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+.custom-ghost-placeholder {
+  background: rgba(0,0,0,.4);
+  min-height: 60px;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+
+/* Selected List Custom */
+
+
+sa-selector,
+.cdk-drag-preview {
+  .column-image,
+  .column-title,
+  .column-action {
+    float: left;
+  }
+  .image,
+  .no-image-icon {
+    margin-right: 10px;
+  }
+}
+
+sa-selector {
+  .column-image {
+    width: 15%;
+  }
+  .column-title {
+    width: 70%;
+  }
+  .column-action {
+    width: 15%;
+  }
+}
+.cdk-drag-preview {
+  .column-image {
+    width: 15%;
+  }
+  .column-title {
+    width: 85%;
+  }
+}
+
+
+
+sa-selector {
+  margin: 0 auto;
+  .routing {
+    color: #333;
+    font-size: 13px;
+  }
+  .selected-list {
+    .selected-list-header {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      h3,
+      .note {
+        margin: 0;
+        display: inline-block;
+        vertical-align: text-bottom;
+        line-height: 1.2;
+      }
+      .note {
+        padding-left: 10px;
+      }
+    }
+    .selected-list-container {
+      width: 100%;
+    }
+    .selected-list-row {
+      margin-bottom: 10px;
+      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.04);
+      border-radius: 2px;
+    }
+    .btn.btn-delete {
+      float: right;
+      width: 50px;
+      min-width: unset;
+      height: 50px;
+      font-size: 10px;
+      margin-left: 12px;
+      padding: 0;
+      background: #fff;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+      &:hover {
+        background: #fff;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+      }
+      svg {
+        margin: 0 auto;
+        width: 60%;
+        g {
+          fill: #222;
+        }
+      }
+    }
+  }
+}
+.firefox .btn.btn-delete svg {
+  &,
+  g {
+    max-width: 28px;
+    max-height: 28px;
+  }
+}
