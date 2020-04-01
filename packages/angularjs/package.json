@@ -28,14 +28,14 @@
   "dependencies": {
     "@stratusjs/core": "^0.2.15",
     "@stratusjs/runtime": "^0.10.7",
-    "angular": "^1.7.8",
-    "angular-animate": "^1.7.8",
-    "angular-aria": "^1.7.8",
-    "angular-material": "^1.1.20",
-    "angular-messages": "^1.7.8",
+    "angular": "^1.7.9",
+    "angular-animate": "^1.7.9",
+    "angular-aria": "^1.7.9",
+    "angular-material": "^1.1.21",
+    "angular-messages": "^1.7.9",
     "angular-paging": "^2.2.2",
-    "angular-resource": "^1.7.8",
-    "angular-sanitize": "^1.7.8",
-    "tslib": "^1.10.0"
+    "angular-resource": "^1.7.9",
+    "angular-sanitize": "^1.7.9",
+    "tslib": "^1.11.1"
   }
 }
