@@ -9,7 +9,11 @@
 </mat-form-field>
 -->
 
-<div class="selected-list">
+ <!-- !model.completed || model.saving -->
+ <mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
+
+ <!-- [ngStyle]="{'display': styled ? 'inherit' : 'none'}" -->
+ <div class="selected-list" *ngIf="styled">
     <div class="selected-list-header border-default border-default-bottom">
         <h3 [textContent]="'Selected ' + (type || 'Items')"></h3>
         <p class="note">Drag to reorder</p>
