@@ -124,6 +124,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         [key: string]: string
     } = {}
 
+    // UI Flags
+    styled = false
+
     constructor(
         private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
@@ -146,6 +149,15 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+            .then(() => {
+                this.styled = true
+                ref.detectChanges()
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.styled = true
+                ref.detectChanges()
+            })
 
         // Hydrate Root App Inputs
         this.hydrate(elementRef, sanitizer, keys<SelectorComponent>())
@@ -257,7 +269,10 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
-        this.subscriber = subscriber
+        this.subscriber = this.subscriber || subscriber
+        if (!this.subscriber) {
+            return
+        }
         const models = this.dataRef()
         if (!models || !models.length) {
             setTimeout(() => {
@@ -266,7 +281,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             return
         }
         // console.log('pushed models to subscriber.')
-        subscriber.next(models)
+        this.subscriber.next(models)
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
