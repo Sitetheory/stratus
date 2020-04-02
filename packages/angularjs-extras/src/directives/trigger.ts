@@ -1,40 +1,72 @@
 // Trigger Directive
 // -----------------
 
-/* global define */
+// Runtime
+import _ from 'lodash'
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
+import {
+    IAttributes,
+    IScope,
+    INgModelController,
+    IParseService
+} from 'angular'
 
-// Define AMD, Require.js, or Contextual Scope
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define(['stratus', 'lodash', 'angular'], factory)
-  } else {
-    factory(root.Stratus, root._, root.angular)
-  }
-}(this, function (Stratus, _, angular) {
-  // This directive intends to handle binding of a model to a function,
-  // triggered upon true
-  Stratus.Directives.Trigger = function ($parse, $log) {
-    return {
-      restrict: 'A',
-      require: 'ngModel',
-      link: function ($scope, $element, $attrs, ngModel) {
-        Stratus.Instances[_.uniqueId('trigger_')] = $scope
+// Angular 1 Modules
+import 'angular-material'
+
+// Stratus Dependencies
+import {
+    cookie
+} from '@stratusjs/core/environment'
+
+// Environment
+const min = !cookie('env') ? '.min' : ''
+const name = 'trigger'
+const localPath = '@stratusjs/angularjs-extras/src/directives'
+
+// This directive intends to handle binding of a model to a function,
+// triggered upon true
+Stratus.Directives.Trigger = (
+    $parse: IParseService
+) => ({
+    restrict: 'A',
+    require: 'ngModel',
+    link: (
+        $scope: IScope & any,
+        $element: JQLite & any,
+        $attrs: IAttributes & any,
+        ngModel: INgModelController
+    ) => {
+        // Initialize
+        const $ctrl: any = this
+        $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
+        Stratus.Instances[$ctrl.uid] = $scope
+        $scope.elementId = $element.elementId || $ctrl.uid
+        $scope.initialized = false
+
+        // Watch Trigger
         $scope.trigger = null
-        $scope.$watch(function () {
-          return $attrs.stratusTrigger
-        }, function (newValue) {
-          if (typeof newValue !== 'undefined') {
-            $scope.trigger = $parse($attrs.stratusTrigger)
-          }
-        })
-        $scope.$watch(function () {
-          return ngModel.$modelValue
-        }, function (newValue) {
-          if (typeof newValue !== 'undefined' && $scope.trigger) {
-            $scope.trigger($scope.$parent)
-          }
-        })
-      }
+        $scope.$watch(() => $attrs.stratusTrigger,
+            (newValue: any) => {
+                if (_.isUndefined(newValue)) {
+                    return
+                }
+                $scope.trigger = $parse($attrs.stratusTrigger)
+            })
+
+        // Watch ngModel
+        $scope.$watch(() => ngModel.$modelValue,
+            (newValue: any) => {
+                if (_.isUndefined(newValue)) {
+                    return
+                }
+                if (!$scope.trigger) {
+                    console.error('unable to trigger:', $scope)
+                    return
+                }
+                $scope.trigger($scope)
+            })
     }
-  }
-}))
+})
