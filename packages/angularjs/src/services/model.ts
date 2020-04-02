@@ -117,6 +117,7 @@ export class Model extends ModelBase {
     // Infrastructure
     header = new ModelBase()
     meta = new ModelBase()
+    route = new ModelBase()
     collection?: Collection = null
 
     // XHR Flags
@@ -168,6 +169,7 @@ export class Model extends ModelBase {
         // Handle Collections & Meta
         this.header = new Stratus.Prototypes.Model()
         this.meta = new Stratus.Prototypes.Model()
+        this.route = new Stratus.Prototypes.Model()
         if (!_.isEmpty(this.collection)) {
             if (this.collection.target) {
                 this.target = this.collection.target
@@ -278,22 +280,33 @@ export class Model extends ModelBase {
         if (!changeSet || _.isEmpty(changeSet)) {
             return changeSet
         }
+        // this.changed = !_.isEqual(this.data, this.initData)
 
         // Trigger Queue for Auto-Save
         this.saveIdle()
 
-        // Handle ID or Version Changes
+        // Sync URL with Data Changes
         if (this.urlSync) {
-            const version = getAnchorParams('version')
-            const versionId = !_.isEmpty(version) ? parseInt(version, 10) : 0
-            // this.changed = !_.isEqual(this.data, this.initData)
-            if (_.get(changeSet, 'id') || (versionId && versionId !== _.get(changeSet, 'version.id'))) {
-                // console.warn('replacing version...')
+            // TODO: Allow an option for using PushState here instead of hitting a page reload
+            // Handle ID Changes
+            if (_.get(changeSet, 'id')) {
+                // if (cookie('env')) {
+                //     console.info('replace id:', this.getIdentifier())
+                // }
                 const newUrl = setUrlParams({
-                    id: this.data.id
+                    id: this.getIdentifier()
                 })
                 if (newUrl !== document.location.href) {
                     window.location.replace(newUrl)
+                }
+            }
+
+            // Handle Version ID Changes
+            const version = getAnchorParams('version')
+            const versionId = !_.isEmpty(version) ? parseInt(version, 10) : 0
+            if (versionId && versionId !== _.get(changeSet, 'version.id')) {
+                if (cookie('env')) {
+                    console.warn('replacing version:', versionId)
                 }
             }
         }
@@ -308,7 +321,7 @@ export class Model extends ModelBase {
     }
 
     getIdentifier() {
-        return (this.identifier = this.get('id') || this.identifier)
+        return (this.identifier = this.get('id') || this.route.get('identifier') || this.identifier)
     }
 
     getType() {
@@ -425,6 +438,7 @@ export class Model extends ModelBase {
                     // Data
                     this.header.set(response.headers() || {})
                     this.meta.set(response.data.meta || {})
+                    this.route.set(response.data.route || {})
                     const convoy = response.data.payload || response.data
                     const status: { code: string }[] = this.meta.get('status')
                     if (this.meta.has('status') && _.first(status).code !== 'SUCCESS') {
@@ -628,6 +642,10 @@ export class Model extends ModelBase {
 
     toJSON(options?: any) {
         // Ensure Patch only Saves on Persistent Models
+        options = options || {}
+        if (!_.isObject(options)) {
+            options = {}
+        }
         options.patch = (options.patch && !this.isNew())
         let data = super.toJSON(options)
         const metaData = this.meta.get('api')

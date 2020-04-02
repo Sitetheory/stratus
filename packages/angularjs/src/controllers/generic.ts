@@ -23,7 +23,10 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Stratus Dependencies
-import {isJSON, setUrlParams} from '@stratusjs/core/misc'
+import {
+    isJSON,
+    setUrlParams
+} from '@stratusjs/core/misc'
 
 // Require this to Sanitize all ng-bind-html instances
 Stratus.Modules.ngSanitize = true
