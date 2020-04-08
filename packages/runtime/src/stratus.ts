@@ -119,7 +119,12 @@ interface StratusRuntime {
     DeploymentPath: string
     BaseUrl?: string
     Client: bowser.IBowser | any
-    Internals: {} | any
+    Internals: {
+        [key: string]: any
+        CssLoader?: (url: any) => Promise<void>
+        JsLoader?: (url: any) => Promise<void>
+        XHR: (request?: XHRRequest) => any
+    }
     Settings: {
         image: {
             size: {
@@ -147,6 +152,7 @@ interface StratusRuntime {
     Selector: {} | any
     Compendium: {} | any
     CSS: {} | any
+    JS: {} | any
     DOM: {} | any
     Aether: Aether
     Chronos: Chronos
@@ -231,6 +237,7 @@ export const Stratus: StratusRuntime = {
 
     /* Stratus */
     CSS: {},
+    JS: {},
     Aether: new Aether(),
     Chronos: new Chronos(),
     Data: {},
@@ -1091,6 +1098,57 @@ Stratus.Internals.CssLoader = (url: any) => {
         // TODO: Add the ability to prepend or append by a flagged option
         // Stratus.Select('head').prepend(link);
         Stratus.Select('head').append(link)
+    })
+}
+
+Stratus.Internals.JsLoader = (url: any) => {
+    return new Promise((resolve: any, reject: any) => {
+        /* Digest Extension */
+        /*
+         let extension: any = /\.([0-9a-z]+)$/i;
+         extension = extension.exec(url);
+         */
+
+        /* Handle Identical Calls */
+        if (url in Stratus.JS) {
+            if (Stratus.JS[url]) {
+                resolve()
+            } else {
+                Stratus.Events.once('onload:' + url, resolve)
+            }
+            return
+        }
+
+        /* Set JS State */
+        Stratus.JS[url] = false
+
+        /* Create Link */
+        const script: any = document.createElement('script')
+        script.async = true
+        script.type = 'text/javascript'
+        script.src = url
+
+        /* Track Resolution */
+        Stratus.Events.once('onload:' + url, () => {
+            Stratus.JS[url] = true
+            resolve()
+        })
+
+        /* Capture OnLoad or Fallback */
+        if ('onload' in script && !Stratus.Client.android) {
+            script.onload = () => {
+                Stratus.Events.trigger('onload:' + url)
+            }
+        } else {
+            Stratus.JS[url] = true
+            Stratus.Events.trigger('onload:' + url)
+        }
+
+        /* Inject Link into Head */
+
+        // TODO: Add the ability to prepend or append by a flagged option
+        // Stratus.Select('head').prepend(link);
+        Stratus.Select('head').append(script)
     })
 }
 
