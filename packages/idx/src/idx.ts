@@ -1575,23 +1575,25 @@ const angularJsService = (
         if (serviceIds && _.isArray(serviceIds)) {
             serviceIds.forEach(serviceId => {
                 if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
-                    serviceList[session.services[serviceId].id] = {
+                    serviceList.push({
                         id: session.services[serviceId].id,
                         name: session.services[serviceId].name,
                         disclaimer: session.services[serviceId].disclaimer,
                         fetchTime: session.services[serviceId].fetchTime,
                         analyticsEnabled: session.services[serviceId].analyticsEnabled
-                    }
+                    })
                 }
             })
         } else {
             session.services.forEach(service => {
-                serviceList[service.id] = {
-                    id: service.id,
-                    name: service.name,
-                    disclaimer: service.disclaimer,
-                    fetchTime: service.fetchTime,
-                    analyticsEnabled: service.analyticsEnabled
+                if (!_.isEmpty(service)) {
+                    serviceList.push({
+                        id: service.id,
+                        name: service.name,
+                        disclaimer: service.disclaimer,
+                        fetchTime: service.fetchTime,
+                        analyticsEnabled: service.analyticsEnabled
+                    })
                 }
             })
         }
