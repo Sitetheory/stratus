@@ -349,7 +349,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }
         let priority = 0
         _.forEach(models, (model) => model.priority = priority++)
-        console.log('prioritize:', _.map(models, (model) => model.priority))
     }
 
     getSVG(url: string) {
