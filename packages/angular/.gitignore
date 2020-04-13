@@ -26,17 +26,3 @@ yarn-error.log
 
 # Atom Sync
 .remote-sync.json
-
-# Package Minifications
-packages/*/src/**/*.min.js
-packages/*/src/**/*.min.css
-packages/*/src/**/*.min.html
-packages/*/src/**/*.css.map
-
-# Package Compilations
-packages/angular/**/*.js
-packages/angular/**/*.css
-packages/boot/**/*.js
-packages/core/**/*.js
-packages/react/**/*.js
-packages/react/**/*.css

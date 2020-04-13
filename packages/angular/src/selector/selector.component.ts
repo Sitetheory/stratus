@@ -175,8 +175,9 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                     if (!data.completed) {
                         return
                     }
-                    // this.onDataChange(ref);
+                    // this.onDataChange();
                     this.dataDefer(this.subscriber)
+                    this.prioritize()
                     this.ref.detectChanges()
                 }
                 data.on('change', onDataChange)
@@ -228,7 +229,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         }
         moveItemInArray(models, event.previousIndex, event.currentIndex)
         let priority = 0
-        _.forEach(models, (model) => model.priority = priority++)
+        _.forEach(models, (model: any) => model.priority = priority++)
         this.model.trigger('change')
     }
 
@@ -334,10 +335,11 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     //     return [];
     // }
 
-    onDataChange(ref: ChangeDetectorRef) {
-        // that.prioritize();
+    onDataChange() {
+        // FIXME: This is not in use due to contextual issues.
+        this.prioritize()
         this.dataDefer(this.subscriber)
-        ref.detectChanges()
+        this.ref.detectChanges()
     }
 
     prioritize() {

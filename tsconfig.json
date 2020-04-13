@@ -63,7 +63,8 @@
       "stratus": [
         "packages/runtime/src/stratus"
       ]
-    }
+    },
+    "jsx": "react"
   },
   "exclude": [
     "node_modules"

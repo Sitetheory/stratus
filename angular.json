@@ -27,6 +27,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "stratus"
+    }
+  },
+  "defaultProject": "stratus",
+  "cli": {
+    "analytics": "46c57f00-3bbb-4090-8ad2-08c23a2cfb1d"
+  }
 }

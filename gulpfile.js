@@ -149,6 +149,9 @@ const location = {
     ],
     compile: [
       // 'packages/*/src/**/*.js.map'
+    ],
+    nonstandard: [
+      '**/node_modules/**/*.ts'
     ]
   },
   template: {
@@ -234,7 +237,7 @@ function compressMangle () {
   }))
   /* */
     // .pipe(sourcemaps.init())
-    .pipe(babel(babelSettings))
+    // .pipe(babel(babelSettings))
     .pipe(terser({
       // parse: {},
       // compress: {},
@@ -432,7 +435,7 @@ function compileTypeScript () {
   if (!location.typescript.core.length) {
     return Promise.resolve('No files selected.')
   }
-  return src(_.union(location.typescript.core, nullify(location.typescript.compile)), { base: '.' })
+  return src(_.union(location.typescript.core, nullify(_.union(location.typescript.compile, location.typescript.nonstandard))), { base: '.' })
     // .pipe(debug({ title: 'Compile TypeScript:' }))
     .pipe(sourcemaps.init())
     .pipe(tsProject())

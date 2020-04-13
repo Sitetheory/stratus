@@ -4,7 +4,12 @@ import {FormBuilder, FormGroup} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 
 // RXJS
-import {debounceTime, finalize, switchMap, tap} from 'rxjs/operators'
+import {
+    debounceTime,
+    finalize,
+    switchMap,
+    tap
+} from 'rxjs/operators'
 
 // External
 import _ from 'lodash'
@@ -106,7 +111,7 @@ export class TreeDialogComponent implements OnInit {
                 tap(() => this.isContentLoading = true),
                 switchMap((value: any) => {
                         if (_.isString(value)) {
-                            this.lastContentSelectorQuery = `/Api/Content?q=${value}`
+                            this.lastContentSelectorQuery = `/Api/Content?options[showCollection]=null&q=${value}`
                         } else {
                             this.data.content = value
                             this.data.url = null
