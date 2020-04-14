@@ -56,7 +56,7 @@ export class TreeNodeComponent implements OnInit {
 
     // Methods
     hasChild = (node: Node) => node.children && node.children.length > 0
-    isExpanded = (node: Node) => node.expanded
+    isExpanded = (node: Node) => node.meta ? node.meta.expanded : true
 
     constructor(
         public dialog: MatDialog,
@@ -79,7 +79,17 @@ export class TreeNodeComponent implements OnInit {
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
 
         // Force UI Redraw
+        this.refresh()
+    }
+
+    public refresh() {
+        if (!this.ref) {
+            console.error('ref not available:', this)
+            return
+        }
+        this.ref.detach()
         this.ref.detectChanges()
+        this.ref.reattach()
     }
 
     public getName(node: Node): string {
@@ -94,8 +104,12 @@ export class TreeNodeComponent implements OnInit {
     }
 
     public toggleExpanded(node: Node): void {
-        node.expanded = !node.expanded
-        this.ref.detectChanges()
+        if (!node.meta) {
+            console.error('node meta not found:', node)
+            return
+        }
+        node.meta.expanded = !node.meta.expanded
+        this.refresh()
     }
 
     public openDialog(node: Node): void {
@@ -118,9 +132,9 @@ export class TreeNodeComponent implements OnInit {
                 nestParent: node.model.data.nestParent || null,
             }
         })
-        this.ref.detectChanges()
+        this.refresh()
 
-        const ref = this.ref
+        const that = this
         dialogRef.afterClosed().subscribe((result: DialogData) => {
             if (!result || _.isEmpty(result)) {
                 return
@@ -140,7 +154,7 @@ export class TreeNodeComponent implements OnInit {
                     return
                 }
                 node.model.set(attr, _.get(result, attr))
-                ref.detectChanges()
+                that.refresh()
             })
             node.model.save()
         })
