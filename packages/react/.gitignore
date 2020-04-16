@@ -21,22 +21,25 @@ bower_components/
 node_modules/
 package-lock.json
 npm-debug.log
+npm-debug.log*
 yarn.lock
+yarn-debug.log*
 yarn-error.log
+yarn-error.log*
+/.pnp
+.pnp.js
 
 # Atom Sync
 .remote-sync.json
 
-# Package Minifications
-packages/*/src/**/*.min.js
-packages/*/src/**/*.min.css
-packages/*/src/**/*.min.html
-packages/*/src/**/*.css.map
+# testing
+coverage/
 
-# Package Compilations
-packages/angular/**/*.js
-packages/angular/**/*.css
-packages/boot/**/*.js
-packages/core/**/*.js
-packages/react/**/*.js
-packages/react/**/*.css
+# production
+build/
+
+# misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
