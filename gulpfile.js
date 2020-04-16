@@ -151,7 +151,8 @@ const location = {
       // 'packages/*/src/**/*.js.map'
     ],
     nonstandard: [
-      '**/node_modules/**/*.ts'
+      '**/node_modules/**/*.ts',
+      'packages/react/src/**/*.ts'
     ]
   },
   template: {
