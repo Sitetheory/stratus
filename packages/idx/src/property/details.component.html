@@ -335,15 +335,16 @@
              data-ng-show="::contact || Idx.sharedValues.contact"
         >
             <h2>Contact</h2>
-            <p class="primary_font">
-                <span class="site-name" data-ng-show="::contact.name || (Idx.sharedValues.contact && Idx.sharedValues.contact.name)" data-ng-bind="::contact.name || Idx.sharedValues.contact.name"></span>
-                <span class="phone" data-ng-show="(contact.phones && contact.phones.Main) || (Idx.sharedValues.contact.phones && Idx.sharedValues.contact.phones.Main)">
-                    <a data-ng-href="tel:{{::contact.phones.Main || Idx.sharedValues.contact.phones.Main}}" data-ng-bind="::contact.phones.Main || Idx.sharedValues.contact.phones.Main"></a>
-                </span>
-                <span class="email" data-ng-show="(contact.emails && contact.emails.Main) || (Idx.sharedValues.contact.emails && Idx.sharedValues.contact.emails.Main)">
-                    <a data-ng-href="mailto:{{::contact.emails.Main || Idx.sharedValues.contact.emails.Main}}" data-ng-bind="::contact.emails.Main || Idx.sharedValues.contact.emails.Main" target="_blank"></a>
-                </span>
+
+            <h4 class="site-name" data-ng-show="::contact.name || (Idx.sharedValues.contact && Idx.sharedValues.contact.name)" data-ng-bind="::contact.name || Idx.sharedValues.contact.name"></h4>
+
+            <p class="phone" data-ng-show="(contact.phones && contact.phones.Main) || (Idx.sharedValues.contact.phones && Idx.sharedValues.contact.phones.Main)">
+                <a data-ng-href="tel:{{::contact.phones.Main || Idx.sharedValues.contact.phones.Main}}" data-ng-bind="::contact.phones.Main || Idx.sharedValues.contact.phones.Main"></a>
             </p>
+            <p class="email" data-ng-show="(contact.emails && contact.emails.Main) || (Idx.sharedValues.contact.emails && Idx.sharedValues.contact.emails.Main)">
+                <a data-ng-href="mailto:{{::contact.emails.Main || Idx.sharedValues.contact.emails.Main}}" data-ng-bind="::contact.emails.Main || Idx.sharedValues.contact.emails.Main" target="_blank"></a>
+            </p>
+
         </div>
 
         <div class="disclaimer-container details-container static-element">
