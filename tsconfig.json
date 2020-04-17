@@ -57,6 +57,9 @@
       "@stratusjs/runtime/*": [
         "packages/runtime/src/*"
       ],
+      "@stratusjs/stripe/*": [
+        "packages/stripe/src/*"
+      ],
       "@stratusjs/swiper/*": [
         "packages/swiper/src/*"
       ],
