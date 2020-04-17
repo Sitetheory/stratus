@@ -16,7 +16,15 @@
 
 #### Installation
 
-TODO
+```sh
+yarn install
+```
+
+#### Development
+
+```sh
+yarn start
+```
 
 # License
 

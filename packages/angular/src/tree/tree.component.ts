@@ -56,11 +56,20 @@ import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/model'
 
 // Data Types
+export interface NodeMeta {
+    id: number
+    expanded: boolean
+}
+
+export interface NodeMetaMap {
+    [key: number]: NodeMeta
+}
+
 export interface Node {
     id: number
     model: any
     children: Node[]
-    expanded: boolean
+    meta: NodeMeta
 }
 
 export interface NodeMap {
@@ -149,6 +158,7 @@ export class TreeComponent extends RootComponent { // implements OnInit
     // Tree Specific
     tree: Node[]
     treeMap: NodeMap
+    metaMap: NodeMetaMap
     dataSource: ArrayDataSource<Node>
     // treeControl = new NestedTreeControl <any> (node => this.getChildren(node))
     treeControl = new NestedTreeControl<any>((node: Node) => node.children || [])
@@ -191,13 +201,13 @@ export class TreeComponent extends RootComponent { // implements OnInit
                     return
                 }
                 // Manually render upon data change
-                ref.detach()
+                // this.ref.detach()
                 const onDataChange = () => {
                     if (this.unsettled || !data.completed) {
                         return
                     }
                     this.dataDefer(this.subscriber)
-                    this.ref.detectChanges()
+                    this.refresh()
                 }
                 data.on('change', onDataChange)
                 onDataChange()
@@ -214,6 +224,16 @@ export class TreeComponent extends RootComponent { // implements OnInit
     // async ngOnInit() {
     //     console.info('tree.ngOnInit')
     // }
+
+    public refresh() {
+        if (!this.ref) {
+            console.error('ref not available:', this)
+            return
+        }
+        this.ref.detach()
+        this.ref.detectChanges()
+        this.ref.reattach()
+    }
 
     public remove(model: any) {
         // const models = this.dataRef()
@@ -280,35 +300,43 @@ export class TreeComponent extends RootComponent { // implements OnInit
         }
         models = _.sortBy(models, ['data.priority'])
         // Convert Collection Models to Nested Tree to optimize references
+        this.metaMap = {}
         this.treeMap = {}
         this.tree = []
         _.forEach(models, (model: any) => {
             const modelId = _.get(model, 'data.id')
             const parentId = _.get(model, 'data.nestParent.id')
             this.dropListIdMap[`${this.uid}_node_${modelId}_drop_list`] = true
+            if (!_.has(this.metaMap, modelId)) {
+                this.metaMap[modelId] = {
+                    id: modelId,
+                    expanded: true
+                }
+            }
             if (!_.has(this.treeMap, modelId)) {
                 this.treeMap[modelId] = {
                     id: modelId,
-                    model: null,
+                    model,
                     children: [],
-                    expanded: false
+                    meta: this.metaMap[modelId]
                 }
             }
             this.treeMap[modelId].model = model
-            if (!parentId) {
-                this.tree.push(
-                    this.treeMap[modelId]
-                )
-            } else {
+            this.treeMap[modelId].meta = this.metaMap[modelId]
+            if (parentId) {
                 if (!_.has(this.treeMap, parentId)) {
                     this.treeMap[parentId] = {
                         id: parentId,
                         model: null,
                         children: [],
-                        expanded: false
+                        meta: null
                     }
                 }
                 this.treeMap[parentId].children.push(
+                    this.treeMap[modelId]
+                )
+            } else {
+                this.tree.push(
                     this.treeMap[modelId]
                 )
             }

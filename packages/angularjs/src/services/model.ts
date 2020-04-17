@@ -377,6 +377,12 @@ export class Model extends ModelBase {
         // XHR Flags
         this.pending = true
 
+        // XHR Flags for Collection
+        if (this.collection) {
+            // TODO: Change to a Model ID Register
+            this.collection.pending = true
+        }
+
         // Diff Information
         this.sent = _.cloneDeep(this.data)
 
@@ -483,6 +489,12 @@ export class Model extends ModelBase {
                     this.pending = false
                     this.completed = true
 
+                    // XHR Flags for Collection
+                    if (this.collection) {
+                        // TODO: Change to a Model ID Register
+                        this.collection.pending = false
+                    }
+
                     // Events
                     this.trigger('success', this)
                     this.trigger('complete', this)
@@ -513,6 +525,12 @@ export class Model extends ModelBase {
                     // XHR Flags
                     this.pending = false
                     this.completed = true
+
+                    // XHR Flags for Collection
+                    if (this.collection) {
+                        // TODO: Change to a Model ID Register
+                        this.collection.pending = false
+                    }
 
                     // Events
                     this.trigger('error', this)

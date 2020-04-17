@@ -128,9 +128,7 @@ export class TreeDialogComponent implements OnInit {
                     this.filteredContentOptions = []
                     // FIXME: We have to go in this roundabout way to force changes to be detected since the
                     // Dialog Sub-Components don't seem to have the write timing for ngOnInit
-                    this.ref.detach()
-                    this.ref.detectChanges()
-                    this.ref.reattach()
+                    this.refresh()
                     return this.filteredContentOptions
                 }
                 const payload = _.get(response.body, 'payload') || response.body
@@ -138,17 +136,13 @@ export class TreeDialogComponent implements OnInit {
                     this.filteredContentOptions = []
                     // FIXME: We have to go in this roundabout way to force changes to be detected since the
                     // Dialog Sub-Components don't seem to have the write timing for ngOnInit
-                    this.ref.detach()
-                    this.ref.detectChanges()
-                    this.ref.reattach()
+                    this.refresh()
                     return this.filteredContentOptions
                 }
                 this.filteredContentOptions = payload
                 // FIXME: We have to go in this roundabout way to force changes to be detected since the
                 // Dialog Sub-Components don't seem to have the write timing for ngOnInit
-                this.ref.detach()
-                this.ref.detectChanges()
-                this.ref.reattach()
+                this.refresh()
                 return this.filteredContentOptions
             })
 
@@ -188,6 +182,14 @@ export class TreeDialogComponent implements OnInit {
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the write timing for ngOnInit
+        this.refresh()
+    }
+
+    public refresh() {
+        if (!this.ref) {
+            console.error('ref not available:', this)
+            return
+        }
         this.ref.detach()
         this.ref.detectChanges()
         this.ref.reattach()
@@ -197,9 +199,7 @@ export class TreeDialogComponent implements OnInit {
         this.dialogRef.close()
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the write timing for ngOnInit
-        this.ref.detach()
-        this.ref.detectChanges()
-        this.ref.reattach()
+        this.refresh()
     }
 
     displayContentText(content: Content) {
@@ -209,10 +209,10 @@ export class TreeDialogComponent implements OnInit {
         }
         // Routing Fallback
         const routing = _.get(content, 'routing[0].url')
-        const routingText = routing ? `/${routing}` : null
+        const routingText = !_.isUndefined(routing) ? `/${routing}` : null
         // ContentId Fallback
         const contentId = _.get(content, 'id')
-        const contentIdText = contentId ? `Content: ${contentId}` : null
+        const contentIdText = !_.isUndefined(contentId) ? `Content: ${contentId}` : null
         // Return Version Title or Fallback Text
         return _.get(content, 'version.title') || routingText || contentIdText
     }
