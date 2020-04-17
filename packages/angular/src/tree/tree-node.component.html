@@ -1,4 +1,7 @@
 <div class="tree-node-content">
+    <!-- show progress while saving -->
+    <mat-progress-bar mode="indeterminate" *ngIf="node.model.pending"></mat-progress-bar>
+
     <!-- use a disabled button to provide padding for tree leaf -->
     <button mat-icon-button
             *ngIf="!hasChild(node)"

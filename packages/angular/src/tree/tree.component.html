@@ -1,4 +1,5 @@
 <div class="tree">
+    <mat-progress-bar mode="indeterminate" *ngIf="collection.pending"></mat-progress-bar>
     <div cdkDropList
          [id]="uid + '_parent_drop_list'"
          [cdkDropListConnectedTo]="dropLists"

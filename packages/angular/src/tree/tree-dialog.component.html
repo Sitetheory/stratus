@@ -1,4 +1,8 @@
 <h1 mat-dialog-title>Menu Link Editor</h1>
+
+<!-- show progress while saving -->
+<mat-progress-bar mode="indeterminate" *ngIf="data.model.pending || !data.model.data.id"></mat-progress-bar>
+
 <div mat-dialog-content class="tree-dialog-content">
     <mat-form-field class="form-field">
         <input matInput type="text" placeholder="Name"
