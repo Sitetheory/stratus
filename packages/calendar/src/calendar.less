@@ -82,6 +82,7 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
   }
   button.fc-button {
     transition: all .2s ease-out;
+    -webkit-transition: all .2s ease-out;
     margin: 0 ;
     padding: 1px 16px;
     border-radius: 0;
@@ -100,9 +101,11 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
       &:first-child {
         border-left: none;
       }
-      &.fc-button-active,
+      &.fc-button-active {
+        font-weight: bold;
+      }
       &:hover {
-        color: #111;
+        color: #888;
       }
     }
 
