@@ -1407,7 +1407,12 @@ Stratus.Components.IdxPropertyDetails = {
 
         $scope.getMLSVariables = (): MLSService => {
             if (!$ctrl.mlsVariables) {
-                $ctrl.mlsVariables = Idx.getMLSVariables([$scope.model.data._ServiceId])[$scope.model.data._ServiceId]
+                Idx.getMLSVariables([$scope.model.data._ServiceId])
+                    .forEach((service: MLSService) => {
+                        if (service.id === $scope.model.data._ServiceId) {
+                            $ctrl.mlsVariables = service
+                        }
+                    })
                 // console.log('$ctrl.mlsVariables', $ctrl.mlsVariables)
             }
             return $ctrl.mlsVariables
