@@ -443,7 +443,10 @@ Stratus.Components.IdxPropertyList = {
          */
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
             if (!$ctrl.mlsVariables || reset) {
-                $ctrl.mlsVariables = Idx.getMLSVariables()
+                $ctrl.mlsVariables = []
+                Idx.getMLSVariables().forEach((service: MLSService) => {
+                    $ctrl.mlsVariables[service.id] = service
+                })
             }
             return $ctrl.mlsVariables
         }

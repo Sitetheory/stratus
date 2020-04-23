@@ -317,9 +317,10 @@ const angularJsService = (
     const defaultWhereOptions: WhereOptions = {
         Status: [],
         ListingType: [],
-        PostalCode: [],
+        CountyOrParish: [],
         MLSAreaMajor: [],
         Neighborhood: [],
+        PostalCode: [],
         // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
         CityRegion: [],
         AgentLicense: []
@@ -1127,6 +1128,10 @@ const angularJsService = (
             PostalCode: {
                 type: 'stringIncludesArray'
             },
+            CountyOrParish: {
+                // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                type: 'stringLikeArray'
+            },
             MLSAreaMajor: {
                 // Note: only 'in' seems to work as a replacement for inq when nested in another object
                 type: 'stringLikeArray'
@@ -1140,6 +1145,7 @@ const angularJsService = (
                 andOr: [
                     {apiField: 'City', type: 'stringLikeArray'},
                     {apiField: 'CityRegion', type: 'stringLikeArray'},
+                    {apiField: 'CountyOrParish', type: 'stringLikeArray'},
                     {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
                     {apiField: 'PostalCode', type: 'stringLikeArray'},
                     // TODO: in the future we should pass in a new defined field like Address (that will
@@ -1153,6 +1159,7 @@ const angularJsService = (
                 type: 'andOr',
                 andOr: [
                     {apiField: 'CityRegion', type: 'stringLikeArray'},
+                    {apiField: 'CountyOrParish', type: 'stringLikeArray'},
                     {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
                 ]
             }
