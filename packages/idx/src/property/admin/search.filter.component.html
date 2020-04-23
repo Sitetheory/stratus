@@ -107,7 +107,7 @@
             <div class="toggle-switch"
                  data-layout="row"
                  aria-label="Listings to Buy or Rent"
-                 data-layout-align="center center">
+                 data-layout-align="start center">
                 <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}" data-flex>
                     Buy
                 </div>
@@ -115,7 +115,7 @@
                         data-ng-model="options.forRent"
                         data-ng-change="selectDefaultListingType()"
                         aria-label="Buy or Rent"
-                        data-flex>
+                        >
                 </md-switch>
                 <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}" data-flex>
                     Rent
