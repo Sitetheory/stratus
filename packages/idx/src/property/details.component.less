@@ -450,6 +450,7 @@ stratus-idx-property-details {
     &.contact-container {
       background: #fff;
       text-align: center;
+      // stylelint-disable-next-line no-descending-specificity
       h4 {
         margin: 30px 0;
         font-size: 14px;
@@ -466,7 +467,6 @@ stratus-idx-property-details {
       }
     }
 
-
     /* Disclaimer Section */
     &.disclaimer-container {
       padding-top: 0;
@@ -478,7 +478,7 @@ stratus-idx-property-details {
         &.border-top {
           border-top: 1px solid rgba(0, 0, 0, 0.15);
         }
-        img {
+        .mls-service-logo {
           max-width: 80px;
           margin-top: 20px;
         }
