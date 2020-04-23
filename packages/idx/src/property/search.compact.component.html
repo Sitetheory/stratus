@@ -204,7 +204,7 @@
                     </div>
 
                     <!-- Only Include if these were preset in a Property Filter pages and we need the ability to remove them -->
-                    <div ng-if="options.query.where.City.length || options.query.where.MLSAreaMajor.length || options.PostalCode.length">
+                    <div ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
                         <div class="sale-status-border dotted-spaced-underline"></div>
                         <h3 data-layout-align="space-around center">Preset Filters</h3>
                         <div class="specific-filters" data-layout="row" data-layout-align="space-around center" aria-label="Specific Areas">
@@ -216,6 +216,20 @@
                                            maxlength="250"
                                            autocomplete="off">
                                 </md-input-container>
+                            </div>
+                            <div class="search-input" data-ng-if="options.query.where.CountyOrParish.length">
+                                <md-chips
+                                        class="area-id font-secondary"
+                                        aria-label="Counties to Limit"
+                                        data-ng-model="options.query.where.CountyOrParish"
+                                        data-md-enable-chip-edit="true"
+                                        data-md-add-on-blur="true"
+                                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                        data-placeholder="County"
+                                        data-secondary-placeholder="+County"
+                                        data-delete-button-label="Remove County"
+                                        data-delete-hint="Press delete to remove County"
+                                ></md-chips>
                             </div>
                             <div class="search-input" data-ng-if="options.query.where.MLSAreaMajor.length">
                                 <md-chips
