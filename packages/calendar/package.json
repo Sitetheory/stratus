@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/calendar",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "AngularJS Calendar component and iCAL service to be used as an add on to StratusJS. Makes use of fullcalendar and iCAL",
   "scripts": {},
   "repository": {
