@@ -34,13 +34,13 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
     }
   }
   /*  Force left and right button areas to have same width so month name is centered */
-  .fc-left,
-  .fc-right {
-    width: 30%;
-  }
+  //.fc-left,
+  //.fc-right {
+  //  width: 30%;
+  //}
   .fc-center {
     text-align: center;
-    width: 40%;
+    //width: 40%;
   }
   .fc-right {
     .fc-button-group {
@@ -243,19 +243,20 @@ body[class^="SitetheoryCalendarBundle"]:not(.disable-scroll) {
       background: #111;
     }
   }
-  .fc-list-item {
+  .fc-list-item,
+  &.fc-unthemed .fc-list-item {
     cursor: pointer;
     td {
       transition: all .1s ease-out;
     }
     &:hover {
       td {
-        color: #FFF;
-        background: #111;
+        color: #000;
+        background: rgba(0,0,0,.04);
       }
       .fc-list-item-marker {
         .fc-event-dot {
-          background: #111;
+          background: #000;
         }
       }
     }
