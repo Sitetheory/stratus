@@ -14,14 +14,40 @@
   const System = root.System
   const steal = root.steal
 
-  // Configure Require.js
-  if (typeof requirejs !== 'undefined') {
-    // TODO: We need to clone the boot configuration because Require.js will change the reference directly
-    requirejs.config(boot.configuration)
+  // TODO: Remove the appendJS function in a new version of boot to ensure we can use any extension we prefer
+  const appendJS = function (paths) {
+    if (typeof paths !== 'object' || !paths) {
+      return paths
+    }
+    for (const path in paths) {
+      if (!Object.prototype.hasOwnProperty.call(paths, path)) {
+        continue
+      }
+      paths[path] = paths[path] + '.js'
+    }
+    return paths
   }
 
-  // Configure steal.js
-  if (typeof steal !== 'undefined' && typeof steal.config === 'function') {
+  // TODO: Move things like this to the Hamlet library
+  const fullUrl = function (path) {
+    if (typeof path !== 'string') {
+      return path
+    }
+    if (path.startsWith('//')) {
+      return path
+    }
+    if (!path.startsWith('/')) {
+      return path
+    }
+    return `${location.origin + path}`
+  }
+
+  if (typeof requirejs !== 'undefined') {
+    // Handle RequireJS Detection
+    // TODO: We need to clone the boot configuration because Require.js will change the reference directly
+    requirejs.config(boot.configuration)
+  } else if (typeof steal !== 'undefined' && typeof steal.config === 'function') {
+    // Handle StealJS Detection
     // Require.js Config Conversion
     const config = boot.configuration
     config.baseURL = typeof config.baseUrl === 'string' ? config.baseUrl : '/'
@@ -29,27 +55,99 @@
     config.cacheVersion = boot.cacheTime
     // config.configMain = '@empty'
     if (typeof config.paths === 'object' && config.paths) {
+      config.paths = appendJS(config.paths)
+    }
+    // Inject into Steal Dynamically
+    steal.config(config)
+    console.log('StealJS configured dynamically for SystemJS support')
+  } else if (typeof System !== 'undefined' && typeof System.config === 'function') {
+    // Handle Legacy SystemJS Detection
+    System.config(boot.configuration)
+    console.log('SystemJS configured dynamically')
+  } else if (typeof System !== 'undefined') {
+    // Handle Modern SystemJS Detection
+    // ImportMap Injector
+    // const inject = function (paths) {
+    //   const configEl = document.createElement('script')
+    //   configEl.setAttribute('type', 'systemjs-importmap')
+    //   configEl.text = JSON.stringify({ imports: paths })
+    //   document.head.appendChild(configEl)
+    // }
+    // Dynamic Module Resolution
+    const constants = {}
+    const wildcards = {}
+    const dynamicModuleResolution = function (id) {
+      if (typeof id !== 'string') {
+        return false
+      }
+      if (typeof constants[id] === 'string') {
+        return constants[id]
+      }
+      // Check Wildcards for a match
+      for (const path in wildcards) {
+        if (!Object.prototype.hasOwnProperty.call(wildcards, path)) {
+          continue
+        }
+        const data = wildcards[path]
+        const re = new RegExp(data.re)
+        const matches = re.exec(id)
+        if (!matches || !matches.length || matches.length < 2) {
+          continue
+        }
+        return data.path.replace('*', matches[1])
+      }
+      return false
+    }
+    // SystemJS Resolver Hook
+    const originalResolve = System.constructor.prototype.resolve
+    System.constructor.prototype.resolve = function (id) {
+      try {
+        return originalResolve.apply(this, arguments)
+      } catch (err) {
+        // console.log('error:', err)
+        const modulePath = dynamicModuleResolution(id)
+        if (modulePath) {
+          return fullUrl(modulePath)
+        }
+        throw err
+      }
+    }
+    // Handle Config Paths
+    const config = boot.configuration
+    if (typeof config.paths === 'object' && config.paths) {
       for (const path in config.paths) {
         if (!Object.prototype.hasOwnProperty.call(config.paths, path)) {
           continue
         }
-        config.paths[path] = config.paths[path] + '.js'
+        // const pathUrl = `${boot.cdn + boot.relative + config.paths[path]}.js${boot.cacheTime ? '?v=' + boot.cacheTime : ''}`
+        const pathUrl = `${boot.cdn + boot.relative + config.paths[path]}.js`
+        if (path.endsWith('*')) {
+          const pathRe = path.replace('/', '\\/').replace('*', '(.*)')
+          wildcards[path] = {
+            path: pathUrl,
+            re: pathRe,
+          }
+          continue
+        }
+        constants[path] = pathUrl
+        // const singlePath = {}
+        // singlePath[path] = pathUrl
+        // inject(singlePath)
       }
     }
-    // Inject into Steal.js
-    steal.config(config)
+    console.log('SystemJS configured through dynamic module hook.')
+    // console.log('SystemJS configured through head element.')
+  } else {
+    console.warn('Module Loader not detected!')
   }
 
-  // Configure System.js
-  if (typeof System !== 'undefined' && typeof System.config === 'function') {
-    System.config(boot.configuration)
-  }
+  // throw "it begins!"
 
   // Begin Warm-Up
   if (typeof System !== 'undefined' && typeof System.import === 'function') {
     System.import('@stratusjs/runtime/stratus')
       .then(function () {
-        console.log('Stratus initialized through Steal.js')
+        console.log('Stratus initialized through SystemJS')
       })
   } else if (typeof require !== 'undefined') {
     require(['@stratusjs/runtime/stratus'])
