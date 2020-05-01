@@ -1,29 +1,69 @@
 // Angular Core
-import {HttpClientModule} from '@angular/common/http'
-import {ApplicationRef, ComponentFactory, NgModule} from '@angular/core'
-import {FormsModule, ReactiveFormsModule} from '@angular/forms'
-import {MatNativeDateModule} from '@angular/material'
-import {BrowserModule} from '@angular/platform-browser'
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
+import {
+    registerLocaleData
+} from '@angular/common'
+import {
+    HttpClientModule
+} from '@angular/common/http'
+import {
+    ApplicationRef,
+    ComponentFactory,
+    NgModule
+} from '@angular/core'
+import {
+    FormsModule,
+    ReactiveFormsModule
+} from '@angular/forms'
+import {
+    MatNativeDateModule
+} from '@angular/material'
+import {
+    BrowserModule
+} from '@angular/platform-browser'
+import {
+    BrowserAnimationsModule
+} from '@angular/platform-browser/animations'
+
+// Angular Locales
+// import localeFr from '@angular/common/locales/fr'
+// import localeEs from '@angular/common/locales/es'
+
+// Register Locales
+// registerLocaleData(localeFr, 'fr-FR')
+// registerLocaleData(localeEs, 'es-ES')
 
 // Stratus Modules
-import {MaterialModules} from '@stratusjs/angular/material'
+import {
+    MaterialModules
+} from '@stratusjs/angular/material'
 
 // Stratus Core Components
-import {BaseComponent} from '@stratusjs/angular/base/base.component'
+import {
+    BaseComponent
+} from '@stratusjs/angular/base/base.component'
 
 // Stratus Custom Components
-import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
-import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
-import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
-import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
+import {
+    SelectorComponent
+} from '@stratusjs/angular/selector/selector.component'
+import {
+    TreeComponent
+} from '@stratusjs/angular/tree/tree.component'
+import {
+    TreeDialogComponent
+} from '@stratusjs/angular/tree/tree-dialog.component'
+import {
+    TreeNodeComponent
+} from '@stratusjs/angular/tree/tree-node.component'
 
 // Angular Components
 import {QuillModule} from 'ngx-quill'
 
 // External Dependencies
 import _ from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
 
 // let roster: {};
 // roster = {
@@ -146,6 +186,6 @@ export class AppModule {
         })
         setTimeout(() => {
             this.detectBoot(appRef)
-        }, this.exponentialTimeout(4000))
+        }, this.exponentialTimeout(2000))
     }
 }
