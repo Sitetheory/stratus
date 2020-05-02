@@ -84,19 +84,28 @@
         return constants[id]
       }
       // Check Wildcards for a match
+      const matches = {}
       for (const path in wildcards) {
         if (!Object.prototype.hasOwnProperty.call(wildcards, path)) {
           continue
         }
         const data = wildcards[path]
         const re = new RegExp(data.re)
-        const matches = re.exec(id)
-        if (!matches || !matches.length || matches.length < 2) {
+        const digest = re.exec(id)
+        if (!digest || !digest.length || digest.length < 2) {
           continue
         }
-        return data.path.replace('*', matches[1])
+        matches[path] = data.path.replace('*', digest[1])
       }
-      return false
+      const matchPaths = Object.keys(matches)
+      if (!matchPaths.length) {
+        return false;
+      }
+      const bestPath = matchPaths.reduce((memo, value) => memo.length >= value.length ? memo : value)
+      if (!bestPath) {
+        return false;
+      }
+      return matches[bestPath]
     }
     // SystemJS Resolver Hook
     const originalResolve = System.constructor.prototype.resolve
@@ -105,6 +114,9 @@
         return originalResolve.apply(this, arguments)
       } catch (err) {
         // console.log('error:', err)
+        if (typeof id === 'string' && id.startsWith('.')) {
+          console.log(id)
+        }
         const modulePath = dynamicModuleResolution(id)
         if (modulePath) {
           return fullUrl(modulePath)
@@ -134,6 +146,7 @@
         // singlePath[path] = pathUrl
         // inject(singlePath)
       }
+      // TODO: Order the constants in terms of length, descending, to ensure the most accurate representation gets matched
     }
     console.log('SystemJS configured through dynamic module hook.')
     // console.log('SystemJS configured through head element.')
