@@ -186,6 +186,6 @@ export class AppModule {
         })
         setTimeout(() => {
             this.detectBoot(appRef)
-        }, this.exponentialTimeout(2000))
+        }, this.exponentialTimeout(4000))
     }
 }
