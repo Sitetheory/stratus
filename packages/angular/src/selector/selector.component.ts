@@ -236,10 +236,24 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     remove(model: any) {
         const models = this.dataRef()
         if (!models || !models.length) {
+            console.error('unable to remove model from selection:', models)
             return
         }
-        const index: number = models.indexOf(model)
+        let index: number = models.indexOf(model)
+        // attempt fallback procedure
         if (index === -1) {
+            const mirrorModels = models
+                .map((m: any) => model.id === m.id ? m : null)
+                .filter((m: any) => m)
+            if (_.isArray(mirrorModels) && mirrorModels.length) {
+                index = models.indexOf(
+                    _.first(mirrorModels)
+                )
+            }
+        }
+        // ensure index is available
+        if (index === -1) {
+            console.error('unable to find model:', model, 'in selection:', models)
             return
         }
         models.splice(index, 1)
