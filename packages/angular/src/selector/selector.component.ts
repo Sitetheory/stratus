@@ -151,12 +151,12 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
             .then(() => {
                 this.styled = true
-                ref.detectChanges()
+                this.refresh()
             })
             .catch(() => {
                 console.error('CSS Failed to load for Component:', this)
                 this.styled = true
-                ref.detectChanges()
+                this.refresh()
             })
 
         // Hydrate Root App Inputs
@@ -178,7 +178,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                     // this.onDataChange();
                     this.dataDefer(this.subscriber)
                     this.prioritize()
-                    this.ref.detectChanges()
+                    this.refresh()
                 }
                 data.on('change', onDataChange)
                 onDataChange()
@@ -221,6 +221,16 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     // ngDoCheck(): void {
     //     console.info('ngDoCheck:', this.dataSub);
     // }
+
+    public refresh() {
+        if (!this.ref) {
+            console.error('ref not available:', this)
+            return
+        }
+        this.ref.detach()
+        this.ref.detectChanges()
+        this.ref.reattach()
+    }
 
     drop(event: CdkDragDrop<string[]>) {
         const models = this.dataRef()
@@ -353,7 +363,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         // FIXME: This is not in use due to contextual issues.
         this.prioritize()
         this.dataDefer(this.subscriber)
-        this.ref.detectChanges()
+        this.refresh()
     }
 
     prioritize() {
