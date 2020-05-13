@@ -5,13 +5,15 @@ import {seconds} from '@stratusjs/core/conversion'
 import _ from 'lodash'
 
 // Cookie Getter & Setter
-export function cookie(name: any, value?: any, expires?: any, path?: any, domain?: any) {
+export function cookie(name: any, value?: any, expires?: any, path?: any, domain?: any, secure?: any, sameSite?: any) {
     const request = {
         name,
         value,
         expires,
         path: path || '/',
-        domain
+        domain,
+        secure,
+        sameSite
     }
     if (name && typeof name === 'object') {
         _.extend(request, name)
@@ -39,5 +41,8 @@ export function cookie(name: any, value?: any, expires?: any, path?: any, domain
     if (request.domain) {
         data += 'domain=' + request.domain + ';'
     }
+    data += `secure=${request.secure === false ? 'false' : 'true'};`
+    data += `sameSite=${request.sameSite || 'None'};`
+    console.log('new cookie:', data)
     document.cookie = data
 }
