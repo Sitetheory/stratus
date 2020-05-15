@@ -16,7 +16,7 @@
     "url": "git+https://github.com/sitetheory/stratus.git"
   },
   "author": "Sitetheory Development Team (https://sitetheory.io/)",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "mit",
   "bugs": {
     "url": "https://github.com/Sitetheory/stratus/issues"
   },
