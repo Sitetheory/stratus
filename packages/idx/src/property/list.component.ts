@@ -65,6 +65,10 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
     disclaimerString: string
     disclaimerHTML: any
 
+    pageChange(pageNumber: number, ev?: any): Promise<void>,
+    pageNext(ev?: any): Promise<void>,
+    pagePrevious(ev?: any): Promise<void>,
+    orderChange(order: string | string[], ev?: any): Promise<void>,
     searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
@@ -91,6 +95,7 @@ Stratus.Components.IdxPropertyList = {
         urlLoad: '@'
     },
     controller(
+        $anchorScroll: angular.IAnchorScrollService,
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
@@ -352,6 +357,7 @@ Stratus.Components.IdxPropertyList = {
                 ev.preventDefault()
             }
             $scope.query.page = pageNumber
+            $anchorScroll($scope.elementId) // Scroll to the top again
             await $scope.searchProperties()
         }
 
