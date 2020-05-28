@@ -65,6 +65,11 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
     disclaimerString: string
     disclaimerHTML: any
 
+    pageChange(pageNumber: number, ev?: any): Promise<void>
+    pageNext(ev?: any): Promise<void>
+    pagePrevious(ev?: any): Promise<void>
+    orderChange(order: string | string[], ev?: any): Promise<void>
+    refreshSearchWidgetOptions(): Promise<void>
     searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
@@ -91,6 +96,7 @@ Stratus.Components.IdxPropertyList = {
         urlLoad: '@'
     },
     controller(
+        $anchorScroll: angular.IAnchorScrollService,
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
@@ -190,6 +196,7 @@ Stratus.Components.IdxPropertyList = {
                 // Load Query from the provided URL settings
                 urlQuery = Idx.getOptionsFromUrl()
                 // If a specific listing is provided, be sure to pop it up as well
+                // console.log('urlQuery', _.clone(urlQuery))
                 if (
                     // urlQuery.hasOwnProperty('Listing') &&
                     urlQuery.Listing.service &&
@@ -200,12 +207,14 @@ Stratus.Components.IdxPropertyList = {
             }
 
             if ($scope.searchOnLoad) {
+                // console.log('at $scope.searchOnLoad', _.clone(urlQuery.Search))
                 const searchQuery: CompileFilterOptions = {
                     where: _.clone(urlQuery.Search) as WhereOptions
                 }
-                delete searchQuery.where.Page
-                delete searchQuery.where.Order
-                await $scope.searchProperties(searchQuery, true, false)
+                // delete searchQuery.where.Page
+                // delete searchQuery.where.Order
+                // console.log('about to searchProperties for', _.clone(searchQuery))
+                await $scope.searchProperties(searchQuery, false, false)
             }
         }
 
@@ -247,6 +256,7 @@ Stratus.Components.IdxPropertyList = {
             $q((resolve: any) => {
                 query = query || _.clone($scope.query) || {}
                 query.where = query.where || {}
+                // console.log('searchProperties has query', _.clone(query))
 
                 let where: UrlWhereOptions = _.clone(query.where) || {}
                 // updateUrl = updateUrl === false ? updateUrl : true
@@ -271,11 +281,18 @@ Stratus.Components.IdxPropertyList = {
                         delete ($scope.query.where.Order)
                     } */
                 } else {
+                    // console.log('query.where is blank, so loading', _.clone($scope.query.where))
                     where = _.clone($scope.query.where) || {}
                 }
 
                 // Page checks
                 // If a different page, set it in the URL
+                if (query.where.Page) {
+                    // console.log('there was a query.where.Page of ', _.clone(query.where.Page))
+                    // If Page was placed in the where query, let's move it
+                    query.page = query.where.Page
+                    delete query.where.Page
+                }
                 if (query.page) {
                     $scope.query.page = query.page
                 }
@@ -291,11 +308,17 @@ Stratus.Components.IdxPropertyList = {
                     delete (where.Page)
                 }
 
+                if (query.where.Order) {
+                    // If Order was placed in the where query, let's move it
+                    query.order = query.where.Order
+                    delete query.where.Order
+                }
                 if (query.order) {
                     $scope.query.order = query.order
                     // delete ($scope.query.where.Order)
                 }
                 if ($scope.query.order && $scope.query.order.length > 0) {
+                    // console.log('setting where to', _.clone($scope.query.order), 'from', _.clone(where.Order))
                     where.Order = $scope.query.order
                 }
 
@@ -335,6 +358,7 @@ Stratus.Components.IdxPropertyList = {
                 ev.preventDefault()
             }
             $scope.query.page = pageNumber
+            $anchorScroll($scope.elementId) // Scroll to the top again
             await $scope.searchProperties()
         }
 
