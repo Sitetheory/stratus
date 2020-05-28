@@ -65,10 +65,11 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
     disclaimerString: string
     disclaimerHTML: any
 
-    pageChange(pageNumber: number, ev?: any): Promise<void>,
-    pageNext(ev?: any): Promise<void>,
-    pagePrevious(ev?: any): Promise<void>,
-    orderChange(order: string | string[], ev?: any): Promise<void>,
+    pageChange(pageNumber: number, ev?: any): Promise<void>
+    pageNext(ev?: any): Promise<void>
+    pagePrevious(ev?: any): Promise<void>
+    orderChange(order: string | string[], ev?: any): Promise<void>
+    refreshSearchWidgetOptions(): Promise<void>
     searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,

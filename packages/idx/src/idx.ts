@@ -38,38 +38,38 @@ export interface IdxService {
     sharedValues: IdxSharedValue
 
     // Functions
-    fetchMembers: (
+    fetchMembers(
         $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>, refresh?: boolean, listName?: string
-    ) => Promise<Collection>
-    fetchOffices: (
+    ): Promise<Collection>
+    fetchOffices(
         $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>, refresh?: boolean, listName?: string
-    ) => Promise<Collection>
-    fetchProperties: (
+    ): Promise<Collection>
+    fetchProperties(
         $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>, refresh?: boolean, listName?: string
-    ) => Promise<Collection>
-    fetchProperty: ($scope: any, modelVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>) => Promise<Model>
-    devLog: (arg: any, arg2: any) => void
-    getContactVariables: () => WidgetContact[]
-    getDefaultWhereOptions: () => WhereOptions
-    getFriendlyStatus: (property: any) => string // TODO replace with property object
-    getIdxServices: () => number[]
-    getListInstance: (listUid: string, listType?: string) => any // TODO return with a scope
-    getListInstanceLinks: (listUid: string, listType?: string) => any[] // TODO return with a scope[]
-    getMLSVariables: (serviceIds?: number[]) => MLSService[]
-    getOptionsFromUrl: () => UrlsOptionsObject
-    getSearchInstanceLinks: (searchUid: string, listType?: string) => any[] // TODO return with a scope[]
-    getUrlOptions: (listingOrSearch: 'Search' | 'Listing') => UrlWhereOptions
-    getUrlOptionsPath: (defaultOptions?: any) => string
-    registerDetailsInstance: (uid: string, $scope: any, listType?: string) => void
-    registerListInstance: (uid: string, $scope: any, listType?: string) => void
-    registerSearchInstance: (uid: string, $scope: any, listUid?: string, listType?: string) => void
-    setIdxServices: (property: number[]) => void
-    setPageTitle: (title?: string) => void
-    setTokenURL: (url: string) => void
-    setUrlOptions: (listingOrSearch: 'Search' | 'Listing', options: any) => void
-    tokenKeepAuth: (keepAlive?: boolean) => IPromise<void>
-    refreshUrlOptions: (defaultOptions: any) => void
-    unregisterDetailsInstance: (uid: string, listType?: string) => void
+    ): Promise<Collection>
+    fetchProperty($scope: any, modelVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>): Promise<Model>
+    devLog(arg: any, arg2: any): void
+    getContactVariables(): WidgetContact[]
+    getDefaultWhereOptions(): WhereOptions
+    getFriendlyStatus(property: any): string // TODO replace with property object
+    getIdxServices(): number[]
+    getListInstance(listUid: string, listType?: string): any // TODO return with a scope
+    getListInstanceLinks(listUid: string, listType?: string): any[] // TODO return with a scope[]
+    getMLSVariables(serviceIds?: number[]): MLSService[]
+    getOptionsFromUrl(): UrlsOptionsObject
+    getSearchInstanceLinks(searchUid: string, listType?: string): any[] // TODO return with a scope[]
+    getUrlOptions(listingOrSearch: 'Search' | 'Listing'): UrlWhereOptions
+    getUrlOptionsPath(defaultOptions?: any): string
+    registerDetailsInstance(uid: string, $scope: any, listType?: string): void
+    registerListInstance(uid: string, $scope: any, listType?: string): void
+    registerSearchInstance(uid: string, $scope: any, listUid?: string, listType?: string): void
+    setIdxServices(property: number[]): void
+    setPageTitle(title?: string): void
+    setTokenURL(url: string): void
+    setUrlOptions(listingOrSearch: 'Search' | 'Listing', options: any): void
+    tokenKeepAuth(keepAlive?: boolean): IPromise<void>
+    refreshUrlOptions(defaultOptions: any): void
+    unregisterDetailsInstance(uid: string, listType?: string): void
 }
 
 export interface UrlsOptionsObject {
