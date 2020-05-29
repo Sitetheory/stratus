@@ -1414,9 +1414,23 @@ const angularJsService = (
             options.perPage = 20
         }
 
+        // Ensure we do not skip past some records by getting a list of what we need
+        let activeServices = 0
+        if (typeof options.service === 'number') {
+            options.service = [options.service]
+        }
+        options.service.forEach(serviceId => {
+            if (Object.prototype.hasOwnProperty.call(session.services, serviceId)) {
+                activeServices++
+            }
+        })
+        // always ensure that it's 1 or greater
+        activeServices = activeServices >= 1 ? activeServices : 1
+
         let skip = 0
         if (options.page) {
-            skip = (options.page - 1) * options.perPage
+            // Divide skip by number of active services to get the correct page count
+            skip = (options.page - 1) * options.perPage / activeServices
         }
         const filterQuery: MongoFilterQuery = {
             where: filterFunction(options.where),
