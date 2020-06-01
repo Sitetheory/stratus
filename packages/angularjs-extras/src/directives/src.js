@@ -17,7 +17,7 @@
   }
 }(this, function (Stratus, _, jQuery, angular) {
   // This directive intends to handle binding of a dynamic variable to
-  Stratus.Directives.Src = function ($parse, $interpolate) {
+  Stratus.Directives.Src = function () {
     return {
       restrict: 'A',
       scope: {
@@ -63,6 +63,11 @@
         // Group Registration
         $scope.registered = false
         $scope.register = function () {
+          // Don't re-register
+          if ($scope.registered) {
+            return true
+          }
+
           // find background image in CSS if there is no src (e.g. for div)
           let backgroundImage = null
           const type = $element.prop('tagName').toLowerCase()
@@ -114,14 +119,16 @@
             return true
           }
 
+          // Ensure we have a location
+          if (!src && !backgroundImage) {
+            return false
+          }
+
           // Don't re-register
           if ($scope.registered) {
             return true
           }
           $scope.registered = true
-          if (!src && !backgroundImage) {
-            return false
-          }
 
           // Begin Registration
           $element.attr('data-src', src)
