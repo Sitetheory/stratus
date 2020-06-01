@@ -1829,11 +1829,11 @@ const angularJsService = (
      * @param collection - {Collection}
      * @param propertyNames - value(s) to reorder/sort by. {String || [String]}
      * @param reverse - If it should reverse sort by the value. {Boolean=}
-     * TODO ensure 'orderByFilter' works
      */
     function orderBy(collection: Collection, propertyNames: string | string[], reverse = false): void {
-        if (propertyNames && propertyNames !== []) {
-            collection.models = orderByFilter(collection.models, propertyNames, reverse)
+        const orderPropertyNames = _.clone(propertyNames)
+        if (orderPropertyNames) {
+            collection.models = orderByFilter(collection.models, orderPropertyNames, reverse)
         }
     }
 
