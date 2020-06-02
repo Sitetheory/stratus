@@ -167,11 +167,12 @@ Stratus.Components.IdxPropertyList = {
 
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
 
+            // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
             $scope.orderOptions = $scope.orderOptions || {
-                'Price (high to low)': '-ListPrice',
-                'Price (low to high)': 'ListPrice',
+                'Price (high to low)': ['-ClosePrice', '-ListPrice'],
+                'Price (low to high)': ['ClosePrice', 'ListPrice'],
                 'Recently Updated': '-ModificationTimestamp',
-                'Recently Sold': '-CloseDate',
+                'Recently Sold': '-CloseDate'
             }
 
             $scope.googleApiKey = $attrs.googleApiKey || null
