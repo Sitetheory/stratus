@@ -1333,8 +1333,8 @@ Stratus.Internals.LoadImage = (obj: any) => {
         }, 500)
         return false
     }
-    // const el: any = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
-    const el: any = obj.el instanceof angular.element ? obj.el : angular.element(obj.el)
+    const el: any = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
+    // const el: any = obj.el instanceof angular.element ? obj.el : angular.element(obj.el)
     if (!el.length) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
@@ -1348,220 +1348,233 @@ Stratus.Internals.LoadImage = (obj: any) => {
             jQuery(this).remove() // prevent memory leaks
         })
     }
-    if (Stratus.Internals.IsOnScreen(obj.spy || el) && !hydrate(el.attr('data-loading'))) {
-        el.attr('data-loading', dehydrate(true))
-        Stratus.DOM.complete(() => {
-            // By default we'll load larger versions of an image to look good on HD
-            // displays, but if you don't want that, you can bypass it with
-            // data-hd="false"
-            let hd: any = hydrate(el.attr('data-hd'))
-            if (typeof hd === 'undefined') {
-                hd = true
+    if (hydrate(el.attr('data-loading'))) {
+        // if (cookie('env')) {
+        //     console.log('loading:', _.first(el))
+        // }
+        return
+    }
+    if (!Stratus.Internals.IsOnScreen(obj.spy || el)) {
+        // if (cookie('env')) {
+        //     console.log('not on screen:', _.first(el))
+        // }
+        return
+    }
+    if (cookie('env')) {
+        console.log('on screen:', _.first(el))
+    }
+    el.attr('data-loading', dehydrate(true))
+    Stratus.DOM.complete(() => {
+        // By default we'll load larger versions of an image to look good on HD
+        // displays, but if you don't want that, you can bypass it with
+        // data-hd="false"
+        let hd: any = hydrate(el.attr('data-hd'))
+        if (typeof hd === 'undefined') {
+            hd = true
+        }
+
+        // Don't Get the Width, until it's "onScreen" (in case it was collapsed
+        // offscreen originally)
+        let src: any = hydrate(el.attr('data-src')) || el.attr('src') || null
+        // NOTE: Element can be either <img> or any element with background image in style
+        const type: any = el.prop('tagName').toLowerCase()
+
+        // Handle precedence
+        // TODO: @deprecated - we don't need to support "lazy" since that is the same as empty
+        if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
+            src = el.attr('src')
+        }
+        if (_.isEmpty(src)) {
+            return false
+        }
+
+        let size: any = hydrate(el.attr('data-size')) || obj.size || null
+
+        // if a specific valid size is requested, use that
+        // FIXME: size.indexOf should never return anything useful
+        if (!size) {
+            let width: any = null
+            let unit: any = null
+            let percentage: any = null
+
+            // if (el.width()) {
+            if (el.offsetWidth || el.clientWidth) {
+                // Check if there is CSS width hard coded on the element
+                // width = el.width()
+                width = el.offsetWidth || el.clientWidth
+            } else if (el.attr('width')) {
+                width = el.attr('width')
             }
 
-            // Don't Get the Width, until it's "onScreen" (in case it was collapsed
-            // offscreen originally)
-            let src: any = hydrate(el.attr('data-src')) || el.attr('src') || null
-            // NOTE: Element can be either <img> or any element with background image in style
-            const type: any = el.prop('tagName').toLowerCase()
-
-            // Handle precedence
-            // TODO: @deprecated - we don't need to support "lazy" since that is the same as empty
-            if (type === 'img' && (src === 'lazy' || _.isEmpty(src))) {
-                src = el.attr('src')
+            // Digest Width Attribute
+            if (width) {
+                const digest: any = /([\d]+)(.*)/
+                width = digest.exec(width)
+                unit = width[2]
+                width = parseInt(width[1], 10)
+                percentage = unit === '%' ? (width / 100) : null
             }
-            if (_.isEmpty(src)) {
+
+            // FIXME: This should only happen if the CSS has completely loaded.
+            // Gather Container (Calculated) Width
+            if (!width || unit === '%') {
+                // If there is no CSS width, calculate the parent container's width
+                // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
+                // So we need to find the first parent that is visible and use that width
+                // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
+                // so in some cases we need to flag to find the parent regardless of invisibility.
+                const visibilitySelector: any = hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
+                // TODO need a replacement for jQuery().parents() and jQuery().find() with class
+                const $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
+                // let $visibleParent = obj.spy || el.parent()
+                width = $visibleParent ? $visibleParent.width() : 0
+
+                // If one of parents of the image (and child of the found parent) has
+                // a bootstrap col-*-* set divide width by that in anticipation (e.g.
+                // Carousel that has items grouped)
+                const $col = $visibleParent.find('[class*="col-"]')
+
+                if ($col.length > 0) {
+                    const colWidth: any = Stratus.Internals.GetColWidth($col)
+                    if (colWidth) {
+                        width = Math.round(width / colWidth)
+                    }
+                }
+
+                // Calculate Percentage
+                if (percentage) {
+                    width = Math.round(width * percentage)
+                }
+            }
+
+            // If no appropriate width was found, abort
+            if (width <= 0) {
+                setTimeout(() => {
+                    el.attr('data-loading', dehydrate(false))
+                    Stratus.Internals.LoadImage(obj)
+                }, 500)
                 return false
             }
 
-            let size: any = hydrate(el.attr('data-size')) || obj.size || null
-
-            // if a specific valid size is requested, use that
-            // FIXME: size.indexOf should never return anything useful
-            if (!size) {
-                let width: any = null
-                let unit: any = null
-                let percentage: any = null
-
-                // if (el.width()) {
-                if (el.offsetWidth || el.clientWidth) {
-                    // Check if there is CSS width hard coded on the element
-                    // width = el.width()
-                    width = el.offsetWidth || el.clientWidth
-                } else if (el.attr('width')) {
-                    width = el.attr('width')
-                }
-
-                // Digest Width Attribute
-                if (width) {
-                    const digest: any = /([\d]+)(.*)/
-                    width = digest.exec(width)
-                    unit = width[2]
-                    width = parseInt(width[1], 10)
-                    percentage = unit === '%' ? (width / 100) : null
-                }
-
-                // FIXME: This should only happen if the CSS has completely loaded.
-                // Gather Container (Calculated) Width
-                if (!width || unit === '%') {
-                    // If there is no CSS width, calculate the parent container's width
-                    // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
-                    // So we need to find the first parent that is visible and use that width
-                    // NOTE: when lazy-loading in a slideshow, the containers that determine the size, might be invisible
-                    // so in some cases we need to flag to find the parent regardless of invisibility.
-                    const visibilitySelector: any = hydrate(el.attr('data-ignore-visibility')) ? null : ':visible'
-                    // TODO need a replacement for jQuery().parents() and jQuery().find() with class
-                    const $visibleParent = jQuery(_.first(jQuery(obj.el).parents(visibilitySelector)))
-                    // let $visibleParent = obj.spy || el.parent()
-                    width = $visibleParent ? $visibleParent.width() : 0
-
-                    // If one of parents of the image (and child of the found parent) has
-                    // a bootstrap col-*-* set divide width by that in anticipation (e.g.
-                    // Carousel that has items grouped)
-                    const $col = $visibleParent.find('[class*="col-"]')
-
-                    if ($col.length > 0) {
-                        const colWidth: any = Stratus.Internals.GetColWidth($col)
-                        if (colWidth) {
-                            width = Math.round(width / colWidth)
-                        }
-                    }
-
-                    // Calculate Percentage
-                    if (percentage) {
-                        width = Math.round(width * percentage)
-                    }
-                }
-
-                // If no appropriate width was found, abort
-                if (width <= 0) {
-                    setTimeout(() => {
-                        el.attr('data-loading', dehydrate(false))
-                        Stratus.Internals.LoadImage(obj)
-                    }, 500)
-                    return false
-                }
-
-                // Double for HD
-                if (hd) {
-                    width = width * 2
-                }
-
-                // Return the first size that is bigger than container width
-                size = _.findKey(Stratus.Settings.image.size, (s: any) => {
-                    const ratio: any = s / width
-                    return (ratio > 0.85 && ratio < 1.15) || s > width
-                })
-
-                // default to largest size if the container is larger and it didn't
-                // find a size
-                size = size || 'hq'
-
-                // if (cookie('env')) {
-                //     console.log('size:', size, width, el)
-                // }
-
-                // Fail-safe for images that are sized too early
-                if (size === 'xs') {
-                    setTimeout(() => {
-                        el.attr('data-loading', dehydrate(false))
-                        Stratus.Internals.LoadImage(obj)
-                    }, 1500)
-                }
+            // Double for HD
+            if (hd) {
+                width = width * 2
             }
 
-            // Change Source to right size (get the base and extension and ignore
-            // size)
-            const srcOrigin: string = src
-            const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
-            const srcMatch: RegExpExecArray = srcRegex.exec(src)
-            if (srcMatch !== null) {
-                src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
-            } else {
-                console.error('Unable to find file name for image src:', el)
-            }
-
-            // Start Loading
-            el.addClass('loading')
-
-            const srcOriginProtocol: any = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
-
-            // Set up actions for to load the smallest image first.
-            if (type === 'img') {
-                // Add Listeners (Only once per Element!)
-                el.on('load', () => {
-                    el.addClass('loaded').removeClass('loading')
-                    jQuery(this).remove() // prevent memory leaks
-                })
-                el.on('error', () => {
-                    // This is the smallest size, so there is nothing to fallback to. Let's hope a bigger size below fixes the image
-                    el.attr('data-loading', dehydrate(false))
-                    // el.attr('src', srcOriginProtocol)
-                    if (cookie('env')) {
-                        console.log('LoadImage() Unable to load', size.toUpperCase(), 'size.', srcOriginProtocol)
-                    }
-                    jQuery(this).remove() // prevent memory leaks
-                })
-            } else {
-                // If Background Image Create a Test Image to Test Loading
-                const loadEl: any = jQuery('<img/>')
-                loadEl.attr('src', srcOriginProtocol)
-                loadEl.on('load', () => {
-                    // If the image wasn't set in the background yet, set it now
-                    el.css('background-image', 'url(' + srcOriginProtocol + ')')
-                    el.addClass('loaded').removeClass('loading')
-                    jQuery(this).remove() // prevent memory leaks
-                })
-                loadEl.on('error', () => {
-                    // This is the smallest size, so there is nothing to fallback to. Let's hope a bigger size below fixes the image
-                    el.attr('data-loading', dehydrate(false))
-                    if (cookie('env')) {
-                        console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at ', srcOriginProtocol)
-                    }
-                    jQuery(this).remove() // prevent memory leaks
-                })
-            }
-
-            // Set up actions to preload and replace the small image with the desire size.
-            // onLoad and onError (if size doesn't exist, just don't use the prefetched image)
-            // Change the Source to be the desired path (for image or background)
-            const srcProtocol: any = src.startsWith('//') ? window.location.protocol + src : src
-            el.attr('data-loading', dehydrate(false))
-            el.attr('data-size', dehydrate(size))
-
-            // Preload this image first. Ensures speed to display and image is valid
-            const preFetchEl: any = jQuery('<img/>')
-            preFetchEl.attr('src', srcProtocol)
-            preFetchEl.on('load', () => {
-                el.addClass('loaded').removeClass('loading')
-                if (type === 'img') {
-                    el.attr('src', srcProtocol)
-                } else {
-                    el.css('background-image', 'url(' + srcProtocol + ')')
-                }
-                jQuery(this).remove() // prevent memory leaks
-            })
-            preFetchEl.on('error', () => {
-                // Image failed, dont try to use this url
-                // TODO: Go down in sizes before reaching the origin
-                if (cookie('env')) {
-                    console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at', srcProtocol)
-                }
-                jQuery(this).remove() // prevent memory leaks
+            // Return the first size that is bigger than container width
+            size = _.findKey(Stratus.Settings.image.size, (s: any) => {
+                const ratio: any = s / width
+                return (ratio > 0.85 && ratio < 1.15) || s > width
             })
 
-            // FIXME: This is a mess that we shouldn't need to maintain.
-            // RegisterGroups should just use Native Logic instead of
-            // another level of abstraction.np
+            // default to largest size if the container is larger and it didn't
+            // find a size
+            size = size || 'hq'
 
-            // Remove from registration
-            // TODO: remove this
-            Stratus.RegisterGroup.remove('OnScroll', obj)
             // if (cookie('env')) {
-            //   console.log('Remove RegisterGroup:', obj)
+            //     console.log('size:', size, width, el)
             // }
+
+            // Fail-safe for images that are sized too early
+            if (size === 'xs') {
+                setTimeout(() => {
+                    el.attr('data-loading', dehydrate(false))
+                    Stratus.Internals.LoadImage(obj)
+                }, 1500)
+            }
+        }
+
+        // Change Source to right size (get the base and extension and ignore
+        // size)
+        const srcOrigin: string = src
+        const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+        const srcMatch: RegExpExecArray = srcRegex.exec(src)
+        if (srcMatch !== null) {
+            src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
+        } else {
+            console.error('Unable to find file name for image src:', el)
+        }
+
+        // Start Loading
+        el.addClass('loading')
+
+        const srcOriginProtocol: any = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
+
+        // Set up actions for to load the smallest image first.
+        if (type === 'img') {
+            // Add Listeners (Only once per Element!)
+            el.on('load', () => {
+                el.addClass('loaded').removeClass('loading')
+                jQuery(this).remove() // prevent memory leaks
+            })
+            el.on('error', () => {
+                // This is the smallest size, so there is nothing to fallback to. Let's hope a bigger size below fixes the image
+                el.attr('data-loading', dehydrate(false))
+                // el.attr('src', srcOriginProtocol)
+                if (cookie('env')) {
+                    console.log('LoadImage() Unable to load', size.toUpperCase(), 'size.', srcOriginProtocol)
+                }
+                jQuery(this).remove() // prevent memory leaks
+            })
+        } else {
+            // If Background Image Create a Test Image to Test Loading
+            const loadEl: any = jQuery('<img/>')
+            loadEl.attr('src', srcOriginProtocol)
+            loadEl.on('load', () => {
+                // If the image wasn't set in the background yet, set it now
+                el.css('background-image', 'url(' + srcOriginProtocol + ')')
+                el.addClass('loaded').removeClass('loading')
+                jQuery(this).remove() // prevent memory leaks
+            })
+            loadEl.on('error', () => {
+                // This is the smallest size, so there is nothing to fallback to. Let's hope a bigger size below fixes the image
+                el.attr('data-loading', dehydrate(false))
+                if (cookie('env')) {
+                    console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at ', srcOriginProtocol)
+                }
+                jQuery(this).remove() // prevent memory leaks
+            })
+        }
+
+        // Set up actions to preload and replace the small image with the desire size.
+        // onLoad and onError (if size doesn't exist, just don't use the prefetched image)
+        // Change the Source to be the desired path (for image or background)
+        const srcProtocol: any = src.startsWith('//') ? window.location.protocol + src : src
+        el.attr('data-loading', dehydrate(false))
+        el.attr('data-size', dehydrate(size))
+
+        // Preload this image first. Ensures speed to display and image is valid
+        const preFetchEl: any = jQuery('<img/>')
+        preFetchEl.attr('src', srcProtocol)
+        preFetchEl.on('load', () => {
+            el.addClass('loaded').removeClass('loading')
+            if (type === 'img') {
+                el.attr('src', srcProtocol)
+            } else {
+                el.css('background-image', 'url(' + srcProtocol + ')')
+            }
+            jQuery(this).remove() // prevent memory leaks
         })
-    }
+        preFetchEl.on('error', () => {
+            // Image failed, dont try to use this url
+            // TODO: Go down in sizes before reaching the origin
+            if (cookie('env')) {
+                console.warn('LoadImage() Unable to load', size.toUpperCase(), 'size at', srcProtocol)
+            }
+            jQuery(this).remove() // prevent memory leaks
+        })
+
+        // FIXME: This is a mess that we shouldn't need to maintain.
+        // RegisterGroups should just use Native Logic instead of
+        // another level of abstraction.np
+
+        // Remove from registration
+        // TODO: remove this
+        Stratus.RegisterGroup.remove('OnScroll', obj)
+        // if (cookie('env')) {
+        //   console.log('Remove RegisterGroup:', obj)
+        // }
+    })
 }
 
 Stratus.Internals.Location = (options: any) => {
@@ -1612,6 +1625,9 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
                 obj.method(obj)
             }
         })
+        // if (cookie('env')) {
+        //     console.log('viewPortChange:', false)
+        // }
         model.set('viewPortChange', false)
         model.set('windowTop', jQuery(Stratus.Environment.get('viewPort') || window).scrollTop())
     })
@@ -1628,6 +1644,9 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
         }
         Stratus.Environment.set('viewPortChange', true)
     }
+    // if (cookie('env')) {
+    //     console.log('add scroll listener to viewport:', viewPort)
+    // }
     viewPort.addEventListener('scroll', viewPortChangeHandler, Stratus.Environment.get('passiveEventOptions'))
     // Resizing can change what's on screen so we need to check the scrolling
     viewPort.addEventListener('resize', viewPortChangeHandler, Stratus.Environment.get('passiveEventOptions'))
