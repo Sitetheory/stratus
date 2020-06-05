@@ -550,7 +550,7 @@ Stratus.Selector.addEventListener = function addEventListener(type: any, listene
         listen(that.selection)
         return that
     }
-    console.warn('Unabled to add EventListener on:', that.selection)
+    console.warn('Unable to add EventListener on:', that.selection)
     return that
 }
 
