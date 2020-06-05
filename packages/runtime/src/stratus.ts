@@ -1360,9 +1360,6 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // }
         return
     }
-    if (cookie('env')) {
-        console.log('on screen:', _.first(el))
-    }
     el.attr('data-loading', dehydrate(true))
     Stratus.DOM.complete(() => {
         // By default we'll load larger versions of an image to look good on HD
