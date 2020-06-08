@@ -96,6 +96,14 @@
             return true
           }
 
+          // Treat stratus-src="true" the same as empty
+          if (
+            $attr.stratusSrc === 'true' ||
+            $attr.stratusSrc === true
+          ) {
+            $attr.stratusSrc = null
+          }
+
           const src = $attr.stratusSrc || $attr.src || backgroundImage
 
           // Get Extension
@@ -115,7 +123,7 @@
           }
 
           // Ensure we have a location
-          if (!src && !backgroundImage) {
+          if (!src) {
             return false
           }
 
