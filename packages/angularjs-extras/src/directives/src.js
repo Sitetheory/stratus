@@ -52,7 +52,7 @@
          * @param {string} tagType
          * @param {string} src
          */
-        $scope.setSrc = function(tagType, src) {
+        $scope.setSrc = function (tagType, src) {
           if (tagType === 'img') {
             $element.attr('src', src)
           } else {
@@ -63,11 +63,6 @@
         // Group Registration
         $scope.registered = false
         $scope.register = function () {
-          // Don't re-register
-          if ($scope.registered) {
-            return true
-          }
-
           // find background image in CSS if there is no src (e.g. for div)
           let backgroundImage = null
           const type = $element.prop('tagName').toLowerCase()
@@ -79,7 +74,7 @@
           }
 
           // Prevent Progressive loading if set to false. Will not continue any further
-          if(
+          if (
             $attr.stratusSrcVersion === 'false' ||
             $attr.stratusSrcVersion === false
           ) {
@@ -90,7 +85,7 @@
           }
 
           // Prevent Progressive loading if set to false
-          if(
+          if (
             $attr.stratusSrc === 'false' ||
             $attr.stratusSrc === false
           ) {
