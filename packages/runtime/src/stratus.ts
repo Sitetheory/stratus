@@ -1331,7 +1331,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
         }, 500)
-        return false
+        return
     }
     const el: any = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
     // const el: any = obj.el instanceof angular.element ? obj.el : angular.element(obj.el)
@@ -1339,7 +1339,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
         }, 500)
-        return false
+        return
     }
     if (!el.hasClass('placeholder')) {
         el.addClass('placeholder')
@@ -1365,14 +1365,14 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // By default we'll load larger versions of an image to look good on HD
         // displays, but if you don't want that, you can bypass it with
         // data-hd="false"
-        let hd: any = hydrate(el.attr('data-hd'))
+        let hd: boolean|undefined = hydrate(el.attr('data-hd'))
         if (typeof hd === 'undefined') {
             hd = true
         }
 
         // Don't Get the Width, until it's "onScreen" (in case it was collapsed
         // offscreen originally)
-        let src: any = hydrate(el.attr('data-src')) || el.attr('src') || null
+        let src: string = hydrate(el.attr('data-src')) || el.attr('src') || null
         // NOTE: Element can be either <img> or any element with background image in style
         const type: any = el.prop('tagName').toLowerCase()
 
@@ -1382,7 +1382,8 @@ Stratus.Internals.LoadImage = (obj: any) => {
             src = el.attr('src')
         }
         if (_.isEmpty(src)) {
-            return false
+            el.attr('data-loading', dehydrate(false))
+            return
         }
 
         let size: any = hydrate(el.attr('data-size')) || obj.size || null
@@ -1403,9 +1404,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 width = el.attr('width')
             }
 
+            // TODO: If width comes out to xs, we want to still allow checks!
+
             // Digest Width Attribute
             if (width) {
-                const digest: any = /([\d]+)(.*)/
+                const digest = /([\d]+)(.*)/
                 width = digest.exec(width)
                 unit = width[2]
                 width = parseInt(width[1], 10)
@@ -1450,8 +1453,21 @@ Stratus.Internals.LoadImage = (obj: any) => {
                     el.attr('data-loading', dehydrate(false))
                     Stratus.Internals.LoadImage(obj)
                 }, 500)
-                return false
+                el.attr('data-loading', dehydrate(false))
+                return
             }
+
+            // Retrieve greatest width
+            let greatestWidth = el.attr('data-greatest-width') || 0
+            if (_.isString(greatestWidth)) {
+                greatestWidth = hydrate(greatestWidth)
+            }
+
+            // Find greatest width
+            width = _.max([width, greatestWidth])
+
+            // Set greatest width for future reference
+            el.attr('data-greatest-width', width)
 
             // Double for HD
             if (hd) {
@@ -1469,7 +1485,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             size = size || 'hq'
 
             // if (cookie('env')) {
-            //     console.log('size:', size, width, el)
+            //     console.log('size:', size, 'greatest width:', greatestWidth, 'original width:', width, 'el:', el)
             // }
 
             // Fail-safe for images that are sized too early
@@ -1477,7 +1493,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 setTimeout(() => {
                     el.attr('data-loading', dehydrate(false))
                     Stratus.Internals.LoadImage(obj)
-                }, 1500)
+                }, 500)
             }
         }
 
@@ -1487,7 +1503,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
         const srcMatch: RegExpExecArray = srcRegex.exec(src)
         if (srcMatch !== null) {
-            src = srcMatch[1] + '-' + size + '.' + srcMatch[3]
+            src = `${srcMatch[1]}-${size}.${srcMatch[3]}`
         } else {
             console.error('Unable to find file name for image src:', el)
         }
@@ -1495,13 +1511,20 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // Start Loading
         el.addClass('loading')
 
-        const srcOriginProtocol: any = srcOrigin.startsWith('//') ? window.location.protocol + srcOrigin : srcOrigin
+        const srcOriginProtocol: string = srcOrigin.startsWith('//') ? window.location.protocol + src : src
+
+        // if (cookie('env')) {
+        //     console.log('LoadImage() srcOriginProtocol:', srcOriginProtocol)
+        // }
 
         // Set up actions for to load the smallest image first.
         if (type === 'img') {
             // Add Listeners (Only once per Element!)
             el.on('load', () => {
                 el.addClass('loaded').removeClass('loading')
+                // if (cookie('env')) {
+                //     console.log('LoadImage() loaded:', el)
+                // }
                 jQuery(this).remove() // prevent memory leaks
             })
             el.on('error', () => {
@@ -1540,6 +1563,10 @@ Stratus.Internals.LoadImage = (obj: any) => {
         el.attr('data-loading', dehydrate(false))
         el.attr('data-size', dehydrate(size))
 
+        // if (cookie('env')) {
+        //     console.log('LoadImage() srcProtocol:', srcProtocol)
+        // }
+
         // Preload this image first. Ensures speed to display and image is valid
         const preFetchEl: any = jQuery('<img/>')
         preFetchEl.attr('src', srcProtocol)
@@ -1563,11 +1590,24 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
         // FIXME: This is a mess that we shouldn't need to maintain.
         // RegisterGroups should just use Native Logic instead of
-        // another level of abstraction.np
+        // another level of abstraction.
+
+        // TODO: Once we get Aether functioning properly, we can use it instead for proper native bindings
+
+        // FIXME: The following code removes the OnScroll binding when it gets sized the first time,
+        // but there are times when the data isn't properly sized yet due to dynamic styling or CSS
+        // injections, so we need to allow the onScroll to still attach, just in case there are
+        // changes that provided an upsized image.
+        // For example, this is was a portion of the issue for a slideshow with a div-type image
+        // that is partially onScreen and has a background css attribute which is xs due to the
+        // corner of the window being placed.
+        // In the future, I would love for this to be completely in Aether for simplistic handling,
+        // but for now, we are properly using passive event handling to ensure the resolution on
+        // scroll triggers is not absolutely ridiculous.
 
         // Remove from registration
         // TODO: remove this
-        Stratus.RegisterGroup.remove('OnScroll', obj)
+        // Stratus.RegisterGroup.remove('OnScroll', obj)
         // if (cookie('env')) {
         //   console.log('Remove RegisterGroup:', obj)
         // }
