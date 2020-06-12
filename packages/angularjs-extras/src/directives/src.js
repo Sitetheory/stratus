@@ -53,6 +53,7 @@
          * @param {string} src
          */
         $scope.setSrc = function (tagType, src) {
+          // FIXME: This is the problem
           if (tagType === 'img') {
             $element.attr('src', src)
           } else {
@@ -92,7 +93,7 @@
             // Requested to not progressive load
             // Set it's suggested image and exit
             // $scope.setSrc(type, $attr.src || backgroundImage)
-            // New: if set to false, don' do stratus-src at all. see https://app.asana.com/0/348823217261712/1149917100747392
+            // New: if set to false, don't do stratus-src at all. see https://app.asana.com/0/348823217261712/1149917100747392
             return true
           }
 
@@ -117,7 +118,7 @@
             return ext === value
           })
           if (!_.size($scope.filter)) {
-            // Set it's suggested image and exit
+            // Set its suggested image and exit
             $scope.setSrc(type, src)
             return true
           }
