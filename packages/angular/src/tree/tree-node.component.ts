@@ -63,7 +63,10 @@ export class TreeNodeComponent implements OnInit {
         private ref: ChangeDetectorRef
     ) {
         // Manually render upon data change
-        ref.detach()
+        // ref.detach()
+
+        // TODO: Bring the Content Selector prioritization over
+        // TODO: Add an ID map for expand / collapse and a button to collapse or expand all
     }
 
     ngOnInit() {
@@ -77,6 +80,9 @@ export class TreeNodeComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+
+        // Attach Component to Node Meta
+        this.node.meta.component = this
 
         // Force UI Redraw
         this.refresh()
