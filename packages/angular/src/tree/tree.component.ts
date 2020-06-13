@@ -32,7 +32,7 @@ import _ from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Components
-import {RootComponent} from '@stratusjs/angular/root/root.component'
+import {RootComponent} from '@stratusjs/angular/core/root.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -54,11 +54,13 @@ import {
 import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/model'
+import {RefreshInterface} from '@stratusjs/angular/core/refresh.interface'
 
 // Data Types
 export interface NodeMeta {
     id: number
     expanded: boolean
+    component?: RefreshInterface
 }
 
 export interface NodeMetaMap {
@@ -230,6 +232,14 @@ export class TreeComponent extends RootComponent { // implements OnInit
             console.error('ref not available:', this)
             return
         }
+        // TODO: Refresh treeNodeComponents through a map
+        _.forEach(this.metaMap, (meta: NodeMeta) => {
+            if (!meta.component || !('refresh' in meta.component)) {
+                return
+            }
+            // console.log('refreshing meta:', meta.component)
+            meta.component.refresh()
+        })
         this.ref.detach()
         this.ref.detectChanges()
         this.ref.reattach()
@@ -295,12 +305,12 @@ export class TreeComponent extends RootComponent { // implements OnInit
         }
         // TODO: Break away from the registry here...  It's not responsive enough.
         let models = this.collection.models
-        if (!models || !_.isArray(models)) {
+        if (!models || !_.isArray(models) || !models.length) {
             return []
         }
         models = _.sortBy(models, ['data.priority'])
         // Convert Collection Models to Nested Tree to optimize references
-        this.metaMap = {}
+        this.metaMap = this.metaMap || {}
         this.treeMap = {}
         this.tree = []
         _.forEach(models, (model: any) => {
@@ -310,7 +320,7 @@ export class TreeComponent extends RootComponent { // implements OnInit
             if (!_.has(this.metaMap, modelId)) {
                 this.metaMap[modelId] = {
                     id: modelId,
-                    expanded: true
+                    expanded: false
                 }
             }
             if (!_.has(this.treeMap, modelId)) {
@@ -363,6 +373,17 @@ export class TreeComponent extends RootComponent { // implements OnInit
             }
             this.dropListMap[key] = element
         })
+    }
+
+    private setExpanded(expanded: boolean) {
+        if (!this.metaMap || !_.size(this.metaMap)) {
+            return
+        }
+        _.forEach(this.metaMap, (nodeMeta: NodeMeta) => {
+            console.log('nodeMeta:', nodeMeta)
+            nodeMeta.expanded = expanded
+        })
+        this.refresh()
     }
 
     /**
@@ -424,19 +445,20 @@ export class TreeComponent extends RootComponent { // implements OnInit
         // Disable Listeners
         this.unsettled = true
 
-        // Debug Data'
-        /* *
-        console.group('onDragDrop()')
-        _.forEach(
-            [
-                `model drop: ${targetNode.model.get('name')}`,
-                `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
-                `index change: ${event.previousIndex} -> ${event.currentIndex}`,
-                `current priority: ${targetNode.model.get('priority')}`,
-            ],
-            (message) => console.log(message)
-        )
-        /* */
+        // Debug Data
+        const dropDebug = false
+        if (cookie('env') && dropDebug) {
+            console.group('onDragDrop()')
+            _.forEach(
+                [
+                    `model drop: ${targetNode.model.get('name')}`,
+                    `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
+                    `index change: ${event.previousIndex} -> ${event.currentIndex}`,
+                    `current priority: ${targetNode.model.get('priority')}`,
+                ],
+                (message) => console.log(message)
+            )
+        }
 
         // Handle Parent Change
         if (!this.nodeIsEqual(parentNode, pastParentNode)) {
@@ -470,14 +492,14 @@ export class TreeComponent extends RootComponent { // implements OnInit
             if (!node.model || !node.model.set) {
                 return
             }
-            node.model.set('priority', ++priority)
+            node.model.set('priority', priority++)
         })
 
         // Debug Data
-        /* *
-        console.log('new priority:', targetNode.model.get('priority'))
-        console.groupEnd()
-        /* */
+        if (cookie('env') && dropDebug) {
+            console.log('new priority:', targetNode.model.get('priority'))
+            console.groupEnd()
+        }
 
         // Handle Propagation
         // let settledModel = false

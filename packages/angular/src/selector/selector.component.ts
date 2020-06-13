@@ -32,7 +32,7 @@ import _ from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
 // Components
-import {RootComponent} from '@stratusjs/angular/root/root.component'
+import {RootComponent} from '@stratusjs/angular/core/root.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
