@@ -1365,14 +1365,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // By default we'll load larger versions of an image to look good on HD
         // displays, but if you don't want that, you can bypass it with
         // data-hd="false"
-        // Note: The note below supersedes the one above.
         let hd: any = hydrate(el.attr('data-hd'))
         if (typeof hd === 'undefined') {
-            // Note: To ensure we get smaller sizes, I have disabled the HD
-            // doubling for Retina Screens by default.  This is what causes
-            // the large size on mobile instead of small and is causing huge
-            // downloads.
-            hd = false
+            hd = true
         }
 
         // Don't Get the Width, until it's "onScreen" (in case it was collapsed
@@ -1434,6 +1429,17 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 // let $visibleParent = obj.spy || el.parent()
                 width = $visibleParent ? $visibleParent.width() : 0
 
+                // if (cookie('env')) {
+                //     console.log(
+                //         'visibilitySelector:', visibilitySelector,
+                //         '$visibleParent:', $visibleParent,
+                //         'offsetWidth:', el.offsetWidth,
+                //         'clientWidth:', el.clientWidth,
+                //         'width:', width,
+                //         'el:', el
+                //     )
+                // }
+
                 // If one of parents of the image (and child of the found parent) has
                 // a bootstrap col-*-* set divide width by that in anticipation (e.g.
                 // Carousel that has items grouped)
@@ -1463,16 +1469,16 @@ Stratus.Internals.LoadImage = (obj: any) => {
             }
 
             // Retrieve greatest width
-            let greatestWidth = el.attr('data-greatest-width') || 0
-            if (_.isString(greatestWidth)) {
-                greatestWidth = hydrate(greatestWidth)
-            }
+            // let greatestWidth = el.attr('data-greatest-width') || 0
+            // if (_.isString(greatestWidth)) {
+            //     greatestWidth = hydrate(greatestWidth)
+            // }
 
             // Find greatest width
-            width = _.max([width, greatestWidth])
+            // width = _.max([width, greatestWidth])
 
             // Set greatest width for future reference
-            el.attr('data-greatest-width', width)
+            // el.attr('data-greatest-width', width)
 
             // Double for HD
             if (hd) {
@@ -1489,8 +1495,13 @@ Stratus.Internals.LoadImage = (obj: any) => {
             // find a size
             size = size || 'hq'
 
-            // if (cookie('env')) {
-            //     console.log('size:', size, 'greatest width:', greatestWidth, 'original width:', width, 'el:', el)
+            // if (!cookie('env')) {
+            //     console.log(
+            //         'size:', size,
+            //         // 'greatest width:', greatestWidth,
+            //         'width:', width,
+            //         'el:', el
+            //     )
             // }
 
             // Fail-safe for images that are sized too early
@@ -1511,6 +1522,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
             src = `${srcMatch[1]}-${size}.${srcMatch[3]}`
         } else {
             console.error('Unable to find file name for image src:', el)
+        }
+
+        // Stop repeat checks
+        if (src === el.attr('src')) {
+            return
         }
 
         // Start Loading (only if not already loaded)
@@ -1612,8 +1628,10 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // but for now, we are properly using passive event handling to ensure the resolution on
         // scroll triggers is not absolutely ridiculous.
 
-        // Remove from registration
-        // Stratus.RegisterGroup.remove('OnScroll', obj)
+        // Remove from registration if already the highest size
+        if (size === 'hq') {
+            Stratus.RegisterGroup.remove('OnScroll', obj)
+        }
         // if (cookie('env')) {
         //   console.log('Remove RegisterGroup:', obj)
         // }
