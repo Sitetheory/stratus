@@ -1469,16 +1469,16 @@ Stratus.Internals.LoadImage = (obj: any) => {
             }
 
             // Retrieve greatest width
-            // let greatestWidth = el.attr('data-greatest-width') || 0
-            // if (_.isString(greatestWidth)) {
-            //     greatestWidth = hydrate(greatestWidth)
-            // }
+            let greatestWidth = el.attr('data-greatest-width') || 0
+            if (_.isString(greatestWidth)) {
+                greatestWidth = hydrate(greatestWidth)
+            }
 
             // Find greatest width
-            // width = _.max([width, greatestWidth])
+            width = _.max([width, greatestWidth])
 
             // Set greatest width for future reference
-            // el.attr('data-greatest-width', width)
+            el.attr('data-greatest-width', width)
 
             // Double for HD
             if (hd) {
