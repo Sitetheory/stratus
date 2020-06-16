@@ -1365,14 +1365,19 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // By default we'll load larger versions of an image to look good on HD
         // displays, but if you don't want that, you can bypass it with
         // data-hd="false"
-        let hd: boolean|undefined = hydrate(el.attr('data-hd'))
+        // Note: The note below supersedes the one above.
+        let hd: any = hydrate(el.attr('data-hd'))
         if (typeof hd === 'undefined') {
-            hd = true
+            // Note: To ensure we get smaller sizes, I have disabled the HD
+            // doubling for Retina Screens by default.  This is what causes
+            // the large size on mobile instead of small and is causing huge
+            // downloads.
+            hd = false
         }
 
         // Don't Get the Width, until it's "onScreen" (in case it was collapsed
         // offscreen originally)
-        let src: string = hydrate(el.attr('data-src')) || el.attr('src') || null
+        let src: any = hydrate(el.attr('data-src')) || el.attr('src') || null
         // NOTE: Element can be either <img> or any element with background image in style
         const type: any = el.prop('tagName').toLowerCase()
 
@@ -1508,8 +1513,10 @@ Stratus.Internals.LoadImage = (obj: any) => {
             console.error('Unable to find file name for image src:', el)
         }
 
-        // Start Loading
-        el.addClass('loading')
+        // Start Loading (only if not already loaded)
+        if (!el.hasClass('loaded')) {
+            el.addClass('loading')
+        }
 
         const srcOriginProtocol: string = srcOrigin.startsWith('//') ? window.location.protocol + src : src
 
@@ -1606,7 +1613,6 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // scroll triggers is not absolutely ridiculous.
 
         // Remove from registration
-        // TODO: remove this
         // Stratus.RegisterGroup.remove('OnScroll', obj)
         // if (cookie('env')) {
         //   console.log('Remove RegisterGroup:', obj)
