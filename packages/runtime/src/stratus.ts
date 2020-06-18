@@ -1406,7 +1406,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // FIXME: This needs to still check for an upsize
         let size: any = hydrate(el.attr('data-size')) || obj.size || null
 
-        // Detect & Save Optimistic Lock
+        // Detect Optimistic Lock
         const resizeOptimisticLock = hydrate(el.attr('data-resize-optimistic-lock')) || 0
 
         // if a specific valid size is requested, use that
@@ -1525,7 +1525,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             // Return the first size that is bigger than container width
             size = _.findKey(Stratus.Settings.image.size, (s: any) => {
-                // Old logic used a hardcoded pixel ratio to instead of the devicePixelRatio
+                // The old logic doubled the width and used this hardcoded ratio
+                // instead of the multiplying by the devicePixelRatio for a more
+                // precise width determined by the client screen.
                 // const ratio: any = s / width
                 // return ratio > 0.85 && ratio < 1.15
                 return s > width
@@ -1726,7 +1728,9 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
             if (typeof obj === 'undefined') {
                 return
             }
-            // TODO: This needs thorough testing before being enabled
+            // TODO: This feature draft would allow more control between the
+            // dynamic request and these event triggers, but would require a
+            // change in format for all locations accessing this group.
             // if (!_.get(obj, 'enabled')) {
             //     return
             // }
