@@ -1303,6 +1303,8 @@ Stratus.Internals.LoadEnvironment = () => {
     if (Stratus.Client.mobile) {
         Stratus.Environment.set('viewPort', null)
     }
+    // Pixel Information
+    Stratus.Environment.set('devicePixelRatio', window.devicePixelRatio || 2)
     // Environment Information
     let passiveEventOptions: any = false
     try {
@@ -1333,14 +1335,28 @@ Stratus.Internals.LoadImage = (obj: any) => {
         }, 500)
         return
     }
+    // TODO: Move this from jQuery as it doesn't appear to truly be necessary
+    // TODO: Assess whether we can move this all into a Stratus.Select
     const el: any = obj.el instanceof jQuery ? obj.el : jQuery(obj.el)
     // const el: any = obj.el instanceof angular.element ? obj.el : angular.element(obj.el)
+    // const el = (obj.el instanceof angular.element || obj.el instanceof jQuery)
     if (!el.length) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
         }, 500)
         return
     }
+    // TODO: Try and use this NativeEl or a Stratus.Select option in any case
+    // we are able to.  We need to slowly phase out the previous jQuery logic
+    // for something more Stable and lightweight.
+    const nativeEl: any = _.first(el)
+    if (!(nativeEl.offsetHeight || nativeEl.clientHeight)) {
+        setTimeout(() => {
+            Stratus.Internals.LoadImage(obj)
+        }, 500)
+        return
+    }
+    // TODO: Convert to Native or Stratus.Select options
     if (!el.hasClass('placeholder')) {
         el.addClass('placeholder')
         el.on('load', () => {
@@ -1348,6 +1364,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             jQuery(this).remove() // prevent memory leaks
         })
     }
+    // TODO: Convert to Native or Stratus.Select options
     if (hydrate(el.attr('data-loading'))) {
         // if (cookie('env')) {
         //     console.log('loading:', _.first(el))
@@ -1386,20 +1403,25 @@ Stratus.Internals.LoadImage = (obj: any) => {
             return
         }
 
+        // FIXME: This needs to still check for an upsize
         let size: any = hydrate(el.attr('data-size')) || obj.size || null
+
+        // Detect & Save Optimistic Lock
+        const resizeOptimisticLock = hydrate(el.attr('data-resize-optimistic-lock')) || 0
 
         // if a specific valid size is requested, use that
         // FIXME: size.indexOf should never return anything useful
-        if (!size) {
+        if (!size || resizeOptimisticLock !== Stratus.Environment.get('resizeOptimisticLock')) {
             let width: any = null
             let unit: any = null
             let percentage: any = null
 
             // if (el.width()) {
-            if (el.offsetWidth || el.clientWidth) {
+            const nativeWidth = nativeEl.offsetWidth || nativeEl.clientWidth
+            if (nativeWidth) {
                 // Check if there is CSS width hard coded on the element
                 // width = el.width()
-                width = el.offsetWidth || el.clientWidth
+                width = nativeWidth
             } else if (el.attr('width')) {
                 width = el.attr('width')
             }
@@ -1417,7 +1439,11 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             // FIXME: This should only happen if the CSS has completely loaded.
             // Gather Container (Calculated) Width
-            if (!width || unit === '%') {
+            // TODO: This may be able to be removed as it doesn't appear to be
+            // used for anything other than old Bootstrap Carousels.
+            const visibleParentCheck = false
+            if (visibleParentCheck && (!width || unit === '%')) {
+                console.warn('visibleParentTriggered:', el)
                 // If there is no CSS width, calculate the parent container's width
                 // The image may be inside an element that is invisible (e.g. Carousel has items display:none)
                 // So we need to find the first parent that is visible and use that width
@@ -1460,6 +1486,14 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             // If no appropriate width was found, abort
             if (width <= 0) {
+                // if (cookie('env')) {
+                //     console.log(
+                //         'offsetWidth:', el.offsetWidth,
+                //         'clientWidth:', el.clientWidth,
+                //         'width:', width,
+                //         'el:', el
+                //     )
+                // }
                 setTimeout(() => {
                     el.attr('data-loading', dehydrate(false))
                     Stratus.Internals.LoadImage(obj)
@@ -1467,6 +1501,9 @@ Stratus.Internals.LoadImage = (obj: any) => {
                 el.attr('data-loading', dehydrate(false))
                 return
             }
+
+            // Save New Optimistic Lock
+            el.attr('data-resize-optimistic-lock', dehydrate(Stratus.Environment.get('resizeOptimisticLock')))
 
             // Retrieve greatest width
             let greatestWidth = el.attr('data-greatest-width') || 0
@@ -1479,16 +1516,19 @@ Stratus.Internals.LoadImage = (obj: any) => {
 
             // Set greatest width for future reference
             el.attr('data-greatest-width', width)
+            el.attr('data-current-width', width)
 
-            // Double for HD
+            // Use devicePixelRatio for HD
             if (hd) {
-                width = width * 2
+                width = width * Stratus.Environment.get('devicePixelRatio')
             }
 
             // Return the first size that is bigger than container width
             size = _.findKey(Stratus.Settings.image.size, (s: any) => {
-                const ratio: any = s / width
-                return (ratio > 0.85 && ratio < 1.15) || s > width
+                // Old logic used a hardcoded pixel ratio to instead of the devicePixelRatio
+                // const ratio: any = s / width
+                // return ratio > 0.85 && ratio < 1.15
+                return s > width
             })
 
             // default to largest size if the container is larger and it didn't
@@ -1525,7 +1565,8 @@ Stratus.Internals.LoadImage = (obj: any) => {
         }
 
         // Stop repeat checks
-        if (src === el.attr('src')) {
+        if (size === hydrate(el.attr('data-size'))) {
+            el.attr('data-loading', dehydrate(false))
             return
         }
 
@@ -1682,7 +1723,14 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
         const scrollElements: any = Stratus.RegisterGroup.get('OnScroll')
 
         _.forEach(scrollElements, (obj: any) => {
-            if (typeof obj !== 'undefined' && _.has(obj, 'method')) {
+            if (typeof obj === 'undefined') {
+                return
+            }
+            // TODO: This needs thorough testing before being enabled
+            // if (!_.get(obj, 'enabled')) {
+            //     return
+            // }
+            if (_.has(obj, 'method')) {
                 obj.method(obj)
             }
         })
@@ -1705,12 +1753,18 @@ Stratus.Internals.OnScroll = _.once((elements: any) => {
         }
         Stratus.Environment.set('viewPortChange', true)
     }
+    const resizeChangeHandler: any = () => {
+        Stratus.Environment.iterate('resizeOptimisticLock')
+        viewPortChangeHandler()
+    }
     // if (cookie('env')) {
     //     console.log('add scroll listener to viewport:', viewPort)
     // }
+    // Note: The viewPort determines what is scrolling, which may be different for parallax screens.
     viewPort.addEventListener('scroll', viewPortChangeHandler, Stratus.Environment.get('passiveEventOptions'))
     // Resizing can change what's on screen so we need to check the scrolling
-    viewPort.addEventListener('resize', viewPortChangeHandler, Stratus.Environment.get('passiveEventOptions'))
+    // Note: The window is all that can be resized accurately.
+    window.addEventListener('resize', resizeChangeHandler, Stratus.Environment.get('passiveEventOptions'))
 
     // Run Once initially
     Stratus.DOM.complete(() => {
