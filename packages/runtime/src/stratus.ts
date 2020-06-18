@@ -1350,6 +1350,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
     // we are able to.  We need to slowly phase out the previous jQuery logic
     // for something more Stable and lightweight.
     const nativeEl: any = _.first(el)
+    // This ensures the image is sizable before we attempt any sizing.
     if (!(nativeEl.offsetHeight || nativeEl.clientHeight)) {
         setTimeout(() => {
             Stratus.Internals.LoadImage(obj)
