@@ -886,26 +886,32 @@ export class Model extends ModelBase {
 
     destroy() {
         // TODO: Add a confirmation option here
-        if (this.collection) {
-            this.collection.remove(this)
-        }
         if (this.getIdentifier()) {
-            this.sync('DELETE', {}).catch(async (message: any) => {
-                console.error('DESTROY:', message)
-                if (!this.toast) {
-                    return
-                }
-                if (!$mdToast) {
-                    const wait = await serviceVerify()
-                }
-                $mdToast.show(
-                    $mdToast.simple()
-                        .textContent('Failure to Delete!')
-                        .toastClass('errorMessage')
-                        .position('top right')
-                        .hideDelay(3000)
-                )
-            })
+            this.sync('DELETE', {})
+                .then((data: any) => {
+                    if (this.error) {
+                        return
+                    }
+                    if (this.collection) {
+                        this.collection.remove(this)
+                    }
+                })
+                .catch(async (message: any) => {
+                    console.error('DESTROY:', message)
+                    if (!this.toast) {
+                        return
+                    }
+                    if (!$mdToast) {
+                        const wait = await serviceVerify()
+                    }
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('Failure to Delete!')
+                            .toastClass('errorMessage')
+                            .position('top right')
+                            .hideDelay(3000)
+                    )
+                })
         }
     }
 }

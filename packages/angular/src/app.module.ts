@@ -44,6 +44,9 @@ import {
 
 // Stratus Custom Components
 import {
+    EditorComponent
+} from '@stratusjs/angular/editor/editor.component'
+import {
     SelectorComponent
 } from '@stratusjs/angular/selector/selector.component'
 import {
@@ -123,6 +126,7 @@ import {
     ],
     entryComponents: [
         BaseComponent,
+        EditorComponent,
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,
@@ -130,6 +134,7 @@ import {
     ],
     declarations: [
         BaseComponent,
+        EditorComponent,
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,
@@ -144,6 +149,7 @@ export class AppModule {
     instances = {}
     modules = {
         'sa-base': BaseComponent,
+        'sa-editor': EditorComponent,
         'sa-selector': SelectorComponent,
         'sa-tree': TreeComponent
     }

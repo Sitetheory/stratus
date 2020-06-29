@@ -511,3 +511,4 @@ exports.dist = parallel(
 )
 
 exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
+exports.compileSass = series(cleanSASS, compileSASS)

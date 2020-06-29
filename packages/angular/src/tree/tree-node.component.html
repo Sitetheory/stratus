@@ -1,6 +1,6 @@
 <div class="tree-node-content">
     <!-- show progress while saving -->
-    <mat-progress-bar mode="indeterminate" *ngIf="node.model.pending"></mat-progress-bar>
+    <!-- <mat-progress-bar mode="indeterminate" *ngIf="node.model.pending"></mat-progress-bar> -->
 
     <!-- use a disabled button to provide padding for tree leaf -->
     <button mat-icon-button
@@ -32,7 +32,7 @@
 <!--          [innerHTML]="getDragPreview(node)"-->
 <!--          class="tree-node-drag-placeholder"></span>-->
 
-    <!-- display children for expandable nodes -->
+    <!-- create drop list -->
     <div cdkDropList
          [id]="tree.uid + '_node_' + node.id + '_drop_list'"
          [cdkDropListConnectedTo]="tree.dropLists"
@@ -40,8 +40,8 @@
          [cdkDropListDisabled]="false"
          (cdkDropListDropped)="tree.onDragDrop($event)"
          class="tree-node-drop-list">
-        <div *ngIf="hasChild(node)"
-             [class.display-none]="!isExpanded(node)">
+        <!-- display children for expandable nodes -->
+        <div [class.display-none]="!isExpanded(node) && hasChild(node)">
             <sa-tree-node cdkDrag
                           *ngFor="let child of node.children"
                           [cdkDragData]="child"

@@ -1,5 +1,5 @@
 <div class="tree">
-    <mat-progress-bar mode="indeterminate" *ngIf="collection.pending"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" *ngIf="collection.completed && collection.pending"></mat-progress-bar>
     <div class="float-right">
         <button mat-button
                 (click)="setExpanded(true)">

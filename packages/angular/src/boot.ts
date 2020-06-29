@@ -23,6 +23,7 @@ function angularBoot() {
     // Load Angular 8+
     const sa = [
         // 'sa-base',
+        'sa-editor',
         'sa-selector',
         'sa-tree',
         'quill-editor'
