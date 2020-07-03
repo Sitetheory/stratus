@@ -10,7 +10,8 @@
     <!-- use a regular button to control expandable nodes -->
     <button mat-icon-button
             *ngIf="hasChild(node)"
-            (click)="toggleExpanded(node)"
+            (click)="toggleExpandedClick(node)"
+            (dblclick)="toggleExpandedDblClick(node)"
             [attr.aria-label]="'toggle ' + getName(node)">
         <mat-icon class="mat-icon-rtl-mirror">
             {{isExpanded(node) ? 'expand_more' : 'chevron_right'}}
@@ -20,7 +21,8 @@
     <!-- clickable name is also the drag handle -->
     <span cdkDragHandle
           [innerHTML]="getName(node)"
-          (click)="openDialog(node)"></span>
+          (click)="openDialogClick(node)"
+          (dblclick)="openDialogDblClick(node)"></span>
 
     <!-- drag preview is all that is viewable when dragging -->
 <!--    <span cdkDragPreview-->

@@ -16,7 +16,7 @@ import {
 } from '@angular/forms'
 import {
     MatNativeDateModule
-} from '@angular/material'
+} from '@angular/material/core'
 import {
     BrowserModule
 } from '@angular/platform-browser'

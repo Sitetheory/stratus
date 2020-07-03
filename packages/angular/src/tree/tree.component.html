@@ -1,13 +1,15 @@
-<div class="tree">
+<div class="tree" cdkDropListGroup>
     <mat-progress-bar mode="indeterminate" *ngIf="collection.completed && collection.pending"></mat-progress-bar>
     <div class="float-right">
         <button mat-button
-                (click)="setExpanded(true)">
+                (click)="setExpandedClick(true)"
+                (dblclick)="setExpandedDblClick(true)">
             Expand All
         </button>
         /
         <button mat-button
-                (click)="setExpanded(false)">
+                (click)="setExpandedClick(false)"
+                (dblclick)="setExpandedDblClick(false)">
             Collapse All
         </button>
     </div>
