@@ -25,8 +25,8 @@ function angularBoot() {
         // 'sa-base',
         'sa-editor',
         'sa-selector',
-        'sa-tree',
-        'quill-editor'
+        'sa-tree'
+        // 'quill-editor'
     ]
     // sa.map((element) => element).reduce((element) => element);
     let detected = false

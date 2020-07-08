@@ -31,6 +31,13 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
 import {keys} from 'ts-transformer-keys'
 
+// Quill Dependencies
+import Quill from 'quill'
+import {
+    EditorChangeContent,
+    EditorChangeSelection
+} from 'ngx-quill'
+
 // Components
 import {RootComponent} from '@stratusjs/angular/core/root.component'
 
@@ -119,6 +126,8 @@ export class EditorComponent extends RootComponent { // implements OnInit, OnCha
 
     // UI Flags
     styled = false
+    blurred = false
+    focused = false
 
     constructor(
         private iconRegistry: MatIconRegistry,
@@ -292,5 +301,25 @@ export class EditorComponent extends RootComponent { // implements OnInit, OnCha
         // FIXME: This is not in use due to contextual issues.
         this.dataDefer(this.subscriber)
         this.refresh()
+    }
+
+    created(event: Quill) {
+        console.log('editor-created', event)
+    }
+
+    changedEditor(event: EditorChangeContent | EditorChangeSelection) {
+        console.log('editor-change', event)
+    }
+
+    focus($event: any) {
+        console.log('focus', $event)
+        this.focused = true
+        this.blurred = false
+    }
+
+    blur($event: any) {
+        console.log('blur', $event)
+        this.focused = false
+        this.blurred = true
     }
 }

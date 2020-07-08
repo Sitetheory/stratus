@@ -60,7 +60,9 @@ import {
 } from '@stratusjs/angular/tree/tree-node.component'
 
 // Angular Components
-import {QuillModule} from 'ngx-quill'
+import {
+    QuillModule
+} from 'ngx-quill'
 
 // External Dependencies
 import _ from 'lodash'

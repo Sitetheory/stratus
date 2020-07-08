@@ -1,15 +1,20 @@
 <mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
 
-<div class="selected-list" *ngIf="styled">
+<div class="editor">
+    <!--*ngIf="styled"-->
     <!-- FIXME: The pipe data shows properly in the span below, but not in the Quill Editor, probably due to scoping -->
     <span [class.display-none]="true"
           [innerText]="dataSub | async">
     </span>
     <!-- TODO: Connect the Quill Editor to a value with proper 2-way binding -->
     <!-- Note: The easiest way may be use of a FormControl like so: [formControl]="form.get(property)" -->
-    <quill-editor>
+    <quill-editor [styles]="{height: '200px'}"
+                  (onFocus)="focus($event)"
+                  (onEditorChanged)="changedEditor($event)"
+                  (onBlur)="blur($event)"
+                  (onEditorCreated)="created($event)">
         <div class="ql-container ql-snow" style="border-width: 0;">
-            <div class="ql-editor"></div>
+            <div class="ql-editor" [innerHTML]="dataSub | async"></div>
         </div>
     </quill-editor>
 </div>
