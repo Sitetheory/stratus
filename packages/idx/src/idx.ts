@@ -1416,7 +1416,10 @@ const angularJsService = (
 
         // Ensure we do not skip past some records by getting a list of what we need
         let activeServices = 0
-        if (typeof options.service === 'number') {
+        if (
+            typeof options.service === 'number' ||
+            typeof options.service === 'string'
+        ) {
             options.service = [options.service]
         }
         options.service.forEach(serviceId => {
