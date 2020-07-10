@@ -540,7 +540,7 @@ export class TreeComponent extends RootComponent { // implements OnInit
         // Start XHR
         targetNode.model.save()
 
-        // Disable Listeners
+        // Enable Listeners
         this.unsettled = false
 
         // update pipe

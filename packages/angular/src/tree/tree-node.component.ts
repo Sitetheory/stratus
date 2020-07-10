@@ -163,12 +163,17 @@ export class TreeNodeComponent implements OnInit {
             if (!result || _.isEmpty(result)) {
                 return
             }
-            [
+            // Disable Listeners
+            this.tree.unsettled = true
+            // Define Attributes
+            const attrs = [
                 'name',
                 'content',
                 'url',
                 'priority'
-            ].forEach(attr => {
+            ]
+            // Persist to Model
+            attrs.forEach(attr => {
                 if (!_.has(result, attr)) {
                     return
                 }
@@ -179,9 +184,15 @@ export class TreeNodeComponent implements OnInit {
                     return
                 }
                 node.model.set(attr, _.get(result, attr))
-                that.refresh()
             })
+            // Refresh Component
+            that.refresh()
+            // Refresh Parent Tree
+            that.tree.refresh()
+            // Start XHR
             node.model.save()
+            // Enable Listeners
+            this.tree.unsettled = false
         })
     }
 
