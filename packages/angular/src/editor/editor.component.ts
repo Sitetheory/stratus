@@ -6,11 +6,15 @@ import {
     ElementRef,
     Input,
     // OnChanges,
-    // OnInit,
+    OnInit,
     // Output,
     // SecurityContext
 } from '@angular/core'
-import {FormControl} from '@angular/forms'
+import {
+    FormBuilder,
+    FormControl,
+    FormGroup
+} from '@angular/forms'
 
 // CDK
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
@@ -30,6 +34,13 @@ import {SubjectSubscriber} from 'rxjs/internal/Subject'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
 import {keys} from 'ts-transformer-keys'
+
+// Quill Dependencies
+import Quill from 'quill'
+import {
+    EditorChangeContent,
+    EditorChangeSelection
+} from 'ngx-quill'
 
 // Components
 import {RootComponent} from '@stratusjs/angular/core/root.component'
@@ -74,7 +85,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class EditorComponent extends RootComponent { // implements OnInit, OnChanges
+export class EditorComponent extends RootComponent implements OnInit { // implements OnInit, OnChanges
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -104,7 +115,7 @@ export class EditorComponent extends RootComponent { // implements OnInit, OnCha
     data: any
     collection?: EventBase
     // @Output() model: any;
-    model?: ModelBase
+    model?: Model
 
     // Observable Connection
     dataSub: Observable<[]>
@@ -119,12 +130,21 @@ export class EditorComponent extends RootComponent { // implements OnInit, OnCha
 
     // UI Flags
     styled = false
+    blurred = false
+    focused = false
+
+    // Forms
+    form: FormGroup = this.fb.group({
+        dataString: new FormControl(),
+    })
+    dataChangeLog: string[] = []
 
     constructor(
         private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
         private ref: ChangeDetectorRef,
-        private elementRef: ElementRef
+        private elementRef: ElementRef,
+        private fb: FormBuilder
     ) {
         // Chain constructor
         super()
@@ -186,13 +206,45 @@ export class EditorComponent extends RootComponent { // implements OnInit, OnCha
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
+        this.dataSub.subscribe(evt => {
+            // TODO: This may need to only work on blur and not focus, unless it is the initialization value
+            const dataControl = this.form.get('dataString')
+            if (dataControl.value === evt) {
+                return
+            }
+            dataControl.patchValue(evt)
+            // Note: A refresh may be necessary if things become less responsive
+            // this.refresh()
+        })
 
         // console.info('constructor!');
     }
 
-    // ngOnInit() {
-    //     console.info('selector.ngOnInit')
-    // }
+    ngOnInit() {
+        // console.info(`${moduleName}.ngOnInit`)
+        const dataControl = this.form.get('dataString')
+        // This valueChanges field is an Event Emitter
+        dataControl.valueChanges.forEach(
+            (value: string) => {
+                // Avoid saving until the Model is truly available
+                if (!this.model.completed || !value) {
+                    return
+                }
+
+                // This avoids saving if it's the same
+                // if (value === this.model.get(this.property)) {
+                //     return
+                // }
+
+                // This keeps a change log of what's been typed.  I used this for testing purposes,
+                // but something this simple could be used for simple UX purposes down the road.
+                // this.dataChangeLog.push(value)
+
+                // Save the qualified change!
+                this.model.set(this.property, value)
+            }
+        )
+    }
 
     // ngOnChanges() {
     //     // Display Inputs
@@ -252,15 +304,15 @@ export class EditorComponent extends RootComponent { // implements OnInit, OnCha
         if (!this.subscriber) {
             return
         }
-        const model = this.dataRef()
-        if (!model) {
+        const dataString = this.dataRef()
+        if (!dataString) {
             setTimeout(() => {
                 this.dataDefer(subscriber)
             }, 500)
             return
         }
-        // console.log('pushed model to subscriber.')
-        this.subscriber.next(model)
+        // console.log('pushed value to subscriber.')
+        this.subscriber.next(dataString)
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
@@ -292,5 +344,29 @@ export class EditorComponent extends RootComponent { // implements OnInit, OnCha
         // FIXME: This is not in use due to contextual issues.
         this.dataDefer(this.subscriber)
         this.refresh()
+    }
+
+    created(event: Quill) {
+        console.log('editor-created', event)
+    }
+
+    changedEditor(event: EditorChangeContent | EditorChangeSelection) {
+        console.log('editor-change', event)
+    }
+
+    focus($event: any) {
+        // console.log('focus', $event)
+        this.focused = true
+        this.blurred = false
+    }
+
+    blur($event: any) {
+        // console.log('blur', $event)
+        this.focused = false
+        this.blurred = true
+    }
+
+    bypassHTML(html: string) {
+        return this.sanitizer.bypassSecurityTrustHtml(html)
     }
 }

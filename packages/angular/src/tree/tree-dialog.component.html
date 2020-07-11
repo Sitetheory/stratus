@@ -57,10 +57,11 @@
     <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? ('/' + data.content.routing[0].url) : 'Nothing yet!'"></span>
     <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
 
-    <!-- Priority Control - deprecated once we have DnD -->
-<!--    <h4>Priority:</h4>-->
-<!--    <mat-form-field class="form-field">-->
-<!--        <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">-->
+    <!-- Priority Control - deprecated once we have proper DnD for child links -->
+    <h4 *ngIf="data.nestParent !== null">Priority:</h4>
+    <mat-form-field class="form-field" *ngIf="data.nestParent !== null">
+        <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">
+<!--        <span [textContent]="data.priority || 'None set!'"></span>-->
 <!--        <button mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
 <!--                (click)="data.priority = data.priority + 1">-->
 <!--            <mat-icon>expand_less</mat-icon>-->
@@ -69,7 +70,7 @@
 <!--                (click)="data.priority = data.priority - 1">-->
 <!--            <mat-icon>expand_more</mat-icon>-->
 <!--        </button>-->
-<!--    </mat-form-field>-->
+    </mat-form-field>
 
     <!-- Level Selector -->
 <!--    <h4><label id="link-level-label">Link Level:</label></h4>-->

@@ -16,7 +16,7 @@ import {
 } from '@angular/forms'
 import {
     MatNativeDateModule
-} from '@angular/material'
+} from '@angular/material/core'
 import {
     BrowserModule
 } from '@angular/platform-browser'
@@ -60,13 +60,20 @@ import {
 } from '@stratusjs/angular/tree/tree-node.component'
 
 // Angular Components
-import {QuillModule} from 'ngx-quill'
+import {
+    QuillModule
+} from 'ngx-quill'
 
 // External Dependencies
 import _ from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
+
+// Dynamic Loader Prototype
+// import {
+//     AngularModules
+// } from '@stratusjs/angular/angular.modules'
 
 // let roster: {};
 // roster = {
@@ -89,6 +96,7 @@ import {
 
 @NgModule({
     imports: [
+        // AngularModules,
         BrowserModule,
         BrowserAnimationsModule,
         FormsModule,

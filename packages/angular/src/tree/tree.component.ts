@@ -147,6 +147,10 @@ export class TreeComponent extends RootComponent { // implements OnInit
     subscriber: Subscriber<any>
     unsettled = false
 
+    // Click Handling
+    isSingleClick: boolean
+    dblClickWait = 500
+
     // Drag & Drop
     dropLists: string[] = []
     // dropLists: HTMLElement[] = []
@@ -375,15 +379,29 @@ export class TreeComponent extends RootComponent { // implements OnInit
         })
     }
 
-    private setExpanded(expanded: boolean) {
+    private setExpanded(expanded: boolean): void {
         if (!this.metaMap || !_.size(this.metaMap)) {
             return
         }
         _.forEach(this.metaMap, (nodeMeta: NodeMeta) => {
-            console.log('nodeMeta:', nodeMeta)
             nodeMeta.expanded = expanded
         })
         this.refresh()
+    }
+
+    public setExpandedClick(expanded: boolean): void {
+        this.isSingleClick = true
+        setTimeout(() => {
+            if (!this.isSingleClick) {
+                return
+            }
+            this.setExpanded(expanded)
+        }, this.dblClickWait)
+    }
+
+    public setExpandedDblClick(expanded: boolean): void {
+        this.isSingleClick = false
+        this.setExpanded(expanded)
     }
 
     /**
@@ -425,6 +443,8 @@ export class TreeComponent extends RootComponent { // implements OnInit
         // if (!this.dataSource) {
         //     return
         // }
+
+        // console.log('onDragDrop:', event)
 
         // Gather Target (Dropped) Node
         const targetNode: Node | null = event.item.data
@@ -520,7 +540,7 @@ export class TreeComponent extends RootComponent { // implements OnInit
         // Start XHR
         targetNode.model.save()
 
-        // Disable Listeners
+        // Enable Listeners
         this.unsettled = false
 
         // update pipe

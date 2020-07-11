@@ -1,15 +1,52 @@
 <mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
 
-<div class="selected-list" *ngIf="styled">
-    <!-- FIXME: The pipe data shows properly in the span below, but not in the Quill Editor, probably due to scoping -->
+<div class="editor-component"
+     [formGroup]="form">
+    <!--*ngIf="styled"-->
+    <!-- The pipe data shows properly in the span below -->
+    <!--
     <span [class.display-none]="true"
           [innerText]="dataSub | async">
     </span>
+    -->
     <!-- TODO: Connect the Quill Editor to a value with proper 2-way binding -->
     <!-- Note: The easiest way may be use of a FormControl like so: [formControl]="form.get(property)" -->
-    <quill-editor>
+    <quill-editor [styles]="{height:'auto', 'min-height':'300px', background: '#ffffff'}"
+                  (onBlur)="blur($event)"
+                  (onFocus)="focus($event)"
+                  format="html"
+                  formControlName="dataString">
+        <!--
+        (onEditorChanged)="changedEditor($event)"
+        (onEditorCreated)="created($event)"
+        -->
         <div class="ql-container ql-snow" style="border-width: 0;">
-            <div class="ql-editor"></div>
+            <div class="ql-editor" [innerHTML]="dataSub | async"></div>
         </div>
     </quill-editor>
 </div>
+
+<!--
+<h3 id="html">HTML Display Test</h3>
+<pre>
+  <code>
+    {{ form.get('html').value }}
+  </code>
+</pre>
+
+<div>
+    Direct HTML (No Editor)
+    <div class="ql-container ql-snow editor" style="border-width: 0;">
+        <div style="width: 100%" class="ql-editor" [innerHTML]="bypassHTML(form.get('html').value)"></div>
+    </div>
+</div>
+
+<div>
+    Quill with HTML
+    <div class="editor">
+        <form [formGroup]="form">
+            <quill-editor format="html" formControlName="html"></quill-editor>
+        </form>
+    </div>
+</div>
+-->

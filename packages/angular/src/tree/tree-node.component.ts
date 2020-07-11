@@ -54,6 +54,9 @@ export class TreeNodeComponent implements OnInit {
     @Input() parent: Node
     @Input() node: Node
 
+    // Click Handling
+    isSingleClick: boolean
+
     // Methods
     hasChild = (node: Node) => node.children && node.children.length > 0
     isExpanded = (node: Node) => node.meta ? node.meta.expanded : true
@@ -118,6 +121,21 @@ export class TreeNodeComponent implements OnInit {
         this.refresh()
     }
 
+    public toggleExpandedClick(node: Node): void {
+        this.isSingleClick = true
+        setTimeout(() => {
+            if (!this.isSingleClick) {
+                return
+            }
+            this.toggleExpanded(node)
+        }, this.tree.dblClickWait)
+    }
+
+    public toggleExpandedDblClick(node: Node): void {
+        this.isSingleClick = false
+        this.toggleExpanded(node)
+    }
+
     public openDialog(node: Node): void {
         if (!node.model || !_.has(node.model, 'data')) {
             return
@@ -131,7 +149,7 @@ export class TreeNodeComponent implements OnInit {
                 // level: node.model.data.nestParent === null ? 'top' : 'child',
                 content: node.model.data.content || null,
                 url: node.model.data.url || null,
-                // priority: node.model.data.priority || 0,
+                priority: node.model.data.priority || 0,
                 model: node.model || null,
                 collection: this.tree.collection || null,
                 parent: node.model.data.parent || null,
@@ -145,11 +163,17 @@ export class TreeNodeComponent implements OnInit {
             if (!result || _.isEmpty(result)) {
                 return
             }
-            [
+            // Disable Listeners
+            this.tree.unsettled = true
+            // Define Attributes
+            const attrs = [
                 'name',
                 'content',
-                'url'
-            ].forEach(attr => {
+                'url',
+                'priority'
+            ]
+            // Persist to Model
+            attrs.forEach(attr => {
                 if (!_.has(result, attr)) {
                     return
                 }
@@ -160,9 +184,30 @@ export class TreeNodeComponent implements OnInit {
                     return
                 }
                 node.model.set(attr, _.get(result, attr))
-                that.refresh()
             })
+            // Refresh Component
+            that.refresh()
+            // Refresh Parent Tree
+            that.tree.refresh()
+            // Start XHR
             node.model.save()
+            // Enable Listeners
+            this.tree.unsettled = false
         })
+    }
+
+    public openDialogClick(node: Node): void {
+        this.isSingleClick = true
+        setTimeout(() => {
+            if (!this.isSingleClick) {
+                return
+            }
+            this.openDialog(node)
+        }, this.tree.dblClickWait)
+    }
+
+    public openDialogDblClick(node: Node): void {
+        this.isSingleClick = false
+        this.openDialog(node)
     }
 }
