@@ -70,6 +70,11 @@ import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 
+// Dynamic Loader Prototype
+// import {
+//     AngularModules
+// } from '@stratusjs/angular/angular.modules'
+
 // let roster: {};
 // roster = {
 //     // 'sa-base': BaseComponent,
@@ -91,6 +96,7 @@ import {
 
 @NgModule({
     imports: [
+        // AngularModules,
         BrowserModule,
         BrowserAnimationsModule,
         FormsModule,

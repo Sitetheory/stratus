@@ -1,6 +1,7 @@
 <mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
 
-<div class="editor" [formGroup]="form">
+<div class="editor-component"
+     [formGroup]="form">
     <!--*ngIf="styled"-->
     <!-- The pipe data shows properly in the span below -->
     <!--
@@ -10,7 +11,7 @@
     -->
     <!-- TODO: Connect the Quill Editor to a value with proper 2-way binding -->
     <!-- Note: The easiest way may be use of a FormControl like so: [formControl]="form.get(property)" -->
-    <quill-editor [styles]="{height: '200px'}"
+    <quill-editor [styles]="{height:'auto', 'min-height':'300px', background: '#ffffff'}"
                   (onBlur)="blur($event)"
                   (onFocus)="focus($event)"
                   format="html"
