@@ -524,7 +524,13 @@ export class Model extends ModelBase {
 
                     // XHR Flags
                     this.pending = false
-                    this.completed = true
+
+                    // Note: I've disabled this because a model should not be marked
+                    // as completed if it hasn't received a proper entity or prototype
+                    // initially.  This is to ensure we don't save entities with the
+                    // possibility of nullified fields due to a broken retrieval,
+                    // resulting in the replacement of good data for bad.
+                    // this.completed = true
 
                     // XHR Flags for Collection
                     if (this.collection) {
@@ -579,8 +585,15 @@ export class Model extends ModelBase {
 
     save() {
         this.saving = true
-        // Avoid sending empty XHRs for Persisted Entities
-        if (this.getIdentifier() && _.isEmpty(this.toPatch())) {
+        // Sanity Checks for Persisted Entities
+        if (this.getIdentifier() &&
+            (
+                // Ensure we have a complete model to begin with
+                !this.completed ||
+                // Avoid sending empty XHRs
+                _.isEmpty(this.toPatch())
+            )
+        ) {
             console.warn('Blocked attempt to save empty payload to persisted model')
             return new Promise((resolve, reject) => {
                 this.saving = false
