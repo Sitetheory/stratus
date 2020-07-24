@@ -70,6 +70,21 @@ import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 
+// Quill Modules
+import Quill from 'quill'
+import QuillInputButton from '@stratusjs/angular/editor/quill.input.button'
+
+// Quill Registers
+Quill.register('modules/mediaLibrary', QuillInputButton)
+Quill.register('modules/codeView', QuillInputButton)
+
+// Third Party Quill
+// TODO: Remove once our custom solutions are in place from the new QuillInputButton
+// import QuillDropzone from '@stratusjs/angular/editor/quill.dropzone'
+// import QuillHtmlEdit from '@stratusjs/angular/editor/quill.html.edit'
+// Quill.register('modules/dropzone', QuillDropzone)
+// Quill.register('modules/htmlEdit', QuillHtmlEdit)
+
 // Dynamic Loader Prototype
 // import {
 //     AngularModules
@@ -104,6 +119,7 @@ import {
         MaterialModules,
         MatNativeDateModule,
         ReactiveFormsModule,
+        // Outline: https://app.asana.com/0/1154407311832843/1184252847388849
         QuillModule.forRoot({
             modules: {
                 // syntax: true,
@@ -111,23 +127,67 @@ import {
                     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                     ['blockquote', 'code-block'],
 
-                    [{ header: 1 }, { header: 2 }],               // custom button values
+                    [{ header: 1 }, { header: 2 }],                  // custom button values
                     [{ list: 'ordered'}, { list: 'bullet' }],
-                    [{ script: 'sub'}, { script: 'super' }],      // superscript/subscript
-                    [{ indent: '-1'}, { indent: '+1' }],          // outdent/indent
-                    [{ direction: 'rtl' }],                         // text direction
+                    [{ script: 'sub'}, { script: 'super' }],         // superscript/subscript
+                    [{ indent: '-1'}, { indent: '+1' }],             // outdent/indent
+                    [{ direction: 'rtl' }],                          // text direction
 
-                    [{ size: ['small', false, 'large', 'huge'] }],  // custom dropdown
+                    [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
                     [{ header: [1, 2, 3, 4, 5, 6, false] }],
 
-                    [{ color: [] }, { background: [] }],          // dropdown with defaults from theme
+                    [{ color: [] }, { background: [] }],             // dropdown with defaults from theme
                     [{ font: [] }],
                     [{ align: [] }],
 
-                    ['clean'],                                         // remove formatting button
+                    ['clean'],                                       // remove formatting button
 
-                    ['link', 'image', 'video']                         // link and image, video
-                ]
+                    [
+                        'link',
+                        // 'image',
+                        'video'
+                    ]
+                ],
+                mediaLibrary: {
+                    debug: true,
+                    buttonHTML: '<i class="fas fa-photo-video"></i>',
+                    buttonTitle: 'Media Library',
+                    name: 'mediaLibrary',
+                    eventName: 'media-library'
+                },
+                codeView: {
+                    debug: true,
+                    buttonHTML: '<i class="fas fa-code"></i>',
+                    buttonTitle: 'Code View',
+                    name: 'codeView',
+                    eventName: 'code-view'
+                }
+                // TODO: Remove once our custom solutions are in place from the new QuillInputButton
+                /* *
+                htmlEdit: {debug: true}
+                dropzone: {
+                    container: document.body,
+                    config: {
+                        url: '/upload/file',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/hal+json'
+                        },
+                        init() {
+                            // Demo Example (Not functional for our purposes)
+                            // Quill.editors[0].editor.quill.onModuleLoad('dropzone', (dropzone: any) => {
+                            //     this.on('success', (file: any, xhr: any) => {
+                            //         // Handle response from server.
+                            //         const location = xhr.location ? xhr.location : ''
+                            //
+                            //         // Attach insert buttons under each preview.
+                            //         dropzone.actions(file.previewElement, window.location.origin + location)
+                            //     })
+                            // })
+                        }
+                    }
+                }
+                /* */
             }
         })
         // SelectorComponent.forRoot()

@@ -50,9 +50,20 @@ import {Registry} from '@stratusjs/angularjs/services/registry'
 import {cookie} from '@stratusjs/core/environment'
 
 // Core Classes
-import {EventManager} from '@stratusjs/core/events/eventManager'
-import {ModelBase} from '@stratusjs/core/datastore/modelBase'
-import {EventBase} from '@stratusjs/core/events/eventBase'
+import {
+    EventManager
+} from '@stratusjs/core/events/eventManager'
+import {
+    ModelBase
+} from '@stratusjs/core/datastore/modelBase'
+import {
+    EventBase
+} from '@stratusjs/core/events/eventBase'
+
+// Core Interfaces
+import {
+    TriggerInterface
+} from '@stratusjs/angular/core/trigger.interface'
 
 // AngularJS Classes
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -85,7 +96,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class EditorComponent extends RootComponent implements OnInit { // implements OnInit, OnChanges
+export class EditorComponent extends RootComponent implements OnInit, TriggerInterface { // implements OnInit, OnChanges
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -368,5 +379,10 @@ export class EditorComponent extends RootComponent implements OnInit { // implem
 
     bypassHTML(html: string) {
         return this.sanitizer.bypassSecurityTrustHtml(html)
+    }
+
+    trigger(name: string, data: any, callee: TriggerInterface) {
+        console.log('editor.trigger:', name, callee)
+        callee.trigger('editor', null, this)
     }
 }
