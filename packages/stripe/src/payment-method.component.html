@@ -1,0 +1,38 @@
+<div id="{{ elementId }}">
+    <md-content data-layout-padding>
+        <!-- TODO add a form to collect Billing info for the card as an option -->
+        <div data-ng-if="detailedBillingInfo" class="billing-info">
+            <md-input-container class="md-block">
+                <label>Name</label>
+                <input data-ng-model="billingInfo.name" data-ng-disabled="!isEditable()">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Email</label>
+                <input data-ng-model="billingInfo.email" data-ng-disabled="!isEditable()">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Address</label>
+                <input data-ng-model="billingInfo.address.line1" data-ng-disabled="!isEditable()">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>City</label>
+                <input data-ng-model="billingInfo.address.city" data-ng-disabled="!isEditable()">
+            </md-input-container>
+            <div data-layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>State</label>
+                    <input data-ng-model="billingInfo.address.state" data-ng-disabled="!isEditable()">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Zip</label>
+                    <input name="postalCode" data-ng-model="billingInfo.address.postal_code"
+                           data-ng-pattern="/^[0-9]{5}$/" maxlength="5" data-ng-disabled="!isEditable()">
+                </md-input-container>
+            </div>
+        </div>
+        <div id="{{ elementId+'-mount' }}" class="card-element" data-ng-class="{'no-pointer-event': !isEditable()}"></div>
+        <div id="{{ elementId+'-errors' }}" class="card-errors" role="alert"></div>
+        <button data-ng-on-click="saveCard()" data-ng-disabled="!isSubmittable()">Save Payment Method</button>
+        <md-progress-linear ng-if="formPending" md-mode="indeterminate"></md-progress-linear>
+    </md-content>
+</div>
