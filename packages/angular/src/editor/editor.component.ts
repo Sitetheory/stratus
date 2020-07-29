@@ -16,8 +16,10 @@ import {
     FormGroup
 } from '@angular/forms'
 
-// CDK
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
+// Angular Material
+import {
+    MatDialog
+} from '@angular/material/dialog'
 
 // External
 import {Observable, Subject, Subscriber} from 'rxjs'
@@ -31,9 +33,13 @@ import {MatIconRegistry} from '@angular/material/icon'
 import {SubjectSubscriber} from 'rxjs/internal/Subject'
 
 // External Dependencies
-import {Stratus} from '@stratusjs/runtime/stratus'
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
-import {keys} from 'ts-transformer-keys'
+import {
+    keys
+} from 'ts-transformer-keys'
 
 // Quill Dependencies
 import Quill from 'quill'
@@ -43,7 +49,13 @@ import {
 } from 'ngx-quill'
 
 // Components
-import {RootComponent} from '@stratusjs/angular/core/root.component'
+import {
+    RootComponent
+} from '@stratusjs/angular/core/root.component'
+import {
+    MediaDialogComponent,
+    MediaDialogData
+} from '@stratusjs/angular/editor/media-dialog.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
@@ -66,8 +78,12 @@ import {
 } from '@stratusjs/angular/core/trigger.interface'
 
 // AngularJS Classes
-import {Model} from '@stratusjs/angularjs/services/model'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+import {
+    Model
+} from '@stratusjs/angularjs/services/model'
+import {
+    Collection
+} from '@stratusjs/angularjs/services/collection'
 
 // Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
@@ -144,6 +160,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     blurred = false
     focused = false
 
+    // External Component Options
+    // TODO: Move this to its own dialog
+    monacoOptions = {
+        theme: 'vs-dark',
+        language: 'html'
+    }
+
     // Forms
     form: FormGroup = this.fb.group({
         dataString: new FormControl(),
@@ -155,7 +178,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         private sanitizer: DomSanitizer,
         private ref: ChangeDetectorRef,
         private elementRef: ElementRef,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        public dialog: MatDialog,
     ) {
         // Chain constructor
         super()
@@ -384,5 +408,28 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     trigger(name: string, data: any, callee: TriggerInterface) {
         console.log('editor.trigger:', name, callee)
         callee.trigger('editor', null, this)
+        if (name === 'media-library') {
+            this.openMediaDialog()
+        }
+    }
+
+    public openMediaDialog(): void {
+        const dialogRef = this.dialog.open(MediaDialogComponent, {
+            width: '1000px',
+            data: {
+                foo: 'bar'
+            }
+        })
+        this.refresh()
+
+        const that = this
+        dialogRef.afterClosed().subscribe((result: MediaDialogData) => {
+            if (!result || _.isEmpty(result)) {
+                return
+            }
+            // TODO: Find Selected Media through click event
+            // Refresh Component
+            that.refresh()
+        })
     }
 }

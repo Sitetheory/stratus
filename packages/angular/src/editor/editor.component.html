@@ -26,6 +26,17 @@
             <div class="ql-editor" [innerHTML]="dataSub | async"></div>
         </div>
     </quill-editor>
+    <!-- TODO: Move this to its own dialog -->
+    <!--
+    [(ngModel)]="code"
+    [formControlName]="dataString"
+    [formControl]="form.get('dataString')"
+    -->
+    <!--
+    <ngx-monaco-editor [options]="monacoOptions"
+                       [ngModel]="form.get('dataString')">
+    </ngx-monaco-editor>
+    -->
 </div>
 
 <!--

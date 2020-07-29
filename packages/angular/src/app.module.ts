@@ -1,3 +1,8 @@
+// Stratus Libraries
+import {
+    cookie
+} from '@stratusjs/core/environment'
+
 // Angular Core
 import {
     registerLocaleData
@@ -32,12 +37,12 @@ import {
 // registerLocaleData(localeFr, 'fr-FR')
 // registerLocaleData(localeEs, 'es-ES')
 
-// Stratus Modules
+// Material Modules
 import {
     MaterialModules
 } from '@stratusjs/angular/material'
 
-// Stratus Core Components
+// Base Components
 import {
     BaseComponent
 } from '@stratusjs/angular/base/base.component'
@@ -63,6 +68,9 @@ import {
 import {
     QuillModule
 } from 'ngx-quill'
+import {
+    MonacoEditorModule, NgxMonacoEditorConfig
+} from 'ngx-monaco-editor'
 
 // External Dependencies
 import _ from 'lodash'
@@ -72,11 +80,13 @@ import {
 
 // Quill Modules
 import Quill from 'quill'
-import QuillInputButton from '@stratusjs/angular/editor/quill.input.button'
+import QuillInputButtonPlugin from '@stratusjs/angular/editor/quill-input-button.plugin'
+import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
+import {MediaDialogComponent} from '@stratusjs/angular/editor/media-dialog.component'
 
 // Quill Registers
-Quill.register('modules/mediaLibrary', QuillInputButton)
-Quill.register('modules/codeView', QuillInputButton)
+Quill.register('modules/mediaLibrary', QuillInputButtonPlugin)
+Quill.register('modules/codeView', QuillInputButtonPlugin)
 
 // Third Party Quill
 // TODO: Remove once our custom solutions are in place from the new QuillInputButton
@@ -109,6 +119,113 @@ Quill.register('modules/codeView', QuillInputButton)
 //     .map((element) => _.get(roster, element) || null)
 //     .filter((item) => !!item);
 
+// External Configs
+const quillConfig: QuillConfig = {
+    modules: {
+        // syntax: true,
+        toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            ['blockquote', 'code-block'],
+
+            [{ header: 1 }, { header: 2 }],                  // custom button values
+            [{ list: 'ordered'}, { list: 'bullet' }],
+            [{ script: 'sub'}, { script: 'super' }],         // superscript/subscript
+            [{ indent: '-1'}, { indent: '+1' }],             // outdent/indent
+            [{ direction: 'rtl' }],                          // text direction
+
+            [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+            [{ color: [] }, { background: [] }],             // dropdown with defaults from theme
+            [{ font: [] }],
+            [{ align: [] }],
+
+            ['clean'],                                       // remove formatting button
+
+            [
+                'link',
+                // 'image',
+                'video'
+            ]
+        ],
+        /* *
+        mediaLibrary: {
+            debug: true,
+            buttonHTML: '<i class="fas fa-photo-video"></i>',
+            buttonTitle: 'Media Library',
+            name: 'mediaLibrary',
+            eventName: 'media-library'
+        },
+        /* */
+        /* *
+        codeView: {
+            debug: true,
+            buttonHTML: '<i class="fas fa-code"></i>',
+            buttonTitle: 'Code View',
+            name: 'codeView',
+            eventName: 'code-view'
+        }
+        /* */
+        // TODO: Remove once our custom solutions are in place from the new QuillInputButton
+        /* *
+        htmlEdit: {debug: true}
+        /* */
+        /* *
+        dropzone: {
+            container: document.body,
+            config: {
+                url: '/upload/file',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/hal+json'
+                },
+                init() {
+                    // Demo Example (Not functional for our purposes)
+                    // Quill.editors[0].editor.quill.onModuleLoad('dropzone', (dropzone: any) => {
+                    //     this.on('success', (file: any, xhr: any) => {
+                    //         // Handle response from server.
+                    //         const location = xhr.location ? xhr.location : ''
+                    //
+                    //         // Attach insert buttons under each preview.
+                    //         dropzone.actions(file.previewElement, window.location.origin + location)
+                    //     })
+                    // })
+                }
+            }
+        }
+        /* */
+    }
+}
+// This only shows the mediaLibrary and codeView when in dev mode
+if (cookie('env')) {
+    quillConfig.modules.mediaLibrary = {
+        debug: true,
+        buttonHTML: '<i class="fas fa-photo-video"></i>',
+        buttonTitle: 'Media Library',
+        name: 'mediaLibrary',
+        eventName: 'media-library'
+    }
+    quillConfig.modules.codeView = {
+        debug: true,
+        buttonHTML: '<i class="fas fa-code"></i>',
+        buttonTitle: 'Code View',
+        name: 'codeView',
+        eventName: 'code-view'
+    }
+}
+const monacoConfig: NgxMonacoEditorConfig = {
+    // configure base path for monaco editor default: './assets'
+    // baseUrl: 'sitetheorycore/node_modules/ngx-monaco-editor/assets',
+    baseUrl: 'ngx-monaco-editor/assets',
+    defaultOptions: {
+        scrollBeyondLastLine: false
+    },
+    // use this function to extend monaco editor functionalities.
+    onMonacoLoad: () => {
+        console.log((window).monaco, this)
+    }
+}
+
 @NgModule({
     imports: [
         // AngularModules,
@@ -120,81 +237,14 @@ Quill.register('modules/codeView', QuillInputButton)
         MatNativeDateModule,
         ReactiveFormsModule,
         // Outline: https://app.asana.com/0/1154407311832843/1184252847388849
-        QuillModule.forRoot({
-            modules: {
-                // syntax: true,
-                toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-                    ['blockquote', 'code-block'],
-
-                    [{ header: 1 }, { header: 2 }],                  // custom button values
-                    [{ list: 'ordered'}, { list: 'bullet' }],
-                    [{ script: 'sub'}, { script: 'super' }],         // superscript/subscript
-                    [{ indent: '-1'}, { indent: '+1' }],             // outdent/indent
-                    [{ direction: 'rtl' }],                          // text direction
-
-                    [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
-                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-                    [{ color: [] }, { background: [] }],             // dropdown with defaults from theme
-                    [{ font: [] }],
-                    [{ align: [] }],
-
-                    ['clean'],                                       // remove formatting button
-
-                    [
-                        'link',
-                        // 'image',
-                        'video'
-                    ]
-                ],
-                mediaLibrary: {
-                    debug: true,
-                    buttonHTML: '<i class="fas fa-photo-video"></i>',
-                    buttonTitle: 'Media Library',
-                    name: 'mediaLibrary',
-                    eventName: 'media-library'
-                },
-                codeView: {
-                    debug: true,
-                    buttonHTML: '<i class="fas fa-code"></i>',
-                    buttonTitle: 'Code View',
-                    name: 'codeView',
-                    eventName: 'code-view'
-                }
-                // TODO: Remove once our custom solutions are in place from the new QuillInputButton
-                /* *
-                htmlEdit: {debug: true}
-                dropzone: {
-                    container: document.body,
-                    config: {
-                        url: '/upload/file',
-                        headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/hal+json'
-                        },
-                        init() {
-                            // Demo Example (Not functional for our purposes)
-                            // Quill.editors[0].editor.quill.onModuleLoad('dropzone', (dropzone: any) => {
-                            //     this.on('success', (file: any, xhr: any) => {
-                            //         // Handle response from server.
-                            //         const location = xhr.location ? xhr.location : ''
-                            //
-                            //         // Attach insert buttons under each preview.
-                            //         dropzone.actions(file.previewElement, window.location.origin + location)
-                            //     })
-                            // })
-                        }
-                    }
-                }
-                /* */
-            }
-        })
+        QuillModule.forRoot(quillConfig),
+        MonacoEditorModule.forRoot(monacoConfig)
         // SelectorComponent.forRoot()
     ],
     entryComponents: [
         BaseComponent,
         EditorComponent,
+        MediaDialogComponent,
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,
@@ -203,6 +253,7 @@ Quill.register('modules/codeView', QuillInputButton)
     declarations: [
         BaseComponent,
         EditorComponent,
+        MediaDialogComponent,
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,

@@ -11,7 +11,7 @@ import Quill from 'quill'
 import {QuillToolbarConfig} from 'ngx-quill'
 
 // Universal Button
-class QuillInputButton implements TriggerInterface {
+class QuillInputButtonPlugin implements TriggerInterface {
     // Settings
     debug = false
     buttonHTML = '<i class="fas fa-carrot"></i>'
@@ -108,5 +108,5 @@ class QuillInputButton implements TriggerInterface {
     }
 }
 
-export default QuillInputButton
-export { QuillInputButton }
+export default QuillInputButtonPlugin
+export { QuillInputButtonPlugin }
