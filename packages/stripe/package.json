@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/stripe",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "AngularJS Stripe Elements components to be used as an add on to StratusJS",
   "main": "",
   "scripts": {
