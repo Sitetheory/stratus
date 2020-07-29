@@ -189,5 +189,6 @@
         load(requirement)
       })
     }
+    root.require.config = boot.config
   }
 })(this); // eslint-disable-line semi

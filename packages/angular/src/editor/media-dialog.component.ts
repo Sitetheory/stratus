@@ -1,7 +1,21 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, OnChanges} from '@angular/core'
-import {FormBuilder, FormGroup} from '@angular/forms'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    OnInit,
+    OnChanges
+} from '@angular/core'
+import {
+    FormBuilder,
+    FormGroup
+} from '@angular/forms'
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef
+} from '@angular/material/dialog'
 
 // RXJS
 import {
@@ -20,17 +34,8 @@ import {BackendService} from '@stratusjs/angular/backend.service'
 import {LooseObject} from '@stratusjs/core/misc'
 
 // Data Types
-export interface DialogData {
-    id: number
-    name: string
-    target: string
-    level: string
-    content: any
-    url: string
-    model: any
-    collection: any
-    parent: any
-    nestParent: any
+export interface MediaDialogData extends LooseObject {
+    foo: string
 }
 export interface Content extends LooseObject {
     id?: number
@@ -43,8 +48,8 @@ export interface Content extends LooseObject {
 // Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
 const systemDir = '@stratusjs/angular'
-const moduleName = 'tree-dialog'
-const parentModuleName = 'tree'
+const moduleName = 'media-dialog'
+const parentModuleName = 'editor'
 
 /**
  * @title Dialog for Nested Tree
@@ -54,7 +59,7 @@ const parentModuleName = 'tree'
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TreeDialogComponent implements OnInit {
+export class MediaDialogComponent implements OnInit {
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -65,10 +70,10 @@ export class TreeDialogComponent implements OnInit {
 
     // TODO: Move this to its own AutoComplete Component
     // AutoComplete Data
-    filteredContentOptions: any[]
-    dialogContentForm: FormGroup
+    mediaEntities: any[]
+    dialogMediaForm: FormGroup
     isContentLoading = false
-    lastContentSelectorQuery: string
+    lastMediaQuery: string
 
     // filteredParentOptions: any[]
     // dialogParentForm: FormGroup
@@ -76,8 +81,8 @@ export class TreeDialogComponent implements OnInit {
     // lastParentSelectorQuery: string
 
     constructor(
-        public dialogRef: MatDialogRef<TreeDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: DialogData,
+        public dialogRef: MatDialogRef<MediaDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: MediaDialogData,
         private fb: FormBuilder,
         private backend: BackendService,
         private ref: ChangeDetectorRef
@@ -100,23 +105,23 @@ export class TreeDialogComponent implements OnInit {
 
         // TODO: Move this to its own AutoComplete Component
         // AutoComplete Logic
-        this.dialogContentForm = this.fb.group({
-            contentSelectorInput: this.data.content || null
+        this.dialogMediaForm = this.fb.group({
+            mediaQueryInput: ''
         })
-        this.dialogContentForm
-            .get('contentSelectorInput')
+        this.dialogMediaForm
+            .get('mediaQueryInput')
             .valueChanges
             .pipe(
                 debounceTime(300),
                 tap(() => this.isContentLoading = true),
                 switchMap((value: any) => {
                         if (_.isString(value)) {
-                            this.lastContentSelectorQuery = `/Api/Content?options[showCollection]=null&q=${value}`
+                            this.lastMediaQuery = `/Api/Media?q=${value}`
                         } else {
                             this.data.content = value
                             this.data.url = null
                         }
-                        return this.backend.get(this.lastContentSelectorQuery)
+                        return this.backend.get(this.lastMediaQuery)
                             .pipe(
                                 finalize(() => this.isContentLoading = false),
                             )
@@ -125,67 +130,28 @@ export class TreeDialogComponent implements OnInit {
             )
             .subscribe((response: any) => {
                 if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                    this.filteredContentOptions = []
+                    this.mediaEntities = []
                     // FIXME: We have to go in this roundabout way to force changes to be detected since the
                     // Dialog Sub-Components don't seem to have the right timing for ngOnInit
                     this.refresh()
-                    return this.filteredContentOptions
+                    return this.mediaEntities
                 }
                 const payload = _.get(response.body, 'payload') || response.body
                 if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                    this.filteredContentOptions = []
+                    this.mediaEntities = []
                     // FIXME: We have to go in this roundabout way to force changes to be detected since the
                     // Dialog Sub-Components don't seem to have the right timing for ngOnInit
                     this.refresh()
-                    return this.filteredContentOptions
+                    return this.mediaEntities
                 }
-                this.filteredContentOptions = payload
+                this.mediaEntities = payload
                 // FIXME: We have to go in this roundabout way to force changes to be detected since the
                 // Dialog Sub-Components don't seem to have the right timing for ngOnInit
                 this.refresh()
-                return this.filteredContentOptions
+                return this.mediaEntities
             })
 
-        // Initialize ContentSelector with Empty Input
-        // TODO: Make something like this work
-        this.dialogContentForm
-            .get('contentSelectorInput')
-            .setValue('')
-
-        // Handle Parent Selector
-        // this.dialogParentForm = this.fb.group({
-        //     parentSelectorInput: this.data.nestParent
-        // })
-        //
-        // this.dialogParentForm
-        //     .get('parentSelectorInput')
-        //     .valueChanges
-        //     .pipe(
-        //         debounceTime(300),
-        //         tap(() => this.isParentLoading = true),
-        //         switchMap(value => {
-        //                 if (_.isString(value)) {
-        //                     this.lastParentSelectorQuery = `/Api/MenuLink?q=${value}`
-        //                 } else {
-        //                     this.data.nestParent = value
-        //                 }
-        //                 return this.backend.get(this.lastParentSelectorQuery)
-        //                     .pipe(
-        //                         finalize(() => this.isParentLoading = false),
-        //                     )
-        //             }
-        //         )
-        //     )
-        //     .subscribe(response => {
-        //         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-        //             return this.filteredParentOptions = []
-        //         }
-        //         const payload = _.get(response.body, 'payload') || response.body
-        //         if (_.isEmpty(payload) || !Array.isArray(payload)) {
-        //             return this.filteredParentOptions = []
-        //         }
-        //         return this.filteredParentOptions = payload
-        //     })
+        // TODO: Initialize MediaQuery with Empty Input
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
@@ -208,25 +174,4 @@ export class TreeDialogComponent implements OnInit {
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         this.refresh()
     }
-
-    displayContentText(content: Content) {
-        // Ensure Content is Selected before Display Text
-        if (!content) {
-            return
-        }
-        // Routing Fallback
-        const routing = _.get(content, 'routing[0].url')
-        const routingText = !_.isUndefined(routing) ? `/${routing}` : null
-        // ContentId Fallback
-        const contentId = _.get(content, 'id')
-        const contentIdText = !_.isUndefined(contentId) ? `Content: ${contentId}` : null
-        // Return Version Title or Fallback Text
-        return _.get(content, 'version.title') || routingText || contentIdText
-    }
-
-    // displayName(option: any) {
-    //     if (option) {
-    //         return _.get(option, 'name')
-    //     }
-    // }
 }

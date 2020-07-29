@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Media Selector</h1>
+
+<div mat-dialog-content class="media-dialog-content">
+    <!-- Target Editor -->
+    <form class="dialog-form" [formGroup]='dialogMediaForm'>
+        <mat-form-field class="form-field">
+            <input matInput placeholder="Search Media" aria-label="Search Media" formControlName='mediaQueryInput'>
+        </mat-form-field>
+    </form>
+    <mat-grid-list cols="3" rowHeight="2:1">
+        <mat-grid-tile *ngFor="let mediaEntity of mediaEntities">
+            <img [src]="mediaEntity.thumbSrc">
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>
