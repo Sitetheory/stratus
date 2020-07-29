@@ -28,7 +28,7 @@ import {AnyFunction, ObjectWithFunctions} from '@stratusjs/core/misc'
 
 export type StripeService = ObjectWithFunctions & {
     [key: string]: AnyFunction // | IdxSharedValue
-    elements: () => Promise<stripe.elements.Elements>
+    elements: (key: string) => Promise<stripe.elements.Elements>
     confirmCardSetup: (
         clientSecret: string,
         data?: stripe.ConfirmCardSetupData,
@@ -70,8 +70,7 @@ const angularJsService = (
         }
     }*/
 
-    // TODO set publish key externally
-    const publishKey = 'pk_test_ULCczPO0jFXoZFatM8IoKhty'
+    let publishKey = ''
     const Stripe: StripeVariables = {}
     let initializing = false
     let initialized = false
@@ -120,7 +119,8 @@ const angularJsService = (
         return
     }
 
-    async function elements(): Promise<stripe.elements.Elements> {
+    async function elements(key: string): Promise<stripe.elements.Elements> {
+        publishKey = key
         await initialize()
 
         return Stripe.stripeElements

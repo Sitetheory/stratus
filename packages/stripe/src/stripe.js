@@ -19,7 +19,7 @@ System.register(["@stratusjs/runtime/stratus"], function (exports_1, context_1) 
         ],
         execute: function () {
             angularJsService = ($window) => {
-                const publishKey = 'pk_test_ULCczPO0jFXoZFatM8IoKhty';
+                let publishKey = '';
                 const Stripe = {};
                 let initializing = false;
                 let initialized = false;
@@ -68,8 +68,9 @@ System.register(["@stratusjs/runtime/stratus"], function (exports_1, context_1) 
                         return;
                     });
                 }
-                function elements() {
+                function elements(key) {
                     return __awaiter(this, void 0, void 0, function* () {
+                        publishKey = key;
                         yield initialize();
                         return Stripe.stripeElements;
                     });

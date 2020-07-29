@@ -62,6 +62,8 @@ Stratus.Components.StripePaymentMethod = {
         clientSecret: '@',
         // When true, Requests for Name + Address to be added
         detailedBillingInfo: '@',
+        // Stripe Publish Key
+        publishKey: '@',
     },
     controller(
         $attrs: angular.IAttributes,
@@ -81,6 +83,7 @@ Stratus.Components.StripePaymentMethod = {
 
         // The SetupIntent Secret. This allows altering the SetupIntent that was created such as changing card details
         const clientSecret: string = $attrs.clientSecret || null
+        const publishKey = $attrs.publishKey || ''
         let card: stripe.elements.Element = null
         $scope.initialized = false
         $scope.cardComplete = false
@@ -92,7 +95,6 @@ Stratus.Components.StripePaymentMethod = {
             address: {}
         }
 
-
         /**
          * On load, attempt to prepare and render the Card element
          */
@@ -103,7 +105,7 @@ Stratus.Components.StripePaymentMethod = {
                 // {} // style options
                 hidePostalCode: $scope.detailedBillingInfo // option can remove postal
             }
-            card = (await Stripe.elements()).create('card', options)
+            card = (await Stripe.elements(publishKey)).create('card', options)
             console.log('loading', _.clone(options))
             // Render the Card
             card.mount(`#${$scope.elementId}-mount`)

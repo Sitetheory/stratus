@@ -40,6 +40,7 @@ System.register(["lodash", "@stratusjs/runtime/stratus", "angular-material", "@s
                     elementId: '@',
                     clientSecret: '@',
                     detailedBillingInfo: '@',
+                    publishKey: '@',
                 },
                 controller($attrs, $element, $scope, Stripe) {
                     const $ctrl = this;
@@ -49,6 +50,7 @@ System.register(["lodash", "@stratusjs/runtime/stratus", "angular-material", "@s
                     $scope.localDir = localDir;
                     stratus_1.Stratus.Internals.CssLoader(`${localDir}${componentName}.component${min}.css`);
                     const clientSecret = $attrs.clientSecret || null;
+                    const publishKey = $attrs.publishKey || '';
                     let card = null;
                     $scope.initialized = false;
                     $scope.cardComplete = false;
@@ -62,7 +64,7 @@ System.register(["lodash", "@stratusjs/runtime/stratus", "angular-material", "@s
                         const options = {
                             hidePostalCode: $scope.detailedBillingInfo
                         };
-                        card = (yield Stripe.elements()).create('card', options);
+                        card = (yield Stripe.elements(publishKey)).create('card', options);
                         console.log('loading', lodash_1.default.clone(options));
                         card.mount(`#${$scope.elementId}-mount`);
                         card.addEventListener('change', (event) => {
