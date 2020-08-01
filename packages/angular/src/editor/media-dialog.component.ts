@@ -27,11 +27,17 @@ import {
 
 // External
 import _ from 'lodash'
-import {Stratus} from '@stratusjs/runtime/stratus'
+import {
+    Stratus
+} from '@stratusjs/runtime/stratus'
 
 // Services
-import {BackendService} from '@stratusjs/angular/backend.service'
-import {LooseObject} from '@stratusjs/core/misc'
+import {
+    BackendService
+} from '@stratusjs/angular/backend.service'
+import {
+    LooseObject
+} from '@stratusjs/core/misc'
 
 // Data Types
 export interface MediaDialogData extends LooseObject {

@@ -10,6 +10,9 @@
     <mat-grid-list cols="3" rowHeight="2:1">
         <mat-grid-tile *ngFor="let mediaEntity of mediaEntities">
             <img [src]="mediaEntity.thumbSrc">
+            <span [style]="{visibility:'hidden'}"
+                  [innerText]="mediaEntity|json">
+            </span>
         </mat-grid-tile>
     </mat-grid-list>
 </div>

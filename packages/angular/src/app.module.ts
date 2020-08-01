@@ -69,7 +69,8 @@ import {
     QuillModule
 } from 'ngx-quill'
 import {
-    MonacoEditorModule, NgxMonacoEditorConfig
+    MonacoEditorModule,
+    NgxMonacoEditorConfig
 } from 'ngx-monaco-editor'
 
 // External Dependencies
@@ -81,12 +82,28 @@ import {
 // Quill Modules
 import Quill from 'quill'
 import QuillInputButtonPlugin from '@stratusjs/angular/editor/quill-input-button.plugin'
-import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
-import {MediaDialogComponent} from '@stratusjs/angular/editor/media-dialog.component'
+import {
+    QuillConfig
+} from 'ngx-quill/lib/quill-editor.interfaces'
+import {
+    MediaDialogComponent
+} from '@stratusjs/angular/editor/media-dialog.component'
+
+// External Quill Modules
+// import ImageUploader from 'quill-image-uploader'
+// import {
+//     htmlEditButton
+//     // @ts-ignore
+// } from 'quill-html-edit-button'
+// @ts-ignore
+import ImageDropAndPaste from 'quill-image-drop-and-paste'
 
 // Quill Registers
 Quill.register('modules/mediaLibrary', QuillInputButtonPlugin)
 Quill.register('modules/codeView', QuillInputButtonPlugin)
+// Quill.register('modules/imageUploader', ImageUploader)
+// Quill.register('modules/htmlEditButton', htmlEditButton)
+Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 
 // Third Party Quill
 // TODO: Remove once our custom solutions are in place from the new QuillInputButton
@@ -205,6 +222,7 @@ if (cookie('env')) {
         name: 'mediaLibrary',
         eventName: 'media-library'
     }
+    /* *
     quillConfig.modules.codeView = {
         debug: true,
         buttonHTML: '<i class="fas fa-code"></i>',
@@ -212,6 +230,58 @@ if (cookie('env')) {
         name: 'codeView',
         eventName: 'code-view'
     }
+    /* */
+    /* *
+    quillConfig.modules.imageUploader = {
+        upload: (file: any) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve(
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/JavaScript-logo.png/480px-JavaScript-logo.png'
+                    )
+                }, 3500)
+            })
+        }
+    }
+    /* */
+    quillConfig.modules.imageDropAndPaste = {
+        handler: (imageDataUrl: any, type: any, imageData: any) => {
+            console.log('image uploaded!', {imageDataUrl, type, imageData})
+
+            /* *
+            let filename = 'my_cool_image.png'
+            let blob = imageData.toBlob()
+            let file = imageData.toFile(filename)
+
+            // generate a form data
+            let formData = new FormData()
+
+            // append blob data
+            formData.append('filename', filename)
+            formData.append('file', blob)
+
+            // or just append the file
+            formData.append('file', file)
+
+            // upload image to your server
+            callUploadAPI(`https://app.sitetheory.io:3000/?session=${cookie('SITETHEORY')}`, formData, (err, res) => {
+                if (err) return
+                // success? you should return the uploaded image's url
+                // then insert into the quill editor
+                let index = (quill.getSelection() || {}).index || quill.getLength()
+                if (index) quill.insertEmbed(index, 'image', res.data.image_url, 'user')
+            })
+            /* */
+        }
+    }
+    /* *
+    quillConfig.modules.htmlEditButton = {
+        debug: true,
+        // msg: 'Edit the content in HTML format',
+        // okText: 'Ok',
+        // cancelText: 'Cancel'
+    }
+    /* */
 }
 const monacoConfig: NgxMonacoEditorConfig = {
     // configure base path for monaco editor default: './assets'

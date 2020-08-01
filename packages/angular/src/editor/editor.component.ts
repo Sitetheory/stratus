@@ -381,8 +381,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.refresh()
     }
 
-    created(event: Quill) {
-        console.log('editor-created', event)
+    created(quill: Quill) {
+        console.log('editor-created', quill)
+        quill.on('text-change', (delta, oldDelta, source) => {
+            if (source === 'api') {
+                console.log('An API call triggered this change.')
+            } else if (source === 'user') {
+                console.log('A user action triggered this change.')
+            }
+        })
     }
 
     changedEditor(event: EditorChangeContent | EditorChangeSelection) {
