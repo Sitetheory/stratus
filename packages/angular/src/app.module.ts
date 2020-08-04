@@ -141,21 +141,26 @@ const quillConfig: QuillConfig = {
     modules: {
         // syntax: true,
         toolbar: [
+            // inline text styles
             ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+            [{ script: 'sub'}, { script: 'super' }],         // superscript/subscript
+
+            // block paragraph styles
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ list: 'ordered'}, { list: 'bullet' }],
             ['blockquote', 'code-block'],
 
-            [{ header: 1 }, { header: 2 }],                  // custom button values
-            [{ list: 'ordered'}, { list: 'bullet' }],
-            [{ script: 'sub'}, { script: 'super' }],         // superscript/subscript
+            // align and indent
+            [{ align: ['right', 'center', 'justify'] }],
             [{ indent: '-1'}, { indent: '+1' }],             // outdent/indent
-            [{ direction: 'rtl' }],                          // text direction
 
-            [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
-            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            // [{ direction: 'rtl' }],                          // text direction
 
-            [{ color: [] }, { background: [] }],             // dropdown with defaults from theme
-            [{ font: [] }],
-            [{ align: [] }],
+            // [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
+
+            // [{ color: [] }, { background: [] }],             // dropdown with defaults from theme
+            // [{ font: [] }],
+
 
             ['clean'],                                       // remove formatting button
 

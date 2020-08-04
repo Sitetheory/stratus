@@ -262,7 +262,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         dataControl.valueChanges.forEach(
             (value: string) => {
                 // Avoid saving until the Model is truly available
-                if (!this.model.completed || !value) {
+                if (!this.model.completed) {
                     return
                 }
 

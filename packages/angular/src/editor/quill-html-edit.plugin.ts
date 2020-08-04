@@ -152,7 +152,7 @@ function formatHTML(code: any) {
             result += newlineChar + whitespace.repeat(currentIndent)
         } else if (stripWhiteSpaces === true && char === ' ' && nextChar === ' ') {
             char = ''
- } else if (stripEmptyLines === true && char === newlineChar) {
+        } else if (stripEmptyLines === true && char === newlineChar) {
             // debugger;
             if (code.substr(pos, code.substr(pos).indexOf('<')).trim() === '') {
                 char = ''
@@ -169,8 +169,8 @@ function formatHTML(code: any) {
 }
 
 // AMD Setup
-// window.QuillHtmlEdit = QuillHtmlEdit
-// module.exports = QuillHtmlEdit
+// window.QuillHtmlEditPlugin = QuillHtmlEditPlugin
+// module.exports = QuillHtmlEditPlugin
 
 // TypeScript Setup
 export default QuillHtmlEditPlugin
