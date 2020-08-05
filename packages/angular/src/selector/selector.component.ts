@@ -74,7 +74,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class SelectorComponent extends RootComponent { // implements OnInit, OnChanges
+export class SelectorComponent extends RootComponent { // implements OnInit, OnChanges {
 
     // Basic Component Settings
     title = moduleName + '_component'
