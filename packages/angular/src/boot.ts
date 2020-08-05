@@ -1,3 +1,8 @@
+// PURPOSE
+// - This is where we must register if a component will be used in html, e.g. sa-selector
+// - we are using a component as an Angular app, this allows us to have as many angular components on a page defined
+//  dynamically.
+
 import {DOMComplete} from '@stratusjs/core/dom'
 
 // Fade out detection cycles
@@ -21,6 +26,8 @@ function angularBoot() {
         return
     }
     // Load Angular 8+
+    // These are registered valid components to find and load on a page
+    // TODO: eventually we need to dynamically load like config.js, e.g. see material.ts
     const sa = [
         // 'sa-base',
         'sa-editor',

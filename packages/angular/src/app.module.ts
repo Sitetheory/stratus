@@ -1,3 +1,8 @@
+// PURPOSE
+// - This is where we register every component that will be used or imported
+// - add an import to define where it is located, e.g. import { BaseComponent } from '@stratusjs/angular/base/base.component'
+// - add to declarations and entryComponents
+
 // Stratus Libraries
 import {
     cookie
@@ -302,6 +307,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
 }
 
 @NgModule({
+    // These are for external libraries (or Angular)
     imports: [
         // AngularModules,
         BrowserModule,
@@ -316,6 +322,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MonacoEditorModule.forRoot(monacoConfig)
         // SelectorComponent.forRoot()
     ],
+    // This determines what is accessible as a component. These must be listed in `declarations`.
     entryComponents: [
         BaseComponent,
         EditorComponent,
@@ -325,6 +332,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         TreeDialogComponent,
         TreeNodeComponent,
     ],
+    // These determine what exists as a component. These must be listed in `entryComponents`.
     declarations: [
         BaseComponent,
         EditorComponent,
