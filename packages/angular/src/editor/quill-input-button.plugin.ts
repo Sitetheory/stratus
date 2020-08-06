@@ -6,12 +6,18 @@ import {
     TriggerInterface
 } from '@stratusjs/angular/core/trigger.interface'
 
+// External Dependencies
+import _ from 'lodash'
+
 // Quill
 import Quill from 'quill'
 import {QuillToolbarConfig} from 'ngx-quill'
 
 // Universal Button
 class QuillInputButtonPlugin implements TriggerInterface {
+    // Local
+    uid: string
+
     // Settings
     debug = false
     buttonHTML = '<i class="fas fa-carrot"></i>'
@@ -21,6 +27,10 @@ class QuillInputButtonPlugin implements TriggerInterface {
 
     // The quill parameter should be a type of Quill, but that doesn't appear to have the container attribute
     constructor(quill: any, options: any) {
+        // Initialization
+        this.uid = _.uniqueId(`quill_input_button_`)
+        Stratus.Instances[this.uid] = this
+
         this.debug = options && options.debug
 
         // normalize options
@@ -97,7 +107,7 @@ class QuillInputButtonPlugin implements TriggerInterface {
         if (!instance) {
             return
         }
-        instance.trigger('media-library', null, this)
+        instance.trigger(this.eventName, null, this)
     }
 
     trigger(name: string, data: any, callee: TriggerInterface) {
