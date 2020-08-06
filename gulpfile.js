@@ -172,6 +172,7 @@ function lintJS () {
     '!**/*.min.js',
     '!node_modules/**/*.js',
     '!dist/**/*.js',
+    '!etc/**/*.js',
     '!packages/**/*.js', // TypeScript supersedes Standard JS
     '!reports/**/*.js',
     '!umd/**/*.js'

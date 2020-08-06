@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Code View</h1>
+
+<div mat-dialog-content class="code-view-dialog-content">
+    <!-- Target Editor -->
+    <form class="dialog-form" [formGroup]='dialogCodeViewForm'>
+        <mat-form-field class="form-field">
+            <textarea matInput
+                      placeholder="Edit Code"
+                      aria-label="Edit Code"
+                      formControlName="codeViewInput">
+            </textarea>
+        </mat-form-field>
+    </form>
+</div>
