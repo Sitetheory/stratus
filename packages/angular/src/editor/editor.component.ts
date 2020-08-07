@@ -84,6 +84,7 @@ import {
 import {
     Collection
 } from '@stratusjs/angularjs/services/collection'
+import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
 
 // Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
@@ -275,6 +276,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // but something this simple could be used for simple UX purposes down the road.
                 // this.dataChangeLog.push(value)
 
+                // Normalize null values to empty strings to maintain consistent typing.
+                if (value === null) {
+                    value = ''
+                }
+
                 // Save the qualified change!
                 this.model.set(this.property, value)
             }
@@ -414,10 +420,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     trigger(name: string, data: any, callee: TriggerInterface) {
         console.log('editor.trigger:', name, callee)
-        callee.trigger('editor', null, this)
         if (name === 'media-library') {
             this.openMediaDialog()
+        } else if (name === 'code-view') {
+            this.openCodeViewDialog()
         }
+        // callee.trigger('editor', null, this)
     }
 
     public openMediaDialog(): void {
@@ -425,6 +433,27 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             width: '1000px',
             data: {
                 foo: 'bar'
+            }
+        })
+        this.refresh()
+
+        const that = this
+        dialogRef.afterClosed().subscribe((result: MediaDialogData) => {
+            if (!result || _.isEmpty(result)) {
+                return
+            }
+            // TODO: Find Selected Media through click event
+            // Refresh Component
+            that.refresh()
+        })
+    }
+
+    public openCodeViewDialog(): void {
+        const dataControl = this.form.get('dataString')
+        const dialogRef = this.dialog.open(CodeViewDialogComponent, {
+            width: '1000px',
+            data: {
+                code: dataControl.value
             }
         })
         this.refresh()

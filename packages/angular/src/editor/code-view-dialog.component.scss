@@ -1,0 +1,12 @@
+.editor-component {
+  .code-view {
+    &-dialog {
+      &-content {
+        .form-field {
+          width: 100%;
+          min-height: 80px;
+        }
+      }
+    }
+  }
+}

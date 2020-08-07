@@ -102,6 +102,7 @@ import {
 // } from 'quill-html-edit-button'
 // @ts-ignore
 import ImageDropAndPaste from 'quill-image-drop-and-paste'
+import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
 
 // Quill Registers
 Quill.register('modules/mediaLibrary', QuillInputButtonPlugin)
@@ -144,6 +145,7 @@ Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 // External Configs
 const quillConfig: QuillConfig = {
     modules: {
+        // TODO: This requires highlight.js
         // syntax: true,
         toolbar: [
             // inline text styles
@@ -159,8 +161,6 @@ const quillConfig: QuillConfig = {
             [{ align: ['right', 'center', 'justify'] }],
             [{ indent: '-1'}, { indent: '+1' }],             // outdent/indent
 
-            // [{ direction: 'rtl' }],                          // text direction
-
             // [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
 
             // [{ color: [] }, { background: [] }],             // dropdown with defaults from theme
@@ -173,7 +173,8 @@ const quillConfig: QuillConfig = {
                 'link',
                 // 'image',
                 'video'
-            ]
+            ],
+            [{ direction: 'rtl' }]                           // text direction
         ],
         /* *
         mediaLibrary: {
@@ -232,7 +233,7 @@ if (cookie('env')) {
         name: 'mediaLibrary',
         eventName: 'media-library'
     }
-    /* *
+    /* */
     quillConfig.modules.codeView = {
         debug: true,
         buttonHTML: '<i class="fas fa-code"></i>',
@@ -325,6 +326,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     // This determines what is accessible as a component. These must be listed in `declarations`.
     entryComponents: [
         BaseComponent,
+        CodeViewDialogComponent,
         EditorComponent,
         MediaDialogComponent,
         SelectorComponent,
@@ -335,6 +337,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     // These determine what exists as a component. These must be listed in `entryComponents`.
     declarations: [
         BaseComponent,
+        CodeViewDialogComponent,
         EditorComponent,
         MediaDialogComponent,
         SelectorComponent,
