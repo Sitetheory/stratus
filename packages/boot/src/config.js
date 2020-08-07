@@ -53,6 +53,7 @@
       // 'stratus.components.*': boot.deployment + '@stratusjs/angularjs/src/components/*' + boot.suffix,
       'stratus.components.base': boot.deployment + '@stratusjs/angularjs/src/components/base' + boot.suffix,
 
+
       // DIRECTIVES:
       // -----------
       // 'stratus.directives.*': boot.deployment + '@stratusjs/angularjs/src/directives/*' + boot.suffix,
@@ -140,6 +141,7 @@
       /* STRATUS COMPONENTS: Social Media */
       // Not Currently Used: this is a way to enable facebook components for a specific facebook page (component not 100% finished for general use)
       // 'stratus.components.facebook': boot.deployment + '@stratusjs/angularjs-extras/src/components/facebook' + boot.suffix,
+      // 'stratus.components.jsonEditor': boot.deployment + '@stratusjs/angularjs-extras/src/components/jsonEditor' + boot.suffix,
 
       /* STRATUS LIBRARY: Angular */
       // '@angular/*': boot.deployment + '@angular/*/bundles/*.umd' + boot.suffix,
