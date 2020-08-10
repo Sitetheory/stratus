@@ -14,10 +14,7 @@
       'angular',
 
       // Modules
-      'angular-material',
-
-      // Directive
-      'stratus.directives.jsonEncode'
+      'angular-material'
 
     ], factory)
   } else {
