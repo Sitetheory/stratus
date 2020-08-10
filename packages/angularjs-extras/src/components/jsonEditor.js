@@ -54,10 +54,9 @@
       $ctrl.uid = _.uniqueId(_.snakeCase(name) + '_')
       Stratus.Instances[$ctrl.uid] = $scope
       $scope.elementId = $attrs.elementId || $ctrl.uid
-      // TODO: create css file instead of customizing styles in the html
-      // Stratus.Internals.CssLoader(
-      //   Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
-      // )
+      Stratus.Internals.CssLoader(
+        Stratus.BaseUrl + Stratus.BundlePath + localPath + '/' + name + min + '.css'
+      )
 
       // Set to false if we ever set an initilized method
       $scope.initialized = false
