@@ -77,12 +77,44 @@ import {
     MonacoEditorModule,
     NgxMonacoEditorConfig
 } from 'ngx-monaco-editor'
+import {
+    CodeEditorModule
+} from '@ngstack/code-editor'
 
 // External Dependencies
 import _ from 'lodash'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
+
+// Highlight.js
+// import hljs from 'highlight.js/lib/core'
+// import javascript from 'highlight.js/lib/languages/javascript'
+// import typescript from 'highlight.js/lib/languages/typescript'
+// import twig from 'highlight.js/lib/languages/twig'
+// import xml from 'highlight.js/lib/languages/xml'
+// import yaml from 'highlight.js/lib/languages/yaml'
+
+// Highlight.js
+// hljs.configure({
+//     languages: [
+//         'css',
+//         'javascript',
+//         'less',
+//         'scss',
+//         'typescript',
+//         'twig',
+//         'xml',
+//         'yaml'
+//     ]
+// })
+
+// Highlight.js Registers
+// hljs.registerLanguage('javascript', javascript)
+// hljs.registerLanguage('typescript', typescript)
+// hljs.registerLanguage('twig', twig)
+// hljs.registerLanguage('xml', xml)
+// hljs.registerLanguage('yaml', yaml)
 
 // Quill Modules
 import Quill from 'quill'
@@ -145,8 +177,7 @@ Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 // External Configs
 const quillConfig: QuillConfig = {
     modules: {
-        // TODO: This requires highlight.js
-        // syntax: true,
+        syntax: true,
         toolbar: [
             // inline text styles
             ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -313,6 +344,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         // AngularModules,
         BrowserModule,
         BrowserAnimationsModule,
+        CodeEditorModule.forRoot(),
         FormsModule,
         HttpClientModule,
         MaterialModules,

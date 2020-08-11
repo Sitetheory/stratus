@@ -2,13 +2,14 @@
 
 <div mat-dialog-content class="code-view-dialog-content">
     <!-- Target Editor -->
-    <form class="dialog-form" [formGroup]='dialogCodeViewForm'>
+    <form class="dialog-form" [formGroup]="this.data.form">
         <mat-form-field class="form-field">
             <textarea matInput
                       placeholder="Edit Code"
                       aria-label="Edit Code"
-                      formControlName="codeViewInput">
+                      formControlName="dataString">
             </textarea>
         </mat-form-field>
     </form>
+    <!--<ngs-code-editor [codeModel]="this.data.model.get(this.data.property)"></ngs-code-editor>-->
 </div>
