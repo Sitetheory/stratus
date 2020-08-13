@@ -449,11 +449,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     public openCodeViewDialog(): void {
-        const dataControl = this.form.get('dataString')
         const dialogRef = this.dialog.open(CodeViewDialogComponent, {
             width: '1000px',
             data: {
-                code: dataControl.value
+                form: this.form,
+                model: this.model,
+                property: this.property
             }
         })
         this.refresh()

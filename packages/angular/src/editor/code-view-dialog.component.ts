@@ -33,15 +33,17 @@ import {
 
 // Services
 import {
-    BackendService
-} from '@stratusjs/angular/backend.service'
-import {
     LooseObject
 } from '@stratusjs/core/misc'
+import {
+    Model
+} from '@stratusjs/angularjs/services/model'
 
 // Data Types
 export interface CodeViewDialogData extends LooseObject {
-    code: string
+    form: FormGroup,
+    model: Model,
+    property: string
 }
 export interface Content extends LooseObject {
     id?: number
@@ -85,8 +87,6 @@ export class CodeViewDialogComponent implements OnInit {
     constructor(
         public dialogRef: MatDialogRef<CodeViewDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: CodeViewDialogData,
-        private fb: FormBuilder,
-        private backend: BackendService,
         private ref: ChangeDetectorRef
     ) {
         // Manually render upon data change
@@ -104,24 +104,6 @@ export class CodeViewDialogComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
-
-        // TODO: Move this to its own AutoComplete Component
-        // AutoComplete Logic
-        this.dialogCodeViewForm = this.fb.group({
-            codeViewInput: this.data.code || ''
-        })
-        this.dialogCodeViewForm
-            .get('codeViewInput')
-            .valueChanges
-            .pipe(
-                debounceTime(300),
-                tap((value: any) => {
-                    console.log('changed:', value)
-                })
-            )
-            .subscribe((response: any) => {
-                this.refresh()
-            })
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
