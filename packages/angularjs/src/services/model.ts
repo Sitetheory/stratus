@@ -373,7 +373,7 @@ export class Model extends ModelBase {
     }
 
     // TODO: Abstract this deeper
-    sync(action?: any, data?: any, options?: any) {
+    sync(action?: any, data?: any, options?: any): Promise<any> {
         // XHR Flags
         this.pending = true
 
@@ -583,8 +583,17 @@ export class Model extends ModelBase {
             })
     }
 
-    save() {
+    save(options?: any): Promise<any> {
         this.saving = true
+        options = options || {}
+        if (!_.isObject(options)) {
+            console.warn('invalid options supplied:', options)
+            options = {}
+        }
+        if (_.has(options, 'force') && options.force) {
+            options.patch = _.has(options, 'patch') ? options.patch : false
+            return this.doSave(options)
+        }
         // Sanity Checks for Persisted Entities
         if (this.getIdentifier() &&
             (
@@ -600,9 +609,19 @@ export class Model extends ModelBase {
                 resolve(this.data)
             })
         }
+        return this.doSave(options)
+    }
+
+    doSave(options?: any): Promise<any> {
+        options = options || {}
+        if (!_.isObject(options)) {
+            console.warn('invalid options supplied:', options)
+            options = {}
+        }
+        options.patch = _.has(options, 'patch') ? options.patch : true
         return this.sync(this.getIdentifier() ? 'PUT' : 'POST',
             this.toJSON({
-                patch: true
+                patch: options.patch
             }))
             .catch(async (message: any) => {
                 this.error = true
