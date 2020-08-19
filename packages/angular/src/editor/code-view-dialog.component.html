@@ -1,15 +1,45 @@
-<h1 mat-dialog-title>Code View</h1>
+<!--<h1 mat-dialog-title>Code View</h1>-->
 
 <div mat-dialog-content class="code-view-dialog-content">
     <!-- Target Editor -->
-    <form class="dialog-form" [formGroup]="this.data.form">
-        <mat-form-field class="form-field">
+    <form class="dialog-form" [formGroup]="this.form">
+        <mat-form-field class="form-field" style="width: 100%">
+            <mat-label>Code Editor</mat-label>
             <textarea matInput
-                      placeholder="Edit Code"
-                      aria-label="Edit Code"
-                      formControlName="dataString">
+                      cdkTextareaAutosize
+                      #autosize="cdkTextareaAutosize"
+                      cdkAutosizeMinRows="8"
+                      cdkAutosizeMaxRows="25"
+                      formControlName="dataString"
+                      aria-label="Code Editor">
             </textarea>
+            <!--cols="100"-->
         </mat-form-field>
     </form>
-    <!--<ngs-code-editor [codeModel]="this.data.model.get(this.data.property)"></ngs-code-editor>-->
+
+    <!-- Highlight.js Logic -->
+    <!-- https://www.npmjs.com/package/ngx-highlightjs -->
+
+    <!-- Ace Logic -->
+    <!-- https://www.npmjs.com/package/ngx-ace-wrapper -->
+    <!--
+    <ngs-code-editor [codeModel]="this.data.model.get(this.data.property)"></ngs-code-editor>
+    -->
+
+    <!-- One-off Ace Logic -->
+    <!--
+    <div class="code-editor" #codeEditor></div>
+    -->
+
+    <!-- Monaco Logic -->
+    <!--
+    [(ngModel)]="code"
+    [formControlName]="dataString"
+    [formControl]="form.get('dataString')"
+    -->
+    <!--
+    <ngx-monaco-editor [options]="monacoOptions"
+                       [ngModel]="form.get('dataString')">
+    </ngx-monaco-editor>
+    -->
 </div>

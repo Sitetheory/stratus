@@ -14,7 +14,7 @@ import Quill from 'quill'
 import {QuillToolbarConfig} from 'ngx-quill'
 
 // Universal Button
-class QuillInputButtonPlugin implements TriggerInterface {
+export class QuillInputButtonPlugin implements TriggerInterface {
     // Local
     uid: string
 
@@ -118,5 +118,5 @@ class QuillInputButtonPlugin implements TriggerInterface {
     }
 }
 
-export default QuillInputButtonPlugin
-export { QuillInputButtonPlugin }
+// export default QuillInputButtonPlugin
+// export { QuillInputButtonPlugin }

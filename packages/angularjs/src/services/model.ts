@@ -311,9 +311,13 @@ export class Model extends ModelBase {
             }
         }
 
+        // Dispatch Model Events
+        // This hasn't been test, but is probably a better idea than what we're getting from the setAttribute
+        // this.throttleTrigger('change', changeSet)
+
         // Dispatch Collection Events
         if (this.collection) {
-            this.collection.throttleTrigger('change')
+            this.collection.throttleTrigger('change', this)
         }
 
         // Ensure the ChangeSet bubbles
@@ -811,6 +815,8 @@ export class Model extends ModelBase {
         } else {
             this.data[attr] = value
         }
+        // The issue with these triggers is they only fire if using the set() method,
+        // while some values will be changed via the data object directly.
         this.throttleTrigger('change', this)
         this.throttleTrigger(`change:${attr}`, value)
     }
