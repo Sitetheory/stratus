@@ -7,12 +7,14 @@
             <input matInput placeholder="Search Media" aria-label="Search Media" formControlName='mediaQueryInput'>
         </mat-form-field>
     </form>
+    <mat-progress-bar mode="indeterminate" *ngIf="isMediaLoading"></mat-progress-bar>
     <mat-grid-list cols="3" rowHeight="2:1">
-        <mat-grid-tile *ngFor="let mediaEntity of mediaEntities">
-            <img [src]="mediaEntity.thumbSrc">
-            <span [style]="{visibility:'hidden'}"
-                  [innerText]="mediaEntity|json">
-            </span>
-        </mat-grid-tile>
+        <ng-container *ngFor="let mediaEntity of mediaEntities">
+            <mat-grid-tile *ngIf="mediaEntity.thumbSrc !== null">
+                <img [src]="mediaEntity.thumbSrc"
+                     [style.cursor]="'pointer'"
+                     (click)="select(mediaEntity)">
+            </mat-grid-tile>
+        </ng-container>
     </mat-grid-list>
 </div>

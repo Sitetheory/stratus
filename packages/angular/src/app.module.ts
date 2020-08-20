@@ -118,13 +118,25 @@ import {
 
 // Quill Modules
 import Quill from 'quill'
-import QuillInputButtonPlugin from '@stratusjs/angular/editor/quill-input-button.plugin'
 import {
     QuillConfig
 } from 'ngx-quill/lib/quill-editor.interfaces'
+
+// Editor Dialogs
+import {
+    CodeViewDialogComponent
+} from '@stratusjs/angular/editor/code-view-dialog.component'
 import {
     MediaDialogComponent
 } from '@stratusjs/angular/editor/media-dialog.component'
+
+// Quill Plugins
+import {
+    QuillInputButtonPlugin
+} from '@stratusjs/angular/editor/quill-input-button.plugin'
+import {
+    QuillImageFormatPlugin
+} from '@stratusjs/angular/editor/quill-image-format.plugin'
 
 // External Quill Modules
 // import ImageUploader from 'quill-image-uploader'
@@ -134,14 +146,19 @@ import {
 // } from 'quill-html-edit-button'
 // @ts-ignore
 import ImageDropAndPaste from 'quill-image-drop-and-paste'
-import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
 
-// Quill Registers
+// Quill Module Registers
 Quill.register('modules/mediaLibrary', QuillInputButtonPlugin)
 Quill.register('modules/codeView', QuillInputButtonPlugin)
 // Quill.register('modules/imageUploader', ImageUploader)
 // Quill.register('modules/htmlEditButton', htmlEditButton)
 Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
+
+// Quill Format Registers
+// FIXME: None of these fire when images are formatted
+// Quill.register(QuillImageFormatPlugin)
+// Quill.register('formats/image', QuillImageFormatPlugin)
+// Quill.register('formats/imageCustom', QuillImageFormatPlugin)
 
 // Third Party Quill
 // TODO: Remove once our custom solutions are in place from the new QuillInputButton
@@ -176,6 +193,18 @@ Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 
 // External Configs
 const quillConfig: QuillConfig = {
+    /* *
+    formats: [
+        'header', 'font', 'size',
+        'background', 'color',
+        'script', 'align', 'direction',
+        'bold', 'italic', 'underline', 'strike',
+        'blockquote', 'code-block',
+        'list', 'bullet', 'indent',
+        'link', 'image', 'video',
+        // 'imageCustom'
+    ],
+    /* */
     modules: {
         syntax: true,
         toolbar: [
@@ -189,7 +218,13 @@ const quillConfig: QuillConfig = {
             ['blockquote', 'code-block'],
 
             // align and indent
-            [{ align: ['right', 'center', 'justify'] }],
+            [{ align: [
+                // For some reason `left` makes the button show as 'undefined'
+                // 'left',
+                // 'center',
+                // 'right',
+                // 'justify'
+                ] }],
             [{ indent: '-1'}, { indent: '+1' }],             // outdent/indent
 
             // [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
@@ -205,7 +240,7 @@ const quillConfig: QuillConfig = {
                 // 'image',
                 'video'
             ],
-            [{ direction: 'rtl' }]                           // text direction
+            // [{ direction: 'rtl' }]                        // text direction
         ],
         /* *
         mediaLibrary: {
@@ -216,15 +251,13 @@ const quillConfig: QuillConfig = {
             eventName: 'media-library'
         },
         /* */
-        /* *
         codeView: {
             debug: true,
-            buttonHTML: '<i class="fas fa-code"></i>',
+            buttonHTML: '<i class="fas fa-file-code"></i>',
             buttonTitle: 'Code View',
             name: 'codeView',
             eventName: 'code-view'
         }
-        /* */
         // TODO: Remove once our custom solutions are in place from the new QuillInputButton
         /* *
         htmlEdit: {debug: true}
@@ -255,7 +288,7 @@ const quillConfig: QuillConfig = {
         /* */
     }
 }
-// This only shows the mediaLibrary and codeView when in dev mode
+// This only adds certain modules when in dev mode
 if (cookie('env')) {
     quillConfig.modules.mediaLibrary = {
         debug: true,
@@ -264,15 +297,6 @@ if (cookie('env')) {
         name: 'mediaLibrary',
         eventName: 'media-library'
     }
-    /* */
-    quillConfig.modules.codeView = {
-        debug: true,
-        buttonHTML: '<i class="fas fa-code"></i>',
-        buttonTitle: 'Code View',
-        name: 'codeView',
-        eventName: 'code-view'
-    }
-    /* */
     /* *
     quillConfig.modules.imageUploader = {
         upload: (file: any) => {
@@ -288,7 +312,9 @@ if (cookie('env')) {
     /* */
     quillConfig.modules.imageDropAndPaste = {
         handler: (imageDataUrl: any, type: any, imageData: any) => {
-            console.log('image uploaded!', {imageDataUrl, type, imageData})
+            // This logic requires that we build an uploader, but this does get triggered.
+            // It does not appear to keep the filename intact, though.
+            console.log('image dropped:', {imageDataUrl, type, imageData})
 
             /* *
             let filename = 'my_cool_image.png'

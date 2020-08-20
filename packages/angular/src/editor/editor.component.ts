@@ -22,12 +22,21 @@ import {
 } from '@angular/material/dialog'
 
 // External
-import {Observable, Subject, Subscriber} from 'rxjs'
+import {
+    Observable, ObservableInput,
+    Subject,
+    Subscriber, timer
+} from 'rxjs'
 // import {map, startWith} from 'rxjs/operators'
 
 // SVG Icons
-import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser'
-import {MatIconRegistry} from '@angular/material/icon'
+import {
+    DomSanitizer,
+    ɵDomSanitizerImpl
+} from '@angular/platform-browser'
+import {
+    MatIconRegistry
+} from '@angular/material/icon'
 
 // RXJS
 import {SubjectSubscriber} from 'rxjs/internal/Subject'
@@ -84,7 +93,10 @@ import {
 import {
     Collection
 } from '@stratusjs/angularjs/services/collection'
-import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
+import {
+    CodeViewDialogComponent
+} from '@stratusjs/angular/editor/code-view-dialog.component'
+import {catchError, debounce} from 'rxjs/operators'
 
 // Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
@@ -157,22 +169,20 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     } = {}
 
     // UI Flags
+    initialized = false
     styled = false
     blurred = false
     focused = false
-
-    // External Component Options
-    // TODO: Move this to its own dialog
-    monacoOptions = {
-        theme: 'vs-dark',
-        language: 'html'
-    }
+    codeViewIsOpen: boolean
 
     // Forms
     form: FormGroup = this.fb.group({
         dataString: new FormControl(),
     })
     dataChangeLog: string[] = []
+
+    // Child Components
+    quill: Quill
 
     constructor(
         private iconRegistry: MatIconRegistry,
@@ -234,7 +244,18 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     }
                     // this.onDataChange();
                     this.dataDefer(this.subscriber)
-                    this.refresh()
+                    // Halt UI Logic when Code View is Open
+                    if (this.codeViewIsOpen) {
+                        return
+                    }
+                    // Refresh Quill
+                    // if (this.quill) {
+                    //     this.quill.update('user')
+                    // }
+                    // TODO: Add a debounce so we don't attempt to update multiple times while the model is changing.
+                    // this.refresh()
+                    // FIXME: Somehow this doesn't completely work...  It gets data from the model
+                    // when it is changed, but won't propagate it when the form event changes the data.
                 }
                 data.on('change', onDataChange)
                 onDataChange()
@@ -242,10 +263,21 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
-        this.dataSub.subscribe(evt => {
+        this.dataSub
+            .pipe(
+                debounce(() => timer(500)),
+                catchError(this.handleError)
+            )
+            .subscribe(evt => {
             // TODO: This may need to only work on blur and not focus, unless it is the initialization value
             const dataControl = this.form.get('dataString')
             if (dataControl.value === evt) {
+                // In the case of data being edited by the code view or something else,
+                // we need to refresh the UI, as long as it has been initialized.
+                // FIXME: This doesn't work
+                // if (this.initialized) {
+                //     this.refresh()
+                // }
                 return
             }
             dataControl.patchValue(evt)
@@ -257,6 +289,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     ngOnInit() {
+        this.initialized = true
         // console.info(`${moduleName}.ngOnInit`)
         const dataControl = this.form.get('dataString')
         // This valueChanges field is an Event Emitter
@@ -316,6 +349,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.ref.detach()
         this.ref.detectChanges()
         this.ref.reattach()
+    }
+
+    handleError(err: ObservableInput<any>): ObservableInput<any> {
+        console.error(err)
+        return err
     }
 
     // Data Connections
@@ -388,7 +426,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     created(quill: Quill) {
-        console.log('editor-created', quill)
+        this.quill = quill
+        /* *
         quill.on('text-change', (delta, oldDelta, source) => {
             if (source === 'api') {
                 console.log('An API call triggered this change.')
@@ -396,10 +435,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 console.log('A user action triggered this change.')
             }
         })
+        /* */
     }
 
-    changedEditor(event: EditorChangeContent | EditorChangeSelection) {
-        console.log('editor-change', event)
+    changedEditor(event: EditorChangeContent | EditorChangeSelection) {
+        console.log('editor-change:', event)
     }
 
     focus($event: any) {
@@ -431,9 +471,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     public openMediaDialog(): void {
         const dialogRef = this.dialog.open(MediaDialogComponent, {
             width: '1000px',
-            data: {
-                foo: 'bar'
-            }
+            data: {}
         })
         this.refresh()
 
@@ -449,6 +487,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     public openCodeViewDialog(): void {
+        this.codeViewIsOpen = true
         const dialogRef = this.dialog.open(CodeViewDialogComponent, {
             width: '1000px',
             data: {
@@ -459,14 +498,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         })
         this.refresh()
 
-        const that = this
         dialogRef.afterClosed().subscribe((result: MediaDialogData) => {
+            this.codeViewIsOpen = false
+            // If result is present, handle it appropriately
             if (!result || _.isEmpty(result)) {
                 return
             }
-            // TODO: Find Selected Media through click event
-            // Refresh Component
-            that.refresh()
+            // FIXME: Even with these triggers and updates, Quill still desyncs from the Code Editor
+            // this.model.trigger('change')
+            // if (this.quill) {
+            //     this.quill.update('user')
+            // }
+            this.refresh()
+            console.log('CodeViewDialog result:', result)
         })
     }
 }

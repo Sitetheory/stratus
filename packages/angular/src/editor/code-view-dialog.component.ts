@@ -3,26 +3,34 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
+    ElementRef,
     Inject,
+    Input,
+    NgZone,
+    OnChanges,
     OnInit,
-    OnChanges
+    ViewChild
 } from '@angular/core'
 import {
-    FormBuilder,
+    FormBuilder, FormControl,
     FormGroup
 } from '@angular/forms'
+
+// Angular Material
 import {
     MAT_DIALOG_DATA,
     MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
 
+// Angular CDK
+import {
+    CdkTextareaAutosize
+} from '@angular/cdk/text-field'
+
 // RXJS
 import {
-    debounceTime,
-    finalize,
-    switchMap,
-    tap
+    take
 } from 'rxjs/operators'
 
 // External
@@ -40,17 +48,10 @@ import {
 } from '@stratusjs/angularjs/services/model'
 
 // Data Types
-export interface CodeViewDialogData extends LooseObject {
+export interface CodeViewDialogData {
     form: FormGroup,
     model: Model,
     property: string
-}
-export interface Content extends LooseObject {
-    id?: number
-    route?: string
-    version?: {
-        title?: string
-    }
 }
 
 // Local Setup
@@ -76,18 +77,31 @@ export class CodeViewDialogComponent implements OnInit {
     // Dependencies
     _: any
 
-    // Form Data
-    dialogCodeViewForm: FormGroup
+    // Forms
+    form: FormGroup = this.fb.group({
+        dataString: new FormControl(),
+    })
 
-    // filteredParentOptions: any[]
-    // dialogParentForm: FormGroup
-    // isParentLoading = false
-    // lastParentSelectorQuery: string
+    // Model Settings
+    model: Model
+    property: string
+
+    // External Component Options
+    monacoOptions = {
+        theme: 'vs-dark',
+        language: 'html'
+    }
+
+    // View Children
+    @ViewChild('autosize') autosize: CdkTextareaAutosize
+    // @ViewChild('codeEditor') codeEditor: ElementRef
 
     constructor(
         public dialogRef: MatDialogRef<CodeViewDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: CodeViewDialogData,
-        private ref: ChangeDetectorRef
+        private ref: ChangeDetectorRef,
+        private fb: FormBuilder,
+        private ngZone: NgZone
     ) {
         // Manually render upon data change
         // ref.detach()
@@ -104,6 +118,39 @@ export class CodeViewDialogComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+
+        // Hoist Data
+        this.model = this.data.model
+        this.property = this.data.property
+
+        // Initialize Form Data
+        const dataControl = this.form.get('dataString')
+        dataControl.patchValue(this.model.get(this.property))
+
+        // This valueChanges field is an Event Emitter
+        dataControl.valueChanges.forEach(
+            (value: string) => {
+                // Avoid saving until the Model is truly available
+                if (!this.model.completed) {
+                    return
+                }
+
+                // This avoids saving if it's the same
+                // if (value === this.model.get(this.property)) {
+                //     return
+                // }
+
+                // Normalize null values to empty strings to maintain consistent typing.
+                if (value === null) {
+                    value = ''
+                }
+
+                // TODO: Debounce this logic!
+
+                // Save the qualified change!
+                this.model.set(this.property, value)
+            }
+        )
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
@@ -125,5 +172,11 @@ export class CodeViewDialogComponent implements OnInit {
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         this.refresh()
+    }
+
+    triggerResize() {
+        // Wait for changes to be applied, then trigger textarea resize.
+        this.ngZone.onStable.pipe(take(1))
+            .subscribe(() => this.autosize.resizeToFitContent(true))
     }
 }

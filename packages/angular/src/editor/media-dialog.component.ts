@@ -12,6 +12,11 @@ import {
     FormGroup
 } from '@angular/forms'
 import {
+    HttpResponse
+} from '@angular/common/http'
+
+// Angular Material
+import {
     MAT_DIALOG_DATA,
     MatDialog,
     MatDialogRef
@@ -40,15 +45,12 @@ import {
 } from '@stratusjs/core/misc'
 
 // Data Types
-export interface MediaDialogData extends LooseObject {
+export interface MediaDialogData {
     foo: string
 }
-export interface Content extends LooseObject {
+export interface Media extends LooseObject {
     id?: number
-    route?: string
-    version?: {
-        title?: string
-    }
+    thumbSrc?: string
 }
 
 // Local Setup
@@ -78,7 +80,7 @@ export class MediaDialogComponent implements OnInit {
     // AutoComplete Data
     mediaEntities: any[]
     dialogMediaForm: FormGroup
-    isContentLoading = false
+    isMediaLoading = true
     lastMediaQuery: string
 
     // filteredParentOptions: any[]
@@ -119,45 +121,32 @@ export class MediaDialogComponent implements OnInit {
             .valueChanges
             .pipe(
                 debounceTime(300),
-                tap(() => this.isContentLoading = true),
+                tap(() => {
+                    // this.isMediaLoading = true
+                }),
                 switchMap((value: any) => {
                         if (_.isString(value)) {
                             this.lastMediaQuery = `/Api/Media?q=${value}`
-                        } else {
-                            this.data.content = value
-                            this.data.url = null
                         }
+                        this.isMediaLoading = true
                         return this.backend.get(this.lastMediaQuery)
                             .pipe(
-                                finalize(() => this.isContentLoading = false),
+                                finalize(() => this.isMediaLoading = false),
                             )
                     }
                 )
             )
-            .subscribe((response: any) => {
-                if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                    this.mediaEntities = []
-                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
-                    // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-                    this.refresh()
-                    return this.mediaEntities
-                }
-                const payload = _.get(response.body, 'payload') || response.body
-                if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                    this.mediaEntities = []
-                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
-                    // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-                    this.refresh()
-                    return this.mediaEntities
-                }
-                this.mediaEntities = payload
-                // FIXME: We have to go in this roundabout way to force changes to be detected since the
-                // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-                this.refresh()
-                return this.mediaEntities
-            })
+            .subscribe((response: HttpResponse<any>) => this.processMedia(response))
 
-        // TODO: Initialize MediaQuery with Empty Input
+        // Initialize Media Query with starter data
+        this.lastMediaQuery = `/Api/Media?q=`
+        this.backend.get(this.lastMediaQuery)
+            .pipe(
+                finalize(() => this.isMediaLoading = false),
+            )
+            .subscribe(
+                (response: HttpResponse<any>) => this.processMedia(response)
+            )
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
@@ -176,8 +165,29 @@ export class MediaDialogComponent implements OnInit {
 
     onCancelClick(): void {
         this.dialogRef.close()
-        // FIXME: We have to go in this roundabout way to force changes to be detected since the
-        // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         this.refresh()
+    }
+
+    processMedia(response: HttpResponse<any>): any[] {
+        if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+            this.mediaEntities = []
+            this.refresh()
+            return this.mediaEntities
+        }
+        const payload = _.get(response.body, 'payload') || response.body
+        if (_.isEmpty(payload) || !Array.isArray(payload)) {
+            this.mediaEntities = []
+            this.isMediaLoading = false
+            this.refresh()
+            return this.mediaEntities
+        }
+        this.mediaEntities = payload
+        this.isMediaLoading = false
+        this.refresh()
+        return this.mediaEntities
+    }
+
+    select(media: Media) {
+        console.log('selected:', media)
     }
 }
