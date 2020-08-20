@@ -23,9 +23,9 @@ import {
 
 // External
 import {
-    Observable,
+    Observable, ObservableInput,
     Subject,
-    Subscriber
+    Subscriber, timer
 } from 'rxjs'
 // import {map, startWith} from 'rxjs/operators'
 
@@ -96,6 +96,7 @@ import {
 import {
     CodeViewDialogComponent
 } from '@stratusjs/angular/editor/code-view-dialog.component'
+import {catchError, debounce} from 'rxjs/operators'
 
 // Local Setup
 const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
@@ -262,16 +263,21 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
-        this.dataSub.subscribe(evt => {
+        this.dataSub
+            .pipe(
+                debounce(() => timer(500)),
+                catchError(this.handleError)
+            )
+            .subscribe(evt => {
             // TODO: This may need to only work on blur and not focus, unless it is the initialization value
             const dataControl = this.form.get('dataString')
             if (dataControl.value === evt) {
                 // In the case of data being edited by the code view or something else,
                 // we need to refresh the UI, as long as it has been initialized.
-                if (this.initialized) {
-                    // FIXME: This doesn't work
-                    // this.refresh()
-                }
+                // FIXME: This doesn't work
+                // if (this.initialized) {
+                //     this.refresh()
+                // }
                 return
             }
             dataControl.patchValue(evt)
@@ -340,10 +346,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             console.error('ref not available:', this)
             return
         }
-        console.log('refreshing:', this.uid)
         this.ref.detach()
         this.ref.detectChanges()
         this.ref.reattach()
+    }
+
+    handleError(err: ObservableInput<any>): ObservableInput<any> {
+        console.error(err)
+        return err
     }
 
     // Data Connections

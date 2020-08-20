@@ -11,25 +11,27 @@
     </span>
     -->
 
-    <!-- Quill Editor -->
-    <!-- https://www.npmjs.com/package/ngx-quill -->
-    <!-- Note: The easiest way may be use of a FormControl like so: [formControl]="form.get(property)" -->
-    <quill-editor [styles]="{height:'auto', 'min-height':'300px', background: '#ffffff'}"
-                  [attr.data-uid]="uid"
-                  (onEditorCreated)="created($event)"
-                  (onBlur)="blur($event)"
-                  (onFocus)="focus($event)"
-                  formControlName="dataString"
-                  format="html">
-        <!--
-        (onEditorChanged)="changedEditor($event)"
-        [formControl]="form.get('dataString')"
-        -->
-        <div class="ql-container ql-snow" style="border-width: 0;">
-            <!-- [innerHTML]="dataSub | async" -->
-            <div class="ql-editor"></div>
-        </div>
-    </quill-editor>
+    <ng-container *ngIf="styled">
+        <!-- Quill Editor -->
+        <!-- https://www.npmjs.com/package/ngx-quill -->
+        <!-- Note: The easiest way may be use of a FormControl like so: [formControl]="form.get(property)" -->
+        <quill-editor [styles]="{height:'auto', 'min-height':'300px', background: '#ffffff'}"
+                      [attr.data-uid]="uid"
+                      (onEditorCreated)="created($event)"
+                      (onBlur)="blur($event)"
+                      (onFocus)="focus($event)"
+                      formControlName="dataString"
+                      format="html">
+            <!--
+            (onEditorChanged)="changedEditor($event)"
+            [formControl]="form.get('dataString')"
+            -->
+            <div class="ql-container ql-snow" style="border-width: 0;">
+                <!-- [innerHTML]="dataSub | async" -->
+                <div class="ql-editor"></div>
+            </div>
+        </quill-editor>
+    </ng-container>
 </div>
 
 <!--
