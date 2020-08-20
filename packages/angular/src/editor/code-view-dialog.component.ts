@@ -30,11 +30,7 @@ import {
 
 // RXJS
 import {
-    debounceTime,
-    finalize,
-    switchMap,
-    take,
-    tap
+    take
 } from 'rxjs/operators'
 
 // External
