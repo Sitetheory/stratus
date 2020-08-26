@@ -71,6 +71,7 @@
                     </div>
 
                     <h3 [innerHTML]="_.get(selectedModel, 'version.title') || _.get(selectedModel, 'version.name') || _.get(selectedModel, 'name') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>
+                    <!-- TODO: make this clickable in new window -->
                     <span class="routing"
                           [textContent]="(has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : null) || _.get(selectedModel, 'description') || ''">
                     </span>
@@ -92,6 +93,24 @@
                             <g id="icon-delete" class="action-button" fill="url(#linear-gradient-icon-delete)">
                                 <path d="M9.98721875,40 C9.98721875,42.209 11.736676,43.99 13.8951228,43.99 L36.092096,43.99 C38.2564134,43.99 40,42.204 40,40 L40,15 L10,15 L9.98721875,40 Z M16.9936094,21.904 L18.9872188,21.904 L18.9872188,38.0891113 L16.9936094,38.0891113 L16.9936094,21.904 Z M23.9286042,21.904 L25.9872188,21.904 L25.9872188,38.0891113 L23.9286042,38.0891113 L23.9286042,21.904 Z M30.9936094,21.904 L32.9872188,21.904 L32.9872188,38.0891113 L30.9936094,38.0891113 L30.9936094,21.904 Z" id="trash-base"></path>
                                 <path d="M29.2875402,7.05695537 L29.2875402,3 L20.7124598,3 L20.7124598,7.05695537 L13.20584,7.05695537 C11.4407276,7.05695537 9.99360938,8.41852994 9.99360938,10.0985149 L9.98721875,13 L40,13 L40.0063906,10.0985149 C40.0063906,8.42223238 38.5680784,7.05695537 36.79416,7.05695537 L29.2875402,7.05695537 Z M22.8562299,5.02801488 L27.1437701,5.02801488 L27.1437701,7.05602976 L22.8562299,7.05602976 L22.8562299,5.02801488 Z" id="trash-lid"></path>
+                            </g>
+                        </svg>
+                    </button>
+                    <button mat-button
+                            *ngIf="has(selectedModel, 'contentType.editUrl')"
+                            [matTooltip]="'Edit ' + target"
+                            aria-label="Edit Item in New Window"
+                            class="btn btn-edit"
+                            (click)="goToUrl(selectedModel, '_blank');">
+                        <svg viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs>
+                                <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linear-gradient-icon-edit">
+                                    <stop class="stop1" stop-color="#666666" stop-opacity="1" offset="0%"></stop>
+                                    <stop class="stop2" stop-color="#666666" stop-opacity="1" offset="100%"></stop>
+                                </linearGradient>
+                            </defs>
+                            <g id="icon-edit" class="action-button" fill="url(#linear-gradient-icon-edit)">
+                                <path d="M8.47016108,18.0701611 C7.69017115,17.2901711 7.69372531,16.0220034 8.47077698,15.2449518 L14.6875925,9.0281363 C15.4679225,8.24780621 16.7321645,8.24688316 17.5128018,9.02752039 L36.9947502,28.5094688 C37.7747401,29.2894588 37.771186,30.5576265 36.9941343,31.3346782 L30.7773188,37.5514936 C29.9969888,38.3318237 28.7327468,38.3327468 27.9521095,37.5521095 L8.47016108,18.0701611 Z M32.6179596,40.7108528 L40.1534935,33.1753189 L41.7213203,42.2786797 L32.6179596,40.7108528 Z" id="icon-edit-pencil"></path>
                             </g>
                         </svg>
                     </button>
