@@ -243,6 +243,14 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         this.model.trigger('change')
     }
 
+    goToUrl(model: any) {
+        if (!model || !model.contentType) {
+            console.error('unable to execute goToUrl() because a valid model content was not provided.')
+            return
+        }
+        window.open(model.contentType.editUrl + '?id=' + model.id, '_blank')
+    }
+
     remove(model: any) {
         const models = this.dataRef()
         if (!models || !models.length) {

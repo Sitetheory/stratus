@@ -173,6 +173,14 @@ sa-selector {
   }
   .column-action {
     width: 15%;
+    > * {
+      display: inline-block;
+      vertical-align: middle;
+      margin-bottom: 2px;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }
 .cdk-drag-preview {
@@ -216,11 +224,11 @@ sa-selector {
       background: rgba(0, 0, 0, 0.04);
       border-radius: 2px;
     }
-    .btn.btn-delete {
+    .btn.btn-delete, .btn.btn-edit {
       float: right;
-      width: 50px;
+      width: 35px;
       min-width: unset;
-      height: 50px;
+      height: 35px;
       font-size: 10px;
       margin-left: 12px;
       padding: 0;
@@ -240,7 +248,7 @@ sa-selector {
     }
   }
 }
-.firefox .btn.btn-delete svg {
+.firefox .btn.btn-delete svg, .firefox .btn.btn-edit svg {
   &,
   g {
     max-width: 28px;
