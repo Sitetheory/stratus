@@ -43,14 +43,63 @@ import {
 import {
     LooseObject
 } from '@stratusjs/core/misc'
+import {Model} from '@stratusjs/angularjs/services/model'
 
 // Data Types
 export interface MediaDialogData {
-    foo: string
+    form: FormGroup,
+    model: Model,
+    property: string
 }
 export interface Media extends LooseObject {
-    id?: number
-    thumbSrc?: string
+    tags?: Array<any>
+    images?: Array<any>
+    media?: Array<any>
+    storageService?: any
+    priority?: number
+    storageServiceId?: number
+    duplicateId?: number
+    name: string
+    description?: string
+    abstract?: any
+    embed?: string
+    hash: string
+    prefix: string
+    url?: string
+    file: string
+    filename: string
+    extension: string
+    mime: string
+    bytes: number
+    bytesHuman: string
+    ratio: string
+    ratioPercent: string
+    bestRatio: string
+    bestRatioWord: string
+    dimensions: string
+    service?: any
+    serviceMediaId?: number
+    meta?: Array<any>
+    src: string
+    thumbSrc: string
+    bestImage?: any
+    duration?: any
+    autoPlay: boolean
+    vr: boolean
+    timeCustom?: number
+    author?: any
+    modules?: Array<any>
+    id: number
+    siteId?: number
+    vendorId?: number
+    time: number
+    timeEdit: number
+    timeStatus?: number
+    status: number
+    importId?: number
+    vendor?: any
+    syndicated: number
+    isPseudoPriority: boolean
 }
 
 // Local Setup
@@ -83,10 +132,9 @@ export class MediaDialogComponent implements OnInit {
     isMediaLoading = true
     lastMediaQuery: string
 
-    // filteredParentOptions: any[]
-    // dialogParentForm: FormGroup
-    // isParentLoading = false
-    // lastParentSelectorQuery: string
+    // Model Settings
+    model: Model
+    property: string
 
     constructor(
         public dialogRef: MatDialogRef<MediaDialogComponent>,
@@ -110,6 +158,10 @@ export class MediaDialogComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+
+        // Hoist Data
+        this.model = this.data.model
+        this.property = this.data.property
 
         // TODO: Move this to its own AutoComplete Component
         // AutoComplete Logic
@@ -188,6 +240,10 @@ export class MediaDialogComponent implements OnInit {
     }
 
     select(media: Media) {
-        console.log('selected:', media)
+        const imageElement = `<img data-stratus-src src="${media.thumbSrc}" alt="${media.name || media.filename}">`
+        this.model.set(
+            this.property,
+            this.model.get(this.property) + imageElement
+        )
     }
 }

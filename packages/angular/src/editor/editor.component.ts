@@ -94,7 +94,7 @@ import {
     Collection
 } from '@stratusjs/angularjs/services/collection'
 import {
-    CodeViewDialogComponent
+    CodeViewDialogComponent, CodeViewDialogData
 } from '@stratusjs/angular/editor/code-view-dialog.component'
 import {catchError, debounce} from 'rxjs/operators'
 
@@ -471,7 +471,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     public openMediaDialog(): void {
         const dialogRef = this.dialog.open(MediaDialogComponent, {
             width: '1000px',
-            data: {}
+            data: {
+                form: this.form,
+                model: this.model,
+                property: this.property
+            }
         })
         this.refresh()
 
@@ -480,9 +484,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             if (!result || _.isEmpty(result)) {
                 return
             }
-            // TODO: Find Selected Media through click event
             // Refresh Component
             that.refresh()
+            // Display output if one exists
+            if (cookie('env') && result) {
+                console.log('media dialog result:', result)
+            }
         })
     }
 
@@ -498,7 +505,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         })
         this.refresh()
 
-        dialogRef.afterClosed().subscribe((result: MediaDialogData) => {
+        dialogRef.afterClosed().subscribe((result: CodeViewDialogData) => {
             this.codeViewIsOpen = false
             // If result is present, handle it appropriately
             if (!result || _.isEmpty(result)) {
@@ -510,7 +517,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             //     this.quill.update('user')
             // }
             this.refresh()
-            console.log('CodeViewDialog result:', result)
+            // Display output if one exists
+            if (cookie('env') && result) {
+                console.log('code view dialog result:', result)
+            }
         })
     }
 }

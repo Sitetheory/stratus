@@ -12,6 +12,7 @@
         <ng-container *ngFor="let mediaEntity of mediaEntities">
             <mat-grid-tile *ngIf="mediaEntity.thumbSrc !== null">
                 <img [src]="mediaEntity.thumbSrc"
+                     [alt]="mediaEntity.name"
                      [style.cursor]="'pointer'"
                      (click)="select(mediaEntity)">
             </mat-grid-tile>
