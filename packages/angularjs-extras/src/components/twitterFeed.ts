@@ -17,9 +17,9 @@ import {sanitize} from '@stratusjs/core/conversion'
 import {cookie} from '@stratusjs/core/environment'
 
 // Environment
-const min = !cookie('env') ? '.min' : ''
+// const min = !cookie('env') ? '.min' : ''
 const name = 'twitterFeed'
-const localPath = '@stratusjs/angularjs-extras/src/components'
+// const localPath = '@stratusjs/angularjs-extras/src/components'
 
 // This component is just a simple twitter feed.
 Stratus.Components.TwitterFeed = {

@@ -20,11 +20,10 @@ import {Observable, Subject, Subscriber} from 'rxjs'
 // import {map, startWith} from 'rxjs/operators'
 
 // SVG Icons
-import {DomSanitizer, ɵDomSanitizerImpl} from '@angular/platform-browser'
+import {DomSanitizer} from '@angular/platform-browser'
 import {MatIconRegistry} from '@angular/material/icon'
 
 // RXJS
-import {SubjectSubscriber} from 'rxjs/internal/Subject'
 
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -36,7 +35,6 @@ import {RootComponent} from '@stratusjs/angular/core/root.component'
 
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
-import {cookie} from '@stratusjs/core/environment'
 
 // Core Classes
 import {EventManager} from '@stratusjs/core/events/eventManager'
@@ -48,10 +46,14 @@ import {Model} from '@stratusjs/angularjs/services/model'
 import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'selector'
 
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+
+// Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
 
 // export interface Model {

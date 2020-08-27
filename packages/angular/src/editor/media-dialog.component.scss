@@ -1,17 +1,18 @@
-.editor-component {
-  .media {
-    &-dialog {
-      &-content {
-        .radio {
-          &-group {
-            display: flex;
-            flex-direction: column;
-            margin: 15px 0;
-          }
-          &-button {
-            margin: 5px;
-          }
+.media {
+  &-dialog {
+    &-content {
+      .radio {
+        &-group {
+          display: flex;
+          flex-direction: column;
+          margin: 15px 0;
         }
+        &-button {
+          margin: 5px;
+        }
+      }
+      .selected {
+        opacity: 0.5;
       }
     }
   }

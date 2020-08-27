@@ -10,14 +10,10 @@ import {
 
 // Angular Core
 import {
-    registerLocaleData
-} from '@angular/common'
-import {
     HttpClientModule
 } from '@angular/common/http'
 import {
     ApplicationRef,
-    ComponentFactory,
     NgModule
 } from '@angular/core'
 import {
@@ -134,9 +130,6 @@ import {
 import {
     QuillInputButtonPlugin
 } from '@stratusjs/angular/editor/quill-input-button.plugin'
-import {
-    QuillImageFormatPlugin
-} from '@stratusjs/angular/editor/quill-image-format.plugin'
 
 // External Quill Modules
 // import ImageUploader from 'quill-image-uploader'
@@ -159,6 +152,10 @@ Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 // Quill.register(QuillImageFormatPlugin)
 // Quill.register('formats/image', QuillImageFormatPlugin)
 // Quill.register('formats/imageCustom', QuillImageFormatPlugin)
+
+// Quill Blot Registers
+// console.log('Quill Break:', QuillBreak)
+// Quill.register(QuillBreak)
 
 // Third Party Quill
 // TODO: Remove once our custom solutions are in place from the new QuillInputButton
@@ -242,7 +239,6 @@ const quillConfig: QuillConfig = {
             ],
             // [{ direction: 'rtl' }]                        // text direction
         ],
-        /* *
         mediaLibrary: {
             debug: true,
             buttonHTML: '<i class="fas fa-photo-video"></i>',
@@ -250,7 +246,6 @@ const quillConfig: QuillConfig = {
             name: 'mediaLibrary',
             eventName: 'media-library'
         },
-        /* */
         codeView: {
             debug: true,
             buttonHTML: '<i class="fas fa-file-code"></i>',
@@ -290,13 +285,6 @@ const quillConfig: QuillConfig = {
 }
 // This only adds certain modules when in dev mode
 if (cookie('env')) {
-    quillConfig.modules.mediaLibrary = {
-        debug: true,
-        buttonHTML: '<i class="fas fa-photo-video"></i>',
-        buttonTitle: 'Media Library',
-        name: 'mediaLibrary',
-        eventName: 'media-library'
-    }
     /* *
     quillConfig.modules.imageUploader = {
         upload: (file: any) => {

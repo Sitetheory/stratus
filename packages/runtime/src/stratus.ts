@@ -91,6 +91,10 @@ interface StratusRuntime {
             namespace: string
             type: string
         }
+        dataDirectives: {
+            namespace: string
+            type: string
+        }
         flex: {
             selector: string
             require: string[]
@@ -296,6 +300,10 @@ export const Stratus: StratusRuntime = {
         directives: {
             namespace: 'stratus.directives.',
             type: 'attribute'
+        },
+        dataDirectives: {
+            namespace: 'stratus.directives.',
+            type: 'data-attribute'
         },
 
         // angular material
@@ -1442,7 +1450,7 @@ Stratus.Internals.LoadImage = (obj: any) => {
             // Gather Container (Calculated) Width
             // TODO: This may be able to be removed as it doesn't appear to be
             // used for anything other than old Bootstrap Carousels.
-            const visibleParentCheck = false
+            const visibleParentCheck = true
             if (visibleParentCheck && (!width || unit === '%')) {
                 console.warn('visibleParentTriggered:', el)
                 // If there is no CSS width, calculate the parent container's width
@@ -1989,11 +1997,17 @@ Stratus.Loaders.Angular = function AngularLoader() {
                         // if (_.isString(pathKey) && cookie('env')) {
                         //     console.log(pathKey.match(/([a-zA-Z]+)/g))
                         // }
-                        return _.startsWith(pathKey, element.namespace)
-                               ? (element.type === 'attribute' ? '[' : '') +
-                                   _.kebabCase(pathKey.replace(element.namespace, 'stratus-')) +
-                                   (element.type === 'attribute' ? ']' : '')
-                               : null
+                        if (!_.startsWith(pathKey, element.namespace)) {
+                            return null
+                        }
+                        const selector = _.kebabCase(pathKey.replace(element.namespace, 'stratus-'))
+                        if (element.type === 'attribute') {
+                            return `[${selector}]`
+                        }
+                        if (element.type === 'data-attribute') {
+                            return `[data-${selector}]`
+                        }
+                        return selector
                     })
                 )
             }
@@ -2256,11 +2270,13 @@ Stratus.Loaders.Angular = function AngularLoader() {
                         if (++counter !== css.length) {
                             return
                         }
-                        const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+                        // const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+                        angular.bootstrap(document.documentElement, ['stratusApp'])
                     })
             })
         } else {
-            const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+            // const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+            angular.bootstrap(document.documentElement, ['stratusApp'])
         }
     })
 }

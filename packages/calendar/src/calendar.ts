@@ -13,6 +13,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Libraries
 import _ from 'lodash'
 import angular from 'angular'
+// tslint:disable-next-line:no-duplicate-imports
 import 'angular'
 import 'jquery'
 import * as moment from 'moment'
@@ -36,9 +37,9 @@ import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/calendar/iCal'
 
 // Services
-import {Model} from '@stratusjs/angularjs/services/model'
-import {Collection} from '@stratusjs/angularjs/services/collection'
-import {Registry} from '@stratusjs/angularjs/services/registry'
+// import {Model} from '@stratusjs/angularjs/services/model'
+// import {Collection} from '@stratusjs/angularjs/services/collection'
+// import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Components
 import * as fullCalendarCustomViewPlugin from '@stratusjs/calendar/customView'
@@ -46,7 +47,9 @@ import * as fullCalendarCustomViewPlugin from '@stratusjs/calendar/customView'
 // Stratus Utilities
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON} from '@stratusjs/core/misc'
+// tslint:disable-next-line:no-duplicate-imports
 import {Calendar, EventApi} from '@fullcalendar/core'
+// tslint:disable-next-line:no-duplicate-imports
 import {ICalExpander} from '@stratusjs/calendar/iCal'
 
 // Environment

@@ -15,6 +15,7 @@ import 'angular-sanitize'
 
 // Services
 import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
     IdxService,

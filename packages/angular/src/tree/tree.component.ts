@@ -37,7 +37,6 @@ import {RootComponent} from '@stratusjs/angular/core/root.component'
 // Services
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {cookie} from '@stratusjs/core/environment'
-import {LooseObject} from '@stratusjs/core/misc'
 
 // Core Classes
 import {EventManager} from '@stratusjs/core/events/eventManager'
@@ -51,8 +50,11 @@ import {
 } from '@stratusjs/angularjs/services/model'
 
 // Force Dependent Services
+// tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/angularjs/services/registry'
+// tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/angularjs/services/collection'
+// tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/angularjs/services/model'
 import {RefreshInterface} from '@stratusjs/angular/core/refresh.interface'
 
@@ -92,9 +94,12 @@ export interface ElementMap {
 // }
 
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree'
+
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Tree with Nested Drag & Drop

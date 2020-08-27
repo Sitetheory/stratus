@@ -5,10 +5,7 @@ import {
     Component,
     ElementRef,
     Input,
-    // OnChanges,
     OnInit,
-    // Output,
-    // SecurityContext
 } from '@angular/core'
 import {
     FormBuilder,
@@ -23,32 +20,30 @@ import {
 
 // External
 import {
-    Observable, ObservableInput,
+    Observable,
+    ObservableInput,
     Subject,
-    Subscriber, timer
+    Subscriber,
+    timer
 } from 'rxjs'
-// import {map, startWith} from 'rxjs/operators'
+import {
+    catchError,
+    debounce
+} from 'rxjs/operators'
 
 // SVG Icons
 import {
-    DomSanitizer,
-    ɵDomSanitizerImpl
+    DomSanitizer
 } from '@angular/platform-browser'
-import {
-    MatIconRegistry
-} from '@angular/material/icon'
-
-// RXJS
-import {SubjectSubscriber} from 'rxjs/internal/Subject'
+// import {
+//     MatIconRegistry
+// } from '@angular/material/icon'
 
 // External Dependencies
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
-import {
-    keys
-} from 'ts-transformer-keys'
 
 // Quill Dependencies
 import Quill from 'quill'
@@ -75,9 +70,6 @@ import {
     EventManager
 } from '@stratusjs/core/events/eventManager'
 import {
-    ModelBase
-} from '@stratusjs/core/datastore/modelBase'
-import {
     EventBase
 } from '@stratusjs/core/events/eventBase'
 
@@ -94,15 +86,24 @@ import {
     Collection
 } from '@stratusjs/angularjs/services/collection'
 import {
-    CodeViewDialogComponent
+    CodeViewDialogComponent,
+    CodeViewDialogData
 } from '@stratusjs/angular/editor/code-view-dialog.component'
-import {catchError, debounce} from 'rxjs/operators'
+
+// Transformers
+import {
+    keys
+} from 'ts-transformer-keys'
 
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'editor'
 
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+
+// Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
 
 // export interface Model {
@@ -185,7 +186,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     quill: Quill
 
     constructor(
-        private iconRegistry: MatIconRegistry,
+        // private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
         private ref: ChangeDetectorRef,
         private elementRef: ElementRef,
@@ -471,7 +472,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     public openMediaDialog(): void {
         const dialogRef = this.dialog.open(MediaDialogComponent, {
             width: '1000px',
-            data: {}
+            data: {
+                form: this.form,
+                model: this.model,
+                property: this.property
+            }
         })
         this.refresh()
 
@@ -480,9 +485,12 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             if (!result || _.isEmpty(result)) {
                 return
             }
-            // TODO: Find Selected Media through click event
             // Refresh Component
             that.refresh()
+            // Display output if one exists
+            if (cookie('env') && result) {
+                console.log('media dialog result:', result)
+            }
         })
     }
 
@@ -498,7 +506,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         })
         this.refresh()
 
-        dialogRef.afterClosed().subscribe((result: MediaDialogData) => {
+        dialogRef.afterClosed().subscribe((result: CodeViewDialogData) => {
             this.codeViewIsOpen = false
             // If result is present, handle it appropriately
             if (!result || _.isEmpty(result)) {
@@ -510,7 +518,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             //     this.quill.update('user')
             // }
             this.refresh()
-            console.log('CodeViewDialog result:', result)
+            // Display output if one exists
+            if (cookie('env') && result) {
+                console.log('code view dialog result:', result)
+            }
         })
     }
 }

@@ -27,10 +27,13 @@ import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-node'
 const parentModuleName = 'tree'
+
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Node for Nested Tree

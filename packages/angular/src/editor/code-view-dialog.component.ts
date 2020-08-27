@@ -3,11 +3,8 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    ElementRef,
     Inject,
-    Input,
     NgZone,
-    OnChanges,
     OnInit,
     ViewChild
 } from '@angular/core'
@@ -19,7 +16,6 @@ import {
 // Angular Material
 import {
     MAT_DIALOG_DATA,
-    MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
 
@@ -41,24 +37,17 @@ import {
 
 // Services
 import {
-    LooseObject
-} from '@stratusjs/core/misc'
-import {
     Model
 } from '@stratusjs/angularjs/services/model'
 
-// Data Types
-export interface CodeViewDialogData {
-    form: FormGroup,
-    model: Model,
-    property: string
-}
-
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'code-view-dialog'
 const parentModuleName = 'editor'
+
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Dialog for Nested Tree
@@ -179,4 +168,11 @@ export class CodeViewDialogComponent implements OnInit {
         this.ngZone.onStable.pipe(take(1))
             .subscribe(() => this.autosize.resizeToFitContent(true))
     }
+}
+
+// Data Types
+export interface CodeViewDialogData {
+    form: FormGroup,
+    model: Model,
+    property: string
 }

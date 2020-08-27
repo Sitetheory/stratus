@@ -354,6 +354,8 @@ export class Collection extends EventManager {
                 return
             }
             if (!$http) {
+                // TODO: Verify the whether the const is necessity
+                // tslint:disable-next-line:no-unused-variable
                 const wait = await serviceVerify()
             }
             $http(prototype)
@@ -373,6 +375,8 @@ export class Collection extends EventManager {
             .catch(async (error: any) => {
                     console.error('FETCH:', error)
                     if (!$mdToast) {
+                        // TODO: Verify the whether the const is necessity
+                        // tslint:disable-next-line:no-unused-variable
                         const wait = await serviceVerify()
                     }
                     $mdToast.show(

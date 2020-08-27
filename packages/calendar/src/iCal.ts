@@ -7,6 +7,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Libraries
 import _ from 'lodash'
 import angular from 'angular'
+// tslint:disable-next-line:no-duplicate-imports
 import 'angular'
 import 'ical.js' // Global ICAL variable.... not able to be sandboxed yet
 

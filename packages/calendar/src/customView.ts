@@ -6,6 +6,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Libraries
 import _ from 'lodash'
 import angular from 'angular'
+// tslint:disable-next-line:no-duplicate-imports
 import 'angular'
 import 'jquery'
 import 'moment'
@@ -13,6 +14,7 @@ import 'moment-range'
 
 // FullCalendar
 import '@fullcalendar/core'
+// tslint:disable-next-line:no-duplicate-imports
 import {EventApi, View, appendToElement, EventStore, sliceEventStore, createPlugin} from '@fullcalendar/core'
 
 // Angular 1 Modules
@@ -24,13 +26,10 @@ import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/registry'
 
 // Services
-import {Model} from '@stratusjs/angularjs/services/model'
-import {Collection} from '@stratusjs/angularjs/services/collection'
-import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Stratus Utilities
 import {cookie} from '@stratusjs/core/environment'
-import {EventUi, EventUiHash} from '@fullcalendar/core/component/event-ui'
+import {EventUiHash} from '@fullcalendar/core/component/event-ui'
 
 // Environment
 const min: any = !cookie('env') ? '.min' : ''

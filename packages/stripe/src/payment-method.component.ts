@@ -12,7 +12,9 @@ import * as angular from 'angular'
 import 'angular-material'
 
 // Services
+// TODO: We don't need to force the stripe import here if the StripeService below is used
 import '@stratusjs/stripe/stripe'
+// tslint:disable-next-line:no-duplicate-imports
 import {StripeService} from '@stratusjs/stripe/stripe'
 
 // Stratus Dependencies

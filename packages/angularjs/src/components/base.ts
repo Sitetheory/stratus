@@ -7,6 +7,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 // Libraries
 import _ from 'lodash'
 import angular from 'angular'
+// tslint:disable-next-line:no-duplicate-imports
 import 'angular'
 import 'jquery'
 
@@ -19,8 +20,11 @@ import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/registry'
 
 // Services
+// tslint:disable-next-line:no-duplicate-imports
 import {Model} from '@stratusjs/angularjs/services/model'
+// tslint:disable-next-line:no-duplicate-imports
 import {Collection} from '@stratusjs/angularjs/services/collection'
+// tslint:disable-next-line:no-duplicate-imports
 import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Stratus Utilities
