@@ -1,0 +1,34 @@
+{
+  "name": "@stratusjs/map",
+  "version": "0.0.0",
+  "description": "Angular Google Map component to be used as an add on to StratusJS",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sitetheory/stratus.git"
+  },
+  "keywords": [
+    "sitetheory",
+    "stratus",
+    "angular",
+    "lodash",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Sitetheory Development Team (https://sitetheory.io/)",
+  "license": "mit",
+  "bugs": {
+    "url": "https://github.com/Sitetheory/stratus/issues"
+  },
+  "homepage": "https://github.com/Sitetheory/stratus#readme",
+  "engines": {
+    "yarn": ">= 1.21.1"
+  },
+  "dependencies": {
+    "@angular/google-maps": "^10.1.3",
+    "@stratusjs/angular": "^0.2.27"
+  }
+}

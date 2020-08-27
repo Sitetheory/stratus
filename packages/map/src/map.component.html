@@ -1,0 +1,25 @@
+<div>This is a test map</div>
+<ng-container *ngIf="initialized">
+    <google-map
+            height="500px"
+            width="100%"
+            [zoom]="zoom"
+            [center]="center"
+            [options]="options"
+    >
+        <map-marker
+                #markerElem="mapMarker"
+                *ngFor="let marker of markers"
+                [position]="marker.position"
+                [label]="marker.label"
+                [title]="marker.title"
+                [options]="marker.options"
+
+                (mapClick)="mapClick(markerElem, marker.click)"
+        ></map-marker>
+
+        <map-info-window>
+            {{markerContent}}
+        </map-info-window>
+    </google-map>
+</ng-container>

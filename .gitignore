@@ -59,6 +59,9 @@ packages/core/src/**/*.js.map
 packages/idx/src/**/*.js
 packages/idx/src/**/*.js.map
 packages/idx/src/**/*.css
+packages/map/src/**/*.js
+packages/map/src/**/*.js.map
+packages/map/src/**/*.css
 packages/react/src/**/*.js
 packages/react/src/**/*.js.map
 packages/react/src/**/*.css
