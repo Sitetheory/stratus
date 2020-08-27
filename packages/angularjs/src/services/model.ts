@@ -225,6 +225,8 @@ export class Model extends ModelBase {
                         return
                     }
                     if (!$mdToast) {
+                        // TODO: Verify the whether the const is necessity
+                        // tslint:disable-next-line:no-unused-variable
                         const wait = await serviceVerify()
                     }
                     $mdToast.show(
@@ -253,6 +255,8 @@ export class Model extends ModelBase {
 
         // Verify AngularJS Services
         if (!$rootScope) {
+            // TODO: Verify the whether the const is necessity
+            // tslint:disable-next-line:no-unused-variable
             const wait = await serviceVerify()
         }
 
@@ -422,6 +426,8 @@ export class Model extends ModelBase {
             }
 
             if (!$http) {
+                // TODO: Verify the whether the const is necessity
+                // tslint:disable-next-line:no-unused-variable
                 const wait = await serviceVerify()
             }
             $http(prototype).then((response: any) => {
@@ -575,6 +581,8 @@ export class Model extends ModelBase {
                     return
                 }
                 if (!$mdToast) {
+                    // TODO: Verify the whether the const is necessity
+                    // tslint:disable-next-line:no-unused-variable
                     const wait = await serviceVerify()
                 }
                 $mdToast.show(
@@ -634,6 +642,8 @@ export class Model extends ModelBase {
                     return
                 }
                 if (!$mdToast) {
+                    // TODO: Verify the whether the const is necessity
+                    // tslint:disable-next-line:no-unused-variable
                     const wait = await serviceVerify()
                 }
                 $mdToast.show(
@@ -940,6 +950,8 @@ export class Model extends ModelBase {
                         return
                     }
                     if (!$mdToast) {
+                        // TODO: Verify the whether the const is necessity
+                        // tslint:disable-next-line:no-unused-variable
                         const wait = await serviceVerify()
                     }
                     $mdToast.show(

@@ -1,7 +1,19 @@
 // Angular Core
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, OnChanges} from '@angular/core'
-import {FormBuilder, FormGroup} from '@angular/forms'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    OnInit
+} from '@angular/core'
+import {
+    FormBuilder,
+    FormGroup
+} from '@angular/forms'
+import {
+    MAT_DIALOG_DATA,
+    MatDialogRef
+} from '@angular/material/dialog'
 
 // RXJS
 import {
@@ -41,10 +53,13 @@ export interface Content extends LooseObject {
 }
 
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'tree-dialog'
 const parentModuleName = 'tree'
+
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Dialog for Nested Tree

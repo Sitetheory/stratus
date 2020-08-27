@@ -8,7 +8,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
 import {sanitize} from '@stratusjs/core/conversion'
-import {extendDeep, isJSON, poll, ucfirst} from '@stratusjs/core/misc'
+import {isJSON, poll, ucfirst} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // AngularJS Dependency Injector
@@ -107,6 +107,8 @@ export class Registry {
                 resolve(this.build(options, $scope))
             }
             if (!$interpolate) {
+                // TODO: Verify the whether the const is necessity
+                // tslint:disable-next-line:no-unused-variable
                 const wait = await serviceVerify()
             }
             _.forEach(options, async (element, key) => {

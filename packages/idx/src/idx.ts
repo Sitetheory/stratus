@@ -9,8 +9,10 @@ import {IPromise} from 'angular'
 
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
+// tslint:disable-next-line:no-duplicate-imports
 import {Model, ModelOptions} from '@stratusjs/angularjs/services/model' // Needed as Class
 import '@stratusjs/angularjs/services/collection' // Needed as $provider
+// tslint:disable-next-line:no-duplicate-imports
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
 import '@stratusjs/idx/listTrac'
 

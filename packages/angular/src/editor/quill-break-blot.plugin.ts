@@ -3,15 +3,17 @@ import {
     cookie
 } from '@stratusjs/core/environment'
 
-const Delta = Quill.import('delta')
 const Break = Quill.import('blots/break')
 const Embed = Quill.import('blots/embed')
 
+/* *
+const Delta = Quill.import('delta')
 const lineBreakMatcher = () => {
     const newDelta = new Delta()
     newDelta.insert({ break: '' })
     return newDelta
 }
+/* */
 
 export class QuillBreak extends Break {
     length() {

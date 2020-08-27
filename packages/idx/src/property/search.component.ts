@@ -13,6 +13,7 @@ import 'angular-material'
 
 // Services
 import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {CompileFilterOptions, IdxService, MLSService, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
@@ -240,6 +241,7 @@ Stratus.Components.IdxPropertySearch = {
          * Create filter function for a query string
          * TODO whats this used for?
          */
+        /* *
         const createFilterFor = (query: string) => {
             const lowercaseQuery = query.toLowerCase()
 
@@ -248,6 +250,7 @@ Stratus.Components.IdxPropertySearch = {
             }
 
         }
+        /* */
 
         /**
          * Update a scope nest variable from a given string path.

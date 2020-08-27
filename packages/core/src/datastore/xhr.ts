@@ -39,39 +39,36 @@ export class XHR {
     }
 
     send() {
-        // Hoist Context
-        const that: any = this
-
         // Make Request
         this.xhr = new XMLHttpRequest()
         const promise: any = new Promise((resolve: any, reject: any) => {
-            that.xhr.open(that.method, that.url, true)
-            if (typeof that.type === 'string' && that.type.length) {
-                that.xhr.setRequestHeader('Content-Type', that.type)
+            this.xhr.open(this.method, this.url, true)
+            if (typeof this.type === 'string' && this.type.length) {
+                this.xhr.setRequestHeader('Content-Type', this.type)
             }
-            that.xhr.onload = () => {
-                if (that.xhr.status >= 200 && that.xhr.status < 400) {
-                    let response: any = that.xhr.responseText
+            this.xhr.onload = () => {
+                if (this.xhr.status >= 200 && this.xhr.status < 400) {
+                    let response: any = this.xhr.responseText
                     if (isJSON(response)) {
                         response = JSON.parse(response)
                     }
                     resolve(response)
                 } else {
-                    reject(that.xhr)
+                    reject(this.xhr)
                 }
             }
 
-            that.xhr.onerror = () => {
-                reject(that.xhr)
+            this.xhr.onerror = () => {
+                reject(this.xhr)
             }
 
-            if (Object.keys(that.data).length) {
-                that.xhr.send(JSON.stringify(that.data))
+            if (Object.keys(this.data).length) {
+                this.xhr.send(JSON.stringify(this.data))
             } else {
-                that.xhr.send()
+                this.xhr.send()
             }
         })
-        promise.then(that.success, that.error)
+        promise.then(this.success, this.error)
         return promise
     }
 }

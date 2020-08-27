@@ -10,14 +10,10 @@ import {
 
 // Angular Core
 import {
-    registerLocaleData
-} from '@angular/common'
-import {
     HttpClientModule
 } from '@angular/common/http'
 import {
     ApplicationRef,
-    ComponentFactory,
     NgModule
 } from '@angular/core'
 import {
@@ -134,12 +130,6 @@ import {
 import {
     QuillInputButtonPlugin
 } from '@stratusjs/angular/editor/quill-input-button.plugin'
-import {
-    QuillImageFormatPlugin
-} from '@stratusjs/angular/editor/quill-image-format.plugin'
-import {
-    QuillBreak
-} from '@stratusjs/angular/editor/quill-break-blot.plugin'
 
 // External Quill Modules
 // import ImageUploader from 'quill-image-uploader'

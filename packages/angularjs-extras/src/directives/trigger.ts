@@ -16,15 +16,10 @@ import {
 // Angular 1 Modules
 import 'angular-material'
 
-// Stratus Dependencies
-import {
-    cookie
-} from '@stratusjs/core/environment'
-
 // Environment
-const min = !cookie('env') ? '.min' : ''
+// const min = !cookie('env') ? '.min' : ''
 const name = 'trigger'
-const localPath = '@stratusjs/angularjs-extras/src/directives'
+// const localPath = '@stratusjs/angularjs-extras/src/directives'
 
 // This directive intends to handle binding of a model to a function,
 // triggered upon true

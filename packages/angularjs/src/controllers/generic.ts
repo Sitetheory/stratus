@@ -18,9 +18,10 @@ import '@stratusjs/angularjs/services/model'
 import '@stratusjs/angularjs/services/collection'
 
 // Services
+// tslint:disable-next-line:no-duplicate-imports
 import {Registry} from '@stratusjs/angularjs/services/registry'
+// tslint:disable-next-line:no-duplicate-imports
 import {Model} from '@stratusjs/angularjs/services/model'
-import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Stratus Dependencies
 import {

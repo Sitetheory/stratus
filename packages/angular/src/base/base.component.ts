@@ -14,31 +14,45 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
-    Injectable,
     Input,
     OnChanges,
     OnInit
 } from '@angular/core'
+import {
+    DomSanitizer
+} from '@angular/platform-browser'
+
+// Angular Material
+// import {MatIconRegistry} from '@angular/material/icon'
 
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
-import {RootComponent} from '@stratusjs/angular/core/root.component'
-import {keys} from 'ts-transformer-keys'
-// import {MatIconRegistry} from '@angular/material/icon'
-import {DomSanitizer} from '@angular/platform-browser'
+
+// Stratus Core
 import {cookie} from '@stratusjs/core/environment'
 
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+// Stratus Angular Core
+import {RootComponent} from '@stratusjs/angular/core/root.component'
+
+// Transformers
+import {keys} from 'ts-transformer-keys'
+
+// Local Setup
+const installDir = '/assets/1/0/bundles'
+const systemDir = '@stratusjs/angular'
 const moduleName = 'base'
+
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Basic Load
  */
 @Component({
     selector: 'sa-base',
-    template: '<ng-content></ng-content>',
-    // templateUrl: `${localDir}/base/base.component.html`,
+    // template: '<ng-content></ng-content>',
+    templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // styleUrls: [`${localDir}/base/base.component.css`],
     // viewProviders: [BaseComponent]
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -76,7 +90,7 @@ export class BaseComponent extends RootComponent implements OnInit, OnChanges {
         Stratus.Instances[_.uniqueId('sa_base_component_')] = this
 
         // Hydrate Root App Inputs
-        this.hydrate(elementRef, sanitizer, keys<BaseComponent>())
+        this.hydrate(this.elementRef, this.sanitizer, keys<BaseComponent>())
     }
 
     ngOnInit() {
@@ -98,5 +112,16 @@ export class BaseComponent extends RootComponent implements OnInit, OnChanges {
             api: this.api,
             urlRoot: this.urlRoot,
         })
+    }
+
+    // TODO: Decide on moving this to RootComponent or creating an Interface
+    public refresh() {
+        if (!this.ref) {
+            console.error('ref not available:', this)
+            return
+        }
+        this.ref.detach()
+        this.ref.detectChanges()
+        this.ref.reattach()
     }
 }

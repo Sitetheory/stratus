@@ -3,7 +3,10 @@
 
 import _ from 'lodash'
 import {EventManager} from '@stratusjs/core/events/eventManager'
-import {getAnchorParams, LooseObject, patch, poll, setUrlParams} from '@stratusjs/core/misc'
+import {
+    LooseObject,
+    patch
+} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 export interface ModelBaseOptions {

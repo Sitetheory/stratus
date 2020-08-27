@@ -2270,11 +2270,13 @@ Stratus.Loaders.Angular = function AngularLoader() {
                         if (++counter !== css.length) {
                             return
                         }
-                        const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+                        // const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+                        angular.bootstrap(document.documentElement, ['stratusApp'])
                     })
             })
         } else {
-            const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+            // const angularRoot = angular.bootstrap(document.documentElement, ['stratusApp'])
+            angular.bootstrap(document.documentElement, ['stratusApp'])
         }
     })
 }

@@ -16,11 +16,14 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
+// tslint:disable-next-line:no-duplicate-imports
 import {IdxService, ObjectWithFunctions} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
+// tslint:disable-next-line:no-duplicate-imports
 import {Model} from '@stratusjs/angularjs/services/model'
+// tslint:disable-next-line:no-duplicate-imports
 import {MLSService} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
@@ -35,7 +38,9 @@ import 'stratus.filters.moment'
 
 // Component Preload
 import '@stratusjs/idx/property/details-sub-section.component'
+// tslint:disable-next-line:no-duplicate-imports
 import {SubSectionOptions} from '@stratusjs/idx/property/details-sub-section.component'
+// tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/swiper/carousel.component'
 
 // Environment

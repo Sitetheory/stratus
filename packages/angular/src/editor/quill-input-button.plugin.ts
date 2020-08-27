@@ -11,7 +11,6 @@ import _ from 'lodash'
 
 // Quill
 import Quill from 'quill'
-import {QuillToolbarConfig} from 'ngx-quill'
 
 // Universal Button
 export class QuillInputButtonPlugin implements TriggerInterface {
