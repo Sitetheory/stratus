@@ -4,8 +4,7 @@ import {
     ChangeDetectorRef,
     Component,
     Inject,
-    OnInit,
-    OnChanges
+    OnInit
 } from '@angular/core'
 import {
     FormBuilder,
@@ -18,7 +17,6 @@ import {
 // Angular Material
 import {
     MAT_DIALOG_DATA,
-    MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
 
@@ -45,68 +43,14 @@ import {
 } from '@stratusjs/core/misc'
 import {Model} from '@stratusjs/angularjs/services/model'
 
-// Data Types
-export interface MediaDialogData {
-    form: FormGroup,
-    model: Model,
-    property: string
-}
-export interface Media extends LooseObject {
-    tags?: Array<any>
-    images?: Array<any>
-    media?: Array<any>
-    storageService?: any
-    priority?: number
-    storageServiceId?: number
-    duplicateId?: number
-    name: string
-    description?: string
-    abstract?: any
-    embed?: string
-    hash: string
-    prefix: string
-    url?: string
-    file: string
-    filename: string
-    extension: string
-    mime: string
-    bytes: number
-    bytesHuman: string
-    ratio: string
-    ratioPercent: string
-    bestRatio: string
-    bestRatioWord: string
-    dimensions: string
-    service?: any
-    serviceMediaId?: number
-    meta?: Array<any>
-    src: string
-    thumbSrc: string
-    bestImage?: any
-    duration?: any
-    autoPlay: boolean
-    vr: boolean
-    timeCustom?: number
-    author?: any
-    modules?: Array<any>
-    id: number
-    siteId?: number
-    vendorId?: number
-    time: number
-    timeEdit: number
-    timeStatus?: number
-    status: number
-    importId?: number
-    vendor?: any
-    syndicated: number
-    isPseudoPriority: boolean
-}
-
 // Local Setup
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths['@stratusjs/angular/*'].replace(/[^/]*$/, '')}`
+const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
 const moduleName = 'media-dialog'
 const parentModuleName = 'editor'
+
+// Directory Template
+const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 
 /**
  * @title Dialog for Nested Tree
@@ -135,6 +79,9 @@ export class MediaDialogComponent implements OnInit {
     // Model Settings
     model: Model
     property: string
+
+    // UI Settings
+    selected: Array<number> = []
 
     constructor(
         public dialogRef: MatDialogRef<MediaDialogComponent>,
@@ -240,10 +187,78 @@ export class MediaDialogComponent implements OnInit {
     }
 
     select(media: Media) {
+        if (_.isUndefined(media)) {
+            return
+        }
         const imageElement = `<img data-stratus-src src="${media.thumbSrc}" alt="${media.name || media.filename}">`
+        this.selected.push(media.id)
         this.model.set(
             this.property,
             this.model.get(this.property) + imageElement
         )
     }
+
+    isSelected(media: Media) : boolean {
+        if (_.isUndefined(media)) {
+            return
+        }
+        return _.includes(this.selected, media.id)
+    }
+}
+
+// Data Types
+export interface MediaDialogData {
+    form: FormGroup,
+    model: Model,
+    property: string
+}
+export interface Media extends LooseObject {
+    tags?: Array<any>
+    images?: Array<any>
+    media?: Array<any>
+    storageService?: any
+    priority?: number
+    storageServiceId?: number
+    duplicateId?: number
+    name: string
+    description?: string
+    abstract?: any
+    embed?: string
+    hash: string
+    prefix: string
+    url?: string
+    file: string
+    filename: string
+    extension: string
+    mime: string
+    bytes: number
+    bytesHuman: string
+    ratio: string
+    ratioPercent: string
+    bestRatio: string
+    bestRatioWord: string
+    dimensions: string
+    service?: any
+    serviceMediaId?: number
+    meta?: Array<any>
+    src: string
+    thumbSrc: string
+    bestImage?: any
+    duration?: any
+    autoPlay: boolean
+    vr: boolean
+    timeCustom?: number
+    author?: any
+    modules?: Array<any>
+    id: number
+    siteId?: number
+    vendorId?: number
+    time: number
+    timeEdit: number
+    timeStatus?: number
+    status: number
+    importId?: number
+    vendor?: any
+    syndicated: number
+    isPseudoPriority: boolean
 }

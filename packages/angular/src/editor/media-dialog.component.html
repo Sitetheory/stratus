@@ -14,6 +14,7 @@
                 <img [src]="mediaEntity.thumbSrc"
                      [alt]="mediaEntity.name"
                      [style.cursor]="'pointer'"
+                     [ngClass]="{'selected' : isSelected(mediaEntity)}"
                      (click)="select(mediaEntity)">
             </mat-grid-tile>
         </ng-container>
