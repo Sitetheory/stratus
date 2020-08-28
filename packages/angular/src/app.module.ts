@@ -401,7 +401,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         TreeNodeComponent,
     ],
     // bootstrap,
-    providers: []
+    providers: [
+        { provide: Window, useValue: window }
+    ]
 })
 export class AppModule {
     // node: true || false
