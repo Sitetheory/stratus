@@ -1,21 +1,21 @@
-<div>This is a test map</div>
+<mat-progress-bar mode="indeterminate" *ngIf="!initialized"></mat-progress-bar>
 <ng-container *ngIf="initialized">
     <google-map
-            height="500px"
-            width="100%"
+            height="{{height}}"
+            width="{{width}}"
             [zoom]="zoom"
             [center]="center"
             [options]="options"
     >
         <map-marker
                 #markerElem="mapMarker"
-                *ngFor="let marker of markers"
+                *ngFor="let marker of storedMarkers"
                 [position]="marker.position"
                 [label]="marker.label"
                 [title]="marker.title"
                 [options]="marker.options"
 
-                (mapClick)="mapClick(markerElem, marker.click)"
+                (mapClick)="mapClick(markerElem, marker)"
         ></map-marker>
 
         <map-info-window>

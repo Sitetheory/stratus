@@ -1,7 +1,7 @@
 {
   "name": "@stratusjs/map",
-  "version": "0.0.0",
-  "description": "Angular Google Map component to be used as an add on to StratusJS",
+  "version": "0.0.1",
+  "description": "Angular Google Map component to be used as an add-on to StratusJS",
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +16,8 @@
     "angular",
     "lodash",
     "javascript",
-    "typescript"
+    "typescript",
+    "google maps"
   ],
   "author": "Sitetheory Development Team (https://sitetheory.io/)",
   "license": "mit",
