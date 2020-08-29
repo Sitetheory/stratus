@@ -13,6 +13,9 @@ import moment from 'moment'
 import 'angular-material'
 import 'angular-sanitize'
 
+// Angular+ Modules
+import {MarkerSettings} from '@stratusjs/map/map.component'
+
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
@@ -65,6 +68,8 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
     contactPhone: string
     disclaimerString: string
     disclaimerHTML: any
+    instancePath: string
+    mapMarkers: MarkerSettings[]
 
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
@@ -111,6 +116,7 @@ Stratus.Components.IdxPropertyList = {
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
+        $scope.instancePath = `Stratus.Instances.${$ctrl.uid}`
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.localDir = localDir
         if ($attrs.tokenUrl) {
@@ -184,6 +190,8 @@ Stratus.Components.IdxPropertyList = {
             $scope.disclaimerString = 'Loading...'
             $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
 
+            $scope.mapMarkers = []
+
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
 
@@ -223,8 +231,40 @@ Stratus.Components.IdxPropertyList = {
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
+                $ctrl.prepareMapMarkers() // TODO being worked on
             }
         })
+
+        $ctrl.prepareMapMarkers = (): void => {
+            // console.log('checking $scope.collection.models', $scope.collection.models)
+            const markers: MarkerSettings[] = []
+            $scope.collection.models.forEach((listing: object | any) => {
+                // console.log('looping listing', listing)
+                if (
+                    Object.prototype.hasOwnProperty.call(listing, 'Latitude') &&
+                    Object.prototype.hasOwnProperty.call(listing, 'Longitude')
+                ) {
+                    markers.push({
+                        position: {lat: listing.Latitude, lng: listing.Longitude},
+                        // title: $scope.getFullAddress(), // TODO titlr
+                        /*options: {
+                            animation: google.maps.Animation.DROP // DROP | BOUNCE
+                        },*/
+                        // TODO popup/scroll to
+                        /*click: {
+                            // action: 'open',
+                            // content: 'Marker content info',
+                            action: 'function',
+                            function: (marker: any, markerSetting: any) => {
+                                console.log('I\'m just running a simple function!!', marker, markerSetting)
+                            }
+                        }*/
+                    })
+                }
+            })
+
+            $scope.mapMarkers = markers
+        }
 
         /**
          * Inject the current URL settings into any attached Search widget
@@ -463,6 +503,28 @@ Stratus.Components.IdxPropertyList = {
                 return addressParts.join(' ')
             }
         }
+
+        /*$scope.getGoogleMapKey = (): string | null => {
+            let googleApiKey = null
+            if (
+                $scope.integrations
+                && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
+                && $scope.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = $scope.integrations.maps.googleMaps.accountId
+            } else if (
+                Idx.sharedValues.integrations
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
+                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
+            }
+            return googleApiKey
+        }*/
 
         /**
          * @param reset - set true to force reset

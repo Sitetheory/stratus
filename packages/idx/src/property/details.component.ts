@@ -13,6 +13,9 @@ import moment from 'moment'
 import 'angular-material'
 import 'angular-sanitize'
 
+// Angular+ Modules
+import {MarkerSettings} from '@stratusjs/map/map.component'
+
 // Services
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
@@ -68,8 +71,11 @@ export type IdxPropertyDetailsScope = angular.IScope & ObjectWithFunctions & {
     integrations?: object | any
     minorDetails: SubSectionOptions[]
     alternateMinorDetails: SubSectionOptions[]
+    instancePath: string
+    mapMarkers: MarkerSettings[]
 
     getPublicRemarksHTML(): any
+
 }
 
 
@@ -107,6 +113,7 @@ Stratus.Components.IdxPropertyDetails = {
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
+        $scope.instancePath = `Stratus.Instances.${$ctrl.uid}`
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.localDir = localDir
         if ($attrs.tokenUrl) {
@@ -1247,8 +1254,33 @@ Stratus.Components.IdxPropertyDetails = {
                 ) {
                     ListTrac.track('view', $scope.model.data.ListingId, $scope.model.data.PostalCode, $scope.model.data.ListAgentKey)
                 }
+
+                $ctrl.prepareMapMarkers()
             }
         })
+
+        $ctrl.prepareMapMarkers = (): void => {
+            if (
+                Object.prototype.hasOwnProperty.call($scope.model.data, 'Latitude') &&
+                Object.prototype.hasOwnProperty.call($scope.model.data, 'Longitude')
+            ) {
+                $scope.mapMarkers = [{
+                    position: {lat: $scope.model.data.Latitude, lng: $scope.model.data.Longitude},
+                    title: $scope.getFullAddress(),
+                    /*options: {
+                        animation: google.maps.Animation.DROP // DROP | BOUNCE
+                    },*/
+                    /*click: {
+                        // action: 'open',
+                        // content: 'Marker content info',
+                        action: 'function',
+                        function: (marker: any, markerSetting: any) => {
+                            console.log('I\'m just running a simple function!!', marker, markerSetting)
+                        }
+                    }*/
+                }]
+            }
+        }
 
         $scope.getUid = (): string => $ctrl.uid
 
@@ -1382,26 +1414,31 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getCoBuyerAgentName = (): string => $scope.model.data.CoBuyerAgentFullName || ($scope.model.data.CoBuyerAgentFirstName ?
             $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null)
 
+        $scope.getGoogleMapKey = (): string | null => {
+            let googleApiKey = null
+            if (
+                $scope.integrations
+                && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
+                && $scope.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = $scope.integrations.maps.googleMaps.accountId
+            } else if (
+                Idx.sharedValues.integrations
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
+                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
+            }
+            return googleApiKey
+        }
+
         $scope.getGoogleMapEmbed = (): string | null => {
             if (!$ctrl.googleMapEmbed) {
-                let googleApiKey = null
-                if (
-                    $scope.integrations
-                    && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
-                    && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
-                    && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
-                    && $scope.integrations.maps.googleMaps.accountId !== ''
-                ) {
-                    googleApiKey = $scope.integrations.maps.googleMaps.accountId
-                } else if (
-                    Idx.sharedValues.integrations
-                    && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
-                    && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
-                    && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
-                    && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
-                ) {
-                    googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
-                }
+                const googleApiKey = $scope.getGoogleMapKey()
 
                 $ctrl.googleMapEmbed = googleApiKey ? $sce.trustAsResourceUrl(
                     `https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${$scope.getFullAddress(true)}`

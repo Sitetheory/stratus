@@ -258,6 +258,16 @@
             </div>
         </div>
 
+        <!-- TODO check if we have markers -->
+        <!--div class="map-location details-container static-element" data-ng-if="::mapMarkers" aria-label="Google Maps Display">
+            <h2 class="dotted-spaced-underline">Location</h2>
+            <sa-map class="google-maps-dynamic"
+                    data-google-maps-key="{{::getGoogleMapKey()}}"
+                    data-markers="{{::instancePath}}.mapMarkers"
+                    data-zoom="18"
+                    data-map-type="roadmap"
+            ></sa-map>
+        </div-->
         <div class="map-location details-container static-element" data-ng-if="::getGoogleMapEmbed()" aria-label="Google Maps Display">
             <h2 class="dotted-spaced-underline">Location</h2>
             <iframe data-ng-src="{{::getGoogleMapEmbed()}}" class="google-map-embed"></iframe>
