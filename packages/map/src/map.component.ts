@@ -2,7 +2,8 @@
 
 // Angular Core
 import {
-    ChangeDetectorRef,
+    AfterViewInit,
+    // ChangeDetectorRef,
     Component,
     ElementRef,
     Input,
@@ -18,7 +19,7 @@ import {keys} from 'ts-transformer-keys'
 import {
     Stratus
 } from '@stratusjs/runtime/stratus'
-import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps'
+// import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps'
 import _ from 'lodash'
 
 // Components
@@ -28,8 +29,8 @@ import {
 
 // Local Setup
 const packageName = 'map'
-const localDir = `/assets/1/0/bundles/${boot.configuration.paths[`@stratusjs/${packageName}/*`].replace(/[^/]*$/, '')}`
 const systemDir = `@stratusjs/${packageName}`
+const localDir = `/assets/1/0/bundles/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
 const moduleName = 'map'
 
 // Static Variables
@@ -39,7 +40,7 @@ const devGoogleMapsKey = 'AIzaSyBAyMH-A99yD5fHQPz7uzqk8glNJYGEqus' // Public dev
 export interface MarkerSettingsClick {
     action: 'open' | 'function' | ''
     content?: string
-    function?: (marker: MapMarker, options: MarkerSettings) => any
+    function?: (marker: google.maps.Marker, options: MarkerSettings) => any
 }
 
 export interface MarkerSettings {
@@ -52,7 +53,7 @@ export interface MarkerSettings {
 
     // Custom option
     // content?: string
-    click?: MarkerSettingsClick | ((marker: MapMarker, options: MarkerSettings) => any)
+    click?: MarkerSettingsClick | ((marker: google.maps.Marker, options: MarkerSettings) => any)
 }
 
 /**
@@ -71,10 +72,13 @@ export interface MarkerSettings {
 })
 
 
-export class MapComponent extends RootComponent implements OnInit { // implements OnInit, OnChanges
+export class MapComponent extends RootComponent implements OnInit, AfterViewInit { // implements OnInit, OnChanges
 
-    @ViewChild(GoogleMap, {static: false}) map: GoogleMap
-    @ViewChild(MapInfoWindow, {static: false}) markerWindow: MapInfoWindow
+    @ViewChild('mapContainer', {static: false}) gMap: ElementRef
+    map: google.maps.Map
+    // @ViewChild(GoogleMap, {static: false}) map: GoogleMap
+    // @ViewChild(MapInfoWindow, {static: false}) markerWindow: MapInfoWindow
+    // @ViewChild('gMap', { static: false }) gMap: GoogleMap
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -102,20 +106,23 @@ export class MapComponent extends RootComponent implements OnInit { // implement
     @Input() zoomControl = false
     @Input() scrollwheel = true
     @Input() disableDoubleClickZoom = false
-    @Input() center: google.maps.LatLngLiteral
+    @Input() center: google.maps.LatLng | google.maps.LatLngLiteral = {lat: 37.4220656, lng: -122.0862784}
     options: google.maps.MapOptions = {
         mapTypeId: this.mapType,
+        center: this.center,
+        zoom: this.zoom,
         zoomControl: this.zoomControl,
         scrollwheel: this.scrollwheel,
         disableDoubleClickZoom: this.disableDoubleClickZoom,
     }
-    protected storedMarkers: MarkerSettings[] = []
+    // protected storedMarkers: MarkerSettings[] = []
+    protected storedMarkers: google.maps.Marker[] = []
     markerContent = ''
 
     constructor(
         private window: Window,
         private sanitizer: DomSanitizer,
-        private ref: ChangeDetectorRef,
+        // private ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
         // Chain constructor
@@ -137,7 +144,7 @@ export class MapComponent extends RootComponent implements OnInit { // implement
             })*/
 
         // Hydrate Root App Inputs
-        this.hydrate(elementRef, sanitizer, keys<MapComponent>())
+        this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
 
         console.info('map constructed')
 
@@ -164,72 +171,98 @@ export class MapComponent extends RootComponent implements OnInit { // implement
         }
     }
 
+    /**
+     * Loads when this component Inits
+     * this.map is not available here yet
+     */
     async ngOnInit() {
         this.initializing = true
         console.info('map Initing')
+    }
+
+    /** Loads when this.map renders */
+    async ngAfterViewInit() {
+        console.info('running ngAfterViewInit')
 
         await this.initGoogleMapsApi()
 
+        this.map = new google.maps.Map(this.gMap.nativeElement, this.options)
+
+        // console.info('map is here', this.map) // can fitBounds with this???? this.map.fitBounds()
+        // console.info('gMap is here', this.gMap) // can fitBounds with this???? this.map.fitBounds()
+
+        this.processProvidedMarkersPath()
 
         this.initializing = false
         this.initialized = true
         console.info('map Inited')
-
-        /*console.log('my instance is', this.uid)
-        const myPath = `Stratus.Instances.${this.uid}`
-
-        console.log('random.object.right', this.getFromPath(this, 'random.object.right'))
-        console.log('random.object', this.getFromPath(this, 'random.object'))
-        console.log('window', window)
-        console.log(myPath, this.getFromPath(window, myPath))*/
-
-        this.processProvidedMarkersPath()
-
-        console.info('map is here', this.map) // can fitBounds with this???? this.map.fitBounds()
-
     }
 
+    /**
+     * Center and possibly zoom map on current Markers
+     */
+    public fitMarkerBounds() {
+        if (this.storedMarkers.length === 1) {
+            // If this is the only marker, center it
+            // TODO Zoom....?
+            this.centerAtPosition(this.storedMarkers[0].getPosition())
+        } else if (this.storedMarkers.length > 1) {
+            // This has multiple markers. Find the balance between all of them
+            const bounds = this.getMarkerBounds()
+            this.centerAtPosition(bounds.getCenter())
+            this.fitBounds(bounds)
+        }
+    }
+
+    /**
+     * With currently input this.markers, create markers on the Map
+     * @private
+     */
     private processProvidedMarkersPath() {
         if (_.isString(this.markers)) {
-            // TODO check and process google.maps.LatLngLiteral (just use addMarker())
             console.info('the test var markers is string', this.markers)
-            const path = this.getFromPath(window, this.markers)
+            const path = this.getFromPath(this.window, this.markers)
             console.info('something path led to', path)
             if (_.isArray(path)) {
                 console.info('path is array, adding directly as markers reference')
-                this.storedMarkers = path
-            }
-
-            // If this is the only marker, center it
-            if (this.storedMarkers.length === 1) {
-                this.centerAtPosition(this.storedMarkers[0].position)
-            } else if (this.storedMarkers.length > 1) {
-                const bounds = this.getMarkerBounds()
-                this.centerAtPosition(bounds.getCenter())
-                this.fitBounds(bounds)
+                // this.storedMarkers = path
+                path.forEach((mark: MarkerSettings) => {
+                    /*const marker = new google.maps.Marker(mark)
+                    marker.setMap(this.map)
+                    this.storedMarkers.push(marker)*/
+                    this.addMarker(mark)
+                })
             }
         } else if (_.isArray(this.markers)) {
-            // TODO need to verify its MarkSettings and no LatLng
-            this.storedMarkers = this.markers as MarkerSettings[]
+            // TODO need to verify its MarkSettings and not LatLng
+            // this.storedMarkers = this.markers as MarkerSettings[]
+            this.markers.forEach((mark: MarkerSettings) => {
+                /*const marker = new google.maps.Marker(mark)
+                marker.setMap(this.map)
+                this.storedMarkers.push(marker)*/
+                this.addMarker(mark)
+            })
             console.info('guessing that this is MarkerSettings[]', this.markers)
         } else {
             console.info('the test var something is.....something...', this.markers)
         }
+        this.fitMarkerBounds()
     }
 
-    getMarkerBounds(): google.maps.LatLngBounds {
+    private getMarkerBounds(): google.maps.LatLngBounds {
         const latLngBounds = new google.maps.LatLngBounds()
 
         this.storedMarkers.forEach((marker) => {
-            latLngBounds.extend(marker.position)
+            // latLngBounds.extend(marker.position)
+            latLngBounds.extend(marker.getPosition())
         })
 
         return latLngBounds
     }
 
-    fitBounds(latLngBounds: google.maps.LatLngBounds) {
+    private fitBounds(latLngBounds: google.maps.LatLngBounds) {
         // TODO padding?
-        // FIXME breaking because this is being called before this.map is defined. How do we get notified when map is assigned??
+        // console.info('setting bounds to', latLngBounds)
         this.map.fitBounds(latLngBounds)
     }
 
@@ -270,7 +303,7 @@ export class MapComponent extends RootComponent implements OnInit { // implement
      * Get the Browsers current position via GPS or Internet hostname. Mobile will prove to be more accurate
      * Page user may disable this at will
      */
-    async getCurrentPosition(highAccuracy?: boolean): Promise<google.maps.LatLngLiteral> {
+    public async getCurrentPosition(highAccuracy?: boolean): Promise<google.maps.LatLngLiteral> {
         return new Promise((resolve, reject) => {
             const options: {
                 enableHighAccuracy?: boolean
@@ -299,18 +332,25 @@ export class MapComponent extends RootComponent implements OnInit { // implement
     /**
      * Centers the Map at a specific coordinate
      */
-    centerAtPosition(position: google.maps.LatLngLiteral | google.maps.LatLng) {
+    public centerAtPosition(position: google.maps.LatLngLiteral | google.maps.LatLng) {
         if (position instanceof google.maps.LatLng) { // toJSON
             position = position.toJSON()
         }
         this.center = position
     }
 
-    addMarker(marker: MarkerSettings) {
-        this.storedMarkers.push(marker)
+    public addMarker(marker: MarkerSettings | google.maps.Marker) {
+        let realMarker: google.maps.Marker
+        if (marker instanceof google.maps.Marker) {
+            realMarker = marker as google.maps.Marker
+        } else {
+            realMarker = new google.maps.Marker(marker)
+        }
+        realMarker.setMap(this.map)
+        this.storedMarkers.push(realMarker)
     }
 
-    mapClick(marker: MapMarker, markerSetting: MarkerSettings) {
+    mapClick(marker: google.maps.Marker, markerSetting: MarkerSettings) {
         // TODO need other options other than this marker popup
         let clickOptions = markerSetting.click || {action: ''}
         if (_.isFunction(clickOptions)) {
@@ -336,14 +376,14 @@ export class MapComponent extends RootComponent implements OnInit { // implement
         // Otherwise do nothing
     }
 
-    openMarkerInfo(marker: MapMarker, content: string) {
+    openMarkerInfo(marker: google.maps.Marker, content: string) {
         // TODO need more options such as clicking off
         this.markerContent = content
         // console.info('marker', _.clone(marker))
-        this.markerWindow.open(marker)
+        // this.markerWindow.open(marker) // TODO markerWindow not used right now
     }
 
-    async testFunction() {
+    /*async testFunction() {
         const currentPosition = await this.getCurrentPosition()
 
         this.centerAtPosition(currentPosition)
@@ -363,7 +403,7 @@ export class MapComponent extends RootComponent implements OnInit { // implement
                 }
             }
         })
-    }
+    }*/
 
     private getFromPath(obj: any, path: string | string[], def?: any): any {
 
