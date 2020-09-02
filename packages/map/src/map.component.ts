@@ -5,10 +5,12 @@ import {
     AfterViewInit,
     // ChangeDetectorRef,
     Component,
+    DoCheck,
     ElementRef,
     Input,
+    KeyValueDiffers, KeyValueDiffer, KeyValueChanges,
     OnInit,
-    ViewChild
+    ViewChild,
 } from '@angular/core'
 
 // External
@@ -72,10 +74,11 @@ export interface MarkerSettings {
 })
 
 
-export class MapComponent extends RootComponent implements OnInit, AfterViewInit { // implements OnInit, OnChanges
+export class MapComponent extends RootComponent implements OnInit, AfterViewInit, DoCheck { // implements OnInit, OnChanges
 
     @ViewChild('mapContainer', {static: false}) gMap: ElementRef
     map: google.maps.Map
+    info: google.maps.InfoWindow
     // @ViewChild(GoogleMap, {static: false}) map: GoogleMap
     // @ViewChild(MapInfoWindow, {static: false}) markerWindow: MapInfoWindow
     // @ViewChild('gMap', { static: false }) gMap: GoogleMap
@@ -88,6 +91,9 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     initializing = false
     initialized = false
     styled = false
+
+    // Watcher
+    watcher: Watcher
 
     // Map Variables
     @Input() height = '500px'
@@ -115,11 +121,10 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         scrollwheel: this.scrollwheel,
         disableDoubleClickZoom: this.disableDoubleClickZoom,
     }
-    // protected storedMarkers: MarkerSettings[] = []
     protected storedMarkers: google.maps.Marker[] = []
-    markerContent = ''
 
     constructor(
+        private Differ: KeyValueDiffers,
         private window: Window,
         private sanitizer: DomSanitizer,
         // private ref: ChangeDetectorRef,
@@ -134,7 +139,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        /*pastStratus.Internals.CssLoader(`${localDir}/${moduleName}.component.css`)
+        /*Stratus.Internals.CssLoader(`${localDir}/${moduleName}.component.css`)
             .then(() => {
                 this.styled = true
             })
@@ -145,8 +150,6 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
-
-        console.info('map constructed')
 
         // Sanitize Numbers
         if (!_.isNumber(this.zoom)) {
@@ -169,6 +172,15 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (this.googleMapsKey === devGoogleMapsKey) {
             console.warn('Google Maps Api Key (data-google-maps-key) was not provided! Displaying in Development mode only.')
         }
+
+        // Setup a watcher
+        this.watcher = new Watcher(this.Differ)
+
+        console.info(this.uid, 'constructed')
+    }
+
+    ngDoCheck() {
+        this.watcher.checkWatchers()
     }
 
     /**
@@ -177,25 +189,26 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      */
     async ngOnInit() {
         this.initializing = true
-        console.info('map Initing')
+        console.info(this.uid, 'Initing')
     }
 
     /** Loads when this.map renders */
     async ngAfterViewInit() {
         console.info('running ngAfterViewInit')
 
-        await this.initGoogleMapsApi()
-
-        this.map = new google.maps.Map(this.gMap.nativeElement, this.options)
-
-        // console.info('map is here', this.map) // can fitBounds with this???? this.map.fitBounds()
-        // console.info('gMap is here', this.gMap) // can fitBounds with this???? this.map.fitBounds()
-
-        this.processProvidedMarkersPath()
-
+        try {
+            await this.initGoogleMapsApi()
+            this.map = new google.maps.Map(this.gMap.nativeElement, this.options)
+            this.info = new google.maps.InfoWindow({
+                maxWidth: 250
+            })
+            this.processProvidedMarkersPath()
+            this.initialized = true
+            console.info(this.uid, 'Inited')
+        } catch (e) {
+            console.error(this.uid, 'could not Init')
+        }
         this.initializing = false
-        this.initialized = true
-        console.info('map Inited')
     }
 
     /**
@@ -209,7 +222,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         } else if (this.storedMarkers.length > 1) {
             // This has multiple markers. Find the balance between all of them
             const bounds = this.getMarkerBounds()
-            this.centerAtPosition(bounds.getCenter())
+            // this.centerAtPosition(bounds.getCenter())
+            this.panToPosition(bounds.getCenter())
             this.fitBounds(bounds)
         }
     }
@@ -220,33 +234,27 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      */
     private processProvidedMarkersPath() {
         if (_.isString(this.markers)) {
-            console.info('the test var markers is string', this.markers)
-            const path = this.getFromPath(this.window, this.markers)
-            console.info('something path led to', path)
-            if (_.isArray(path)) {
-                console.info('path is array, adding directly as markers reference')
-                // this.storedMarkers = path
-                path.forEach((mark: MarkerSettings) => {
-                    /*const marker = new google.maps.Marker(mark)
-                    marker.setMap(this.map)
-                    this.storedMarkers.push(marker)*/
-                    this.addMarker(mark)
-                })
-            }
+            // console.info('the test var markers is string', this.markers)
+            this.watcher.watch(this.window, this.markers, (newValue) => {
+                // console.info(this.markers, 'variable changed', _.clone(newValue))
+                if (_.isArray(newValue)) {
+                    // We're just assuming that this is a MarkerSettings[] Need better way of checking?
+                    this.removeMarkers()
+                    newValue.forEach((mark: MarkerSettings) => {
+                        this.addMarker(mark)
+                    })
+                    this.fitMarkerBounds()
+                }
+            })
         } else if (_.isArray(this.markers)) {
             // TODO need to verify its MarkSettings and not LatLng
-            // this.storedMarkers = this.markers as MarkerSettings[]
             this.markers.forEach((mark: MarkerSettings) => {
-                /*const marker = new google.maps.Marker(mark)
-                marker.setMap(this.map)
-                this.storedMarkers.push(marker)*/
                 this.addMarker(mark)
             })
-            console.info('guessing that this is MarkerSettings[]', this.markers)
+            this.fitMarkerBounds()
         } else {
             console.info('the test var something is.....something...', this.markers)
         }
-        this.fitMarkerBounds()
     }
 
     private getMarkerBounds(): google.maps.LatLngBounds {
@@ -281,21 +289,20 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
 
         try {
+            // TODO check if google is already loaded first
             await Stratus.Internals.JsLoader(`https://maps.googleapis.com/maps/api/js?key=${this.googleMapsKey}`)
-            // TODO check if google is already loaded
-            if (
-                !Object.prototype.hasOwnProperty.call(window, 'google') ||
-                !Object.prototype.hasOwnProperty.call(window.google, 'maps')
-            ) {
-                console.error('Google Maps Api was not initialized, cannot continue')
-                this.initializing = false
-                return
-            }
             console.log('Google Maps Api Loaded')
         } catch (e) {
             console.error('Google Maps Api could not be fetched, cannot continue')
-            this.initializing = false
-            return
+            throw new Error('Google Maps Api could not be fetched, cannot continue')
+        }
+
+        if (
+            !Object.prototype.hasOwnProperty.call(window, 'google') ||
+            !Object.prototype.hasOwnProperty.call(window.google, 'maps')
+        ) {
+            console.error('Google Maps Api was not initialized, cannot continue')
+            throw new Error('Google Maps Api was not initialized, cannot continue')
         }
     }
 
@@ -336,7 +343,14 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (position instanceof google.maps.LatLng) { // toJSON
             position = position.toJSON()
         }
-        this.center = position
+        this.map.setCenter(position)
+    }
+
+    public panToPosition(position: google.maps.LatLngLiteral | google.maps.LatLng) {
+        if (position instanceof google.maps.LatLng) { // toJSON
+            position = position.toJSON()
+        }
+        this.map.panTo(position)
     }
 
     public addMarker(marker: MarkerSettings | google.maps.Marker) {
@@ -345,9 +359,21 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             realMarker = marker as google.maps.Marker
         } else {
             realMarker = new google.maps.Marker(marker)
+            // Only can add click event if MarkerSettings
+            realMarker.addListener('click', () => {
+                this.mapClick(realMarker, marker as MarkerSettings)
+            })
         }
         realMarker.setMap(this.map)
         this.storedMarkers.push(realMarker)
+    }
+
+    public removeMarkers() {
+        // TODO isn't there a better way to remove markers?
+        this.storedMarkers.forEach((marker) => {
+            marker.setMap(null)
+        })
+        this.storedMarkers = []
     }
 
     mapClick(marker: google.maps.Marker, markerSetting: MarkerSettings) {
@@ -378,32 +404,59 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     openMarkerInfo(marker: google.maps.Marker, content: string) {
         // TODO need more options such as clicking off
-        this.markerContent = content
-        // console.info('marker', _.clone(marker))
-        // this.markerWindow.open(marker) // TODO markerWindow not used right now
+        this.info.setContent(content)
+        this.info.open(this.map, marker) // TODO markerWindow not used right now
+    }
+}
+
+class Watcher {
+    // Watcher
+    watching: {
+        scope: object | any,
+        path: string,
+        action: ((newValue?: unknown, change?: KeyValueChanges<unknown, unknown>) => any)
+        differ: KeyValueDiffer<unknown, unknown>
+    }[] = []
+    nextCheck = 0
+    checkEveryMillisecond = 1000
+
+    constructor(
+        private Differ: KeyValueDiffers
+    ) {
+        this.Differ = Differ
     }
 
-    /*async testFunction() {
-        const currentPosition = await this.getCurrentPosition()
-
-        this.centerAtPosition(currentPosition)
-
-        this.addMarker({
-            position: currentPosition,
-            title: 'Marker Title',
-            options: {
-                animation: google.maps.Animation.DROP // DROP | BOUNCE
-            },
-            click: {
-                // action: 'open',
-                // content: 'Marker content info',
-                action: 'function',
-                function: (marker, markerSetting) => {
-                    console.log('I\'m just running a simple function!!', marker, markerSetting)
-                }
-            }
+    watch(scope: object | any, path: string, action: ((newValue?: unknown, change?: KeyValueChanges<unknown, unknown>) => any)) {
+        // Handled only arrays and objects currently
+        const originalValue = this.getFromPath(scope, path)
+        this.watching.push({
+            scope,
+            path,
+            action,
+            differ: this.Differ.find(originalValue).create(),
+            /*action: (): any => {
+                console.info('test running window watcher')
+            }*/
         })
-    }*/
+        // console.info('watching', path, originalValue)
+    }
+
+    checkWatchers() {
+        const currentMilliseconds = new Date().getTime()
+        // console.info('checkWatchers() cmparing', currentMilliseconds, this.nextCheck)
+        if (this.nextCheck <= currentMilliseconds) {
+            this.nextCheck = currentMilliseconds + this.checkEveryMillisecond
+            // console.info('checkWatchers() ran')
+            this.watching.forEach((watcher) => {
+                const newValue = this.getFromPath(watcher.scope, watcher.path)
+                const change = watcher.differ.diff(newValue)
+                if (change) {
+                    watcher.action(newValue, change)
+                    // console.info(watcher.path, 'variable changed', _.clone(variable))
+                }
+            })
+        }
+    }
 
     private getFromPath(obj: any, path: string | string[], def?: any): any {
 
