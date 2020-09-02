@@ -176,7 +176,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         // Setup a watcher
         this.watcher = new Watcher(this.Differ)
 
-        console.info(this.uid, 'constructed')
+        // console.info(this.uid, 'constructed')
     }
 
     ngDoCheck() {
@@ -189,13 +189,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      */
     async ngOnInit() {
         this.initializing = true
-        console.info(this.uid, 'Initing')
+        // console.info(this.uid, 'Initing')
     }
 
     /** Loads when this.map renders */
     async ngAfterViewInit() {
-        console.info('running ngAfterViewInit')
-
         try {
             await this.initGoogleMapsApi()
             this.map = new google.maps.Map(this.gMap.nativeElement, this.options)
@@ -204,7 +202,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             })
             this.processProvidedMarkersPath()
             this.initialized = true
-            console.info(this.uid, 'Inited')
+            // console.info(this.uid, 'Inited')
         } catch (e) {
             console.error(this.uid, 'could not Init')
         }
@@ -238,9 +236,9 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             this.watcher.watch(this.window, this.markers, (newValue) => {
                 // console.info(this.markers, 'variable changed', _.clone(newValue))
                 if (_.isArray(newValue)) {
-                    // We're just assuming that this is a MarkerSettings[] Need better way of checking?
+                    // We're just assuming that this is a MarkerSettings[] or Marker[] Need better way of checking?
                     this.removeMarkers()
-                    newValue.forEach((mark: MarkerSettings) => {
+                    newValue.forEach((mark: MarkerSettings | google.maps.Marker) => {
                         this.addMarker(mark)
                     })
                     this.fitMarkerBounds()
@@ -279,7 +277,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      * Required before any functions can be performed
      */
     private async initGoogleMapsApi() {
-        console.log('Loading Google Maps Api')
+        // console.log('Loading Google Maps Api')
         if (
             Object.prototype.hasOwnProperty.call(window, 'google') &&
             Object.prototype.hasOwnProperty.call(window.google, 'maps')
@@ -359,6 +357,9 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             realMarker = marker as google.maps.Marker
         } else {
             realMarker = new google.maps.Marker(marker)
+            if (marker.hasOwnProperty('options')) {
+                realMarker.setOptions(marker.options)
+            }
             // Only can add click event if MarkerSettings
             realMarker.addListener('click', () => {
                 this.mapClick(realMarker, marker as MarkerSettings)

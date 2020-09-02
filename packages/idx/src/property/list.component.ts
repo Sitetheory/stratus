@@ -238,27 +238,41 @@ Stratus.Components.IdxPropertyList = {
         $ctrl.prepareMapMarkers = (): void => {
             // console.log('checking $scope.collection.models', $scope.collection.models)
             const markers: MarkerSettings[] = []
-            $scope.collection.models.forEach((listing: object | any) => {
+            // only get the page's models, not every single model in collection
+            $scope.collection.models.slice(
+                ($scope.query.perPage * ($scope.query.page - 1)), // 20 * (1 - 1) = 0. 20 * (2 - 1) = 20
+                ($scope.query.perPage * $scope.query.page) // e.g. 20 * 1 = 20. 20 * 2 = 40
+            ).forEach((listing: object | any) => {
                 // console.log('looping listing', listing)
                 if (
                     Object.prototype.hasOwnProperty.call(listing, 'Latitude') &&
                     Object.prototype.hasOwnProperty.call(listing, 'Longitude')
                 ) {
+                    const address = $scope.getStreetAddress(listing)
+                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
+                    /*const marker = new google.maps.Marker({
+                        position: {lat: listing.Latitude, lng: listing.Longitude},
+                        title: address,
+                        animation: google.maps.Animation.DROP
+                    })
+                    marker.addListener('click', () => {
+                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                        // $scope.displayPropertyDetails(listing)
+                    })
+                    markers.push(marker)*/
                     markers.push({
                         position: {lat: listing.Latitude, lng: listing.Longitude},
-                        // title: $scope.getFullAddress(), // TODO titlr
-                        /*options: {
-                            animation: google.maps.Animation.DROP // DROP | BOUNCE
-                        },*/
-                        // TODO popup/scroll to
-                        /*click: {
-                            // action: 'open',
-                            // content: 'Marker content info',
+                        title: address,
+                        options: {
+                            animation: 2 // DROP: 2 | BOUNCE: 1
+                        },
+                        click: {
                             action: 'function',
                             function: (marker: any, markerSetting: any) => {
-                                console.log('I\'m just running a simple function!!', marker, markerSetting)
+                                $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                                // $scope.displayPropertyDetails(listing)
                             }
-                        }*/
+                        }
                     })
                 }
             })
