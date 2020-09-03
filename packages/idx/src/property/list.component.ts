@@ -85,6 +85,7 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
 
 Stratus.Components.IdxPropertyList = {
     bindings: {
+        uid: '@',
         elementId: '@',
         tokenUrl: '@',
         detailsLinkPopup: '@',
@@ -114,6 +115,9 @@ Stratus.Components.IdxPropertyList = {
     ) {
         // Initialize
         const $ctrl = this
+        /*$ctrl.uid = $attrs.uid && !_.isEmpty($attrs.uid) ? $attrs.uid :
+            _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+         */
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.instancePath = `Stratus.Instances.${$ctrl.uid}`
