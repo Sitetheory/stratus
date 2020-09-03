@@ -1,7 +1,7 @@
 {
-  "name": "@stratusjs/stripe",
-  "version": "0.0.3",
-  "description": "AngularJS Stripe Elements components to be used as an add on to StratusJS",
+  "name": "@stratusjs/map",
+  "version": "0.1.1",
+  "description": "Angular Google Map component to be used as an add-on to StratusJS",
   "main": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,11 +13,11 @@
   "keywords": [
     "sitetheory",
     "stratus",
-    "angularjs",
+    "angular",
     "lodash",
     "javascript",
     "typescript",
-    "stripe"
+    "google maps"
   ],
   "author": "Sitetheory Development Team (https://sitetheory.io/)",
   "license": "mit",
@@ -29,8 +29,7 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
-    "@stratusjs/angularjs": "^0.2.34",
-    "@stratusjs/angularjs-extras": "^0.6.6",
-    "@stratusjs/runtime": "^0.11.6"
+    "@angular/google-maps": "^10.1.3",
+    "@stratusjs/angular": "^0.2.29"
   }
 }

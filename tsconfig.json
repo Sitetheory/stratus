@@ -51,6 +51,9 @@
       "@stratusjs/idx/*": [
         "packages/idx/src/*"
       ],
+      "@stratusjs/map/*": [
+        "packages/map/src/*"
+      ],
       "@stratusjs/react/*": [
         "packages/react/src/*"
       ],

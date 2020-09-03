@@ -52,6 +52,7 @@ import {
 import {
     EditorComponent
 } from '@stratusjs/angular/editor/editor.component'
+import {MapComponent} from '@stratusjs/map/map.component'
 import {
     SelectorComponent
 } from '@stratusjs/angular/selector/selector.component'
@@ -111,6 +112,9 @@ import {
 // hljs.registerLanguage('twig', twig)
 // hljs.registerLanguage('xml', xml)
 // hljs.registerLanguage('yaml', yaml)
+
+// Google Modules (required by @stratusjs/map)
+import { GoogleMapsModule } from '@angular/google-maps'
 
 // Quill Modules
 import Quill from 'quill'
@@ -207,22 +211,24 @@ const quillConfig: QuillConfig = {
         toolbar: [
             // inline text styles
             ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-            [{ script: 'sub'}, { script: 'super' }],         // superscript/subscript
+            [{script: 'sub'}, {script: 'super'}],         // superscript/subscript
 
             // block paragraph styles
-            [{ header: [1, 2, 3, 4, 5, 6, false] }],
-            [{ list: 'ordered'}, { list: 'bullet' }],
+            [{header: [1, 2, 3, 4, 5, 6, false]}],
+            [{list: 'ordered'}, {list: 'bullet'}],
             ['blockquote', 'code-block'],
 
             // align and indent
-            [{ align: [
-                // For some reason `left` makes the button show as 'undefined'
-                // 'left',
-                // 'center',
-                // 'right',
-                // 'justify'
-                ] }],
-            [{ indent: '-1'}, { indent: '+1' }],             // outdent/indent
+            [{
+                align: [
+                    // For some reason `left` makes the button show as 'undefined'
+                    // 'left',
+                    // 'center',
+                    // 'right',
+                    // 'justify'
+                ]
+            }],
+            [{indent: '-1'}, {indent: '+1'}],             // outdent/indent
 
             // [{ size: ['small', false, 'large', 'huge'] }],   // custom dropdown
 
@@ -360,6 +366,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         BrowserAnimationsModule,
         CodeEditorModule.forRoot(),
         FormsModule,
+        GoogleMapsModule, // Required by @stratusjs/map
         HttpClientModule,
         MaterialModules,
         MatNativeDateModule,
@@ -374,6 +381,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         BaseComponent,
         CodeViewDialogComponent,
         EditorComponent,
+        MapComponent,
         MediaDialogComponent,
         SelectorComponent,
         TreeComponent,
@@ -385,6 +393,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         BaseComponent,
         CodeViewDialogComponent,
         EditorComponent,
+        MapComponent,
         MediaDialogComponent,
         SelectorComponent,
         TreeComponent,
@@ -392,7 +401,9 @@ const monacoConfig: NgxMonacoEditorConfig = {
         TreeNodeComponent,
     ],
     // bootstrap,
-    providers: []
+    providers: [
+        { provide: Window, useValue: window }
+    ]
 })
 export class AppModule {
     // node: true || false
@@ -401,15 +412,19 @@ export class AppModule {
     modules = {
         'sa-base': BaseComponent,
         'sa-editor': EditorComponent,
+        'sa-map': MapComponent,
         'sa-selector': SelectorComponent,
         'sa-tree': TreeComponent
     }
+
     constructor() {
         Stratus.Instances[_.uniqueId('sa_app_module_')] = this
     }
+
     ngDoBootstrap(appRef: ApplicationRef) {
         this.detectBoot(appRef)
     }
+
     // Fade out detection cycles
     exponentialTimeout(limit?: number) {
         if (_.isNumber(limit) && limit < this.initialTimeout) {
@@ -422,6 +437,7 @@ export class AppModule {
         // return
         return currentTimeout
     }
+
     detectBoot(appRef: ApplicationRef) {
         _.forEach(this.modules, (module, selector) => {
             // if (!(module instanceof ComponentFactory)) {

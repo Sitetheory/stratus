@@ -31,6 +31,7 @@ function angularBoot() {
     const sa = [
         // 'sa-base',
         'sa-editor',
+        'sa-map',
         'sa-selector',
         'sa-tree'
         // 'quill-editor'

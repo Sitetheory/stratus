@@ -13,6 +13,9 @@ import moment from 'moment'
 import 'angular-material'
 import 'angular-sanitize'
 
+// Angular+ Modules
+import {MarkerSettings} from '@stratusjs/map/map.component'
+
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
@@ -65,6 +68,8 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
     contactPhone: string
     disclaimerString: string
     disclaimerHTML: any
+    instancePath: string
+    mapMarkers: MarkerSettings[]
 
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
@@ -80,6 +85,7 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
 
 Stratus.Components.IdxPropertyList = {
     bindings: {
+        uid: '@',
         elementId: '@',
         tokenUrl: '@',
         detailsLinkPopup: '@',
@@ -109,8 +115,12 @@ Stratus.Components.IdxPropertyList = {
     ) {
         // Initialize
         const $ctrl = this
+        /*$ctrl.uid = $attrs.uid && !_.isEmpty($attrs.uid) ? $attrs.uid :
+            _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+         */
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
+        $scope.instancePath = `Stratus.Instances.${$ctrl.uid}`
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.localDir = localDir
         if ($attrs.tokenUrl) {
@@ -184,6 +194,8 @@ Stratus.Components.IdxPropertyList = {
             $scope.disclaimerString = 'Loading...'
             $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
 
+            $scope.mapMarkers = []
+
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, $scope)
 
@@ -223,8 +235,54 @@ Stratus.Components.IdxPropertyList = {
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
+                $ctrl.prepareMapMarkers() // TODO being worked on
             }
         })
+
+        $ctrl.prepareMapMarkers = (): void => {
+            // console.log('checking $scope.collection.models', $scope.collection.models)
+            const markers: MarkerSettings[] = []
+            // only get the page's models, not every single model in collection
+            $scope.collection.models.slice(
+                ($scope.query.perPage * ($scope.query.page - 1)), // 20 * (1 - 1) = 0. 20 * (2 - 1) = 20
+                ($scope.query.perPage * $scope.query.page) // e.g. 20 * 1 = 20. 20 * 2 = 40
+            ).forEach((listing: object | any) => {
+                // console.log('looping listing', listing)
+                if (
+                    Object.prototype.hasOwnProperty.call(listing, 'Latitude') &&
+                    Object.prototype.hasOwnProperty.call(listing, 'Longitude')
+                ) {
+                    const address = $scope.getStreetAddress(listing)
+                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
+                    /*const marker = new google.maps.Marker({
+                        position: {lat: listing.Latitude, lng: listing.Longitude},
+                        title: address,
+                        animation: google.maps.Animation.DROP
+                    })
+                    marker.addListener('click', () => {
+                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                        // $scope.displayPropertyDetails(listing)
+                    })
+                    markers.push(marker)*/
+                    markers.push({
+                        position: {lat: listing.Latitude, lng: listing.Longitude},
+                        title: address,
+                        options: {
+                            animation: 2 // DROP: 2 | BOUNCE: 1
+                        },
+                        click: {
+                            action: 'function',
+                            function: (marker: any, markerSetting: any) => {
+                                $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                                // $scope.displayPropertyDetails(listing)
+                            }
+                        }
+                    })
+                }
+            })
+
+            $scope.mapMarkers = markers
+        }
 
         /**
          * Inject the current URL settings into any attached Search widget
@@ -463,6 +521,28 @@ Stratus.Components.IdxPropertyList = {
                 return addressParts.join(' ')
             }
         }
+
+        /*$scope.getGoogleMapKey = (): string | null => {
+            let googleApiKey = null
+            if (
+                $scope.integrations
+                && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
+                && $scope.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = $scope.integrations.maps.googleMaps.accountId
+            } else if (
+                Idx.sharedValues.integrations
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
+                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
+                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
+            ) {
+                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
+            }
+            return googleApiKey
+        }*/
 
         /**
          * @param reset - set true to force reset

@@ -2171,6 +2171,8 @@ const angularJsService = (
             'MLSAreaMajor',
             'CountyOrParish',
             'StateOrProvince',
+            'Latitude',
+            'Longitude',
             'ListPrice',
             'ClosePrice',
             'ListingId',

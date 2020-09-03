@@ -1,0 +1,30 @@
+<mat-progress-bar mode="indeterminate" *ngIf="!initialized"></mat-progress-bar>
+<ng-container> <!-- *ngIf="initialized" -->
+    <div
+            #mapContainer
+            style="height: {{height}}; width: {{width}};"
+    ></div>
+    <!--google-map
+            #mapContainer
+            height="{{height}}"
+            width="{{width}}"
+            [zoom]="zoom"
+            [center]="center"
+            [options]="options"
+    >
+        <map-marker
+                #markerElem="mapMarker"
+                *ngFor="let marker of storedMarkers"
+                [position]="marker.position"
+                [label]="marker.label"
+                [title]="marker.title"
+                [options]="marker.options"
+
+                (mapClick)="mapClick(markerElem, marker)"
+        ></map-marker>
+
+        <map-info-window>
+            {{markerContent}}
+        </map-info-window>
+    </google-map-->
+</ng-container>
