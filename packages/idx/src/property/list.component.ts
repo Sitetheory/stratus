@@ -32,6 +32,8 @@ import {
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
+import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
+import {IdxMapScope} from '@stratusjs/idx/map.component'
 
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
@@ -288,16 +290,17 @@ Stratus.Components.IdxPropertyList = {
          * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
          */
         $scope.refreshSearchWidgetOptions = async (): Promise<void> => {
-            const searchScopes: any[] = Idx.getListInstanceLinks($scope.elementId)
-            searchScopes.forEach((searchScope) => {
-                if (Object.prototype.hasOwnProperty.call(searchScope, 'setQuery')) {
+            const linkedScopes = Idx.getListInstanceLinks($scope.elementId) as (IdxPropertySearchScope | IdxMapScope)[]
+            linkedScopes.forEach((linkedScope) => {
+                if (Object.prototype.hasOwnProperty.call(linkedScope, 'setQuery')) { // Treat as IdxPropertySearchScope
                     // FIXME search widgets may only hold certain values. Later this needs to be adjusted
                     //  to only update the values in which a user can see/control
                     // console.log('refreshSearchWidgetOptions Idx.getUrlOptions', _.clone(Idx.getUrlOptions('Search')))
                     // searchScope.setWhere(Idx.getUrlOptions('Search')) // FIXME this needs to just set query.where
-                    searchScope.setQuery($scope.query)
-                    searchScope.listInitialized = true
+                    linkedScope.setQuery($scope.query)
+                    linkedScope.listInitialized = true
                 }
+                // FIXME need a pubSub here for IdxMapScope to request updates per event
             })
         }
 

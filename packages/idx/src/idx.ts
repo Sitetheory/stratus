@@ -19,6 +19,7 @@ import '@stratusjs/idx/listTrac'
 // Stratus Dependencies
 import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import {IdxMapScope} from '@stratusjs/idx/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
@@ -75,12 +76,13 @@ export interface IdxService {
     ): Promise<Model<Property>>
 
     // Instance Methods
-    getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxComponentScope | null // TODO return with a scope
-    getListInstanceLinks(listUid: string, listType?: string): (IdxPropertySearchScope | IdxComponentScope)[] // TODO return with a scope[]
-    getSearchInstanceLinks(searchUid: string, listType?: string): (IdxPropertyListScope | IdxComponentScope)[] // TODO return with a scope[]
-    registerDetailsInstance(uid: string, $scope: IdxPropertyDetailsScope, listType?: string): void
-    registerListInstance(uid: string, $scope: IdxPropertyListScope, listType?: string): void
-    registerSearchInstance(uid: string, $scope: IdxPropertySearchScope, listUid?: string, listType?: string): void
+    getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxComponentScope | null
+    getListInstanceLinks(listUid: string, listType?: string): (IdxPropertySearchScope | IdxMapScope | IdxComponentScope)[]
+    getSearchInstanceLinks(searchUid: string, listType?: string): (IdxPropertyListScope | IdxComponentScope)[]
+    registerDetailsInstance(uid: string, $scope: IdxPropertyDetailsScope | IdxComponentScope, listType?: string): void
+    registerListInstance(uid: string, $scope: IdxPropertyListScope | IdxComponentScope, listType?: string): void
+    registerMapInstance(uid: string, $scope: IdxMapScope): void
+    registerSearchInstance(uid: string, $scope: IdxPropertySearchScope | IdxComponentScope, listUid?: string, searchType?: string): void
     unregisterDetailsInstance(uid: string, listType?: string): void
 
     // Url Option Methods
@@ -448,21 +450,32 @@ const angularJsService = (
         OfficeSearch: object,
         OfficeDetails: object
     } */
-    // any
+    // FIXME move from IdxComponentScope to defined scope soon
     const instance: {
         [instanceName: string]: {
             [uid: string]: IdxComponentScope
         }
+        Map: {[uid: string]: IdxComponentScope},
+        MemberDetails: {[uid: string]: IdxComponentScope},
+        MemberList: {[uid: string]: IdxComponentScope},
+        MemberSearch: {[uid: string]: IdxComponentScope},
+        OfficeDetails: {[uid: string]: IdxComponentScope},
+        OfficeList: {[uid: string]: IdxComponentScope},
+        OfficeSearch: {[uid: string]: IdxComponentScope},
+        PropertyDetails: {[uid: string]: IdxPropertyDetailsScope},
+        PropertyList: {[uid: string]: IdxPropertyListScope},
+        PropertySearch: {[uid: string]: IdxPropertySearchScope},
     } = { // FIXME theres a number of queries that need dynamic calls
-        PropertyList: {},
-        PropertySearch: {},
-        PropertyDetails: {},
+        Map: {},
         MemberList: {},
         MemberSearch: {},
         MemberDetails: {},
         OfficeList: {},
         OfficeSearch: {},
-        OfficeDetails: {}
+        OfficeDetails: {},
+        PropertyList: {},
+        PropertySearch: {},
+        PropertyDetails: {}
     }
 
     /** type {{List: Object<[String]>, Search: Object<[String]>}} */
@@ -470,11 +483,15 @@ const angularJsService = (
         List: {
             [uid: string]: string[]
         }
+        Map: {
+            [uid: string]: string[]
+        }
         Search: {
             [uid: string]: string[]
         }
     } = {
         List: {},
+        Map: {},
         Search: {}
     }
 
@@ -512,12 +529,13 @@ const angularJsService = (
      * @param $scope - angular scope
      * @param listType - Property / Member / Office
      */
-    function registerListInstance(uid: string, $scope: IdxPropertyListScope, listType = 'Property'): void {
+    function registerListInstance(uid: string, $scope: IdxPropertyListScope | IdxComponentScope, listType: 'Property' = 'Property'): void {
         // if (!instance[listType + 'List']) {
-        if (!Object.prototype.hasOwnProperty.call(instance, listType + 'List')) {
-            instance[listType + 'List'] = {}
+        const instanceType = listType + 'List'
+        if (!Object.prototype.hasOwnProperty.call(instance, instanceType)) {
+            instance[instanceType] = {}
         }
-        instance[listType + 'List'][uid] = $scope
+        instance[instanceType][uid] = $scope
         if (!Object.prototype.hasOwnProperty.call(instanceLink.List, uid)) {
             instanceLink.List[uid] = []
         }
@@ -528,10 +546,10 @@ const angularJsService = (
      * @param uid - The elementId of a widget
      * @param $scope - angular scope
      * @param listUid -  uid name
-     * @param listType - Property / Member / Office
+     * @param searchType - Property / Member / Office
      */
-    function registerSearchInstance(uid: string, $scope: IdxPropertySearchScope, listUid?: string, listType = 'Property'): void {
-        instance[listType + 'Search'][uid] = $scope
+    function registerSearchInstance(uid: string, $scope: IdxPropertySearchScope | IdxComponentScope, listUid?: string, searchType = 'Property'): void {
+        instance[searchType + 'Search'][uid] = $scope
         if (!Object.prototype.hasOwnProperty.call(instanceLink.Search, uid)) {
             instanceLink.Search[uid] = []
         }
@@ -548,10 +566,10 @@ const angularJsService = (
      * Add Search instance to the service
      * @param uid - The elementId of a widget
      * @param $scope - angular scope
-     * @param listType - Property / Member / Office
+     * @param detailsType - Property / Member / Office
      */
-    function registerDetailsInstance(uid: string, $scope: IdxPropertyDetailsScope, listType = 'Property'): void {
-        instance[listType + 'Details'][uid] = $scope
+    function registerDetailsInstance(uid: string, $scope: IdxPropertyDetailsScope | IdxComponentScope, detailsType = 'Property'): void {
+        instance[detailsType + 'Details'][uid] = $scope
     }
 
     /**
@@ -564,6 +582,21 @@ const angularJsService = (
             const detailUid = instance[listType + 'Details'][uid].getUid()
             delete instance[listType + 'Details'][uid]
             Stratus.Instances.Clean(detailUid)
+        }
+    }
+
+    /**
+     * Add Map instance to the service
+     * @param uid - The elementId of a widget
+     * @param $scope - angular scope
+     */
+    function registerMapInstance(uid: string, $scope: IdxMapScope): void {
+        if (!Object.prototype.hasOwnProperty.call(instance, 'Map')) {
+            instance.Map = {}
+        }
+        instance.Map[uid] = $scope
+        if (!Object.prototype.hasOwnProperty.call(instanceLink.Map, uid)) {
+            instanceLink.Map[uid] = []
         }
     }
 
@@ -608,7 +641,7 @@ const angularJsService = (
      * @param listType - Property / Member / Office
      * FIXME only using IdxComponentScope until all converted
      */
-    function getListInstanceLinks(listUid: string, listType = 'Property'): (IdxPropertySearchScope | IdxComponentScope)[] {
+    function getListInstanceLinks(listUid: string, listType = 'Property'): (IdxPropertySearchScope | IdxMapScope | IdxComponentScope)[] {
         const linkedSearches: (IdxPropertySearchScope | IdxComponentScope)[] = []
         if (Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
             instanceLink.List[listUid].forEach((searchUid) => {
@@ -2559,6 +2592,7 @@ const angularJsService = (
         getUrlOptionsPath,
         registerDetailsInstance,
         registerListInstance,
+        registerMapInstance,
         registerSearchInstance,
         setIdxServices,
         setPageTitle,
