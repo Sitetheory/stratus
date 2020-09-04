@@ -264,12 +264,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
-        this.dataSub
-            .pipe(
-                debounce(() => timer(500)),
-                catchError(this.handleError)
-            )
-            .subscribe(evt => {
+        this.dataSub.pipe(
+            debounce(() => timer(500)),
+            catchError(this.handleError)
+        ).subscribe(evt => {
+            // While the editor is focused, we skip the debounce updates to avoid cursor glitches
+            if (this.focused) {
+                return
+            }
             // TODO: This may need to only work on blur and not focus, unless it is the initialization value
             const dataControl = this.form.get('dataString')
             if (dataControl.value === evt) {
