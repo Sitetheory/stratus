@@ -488,7 +488,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                         }
 
                         // Propagate Changes
-                        this.data = _.cloneDeep(intermediateData)
+                        this.data = _.cloneDeep(intermediateData) as T
                         this.changed = false
                         this.saving = false
                         this.handleChanges()

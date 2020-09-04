@@ -20,7 +20,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
     name = 'ModelBase'
 
     // Infrastructure
-    data: T | LooseObject = {}
+    data: T = {} as T
     temps: LooseObject = {}
 
     // Diff Detection

@@ -110,7 +110,7 @@ export class Collection<T = LooseObject> extends EventManager {
     header = new ModelBase<T>()
     meta = new ModelBase<T>()
     model = Model
-    models: Model<T>[] = []
+    models: Model<T>[] | (Model<T>['data'])[] = []
     types: any = []
     cacheRequest: any = {}
 
@@ -230,19 +230,21 @@ export class Collection<T = LooseObject> extends EventManager {
             this.types.push(type)
         }
         // TODO: Make this able to be flagged as direct entities
-        data.forEach((target: any) => {
-            // TODO: Add references to the Catalog when creating these
-            // models
-            this.models.push(new Model<T>({
-                autoSave: this.autoSave,
-                autoSaveInterval: this.autoSaveInterval,
-                collection: this,
-                completed: true,
-                received: true,
-                type: type || null,
-                watch: this.watch
-            }, target))
-        })
+        if (!this.direct) {
+            data.forEach((target: any) => {
+                // TODO: Add references to the Catalog when creating these
+                // models
+                (this.models as Model<T>[]).push(new Model<T>({
+                    autoSave: this.autoSave,
+                    autoSaveInterval: this.autoSaveInterval,
+                    collection: this,
+                    completed: true,
+                    received: true,
+                    type: type || null,
+                    watch: this.watch
+                }, target))
+            })
+        }
     }
 
     // TODO: Abstract this deeper
@@ -324,8 +326,9 @@ export class Collection<T = LooseObject> extends EventManager {
 
 
                     // Build Report
-                    const error = new Stratus.Prototypes.Error()
-                    error.payload = _.isObject(response.data) ? response.data : response
+                    const error = new Stratus.Prototypes.Error({
+                        payload: _.isObject(response.data) ? response.data : response
+                    }, {})
                     if (response.statusText && response.statusText !== 'OK') {
                         error.message = response.statusText
                     } else if (!_.isObject(response.data)) {
@@ -377,7 +380,8 @@ export class Collection<T = LooseObject> extends EventManager {
                     if (!$mdToast) {
                         // TODO: Verify the whether the const is necessity
                         // tslint:disable-next-line:no-unused-variable
-                        const wait = await serviceVerify()
+                        // const wait = await serviceVerify()
+                        await serviceVerify()
                     }
                     $mdToast.show(
                         $mdToast.simple()
@@ -426,7 +430,7 @@ export class Collection<T = LooseObject> extends EventManager {
     }
 
     toJSON() {
-        return this.models.map((model: Model) => model.toJSON())
+        return !this.direct ? (this.models as Model<T>[]).map((model: Model<T>) => model.toJSON()) : this.models
     }
 
     add(target: any, options: any) {
@@ -451,9 +455,11 @@ export class Collection<T = LooseObject> extends EventManager {
         }
     }
 
-    remove(target: Model) {
-        this.models.splice(this.models.indexOf(target), 1)
-        this.throttleTrigger('change')
+    remove(target: Model<T>) {
+        if (!this.direct) {
+            this.models.splice((this.models as Model<T>[]).indexOf(target), 1)
+            this.throttleTrigger('change')
+        }
         return this
     }
 
