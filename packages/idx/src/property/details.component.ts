@@ -1284,8 +1284,6 @@ Stratus.Components.IdxPropertyDetails = {
             }
         }
 
-        $scope.getUid = (): string => $ctrl.uid
-
         /**
          * Will perform a fetch request in the background. Results will be known once watcher for 'model.data' notices
          */
@@ -1449,9 +1447,8 @@ Stratus.Components.IdxPropertyDetails = {
          */
         $scope.getMLSDisclaimer = (html?: boolean): string => html ? $scope.disclaimerHTML : $scope.disclaimerString
 
-        /**
-         * Function that runs when widget is destroyed
-         */
+        $scope.getUid = (): string => $ctrl.uid
+
         $scope.remove = (): void => {
             // TODO need to kill any attached slideshows
         }

@@ -658,9 +658,6 @@ Stratus.Components.IdxPropertyList = {
 
         $scope.getUid = (): string => $ctrl.uid
 
-        /**
-         * Destroy this widget
-         */
         $scope.remove = (): void => {
         }
     },
