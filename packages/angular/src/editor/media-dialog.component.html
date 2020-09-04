@@ -17,6 +17,18 @@
                      [ngClass]="{'selected' : isSelected(mediaEntity)}"
                      (click)="select(mediaEntity)">
             </mat-grid-tile>
+            <!--
+            <mat-grid-tile *ngIf="mediaEntity.thumbSrc !== null">
+                <span [innerText]="mediaEntity | json"></span>
+            </mat-grid-tile>
+            -->
         </ng-container>
     </mat-grid-list>
+    <!-- TODO: Set the paginator settings according to the meta data coming from the XHR payloads -->
+    <!--
+    <mat-paginator [length]="100"
+                   [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+    -->
 </div>
