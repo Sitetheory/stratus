@@ -99,7 +99,7 @@ export interface ModelOptions extends ModelBaseOptions {
 
 export const ModelOptionKeys = keys<ModelOptions>()
 
-export class Model extends ModelBase {
+export class Model<T = LooseObject> extends ModelBase<T> {
     // Base Information
     name = 'Model'
 
@@ -823,7 +823,7 @@ export class Model extends ModelBase {
                     return attrs && attrs[link]
                 }, this.data)
         } else {
-            this.data[attr] = value
+            (this.data as LooseObject)[attr] = value
         }
         // The issue with these triggers is they only fire if using the set() method,
         // while some values will be changed via the data object directly.
