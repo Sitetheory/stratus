@@ -87,7 +87,7 @@ export interface CollectionOptions {
 
 export const CollectionOptionKeys = keys<CollectionOptions>()
 
-export class Collection extends EventManager {
+export class Collection<T = LooseObject> extends EventManager {
     // Base Information
     name = 'Collection'
 
@@ -107,10 +107,10 @@ export class Collection extends EventManager {
     decay = 0
 
     // Infrastructure
-    header = new ModelBase()
-    meta = new ModelBase()
+    header = new ModelBase<T>()
+    meta = new ModelBase<T>()
     model = Model
-    models: any = []
+    models: Model<T>[] = []
     types: any = []
     cacheRequest: any = {}
 
@@ -233,7 +233,7 @@ export class Collection extends EventManager {
         data.forEach((target: any) => {
             // TODO: Add references to the Catalog when creating these
             // models
-            this.models.push(new Model({
+            this.models.push(new Model<T>({
                 autoSave: this.autoSave,
                 autoSaveInterval: this.autoSaveInterval,
                 collection: this,
