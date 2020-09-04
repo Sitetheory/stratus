@@ -24,6 +24,7 @@ import {
     IdxComponentScope,
     IdxService,
     MLSService,
+    Property,
     WhereOptions,
     UrlWhereOptions,
     UrlsOptionsObject
@@ -49,7 +50,7 @@ const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 export type IdxPropertyListScope = IdxComponentScope & {
-    collection: Collection
+    collection: Collection<Property>
     urlLoad: boolean
     searchOnLoad: boolean
     detailsLinkPopup: boolean
@@ -68,6 +69,7 @@ export type IdxPropertyListScope = IdxComponentScope & {
     mapMarkers: MarkerSettings[]
 
     displayPropertyDetails(property: object | any, ev?: any): void
+    getStreetAddress(property: Property): string
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
     pagePrevious(ev?: any): Promise<void>
@@ -131,7 +133,7 @@ Stratus.Components.IdxPropertyList = {
          */
         $ctrl.$onInit = async () => {
             $scope.Idx = Idx
-            $scope.collection = new Collection({})
+            $scope.collection = new Collection<Property>({})
             /**
              * Allow query to be loaded initially from the URL
              * type {boolean}
@@ -469,55 +471,11 @@ Stratus.Components.IdxPropertyList = {
          * Return a string path to a particular property listing
          * TODO Idx needs a Property interface
          */
-        $scope.getDetailsURL = (property: object | any): string =>
+        $scope.getDetailsURL = (property: Property): string =>
             $scope.detailsLinkUrl + '#!/Listing/' + property._ServiceId + '/' + property.ListingKey + '/'
 
-        /**
-         * Returns the processed street address
-         * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
-         * +  StreetDirSuffix + 'Unit' + UnitNumber
-         */
-        $scope.getStreetAddress = (property: object | any): string => {
-            if (
-                Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') &&
-                property.UnparsedAddress !== ''
-            ) {
-                return property.UnparsedAddress
-                // address = property.UnparsedAddress
-                // console.log('using unparsed ')
-            } else {
-                const addressParts: string[] = []
-                if (
-                    Object.prototype.hasOwnProperty.call(property, 'StreetNumberNumeric') &&
-                    _.isNumber(property.StreetNumberNumeric) &&
-                    property.StreetNumberNumeric > 0
-                ) {
-                    addressParts.push(property.StreetNumberNumeric)
-                } else if (
-                    Object.prototype.hasOwnProperty.call(property, 'StreetNumber') &&
-                    property.StreetNumber !== ''
-                ) {
-                    addressParts.push(property.StreetNumber)
-                }
-                [
-                    'StreetDirPrefix',
-                    'StreetName',
-                    'StreetSuffix',
-                    'StreetSuffixModifier',
-                    'StreetDirSuffix',
-                    'UnitNumber'
-                ]
-                    .forEach((addressPart) => {
-                        if (Object.prototype.hasOwnProperty.call(property, addressPart)) {
-                            if (addressPart === 'UnitNumber') {
-                                addressParts.push('Unit')
-                            }
-                            addressParts.push(property[addressPart])
-                        }
-                    })
-                return addressParts.join(' ')
-            }
-        }
+
+        $scope.getStreetAddress = (property: Property): string => $scope.Idx.getStreetAddress(property)
 
         /*$scope.getGoogleMapKey = (): string | null => {
             let googleApiKey = null
@@ -601,7 +559,7 @@ Stratus.Components.IdxPropertyList = {
          * @param property property object
          * @param ev - Click event
          */
-        $scope.displayPropertyDetails = (property: object | any, ev?: any): void => {
+        $scope.displayPropertyDetails = (property: Property, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -610,7 +568,7 @@ Stratus.Components.IdxPropertyList = {
                 // Opening a popup will load the propertyDetails and adjust the hashbang URL
                 const templateOptions: {
                     'element-id': string,
-                    service: number,
+                    service: string | number,
                     'listing-key': string,
                     'default-list-options': string,
                     'page-title': boolean,
@@ -697,6 +655,8 @@ Stratus.Components.IdxPropertyList = {
                 $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)
             }
         }
+
+        $scope.getUid = (): string => $ctrl.uid
 
         /**
          * Destroy this widget

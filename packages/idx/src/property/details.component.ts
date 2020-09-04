@@ -20,7 +20,7 @@ import {MarkerSettings} from '@stratusjs/map/map.component'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxComponentScope, IdxService} from '@stratusjs/idx/idx'
+import {IdxComponentScope, IdxService, Property, WidgetIntegrations} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
@@ -28,7 +28,7 @@ import '@stratusjs/idx/listTrac'
 import {Model} from '@stratusjs/angularjs/services/model'
 // tslint:disable-next-line:no-duplicate-imports
 import {MLSService} from '@stratusjs/idx/idx'
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {SlideImage} from '@stratusjs/swiper/carousel.component'
 
@@ -54,15 +54,8 @@ const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-interface PropertyData extends LooseObject {
-    _ServiceId: string | number
-}
-
 export type IdxPropertyDetailsScope = IdxComponentScope & {
-    elementId: string
-    localDir: string
-    model: any
-    Idx: any
+    model: Model<Property>
     urlLoad: boolean
     pageTitle: string
     options: any // TODO ned to specify
@@ -72,13 +65,18 @@ export type IdxPropertyDetailsScope = IdxComponentScope & {
     images: object[]
     contact?: object | any
     contactUrl?: string
-    integrations?: object | any
+    integrations?: WidgetIntegrations
     minorDetails: SubSectionOptions[]
     alternateMinorDetails: SubSectionOptions[]
     instancePath: string
     mapMarkers: MarkerSettings[]
 
+    fetchProperty(): Promise<void>
+    getFullAddress(encode?: boolean): string
+    getMLSDisclaimer(html?: boolean): string
     getPublicRemarksHTML(): any
+    getSlideshowImages(): SlideImage[]
+    getStreetAddress(): string
 
 }
 
@@ -130,7 +128,7 @@ Stratus.Components.IdxPropertyDetails = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         $ctrl.$onInit = () => {
-            $scope.model = new Model() as Model
+            $scope.model = new Model() as Model<Property>
             $scope.Idx = Idx
             $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
             $scope.pageTitle = $attrs.pageTitle && isJSON($attrs.pageTitle) ? JSON.parse($attrs.pageTitle) : false
@@ -1228,7 +1226,7 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.fetchProperty()
         }
 
-        $scope.$watch('model.data', (data?: Model<PropertyData>['data']) => {
+        $scope.$watch('model.data', (data?: Model<Property>['data']) => {
             if (
                 data &&
                 data.hasOwnProperty('_ServiceId')
@@ -1354,57 +1352,9 @@ Stratus.Components.IdxPropertyDetails = {
             return images
         }
 
-        /**
-         * Returns the processed street address
-         * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
-         * +  StreetDirSuffix + 'Unit' + UnitNumber
-         * TODO can combine with other function so its not duplicate
-         */
-        $scope.getStreetAddress = (): string => {
-            if (
-                Object.prototype.hasOwnProperty.call($scope.model.data, 'UnparsedAddress') &&
-                $scope.model.data.UnparsedAddress !== ''
-            ) {
-                return $scope.model.data.UnparsedAddress
-            } else {
-                const addressParts: string[] = []
-                if (
-                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumberNumeric') &&
-                    _.isNumber($scope.model.data.StreetNumberNumeric) &&
-                    $scope.model.data.StreetNumberNumeric > 0
-                ) {
-                    addressParts.push($scope.model.data.StreetNumberNumeric)
-                } else if (
-                    Object.prototype.hasOwnProperty.call($scope.model.data, 'StreetNumber') &&
-                    $scope.model.data.StreetNumber !== ''
-                ) {
-                    addressParts.push($scope.model.data.StreetNumber)
-                }
-                [
-                    'StreetDirPrefix',
-                    'StreetName',
-                    'StreetSuffix',
-                    'StreetSuffixModifier',
-                    'StreetDirSuffix',
-                    'UnitNumber'
-                ]
-                    .forEach(addressPart => {
-                        if (Object.prototype.hasOwnProperty.call($scope.model.data, addressPart)) {
-                            if (addressPart === 'UnitNumber') {
-                                addressParts.push('Unit')
-                            }
-                            addressParts.push($scope.model.data[addressPart])
-                        }
-                    })
-                return addressParts.join(' ')
-            }
-        }
+        $scope.getStreetAddress = (): string => $scope.Idx.getStreetAddress($scope.model.data)
 
-        $scope.getFullAddress = (encode?: boolean): string => {
-            // const address = $scope.model.data.UnparsedAddress + ', ' + $scope.model.data.City + ' ' + $scope.model.data.StateOrProvince
-            const address = $scope.getStreetAddress() + ', ' + $scope.model.data.City + ' ' + $scope.model.data.StateOrProvince
-            return encode ? encodeURIComponent(address) : address
-        }
+        $scope.getFullAddress = (encode?: boolean): string => $scope.Idx.getFullAddress($scope.model.data, encode)
 
         $scope.getListAgentName = (): string => $scope.model.data.ListAgentFullName || ($scope.model.data.ListAgentFirstName ?
             $scope.model.data.ListAgentFirstName + ' ' + $scope.model.data.ListAgentLastName : null)
@@ -1455,7 +1405,7 @@ Stratus.Components.IdxPropertyDetails = {
             if (!$ctrl.mlsVariables) {
                 Idx.getMLSVariables([$scope.model.data._ServiceId])
                     .forEach((service: MLSService) => {
-                        if (service.id === parseInt($scope.model.data._ServiceId, 10)) {
+                        if (service.id === parseInt($scope.model.data._ServiceId as unknown as string, 10)) {
                             $ctrl.mlsVariables = service
                         }
                     })

@@ -19,6 +19,10 @@ import '@stratusjs/idx/listTrac'
 // Stratus Dependencies
 import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
+import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
+import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
+// import {IdxMapScope} from '@stratusjs/idx/map.component'
 
 
 // Environment
@@ -39,39 +43,71 @@ export interface IdxService {
     // Variables
     sharedValues: IdxSharedValue
 
-    // Functions
+    // Fetch Methods
     fetchMembers(
-        $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>, refresh?: boolean, listName?: string
+        $scope: any,
+        collectionVarName: string,
+        options?: Pick<CompileFilterOptions,
+            'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
+        refresh?: boolean,
+        listName?: string
     ): Promise<Collection>
+
     fetchOffices(
-        $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>, refresh?: boolean, listName?: string
+        $scope: any,
+        collectionVarName: string,
+        options?: Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
+        refresh?: boolean,
+        listName?: string
     ): Promise<Collection>
+
     fetchProperties(
-        $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>, refresh?: boolean, listName?: string
+        $scope: IdxComponentScope, collectionVarName: string,
+        options?: Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
+        refresh?: boolean,
+        listName?: string
     ): Promise<Collection<Property>>
-    fetchProperty($scope: any, modelVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>): Promise<Model<Property>>
-    devLog(arg: any, arg2: any): void
-    getContactVariables(): WidgetContact[]
-    getDefaultWhereOptions(): WhereOptions
-    getFriendlyStatus(property: any): string // TODO replace with property object
-    getIdxServices(): number[]
-    getListInstance(listUid: string, listType?: string): any // TODO return with a scope
-    getListInstanceLinks(listUid: string, listType?: string): any[] // TODO return with a scope[]
-    getMLSVariables(serviceIds?: number[]): MLSService[]
+
+    fetchProperty(
+        $scope: any,
+        modelVarName: string,
+        options?: Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>
+    ): Promise<Model<Property>>
+
+    // Instance Methods
+    getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxComponentScope | null // TODO return with a scope
+    getListInstanceLinks(listUid: string, listType?: string): (IdxPropertySearchScope | IdxComponentScope)[] // TODO return with a scope[]
+    getSearchInstanceLinks(searchUid: string, listType?: string): (IdxPropertyListScope | IdxComponentScope)[] // TODO return with a scope[]
+    registerDetailsInstance(uid: string, $scope: IdxPropertyDetailsScope, listType?: string): void
+    registerListInstance(uid: string, $scope: IdxPropertyListScope, listType?: string): void
+    registerSearchInstance(uid: string, $scope: IdxPropertySearchScope, listUid?: string, listType?: string): void
+    unregisterDetailsInstance(uid: string, listType?: string): void
+
+    // Url Option Methods
     getOptionsFromUrl(): UrlsOptionsObject
-    getSearchInstanceLinks(searchUid: string, listType?: string): any[] // TODO return with a scope[]
     getUrlOptions(listingOrSearch: 'Search' | 'Listing'): UrlWhereOptions
     getUrlOptionsPath(defaultOptions?: any): string
-    registerDetailsInstance(uid: string, $scope: any, listType?: string): void
-    registerListInstance(uid: string, $scope: any, listType?: string): void
-    registerSearchInstance(uid: string, $scope: any, listUid?: string, listType?: string): void
+    refreshUrlOptions(defaultOptions: any): void
+    setUrlOptions(listingOrSearch: 'Search' | 'Listing', options: any): void
+
+    // Reusable Methods
+    devLog(arg: any, arg2: any): void
+    getFriendlyStatus(property: Property): string // TODO replace with property object
+    getFullAddress(property: Property, encode?: boolean): string
+    getIdxServices(): number[]
+    getMLSVariables(serviceIds?: number[]): MLSService[]
+    getStreetAddress(property: Property): string
+
+    // Other Unsorted Methods
+    getContactVariables(): WidgetContact[]
+    getDefaultWhereOptions(): WhereOptions
     setIdxServices(property: number[]): void
     setPageTitle(title?: string): void
+
+    // Auth Methods
     setTokenURL(url: string): void
-    setUrlOptions(listingOrSearch: 'Search' | 'Listing', options: any): void
     tokenKeepAuth(keepAlive?: boolean): IPromise<void>
-    refreshUrlOptions(defaultOptions: any): void
-    unregisterDetailsInstance(uid: string, listType?: string): void
+
 }
 
 export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
@@ -79,6 +115,7 @@ export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
     localDir: string
     Idx: IdxService
 
+    getUid(): string
     remove(): void
 }
 
@@ -300,7 +337,60 @@ interface MongoFilterQuery {
 }
 
 export interface Property extends LooseObject {
-    _ServiceId: string | number
+    id: string
+    ListingKey: string
+    ListingId: string
+    MlsStatus: string
+    StandardStatus: string
+    PropertyType: string
+    PropertySubType: string
+
+    // Time
+    ModificationTimestamp: Date
+
+    // Location
+    UnparsedAddress?: string
+    StreetNumberNumeric?: number
+    StreetNumber?: string
+    StreetDirPrefix?: string
+    StreetName?: string
+    StreetSuffix?: string
+    StreetSuffixModifier?: string
+    StreetDirSuffix?: string
+    UnitNumber?: string
+    City?: string
+    StateOrProvince?: string
+    PostalCode?: string
+    Country?: string
+    Latitude?: number
+    Longitude?: number
+
+    // Details
+    PublicRemarks?: string
+
+    // Agent
+    ListAgentFullName?: string
+    ListAgentFirstName?: string
+    ListAgentLastName?: string
+    CoListAgentFullName?: string
+    CoListAgentFirstName?: string
+    CoListAgentLastName?: string
+    BuyerAgentFullName?: string
+    BuyerAgentFirstName?: string
+    BuyerAgentLastName?: string
+    CoBuyerAgentFullName?: string
+    CoBuyerAgentFirstName?: string
+    CoBuyerAgentLastName?: string
+
+    [key: string]: unknown
+
+    // Custom
+    _ServiceId: number
+    _Class: string
+    _unmapped?: {
+        [key: string]: unknown
+        CoordinateModificationTimestamp?: Date
+    }
 }
 
 // All Service functionality
@@ -358,7 +448,7 @@ const angularJsService = (
     // any
     const instance: {
         [instanceName: string]: {
-            [uid: string]: angular.IScope & any
+            [uid: string]: IdxComponentScope
         }
     } = { // FIXME theres a number of queries that need dynamic calls
         PropertyList: {},
@@ -419,7 +509,7 @@ const angularJsService = (
      * @param $scope - angular scope
      * @param listType - Property / Member / Office
      */
-    function registerListInstance(uid: string, $scope: any, listType = 'Property'): void {
+    function registerListInstance(uid: string, $scope: IdxPropertyListScope, listType = 'Property'): void {
         // if (!instance[listType + 'List']) {
         if (!Object.prototype.hasOwnProperty.call(instance, listType + 'List')) {
             instance[listType + 'List'] = {}
@@ -437,7 +527,7 @@ const angularJsService = (
      * @param listUid -  uid name
      * @param listType - Property / Member / Office
      */
-    function registerSearchInstance(uid: string, $scope: any, listUid?: string, listType = 'Property'): void {
+    function registerSearchInstance(uid: string, $scope: IdxPropertySearchScope, listUid?: string, listType = 'Property'): void {
         instance[listType + 'Search'][uid] = $scope
         if (!Object.prototype.hasOwnProperty.call(instanceLink.Search, uid)) {
             instanceLink.Search[uid] = []
@@ -457,7 +547,7 @@ const angularJsService = (
      * @param $scope - angular scope
      * @param listType - Property / Member / Office
      */
-    function registerDetailsInstance(uid: string, $scope: any, listType = 'Property'): void {
+    function registerDetailsInstance(uid: string, $scope: IdxPropertyDetailsScope, listType = 'Property'): void {
         instance[listType + 'Details'][uid] = $scope
     }
 
@@ -485,9 +575,10 @@ const angularJsService = (
      * Return the List scopes of a those connected to a particular Search widget
      * @param searchUid - uid of search component
      * @param listType - Property / Member / Office
+     * FIXME only using IdxComponentScope until all converted
      */
-    function getSearchInstanceLinks(searchUid: string, listType = 'Property'): any[] {
-        const linkedLists: any = []
+    function getSearchInstanceLinks(searchUid: string, listType = 'Property'): (IdxPropertyListScope | IdxComponentScope)[] {
+        const linkedLists: (IdxPropertyListScope | IdxComponentScope)[] = []
         if (Object.prototype.hasOwnProperty.call(instanceLink.Search, searchUid)) {
             instanceLink.Search[searchUid].forEach((listUid: any) => {
                 if (Object.prototype.hasOwnProperty.call(instance[listType + 'List'], listUid)) {
@@ -502,8 +593,9 @@ const angularJsService = (
      * Return a List scope
      * @param listUid - uid of List
      * @param listType - Property / Member / Office
+     * FIXME only using IdxComponentScope until all converted
      */
-    function getListInstance(listUid: string, listType = 'Property'): any | null {
+    function getListInstance(listUid: string, listType = 'Property'): IdxPropertyListScope | IdxComponentScope | null {
         return Object.prototype.hasOwnProperty.call(instanceLink.List, listUid) ? instance[listType + 'List'][listUid] : null
     }
 
@@ -511,11 +603,12 @@ const angularJsService = (
      * Return the Search scopes of a those connected to a particular List widget
      * @param listUid - uid of list
      * @param listType - Property / Member / Office
+     * FIXME only using IdxComponentScope until all converted
      */
-    function getListInstanceLinks(listUid: string, listType = 'Property'): any[] {
-        const linkedSearches: any[] = []
+    function getListInstanceLinks(listUid: string, listType = 'Property'): (IdxPropertySearchScope | IdxComponentScope)[] {
+        const linkedSearches: (IdxPropertySearchScope | IdxComponentScope)[] = []
         if (Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
-            instanceLink.List[listUid].forEach((searchUid: any) => {
+            instanceLink.List[listUid].forEach((searchUid) => {
                 if (Object.prototype.hasOwnProperty.call(instance[listType + 'Search'], searchUid)) {
                     linkedSearches.push(instance[listType + 'Search'][searchUid])
                 }
@@ -874,12 +967,12 @@ const angularJsService = (
      * @param modelName - {'Property'/'Office','Member'}
      * @param append -
      */
-    async function fetchMergeCollections(
-        originalCollection: Collection,
-        collections: Collection[],
+    async function fetchMergeCollections<T>(
+        originalCollection: Collection<T>,
+        collections: Collection<T>[],
         modelName: 'Property' | 'Member' | 'Office' | 'OpenHouse',
         append = false
-    ): Promise<Collection> {
+    ): Promise<Collection<T>> {
         // The Collection is now doing something. Let's label it as such.
         originalCollection.pending = true
         originalCollection.completed = false
@@ -905,7 +998,7 @@ const angularJsService = (
                         })
                         // Inject the local server's Service Id loaded from
                         .then(() => {
-                            resolve(modelInjectProperty(collection.models, {
+                            resolve(modelInjectProperty<T>(collection.models as T[], {
                                 _ServiceId: collection.serviceId
                             }))
                         })
@@ -963,11 +1056,11 @@ const angularJsService = (
      * @param newModel - {Model}
      * @param modelName - {string}
      */
-    function fetchReplaceModel(
-        originalModel: Model,
-        newModel: Model,
+    function fetchReplaceModel<T>(
+        originalModel: Model<T>,
+        newModel: Model<T>,
         modelName: 'Property' | 'Member' | 'Office' | 'OpenHouse'
-    ): IPromise<Model> {
+    ): IPromise<Model<T>> {
         // The Model is now doing something. Let's label it as such.
         originalModel.pending = true
         originalModel.completed = false
@@ -991,7 +1084,7 @@ const angularJsService = (
                     })
                     // Inject the local server's Service Id loaded from
                     .then(() => {
-                        resolve(modelInjectProperty([newModel.data], {
+                        resolve(modelInjectProperty<T>([newModel.data], {
                             _ServiceId: newModel.serviceId
                         }))
                         const fetchTime = newModel.header.get('x-fetch-time')
@@ -1032,7 +1125,7 @@ const angularJsService = (
      * @param properties - {Object<String, *>}
      * TODO define Model?
      */
-    function modelInjectProperty(modelDatas: object[], properties: { [key: string]: any }): void {
+    function modelInjectProperty<T>(modelDatas: (Model<T>['data'])[], properties: { [key: string]: any }): void {
         modelDatas.forEach(modelData => {
             _.extend(modelData, properties)
         })
@@ -1043,26 +1136,28 @@ const angularJsService = (
      * @param instanceType -
      * @param scopedCollectionVarName -
      */
-    function createOrSyncCollectionVariable(instanceType: string, scopedCollectionVarName: string): Collection {
-        let collection: Collection // TODO define Collection
+    function createOrSyncCollectionVariable<T>(instanceType: string, scopedCollectionVarName: string): Collection<T> {
+        let collection: Collection<T> // TODO define Collection
         Object.keys(instance[instanceType]).forEach(listName => {
             if (
                 !collection &&
                 Object.prototype.hasOwnProperty.call(instance[instanceType], listName) &&
-                Object.prototype.hasOwnProperty.call(instance[instanceType][listName], scopedCollectionVarName)
+                Object.prototype.hasOwnProperty.call(instance[instanceType][listName], scopedCollectionVarName) &&
+                instance[instanceType][listName][scopedCollectionVarName] instanceof Collection
             ) {
-                collection = instance[instanceType][listName][scopedCollectionVarName]
+                // collection = instance[instanceType][listName][scopedCollectionVarName]
+                collection = (instance[instanceType][listName][scopedCollectionVarName] as unknown as Collection<T>)
             }
         })
         if (!collection) {
-            collection = new Collection() as Collection
+            collection = new Collection() as Collection<T>
         }
         Object.keys(instance[instanceType]).forEach(listName => {
             if (
                 !Object.prototype.hasOwnProperty.call(instance[instanceType][listName], scopedCollectionVarName) ||
-                instance[instanceType][listName][scopedCollectionVarName] !== collection
+                (instance[instanceType][listName][scopedCollectionVarName] as unknown as Collection<T>) !== collection
             ) {
-                instance[instanceType][listName][scopedCollectionVarName] = collection
+                (instance[instanceType][listName][scopedCollectionVarName] as unknown as Collection<T>) = collection
             }
         }, this)
         return collection
@@ -1920,13 +2015,13 @@ const angularJsService = (
         const apiModelSingular = getSingularApiModelName(apiModel)
 
         // Prepare the same Collection for each List
-        const collection = await createOrSyncCollectionVariable(instanceName, collectionVarName)
+        const collection: Collection<T> = await createOrSyncCollectionVariable<T>(instanceName, collectionVarName)
 
         // Set API paths to fetch listing data for each MLS Service
         const filterQuery = compileFilterFunction(options)
         // options.page items need to happen after here
 
-        const collections: Collection[] = [] // TODO define Collection
+        const collections: Collection<T>[] = [] // TODO define Collection
 
         // check if this filterQuery is any different from the 'last one' used
         // if this is a new query rather than a page change
@@ -2009,7 +2104,7 @@ const angularJsService = (
 
             // When using the same WHERE and only changing the page, results should pool together (append)
             // Fetch and Merge all results together into single list
-            await fetchMergeCollections(collection, collections, apiModelSingular, !refresh)
+            await fetchMergeCollections<T>(collection, collections, apiModelSingular, !refresh)
 
             // If the query as updated, adjust the TotalRecords available
             if (refresh) {
@@ -2075,12 +2170,12 @@ const angularJsService = (
         const apiModelSingular = getSingularApiModelName(apiModel)
 
         // Prepare the Model and ensure we don't keep replacing it
-        let model: Model
+        let model: Model<T>
         if (Object.prototype.hasOwnProperty.call($scope, modelVarName)) {
             model = $scope[modelVarName]
         }
         if (!model) {
-            model = new Model() as Model
+            model = new Model() as Model<T>
         }
         if (
             !Object.prototype.hasOwnProperty.call($scope, modelVarName) ||
@@ -2114,7 +2209,7 @@ const angularJsService = (
 
             const tempModel = createModel<T>(request)
 
-            fetchReplaceModel(model, tempModel, apiModelSingular)
+            fetchReplaceModel<T>(model, tempModel, apiModelSingular)
                 .then(() => {
                     // $scope.$digest();
                     $scope.$applyAsync()
@@ -2143,7 +2238,7 @@ const angularJsService = (
      * @param listName - instance to save data to
      */
     async function fetchProperties(
-        $scope: object | any,
+        $scope: IdxComponentScope,
         collectionVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
         refresh = false,
@@ -2352,7 +2447,7 @@ const angularJsService = (
      * @param property - Property Object
      * @returns 'Active' | 'Contingent' | 'Closed'
      */
-    function getFriendlyStatus(property: object | any): string {
+    function getFriendlyStatus(property: Property): string {
         let statusName = ''
         if (
             Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
@@ -2387,6 +2482,59 @@ const angularJsService = (
         return statusName
     }
 
+    /**
+     * Returns the processed street address
+     * (StreetNumberNumeric / StreetNumber) + StreetDirPrefix + StreetName + StreetSuffix +  StreetSuffixModifier
+     * +  StreetDirSuffix + 'Unit' + UnitNumber
+     */
+    function getStreetAddress(property: Property): string {
+        if (
+            Object.prototype.hasOwnProperty.call(property, 'UnparsedAddress') &&
+            property.UnparsedAddress !== ''
+        ) {
+            return property.UnparsedAddress
+            // address = property.UnparsedAddress
+            // console.log('using unparsed ')
+        } else {
+            const addressParts: string[] = []
+            if (
+                Object.prototype.hasOwnProperty.call(property, 'StreetNumberNumeric') &&
+                _.isNumber(property.StreetNumberNumeric) &&
+                property.StreetNumberNumeric > 0
+            ) {
+                addressParts.push(property.StreetNumberNumeric.toString())
+            } else if (
+                Object.prototype.hasOwnProperty.call(property, 'StreetNumber') &&
+                property.StreetNumber !== ''
+            ) {
+                addressParts.push(property.StreetNumber)
+            }
+            [
+                'StreetDirPrefix',
+                'StreetName',
+                'StreetSuffix',
+                'StreetSuffixModifier',
+                'StreetDirSuffix',
+                'UnitNumber'
+            ]
+                .forEach((addressPart) => {
+                    if (Object.prototype.hasOwnProperty.call(property, addressPart)) {
+                        if (addressPart === 'UnitNumber') {
+                            addressParts.push('Unit')
+                        }
+                        addressParts.push(property[addressPart] as string)
+                    }
+                })
+            return addressParts.join(' ')
+        }
+    }
+
+    function getFullAddress(property: Property, encode?: boolean): string {
+        // const address = property.UnparsedAddress + ', ' + property.City + ' ' + property.StateOrProvince
+        const address = getStreetAddress(property) + ', ' + property.City + ' ' + property.StateOrProvince
+        return encode ? encodeURIComponent(address) : address
+    }
+
     return {
         fetchMembers,
         fetchOffices,
@@ -2396,12 +2544,14 @@ const angularJsService = (
         getContactVariables,
         getDefaultWhereOptions,
         getFriendlyStatus,
+        getFullAddress,
         getIdxServices,
         getListInstance,
         getListInstanceLinks,
         getMLSVariables,
         getOptionsFromUrl,
         getSearchInstanceLinks,
+        getStreetAddress,
         getUrlOptions,
         getUrlOptionsPath,
         registerDetailsInstance,

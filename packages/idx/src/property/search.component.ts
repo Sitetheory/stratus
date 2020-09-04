@@ -93,6 +93,7 @@ Stratus.Components.IdxPropertySearch = {
 
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
+        // Used by template
         $scope.$mdConstant = $mdConstant
 
         /**
@@ -557,6 +558,8 @@ Stratus.Components.IdxPropertySearch = {
                 }
             }
         }
+
+        $scope.getUid = (): string => $ctrl.uid
 
         /**
          * Destroy this widget
