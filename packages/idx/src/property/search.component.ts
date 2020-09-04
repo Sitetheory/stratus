@@ -14,7 +14,13 @@ import 'angular-material'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {CompileFilterOptions, IdxService, MLSService, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
+import {
+    CompileFilterOptions,
+    IdxComponentScope,
+    IdxService,
+    MLSService,
+    WhereOptions
+} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -30,11 +36,7 @@ const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxPropertySearchScope = angular.IScope & ObjectWithFunctions & {
-    elementId: string
-    localDir: string
-    model: any
-    Idx: any
+export type IdxPropertySearchScope = IdxComponentScope & {
     widgetName: string
     listId: string
     listInitialized: boolean
@@ -98,6 +100,7 @@ Stratus.Components.IdxPropertySearch = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         $ctrl.$onInit = async () => {
+            $scope.Idx = Idx
             $scope.widgetName = $attrs.widgetName || ''
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
@@ -553,6 +556,13 @@ Stratus.Components.IdxPropertySearch = {
                     await instance.refreshSearchWidgetOptions()
                 }
             }
+        }
+
+        /**
+         * Destroy this widget
+         */
+        $scope.remove = (): void => {
+            // TODO need to kill any attached slideshows
         }
     },
     templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`

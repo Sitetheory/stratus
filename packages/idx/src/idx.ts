@@ -48,8 +48,8 @@ export interface IdxService {
     ): Promise<Collection>
     fetchProperties(
         $scope: any, collectionVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>, refresh?: boolean, listName?: string
-    ): Promise<Collection>
-    fetchProperty($scope: any, modelVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>): Promise<Model>
+    ): Promise<Collection<Property>>
+    fetchProperty($scope: any, modelVarName: string, options?: Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>): Promise<Model<Property>>
     devLog(arg: any, arg2: any): void
     getContactVariables(): WidgetContact[]
     getDefaultWhereOptions(): WhereOptions
@@ -72,6 +72,14 @@ export interface IdxService {
     tokenKeepAuth(keepAlive?: boolean): IPromise<void>
     refreshUrlOptions(defaultOptions: any): void
     unregisterDetailsInstance(uid: string, listType?: string): void
+}
+
+export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
+    elementId: string
+    localDir: string
+    Idx: IdxService
+
+    remove(): void
 }
 
 export interface UrlsOptionsObject {
@@ -289,6 +297,10 @@ interface MongoFilterQuery {
     order?: MongoOrderQuery,
     include?: MongoIncludeQuery[] | MongoIncludeQuery,
     count?: boolean,
+}
+
+export interface Property extends LooseObject {
+    _ServiceId: string | number
 }
 
 // All Service functionality
@@ -825,9 +837,9 @@ const angularJsService = (
      * @param request - Standard Registry request object
      * TODO define type Request
      */
-    function createModel(request: ModelOptions & LooseObject): Model {
+    function createModel<T>(request: ModelOptions & LooseObject): Model<T> {
         // request.direct = true;
-        const model = new Model(request) as Model
+        const model = new Model(request) as Model<T>
         if (request.api) {
             model.meta.set('api', isJSON(request.api)
                 ? JSON.parse(request.api)
@@ -842,9 +854,9 @@ const angularJsService = (
      * @param request - Standard Registry request object
      * TODO define type Request
      */
-    function createCollection(request: any): Collection {
+    function createCollection<T>(request: any): Collection<T> {
         request.direct = true
-        const collection = new Collection(request) as Collection
+        const collection = new Collection(request) as Collection<T>
         if (request.api) {
             collection.meta.set('api', isJSON(request.api)
                 ? JSON.parse(request.api)
@@ -1878,7 +1890,7 @@ const angularJsService = (
      * @param apiModel - {String}
      * @param compileFilterFunction - {Function}
      */
-    async function genericSearchCollection(
+    async function genericSearchCollection<T>(
         $scope: object | any,
         collectionVarName: string,
         options = {} as CompileFilterOptions,
@@ -1886,7 +1898,7 @@ const angularJsService = (
         instanceName: string,
         apiModel: string,
         compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
-    ): Promise<Collection> {
+    ): Promise<Collection<T>> {
         options.service = options.service || []
         options.where = options.where || {}
         options.order = options.order || []
@@ -1989,7 +2001,7 @@ const angularJsService = (
                         }
 
                         collections.push(
-                            createCollection(request)
+                            createCollection<T>(request)
                         )
                     }
                 }
@@ -2041,13 +2053,13 @@ const angularJsService = (
      * @param apiModel - {String}
      * @param compileFilterFunction - {Function}
      */
-    async function genericSearchModel(
+    async function genericSearchModel<T>(
         $scope: object | any,
         modelVarName: string,
         options = {} as CompileFilterOptions,
         apiModel: string,
         compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
-    ): Promise<Model> {
+    ): Promise<Model<T>> {
         await tokenKeepAuth()
 
         options.service = options.service || 0
@@ -2100,7 +2112,7 @@ const angularJsService = (
                 }
             }
 
-            const tempModel = createModel(request)
+            const tempModel = createModel<T>(request)
 
             fetchReplaceModel(model, tempModel, apiModelSingular)
                 .then(() => {
@@ -2136,7 +2148,7 @@ const angularJsService = (
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'page' | 'perPage' | 'order' | 'fields' | 'images' | 'openhouses'>,
         refresh = false,
         listName = 'PropertyList'
-    ): Promise<Collection> {
+    ): Promise<Collection<Property>> {
         options.service = options.service || []
         // options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
         if (
@@ -2185,7 +2197,7 @@ const angularJsService = (
         ]
         // options.where['ListType'] = ['House','Townhouse'];
 
-        return genericSearchCollection($scope, collectionVarName, options, refresh,
+        return genericSearchCollection<Property>($scope, collectionVarName, options, refresh,
             listName,
             'Properties',
             compilePropertyFilter
@@ -2209,14 +2221,14 @@ const angularJsService = (
         $scope: object | any,
         modelVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>,
-    ): Promise<Model> {
+    ): Promise<Model<Property>> {
         options.service = options.service || null
         options.where = options.where || {}
         options.images = options.images || false
         options.openhouses = options.openhouses || false
         options.fields = options.fields || []
 
-        return genericSearchModel($scope, modelVarName, options,
+        return genericSearchModel<Property>($scope, modelVarName, options,
             'Properties',
             compilePropertyFilter
         )
@@ -2273,7 +2285,7 @@ const angularJsService = (
         ]
         // options.where['ListType'] = ['House','Townhouse'];
 
-        return genericSearchCollection($scope, collectionVarName, options, refresh,
+        return genericSearchCollection<LooseObject>($scope, collectionVarName, options, refresh,
             listName,
             'Members',
             compileMemberFilter
@@ -2328,7 +2340,7 @@ const angularJsService = (
         // options.where['ListType'] = ['House','Townhouse'];
         refresh = refresh || false
 
-        return genericSearchCollection($scope, collectionVarName, options, refresh,
+        return genericSearchCollection<LooseObject>($scope, collectionVarName, options, refresh,
             listName,
             'Offices',
             compileOfficeFilter

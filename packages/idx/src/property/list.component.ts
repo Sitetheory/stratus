@@ -21,9 +21,9 @@ import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
+    IdxComponentScope,
     IdxService,
     MLSService,
-    ObjectWithFunctions,
     WhereOptions,
     UrlWhereOptions,
     UrlsOptionsObject
@@ -48,11 +48,7 @@ const moduleName = 'property'
 const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
-    elementId: string
-    localDir: string
-    model: any
-    Idx: any
+export type IdxPropertyListScope = IdxComponentScope & {
     collection: Collection
     urlLoad: boolean
     searchOnLoad: boolean
@@ -71,6 +67,7 @@ export type IdxPropertyListScope = angular.IScope & ObjectWithFunctions & {
     instancePath: string
     mapMarkers: MarkerSettings[]
 
+    displayPropertyDetails(property: object | any, ev?: any): void
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
     pagePrevious(ev?: any): Promise<void>

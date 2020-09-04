@@ -20,7 +20,7 @@ import {MarkerSettings} from '@stratusjs/map/map.component'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxService, ObjectWithFunctions} from '@stratusjs/idx/idx'
+import {IdxComponentScope, IdxService} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
@@ -28,7 +28,7 @@ import '@stratusjs/idx/listTrac'
 import {Model} from '@stratusjs/angularjs/services/model'
 // tslint:disable-next-line:no-duplicate-imports
 import {MLSService} from '@stratusjs/idx/idx'
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {SlideImage} from '@stratusjs/swiper/carousel.component'
 
@@ -54,7 +54,11 @@ const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxPropertyDetailsScope = angular.IScope & ObjectWithFunctions & {
+interface PropertyData extends LooseObject {
+    _ServiceId: string | number
+}
+
+export type IdxPropertyDetailsScope = IdxComponentScope & {
     elementId: string
     localDir: string
     model: any
@@ -1224,7 +1228,7 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.fetchProperty()
         }
 
-        $scope.$watch('model.data', (data?: any) => {
+        $scope.$watch('model.data', (data?: Model<PropertyData>['data']) => {
             if (
                 data &&
                 data.hasOwnProperty('_ServiceId')
