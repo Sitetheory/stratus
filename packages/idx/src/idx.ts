@@ -348,6 +348,8 @@ export interface Property extends LooseObject {
     // Time
     ModificationTimestamp: Date
 
+    // TODO need to add basic types
+
     // Location
     UnparsedAddress?: string
     StreetNumberNumeric?: number
@@ -364,6 +366,7 @@ export interface Property extends LooseObject {
     Country?: string
     Latitude?: number
     Longitude?: number
+    MapCoordinateSource?: string
 
     // Details
     PublicRemarks?: string
