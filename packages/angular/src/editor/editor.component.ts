@@ -136,6 +136,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     // Basic Component Settings
     title = moduleName + '_component'
     uid: string
+    dev = !!cookie('env')
+    editor: 'angular-editor'|'quill' = 'angular-editor'
 
     // Registry Attributes
     @Input() target: string
@@ -212,17 +214,34 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         customClasses: [
             {
-                name: 'quote',
-                class: 'quote',
+                name: 'Button',
+                class: 'btn',
+                tag: 'span',
             },
             {
-                name: 'redText',
-                class: 'redText'
+                name: 'Header',
+                class: 'header',
+                tag: 'span',
             },
             {
-                name: 'titleText',
-                class: 'titleText',
-                tag: 'h1',
+                name: 'Title',
+                class: 'title',
+                tag: 'span',
+            },
+            {
+                name: 'Alt Title (over)',
+                class: 'alt-title',
+                tag: 'span',
+            },
+            {
+                name: 'Subtitle',
+                class: 'subtitle',
+                tag: 'span',
+            },
+            {
+                name: 'Pullout Quote',
+                class: 'pullout',
+                tag: 'span',
             },
         ],
         uploadUrl: `https://app.sitetheory.io:3000/?session=${cookie('SITETHEORY')}`,
@@ -231,10 +250,46 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         toolbarPosition: 'top',
         toolbarHiddenButtons: [
             [
+                // 'bold',
+                // 'italic',
+                // 'underline',
+                // 'strikeThrough',
+                // 'superscript',
+                // 'subscript'
+            ], [
+                // 'heading',
+                'fontName',
+                'fontSize',
+                'textColor',
+                'backgroundColor'
+            ], [
+                // 'justifyLeft',
+                // 'justifyCenter',
+                // 'justifyRight',
+                // 'justifyFull',
+                // 'indent',
+                // 'outdent'
+            ], [
+                // 'cut',
+                // 'copy',
+                // 'delete',
+                // 'removeFormat',
                 'undo',
                 'redo'
             ], [
-                // nothing yet
+                // 'paragraph',
+                // 'blockquote',
+                // 'removeBlockquote',
+                'insertHorizontalRule',
+                // 'insertUnorderedList',
+                // 'insertOrderedList',
+                'customClasses'
+            ], [
+                'link',
+                'unlink',
+                'insertImage',
+                // 'insertVideo'
+                // 'toggleEditorMode'
             ]
         ],
     }

@@ -11,25 +11,43 @@
     </span>
     -->
 
-    <ng-container *ngIf="styled">
+    <!-- view multiple options -->
+    <!-- --
+    <ng-container *ngIf="styled && dev">
+        <mat-button-toggle-group name="editor"
+                                 aria-label="Editor"
+                                 [(value)]="editor">
+            <mat-button-toggle value="angular-editor">
+                Angular-Editor
+            </mat-button-toggle>
+            <mat-button-toggle value="quill">
+                Quill
+            </mat-button-toggle>
+        </mat-button-toggle-group>
+        <br>
+    </ng-container>
+    !-- -->
+
+    <ng-container *ngIf="styled && editor == 'angular-editor'">
+        <!-- Media Selector -->
+        <p>
+            <button mat-raised-button
+                    (click)="openMediaDialog()">
+                Add Media
+            </button>
+        </p>
         <!-- Angular Editor -->
-        <!-- --
         <angular-editor formControlName="dataString"
                         [config]="editorConfig"
                         (blur)="blur($event)"
                         (focus)="focus($event)">
         </angular-editor>
-        !-- -->
+    </ng-container>
 
+    <ng-container *ngIf="styled && editor == 'quill'">
         <!-- Quill Editor -->
         <!-- https://www.npmjs.com/package/ngx-quill -->
         <!-- Note: The easiest way may be use of a FormControl like so: [formControl]="form.get(property)" -->
-        <!--
-        (onEditorChanged)="changedEditor($event)"
-        [formControl]="form.get('dataString')"
-        [innerHTML]="dataSub | async"
-        -->
-        <!-- -->
         <quill-editor [styles]="{height:'auto', 'min-height':'300px', background: '#ffffff'}"
                       [attr.data-uid]="uid"
                       (onEditorCreated)="created($event)"
@@ -37,11 +55,15 @@
                       (onFocus)="focus($event)"
                       formControlName="dataString"
                       format="html">
+            <!--
+            (onEditorChanged)="changedEditor($event)"
+            [formControl]="form.get('dataString')"
+            -->
             <div class="ql-container ql-snow" style="border-width: 0;">
+                <!-- [innerHTML]="dataSub | async" -->
                 <div class="ql-editor"></div>
             </div>
         </quill-editor>
-        <!-- -->
     </ng-container>
 </div>
 

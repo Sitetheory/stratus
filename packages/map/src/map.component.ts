@@ -174,6 +174,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
 
         // Setup a watcher
+        // tslint:disable-next-line:no-use-before-declare
         this.watcher = new Watcher(this.Differ)
 
         // console.info(this.uid, 'constructed')
@@ -228,7 +229,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     /**
      * With currently input this.markers, create markers on the Map
-     * @private
+     * FIXME: For some reason the @private doesn't pass linting, so it's commented out
+     * #private
      */
     private processProvidedMarkersPath() {
         if (_.isString(this.markers)) {

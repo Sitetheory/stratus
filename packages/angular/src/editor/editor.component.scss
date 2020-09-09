@@ -2,9 +2,25 @@
 //@import '~quill/dist/quill.bubble.css';
 //@import '~quill/dist/quill.snow.css';
 .editor-component {
-  background: #ffffff;
+  // This overwrites the 100% width for Video Displays created in Angular-Editor.
+  // It still looks terrible though due to placement and sizing.
+  img[src$="youtube-play.png"] {
+    width: 50%;
+  }
+  /* *
+  img[data-stratus-src] {
+    // This overwrites the width for anything with a lazy loader
+    width: 100%;
+  }
+  /* */
+  .angular-editor {
+    background: #ffffff;
+  }
+  .ql-toolbar {
+    background: #ffffff;
+  }
   .ql-container {
-    // Nothing yet
+    background: #ffffff;
     .ql-editor {
       // Nothing yet
     }
