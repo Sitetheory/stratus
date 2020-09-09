@@ -56,7 +56,8 @@ Stratus.Components.IdxMap = {
             // TODO attempt to connect to with Idx
 
             // Register this Map with the Property service
-            Idx.registerMapInstance($scope.elementId, $scope, $scope.linkId)
+            // Idx.registerMapInstance($scope.elementId, $scope, $scope.linkId)
+            Idx.registerMapInstance($scope.elementId, $scope)
         }
 
         /*$scope.stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {

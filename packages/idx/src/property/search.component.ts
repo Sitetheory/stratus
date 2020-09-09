@@ -16,7 +16,7 @@ import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
-    IdxComponentScope,
+    IdxSearchScope,
     IdxService,
     MLSService,
     WhereOptions
@@ -36,7 +36,7 @@ const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxPropertySearchScope = IdxComponentScope & {
+export type IdxPropertySearchScope = IdxSearchScope & {
     widgetName: string
     listId: string
     listInitialized: boolean

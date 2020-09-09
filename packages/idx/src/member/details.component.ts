@@ -16,10 +16,10 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {CompileFilterOptions, IdxService} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, IdxDetailsScope, IdxService, Member} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Custom Filters
@@ -33,6 +33,9 @@ const moduleName = 'member'
 const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxMemberDetailsScope = IdxDetailsScope<Member> & LooseObject & { // FIXME do not extend LooseObject
+}
 
 Stratus.Components.IdxMemberDetails = {
     bindings: {
@@ -54,7 +57,8 @@ Stratus.Components.IdxMemberDetails = {
         $location: angular.ILocationService,
         $q: angular.IQService,
         $sce: angular.ISCEService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxMemberDetailsScope,
+        // tslint:disable-next-line:no-shadowed-variable
         Model: any,
         Idx: IdxService,
     ) {
@@ -116,8 +120,6 @@ Stratus.Components.IdxMemberDetails = {
                 Idx.setPageTitle($scope.memberMerged.MemberFullName || `${$scope.memberMerged.MemberFirstName} ${$scope.memberMerged.MemberLastName}`)
             }
         })
-
-        $scope.getUid = (): string => $ctrl.uid
 
         $scope.fetchMember = async (): Promise<void> => {
             /*
@@ -203,9 +205,8 @@ Stratus.Components.IdxMemberDetails = {
             return html ? $sce.trustAsHtml(disclaimer) : disclaimer
         }
 
-        /**
-         * Function that runs when widget is destroyed
-         */
+        $scope.getUid = (): string => $ctrl.uid
+
         $scope.remove = (): void => {
         }
 

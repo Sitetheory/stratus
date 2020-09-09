@@ -14,10 +14,10 @@ import * as angular from 'angular'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxService} from '@stratusjs/idx/idx'
+import {IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
@@ -30,6 +30,9 @@ const moduleName = 'member'
 const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxMemberSearchScope = IdxSearchScope & LooseObject & { // FIXME do not extend LooseObject
+}
 
 Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or IdxMemberSearch
     bindings: {
@@ -47,7 +50,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
         $mdPanel: angular.material.IPanelService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxMemberSearchScope,
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         Idx: IdxService,
@@ -267,6 +270,11 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
                     // Let's destroy it to save memory
                     // $timeout(IDX.unregisterDetailsInstance('property_member_detail_popup'), 10)
                 })
+        }
+
+        $scope.getUid = (): string => $ctrl.uid
+
+        $scope.remove = (): void => {
         }
 
     },

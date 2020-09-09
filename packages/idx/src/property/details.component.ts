@@ -20,7 +20,7 @@ import {MarkerSettings} from '@stratusjs/map/map.component'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxComponentScope, IdxService, Property, WidgetIntegrations} from '@stratusjs/idx/idx'
+import {IdxDetailsScope, IdxService, Property, WidgetIntegrations} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
@@ -54,8 +54,8 @@ const componentName = 'details'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxPropertyDetailsScope = IdxComponentScope & {
-    model: Model<Property>
+export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
+    // model: Model<Property>
     urlLoad: boolean
     pageTitle: string
     options: any // TODO ned to specify

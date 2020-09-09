@@ -21,7 +21,7 @@ import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
-    IdxComponentScope,
+    IdxListScope,
     IdxService,
     MLSService,
     Property,
@@ -51,8 +51,7 @@ const moduleName = 'property'
 const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxPropertyListScope = IdxComponentScope & {
-    collection: Collection<Property>
+export type IdxPropertyListScope = IdxListScope<Property> & {
     urlLoad: boolean
     searchOnLoad: boolean
     detailsLinkPopup: boolean
@@ -81,7 +80,7 @@ export type IdxPropertyListScope = IdxComponentScope & {
         query?: CompileFilterOptions,
         refresh?: boolean,
         updateUrl?: boolean
-    ): Promise<Collection>
+    ): Promise<Collection<Property>>
 }
 
 Stratus.Components.IdxPropertyList = {
@@ -244,10 +243,11 @@ Stratus.Components.IdxPropertyList = {
             // console.log('checking $scope.collection.models', $scope.collection.models)
             const markers: MarkerSettings[] = []
             // only get the page's models, not every single model in collection
-            $scope.collection.models.slice(
+            const models = $scope.collection.models as Property[]
+            models.slice(
                 ($scope.query.perPage * ($scope.query.page - 1)), // 20 * (1 - 1) = 0. 20 * (2 - 1) = 20
                 ($scope.query.perPage * $scope.query.page) // e.g. 20 * 1 = 20. 20 * 2 = 40
-            ).forEach((listing: object | any) => {
+            ).forEach((listing) => {
                 // console.log('looping listing', listing)
                 if (
                     Object.prototype.hasOwnProperty.call(listing, 'Latitude') &&
@@ -308,13 +308,13 @@ Stratus.Components.IdxPropertyList = {
          * Functionality called when a search widget runs a query after the page has loaded
          * may update the URL query, so it may not be ideal to use on page load
          * TODO Idx needs to export search query interface
-         * Returns Collection
+         * Returns Collection<Property>
          */
         $scope.searchProperties = async (
             query?: CompileFilterOptions,
             refresh?: boolean,
             updateUrl?: boolean
-        ): Promise<Collection> =>
+        ): Promise<Collection<Property>> =>
             $q((resolve: any) => {
                 query = query || _.clone($scope.query) || {}
                 query.where = query.where || {}

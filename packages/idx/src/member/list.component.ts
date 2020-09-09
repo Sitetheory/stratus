@@ -16,11 +16,11 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxService} from '@stratusjs/idx/idx'
+import {IdxListScope, IdxService, Member} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
@@ -33,6 +33,9 @@ const moduleName = 'member'
 const componentName = 'list'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxMemberListScope = IdxListScope<Member> & LooseObject & { // FIXME do not extend LooseObject
+}
 
 Stratus.Components.IdxMemberList = {
     bindings: {
@@ -52,7 +55,7 @@ Stratus.Components.IdxMemberList = {
         $mdDialog: angular.material.IDialogService,
         $timeout: angular.ITimeoutService,
         $sce: angular.ISCEService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxMemberListScope,
         $window: angular.IWindowService,
         Idx: IdxService,
     ) {
@@ -399,9 +402,8 @@ Stratus.Components.IdxMemberList = {
                 // await $q.all(promises)
             }
 
-        /**
-         * Destroy this widget
-         */
+        $scope.getUid = (): string => $ctrl.uid
+
         $scope.remove = (): void => {
         }
     },
