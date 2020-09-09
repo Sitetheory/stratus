@@ -55,6 +55,7 @@
     "@angular/router": "^10.0.2",
     "@babel/parser": "^7.9.4",
     "@babel/types": "^7.9.5",
+    "@kolkov/angular-editor": "^1.1.3",
     "@ngstack/code-editor": "^1.0.0",
     "@stratusjs/angular": "file:packages/angular",
     "@stratusjs/angularjs": "file:packages/angularjs",

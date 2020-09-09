@@ -45,6 +45,11 @@ import {
 } from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
 
+// Angular Editor Dependencies
+import {
+    AngularEditorConfig
+} from '@kolkov/angular-editor'
+
 // Quill Dependencies
 import Quill from 'quill'
 import {
@@ -131,6 +136,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     // Basic Component Settings
     title = moduleName + '_component'
     uid: string
+    dev = !!cookie('env')
+    editor: 'angular-editor'|'quill' = 'angular-editor'
 
     // Registry Attributes
     @Input() target: string
@@ -184,6 +191,108 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Child Components
     quill: Quill
+    editorConfig: AngularEditorConfig = {
+        editable: true,
+        spellcheck: true,
+        height: 'auto',
+        minHeight: '0',
+        maxHeight: 'auto',
+        width: 'auto',
+        minWidth: '0',
+        translate: 'yes',
+        enableToolbar: true,
+        showToolbar: true,
+        placeholder: 'Enter text here...',
+        defaultParagraphSeparator: '',
+        defaultFontName: '',
+        defaultFontSize: '',
+        fonts: [
+            {class: 'arial', name: 'Arial'},
+            {class: 'times-new-roman', name: 'Times New Roman'},
+            {class: 'calibri', name: 'Calibri'},
+            {class: 'comic-sans-ms', name: 'Comic Sans MS'}
+        ],
+        customClasses: [
+            {
+                name: 'Button',
+                class: 'btn',
+                tag: 'span',
+            },
+            {
+                name: 'Header',
+                class: 'header',
+                tag: 'span',
+            },
+            {
+                name: 'Title',
+                class: 'title',
+                tag: 'span',
+            },
+            {
+                name: 'Alt Title (over)',
+                class: 'alt-title',
+                tag: 'span',
+            },
+            {
+                name: 'Subtitle',
+                class: 'subtitle',
+                tag: 'span',
+            },
+            {
+                name: 'Pullout Quote',
+                class: 'pullout',
+                tag: 'span',
+            },
+        ],
+        uploadUrl: `https://app.sitetheory.io:3000/?session=${cookie('SITETHEORY')}`,
+        uploadWithCredentials: false,
+        sanitize: false,
+        toolbarPosition: 'top',
+        toolbarHiddenButtons: [
+            [
+                // 'bold',
+                // 'italic',
+                // 'underline',
+                // 'strikeThrough',
+                // 'superscript',
+                // 'subscript'
+            ], [
+                // 'heading',
+                'fontName',
+                'fontSize',
+                'textColor',
+                'backgroundColor'
+            ], [
+                // 'justifyLeft',
+                // 'justifyCenter',
+                // 'justifyRight',
+                // 'justifyFull',
+                // 'indent',
+                // 'outdent'
+            ], [
+                // 'cut',
+                // 'copy',
+                // 'delete',
+                // 'removeFormat',
+                'undo',
+                'redo'
+            ], [
+                // 'paragraph',
+                // 'blockquote',
+                // 'removeBlockquote',
+                'insertHorizontalRule',
+                // 'insertUnorderedList',
+                // 'insertOrderedList',
+                'customClasses'
+            ], [
+                'link',
+                'unlink',
+                'insertImage',
+                // 'insertVideo'
+                // 'toggleEditorMode'
+            ]
+        ],
+    }
 
     constructor(
         // private iconRegistry: MatIconRegistry,
@@ -264,12 +373,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         // Declare Observable with Subscriber (Only Happens Once)
         this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
-        this.dataSub
-            .pipe(
-                debounce(() => timer(500)),
-                catchError(this.handleError)
-            )
-            .subscribe(evt => {
+        this.dataSub.pipe(
+            debounce(() => timer(500)),
+            catchError(this.handleError)
+        ).subscribe(evt => {
+            // While the editor is focused, we skip the debounce updates to avoid cursor glitches
+            if (this.focused) {
+                return
+            }
             // TODO: This may need to only work on blur and not focus, unless it is the initialization value
             const dataControl = this.form.get('dataString')
             if (dataControl.value === evt) {

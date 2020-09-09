@@ -116,6 +116,11 @@ import {
 // Google Modules (required by @stratusjs/map)
 import { GoogleMapsModule } from '@angular/google-maps'
 
+// Angular Editor Dependencies
+import {
+    AngularEditorModule
+} from '@kolkov/angular-editor'
+
 // Quill Modules
 import Quill from 'quill'
 import {
@@ -371,6 +376,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         MaterialModules,
         MatNativeDateModule,
         ReactiveFormsModule,
+        AngularEditorModule,
         // Outline: https://app.asana.com/0/1154407311832843/1184252847388849
         QuillModule.forRoot(quillConfig),
         MonacoEditorModule.forRoot(monacoConfig)
