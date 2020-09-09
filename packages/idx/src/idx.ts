@@ -82,15 +82,28 @@ export interface IdxService {
 
     getSearchInstanceLinks(searchUid: string, listType?: string): (IdxPropertyListScope | IdxComponentScope)[]
 
-    registerDetailsInstance(uid: string, $scope: IdxPropertyDetailsScope | IdxComponentScope, listType?: string): void
+    registerDetailsInstance(
+        uid: string,
+        moduleName: 'member' | 'office' | 'property',
+        $scope: IdxDetailsScope
+    ): void
 
-    registerListInstance(uid: string, $scope: IdxPropertyListScope | IdxComponentScope, listType?: string): void
+    registerListInstance(
+        uid: string,
+        moduleName: 'member' | 'office' | 'property',
+        $scope: IdxListScope
+    ): void
 
     registerMapInstance(uid: string, $scope: IdxMapScope): void
 
-    registerSearchInstance(uid: string, $scope: IdxPropertySearchScope | IdxComponentScope, listUid?: string, searchType?: string): void
+    registerSearchInstance(
+        uid: string,
+        moduleName: 'member' | 'office' | 'property',
+        $scope: IdxSearchScope,
+        listUid?: string
+    ): void
 
-    unregisterDetailsInstance(uid: string, listType?: string): void
+    unregisterDetailsInstance(uid: string, moduleName: 'member' | 'office' | 'property'): void
 
     // Url Option Methods
     getOptionsFromUrl(): UrlsOptionsObject
@@ -564,27 +577,30 @@ const angularJsService = (
     }
 
     /**
+     * Add Search instance to the service
+     * @param uid - The elementId of a widget
+     * @param $scope - angular scope
+     * @param moduleName - Property / Member / Office
+     */
+    function registerDetailsInstance(
+        uid: string,
+        moduleName: 'member' | 'office' | 'property',
+        $scope: IdxDetailsScope,
+    ): void {
+        instance[moduleName].details[uid] = $scope
+    }
+
+    /**
      * Add List instance to the service
      * @param uid - The elementId of a widget
      * @param $scope - angular scope
      * @param moduleName - Property / Member / Office
      */
-    // registerListInstance(uid: string, $scope: IdxPropertyListScope | IdxComponentScope, listType: 'Property' = 'Property'): void {
     function registerListInstance(
         uid: string,
-        $scope: IdxListScope,
-        moduleName: 'member' | 'office' | 'property' = 'property'
+        moduleName: 'member' | 'office' | 'property',
+        $scope: IdxListScope
     ): void {
-        // if (!instance[listType + 'List']) {
-        /*const instanceType = listType + 'List'
-        if (!Object.prototype.hasOwnProperty.call(instance, instanceType)) {
-            instance[instanceType] = {}
-        }
-        instance[instanceType][uid] = $scope
-        if (!Object.prototype.hasOwnProperty.call(instanceLink.List, uid)) {
-            instanceLink.List[uid] = []
-        }*/
-
         if (!Object.prototype.hasOwnProperty.call(instance, moduleName)) {
             instance[moduleName].list = {}
         }
@@ -601,25 +617,12 @@ const angularJsService = (
      * @param listUid -  uid name
      * @param moduleName - Property / Member / Office
      */
-    // registerSearchInstance(uid: string, $scope: IdxPropertySearchScope | IdxComponentScope, listUid?: string, searchType = 'Property') {
     function registerSearchInstance(
         uid: string,
+        moduleName: 'member' | 'office' | 'property',
         $scope: IdxSearchScope,
-        listUid?: string,
-        moduleName: 'member' | 'office' | 'property' = 'property'
+        listUid?: string
     ): void {
-        /*instance[searchType + 'Search'][uid] = $scope
-        if (!Object.prototype.hasOwnProperty.call(instanceLink.Search, uid)) {
-            instanceLink.Search[uid] = []
-        }
-        if (listUid) {
-            instanceLink.Search[uid].push(listUid)
-            if (!Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
-                instanceLink.List[listUid] = []
-            }
-            instanceLink.List[listUid].push(uid)
-        }*/
-
         instance[moduleName].search[uid] = $scope
         if (!Object.prototype.hasOwnProperty.call(instanceLink.Search, uid)) {
             instanceLink.Search[uid] = []
@@ -634,27 +637,13 @@ const angularJsService = (
     }
 
     /**
-     * Add Search instance to the service
-     * @param uid - The elementId of a widget
-     * @param $scope - angular scope
-     * @param moduleName - Property / Member / Office
-     */
-    function registerDetailsInstance(
-        uid: string,
-        $scope: IdxDetailsScope,
-        moduleName: 'member' | 'office' | 'property' = 'property'
-    ): void {
-        instance[moduleName].details[uid] = $scope
-    }
-
-    /**
      * Destroy a reference and Instance of a Details widget
      * @param uid - The elementId of a widget
      * @param moduleName - Property / Member / Office
      */
     function unregisterDetailsInstance(
         uid: string,
-        moduleName: 'member' | 'office' | 'property' = 'property'
+        moduleName: 'member' | 'office' | 'property'
     ): void {
         if (Object.prototype.hasOwnProperty.call(instance[moduleName].details, uid)) {
             const detailUid = instance[moduleName].details[uid].getUid()

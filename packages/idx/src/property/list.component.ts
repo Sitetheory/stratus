@@ -197,7 +197,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.mapMarkers = []
 
             // Register this List with the Property service
-            Idx.registerListInstance($scope.elementId, $scope)
+            Idx.registerListInstance($scope.elementId, moduleName, $scope)
 
             let urlQuery: UrlsOptionsObject = {
                 Listing: {},
@@ -638,7 +638,7 @@ Stratus.Components.IdxPropertyList = {
                                 // Revert page title back to what it was
                                 Idx.setPageTitle()
                                 // Let's destroy it to save memory
-                                $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup'), 10)
+                                $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup', 'property'), 10)
                             }
                         }
                     }
@@ -652,7 +652,7 @@ Stratus.Components.IdxPropertyList = {
                         // Revert page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
-                        $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup'), 10)
+                        $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup', 'property'), 10)
                     })
             } else {
                 $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)

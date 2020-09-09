@@ -1207,7 +1207,7 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.alternateMinorDetails = alternateMinorDetails
 
             // Register this List with the Property service
-            Idx.registerDetailsInstance($scope.elementId, $scope)
+            Idx.registerDetailsInstance($scope.elementId, moduleName, $scope)
 
             if (!$scope.options.service || // if there is a service
                 !($scope.options.ListingKey || $scope.options.ListingId)

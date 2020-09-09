@@ -97,7 +97,7 @@ Stratus.Components.IdxMemberDetails = {
             $scope.memberCombined = {}
 
             // Register this List with the Property service
-            Idx.registerListInstance($scope.elementId, $scope, 'MemberDetails')
+            Idx.registerDetailsInstance($scope.elementId, moduleName, $scope)
             // console.log(this.uid)
 
             console.log('options', $scope.options, $attrs)

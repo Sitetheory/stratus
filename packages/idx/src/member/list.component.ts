@@ -107,7 +107,7 @@ Stratus.Components.IdxMemberList = {
             // $scope.googleApiKey = $attrs.googleApiKey || null
 
             // Register this List with the Property service
-            Idx.registerListInstance($scope.elementId, $scope, 'Member')
+            Idx.registerListInstance($scope.elementId, moduleName, $scope)
 
             const urlOptions: { Search?: any } = {}
             /* if ($scope.urlLoad) {
@@ -323,7 +323,7 @@ Stratus.Components.IdxMemberList = {
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
-                        $timeout(() => Idx.unregisterDetailsInstance('property_member_detail_popup'), 10)
+                        $timeout(() => Idx.unregisterDetailsInstance('property_member_detail_popup', 'member'), 10)
                     })
             } else {
                 $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)

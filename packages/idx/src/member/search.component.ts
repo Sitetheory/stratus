@@ -90,7 +90,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
             }
 
             // Register this Search with the Property service
-            Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId, 'Member')
+            Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
 
             // $scope.variableSync()
         }

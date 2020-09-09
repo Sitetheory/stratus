@@ -207,7 +207,7 @@ Stratus.Components.IdxPropertySearch = {
             $scope.setWhereDefaults()
 
             // Register this Search with the Property service
-            Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
+            Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
 
             if ($attrs.tokenOnLoad) {
                 await Idx.tokenKeepAuth()
