@@ -117,7 +117,7 @@ export interface IdxService {
     setUrlOptions(listingOrSearch: 'Search' | 'Listing', options: any): void
 
     // Reusable Methods
-    devLog(arg: any, arg2: any): void
+    devLog(...items: any): void
 
     emit(
         emitterName: string,
@@ -172,6 +172,8 @@ export type IdxDetailsScope<T = LooseObject> = IdxComponentScope & {
 
 export type IdxListScope<T = LooseObject> = IdxComponentScope & {
     collection: Collection<T>
+
+    getPageModels(): T[]
 }
 
 export type IdxSearchScope = IdxComponentScope & {
@@ -467,7 +469,12 @@ export interface Property extends LooseObject {
 }
 
 export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
-export type IdxEmitterCollectionUpdated = IdxEmitter & ((source: IdxComponentScope, collection?: Collection) => any)
+export type IdxEmitterInit = IdxEmitter & ((source: IdxComponentScope) => any)
+export type IdxEmitterCollectionUpdated = IdxEmitter & ((source: IdxListScope, collection?: Collection) => any)
+export type IdxEmitterPageChanged = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
+export type IdxEmitterPageChanging = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
+export type IdxEmitterOrderChanged = IdxEmitter & ((source: IdxListScope, order?: string | string[]) => any)
+export type IdxEmitterOrderChanging = IdxEmitter & ((source: IdxListScope, order?: string | string[]) => any)
 
 // All Service functionality
 const angularJsService = (
@@ -567,7 +574,12 @@ const angularJsService = (
     const instanceOnEmitters: {
         [emitterUid: string]: {
             [onMethodName: string]: IdxEmitter[]
+            init?: IdxEmitterInit[]
             collectionUpdated?: IdxEmitterCollectionUpdated[]
+            pageChanged?: IdxEmitterPageChanged[]
+            pageChanging?: IdxEmitterPageChanging[]
+            orderChanged?: IdxEmitterOrderChanged[]
+            orderChanging?: IdxEmitterOrderChanging[]
         }
     } = {
         /*idx_property_list_7: {
@@ -620,7 +632,7 @@ const angularJsService = (
         var1?: any, var2?: any, var3?: any
     ) {
         const uid = $scope.elementId
-        console.log(uid, $scope, 'is emitting', emitterName)
+        // console.log(uid, $scope, 'is emitting', emitterName)
         if (
             Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid) &&
             Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)
@@ -628,8 +640,14 @@ const angularJsService = (
             instanceOnEmitters[uid][emitterName].forEach((emitter) => {
                 emitter($scope, var1, var2, var3)
             })
-        } else {
+        }/*else {
             console.log('yet no one is watching')
+        }*/
+
+        if (emitterName === 'init') {
+            // Let's prep the requests for 'init' so they immediate call if this scope has already init
+            instanceOnEmitters[uid] = instanceOnEmitters[uid] || {}
+            instanceOnEmitters[uid].init = instanceOnEmitters[uid].init || []
         }
     }
 
@@ -639,7 +657,19 @@ const angularJsService = (
         emitterName: string,
         callback: IdxEmitter
     ) {
-        console.log('a request has been made to watch for', uid, 'to emit', emitterName)
+        // console.log('a request has been made to watch for', uid, 'to emit', emitterName)
+        // Let's check if an init request has already missed it's opportunity to init
+        if (
+            emitterName === 'init' &&
+            Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid) &&
+            Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName) &&
+            Object.prototype.hasOwnProperty.call(Stratus.Instances, uid)
+        ) {
+            // init has already happened.... so let's send back the emit of 'init' right now!
+            emit('init', Stratus.Instances[uid])
+            return
+        }
+
         if (!Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid)) {
             instanceOnEmitters[uid] = {}
         }
@@ -2094,9 +2124,9 @@ const angularJsService = (
      * TODO: Remove
      * Output console if not in production
      */
-    function devLog(item1: any, item2: any): void {
+    function devLog(...items: any): void {
         if (cookie('env')) {
-            console.log(item1, item2)
+            console.log(...items)
         }
     }
 

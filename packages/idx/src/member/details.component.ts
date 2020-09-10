@@ -65,8 +65,8 @@ Stratus.Components.IdxMemberDetails = {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -102,6 +102,7 @@ Stratus.Components.IdxMemberDetails = {
 
             console.log('options', $scope.options, $attrs)
             $scope.fetchMember()
+            Idx.emit('init', $scope)
         }
 
         $scope.$watch('collection.models', async (models: any[]) => {

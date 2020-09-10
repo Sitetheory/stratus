@@ -86,8 +86,8 @@ Stratus.Components.IdxPropertySearch = {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -211,9 +211,9 @@ Stratus.Components.IdxPropertySearch = {
             Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
 
             // FIXME testing emitters
-            Idx.on($scope.listId, 'collectionUpdated', (source, collection: Collection) => {
+            /*Idx.on($scope.listId, 'collectionUpdated', (source, collection: Collection) => {
                 console.log('collectionUpdated!!!!', source, collection)
-            })
+            })*/
 
             if ($attrs.tokenOnLoad) {
                 await Idx.tokenKeepAuth()
@@ -221,6 +221,7 @@ Stratus.Components.IdxPropertySearch = {
             }
 
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
+            Idx.emit('init', $scope)
         }
 
         $scope.$watch('options.query.where.ListingType', () => {

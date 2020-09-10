@@ -13,7 +13,9 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
-import {IdxComponentScope, IdxEmitter, IdxService} from '@stratusjs/idx/idx'
+import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
+import {Collection} from '@stratusjs/angularjs/services/collection'
+import {MarkerSettings} from '@stratusjs/map/map.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -25,16 +27,16 @@ const componentName = 'map'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
 export type IdxMapScope = IdxComponentScope & {
-    linkId: string
-    linkInitialized: boolean
+    listId: string
+    listInitialized: boolean
+
+    instancePath: string
+    mapMarkers: MarkerSettings[]
 }
 
 Stratus.Components.IdxMap = {
     bindings: {
-        ngModel: '=',
-        items: '@',
-        sectionName: '@',
-        className: '@',
+        listId: '@',
         template: '@',
     },
     controller(
@@ -47,17 +49,76 @@ Stratus.Components.IdxMap = {
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(componentName) + '_')
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
 
         $ctrl.$onInit = () => {
             $scope.Idx = Idx
-            $scope.linkId = $attrs.linkId || null
-            $scope.linkInitialized = false
-
-            // TODO attempt to connect to with Idx
+            $scope.listId = $attrs.listId || null
+            $scope.listInitialized = false
 
             // Register this Map with the Property service
             // Idx.registerMapInstance($scope.elementId, $scope, $scope.linkId)
             Idx.registerMapInstance($scope.elementId, $scope)
+
+            if ($scope.listId) {
+                Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
+                /*Idx.on($scope.listId, 'collectionUpdated', (source: IdxListScope, collection: Collection) => {
+                    console.log('collectionUpdated!!!!', source, collection)
+                    $ctrl.prepareMapMarkers(source)
+                })*/
+                Idx.on($scope.listId, 'init', (source: IdxListScope) => {
+                    // console.log('init!!!!', source)
+                    $ctrl.prepareMapMarkers(source)
+                })
+                Idx.on($scope.listId, 'pageChanged', (source: IdxListScope, pageNumber: number) => {
+                    // console.log('pageChanged!!!!', source, pageNumber)
+                    $ctrl.prepareMapMarkers(source)
+                })
+            }
+            Idx.emit('init', $scope)
+        }
+
+        $ctrl.prepareMapMarkers = (source: IdxListScope<Member | Property>): void => {
+            // console.log('checking $scope.collection.models', $scope.collection.models)
+            const markers: MarkerSettings[] = []
+            source.getPageModels().forEach((model) => {
+                // console.log('looping listing', listing)
+                if (
+                    Object.prototype.hasOwnProperty.call(model, 'Latitude') &&
+                    Object.prototype.hasOwnProperty.call(model, 'Longitude')
+                ) {
+                    const address = Idx.getStreetAddress(model as Property) // TODO handle Member?
+                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
+                    /*const marker = new google.maps.Marker({
+                        position: {lat: listing.Latitude, lng: listing.Longitude},
+                        title: address,
+                        animation: google.maps.Animation.DROP
+                    })
+                    marker.addListener('click', () => {
+                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                        // $scope.displayPropertyDetails(listing)
+                    })
+                    markers.push(marker)*/
+                    markers.push({
+                        position: {lat: model.Latitude, lng: model.Longitude},
+                        title: address,
+                        options: {
+                            animation: 2 // DROP: 2 | BOUNCE: 1
+                        },
+                        click: {
+                            action: 'function',
+                            function: (marker: any, markerSetting: any) => {
+                                console.log('Was clicked~')
+                                // $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                                // $scope.displayPropertyDetails(listing)
+                            }
+                        }
+                    })
+                }
+            })
+
+            console.log('markers', markers)
+            $scope.mapMarkers = markers
         }
 
         /*$scope.stopWatchingModel = $scope.$watch('$ctrl.ngModel', (data: any) => {

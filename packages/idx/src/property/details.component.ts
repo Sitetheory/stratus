@@ -114,9 +114,9 @@ Stratus.Components.IdxPropertyDetails = {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
-        $scope.instancePath = `Stratus.Instances.${$ctrl.uid}`
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
+        $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
         $scope.localDir = localDir
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
@@ -1224,6 +1224,7 @@ Stratus.Components.IdxPropertyDetails = {
                 }
             }
             $scope.fetchProperty()
+            Idx.emit('init', $scope)
         }
 
         $scope.$watch('model.data', (data?: Model<Property>['data']) => {

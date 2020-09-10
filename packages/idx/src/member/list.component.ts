@@ -16,7 +16,7 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxEmitter, IdxListScope, IdxService, Member} from '@stratusjs/idx/idx'
+import {IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
@@ -62,8 +62,8 @@ Stratus.Components.IdxMemberList = {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -125,6 +125,27 @@ Stratus.Components.IdxMemberList = {
             } */
 
             await $scope.searchMembers(urlOptions.Search, true, false)
+            Idx.emit('init', $scope)
+        }
+
+        $scope.$watch('collection.models', () => { // models?: []
+            if ($scope.collection.completed) {
+                Idx.emit('collectionUpdated', $scope, $scope.collection)
+            }
+        })
+
+        $scope.getPageModels = (): Member[] => {
+            // console.log('checking $scope.collection.models', $scope.collection.models)
+            const members: Member[] = []
+            // only get the page's models, not every single model in collection
+            const models = $scope.collection.models as Member[]
+            models.slice(
+                ($scope.query.perPage * ($scope.query.page - 1)), // 20 * (1 - 1) = 0. 20 * (2 - 1) = 20
+                ($scope.query.perPage * $scope.query.page) // e.g. 20 * 1 = 20. 20 * 2 = 40
+            ).forEach((member) => {
+                members.push(member)
+            })
+            return members
         }
 
         /**
@@ -204,11 +225,13 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.pageChange = async (pageNumber: number, ev?: any): Promise<void> => {
+            Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.page = pageNumber
             await $scope.searchMembers()
+            Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
         }
 
         /**
@@ -244,11 +267,13 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.orderChange = async (order: string | string[], ev?: any): Promise<void> => {
+            Idx.emit('orderChanging', $scope, _.clone(order))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.order = order
             await $scope.searchMembers(null, true, true)
+            Idx.emit('orderChanged', $scope, _.clone(order))
         }
 
         /**

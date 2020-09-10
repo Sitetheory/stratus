@@ -58,8 +58,8 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -93,6 +93,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
             Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
 
             // $scope.variableSync()
+            Idx.emit('init', $scope)
         }
 
         /**
