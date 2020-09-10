@@ -22,7 +22,7 @@ import {cookie} from '@stratusjs/core/environment'
 import {IdxMapScope} from '@stratusjs/idx/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
-import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
+// import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
 // import {IdxMapScope} from '@stratusjs/idx/map.component'
 
 
@@ -119,6 +119,17 @@ export interface IdxService {
     // Reusable Methods
     devLog(arg: any, arg2: any): void
 
+    emit(
+        emitterName: string,
+        $scope: IdxComponentScope,
+        var1?: any, var2?: any, var3?: any
+    ): void
+    on(
+        uid: string,
+        emitterName: string,
+        callback: IdxEmitter
+    ): void
+
     getFriendlyStatus(property: Property): string // TODO replace with property object
     getFullAddress(property: Property, encode?: boolean): string
 
@@ -149,7 +160,9 @@ export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
     localDir: string
     Idx: IdxService
 
-    getUid(): string
+    /** @deprecated */
+    getUid(): string // FIXME this isn't returning the uid. Use elementId.
+    on(emitterName: string, callback: IdxEmitter): void
     remove(): void
 }
 
@@ -453,6 +466,9 @@ export interface Property extends LooseObject {
     }
 }
 
+export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
+export type IdxEmitterCollectionUpdated = IdxEmitter & ((source: IdxComponentScope, collection?: Collection) => any)
+
 // All Service functionality
 const angularJsService = (
     $injector: angular.auto.IInjectorService,
@@ -548,6 +564,27 @@ const angularJsService = (
         Search: {}
     }
 
+    const instanceOnEmitters: {
+        [emitterUid: string]: {
+            [onMethodName: string]: IdxEmitter[]
+            collectionUpdated?: IdxEmitterCollectionUpdated[]
+        }
+    } = {
+        /*idx_property_list_7: {
+            somethingChangedFake: [
+                (source) => {
+                    console.log('The something updated in this scope', source)
+                }
+            ],
+            collectionUpdated: [
+                (source: IdxComponentScope, collection: Collection) => {
+                    console.log('The collection in this scope updated', source)
+                    console.log('collection is now', collection)
+                }
+            ]
+        }*/
+    }
+
     /** type {{services: Array<MLSService>, lastCreated: Date, lastTtl: number}} */
     const session: Session = {
         services: [],
@@ -574,6 +611,42 @@ const angularJsService = (
         whereFilter: {},
         pages: [],
         perPage: 0
+    }
+
+    // TODO infer the emit type
+    function emit(
+        emitterName: string,
+        $scope: IdxComponentScope,
+        var1?: any, var2?: any, var3?: any
+    ) {
+        const uid = $scope.elementId
+        console.log(uid, $scope, 'is emitting', emitterName)
+        if (
+            Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid) &&
+            Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)
+        ) {
+            instanceOnEmitters[uid][emitterName].forEach((emitter) => {
+                emitter($scope, var1, var2, var3)
+            })
+        } else {
+            console.log('yet no one is watching')
+        }
+    }
+
+    // TODO infer the emit type
+    function on(
+        uid: string,
+        emitterName: string,
+        callback: IdxEmitter
+    ) {
+        console.log('a request has been made to watch for', uid, 'to emit', emitterName)
+        if (!Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid)) {
+            instanceOnEmitters[uid] = {}
+        }
+        if (!Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)) {
+            instanceOnEmitters[uid][emitterName] = []
+        }
+        instanceOnEmitters[uid][emitterName].push(callback)
     }
 
     /**
@@ -646,7 +719,7 @@ const angularJsService = (
         moduleName: 'member' | 'office' | 'property'
     ): void {
         if (Object.prototype.hasOwnProperty.call(instance[moduleName].details, uid)) {
-            const detailUid = instance[moduleName].details[uid].getUid()
+            const detailUid = instance[moduleName].details[uid].elementId
             delete instance[moduleName].details[uid]
             Stratus.Instances.Clean(detailUid)
         }
@@ -2655,6 +2728,7 @@ const angularJsService = (
         fetchProperties,
         fetchProperty,
         devLog,
+        emit,
         getContactVariables,
         getDefaultWhereOptions,
         getFriendlyStatus,
@@ -2668,6 +2742,7 @@ const angularJsService = (
         getStreetAddress,
         getUrlOptions,
         getUrlOptionsPath,
+        on,
         registerDetailsInstance,
         registerListInstance,
         registerMapInstance,

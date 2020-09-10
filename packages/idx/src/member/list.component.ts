@@ -16,7 +16,7 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxListScope, IdxService, Member} from '@stratusjs/idx/idx'
+import {IdxEmitter, IdxListScope, IdxService, Member} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
@@ -402,7 +402,9 @@ Stratus.Components.IdxMemberList = {
                 // await $q.all(promises)
             }
 
-        $scope.getUid = (): string => $ctrl.uid
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
         }

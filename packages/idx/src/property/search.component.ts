@@ -15,7 +15,7 @@ import 'angular-material'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
-    CompileFilterOptions,
+    CompileFilterOptions, IdxEmitter,
     IdxSearchScope,
     IdxService,
     MLSService,
@@ -27,6 +27,7 @@ import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
 import 'stratus.directives.stringToNumber'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -208,6 +209,11 @@ Stratus.Components.IdxPropertySearch = {
 
             // Register this Search with the Property service
             Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
+
+            // FIXME testing emitters
+            Idx.on($scope.listId, 'collectionUpdated', (source, collection: Collection) => {
+                console.log('collectionUpdated!!!!', source, collection)
+            })
 
             if ($attrs.tokenOnLoad) {
                 await Idx.tokenKeepAuth()
@@ -559,7 +565,9 @@ Stratus.Components.IdxPropertySearch = {
             }
         }
 
-        $scope.getUid = (): string => $ctrl.uid
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
 
         /**
          * Destroy this widget

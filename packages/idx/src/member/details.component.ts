@@ -16,7 +16,7 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {CompileFilterOptions, IdxDetailsScope, IdxService, Member} from '@stratusjs/idx/idx'
+import {CompileFilterOptions, IdxDetailsScope, IdxEmitter, IdxService, Member} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON, LooseObject} from '@stratusjs/core/misc'
@@ -205,7 +205,9 @@ Stratus.Components.IdxMemberDetails = {
             return html ? $sce.trustAsHtml(disclaimer) : disclaimer
         }
 
-        $scope.getUid = (): string => $ctrl.uid
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
         }

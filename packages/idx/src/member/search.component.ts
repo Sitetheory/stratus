@@ -14,7 +14,7 @@ import * as angular from 'angular'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
+import {IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON, LooseObject} from '@stratusjs/core/misc'
@@ -272,7 +272,9 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
                 })
         }
 
-        $scope.getUid = (): string => $ctrl.uid
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
         }

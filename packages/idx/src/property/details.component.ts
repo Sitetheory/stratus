@@ -20,7 +20,7 @@ import {MarkerSettings} from '@stratusjs/map/map.component'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxDetailsScope, IdxService, Property, WidgetIntegrations} from '@stratusjs/idx/idx'
+import {IdxDetailsScope, IdxEmitter, IdxService, Property, WidgetIntegrations} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
@@ -1447,7 +1447,9 @@ Stratus.Components.IdxPropertyDetails = {
          */
         $scope.getMLSDisclaimer = (html?: boolean): string => html ? $scope.disclaimerHTML : $scope.disclaimerString
 
-        $scope.getUid = (): string => $ctrl.uid
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
             // TODO need to kill any attached slideshows

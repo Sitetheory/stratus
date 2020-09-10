@@ -27,7 +27,7 @@ import {
     Property,
     WhereOptions,
     UrlWhereOptions,
-    UrlsOptionsObject
+    UrlsOptionsObject, IdxEmitter
 } from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
@@ -236,6 +236,9 @@ Stratus.Components.IdxPropertyList = {
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
                 $ctrl.prepareMapMarkers() // TODO being worked on
+
+                // FIXME testing
+                Idx.emit('collectionUpdated', $scope, $scope.collection)
             }
         })
 
@@ -658,6 +661,8 @@ Stratus.Components.IdxPropertyList = {
                 $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)
             }
         }
+
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.getUid = (): string => $ctrl.uid
 

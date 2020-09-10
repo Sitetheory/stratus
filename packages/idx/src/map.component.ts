@@ -13,7 +13,7 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
-import {IdxComponentScope, IdxService} from '@stratusjs/idx/idx'
+import {IdxComponentScope, IdxEmitter, IdxService} from '@stratusjs/idx/idx'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -50,7 +50,7 @@ Stratus.Components.IdxMap = {
 
         $ctrl.$onInit = () => {
             $scope.Idx = Idx
-            $scope.linkId = $attrs.listId || null
+            $scope.linkId = $attrs.linkId || null
             $scope.linkInitialized = false
 
             // TODO attempt to connect to with Idx
@@ -68,7 +68,9 @@ Stratus.Components.IdxMap = {
             }
         })*/
 
-        $scope.getUid = (): string => $ctrl.uid
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
         }
