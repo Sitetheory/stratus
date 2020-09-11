@@ -107,7 +107,7 @@ class Watcher {
         }
     }
 
-    private getFromPath(obj: any, path: string | string[], def?: any): any {
+    public getFromPath(obj: any, path: string | string[], def?: any): any {
 
         /** If the path is a string, convert it to an array */
         const stringToPath = (stringPath: string | string[]) => {
@@ -211,6 +211,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      * TODO is string is json, process as google.maps.LatLngLiteral or google.maps.LatLngLiteral[]
      */
     @Input() markers: string | MarkerSettings[]
+    @Input() callback: string | ((self: this) => {})
     // @Input() markers: string | google.maps.LatLngLiteral[] | MarkerSettings[] // Later allow just coords
     @Input() zoom = 18
     @Input() mapType = 'roadmap'  // 'roadmap' | 'hybrid' | 'satellite' | 'terrain'
@@ -306,6 +307,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 maxWidth: 250
             })
             this.processProvidedMarkersPath()
+            this.processProvidedCallback()
             this.initialized = true
             // console.info(this.uid, 'Inited')
         } catch (e) {
@@ -354,8 +356,21 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 this.addMarker(mark)
             })
             this.fitMarkerBounds()
-        } else {
+        } /*else {
             console.info('the test var something is.....something...', this.markers)
+        }*/
+    }
+
+    private processProvidedCallback() {
+        if (_.isString(this.callback)) {
+            // This callback is probably reference a path to a function. let's grab it
+            this.callback = this.watcher.getFromPath(window, this.callback)
+            // We'll use this below
+        }
+
+        if (_.isFunction(this.callback)) {
+            // We can only assume that this is a function created properly
+            this.callback(this)
         }
     }
 
