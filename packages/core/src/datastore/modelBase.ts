@@ -16,11 +16,11 @@ export interface ModelBaseOptions {
 
 // This function is meant to be extended models that want to use internal data
 // in a native Backbone way.
-export class ModelBase extends EventManager {
+export class ModelBase<T = LooseObject> extends EventManager {
     name = 'ModelBase'
 
     // Infrastructure
-    data: LooseObject = {}
+    data: T = {} as T
     temps: LooseObject = {}
 
     // Diff Detection
@@ -134,7 +134,7 @@ export class ModelBase extends EventManager {
     }
 
     size() {
-        return _.size(this.data)
+        return _.size(this.data as LooseObject)
     }
 
     set(attr: string|object, value?: any) {
@@ -173,8 +173,8 @@ export class ModelBase extends EventManager {
                         this.trigger('change', this)
                     }
                 }
-            } else if (!_.has(this.data, attr) || !_.isEqual(this.data[attr], value)) {
-                this.data[attr] = value
+            } else if (!_.has(this.data, attr) || !_.isEqual((this.data as LooseObject)[attr], value)) {
+                (this.data as LooseObject)[attr] = value
                 this.trigger('change:' + attr, this)
                 this.trigger('change', this)
             }
@@ -200,8 +200,8 @@ export class ModelBase extends EventManager {
 
         // only add value if it's supplied (sometimes we want to create an empty
         // placeholder first)
-        if (typeof value !== 'undefined' && !_.includes(this.data[attr], value)) {
-            this.data[attr].push(value)
+        if (typeof value !== 'undefined' && !_.includes((this.data as LooseObject)[attr], value)) {
+            (this.data as LooseObject)[attr].push(value)
             return value
         }
     }
@@ -219,28 +219,28 @@ export class ModelBase extends EventManager {
         } else {
             // TODO: use dot notation for nested removal or _.without for array
             // values (these should be separate functions)
-            this.data[attr] = _.without(this.data[attr], value)
+            (this.data as LooseObject)[attr] = _.without((this.data as LooseObject)[attr], value)
         }
         // if (!cookie('env')) {
         //     console.log('removed:', this.data[attr])
         // }
-        return this.data[attr]
+        return (this.data as LooseObject)[attr]
     }
 
     iterate(attr: any) {
         if (!this.has(attr)) {
             this.set(attr, 0)
         }
-        return ++this.data[attr]
+        return ++(this.data as LooseObject)[attr]
     }
 
     /**
      * Clear all internal data
      */
     clear() {
-        for (const attribute in this.data) {
+        for (const attribute in (this.data as LooseObject)) {
             if (Object.prototype.hasOwnProperty.call(this.data, attribute)) {
-                delete this.data[attribute]
+                delete (this.data as LooseObject)[attribute]
             }
         }
     }

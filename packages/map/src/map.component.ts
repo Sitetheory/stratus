@@ -58,6 +58,112 @@ export interface MarkerSettings {
     click?: MarkerSettingsClick | ((marker: google.maps.Marker, options: MarkerSettings) => any)
 }
 
+class Watcher {
+    // Watcher
+    watching: {
+        scope: object | any,
+        path: string,
+        action: ((newValue?: unknown, change?: KeyValueChanges<unknown, unknown>) => any)
+        differ: KeyValueDiffer<unknown, unknown>
+    }[] = []
+    nextCheck = 0
+    checkEveryMillisecond = 1000
+
+    constructor(
+        private Differ: KeyValueDiffers
+    ) {
+        this.Differ = Differ
+    }
+
+    watch(scope: object | any, path: string, action: ((newValue?: unknown, change?: KeyValueChanges<unknown, unknown>) => any)) {
+        // Handled only arrays and objects currently
+        const originalValue = this.getFromPath(scope, path)
+        this.watching.push({
+            scope,
+            path,
+            action,
+            differ: this.Differ.find(originalValue).create(),
+            /*action: (): any => {
+                console.info('test running window watcher')
+            }*/
+        })
+        // console.info('watching', path, originalValue)
+    }
+
+    checkWatchers() {
+        const currentMilliseconds = new Date().getTime()
+        // console.info('checkWatchers() cmparing', currentMilliseconds, this.nextCheck)
+        if (this.nextCheck <= currentMilliseconds) {
+            this.nextCheck = currentMilliseconds + this.checkEveryMillisecond
+            // console.info('checkWatchers() ran')
+            this.watching.forEach((watcher) => {
+                const newValue = this.getFromPath(watcher.scope, watcher.path)
+                const change = watcher.differ.diff(newValue)
+                if (change) {
+                    watcher.action(newValue, change)
+                    // console.info(watcher.path, 'variable changed', _.clone(variable))
+                }
+            })
+        }
+    }
+
+    public getFromPath(obj: any, path: string | string[], def?: any): any {
+
+        /** If the path is a string, convert it to an array */
+        const stringToPath = (stringPath: string | string[]) => {
+
+            // If the path isn't a string, return it
+            if (typeof stringPath !== 'string') {
+                return stringPath
+            }
+
+            // Create new array
+            const output: string[] = []
+
+            // Split to an array with dot notation
+            stringPath.split('.').forEach((item) => {
+
+                // Split to an array with bracket notation
+                item.split(/\[([^}]+)\]/g).forEach((key) => {
+
+                    // Push to the new array
+                    if (key.length > 0) {
+                        output.push(key)
+                    }
+
+                })
+
+            })
+
+            return output
+
+        }
+
+        // Get the path as an array
+        path = stringToPath(path)
+
+        // Cache the current object
+        let current = obj
+
+        // For each item in the path, dig into the object
+        // for (let i = 0; i < path.length; i++) {
+        for (const pathPiece of path) {
+
+            // If the item isn't found, return the default (or null)
+            if (!current[pathPiece]) {
+                return def || null
+            }
+
+            // Otherwise, update the current  value
+            current = current[pathPiece]
+
+        }
+
+        return current
+
+    }
+}
+
 /**
  * @title AutoComplete Selector with Drag&Drop Sorting
  */
@@ -72,7 +178,6 @@ export interface MarkerSettings {
     // ],
     // changeDetection: ChangeDetectionStrategy.OnPush // Detect changes only once
 })
-
 
 export class MapComponent extends RootComponent implements OnInit, AfterViewInit, DoCheck { // implements OnInit, OnChanges
 
@@ -106,6 +211,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      * TODO is string is json, process as google.maps.LatLngLiteral or google.maps.LatLngLiteral[]
      */
     @Input() markers: string | MarkerSettings[]
+    @Input() callback: string | ((self: this) => {})
     // @Input() markers: string | google.maps.LatLngLiteral[] | MarkerSettings[] // Later allow just coords
     @Input() zoom = 18
     @Input() mapType = 'roadmap'  // 'roadmap' | 'hybrid' | 'satellite' | 'terrain'
@@ -174,7 +280,6 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         }
 
         // Setup a watcher
-        // tslint:disable-next-line:no-use-before-declare
         this.watcher = new Watcher(this.Differ)
 
         // console.info(this.uid, 'constructed')
@@ -202,6 +307,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 maxWidth: 250
             })
             this.processProvidedMarkersPath()
+            this.processProvidedCallback()
             this.initialized = true
             // console.info(this.uid, 'Inited')
         } catch (e) {
@@ -229,8 +335,6 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     /**
      * With currently input this.markers, create markers on the Map
-     * FIXME: For some reason the @private doesn't pass linting, so it's commented out
-     * #private
      */
     private processProvidedMarkersPath() {
         if (_.isString(this.markers)) {
@@ -252,8 +356,21 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 this.addMarker(mark)
             })
             this.fitMarkerBounds()
-        } else {
+        } /*else {
             console.info('the test var something is.....something...', this.markers)
+        }*/
+    }
+
+    private processProvidedCallback() {
+        if (_.isString(this.callback)) {
+            // This callback is probably reference a path to a function. let's grab it
+            this.callback = this.watcher.getFromPath(window, this.callback)
+            // We'll use this below
+        }
+
+        if (_.isFunction(this.callback)) {
+            // We can only assume that this is a function created properly
+            this.callback(this)
         }
     }
 
@@ -409,111 +526,5 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         // TODO need more options such as clicking off
         this.info.setContent(content)
         this.info.open(this.map, marker) // TODO markerWindow not used right now
-    }
-}
-
-class Watcher {
-    // Watcher
-    watching: {
-        scope: object | any,
-        path: string,
-        action: ((newValue?: unknown, change?: KeyValueChanges<unknown, unknown>) => any)
-        differ: KeyValueDiffer<unknown, unknown>
-    }[] = []
-    nextCheck = 0
-    checkEveryMillisecond = 1000
-
-    constructor(
-        private Differ: KeyValueDiffers
-    ) {
-        this.Differ = Differ
-    }
-
-    watch(scope: object | any, path: string, action: ((newValue?: unknown, change?: KeyValueChanges<unknown, unknown>) => any)) {
-        // Handled only arrays and objects currently
-        const originalValue = this.getFromPath(scope, path)
-        this.watching.push({
-            scope,
-            path,
-            action,
-            differ: this.Differ.find(originalValue).create(),
-            /*action: (): any => {
-                console.info('test running window watcher')
-            }*/
-        })
-        // console.info('watching', path, originalValue)
-    }
-
-    checkWatchers() {
-        const currentMilliseconds = new Date().getTime()
-        // console.info('checkWatchers() cmparing', currentMilliseconds, this.nextCheck)
-        if (this.nextCheck <= currentMilliseconds) {
-            this.nextCheck = currentMilliseconds + this.checkEveryMillisecond
-            // console.info('checkWatchers() ran')
-            this.watching.forEach((watcher) => {
-                const newValue = this.getFromPath(watcher.scope, watcher.path)
-                const change = watcher.differ.diff(newValue)
-                if (change) {
-                    watcher.action(newValue, change)
-                    // console.info(watcher.path, 'variable changed', _.clone(variable))
-                }
-            })
-        }
-    }
-
-    private getFromPath(obj: any, path: string | string[], def?: any): any {
-
-        /** If the path is a string, convert it to an array */
-        const stringToPath = (stringPath: string | string[]) => {
-
-            // If the path isn't a string, return it
-            if (typeof stringPath !== 'string') {
-                return stringPath
-            }
-
-            // Create new array
-            const output: string[] = []
-
-            // Split to an array with dot notation
-            stringPath.split('.').forEach((item) => {
-
-                // Split to an array with bracket notation
-                item.split(/\[([^}]+)\]/g).forEach((key) => {
-
-                    // Push to the new array
-                    if (key.length > 0) {
-                        output.push(key)
-                    }
-
-                })
-
-            })
-
-            return output
-
-        }
-
-        // Get the path as an array
-        path = stringToPath(path)
-
-        // Cache the current object
-        let current = obj
-
-        // For each item in the path, dig into the object
-        // for (let i = 0; i < path.length; i++) {
-        for (const pathPiece of path) {
-
-            // If the item isn't found, return the default (or null)
-            if (!current[pathPiece]) {
-                return def || null
-            }
-
-            // Otherwise, update the current  value
-            current = current[pathPiece]
-
-        }
-
-        return current
-
     }
 }

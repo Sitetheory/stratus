@@ -14,10 +14,10 @@ import * as angular from 'angular'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxService} from '@stratusjs/idx/idx'
+import {IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
@@ -30,6 +30,9 @@ const moduleName = 'member'
 const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxMemberSearchScope = IdxSearchScope & LooseObject & { // FIXME do not extend LooseObject
+}
 
 Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or IdxMemberSearch
     bindings: {
@@ -47,7 +50,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
         $mdPanel: angular.material.IPanelService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxMemberSearchScope,
         $timeout: angular.ITimeoutService,
         $window: angular.IWindowService,
         Idx: IdxService,
@@ -55,8 +58,8 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -87,9 +90,10 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
             }
 
             // Register this Search with the Property service
-            Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId, 'Member')
+            Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
 
             // $scope.variableSync()
+            Idx.emit('init', $scope)
         }
 
         /**
@@ -267,6 +271,13 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
                     // Let's destroy it to save memory
                     // $timeout(IDX.unregisterDetailsInstance('property_member_detail_popup'), 10)
                 })
+        }
+
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
+
+        $scope.remove = (): void => {
         }
 
     },

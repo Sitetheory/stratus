@@ -14,7 +14,13 @@ import 'angular-material'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {CompileFilterOptions, IdxService, MLSService, ObjectWithFunctions, WhereOptions} from '@stratusjs/idx/idx'
+import {
+    CompileFilterOptions, IdxEmitter,
+    IdxSearchScope,
+    IdxService,
+    MLSService,
+    WhereOptions
+} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
@@ -30,11 +36,7 @@ const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxPropertySearchScope = angular.IScope & ObjectWithFunctions & {
-    elementId: string
-    localDir: string
-    model: any
-    Idx: any
+export type IdxPropertySearchScope = IdxSearchScope & {
     widgetName: string
     listId: string
     listInitialized: boolean
@@ -83,14 +85,15 @@ Stratus.Components.IdxPropertySearch = {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
 
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
+        // Used by template
         $scope.$mdConstant = $mdConstant
 
         /**
@@ -98,6 +101,7 @@ Stratus.Components.IdxPropertySearch = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         $ctrl.$onInit = async () => {
+            $scope.Idx = Idx
             $scope.widgetName = $attrs.widgetName || ''
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
@@ -203,7 +207,12 @@ Stratus.Components.IdxPropertySearch = {
             $scope.setWhereDefaults()
 
             // Register this Search with the Property service
-            Idx.registerSearchInstance($scope.elementId, $scope, $scope.listId)
+            Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
+
+            // FIXME testing emitters
+            /*Idx.on($scope.listId, 'collectionUpdated', (source, collection: Collection) => {
+                console.log('collectionUpdated!!!!', source, collection)
+            })*/
 
             if ($attrs.tokenOnLoad) {
                 await Idx.tokenKeepAuth()
@@ -211,6 +220,7 @@ Stratus.Components.IdxPropertySearch = {
             }
 
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
+            Idx.emit('init', $scope)
         }
 
         $scope.$watch('options.query.where.ListingType', () => {
@@ -553,6 +563,17 @@ Stratus.Components.IdxPropertySearch = {
                     await instance.refreshSearchWidgetOptions()
                 }
             }
+        }
+
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
+
+        /**
+         * Destroy this widget
+         */
+        $scope.remove = (): void => {
+            // TODO need to kill any attached slideshows
         }
     },
     templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`

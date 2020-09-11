@@ -16,11 +16,11 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxService} from '@stratusjs/idx/idx'
+import {IdxEmitter, IdxListScope, IdxService, Member} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
@@ -33,6 +33,9 @@ const moduleName = 'member'
 const componentName = 'list'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+
+export type IdxMemberListScope = IdxListScope<Member> & LooseObject & { // FIXME do not extend LooseObject
+}
 
 Stratus.Components.IdxMemberList = {
     bindings: {
@@ -52,15 +55,15 @@ Stratus.Components.IdxMemberList = {
         $mdDialog: angular.material.IDialogService,
         $timeout: angular.ITimeoutService,
         $sce: angular.ISCEService,
-        $scope: object | any, // angular.IScope breaks references so far
+        $scope: IdxMemberListScope,
         $window: angular.IWindowService,
         Idx: IdxService,
     ) {
         // Initialize
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
@@ -104,7 +107,7 @@ Stratus.Components.IdxMemberList = {
             // $scope.googleApiKey = $attrs.googleApiKey || null
 
             // Register this List with the Property service
-            Idx.registerListInstance($scope.elementId, $scope, 'Member')
+            Idx.registerListInstance($scope.elementId, moduleName, $scope)
 
             const urlOptions: { Search?: any } = {}
             /* if ($scope.urlLoad) {
@@ -122,6 +125,27 @@ Stratus.Components.IdxMemberList = {
             } */
 
             await $scope.searchMembers(urlOptions.Search, true, false)
+            Idx.emit('init', $scope)
+        }
+
+        $scope.$watch('collection.models', () => { // models?: []
+            if ($scope.collection.completed) {
+                Idx.emit('collectionUpdated', $scope, $scope.collection)
+            }
+        })
+
+        $scope.getPageModels = (): Member[] => {
+            // console.log('checking $scope.collection.models', $scope.collection.models)
+            const members: Member[] = []
+            // only get the page's models, not every single model in collection
+            const models = $scope.collection.models as Member[]
+            models.slice(
+                ($scope.query.perPage * ($scope.query.page - 1)), // 20 * (1 - 1) = 0. 20 * (2 - 1) = 20
+                ($scope.query.perPage * $scope.query.page) // e.g. 20 * 1 = 20. 20 * 2 = 40
+            ).forEach((member) => {
+                members.push(member)
+            })
+            return members
         }
 
         /**
@@ -201,11 +225,13 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.pageChange = async (pageNumber: number, ev?: any): Promise<void> => {
+            Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.page = pageNumber
             await $scope.searchMembers()
+            Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
         }
 
         /**
@@ -241,11 +267,13 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.orderChange = async (order: string | string[], ev?: any): Promise<void> => {
+            Idx.emit('orderChanging', $scope, _.clone(order))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.order = order
             await $scope.searchMembers(null, true, true)
+            Idx.emit('orderChanged', $scope, _.clone(order))
         }
 
         /**
@@ -320,7 +348,7 @@ Stratus.Components.IdxMemberList = {
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
-                        $timeout(() => Idx.unregisterDetailsInstance('property_member_detail_popup'), 10)
+                        $timeout(() => Idx.unregisterDetailsInstance('property_member_detail_popup', 'member'), 10)
                     })
             } else {
                 $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)
@@ -399,9 +427,10 @@ Stratus.Components.IdxMemberList = {
                 // await $q.all(promises)
             }
 
-        /**
-         * Destroy this widget
-         */
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+
+        $scope.getUid = (): string => $scope.elementId
+
         $scope.remove = (): void => {
         }
     },
