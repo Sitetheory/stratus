@@ -15,7 +15,7 @@ import '@stratusjs/angularjs/services/model'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {Collection} from '@stratusjs/angularjs/services/collection'
-import {MarkerSettings} from '@stratusjs/map/map.component'
+import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -32,6 +32,7 @@ export type IdxMapScope = IdxComponentScope & {
 
     instancePath: string
     mapMarkers: MarkerSettings[]
+    map: MapComponent
 }
 
 Stratus.Components.IdxMap = {
@@ -69,10 +70,12 @@ Stratus.Components.IdxMap = {
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
                     // console.log('init!!!!', source)
                     $ctrl.prepareMapMarkers(source)
+                    $scope.mapUpdate()
                 })
                 Idx.on($scope.listId, 'pageChanged', (source: IdxListScope, pageNumber: number) => {
                     // console.log('pageChanged!!!!', source, pageNumber)
                     $ctrl.prepareMapMarkers(source)
+                    $scope.mapUpdate()
                 })
             }
             Idx.emit('init', $scope)
@@ -128,6 +131,25 @@ Stratus.Components.IdxMap = {
                 $scope.stopWatchingModel()
             }
         })*/
+
+        $scope.mapInitialize = (map: MapComponent) => {
+            // console.log('idx map is running the map!!!!', map)
+            $scope.map = map
+            $scope.mapUpdate()
+        }
+
+        /**
+         * Refresh the Map with the latest markers
+         */
+        $scope.mapUpdate = () => {
+            if ($scope.map) {
+                $scope.map.removeMarkers()
+                $scope.mapMarkers.forEach((marker) => {
+                    $scope.map.addMarker(marker)
+                })
+                $scope.map.fitMarkerBounds()
+            }
+        }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
 

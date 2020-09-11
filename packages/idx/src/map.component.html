@@ -1,7 +1,7 @@
 <div id="{{::elementId}}" data-ng-cloak>
     <div class="map-location details-container static-element" aria-label="Google Maps Display">
         <sa-map class="google-maps-dynamic"
-                data-markers="{{::instancePath}}.mapMarkers"
+                data-callback="{{::instancePath}}.mapInitialize"
                 data-map-type="roadmap"
         ></sa-map>
     </div>
