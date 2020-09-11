@@ -14,7 +14,6 @@ import '@stratusjs/angularjs/services/model'
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
-import {Collection} from '@stratusjs/angularjs/services/collection'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 
 // Environment
@@ -41,6 +40,7 @@ Stratus.Components.IdxMap = {
         template: '@',
     },
     controller(
+        // $anchorScroll: angular.IAnchorScrollService,
         $attrs: angular.IAttributes,
         $scope: IdxMapScope,
         Idx: IdxService,
@@ -112,6 +112,7 @@ Stratus.Components.IdxMap = {
                             action: 'function',
                             function: (marker: any, markerSetting: any) => {
                                 console.log('Was clicked~')
+                                // TODO need to fix the scrolling
                                 // $anchorScroll(`${$scope.elementId}_${listing._id}`)
                                 // $scope.displayPropertyDetails(listing)
                             }
@@ -120,7 +121,7 @@ Stratus.Components.IdxMap = {
                 }
             })
 
-            console.log('markers', markers)
+            // console.log('markers', markers)
             $scope.mapMarkers = markers
         }
 
