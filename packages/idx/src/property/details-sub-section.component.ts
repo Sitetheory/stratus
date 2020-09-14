@@ -73,8 +73,9 @@ Stratus.Components.IdxPropertyDetailsSubSection = {
             Object.keys($scope.items).forEach((item: string) => {
                 if (
                     Object.prototype.hasOwnProperty.call($scope.model.data, item) &&
-                    $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections can appear
-                    $scope.model.data[item] !== '' // ensure we skip blanks or empty sections can appear
+                    $scope.model.data[item] !== 0 && // ensure we skip 0 or empty sections that can appear
+                    $scope.model.data[item] !== '' && // ensure we skip "0" sections that can appear
+                    $scope.model.data[item] !== '0' // ensure we skip blanks or empty sections that can appear
                 ) {
                     if (!(
                         $scope.model.data[item] === false &&
