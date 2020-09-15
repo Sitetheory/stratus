@@ -215,8 +215,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     // @Input() markers: string | google.maps.LatLngLiteral[] | MarkerSettings[] // Later allow just coords
     @Input() zoom = 18
     @Input() mapType = 'roadmap'  // 'roadmap' | 'hybrid' | 'satellite' | 'terrain'
-    @Input() zoomControl = false
-    @Input() scrollwheel = true
+    @Input() zoomControl = true // Display Zoom Controls
+    @Input() scrollwheel = false
     @Input() disableDoubleClickZoom = false
     @Input() center: google.maps.LatLng | google.maps.LatLngLiteral = {lat: 37.4220656, lng: -122.0862784}
     options: google.maps.MapOptions = {
@@ -257,18 +257,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
 
-        // Sanitize Numbers
-        if (!_.isNumber(this.zoom)) {
-            this.zoom = Number.parseInt(this.zoom, 10)
-        }
-
-        // Sanitize Booleans
-        if (!_.isBoolean(this.scrollwheel)) {
-            this.scrollwheel = (this.scrollwheel === 'true')
-        }
-        if (!_.isBoolean(this.disableDoubleClickZoom)) {
-            this.disableDoubleClickZoom = (this.disableDoubleClickZoom === 'true')
-        }
+        this.processOptions()
 
         // Ensure there is at least a Dev key
         if (_.isEmpty(this.googleMapsKey)) {
@@ -330,6 +319,33 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             // this.centerAtPosition(bounds.getCenter())
             this.panToPosition(bounds.getCenter())
             this.fitBounds(bounds)
+        }
+    }
+
+    private processOptions() {
+        // Sanitize Numbers
+        if (!_.isNumber(this.zoom)) {
+            this.zoom = Number.parseInt(this.zoom, 10)
+        }
+
+        // Sanitize Booleans
+        if (!_.isBoolean(this.zoomControl)) {
+            this.zoomControl = (this.zoomControl === 'true')
+        }
+        if (!_.isBoolean(this.scrollwheel)) {
+            this.scrollwheel = (this.scrollwheel === 'true')
+        }
+        if (!_.isBoolean(this.disableDoubleClickZoom)) {
+            this.disableDoubleClickZoom = (this.disableDoubleClickZoom === 'true')
+        }
+
+        this.options = {
+            mapTypeId: this.mapType,
+            center: this.center,
+            zoom: this.zoom,
+            zoomControl: this.zoomControl,
+            scrollwheel: this.scrollwheel,
+            disableDoubleClickZoom: this.disableDoubleClickZoom,
         }
     }
 
