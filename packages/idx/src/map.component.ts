@@ -28,16 +28,26 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
 export type IdxMapScope = IdxComponentScope & {
     listId: string
     listInitialized: boolean
-
-    instancePath: string
     mapMarkers: MarkerSettings[]
     map: MapComponent
+
+    instancePath: string
+    googleMapsKey: string
+    mapType: string
+    zoom: number
+
+    mapInitialize(map: MapComponent): void
+    mapUpdate(): void
 }
 
 Stratus.Components.IdxMap = {
     bindings: {
+        instancePath: '@',
+        googleMapsKey: '@',
         listId: '@',
+        mapType: '@',
         template: '@',
+        zoom: '@',
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
@@ -56,24 +66,20 @@ Stratus.Components.IdxMap = {
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
+            $scope.googleMapsKey = $attrs.googleMapKey || null
+            $scope.mapType = $attrs.mapType || 'roadmap'
+            $scope.zoom = $attrs.zoom || 18
 
             // Register this Map with the Property service
-            // Idx.registerMapInstance($scope.elementId, $scope, $scope.linkId)
             Idx.registerMapInstance($scope.elementId, $scope)
 
             if ($scope.listId) {
                 Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
-                /*Idx.on($scope.listId, 'collectionUpdated', (source: IdxListScope, collection: Collection) => {
-                    console.log('collectionUpdated!!!!', source, collection)
-                    $ctrl.prepareMapMarkers(source)
-                })*/
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
-                    // console.log('init!!!!', source)
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
                 Idx.on($scope.listId, 'pageChanged', (source: IdxListScope, pageNumber: number) => {
-                    // console.log('pageChanged!!!!', source, pageNumber)
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })

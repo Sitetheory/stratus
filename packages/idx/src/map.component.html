@@ -1,8 +1,8 @@
-<div id="{{::elementId}}" data-ng-cloak>
-    <div class="map-location details-container static-element" aria-label="Google Maps Display">
-        <sa-map class="google-maps-dynamic"
-                data-callback="{{::instancePath}}.mapInitialize"
-                data-map-type="roadmap"
-        ></sa-map>
-    </div>
+<div id="{{::elementId}}" data-ng-cloak aria-label="Google Maps Display">
+    <sa-map
+            data-callback="{{::instancePath}}.mapInitialize"
+            data-google-maps-key="{{::googleMapsKey}}"
+            data-map-type="{{::mapType}}"
+            data-zoom="{{::zoom}}"
+    ></sa-map>
 </div>
