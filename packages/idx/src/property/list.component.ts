@@ -236,7 +236,6 @@ Stratus.Components.IdxPropertyList = {
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
-                $ctrl.prepareMapMarkers() // TODO being worked on
 
                 Idx.emit('collectionUpdated', $scope, $scope.collection)
             }
@@ -254,46 +253,6 @@ Stratus.Components.IdxPropertyList = {
                 listings.push(listing)
             })
             return listings
-        }
-
-        $ctrl.prepareMapMarkers = (): void => {
-            const markers: MarkerSettings[] = []
-            $scope.getPageModels().forEach((listing) => {
-                // console.log('looping listing', listing)
-                if (
-                    Object.prototype.hasOwnProperty.call(listing, 'Latitude') &&
-                    Object.prototype.hasOwnProperty.call(listing, 'Longitude')
-                ) {
-                    const address = $scope.getStreetAddress(listing)
-                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
-                    /*const marker = new google.maps.Marker({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        animation: google.maps.Animation.DROP
-                    })
-                    marker.addListener('click', () => {
-                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                        // $scope.displayModelDetails(listing)
-                    })
-                    markers.push(marker)*/
-                    markers.push({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        options: {
-                            animation: 2 // DROP: 2 | BOUNCE: 1
-                        },
-                        click: {
-                            action: 'function',
-                            function: (marker: any, markerSetting: any) => {
-                                $scope.scrollToModel(listing)
-                                // $scope.displayModelDetails(listing)
-                            }
-                        }
-                    })
-                }
-            })
-
-            $scope.mapMarkers = markers
         }
 
         $scope.scrollToModel = (model: Property): void => {

@@ -30,6 +30,7 @@ export type IdxMapScope = IdxComponentScope & {
     listInitialized: boolean
     mapMarkers: MarkerSettings[]
     map: MapComponent
+    list: IdxListScope
 
     instancePath: string
     googleMapsKey: string
@@ -66,7 +67,7 @@ Stratus.Components.IdxMap = {
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
-            $scope.googleMapsKey = $attrs.googleMapKey || null
+            $scope.googleMapsKey = $attrs.googleMapsKey || null
             $scope.mapType = $attrs.mapType || 'roadmap'
             $scope.zoom = $attrs.zoom || 18
 
@@ -76,6 +77,7 @@ Stratus.Components.IdxMap = {
             if ($scope.listId) {
                 Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
+                    $scope.list = source
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
@@ -97,17 +99,6 @@ Stratus.Components.IdxMap = {
                     Object.prototype.hasOwnProperty.call(model, 'Longitude')
                 ) {
                     const address = Idx.getStreetAddress(model as Property) // TODO handle Member?
-                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
-                    /*const marker = new google.maps.Marker({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        animation: google.maps.Animation.DROP
-                    })
-                    marker.addListener('click', () => {
-                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                        // $scope.displayPropertyDetails(listing)
-                    })
-                    markers.push(marker)*/
                     markers.push({
                         position: {lat: model.Latitude, lng: model.Longitude},
                         title: address,
@@ -117,9 +108,11 @@ Stratus.Components.IdxMap = {
                         click: {
                             action: 'function',
                             function: (marker: any, markerSetting: any) => {
-                                console.log('Was clicked~')
-                                // TODO need to fix the scrolling
-                                // $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                                // TODO need option to enable scrolling
+                                if ($scope.list) {
+                                    // Scroll to Model
+                                    $scope.list.scrollToModel(model)
+                                }
                                 // $scope.displayPropertyDetails(listing)
                             }
                         }
