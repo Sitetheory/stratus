@@ -283,10 +283,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 'insertHorizontalRule',
                 // 'insertUnorderedList',
                 // 'insertOrderedList',
-                'customClasses'
+                // 'customClasses'
             ], [
-                'link',
-                'unlink',
+                // 'link',
+                // 'unlink',
                 'insertImage',
                 // 'insertVideo'
                 // 'toggleEditorMode'
