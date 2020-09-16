@@ -1,7 +1,7 @@
 // Stratus Event System
 // --------------------
 
-import _, { Cancelable } from 'lodash'
+import _ from 'lodash'
 import {EventBase} from '@stratusjs/core/events/eventBase'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -10,7 +10,10 @@ export class EventManager {
     public listeners: {
         [key: string]: Array<EventBase>
     } = {}
-    public throttleTrigger: ((name: any, ...args: any[]) => (this)) & Cancelable
+    public throttleTrigger: ((name: any, ...args: any[]) => (this)) & {
+        cancel(): void
+        flush(): void
+    }
 
     constructor(throttle?: any) {
         this.throttleTrigger = _.throttle(this.trigger, throttle || 100)
