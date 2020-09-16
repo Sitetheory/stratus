@@ -1,9 +1,7 @@
 // Stratus Event System
 // --------------------
 
-import _ from 'lodash'
-// tslint:disable-next-line:no-duplicate-imports
-import { Cancelable } from 'lodash'
+import _, { Cancelable } from 'lodash'
 import {EventBase} from '@stratusjs/core/events/eventBase'
 import {cookie} from '@stratusjs/core/environment'
 
