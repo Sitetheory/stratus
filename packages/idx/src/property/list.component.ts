@@ -69,7 +69,6 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     instancePath: string
     mapMarkers: MarkerSettings[]
 
-    displayPropertyDetails(property: object | any, ev?: any): void
     getStreetAddress(property: Property): string
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
@@ -216,7 +215,7 @@ Stratus.Components.IdxPropertyList = {
                     urlQuery.Listing.service &&
                     urlQuery.Listing.ListingKey
                 ) {
-                    $scope.displayPropertyDetails(urlQuery.Listing)
+                    $scope.displayModelDetails((urlQuery.Listing as Property)) // FIXME a quick fix as this contains ListingKey
                 }
             }
 
@@ -237,7 +236,6 @@ Stratus.Components.IdxPropertyList = {
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
-                $ctrl.prepareMapMarkers() // TODO being worked on
 
                 Idx.emit('collectionUpdated', $scope, $scope.collection)
             }
@@ -257,44 +255,8 @@ Stratus.Components.IdxPropertyList = {
             return listings
         }
 
-        $ctrl.prepareMapMarkers = (): void => {
-            const markers: MarkerSettings[] = []
-            $scope.getPageModels().forEach((listing) => {
-                // console.log('looping listing', listing)
-                if (
-                    Object.prototype.hasOwnProperty.call(listing, 'Latitude') &&
-                    Object.prototype.hasOwnProperty.call(listing, 'Longitude')
-                ) {
-                    const address = $scope.getStreetAddress(listing)
-                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
-                    /*const marker = new google.maps.Marker({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        animation: google.maps.Animation.DROP
-                    })
-                    marker.addListener('click', () => {
-                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                        // $scope.displayPropertyDetails(listing)
-                    })
-                    markers.push(marker)*/
-                    markers.push({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        options: {
-                            animation: 2 // DROP: 2 | BOUNCE: 1
-                        },
-                        click: {
-                            action: 'function',
-                            function: (marker: any, markerSetting: any) => {
-                                $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                                // $scope.displayPropertyDetails(listing)
-                            }
-                        }
-                    })
-                }
-            })
-
-            $scope.mapMarkers = markers
+        $scope.scrollToModel = (model: Property): void => {
+            $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
         /**
@@ -575,10 +537,10 @@ Stratus.Components.IdxPropertyList = {
 
         /**
          * Either popup or load a new page with the
-         * @param property property object
+         * @param model property object
          * @param ev - Click event
          */
-        $scope.displayPropertyDetails = (property: Property, ev?: any): void => {
+        $scope.displayModelDetails = (model: Property, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -598,9 +560,9 @@ Stratus.Components.IdxPropertyList = {
                     template?: string,
                     'url-load'?: boolean,
                 } = {
-                    'element-id': 'property_detail_popup_' + property.ListingKey,
-                    service: property._ServiceId,
-                    'listing-key': property.ListingKey,
+                    'element-id': 'property_detail_popup_' + model.ListingKey,
+                    service: model._ServiceId,
+                    'listing-key': model.ListingKey,
                     'default-list-options': JSON.stringify($ctrl.defaultQuery),
                     'page-title': true, // update the page title
                     'url-load': $scope.urlLoad
@@ -622,7 +584,7 @@ Stratus.Components.IdxPropertyList = {
                 }
 
                 let template =
-                    `<md-dialog aria-label="${property.ListingKey}" class="stratus-idx-property-list-dialog">` +
+                    `<md-dialog aria-label="${model.ListingKey}" class="stratus-idx-property-list-dialog">` +
                     `<div class="popup-close-button-container">` +
                     `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()" aria-label="Close Details Popup"></div>` +
                     `</div>` +
@@ -671,7 +633,7 @@ Stratus.Components.IdxPropertyList = {
                         $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup', 'property'), 10)
                     })
             } else {
-                $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)
+                $window.open($scope.getDetailsURL(model), $scope.detailsLinkTarget)
             }
         }
 

@@ -50,6 +50,7 @@ Stratus.Components.IdxMemberList = {
         variableSync: '@'
     },
     controller(
+        $anchorScroll: angular.IAnchorScrollService,
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
@@ -146,6 +147,10 @@ Stratus.Components.IdxMemberList = {
                 members.push(member)
             })
             return members
+        }
+
+        $scope.scrollToModel = (model: Member): void => {
+            $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
         /**
@@ -297,11 +302,10 @@ Stratus.Components.IdxMemberList = {
 
         /**
          * Either popup or load a new page with the
-         * TODO Idx export Member Interface
-         * @param member - details object
+         * @param model - details object
          * @param ev - Click event
          */
-        $scope.displayMemberDetails = (member: { _ServiceId: number, MemberKey: string }, ev?: any): void => {
+        $scope.displayModelDetails = (model: Member, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -316,8 +320,8 @@ Stratus.Components.IdxMemberList = {
                     'google-api-key'?: string,
                 } = {
                     element_id: 'property_member_detail_popup',
-                    service: member._ServiceId,
-                    'member-key': member.MemberKey,
+                    service: model._ServiceId,
+                    'member-key': model.MemberKey,
                     'page-title': true// update the page title
                 }
                 if ($scope.googleApiKey) {
@@ -325,7 +329,7 @@ Stratus.Components.IdxMemberList = {
                 }
 
                 let template =
-                    '<md-dialog aria-label="' + member.MemberKey + '">' +
+                    '<md-dialog aria-label="' + model.MemberKey + '">' +
                     '<stratus-idx-member-details '
                 _.forEach(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
@@ -351,12 +355,12 @@ Stratus.Components.IdxMemberList = {
                         $timeout(() => Idx.unregisterDetailsInstance('property_member_detail_popup', 'member'), 10)
                     })
             } else {
-                $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)
+                $window.open($scope.getDetailsURL(model), $scope.detailsLinkTarget)
             }
         }
 
         $scope.injectMemberDetails = async (member: any): Promise<void> => {
-            // console.log('will add these details to a form', member)
+            // console.log('will add these details to a form', model)
             await $scope.variableInject(member)
         }
 

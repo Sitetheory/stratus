@@ -173,7 +173,9 @@ export type IdxDetailsScope<T = LooseObject> = IdxComponentScope & {
 export type IdxListScope<T = LooseObject> = IdxComponentScope & {
     collection: Collection<T>
 
+    displayModelDetails(model: T, ev?: any): void
     getPageModels(): T[]
+    scrollToModel(model: T): void
 }
 
 export type IdxSearchScope = IdxComponentScope & {

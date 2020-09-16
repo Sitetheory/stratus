@@ -28,16 +28,27 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
 export type IdxMapScope = IdxComponentScope & {
     listId: string
     listInitialized: boolean
-
-    instancePath: string
     mapMarkers: MarkerSettings[]
     map: MapComponent
+    list: IdxListScope
+
+    instancePath: string
+    googleMapsKey: string
+    mapType: string
+    zoom: number
+
+    mapInitialize(map: MapComponent): void
+    mapUpdate(): void
 }
 
 Stratus.Components.IdxMap = {
     bindings: {
+        instancePath: '@',
+        googleMapsKey: '@',
         listId: '@',
+        mapType: '@',
         template: '@',
+        zoom: '@',
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
@@ -56,24 +67,21 @@ Stratus.Components.IdxMap = {
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
+            $scope.googleMapsKey = $attrs.googleMapsKey || null
+            $scope.mapType = $attrs.mapType || 'roadmap'
+            $scope.zoom = $attrs.zoom || 18
 
             // Register this Map with the Property service
-            // Idx.registerMapInstance($scope.elementId, $scope, $scope.linkId)
             Idx.registerMapInstance($scope.elementId, $scope)
 
             if ($scope.listId) {
                 Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
-                /*Idx.on($scope.listId, 'collectionUpdated', (source: IdxListScope, collection: Collection) => {
-                    console.log('collectionUpdated!!!!', source, collection)
-                    $ctrl.prepareMapMarkers(source)
-                })*/
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
-                    // console.log('init!!!!', source)
+                    $scope.list = source
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
                 Idx.on($scope.listId, 'pageChanged', (source: IdxListScope, pageNumber: number) => {
-                    // console.log('pageChanged!!!!', source, pageNumber)
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
@@ -91,17 +99,6 @@ Stratus.Components.IdxMap = {
                     Object.prototype.hasOwnProperty.call(model, 'Longitude')
                 ) {
                     const address = Idx.getStreetAddress(model as Property) // TODO handle Member?
-                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
-                    /*const marker = new google.maps.Marker({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        animation: google.maps.Animation.DROP
-                    })
-                    marker.addListener('click', () => {
-                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                        // $scope.displayPropertyDetails(listing)
-                    })
-                    markers.push(marker)*/
                     markers.push({
                         position: {lat: model.Latitude, lng: model.Longitude},
                         title: address,
@@ -111,9 +108,11 @@ Stratus.Components.IdxMap = {
                         click: {
                             action: 'function',
                             function: (marker: any, markerSetting: any) => {
-                                console.log('Was clicked~')
-                                // TODO need to fix the scrolling
-                                // $anchorScroll(`${$scope.elementId}_${listing._id}`)
+                                // TODO need option to enable scrolling
+                                if ($scope.list) {
+                                    // Scroll to Model
+                                    $scope.list.scrollToModel(model)
+                                }
                                 // $scope.displayPropertyDetails(listing)
                             }
                         }
