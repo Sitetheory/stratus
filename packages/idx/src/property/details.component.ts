@@ -1367,7 +1367,7 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getCoBuyerAgentName = (): string => $scope.model.data.CoBuyerAgentFullName || ($scope.model.data.CoBuyerAgentFirstName ?
             $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null)
 
-        $scope.getGoogleMapKey = (): string | null => {
+        $scope.getGoogleMapsKey = (): string | null => {
             let googleApiKey = null
             if (
                 $scope.integrations
@@ -1377,21 +1377,15 @@ Stratus.Components.IdxPropertyDetails = {
                 && $scope.integrations.maps.googleMaps.accountId !== ''
             ) {
                 googleApiKey = $scope.integrations.maps.googleMaps.accountId
-            } else if (
-                Idx.sharedValues.integrations
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
-                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
+            } else {
+                googleApiKey = Idx.getGoogleMapsKey()
             }
             return googleApiKey
         }
 
         $scope.getGoogleMapEmbed = (): string | null => {
             if (!$ctrl.googleMapEmbed) {
-                const googleApiKey = $scope.getGoogleMapKey()
+                const googleApiKey = $scope.getGoogleMapsKey()
 
                 $ctrl.googleMapEmbed = googleApiKey ? $sce.trustAsResourceUrl(
                     `https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${$scope.getFullAddress(true)}`

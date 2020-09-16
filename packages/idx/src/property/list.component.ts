@@ -458,27 +458,9 @@ Stratus.Components.IdxPropertyList = {
 
         $scope.getStreetAddress = (property: Property): string => $scope.Idx.getStreetAddress(property)
 
-        /*$scope.getGoogleMapKey = (): string | null => {
-            let googleApiKey = null
-            if (
-                $scope.integrations
-                && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
-                && $scope.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = $scope.integrations.maps.googleMaps.accountId
-            } else if (
-                Idx.sharedValues.integrations
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
-                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
-            }
-            return googleApiKey
-        }*/
+        $scope.getGoogleMapsKey = (): string | null => {
+            return $scope.googleApiKey || Idx.getGoogleMapsKey()
+        }
 
         /**
          * @param reset - set true to force reset
@@ -567,8 +549,8 @@ Stratus.Components.IdxPropertyList = {
                     'page-title': true, // update the page title
                     'url-load': $scope.urlLoad
                 }
-                if ($scope.googleApiKey) {
-                    templateOptions['google-api-key'] = $scope.googleApiKey
+                if ($scope.getGoogleMapsKey()) {
+                    templateOptions['google-api-key'] = $scope.getGoogleMapsKey()
                 }
                 if ($scope.contactName) {
                     templateOptions['contact-name'] = $scope.contactName

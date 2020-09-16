@@ -238,7 +238,7 @@
         <!-- parallax-element disabled, cannot use height altering on the entire widget -->
         <div class="secondary-image-container">
             <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
-            <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.sharedValues.contactUrl"
+            <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl getGoogleMapsKey|| Idx.sharedValues.contactUrl"
                target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}{{(Idx.sharedValues.contactCommentVariable ? '?' + Idx.sharedValues.contactCommentVariable + '=' + getFullAddress(true) : '')}}"
                aria-label="Contact an Agent Link"
             >
@@ -262,7 +262,7 @@
         <!--div class="map-location details-container static-element" data-ng-if="::mapMarkers" aria-label="Google Maps Display">
             <h2 class="dotted-spaced-underline">Location</h2>
             <sa-map class="google-maps-dynamic"
-                    data-google-maps-key="{{::getGoogleMapKey()}}"
+                    data-google-maps-key="{{::getGoogleMapsKey()}}"
                     data-markers="{{::instancePath}}.mapMarkers"
                     data-zoom="18"
                     data-map-type="roadmap"
