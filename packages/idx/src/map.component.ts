@@ -172,11 +172,6 @@ Stratus.Components.IdxMap = {
         }
 
         $scope.getGoogleMapsKey = (): string | null => {
-            if ($scope.googleMapsKey) {
-                console.log('the provided key was', _.clone($scope.googleMapsKey))
-            } else {
-                console.log('the found key was', _.clone(Idx.getGoogleMapsKey()))
-            }
             return $scope.googleMapsKey || Idx.getGoogleMapsKey()
         }
 
