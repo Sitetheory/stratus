@@ -84,6 +84,7 @@ Stratus.Components.IdxMap = {
             $scope.mapInitialized = false
             $scope.listInitialized = false
             $scope.googleMapsKey = $attrs.googleMapsKey || null
+            $scope.mapMarkers = []
             $scope.mapType = $attrs.mapType || 'roadmap'
             $scope.zoom = $attrs.zoom || 18
             $scope.zoomControl = $attrs.zoomControl || true
@@ -97,23 +98,21 @@ Stratus.Components.IdxMap = {
             if ($scope.listId) {
                 Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
-                    console.log('list init')
                     $scope.list = source
                     $scope.listInitialized = true
                     // $scope.initialized = true
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
-                Idx.on($scope.listId, 'pageChanged', (source: IdxListScope) => {
+                Idx.on($scope.listId, 'searched', (source: IdxListScope) => {
+                    // page changing and searched triggers 'searched'
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
             }
             if ($scope.googleMapsKey) {
-                console.log('Already has $scope.googleMapsKey, map initing now')
                 $scope.initialized = true
             } else {
-                console.log('no $scope.googleMapsKey, waiting for session')
                 Idx.on('Idx', 'sessionInit', () => {
                     console.log('session init')
                     $scope.initialized = true
@@ -173,7 +172,6 @@ Stratus.Components.IdxMap = {
             $scope.$applyAsync(() => {
                 $scope.mapInitialized = true
             })
-            console.log('scope.mapInitialized', $scope.mapInitialized)
             $scope.mapUpdate()
         }
 

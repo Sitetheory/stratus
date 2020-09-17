@@ -480,6 +480,8 @@ export type IdxEmitterPageChanged = IdxEmitter & ((source: IdxListScope, pageNum
 export type IdxEmitterPageChanging = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
 export type IdxEmitterOrderChanged = IdxEmitter & ((source: IdxListScope, order?: string | string[]) => any)
 export type IdxEmitterOrderChanging = IdxEmitter & ((source: IdxListScope, order?: string | string[]) => any)
+export type IdxEmitterSearching = IdxEmitter & ((source: IdxComponentScope, query?: CompileFilterOptions) => any)
+export type IdxEmitterSearched = IdxEmitter & ((source: IdxComponentScope, query?: CompileFilterOptions) => any)
 
 // All Service functionality
 const angularJsService = (
@@ -587,6 +589,8 @@ const angularJsService = (
             pageChanging?: IdxEmitterPageChanging[]
             orderChanged?: IdxEmitterOrderChanged[]
             orderChanging?: IdxEmitterOrderChanging[]
+            searched?: IdxEmitterSearched[]
+            searching?: IdxEmitterSearching[]
         }
     } = {
         /*idx_property_list_7: {
