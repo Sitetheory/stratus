@@ -474,6 +474,7 @@ export interface Property extends LooseObject {
 
 export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
 export type IdxEmitterInit = IdxEmitter & ((source: IdxComponentScope) => any)
+export type IdxEmitterInitSession = IdxEmitter & ((source: null) => any)
 export type IdxEmitterCollectionUpdated = IdxEmitter & ((source: IdxListScope, collection?: Collection) => any)
 export type IdxEmitterPageChanged = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
 export type IdxEmitterPageChanging = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
@@ -518,6 +519,7 @@ const angularJsService = (
     }
     let idxServicesEnabled: number[] = []
     let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
+    let sessionInitialized = false
     let refreshLoginTimer: any // Timeout object
     let defaultPageTitle: string
     const instance: {
@@ -579,6 +581,7 @@ const angularJsService = (
         [emitterUid: string]: {
             [onMethodName: string]: IdxEmitter[]
             init?: IdxEmitterInit[]
+            sessionInit?: IdxEmitterInitSession[]
             collectionUpdated?: IdxEmitterCollectionUpdated[]
             pageChanged?: IdxEmitterPageChanged[]
             pageChanging?: IdxEmitterPageChanging[]
@@ -635,7 +638,15 @@ const angularJsService = (
         $scope: IdxComponentScope,
         var1?: any, var2?: any, var3?: any
     ) {
-        const uid = $scope.elementId
+        emitManual(emitterName, $scope.elementId, $scope, var1, var2, var3)
+    }
+
+    function emitManual(
+        emitterName: string,
+        uid: string,
+        $scope: IdxComponentScope,
+        var1?: any, var2?: any, var3?: any
+    ) {
         // console.log(uid, $scope, 'is emitting', emitterName)
         if (
             Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid) &&
@@ -644,14 +655,15 @@ const angularJsService = (
             instanceOnEmitters[uid][emitterName].forEach((emitter) => {
                 emitter($scope, var1, var2, var3)
             })
-        }/*else {
-            console.log('yet no one is watching')
-        }*/
+        }
 
-        if (emitterName === 'init') {
+        if (
+            emitterName === 'init' ||
+            emitterName === 'sessionInit'
+        ) {
             // Let's prep the requests for 'init' so they immediate call if this scope has already init
             instanceOnEmitters[uid] = instanceOnEmitters[uid] || {}
-            instanceOnEmitters[uid].init = instanceOnEmitters[uid].init || []
+            instanceOnEmitters[uid][emitterName] = instanceOnEmitters[uid][emitterName] || []
         }
     }
 
@@ -670,7 +682,18 @@ const angularJsService = (
             Object.prototype.hasOwnProperty.call(Stratus.Instances, uid)
         ) {
             // init has already happened.... so let's send back the emit of 'init' right now!
-            emit('init', Stratus.Instances[uid])
+            // emit('init', Stratus.Instances[uid]) // wait, would this send the init a second time? maybe just send it to this callback
+            callback(Stratus.Instances[uid])
+            return
+        }
+
+        if (
+            uid === 'Idx' &&
+            emitterName === 'sessionInit' &&
+            sessionInitialized
+        ) {
+            // sessionInitialized has already happened.... so let's send back the emit of 'sessionInitialized' right now!
+            callback(null)
             return
         }
 
@@ -1110,6 +1133,11 @@ const angularJsService = (
                 }
             }
         }
+        if (!sessionInitialized) {
+            emitManual('sessionInit', 'Idx', null)
+        }
+        emitManual('sessionRefresh', 'Idx', null)
+        sessionInitialized = true
 
         if (keepAlive) {
             tokenEnableRefreshTimer()
@@ -2777,6 +2805,7 @@ const angularJsService = (
         fetchProperty,
         devLog,
         emit,
+        emitManual,
         getContactVariables,
         getDefaultWhereOptions,
         getFriendlyStatus,
