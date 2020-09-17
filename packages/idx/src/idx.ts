@@ -474,7 +474,7 @@ export interface Property extends LooseObject {
 
 export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
 export type IdxEmitterInit = IdxEmitter & ((source: IdxComponentScope) => any)
-export type IdxEmitterInitSession = IdxEmitter & ((source: null) => any)
+export type IdxEmitterSessionInit = IdxEmitter & ((source: null) => any)
 export type IdxEmitterCollectionUpdated = IdxEmitter & ((source: IdxListScope, collection?: Collection) => any)
 export type IdxEmitterPageChanged = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
 export type IdxEmitterPageChanging = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
@@ -581,7 +581,7 @@ const angularJsService = (
         [emitterUid: string]: {
             [onMethodName: string]: IdxEmitter[]
             init?: IdxEmitterInit[]
-            sessionInit?: IdxEmitterInitSession[]
+            sessionInit?: IdxEmitterSessionInit[]
             collectionUpdated?: IdxEmitterCollectionUpdated[]
             pageChanged?: IdxEmitterPageChanged[]
             pageChanging?: IdxEmitterPageChanging[]
