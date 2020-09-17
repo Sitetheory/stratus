@@ -16,6 +16,10 @@ import {cookie} from '@stratusjs/core/environment'
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 
+// Component Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/map/map.component'
+
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
@@ -27,6 +31,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
 
 export type IdxMapScope = IdxComponentScope & {
     listId: string
+    initialized: boolean
     listInitialized: boolean
     mapMarkers: MarkerSettings[]
     map: MapComponent
@@ -36,6 +41,10 @@ export type IdxMapScope = IdxComponentScope & {
     googleMapsKey: string
     mapType: string
     zoom: number
+    zoomControl: boolean
+    scrollwheel: boolean
+    width: number
+    height: number
 
     mapInitialize(map: MapComponent): void
     mapUpdate(): void
@@ -49,6 +58,10 @@ Stratus.Components.IdxMap = {
         mapType: '@',
         template: '@',
         zoom: '@',
+        zoomControl: '@',
+        scrollwheel: '@',
+        height: '@',
+        width: '@',
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
@@ -66,10 +79,15 @@ Stratus.Components.IdxMap = {
         $ctrl.$onInit = () => {
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
+            $scope.initialized = false
             $scope.listInitialized = false
             $scope.googleMapsKey = $attrs.googleMapsKey || null
             $scope.mapType = $attrs.mapType || 'roadmap'
             $scope.zoom = $attrs.zoom || 18
+            $scope.zoomControl = $attrs.zoomControl || true
+            $scope.scrollwheel = $attrs.scrollwheel || false
+            $scope.height = $attrs.height || '500px'
+            $scope.width = $attrs.width || '100%'
 
             // Register this Map with the Property service
             Idx.registerMapInstance($scope.elementId, $scope)
@@ -78,6 +96,8 @@ Stratus.Components.IdxMap = {
                 Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
                     $scope.list = source
+                    $scope.listInitialized = true
+                    $scope.initialized = true
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
@@ -149,6 +169,10 @@ Stratus.Components.IdxMap = {
                 })
                 $scope.map.fitMarkerBounds()
             }
+        }
+
+        $scope.getGoogleMapsKey = (): string | null => {
+            return $scope.googleMapsKey || Idx.getGoogleMapsKey()
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)

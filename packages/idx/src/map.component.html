@@ -1,8 +1,12 @@
-<div id="{{::elementId}}" data-ng-cloak aria-label="Google Maps Display">
+<div id="{{::elementId}}" data-ng-cloak aria-label="Google Maps Display" data-ng-if="initialized">
     <sa-map
             data-callback="{{::instancePath}}.mapInitialize"
-            data-google-maps-key="{{::googleMapsKey}}"
+            data-google-maps-key="{{::getGoogleMapsKey()}}"
             data-map-type="{{::mapType}}"
             data-zoom="{{::zoom}}"
+            data-zoom-control="{{::zoomControl}}"
+            data-scrollwheel="{{::scrollwheel}}"
+            data-height="{{::height}}"
+            data-width="{{::width}}"
     ></sa-map>
 </div>

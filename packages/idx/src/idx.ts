@@ -133,6 +133,8 @@ export interface IdxService {
     getFriendlyStatus(property: Property): string // TODO replace with property object
     getFullAddress(property: Property, encode?: boolean): string
 
+    getGoogleMapsKey(): string | null
+
     getIdxServices(): number[]
 
     getMLSVariables(serviceIds?: number[]): MLSService[]
@@ -2754,6 +2756,20 @@ const angularJsService = (
         return encode ? encodeURIComponent(address) : address
     }
 
+    function getGoogleMapsKey(): string | null {
+        let googleMapsKey = null
+        if (
+            sharedValues.integrations
+            && Object.prototype.hasOwnProperty.call(sharedValues.integrations, 'maps')
+            && Object.prototype.hasOwnProperty.call(sharedValues.integrations.maps, 'googleMaps')
+            && Object.prototype.hasOwnProperty.call(sharedValues.integrations.maps.googleMaps, 'accountId')
+            && sharedValues.integrations.maps.googleMaps.accountId !== ''
+        ) {
+            googleMapsKey = sharedValues.integrations.maps.googleMaps.accountId
+        }
+        return googleMapsKey
+    }
+
     return {
         fetchMembers,
         fetchOffices,
@@ -2765,6 +2781,7 @@ const angularJsService = (
         getDefaultWhereOptions,
         getFriendlyStatus,
         getFullAddress,
+        getGoogleMapsKey,
         getIdxServices,
         getListInstance,
         getListInstanceLinks,
