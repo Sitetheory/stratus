@@ -657,10 +657,7 @@ const angularJsService = (
             })
         }
 
-        if (
-            emitterName === 'init' ||
-            emitterName === 'sessionInit'
-        ) {
+        if (emitterName === 'init') {
             // Let's prep the requests for 'init' so they immediate call if this scope has already init
             instanceOnEmitters[uid] = instanceOnEmitters[uid] || {}
             instanceOnEmitters[uid][emitterName] = instanceOnEmitters[uid][emitterName] || []
