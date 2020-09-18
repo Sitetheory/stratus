@@ -1,5 +1,16 @@
-<div id="{{::elementId}}" data-ng-cloak aria-label="Google Maps Display" data-ng-if="initialized">
+<sa-boot></sa-boot>
+<div id="{{::elementId}}" data-ng-cloak aria-label="Google Maps Display">
+    <div
+            data-ng-if="!initialized || !mapInitialized"
+            data-layout="row"
+            data-layout-align="center center"
+            style="height: {{height}}; width: {{width}};"
+    >
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
     <sa-map
+            data-ng-if="initialized"
+            data-ng-show="mapInitialized"
             data-callback="{{::instancePath}}.mapInitialize"
             data-google-maps-key="{{::getGoogleMapsKey()}}"
             data-map-type="{{::mapType}}"

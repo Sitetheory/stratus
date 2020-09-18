@@ -289,6 +289,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     /** Loads when this.map renders */
     async ngAfterViewInit() {
+        // console.log('running ngAfterViewInit')
         try {
             await this.initGoogleMapsApi()
             this.map = new google.maps.Map(this.gMap.nativeElement, this.options)
@@ -300,9 +301,10 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             this.initialized = true
             // console.info(this.uid, 'Inited')
         } catch (e) {
-            console.error(this.uid, 'could not Init')
+            console.error(this.uid, 'could not Init', e)
         }
         this.initializing = false
+        // console.log('ngAfterViewInit done')
     }
 
     /**

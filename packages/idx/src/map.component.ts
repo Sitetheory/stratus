@@ -32,6 +32,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
 export type IdxMapScope = IdxComponentScope & {
     listId: string
     initialized: boolean
+    mapInitialized: boolean
     listInitialized: boolean
     mapMarkers: MarkerSettings[]
     map: MapComponent
@@ -80,8 +81,10 @@ Stratus.Components.IdxMap = {
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
             $scope.initialized = false
+            $scope.mapInitialized = false
             $scope.listInitialized = false
             $scope.googleMapsKey = $attrs.googleMapsKey || null
+            $scope.mapMarkers = []
             $scope.mapType = $attrs.mapType || 'roadmap'
             $scope.zoom = $attrs.zoom || 18
             $scope.zoomControl = $attrs.zoomControl || true
@@ -97,15 +100,25 @@ Stratus.Components.IdxMap = {
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
                     $scope.list = source
                     $scope.listInitialized = true
-                    $scope.initialized = true
+                    // $scope.initialized = true
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
-                Idx.on($scope.listId, 'pageChanged', (source: IdxListScope, pageNumber: number) => {
+                Idx.on($scope.listId, 'searched', (source: IdxListScope) => {
+                    // page changing and searched triggers 'searched'
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
             }
+            if ($scope.googleMapsKey) {
+                $scope.initialized = true
+            } else {
+                Idx.on('Idx', 'sessionInit', () => {
+                    console.log('session init')
+                    $scope.initialized = true
+                })
+            }
+
             Idx.emit('init', $scope)
         }
 
@@ -127,7 +140,8 @@ Stratus.Components.IdxMap = {
                         },
                         click: {
                             action: 'function',
-                            function: (marker: any, markerSetting: any) => {
+                            // function: (marker: any, markerSetting: any) => {
+                            function: () => {
                                 // TODO need option to enable scrolling
                                 if ($scope.list) {
                                     // Scroll to Model
@@ -155,6 +169,9 @@ Stratus.Components.IdxMap = {
         $scope.mapInitialize = (map: MapComponent) => {
             // console.log('idx map is running the map!!!!', map)
             $scope.map = map
+            $scope.$applyAsync(() => {
+                $scope.mapInitialized = true
+            })
             $scope.mapUpdate()
         }
 

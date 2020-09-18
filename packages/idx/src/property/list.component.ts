@@ -364,6 +364,7 @@ Stratus.Components.IdxPropertyList = {
                 }
 
                 // FIXME handle service
+                Idx.emit('searching', $scope, _.clone($scope.query))
 
                 // console.log('setting this URL', _.clone(where))
                 // console.log('$scope.query.where ending with', _.clone($scope.query.where))
@@ -381,7 +382,10 @@ Stratus.Components.IdxPropertyList = {
                 $scope.refreshSearchWidgetOptions()
 
                 // Grab the new property listings
-                resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                const results = Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                Idx.emit('searched', $scope, _.clone($scope.query))
+                resolve(results)
+                // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
             })
 
         /**
