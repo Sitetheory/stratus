@@ -13,6 +13,7 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
+import {isJSON} from '@stratusjs/core/misc'
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
 
@@ -47,6 +48,8 @@ export type IdxMapScope = IdxComponentScope & {
     width: number
     height: number
 
+    markerClickScroll: boolean
+
     mapInitialize(map: MapComponent): void
     mapUpdate(): void
 }
@@ -63,6 +66,7 @@ Stratus.Components.IdxMap = {
         scrollwheel: '@',
         height: '@',
         width: '@',
+        markerClickScroll: '@',
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
@@ -91,6 +95,8 @@ Stratus.Components.IdxMap = {
             $scope.scrollwheel = $attrs.scrollwheel || false
             $scope.height = $attrs.height || '500px'
             $scope.width = $attrs.width || '100%'
+            $scope.markerClickScroll = $attrs.markerClickScroll && isJSON($attrs.markerClickScroll) ?
+                JSON.parse($attrs.markerClickScroll) : false
 
             // Register this Map with the Property service
             Idx.registerMapInstance($scope.elementId, $scope)
@@ -142,8 +148,10 @@ Stratus.Components.IdxMap = {
                             action: 'function',
                             // function: (marker: any, markerSetting: any) => {
                             function: () => {
-                                // TODO need option to enable scrolling
-                                if ($scope.list) {
+                                if (
+                                    $scope.markerClickScroll &&
+                                    $scope.list)
+                                {
                                     // Scroll to Model
                                     $scope.list.scrollToModel(model)
                                 }
