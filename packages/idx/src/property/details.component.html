@@ -238,7 +238,7 @@
         <!-- parallax-element disabled, cannot use height altering on the entire widget -->
         <div class="secondary-image-container">
             <!-- TODO MLSL requires listrac: data-ng-click="return cms.obj.listtrac.track('lead');"-->
-            <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl getGoogleMapsKey|| Idx.sharedValues.contactUrl"
+            <a class="btn btn-alt btn-contact" data-ng-show="::contactUrl || Idx.sharedValues.contactUrl"
                target="_blank" data-ng-href="{{::contactUrl || Idx.sharedValues.contactUrl}}{{(Idx.sharedValues.contactCommentVariable ? '?' + Idx.sharedValues.contactCommentVariable + '=' + getFullAddress(true) : '')}}"
                aria-label="Contact an Agent Link"
             >
@@ -254,7 +254,7 @@
                  aria-label="Background Image of the Listing"
             >
                 <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::getStreetAddress()}}"/>
-                <img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg" alt="No Image Available">
+                <img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg" alt="No Image Available"/>
             </div>
         </div>
 
