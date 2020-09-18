@@ -49,6 +49,7 @@ export type IdxMapScope = IdxComponentScope & {
     height: number
 
     markerClickScroll: boolean
+    markerClickHighlight: boolean
 
     mapInitialize(map: MapComponent): void
     mapUpdate(): void
@@ -97,6 +98,8 @@ Stratus.Components.IdxMap = {
             $scope.width = $attrs.width || '100%'
             $scope.markerClickScroll = $attrs.markerClickScroll && isJSON($attrs.markerClickScroll) ?
                 JSON.parse($attrs.markerClickScroll) : false
+            $scope.markerClickHighlight = $attrs.markerClickHighlight && isJSON($attrs.markerClickHighlight) ?
+                JSON.parse($attrs.markerClickHighlight) : false
 
             // Register this Map with the Property service
             Idx.registerMapInstance($scope.elementId, $scope)
@@ -148,14 +151,16 @@ Stratus.Components.IdxMap = {
                             action: 'function',
                             // function: (marker: any, markerSetting: any) => {
                             function: () => {
-                                if (
-                                    $scope.markerClickScroll &&
-                                    $scope.list)
-                                {
-                                    // Scroll to Model
-                                    $scope.list.scrollToModel(model)
+                                if ($scope.list) {
+                                    if ($scope.markerClickScroll) {
+                                        // Scroll to Model
+                                        $scope.list.scrollToModel(model)
+                                    }
+                                    if ($scope.markerClickHighlight) {
+                                        // Highlight the model for 6 seconds
+                                        $scope.list.highlightModel(model, 6000)
+                                    }
                                 }
-                                // $scope.displayPropertyDetails(listing)
                             }
                         }
                     })

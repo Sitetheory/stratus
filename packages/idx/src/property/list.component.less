@@ -88,6 +88,7 @@ stratus-idx-property-list {
       md-card {
         &.property-item {
           box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
+          transition: background-color linear 1000ms;
 
           /* IDX Image */
           .property-image {
@@ -222,6 +223,9 @@ stratus-idx-property-list {
               text-align: center;
               color: #888;
             }
+          }
+          &.highlight {
+            background-color: rgba(0, 0, 0, 0.12);
           }
         }
       }

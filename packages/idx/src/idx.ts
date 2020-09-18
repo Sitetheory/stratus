@@ -177,7 +177,9 @@ export type IdxListScope<T = LooseObject> = IdxComponentScope & {
 
     displayModelDetails(model: T, ev?: any): void
     getPageModels(): T[]
+    highlightModel(model: T, timeout?: number): void
     scrollToModel(model: T): void
+    unhighlightModel(model: T): void
 }
 
 export type IdxSearchScope = IdxComponentScope & {
@@ -405,11 +407,21 @@ interface MongoFilterQuery {
 export interface Office extends LooseObject {
     id: string
     OfficeKey: string
+
+    _unmapped?: {
+        [key: string]: unknown
+        _highlight?: boolean
+    }
 }
 
 export interface Member extends LooseObject {
     id: string
     MemberKey: string
+
+    _unmapped?: {
+        [key: string]: unknown
+        _highlight?: boolean
+    }
 }
 
 export interface Property extends LooseObject {
@@ -469,6 +481,7 @@ export interface Property extends LooseObject {
     _unmapped?: {
         [key: string]: unknown
         CoordinateModificationTimestamp?: Date
+        _highlight?: boolean
     }
 }
 

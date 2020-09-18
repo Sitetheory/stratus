@@ -521,6 +521,28 @@ Stratus.Components.IdxPropertyList = {
          */
         $scope.getMLSDisclaimer = (html?: boolean): string => html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
 
+        $scope.highlightModel = (model: Property, timeout?: number): void => {
+            timeout = timeout || 0
+            model._unmapped = model._unmapped || {}
+            $scope.$applyAsync(() => {
+                model._unmapped._highlight = true
+            })
+            if (timeout > 0) {
+                $timeout(() => {
+                    $scope.unhighlightModel(model)
+                }, timeout)
+            }
+        }
+
+        $scope.unhighlightModel = (model: Property): void => {
+            if (model) {
+                model._unmapped = model._unmapped || {}
+                $scope.$applyAsync(() => {
+                    model._unmapped._highlight = false
+                })
+            }
+        }
+
         /**
          * Either popup or load a new page with the
          * @param model property object
