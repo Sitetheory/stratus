@@ -49,6 +49,8 @@ export interface MarkerSettings {
     position: google.maps.LatLngLiteral | google.maps.LatLng
     title?: string
     // Adding a Label when there is a shape does not look good
+    icon?: string | google.maps.Icon | google.maps.Symbol
+    iconHover?: string | google.maps.Icon | google.maps.Symbol
     label?: string | google.maps.MarkerLabel
     clickable?: boolean
     options?: google.maps.MarkerOptions
@@ -219,6 +221,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     @Input() scrollwheel = false
     @Input() disableDoubleClickZoom = false
     @Input() center: google.maps.LatLng | google.maps.LatLngLiteral = {lat: 37.4220656, lng: -122.0862784}
+    @Input() defaultIcon: string | google.maps.Icon | google.maps.Symbol
+    @Input() defaultIconHover: string | google.maps.Icon | google.maps.Symbol
     options: google.maps.MapOptions = {
         mapTypeId: this.mapType,
         center: this.center,
@@ -298,6 +302,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             })
             this.processProvidedMarkersPath()
             this.processProvidedCallback()
+
             this.initialized = true
             // console.info(this.uid, 'Inited')
         } catch (e) {
@@ -493,11 +498,23 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (marker instanceof google.maps.Marker) {
             realMarker = marker as google.maps.Marker
         } else {
+            marker.icon = marker.icon || this.defaultIcon
             realMarker = new google.maps.Marker(marker)
             if (marker.hasOwnProperty('options')) {
                 realMarker.setOptions(marker.options)
             }
-            // Only can add click event if MarkerSettings
+
+            // Only can add hover event if in MarkerSettings or defaulted
+            // marker.iconHover = marker.iconHover || this.defaultIconHover
+            if (marker.iconHover || this.defaultIconHover) {
+                realMarker.addListener('mouseover', () => {
+                    realMarker.setIcon(marker.iconHover || this.defaultIconHover)
+                })
+                realMarker.addListener('mouseout', () => {
+                    realMarker.setIcon(marker.icon || this.defaultIcon)
+                })
+            }
+            // Only can add click event if in MarkerSettings
             realMarker.addListener('click', () => {
                 this.mapClick(realMarker, marker as MarkerSettings)
             })

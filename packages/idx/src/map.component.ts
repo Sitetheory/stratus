@@ -50,6 +50,8 @@ export type IdxMapScope = IdxComponentScope & {
 
     markerClickScroll: boolean
     markerClickHighlight: boolean
+    markerIcon: string
+    markerIconHover: string
 
     mapInitialize(map: MapComponent): void
     mapUpdate(): void
@@ -100,6 +102,8 @@ Stratus.Components.IdxMap = {
                 JSON.parse($attrs.markerClickScroll) : false
             $scope.markerClickHighlight = $attrs.markerClickHighlight && isJSON($attrs.markerClickHighlight) ?
                 JSON.parse($attrs.markerClickHighlight) : false
+            $scope.markerIcon = $attrs.markerIcon || null
+            $scope.markerIconHover = $attrs.markerIconHover || null
 
             // Register this Map with the Property service
             Idx.registerMapInstance($scope.elementId, $scope)
@@ -147,6 +151,14 @@ Stratus.Components.IdxMap = {
                         options: {
                             animation: 2 // DROP: 2 | BOUNCE: 1
                         },
+                        // Example icon
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A
+                        // &psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1.1
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&color=ff333333&scale=1.1
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-blue.png&psize=16
+                        // &font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-blue.png?scale=1
+                        // https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2.png
                         click: {
                             action: 'function',
                             // function: (marker: any, markerSetting: any) => {
