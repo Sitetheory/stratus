@@ -144,7 +144,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsLinkPopup = $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ?
                 JSON.parse($attrs.detailsLinkPopup) : true
             /** type {string} */
-            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || '/property/details'
+            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || ''
             /** type {string} */
             $scope.detailsLinkTarget = $attrs.detailsLinkTarget || '_self'
             /** type {string|null} */
