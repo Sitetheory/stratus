@@ -167,10 +167,16 @@
                     </div>
                     <!-- TODO need a decent way to make a title for Property listings -->
                     <!--h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3-->
-                    <div class="font-body description" data-ng-if="::model.data.PublicRemarks" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description"></div>
+                    <div class="font-body description" data-ng-if="::model.data.PublicRemarks && !hideVariables.includes('PublicRemarks')" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description"></div>
                     <div class="response-container">
-                        <a data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded"
-                           data-ng-href="{{::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded}}"
+                        <a data-ng-if="::model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')"
+                           data-ng-href="{{::model.data.VirtualTourURLUnbranded}}"
+                           class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
+                        >
+                            VTour
+                        </a>
+                        <a data-ng-if="::!(model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')) && model.data.VirtualTourURLBranded && !hideVariables.includes('VirtualTourURLBranded')"
+                           data-ng-href="{{::model.data.VirtualTourURLBranded}}"
                            class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
                         >
                             VTour
