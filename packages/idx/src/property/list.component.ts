@@ -144,7 +144,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsLinkPopup = $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ?
                 JSON.parse($attrs.detailsLinkPopup) : true
             /** type {string} */
-            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || '/property/details'
+            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || ''
             /** type {string} */
             $scope.detailsLinkTarget = $attrs.detailsLinkTarget || '_self'
             /** type {string|null} */
@@ -289,7 +289,7 @@ Stratus.Components.IdxPropertyList = {
             refresh?: boolean,
             updateUrl?: boolean
         ): Promise<Collection<Property>> =>
-            $q((resolve: any) => {
+            $q(async (resolve: any) => {
                 query = query || _.clone($scope.query) || {}
                 query.where = query.where || {}
                 // console.log('searchProperties has query', _.clone(query))
@@ -382,7 +382,7 @@ Stratus.Components.IdxPropertyList = {
                 $scope.refreshSearchWidgetOptions()
 
                 // Grab the new property listings
-                const results = Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
                 Idx.emit('searched', $scope, _.clone($scope.query))
                 resolve(results)
                 // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
