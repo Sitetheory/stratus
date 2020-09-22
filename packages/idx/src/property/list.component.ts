@@ -564,7 +564,7 @@ Stratus.Components.IdxPropertyList = {
                     'contact-name'?: string,
                     'contact-email'?: string,
                     'contact-phone'?: string,
-                    'hide-variables'?: string[],
+                    'hide-variables'?: string, // a string array
                     template?: string,
                     'url-load'?: boolean,
                 } = {
@@ -588,7 +588,7 @@ Stratus.Components.IdxPropertyList = {
                     templateOptions['contact-phone'] = $scope.contactPhone
                 }
                 if ($scope.detailsHideVariables.length > 0) {
-                    templateOptions['hide-variables'] = $scope.detailsHideVariables
+                    templateOptions['hide-variables'] = JSON.stringify($scope.detailsHideVariables)
                 }
                 if ($scope.detailsTemplate) {
                     templateOptions.template = $scope.detailsTemplate
