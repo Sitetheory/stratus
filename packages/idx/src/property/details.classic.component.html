@@ -215,7 +215,7 @@
 						ng-model="model"
 						data-ng-repeat="detail in ::minorDetails"
 						section-name="{{::detail.section}}"
-						items={{::detail.items}}
+						items="{{::detail.items | json}}"
 				>
 				</stratus-idx-property-details-sub-section>
 
