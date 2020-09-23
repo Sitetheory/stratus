@@ -215,6 +215,9 @@ sa-selector {
         padding-left: 10px;
       }
     }
+    .selected-message-box {
+      // extra information for the list messages (currently only used for an empty list)
+    }
     .selected-list-container {
       width: 100%;
     }
@@ -223,6 +226,13 @@ sa-selector {
       padding: 12px 16px;
       background: rgba(0, 0, 0, 0.04);
       border-radius: 2px;
+      &.active {
+        // extra options for status >= 1
+      }
+      &.inactive {
+        // extra options for status < 1
+        background: #DDD;
+      }
     }
     .btn.btn-delete, .btn.btn-edit {
       float: right;

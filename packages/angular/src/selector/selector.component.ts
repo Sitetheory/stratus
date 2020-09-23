@@ -16,12 +16,17 @@ import {FormControl} from '@angular/forms'
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
 
 // External
-import {Observable, Subject, Subscriber} from 'rxjs'
+import {
+    Observable,
+    Subject,
+    Subscriber
+} from 'rxjs'
 // import {map, startWith} from 'rxjs/operators'
 
 // SVG Icons
 import {DomSanitizer} from '@angular/platform-browser'
 import {MatIconRegistry} from '@angular/material/icon'
+import {IconOptions} from '@angular/material/icon/icon-registry'
 
 // RXJS
 
@@ -38,8 +43,8 @@ import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Core Classes
 import {EventManager} from '@stratusjs/core/events/eventManager'
-import {ModelBase} from '@stratusjs/core/datastore/modelBase'
 import {EventBase} from '@stratusjs/core/events/eventBase'
+import {cookie} from '@stratusjs/core/environment'
 
 // AngularJS Classes
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -109,7 +114,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     data: any
     collection?: EventBase
     // @Output() model: any;
-    model?: ModelBase
+    model?: Model
 
     // Observable Connection
     dataSub: Observable<[]>
@@ -128,6 +133,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
     // UI Flags
     styled = false
+    empty = false
 
     constructor(
         private iconRegistry: MatIconRegistry,
@@ -142,11 +148,14 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
 
+        // Declare Observable with Subscriber (Only Happens Once)
+        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
+
         // SVG Icons
-        iconRegistry.addSvgIcon(
-            'selector:delete',
-            sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg')
-        )
+        _.forEach({
+            selector_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
+            selector_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg'
+        }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
@@ -185,9 +194,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                 data.on('change', onDataChange)
                 onDataChange()
             })
-
-        // Declare Observable with Subscriber (Only Happens Once)
-        this.dataSub = new Observable(subscriber => this.dataDefer(subscriber))
 
         // AutoComplete Binding
         // this.filteredModels = this.selectCtrl.valueChanges
@@ -257,6 +263,8 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         const models = this.dataRef()
         if (!models || !models.length) {
             console.error('unable to remove model from selection:', models)
+            // Still refresh if empty
+            this.refresh()
             return
         }
         let index: number = models.indexOf(model)
@@ -305,22 +313,26 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     // Ensures Data is populated before hitting the Subscriber
     dataDefer(subscriber: Subscriber<any>) {
         this.subscriber = this.subscriber || subscriber
-        if (!this.subscriber) {
-            return
-        }
-        const models = this.dataRef()
-        if (!models || !models.length) {
+        if (!this.subscriber || !this.model || !this.model.completed) {
             setTimeout(() => {
                 this.dataDefer(subscriber)
             }, 500)
             return
         }
-        // console.log('pushed models to subscriber.')
+        const models = this.dataRef()
+        this.empty = !models.length
         this.subscriber.next(models)
+        /* */
+        // FIXME: This gets called twice per cycle...
+        if (cookie('env')) {
+            console.log('pushed models to subscriber:', models)
+        }
+        /* */
+        this.refresh()
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
 
-    dataRef(): any {
+    dataRef(): Array<any> {
         if (!this.model) {
             return []
         }
@@ -385,25 +397,42 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         _.forEach(models, (model) => model.priority = priority++)
     }
 
-    getSVG(url: string) {
-        console.log('get:', url)
-        return this.iconRegistry.getSvgIconFromUrl(
-            this.sanitizer.bypassSecurityTrustResourceUrl(url)
-        )
+    getSvg(url: string, options?: IconOptions): Observable<string> {
+        const uid = this.addSvgIcon(url, options)
+        return new Observable<string>((subscriber: Subscriber<string>) => {
+            this.iconRegistry
+                .getNamedSvgIcon(uid)
+                .subscribe({
+                    /* *
+                    next(svg: SVGElement) {
+                        console.log(`getSvg(${url}):`, svg)
+                    },
+                    /* */
+                    error(err) {
+                        console.error(`getSvg(${url}): ${err}`)
+                    },
+                    complete() {
+                        // console.log(`getSvg(${url}): completed`)
+                        subscriber.next(uid)
+                    }
+                })
+        })
     }
 
-    addSVG(url: string, options?: object) {
-        console.log('add:', url)
+    /**
+     * This function marks a url safe with the DomSanitizer and returns a uid
+     * https://material.angular.io/components/icon/overview#svg-icons
+     */
+    addSvgIcon(url: string, options?: IconOptions) : string {
         if (url in this.svgIcons) {
             return this.svgIcons[url]
         }
         if (!options) {
             options = {}
         }
-        this.svgIcons[url] = _.uniqueId('selector:')
-        const safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url)
-        this.iconRegistry.addSvgIcon(this.svgIcons[url], safeUrl, options)
-        return this.svgIcons[url]
+        const uid = this.svgIcons[url] = _.uniqueId('selector_svg')
+        this.iconRegistry.addSvgIcon(uid, this.sanitizer.bypassSecurityTrustResourceUrl(url), options)
+        return uid
     }
 
     // findImage(model: any): string {
