@@ -57,6 +57,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     detailsLinkPopup: boolean
     detailsLinkUrl: string
     detailsLinkTarget: '_self' | '_blank'
+    detailsHideVariables?: string[]
     detailsTemplate?: string
     query: CompileFilterOptions
     orderOptions: object | any // TODO need to specify
@@ -90,6 +91,7 @@ Stratus.Components.IdxPropertyList = {
         detailsLinkPopup: '@',
         detailsLinkUrl: '@',
         detailsLinkTarget: '@',
+        detailsHideVariables: '@',
         detailsTemplate: '@',
         contactEmail: '@',
         contactName: '@',
@@ -136,18 +138,15 @@ Stratus.Components.IdxPropertyList = {
             $scope.collection = new Collection<Property>({})
             /**
              * Allow query to be loaded initially from the URL
-             * type {boolean}
              */
             $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
             $scope.searchOnLoad = $attrs.searchOnLoad && isJSON($attrs.searchOnLoad) ? JSON.parse($attrs.searchOnLoad) : true
-            /** type {boolean} */
             $scope.detailsLinkPopup = $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ?
                 JSON.parse($attrs.detailsLinkPopup) : true
-            /** type {string} */
             $scope.detailsLinkUrl = $attrs.detailsLinkUrl || ''
-            /** type {string} */
             $scope.detailsLinkTarget = $attrs.detailsLinkTarget || '_self'
-            /** type {string|null} */
+            $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
+                JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
 
             // TODO added backwards compatible options <--> query parameter until the next version
@@ -565,6 +564,7 @@ Stratus.Components.IdxPropertyList = {
                     'contact-name'?: string,
                     'contact-email'?: string,
                     'contact-phone'?: string,
+                    'hide-variables'?: string, // a string array
                     template?: string,
                     'url-load'?: boolean,
                 } = {
@@ -586,6 +586,9 @@ Stratus.Components.IdxPropertyList = {
                 }
                 if ($scope.contactPhone) {
                     templateOptions['contact-phone'] = $scope.contactPhone
+                }
+                if ($scope.detailsHideVariables.length > 0) {
+                    templateOptions['hide-variables'] = JSON.stringify($scope.detailsHideVariables)
                 }
                 if ($scope.detailsTemplate) {
                     templateOptions.template = $scope.detailsTemplate

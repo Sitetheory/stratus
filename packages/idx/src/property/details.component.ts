@@ -68,6 +68,7 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     integrations?: WidgetIntegrations
     minorDetails: SubSectionOptions[]
     alternateMinorDetails: SubSectionOptions[]
+    hideVariables: string[]
     instancePath: string
     mapMarkers: MarkerSettings[]
 
@@ -97,6 +98,7 @@ Stratus.Components.IdxPropertyDetails = {
         contactName: '@',
         contactPhone: '@',
         contactWebsiteUrl: '@',
+        hideVariables: '@',
         options: '@',
         template: '@',
         defaultListOptions: '@'
@@ -147,6 +149,10 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.options.openhouses = $attrs.openhouses && isJSON($attrs.openhouses) ? JSON.parse($attrs.openhouses) : {
                 fields: '*'// show all OH details
             }
+
+            // Items that the user might not what to appear on their feed here. Note that this is human chosen and may
+            // not adhere to MLS rules
+            $scope.hideVariables = $attrs.hideVariables && isJSON($attrs.hideVariables) ? JSON.parse($attrs.hideVariables) : []
 
             // The List's default query is needed to avoid showing the entire Query in the URL
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
@@ -1203,6 +1209,7 @@ Stratus.Components.IdxPropertyDetails = {
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
              */
+            $ctrl.hideDetailVariables(minorDetails, $scope.hideVariables)
             $scope.minorDetails = minorDetails
             $scope.alternateMinorDetails = alternateMinorDetails
 
@@ -1261,6 +1268,23 @@ Stratus.Components.IdxPropertyDetails = {
                 $ctrl.prepareMapMarkers()
             }
         })
+
+        /**
+         * Remove certain fields from displaying in the Details section by removing their display object
+         * @param detailOptions - SubSectionOptions[] to alter
+         * @param variablesToHide - List of variable names to hide
+         */
+        $ctrl.hideDetailVariables = (detailOptions: SubSectionOptions[], variablesToHide: string[]): void => {
+            if (variablesToHide.length > 0) {
+                detailOptions.forEach((section) => {
+                    Object.keys(section.items).forEach((variableName) => {
+                        if (variablesToHide.includes(variableName)) {
+                            delete section.items[variableName]
+                        }
+                    })
+                })
+            }
+        }
 
         $ctrl.prepareMapMarkers = (): void => {
             if (
