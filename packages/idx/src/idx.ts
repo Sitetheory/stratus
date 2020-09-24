@@ -478,6 +478,7 @@ export interface Property extends LooseObject {
     // Custom
     _ServiceId: number
     _Class: string
+    _IsRental?: boolean
     _unmapped?: {
         [key: string]: unknown
         CoordinateModificationTimestamp?: Date
@@ -2707,10 +2708,14 @@ const angularJsService = (
 
     /**
      * Grabs a shorten more human and code friendly name of the property's status
-     * @param property - Property Object
-     * @returns 'Active' | 'Contingent' | 'Closed'
+     * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
+     * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
+     * preferredStatus = 'Rented', a Closed listing will either be 'Sold' or 'Rented'
      */
-    function getFriendlyStatus(property: Property): string {
+    function getFriendlyStatus(
+        property: Property,
+        preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
+    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' |'Rented' | string {
         let statusName = ''
         if (
             Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
@@ -2734,11 +2739,80 @@ const angularJsService = (
                     statusName = 'Contingent'
                     break
                 }
-                case 'Sold':
-                case 'Leased/Option':
-                case 'Leased/Rented': {
-                    statusName = 'Closed'
-                    break
+                default: statusName = getFriendlyClosedStatus(property, statusName, preferredStatus)
+            }
+        }
+        return statusName
+    }
+
+    /**
+     * Grabs a full/longer name of the property's status. Mostly intended to properly show the normal/rent status
+     * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
+     * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
+     * preferredStatus = 'Rented', a Closed listing will either be 'Sold' or 'Rented'
+     */
+    function getFullStatus(
+        property: Property,
+        preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
+    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' |'Rented' | string {
+        let statusName = ''
+        if (
+            Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
+            property.MlsStatus !== ''
+        ) {
+            statusName = property.MlsStatus
+        } else if (
+            Object.prototype.hasOwnProperty.call(property, 'StandardStatus') &&
+            property.StandardStatus !== ''
+        ) {
+            statusName = property.StandardStatus
+        }
+        if (statusName !== '') {
+            statusName = getFriendlyClosedStatus(property, statusName, preferredStatus)
+        }
+        return statusName
+    }
+
+    /**
+     * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
+     * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
+     * preferredStatus = 'Rented', a Closed listing will either be 'Sold' or 'Rented'
+     */
+    function getFriendlyClosedStatus(
+        property: Property,
+        statusName: string,
+        preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
+    ): string {
+        if (statusName !== '') {
+            if (preferredStatus === 'Closed') {
+                // Ensure closed statuses are always converted to Closed
+                switch (statusName) {
+                    case 'Sold':
+                    case 'Leased/Option':
+                    case 'Leased/Rented': {
+                        statusName = 'Closed'
+                        break
+                    }
+                }
+            } else {
+                // The preferred is Sold / Leased / Rented now
+                // Note some MLSs might not have listings with the wording of leased/rented
+                switch (statusName) {
+                    case 'Closed':
+                    case 'Sold':
+                        statusName = 'Sold'
+                        if (
+                            Object.prototype.hasOwnProperty.call(property, '_IsRental') &&
+                            property._IsRental
+                        ) {
+                            statusName = preferredStatus
+                        }
+                        break
+                    case 'Leased/Option':
+                    case 'Leased/Rented': {
+                        statusName = preferredStatus
+                        break
+                    }
                 }
             }
         }
@@ -2824,6 +2898,7 @@ const angularJsService = (
         getDefaultWhereOptions,
         getFriendlyStatus,
         getFullAddress,
+        getFullStatus,
         getGoogleMapsKey,
         getIdxServices,
         getListInstance,
