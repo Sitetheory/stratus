@@ -44,7 +44,7 @@
                     <ul class="details-specs primary_font">
                         <li>
                             <!-- TODO need a prettier word for the status and a detail of real status -->
-                            <span data-ng-bind="::model.data.MlsStatus || model.data.StandardStatus" aria-label="Status"></span>
+                            <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)" aria-label="Status"></span>
                         </li>
                         <li data-ng-if="::model.data.BedroomsTotal > 0">
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
@@ -63,7 +63,7 @@
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
                         <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
-                            Closed on
+                            <span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
                             <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
                         <li data-ng-if="::model.data.OnMarketDate">
@@ -162,7 +162,7 @@
                 </div>
                 <div class="details-right">
                     <div class="list-price font-secondary" data-ng-if="::model.data.ClosePrice || model.data.ListPrice">
-                        <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? 'Sold for' : 'Listed at'"></span>
+                        <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? Idx.getFriendlyStatus(model.data, preferredStatus) + ' for' : 'Listed at'"></span>
                         <span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)"></span>
                     </div>
                     <!-- TODO need a decent way to make a title for Property listings -->

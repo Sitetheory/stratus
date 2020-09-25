@@ -69,6 +69,7 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     minorDetails: SubSectionOptions[]
     alternateMinorDetails: SubSectionOptions[]
     hideVariables: string[]
+    preferredStatus: 'Closed' | 'Leased' | 'Rented'
     instancePath: string
     mapMarkers: MarkerSettings[]
 
@@ -99,6 +100,7 @@ Stratus.Components.IdxPropertyDetails = {
         contactPhone: '@',
         contactWebsiteUrl: '@',
         hideVariables: '@',
+        preferredStatus: '@',
         options: '@',
         template: '@',
         defaultListOptions: '@'
@@ -153,6 +155,7 @@ Stratus.Components.IdxPropertyDetails = {
             // Items that the user might not what to appear on their feed here. Note that this is human chosen and may
             // not adhere to MLS rules
             $scope.hideVariables = $attrs.hideVariables && isJSON($attrs.hideVariables) ? JSON.parse($attrs.hideVariables) : []
+            $scope.preferredStatus = $attrs.preferredStatus || 'Closed'
 
             // The List's default query is needed to avoid showing the entire Query in the URL
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
@@ -1467,8 +1470,6 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getMLSDisclaimer = (html?: boolean): string => html ? $scope.disclaimerHTML : $scope.disclaimerString
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
-
-        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
             // TODO need to kill any attached slideshows

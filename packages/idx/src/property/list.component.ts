@@ -58,6 +58,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     detailsLinkUrl: string
     detailsLinkTarget: '_self' | '_blank'
     detailsHideVariables?: string[]
+    preferredStatus: 'Closed' | 'Leased' | 'Rented'
     detailsTemplate?: string
     query: CompileFilterOptions
     orderOptions: object | any // TODO need to specify
@@ -93,6 +94,7 @@ Stratus.Components.IdxPropertyList = {
         detailsLinkTarget: '@',
         detailsHideVariables: '@',
         detailsTemplate: '@',
+        preferredStatus: '@',
         contactEmail: '@',
         contactName: '@',
         contactPhone: '@',
@@ -148,6 +150,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
                 JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
+            $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
             // TODO added backwards compatible options <--> query parameter until the next version
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) :
@@ -565,6 +568,7 @@ Stratus.Components.IdxPropertyList = {
                     'contact-email'?: string,
                     'contact-phone'?: string,
                     'hide-variables'?: string, // a string array
+                    'preferred-status'?: string,
                     template?: string,
                     'url-load'?: boolean,
                 } = {
@@ -589,6 +593,9 @@ Stratus.Components.IdxPropertyList = {
                 }
                 if ($scope.detailsHideVariables.length > 0) {
                     templateOptions['hide-variables'] = JSON.stringify($scope.detailsHideVariables)
+                }
+                if ($scope.preferredStatus) {
+                    templateOptions['preferred-status'] = $scope.preferredStatus
                 }
                 if ($scope.detailsTemplate) {
                     templateOptions.template = $scope.detailsTemplate
@@ -649,8 +656,6 @@ Stratus.Components.IdxPropertyList = {
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
-
-        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
         }
