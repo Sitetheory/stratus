@@ -1,5 +1,6 @@
 dist: xenial
-language: javascript
+os: linux
+language: nodejs
 services:
   - mongodb
   - mysql
