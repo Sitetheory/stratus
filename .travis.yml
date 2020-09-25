@@ -1,9 +1,10 @@
 dist: xenial
+language: javascript
 services:
   - mongodb
   - mysql
-  - redis-server
-matrix:
+  - redis
+jobs:
   include:
     - language: node_js
       # EOL: 2021-04-30
