@@ -162,8 +162,6 @@ export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
     localDir: string
     Idx: IdxService
 
-    /** @deprecated */
-    getUid(): string // FIXME this isn't returning the uid. Use elementId.
     on(emitterName: string, callback: IdxEmitter): void
     remove(): void
 }

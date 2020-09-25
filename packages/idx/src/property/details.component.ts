@@ -1471,8 +1471,6 @@ Stratus.Components.IdxPropertyDetails = {
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
 
-        $scope.getUid = (): string => $scope.elementId
-
         $scope.remove = (): void => {
             // TODO need to kill any attached slideshows
         }

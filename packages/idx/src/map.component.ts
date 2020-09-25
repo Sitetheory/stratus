@@ -219,8 +219,6 @@ Stratus.Components.IdxMap = {
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
 
-        $scope.getUid = (): string => $scope.elementId
-
         $scope.remove = (): void => {
         }
     },
