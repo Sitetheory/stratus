@@ -38,15 +38,15 @@ export class BackendService {
     }
 
     get(url: string): Observable<HttpResponse<any>> {
-        if (!_.has(this.cache, url)) {
-            const now = new Date()
-            const data = this.http.get(url, { observe: 'response' })
-            this.cache[url] = {
-                fetched: now.valueOf(),
-                data
-            }
-            return data
+        if (_.has(this.cache, url)) {
+            return this.cache[url].data
         }
-        return this.cache[url].data
+        const now = new Date()
+        const data = this.http.get(url, { observe: 'response' })
+        this.cache[url] = {
+            fetched: now.valueOf(),
+            data
+        }
+        return data
     }
 }

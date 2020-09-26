@@ -1,6 +1,10 @@
-<div class="tree-node-content">
-    <!-- show progress while saving -->
-    <!-- <mat-progress-bar mode="indeterminate" *ngIf="node.model.pending"></mat-progress-bar> -->
+<!-- show progress while initializing -->
+<!--
+<mat-progress-bar mode="indeterminate" *ngIf="!isStyled || !isInitialized"></mat-progress-bar>
+-->
+
+<div class="tree-node-content"
+     *ngIf="isInitialized && isStyled">
 
     <!-- use a disabled button to provide padding for tree leaf -->
     <button mat-icon-button

@@ -7,7 +7,8 @@
 .cdk-drag-preview {
   .content-type {
     margin-bottom: 2px;
-    md-icon{
+    md-icon,
+    mat-icon {
       margin-right: 4px;
       height: 14px;
       width: 14px;
@@ -22,7 +23,8 @@
     }
   }
   .no-image-icon {
-    md-icon {
+    md-icon,
+    mat-icon {
       height: 28px;
       width: 28px;
       min-height: 28px;
@@ -79,7 +81,8 @@ md-autocomplete,
     .column-title {
       opacity: .3;
     }
-    md-icon.selected-icon {
+    md-icon.selected-icon,
+    mat-icon.selected-icon {
       z-index: 5;
       height: 40px;
       width: 40px;
