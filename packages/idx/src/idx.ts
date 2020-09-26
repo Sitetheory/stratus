@@ -500,6 +500,7 @@ const angularJsService = (
     $injector: angular.auto.IInjectorService,
     $http: angular.IHttpService,
     $location: angular.ILocationService,
+    $mdToast: angular.material.IToastService,
     $q: angular.IQService,
     $rootScope: angular.IRootScopeService,
     $window: angular.IWindowService,
@@ -931,7 +932,7 @@ const angularJsService = (
                     resolve()
                 }
             } catch (err) {
-                console.error('error', err)
+                console.error('tokenKeepAuth Error:', err)
                 reject(err)
             }
         })
@@ -970,12 +971,10 @@ const angularJsService = (
                     tokenHandleGoodResponse(response, keepAlive)
                     resolve()
                 } else {
-                    tokenHandleBadResponse(response)
-                    reject()
+                    reject(tokenHandleBadResponse(response))
                 }
             }, (response: TokenResponse) => { // TODO interface a response
-                tokenHandleBadResponse(response)
-                reject()
+                reject(tokenHandleBadResponse(response))
             })
         })
     }
@@ -1161,17 +1160,27 @@ const angularJsService = (
      * Functions to do if the token retrieval fails. For now it just outputs the errors
      * @param response -
      */
-    function tokenHandleBadResponse(response: TokenResponse | any): void {
+    function tokenHandleBadResponse(response: TokenResponse | any): string | any {
+        let errorMessage: any = 'Token supplied is invalid or blank'
         if (
             typeof response === 'object' &&
             Object.prototype.hasOwnProperty.call(response, 'data') &&
             Object.prototype.hasOwnProperty.call(response.data, 'errors') &&
             Object.prototype.hasOwnProperty.call(response.data.errors, 'length')
         ) {
-            console.error(response.data.errors)
+            // console.error('Token Error', response.data.errors)
+            errorMessage = response.data.errors
         } else {
-            console.error(response)
+            // console.error('Token Error', response)
         }
+        $mdToast.show(
+            $mdToast.simple()
+                .textContent('Unable to authorize Idx feed!')
+                .toastClass('errorMessage')
+                .position('top right')
+                .hideDelay(5000)
+        )
+        return errorMessage
     }
 
     /**

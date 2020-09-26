@@ -383,11 +383,15 @@ Stratus.Components.IdxPropertyList = {
                 // Keep the Search widgets up to date
                 $scope.refreshSearchWidgetOptions()
 
-                // Grab the new property listings
-                const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
-                Idx.emit('searched', $scope, _.clone($scope.query))
-                resolve(results)
-                // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                try {
+                    // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                    // Grab the new property listings
+                    const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                    Idx.emit('searched', $scope, _.clone($scope.query))
+                    resolve(results)
+                } catch (e) {
+                    console.error('Unable to fetchProperties:', e)
+                }
             })
 
         /**
