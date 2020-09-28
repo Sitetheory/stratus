@@ -255,7 +255,8 @@
                 >
                     <md-input-container flex>
                         <label>Restrict Data Source</label>
-                        <md-select data-ng-model="options.query.service" placeholder="Restrict Data Source" multiple>
+                        <!-- Multiple fields disabled for now as pagination is broken -->
+                        <md-select data-ng-model="options.query.service" placeholder="Restrict Data Source" required>
                             <md-option data-ng-repeat="mls in getMLSVariables()" data-ng-value="mls.id">
                                 {{mls.name}}
                             </md-option>

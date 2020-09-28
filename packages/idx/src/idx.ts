@@ -774,7 +774,7 @@ const angularJsService = (
             instanceLink.Search[uid] = []
         }
         if (listUid) {
-            console.log('added', uid, 'to', listUid, 'instanceLink')
+            // console.log('added', uid, 'to', listUid, 'instanceLink')
             instanceLink.Search[uid].push(listUid)
             if (!Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
                 instanceLink.List[listUid] = []
@@ -2269,7 +2269,7 @@ const angularJsService = (
         apiModel: string,
         compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
     ): Promise<Collection<T>> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         options.where = options.where || {}
         options.order = options.order || []
         options.page = options.page || 1
@@ -2285,6 +2285,10 @@ const angularJsService = (
 
         if (typeof options.service === 'number') {
             options.service = [options.service]
+        }
+        // FIXME temp bandaid here to require a service
+        if (options.service.length === 0) {
+            options.service = [0]
         }
 
         const apiModelSingular = getSingularApiModelName(apiModel)
@@ -2432,7 +2436,7 @@ const angularJsService = (
     ): Promise<Model<T>> {
         await tokenKeepAuth()
 
-        options.service = options.service || 0
+        options.service = options.service ?? 0
         options.where = options.where || {}
         options.images = options.images || false
         options.fields = options.fields || []
@@ -2518,7 +2522,7 @@ const angularJsService = (
         refresh = false,
         // listName = 'PropertyList'
     ): Promise<Collection<Property>> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         // options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
         if (
             !options.where &&
@@ -2595,7 +2599,7 @@ const angularJsService = (
         modelVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>,
     ): Promise<Model<Property>> {
-        options.service = options.service || null
+        options.service = options.service ?? null
         options.where = options.where || {}
         options.images = options.images || false
         options.openhouses = options.openhouses || false
@@ -2630,7 +2634,7 @@ const angularJsService = (
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
         refresh = false
     ): Promise<Collection> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         // options.listName = options.listName || 'MemberList'
         options.where = options.where || {}
         options.order = options.order || []
@@ -2687,7 +2691,7 @@ const angularJsService = (
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
         refresh = false
     ): Promise<Collection> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         options.where = options.where || {}
         options.order = options.order || []
         options.page = options.page || 1

@@ -212,7 +212,8 @@ Stratus.Components.IdxPropertyList = {
                 // console.log('urlQuery', _.clone(urlQuery))
                 if (
                     // urlQuery.hasOwnProperty('Listing') &&
-                    urlQuery.Listing.service &&
+                    // urlQuery.Listing.service &&
+                    urlQuery.hasOwnProperty('service') &&
                     urlQuery.Listing.ListingKey
                 ) {
                     $scope.displayModelDetails((urlQuery.Listing as Property)) // FIXME a quick fix as this contains ListingKey
@@ -339,7 +340,10 @@ Stratus.Components.IdxPropertyList = {
                     where.Order = $scope.query.order
                 }
 
-                if (query.service) {
+                if (
+                    query.hasOwnProperty('service') &&
+                    !_.isNil(query.service)
+                ) {
                     // service does not affect URLs as it's a page specific thing
                     $scope.query.service = query.service
                 }
