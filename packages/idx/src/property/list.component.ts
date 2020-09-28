@@ -32,7 +32,6 @@ import {
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
