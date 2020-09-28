@@ -183,6 +183,8 @@ export type IdxListScope<T = LooseObject> = IdxComponentScope & {
 export type IdxSearchScope = IdxComponentScope & {
     listId: string
     listInitialized: boolean
+
+    refreshSearchWidgetOptions(listScope?: IdxListScope): void
 }
 
 export interface UrlsOptionsObject {
@@ -772,6 +774,7 @@ const angularJsService = (
             instanceLink.Search[uid] = []
         }
         if (listUid) {
+            console.log('added', uid, 'to', listUid, 'instanceLink')
             instanceLink.Search[uid].push(listUid)
             if (!Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
                 instanceLink.List[listUid] = []

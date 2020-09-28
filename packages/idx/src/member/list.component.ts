@@ -154,26 +154,12 @@ Stratus.Components.IdxMemberList = {
         }
 
         /**
-         * Inject the current URL settings into any attached Search widget
-         * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
-         */
-        $scope.refreshSearchWidgetOptions = (): void => {
-            const searchScopes: any[] = Idx.getListInstanceLinks($scope.elementId, 'Member')
-            searchScopes.forEach(searchScope => {
-                // FIXME search widgets may only hold certain values.
-                //  Later this needs to be adjust to only update the values in which a user can see/control
-                // searchScope.setQuery(Idx.getUrlOptions('Search'))
-                searchScope.listInitialized = true
-            })
-        }
-
-        /**
          * Functionality called when a search widget runs a query after the page has loaded
          * may update the URL options, so it may not be ideal to use on page load
          * TODO Idx needs to export search options interface
          */
         $scope.searchMembers = async (options?: object | any, refresh?: boolean, updateUrl?: boolean): Promise<Collection> =>
-            $q((resolve: any) => {
+            $q(async (resolve: any) => {
                 options = options || {}
                 updateUrl = updateUrl === false ? updateUrl : true
 
@@ -215,13 +201,19 @@ Stratus.Components.IdxMemberList = {
                 /* if (updateUrl) {
                   Idx.refreshUrlOptions($ctrl.defaultOptions)
                 } */
-
-                // Keep the Search widgets up to date
-                // $scope.refreshSearchWidgetOptions()
+                Idx.emit('searching', $scope, _.clone($scope.query))
 
                 // Grab the new member listings
-                console.log('fetching members:', $scope.options)
-                resolve(Idx.fetchMembers($scope, 'collection', $scope.options, refresh))
+                // console.log('fetching members:', $scope.options)
+                try {
+                    // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                    // Grab the new property listings
+                    const results = await Idx.fetchMembers($scope, 'collection', $scope.options, refresh)
+                    Idx.emit('searched', $scope, _.clone($scope.query))
+                    resolve(results)
+                } catch (e) {
+                    console.error('Unable to fetchMembers:', e)
+                }
             })
 
         /**

@@ -76,7 +76,6 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     pageNext(ev?: any): Promise<void>
     pagePrevious(ev?: any): Promise<void>
     orderChange(order: string | string[], ev?: any): Promise<void>
-    refreshSearchWidgetOptions(): Promise<void>
     searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
@@ -262,25 +261,6 @@ Stratus.Components.IdxPropertyList = {
         }
 
         /**
-         * Inject the current URL settings into any attached Search widget
-         * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
-         */
-        $scope.refreshSearchWidgetOptions = async (): Promise<void> => {
-            const linkedScopes = Idx.getListInstanceLinks($scope.elementId) as (IdxPropertySearchScope)[]
-            linkedScopes.forEach((linkedScope) => {
-                if (Object.prototype.hasOwnProperty.call(linkedScope, 'setQuery')) { // Treat as IdxPropertySearchScope
-                    // FIXME search widgets may only hold certain values. Later this needs to be adjusted
-                    //  to only update the values in which a user can see/control
-                    // console.log('refreshSearchWidgetOptions Idx.getUrlOptions', _.clone(Idx.getUrlOptions('Search')))
-                    // searchScope.setWhere(Idx.getUrlOptions('Search')) // FIXME this needs to just set query.where
-                    linkedScope.setQuery($scope.query)
-                    linkedScope.listInitialized = true
-                }
-                // FIXME need a pubSub here for IdxMapScope to request updates per event
-            })
-        }
-
-        /**
          * Functionality called when a search widget runs a query after the page has loaded
          * may update the URL query, so it may not be ideal to use on page load
          * TODO Idx needs to export search query interface
@@ -365,9 +345,6 @@ Stratus.Components.IdxPropertyList = {
                     $scope.query.service = query.service
                 }
 
-                // FIXME handle service
-                Idx.emit('searching', $scope, _.clone($scope.query))
-
                 // console.log('setting this URL', _.clone(where))
                 // console.log('$scope.query.where ending with', _.clone($scope.query.where))
                 // Set the URL query
@@ -380,8 +357,7 @@ Stratus.Components.IdxPropertyList = {
                     Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }
 
-                // Keep the Search widgets up to date
-                $scope.refreshSearchWidgetOptions()
+                Idx.emit('searching', $scope, _.clone($scope.query))
 
                 try {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))

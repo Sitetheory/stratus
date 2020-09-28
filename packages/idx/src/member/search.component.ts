@@ -19,9 +19,10 @@ import {IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 // Stratus Dependencies
 import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
 // Component Preload
-import '@stratusjs/idx/member/list.component'
+// import '@stratusjs/idx/member/list.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -75,7 +76,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
             // A workaround for the race condition for now, up for suggestions
             /* $timeout(function () {
               if (!$scope.listInitialized) {
-                $scope.refreshSearchWidgetOptions()
+                // $scope.refreshSearchWidgetOptions()
               }
             }, 2000) */
 
@@ -91,6 +92,11 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
 
             // Register this Search with the Property service
             Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
+            if ($scope.listId) {
+                // When the List loads, we need to update our settings with the list's
+                Idx.on($scope.listId, 'init', $scope.refreshSearchWidgetOptions)
+                Idx.on($scope.listId, 'searching', $scope.refreshSearchWidgetOptions)
+            }
 
             // $scope.variableSync()
             Idx.emit('init', $scope)
@@ -271,6 +277,22 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
                     // Let's destroy it to save memory
                     // $timeout(IDX.unregisterDetailsInstance('property_member_detail_popup'), 10)
                 })
+        }
+
+        /**
+         * Have the widget options refreshed form the Widget's end
+         */
+        $scope.refreshSearchWidgetOptions = async (listScope?: IdxMemberListScope): Promise<void> => {
+            if (
+                !listScope &&
+                $scope.listId
+            ) {
+                listScope = Idx.getListInstance($scope.listId) as IdxMemberListScope
+            }
+            if (listScope) {
+                // $scope.setQuery(listScope.query)
+                $scope.listInitialized = true
+            }
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
