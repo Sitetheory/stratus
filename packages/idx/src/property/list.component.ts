@@ -32,7 +32,6 @@ import {
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
@@ -76,7 +75,6 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     pageNext(ev?: any): Promise<void>
     pagePrevious(ev?: any): Promise<void>
     orderChange(order: string | string[], ev?: any): Promise<void>
-    refreshSearchWidgetOptions(): Promise<void>
     searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
@@ -214,7 +212,8 @@ Stratus.Components.IdxPropertyList = {
                 // console.log('urlQuery', _.clone(urlQuery))
                 if (
                     // urlQuery.hasOwnProperty('Listing') &&
-                    urlQuery.Listing.service &&
+                    // urlQuery.Listing.service &&
+                    urlQuery.hasOwnProperty('service') &&
                     urlQuery.Listing.ListingKey
                 ) {
                     $scope.displayModelDetails((urlQuery.Listing as Property)) // FIXME a quick fix as this contains ListingKey
@@ -262,25 +261,6 @@ Stratus.Components.IdxPropertyList = {
         }
 
         /**
-         * Inject the current URL settings into any attached Search widget
-         * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
-         */
-        $scope.refreshSearchWidgetOptions = async (): Promise<void> => {
-            const linkedScopes = Idx.getListInstanceLinks($scope.elementId) as (IdxPropertySearchScope)[]
-            linkedScopes.forEach((linkedScope) => {
-                if (Object.prototype.hasOwnProperty.call(linkedScope, 'setQuery')) { // Treat as IdxPropertySearchScope
-                    // FIXME search widgets may only hold certain values. Later this needs to be adjusted
-                    //  to only update the values in which a user can see/control
-                    // console.log('refreshSearchWidgetOptions Idx.getUrlOptions', _.clone(Idx.getUrlOptions('Search')))
-                    // searchScope.setWhere(Idx.getUrlOptions('Search')) // FIXME this needs to just set query.where
-                    linkedScope.setQuery($scope.query)
-                    linkedScope.listInitialized = true
-                }
-                // FIXME need a pubSub here for IdxMapScope to request updates per event
-            })
-        }
-
-        /**
          * Functionality called when a search widget runs a query after the page has loaded
          * may update the URL query, so it may not be ideal to use on page load
          * TODO Idx needs to export search query interface
@@ -296,7 +276,7 @@ Stratus.Components.IdxPropertyList = {
                 query.where = query.where || {}
                 // console.log('searchProperties has query', _.clone(query))
 
-                let where: UrlWhereOptions = _.clone(query.where) || {}
+                let urlWhere: UrlWhereOptions = _.clone(query.where) || {}
                 // updateUrl = updateUrl === false ? updateUrl : true
                 updateUrl = updateUrl === false ? updateUrl : $scope.urlLoad === false ? $scope.urlLoad : true
 
@@ -320,14 +300,17 @@ Stratus.Components.IdxPropertyList = {
                     } */
                 } else {
                     // console.log('query.where is blank, so loading', _.clone($scope.query.where))
-                    where = _.clone($scope.query.where) || {}
+                    urlWhere = _.clone($scope.query.where) || {}
                 }
 
                 // Page checks
                 // If a different page, set it in the URL
+                // If Page was placed in the where query, let's move it
+                if (query.where.page) {
+                    query.page = query.where.page
+                    delete query.where.page
+                }
                 if (query.where.Page) {
-                    // console.log('there was a query.where.Page of ', _.clone(query.where.Page))
-                    // If Page was placed in the where query, let's move it
                     query.page = query.where.Page
                     delete query.where.Page
                 }
@@ -339,15 +322,19 @@ Stratus.Components.IdxPropertyList = {
                     $scope.query.page = 1
                 }
                 if ($scope.query.page) {
-                    where.Page = $scope.query.page
+                    urlWhere.Page = $scope.query.page
                 }
                 // Don't add Page/1 to the URL
-                if (where.Page <= 1) {
-                    delete (where.Page)
+                if (urlWhere.Page <= 1) {
+                    delete (urlWhere.Page)
                 }
 
+                // If Order was placed in the where query, let's move it
+                if (query.where.order) {
+                    query.order = query.where.order
+                    delete query.where.order
+                }
                 if (query.where.Order) {
-                    // If Order was placed in the where query, let's move it
                     query.order = query.where.Order
                     delete query.where.Order
                 }
@@ -357,21 +344,21 @@ Stratus.Components.IdxPropertyList = {
                 }
                 if ($scope.query.order && $scope.query.order.length > 0) {
                     // console.log('setting where to', _.clone($scope.query.order), 'from', _.clone(where.Order))
-                    where.Order = $scope.query.order
+                    urlWhere.Order = $scope.query.order
                 }
 
-                if (query.service) {
+                if (
+                    query.hasOwnProperty('service') &&
+                    !_.isNil(query.service)
+                ) {
                     // service does not affect URLs as it's a page specific thing
                     $scope.query.service = query.service
                 }
 
-                // FIXME handle service
-                Idx.emit('searching', $scope, _.clone($scope.query))
-
-                // console.log('setting this URL', _.clone(where))
+                // console.log('setting this URL', _.clone(urlWhere))
                 // console.log('$scope.query.where ending with', _.clone($scope.query.where))
                 // Set the URL query
-                Idx.setUrlOptions('Search', where)
+                Idx.setUrlOptions('Search', urlWhere)
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
                 if (updateUrl) {
@@ -380,8 +367,7 @@ Stratus.Components.IdxPropertyList = {
                     Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }
 
-                // Keep the Search widgets up to date
-                $scope.refreshSearchWidgetOptions()
+                Idx.emit('searching', $scope, _.clone($scope.query))
 
                 try {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
