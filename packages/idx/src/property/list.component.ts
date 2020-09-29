@@ -211,9 +211,9 @@ Stratus.Components.IdxPropertyList = {
                 // If a specific listing is provided, be sure to pop it up as well
                 // console.log('urlQuery', _.clone(urlQuery))
                 if (
-                    // urlQuery.hasOwnProperty('Listing') &&
+                    urlQuery.hasOwnProperty('Listing') &&
                     // urlQuery.Listing.service &&
-                    urlQuery.hasOwnProperty('service') &&
+                    urlQuery.Listing.hasOwnProperty('service') &&
                     urlQuery.Listing.ListingKey
                 ) {
                     $scope.displayModelDetails((urlQuery.Listing as Property)) // FIXME a quick fix as this contains ListingKey
