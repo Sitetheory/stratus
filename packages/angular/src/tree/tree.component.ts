@@ -5,6 +5,8 @@ import {
     Component,
     ElementRef,
     Input,
+    OnDestroy,
+    OnInit,
 } from '@angular/core'
 
 // CDK
@@ -35,6 +37,7 @@ import {keys} from 'ts-transformer-keys'
 import {RootComponent} from '@stratusjs/angular/core/root.component'
 
 // Services
+import {BackendService} from '@stratusjs/angular/backend.service'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 import {cookie} from '@stratusjs/core/environment'
 
@@ -71,7 +74,7 @@ export interface NodeMetaMap {
 
 export interface Node {
     id: number
-    model: any
+    model: Model
     children: Node[]
     meta: NodeMeta
 }
@@ -116,11 +119,16 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class TreeComponent extends RootComponent { // implements OnInit
+export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     // Basic Component Settings
     title = moduleName + '_component'
     uid: string
+
+    // Timing Flags
+    isInitialized = false
+    isDestroyed = false
+    isStyled = false
 
     // Registry Attributes
     @Input() target: string
@@ -142,9 +150,9 @@ export class TreeComponent extends RootComponent { // implements OnInit
     // Stratus Data Connectivity
     registry = new Registry()
     fetched: Promise<boolean|Collection|Model>
-    data: any
-    collection: any
-    model: any
+    data: Collection|Model
+    collection: Collection
+    model: Model
 
     // Observable Connection
     dataSub: Observable<[]>
@@ -172,7 +180,7 @@ export class TreeComponent extends RootComponent { // implements OnInit
     metaMap: NodeMetaMap
     dataSource: ArrayDataSource<Node>
     // treeControl = new NestedTreeControl <any> (node => this.getChildren(node))
-    treeControl = new NestedTreeControl<any>((node: Node) => node.children || [])
+    treeControl = new NestedTreeControl<Node>((node: Node) => node.children || [])
 
     // Methods
     // hasChild = (index: number, node: any) => this.getChildren(node).length > 0;
@@ -181,28 +189,34 @@ export class TreeComponent extends RootComponent { // implements OnInit
     constructor(
         public iconRegistry: MatIconRegistry,
         public sanitizer: DomSanitizer,
+        public backend: BackendService,
         private ref: ChangeDetectorRef,
         private elementRef: ElementRef
     ) {
         // Chain constructor
         super()
 
+        // Hydrate Root App Inputs
+        this.hydrate(this.elementRef, this.sanitizer, keys<TreeComponent>())
+    }
+
+    ngOnInit() {
         // Initialization
         this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
 
-        // SVG Icons
-        iconRegistry.addSvgIcon(
-            'delete',
-            sanitizer.bypassSecurityTrustResourceUrl('/Api/Resource?path=@SitetheoryCoreBundle:images/icons/actionButtons/delete.svg')
-        )
-
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
-
-        // Hydrate Root App Inputs
-        this.hydrate(elementRef, sanitizer, keys<TreeComponent>())
+            .then(() => {
+                this.isStyled = true
+                this.refresh()
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.isStyled = true
+                this.refresh()
+            })
 
         // Data Connections
         this.fetchData()
@@ -230,13 +244,26 @@ export class TreeComponent extends RootComponent { // implements OnInit
         // Initialize Drop List Map
         this.dropListIdMap[`${this.uid}_parent_drop_list`] = true
         this.trackDropLists()
+
+        // Mark as complete
+        this.isInitialized = true
+
+        // Force UI Redraw
+        this.refresh()
     }
 
     // async ngOnInit() {
     //     console.info('tree.ngOnInit')
     // }
 
+    ngOnDestroy() {
+        this.isDestroyed = true
+    }
+
     public refresh() {
+        if (this.isDestroyed) {
+            return
+        }
         if (!this.ref) {
             console.error('ref not available:', this)
             return
@@ -296,7 +323,13 @@ export class TreeComponent extends RootComponent { // implements OnInit
     }
 
     private dataDefer(subscriber: Subscriber<any>) {
-        this.subscriber = subscriber
+        this.subscriber = this.subscriber || subscriber
+        if (!this.subscriber || !this.collection || !this.collection.completed) {
+            setTimeout(() => {
+                this.dataDefer(subscriber)
+            }, 500)
+            return
+        }
         const tree = this.dataRef(true)
         if (tree && tree.length) {
             subscriber.next(tree)

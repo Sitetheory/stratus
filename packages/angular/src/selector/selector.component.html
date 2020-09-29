@@ -76,7 +76,11 @@
                 <div class="column-title">
                     <!-- has(selectedModel, 'iconResourcePath') || has(selectedModel, 'contentType.iconResourcePath') -->
                     <div class="content-type" *ngIf="has(selectedModel, 'contentType.iconResourcePath')">
-                        <mat-icon class="content-type-icon position-center"
+                        <!--
+                        I disabled the position-center class on this one as it causes the icon
+                        to break away from the div and float to the top of the selector container
+                        -->
+                        <mat-icon class="content-type-icon"
                                   [svgIcon]="getSvg('/assets/1/0/bundles/' + _.get(selectedModel, 'contentType.iconResourcePath')) | async">
                             ContentType Icon
                         </mat-icon>

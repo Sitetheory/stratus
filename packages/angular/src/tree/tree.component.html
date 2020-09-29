@@ -1,3 +1,7 @@
+<!-- show progress while initializing -->
+<mat-progress-bar mode="indeterminate" *ngIf="!isStyled || !isInitialized"></mat-progress-bar>
+
+<!-- *ngIf="isInitialized && isStyled" -->
 <div class="tree" cdkDropListGroup>
     <mat-progress-bar mode="indeterminate" *ngIf="collection.completed && collection.pending"></mat-progress-bar>
     <div class="float-right">
@@ -25,11 +29,16 @@
         <!--(mouseleave)="onDragHoverEnd()"-->
         <!--(cdkDragStarted)="onDragStart()"-->
         <!--(cdkDragReleased)="onDragEnd()"-->
-        <sa-tree-node cdkDrag
-                      *ngFor="let rootNode of dataSub | async"
-                      [cdkDragData]="rootNode"
-                      [tree]="this"
-                      [node]="rootNode"
-                      class="tree-node"></sa-tree-node>
+        <ng-container *ngIf='dataSub | async; let rootNodes'>
+            <div *ngIf='!rootNodes || rootNodes.length === 0'>
+                Add links to start building a Menu.
+            </div>
+            <sa-tree-node cdkDrag
+                          *ngFor="let rootNode of rootNodes"
+                          [cdkDragData]="rootNode"
+                          [tree]="this"
+                          [node]="rootNode"
+                          class="tree-node"></sa-tree-node>
+        </ng-container>
     </div>
 </div>

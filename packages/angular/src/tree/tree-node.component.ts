@@ -3,7 +3,7 @@ import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
-    Input,
+    Input, OnDestroy,
     OnInit,
 } from '@angular/core'
 
@@ -43,11 +43,16 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TreeNodeComponent implements OnInit {
+export class TreeNodeComponent implements OnInit, OnDestroy {
 
     // Basic Component Settings
     title = moduleName + '_component'
     uid: string
+
+    // Timing Flags
+    isInitialized = false
+    isDestroyed = false
+    isStyled = false
 
     // Dependencies
     _: any
@@ -86,15 +91,35 @@ export class TreeNodeComponent implements OnInit {
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+            .then(() => {
+                this.isStyled = true
+                this.refresh()
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.isStyled = true
+                this.refresh()
+            })
 
         // Attach Component to Node Meta
         this.node.meta.component = this
+
+        // Mark as complete
+        this.isInitialized = true
 
         // Force UI Redraw
         this.refresh()
     }
 
+    ngOnDestroy() {
+        this.node.meta.component = null
+        this.isDestroyed = true
+    }
+
     public refresh() {
+        if (this.isDestroyed) {
+            return
+        }
         if (!this.ref) {
             console.error('ref not available:', this)
             return
@@ -144,8 +169,11 @@ export class TreeNodeComponent implements OnInit {
             return
         }
         const dialogRef = this.dialog.open(TreeDialogComponent, {
-            width: '250px',
+            width: '400px',
+            autoFocus: true,
+            restoreFocus: false,
             data: {
+                backend: this.tree.backend,
                 id: node.model.data.id || null,
                 name: node.model.data.name || '',
                 target: node.model.data.url ? 'url' : 'content',
