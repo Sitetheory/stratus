@@ -237,14 +237,13 @@
 
             <div class="display-specs"
                  aria-label="Display Specs">
-                <!-- TODO Order Options -->
                 <div class="search-input"
                      data-layout="row"
                 >
                     <md-input-container class="md-block minimal">
                         <label>Sort</label>
-                        <md-select data-ng-model="options.query.Order">
-                            <md-option data-ng-repeat="option in options.selection.Order" data-ng-value="option.value">
+                        <md-select data-ng-model="options.query.order">
+                            <md-option data-ng-repeat="option in options.selection.order" data-ng-value="option.value">
                                 {{option.name}}
                             </md-option>
                         </md-select>

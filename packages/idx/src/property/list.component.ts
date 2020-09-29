@@ -276,7 +276,7 @@ Stratus.Components.IdxPropertyList = {
                 query.where = query.where || {}
                 // console.log('searchProperties has query', _.clone(query))
 
-                let where: UrlWhereOptions = _.clone(query.where) || {}
+                let urlWhere: UrlWhereOptions = _.clone(query.where) || {}
                 // updateUrl = updateUrl === false ? updateUrl : true
                 updateUrl = updateUrl === false ? updateUrl : $scope.urlLoad === false ? $scope.urlLoad : true
 
@@ -300,14 +300,17 @@ Stratus.Components.IdxPropertyList = {
                     } */
                 } else {
                     // console.log('query.where is blank, so loading', _.clone($scope.query.where))
-                    where = _.clone($scope.query.where) || {}
+                    urlWhere = _.clone($scope.query.where) || {}
                 }
 
                 // Page checks
                 // If a different page, set it in the URL
+                // If Page was placed in the where query, let's move it
+                if (query.where.page) {
+                    query.page = query.where.page
+                    delete query.where.page
+                }
                 if (query.where.Page) {
-                    // console.log('there was a query.where.Page of ', _.clone(query.where.Page))
-                    // If Page was placed in the where query, let's move it
                     query.page = query.where.Page
                     delete query.where.Page
                 }
@@ -319,15 +322,19 @@ Stratus.Components.IdxPropertyList = {
                     $scope.query.page = 1
                 }
                 if ($scope.query.page) {
-                    where.Page = $scope.query.page
+                    urlWhere.Page = $scope.query.page
                 }
                 // Don't add Page/1 to the URL
-                if (where.Page <= 1) {
-                    delete (where.Page)
+                if (urlWhere.Page <= 1) {
+                    delete (urlWhere.Page)
                 }
 
+                // If Order was placed in the where query, let's move it
+                if (query.where.order) {
+                    query.order = query.where.order
+                    delete query.where.order
+                }
                 if (query.where.Order) {
-                    // If Order was placed in the where query, let's move it
                     query.order = query.where.Order
                     delete query.where.Order
                 }
@@ -337,7 +344,7 @@ Stratus.Components.IdxPropertyList = {
                 }
                 if ($scope.query.order && $scope.query.order.length > 0) {
                     // console.log('setting where to', _.clone($scope.query.order), 'from', _.clone(where.Order))
-                    where.Order = $scope.query.order
+                    urlWhere.Order = $scope.query.order
                 }
 
                 if (
@@ -348,10 +355,10 @@ Stratus.Components.IdxPropertyList = {
                     $scope.query.service = query.service
                 }
 
-                // console.log('setting this URL', _.clone(where))
+                // console.log('setting this URL', _.clone(urlWhere))
                 // console.log('$scope.query.where ending with', _.clone($scope.query.where))
                 // Set the URL query
-                Idx.setUrlOptions('Search', where)
+                Idx.setUrlOptions('Search', urlWhere)
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
                 if (updateUrl) {

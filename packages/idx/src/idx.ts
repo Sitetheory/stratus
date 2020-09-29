@@ -201,9 +201,9 @@ export interface UrlWhereOptions extends Omit<WhereOptions, 'Page' | 'Order'> {
 // Reusable Objects. Keys listed are not required, but help programmers define what exists/is possible
 export interface WhereOptions extends LooseObject {
     page?: undefined // Key being added to wrong type
-    Page?: undefined // Key being added to wrong type
+    // Page?: undefined // Key being added to wrong type
     order?: undefined // Key being added to wrong type
-    Order?: undefined // Key being added to wrong type
+    // Order?: undefined // Key being added to wrong type
     where?: undefined // Key being added to wrong type
 
     // Property
