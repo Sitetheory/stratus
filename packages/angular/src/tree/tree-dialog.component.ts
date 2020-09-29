@@ -37,7 +37,7 @@ import {BackendService} from '@stratusjs/angular/backend.service'
 
 // Interfaces
 import {Convoy} from '@stratusjs/angular/data/convoy.interface'
-import {Content} from '@stratusjs/angular/data/content.interface'
+import {ContentEntity} from '@stratusjs/angular/data/content.interface'
 
 // Data Types
 export interface DialogData {
@@ -172,7 +172,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
                     }
                 )
             )
-            .subscribe((response: HttpResponse<Convoy<any>>) => this.handleContent(response))
+            .subscribe((response: HttpResponse<Convoy<ContentEntity<any>>>) => this.handleContent(response))
 
         // Initialize ContentSelector with Empty Input
         // this.dialogContentForm
@@ -184,7 +184,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
             .pipe(
                 finalize(() => this.isContentLoading = false),
             )
-            .subscribe((response: HttpResponse<Convoy<any>>) => this.handleContent(response))
+            .subscribe((response: HttpResponse<Convoy<ContentEntity<any>>>) => this.handleContent(response))
 
         // Handle Parent Selector
         // this.dialogParentForm = this.fb.group({
@@ -253,7 +253,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         this.refresh()
     }
 
-    displayContentText(content: Content) {
+    displayContentText(content: ContentEntity<any>) {
         // Ensure Content is Selected before Display Text
         if (!content) {
             return
@@ -274,7 +274,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     //     }
     // }
 
-    private handleContent(response:HttpResponse<Convoy<any>>) {
+    private handleContent(response:HttpResponse<Convoy<ContentEntity<any>>>) {
         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
             this.filteredContentOptions = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
