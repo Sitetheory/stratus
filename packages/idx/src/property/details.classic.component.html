@@ -15,7 +15,7 @@
 				<div class="address-container" data-flex="100" data-flex-gt-xs="80">
 					<h3 class="address">
 						<!--span data-ng-bind="::model.data.UnparsedAddress"></span-->
-						<span data-ng-bind="::getStreetAddress()"></span><!--Address not yet available-->
+						<span data-ng-bind="::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()"></span><!--Address not yet available-->
 					</h3>
 					<div class="address2">
 						<span data-ng-bind="::model.data.City | lowercase"></span><span data-ng-if="::model.data.StateOrProvince">, <span data-ng-bind="::model.data.StateOrProvince"></span></span>
