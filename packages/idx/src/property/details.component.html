@@ -14,7 +14,7 @@
 
         <div class="details-header static-element">
             <h1 class="address">
-                <span data-ng-bind="::getStreetAddress()" aria-label="Street Address"></span>
+                <span data-ng-bind="::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()" aria-label="Street Address"></span>
             </h1>
             <h4>
                 <span data-ng-bind="::model.data.City" aria-label="City"></span>
@@ -259,7 +259,7 @@
                  data-stratus-src="{{::model.data.Images[0].MediaURL}}"
                  aria-label="Background Image of the Listing"
             >
-                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::getStreetAddress()}}"/>
+                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()}}"/>
                 <img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg" alt="No Image Available"/>
             </div>
         </div>

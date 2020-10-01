@@ -131,7 +131,7 @@
                     <div data-layout="row" data-layout-align="start center" aria-label="Listing Status" >
                         <md-button class="md-raised font-primary"
                                    data-ng-class="{'md-primary': inArray('Active', options.query.where.Status)}"
-                                   data-ng-click="options.query.where.Status = ['Active', 'Contract'];"
+                                   data-ng-click="toggleArrayElement('Active', options.query.where.Status)"
                                    aria-label="For Sale"
                                    data-md-prevent-menu-close
                         >
@@ -139,7 +139,7 @@
                         </md-button>
                         <md-button class="md-raised font-primary"
                                    data-ng-class="{'md-primary': inArray('Closed', options.query.where.Status)}"
-                                   data-ng-click="options.query.where.Status = ['Closed']"
+                                   data-ng-click="toggleArrayElement('Closed', options.query.where.Status)"
                                    aria-label="Sold"
                                    data-md-prevent-menu-close
                         >
@@ -147,7 +147,7 @@
                         </md-button>
                     </div>
 
-                    <div data-ng-show="!options.forRent && inArray('Active', options.query.where.Status)" data-layout-align="end center" data-flex>
+                    <div data-ng-show="!options.forRent && (inArray('Active', options.query.where.Status) || inArray('Contract', options.query.where.Status))" data-layout-align="end center" data-flex>
                         <md-checkbox
                                 class="show-under-contract font-secondary"
                                 data-ng-checked="inArray('Contract', options.query.where.Status)"
