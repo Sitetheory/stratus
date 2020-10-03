@@ -301,6 +301,23 @@ Stratus.Components.IdxPropertyList = {
                     urlWhere = _.clone($scope.query.where) || {}
                 }
 
+                // Check and remove incompatible where combinations. Basically if Location or neighborhood are used, remove the others
+                if (!_.isEmpty(query.where.Location)) {
+                    delete query.where.Neighborhood
+                    delete query.where.UnparsedAddress
+                    delete query.where.City
+                    delete query.where.CityRegion
+                    delete query.where.PostalCode
+                    delete query.where.MLSAreaMajor
+                }
+                if (!_.isEmpty(query.where.Neighborhood)) {
+                    delete query.where.UnparsedAddress
+                    delete query.where.City
+                    delete query.where.CityRegion
+                    delete query.where.PostalCode
+                    delete query.where.MLSAreaMajor
+                }
+
                 // Page checks
                 // If a different page, set it in the URL
                 // If Page was placed in the where query, let's move it
