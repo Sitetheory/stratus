@@ -156,15 +156,13 @@ Stratus.Components.IdxPropertyList = {
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
             $scope.query.service = $scope.query.service || []
-            $scope.query.order = $scope.query.order || null // will be set by Service
+            // If string, check if a json and parse first. Otherwise be null or what it is
+            $scope.query.order = $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ?
+                JSON.parse($scope.query.order) : $scope.query.order || null
             $scope.query.page = $scope.query.page || null // will be set by Service
             $scope.query.perPage = $scope.query.perPage || 25
             $scope.query.images = $scope.query.images || {limit: 1}
 
-            // Remove invalid variable types to prevent breaking formating
-            if (_.isArray($scope.query.order)) {
-                delete $scope.query.order
-            }
             if (_.isArray($scope.query.where)) {
                 delete $scope.query.where
             }
@@ -179,8 +177,8 @@ Stratus.Components.IdxPropertyList = {
 
             // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
             $scope.orderOptions = $scope.orderOptions || {
-                'Price (high to low)': ['-ClosePrice', '-ListPrice'],
-                'Price (low to high)': ['ClosePrice', 'ListPrice'],
+                'Price (high to low)': '-_BestPrice',
+                'Price (low to high)': '_BestPrice',
                 'Recently Updated': '-ModificationTimestamp',
                 'Recently Sold': '-CloseDate'
             }
@@ -301,6 +299,23 @@ Stratus.Components.IdxPropertyList = {
                 } else {
                     // console.log('query.where is blank, so loading', _.clone($scope.query.where))
                     urlWhere = _.clone($scope.query.where) || {}
+                }
+
+                // Check and remove incompatible where combinations. Basically if Location or neighborhood are used, remove the others
+                if (!_.isEmpty(query.where.Location)) {
+                    delete query.where.Neighborhood
+                    delete query.where.UnparsedAddress
+                    delete query.where.City
+                    delete query.where.CityRegion
+                    delete query.where.PostalCode
+                    delete query.where.MLSAreaMajor
+                }
+                if (!_.isEmpty(query.where.Neighborhood)) {
+                    delete query.where.UnparsedAddress
+                    delete query.where.City
+                    delete query.where.CityRegion
+                    delete query.where.PostalCode
+                    delete query.where.MLSAreaMajor
                 }
 
                 // Page checks
@@ -464,7 +479,21 @@ Stratus.Components.IdxPropertyList = {
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
             if (!$ctrl.mlsVariables || reset) {
                 $ctrl.mlsVariables = []
-                Idx.getMLSVariables().forEach((service: MLSService) => {
+                let mlsServicesRequested = null
+                // Ensure we are only requesting the services we are using
+                if (
+                    $scope.query &&
+                    (
+                        _.isNumber($scope.query.service) ||
+                        !_.isEmpty($scope.query.service)
+                    )
+                ) {
+                    if (!_.isArray($scope.query.service)) {
+                        $scope.query.service = [$scope.query.service]
+                    }
+                    mlsServicesRequested = $scope.query.service
+                }
+                Idx.getMLSVariables(mlsServicesRequested).forEach((service: MLSService) => {
                     $ctrl.mlsVariables[service.id] = service
                 })
             }
