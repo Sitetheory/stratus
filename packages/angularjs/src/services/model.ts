@@ -932,37 +932,40 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         return false
     }
 
-    destroy() {
+    destroy(): Promise<any> {
         // TODO: Add a confirmation option here
-        if (this.getIdentifier()) {
-            this.sync('DELETE', {})
-                .then((data: any) => {
-                    if (this.error) {
-                        return
-                    }
-                    if (this.collection) {
-                        this.collection.remove(this)
-                    }
-                })
-                .catch(async (message: any) => {
-                    console.error('DESTROY:', message)
-                    if (!this.toast) {
-                        return
-                    }
-                    if (!$mdToast) {
-                        // TODO: Verify the whether the const is necessity
-                        // tslint:disable-next-line:no-unused-variable
-                        const wait = await serviceVerify()
-                    }
-                    $mdToast.show(
-                        $mdToast.simple()
-                            .textContent('Failure to Delete!')
-                            .toastClass('errorMessage')
-                            .position('top right')
-                            .hideDelay(3000)
-                    )
-                })
+        if (!this.getIdentifier()) {
+            return new Promise((resolve, reject) => {
+                reject('Unable to delete (non-persisted) model without id.')
+            })
         }
+        return this.sync('DELETE', {})
+            .then((data: any) => {
+                if (this.error) {
+                    return
+                }
+                if (this.collection) {
+                    this.collection.remove(this)
+                }
+            })
+            .catch(async (message: any) => {
+                console.error('DESTROY:', message)
+                if (!this.toast) {
+                    return
+                }
+                if (!$mdToast) {
+                    // TODO: Verify the whether the const is necessity
+                    // tslint:disable-next-line:no-unused-variable
+                    const wait = await serviceVerify()
+                }
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Failure to Delete!')
+                        .toastClass('errorMessage')
+                        .position('top right')
+                        .hideDelay(3000)
+                )
+            })
     }
 }
 

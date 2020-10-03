@@ -4,7 +4,8 @@
 -->
 
 <div class="tree-node-content"
-     *ngIf="isInitialized && isStyled">
+     [attr.data-id]="node.id"
+     [attr.id]="'node-'+node.id">
 
     <!-- use a disabled button to provide padding for tree leaf -->
     <button mat-icon-button
@@ -23,7 +24,11 @@
     </button>
 
     <!-- clickable name is also the drag handle -->
-    <span cdkDragHandle
+    <!-- cdkDragHandle -->
+    <span cdkDragPlaceholder
+          class="node-name"
+          [attr.data-id]="node.id"
+          [attr.id]="'node-'+node.id"
           [innerHTML]="getName(node)"
           (click)="openDialogClick(node)"
           (dblclick)="openDialogDblClick(node)"></span>
@@ -47,14 +52,15 @@
          (cdkDropListDropped)="tree.onDragDrop($event)"
          class="tree-node-drop-list">
         <!-- display children for expandable nodes -->
-        <div [class.display-none]="!isExpanded(node) && hasChild(node)">
-            <sa-tree-node cdkDrag
-                          *ngFor="let child of node.children"
-                          [cdkDragData]="child"
-                          [tree]="tree"
-                          [parent]="node"
-                          [node]="child"
-                          class="tree-node"></sa-tree-node>
-        </div>
+        <!-- FIXME: This needs to be built into somewhere else, because it makes the dropping hard -->
+        <!-- <ng-container [class.display-none]="!isExpanded(parent) && hasChild(node)">-->
+        <sa-tree-node cdkDrag
+                      *ngFor="let child of node.children"
+                      (cdkDragMoved)="tree.onDragMove($event)"
+                      [cdkDragData]="child"
+                      [tree]="tree"
+                      [parent]="node"
+                      [node]="child"
+                      class="tree-node"></sa-tree-node>
     </div>
 </div>

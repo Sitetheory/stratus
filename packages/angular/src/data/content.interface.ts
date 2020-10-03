@@ -1,11 +1,11 @@
 // I will eventually break this up into individual schemas as we map out the API.
-export interface ContentEntity<t> {
+export interface ContentEntity<t = any> {
     type?: string
     version: ContentVersionEntity<t>
     contentType: ContentTypeEntity
     domain?: null
     author?: null
-    associatedContent?: ContentEntity<any>
+    associatedContent?: ContentEntity
     mailLists?: null
     priority?: null
     tags?: TagEntity[]
