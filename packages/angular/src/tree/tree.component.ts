@@ -7,6 +7,7 @@ import {
     Input,
     OnDestroy,
     OnInit,
+    Inject,
 } from '@angular/core'
 
 // CDK
@@ -15,6 +16,7 @@ import {
 } from '@angular/cdk/collections'
 import {
     CdkDragDrop,
+    CdkDragMove,
     moveItemInArray,
 } from '@angular/cdk/drag-drop'
 import {
@@ -26,15 +28,23 @@ import {DomSanitizer} from '@angular/platform-browser'
 import {MatIconRegistry} from '@angular/material/icon'
 
 // RXJS
-import {Observable, Subject, Subscriber} from 'rxjs'
+import {
+    Observable,
+    Subject,
+    Subscriber
+} from 'rxjs'
 
 // External
 import {Stratus} from '@stratusjs/runtime/stratus'
 import _ from 'lodash'
 import {keys} from 'ts-transformer-keys'
+import {debounce} from '@agentepsilon/decko'
 
 // Components
 import {RootComponent} from '@stratusjs/angular/core/root.component'
+
+// Interfaces
+import {RefreshInterface} from '@stratusjs/angular/core/refresh.interface'
 
 // Services
 import {BackendService} from '@stratusjs/angular/backend.service'
@@ -59,7 +69,7 @@ import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/angularjs/services/collection'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/angularjs/services/model'
-import {RefreshInterface} from '@stratusjs/angular/core/refresh.interface'
+import { DOCUMENT } from '@angular/common'
 
 // Data Types
 export interface NodeMeta {
@@ -91,9 +101,19 @@ export interface ElementMap {
     [key: string]: HTMLElement
 }
 
+export interface DropData {
+    targetId: string
+    action?: string
+}
+
+export interface NodePatch {
+    id?: number
+    name?: string
+}
+
 // export interface Model {
-//     completed: boolean;
-//     data: object;
+//     completed: boolean
+//     data: object
 // }
 
 // Local Setup
@@ -173,6 +193,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     dragging = false
     expandTimeout: any
     expandDelay = 1000
+    dropData: DropData = null
 
     // Tree Specific
     tree: Node[]
@@ -183,7 +204,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     treeControl = new NestedTreeControl<Node>((node: Node) => node.children || [])
 
     // Methods
-    // hasChild = (index: number, node: any) => this.getChildren(node).length > 0;
+    // hasChild = (index: number, node: any) => this.getChildren(node).length > 0
     // hasChild = (index: number, node: any) => node.children && node.children.length > 0
 
     constructor(
@@ -191,19 +212,20 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         public sanitizer: DomSanitizer,
         public backend: BackendService,
         private ref: ChangeDetectorRef,
-        private elementRef: ElementRef
+        private elementRef: ElementRef,
+        @Inject(DOCUMENT) private document: Document
     ) {
         // Chain constructor
         super()
-
-        // Hydrate Root App Inputs
-        this.hydrate(this.elementRef, this.sanitizer, keys<TreeComponent>())
     }
 
     ngOnInit() {
         // Initialization
         this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
+
+        // Hydrate Root App Inputs
+        this.hydrate(this.elementRef, this.sanitizer, keys<TreeComponent>())
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
@@ -491,7 +513,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         }
 
         // Determine Parents
-        const parentNode: Node | null = event.container.data
+        let parentNode: Node | null = event.container.data
         const pastParentNode: Node | null = event.previousContainer.data
 
         // Determine Placement
@@ -502,6 +524,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
         // Disable Listeners
         this.unsettled = true
+
+        // Find Drop Node (For Comparisons)
+        const targetDropNode =
+            (this.dropData.targetId && this.dropData.targetId in this.treeMap) ?
+            this.treeMap[_.toNumber(this.dropData.targetId)] : null
 
         // Debug Data
         const dropDebug = false
@@ -518,29 +545,56 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             )
         }
 
+        // Handle Drop Node Correction
+        // ---------------------------
+        // Sometimes the Drop List gets an incorrect parent to associated
+        // with the drop location and this attempts to correct it in these
+        // specific edge cases
+        if (targetDropNode && !this.nodeIsEqual(parentNode, targetDropNode)) {
+            if (cookie('env') && dropDebug) {
+                console.log(`target drop node differs: ${targetDropNode.id} -> ${targetDropNode.model.get('name')}`)
+                console.log('target drop node is the same as target node:', !this.nodeIsEqual(targetNode, targetDropNode))
+            }
+            if (!this.nodeIsEqual(targetNode, targetDropNode)) {
+                switch (this.dropData.action) {
+                    case 'before':
+                    case 'after':
+                        const nestParentId = targetDropNode.model.get('nestParent.id')
+                        const nestParent = (nestParentId && nestParentId in this.treeMap) ? this.treeMap[nestParentId] : null
+                        parentNode = nestParent
+                        break
+                    case 'inside':
+                        parentNode = targetDropNode
+                        break
+                }
+            }
+            if (cookie('env') && dropDebug) {
+                console.log('target drop node selected:', parentNode ? `${parentNode.id} -> ${parentNode.model.get('name')}` : 'none')
+            }
+        }
+
         // Handle Parent Change
         if (!this.nodeIsEqual(parentNode, pastParentNode)) {
             if (parentNode) {
-                parentNode.children.push(targetNode)
+                switch (this.dropData.action) {
+                    case 'before':
+                    case 'after':
+                        let targetIndex = parentNode.children.findIndex((n: Node) => n.id === targetNode.id)
+                        if (this.dropData.action === 'after') {
+                            targetIndex++
+                        }
+                        parentNode.children.splice(targetIndex, 0, targetNode)
+                        break
+                    case 'inside':
+                        parentNode.children.push(targetNode)
+                        break
+                }
+                parentNode.meta.expanded = true
             }
             if (pastParentNode) {
                 this.removeNode(pastParentNode.children, targetNode)
             }
-            const parentPatch = {}
-            if (parentNode) {
-                [
-                    'id',
-                    'name'
-                ].forEach((key) => {
-                    const value = _.get(parentNode, `model.data.${key}`)
-                    if (!value) {
-                        return
-                    }
-                    _.set(parentPatch, key, value)
-                })
-            }
-            targetNode.model.set('nestParent', !parentNode ? parentNode : parentPatch)
-            // console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
+            targetNode.model.set('nestParent', this.buildNodePatch(parentNode))
         }
 
         // Set Priority
@@ -555,6 +609,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
         // Debug Data
         if (cookie('env') && dropDebug) {
+            console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
             console.log('new priority:', targetNode.model.get('priority'))
             console.groupEnd()
         }
@@ -602,15 +657,91 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     //     return !_.isEqual(event.item.data, event.item.data)
     // }
 
+    @debounce(50)
+    onDragMove(event: CdkDragMove) {
+        const e = this.document.elementFromPoint(event.pointerPosition.x,event.pointerPosition.y)
+        if (!e) {
+            this.clearDragData()
+            return
+        }
+        const containerClass = 'tree-node-content'
+        const container = e.classList.contains(containerClass) ? e : e.closest(`.${containerClass}`)
+        if (!container) {
+            this.clearDragData()
+            return
+        }
+        this.dropData = {
+            targetId: container.getAttribute('data-id')
+        }
+        const targetRect = container.getBoundingClientRect()
+        const oneThird = targetRect.height / 3
+
+        if (event.pointerPosition.y - targetRect.top < oneThird) {
+            this.dropData.action = 'before'
+        } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
+            this.dropData.action = 'after'
+        } else {
+            this.dropData.action = 'inside'
+        }
+        this.showDragData()
+    }
+
+    showDragData() {
+        this.clearDragData()
+        if (!this.dropData) {
+            return
+        }
+        this.document.getElementById(`node-${this.dropData.targetId}`).classList.add(`drop-${this.dropData.action}`)
+    }
+
+    clearDragData(dropped = false) {
+        if (dropped) {
+            this.dropData = null
+        }
+        this.document
+            .querySelectorAll('.drop-before')
+            .forEach(element =>
+                element.classList.remove('drop-before')
+            )
+        this.document
+            .querySelectorAll('.drop-after')
+            .forEach(element =>
+                element.classList.remove('drop-after')
+            )
+        this.document
+            .querySelectorAll('.drop-inside')
+            .forEach(element =>
+                element.classList.remove('drop-inside')
+            )
+    }
+
+    buildNodePatch(node: Node = null): NodePatch | null {
+        if (!node || !node.model) {
+            return null
+        }
+        const nodePatch = {}
+        _.forEach([
+            'id',
+            'name'
+        ], (key: string) => {
+            const value = node.model.get(key)
+            if (!value) {
+                return
+            }
+            _.set(nodePatch, key, value)
+        })
+        return nodePatch
+    }
+
     // getChildren(model: any): any[] {
     //     if (!model) {
-    //         return [];
+    //         return []
     //     }
     //     // TODO: Instead of a filter, like this, it would be better to search the tree
     //     return _.filter(this.dataRef(), function (child) {
-    //         const modelId = _.get(model, 'data.id');
-    //         const parentId = _.get(child, 'data.nestParent.id');
-    //         return modelId && parentId && modelId === parentId;
+    //         const modelId = _.get(model, 'data.id')
+    //         const parentId = _.get(child, 'data.nestParent.id')
+    //         return modelId && parentId && modelId === parentId
     //     })
     // }
 }

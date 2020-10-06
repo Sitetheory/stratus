@@ -96,6 +96,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     filteredContentOptions: Array<any>
     dialogContentForm: FormGroup
     isContentLoading = false
+    isContentLoaded = false
     lastContentSelectorQuery: string
 
     // filteredParentOptions: any[]
@@ -127,12 +128,12 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
             .then(() => {
                 this.isStyled = true
-                this.refresh()
+                // this.refresh()
             })
             .catch(() => {
                 console.error('CSS Failed to load for Component:', this)
                 this.isStyled = true
-                this.refresh()
+                // this.refresh()
             })
 
         // Hoist Service
@@ -167,12 +168,15 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
                         }
                         return this.backend.get(this.lastContentSelectorQuery)
                             .pipe(
-                                finalize(() => this.isContentLoading = false),
+                                finalize(() => {
+                                    this.isContentLoading = false
+                                    this.isContentLoaded = true
+                                }),
                             )
                     }
                 )
             )
-            .subscribe((response: HttpResponse<Convoy<ContentEntity<any>>>) => this.handleContent(response))
+            .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => this.handleContent(response))
 
         // Initialize ContentSelector with Empty Input
         // this.dialogContentForm
@@ -180,11 +184,12 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         //     .setValue('')
 
         // Initial Call for Content
-        this.backend.get('/Api/Content?options[showCollection]=null&q=')
+        this.backend
+            .get('/Api/Content?options[showCollection]=null&q=')
             .pipe(
                 finalize(() => this.isContentLoading = false),
             )
-            .subscribe((response: HttpResponse<Convoy<ContentEntity<any>>>) => this.handleContent(response))
+            .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => this.handleContent(response))
 
         // Handle Parent Selector
         // this.dialogParentForm = this.fb.group({
@@ -226,7 +231,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-        this.refresh()
+        // this.refresh()
     }
 
     ngOnDestroy() {
@@ -250,10 +255,10 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.close()
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-        this.refresh()
+        // this.refresh()
     }
 
-    displayContentText(content: ContentEntity<any>) {
+    displayContentText(content: ContentEntity) {
         // Ensure Content is Selected before Display Text
         if (!content) {
             return
@@ -274,12 +279,12 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     //     }
     // }
 
-    private handleContent(response:HttpResponse<Convoy<ContentEntity<any>>>) {
+    private handleContent(response:HttpResponse<Convoy<ContentEntity>>) {
         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
             this.filteredContentOptions = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
             // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-            this.refresh()
+            // this.refresh()
             return this.filteredContentOptions
         }
         const payload = _.get(response.body, 'payload') || response.body
@@ -287,13 +292,13 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
             this.filteredContentOptions = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
             // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-            this.refresh()
+            // this.refresh()
             return this.filteredContentOptions
         }
         this.filteredContentOptions = payload
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-        this.refresh()
+        // this.refresh()
         return this.filteredContentOptions
     }
 }
