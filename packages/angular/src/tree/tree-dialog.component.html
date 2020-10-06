@@ -1,13 +1,23 @@
 <h1 mat-dialog-title>Menu Link Editor</h1>
 
 <!-- show progress while saving -->
+<!--
 <mat-progress-bar mode="indeterminate" *ngIf="data.model.pending || !data.model.data.id"></mat-progress-bar>
+-->
 
-<div mat-dialog-content class="tree-dialog-content">
+<div class="tree-dialog-content" mat-dialog-content>
+    <mat-progress-bar mode="indeterminate" *ngIf="!isInitialized"></mat-progress-bar>
+
     <mat-form-field class="form-field">
-        <input matInput type="text" placeholder="Name"
+        <input #nameInput
+               matInput
+               type="text"
+               placeholder="Name"
                [(ngModel)]="data.name">
-        <button mat-button matSuffix mat-icon-button aria-label="Clear"
+        <button mat-button
+                mat-icon-button
+                matSuffix
+                aria-label="Clear"
                 *ngIf="data.name"
                 (click)="data.name=''">
             <mat-icon>close</mat-icon>
@@ -17,8 +27,8 @@
     <!-- Target Selector -->
     <h4><label id="link-type-label">Link Type:</label></h4>
     <mat-radio-group class="radio-group"
-            aria-labelledby="link-type-label"
-            [(ngModel)]="data.target">
+                     aria-labelledby="link-type-label"
+                     [(ngModel)]="data.target">
         <mat-radio-button class="radio-button" value="content">
             Content
         </mat-radio-button>
@@ -44,7 +54,9 @@
         </ng-container>
     </form>
 
-    <mat-form-field class="form-field" *ngIf="data.target == 'url'">
+    <mat-form-field class="form-field"
+                    [style.width.px]=320
+                    *ngIf="data.target == 'url'">
         <input matInput type="text" placeholder="URL" [(ngModel)]="data.url">
         <button mat-button *ngIf="data.url" matSuffix mat-icon-button aria-label="Clear" (click)="data.url=''">
             <mat-icon>close</mat-icon>
@@ -118,7 +130,8 @@
         Delete (Completely)
     </button>
     <button mat-button
-            (click)="data.collection.add({name:'Untitled Child', parent: data.parent, nestParent: data.id},{save: true})">
+            [disabled]="!data.id"
+            (click)="data.collection.add({name:'Untitled Child', parent: data.parent, nestParent: {id: data.id}}, {save: true})">
         Add Child
     </button>
 

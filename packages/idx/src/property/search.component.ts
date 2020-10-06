@@ -27,6 +27,7 @@ import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 // FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
 import 'stratus.directives.stringToNumber'
+import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -126,9 +127,9 @@ Stratus.Components.IdxPropertySearch = {
             // If the List hasn't updated this widget after 1 second, make sure it's checked again. A workaround for
             // the race condition for now, up for suggestions
             $timeout(async () => {
-                if (!$scope.listInitialized) {
+                /*if (!$scope.listInitialized) {
                     await $scope.refreshSearchWidgetOptions()
-                }
+                }*/
                 // Sync needs to happen here so that the List and still connect with the Search widget
                 await $scope.variableSync()
             }, 1000)
@@ -149,9 +150,9 @@ Stratus.Components.IdxPropertySearch = {
                 {name: '4+', value: 4},
                 {name: '5+', value: 5}
             ]
-            $scope.options.selection.Order = $scope.options.selection.Order || [
-                {name: 'Price (high to low)', value: '-ListPrice'},
-                {name: 'Price (low to high)', value: 'ListPrice'},
+            $scope.options.selection.order = $scope.options.selection.order || [
+                {name: 'Price (high to low)', value: '-_BestPrice'},
+                {name: 'Price (low to high)', value: '_BestPrice'},
                 {name: 'Recently Updated', value: '-ModificationTimestamp'},
                 {name: 'Recently Sold', value: '-CloseDate'}
             ]
@@ -207,7 +208,12 @@ Stratus.Components.IdxPropertySearch = {
             $scope.setWhereDefaults()
 
             // Register this Search with the Property service
-            Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId)
+            Idx.registerSearchInstance($scope.elementId, moduleName, $scope, $scope.listId) // May be deprecating
+            if ($scope.listId) {
+                // When the List loads, we need to update our settings with the list's
+                Idx.on($scope.listId, 'init', $scope.refreshSearchWidgetOptions)
+                Idx.on($scope.listId, 'searching', $scope.refreshSearchWidgetOptions)
+            }
 
             // FIXME testing emitters
             /*Idx.on($scope.listId, 'collectionUpdated', (source, collection: Collection) => {
@@ -215,8 +221,12 @@ Stratus.Components.IdxPropertySearch = {
             })*/
 
             if ($attrs.tokenOnLoad) {
-                await Idx.tokenKeepAuth()
-                $scope.getMLSVariables(true)
+                try {
+                    await Idx.tokenKeepAuth()
+                    $scope.getMLSVariables(true)
+                } catch(e) {
+                    console.error('Search is unable to load in token data', e)
+                }
             }
 
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
@@ -556,18 +566,20 @@ Stratus.Components.IdxPropertySearch = {
         /**
          * Have the widget options refreshed form the Widget's end
          */
-        $scope.refreshSearchWidgetOptions = async (): Promise<void> => {
-            if ($scope.listId) {
-                const instance = Idx.getListInstance($scope.listId)
-                if (instance && instance.hasOwnProperty('refreshSearchWidgetOptions')) {
-                    await instance.refreshSearchWidgetOptions()
-                }
+        $scope.refreshSearchWidgetOptions = async (listScope?: IdxPropertyListScope): Promise<void> => {
+            if (
+                !listScope &&
+                $scope.listId
+            ) {
+                listScope = Idx.getListInstance($scope.listId) as IdxPropertyListScope
+            }
+            if (listScope) {
+                $scope.setQuery(listScope.query)
+                $scope.listInitialized = true
             }
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
-
-        $scope.getUid = (): string => $scope.elementId
 
         /**
          * Destroy this widget

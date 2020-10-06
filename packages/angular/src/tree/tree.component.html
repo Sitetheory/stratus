@@ -1,4 +1,12 @@
-<div class="tree" cdkDropListGroup>
+<!-- show progress while initializing -->
+<mat-progress-bar mode="indeterminate" *ngIf="!isStyled || !isInitialized"></mat-progress-bar>
+
+<!--
+    Adding `cdkDropListGroup` is supposed to automatically
+    connect all drop lists, but it doesn't appear to work
+    in the nested logic.
+-->
+<div class="tree">
     <mat-progress-bar mode="indeterminate" *ngIf="collection.completed && collection.pending"></mat-progress-bar>
     <div class="float-right">
         <button mat-button
@@ -25,11 +33,24 @@
         <!--(mouseleave)="onDragHoverEnd()"-->
         <!--(cdkDragStarted)="onDragStart()"-->
         <!--(cdkDragReleased)="onDragEnd()"-->
-        <sa-tree-node cdkDrag
-                      *ngFor="let rootNode of dataSub | async"
-                      [cdkDragData]="rootNode"
-                      [tree]="this"
-                      [node]="rootNode"
-                      class="tree-node"></sa-tree-node>
+        <ng-container *ngIf='dataSub | async; let rootNodes'>
+            <div *ngIf='!rootNodes || rootNodes.length === 0'>
+                Add links to start building a Menu.
+            </div>
+            <sa-tree-node cdkDrag
+                          *ngFor="let rootNode of rootNodes"
+                          (cdkDragMoved)="onDragMove($event)"
+                          [cdkDragData]="rootNode"
+                          [tree]="this"
+                          [node]="rootNode"
+                          class="tree-node"></sa-tree-node>
+        </ng-container>
+
+        <!-- Debug Info -->
+        <!--
+        <hr />
+        <p><strong>current action:</strong></p>
+        <pre>{{dropData|json}}</pre>
+        -->
     </div>
 </div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import {HttpClient, HttpResponse} from '@angular/common/http'
-import {Observable} from 'rxjs'
+import {Observable, Subscriber} from 'rxjs'
 
 // External
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -9,7 +9,8 @@ import _ from 'lodash'
 // Interfaces
 export interface Query {
     fetched: number
-    data: Observable<HttpResponse<any>>
+    observable: Observable<HttpResponse<any>>
+    data?: HttpResponse<any>
 }
 
 export interface QueryMap {
@@ -37,16 +38,39 @@ export class BackendService {
         this.cache = {}
     }
 
+    // Create an Observable that returns XHR data
     get(url: string): Observable<HttpResponse<any>> {
-        if (!_.has(this.cache, url)) {
-            const now = new Date()
-            const data = this.http.get(url, { observe: 'response' })
-            this.cache[url] = {
-                fetched: now.valueOf(),
-                data
-            }
-            return data
+        if (url in this.cache) {
+            return this.cache[url].observable
         }
-        return this.cache[url].data
+        const now = new Date()
+        const query = this.cache[url] = {
+            fetched: now.valueOf(),
+            observable: new Observable((subscriber: Subscriber<any>) => this.getData(url, subscriber))
+        }
+        return query.observable
+    }
+
+    // This ensures the XHR only runs once per query by caching the data
+    private getData(url: string, subscriber: Subscriber<any>) {
+        // The observable cache reference should always be available
+        if (!(url in this.cache)) {
+            return
+        }
+        const query = this.cache[url]
+        // Return data if already cached
+        if ('data' in query) {
+            subscriber.next(query.data)
+            subscriber.complete()
+            return
+        }
+        // Fetch data if not available
+        this.http
+            .get(url, { observe: 'response' })
+            .subscribe((response: HttpResponse<any>) => {
+                query.data = response
+                subscriber.next(response)
+                subscriber.complete()
+            })
     }
 }

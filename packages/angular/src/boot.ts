@@ -30,6 +30,7 @@ function angularBoot() {
     // TODO: eventually we need to dynamically load like config.js, e.g. see material.ts
     const sa = [
         // 'sa-base',
+        'sa-boot', // Forcibly Boot Angular. Useful if element is not directly on a page onLoad
         'sa-editor',
         'sa-map',
         'sa-selector',

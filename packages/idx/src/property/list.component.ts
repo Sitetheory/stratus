@@ -32,7 +32,6 @@ import {
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
-import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
@@ -57,6 +56,8 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     detailsLinkPopup: boolean
     detailsLinkUrl: string
     detailsLinkTarget: '_self' | '_blank'
+    detailsHideVariables?: string[]
+    preferredStatus: 'Closed' | 'Leased' | 'Rented'
     detailsTemplate?: string
     query: CompileFilterOptions
     orderOptions: object | any // TODO need to specify
@@ -69,13 +70,11 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     instancePath: string
     mapMarkers: MarkerSettings[]
 
-    displayPropertyDetails(property: object | any, ev?: any): void
     getStreetAddress(property: Property): string
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
     pagePrevious(ev?: any): Promise<void>
     orderChange(order: string | string[], ev?: any): Promise<void>
-    refreshSearchWidgetOptions(): Promise<void>
     searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
@@ -91,7 +90,9 @@ Stratus.Components.IdxPropertyList = {
         detailsLinkPopup: '@',
         detailsLinkUrl: '@',
         detailsLinkTarget: '@',
+        detailsHideVariables: '@',
         detailsTemplate: '@',
+        preferredStatus: '@',
         contactEmail: '@',
         contactName: '@',
         contactPhone: '@',
@@ -137,19 +138,17 @@ Stratus.Components.IdxPropertyList = {
             $scope.collection = new Collection<Property>({})
             /**
              * Allow query to be loaded initially from the URL
-             * type {boolean}
              */
             $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
             $scope.searchOnLoad = $attrs.searchOnLoad && isJSON($attrs.searchOnLoad) ? JSON.parse($attrs.searchOnLoad) : true
-            /** type {boolean} */
             $scope.detailsLinkPopup = $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ?
                 JSON.parse($attrs.detailsLinkPopup) : true
-            /** type {string} */
-            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || '/property/details'
-            /** type {string} */
+            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || ''
             $scope.detailsLinkTarget = $attrs.detailsLinkTarget || '_self'
-            /** type {string|null} */
+            $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
+                JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
+            $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
             // TODO added backwards compatible options <--> query parameter until the next version
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) :
@@ -157,15 +156,13 @@ Stratus.Components.IdxPropertyList = {
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
             $scope.query.service = $scope.query.service || []
-            $scope.query.order = $scope.query.order || null // will be set by Service
+            // If string, check if a json and parse first. Otherwise be null or what it is
+            $scope.query.order = $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ?
+                JSON.parse($scope.query.order) : $scope.query.order || null
             $scope.query.page = $scope.query.page || null // will be set by Service
             $scope.query.perPage = $scope.query.perPage || 25
             $scope.query.images = $scope.query.images || {limit: 1}
 
-            // Remove invalid variable types to prevent breaking formating
-            if (_.isArray($scope.query.order)) {
-                delete $scope.query.order
-            }
             if (_.isArray($scope.query.where)) {
                 delete $scope.query.where
             }
@@ -180,8 +177,8 @@ Stratus.Components.IdxPropertyList = {
 
             // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
             $scope.orderOptions = $scope.orderOptions || {
-                'Price (high to low)': ['-ClosePrice', '-ListPrice'],
-                'Price (low to high)': ['ClosePrice', 'ListPrice'],
+                'Price (high to low)': '-_BestPrice',
+                'Price (low to high)': '_BestPrice',
                 'Recently Updated': '-ModificationTimestamp',
                 'Recently Sold': '-CloseDate'
             }
@@ -212,11 +209,12 @@ Stratus.Components.IdxPropertyList = {
                 // If a specific listing is provided, be sure to pop it up as well
                 // console.log('urlQuery', _.clone(urlQuery))
                 if (
-                    // urlQuery.hasOwnProperty('Listing') &&
-                    urlQuery.Listing.service &&
+                    urlQuery.hasOwnProperty('Listing') &&
+                    // urlQuery.Listing.service &&
+                    urlQuery.Listing.hasOwnProperty('service') &&
                     urlQuery.Listing.ListingKey
                 ) {
-                    $scope.displayPropertyDetails(urlQuery.Listing)
+                    $scope.displayModelDetails((urlQuery.Listing as Property)) // FIXME a quick fix as this contains ListingKey
                 }
             }
 
@@ -237,7 +235,6 @@ Stratus.Components.IdxPropertyList = {
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
                 $ctrl.processMLSDisclaimer() // TODO force reset with true?
-                $ctrl.prepareMapMarkers() // TODO being worked on
 
                 Idx.emit('collectionUpdated', $scope, $scope.collection)
             }
@@ -257,63 +254,8 @@ Stratus.Components.IdxPropertyList = {
             return listings
         }
 
-        $ctrl.prepareMapMarkers = (): void => {
-            const markers: MarkerSettings[] = []
-            $scope.getPageModels().forEach((listing) => {
-                // console.log('looping listing', listing)
-                if (
-                    Object.prototype.hasOwnProperty.call(listing, 'Latitude') &&
-                    Object.prototype.hasOwnProperty.call(listing, 'Longitude')
-                ) {
-                    const address = $scope.getStreetAddress(listing)
-                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
-                    /*const marker = new google.maps.Marker({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        animation: google.maps.Animation.DROP
-                    })
-                    marker.addListener('click', () => {
-                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                        // $scope.displayPropertyDetails(listing)
-                    })
-                    markers.push(marker)*/
-                    markers.push({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        options: {
-                            animation: 2 // DROP: 2 | BOUNCE: 1
-                        },
-                        click: {
-                            action: 'function',
-                            function: (marker: any, markerSetting: any) => {
-                                $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                                // $scope.displayPropertyDetails(listing)
-                            }
-                        }
-                    })
-                }
-            })
-
-            $scope.mapMarkers = markers
-        }
-
-        /**
-         * Inject the current URL settings into any attached Search widget
-         * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
-         */
-        $scope.refreshSearchWidgetOptions = async (): Promise<void> => {
-            const linkedScopes = Idx.getListInstanceLinks($scope.elementId) as (IdxPropertySearchScope)[]
-            linkedScopes.forEach((linkedScope) => {
-                if (Object.prototype.hasOwnProperty.call(linkedScope, 'setQuery')) { // Treat as IdxPropertySearchScope
-                    // FIXME search widgets may only hold certain values. Later this needs to be adjusted
-                    //  to only update the values in which a user can see/control
-                    // console.log('refreshSearchWidgetOptions Idx.getUrlOptions', _.clone(Idx.getUrlOptions('Search')))
-                    // searchScope.setWhere(Idx.getUrlOptions('Search')) // FIXME this needs to just set query.where
-                    linkedScope.setQuery($scope.query)
-                    linkedScope.listInitialized = true
-                }
-                // FIXME need a pubSub here for IdxMapScope to request updates per event
-            })
+        $scope.scrollToModel = (model: Property): void => {
+            $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
         /**
@@ -327,12 +269,12 @@ Stratus.Components.IdxPropertyList = {
             refresh?: boolean,
             updateUrl?: boolean
         ): Promise<Collection<Property>> =>
-            $q((resolve: any) => {
+            $q(async (resolve: any) => {
                 query = query || _.clone($scope.query) || {}
                 query.where = query.where || {}
                 // console.log('searchProperties has query', _.clone(query))
 
-                let where: UrlWhereOptions = _.clone(query.where) || {}
+                let urlWhere: UrlWhereOptions = _.clone(query.where) || {}
                 // updateUrl = updateUrl === false ? updateUrl : true
                 updateUrl = updateUrl === false ? updateUrl : $scope.urlLoad === false ? $scope.urlLoad : true
 
@@ -356,14 +298,34 @@ Stratus.Components.IdxPropertyList = {
                     } */
                 } else {
                     // console.log('query.where is blank, so loading', _.clone($scope.query.where))
-                    where = _.clone($scope.query.where) || {}
+                    urlWhere = _.clone($scope.query.where) || {}
+                }
+
+                // Check and remove incompatible where combinations. Basically if Location or neighborhood are used, remove the others
+                if (!_.isEmpty(query.where.Location)) {
+                    delete query.where.Neighborhood
+                    delete query.where.UnparsedAddress
+                    delete query.where.City
+                    delete query.where.CityRegion
+                    delete query.where.PostalCode
+                    delete query.where.MLSAreaMajor
+                }
+                if (!_.isEmpty(query.where.Neighborhood)) {
+                    delete query.where.UnparsedAddress
+                    delete query.where.City
+                    delete query.where.CityRegion
+                    delete query.where.PostalCode
+                    delete query.where.MLSAreaMajor
                 }
 
                 // Page checks
                 // If a different page, set it in the URL
+                // If Page was placed in the where query, let's move it
+                if (query.where.page) {
+                    query.page = query.where.page
+                    delete query.where.page
+                }
                 if (query.where.Page) {
-                    // console.log('there was a query.where.Page of ', _.clone(query.where.Page))
-                    // If Page was placed in the where query, let's move it
                     query.page = query.where.Page
                     delete query.where.Page
                 }
@@ -375,15 +337,19 @@ Stratus.Components.IdxPropertyList = {
                     $scope.query.page = 1
                 }
                 if ($scope.query.page) {
-                    where.Page = $scope.query.page
+                    urlWhere.Page = $scope.query.page
                 }
                 // Don't add Page/1 to the URL
-                if (where.Page <= 1) {
-                    delete (where.Page)
+                if (urlWhere.Page <= 1) {
+                    delete (urlWhere.Page)
                 }
 
+                // If Order was placed in the where query, let's move it
+                if (query.where.order) {
+                    query.order = query.where.order
+                    delete query.where.order
+                }
                 if (query.where.Order) {
-                    // If Order was placed in the where query, let's move it
                     query.order = query.where.Order
                     delete query.where.Order
                 }
@@ -393,20 +359,21 @@ Stratus.Components.IdxPropertyList = {
                 }
                 if ($scope.query.order && $scope.query.order.length > 0) {
                     // console.log('setting where to', _.clone($scope.query.order), 'from', _.clone(where.Order))
-                    where.Order = $scope.query.order
+                    urlWhere.Order = $scope.query.order
                 }
 
-                if (query.service) {
+                if (
+                    query.hasOwnProperty('service') &&
+                    !_.isNil(query.service)
+                ) {
                     // service does not affect URLs as it's a page specific thing
                     $scope.query.service = query.service
                 }
 
-                // FIXME handle service
-
-                // console.log('setting this URL', _.clone(where))
+                // console.log('setting this URL', _.clone(urlWhere))
                 // console.log('$scope.query.where ending with', _.clone($scope.query.where))
                 // Set the URL query
-                Idx.setUrlOptions('Search', where)
+                Idx.setUrlOptions('Search', urlWhere)
                 // TODO need to avoid adding default variables to URL (Status/order/etc)
 
                 if (updateUrl) {
@@ -415,11 +382,17 @@ Stratus.Components.IdxPropertyList = {
                     Idx.refreshUrlOptions($ctrl.defaultQuery)
                 }
 
-                // Keep the Search widgets up to date
-                $scope.refreshSearchWidgetOptions()
+                Idx.emit('searching', $scope, _.clone($scope.query))
 
-                // Grab the new property listings
-                resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                try {
+                    // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                    // Grab the new property listings
+                    const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                    Idx.emit('searched', $scope, _.clone($scope.query))
+                    resolve(results)
+                } catch (e) {
+                    console.error('Unable to fetchProperties:', e)
+                }
             })
 
         /**
@@ -496,27 +469,9 @@ Stratus.Components.IdxPropertyList = {
 
         $scope.getStreetAddress = (property: Property): string => $scope.Idx.getStreetAddress(property)
 
-        /*$scope.getGoogleMapKey = (): string | null => {
-            let googleApiKey = null
-            if (
-                $scope.integrations
-                && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
-                && $scope.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = $scope.integrations.maps.googleMaps.accountId
-            } else if (
-                Idx.sharedValues.integrations
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
-                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
-            }
-            return googleApiKey
-        }*/
+        $scope.getGoogleMapsKey = (): string | null => {
+            return $scope.googleApiKey || Idx.getGoogleMapsKey()
+        }
 
         /**
          * @param reset - set true to force reset
@@ -524,7 +479,21 @@ Stratus.Components.IdxPropertyList = {
         $scope.getMLSVariables = (reset?: boolean): MLSService[] => {
             if (!$ctrl.mlsVariables || reset) {
                 $ctrl.mlsVariables = []
-                Idx.getMLSVariables().forEach((service: MLSService) => {
+                let mlsServicesRequested = null
+                // Ensure we are only requesting the services we are using
+                if (
+                    $scope.query &&
+                    (
+                        _.isNumber($scope.query.service) ||
+                        !_.isEmpty($scope.query.service)
+                    )
+                ) {
+                    if (!_.isArray($scope.query.service)) {
+                        $scope.query.service = [$scope.query.service]
+                    }
+                    mlsServicesRequested = $scope.query.service
+                }
+                Idx.getMLSVariables(mlsServicesRequested).forEach((service: MLSService) => {
                     $ctrl.mlsVariables[service.id] = service
                 })
             }
@@ -573,12 +542,34 @@ Stratus.Components.IdxPropertyList = {
          */
         $scope.getMLSDisclaimer = (html?: boolean): string => html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
 
+        $scope.highlightModel = (model: Property, timeout?: number): void => {
+            timeout = timeout || 0
+            model._unmapped = model._unmapped || {}
+            $scope.$applyAsync(() => {
+                model._unmapped._highlight = true
+            })
+            if (timeout > 0) {
+                $timeout(() => {
+                    $scope.unhighlightModel(model)
+                }, timeout)
+            }
+        }
+
+        $scope.unhighlightModel = (model: Property): void => {
+            if (model) {
+                model._unmapped = model._unmapped || {}
+                $scope.$applyAsync(() => {
+                    model._unmapped._highlight = false
+                })
+            }
+        }
+
         /**
          * Either popup or load a new page with the
-         * @param property property object
+         * @param model property object
          * @param ev - Click event
          */
-        $scope.displayPropertyDetails = (property: Property, ev?: any): void => {
+        $scope.displayModelDetails = (model: Property, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -595,18 +586,20 @@ Stratus.Components.IdxPropertyList = {
                     'contact-name'?: string,
                     'contact-email'?: string,
                     'contact-phone'?: string,
+                    'hide-variables'?: string, // a string array
+                    'preferred-status'?: string,
                     template?: string,
                     'url-load'?: boolean,
                 } = {
-                    'element-id': 'property_detail_popup_' + property.ListingKey,
-                    service: property._ServiceId,
-                    'listing-key': property.ListingKey,
+                    'element-id': 'property_detail_popup_' + model.ListingKey,
+                    service: model._ServiceId,
+                    'listing-key': model.ListingKey,
                     'default-list-options': JSON.stringify($ctrl.defaultQuery),
                     'page-title': true, // update the page title
                     'url-load': $scope.urlLoad
                 }
-                if ($scope.googleApiKey) {
-                    templateOptions['google-api-key'] = $scope.googleApiKey
+                if ($scope.getGoogleMapsKey()) {
+                    templateOptions['google-api-key'] = $scope.getGoogleMapsKey()
                 }
                 if ($scope.contactName) {
                     templateOptions['contact-name'] = $scope.contactName
@@ -617,12 +610,18 @@ Stratus.Components.IdxPropertyList = {
                 if ($scope.contactPhone) {
                     templateOptions['contact-phone'] = $scope.contactPhone
                 }
+                if ($scope.detailsHideVariables.length > 0) {
+                    templateOptions['hide-variables'] = JSON.stringify($scope.detailsHideVariables)
+                }
+                if ($scope.preferredStatus) {
+                    templateOptions['preferred-status'] = $scope.preferredStatus
+                }
                 if ($scope.detailsTemplate) {
                     templateOptions.template = $scope.detailsTemplate
                 }
 
                 let template =
-                    `<md-dialog aria-label="${property.ListingKey}" class="stratus-idx-property-list-dialog">` +
+                    `<md-dialog aria-label="${model.ListingKey}" class="stratus-idx-property-list-dialog">` +
                     `<div class="popup-close-button-container">` +
                     `<div aria-label="Close Popup" class="close-button" data-ng-click="closePopup()" aria-label="Close Details Popup"></div>` +
                     `</div>` +
@@ -671,13 +670,11 @@ Stratus.Components.IdxPropertyList = {
                         $timeout(() => Idx.unregisterDetailsInstance('property_detail_popup', 'property'), 10)
                     })
             } else {
-                $window.open($scope.getDetailsURL(property), $scope.detailsLinkTarget)
+                $window.open($scope.getDetailsURL(model), $scope.detailsLinkTarget)
             }
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
-
-        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
         }

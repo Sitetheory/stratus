@@ -68,6 +68,8 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     integrations?: WidgetIntegrations
     minorDetails: SubSectionOptions[]
     alternateMinorDetails: SubSectionOptions[]
+    hideVariables: string[]
+    preferredStatus: 'Closed' | 'Leased' | 'Rented'
     instancePath: string
     mapMarkers: MarkerSettings[]
 
@@ -97,6 +99,8 @@ Stratus.Components.IdxPropertyDetails = {
         contactName: '@',
         contactPhone: '@',
         contactWebsiteUrl: '@',
+        hideVariables: '@',
+        preferredStatus: '@',
         options: '@',
         template: '@',
         defaultListOptions: '@'
@@ -147,6 +151,11 @@ Stratus.Components.IdxPropertyDetails = {
             $scope.options.openhouses = $attrs.openhouses && isJSON($attrs.openhouses) ? JSON.parse($attrs.openhouses) : {
                 fields: '*'// show all OH details
             }
+
+            // Items that the user might not what to appear on their feed here. Note that this is human chosen and may
+            // not adhere to MLS rules
+            $scope.hideVariables = $attrs.hideVariables && isJSON($attrs.hideVariables) ? JSON.parse($attrs.hideVariables) : []
+            $scope.preferredStatus = $attrs.preferredStatus || 'Closed'
 
             // The List's default query is needed to avoid showing the entire Query in the URL
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
@@ -1203,6 +1212,7 @@ Stratus.Components.IdxPropertyDetails = {
             /**
              * An optional pre-compiled set data for the sub-section component to display fields
              */
+            $ctrl.hideDetailVariables(minorDetails, $scope.hideVariables)
             $scope.minorDetails = minorDetails
             $scope.alternateMinorDetails = alternateMinorDetails
 
@@ -1261,6 +1271,23 @@ Stratus.Components.IdxPropertyDetails = {
                 $ctrl.prepareMapMarkers()
             }
         })
+
+        /**
+         * Remove certain fields from displaying in the Details section by removing their display object
+         * @param detailOptions - SubSectionOptions[] to alter
+         * @param variablesToHide - List of variable names to hide
+         */
+        $ctrl.hideDetailVariables = (detailOptions: SubSectionOptions[], variablesToHide: string[]): void => {
+            if (variablesToHide.length > 0) {
+                detailOptions.forEach((section) => {
+                    Object.keys(section.items).forEach((variableName) => {
+                        if (variablesToHide.includes(variableName)) {
+                            delete section.items[variableName]
+                        }
+                    })
+                })
+            }
+        }
 
         $ctrl.prepareMapMarkers = (): void => {
             if (
@@ -1367,7 +1394,7 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getCoBuyerAgentName = (): string => $scope.model.data.CoBuyerAgentFullName || ($scope.model.data.CoBuyerAgentFirstName ?
             $scope.model.data.CoBuyerAgentFirstName + ' ' + $scope.model.data.CoBuyerAgentLastName : null)
 
-        $scope.getGoogleMapKey = (): string | null => {
+        $scope.getGoogleMapsKey = (): string | null => {
             let googleApiKey = null
             if (
                 $scope.integrations
@@ -1377,21 +1404,15 @@ Stratus.Components.IdxPropertyDetails = {
                 && $scope.integrations.maps.googleMaps.accountId !== ''
             ) {
                 googleApiKey = $scope.integrations.maps.googleMaps.accountId
-            } else if (
-                Idx.sharedValues.integrations
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations, 'maps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call(Idx.sharedValues.integrations.maps.googleMaps, 'accountId')
-                && Idx.sharedValues.integrations.maps.googleMaps.accountId !== ''
-            ) {
-                googleApiKey = Idx.sharedValues.integrations.maps.googleMaps.accountId
+            } else {
+                googleApiKey = Idx.getGoogleMapsKey()
             }
             return googleApiKey
         }
 
         $scope.getGoogleMapEmbed = (): string | null => {
             if (!$ctrl.googleMapEmbed) {
-                const googleApiKey = $scope.getGoogleMapKey()
+                const googleApiKey = $scope.getGoogleMapsKey()
 
                 $ctrl.googleMapEmbed = googleApiKey ? $sce.trustAsResourceUrl(
                     `https://www.google.com/maps/embed/v1/place?key=${googleApiKey}&q=${$scope.getFullAddress(true)}`
@@ -1449,8 +1470,6 @@ Stratus.Components.IdxPropertyDetails = {
         $scope.getMLSDisclaimer = (html?: boolean): string => html ? $scope.disclaimerHTML : $scope.disclaimerString
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
-
-        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
             // TODO need to kill any attached slideshows

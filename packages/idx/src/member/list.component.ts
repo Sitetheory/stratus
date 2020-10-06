@@ -50,6 +50,7 @@ Stratus.Components.IdxMemberList = {
         variableSync: '@'
     },
     controller(
+        $anchorScroll: angular.IAnchorScrollService,
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdDialog: angular.material.IDialogService,
@@ -148,18 +149,8 @@ Stratus.Components.IdxMemberList = {
             return members
         }
 
-        /**
-         * Inject the current URL settings into any attached Search widget
-         * Due to race conditions, sometimes the List made load before the Search, so the Search will also check if it's missing any values
-         */
-        $scope.refreshSearchWidgetOptions = (): void => {
-            const searchScopes: any[] = Idx.getListInstanceLinks($scope.elementId, 'Member')
-            searchScopes.forEach(searchScope => {
-                // FIXME search widgets may only hold certain values.
-                //  Later this needs to be adjust to only update the values in which a user can see/control
-                // searchScope.setQuery(Idx.getUrlOptions('Search'))
-                searchScope.listInitialized = true
-            })
+        $scope.scrollToModel = (model: Member): void => {
+            $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
         /**
@@ -168,7 +159,7 @@ Stratus.Components.IdxMemberList = {
          * TODO Idx needs to export search options interface
          */
         $scope.searchMembers = async (options?: object | any, refresh?: boolean, updateUrl?: boolean): Promise<Collection> =>
-            $q((resolve: any) => {
+            $q(async (resolve: any) => {
                 options = options || {}
                 updateUrl = updateUrl === false ? updateUrl : true
 
@@ -210,13 +201,19 @@ Stratus.Components.IdxMemberList = {
                 /* if (updateUrl) {
                   Idx.refreshUrlOptions($ctrl.defaultOptions)
                 } */
-
-                // Keep the Search widgets up to date
-                // $scope.refreshSearchWidgetOptions()
+                Idx.emit('searching', $scope, _.clone($scope.query))
 
                 // Grab the new member listings
-                console.log('fetching members:', $scope.options)
-                resolve(Idx.fetchMembers($scope, 'collection', $scope.options, refresh))
+                // console.log('fetching members:', $scope.options)
+                try {
+                    // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                    // Grab the new property listings
+                    const results = await Idx.fetchMembers($scope, 'collection', $scope.options, refresh)
+                    Idx.emit('searched', $scope, _.clone($scope.query))
+                    resolve(results)
+                } catch (e) {
+                    console.error('Unable to fetchMembers:', e)
+                }
             })
 
         /**
@@ -295,13 +292,34 @@ Stratus.Components.IdxMemberList = {
             return html ? $sce.trustAsHtml(disclaimer) : disclaimer
         }
 
+        $scope.highlightModel = (model: Member, timeout?: number): void => {
+            timeout = timeout || 0
+            model._unmapped = model._unmapped || {}
+            $scope.$applyAsync(() => {
+                model._unmapped._highlight = true
+            })
+            if (timeout > 0) {
+                $timeout(() => {
+                    $scope.unhighlightModel(model)
+                }, timeout)
+            }
+        }
+
+        $scope.unhighlightModel = (model: Member): void => {
+            if (model) {
+                model._unmapped = model._unmapped || {}
+                $scope.$applyAsync(() => {
+                    model._unmapped._highlight = false
+                })
+            }
+        }
+
         /**
          * Either popup or load a new page with the
-         * TODO Idx export Member Interface
-         * @param member - details object
+         * @param model - details object
          * @param ev - Click event
          */
-        $scope.displayMemberDetails = (member: { _ServiceId: number, MemberKey: string }, ev?: any): void => {
+        $scope.displayModelDetails = (model: Member, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -316,8 +334,8 @@ Stratus.Components.IdxMemberList = {
                     'google-api-key'?: string,
                 } = {
                     element_id: 'property_member_detail_popup',
-                    service: member._ServiceId,
-                    'member-key': member.MemberKey,
+                    service: model._ServiceId,
+                    'member-key': model.MemberKey,
                     'page-title': true// update the page title
                 }
                 if ($scope.googleApiKey) {
@@ -325,7 +343,7 @@ Stratus.Components.IdxMemberList = {
                 }
 
                 let template =
-                    '<md-dialog aria-label="' + member.MemberKey + '">' +
+                    '<md-dialog aria-label="' + model.MemberKey + '">' +
                     '<stratus-idx-member-details '
                 _.forEach(templateOptions, (optionValue, optionKey) => {
                     template += `${optionKey}='${optionValue}'`
@@ -351,12 +369,12 @@ Stratus.Components.IdxMemberList = {
                         $timeout(() => Idx.unregisterDetailsInstance('property_member_detail_popup', 'member'), 10)
                     })
             } else {
-                $window.open($scope.getDetailsURL(member), $scope.detailsLinkTarget)
+                $window.open($scope.getDetailsURL(model), $scope.detailsLinkTarget)
             }
         }
 
         $scope.injectMemberDetails = async (member: any): Promise<void> => {
-            // console.log('will add these details to a form', member)
+            // console.log('will add these details to a form', model)
             await $scope.variableInject(member)
         }
 
@@ -428,8 +446,6 @@ Stratus.Components.IdxMemberList = {
             }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
-
-        $scope.getUid = (): string => $scope.elementId
 
         $scope.remove = (): void => {
         }

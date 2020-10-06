@@ -14,7 +14,7 @@
 
         <div class="details-header static-element">
             <h1 class="address">
-                <span data-ng-bind="::getStreetAddress()" aria-label="Street Address"></span>
+                <span data-ng-bind="::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()" aria-label="Street Address"></span>
             </h1>
             <h4>
                 <span data-ng-bind="::model.data.City" aria-label="City"></span>
@@ -43,7 +43,7 @@
                     <ul class="details-specs primary_font">
                         <li>
                             <!-- TODO need a prettier word for the status and a detail of real status -->
-                            <span data-ng-bind="::model.data.MlsStatus || model.data.StandardStatus" aria-label="Status"></span>
+                            <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)" aria-label="Status"></span>
                         </li>
                         <li data-ng-if="::model.data.BedroomsTotal && ::model.data.BedroomsTotal > 0">
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
@@ -62,7 +62,7 @@
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
                         <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
-                            Closed on
+                            <span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
                             <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </li>
                         <li data-ng-if="::model.data.OnMarketDate">
@@ -161,15 +161,21 @@
                 </div>
                 <div class="details-right">
                     <div class="list-price font-secondary" data-ng-if="::model.data.ClosePrice || model.data.ListPrice">
-                        <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? 'Sold for' : 'Listed at'"></span>
+                        <span class="list-price-label" data-ng-bind="model.data.ClosePrice ? Idx.getFriendlyStatus(model.data, preferredStatus) + ' for' : 'Listed at'"></span>
                         <span class="list-price" data-ng-bind="'$' + (model.data.ClosePrice || model.data.ListPrice | number)"></span>
                     </div>
                     <!-- TODO need a decent way to make a title for Property listings -->
                     <!--h3 class="property-title">An exclusive haven destined for modern, indoor-outdoor entertaining</h3-->
-                    <div class="font-body description" data-ng-if="::model.data.PublicRemarks" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description"></div>
+                    <div class="font-body description" data-ng-if="::model.data.PublicRemarks && !hideVariables.includes('PublicRemarks')" data-ng-bind-html="::getPublicRemarksHTML()" aria-label="Description"></div>
                     <div class="response-container">
-                        <a data-ng-if="::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded"
-                           data-ng-href="{{::model.data.VirtualTourURLUnbranded || model.data.VirtualTourURLBranded}}"
+                        <a data-ng-if="::model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')"
+                           data-ng-href="{{::model.data.VirtualTourURLUnbranded}}"
+                           class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
+                        >
+                            VTour
+                        </a>
+                        <a data-ng-if="::!(model.data.VirtualTourURLUnbranded && !hideVariables.includes('VirtualTourURLUnbranded')) && model.data.VirtualTourURLBranded && !hideVariables.includes('VirtualTourURLBranded')"
+                           data-ng-href="{{::model.data.VirtualTourURLBranded}}"
                            class="vtour btn btn-alt" target="_blank" aria-label="Virtual Tour Link"
                         >
                             VTour
@@ -252,8 +258,8 @@
                  data-stratus-src="{{::model.data.Images[0].MediaURL}}"
                  aria-label="Background Image of the Listing"
             >
-                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::getStreetAddress()}}"/>
-                <img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg" alt="No Image Available">
+                <img data-ng-if="model.data.Images && model.data.Images.length > 0" data-ng-src="{{::localDir}}images/stratus-property-shapeholder.png" alt="{{::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()}}"/>
+                <img data-ng-if="!model.data.Images" data-ng-src="{{::localDir}}images/no-image-simple.jpg" alt="No Image Available"/>
             </div>
         </div>
 
@@ -261,7 +267,7 @@
         <!--div class="map-location details-container static-element" data-ng-if="::mapMarkers" aria-label="Google Maps Display">
             <h2 class="dotted-spaced-underline">Location</h2>
             <sa-map class="google-maps-dynamic"
-                    data-google-maps-key="{{::getGoogleMapKey()}}"
+                    data-google-maps-key="{{::getGoogleMapsKey()}}"
                     data-markers="{{::instancePath}}.mapMarkers"
                     data-zoom="18"
                     data-map-type="roadmap"
@@ -284,7 +290,7 @@
                             ng-model="model"
                             data-ng-repeat="detail in ::minorDetails"
                             section-name="{{::detail.section}}"
-                            items={{::detail.items}}
+                            items="{{::detail.items | json}}"
                     >
                     </stratus-idx-property-details-sub-section>
 

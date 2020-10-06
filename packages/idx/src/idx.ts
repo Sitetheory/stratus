@@ -133,6 +133,8 @@ export interface IdxService {
     getFriendlyStatus(property: Property): string // TODO replace with property object
     getFullAddress(property: Property, encode?: boolean): string
 
+    getGoogleMapsKey(): string | null
+
     getIdxServices(): number[]
 
     getMLSVariables(serviceIds?: number[]): MLSService[]
@@ -160,8 +162,6 @@ export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
     localDir: string
     Idx: IdxService
 
-    /** @deprecated */
-    getUid(): string // FIXME this isn't returning the uid. Use elementId.
     on(emitterName: string, callback: IdxEmitter): void
     remove(): void
 }
@@ -173,12 +173,18 @@ export type IdxDetailsScope<T = LooseObject> = IdxComponentScope & {
 export type IdxListScope<T = LooseObject> = IdxComponentScope & {
     collection: Collection<T>
 
+    displayModelDetails(model: T, ev?: any): void
     getPageModels(): T[]
+    highlightModel(model: T, timeout?: number): void
+    scrollToModel(model: T): void
+    unhighlightModel(model: T): void
 }
 
 export type IdxSearchScope = IdxComponentScope & {
     listId: string
     listInitialized: boolean
+
+    refreshSearchWidgetOptions(listScope?: IdxListScope): void
 }
 
 export interface UrlsOptionsObject {
@@ -195,9 +201,9 @@ export interface UrlWhereOptions extends Omit<WhereOptions, 'Page' | 'Order'> {
 // Reusable Objects. Keys listed are not required, but help programmers define what exists/is possible
 export interface WhereOptions extends LooseObject {
     page?: undefined // Key being added to wrong type
-    Page?: undefined // Key being added to wrong type
+    // Page?: undefined // Key being added to wrong type
     order?: undefined // Key being added to wrong type
-    Order?: undefined // Key being added to wrong type
+    // Order?: undefined // Key being added to wrong type
     where?: undefined // Key being added to wrong type
 
     // Property
@@ -401,11 +407,21 @@ interface MongoFilterQuery {
 export interface Office extends LooseObject {
     id: string
     OfficeKey: string
+
+    _unmapped?: {
+        [key: string]: unknown
+        _highlight?: boolean
+    }
 }
 
 export interface Member extends LooseObject {
     id: string
     MemberKey: string
+
+    _unmapped?: {
+        [key: string]: unknown
+        _highlight?: boolean
+    }
 }
 
 export interface Property extends LooseObject {
@@ -462,25 +478,31 @@ export interface Property extends LooseObject {
     // Custom
     _ServiceId: number
     _Class: string
+    _IsRental?: boolean
     _unmapped?: {
         [key: string]: unknown
         CoordinateModificationTimestamp?: Date
+        _highlight?: boolean
     }
 }
 
 export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
 export type IdxEmitterInit = IdxEmitter & ((source: IdxComponentScope) => any)
+export type IdxEmitterSessionInit = IdxEmitter & ((source: null) => any)
 export type IdxEmitterCollectionUpdated = IdxEmitter & ((source: IdxListScope, collection?: Collection) => any)
 export type IdxEmitterPageChanged = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
 export type IdxEmitterPageChanging = IdxEmitter & ((source: IdxListScope, pageNumber?: number) => any)
 export type IdxEmitterOrderChanged = IdxEmitter & ((source: IdxListScope, order?: string | string[]) => any)
 export type IdxEmitterOrderChanging = IdxEmitter & ((source: IdxListScope, order?: string | string[]) => any)
+export type IdxEmitterSearching = IdxEmitter & ((source: IdxComponentScope, query?: CompileFilterOptions) => any)
+export type IdxEmitterSearched = IdxEmitter & ((source: IdxComponentScope, query?: CompileFilterOptions) => any)
 
 // All Service functionality
 const angularJsService = (
     $injector: angular.auto.IInjectorService,
     $http: angular.IHttpService,
     $location: angular.ILocationService,
+    $mdToast: angular.material.IToastService,
     $q: angular.IQService,
     $rootScope: angular.IRootScopeService,
     $window: angular.IWindowService,
@@ -514,6 +536,7 @@ const angularJsService = (
     }
     let idxServicesEnabled: number[] = []
     let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
+    let sessionInitialized = false
     let refreshLoginTimer: any // Timeout object
     let defaultPageTitle: string
     const instance: {
@@ -575,11 +598,14 @@ const angularJsService = (
         [emitterUid: string]: {
             [onMethodName: string]: IdxEmitter[]
             init?: IdxEmitterInit[]
+            sessionInit?: IdxEmitterSessionInit[]
             collectionUpdated?: IdxEmitterCollectionUpdated[]
             pageChanged?: IdxEmitterPageChanged[]
             pageChanging?: IdxEmitterPageChanging[]
             orderChanged?: IdxEmitterOrderChanged[]
             orderChanging?: IdxEmitterOrderChanging[]
+            searched?: IdxEmitterSearched[]
+            searching?: IdxEmitterSearching[]
         }
     } = {
         /*idx_property_list_7: {
@@ -631,7 +657,15 @@ const angularJsService = (
         $scope: IdxComponentScope,
         var1?: any, var2?: any, var3?: any
     ) {
-        const uid = $scope.elementId
+        emitManual(emitterName, $scope.elementId, $scope, var1, var2, var3)
+    }
+
+    function emitManual(
+        emitterName: string,
+        uid: string,
+        $scope: IdxComponentScope,
+        var1?: any, var2?: any, var3?: any
+    ) {
         // console.log(uid, $scope, 'is emitting', emitterName)
         if (
             Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid) &&
@@ -640,14 +674,12 @@ const angularJsService = (
             instanceOnEmitters[uid][emitterName].forEach((emitter) => {
                 emitter($scope, var1, var2, var3)
             })
-        }/*else {
-            console.log('yet no one is watching')
-        }*/
+        }
 
         if (emitterName === 'init') {
             // Let's prep the requests for 'init' so they immediate call if this scope has already init
             instanceOnEmitters[uid] = instanceOnEmitters[uid] || {}
-            instanceOnEmitters[uid].init = instanceOnEmitters[uid].init || []
+            instanceOnEmitters[uid][emitterName] = instanceOnEmitters[uid][emitterName] || []
         }
     }
 
@@ -666,7 +698,18 @@ const angularJsService = (
             Object.prototype.hasOwnProperty.call(Stratus.Instances, uid)
         ) {
             // init has already happened.... so let's send back the emit of 'init' right now!
-            emit('init', Stratus.Instances[uid])
+            // emit('init', Stratus.Instances[uid]) // wait, would this send the init a second time? maybe just send it to this callback
+            callback(Stratus.Instances[uid])
+            return
+        }
+
+        if (
+            uid === 'Idx' &&
+            emitterName === 'sessionInit' &&
+            sessionInitialized
+        ) {
+            // sessionInitialized has already happened.... so let's send back the emit of 'sessionInitialized' right now!
+            callback(null)
             return
         }
 
@@ -731,6 +774,7 @@ const angularJsService = (
             instanceLink.Search[uid] = []
         }
         if (listUid) {
+            // console.log('added', uid, 'to', listUid, 'instanceLink')
             instanceLink.Search[uid].push(listUid)
             if (!Object.prototype.hasOwnProperty.call(instanceLink.List, listUid)) {
                 instanceLink.List[listUid] = []
@@ -891,7 +935,7 @@ const angularJsService = (
                     resolve()
                 }
             } catch (err) {
-                console.error('error', err)
+                console.error('tokenKeepAuth Error:', err)
                 reject(err)
             }
         })
@@ -930,12 +974,10 @@ const angularJsService = (
                     tokenHandleGoodResponse(response, keepAlive)
                     resolve()
                 } else {
-                    tokenHandleBadResponse(response)
-                    reject()
+                    reject(tokenHandleBadResponse(response))
                 }
             }, (response: TokenResponse) => { // TODO interface a response
-                tokenHandleBadResponse(response)
-                reject()
+                reject(tokenHandleBadResponse(response))
             })
         })
     }
@@ -1106,6 +1148,11 @@ const angularJsService = (
                 }
             }
         }
+        if (!sessionInitialized) {
+            emitManual('sessionInit', 'Idx', null)
+        }
+        emitManual('sessionRefresh', 'Idx', null)
+        sessionInitialized = true
 
         if (keepAlive) {
             tokenEnableRefreshTimer()
@@ -1116,17 +1163,27 @@ const angularJsService = (
      * Functions to do if the token retrieval fails. For now it just outputs the errors
      * @param response -
      */
-    function tokenHandleBadResponse(response: TokenResponse | any): void {
+    function tokenHandleBadResponse(response: TokenResponse | any): string | any {
+        let errorMessage: any = 'Token supplied is invalid or blank'
         if (
             typeof response === 'object' &&
             Object.prototype.hasOwnProperty.call(response, 'data') &&
             Object.prototype.hasOwnProperty.call(response.data, 'errors') &&
             Object.prototype.hasOwnProperty.call(response.data.errors, 'length')
         ) {
-            console.error(response.data.errors)
+            // console.error('Token Error', response.data.errors)
+            errorMessage = response.data.errors
         } else {
-            console.error(response)
+            // console.error('Token Error', response)
         }
+        $mdToast.show(
+            $mdToast.simple()
+                .textContent('Unable to authorize Idx feed!')
+                .toastClass('errorMessage')
+                .position('top right')
+                .hideDelay(5000)
+        )
+        return errorMessage
     }
 
     /**
@@ -2212,7 +2269,7 @@ const angularJsService = (
         apiModel: string,
         compileFilterFunction: (options: CompileFilterOptions) => MongoFilterQuery
     ): Promise<Collection<T>> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         options.where = options.where || {}
         options.order = options.order || []
         options.page = options.page || 1
@@ -2228,6 +2285,10 @@ const angularJsService = (
 
         if (typeof options.service === 'number') {
             options.service = [options.service]
+        }
+        // FIXME temp bandaid here to require a service
+        if (options.service.length === 0) {
+            options.service = [0]
         }
 
         const apiModelSingular = getSingularApiModelName(apiModel)
@@ -2375,7 +2436,7 @@ const angularJsService = (
     ): Promise<Model<T>> {
         await tokenKeepAuth()
 
-        options.service = options.service || 0
+        options.service = options.service ?? 0
         options.where = options.where || {}
         options.images = options.images || false
         options.fields = options.fields || []
@@ -2461,7 +2522,7 @@ const angularJsService = (
         refresh = false,
         // listName = 'PropertyList'
     ): Promise<Collection<Property>> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         // options.where = options.where || urlOptions.Search || {} // TODO may want to sanitize the urlOptions
         if (
             !options.where &&
@@ -2538,7 +2599,7 @@ const angularJsService = (
         modelVarName: string,
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'fields' | 'images' | 'openhouses'>,
     ): Promise<Model<Property>> {
-        options.service = options.service || null
+        options.service = options.service ?? null
         options.where = options.where || {}
         options.images = options.images || false
         options.openhouses = options.openhouses || false
@@ -2573,7 +2634,7 @@ const angularJsService = (
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office'>,
         refresh = false
     ): Promise<Collection> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         // options.listName = options.listName || 'MemberList'
         options.where = options.where || {}
         options.order = options.order || []
@@ -2630,7 +2691,7 @@ const angularJsService = (
         options = {} as Pick<CompileFilterOptions, 'service' | 'where' | 'order' | 'page' | 'perPage' | 'fields' | 'images' | 'office' | 'managingBroker' | 'members'>,
         refresh = false
     ): Promise<Collection> {
-        options.service = options.service || []
+        options.service = options.service ?? []
         options.where = options.where || {}
         options.order = options.order || []
         options.page = options.page || 1
@@ -2661,10 +2722,14 @@ const angularJsService = (
 
     /**
      * Grabs a shorten more human and code friendly name of the property's status
-     * @param property - Property Object
-     * @returns 'Active' | 'Contingent' | 'Closed'
+     * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
+     * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
+     * preferredStatus = 'Rented', a Closed listing will either be 'Sold' or 'Rented'
      */
-    function getFriendlyStatus(property: Property): string {
+    function getFriendlyStatus(
+        property: Property,
+        preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
+    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' |'Rented' | string {
         let statusName = ''
         if (
             Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
@@ -2688,11 +2753,80 @@ const angularJsService = (
                     statusName = 'Contingent'
                     break
                 }
-                case 'Sold':
-                case 'Leased/Option':
-                case 'Leased/Rented': {
-                    statusName = 'Closed'
-                    break
+                default: statusName = getFriendlyClosedStatus(property, statusName, preferredStatus)
+            }
+        }
+        return statusName
+    }
+
+    /**
+     * Grabs a full/longer name of the property's status. Mostly intended to properly show the normal/rent status
+     * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
+     * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
+     * preferredStatus = 'Rented', a Closed listing will either be 'Sold' or 'Rented'
+     */
+    function getFullStatus(
+        property: Property,
+        preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
+    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' |'Rented' | string {
+        let statusName = ''
+        if (
+            Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
+            property.MlsStatus !== ''
+        ) {
+            statusName = property.MlsStatus
+        } else if (
+            Object.prototype.hasOwnProperty.call(property, 'StandardStatus') &&
+            property.StandardStatus !== ''
+        ) {
+            statusName = property.StandardStatus
+        }
+        if (statusName !== '') {
+            statusName = getFriendlyClosedStatus(property, statusName, preferredStatus)
+        }
+        return statusName
+    }
+
+    /**
+     * When selecting a preferredStatus, 'Closed' wil always show a Closed listing as such.
+     * preferredStatus = 'Leased', a Closed listing will either be 'Sold' or 'Leased'
+     * preferredStatus = 'Rented', a Closed listing will either be 'Sold' or 'Rented'
+     */
+    function getFriendlyClosedStatus(
+        property: Property,
+        statusName: string,
+        preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
+    ): string {
+        if (statusName !== '') {
+            if (preferredStatus === 'Closed') {
+                // Ensure closed statuses are always converted to Closed
+                switch (statusName) {
+                    case 'Sold':
+                    case 'Leased/Option':
+                    case 'Leased/Rented': {
+                        statusName = 'Closed'
+                        break
+                    }
+                }
+            } else {
+                // The preferred is Sold / Leased / Rented now
+                // Note some MLSs might not have listings with the wording of leased/rented
+                switch (statusName) {
+                    case 'Closed':
+                    case 'Sold':
+                        statusName = 'Sold'
+                        if (
+                            Object.prototype.hasOwnProperty.call(property, '_IsRental') &&
+                            property._IsRental
+                        ) {
+                            statusName = preferredStatus
+                        }
+                        break
+                    case 'Leased/Option':
+                    case 'Leased/Rented': {
+                        statusName = preferredStatus
+                        break
+                    }
                 }
             }
         }
@@ -2752,6 +2886,20 @@ const angularJsService = (
         return encode ? encodeURIComponent(address) : address
     }
 
+    function getGoogleMapsKey(): string | null {
+        let googleMapsKey = null
+        if (
+            sharedValues.integrations
+            && Object.prototype.hasOwnProperty.call(sharedValues.integrations, 'maps')
+            && Object.prototype.hasOwnProperty.call(sharedValues.integrations.maps, 'googleMaps')
+            && Object.prototype.hasOwnProperty.call(sharedValues.integrations.maps.googleMaps, 'accountId')
+            && sharedValues.integrations.maps.googleMaps.accountId !== ''
+        ) {
+            googleMapsKey = sharedValues.integrations.maps.googleMaps.accountId
+        }
+        return googleMapsKey
+    }
+
     return {
         fetchMembers,
         fetchOffices,
@@ -2759,10 +2907,13 @@ const angularJsService = (
         fetchProperty,
         devLog,
         emit,
+        emitManual,
         getContactVariables,
         getDefaultWhereOptions,
         getFriendlyStatus,
         getFullAddress,
+        getFullStatus,
+        getGoogleMapsKey,
         getIdxServices,
         getListInstance,
         getListInstanceLinks,

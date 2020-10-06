@@ -4,6 +4,7 @@ import {
     ChangeDetectorRef,
     Component,
     Inject,
+    OnDestroy,
     OnInit
 } from '@angular/core'
 import {
@@ -27,29 +28,30 @@ import {
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
+// Angular 1 Services
+import {Model} from '@stratusjs/angularjs/services/model'
+
 // Services
+import {HttpResponse} from '@angular/common/http'
 import {BackendService} from '@stratusjs/angular/backend.service'
-import {LooseObject} from '@stratusjs/core/misc'
+
+// Interfaces
+import {Convoy} from '@stratusjs/angular/data/convoy.interface'
+import {ContentEntity} from '@stratusjs/angular/data/content.interface'
 
 // Data Types
 export interface DialogData {
+    backend: BackendService
     id: number
     name: string
     target: string
     level: string
     content: any
     url: string
-    model: any
+    model: Model
     collection: any
     parent: any
     nestParent: any
-}
-export interface Content extends LooseObject {
-    id?: number
-    route?: string
-    version?: {
-        title?: string
-    }
 }
 
 // Local Setup
@@ -69,20 +71,32 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TreeDialogComponent implements OnInit {
+export class TreeDialogComponent implements OnInit, OnDestroy {
 
     // Basic Component Settings
     title = moduleName + '_component'
     uid: string
 
+    // Timing Flags
+    isInitialized = false
+    isDestroyed = false
+    isStyled = false
+
     // Dependencies
     _: any
 
+    // Services
+    backend: BackendService
+
+    // View Elements
+    // @ViewChild('nameInput') nameField: ElementRef
+
     // TODO: Move this to its own AutoComplete Component
     // AutoComplete Data
-    filteredContentOptions: any[]
+    filteredContentOptions: Array<any>
     dialogContentForm: FormGroup
     isContentLoading = false
+    isContentLoaded = false
     lastContentSelectorQuery: string
 
     // filteredParentOptions: any[]
@@ -94,7 +108,6 @@ export class TreeDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<TreeDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
         private fb: FormBuilder,
-        private backend: BackendService,
         private ref: ChangeDetectorRef
     ) {
         // Manually render upon data change
@@ -111,7 +124,29 @@ export class TreeDialogComponent implements OnInit {
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
+        // FIXME: This needs to work the same way the selector and editor do, which wait for the CSS until it is marked as "styled"
         Stratus.Internals.CssLoader(`${localDir}/${parentModuleName}/${moduleName}.component.css`)
+            .then(() => {
+                this.isStyled = true
+                // this.refresh()
+            })
+            .catch(() => {
+                console.error('CSS Failed to load for Component:', this)
+                this.isStyled = true
+                // this.refresh()
+            })
+
+        // Hoist Service
+        this.backend = this.data.backend
+
+        // Element Focus
+        /* *
+        if (this.nameField) {
+            this.nameField.nativeElement.focus()
+        } else {
+            console.log('nameField:', this.nameField)
+        }
+        /* */
 
         // TODO: Move this to its own AutoComplete Component
         // AutoComplete Logic
@@ -133,39 +168,28 @@ export class TreeDialogComponent implements OnInit {
                         }
                         return this.backend.get(this.lastContentSelectorQuery)
                             .pipe(
-                                finalize(() => this.isContentLoading = false),
+                                finalize(() => {
+                                    this.isContentLoading = false
+                                    this.isContentLoaded = true
+                                }),
                             )
                     }
                 )
             )
-            .subscribe((response: any) => {
-                if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-                    this.filteredContentOptions = []
-                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
-                    // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-                    this.refresh()
-                    return this.filteredContentOptions
-                }
-                const payload = _.get(response.body, 'payload') || response.body
-                if (_.isEmpty(payload) || !Array.isArray(payload)) {
-                    this.filteredContentOptions = []
-                    // FIXME: We have to go in this roundabout way to force changes to be detected since the
-                    // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-                    this.refresh()
-                    return this.filteredContentOptions
-                }
-                this.filteredContentOptions = payload
-                // FIXME: We have to go in this roundabout way to force changes to be detected since the
-                // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-                this.refresh()
-                return this.filteredContentOptions
-            })
+            .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => this.handleContent(response))
 
         // Initialize ContentSelector with Empty Input
-        // TODO: Make something like this work
-        this.dialogContentForm
-            .get('contentSelectorInput')
-            .setValue('')
+        // this.dialogContentForm
+        //     .get('contentSelectorInput')
+        //     .setValue('')
+
+        // Initial Call for Content
+        this.backend
+            .get('/Api/Content?options[showCollection]=null&q=')
+            .pipe(
+                finalize(() => this.isContentLoading = false),
+            )
+            .subscribe((response: HttpResponse<Convoy<ContentEntity>>) => this.handleContent(response))
 
         // Handle Parent Selector
         // this.dialogParentForm = this.fb.group({
@@ -202,12 +226,22 @@ export class TreeDialogComponent implements OnInit {
         //         return this.filteredParentOptions = payload
         //     })
 
+        // Mark as complete
+        this.isInitialized = true
+
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-        this.refresh()
+        // this.refresh()
+    }
+
+    ngOnDestroy() {
+        this.isDestroyed = true
     }
 
     public refresh() {
+        if (this.isDestroyed) {
+            return
+        }
         if (!this.ref) {
             console.error('ref not available:', this)
             return
@@ -221,10 +255,10 @@ export class TreeDialogComponent implements OnInit {
         this.dialogRef.close()
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
-        this.refresh()
+        // this.refresh()
     }
 
-    displayContentText(content: Content) {
+    displayContentText(content: ContentEntity) {
         // Ensure Content is Selected before Display Text
         if (!content) {
             return
@@ -244,4 +278,27 @@ export class TreeDialogComponent implements OnInit {
     //         return _.get(option, 'name')
     //     }
     // }
+
+    private handleContent(response:HttpResponse<Convoy<ContentEntity>>) {
+        if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+            this.filteredContentOptions = []
+            // FIXME: We have to go in this roundabout way to force changes to be detected since the
+            // Dialog Sub-Components don't seem to have the right timing for ngOnInit
+            // this.refresh()
+            return this.filteredContentOptions
+        }
+        const payload = _.get(response.body, 'payload') || response.body
+        if (_.isEmpty(payload) || !Array.isArray(payload)) {
+            this.filteredContentOptions = []
+            // FIXME: We have to go in this roundabout way to force changes to be detected since the
+            // Dialog Sub-Components don't seem to have the right timing for ngOnInit
+            // this.refresh()
+            return this.filteredContentOptions
+        }
+        this.filteredContentOptions = payload
+        // FIXME: We have to go in this roundabout way to force changes to be detected since the
+        // Dialog Sub-Components don't seem to have the right timing for ngOnInit
+        // this.refresh()
+        return this.filteredContentOptions
+    }
 }

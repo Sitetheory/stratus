@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angular",
-  "version": "0.2.31",
+  "version": "0.2.36",
   "description": "This is the angular package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -26,6 +26,7 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
+    "@agentepsilon/decko": "^2.0.1",
     "@angular/animations": "^10.0.6",
     "@angular/cdk": "^10.0.2",
     "@angular/common": "^10.0.6",

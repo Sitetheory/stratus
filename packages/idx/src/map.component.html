@@ -1,8 +1,25 @@
-<div id="{{::elementId}}" data-ng-cloak>
-    <div class="map-location details-container static-element" aria-label="Google Maps Display">
-        <sa-map class="google-maps-dynamic"
-                data-callback="{{::instancePath}}.mapInitialize"
-                data-map-type="roadmap"
-        ></sa-map>
+<sa-boot></sa-boot>
+<div id="{{::elementId}}" data-ng-cloak aria-label="Google Maps Display">
+    <div
+            data-ng-if="!initialized || !mapInitialized"
+            data-layout="row"
+            data-layout-align="center center"
+            style="height: {{height}}; width: {{width}};"
+    >
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
     </div>
+    <sa-map
+            data-ng-if="initialized"
+            data-ng-show="mapInitialized"
+            data-callback="{{::instancePath}}.mapInitialize"
+            data-google-maps-key="{{::getGoogleMapsKey()}}"
+            data-map-type="{{::mapType}}"
+            data-zoom="{{::zoom}}"
+            data-zoom-control="{{::zoomControl}}"
+            data-scrollwheel="{{::scrollwheel}}"
+            data-height="{{::height}}"
+            data-width="{{::width}}"
+            data-default-icon="{{::markerIcon}}"
+            data-default-icon-hover="{{::markerIconHover}}"
+    ></sa-map>
 </div>

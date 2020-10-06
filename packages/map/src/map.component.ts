@@ -49,6 +49,8 @@ export interface MarkerSettings {
     position: google.maps.LatLngLiteral | google.maps.LatLng
     title?: string
     // Adding a Label when there is a shape does not look good
+    icon?: string | google.maps.Icon | google.maps.Symbol
+    iconHover?: string | google.maps.Icon | google.maps.Symbol
     label?: string | google.maps.MarkerLabel
     clickable?: boolean
     options?: google.maps.MarkerOptions
@@ -215,10 +217,12 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     // @Input() markers: string | google.maps.LatLngLiteral[] | MarkerSettings[] // Later allow just coords
     @Input() zoom = 18
     @Input() mapType = 'roadmap'  // 'roadmap' | 'hybrid' | 'satellite' | 'terrain'
-    @Input() zoomControl = false
-    @Input() scrollwheel = true
+    @Input() zoomControl = true // Display Zoom Controls
+    @Input() scrollwheel = false
     @Input() disableDoubleClickZoom = false
     @Input() center: google.maps.LatLng | google.maps.LatLngLiteral = {lat: 37.4220656, lng: -122.0862784}
+    @Input() defaultIcon: string | google.maps.Icon | google.maps.Symbol
+    @Input() defaultIconHover: string | google.maps.Icon | google.maps.Symbol
     options: google.maps.MapOptions = {
         mapTypeId: this.mapType,
         center: this.center,
@@ -257,18 +261,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
 
-        // Sanitize Numbers
-        if (!_.isNumber(this.zoom)) {
-            this.zoom = Number.parseInt(this.zoom, 10)
-        }
-
-        // Sanitize Booleans
-        if (!_.isBoolean(this.scrollwheel)) {
-            this.scrollwheel = (this.scrollwheel === 'true')
-        }
-        if (!_.isBoolean(this.disableDoubleClickZoom)) {
-            this.disableDoubleClickZoom = (this.disableDoubleClickZoom === 'true')
-        }
+        this.processOptions()
 
         // Ensure there is at least a Dev key
         if (_.isEmpty(this.googleMapsKey)) {
@@ -300,6 +293,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
     /** Loads when this.map renders */
     async ngAfterViewInit() {
+        // console.log('running ngAfterViewInit')
         try {
             await this.initGoogleMapsApi()
             this.map = new google.maps.Map(this.gMap.nativeElement, this.options)
@@ -308,12 +302,14 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             })
             this.processProvidedMarkersPath()
             this.processProvidedCallback()
+
             this.initialized = true
             // console.info(this.uid, 'Inited')
         } catch (e) {
-            console.error(this.uid, 'could not Init')
+            console.error(this.uid, 'could not Init', e)
         }
         this.initializing = false
+        // console.log('ngAfterViewInit done')
     }
 
     /**
@@ -330,6 +326,33 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             // this.centerAtPosition(bounds.getCenter())
             this.panToPosition(bounds.getCenter())
             this.fitBounds(bounds)
+        }
+    }
+
+    private processOptions() {
+        // Sanitize Numbers
+        if (!_.isNumber(this.zoom)) {
+            this.zoom = Number.parseInt(this.zoom, 10)
+        }
+
+        // Sanitize Booleans
+        if (!_.isBoolean(this.zoomControl)) {
+            this.zoomControl = (this.zoomControl === 'true')
+        }
+        if (!_.isBoolean(this.scrollwheel)) {
+            this.scrollwheel = (this.scrollwheel === 'true')
+        }
+        if (!_.isBoolean(this.disableDoubleClickZoom)) {
+            this.disableDoubleClickZoom = (this.disableDoubleClickZoom === 'true')
+        }
+
+        this.options = {
+            mapTypeId: this.mapType,
+            center: this.center,
+            zoom: this.zoom,
+            zoomControl: this.zoomControl,
+            scrollwheel: this.scrollwheel,
+            disableDoubleClickZoom: this.disableDoubleClickZoom,
         }
     }
 
@@ -475,11 +498,23 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (marker instanceof google.maps.Marker) {
             realMarker = marker as google.maps.Marker
         } else {
+            marker.icon = marker.icon || this.defaultIcon
             realMarker = new google.maps.Marker(marker)
             if (marker.hasOwnProperty('options')) {
                 realMarker.setOptions(marker.options)
             }
-            // Only can add click event if MarkerSettings
+
+            // Only can add hover event if in MarkerSettings or defaulted
+            // marker.iconHover = marker.iconHover || this.defaultIconHover
+            if (marker.iconHover || this.defaultIconHover) {
+                realMarker.addListener('mouseover', () => {
+                    realMarker.setIcon(marker.iconHover || this.defaultIconHover)
+                })
+                realMarker.addListener('mouseout', () => {
+                    realMarker.setIcon(marker.icon || this.defaultIcon)
+                })
+            }
+            // Only can add click event if in MarkerSettings
             realMarker.addListener('click', () => {
                 this.mapClick(realMarker, marker as MarkerSettings)
             })

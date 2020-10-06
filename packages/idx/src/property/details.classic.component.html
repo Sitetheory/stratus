@@ -15,7 +15,7 @@
 				<div class="address-container" data-flex="100" data-flex-gt-xs="80">
 					<h3 class="address">
 						<!--span data-ng-bind="::model.data.UnparsedAddress"></span-->
-						<span data-ng-bind="::getStreetAddress()"></span><!--Address not yet available-->
+						<span data-ng-bind="::model.data.InternetAddressDisplayYN === false ? 'Address Not Disclosed' : getStreetAddress()"></span><!--Address not yet available-->
 					</h3>
 					<div class="address2">
 						<span data-ng-bind="::model.data.City | lowercase"></span><span data-ng-if="::model.data.StateOrProvince">, <span data-ng-bind="::model.data.StateOrProvince"></span></span>
@@ -69,7 +69,7 @@
 
 				<div class="details-specs-container" data-flex="100" data-flex-gt-xs="20">
 					<div class="details-specs">
-						Status: <span data-ng-bind="::model.data.MlsStatus"></span>
+						Status: <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)"></span>
 						<span data-ng-if="::model.data.BedroomsTotal > 0"><br><span data-ng-bind="::model.data.BedroomsTotal"></span> Beds</span>
                         <span data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0">
                             <br><span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span> Baths
@@ -84,7 +84,7 @@
                             <br><span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </span>
                         <span data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
-                            Closed on
+                            <span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
                             <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </span>
                         <span data-ng-if="::model.data.OnMarketDate">
@@ -215,7 +215,7 @@
 						ng-model="model"
 						data-ng-repeat="detail in ::minorDetails"
 						section-name="{{::detail.section}}"
-						items={{::detail.items}}
+						items="{{::detail.items | json}}"
 				>
 				</stratus-idx-property-details-sub-section>
 

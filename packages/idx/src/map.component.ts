@@ -13,8 +13,13 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {cookie} from '@stratusjs/core/environment'
+import {isJSON} from '@stratusjs/core/misc'
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
+
+// Component Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/map/map.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -27,17 +32,44 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
 
 export type IdxMapScope = IdxComponentScope & {
     listId: string
+    initialized: boolean
+    mapInitialized: boolean
     listInitialized: boolean
-
-    instancePath: string
     mapMarkers: MarkerSettings[]
     map: MapComponent
+    list: IdxListScope
+
+    instancePath: string
+    googleMapsKey: string
+    mapType: string
+    zoom: number
+    zoomControl: boolean
+    scrollwheel: boolean
+    width: number
+    height: number
+
+    markerClickScroll: boolean
+    markerClickHighlight: boolean
+    markerIcon: string
+    markerIconHover: string
+
+    mapInitialize(map: MapComponent): void
+    mapUpdate(): void
 }
 
 Stratus.Components.IdxMap = {
     bindings: {
+        instancePath: '@',
+        googleMapsKey: '@',
         listId: '@',
+        mapType: '@',
         template: '@',
+        zoom: '@',
+        zoomControl: '@',
+        scrollwheel: '@',
+        height: '@',
+        width: '@',
+        markerClickScroll: '@',
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
@@ -55,29 +87,51 @@ Stratus.Components.IdxMap = {
         $ctrl.$onInit = () => {
             $scope.Idx = Idx
             $scope.listId = $attrs.listId || null
+            $scope.initialized = false
+            $scope.mapInitialized = false
             $scope.listInitialized = false
+            $scope.googleMapsKey = $attrs.googleMapsKey || null
+            $scope.mapMarkers = []
+            $scope.mapType = $attrs.mapType || 'roadmap'
+            $scope.zoom = $attrs.zoom || 18
+            $scope.zoomControl = $attrs.zoomControl || true
+            $scope.scrollwheel = $attrs.scrollwheel || false
+            $scope.height = $attrs.height || '500px'
+            $scope.width = $attrs.width || '100%'
+            $scope.markerClickScroll = $attrs.markerClickScroll && isJSON($attrs.markerClickScroll) ?
+                JSON.parse($attrs.markerClickScroll) : false
+            $scope.markerClickHighlight = $attrs.markerClickHighlight && isJSON($attrs.markerClickHighlight) ?
+                JSON.parse($attrs.markerClickHighlight) : false
+            $scope.markerIcon = $attrs.markerIcon || null
+            $scope.markerIconHover = $attrs.markerIconHover || null
 
             // Register this Map with the Property service
-            // Idx.registerMapInstance($scope.elementId, $scope, $scope.linkId)
             Idx.registerMapInstance($scope.elementId, $scope)
 
             if ($scope.listId) {
                 Idx.devLog($scope.elementId, 'is watching for map to update from', $scope.listId)
-                /*Idx.on($scope.listId, 'collectionUpdated', (source: IdxListScope, collection: Collection) => {
-                    console.log('collectionUpdated!!!!', source, collection)
-                    $ctrl.prepareMapMarkers(source)
-                })*/
                 Idx.on($scope.listId, 'init', (source: IdxListScope) => {
-                    // console.log('init!!!!', source)
+                    $scope.list = source
+                    $scope.listInitialized = true
+                    // $scope.initialized = true
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
-                Idx.on($scope.listId, 'pageChanged', (source: IdxListScope, pageNumber: number) => {
-                    // console.log('pageChanged!!!!', source, pageNumber)
+                Idx.on($scope.listId, 'searched', (source: IdxListScope) => {
+                    // page changing and searched triggers 'searched'
                     $ctrl.prepareMapMarkers(source)
                     $scope.mapUpdate()
                 })
             }
+            if ($scope.googleMapsKey) {
+                $scope.initialized = true
+            } else {
+                Idx.on('Idx', 'sessionInit', () => {
+                    console.log('session init')
+                    $scope.initialized = true
+                })
+            }
+
             Idx.emit('init', $scope)
         }
 
@@ -91,30 +145,34 @@ Stratus.Components.IdxMap = {
                     Object.prototype.hasOwnProperty.call(model, 'Longitude')
                 ) {
                     const address = Idx.getStreetAddress(model as Property) // TODO handle Member?
-                    // TODO we could just send a whole Marker instead, but then we need to wait for google.maps to be ready
-                    /*const marker = new google.maps.Marker({
-                        position: {lat: listing.Latitude, lng: listing.Longitude},
-                        title: address,
-                        animation: google.maps.Animation.DROP
-                    })
-                    marker.addListener('click', () => {
-                        $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                        // $scope.displayPropertyDetails(listing)
-                    })
-                    markers.push(marker)*/
                     markers.push({
                         position: {lat: model.Latitude, lng: model.Longitude},
                         title: address,
                         options: {
                             animation: 2 // DROP: 2 | BOUNCE: 1
                         },
+                        // Example icon
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A
+                        // &psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1.1
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&color=ff333333&scale=1.1
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-blue.png&psize=16
+                        // &font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1
+                        // https://mts.googleapis.com/vt/icon/name=icons/spotlight/spotlight-waypoint-blue.png?scale=1
+                        // https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi2.png
                         click: {
                             action: 'function',
-                            function: (marker: any, markerSetting: any) => {
-                                console.log('Was clicked~')
-                                // TODO need to fix the scrolling
-                                // $anchorScroll(`${$scope.elementId}_${listing._id}`)
-                                // $scope.displayPropertyDetails(listing)
+                            // function: (marker: any, markerSetting: any) => {
+                            function: () => {
+                                if ($scope.list) {
+                                    if ($scope.markerClickScroll) {
+                                        // Scroll to Model
+                                        $scope.list.scrollToModel(model)
+                                    }
+                                    if ($scope.markerClickHighlight) {
+                                        // Highlight the model for 6 seconds
+                                        $scope.list.highlightModel(model, 6000)
+                                    }
+                                }
                             }
                         }
                     })
@@ -136,6 +194,9 @@ Stratus.Components.IdxMap = {
         $scope.mapInitialize = (map: MapComponent) => {
             // console.log('idx map is running the map!!!!', map)
             $scope.map = map
+            $scope.$applyAsync(() => {
+                $scope.mapInitialized = true
+            })
             $scope.mapUpdate()
         }
 
@@ -152,9 +213,11 @@ Stratus.Components.IdxMap = {
             }
         }
 
-        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+        $scope.getGoogleMapsKey = (): string | null => {
+            return $scope.googleMapsKey || Idx.getGoogleMapsKey()
+        }
 
-        $scope.getUid = (): string => $scope.elementId
+        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.remove = (): void => {
         }
