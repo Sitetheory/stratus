@@ -831,7 +831,8 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         this.throttleTrigger(`change:${attr}`, value)
     }
 
-    toggle(attribute: any, item: any, options?: object | any) {
+    // FIXME: This doesn't appear to work properly anymore
+    toggle(attribute: any, item?: any, options?: object | any) {
         if (typeof options === 'object' &&
             !_.isUndefined(options.multiple) &&
             _.isUndefined(options.strict)) {

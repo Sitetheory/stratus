@@ -14,6 +14,7 @@
                type="text"
                placeholder="Name"
                [(ngModel)]="data.name">
+        <!--
         <button mat-button
                 mat-icon-button
                 matSuffix
@@ -22,6 +23,7 @@
                 (click)="data.name=''">
             <mat-icon>close</mat-icon>
         </button>
+        -->
     </mat-form-field>
 
     <!-- Target Selector -->
@@ -48,7 +50,11 @@
                     <mat-spinner diameter="50"></mat-spinner>
                 </mat-option>
                 <ng-container *ngIf="!isContentLoading">
-                    <mat-option *ngFor="let option of filteredContentOptions" [value]="option" [innerHTML]="option.version.title"></mat-option>
+                    <!-- TODO: Modify to filteredContentOptions|async which should improve responsiveness -->
+                    <mat-option *ngFor="let option of filteredContentOptions" [value]="option">
+                        {{option.version.title}}
+                        {{option|json}}
+                    </mat-option>
                 </ng-container>
             </mat-autocomplete>
         </ng-container>
@@ -126,8 +132,13 @@
     <h4>Actions:</h4>
 
     <button mat-button
-            (click)="data.model.destroy(); onCancelClick()">
-        Delete (Completely)
+            (click)="destroy()">
+        <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
+    </button>
+    <button mat-button
+            [class.visibility-off]="!data.model.get('status')"
+            (click)="toggleStatus()">
+        <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">Visibility</mat-icon>
     </button>
     <button mat-button
             [disabled]="!data.id"

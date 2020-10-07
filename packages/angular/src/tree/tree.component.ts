@@ -1,6 +1,6 @@
 // Angular Core
 import {
-    ChangeDetectionStrategy,
+    // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -136,7 +136,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
     // ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class TreeComponent extends RootComponent implements OnInit, OnDestroy {

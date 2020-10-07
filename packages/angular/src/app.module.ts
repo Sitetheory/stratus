@@ -50,6 +50,9 @@ import {
 
 // Stratus Custom Components
 import {
+    ConfirmDialogComponent
+} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
+import {
     EditorComponent
 } from '@stratusjs/angular/editor/editor.component'
 import {MapComponent} from '@stratusjs/map/map.component'
@@ -386,6 +389,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     entryComponents: [
         BaseComponent,
         CodeViewDialogComponent,
+        ConfirmDialogComponent,
         EditorComponent,
         MapComponent,
         MediaDialogComponent,
@@ -398,6 +402,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     declarations: [
         BaseComponent,
         CodeViewDialogComponent,
+        ConfirmDialogComponent,
         EditorComponent,
         MapComponent,
         MediaDialogComponent,

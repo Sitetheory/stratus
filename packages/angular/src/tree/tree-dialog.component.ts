@@ -1,6 +1,5 @@
 // Angular Core
 import {
-    ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     Inject,
@@ -13,6 +12,7 @@ import {
 } from '@angular/forms'
 import {
     MAT_DIALOG_DATA,
+    MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
 
@@ -38,6 +38,13 @@ import {BackendService} from '@stratusjs/angular/backend.service'
 // Interfaces
 import {Convoy} from '@stratusjs/angular/data/convoy.interface'
 import {ContentEntity} from '@stratusjs/angular/data/content.interface'
+
+// Meow
+import {MatIconRegistry} from '@angular/material/icon'
+import {DomSanitizer} from '@angular/platform-browser'
+import {
+    ConfirmDialogComponent
+} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
 
 // Data Types
 export interface DialogData {
@@ -69,7 +76,7 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
 @Component({
     selector: `sa-${moduleName}`,
     templateUrl: `${localDir}/${parentModuleName}/${moduleName}.component.html`,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TreeDialogComponent implements OnInit, OnDestroy {
 
@@ -107,7 +114,10 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     constructor(
         public dialogRef: MatDialogRef<TreeDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
+        private iconRegistry: MatIconRegistry,
+        private sanitizer: DomSanitizer,
         private fb: FormBuilder,
+        private dialog: MatDialog,
         private ref: ChangeDetectorRef
     ) {
         // Manually render upon data change
@@ -135,6 +145,12 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
                 this.isStyled = true
                 // this.refresh()
             })
+
+        // SVG Icons
+        _.forEach({
+            tree_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
+            tree_visibility: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/visibility.svg',
+        }, (value, key) => this.iconRegistry.addSvgIcon(key, this.sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // Hoist Service
         this.backend = this.data.backend
@@ -300,5 +316,37 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         // this.refresh()
         return this.filteredContentOptions
+    }
+
+    // tslint:disable-next-line:no-unused-variable
+    private destroy() {
+        this.dialog
+            .open(ConfirmDialogComponent, {
+                maxWidth: '400px',
+                data: {
+                    title: 'Delete MenuLink',
+                    message: 'Are you sure you want to do this?'
+                }
+            })
+            .afterClosed().subscribe((dialogResult: boolean) => {
+                if (!dialogResult) {
+                    return
+                }
+                if (!this.data || !this.data.model) {
+                    return
+                }
+                this.data.model.destroy()
+                this.onCancelClick()
+            })
+    }
+
+    // tslint:disable-next-line:no-unused-variable
+    private toggleStatus() {
+        if (!this.data || !this.data.model) {
+            return
+        }
+        const model = this.data.model
+        model.set('status', !model.get('status'))
+        model.save()
     }
 }
