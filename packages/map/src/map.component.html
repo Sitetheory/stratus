@@ -2,7 +2,8 @@
         *ngIf="!initialized"
         data-layout="row"
         data-layout-align="center center"
-        style="height: {{height}}; width: {{width}};"
+        [ngStyle]="{'height': height, 'width': width}"
+        class="map-sizing"
 >
     <mat-spinner></mat-spinner>
 </div>
@@ -10,6 +11,7 @@
     <div
             #mapContainer
             [hidden]="!initialized"
-            style="height: {{height}}; width: {{width}};"
+            [ngStyle]="{'height': height, 'width': width}"
+            class="map-sizing"
     ></div>
 </ng-container>

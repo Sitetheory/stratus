@@ -203,8 +203,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     watcher: Watcher
 
     // Map Variables
-    @Input() height = '500px'
-    @Input() width = '100%'
+    @Input() height?: string = null // '500px'
+    @Input() width?: string = null // '100%'
     // TODO check if there is a global Key in stratus
     @Input() googleMapsKey = devGoogleMapsKey
     /**
@@ -249,14 +249,14 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        /*Stratus.Internals.CssLoader(`${localDir}/${moduleName}.component.css`)
+        Stratus.Internals.CssLoader(`${localDir}/${moduleName}.component.css`)
             .then(() => {
                 this.styled = true
             })
             .catch(() => {
                 console.error('CSS Failed to load for Component:', this)
-                this.styled = true
-            })*/
+                this.styled = false
+            })
 
         // Hydrate Root App Inputs
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
