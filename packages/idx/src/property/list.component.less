@@ -70,7 +70,7 @@ stratus-idx-property-list {
 
   /* Property List */
   .list-container {
-    margin: 10px -1.5% 0;
+    margin: 10px -8px 0;
 
     /* Details button */
     .property-button-container {
@@ -85,6 +85,11 @@ stratus-idx-property-list {
       padding-bottom: 24px;
       margin-bottom: 16px;
       text-align: center;
+      float: left;
+      width: 100%;
+      @media @desktop-only {
+        width: 50%;
+      }
       md-card {
         &.property-item {
           box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
@@ -227,26 +232,6 @@ stratus-idx-property-list {
           &.highlight {
             background-color: rgba(0, 0, 0, 0.12);
           }
-        }
-      }
-    }
-
-    /* 2 or 3 column */
-    &.columns-2 {
-      .property-container {
-        width: 100%;
-
-        @media @desktop-only {
-          width: 49.5%;
-        }
-      }
-    }
-    &.columns-3 {
-      .property-container {
-        width: 100%;
-
-        @media @desktop-only {
-          width: 32%;
         }
       }
     }

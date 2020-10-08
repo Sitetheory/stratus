@@ -5,17 +5,17 @@
      data-ng-class="[{'filters-open' : advancedFiltersStatus == 'open'}, {'filters-closed' : advancedFiltersStatus == 'closed'}]">
 
     <h2 data-ng-show="widgetName" data-ng-bind="widgetName"></h2>
-    <div class="search-header">
-        <h4>Search Filters</h4>
-        <div class="basic-advanced">
-            <a class="close-filters-link border-default border-default-right" data-ng-click="advancedFiltersStatus = 'closed'">Basic</a>
-            <a class="open-filters-link" data-ng-click="advancedFiltersStatus = 'open'">Advanced</a>
-        </div>
-    </div>
+    <!--<div class="search-header">-->
+        <!--<h4>Search Filters</h4>-->
+        <!--<div class="basic-advanced">-->
+            <!--<a class="close-filters-link border-default border-default-right" data-ng-click="advancedFiltersStatus = 'closed'">Basic</a>-->
+            <!--<a class="open-filters-link" data-ng-click="advancedFiltersStatus = 'open'">Advanced</a>-->
+        <!--</div>-->
+    <!--</div>-->
 
-    <div class="search-row" layout="row" layout-gt-sm="row">
+    <div class="search-row" layout="row" layout-align="start center">
 
-        <div class="search-input" data-flex-gt-sm="40">
+        <div class="search-input search-location">
             <md-input-container class="md-block minimal">
             <label>City, Neighborhood, Zip, Address</label>
             <input data-ng-model="options.query.where.Location" type="text" maxlength="250"
@@ -25,21 +25,21 @@
             </md-input-container>
         </div>
 
-        <div class="search-input" data-flex-gt-sm="10">
+        <div class="search-input search-min-price">
             <md-input-container class="md-block minimal">
                 <label>Min Price</label>
                 <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
             </md-input-container>
         </div>
 
-        <div class="search-input" data-flex-gt-sm="10">
+        <div class="search-input search-max-price">
             <md-input-container class="md-block minimal">
                 <label>Max Price</label>
                 <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
             </md-input-container>
         </div>
 
-        <div class="search-input" data-flex-gt-sm="10">
+        <div class="search-input search-beds">
             <md-input-container class="md-block minimal">
                 <label>Beds</label>
                 <md-select data-ng-model="options.query.where.Bedrooms">
@@ -50,7 +50,7 @@
                 </md-select>
             </md-input-container>
         </div>
-        <div class="search-input" data-flex-gt-sm="10">
+        <div class="search-input search-baths">
             <md-input-container class="md-block minimal">
                 <label>Baths</label>
                 <md-select data-ng-model="options.query.where.Bathrooms">
@@ -62,8 +62,8 @@
             </md-input-container>
         </div>
 
-        <div class="search-row submit-row" data-flex-gt-sm="20">
-            <a class="btn btn-submit" data-ng-click="searchProperties()">Search Now</a>
+        <div class="search-row submit-row">
+            <a class="btn btn-submit" data-ng-click="searchProperties()">Search</a>
         </div>
 
     </div>
@@ -275,4 +275,8 @@
 
         <!--</div>-->
     </div>
+    <a class="close-filters-link border-default border-default-right"
+       data-ng-show="advancedFiltersStatus == 'open'"
+       data-ng-click="advancedFiltersStatus = 'closed'">Close options</a>-->
+    <a class="open-filters-link" data-ng-show="advancedFiltersStatus == 'closed'" data-ng-click="advancedFiltersStatus = 'open'">Show more options</a>
 </div>
