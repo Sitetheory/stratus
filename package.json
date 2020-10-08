@@ -33,7 +33,7 @@
     "typescript"
   ],
   "engines": {
-    "yarn": ">= 1.0.0"
+    "yarn": ">= 1.21.1"
   },
   "devDependencies": {
     "@agentepsilon/decko": "^2.0.1",
@@ -66,6 +66,7 @@
     "@stratusjs/calendar": "file:packages/calendar",
     "@stratusjs/core": "file:packages/core",
     "@stratusjs/idx": "file:packages/idx",
+    "@stratusjs/map": "file:packages/map",
     "@stratusjs/react": "file:packages/react",
     "@stratusjs/runtime": "file:packages/runtime",
     "@stratusjs/swiper": "file:packages/swiper",

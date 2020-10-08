@@ -45,8 +45,8 @@ export type IdxMapScope = IdxComponentScope & {
     zoom: number
     zoomControl: boolean
     scrollwheel: boolean
-    width: number
-    height: number
+    width?: string
+    height?: string
 
     markerClickScroll: boolean
     markerClickHighlight: boolean
@@ -96,8 +96,8 @@ Stratus.Components.IdxMap = {
             $scope.zoom = $attrs.zoom || 18
             $scope.zoomControl = $attrs.zoomControl || true
             $scope.scrollwheel = $attrs.scrollwheel || false
-            $scope.height = $attrs.height || '500px'
-            $scope.width = $attrs.width || '100%'
+            $scope.height = $attrs.height || null // '500px'
+            $scope.width = $attrs.width || null // '100%'
             $scope.markerClickScroll = $attrs.markerClickScroll && isJSON($attrs.markerClickScroll) ?
                 JSON.parse($attrs.markerClickScroll) : false
             $scope.markerClickHighlight = $attrs.markerClickHighlight && isJSON($attrs.markerClickHighlight) ?
