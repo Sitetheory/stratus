@@ -1,6 +1,6 @@
 // Angular Core
 import {
-    ChangeDetectionStrategy,
+    // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
@@ -78,7 +78,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     // styleUrls: [
     //     `${localDir}/${moduleName}/${moduleName}.component.css`
     // ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    // changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class SelectorComponent extends RootComponent { // implements OnInit, OnChanges {

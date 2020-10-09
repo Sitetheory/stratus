@@ -1,0 +1,74 @@
+<!--
+    This is a direct conversion from the AutoComplete in Angular 1,
+    but it doesn't work in the new Angular 10 AutoCompletes, likely
+    due to styling.
+-->
+
+<!-- ng-disabled="itemDisabled = isSelected(model)" -->
+<div class="autocomplete-option"
+     [class]="model.contentType.class"
+     [class.selected]="isSelected(model)">
+    <div class="autocomplete-row clearfix">
+        <div class="column-image st-grid column20">
+            <div class="image-container background-dark position-anchor">
+                <!-- Checkmark icon for selected items -->
+                <!--
+                <div *ngIf="isSelected(model)">
+                    <mat-icon class="selected-icon position-center"
+                              aria-hidden="true"
+                              svgIcon="tree_check"></mat-icon>
+                </div>
+                -->
+
+                <!-- Item image, video or header image -->
+                <div class="image position-all"
+                     style="background-size: cover"
+                     *ngIf="model.version.images.length || model.version.shellImages.length"
+                     [style.background]="'url(' + (model.version.images.length ? model.version.images[0].src : model.version.shellImages.length ? model.version.shellImages[0].src : '') + ') no-repeat center center'">
+                </div>
+
+                <div class="image position-all"
+                     style="background-size: cover"
+                     *ngIf="!model.version.images.length && !model.version.shellImages.length && model.version.videos.length"
+                     [style.background]="'url(' + (model.version.videos[0].src) + ') no-repeat center center'">
+                </div>
+
+                <!-- Icon for items with no image -->
+                <div class="no-image-icon position-all"
+                     *ngIf="!model.version.images.length && !model.version.videos.length && !model.version.shellImages.length"
+                     [class]="[model.contentType.class + '-background-color', model.version.meta.backgroundColor]">
+                    <div *ngIf="!isSelected(model) && model.contentType.iconResource">
+                        <mat-icon class="content-type-icon position-center"
+                                  aria-hidden="true"
+                                  [svgIcon]="getSvg('/assets/1/0/bundles/' + model.contentType.iconResourcePath) | async">
+                            ContentType Icon
+                        </mat-icon>
+                    </div>
+                </div>
+
+                <!-- Shapeholder -->
+                <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+            </div>
+        </div>
+        <div class="column-title st-grid column80">
+            <!--
+            <div class="content-type" *ngIf="model.contentType.iconResource">
+                <mat-icon class="content-type-icon"
+                          aria-hidden="true"
+                          svgIcon="{{ model.contentType.iconResourcePath | assetPath }}"></mat-icon>
+                <span class="comment content-type-name font-body"
+                      ng-class="(model.contentType.name | lowercase) + '-color'"
+                      ng-bind="model.contentType.name"></span>
+            </div>
+            -->
+            <h3 class="title">
+                {{model.version.title || (model.contentType.class === 'sitetheory-core-bundle-content-module' ? model.version.bestIdentifier : ('Untitled ' + model.contentType.name + ' (' + model.id + ')'))}}
+            </h3>
+            <div>
+                <div class="routing" *ngIf="model.routing.length">
+                    {{'/' + model.routing[0].url}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
