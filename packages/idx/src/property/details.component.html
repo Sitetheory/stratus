@@ -40,26 +40,25 @@
             <div class="clearfix">
                 <div class="details-left">
                     <h2>About</h2>
-
                     <ul class="details-specs primary_font">
                         <li>
                             <!-- TODO need a prettier word for the status and a detail of real status -->
                             <span data-ng-bind="::Idx.getFullStatus(model.data, preferredStatus)" aria-label="Status"></span>
                         </li>
-                        <li data-ng-if="::model.data.BedroomsTotal > 0">
+                        <li data-ng-if="::model.data.BedroomsTotal && ::model.data.BedroomsTotal > 0">
                             <span data-ng-bind="::model.data.BedroomsTotal"></span> Beds
                         </li>
-                        <li data-ng-if="::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0">
+                        <li data-ng-if="::model.data.BathroomsFull && ::model.data.BathroomsFull > 0 || model.data.BathroomsTotalInteger > 0">
                             <span data-ng-bind="::model.data.BathroomsFull || model.data.BathroomsTotalInteger"></span>
                             Baths
                         </li>
-                        <li data-ng-if="::model.data.BathroomsHalf > 0">
+                        <li data-ng-if="::model.data.BathroomsHalf && ::model.data.BathroomsHalf > 0">
                             <span data-ng-bind="::model.data.BathroomsHalf"></span> Half Baths
                         </li>
-                        <li data-ng-if="::model.data.BathroomsOneQuarter > 0">
+                        <li data-ng-if="::model.data.BathroomsOneQuarter && ::model.data.BathroomsOneQuarter > 0">
                             <span data-ng-bind="::model.data.BathroomsOneQuarter"></span> Quarter Baths
                         </li>
-                        <li data-ng-if="::model.data.BathroomsPartial > 0">
+                        <li data-ng-if="::model.data.BathroomsPartial && ::model.data.BathroomsPartial > 0">
                             <span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </li>
                         <li data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
@@ -93,9 +92,9 @@
                         <li data-ng-if="::model.data.YearBuilt">
                             Built in <span data-ng-bind="::model.data.YearBuilt"></span>
                         </li>
-                        <li data-ng-if="::model.data.LivingArea" aria-label="Living Area">
+                        <li data-ng-if="::model.data.LivingArea > 0 && ::model.data.LivingArea > 0" aria-label="Living Area">
                             Living Area:
-                            <span data-ng-bind="::model.data.LivingArea | number"></span>
+                            <span data-ng-bind="::model.data.LivingArea | number && ::model.data.LivingArea | number > 0"></span>
                             <span data-ng-if="::model.data.LivingAreaUnits">
 								<span data-ng-bind="::model.data.LivingAreaUnits"></span>
 							</span>
@@ -103,7 +102,7 @@
 								Square Feet
 							</span>
                         </li>
-                        <li data-ng-if="::model.data.LeasableArea" aria-label="Leasable Area">
+                        <li data-ng-if="::model.data.LeasableArea && ::model.data.LeasableArea > 0" aria-label="Leasable Area">
                             Leasable:
                             <span data-ng-bind="::model.data.LeasableArea | number"></span>
                             <span data-ng-if="::model.data.LeasableAreaUnits">
@@ -113,7 +112,7 @@
 								Square Feet
 							</span>
                         </li>
-                        <li data-ng-if="::model.data.BuildingAreaTotal" aria-label="Building Area">
+                        <li data-ng-if="::model.data.BuildingAreaTotal && ::model.data.BuildingAreaTotal > 0" aria-label="Building Area">
                             Building:
                             <span data-ng-bind="::model.data.BuildingAreaTotal | number"></span>
                             <span data-ng-if="::model.data.BuildingAreaUnits">
@@ -123,7 +122,7 @@
 								Square Feet
 							</span>
                         </li>
-                        <li data-ng-if="::model.data.LotSizeArea" aria-label="Lot Size">
+                        <li data-ng-if="::model.data.LotSizeArea && ::model.data.LotSizeArea > 0" aria-label="Lot Size">
                             Lot: <span data-ng-bind="::model.data.LotSizeArea | number"></span>
                             <span data-ng-if="::model.data.LotSizeUnits">
 								<span data-ng-bind="::model.data.LotSizeUnits"></span>
@@ -132,16 +131,16 @@
 								Square Feet
 							</span>
                         </li>
-                        <li data-ng-if="!model.data.LotSizeArea && model.data.LotSizeAcres" aria-label="Lot Size Acres">
+                        <li data-ng-if="!model.data.LotSizeArea && model.data.LotSizeAcres > 0" aria-label="Lot Size Acres">
                             Lot: <span data-ng-bind="::model.data.LotSizeAcres"></span> Acres
                         </li>
-                        <li data-ng-if="!model.data.LotSizeArea && model.data.LotSizeSquareFeet" aria-label="Lot Size Square Feet">
+                        <li data-ng-if="!model.data.LotSizeArea && model.data.LotSizeSquareFeet > 0" aria-label="Lot Size Square Feet">
                             Lot: <span data-ng-bind="::model.data.LotSizeSquareFeet"></span> SqFt
                         </li>
                         <li data-ng-if="::model.data.PoolPrivateYN">
                             With Pool
                         </li>
-                        <li data-ng-if="::model.data.Stories">
+                        <li data-ng-if="::model.data.Stories && ::model.data.Stories > 0">
                             Stories: <span data-ng-bind="::model.data.Stories"></span>
                         </li>
                         <li data-ng-if="::model.data.PropertyType">
