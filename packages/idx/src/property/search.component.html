@@ -13,7 +13,7 @@
         <!--</div>-->
     <!--</div>-->
 
-    <div class="search-row" layout="row" layout-align="start center">
+    <div class="search-row search-basic clearfix">
 
         <div class="search-input search-location">
             <md-input-container class="md-block minimal">
@@ -62,7 +62,7 @@
             </md-input-container>
         </div>
 
-        <div class="search-row submit-row">
+        <div class="submit-row">
             <a class="btn btn-submit" data-ng-click="searchProperties()">Search</a>
         </div>
 
@@ -277,6 +277,6 @@
     </div>
     <a class="close-filters-link border-default border-default-right"
        data-ng-show="advancedFiltersStatus == 'open'"
-       data-ng-click="advancedFiltersStatus = 'closed'">Close options</a>-->
-    <a class="open-filters-link" data-ng-show="advancedFiltersStatus == 'closed'" data-ng-click="advancedFiltersStatus = 'open'">Show more options</a>
+       data-ng-click="advancedFiltersStatus = 'closed'">Less filters</a>-->
+    <a class="open-filters-link" data-ng-show="advancedFiltersStatus == 'closed'" data-ng-click="advancedFiltersStatus = 'open'">More filters</a>
 </div>
