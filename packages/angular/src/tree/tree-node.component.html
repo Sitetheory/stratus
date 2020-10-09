@@ -3,10 +3,8 @@
 <mat-progress-bar mode="indeterminate" *ngIf="!isStyled || !isInitialized"></mat-progress-bar>
 -->
 
-<!-- FIXME: Expand / Collapse below needs to be revitalized after the Drag & Drop Refactor -->
-<!--[class.display-none]="parent && !isExpanded(parent) && hasChild(parent)"-->
-
 <div class="tree-node-content"
+     [class.display-none]="parent && !isExpanded(parent)"
      [attr.data-id]="node.id"
      [attr.id]="'node-'+node.id">
 
@@ -32,6 +30,7 @@
           class="node-name"
           [attr.data-id]="node.id"
           [attr.id]="'node-'+node.id"
+          [class.visibility-off]="node.model.get('status') === 0"
           [innerHTML]="getName(node)"
           (click)="openDialogClick(node)"
           (dblclick)="openDialogDblClick(node)"></span>
@@ -54,6 +53,10 @@
          [cdkDropListDisabled]="false"
          (cdkDropListDropped)="tree.onDragDrop($event)"
          class="tree-node-drop-list">
+        <!-- Legacy child expand / collapse:
+        <div *ngIf="hasChild(node)"
+             [class.display-none]="!isExpanded(node)">
+        -->
         <!-- display children -->
         <sa-tree-node cdkDrag
                       *ngFor="let child of node.children"

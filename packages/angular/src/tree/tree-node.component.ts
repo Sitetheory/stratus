@@ -174,7 +174,9 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
             autoFocus: true,
             restoreFocus: false,
             data: {
+                tree: this.tree,
                 backend: this.tree.backend,
+                iconRegistry: this.tree.iconRegistry,
                 id: node.model.data.id || null,
                 name: node.model.data.name || '',
                 target: node.model.data.url ? 'url' : 'content',

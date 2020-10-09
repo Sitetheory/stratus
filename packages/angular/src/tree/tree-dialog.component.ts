@@ -10,13 +10,24 @@ import {
     FormBuilder,
     FormGroup
 } from '@angular/forms'
+
+// Angular Material
 import {
     MAT_DIALOG_DATA,
     MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
+import {
+    MatIconRegistry
+} from '@angular/material/icon'
+import {
+    IconOptions
+} from '@angular/material/icon/icon-registry'
 
 // RXJS
+import {
+    Observable
+} from 'rxjs'
 import {
     debounceTime,
     finalize,
@@ -39,16 +50,20 @@ import {BackendService} from '@stratusjs/angular/backend.service'
 import {Convoy} from '@stratusjs/angular/data/convoy.interface'
 import {ContentEntity} from '@stratusjs/angular/data/content.interface'
 
-// Meow
-import {MatIconRegistry} from '@angular/material/icon'
-import {DomSanitizer} from '@angular/platform-browser'
+// Components
+import {
+    TreeComponent
+} from '@stratusjs/angular/tree/tree.component'
 import {
     ConfirmDialogComponent
 } from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
+import { moveItemInArray } from '@angular/cdk/drag-drop'
 
 // Data Types
 export interface DialogData {
+    tree: TreeComponent
     backend: BackendService
+    iconRegistry: MatIconRegistry
     id: number
     name: string
     target: string
@@ -92,15 +107,19 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     // Dependencies
     _: any
 
+    // Root Component
+    tree: TreeComponent
+
     // Services
     backend: BackendService
+    iconRegistry: MatIconRegistry
 
     // View Elements
     // @ViewChild('nameInput') nameField: ElementRef
 
     // TODO: Move this to its own AutoComplete Component
     // AutoComplete Data
-    filteredContentOptions: Array<any>
+    filteredContent: Array<ContentEntity>
     dialogContentForm: FormGroup
     isContentLoading = false
     isContentLoaded = false
@@ -114,8 +133,6 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     constructor(
         public dialogRef: MatDialogRef<TreeDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
-        private iconRegistry: MatIconRegistry,
-        private sanitizer: DomSanitizer,
         private fb: FormBuilder,
         private dialog: MatDialog,
         private ref: ChangeDetectorRef
@@ -146,14 +163,12 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
                 // this.refresh()
             })
 
-        // SVG Icons
-        _.forEach({
-            tree_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
-            tree_visibility: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/visibility.svg',
-        }, (value, key) => this.iconRegistry.addSvgIcon(key, this.sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
+        // Hoist Components
+        this.tree = this.data.tree
 
-        // Hoist Service
+        // Hoist Services
         this.backend = this.data.backend
+        this.iconRegistry = this.data.iconRegistry
 
         // Element Focus
         /* *
@@ -279,14 +294,14 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         if (!content) {
             return
         }
-        // Routing Fallback
+        // Routing Display
         const routing = _.get(content, 'routing[0].url')
-        const routingText = !_.isUndefined(routing) ? `/${routing}` : null
+        const routingText = !_.isUndefined(routing) ? ` (/${routing})` : ' (No route!)'
         // ContentId Fallback
         const contentId = _.get(content, 'id')
         const contentIdText = !_.isUndefined(contentId) ? `Content: ${contentId}` : null
         // Return Version Title or Fallback Text
-        return _.get(content, 'version.title') || routingText || contentIdText
+        return (_.get(content, 'version.title') || contentIdText) + routingText
     }
 
     // displayName(option: any) {
@@ -297,29 +312,28 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
 
     private handleContent(response:HttpResponse<Convoy<ContentEntity>>) {
         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
-            this.filteredContentOptions = []
+            this.filteredContent = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
             // Dialog Sub-Components don't seem to have the right timing for ngOnInit
             // this.refresh()
-            return this.filteredContentOptions
+            return this.filteredContent
         }
         const payload = _.get(response.body, 'payload') || response.body
         if (_.isEmpty(payload) || !Array.isArray(payload)) {
-            this.filteredContentOptions = []
+            this.filteredContent = []
             // FIXME: We have to go in this roundabout way to force changes to be detected since the
             // Dialog Sub-Components don't seem to have the right timing for ngOnInit
             // this.refresh()
-            return this.filteredContentOptions
+            return this.filteredContent
         }
-        this.filteredContentOptions = payload
+        this.filteredContent = this.selectedOnTop(payload, this.data.content)
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         // this.refresh()
-        return this.filteredContentOptions
+        return this.filteredContent
     }
 
-    // tslint:disable-next-line:no-unused-variable
-    private destroy() {
+    public destroy() {
         this.dialog
             .open(ConfirmDialogComponent, {
                 maxWidth: '400px',
@@ -340,13 +354,41 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
             })
     }
 
-    // tslint:disable-next-line:no-unused-variable
-    private toggleStatus() {
+    public toggleStatus() {
         if (!this.data || !this.data.model) {
             return
         }
         const model = this.data.model
-        model.set('status', !model.get('status'))
+        model.set('status', model.get('status') ? 0 : 1)
         model.save()
+    }
+
+    public isSelected(content: ContentEntity) {
+        if (!this.data.content) {
+            return false
+        }
+        return this.data.content.id === content.id
+    }
+
+    public getSvg(url: string, options?: IconOptions): Observable<string> {
+        return this.tree.getSvg(url, options)
+    }
+
+    selectedOnTop(list?: Array<ContentEntity>, selected?: ContentEntity): Array<ContentEntity> {
+        if (!list || !list.length) {
+            return list
+        }
+        if (!selected || !selected.id) {
+            return list
+        }
+        const orderedList = _.clone(list)
+        const index = list.findIndex((v) => v.id === selected.id)
+        if (index === -1) {
+            // If Selected is not present, inject as first element
+            orderedList.unshift(selected)
+            return orderedList
+        }
+        moveItemInArray(orderedList, index, 0)
+        return orderedList
     }
 }

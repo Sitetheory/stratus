@@ -49,6 +49,11 @@
       padding-left: 40px;
       //border-left: dashed 1px #222222;
     }
+    .tree-node-content {
+      .visibility-off {
+        opacity: 0.5;
+      }
+    }
     &-drag {
       &-preview {
         //box-sizing: border-box;

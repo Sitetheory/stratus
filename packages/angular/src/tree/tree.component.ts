@@ -69,7 +69,9 @@ import '@stratusjs/angularjs/services/registry'
 import '@stratusjs/angularjs/services/collection'
 // tslint:disable-next-line:no-duplicate-imports
 import '@stratusjs/angularjs/services/model'
+
 import { DOCUMENT } from '@angular/common'
+import {IconOptions} from '@angular/material/icon/icon-registry'
 
 // Data Types
 export interface NodeMeta {
@@ -180,6 +182,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     subscriber: Subscriber<any>
     unsettled = false
 
+    // Icon Localization
+    svgIcons: {
+        [key: string]: string
+    } = {}
+
     // Click Handling
     isSingleClick: boolean
     dblClickWait = 500
@@ -239,6 +246,14 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 this.isStyled = true
                 this.refresh()
             })
+
+        // SVG Icons
+        // TODO: Make this into a single service
+        _.forEach({
+            tree_check: '/assets/1/0/bundles/sitetheorycore/images/icons/check.svg',
+            tree_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
+            tree_visibility: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/visibility.svg',
+        }, (value, key) => this.iconRegistry.addSvgIcon(key, this.sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // Data Connections
         this.fetchData()
@@ -744,4 +759,42 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     //         return modelId && parentId && modelId === parentId
     //     })
     // }
+
+    public getSvg(url: string, options?: IconOptions): Observable<string> {
+        const uid = this.addSvgIcon(url, options)
+        return new Observable<string>((subscriber: Subscriber<string>) => {
+            this.iconRegistry
+                .getNamedSvgIcon(uid)
+                .subscribe({
+                    /* *
+                     next(svg: SVGElement) {
+                     console.log(`getSvg(${url}):`, svg)
+                     },
+                     /* */
+                    error(err) {
+                        console.error(`getSvg(${url}): ${err}`)
+                    },
+                    complete() {
+                        // console.log(`getSvg(${url}): completed`)
+                        subscriber.next(uid)
+                    }
+                })
+        })
+    }
+
+    /**
+     * This function marks a url safe with the DomSanitizer and returns a uid
+     * https://material.angular.io/components/icon/overview#svg-icons
+     */
+    public addSvgIcon(url: string, options?: IconOptions) : string {
+        if (url in this.svgIcons) {
+            return this.svgIcons[url]
+        }
+        if (!options) {
+            options = {}
+        }
+        const uid = this.svgIcons[url] = _.uniqueId('selector_svg')
+        this.iconRegistry.addSvgIcon(uid, this.sanitizer.bypassSecurityTrustResourceUrl(url), options)
+        return uid
+    }
 }
