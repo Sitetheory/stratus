@@ -14,6 +14,7 @@
                type="text"
                placeholder="Name"
                [(ngModel)]="data.name">
+        <!--
         <button mat-button
                 mat-icon-button
                 matSuffix
@@ -22,6 +23,7 @@
                 (click)="data.name=''">
             <mat-icon>close</mat-icon>
         </button>
+        -->
     </mat-form-field>
 
     <!-- Target Selector -->
@@ -41,14 +43,66 @@
     <form class="dialog-form" [formGroup]='dialogContentForm'>
         <ng-container *ngIf="data.target == 'content'">
             <mat-form-field class="form-field">
-                <input matInput placeholder="Link Content" aria-label="Link Content" [matAutocomplete]="auto" formControlName='contentSelectorInput'>
+                <input matInput
+                       placeholder="Link Content"
+                       aria-label="Link Content"
+                       [matAutocomplete]="auto"
+                       formControlName='contentSelectorInput'>
             </mat-form-field>
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayContentText">
+            <mat-autocomplete autoActiveFirstOption
+                              #auto="matAutocomplete"
+                              [displayWith]="displayContentText">
                 <mat-option *ngIf="isContentLoading" class="is-loading">
                     <mat-spinner diameter="50"></mat-spinner>
                 </mat-option>
                 <ng-container *ngIf="!isContentLoading">
-                    <mat-option *ngFor="let option of filteredContentOptions" [value]="option" [innerHTML]="option.version.title"></mat-option>
+                    <!-- TODO: Modify to filteredContentModels|async which should improve responsiveness -->
+                    <mat-option *ngFor="let model of filteredContent"
+                                [value]="model">
+                        <!-- Item image, video or header image -->
+                        <!--
+                        <span class="image position-all"
+                             style="background-size: cover"
+                             *ngIf="model.version.images.length || model.version.shellImages.length"
+                             [style.background]="'url(' + (model.version.images.length ? model.version.images[0].src : model.version.shellImages.length ? model.version.shellImages[0].src : '') + ') no-repeat center center'">
+                        </span>
+                        <span class="image position-all"
+                             style="background-size: cover"
+                             *ngIf="!model.version.images.length && !model.version.shellImages.length && model.version.videos.length"
+                             [style.background]="'url(' + (model.version.videos[0].src) + ') no-repeat center center'">
+                        </span>
+                        -->
+
+                        <!-- Icon for items with no image -->
+                        <!-- FIXME: Re-enable the ngIf once the other options above are functional -->
+                        <!--*ngIf="!model.version.images.length && !model.version.videos.length && !model.version.shellImages.length"-->
+                        <!-- FIXME: The background class makes a weird rectangle that covers the SVG -->
+                        <!--[class]="model.contentType.class + '-background-color'"-->
+                        <!--model.version.meta.backgroundColor-->
+                        <!--
+                        <span class="no-image-icon position-all"
+                              *ngIf="model.contentType.iconResource">
+                            <mat-icon aria-hidden="true"
+                                      [svgIcon]="getSvg('/assets/1/0/bundles/' + model.contentType.iconResourcePath) | async">
+                                Icon
+                            </mat-icon>
+                        </span>
+                        -->
+
+                        <!-- Content Type Icon -->
+                        <mat-icon aria-hidden="true"
+                                  *ngIf="model.contentType.iconResourcePath"
+                                  [svgIcon]="getSvg('/assets/1/0/bundles/' + model.contentType.iconResourcePath) | async">
+                            Icon
+                        </mat-icon>
+
+                        <!-- Title & Route Display -->
+                        <!--<span [class.selected-item]="isSelected(model)">-->
+                        {{model.version.title}}
+                        <small *ngIf="model.routing.length">
+                            {{'/' + model.routing[0].url}}
+                        </small>
+                    </mat-option>
                 </ng-container>
             </mat-autocomplete>
         </ng-container>
@@ -64,10 +118,12 @@
     </mat-form-field>
 
     <!-- Target Display -->
+    <!--
     <h4>Linked To:</h4>
 
     <span *ngIf="data.target == 'content'" [textContent]="data.content && data.content.routing ? ('/' + data.content.routing[0].url) : 'Nothing yet!'"></span>
     <span *ngIf="data.target == 'url'" [textContent]="data.url || 'Nothing yet!'"></span>
+    -->
 
     <!-- Priority Control - deprecated once we have proper DnD for child links -->
     <h4 *ngIf="data.nestParent !== null">Priority:</h4>
@@ -126,8 +182,13 @@
     <h4>Actions:</h4>
 
     <button mat-button
-            (click)="data.model.destroy(); onCancelClick()">
-        Delete (Completely)
+            (click)="destroy()">
+        <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
+    </button>
+    <button mat-button
+            [class.visibility-off]="data.model.get('status') === 0"
+            (click)="toggleStatus()">
+        <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">Visibility</mat-icon>
     </button>
     <button mat-button
             [disabled]="!data.id"

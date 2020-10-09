@@ -4,6 +4,7 @@
 -->
 
 <div class="tree-node-content"
+     [class.display-none]="parent && !isExpanded(parent)"
      [attr.data-id]="node.id"
      [attr.id]="'node-'+node.id">
 
@@ -29,6 +30,7 @@
           class="node-name"
           [attr.data-id]="node.id"
           [attr.id]="'node-'+node.id"
+          [class.visibility-off]="node.model.get('status') === 0"
           [innerHTML]="getName(node)"
           (click)="openDialogClick(node)"
           (dblclick)="openDialogDblClick(node)"></span>
@@ -51,9 +53,11 @@
          [cdkDropListDisabled]="false"
          (cdkDropListDropped)="tree.onDragDrop($event)"
          class="tree-node-drop-list">
-        <!-- display children for expandable nodes -->
-        <!-- FIXME: This needs to be built into somewhere else, because it makes the dropping hard -->
-        <!-- <ng-container [class.display-none]="!isExpanded(parent) && hasChild(node)">-->
+        <!-- Legacy child expand / collapse:
+        <div *ngIf="hasChild(node)"
+             [class.display-none]="!isExpanded(node)">
+        -->
+        <!-- display children -->
         <sa-tree-node cdkDrag
                       *ngFor="let child of node.children"
                       (cdkDragMoved)="tree.onDragMove($event)"
