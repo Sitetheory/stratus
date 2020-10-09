@@ -7,6 +7,7 @@ import {
     Component,
     DoCheck,
     ElementRef,
+    HostListener,
     Input,
     KeyValueDiffers, KeyValueDiffer, KeyValueChanges,
     OnInit,
@@ -23,6 +24,7 @@ import {
 } from '@stratusjs/runtime/stratus'
 // import {GoogleMap, MapInfoWindow, MapMarker} from '@angular/google-maps'
 import _ from 'lodash'
+import {isJSON} from '@stratusjs/core/misc'
 
 // Components
 import {
@@ -38,6 +40,9 @@ const moduleName = 'map'
 // Static Variables
 const devGoogleMapsKey = 'AIzaSyBAyMH-A99yD5fHQPz7uzqk8glNJYGEqus' // Public dev key as placeholder
 
+type lodashDebounce = (() => void) & {
+    cancel(): void
+}
 
 export interface MarkerSettingsClick {
     action: 'open' | 'function' | ''
@@ -93,19 +98,21 @@ class Watcher {
     }
 
     checkWatchers() {
-        const currentMilliseconds = new Date().getTime()
-        // console.info('checkWatchers() cmparing', currentMilliseconds, this.nextCheck)
-        if (this.nextCheck <= currentMilliseconds) {
-            this.nextCheck = currentMilliseconds + this.checkEveryMillisecond
-            // console.info('checkWatchers() ran')
-            this.watching.forEach((watcher) => {
-                const newValue = this.getFromPath(watcher.scope, watcher.path)
-                const change = watcher.differ.diff(newValue)
-                if (change) {
-                    watcher.action(newValue, change)
-                    // console.info(watcher.path, 'variable changed', _.clone(variable))
-                }
-            })
+        if (this.watching.length > 0) {
+            const currentMilliseconds = new Date().getTime()
+            // console.info('checkWatchers() cmparing', currentMilliseconds, this.nextCheck)
+            if (this.nextCheck <= currentMilliseconds) {
+                this.nextCheck = currentMilliseconds + this.checkEveryMillisecond
+                // console.info('checkWatchers() ran')
+                this.watching.forEach((watcher) => {
+                    const newValue = this.getFromPath(watcher.scope, watcher.path)
+                    const change = watcher.differ.diff(newValue)
+                    if (change) {
+                        watcher.action(newValue, change)
+                        // console.info(watcher.path, 'variable changed', _.clone(variable))
+                    }
+                })
+            }
         }
     }
 
@@ -202,9 +209,13 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     // Watcher
     watcher: Watcher
 
-    // Map Variables
+    // Map/Size Variables
     @Input() height?: string = null // '500px'
     @Input() width?: string = null // '100%'
+    @Input() referenceParent = 'document' // 'document' | 'window' |  '#elementName'
+    @Input() fullHeight = false
+    @Input() fullHeightMinusElements?: string = null // '["header","foo"]'
+    fullHeightMinusElementNames: string[] = [] // ['header','foo']
     // TODO check if there is a global Key in stratus
     @Input() googleMapsKey = devGoogleMapsKey
     /**
@@ -232,6 +243,9 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         disableDoubleClickZoom: this.disableDoubleClickZoom,
     }
     protected storedMarkers: google.maps.Marker[] = []
+    // Debounce holders
+    private resizeDebounce: lodashDebounce
+    private fitMarkerBoundsDebounce: lodashDebounce
 
     constructor(
         private Differ: KeyValueDiffers,
@@ -262,6 +276,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         this.hydrate(this.elementRef, this.sanitizer, keys<MapComponent>())
 
         this.processOptions()
+
+        this.updateWidgetSize()
 
         // Ensure there is at least a Dev key
         if (_.isEmpty(this.googleMapsKey)) {
@@ -312,6 +328,79 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         // console.log('ngAfterViewInit done')
     }
 
+    // Will run whenever the window size changes
+    @HostListener('window:resize', ['$event'])
+    public onResize() { // event?: any
+        // console.log('window resized:', this.getParentSize())
+        if (!this.resizeDebounce) {
+            // Try to update every 150 milliseconds if not currently resizing. Otherwise, wait no longer than 1.5 secs to update
+            this.resizeDebounce = _.debounce(this.resize.bind(this), 150,{leading: false, trailing: true, maxWait: 1500})
+        }
+        this.resizeDebounce()
+    }
+
+    public resize() {
+        // console.log('resize ran')
+        this.updateWidgetSize()
+        if (!this.fitMarkerBoundsDebounce) {
+            // Try to fitMarkerBounds once within 300 milliseconds if not currently resizing (only if the resizing temporarily stops).
+            this.fitMarkerBoundsDebounce = _.debounce(this.fitMarkerBounds.bind(this), 300,{leading: false, trailing: true})
+        }
+        this.fitMarkerBoundsDebounce()
+    }
+
+    public getWindowSize() {
+        return {
+            height: this.window.innerHeight,
+            width: this.window.innerWidth
+        }
+    }
+
+    public getDocumentSize() {
+        return {
+            height: this.window.document.body.clientHeight,
+            width: this.window.document.body.clientWidth
+        }
+    }
+
+    public getElementSize(elementSelector: string) {
+        const el = this.window.document.querySelector(elementSelector) as HTMLElement
+        if (el) {
+            return {
+                height: el.clientHeight,
+                width: el.clientWidth
+            }
+        }
+        return this.getDocumentSize()
+    }
+
+    public getParentSize() {
+        return this.referenceParent === 'document' ? this.getDocumentSize() :
+            this.referenceParent === 'window' ? this.getWindowSize() :
+                this.getElementSize(this.referenceParent)
+    }
+
+    public updateWidgetSize() {
+        if (this.fullHeight || this.fullHeightMinusElementNames.length > 0) {
+            if (this.fullHeightMinusElementNames.length === 0) {
+                this.height = this.getParentSize().height + 'px'
+            } else {
+                // get the element and height or each fullHeightMinusElementNames
+                let heightOffset = 0
+                this.fullHeightMinusElementNames.forEach((elementSelector) => {
+                    // const el = this.window.document.getElementById(elementSelector)
+                    const el = this.window.document.querySelector(elementSelector) as HTMLElement
+                    if (el) {
+                        heightOffset += el.offsetHeight
+                    }
+                })
+                // console.log('heightOffset:', heightOffset)
+                this.height = (this.getParentSize().height - heightOffset) + 'px'
+            }
+            // console.log('updated height', this.height)
+        }
+    }
+
     /**
      * Center and possibly zoom map on current Markers
      */
@@ -327,6 +416,12 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             this.panToPosition(bounds.getCenter())
             this.fitBounds(bounds)
         }
+    }
+
+    public decodeHTML (html: string) {
+        const txt = document.createElement('textarea')
+        txt.innerHTML = html
+        return txt.value
     }
 
     private processOptions() {
@@ -345,7 +440,11 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (!_.isBoolean(this.disableDoubleClickZoom)) {
             this.disableDoubleClickZoom = (this.disableDoubleClickZoom === 'true')
         }
+        if (!_.isBoolean(this.fullHeight)) {
+            this.fullHeight = (this.fullHeight === 'true')
+        }
 
+        // Set Google MAps Options
         this.options = {
             mapTypeId: this.mapType,
             center: this.center,
@@ -353,6 +452,18 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             zoomControl: this.zoomControl,
             scrollwheel: this.scrollwheel,
             disableDoubleClickZoom: this.disableDoubleClickZoom,
+        }
+
+        // Sizing Options
+        if (this.fullHeightMinusElements) {
+            // hydrate seems to htmlEntity encode when it isn;t suppose to, breaking JSON
+            this.fullHeightMinusElements = this.decodeHTML(this.fullHeightMinusElements)
+        }
+        const fullHeightMinusElementNames = this.fullHeightMinusElements && isJSON(this.fullHeightMinusElements) ?
+            JSON.parse(this.fullHeightMinusElements) : null
+        if (_.isArray(fullHeightMinusElementNames)) {
+            this.fullHeight = true
+            this.fullHeightMinusElementNames = fullHeightMinusElementNames
         }
     }
 
