@@ -45,7 +45,21 @@
 <!--          [innerHTML]="getDragPreview(node)"-->
 <!--          class="tree-node-drag-placeholder"></span>-->
 
+    <!-- Content Type Icon -->
+    <mat-icon class="type-icon"
+              aria-hidden="true"
+              *ngIf="node.model.get('content.contentType.iconResourcePath')"
+              [svgIcon]="getSvg('/assets/1/0/bundles/' + node.model.get('content.contentType.iconResourcePath')) | async">
+    </mat-icon>
+
+    <!-- Route Display -->
+    <small [class.route-none]="!node.model.get('route')"
+           [class.type-none]="!node.model.get('content.contentType.iconResourcePath')">
+        {{node.model.get('route') || 'No route set!'}}
+    </small>
+
     <!-- create drop list -->
+    <!-- FIXME: enabling [cdkDropListSortingDisabled]="true" allows parent drops with ease, but no sorting information -->
     <div cdkDropList
          [id]="tree.uid + '_node_' + node.id + '_drop_list'"
          [cdkDropListConnectedTo]="tree.dropLists"

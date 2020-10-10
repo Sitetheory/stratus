@@ -26,6 +26,8 @@ import {
 // External
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
+import {IconOptions} from '@angular/material/icon/icon-registry'
+import {Observable} from 'rxjs'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
@@ -243,5 +245,9 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
     public openDialogDblClick(node: Node): void {
         this.isSingleClick = false
         this.openDialog(node)
+    }
+
+    public getSvg(url: string, options?: IconOptions): Observable<string> {
+        return this.tree.getSvg(url, options)
     }
 }
