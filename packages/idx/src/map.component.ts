@@ -104,6 +104,9 @@ Stratus.Components.IdxMap = {
                 JSON.parse($attrs.markerClickHighlight) : false
             $scope.markerIcon = $attrs.markerIcon || null
             $scope.markerIconHover = $attrs.markerIconHover || null
+            $scope.fullHeight = $attrs.fullHeight || null
+            $scope.fullHeightMinusElements = $attrs.fullHeightMinusElements || null
+            $scope.referenceParent = $attrs.referenceParent || 'document'
 
             // Register this Map with the Property service
             Idx.registerMapInstance($scope.elementId, $scope)

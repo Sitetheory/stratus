@@ -424,6 +424,20 @@ export interface Member extends LooseObject {
     }
 }
 
+export interface Media extends LooseObject {
+    MediaKey: string
+    MediaURL?: string
+}
+
+export interface OpenHouse extends LooseObject {
+    OpenHouseKey: string
+    OpenHouseStartTime: Date
+    OpenHouseEndTime?: Date
+    OpenHouseStatus?: string
+    ShowingAgentFirstName?: string
+    ShowingAgentLastName?: string
+}
+
 export interface Property extends LooseObject {
     id: string
     ListingKey: string
@@ -457,7 +471,28 @@ export interface Property extends LooseObject {
     MapCoordinateSource?: string
 
     // Details
+    BathroomsFull?: number
+    BathroomsHalf?: number
+    BathroomsOneQuarter?: number
+    BathroomsPartial?: number
+    BathroomsTotalInteger?: number
+    BedroomsTotal?: number
+    LivingArea?: number
+    LivingAreaUnits?: string
+    LotSizeArea?: number
+    LotSizeUnits?: number
+    LotSizeAcres?: number
+    LotSizeSquareFeet?: number
+    LeasableArea?: number
+    LeasableAreaUnits?: string
+    BuildingAreaTotal?: number
+    BuildingAreaUnits?: string
+    Stories?: number
+    Levels?: string[]
     PublicRemarks?: string
+    YearBuilt?: number
+    PoolPrivateYN?: boolean
+    InternetAddressDisplayYN?: boolean
 
     // Agent
     ListAgentFullName?: string
@@ -476,6 +511,8 @@ export interface Property extends LooseObject {
     [key: string]: unknown
 
     // Custom
+    Images?: Media[]
+    OpenHouses?: OpenHouse[]
     _ServiceId: number
     _Class: string
     _IsRental?: boolean
