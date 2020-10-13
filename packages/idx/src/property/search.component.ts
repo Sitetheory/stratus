@@ -309,13 +309,25 @@ Stratus.Components.IdxPropertySearch = {
                 ) {
                     console.warn('updateNestedPathValue couldn\'t connect', currentPiece, ' as value given is array, but value stored is not: ', _.clone(currentNest), 'It may need to be initialized first (as an array)')
                 } else {
-                    if (_.isArray(currentNest[currentPiece]) && !_.isArray(value)) {
+                    if (_.isArray(currentNest[currentPiece]) && !_.isArray(value) && !isJSON(value)) {
+                        // console.log('checking if this was an array', _.clone(value))
                         value = value === '' ? [] : value.split(',')
-                    }
+                    }/* else if (
+                        _.isString(value) &&
+                        (value[0] === '[' || value[0] === '{') &&
+                        isJSON(value)
+                    ) {
+                        value = JSON.parse(value)
+                        console.log('converted', value, 'to object')
+                    }*/
                     // console.log(currentPiece, 'updated to ', value)
                     // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
                     // This is mostly just to allow a whole object to be passed in and saved
-                    if (_.isObject(currentNest[currentPiece])) {
+                    if (
+                        _.isObject(currentNest[currentPiece]) ||
+                        isJSON(value)
+                    ) {
+                        // console.log('parsing', _.clone(value))
                         currentNest[currentPiece] = JSON.parse(value)
                     } else {
                         currentNest[currentPiece] = value
@@ -339,7 +351,7 @@ Stratus.Components.IdxPropertySearch = {
          */
         $scope.variableSync = async (): Promise<void> => {
             $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
-            // console.log('variables syncing: ', $scope.variableSyncing)
+            // console.log('variables syncing: ', _.clone($scope.variableSyncing))
             const promises: any[] = []
             Object.keys($scope.variableSyncing).forEach((elementId: string) => {
                 promises.push(
