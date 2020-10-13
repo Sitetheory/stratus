@@ -5,9 +5,9 @@
 <mat-progress-bar mode="indeterminate" *ngIf="data.model.pending || !data.model.data.id"></mat-progress-bar>
 -->
 
-<div class="tree-dialog-content" mat-dialog-content>
-    <mat-progress-bar mode="indeterminate" *ngIf="!isInitialized"></mat-progress-bar>
-
+<div class="tree-dialog-content"
+     *ngIf="isInitialized"
+     mat-dialog-content>
     <mat-form-field class="form-field">
         <input #nameInput
                matInput
@@ -27,7 +27,9 @@
     </mat-form-field>
 
     <!-- Target Selector -->
-    <h4><label id="link-type-label">Link Type:</label></h4>
+    <h4>
+        <label id="link-type-label">Link Type:</label>
+    </h4>
     <mat-radio-group class="radio-group"
                      aria-labelledby="link-type-label"
                      [(ngModel)]="data.target">
@@ -40,7 +42,8 @@
     </mat-radio-group>
 
     <!-- Target Editor -->
-    <form class="dialog-form" [formGroup]='dialogContentForm'>
+    <form class="dialog-form"
+          [formGroup]='dialogContentForm'>
         <ng-container *ngIf="data.target == 'content'">
             <mat-form-field class="form-field">
                 <input matInput
@@ -126,8 +129,11 @@
     -->
 
     <!-- Priority Control - deprecated once we have proper DnD for child links -->
-    <h4 *ngIf="data.nestParent !== null">Priority:</h4>
-    <mat-form-field class="form-field" *ngIf="data.nestParent !== null">
+    <h4 *ngIf="data.nestParent !== null">
+        Priority:
+    </h4>
+    <mat-form-field class="form-field"
+                    *ngIf="data.nestParent !== null">
         <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">
 <!--        <span [textContent]="data.priority || 'None set!'"></span>-->
 <!--        <button mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
@@ -179,7 +185,9 @@
 <!--          [textContent]="data.nestParent.name || 'Untitled Parent'"></span>-->
 
     <!-- Misc Buttons -->
-    <h4>Actions:</h4>
+    <h4>
+        Actions:
+    </h4>
 
     <button mat-button
             (click)="destroy()">
