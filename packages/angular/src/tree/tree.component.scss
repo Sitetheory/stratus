@@ -25,12 +25,18 @@
   .drop {
     &-inside {
       border: 2px solid #00b7ff !important;
+      //padding-top: 5px;
+      //padding-bottom: 5px;
     }
     &-before {
       border-top: 2px solid #00b7ff !important;
+      //padding-top: 5px;
+      //padding-bottom: 5px;
     }
     &-after {
       border-bottom: 2px solid #00b7ff !important;
+      //padding-top: 5px;
+      //padding-bottom: 5px;
     }
   }
   .tree-node {
@@ -52,6 +58,19 @@
     .tree-node-content {
       .visibility-off {
         opacity: 0.5;
+      }
+      .type-icon {
+        height: 15px;
+        width: 22px;
+      }
+      .type-none {
+        padding-left: 6px;
+      }
+      .route-none {
+        color: #FF5B3A;
+      }
+      .mat-button-disabled {
+        height: 24px;
       }
     }
     &-drag {

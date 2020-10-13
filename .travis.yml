@@ -23,14 +23,97 @@ jobs:
       cache:
         directories:
           - node_modules
+
+#    - language: node_js
+#      # EOL: 2020-06-01
+#      name: "NodeJS 13"
+#      node_js:
+#        - "13"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: 2023-04-30
+#      name: "NodeJS 14: Fermium"
+#      node_js:
+#        - "14"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: 2021-06-01
+#      name: "NodeJS 15"
+#      node_js:
+#        - "15"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: 2024-04-30
+#      name: "NodeJS 16: Gallium"
+#      node_js:
+#        - "16"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: 2022-06-01
+#      name: "NodeJS 17"
+#      node_js:
+#        - "17"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: 2025-04-30
+#      name: "NodeJS 18: Hydrogen"
+#      node_js:
+#        - "18"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: 2023-06-01
+#      name: "NodeJS 19"
+#      node_js:
+#        - "19"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: 2026-04-30
+#      name: "NodeJS 20: Iron"
+#      node_js:
+#        - "20"
+#      cache:
+#        directories:
+#          - node_modules
+
+#    - language: node_js
+#      # EOL: Indeterminate
+#      name: "NodeJS: LTS"
+#      node_js:
+#        - "lts/*"
+#      cache:
+#        directories:
+#          - node_modules
+
     - language: node_js
-      # EOL: 2020-06-01
-      name: "NodeJS 13: Latest"
+      # EOL: Indeterminate
+      name: "NodeJS: Stable"
       node_js:
-        - "13"
+        - "node"
       cache:
         directories:
           - node_modules
+
 #      before_install:
 #        - export CHROME_BIN=chromium-browser
 #        - export DISPLAY=:99.0

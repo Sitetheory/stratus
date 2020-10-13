@@ -21,6 +21,7 @@
             Collapse All
         </button>
     </div>
+    <!-- FIXME: enabling [cdkDropListSortingDisabled]="true" allows parent drops with ease, but no sorting information -->
     <div cdkDropList
          [id]="uid + '_parent_drop_list'"
          [cdkDropListConnectedTo]="dropLists"
