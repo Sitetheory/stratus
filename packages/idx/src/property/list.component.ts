@@ -174,6 +174,10 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.where = _.extend(Idx.getDefaultWhereOptions(), startingQuery || {})
 
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
+            // Need to include Order
+            if ($scope.query.order) {
+                $ctrl.defaultQuery.Order = $scope.query.order
+            }
 
             // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
             $scope.orderOptions = $scope.orderOptions || {

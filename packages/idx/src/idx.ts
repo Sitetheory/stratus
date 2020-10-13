@@ -124,6 +124,7 @@ export interface IdxService {
         $scope: IdxComponentScope,
         var1?: any, var2?: any, var3?: any
     ): void
+
     on(
         uid: string,
         emitterName: string,
@@ -2152,6 +2153,7 @@ const angularJsService = (
     function setUrlOptions(listingOrSearch: 'Listing' | 'Search', options: object | any) {
         // console.log('setUrlOptions ', listingOrSearch, _.clone(options))
         urlOptions[listingOrSearch] = options || {}
+        // console.log('set url options', _.clone(urlOptions[listingOrSearch]))
     }
 
     /**
@@ -2179,15 +2181,26 @@ const angularJsService = (
         if (searchOptionNames.length > 0) {
             let searchPath = ''
             searchOptionNames.forEach(searchOptionName => {
+                // console.log('searchOptionName', searchOptionName)
                 if (
                     Object.prototype.hasOwnProperty.call(urlOptions.Search, searchOptionName) &&
-                    urlOptions.Search[searchOptionName] !== null &&
+                    urlOptions.Search[searchOptionName] !== null
                     // && urlOptions.Search[searchOptionName] !== ''
                     // && urlOptions.Search[searchOptionName] !== 0// may need to correct this
-                    !_.isEqual(defaultOptions[searchOptionName], urlOptions.Search[searchOptionName])
                 ) {
-                    // console.log(searchOptionName, defaultOptions[searchOptionName], urlOptions.Search[searchOptionName]);
-                    searchPath += searchOptionName + '/' + urlOptions.Search[searchOptionName] + '/'
+                    let defaultValue = defaultOptions[searchOptionName]
+                    const compareValue = urlOptions.Search[searchOptionName]
+                    if (
+                        !_.isArray(defaultValue) &&
+                        _.isArray(compareValue)
+                    ) {
+                        // If they both aren't arrays, make them so we can compare
+                        defaultValue = [defaultValue]
+                    }
+                    if (!_.isEqual(defaultValue, compareValue)) {
+                        // console.log(searchOptionName, defaultValue, compareValue)
+                        searchPath += searchOptionName + '/' + compareValue + '/'
+                    }
                 }
             })
             if (searchPath !== '') {
@@ -2766,7 +2779,7 @@ const angularJsService = (
     function getFriendlyStatus(
         property: Property,
         preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
-    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' |'Rented' | string {
+    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' | 'Rented' | string {
         let statusName = ''
         if (
             Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
@@ -2790,7 +2803,8 @@ const angularJsService = (
                     statusName = 'Contingent'
                     break
                 }
-                default: statusName = getFriendlyClosedStatus(property, statusName, preferredStatus)
+                default:
+                    statusName = getFriendlyClosedStatus(property, statusName, preferredStatus)
             }
         }
         return statusName
@@ -2805,7 +2819,7 @@ const angularJsService = (
     function getFullStatus(
         property: Property,
         preferredStatus: 'Closed' | 'Leased' | 'Rented' = 'Closed'
-    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' |'Rented' | string {
+    ): 'Active' | 'Contingent' | 'Closed' | 'Leased' | 'Rented' | string {
         let statusName = ''
         if (
             Object.prototype.hasOwnProperty.call(property, 'MlsStatus') &&
