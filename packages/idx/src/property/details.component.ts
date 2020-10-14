@@ -202,7 +202,7 @@ Stratus.Components.IdxPropertyDetails = {
                 $scope.integrations = {
                     maps: {
                         googleMaps: {
-                            accountId: $attrs.googleApiKey
+                            publicKey: $attrs.googleApiKey
                         }
                     }
                 }
@@ -1400,10 +1400,10 @@ Stratus.Components.IdxPropertyDetails = {
                 $scope.integrations
                 && Object.prototype.hasOwnProperty.call($scope.integrations, 'maps')
                 && Object.prototype.hasOwnProperty.call($scope.integrations.maps, 'googleMaps')
-                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'accountId')
-                && $scope.integrations.maps.googleMaps.accountId !== ''
+                && Object.prototype.hasOwnProperty.call($scope.integrations.maps.googleMaps, 'publicKey')
+                && $scope.integrations.maps.googleMaps.publicKey !== ''
             ) {
-                googleApiKey = $scope.integrations.maps.googleMaps.accountId
+                googleApiKey = $scope.integrations.maps.googleMaps.publicKey
             } else {
                 googleApiKey = Idx.getGoogleMapsKey()
             }

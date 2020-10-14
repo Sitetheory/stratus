@@ -319,7 +319,7 @@ export interface WidgetIntegrations {
     },
     maps?: {
         googleMaps?: {
-            accountId: string
+            publicKey: string
         }
     }
 }
@@ -1175,12 +1175,12 @@ const angularJsService = (
             if (Object.prototype.hasOwnProperty.call(response.data.integrations, 'maps')) {
                 if (Object.prototype.hasOwnProperty.call(response.data.integrations.maps, 'googleMaps')) {
                     if (
-                        Object.prototype.hasOwnProperty.call(response.data.integrations.maps.googleMaps, 'accountId')
-                        && _.isString(response.data.integrations.maps.googleMaps.accountId)
-                        && response.data.integrations.maps.googleMaps.accountId !== ''
+                        Object.prototype.hasOwnProperty.call(response.data.integrations.maps.googleMaps, 'publicKey')
+                        && _.isString(response.data.integrations.maps.googleMaps.publicKey)
+                        && response.data.integrations.maps.googleMaps.publicKey !== ''
                     ) {
                         sharedValues.integrations.maps.googleMaps = {
-                            accountId: response.data.integrations.maps.googleMaps.accountId
+                            publicKey: response.data.integrations.maps.googleMaps.publicKey
                         }
                     }
                 }
@@ -2943,10 +2943,10 @@ const angularJsService = (
             sharedValues.integrations
             && Object.prototype.hasOwnProperty.call(sharedValues.integrations, 'maps')
             && Object.prototype.hasOwnProperty.call(sharedValues.integrations.maps, 'googleMaps')
-            && Object.prototype.hasOwnProperty.call(sharedValues.integrations.maps.googleMaps, 'accountId')
-            && sharedValues.integrations.maps.googleMaps.accountId !== ''
+            && Object.prototype.hasOwnProperty.call(sharedValues.integrations.maps.googleMaps, 'publicKey')
+            && sharedValues.integrations.maps.googleMaps.publicKey !== ''
         ) {
-            googleMapsKey = sharedValues.integrations.maps.googleMaps.accountId
+            googleMapsKey = sharedValues.integrations.maps.googleMaps.publicKey
         }
         return googleMapsKey
     }
