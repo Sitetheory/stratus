@@ -318,6 +318,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         // Dispatch Model Events
         // This hasn't been test, but is probably a better idea than what we're getting from the setAttribute
         // this.throttleTrigger('change', changeSet)
+        this.throttleTrigger('change', this)
 
         // Dispatch Collection Events
         if (this.collection) {
@@ -507,6 +508,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
 
                     // Events
                     this.trigger('success', this)
+                    this.trigger('change', this)
                     this.trigger('complete', this)
 
                     // Propagate Collection Change Event
