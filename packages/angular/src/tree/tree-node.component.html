@@ -66,6 +66,7 @@
          [cdkDropListData]="node"
          [cdkDropListDisabled]="false"
          (cdkDropListDropped)="tree.onDragDrop($event)"
+         [cdkDropListSortingDisabled]="tree.cdkDropListSortingDisabled"
          class="tree-node-drop-list">
         <!-- Legacy child expand / collapse:
         <div *ngIf="hasChild(node)"

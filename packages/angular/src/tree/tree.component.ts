@@ -201,6 +201,8 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
     expandTimeout: any
     expandDelay = 1000
     dropData: DropData = null
+    cdkDropListSortingDisabled = true
+    dropDebug = false
 
     // Tree Specific
     tree: Node[]
@@ -546,15 +548,15 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             this.treeMap[_.toNumber(this.dropData.targetId)] : null
 
         // Debug Data
-        const dropDebug = false
-        if (cookie('env') && dropDebug) {
+        if (cookie('env') && this.dropDebug) {
             console.group('onDragDrop()')
             _.forEach(
                 [
                     `model drop: ${targetNode.model.get('name')}`,
                     `list shift: ${event.container.element.nativeElement.id} -> ${event.previousContainer.element.nativeElement.id}`,
-                    `index change: ${event.previousIndex} -> ${event.currentIndex}`,
+                    `index change (event): ${event.previousIndex} -> ${event.currentIndex}`,
                     `current priority: ${targetNode.model.get('priority')}`,
+                    `target drop action: ${this.dropData.action}`,
                 ],
                 (message) => console.log(message)
             )
@@ -566,11 +568,11 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // with the drop location and this attempts to correct it in these
         // specific edge cases
         if (targetDropNode && !this.nodeIsEqual(parentNode, targetDropNode)) {
-            if (cookie('env') && dropDebug) {
+            if (cookie('env') && this.dropDebug) {
                 console.log(`target drop node differs: ${targetDropNode.id} -> ${targetDropNode.model.get('name')}`)
-                console.log('target drop node is the same as target node:', !this.nodeIsEqual(targetNode, targetDropNode))
+                console.log('target drop node is the same as target node:', targetNode.id === targetDropNode.id)
             }
-            if (!this.nodeIsEqual(targetNode, targetDropNode)) {
+            if (targetNode.id !== targetDropNode.id) {
                 switch (this.dropData.action) {
                     case 'before':
                     case 'after':
@@ -583,7 +585,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                         break
                 }
             }
-            if (cookie('env') && dropDebug) {
+            if (cookie('env') && this.dropDebug) {
                 console.log('target drop node selected:', parentNode ? `${parentNode.id} -> ${parentNode.model.get('name')}` : 'none')
             }
         }
@@ -610,22 +612,56 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 this.removeNode(pastParentNode.children, targetNode)
             }
             targetNode.model.set('nestParent', this.buildNodePatch(parentNode))
+
+            // Display debug data
+            if (cookie('env') && this.dropDebug) {
+                console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
+            }
         }
 
-        // Set Priority
-        moveItemInArray(tree, event.previousIndex, event.currentIndex)
-        let priority = 0
-        _.forEach(tree, (node: Node) => {
-            if (!node.model || !node.model.set) {
-                return
-            }
-            node.model.set('priority', priority++)
-        })
+        // Define tree branch
+        const branch = parentNode ? parentNode.children : tree
 
-        // Debug Data
-        if (cookie('env') && dropDebug) {
+        // Initial Target Index
+        let targetDropIndex = event.currentIndex
+        if (this.cdkDropListSortingDisabled) {
+            // If sorting is disabled, calculate index via dropAction
+            targetDropIndex = null
+            switch (this.dropData.action) {
+                case 'before':
+                case 'after':
+                    targetDropIndex = branch.findIndex((n: Node) => n.id === targetDropNode.id)
+                    if (this.dropData.action === 'after') {
+                        targetDropIndex++
+                    }
+                    if (cookie('env') && this.dropDebug) {
+                        console.log('index change (drop node):', `${event.previousIndex} -> ${targetDropIndex}`)
+                    }
+                    break
+            }
+        }
+
+        // Handle new cell placement
+        if (_.isNumber(targetDropIndex)) {
+            // Move cell in array
+            moveItemInArray(branch, event.previousIndex, targetDropIndex)
+            // Generate new priority
+            let priority = 0
+            _.forEach(branch, (node: Node) => {
+                if (!node.model || !node.model.set) {
+                    return
+                }
+                node.model.set('priority', priority++)
+            })
+            // Display debug data
+            if (cookie('env') && this.dropDebug) {
+                console.log('new priority:', targetNode.model.get('priority'))
+            }
+        }
+
+        // Close Debug Group
+        if (cookie('env') && this.dropDebug) {
             console.log(`new parent: ${targetNode.model.get('nestParent.name') || null}`)
-            console.log('new priority:', targetNode.model.get('priority'))
             console.groupEnd()
         }
 

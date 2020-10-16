@@ -359,12 +359,14 @@ function compileLESS () {
   }
   return src(_.union(location.less.core, nullify(location.less.compile)), { base: '.' })
   // .pipe(debug({ title: 'Compile LESS:' }))
+    .pipe(sourcemaps.init())
     .pipe(less({
       globalVars: {
         asset: "'/assets/1/0'"
       }
     }))
-    .pipe(gulpDest('.', { ext: '.css' }))
+    .pipe(sourcemaps.write('.'))
+    // .pipe(gulpDest('.', { ext: '.css' }))
     .pipe(dest('.'))
 }
 
@@ -381,8 +383,10 @@ function compileSASS () {
   }
   return src(_.union(location.sass.core, nullify(location.sass.compile)), { base: '.' })
   // .pipe(debug({ title: 'Compile SASS:' }))
+    .pipe(sourcemaps.init())
     .pipe(sass.sync().on('error', sass.logError))
-    .pipe(gulpDest('.', { ext: '.css' }))
+    .pipe(sourcemaps.write('.'))
+    // .pipe(gulpDest('.', { ext: '.css' }))
     .pipe(dest('.'))
 }
 
