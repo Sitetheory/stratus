@@ -1,6 +1,22 @@
 {
   "extends": "stylelint-config-standard",
   "rules": {
+    "no-descending-specificity": [
+      true,
+      {
+        "ignore": [
+          "selectors-within-list"
+        ]
+      }
+    ],
+    "rule-empty-line-before": [
+      "never-multi-line",
+      {
+        "ignore": [
+          "after-comment"
+        ]
+      }
+    ],
     "selector-type-no-unknown": [
       true,
       {
@@ -8,7 +24,6 @@
           "custom-elements"
         ]
       }
-    ],
-    "rule-empty-line-before": "never-multi-line"
+    ]
   }
 }
