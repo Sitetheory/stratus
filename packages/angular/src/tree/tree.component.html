@@ -28,6 +28,7 @@
          [cdkDropListData]="null"
          [cdkDropListDisabled]="false"
          (cdkDropListDropped)="onDragDrop($event)"
+         [cdkDropListSortingDisabled]="this.cdkDropListSortingDisabled"
          class="tree-node-drop-list">
         <!--[id]="uid + '_node_' + node.model.data.id"-->
         <!--(mouseenter)="onDragHover(node)"-->
