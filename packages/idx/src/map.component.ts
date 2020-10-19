@@ -70,6 +70,12 @@ Stratus.Components.IdxMap = {
         height: '@',
         width: '@',
         markerClickScroll: '@',
+        markerClickHighlight: '@',
+        markerIcon: '@',
+        markerIconHover: '@',
+        fullHeight: '@',
+        fullHeightMinusElements: '@',
+        referenceParent: '@',
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
