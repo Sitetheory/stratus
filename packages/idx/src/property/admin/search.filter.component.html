@@ -241,11 +241,9 @@
                      data-layout="row"
                 >
                     <md-input-container class="md-block minimal">
-                        <label>Sort</label>
-                        <md-select
-                                data-ng-model="options.query.order"
-                                aria-label="Sort Options"
-                        >
+                        <!--md-select can't auto select an array...so this is a bandaid to so the value in the label -->
+                        <label data-ng-bind="_.isArray(options.query.order) ? 'Sort: ' + options.query.order : 'Sort'">Sort</label>
+                        <md-select data-ng-model="options.query.order" aria-label="Sort Options">
                             <md-option data-ng-repeat="option in options.selection.order" data-ng-value="option.value">
                                 {{option.name}}
                             </md-option>
