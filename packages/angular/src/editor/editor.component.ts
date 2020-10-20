@@ -246,7 +246,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         uploadUrl: `https://app.sitetheory.io:3000/?session=${cookie('SITETHEORY')}`,
         uploadWithCredentials: false,
-        sanitize: true,
+        sanitize: false,
         toolbarPosition: 'top',
         toolbarHiddenButtons: [
             [
