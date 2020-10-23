@@ -221,9 +221,10 @@ export interface WhereOptions extends LooseObject {
     ListPriceMax?: number | any,
     Bathrooms?: number | any, // Previously BathroomsFullMin
     Bedrooms?: number | any, // Previously BedroomsTotalMin
-    AgentLicense?: string[] | string,
     Location?: string,
     Neighborhood?: string[] | string,
+    AgentLicense?: string[] | string, // Converts on server to multiple checks
+    OpenHouseOnly?: boolean, // Filters by only those with OpenHouses attached
 
     // Member
     MemberKey?: string,
@@ -1485,7 +1486,7 @@ const angularJsService = (
         const andStatement: MongoWhereQuery[] = [] // TS detecting [] as string[] otherwise
 
         interface SearchObject {
-            type: 'stringEquals' | // Input is a string, needs to equal another string or number field
+            type: 'valueEquals' | // Input is a string, needs to equal another string or number field
                 'stringLike' | // Input is a string, needs to be similar to another string field
                 'stringLikeArray' | // Input is a string or array, one of which needs to be found similar to db string field
                 'stringIncludesArray' | // Input is a string or array, one of which needs to be found equal to db string field
@@ -1496,7 +1497,7 @@ const angularJsService = (
             apiField?: string, // Used if the widgetField name is different from the field in database
             andOr?: Array<{
                 apiField: string,
-                type: 'stringEquals'
+                type: 'valueEquals'
                     | 'stringLike'
                     | 'stringLikeArray'
                     | 'stringIncludesArray'
@@ -1510,10 +1511,10 @@ const angularJsService = (
          */
         const searchPossibilities: { [key: string]: SearchObject } = {
             ListingKey: {
-                type: 'stringEquals'
+                type: 'valueEquals'
             },
             ListingId: {
-                type: 'stringEquals'
+                type: 'valueEquals'
             },
             ListingType: {
                 type: 'stringIncludesArray'
@@ -1538,6 +1539,10 @@ const angularJsService = (
             },
             AgentLicense: {
                 type: 'stringIncludesArray'
+            },
+            // Filters by only listings with OpenHouses
+            OpenHouseOnly: {
+                type: 'valueEquals'
             },
             // TODO: replace this with a generic API field that supports all MLS (which may not have
             // TODO: Unparsed Address but instead have StreetName, StreetNumber, etc.
@@ -1593,7 +1598,7 @@ const angularJsService = (
         const searchFunctions: {
             [key: string]: (searchObject: SearchObject, value: any) => void
         } = {
-            stringEquals: (searchObject, value) => {
+            valueEquals: (searchObject, value) => {
                 whereQuery[searchObject.apiField] = value
             },
             stringLike: (searchObject, value) => {
@@ -1677,7 +1682,7 @@ const angularJsService = (
                     // that will later be added to andStatement
                     const andOrOrStatement: MongoWhereQuery[] = []
                     searchObject.andOr.forEach((orObject) => {
-                        if (orObject.type === 'stringEquals') {
+                        if (orObject.type === 'valueEquals') {
                             andOrOrStatement.push({
                                 [orObject.apiField]: value
                             })
@@ -2618,7 +2623,20 @@ const angularJsService = (
             'BathroomsPartial',
             'BedroomsTotal'
         ]
-        // options.where['ListType'] = ['House','Townhouse'];
+        // options.where['ListType'] = ['House','Townhouse']
+        // Include openhouses is filtered
+        if (
+            Object.prototype.hasOwnProperty.call(options.where, 'OpenHouseOnly') &&
+            _.isString(options.where.OpenHouseOnly)
+        ) {
+            options.where.OpenHouseOnly = (options.where.OpenHouseOnly === 'true')
+        }
+        if (
+            Object.prototype.hasOwnProperty.call(options.where, 'OpenHouseOnly') &&
+            options.where.OpenHouseOnly
+        ) {
+            options.openhouses = true
+        }
 
         return genericSearchCollection<Property>(
             $scope,
