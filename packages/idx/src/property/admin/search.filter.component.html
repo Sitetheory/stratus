@@ -171,6 +171,14 @@
                         Show Under Contract
                     </md-checkbox>
                 </div>
+                <md-checkbox
+                        data-ng-model="options.query.where.OpenHouseOnly"
+                        aria-label="Open Houses Only"
+                        data-layout="row"
+                        data-layout-align="left"
+                >
+                    Open Houses Only
+                </md-checkbox>
             </div>
 
             <div class="property-zoning"
@@ -237,28 +245,28 @@
 
             <div class="display-specs"
                  aria-label="Display Specs">
-                <div class="search-input"
-                     data-layout="row"
-                >
+                <div class="search-input" data-layout="row">
                     <md-input-container class="md-block minimal">
-                        <label>Sort</label>
-                        <md-select
-                                data-ng-model="options.query.order"
-                                aria-label="Sort Options"
-                        >
+                        <!--md-select can't auto select an array...so this is a bandaid to so the value in the label -->
+                        <label data-ng-bind="_.isArray(options.query.order) ? 'Sort: ' + options.query.order : 'Sort'">Sort</label>
+                        <md-select data-ng-model="options.query.order" aria-label="Sort Options">
                             <md-option data-ng-repeat="option in options.selection.order" data-ng-value="option.value">
                                 {{option.name}}
                             </md-option>
                         </md-select>
                     </md-input-container>
                 </div>
-                <div class="search-input"
-                     data-layout="row"
-                >
+                <div class="search-input" data-layout="row">
                     <md-input-container flex>
                         <label>Restrict Data Source</label>
                         <!-- Multiple fields disabled for now as pagination is broken -->
-                        <md-select data-ng-model="options.query.service" placeholder="Restrict Data Source" aria-label="Restricted Data Source Displayed" required>
+                        <md-select
+                                data-ng-model="options.query.service"
+                                placeholder="Restrict Data Source"
+                                aria-label="Restricted Data Source Displayed"
+                                md-select-only-option
+                                required
+                        >
                             <md-option data-ng-repeat="mls in getMLSVariables()" data-ng-value="mls.id">
                                 {{mls.name}}
                             </md-option>

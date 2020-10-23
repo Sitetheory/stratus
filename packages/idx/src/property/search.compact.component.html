@@ -141,7 +141,7 @@
                         </md-button>
                     </div>
 
-                    <div data-ng-show="!options.forRent && inArray('Active', options.query.where.Status)">
+                    <div data-ng-show="!options.forRent && (inArray('Active', options.query.where.Status) || inArray('Contract', options.query.where.Status))">
                         <md-checkbox
                                 class="show-under-contract font-secondary"
                                 data-ng-checked="inArray('Contract', options.query.where.Status)"
@@ -152,6 +152,15 @@
                             Show Under Contract
                         </md-checkbox>
                     </div>
+
+                    <md-checkbox
+                            class="show-open-houses font-secondary"
+                            data-ng-model="options.query.where.OpenHouseOnly"
+                            aria-label="Open Houses Only"
+                            data-md-prevent-menu-close
+                    >
+                        Open Houses Only
+                    </md-checkbox>
 
                     <div class="sale-status-border dotted-spaced-underline"></div>
 

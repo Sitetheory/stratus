@@ -87,6 +87,7 @@ Stratus.Components.IdxPropertySearch = {
         const $ctrl = this
         $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
         $scope.elementId = $attrs.elementId || $ctrl.uid
+        $scope._ = _
         Stratus.Instances[$scope.elementId] = $scope
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
