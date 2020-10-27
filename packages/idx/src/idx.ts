@@ -2619,6 +2619,21 @@ const angularJsService = (
         ) {
             options.openhouses = true
         }
+        // OpenHousesOnly can work fast enough if there is more filters. Disable otherwise
+        if (
+            _.isEmpty(options.where.Neighborhood) &&
+            _.isEmpty(options.where.Location) &&
+            _.isEmpty(options.where.AgentLicense) &&
+            _.isEmpty(options.where.City) &&
+            _.isEmpty(options.where.CityRegion) &&
+            _.isEmpty(options.where.CountyOrParish) &&
+            _.isEmpty(options.where.MLSAreaMajor) &&
+            _.isEmpty(options.where.PostalCode) &&
+            _.isEmpty(options.where.UnparsedAddress)
+        ) {
+            options.openhouses = false
+            delete options.where.OpenHouseOnly
+        }
 
         return genericSearchCollection<Property>(
             $scope,
