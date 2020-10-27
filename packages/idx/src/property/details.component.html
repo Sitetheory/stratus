@@ -1,4 +1,3 @@
-
 <div id="{{elementId}}" data-ng-cloak>
     <div data-ng-if="model.pending" data-layout="row" data-layout-padding data-layout-margin data-layout-align="space-around center" data-layout-wrap>
         <md-progress-circular md-mode="indeterminate"></md-progress-circular>
@@ -219,7 +218,7 @@
                                         <span data-ng-if="::openHouse.OpenHouseEndTime"> —
                                             <span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
                                         </span>
-                                        <span data-ng-if="::openHouse.OpenHouseStatus && openHouse.OpenHouseStatus !== 'Active'"> (<span data-ng-bind="::openHouse.OpenHouseStatus">)</span>
+                                        <span data-ng-if="::openHouse.OpenHouseStatus && openHouse.OpenHouseStatus !== 'Active'"> (<span data-ng-bind="::openHouse.OpenHouseStatus"></span>)</span>
                                         <span data-ng-if="::openHouse.ShowingAgentFirstName" aria-label="Open House Shown by Agent">
                                             <br/>
                                             with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
