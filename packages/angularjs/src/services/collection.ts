@@ -232,8 +232,7 @@ export class Collection<T = LooseObject> extends EventManager {
         // TODO: Make this able to be flagged as direct entities
         if (!this.direct) {
             data.forEach((target: any) => {
-                // TODO: Add references to the Catalog when creating these
-                // models
+                // TODO: Add references to the Catalog when creating these models
                 (this.models as Model<T>[]).push(new Model<T>({
                     autoSave: this.autoSave,
                     autoSaveInterval: this.autoSaveInterval,
@@ -433,7 +432,7 @@ export class Collection<T = LooseObject> extends EventManager {
         return !this.direct ? (this.models as Model<T>[]).map((model: Model<T>) => model.toJSON()) : this.models
     }
 
-    add(target: any, options: any) {
+    add(target: any, options: any): Model {
         if (!_.isObject(target)) {
             return
         }
@@ -453,6 +452,7 @@ export class Collection<T = LooseObject> extends EventManager {
         if (options.save) {
             target.save()
         }
+        return target
     }
 
     remove(target: Model<T>) {
