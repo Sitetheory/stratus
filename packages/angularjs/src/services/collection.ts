@@ -22,7 +22,7 @@ import 'angular-material' // Reliant for $mdToast
 import {getInjector} from '@stratusjs/angularjs/injector'
 
 // AngularJS Services
-import {Model} from '@stratusjs/angularjs/services/model'
+import {Model, ModelOptions} from '@stratusjs/angularjs/services/model'
 
 // Instantiate Injector
 let injector = getInjector()
@@ -83,6 +83,11 @@ export interface CollectionOptions {
     // threshold?: number,
     urlRoot?: string,
     watch?: boolean,
+}
+
+export interface CollectionModelOptions extends ModelOptions {
+    prepend?: boolean,
+    save?: boolean
 }
 
 export const CollectionOptionKeys = keys<CollectionOptions>()
@@ -432,17 +437,24 @@ export class Collection<T = LooseObject> extends EventManager {
         return !this.direct ? (this.models as Model<T>[]).map((model: Model<T>) => model.toJSON()) : this.models
     }
 
-    add(target: any, options: any): Model {
+    add(target?: any, options?: CollectionModelOptions): Model {
         if (!_.isObject(target)) {
+            console.error('collection.add: target object not set!')
             return
         }
         if (!options || typeof options !== 'object') {
             options = {}
         }
-        target = (target instanceof Model) ? target : new Model({
-            collection: this
-        }, target)
-        target.collection = this
+        if (target instanceof Model) {
+            target.collection = this
+        } else {
+            options.collection = this
+            target = new Model(options, target)
+            target.initialize()
+            if (options.autoSave || options.watch) {
+                target.fetch()
+            }
+        }
         if (options.prepend) {
             this.models.unshift(target)
         } else {
