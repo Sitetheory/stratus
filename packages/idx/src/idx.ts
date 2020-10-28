@@ -313,9 +313,6 @@ export interface WidgetIntegrations {
         },
         listTrac?: {
             accountId: string
-        },
-        listtracAnalytics?: { // FIXME: Need to remove this name and rename to listTrac (Sitetheory side)
-            accountId: string
         }
     },
     maps?: {
@@ -1152,21 +1149,6 @@ const angularJsService = (
                     ) {
                         sharedValues.integrations.analytics.listTrac = {
                             accountId: response.data.integrations.analytics.listTrac.accountId
-                        }
-                        ListTrac.setAccountId(sharedValues.integrations.analytics.listTrac.accountId)
-                        // FIXME we only need to load ListTrac/send an event when the the MLS is whitelisted for it
-                    }
-                } else if (Object.prototype.hasOwnProperty.call(response.data.integrations.analytics, 'listtracAnalytics')) {
-                    // FIXME this is a placeholder until Sitetheory is fixed (listtracAnalytics changed to listTrac)
-                    if (
-                        Object.prototype.hasOwnProperty.call(
-                            response.data.integrations.analytics.listtracAnalytics, 'accountId'
-                        )
-                        && _.isString(response.data.integrations.analytics.listtracAnalytics.accountId)
-                        && response.data.integrations.analytics.listtracAnalytics.accountId !== ''
-                    ) {
-                        sharedValues.integrations.analytics.listTrac = {
-                            accountId: response.data.integrations.analytics.listtracAnalytics.accountId
                         }
                         ListTrac.setAccountId(sharedValues.integrations.analytics.listTrac.accountId)
                         // FIXME we only need to load ListTrac/send an event when the the MLS is whitelisted for it
@@ -2636,6 +2618,21 @@ const angularJsService = (
             options.where.OpenHouseOnly
         ) {
             options.openhouses = true
+        }
+        // OpenHousesOnly can work fast enough if there is more filters. Disable otherwise
+        if (
+            _.isEmpty(options.where.Neighborhood) &&
+            _.isEmpty(options.where.Location) &&
+            _.isEmpty(options.where.AgentLicense) &&
+            _.isEmpty(options.where.City) &&
+            _.isEmpty(options.where.CityRegion) &&
+            _.isEmpty(options.where.CountyOrParish) &&
+            _.isEmpty(options.where.MLSAreaMajor) &&
+            _.isEmpty(options.where.PostalCode) &&
+            _.isEmpty(options.where.UnparsedAddress)
+        ) {
+            options.openhouses = false
+            delete options.where.OpenHouseOnly
         }
 
         return genericSearchCollection<Property>(
