@@ -4,14 +4,10 @@
 // - add to declarations and entryComponents
 
 // Stratus Libraries
-import {
-    cookie
-} from '@stratusjs/core/environment'
+import {cookie} from '@stratusjs/core/environment'
 
 // Angular Core
-import {
-    HttpClientModule
-} from '@angular/common/http'
+import {HttpClientModule} from '@angular/common/http'
 import {
     ApplicationRef,
     NgModule
@@ -20,15 +16,9 @@ import {
     FormsModule,
     ReactiveFormsModule
 } from '@angular/forms'
-import {
-    MatNativeDateModule
-} from '@angular/material/core'
-import {
-    BrowserModule
-} from '@angular/platform-browser'
-import {
-    BrowserAnimationsModule
-} from '@angular/platform-browser/animations'
+import {MatNativeDateModule} from '@angular/material/core'
+import {BrowserModule} from '@angular/platform-browser'
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 
 // Angular Locales
 // import localeFr from '@angular/common/locales/fr'
@@ -39,35 +29,20 @@ import {
 // registerLocaleData(localeEs, 'es-ES')
 
 // Material Modules
-import {
-    MaterialModules
-} from '@stratusjs/angular/material'
+import {MaterialModules} from '@stratusjs/angular/material'
 
 // Base Components
-import {
-    BaseComponent
-} from '@stratusjs/angular/base/base.component'
+import {BaseComponent} from '@stratusjs/angular/base/base.component'
 
-// Stratus Custom Components
-import {
-    ConfirmDialogComponent
-} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
-import {
-    EditorComponent
-} from '@stratusjs/angular/editor/editor.component'
+// Stratus Custom Directives/Components
+import {ConfirmDialogComponent} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
+import {EditorComponent} from '@stratusjs/angular/editor/editor.component'
 import {MapComponent} from '@stratusjs/map/map.component'
-import {
-    SelectorComponent
-} from '@stratusjs/angular/selector/selector.component'
-import {
-    TreeComponent
-} from '@stratusjs/angular/tree/tree.component'
-import {
-    TreeDialogComponent
-} from '@stratusjs/angular/tree/tree-dialog.component'
-import {
-    TreeNodeComponent
-} from '@stratusjs/angular/tree/tree-node.component'
+import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
+import {TestDirective} from '@stratusjs/angular/test/test.directive'
+import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
+import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
+import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
 
 // Angular Components
 import {
@@ -87,9 +62,7 @@ import {
 
 // External Dependencies
 import _ from 'lodash'
-import {
-    Stratus
-} from '@stratusjs/runtime/stratus'
+import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Highlight.js
 // import hljs from 'highlight.js/lib/core'
@@ -121,7 +94,7 @@ import {
 // hljs.registerLanguage('yaml', yaml)
 
 // Google Modules (required by @stratusjs/map)
-import { GoogleMapsModule } from '@angular/google-maps'
+import {GoogleMapsModule} from '@angular/google-maps'
 
 // Angular Editor Dependencies
 import {
@@ -130,22 +103,14 @@ import {
 
 // Quill Modules
 import Quill from 'quill'
-import {
-    QuillConfig
-} from 'ngx-quill/lib/quill-editor.interfaces'
+import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
 
 // Editor Dialogs
-import {
-    CodeViewDialogComponent
-} from '@stratusjs/angular/editor/code-view-dialog.component'
-import {
-    MediaDialogComponent
-} from '@stratusjs/angular/editor/media-dialog.component'
+import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
+import {MediaDialogComponent} from '@stratusjs/angular/editor/media-dialog.component'
 
 // Quill Plugins
-import {
-    QuillInputButtonPlugin
-} from '@stratusjs/angular/editor/quill-input-button.plugin'
+import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-button.plugin'
 
 // External Quill Modules
 // import ImageUploader from 'quill-image-uploader'
@@ -419,7 +384,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     ],
     // bootstrap,
     providers: [
-        { provide: Window, useValue: window }
+        {provide: Window, useValue: window}
     ]
 })
 export class AppModule {
@@ -474,6 +439,28 @@ export class AppModule {
                 appRef.bootstrap(module, node)
             })
         })
+        // FIXME this logic is broken
+        /*
+        _.forEach(this.directives, (directive, selector) => {
+            // if (!(module instanceof ComponentFactory)) {
+            //     return;
+            // }
+            // const elements = document.getElementsByTagName(selector)
+            const elements = document.querySelectorAll(`[${selector}]`)
+            if (!elements || !elements.length) {
+                return
+            }
+            _.forEach(elements, (node) => {
+                if (node.hasAttribute('ng-version')) {
+                    return
+                }
+                console.warn('detected ', selector)
+                // console.log('ngDoBootstrap detected:', node);
+                // FIXME: Directives cannot be added to ngModule.entryComponents, so this will error
+                // @ts-ignore
+                appRef.bootstrap(directive, node)
+            })
+        })*/
         setTimeout(() => {
             this.detectBoot(appRef)
         }, this.exponentialTimeout(4000))
