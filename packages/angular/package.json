@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angular",
-  "version": "0.2.43",
+  "version": "0.2.44",
   "description": "This is the angular package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -45,7 +45,7 @@
     "@ngstack/code-editor": "^1.0.0",
     "@stratusjs/boot": "^0.2.5",
     "@stratusjs/core": "^0.2.18",
-    "@stratusjs/map": "^0.0.1",
+    "@stratusjs/map": "^0.3.0",
     "@stratusjs/runtime": "^0.11.7",
     "ace-builds": "^1.4.12",
     "core-js": "^3.6.5",
@@ -69,7 +69,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
     "rxjs-compat": "^6.6.3",
-    "tslib": "^2.0.3",
+    "tslib": "^1.14.1",
     "web-animations-js": "^2.3.2",
     "zone.js": "^0.10.3"
   }
