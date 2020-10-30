@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angularjs-extras",
-  "version": "0.6.7",
+  "version": "0.7.0",
   "description": "This is the AngularJS Extras package for StratusJS.",
   "scripts": {},
   "repository": {
@@ -27,12 +27,12 @@
     "yarn": ">= 1.21.1"
   },
   "dependencies": {
-    "@stratusjs/angularjs": "^0.2.29",
-    "@stratusjs/core": "^0.2.15",
-    "@stratusjs/runtime": "^0.10.7",
+    "@stratusjs/angularjs": "^0.2.44",
+    "@stratusjs/core": "^0.2.18",
+    "@stratusjs/runtime": "^0.11.7",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.27",
-    "tslib": "^1.11.1"
+    "tslib": "^1.14.1"
   }
 }
