@@ -87,6 +87,8 @@ packages/angularjs-extras/src/components/twitterFeed.js
 packages/angularjs-extras/src/components/twitterFeed.js.map
 packages/angularjs-extras/src/directives/froala.js
 packages/angularjs-extras/src/directives/froala.js.map
+packages/angularjs-extras/src/directives/fullHeight.js
+packages/angularjs-extras/src/directives/fullHeight.js.map
 packages/angularjs-extras/src/directives/trigger.js
 packages/angularjs-extras/src/directives/trigger.js.map
 packages/angularjs-extras/src/services/iCal.js
