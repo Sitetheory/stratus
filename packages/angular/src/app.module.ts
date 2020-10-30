@@ -73,6 +73,9 @@ import {
 import {
     QuillModule
 } from 'ngx-quill'
+
+// The following components are not currently in use:
+/* *
 import {
     MonacoEditorModule,
     NgxMonacoEditorConfig
@@ -80,6 +83,7 @@ import {
 import {
     CodeEditorModule
 } from '@ngstack/code-editor'
+/* */
 
 // External Dependencies
 import _ from 'lodash'
@@ -353,6 +357,7 @@ if (cookie('env')) {
     }
     /* */
 }
+/* *
 const monacoConfig: NgxMonacoEditorConfig = {
     // configure base path for monaco editor default: './assets'
     // baseUrl: 'sitetheorycore/node_modules/ngx-monaco-editor/assets',
@@ -365,6 +370,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         console.log((window).monaco, this)
     }
 }
+/* */
 
 @NgModule({
     // These are for external libraries (or Angular)
@@ -372,7 +378,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         // AngularModules,
         BrowserModule,
         BrowserAnimationsModule,
-        CodeEditorModule.forRoot(),
+        // CodeEditorModule.forRoot(),
         FormsModule,
         GoogleMapsModule, // Required by @stratusjs/map
         HttpClientModule,
@@ -382,7 +388,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         AngularEditorModule,
         // Outline: https://app.asana.com/0/1154407311832843/1184252847388849
         QuillModule.forRoot(quillConfig),
-        MonacoEditorModule.forRoot(monacoConfig)
+        // MonacoEditorModule.forRoot(monacoConfig)
         // SelectorComponent.forRoot()
     ],
     // This determines what is accessible as a component. These must be listed in `declarations`.

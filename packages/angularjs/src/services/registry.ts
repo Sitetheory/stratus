@@ -232,6 +232,7 @@ export class Registry {
                     $scope.collection = data
                 }
             }
+            // TODO: Allow this to be toggled off
             if (!data.pending && !data.completed) {
                 data.fetch()
             }
