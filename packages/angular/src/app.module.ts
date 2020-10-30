@@ -39,7 +39,6 @@ import {ConfirmDialogComponent} from '@stratusjs/angular/confirm-dialog/confirm-
 import {EditorComponent} from '@stratusjs/angular/editor/editor.component'
 import {MapComponent} from '@stratusjs/map/map.component'
 import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
-import {TestDirective} from '@stratusjs/angular/test/test.directive'
 import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
 import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
 import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
