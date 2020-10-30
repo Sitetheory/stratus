@@ -447,12 +447,19 @@ export class Collection<T = LooseObject> extends EventManager {
         }
         if (target instanceof Model) {
             target.collection = this
+            if (options.save) {
+                target.save()
+            }
         } else {
             options.collection = this
             target = new Model(options, target)
             target.initialize()
             if (options.autoSave || options.watch) {
-                target.fetch()
+                if (target.isNew()) {
+                    target.save()
+                } else if (!target.completed) {
+                    target.fetch()
+                }
             }
         }
         if (options.prepend) {
@@ -461,9 +468,6 @@ export class Collection<T = LooseObject> extends EventManager {
             this.models.push(target)
         }
         this.throttleTrigger('change')
-        if (options.save) {
-            target.save()
-        }
         return target
     }
 
