@@ -33,13 +33,12 @@ export type FullHeightScope = angular.IScope & { // & ObjectWithFunctions
 
     init(): void
     decodeHTML(html: string): string
-    updateWidgetSize(): void
-    updateHeight(height: string): void
-    getWindowSize(): ElementSize
-    getWindowSize(): ElementSize
     getDocumentSize(): ElementSize
     getElementSize(elementSelector: string): ElementSize
     getParentSize(): ElementSize
+    getWindowSize(): ElementSize
+    updateWidgetSize(): void
+    updateHeight(height: string): void
 }
 type ElementSize = {
     height: number
@@ -72,11 +71,10 @@ Stratus.Directives.FullHeight = (
         $scope.init = () => {
             // Sizing Options
             if ($attrs.fullHeightReferenceParent && _.isString($attrs.fullHeightReferenceParent)) {
-                // hydrate seems to htmlEntity encode when it isn't suppose to, breaking JSON
                 $scope.referenceParent = $attrs.fullHeightReferenceParent
             }
             if ($attrs.fullHeightMinusElements) {
-                // hydrate seems to htmlEntity encode when it isn;t suppose to, breaking JSON
+                // Prevent HTML encoding with importing json
                 $scope.fullHeightMinusElements = $scope.decodeHTML($attrs.fullHeightMinusElements)
             }
             const fullHeightMinusElementNames = $scope.fullHeightMinusElements && isJSON($scope.fullHeightMinusElements) ?
@@ -111,7 +109,7 @@ Stratus.Directives.FullHeight = (
         $scope.updateWidgetSize = () => {
             if ($scope.fullHeight || $scope.fullHeightMinusElementNames.length > 0) {
                 if ($scope.fullHeightMinusElementNames.length === 0) {
-                    $scope.updateHeight($scope.getParentSize().height + 'px')
+                    $scope.updateHeight(`${$scope.getParentSize().height}px`)
                 } else {
                     // get the element and height or each fullHeightMinusElementNames
                     let heightOffset = 0
@@ -123,7 +121,7 @@ Stratus.Directives.FullHeight = (
                         }
                     })
                     // console.log('heightOffset:', heightOffset)
-                    $scope.updateHeight(($scope.getParentSize().height - heightOffset) + 'px')
+                    $scope.updateHeight(`${$scope.getParentSize().height - heightOffset}px`)
                 }
                 // console.log('updated height', $scope.height)
             }
