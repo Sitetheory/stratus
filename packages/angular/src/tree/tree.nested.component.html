@@ -19,7 +19,7 @@
                               (cdkDragReleased)="onDragEnd()"
                               class="tree-node">
             <!-- use a disabled button to provide padding for tree leaf -->
-            <button mat-icon-button disabled></button>
+            <a mat-icon-button disabled></a>
 
             <!-- Display Clickable Name -->
             <span cdkDragHandle
@@ -40,9 +40,9 @@
 
             <!-- Display Name & Dialogue Button -->
 <!--        {{node.model.data.name}}&nbsp;-->
-<!--        <button mat-raised-button (click)="openDialog(node.model)">-->
+<!--        <a mat-raised-button (click)="openDialog(node.model)">-->
 <!--            <i class="fas fa-pencil-alt"></i>-->
-<!--        </button>-->
+<!--        </a>-->
 
             <!-- This is just a test of the Quill Editor, since we have not made decorators to provide a data connection -->
 <!--        <ng-container *ngIf="node.model.data.content && node.model.data.content.version">-->
@@ -67,13 +67,13 @@
                               (cdkDragStarted)="onDragStart()"
                               (cdkDragReleased)="onDragEnd()"
                               class="tree-node">
-            <button cdkTreeNodeToggle
+            <a cdkTreeNodeToggle
                     mat-icon-button
                     [attr.aria-label]="'toggle ' + node.model.data.name">
                 <mat-icon class="mat-icon-rtl-mirror">
                     {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                 </mat-icon>
-            </button>
+            </a>
 
             <!-- Display Clickable Name -->
             <span cdkDragHandle
@@ -94,9 +94,9 @@
 
             <!-- Display Name & Dialogue Button -->
 <!--        {{node.model.data.name}}&nbsp;-->
-<!--        <button mat-raised-button (click)="openDialog(node.model)">-->
+<!--        <a mat-raised-button (click)="openDialog(node.model)">-->
 <!--            <i class="fas fa-pencil-alt"></i>-->
-<!--        </button>-->
+<!--        </a>-->
 
             <!-- This is just a test of the Quill Editor, since we have not made decorators to provide a data connection -->
 <!--        <ng-container *ngIf="node.model.data.content && node.model.data.content.version">-->

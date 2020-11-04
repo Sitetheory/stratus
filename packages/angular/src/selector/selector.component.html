@@ -97,21 +97,21 @@
                     </span>
                 </div>
                 <div class="column-action">
-                    <button mat-button
+                    <a mat-button
                             [matTooltip]="'Delete ' + target"
                             aria-label="Delete Item"
                             class="btn btn-delete"
                             (click)="remove(selectedModel)">
                         <mat-icon svgIcon="selector_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
-                    </button>
-                    <button mat-button
+                    </a>
+                    <a mat-button
                             *ngIf="has(selectedModel, 'contentType.editUrl')"
                             [matTooltip]="'Edit ' + target"
                             aria-label="Edit Item in New Window"
                             class="btn btn-edit"
                             (click)="goToUrl(selectedModel, '_blank');">
                         <mat-icon svgIcon="selector_edit" aria-hidden="false" aria-label="Edit Item">Edit</mat-icon>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

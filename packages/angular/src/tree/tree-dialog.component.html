@@ -15,14 +15,14 @@
                placeholder="Name"
                [(ngModel)]="data.name">
         <!--
-        <button mat-button
+        <a mat-button
                 mat-icon-button
                 matSuffix
                 aria-label="Clear"
                 *ngIf="data.name"
                 (click)="data.name=''">
             <mat-icon>close</mat-icon>
-        </button>
+        </a>
         -->
     </mat-form-field>
 
@@ -115,9 +115,9 @@
                     [style.width.px]=320
                     *ngIf="data.target == 'url'">
         <input matInput type="text" placeholder="URL" [(ngModel)]="data.url">
-        <button mat-button *ngIf="data.url" matSuffix mat-icon-button aria-label="Clear" (click)="data.url=''">
+        <a mat-button *ngIf="data.url" matSuffix mat-icon-button aria-label="Clear" (click)="data.url=''">
             <mat-icon>close</mat-icon>
-        </button>
+        </a>
     </mat-form-field>
 
     <!-- Target Display -->
@@ -136,14 +136,14 @@
                     *ngIf="data.nestParent !== null">
         <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">
 <!--        <span [textContent]="data.priority || 'None set!'"></span>-->
-<!--        <button mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
+<!--        <a mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
 <!--                (click)="data.priority = data.priority + 1">-->
 <!--            <mat-icon>expand_less</mat-icon>-->
-<!--        </button>-->
-<!--        <button mat-button matSuffix mat-icon-button aria-label="Decrease Priority"-->
+<!--        </a>-->
+<!--        <a mat-button matSuffix mat-icon-button aria-label="Decrease Priority"-->
 <!--                (click)="data.priority = data.priority - 1">-->
 <!--            <mat-icon>expand_more</mat-icon>-->
-<!--        </button>-->
+<!--        </a>-->
     </mat-form-field>
 
     <!-- Level Selector -->
@@ -189,28 +189,28 @@
         Actions:
     </h4>
 
-    <button mat-button
+    <a mat-button
             (click)="destroy()">
         <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
-    </button>
-    <button mat-button
+    </a>
+    <a mat-button
             [class.visibility-off]="data.model.get('status') === 0"
             (click)="toggleStatus()">
         <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">Visibility</mat-icon>
-    </button>
-    <button mat-button
+    </a>
+    <a mat-button
             [disabled]="!data.id"
             (click)="data.collection.add({name:'Untitled Child', parent: data.parent, nestParent: {id: data.id}}, {save: true})">
         Add Child
-    </button>
+    </a>
 
     <mat-divider></mat-divider>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onCancelClick()">
+    <a mat-button (click)="onCancelClick()">
         Cancel
-    </button>
-    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>
+    </a>
+    <a mat-button [mat-dialog-close]="data" cdkFocusInitial>
         Ok
-    </button>
+    </a>
 </div>

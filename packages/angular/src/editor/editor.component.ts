@@ -421,6 +421,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // but something this simple could be used for simple UX purposes down the road.
                 // this.dataChangeLog.push(value)
 
+                // TODO: Convert this to a normalize function
                 // Normalize null values to empty strings to maintain consistent typing.
                 if (value === null) {
                     value = ''
@@ -512,6 +513,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             return ''
         }
         const data = this.model.get(this.property)
+        // TODO: Convert this to a normalize function
         if (!data) {
             return ''
         }
