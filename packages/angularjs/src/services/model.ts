@@ -286,6 +286,12 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         }
         // this.changed = !_.isEqual(this.data, this.initData)
 
+        // This ensures that we only save
+        if (this.error && !this.completed && this.getIdentifier()) {
+            console.warn('Blocked attempt to save a persisted model that has not been fetched successfully.')
+            return
+        }
+
         // Trigger Queue for Auto-Save
         this.saveIdle()
 
@@ -617,7 +623,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 _.isEmpty(this.toPatch())
             )
         ) {
-            console.warn('Blocked attempt to save empty payload to persisted model')
+            console.warn('Blocked attempt to save an empty payload to a persisted model.')
             return new Promise((resolve, reject) => {
                 this.saving = false
                 resolve(this.data)
@@ -947,6 +953,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
                 if (this.error) {
                     return
                 }
+                this.throttleTrigger('change')
                 if (this.collection) {
                     this.collection.remove(this)
                 }

@@ -515,5 +515,10 @@ exports.dist = parallel(
   // distStratus
 )
 
-exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
+exports.compileCSS = parallel(
+  series(cleanLESS, compileLESS),
+  series(cleanSASS, compileSASS),
+  series(cleanCSS, compressCSS)
+)
 exports.compileSass = series(cleanSASS, compileSASS)
+exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
