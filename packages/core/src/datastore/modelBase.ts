@@ -130,7 +130,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
     }
 
     has(attr: any) {
-        return (typeof this.get(attr) !== 'undefined')
+        return typeof this.get(attr) !== 'undefined'
     }
 
     size() {
@@ -148,6 +148,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
     }
 
     setAttribute(attr: any, value: any) {
+        // TODO: Code golf this function to be only 1 level
         if (typeof attr === 'string') {
             if (attr.indexOf('.') !== -1) {
                 let reference: any = this.data
@@ -183,6 +184,7 @@ export class ModelBase<T = LooseObject> extends EventManager {
 
     temp(attr: any, value: any) {
         this.set(attr, value)
+        // TODO: Code golf this function to be only 1 level
         if (attr && typeof attr === 'object') {
             _.forEach(attr, (v: any, k: any) => {
                 this.temps[k] = v

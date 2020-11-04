@@ -101,6 +101,11 @@ Stratus.Controllers.Generic = [
         $scope.getHTML = $sce.trustAsHtml
         $scope.getURL = $sce.trustAsResourceUrl
 
+        // Bind Redraw to all Change Events
+        if ($scope.data && _.isFunction($scope.data.on)) {
+            $scope.data.on('change', () => $scope.$applyAsync())
+        }
+
         // Handle Selected
         if (!$scope.collection) {
             return

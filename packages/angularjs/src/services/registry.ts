@@ -3,7 +3,7 @@
 
 // Runtime
 import _ from 'lodash'
-import angular from 'angular'
+import angular, {IScope} from 'angular'
 import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Stratus Core
@@ -24,6 +24,14 @@ let injector = getInjector()
 // Angular Services
 // let $interpolate: angular.IInterpolateService = injector ? injector.get('$interpolate') : null
 let $interpolate: angular.IInterpolateService
+
+// Interfaces
+export interface RegistryOptions extends CollectionOptions, ModelOptions {
+    id?: number
+    api?: string
+    decouple?: boolean
+    fetch?: boolean
+}
 
 // Service Verification Function
 const serviceVerify = async () => {
@@ -62,18 +70,22 @@ export class Registry {
     // Maintain all models in Namespace
     // Inverse the parent and child objects the same way Doctrine does
     // TODO: PushState Handling like: #/media/p/2
-    fetch($element: any, $scope: any): Promise<boolean|Collection|Model> {
+    fetch(
+        $element: string|object|JQLite|any,
+        $scope: object|IScope|any
+    ): Promise<boolean|Collection|Model> {
         return new Promise(async (resolve, reject) => {
             if (typeof $element === 'string') {
                 $element = {
                     target: $element
                 }
             }
-            const inputs = {}
+            const inputs: RegistryOptions = {}
             const baseInputs = [
                 'id',
                 'api',
-                'decouple'
+                'decouple',
+                'fetch'
             ]
             _.forEach(
                 _.union(ModelOptionKeys, CollectionOptionKeys, baseInputs),
@@ -150,8 +162,12 @@ export class Registry {
         })
     }
 
-    build(options: any, $scope: any): Collection | Model {
+    build(
+        options: RegistryOptions,
+        $scope: object|IScope|any
+    ): Collection | Model {
         let data
+        // TODO: Code golf this function to be only 1 level
         if (options.target) {
             options.target = ucfirst(options.target)
 
@@ -232,8 +248,12 @@ export class Registry {
                     $scope.collection = data
                 }
             }
-            // TODO: Allow this to be toggled off
-            if (!data.pending && !data.completed) {
+            if (!data.pending
+                && !data.completed
+                && (
+                    _.isUndefined(options.fetch) || options.fetch
+                )
+            ) {
                 data.fetch()
             }
         }
