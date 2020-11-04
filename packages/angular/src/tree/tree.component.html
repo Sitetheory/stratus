@@ -9,17 +9,17 @@
 <div class="tree">
     <mat-progress-bar mode="indeterminate" *ngIf="collection.completed && collection.pending"></mat-progress-bar>
     <div class="float-right">
-        <button mat-button
+        <a mat-button
                 (click)="setExpandedClick(true)"
                 (dblclick)="setExpandedDblClick(true)">
             Expand All
-        </button>
+        </a>
         /
-        <button mat-button
+        <a mat-button
                 (click)="setExpandedClick(false)"
                 (dblclick)="setExpandedDblClick(false)">
             Collapse All
-        </button>
+        </a>
     </div>
     <!-- FIXME: enabling [cdkDropListSortingDisabled]="true" allows parent drops with ease, but no sorting information -->
     <div cdkDropList

@@ -9,12 +9,12 @@
      [attr.id]="'node-'+node.id">
 
     <!-- use a disabled button to provide padding for tree leaf -->
-    <button mat-icon-button
+    <a mat-icon-button
             *ngIf="!hasChild(node)"
-            disabled></button>
+            disabled></a>
 
     <!-- use a regular button to control expandable nodes -->
-    <button mat-icon-button
+    <a mat-icon-button
             *ngIf="hasChild(node)"
             (click)="toggleExpandedClick(node)"
             (dblclick)="toggleExpandedDblClick(node)"
@@ -22,7 +22,7 @@
         <mat-icon class="mat-icon-rtl-mirror">
             {{isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
-    </button>
+    </a>
 
     <!-- clickable name is also the drag handle -->
     <!-- cdkDragHandle -->

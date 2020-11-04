@@ -31,10 +31,10 @@
     <ng-container *ngIf="styled && editor == 'angular-editor'">
         <!-- Media Selector -->
         <p>
-            <button mat-raised-button
+            <a mat-raised-button
                     (click)="openMediaDialog()">
                 Add Media
-            </button>
+            </a>
         </p>
         <!-- Angular Editor -->
         <angular-editor formControlName="dataString"
