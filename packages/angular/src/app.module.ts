@@ -44,9 +44,9 @@ import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component
 import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
 
 // Angular Components
-import {
-    QuillModule
-} from 'ngx-quill'
+// import {
+//     QuillModule
+// } from 'ngx-quill'
 
 // The following components are not currently in use:
 /* *
@@ -101,15 +101,15 @@ import {
 } from '@kolkov/angular-editor'
 
 // Quill Modules
-import Quill from 'quill'
-import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
+// import Quill from 'quill'
+// import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
 
 // Editor Dialogs
 import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
 import {MediaDialogComponent} from '@stratusjs/angular/editor/media-dialog.component'
 
 // Quill Plugins
-import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-button.plugin'
+// import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-button.plugin'
 
 // External Quill Modules
 // import ImageUploader from 'quill-image-uploader'
@@ -118,14 +118,14 @@ import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-butt
 //     // @ts-ignore
 // } from 'quill-html-edit-button'
 // @ts-ignore
-import ImageDropAndPaste from 'quill-image-drop-and-paste'
+// import ImageDropAndPaste from 'quill-image-drop-and-paste'
 
 // Quill Module Registers
-Quill.register('modules/mediaLibrary', QuillInputButtonPlugin)
-Quill.register('modules/codeView', QuillInputButtonPlugin)
+// Quill.register('modules/mediaLibrary', QuillInputButtonPlugin)
+// Quill.register('modules/codeView', QuillInputButtonPlugin)
 // Quill.register('modules/imageUploader', ImageUploader)
 // Quill.register('modules/htmlEditButton', htmlEditButton)
-Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
+// Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 
 // Quill Format Registers
 // FIXME: None of these fire when images are formatted
@@ -169,7 +169,8 @@ Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 //     .filter((item) => !!item);
 
 // External Configs
-const quillConfig: QuillConfig = {
+// const quillConfig: QuillConfig = {
+const quillConfig: any = {
     /* *
     formats: [
         'header', 'font', 'size',
@@ -279,14 +280,13 @@ if (cookie('env')) {
             })
         }
     }
-    /* */
+    /* *
     quillConfig.modules.imageDropAndPaste = {
         handler: (imageDataUrl: any, type: any, imageData: any) => {
             // This logic requires that we build an uploader, but this does get triggered.
             // It does not appear to keep the filename intact, though.
             console.log('image dropped:', {imageDataUrl, type, imageData})
 
-            /* *
             let filename = 'my_cool_image.png'
             let blob = imageData.toBlob()
             let file = imageData.toFile(filename)
@@ -309,9 +309,9 @@ if (cookie('env')) {
                 let index = (quill.getSelection() || {}).index || quill.getLength()
                 if (index) quill.insertEmbed(index, 'image', res.data.image_url, 'user')
             })
-            /* */
         }
     }
+    /* */
     /* *
     quillConfig.modules.htmlEditButton = {
         debug: true,
@@ -351,7 +351,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         ReactiveFormsModule,
         AngularEditorModule,
         // Outline: https://app.asana.com/0/1154407311832843/1184252847388849
-        QuillModule.forRoot(quillConfig),
+        // QuillModule.forRoot(quillConfig),
         // MonacoEditorModule.forRoot(monacoConfig)
         // SelectorComponent.forRoot()
     ],

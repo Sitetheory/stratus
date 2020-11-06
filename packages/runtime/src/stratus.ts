@@ -1982,88 +1982,95 @@ Stratus.Loaders.Angular = function AngularLoader() {
                 _.forEach(element, (value: any) => {
                     container[attribute].push(value)
                 })
-            } else {
-                container[attribute].push(element)
+                return
             }
+            container[attribute].push(element)
         })
     }
 
     _.forEach(Stratus.Roster, (element: any, key: any) => {
-        if (typeof element === 'object' && element) {
-            // sanitize roster fields without selector attribute
-            if (_.isUndefined(element.selector) && element.namespace) {
-                element.selector = _.filter(
-                    _.map(boot.configuration.paths, (path: any, pathKey: any) => {
-                        // if (_.isString(pathKey) && cookie('env')) {
-                        //     console.log(pathKey.match(/([a-zA-Z]+)/g))
-                        // }
-                        if (!_.startsWith(pathKey, element.namespace)) {
-                            return null
-                        }
-                        const selector = _.kebabCase(pathKey.replace(element.namespace, 'stratus-'))
-                        if (element.type === 'attribute') {
-                            return `[${selector}]`
-                        }
-                        if (element.type === 'data-attribute') {
-                            return `[data-${selector}]`
-                        }
-                        return selector
-                    })
-                )
-            }
-
-            // digest roster
-            if (_.isArray(element.selector)) {
-                element.length = 0
-                _.forEach(element.selector, (selector: any) => {
-                    nodes = document.querySelectorAll(selector)
-                    element.length += nodes.length
-                    if (nodes.length) {
-                        const name: any = selector.replace(/^\[/, '').replace(/]$/, '')
-                        requirement = element.namespace + lcfirst(_.camelCase(name.replace(/^stratus/, '').replace(/^ng/, '')))
-                        if (_.has(boot.configuration.paths, requirement)) {
-                            injection = {
-                                requirement
-                            }
-                            if (element.module) {
-                                injection.module =
-                                    _.isString(element.module) ? element.module : lcfirst(_.camelCase(name + (element.suffix || '')))
-                            }
-                            injector(injection)
-                        }
+        if (typeof element !== 'object' || !element) {
+            return
+        }
+        // sanitize roster fields without selector attribute
+        if (_.isUndefined(element.selector) && element.namespace) {
+            element.selector = _.filter(
+                _.map(boot.configuration.paths, (path: any, pathKey: any) => {
+                    // if (_.isString(pathKey) && cookie('env')) {
+                    //     console.log(pathKey.match(/([a-zA-Z]+)/g))
+                    // }
+                    if (!_.startsWith(pathKey, element.namespace)) {
+                        return null
                     }
+                    const selector = _.kebabCase(pathKey.replace(element.namespace, 'stratus-'))
+                    if (element.type === 'attribute') {
+                        return `[${selector}]`
+                    }
+                    if (element.type === 'data-attribute') {
+                        return `[data-${selector}]`
+                    }
+                    return selector
                 })
-            } else if (_.isString(element.selector)) {
-                nodes = document.querySelectorAll(element.selector)
-                element.length = nodes.length
-                if (nodes.length) {
-                    const attribute: any = element.selector.replace(/^\[/, '').replace(/]$/, '')
-                    if (attribute && element.namespace) {
-                        _.forEach(nodes, (node: any) => {
-                            const name: any = node.getAttribute(attribute)
-                            if (name) {
-                                requirement = element.namespace + lcfirst(_.camelCase(name.replace('Stratus', '')))
-                                if (_.has(boot.configuration.paths, requirement)) {
-                                    injector({
-                                        requirement
-                                    })
-                                }
-                            }
-                        })
-                    } else if (element.require) {
-                        // TODO: add an injector to the container
-                        container.requirement = _.union(container.requirement, element.require)
-                        injection = {}
-                        if (element.module) {
-                            injection.module =
-                                _.isString(element.module) ? element.module : lcfirst(_.camelCase(attribute + (element.suffix || '')))
-                        }
-                        if (element.stylesheet) {
-                            injection.stylesheet = element.stylesheet
-                        }
-                        injector(injection)
-                    }
+            )
+        }
+
+        // digest roster
+        if (_.isArray(element.selector)) {
+            element.length = 0
+            _.forEach(element.selector, (selector: any) => {
+                nodes = document.querySelectorAll(selector)
+                element.length += nodes.length
+                if (!nodes.length) {
+                    return
                 }
+                const name: any = selector.replace(/^\[/, '').replace(/]$/, '')
+                requirement = element.namespace + lcfirst(_.camelCase(
+                    name.replace(/^stratus/, '').replace(/^data-stratus/, '').replace(/^ng/, '')
+                ))
+                if (_.has(boot.configuration.paths, requirement)) {
+                    injection = {
+                        requirement
+                    }
+                    if (element.module) {
+                        injection.module = _.isString(element.module) ? element.module
+                                                                      : lcfirst(_.camelCase(name + (element.suffix || '')))
+                    }
+                    injector(injection)
+                }
+            })
+        } else if (_.isString(element.selector)) {
+            nodes = document.querySelectorAll(element.selector)
+            element.length = nodes.length
+            if (!nodes.length) {
+                return
+            }
+            const attribute: string = element.selector.replace(/^\[/, '').replace(/]$/, '')
+            if (attribute && element.namespace) {
+                _.forEach(nodes, (node: any) => {
+                    const name: string = node.getAttribute(attribute)
+                    if (!name) {
+                        return
+                    }
+                    requirement = element.namespace + lcfirst(_.camelCase(name.replace('Stratus', '')))
+                    if (!_.has(boot.configuration.paths, requirement)) {
+                        return
+                    }
+                    injector({
+                        requirement
+                    })
+                })
+            } else if (element.require) {
+                // TODO: add an injector to the container
+                container.requirement = _.union(container.requirement, element.require)
+                injection = {}
+                if (element.module) {
+                    injection.module = _.isString(element.module) ? element.module
+                                                                  : lcfirst(_.camelCase(`${attribute}${element.suffix||''}`))
+                }
+                if (element.stylesheet) {
+                    injection.stylesheet = element.stylesheet
+                }
+                injector(injection)
             }
         }
     })
@@ -2334,6 +2341,11 @@ Stratus.PostMessage.Convoy((convoy: any) => {
             expires: '1w'
         })
         if (Stratus.Client.safari) {
+            return
+        }
+        // Force HTTPS
+        if (window.location.protocol === 'http:') {
+            window.location.href = window.location.href.replace('http:', 'https:')
             return
         }
         window.location.reload()

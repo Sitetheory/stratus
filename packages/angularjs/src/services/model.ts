@@ -161,7 +161,7 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         options.received = options.received || false
 
         // Inject Options
-        _.extend(this, options)
+        _.extend(this, this.sanitizeOptions(options))
 
         // The data used to detect the data is changed.
         // this.initData = {}
@@ -243,6 +243,18 @@ export class Model<T = LooseObject> extends ModelBase<T> {
         if (!this.stagger) {
             this.initialize()
         }
+    }
+
+    sanitizeOptions(options: LooseObject): LooseObject {
+        const sanitizedOptions = {}
+        _.forEach(ModelOptionKeys, (key) => {
+            const data = _.get(options, key)
+            if (_.isUndefined(data)) {
+                return
+            }
+            _.set(sanitizedOptions, key, data)
+        })
+        return sanitizedOptions
     }
 
     // Watch for Data Changes

@@ -44,7 +44,7 @@ import {Registry} from '@stratusjs/angularjs/services/registry'
 // Core Classes
 import {EventManager} from '@stratusjs/core/events/eventManager'
 import {EventBase} from '@stratusjs/core/events/eventBase'
-import {cookie} from '@stratusjs/core/environment'
+// import {cookie} from '@stratusjs/core/environment'
 
 // AngularJS Classes
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -322,7 +322,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         const models = this.dataRef()
         this.empty = !models.length
         this.subscriber.next(models)
-        /* */
+        /* *
         // FIXME: This gets called twice per cycle...
         if (cookie('env')) {
             console.log('pushed models to subscriber:', models)

@@ -51,11 +51,11 @@ import {
 } from '@kolkov/angular-editor'
 
 // Quill Dependencies
-import Quill from 'quill'
-import {
-    EditorChangeContent,
-    EditorChangeSelection
-} from 'ngx-quill'
+// import Quill from 'quill'
+// import {
+//     EditorChangeContent,
+//     EditorChangeSelection
+// } from 'ngx-quill'
 
 // Components
 import {
@@ -190,7 +190,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     dataChangeLog: string[] = []
 
     // Child Components
-    quill: Quill
+    // quill: Quill
     editorConfig: AngularEditorConfig = {
         editable: true,
         spellcheck: true,
@@ -329,12 +329,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             })
 
         // TODO: Allow more CSS files to get pulled and mark this.styled appropriately
+        /* *
         if (_.has(boot.configuration.paths, 'quill')) {
             const quillDir = `/assets/1/0/bundles/${boot.configuration.paths.quill.replace(/[^/]*$/, '')}`
             Stratus.Internals.CssLoader(`${quillDir}quill.core.css`)
             // Stratus.Internals.CssLoader(`${quillDir}quill.bubble.css`)
             Stratus.Internals.CssLoader(`${quillDir}quill.snow.css`)
         }
+        /* */
 
         // Hydrate Root App Inputs
         this.hydrate(elementRef, sanitizer, keys<EditorComponent>())
@@ -421,16 +423,53 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // but something this simple could be used for simple UX purposes down the road.
                 // this.dataChangeLog.push(value)
 
-                // TODO: Convert this to a normalize function
-                // Normalize null values to empty strings to maintain consistent typing.
-                if (value === null) {
-                    value = ''
-                }
-
                 // Save the qualified change!
-                this.model.set(this.property, value)
+                this.model.set(
+                    this.property,
+                    this.normalizeOut(value)
+                )
             }
         )
+    }
+
+    normalizeIn(data?: string): string {
+        // Normalize non-string values to strings.
+        if (!data || !_.isString(data)) {
+            return ''
+        }
+        return this.changeImgSize(data, 'hq')
+    }
+    normalizeOut(data?: string): string {
+        // Normalize null values to empty strings to maintain consistent typing.
+        if (data === null) {
+            return ''
+        }
+        if (!_.isString(data)) {
+            return data
+        }
+        return this.changeImgSize(data, 'xs')
+    }
+    changeImgSize(data?: string, size?: string): string {
+        if (!data || !_.isString(data)) {
+            return data
+        }
+        if (!size || !_.isString(size)) {
+            return data
+        }
+        const imgRegex: RegExp = /<img([\w\W]+?)>/gi
+        let imgMatch: RegExpExecArray
+        // tslint:disable-next-line:no-conditional-assignment
+        while (imgMatch = imgRegex.exec(data)) {
+            const src: string = imgMatch[0]
+            const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+            const srcMatch: RegExpExecArray = srcRegex.exec(src)
+            if (srcMatch === null) {
+                console.error('Unable to find file name for image src:', src)
+                return
+            }
+            data = data.replace(src, `${srcMatch[1]}-${size}.${srcMatch[3]}`)
+        }
+        return data
     }
 
     // ngOnChanges() {
@@ -512,15 +551,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!this.model) {
             return ''
         }
-        const data = this.model.get(this.property)
-        // TODO: Convert this to a normalize function
-        if (!data) {
-            return ''
-        }
-        if (!_.isString(data)) {
-            return ''
-        }
-        return data
+        return this.normalizeIn(
+            this.model.get(this.property)
+        )
     }
 
     // selectedModel (observer: any) : any {
@@ -539,8 +572,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.refresh()
     }
 
-    created(quill: Quill) {
-        this.quill = quill
+    // created(quill: Quill) {
+    created() {
+        // this.quill = quill
         /* *
         quill.on('text-change', (delta, oldDelta, source) => {
             if (source === 'api') {
@@ -552,7 +586,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         /* */
     }
 
-    changedEditor(event: EditorChangeContent | EditorChangeSelection) {
+    // changedEditor(event: EditorChangeContent | EditorChangeSelection) {
+    changedEditor(event: any) {
         console.log('editor-change:', event)
     }
 

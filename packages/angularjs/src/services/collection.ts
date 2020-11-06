@@ -86,7 +86,10 @@ export interface CollectionOptions {
 }
 
 export interface CollectionModelOptions extends ModelOptions {
+    // This adds a new model to the beginning of the collection.models
     prepend?: boolean,
+
+    // This forces a save (intended for use without autoSave enabled)
     save?: boolean
 }
 
@@ -447,9 +450,6 @@ export class Collection<T = LooseObject> extends EventManager {
         }
         if (target instanceof Model) {
             target.collection = this
-            if (options.save) {
-                target.save()
-            }
         } else {
             options.collection = this
             target = new Model(options, target)
@@ -461,6 +461,9 @@ export class Collection<T = LooseObject> extends EventManager {
                     target.fetch()
                 }
             }
+        }
+        if (options.save) {
+            target.save()
         }
         if (options.prepend) {
             this.models.unshift(target)
