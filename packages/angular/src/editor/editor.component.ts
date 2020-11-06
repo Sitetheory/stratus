@@ -421,16 +421,53 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // but something this simple could be used for simple UX purposes down the road.
                 // this.dataChangeLog.push(value)
 
-                // TODO: Convert this to a normalize function
-                // Normalize null values to empty strings to maintain consistent typing.
-                if (value === null) {
-                    value = ''
-                }
-
                 // Save the qualified change!
-                this.model.set(this.property, value)
+                this.model.set(
+                    this.property,
+                    this.normalizeOut(value)
+                )
             }
         )
+    }
+
+    normalizeIn(data?: string): string {
+        // Normalize non-string values to strings.
+        if (!data || !_.isString(data)) {
+            return ''
+        }
+        return this.changeImgSize(data, 'hq')
+    }
+    normalizeOut(data?: string): string {
+        // Normalize null values to empty strings to maintain consistent typing.
+        if (data === null) {
+            return ''
+        }
+        if (!_.isString(data)) {
+            return data
+        }
+        return this.changeImgSize(data, 'xs')
+    }
+    changeImgSize(data?: string, size?: string): string {
+        if (!data || !_.isString(data)) {
+            return data
+        }
+        if (!size || !_.isString(size)) {
+            return data
+        }
+        const imgRegex: RegExp = /<img([\w\W]+?)>/gi
+        let imgMatch: RegExpExecArray
+        // tslint:disable-next-line:no-conditional-assignment
+        while (imgMatch = imgRegex.exec(data)) {
+            const src: string = imgMatch[0]
+            const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
+            const srcMatch: RegExpExecArray = srcRegex.exec(src)
+            if (srcMatch === null) {
+                console.error('Unable to find file name for image src:', src)
+                return
+            }
+            data = data.replace(src, `${srcMatch[1]}-${size}.${srcMatch[3]}`)
+        }
+        return data
     }
 
     // ngOnChanges() {
@@ -512,15 +549,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!this.model) {
             return ''
         }
-        const data = this.model.get(this.property)
-        // TODO: Convert this to a normalize function
-        if (!data) {
-            return ''
-        }
-        if (!_.isString(data)) {
-            return ''
-        }
-        return data
+        return this.normalizeIn(
+            this.model.get(this.property)
+        )
     }
 
     // selectedModel (observer: any) : any {
