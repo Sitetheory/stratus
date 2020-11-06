@@ -51,11 +51,11 @@ import {
 } from '@kolkov/angular-editor'
 
 // Quill Dependencies
-import Quill from 'quill'
-import {
-    EditorChangeContent,
-    EditorChangeSelection
-} from 'ngx-quill'
+// import Quill from 'quill'
+// import {
+//     EditorChangeContent,
+//     EditorChangeSelection
+// } from 'ngx-quill'
 
 // Components
 import {
@@ -190,7 +190,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     dataChangeLog: string[] = []
 
     // Child Components
-    quill: Quill
+    // quill: Quill
     editorConfig: AngularEditorConfig = {
         editable: true,
         spellcheck: true,
@@ -329,12 +329,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             })
 
         // TODO: Allow more CSS files to get pulled and mark this.styled appropriately
+        /* *
         if (_.has(boot.configuration.paths, 'quill')) {
             const quillDir = `/assets/1/0/bundles/${boot.configuration.paths.quill.replace(/[^/]*$/, '')}`
             Stratus.Internals.CssLoader(`${quillDir}quill.core.css`)
             // Stratus.Internals.CssLoader(`${quillDir}quill.bubble.css`)
             Stratus.Internals.CssLoader(`${quillDir}quill.snow.css`)
         }
+        /* */
 
         // Hydrate Root App Inputs
         this.hydrate(elementRef, sanitizer, keys<EditorComponent>())
@@ -570,8 +572,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         this.refresh()
     }
 
-    created(quill: Quill) {
-        this.quill = quill
+    // created(quill: Quill) {
+    created() {
+        // this.quill = quill
         /* *
         quill.on('text-change', (delta, oldDelta, source) => {
             if (source === 'api') {
@@ -583,7 +586,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         /* */
     }
 
-    changedEditor(event: EditorChangeContent | EditorChangeSelection) {
+    // changedEditor(event: EditorChangeContent | EditorChangeSelection) {
+    changedEditor(event: any) {
         console.log('editor-change:', event)
     }
 
