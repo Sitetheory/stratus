@@ -288,7 +288,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // 'link',
                 // 'unlink',
                 'insertImage',
-                // 'insertVideo'
+                'insertVideo'
                 // 'toggleEditorMode'
             ]
         ],
