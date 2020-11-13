@@ -288,7 +288,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // 'link',
                 // 'unlink',
                 'insertImage',
-                // 'insertVideo'
+                'insertVideo'
                 // 'toggleEditorMode'
             ]
         ],
@@ -461,10 +461,21 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // tslint:disable-next-line:no-conditional-assignment
         while (imgMatch = imgRegex.exec(data)) {
             const src: string = imgMatch[0]
+            // This skips image sizing for elements without lazy loading
+            // TODO: Enable this after things are normalized
+            // if (!src.includes('stratus-src')) {
+            //     return
+            // }
             const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
             const srcMatch: RegExpExecArray = srcRegex.exec(src)
             if (srcMatch === null) {
                 console.error('Unable to find file name for image src:', src)
+                return
+            }
+            // This removes image sizing from elements without lazy loading
+            // TODO: Disable this after things are normalized
+            if (!src.includes('stratus-src')) {
+                data = data.replace(src, `${srcMatch[1]}.${srcMatch[3]}`)
                 return
             }
             data = data.replace(src, `${srcMatch[1]}-${size}.${srcMatch[3]}`)

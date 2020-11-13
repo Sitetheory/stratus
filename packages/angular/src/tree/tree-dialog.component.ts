@@ -124,6 +124,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     isContentLoading = false
     isContentLoaded = false
     lastContentSelectorQuery: string
+    basicContentSelectorQuery = '/Api/Content?options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&q='
 
     // filteredParentOptions: any[]
     // dialogParentForm: FormGroup
@@ -192,7 +193,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
                 tap(() => this.isContentLoading = true),
                 switchMap((value: any) => {
                         if (_.isString(value)) {
-                            this.lastContentSelectorQuery = `/Api/Content?options[showCollection]=null&q=${value}`
+                            this.lastContentSelectorQuery = `${this.basicContentSelectorQuery}${value}`
                         } else {
                             this.data.content = value
                             this.data.url = null
@@ -216,7 +217,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
 
         // Initial Call for Content
         this.backend
-            .get('/Api/Content?options[showCollection]=null&q=')
+            .get(this.basicContentSelectorQuery)
             .pipe(
                 finalize(() => this.isContentLoading = false),
             )
