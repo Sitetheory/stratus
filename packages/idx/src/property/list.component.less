@@ -89,6 +89,12 @@ stratus-idx-property-list {
       width: 100%;
       @media @desktop-only {
         width: 50%;
+        &:nth-child(2n) {
+          clear: right;
+        }
+        &:nth-child(2n) + .property-container {
+          clear: left;
+        }
       }
       md-card {
         &.property-item {

@@ -17,12 +17,30 @@
 
         <div class="search-input search-location">
             <md-input-container class="md-block minimal">
-            <label>City, Neighborhood, Zip, Address</label>
+            <label>City, Neighborhood, Zip</label>
             <input data-ng-model="options.query.where.Location" type="text" maxlength="250"
                    data-ng-keyup="$event.keyCode == 13 && options.query.where.Location && searchProperties()"
                    autocomplete="off"
             >
             </md-input-container>
+        </div>
+
+        <div class="search-input search-buy-rent">
+            <div class="toggle-switch" aria-label="Listings to Buy or Rent" data-layout="row" data-layout-align="center center">
+                <div class="option-choice buy" data-ng-class="{inactive: options.forRent}" data-flex>
+                    Buy
+                </div>
+
+                <md-switch
+                        data-ng-model="options.forRent"
+                        data-ng-change="selectDefaultListingType()"
+                        aria-label="Buy or Rent"
+                >
+                </md-switch>
+                <div class="option-choice rent" data-ng-class="{inactive: !options.forRent}" data-flex>
+                    Rent
+                </div>
+            </div>
         </div>
 
         <div class="search-input search-min-price">
@@ -41,39 +59,60 @@
 
         <div class="search-input search-beds">
             <md-input-container class="md-block minimal">
-                <label>Beds</label>
+                <label>0+ Beds</label>
                 <md-select data-ng-model="options.query.where.Bedrooms">
-                    <md-option></md-option>
+                    <md-option>0+ Beds</md-option>
                     <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
-                        {{option.name}}
+                        {{option.name}} Beds
                     </md-option>
                 </md-select>
             </md-input-container>
         </div>
         <div class="search-input search-baths">
             <md-input-container class="md-block minimal">
-                <label>Baths</label>
+                <label>0+ Baths</label>
                 <md-select data-ng-model="options.query.where.Bathrooms">
-                    <md-option></md-option>
+                    <md-option>0+ Baths</md-option>
                     <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
-                        {{option.name}}
+                        {{option.name}} Baths
                     </md-option>
                 </md-select>
             </md-input-container>
         </div>
-
+        <div class="search-more-filters" data-ng-init="advancedFiltersStatus = false">
+            <a class="open-filters-link"
+               data-ng-click="advancedFiltersStatus=!advancedFiltersStatus">
+                <md-icon md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/filters.svg' | assetPath }}"></md-icon>
+                <span class="btn-text"><span data-ng-show="advancedFiltersStatus != true">More</span><span data-ng-show="advancedFiltersStatus == true">Less</span> Filters</span>
+            </a>
+        </div>
         <div class="submit-row">
             <a class="btn btn-submit" data-ng-click="searchProperties()">Search</a>
         </div>
 
     </div>
-    <div data-ng-show="advancedFiltersStatus == 'open'">
-        <div class="search-row open-filters-row" data-flex data-layout="column" data-layout-align="start start">
+    <div class="search-row filters-row" data-ng-class="{'open-filters' : advancedFiltersStatus == true}">
+        <div>
 
-            <div data-layout="column" data-layout-gt-sm="row" data-layout-align="start start">
-                <div data-flex="40">
+            <div>
+                <div>
                     <div class="stratus-idx-property-search-menu">
-                        <div class="property-zoning" data-layout="row" data-layout-align="start center" aria-label="Listing Zoning" data-flex>
+                        <div class="toggle-switch" aria-label="Listings to Buy or Rent">
+                            <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}">
+                                Buy
+                            </div>
+
+                            <md-switch
+                                    data-ng-model="options.forRent"
+                                    data-ng-change="selectDefaultListingType()"
+                                    aria-label="Buy or Rent"
+                            >
+                            </md-switch>
+                            <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}">
+                                Rent
+                            </div>
+                        </div>
+                        <div class="property-zoning" aria-label="Listing Zoning">
                                 <md-button
                                         class="font-primary"
                                         data-ng-class="{'md-primary': options.selection.ListingType.group.Residential}"
@@ -95,7 +134,7 @@
                             </div>
                     </div>
 
-                    <div aria-label="Listing Types" class="listing-types" data-layout-wrap>
+                    <div class="listing-types" aria-label="Listing Types">
                         <md-button
                                 data-ng-repeat="listType in ::options.selection.ListingType.All"
                                 class="md-raised font-primary"
@@ -110,26 +149,10 @@
 
                 </div>
 
-                <div data-flex="40" data-flex-offset-gt-sm="10" class="stratus-idx-property-search-menu">
+                <div class="stratus-idx-property-search-menu">
 
-                    <div class="toggle-switch" aria-label="Listings to Buy or Rent" data-layout="row" data-layout-align="start center">
-                        <div class="option-choice font-primary" data-ng-class="{inactive: options.forRent}" data-flex>
-                            Buy
-                        </div>
-
-                        <md-switch
-                                data-ng-model="options.forRent"
-                                data-ng-change="selectDefaultListingType()"
-                                aria-label="Buy or Rent"
-                                >
-                        </md-switch>
-                        <div class="option-choice font-primary" data-ng-class="{inactive: !options.forRent}" data-flex>
-                            Rent
-                        </div>
-                    </div>
-
-                    <div data-layout="row" data-layout-align="start center" aria-label="Listing Status" >
-                        <md-button class="md-raised font-primary"
+                    <div aria-label="Listing Status">
+                        <md-button class="font-primary"
                                    data-ng-class="{'md-primary': inArray('Active', options.query.where.Status)}"
                                    data-ng-click="toggleArrayElement('Active', options.query.where.Status)"
                                    aria-label="For Sale"
@@ -137,7 +160,7 @@
                         >
                             For Sale
                         </md-button>
-                        <md-button class="md-raised font-primary"
+                        <md-button class="font-primary"
                                    data-ng-class="{'md-primary': inArray('Closed', options.query.where.Status)}"
                                    data-ng-click="toggleArrayElement('Closed', options.query.where.Status)"
                                    aria-label="Sold"
@@ -147,7 +170,7 @@
                         </md-button>
                     </div>
 
-                    <div data-ng-show="!options.forRent && (inArray('Active', options.query.where.Status) || inArray('Contract', options.query.where.Status))" data-layout-align="end center" data-flex>
+                    <div data-ng-show="!options.forRent && (inArray('Active', options.query.where.Status) || inArray('Contract', options.query.where.Status))">
                         <md-checkbox
                                 class="show-under-contract font-secondary"
                                 data-ng-checked="inArray('Contract', options.query.where.Status)"
@@ -172,12 +195,10 @@
                 </div>
             </div>
 
-            <div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
-                 data-layout="column" data-layout-align="start start"
-            >
+            <div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
                 <div class="sale-status-border dotted-spaced-underline"></div>
-                <h3 data-layout-align="space-around center">Preset Filters</h3>
-                <div class="specific-filters" data-layout="row" data-layout-align="space-around center" aria-label="Specific Areas">
+                <h3>Preset Filters</h3>
+                <div class="specific-filters" aria-label="Specific Areas">
                     <div class="search-input" data-ng-if="options.query.where.City.length">
                         <md-input-container class="md-block minimal">
                             <label>City</label>
@@ -286,8 +307,4 @@
 
         <!--</div>-->
     </div>
-    <a class="close-filters-link"
-       data-ng-show="advancedFiltersStatus == 'open'"
-       data-ng-click="advancedFiltersStatus = 'closed'">Less filters</a>
-    <a class="open-filters-link" data-ng-show="advancedFiltersStatus == 'closed'" data-ng-click="advancedFiltersStatus = 'open'">More filters</a>
 </div>
