@@ -88,6 +88,7 @@ export interface ModelOptions extends ModelBaseOptions {
     collection?: Collection,
     completed?: boolean, // Fetch/injected model can already be completed
     manifest?: string,
+    serviceId?: number,
     stagger?: boolean,
     target?: string,
     targetSuffix?: string,
