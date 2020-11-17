@@ -2,9 +2,108 @@
 search.filter.component.less and admin/search.component.less should be copies of each other for ease of development
 Nothing should be outside 'stratus-idx-property-search'/'.md-panel.stratus-idx-property-search-menu' or it will leak into other modules
 */
+#app {
 stratus-idx-property-search,
 .md-panel.stratus-idx-property-search-menu {
   position: relative;
+
+  .toggle-switch {
+    .option-choice {
+      display: inline-block;
+      vertical-align: middle;
+      font-weight: bold;
+      &.inactive {
+        color: #aaa;
+        font-weight: normal;
+      }
+      &:first-child {
+        padding-right: 8px;
+      }
+    }
+    md-switch {
+      display: inline-block;
+      vertical-align: middle;
+      height: unset;
+      .md-bar {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .md-ink-ripple {
+        color: #666;
+      }
+      .md-thumb {
+        background-color: #222;
+      }
+    }
+  }
+  .custom-toggle {
+    display: table;
+    position: relative;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0,0,0,.3);
+    .md-button {
+      margin: 0;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+      width: 120px;
+      color: #666;
+      &,
+      &:link,
+      &:active,
+      &:visited,
+      &:hover {
+        border: none;
+        background: none;
+      }
+      &.active,
+      &:hover {
+        color: #111;
+      }
+    }
+    &::after {
+      position: absolute;
+      left: 0;
+      width: 50%;
+      bottom: 0;
+      display: block;
+      content: '';
+      border-top: 2px solid #111;
+    }
+    @keyframes customToggleLeft {
+      0% {
+        left: 50%;
+        width: 50%;
+      }
+      30% {
+        left: 0;
+        width: 10%;
+      }
+      100% {
+        left: 0;
+        width: 50%;
+      }
+    }
+    @keyframes customToggleRight {
+      0% {
+        left: 0;
+        width: 50%;
+      }
+      30% {
+        left: 90%;
+        width: 10%;
+      }
+      100% {
+        left: 50%;
+        width: 50%;
+      }
+    }
+    &.active-left::after {
+      animation: customToggleLeft 1.5s ease both;
+    }
+    &.active-right::after {
+      animation: customToggleRight 1.5s ease both;
+    }
+  }
 
   .search-basic {
     position: relative;
@@ -16,7 +115,6 @@ stratus-idx-property-search,
     md-select,
     md-switch {
       margin: 0 2px;
-      height: 32px;
       .md-select-value.md-select-placeholder,
       label,
       .md-select-icon:after {
@@ -24,7 +122,7 @@ stratus-idx-property-search,
         color: #111;
       }
     }
-    md-input-container.minimal {
+    > .search-input > md-input-container.minimal {
       // stylelint-disable-next-line no-descending-specificity
       &:first-child {
         // stylelint-disable-next-line no-descending-specificity
@@ -50,7 +148,7 @@ stratus-idx-property-search,
     > div {
       display: inline-block;
       vertical-align: middle;
-      padding: 8px 20px;
+      padding: 8px 14px;
 
 
       /* This should be applied to only search-location after all other inputs become md-selects. */
@@ -105,7 +203,7 @@ stratus-idx-property-search,
     }
   }
   .search-location {
-    width: 28%;
+    width: 22%;
     border-right: 1px solid rgba(0,0,0,.1);
   }
   //.search-buy-rent {
@@ -132,54 +230,60 @@ stratus-idx-property-search,
       max-width: 100px;
     }
   }
-  .toggle-switch {
-    .option-choice {
+  .search-price {
+    position: relative;
+  }
+  .price-dropdown {
+    top: 45px;
+    left: 0;
+    padding: 20px;
+    min-width: 300px;
+    md-input-container {
       display: inline-block;
-      vertical-align: middle;
-      font-weight: bold;
-      &.inactive {
-        color: #aaa;
-        font-weight: normal;
-      }
-      &.buy {
-        text-align: right;
-        padding-right: 8px;
-      }
-    }
-    md-switch {
-      display: inline-block;
-      vertical-align: middle;
-      .md-bar {
-        background: rgba(0, 0, 0, 0.2);
-      }
-      .md-ink-ripple {
-        color: #666;
-      }
-      .md-thumb {
-        background-color: #222;
-      }
     }
   }
-  .filters-row {
+  .price-dropdown,
+  .more-filters {
     transition: all 0.3s ease-out;
     -webkit-transition: all 0.3s ease-out;
     transform: translateY(40px);
     position: absolute;
-    top: 49px;
-    right: 0;
     z-index: 1;
-    padding: 30px;
     opacity: 0;
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
-    .listing-types {
-      margin-top: 20px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(0, 0, 0, 0.15);
-    }
+    &.open-price,
     &.open-filters {
       transform: translateY(0);
       opacity: 1;
+    }
+  }
+
+  .more-filters {
+    top: 51px;
+    right: 0;
+    min-width: 400px;
+    padding: 30px;
+    h4 {
+      font-size: 11px;
+      font-weight: normal;
+      color: #999;
+    }
+    .buy-rent,
+    .listing-types,
+    .listing-status,
+    .extras {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+    md-checkbox {
+      display: block;
+    }
+
+    /* Elements that move into the more filters area as browser gets smaller */
+    .buy-rent {
+      display: none;
     }
   }
 
@@ -187,13 +291,24 @@ stratus-idx-property-search,
     &,
     &:link,
     &:visited,
-    &:active,
-    &:hover {
+    &:active {
       color: #111;
       cursor: pointer;
     }
     .btn-text {
       padding-left: 6px;
+      @media (max-width: 1200px) {
+        display: none;
+      }
+    }
+    svg path {
+      fill: #111;
+    }
+    &:hover {
+      color: #666;
+      svg path {
+        fill: #666;
+      }
     }
   }
   .submit-row {
@@ -223,38 +338,31 @@ stratus-idx-property-search,
 /***************
  * Search Menu
  **************/
-.stratus-idx-property-search-menu {
-  &.md-panel {
-    background-color: #fff;
-    max-width: 85%;
-  }
-  .outer-padding {
-    max-width: 550px;
-    padding: 26px;
-  }
-  .toggle-switch {
-    margin-bottom: 20px;
-  }
-
-  .sale-status-border {
-    margin-bottom: 5px;
-    height: 2px;
-    width: 100%;
-  }
-  .property-specs {
-    margin: 10px 0 30px 0;
-    width: 100%;
-  }
-  //.show-under-contract {
-  //  margin-top: 6px;
-  //  font-size: 13px;
-  //}
-  .agent-license {
-    margin: 5px 0 20px;
-    // stylelint-disable-next-line no-descending-specificity
-    .md-chips .md-chip-input-container input {
-      font-size: 13px;
-      text-align: center;
-    }
-  }
+//.stratus-idx-property-search-menu {
+//  &.md-panel {
+//    background-color: #fff;
+//    max-width: 85%;
+//  }
+//  .outer-padding {
+//    max-width: 550px;
+//    padding: 26px;
+//  }
+//  .sale-status-border {
+//    margin-bottom: 5px;
+//    height: 2px;
+//    width: 100%;
+//  }
+//  .property-specs {
+//    margin: 10px 0 30px 0;
+//    width: 100%;
+//  }
+//  .agent-license {
+//    margin: 5px 0 20px;
+//    // stylelint-disable-next-line no-descending-specificity
+//    .md-chips .md-chip-input-container input {
+//      font-size: 13px;
+//      text-align: center;
+//    }
+//  }
+//}
 }
