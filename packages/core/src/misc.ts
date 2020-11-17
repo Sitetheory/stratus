@@ -173,7 +173,7 @@ export function allTrue(values: any) {
 }
 
 // Determines whether or not the string supplied is in a valid JSON format
-export function isJSON(str: string) {
+export function isJSON(str: string | any) {
     try {
         JSON.parse(str)
     } catch (e) {

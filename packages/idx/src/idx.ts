@@ -1223,13 +1223,24 @@ const angularJsService = (
      * @param request - Standard Registry request object
      * TODO define type Request
      */
-    function createModel<T>(request: ModelOptions & LooseObject): Model<T> {
+    function createModel<T>(
+        request: ModelOptions & {
+            serviceId?: number
+            api?: LooseObject | string
+        }
+    ): Model<T> {
         // request.direct = true;
         const model = new Model(request) as Model<T>
-        if (request.api) {
+        if (
+            Object.prototype.hasOwnProperty.call(request, 'api') &&
+            request.api
+        ) {
             model.meta.set('api', isJSON(request.api)
-                ? JSON.parse(request.api)
+                ? JSON.parse(request.api as string)
                 : request.api)
+        }
+        if (Object.prototype.hasOwnProperty.call(request, 'serviceId')) {
+            model.serviceId = request.serviceId
         }
         return model
     }
@@ -2506,7 +2517,10 @@ const angularJsService = (
             // Set API paths to fetch listing data for the specific MLS Service
             // let filterQuery = compileFilterFunction(options);
 
-            const request: ModelOptions & LooseObject = {
+            const request: ModelOptions & {
+                serviceId?: number
+                api?: LooseObject | string
+            } = {
                 serviceId: options.service,
                 urlRoot: session.services[options.service].host,
                 target: apiModel + '/search',
@@ -2524,6 +2538,7 @@ const angularJsService = (
             }
 
             const tempModel = createModel<T>(request)
+            // tempModel.serviceId = options.service
 
             fetchReplaceModel<T>(model, tempModel, apiModelSingular)
                 .then(() => {
