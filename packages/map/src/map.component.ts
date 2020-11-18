@@ -222,6 +222,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
      * If string, use as path from `window` to variable of MarkerSettings[]
      * Otherwise if object, use directly as MarkerSettings[]
      * TODO is string is json, process as google.maps.LatLngLiteral or google.maps.LatLngLiteral[]
+     * Also font details can be found at https://developers.google.com/maps/documentation/javascript/reference/marker#MarkerLabel
      */
     @Input() markers: string | MarkerSettings[]
     @Input() callback: string | ((self: this) => {})

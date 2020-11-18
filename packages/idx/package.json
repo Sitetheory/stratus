@@ -35,6 +35,7 @@
     "@stratusjs/angularjs-extras": "^0.7.0",
     "@stratusjs/map": "^0.3.0",
     "@stratusjs/runtime": "^0.11.8",
-    "@stratusjs/swiper": "^0.1.8"
+    "@stratusjs/swiper": "^0.1.8",
+    "numeral": "^2.0.6"
   }
 }
