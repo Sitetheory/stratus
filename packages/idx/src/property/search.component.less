@@ -7,6 +7,14 @@ stratus-idx-property-search,
 .md-panel.stratus-idx-property-search-menu {
   position: relative;
 
+  .click-out {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+  }
   .toggle-switch {
     .option-choice {
       display: inline-block;
@@ -114,7 +122,7 @@ stratus-idx-property-search,
     md-input-container.minimal,
     md-select,
     md-switch {
-      margin: 0 2px;
+      margin: 0;
       .md-select-value.md-select-placeholder,
       label,
       .md-select-icon:after {
@@ -163,17 +171,9 @@ stratus-idx-property-search,
       &.search-location,
       &.search-min-price,
       &.search-max-price {
-        background-image: -webkit-linear-gradient(#111,#111);
-        background-image: linear-gradient(#111,#111);
-        background-size: 0% .1rem;
-        background-repeat: no-repeat;
-        background-position: left bottom;
         &:hover {
           /* This can be activated after all inputs are md-selects. Doesn't work with regular inputs */
           //background: #222;
-          color: #111;
-          animation: inputHoverAnimation .5s ease both;
-          -webkit-animation: inputHoverAnimation .5s ease both;
           md-input-container.minimal,
           md-select,
           md-switch {
@@ -203,8 +203,68 @@ stratus-idx-property-search,
     }
   }
   .search-location {
+    position: relative;
+    height: 48px;
     width: 22%;
     border-right: 1px solid rgba(0,0,0,.1);
+    &.preset-clear {
+      background-image: -webkit-linear-gradient(#111,#111);
+      background-image: linear-gradient(#111,#111);
+      background-size: 0% .1rem;
+      background-repeat: no-repeat;
+      background-position: left bottom;
+      &:hover {
+        color: #111;
+        animation: inputHoverAnimation .5s ease both;
+        -webkit-animation: inputHoverAnimation .5s ease both;
+      }
+    }
+    .preset-location,
+    md-input-container.minimal {
+      transform: translateY(-50%);
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 90%;
+      margin-left: 10%;
+    }
+    md-input-container.minimal {
+      margin-top: 4px;
+      input,
+      .md-select-value.md-select-placeholder,
+      label {
+        height: 30px;
+        font-size: 18px;
+      }
+      &.md-input-focused,
+      &.md-input-has-value {
+        label {
+          display: none;
+        }
+      }
+    }
+    .preset-location {
+      font-size: 18px;
+    }
+    .custom-clear {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 16px;
+      height: 16px;
+      md-icon {
+        height: 16px;
+        width: 16px;
+        min-height: 16px;
+        min-width: 16px;
+      }
+      svg g {
+        fill: #666;
+      }
+      &:hover svg g {
+        fill: #000;
+      }
+    }
   }
   //.search-buy-rent {
   //  width: 12%;
@@ -232,12 +292,13 @@ stratus-idx-property-search,
   }
   .search-price {
     position: relative;
+    z-index: 10;
   }
   .price-dropdown {
-    top: 45px;
+    top: 44px;
     left: 0;
     padding: 20px;
-    min-width: 300px;
+    min-width: 320px;
     md-input-container {
       display: inline-block;
     }
@@ -248,10 +309,9 @@ stratus-idx-property-search,
     -webkit-transition: all 0.3s ease-out;
     transform: translateY(40px);
     position: absolute;
-    z-index: 1;
+    z-index: 100;
     opacity: 0;
     background: rgba(255, 255, 255, 0.96);
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
     &.open-price,
     &.open-filters {
       transform: translateY(0);
@@ -259,35 +319,9 @@ stratus-idx-property-search,
     }
   }
 
-  .more-filters {
-    top: 51px;
-    right: 0;
-    min-width: 400px;
-    padding: 30px;
-    h4 {
-      font-size: 11px;
-      font-weight: normal;
-      color: #999;
-    }
-    .buy-rent,
-    .listing-types,
-    .listing-status,
-    .extras {
-      margin-bottom: 20px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    }
-    md-checkbox {
-      display: block;
-    }
-
-    /* Elements that move into the more filters area as browser gets smaller */
-    .buy-rent {
-      display: none;
-    }
-  }
-
   .open-filters-link {
+    position: relative;
+    z-index: 10;
     &,
     &:link,
     &:visited,
@@ -311,6 +345,36 @@ stratus-idx-property-search,
       }
     }
   }
+  .more-filters {
+    top: 51px;
+    right: 0;
+    min-width: 400px;
+    padding: 30px;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+    h4 {
+      font-size: 11px;
+      font-weight: normal;
+      color: #999;
+    }
+    .buy-rent,
+    .listing-types,
+    .listing-status,
+    .extras {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+    md-checkbox {
+      display: block;
+    }
+
+    /* Elements that move into the more filters area as browser gets smaller */
+    .buy-rent {
+      display: none;
+    }
+  }
+
+
   .submit-row {
     .btn {
       &.btn-submit {
