@@ -297,7 +297,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
     }
 
-    // Froala 2 Buttons
+    // Froala 2 Buttons (For Reference)
     // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
     froalaButtons: string[] = [
         'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
