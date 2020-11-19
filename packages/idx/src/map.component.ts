@@ -7,6 +7,7 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
+import numeral from 'numeral'
 
 // Services
 import '@stratusjs/angularjs/services/model'
@@ -50,9 +51,12 @@ export type IdxMapScope = IdxComponentScope & {
 
     markerClickScroll: boolean
     markerClickHighlight: boolean
+    markerPrice: boolean
     markerIcon: string
     markerIconHover: string
 
+    getGoogleMapsKey(): string | null
+    getShortCurrency(value: number, characterLimit?: number): string
     mapInitialize(map: MapComponent): void
     mapUpdate(): void
 }
@@ -71,6 +75,7 @@ Stratus.Components.IdxMap = {
         width: '@',
         markerClickScroll: '@',
         markerClickHighlight: '@',
+        markerPrice: '@',
         markerIcon: '@',
         markerIconHover: '@',
         fullHeight: '@',
@@ -108,6 +113,8 @@ Stratus.Components.IdxMap = {
                 JSON.parse($attrs.markerClickScroll) : false
             $scope.markerClickHighlight = $attrs.markerClickHighlight && isJSON($attrs.markerClickHighlight) ?
                 JSON.parse($attrs.markerClickHighlight) : false
+            $scope.markerPrice = $attrs.markerPrice && isJSON($attrs.markerPrice) ?
+                JSON.parse($attrs.markerPrice) : false
             $scope.markerIcon = $attrs.markerIcon || null
             $scope.markerIconHover = $attrs.markerIconHover || null
             $scope.fullHeight = $attrs.fullHeight || null
@@ -154,7 +161,7 @@ Stratus.Components.IdxMap = {
                     Object.prototype.hasOwnProperty.call(model, 'Longitude')
                 ) {
                     const address = Idx.getStreetAddress(model as Property) // TODO handle Member?
-                    markers.push({
+                    const marker: MarkerSettings = {
                         position: {lat: model.Latitude, lng: model.Longitude},
                         title: address,
                         options: {
@@ -184,7 +191,23 @@ Stratus.Components.IdxMap = {
                                 }
                             }
                         }
-                    })
+                    }
+                    // See https://developers.google.com/maps/documentation/javascript/reference/marker#MarkerLabel
+                    // for adding font details
+                    if (
+                        $scope.markerPrice &&
+                        (
+                            Object.prototype.hasOwnProperty.call(model, 'ListPrice') ||
+                            Object.prototype.hasOwnProperty.call(model, 'ClosePrice')
+                        ) &&
+                        (model.ClosePrice || model.ListPrice)
+                    ) {
+                        // FIXME the format will need to change depending on the number range.
+                        // We'll want to only use '0.0a' when there is 5 charcters
+                        marker.label = $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                        // console.log('has price label of', marker.label)
+                    }
+                    markers.push(marker)
                 }
             })
 
@@ -224,6 +247,29 @@ Stratus.Components.IdxMap = {
 
         $scope.getGoogleMapsKey = (): string | null => {
             return $scope.googleMapsKey || Idx.getGoogleMapsKey()
+        }
+
+        $scope.getShortCurrency = (value: number, characterLimit: number = 7): string => {
+            let format
+            switch (characterLimit) {
+                case 7:
+                default:
+                    // 0 - 999 (0a = $999)
+                    // 1000 - 999999 (0.0a = $1m)
+                    // 1000000 - 99994999 (0.00a = $99.99m)
+                    // 99995000 + (0.0a = $999.9m)
+                    if (value > 99994999) {
+                        format = '0.0a'
+                    } else if (value > 999999) {
+                        format = '0.00a'
+                    } else if (value > 999) {
+                        format = '0.0a'
+                    } else {
+                        format = '0a'
+                    }
+            }
+
+            return '$' + numeral(value).format(format).toUpperCase()
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
