@@ -7,7 +7,6 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-// @ts-ignore
 import numeral from 'numeral'
 
 // Services
