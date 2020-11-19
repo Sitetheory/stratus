@@ -21,7 +21,7 @@ import {
     isAngular,
     isjQuery,
     isJSON,
-    lcfirst,
+    lcfirst, LooseObject,
     patch,
     poll,
     repeat,
@@ -127,6 +127,7 @@ interface StratusRuntime {
         [key: string]: any
         CssLoader?: (url: any) => Promise<void>
         JsLoader?: (url: any) => Promise<void>
+        LoadCss?: (urls?: string|string[]|LooseObject) => Promise<void>
         XHR: (request?: XHRRequest) => any
     }
     Settings: {
@@ -1256,7 +1257,7 @@ Stratus.Internals.IsOnScreen = (el: any, offset: any, partial: any) => {
 /**
  * TODO: Determine relative or CDN based URLs
  */
-Stratus.Internals.LoadCss = (urls: any) => {
+Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
     return new Promise((resolve: any, reject: any) => {
         if (typeof urls === 'undefined' || typeof urls === 'function') {
             reject(new Stratus.Prototypes.Error({

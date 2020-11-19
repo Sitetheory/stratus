@@ -99,14 +99,17 @@ import {
 import {
     keys
 } from 'ts-transformer-keys'
+import {LooseObject} from '@stratusjs/core/misc'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
-const systemDir = '@stratusjs/angular'
+const systemPackage = '@stratusjs/angular'
+const froalaPackage = 'froala-editor'
 const moduleName = 'editor'
 
 // Directory Template
-const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
+const localDir = `${installDir}/${boot.configuration.paths[`${systemPackage}/*`].replace(/[^\/]*$/, '')}`
+const froalaDir = `${installDir}/${boot.configuration.paths[froalaPackage].replace(/js\/[^\/]*$/, '')}`
 
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
@@ -137,7 +140,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     title = moduleName + '_component'
     uid: string
     dev = !!cookie('env')
-    editor: 'angular-editor'|'quill' = 'angular-editor'
+    editor: 'froala'|'angular-editor'|'quill' = this.dev ? 'froala' : 'angular-editor'
 
     // Registry Attributes
     @Input() target: string
@@ -294,6 +297,305 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
     }
 
+    // Froala 2 Buttons (For Reference)
+    // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
+    froalaButtons: string[] = [
+        'bold', 'italic', 'underline', 'strikeThrough', 'subscript', 'superscript', '|', 'formatBlock',
+        'blockStyle', 'inlineStyle', 'paragraphStyle', 'paragraphFormat', 'align', 'formatOL',
+        'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertImage', 'insertVideo', 'insertFile',
+        'insertTable', '|', 'undo', 'redo', 'removeFormat', 'wordPaste', 'help', 'html', 'fullscreen'
+    ]
+
+    // Froala Configuration
+    froalaConfig: LooseObject = {
+        codeBeautifierOptions: {
+            end_with_newline: true,
+            indent_inner_html: true,
+            extra_liners: '["p", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "pre", "ul", "ol", "table", "dl"]',
+            brace_style: 'expand',
+            // indent_char: '\t',
+            indent_char: ' ',
+            // indent_size: 1,
+            indent_size: 4,
+            wrap_line_length: 0
+        },
+        codeMirror: true,
+        codeMirrorOptions: {
+            indentWithTabs: false,
+            lineNumbers: true,
+            lineWrapping: true,
+            mode: 'text/html',
+            tabMode: 'space',
+            tabSize: 4
+        },
+        fileUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
+        htmlAllowedAttrs: [
+            'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
+            'allowtransparency', 'alt', 'aria-.*', 'async', 'autocomplete', 'autofocus',
+            'autoplay', 'autosave',
+            'background', 'bgcolor', 'border',
+            'charset', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'color',
+            'cols', 'colspan', 'content', 'contenteditable', 'contextmenu', 'controls',
+            'coords',
+            'data', 'data-.*', 'datetime', 'default', 'defer', 'dir', 'dirname',
+            'disabled', 'download', 'draggable', 'dropzone',
+            'enctype',
+            'for', 'form', 'formaction', 'frameborder',
+            'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'http-equiv',
+            'icon', 'id', 'ismap', 'itemprop',
+            'keytype', 'kind',
+            'label', 'lang', 'language', 'list', 'loop', 'low',
+            'max', 'maxlength', 'media', 'method', 'min', 'mozallowfullscreen', 'multiple',
+            'muted',
+            'name', 'novalidate',
+            'open', 'optimum',
+            'pattern', 'ping', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate',
+            'radiogroup', 'readonly', 'rel', 'required', 'reversed', 'rows', 'rowspan',
+            'sandbox', 'scope', 'scoped', 'scrolling', 'seamless', 'selected', 'shape',
+            'size', 'sizes', 'span', 'src', 'srcdoc', 'srclang', 'srcset', 'start', 'step',
+            'summary', 'spellcheck', 'style',
+            'tabindex', 'target', 'title', 'type', 'translate',
+            'usemap',
+            'value', 'valign',
+            'webkitallowfullscreen', 'width', 'wrap'
+        ],
+        htmlAllowedEmptyTags: [
+            'textarea', 'a', 'iframe', 'object', 'video', 'style', 'script',
+            '.fa', '.fr-emoticon', '.fr-inner', 'path', 'line', 'hr', 'div'
+        ],
+        htmlAllowedStyleProps: [
+            // 'font-family', 'font-size', 'background', 'color', 'width',
+            // 'text-align', 'vertical-align', 'background-color'
+        ],
+        htmlAllowedTags: [
+            'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
+            'b', 'base', 'bdi', 'bdo', 'blockquote', 'br', 'button',
+            'canvas', 'caption', 'cite', 'code', 'col', 'colgroup',
+            'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div', 'dl', 'dt',
+            'em', 'embed',
+            'fieldset', 'figcaption', 'figure', 'footer', 'form',
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr',
+            'i', 'iframe', 'img', 'input', 'ins',
+            'kbd', 'keygen',
+            'label', 'legend', 'li', 'link',
+            'main', 'map', 'mark', 'menu', 'menuitem', 'meter',
+            'nav', 'noscript',
+            'object', 'ol', 'optgroup', 'option', 'output',
+            'p', 'param', 'pre', 'progress',
+            'queue',
+            'rp', 'rt', 'ruby',
+            's', 'samp', 'script', 'style', 'section', 'select', 'small',
+            'source', 'span', 'strike', 'strong', 'sub', 'summary', 'sup',
+            'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track',
+            'u', 'ul',
+            'var', 'video',
+            'wbr'
+        ],
+        htmlRemoveTags: [
+            // 'script', 'style', 'base'
+        ],
+        htmlSimpleAmpersand: false,
+        htmlUntouched: true,
+        imageManagerPageSize: 20,
+        imageManagerScrollOffset: 10,
+        imageManagerLoadMethod: 'GET',
+        // imageManagerLoadParams: {},
+        imageManagerLoadURL: '/Api/Media?payload-only=true',
+        // imageManagerDeleteMethod: 'DELETE',
+        // imageManagerDeleteParams: {},
+        // Note: The request will contain the image source as src parameter.
+        // imageManagerDeleteURL: '/Api/MediaSrc',
+        // imageManagerPreloader: '/images/loader.gif',
+        multiLine: true,
+        pasteDeniedAttrs: [
+            // 'class', 'id', 'style'
+        ],
+        pasteDeniedTags: [],
+        pastePlain: false,
+        pluginsEnabled: [
+            'align', 'charCounter', 'codeBeautifier', 'codeView', 'colors', 'draggable', 'embedly',
+            'emoticons', 'entities', 'file', 'fontAwesome', 'fontFamily', 'fontSize', 'fullscreen',
+            'image', 'imageTUI', 'imageManager', 'inlineStyle', 'inlineClass', 'lineBreaker',
+            'lineHeight', 'link', 'lists', 'paragraphFormat', 'paragraphStyle', 'quickInsert',
+            'quote', 'save', 'table', 'url', 'video', 'wordPaste'
+        ],
+        spellcheck: true,
+        toolbarSticky: false,
+        toolbarButtons: {
+            moreText: {
+                buttons: [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikeThrough',
+                    'subscript',
+                    'superscript',
+                    'fontFamily',
+                    'fontSize',
+                    'textColor',
+                    'backgroundColor',
+                    'inlineClass',
+                    'inlineStyle',
+                    'clearFormatting'
+                ]
+            },
+            moreParagraph: {
+                buttons: [
+                    'alignLeft',
+                    'alignCenter',
+                    'formatOLSimple',
+                    'alignRight',
+                    'alignJustify',
+                    'formatOL',
+                    'formatUL',
+                    'paragraphFormat',
+                    'paragraphStyle',
+                    'lineHeight',
+                    'outdent',
+                    'indent',
+                    'quote'
+                ]
+            },
+            moreRich: {
+                buttons: [
+                    'insertLink',
+                    'insertImage',
+                    'insertVideo',
+                    'insertTable',
+                    'emoticons',
+                    'fontAwesome',
+                    'specialCharacters',
+                    'embedly',
+                    'insertFile',
+                    'insertHR'
+                ]
+            },
+            moreMisc: {
+                buttons: ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help'],
+                align: 'right',
+                buttonsVisible: 2
+            }
+        },
+        // A MD sized screen will show the default toolbarButtons
+        // toolbarButtonsMD: null,
+        toolbarButtonsSM: {
+            moreText: {
+                buttons: [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikeThrough',
+                    'subscript',
+                    'superscript',
+                    'fontFamily',
+                    'fontSize',
+                    'textColor',
+                    'backgroundColor',
+                    'inlineClass',
+                    'inlineStyle',
+                    'clearFormatting'
+                ],
+                buttonsVisible: 2
+            },
+            moreParagraph: {
+                buttons: [
+                    'alignLeft',
+                    'alignCenter',
+                    'formatOLSimple',
+                    'alignRight',
+                    'alignJustify',
+                    'formatOL',
+                    'formatUL',
+                    'paragraphFormat',
+                    'paragraphStyle',
+                    'lineHeight',
+                    'outdent',
+                    'indent',
+                    'quote'
+                ],
+                buttonsVisible: 2
+            },
+            moreRich: {
+                buttons: [
+                    'insertLink',
+                    'insertImage',
+                    'insertVideo',
+                    'insertTable',
+                    'emoticons',
+                    'fontAwesome',
+                    'specialCharacters',
+                    'embedly',
+                    'insertFile',
+                    'insertHR'
+                ],
+                buttonsVisible: 2
+            },
+            moreMisc: {
+                buttons: ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help'],
+                align: 'right',
+                buttonsVisible: 2
+            }
+        },
+        toolbarButtonsXS: {
+            moreText: {
+                buttons: [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikeThrough',
+                    'subscript',
+                    'superscript',
+                    'fontFamily',
+                    'fontSize',
+                    'textColor',
+                    'backgroundColor',
+                    'inlineClass',
+                    'inlineStyle',
+                    'clearFormatting'
+                ],
+                buttonsVisible: 0
+            },
+            moreParagraph: {
+                buttons: [
+                    'alignLeft',
+                    'alignCenter',
+                    'formatOLSimple',
+                    'alignRight',
+                    'alignJustify',
+                    'formatOL',
+                    'formatUL',
+                    'paragraphFormat',
+                    'paragraphStyle',
+                    'lineHeight',
+                    'outdent',
+                    'indent',
+                    'quote'
+                ],
+                buttonsVisible: 0
+            },
+            moreRich: {
+                buttons: [
+                    'insertLink',
+                    'insertImage',
+                    'insertVideo',
+                    'insertTable',
+                    'emoticons',
+                    'fontAwesome',
+                    'specialCharacters',
+                    'embedly',
+                    'insertFile',
+                    'insertHR'
+                ],
+                buttonsVisible: 0
+            },
+            moreMisc: {
+                buttons: ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help'],
+                align: 'right',
+                buttonsVisible: 2
+            }
+        }
+    }
+
     constructor(
         // private iconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer,
@@ -317,16 +619,18 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${moduleName}.component.css`)
-            .then(() => {
-                this.styled = true
-                this.refresh()
-            })
-            .catch(() => {
-                console.error('CSS Failed to load for Component:', this)
-                this.styled = true
-                this.refresh()
-            })
+        Stratus.Internals.LoadCss([
+            `${localDir}${moduleName}/${moduleName}.component${this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/froala_editor.pkgd${this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/froala_style${this.dev ? '.min' : ''}.css`
+        ]).then(() => {
+            this.styled = true
+            this.refresh()
+        }).catch(() => {
+            console.error('CSS Failed to load for Component:', this)
+            this.styled = true
+            this.refresh()
+        })
 
         // TODO: Allow more CSS files to get pulled and mark this.styled appropriately
         /* *

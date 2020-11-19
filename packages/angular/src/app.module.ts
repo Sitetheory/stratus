@@ -47,6 +47,10 @@ import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
 // import {
 //     QuillModule
 // } from 'ngx-quill'
+// import {
+//     FroalaEditorModule,
+//     FroalaViewModule
+// } from 'angular-froala-wysiwyg'
 
 // The following components are not currently in use:
 /* *
@@ -107,6 +111,12 @@ import {
 // Editor Dialogs
 import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
 import {MediaDialogComponent} from '@stratusjs/angular/editor/media-dialog.component'
+import {
+    FroalaEditorModule
+} from '@stratusjs/angular/froalaEditor/froalaEditor.module'
+import {
+    FroalaViewModule
+} from '@stratusjs/angular/froalaView/froalaView.module'
 
 // Quill Plugins
 // import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-button.plugin'
@@ -344,6 +354,8 @@ const monacoConfig: NgxMonacoEditorConfig = {
         BrowserAnimationsModule,
         // CodeEditorModule.forRoot(),
         FormsModule,
+        FroalaEditorModule.forRoot(),
+        FroalaViewModule.forRoot(),
         GoogleMapsModule, // Required by @stratusjs/map
         HttpClientModule,
         MaterialModules,
