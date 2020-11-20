@@ -8,6 +8,14 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
 stratus-idx-property-list {
+
+  .no-results {
+    padding: 200px 40px 0;
+    font-size: 24px;
+    text-align: center;
+    background: url('images/no-results.png') no-repeat center 80px;
+    background-size: 80px;
+  }
   /* Generic dotted underline */
   .dotted-spaced-underline {
     background-image: linear-gradient(to right, #333 25%, rgba(255, 255, 255, 0) 0%);
