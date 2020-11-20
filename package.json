@@ -119,6 +119,7 @@
     "gulp-tslint": "^8.1.4",
     "gulp-typescript": "^5.0.1",
     "highlight.js": "^9.18.3",
+    "jsdom": "^16.4.0",
     "less": "^3.9.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",

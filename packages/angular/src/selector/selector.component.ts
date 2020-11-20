@@ -159,7 +159,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
-        Stratus.Internals.CssLoader(`${localDir}/${moduleName}/${moduleName}.component.css`)
+        Stratus.Internals.CssLoader(`${localDir}${moduleName}/${moduleName}.component.css`)
             .then(() => {
                 this.styled = true
                 this.refresh()

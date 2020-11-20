@@ -1,6 +1,6 @@
 {
   "name": "@stratusjs/angular",
-  "version": "0.2.49",
+  "version": "0.2.50",
   "description": "This is the angular package for StratusJS.",
   "scripts": {},
   "repository": {

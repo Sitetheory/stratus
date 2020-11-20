@@ -1087,7 +1087,7 @@ Stratus.Internals.CssLoader = (url: any) => {
         link.href = url
 
         /* Track Resolution */
-        Stratus.Events.once('onload:' + url, () => {
+        Stratus.Events.once(`onload:${url}`, () => {
             Stratus.CSS[url] = true
             resolve()
         })
@@ -1095,11 +1095,11 @@ Stratus.Internals.CssLoader = (url: any) => {
         /* Capture OnLoad or Fallback */
         if ('onload' in link && !Stratus.Client.android) {
             link.onload = () => {
-                Stratus.Events.trigger('onload:' + url)
+                Stratus.Events.trigger(`onload:${url}`)
             }
         } else {
             Stratus.CSS[url] = true
-            Stratus.Events.trigger('onload:' + url)
+            Stratus.Events.trigger(`onload:${url}`)
         }
 
         /* Inject Link into Head */
@@ -1264,39 +1264,45 @@ Stratus.Internals.LoadCss = (urls?: string|string[]|LooseObject) => {
                 code: 'LoadCSS',
                 message: 'CSS Resource URLs must be defined as a String, Array, or Object.'
             }, this))
+            return
         }
         if (typeof urls === 'string') {
             urls = [urls]
         }
-        const cssEntries: any = {
+        const cssEntries: LooseObject = {
             total: urls.length,
             iteration: 0
         }
-        if (cssEntries.total > 0) {
-            _.forEach(urls.reverse(), (url: any) => {
-                cssEntries.iteration++
-                const cssEntry: any = _.uniqueId('css_')
-                cssEntries[cssEntry] = false
-                if (typeof url === 'undefined' || !url) {
-                    cssEntries[cssEntry] = true
-                    if (cssEntries.total === cssEntries.iteration &&
-                        _.every(cssEntries)) {
-                        resolve(cssEntries)
-                    }
-                } else {
-                    Stratus.Internals.CssLoader(url).then((entry: any) => {
-                        cssEntries[cssEntry] = true
-                        if (cssEntries.total === cssEntries.iteration &&
-                            _.every(cssEntries)) {
-                            resolve(cssEntries)
-                        }
-                    }, reject)
-                }
-            })
-        } else {
-            reject(new Stratus.Prototypes.Error(
-                {code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
+        if (cssEntries.total < 1) {
+            reject(new Stratus.Prototypes.Error({code: 'LoadCSS', message: 'No CSS Resource URLs found!'}, this))
+            return
         }
+        _.forEach(urls.reverse(), (url: string) => {
+            cssEntries.iteration++
+            const cssEntry: string = _.uniqueId('css_')
+            cssEntries[cssEntry] = false
+            if (typeof url === 'undefined' || !url) {
+                cssEntries[cssEntry] = true
+                if (cssEntries.total !== cssEntries.iteration) {
+                    return
+                }
+                if (!_.every(cssEntries)) {
+                    return
+                }
+                resolve(cssEntries)
+                return
+            }
+            Stratus.Internals.CssLoader(url).then((entry: any) => {
+                cssEntries[cssEntry] = true
+                if (cssEntries.total !== cssEntries.iteration) {
+                    return
+                }
+                if (!_.every(cssEntries)) {
+                    return
+                }
+                resolve(cssEntries)
+            }, reject)
+        })
     })
 }
 
