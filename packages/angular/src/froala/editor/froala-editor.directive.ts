@@ -283,6 +283,10 @@ export class FroalaEditorDirective implements ControlValueAccessor {
             }
 
             // Initialize the Froala Editor.
+            // console.log('------- it begins -------')
+            // console.log(this._element)
+            // console.log(this._opts)
+            // console.log('------- it ends -------')
             this._editor = new FroalaEditor(
                 this._element,
                 this._opts

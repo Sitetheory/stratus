@@ -308,6 +308,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Froala Configuration
     froalaConfig: LooseObject = {
+        // key: 'LGnD1KNZf1CPBYCAZB-8F3UDSLLSG1VFf1A3C2==',
         codeBeautifierOptions: {
             end_with_newline: true,
             indent_inner_html: true,
@@ -319,7 +320,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             indent_size: 4,
             wrap_line_length: 0
         },
-        codeMirror: true,
+        codeMirror: false,
         codeMirrorOptions: {
             indentWithTabs: false,
             lineNumbers: true,
@@ -594,6 +595,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 buttonsVisible: 2
             }
         }
+        /* */
     }
 
     constructor(
@@ -620,17 +622,20 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.LoadCss([
-            `${localDir}${moduleName}/${moduleName}.component${this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/froala_editor.pkgd${this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/froala_style${this.dev ? '.min' : ''}.css`
+            `${localDir}${moduleName}/${moduleName}.component${!this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/froala_editor.pkgd${!this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/froala_style${!this.dev ? '.min' : ''}.css`
         ]).then(() => {
             this.styled = true
             this.refresh()
-        }).catch(() => {
-            console.error('CSS Failed to load for Component:', this)
+        }).catch((e: Error) => {
+            console.error(e)
+            console.warn('CSS Failed to load for Component:', this.uid)
             this.styled = true
             this.refresh()
         })
+
+        // _.forEach(cssFiles, (file: string) => Stratus.Internals.CssLoader(file).catch((e) => console.error(e)))
 
         // TODO: Allow more CSS files to get pulled and mark this.styled appropriately
         /* *
@@ -906,14 +911,18 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         console.log('editor-change:', event)
     }
 
-    focus($event: any) {
-        // console.log('focus', $event)
+    onChangeEvent($event: any) {
+        console.log('change:', $event)
+    }
+
+    onFocus($event: any) {
+        // console.log('focus:', $event)
         this.focused = true
         this.blurred = false
     }
 
-    blur($event: any) {
-        // console.log('blur', $event)
+    onBlur($event: any) {
+        // console.log('blur:', $event)
         this.focused = false
         this.blurred = true
     }

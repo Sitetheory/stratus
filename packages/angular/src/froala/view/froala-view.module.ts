@@ -1,6 +1,6 @@
 import {NgModule, ModuleWithProviders} from '@angular/core'
 
-import {FroalaViewDirective} from '@stratusjs/angular/froalaView/froalaView.directive'
+import {FroalaViewDirective} from '@stratusjs/angular/froala/view/froala-view.directive'
 
 @NgModule({
     declarations: [FroalaViewDirective],

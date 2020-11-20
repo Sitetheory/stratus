@@ -109,14 +109,18 @@ import {
 // import {QuillConfig} from 'ngx-quill/lib/quill-editor.interfaces'
 
 // Editor Dialogs
-import {CodeViewDialogComponent} from '@stratusjs/angular/editor/code-view-dialog.component'
-import {MediaDialogComponent} from '@stratusjs/angular/editor/media-dialog.component'
+import {
+    CodeViewDialogComponent
+} from '@stratusjs/angular/editor/code-view-dialog.component'
+import {
+    MediaDialogComponent
+} from '@stratusjs/angular/editor/media-dialog.component'
 import {
     FroalaEditorModule
-} from '@stratusjs/angular/froalaEditor/froalaEditor.module'
+} from '@stratusjs/angular/froala/editor/froala-editor.module'
 import {
     FroalaViewModule
-} from '@stratusjs/angular/froalaView/froalaView.module'
+} from '@stratusjs/angular/froala/view/froala-view.module'
 
 // Quill Plugins
 // import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-button.plugin'

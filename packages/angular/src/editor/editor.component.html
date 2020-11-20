@@ -37,7 +37,10 @@
             </a>
         </p>
         <!-- Froala Editor -->
-        <div [froalaEditor]="froalaConfig" formControlName="dataString"></div>
+        <textarea [froalaEditor]="froalaConfig" formControlName="dataString"></textarea>
+        <!--
+        <textarea [froalaEditor]="froalaConfig" (froalaModelChange)="onChangeEvent($event)" [(froalaModel)]="model"></textarea>
+        -->
     </ng-container>
 
 
@@ -53,8 +56,8 @@
         <angular-editor formControlName="dataString"
                         [id]="'angular-editor-'+uid"
                         [config]="editorConfig"
-                        (blur)="blur($event)"
-                        (focus)="focus($event)">
+                        (blur)="onBlur($event)"
+                        (focus)="onFocus($event)">
         </angular-editor>
     </ng-container>
 
@@ -66,8 +69,8 @@
         <quill-editor [styles]="{height:'auto', 'min-height':'300px', background: '#ffffff'}"
                       [attr.data-uid]="uid"
                       (onEditorCreated)="created($event)"
-                      (onBlur)="blur($event)"
-                      (onFocus)="focus($event)"
+                      (onBlur)="onBlur($event)"
+                      (onFocus)="onFocus($event)"
                       formControlName="dataString"
                       format="html">
                       -->

@@ -1,6 +1,6 @@
 import {NgModule, ModuleWithProviders} from '@angular/core'
 
-import {FroalaEditorDirective} from '@stratusjs/angular/froalaEditor/froalaEditor.directive'
+import {FroalaEditorDirective} from '@stratusjs/angular/froala/editor/froala-editor.directive'
 
 @NgModule({
     declarations: [FroalaEditorDirective],
