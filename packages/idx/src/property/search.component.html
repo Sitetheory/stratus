@@ -282,7 +282,10 @@
                 </md-checkbox>
             </div>
 
-            <div class="extras">
+            <div
+                    class="extras"
+                    data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+            >
                 <h4>Extras</h4>
                 <!-- 'Openhouses Only' is only allowed when more filters are supplied due to speed restrictions -->
                 <md-checkbox
