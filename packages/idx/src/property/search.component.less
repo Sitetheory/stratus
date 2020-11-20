@@ -2,145 +2,36 @@
 search.filter.component.less and admin/search.component.less should be copies of each other for ease of development
 Nothing should be outside 'stratus-idx-property-search'/'.md-panel.stratus-idx-property-search-menu' or it will leak into other modules
 */
+#app {
 stratus-idx-property-search,
 .md-panel.stratus-idx-property-search-menu {
-  height: auto;
+  position: relative;
 
-  /* md-input-container adds a ton of spacing by default. This will remove it */
-  md-input-container.minimal {
-    margin: 10px 2px 5px;
-    // stylelint-disable-next-line no-descending-specificity
-    &:first-child {
-      // stylelint-disable-next-line no-descending-specificity
-      &,
-      input,
-      label {
-        padding-left: 0;
-        font-size: 16px;
-      }
-    }
-  }
-  md-input-container.minimal .md-errors-spacer {
-    min-height: 0;
-  }
-}
-stratus-idx-property-search {
-  .idx-search-component {
-    margin-bottom: 20px;
-    .search-basic > div {
-      float: left;
-    }
-    .search-location {
-      width: 40%;
-    }
-    .search-min-price {
-      width: 12%;
-    }
-    .search-max-price {
-      width: 12%;
-    }
-    .search-beds {
-      width: 12%;
-    }
-    .search-baths {
-      width: 12%;
-    }
-    .submit-row {
-      width: 12%;
-    }
-    .close-filters-link,
-    .open-filters-link {
-      display: inline-block;
-      padding: 6px 0 10px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-    .open-filters-row {
-      transition: all 0.3s ease-out;
-      -webkit-transition: all 0.3s ease-out;
-      opacity: 0;
-      margin-top: 20px;
-      .listing-types {
-        margin-top: 20px;
-        padding-top: 20px;
-        border-top: 1px solid rgba(0, 0, 0, 0.15);
-      }
-    }
-    &.filters-open {
-      .open-filters-link {
-        &,
-        &:link,
-        &:visited,
-        &:active,
-        &:hover {
-          color: #111;
-          cursor: default;
-        }
-      }
-      .open-filters-row {
-        opacity: 1;
-      }
-    }
-    &.filters-closed {
-      .close-filters-link {
-        &,
-        &:link,
-        &:visited,
-        &:active,
-        &:hover {
-          color: #111;
-          cursor: default;
-        }
-      }
-    }
-    .submit-row {
-      text-align: right;
-      .btn {
-        &.btn-submit {
-          display: inline-block;
-          margin: 10px 0 0 10px;
-        }
-      }
-    }
-  }
-  &.sidebar {
-    .idx-search-component {
-      .open-filters {
-        margin-top: 10px;
-        font-weight: bold;
-        font-size: 13px;
-      }
-    }
-  }
-}
-
-/***************
- * Search Menu
- **************/
-.stratus-idx-property-search-menu {
-  &.md-panel {
-    background-color: #fff;
-    max-width: 85%;
-  }
-  .outer-padding {
-    max-width: 550px;
-    padding: 26px;
+  .click-out {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
   }
   .toggle-switch {
-    margin-bottom: 20px;
     .option-choice {
-      display: contents;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      display: inline-block;
+      vertical-align: middle;
       font-weight: bold;
       &.inactive {
         color: #aaa;
         font-weight: normal;
       }
+      &:first-child {
+        padding-right: 8px;
+      }
     }
     md-switch {
-      margin: 0 5px 0 15px;
+      display: inline-block;
+      vertical-align: middle;
+      height: unset;
       .md-bar {
         background: rgba(0, 0, 0, 0.2);
       }
@@ -152,63 +43,474 @@ stratus-idx-property-search {
       }
     }
   }
-
-  /*
+  .custom-toggle {
+    display: table;
+    position: relative;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0,0,0,.3);
     .md-button {
-      &.md-default-theme.md-primary.md-fab,
-      &.md-primary.md-fab,
-      &.md-default-theme.md-primary.md-raised,
-      &.md-primary.md-raised {
-        color: #fff;
-        background: #222;
+      margin: 0;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+      width: 120px;
+      color: #666;
+      &,
+      &:link,
+      &:active,
+      &:visited,
+      &:hover {
+        border: none;
+        background: none;
       }
-      &.md-default-theme.md-primary.md-fab:not([disabled]).md-focused,
-      &.md-primary.md-fab:not([disabled]).md-focused,
-      &.md-default-theme.md-primary.md-fab:not([disabled]):hover,
-      &.md-primary.md-fab:not([disabled]):hover,
-      &.md-default-theme.md-primary.md-raised:not([disabled]).md-focused,
-      &.md-primary.md-raised:not([disabled]).md-focused,
-      &.md-default-theme.md-primary.md-raised:not([disabled]):hover,
-      &.md-primary.md-raised:not([disabled]):hover {
-        color: #fff;
-        background: #999;
+      &.active,
+      &:hover {
+        color: #111;
       }
     }
-    .property-zoning {
-      margin-bottom: 30px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    &::after {
+      position: absolute;
+      left: 0;
+      width: 50%;
+      bottom: 0;
+      display: block;
+      content: '';
+      border-top: 2px solid #111;
+    }
+    @keyframes customToggleLeft {
+      0% {
+        left: 50%;
+        width: 50%;
+      }
+      30% {
+        left: 0;
+        width: 10%;
+      }
+      100% {
+        left: 0;
+        width: 50%;
+      }
+    }
+    @keyframes customToggleRight {
+      0% {
+        left: 0;
+        width: 50%;
+      }
+      30% {
+        left: 90%;
+        width: 10%;
+      }
+      100% {
+        left: 50%;
+        width: 50%;
+      }
+    }
+    &.active-left::after {
+      animation: customToggleLeft 1.5s ease both;
+    }
+    &.active-right::after {
+      animation: customToggleRight 1.5s ease both;
+    }
+  }
+
+  /* md-input-container adds a ton of spacing by default. This will remove it */
+  md-input-container.minimal,
+  md-select,
+  md-switch {
+    margin: 0;
+    .md-select-value.md-select-placeholder,
+    label,
+    .md-select-icon:after {
+      transition: all .2s ease;
+      color: #111;
+    }
+  }
+
+  .search-basic {
+    position: relative;
+    z-index: 3;
+    background: #FFF;
+
+
+    > .search-input > md-input-container.minimal {
       // stylelint-disable-next-line no-descending-specificity
-      .md-button {
-        padding: 0 12px 4px;
-        margin: 0 0 -1px;
-        border-bottom: 2px solid transparent;
-        &.md-default-theme.md-primary,
-        &.md-primary {
-          font-weight: bold;
-          border-bottom: 2px solid rgba(0, 0, 0, 0.8);
+      &:first-child {
+        // stylelint-disable-next-line no-descending-specificity
+        &,
+        input,
+        label {
+          padding-left: 0;
+        }
+      }
+      &.md-input-focused,
+      &.md-input-has-value {
+        label {
+          display: none;
+        }
+      }
+      md-select.md-default-theme .md-select-value.md-select-placeholder,
+      md-select .md-select-value.md-select-placeholder,
+      input {
+        border: none;
+      }
+    }
+    .md-select-value {
+      padding-top: 0 !important;
+    }
+    md-input-container.minimal .md-errors-spacer {
+      min-height: 0;
+    }
+
+    > div {
+      display: inline-block;
+      vertical-align: middle;
+      padding: 8px 20px;
+
+      /* This should be applied to only search-location after all other inputs become md-selects. */
+      @keyframes inputHoverAnimation {
+        0% {
+          background-size: 0 0.1rem;
+        }
+        100% {
+          background-size: 100% 0.1rem;
+        }
+      }
+
+      &.search-location {
+        position: relative;
+        height: 48px;
+        width: 24%;
+        border-right: 1px solid rgba(0,0,0,.1);
+        @media (max-width: 1100px) {
+          width: 30%;
+        }
+        @media (max-width: 959px) {
+          width: unset;
+          border: none;
+          display: block;
+          margin-right: 80px;
+        }
+        .search-icon {
+          display: inline-block;
+          margin-top: 4px;
+          svg {
+            transform: rotate(-30deg);
+            g {
+              fill: #111;
+            }
+          }
+        }
+        &.location-input-active {
+          background-image: -webkit-linear-gradient(#111,#111);
+          background-image: linear-gradient(#111,#111);
+          background-size: 0% .1rem;
+          background-repeat: no-repeat;
+          background-position: left bottom;
+          &:hover {
+            color: #111;
+            animation: inputHoverAnimation .5s ease both;
+            -webkit-animation: inputHoverAnimation .5s ease both;
+          }
+        }
+        .preset-location,
+        md-input-container.minimal {
+          transform: translateY(-50%);
+          position: absolute;
+          top: 50%;
+          left: 0;
+          right: 0;
+          margin-left: 20px;
+          padding-right: 30px;
+        }
+        md-input-container.minimal {
+          margin-left: 48px;
+          input,
+          .md-select-value.md-select-placeholder,
+          label {
+            padding: 0;
+            font-size: 16px;
+          }
+        }
+        .preset-location {
+          cursor: default;
+          font-size: 16px;
+          color: #999;
+        }
+        .custom-clear {
+          transform: translateY(-50%);
+          position: absolute;
+          top: 50%;
+          right: 8px;
+          width: 20px;
+          height: 20px;
+          md-icon {
+            vertical-align: top;
+            height: 20px;
+            width: 20px;
+            min-height: 20px;
+            min-width: 20px;
+          }
+          svg g {
+            fill: #666;
+          }
+          &:hover svg g {
+            fill: #000;
+          }
+        }
+      }
+      &.search-beds,
+      &.search-baths {
+        @media (max-width: 1100px) {
+          display: none;
+        }
+        .md-select-value {
+          max-width: 100px;
+        }
+      }
+      &.search-buy-rent {
+        @media (max-width: 959px) {
+          display: none;
+        }
+      }
+      &.search-price {
+        position: relative;
+        z-index: 10;
+        @media (max-width: 959px) {
+          display: none;
         }
       }
     }
-  */
-  .sale-status-border {
-    margin-bottom: 5px;
-    height: 2px;
-    width: 100%;
   }
-  .property-specs {
-    margin: 10px 0 30px 0;
-    width: 100%;
-  }
-  .show-under-contract {
-    margin-top: 6px;
-    font-size: 13px;
-  }
-  .agent-license {
-    margin: 5px 0 20px;
-    // stylelint-disable-next-line no-descending-specificity
-    .md-chips .md-chip-input-container input {
-      font-size: 13px;
-      text-align: center;
+
+  .price-dropdown {
+    top: 44px;
+    left: 0;
+    padding: 20px;
+    min-width: 320px;
+    span,
+    md-input-container {
+      vertical-align: middle;
+      display: inline-block;
     }
   }
+  .price-dropdown {
+    transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-out;
+    transform: translateY(40px);
+    position: absolute;
+    z-index: 100;
+    opacity: 0;
+    background: rgba(255, 255, 255, 0.96);
+    &.open-price {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  .open-price-link {
+    display: block;
+    position: relative;
+    padding-right: 22px;
+    md-icon {
+      transform: translateY(-50%);
+      position: absolute;
+      top: 50%;
+      right: 0;
+      width: 12px;
+      height: 12px;
+      min-width: 10px;
+      min-height: 10px;
+      svg g {
+        fill: #111;
+      }
+    }
+  }
+  .search-more-filters {
+    position: absolute;
+    transform: translateY(-50%);
+    top: 50%;
+    right: 0;
+    height: 48px;
+    z-index: 10;
+    border-left: 1px solid rgba(0,0,0,.1);
+    .open-filters-link {
+      display: inline-block;
+      position: relative;
+      margin-top: 4px;
+      &,
+      &:link,
+      &:visited,
+      &:active {
+        color: #111;
+        cursor: pointer;
+      }
+      .btn-text {
+        padding-left: 6px;
+        @media (max-width: 959px) {
+          display: none;
+        }
+      }
+      svg path {
+        fill: #111;
+      }
+      &:hover {
+        color: #666;
+        svg path {
+          fill: #666;
+        }
+      }
+      @media (max-width: 1200px) {
+        .optional-btn-text {
+          display: none;
+        }
+      }
+    }
+  }
+
+  /* No longer needed because form fields give instant results now */
+  //.submit-row {
+  //  .btn {
+  //    &.btn-submit {
+  //      position: absolute;
+  //      transform: translateY(-50%);
+  //      top: 50%;
+  //      right: 20px;
+  //      padding: 8px 30px;
+  //      @media (max-width: 600px) {
+  //        right: 14px;
+  //        padding: 8px 20px;
+  //      }
+  //    }
+  //  }
+  //}
+}
+.stratus-idx-property-search-menu {
+  position: relative;
+  z-index: -1000;
+  .more-filters {
+    transition: all 0.3s ease-out;
+    -webkit-transition: all 0.3s ease-out;
+    transform: translateY(40px);
+    position: absolute;
+    z-index: 100;
+    top: 1px;
+    right: 0;
+    opacity: 0;
+    width: 380px;
+    padding: 50px 30px 30px 30px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+    @media (max-width: 768px) {
+      transform: translateX(100%);
+    }
+    @media (max-width: 600px) {
+      width: 100%;
+    }
+    .btn-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: none;
+      @media (max-width: 959px) {
+        display: block;
+      }
+    }
+    h4 {
+      font-size: 11px;
+      font-weight: normal;
+      color: #999;
+    }
+    .listing-types,
+    .listing-status {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+    md-checkbox {
+      display: block;
+    }
+
+    /* Elements that move into the more filters area as browser gets smaller */
+    .buy-rent {
+      display: none;
+      margin-bottom: 40px;
+      @media (max-width: 959px) {
+        display: block;
+      }
+    }
+    .price,
+    .beds-baths {
+      display: none;
+      span,
+      md-input-container {
+        vertical-align: top;
+        display: inline-block;
+      }
+    }
+    .price {
+      span {
+        padding-top: 8px;
+      }
+      @media (max-width: 959px) {
+        display: block;
+      }
+    }
+    .beds-baths {
+      margin-bottom: 40px;
+      @media (max-width: 1100px) {
+        display: block;
+      }
+    }
+  }
+  &.open-filters {
+    z-index: 2;
+    .more-filters {
+      transform: translateY(0);
+      opacity: 1;
+      @media (max-width: 768px) {
+        transform: translateX(0);
+      }
+    }
+  }
+}
+&.sidebar {
+  .idx-search-component {
+    .open-filters {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+  }
+
+}
+
+/***************
+ * Search Menu
+ **************/
+//.stratus-idx-property-search-menu {
+//  &.md-panel {
+//    background-color: #fff;
+//    max-width: 85%;
+//  }
+//  .outer-padding {
+//    max-width: 550px;
+//    padding: 26px;
+//  }
+//  .sale-status-border {
+//    margin-bottom: 5px;
+//    height: 2px;
+//    width: 100%;
+//  }
+//  .property-specs {
+//    margin: 10px 0 30px 0;
+//    width: 100%;
+//  }
+//  .agent-license {
+//    margin: 5px 0 20px;
+//    // stylelint-disable-next-line no-descending-specificity
+//    .md-chips .md-chip-input-container input {
+//      font-size: 13px;
+//      text-align: center;
+//    }
+//  }
+//}
 }
