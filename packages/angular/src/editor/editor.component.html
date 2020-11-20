@@ -28,6 +28,19 @@
     </ng-container>
     !-- -->
 
+    <ng-container *ngIf="styled && editor == 'froala'">
+        <!-- Media Selector -->
+        <p>
+            <a mat-raised-button
+               (click)="openMediaDialog()">
+                Add Media
+            </a>
+        </p>
+        <!-- Froala Editor -->
+        <div [froalaEditor]="froalaConfig" formControlName="dataString"></div>
+    </ng-container>
+
+
     <ng-container *ngIf="styled && editor == 'angular-editor'">
         <!-- Media Selector -->
         <p>
