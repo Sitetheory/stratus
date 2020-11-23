@@ -20,14 +20,19 @@ import {MarkerSettings} from '@stratusjs/map/map.component'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxDetailsScope, IdxEmitter, IdxService, Property, WidgetIntegrations} from '@stratusjs/idx/idx'
+import {
+    IdxDetailsScope,
+    IdxEmitter,
+    IdxService,
+    MLSService,
+    Property,
+    WidgetIntegrations
+} from '@stratusjs/idx/idx'
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
 // tslint:disable-next-line:no-duplicate-imports
 import {Model} from '@stratusjs/angularjs/services/model'
-// tslint:disable-next-line:no-duplicate-imports
-import {MLSService} from '@stratusjs/idx/idx'
 import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {SlideImage} from '@stratusjs/swiper/carousel.component'
