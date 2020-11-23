@@ -2,7 +2,7 @@
   "extends": "stylelint-config-standard",
   "rules": {
     "no-descending-specificity": [
-      true,
+      false,
       {
         "ignore": [
           "selectors-within-list"
