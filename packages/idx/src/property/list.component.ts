@@ -21,13 +21,14 @@ import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
+    IdxEmitter,
     IdxListScope,
     IdxService,
     MLSService,
     Property,
     WhereOptions,
     UrlWhereOptions,
-    UrlsOptionsObject, IdxEmitter
+    UrlsOptionsObject
 } from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
