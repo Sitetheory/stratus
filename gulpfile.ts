@@ -5,6 +5,7 @@ const concat = require('gulp-concat')
 const gulpDest = require('gulp-dest')
 const terser = require('gulp-terser')
 const del = require('del')
+// @ts-ignore
 const _ = require('lodash')
 
 // Unit Testing
@@ -104,6 +105,7 @@ interface Locations {
     typescript: {
         core: string[]
         compile: string[]
+        external: string[]
         nonstandard: string[]
     }
     boot: {
@@ -196,8 +198,11 @@ const locations: Locations = {
         compile: [
             // 'packages/*/src/**/*.js.map'
         ],
+        external: [
+            '**/node_modules/**/*.ts'
+        ],
         nonstandard: [
-            '**/node_modules/**/*.ts',
+            'packages/angular/src/froala/**/*.ts',
             'packages/react/src/**/*.ts'
         ]
     },
@@ -460,7 +465,7 @@ function compressCSS() {
         .pipe(minCSS({
             compatibility: '*',
             inline: ['none'],
-            rebaseTo: 'none' // FIXME: This is a temporary hack I created by breaking some code in CleanCSS to get back relative urls
+            // rebaseTo: 'none' // FIXME: This is a temporary hack I created by breaking some code in CleanCSS to get back relative urls
         }))
         .pipe(gulpDest('.', {ext: '.min.css'}))
         .pipe(dest('.'))
@@ -500,8 +505,10 @@ function compileTypeScript() {
     return src(
         _.union(locations.typescript.core,
             nullify(
-                _.union(locations.typescript.compile,
-                    locations.typescript.nonstandard)
+                _.union(
+                    locations.typescript.compile,
+                    locations.typescript.external
+                )
             )
         ),
         {base: '.'}
