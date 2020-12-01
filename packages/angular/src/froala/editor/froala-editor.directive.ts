@@ -4,6 +4,7 @@ import {Directive, ElementRef, EventEmitter, Input, NgZone, Output, forwardRef} 
 
 // @ts-ignore
 import FroalaEditor from 'froala-editor'
+// import _ from 'lodash'
 
 @Directive({
     // tslint:disable-next-line:directive-selector
@@ -285,7 +286,10 @@ export class FroalaEditorDirective implements ControlValueAccessor {
             // Initialize the Froala Editor.
             // console.log('------- it begins -------')
             // console.log(this._element)
-            // console.log(this._opts)
+            // console.log(_.clone(this._opts))
+            // console.log(JSON.stringify(
+            //     _.clone(this._opts)
+            // ))
             // console.log('------- it ends -------')
             this._editor = new FroalaEditor(
                 this._element,

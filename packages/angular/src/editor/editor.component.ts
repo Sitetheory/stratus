@@ -101,14 +101,69 @@ import {
 } from 'ts-transformer-keys'
 import {LooseObject} from '@stratusjs/core/misc'
 
+// CodeMirror
+import 'codemirror'
+import 'codemirror/mode/xml/xml'
+
+// Froala Plugins
+import 'froala-plugins'
+import 'froala-embedly'
+import 'froala-font-awesome'
+import 'froala-image-tui'
+import 'froala-spell-checker'
+
+// Froala Individual Plugins
+// import 'froala-align'
+// import 'froala-char-counter'
+// import 'froala-code-beautifier'
+// import 'froala-code-view'
+// import 'froala-colors'
+// import 'froala-cryptojs'
+// import 'froala-draggable'
+// import 'froala-edit-in-popup'
+// import 'froala-emoticons'
+// import 'froala-entities'
+// import 'froala-file'
+// import 'froala-files-manager'
+// import 'froala-font-family'
+// import 'froala-font-size'
+// import 'froala-forms'
+// import 'froala-fullscreen'
+// import 'froala-help'
+// import 'froala-image'
+// import 'froala-image-manager'
+// import 'froala-inline-class'
+// import 'froala-inline-style'
+// import 'froala-line-breaker'
+// import 'froala-line-height'
+// import 'froala-link'
+// import 'froala-lists'
+// import 'froala-paragraph-format'
+// import 'froala-paragraph-style'
+// import 'froala-print'
+// import 'froala-quick-insert'
+// import 'froala-quote'
+// import 'froala-save'
+// import 'froala-special-characters'
+// import 'froala-table'
+// import 'froala-trim-video'
+// import 'froala-url'
+// import 'froala-video'
+// import 'froala-word-paste'
+
+// Froala Custom Plugins
+// import '@stratusjs/angular/froala/plugins/image_manager'
+
 // Local Setup
 const installDir = '/assets/1/0/bundles'
 const systemPackage = '@stratusjs/angular'
 const froalaPackage = 'froala-editor'
+const codeMirrorPackage = 'codemirror'
 const moduleName = 'editor'
 
 // Directory Template
 const localDir = `${installDir}/${boot.configuration.paths[`${systemPackage}/*`].replace(/[^\/]*$/, '')}`
+const codeMirrorDir = `${installDir}/${boot.configuration.paths[`${codeMirrorPackage}/*`].replace(/[^\/]*$/, '')}`
 const froalaDir = `${installDir}/${boot.configuration.paths[froalaPackage].replace(/js\/[^\/]*$/, '')}`
 
 // Utility Functions
@@ -320,6 +375,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             indent_size: 4,
             wrap_line_length: 0
         },
+        // FIXME: The CodeView Plugin gives the following error when initializing CodeMirror.
+        // FIXME: TypeError: c.opts.codeMirror.fromTextArea is not a function
         codeMirror: false,
         codeMirrorOptions: {
             indentWithTabs: false,
@@ -397,6 +454,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         htmlSimpleAmpersand: false,
         htmlUntouched: true,
+        imageInsertButtons: [
+            'imageBack',
+            '|',
+            // 'imageUpload',
+            'imageByURL',
+            // 'imageManager'
+        ],
         imageManagerPageSize: 20,
         imageManagerScrollOffset: 10,
         imageManagerLoadMethod: 'GET',
@@ -414,11 +478,39 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         pasteDeniedTags: [],
         pastePlain: false,
         pluginsEnabled: [
-            'align', 'charCounter', 'codeBeautifier', 'codeView', 'colors', 'draggable', 'embedly',
-            'emoticons', 'entities', 'file', 'fontAwesome', 'fontFamily', 'fontSize', 'fullscreen',
-            'image', 'imageTUI', 'imageManager', 'inlineStyle', 'inlineClass', 'lineBreaker',
-            'lineHeight', 'link', 'lists', 'paragraphFormat', 'paragraphStyle', 'quickInsert',
-            'quote', 'save', 'table', 'url', 'video', 'wordPaste'
+            'align',
+            'charCounter',
+            'codeBeautifier',
+            'codeView',
+            'colors',
+            'draggable',
+            'embedly',
+            'emoticons',
+            'entities',
+            'file',
+            // 'fontAwesome',
+            'fontFamily',
+            'fontSize',
+            // 'fullscreen',
+            'image',
+            // 'imageTUI',
+            // 'imageManager',
+            // 'imageManagerCustom',
+            'inlineStyle',
+            'inlineClass',
+            'lineBreaker',
+            'lineHeight',
+            'link',
+            'lists',
+            'paragraphFormat',
+            'paragraphStyle',
+            'quickInsert',
+            'quote',
+            'save',
+            'table',
+            'url',
+            'video',
+            'wordPaste',
         ],
         spellcheck: true,
         toolbarSticky: false,
@@ -464,7 +556,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'insertVideo',
                     'insertTable',
                     'emoticons',
-                    'fontAwesome',
+                    // 'fontAwesome',
                     'specialCharacters',
                     'embedly',
                     'insertFile',
@@ -472,7 +564,17 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 ]
             },
             moreMisc: {
-                buttons: ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help'],
+                buttons: [
+                    'undo',
+                    'redo',
+                    // 'fullscreen',
+                    'print',
+                    // 'getPDF',
+                    'spellChecker',
+                    // 'selectAll',
+                    'html',
+                    'help'
+                ],
                 align: 'right',
                 buttonsVisible: 2
             }
@@ -523,7 +625,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'insertVideo',
                     'insertTable',
                     'emoticons',
-                    'fontAwesome',
+                    // 'fontAwesome',
                     'specialCharacters',
                     'embedly',
                     'insertFile',
@@ -532,7 +634,17 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 buttonsVisible: 2
             },
             moreMisc: {
-                buttons: ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help'],
+                buttons: [
+                    'undo',
+                    'redo',
+                    // 'fullscreen',
+                    'print',
+                    // 'getPDF',
+                    'spellChecker',
+                    // 'selectAll',
+                    'html',
+                    'help'
+                ],
                 align: 'right',
                 buttonsVisible: 2
             }
@@ -581,7 +693,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'insertVideo',
                     'insertTable',
                     'emoticons',
-                    'fontAwesome',
+                    // 'fontAwesome',
                     'specialCharacters',
                     'embedly',
                     'insertFile',
@@ -590,12 +702,28 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 buttonsVisible: 0
             },
             moreMisc: {
-                buttons: ['undo', 'redo', 'fullscreen', 'print', 'getPDF', 'spellChecker', 'selectAll', 'html', 'help'],
+                buttons: [
+                    'undo',
+                    'redo',
+                    // 'fullscreen',
+                    'print',
+                    // 'getPDF',
+                    'spellChecker',
+                    // 'selectAll',
+                    'html',
+                    'help'
+                ],
                 align: 'right',
                 buttonsVisible: 2
             }
-        }
-        /* */
+        },
+        videoInsertButtons: [
+            'videoBack',
+            '|',
+            'videoByURL',
+            'videoEmbed',
+            // 'videoUpload',
+        ]
     }
 
     constructor(
@@ -623,8 +751,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // Load Component CSS until System.js can import CSS properly.
         Stratus.Internals.LoadCss([
             `${localDir}${moduleName}/${moduleName}.component${!this.dev ? '.min' : ''}.css`,
+            `${codeMirrorDir}lib/codemirror.css`,
             `${froalaDir}css/froala_editor.pkgd${!this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/froala_style${!this.dev ? '.min' : ''}.css`
+            `${froalaDir}css/froala_style${!this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/third_party/embedly${!this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/third_party/font_awesome${!this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/third_party/image_tui${!this.dev ? '.min' : ''}.css`,
+            `${froalaDir}css/third_party/spell_checker${!this.dev ? '.min' : ''}.css`
         ]).then(() => {
             this.styled = true
             this.refresh()
