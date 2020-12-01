@@ -493,7 +493,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'fontSize',
             // 'fullscreen',
             'image',
-            'imageTUI',
+            // 'imageTUI',
             // 'imageManager',
             // 'imageManagerCustom',
             'inlineStyle',
