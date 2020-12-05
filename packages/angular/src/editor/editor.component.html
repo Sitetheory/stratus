@@ -30,12 +30,14 @@
 
     <ng-container *ngIf="styled && editor == 'froala'">
         <!-- Media Selector -->
+        <!--
         <p>
             <a mat-raised-button
                (click)="openMediaDialog()">
                 Add Media
             </a>
         </p>
+        -->
         <!-- Froala Editor -->
         <textarea [froalaEditor]="froalaConfig" formControlName="dataString"></textarea>
         <!--

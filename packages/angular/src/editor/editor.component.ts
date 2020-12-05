@@ -152,7 +152,7 @@ import 'froala-spell-checker'
 // import 'froala-word-paste'
 
 // Froala Custom Plugins
-// import '@stratusjs/angular/froala/plugins/image_manager'
+import '@stratusjs/angular/froala/plugins/mediaManager'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
@@ -460,6 +460,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'imageUpload',
             'imageByURL',
             // 'imageManager'
+            'mediaManager'
         ],
         imageManagerPageSize: 20,
         imageManagerScrollOffset: 10,
@@ -476,7 +477,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'class', 'id', 'style'
         ],
         pasteDeniedTags: [],
-        pastePlain: false,
+        pastePlain: true,
         pluginsEnabled: [
             'align',
             'charCounter',
@@ -502,6 +503,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'lineHeight',
             'link',
             'lists',
+            'mediaManager',
             'paragraphFormat',
             'paragraphStyle',
             'quickInsert',
@@ -512,8 +514,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'video',
             'wordPaste',
         ],
+        quickInsertButtons: [
+            // 'image',
+            'media',
+            'video',
+            'embedly',
+            'table',
+            'ul',
+            'ol',
+            'hr'
+        ],
+        scrollableContainer: Stratus.Environment.get('viewPort') || 'body',
         spellcheck: true,
-        toolbarSticky: false,
+        toolbarSticky: true,
         toolbarButtons: {
             moreText: {
                 buttons: [
@@ -552,6 +565,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreRich: {
                 buttons: [
                     'insertLink',
+                    'mediaManager',
                     'insertImage',
                     'insertVideo',
                     'insertTable',
@@ -621,6 +635,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreRich: {
                 buttons: [
                     'insertLink',
+                    'mediaManager',
                     'insertImage',
                     'insertVideo',
                     'insertTable',
@@ -689,6 +704,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreRich: {
                 buttons: [
                     'insertLink',
+                    'mediaManager',
                     'insertImage',
                     'insertVideo',
                     'insertTable',
@@ -1067,17 +1083,20 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     trigger(name: string, data: any, callee: TriggerInterface) {
         console.log('editor.trigger:', name, callee)
         if (name === 'media-library') {
-            this.openMediaDialog()
+            this.openMediaDialog(callee)
         } else if (name === 'code-view') {
             this.openCodeViewDialog()
         }
         // callee.trigger('editor', null, this)
     }
 
-    public openMediaDialog(): void {
+    public openMediaDialog(callee: TriggerInterface): void {
         const dialogRef = this.dialog.open(MediaDialogComponent, {
             width: '1000px',
             data: {
+                editor: this,
+                eventManager: callee,
+                // eventInsert: false,
                 form: this.form,
                 model: this.model,
                 property: this.property
