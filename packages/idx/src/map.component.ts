@@ -115,7 +115,7 @@ Stratus.Components.IdxMap = {
                 JSON.parse($attrs.markerClickHighlight) : false
             $scope.markerPrice = $attrs.markerPrice && isJSON($attrs.markerPrice) ?
                 JSON.parse($attrs.markerPrice) : false
-            $scope.markerIcon = $attrs.markerIcon || null
+            $scope.markerIcon = $attrs.markerIcon || ($scope.markerPrice ? `${localDir}/images/map-marker-black.png` : null)
             $scope.markerIconHover = $attrs.markerIconHover || null
             $scope.fullHeight = $attrs.fullHeight || null
             $scope.fullHeightMinusElements = $attrs.fullHeightMinusElements || null
@@ -154,6 +154,7 @@ Stratus.Components.IdxMap = {
         $ctrl.prepareMapMarkers = (source: IdxListScope<Member | Property>): void => {
             // console.log('checking $scope.collection.models', $scope.collection.models)
             const markers: MarkerSettings[] = []
+            let zIndexCounter = 100
             source.getPageModels().forEach((model) => {
                 // console.log('looping listing', listing)
                 if (
@@ -204,8 +205,14 @@ Stratus.Components.IdxMap = {
                     ) {
                         // FIXME the format will need to change depending on the number range.
                         // We'll want to only use '0.0a' when there is 5 charcters
-                        marker.label = $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                        // marker.label = $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                        marker.label = {
+                            color: 'white',
+                            text: $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                        }
                         // console.log('has price label of', marker.label)
+                        marker.collisionBehavior = 'REQUIRED_AND_HIDES_OPTIONAL'
+                        marker.zIndex = zIndexCounter--
                     }
                     markers.push(marker)
                 }

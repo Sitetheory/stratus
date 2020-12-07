@@ -59,6 +59,8 @@ export interface MarkerSettings {
     label?: string | google.maps.MarkerLabel
     clickable?: boolean
     options?: google.maps.MarkerOptions
+    collisionBehavior?: 'REQUIRED' | 'OPTIONAL_AND_HIDES_LOWER_PRIORITY' | 'REQUIRED_AND_HIDES_OPTIONAL'
+    zIndex?: number
 
     // Custom option
     // content?: string
@@ -244,6 +246,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         disableDoubleClickZoom: this.disableDoubleClickZoom,
     }
     protected storedMarkers: google.maps.Marker[] = []
+    private highestMarkerZIndex = 0
     // Debounce holders
     private resizeDebounce: lodashDebounce
     private fitMarkerBoundsDebounce: lodashDebounce
@@ -605,6 +608,22 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         this.map.panTo(position)
     }
 
+    public getHighestMarkerZIndex() {
+        // if we haven't previously got the highest zIndex
+        // save it as no need to do it multiple times
+        if (this.highestMarkerZIndex === 0) {
+            let tempZIndex
+            this.storedMarkers.forEach((marker) => {
+                tempZIndex = marker.getZIndex()
+                if (tempZIndex > this.highestMarkerZIndex) {
+                    this.highestMarkerZIndex = tempZIndex
+                }
+            })
+        }
+        return this.highestMarkerZIndex
+
+    }
+
     public addMarker(marker: MarkerSettings | google.maps.Marker) {
         let realMarker: google.maps.Marker
         if (marker instanceof google.maps.Marker) {
@@ -631,6 +650,16 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 this.mapClick(realMarker, marker as MarkerSettings)
             })
         }
+
+        // Add Checks to keep hover over on top
+        realMarker.set('originalZIndex', realMarker.getZIndex())
+        realMarker.addListener('mouseover', () => {
+            realMarker.setZIndex(this.getHighestMarkerZIndex()+1)
+        })
+        realMarker.addListener('mouseout', () => {
+            realMarker.setZIndex(realMarker.get('originalZIndex'))
+        })
+
         realMarker.setMap(this.map)
         this.storedMarkers.push(realMarker)
     }
