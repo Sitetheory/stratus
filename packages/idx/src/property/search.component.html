@@ -15,7 +15,9 @@
 
     <div class="search-row search-basic clearfix">
 
-        <div class="search-input search-location" ng-class="{'location-input-active' :!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)}">
+        <div
+                class="search-input search-location"
+                data-ng-class="{'location-input-active' :!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)}">
 
             <!-- If there are preset filters like City, MLS Area, Postal Code, which are subsets of Location, then we
             will show that we are filtering by those, and we will not show the Location field. They remain in the filter
@@ -50,9 +52,12 @@
             <!-- TODO: make this gray in the CSS -->
             <div class="preset-location"
                  data-ng-if="(options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)">
-                <span data-ng-if="options.query.where.City.length" ng-bind="options.query.where.City"></span>
+                <span data-ng-if="options.query.where.City.length" data-ng-bind="options.query.where.City"></span>
                 <!-- NOTE: these are actually arrays so we union them then join split with a comma -->
-                <span data-ng-if="options.query.where.CountyOrParish.length || ouptions.query.where.MLSAreaMajor.length || options.query.where.PostalCode" ng-bind="(options.query.where.City.length && (options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length) ? ', ' : '') + _.join(_.union(options.query.where.CountyOrParish, options.query.where.MLSAreaMajor, options.query.where.PostalCode), ', ')"></span>
+                <span
+                        data-ng-if="options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode"
+                        data-ng-bind="(options.query.where.City.length && (options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length) ? ', ' : '') + _.join(_.union(options.query.where.CountyOrParish, options.query.where.MLSAreaMajor, options.query.where.PostalCode), ', ')"
+                ></span>
             </div>
             <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate -->
             <!-- NOTE: three of these get cleared as arrays -->
@@ -83,20 +88,20 @@
         <div class="search-input search-price">
             <a class="open-price-link"
                data-ng-click="openPrice=!openPrice">
-                <span ng-show="options.query.where.ListPriceMin == null && options.query.where.ListPriceMax == null">Any Price</span>
-                <span ng-show="options.query.where.ListPriceMin != null || options.query.where.ListPriceMax != null">
-                    <span ng-show="options.query.where.ListPriceMin != null">$<span ng-bind="options.query.where.ListPriceMin"></span></span>
-                    <span ng-show="options.query.where.ListPriceMin == null">No Min</span>
+                <span data-ng-show="options.query.where.ListPriceMin == null && options.query.where.ListPriceMax == null">Any Price</span>
+                <span data-ng-show="options.query.where.ListPriceMin != null || options.query.where.ListPriceMax != null">
+                    <span data-ng-show="options.query.where.ListPriceMin != null">$<span data-ng-bind="options.query.where.ListPriceMin"></span></span>
+                    <span data-ng-show="options.query.where.ListPriceMin == null">No Min</span>
                     &nbsp;&ndash;&nbsp;
-                    <span ng-show="options.query.where.ListPriceMax != null">$<span ng-bind="options.query.where.ListPriceMax"></span></span>
+                    <span data-ng-show="options.query.where.ListPriceMax != null">$<span data-ng-bind="options.query.where.ListPriceMax"></span></span>
 
 
-                    <span ng-show="options.query.where.ListPriceMax == null">No Max</span>
+                    <span data-ng-show="options.query.where.ListPriceMax == null">No Max</span>
                 </span>
                 <md-icon md-svg-src="{{ 'sitetheorycore/images/dropDownFat.svg' | assetPath }}"></md-icon>
             </a>
 
-            <div class="price-dropdown" ng-class="{'open-price' : openPrice == true}">
+            <div class="price-dropdown" data-ng-class="{'open-price' : openPrice == true}">
                 <!-- TODO: replace dollar sign with dynamic currency sign -->
                 <span>$</span>
                 <md-input-container class="md-block minimal">
@@ -109,7 +114,7 @@
                     <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" data-ng-blur="searchProperties()" type="text" maxlength="11" size="11" autocomplete="off">
                 </md-input-container>
             </div>
-            <div class="click-out" ng-show="openPrice == true" ng-click="openPrice = false"></div>
+            <div class="click-out" data-ng-show="openPrice == true" data-ng-click="openPrice = false"></div>
         </div>
         <div class="search-input search-beds">
             <md-input-container class="md-block minimal">
@@ -358,6 +363,6 @@
             <!--</div>-->
 
         </div>
-        <div class="click-out" ng-show="advancedFiltersStatus == true" ng-click="advancedFiltersStatus = false"></div>
+        <div class="click-out" data-ng-show="advancedFiltersStatus == true" data-ng-click="advancedFiltersStatus = false"></div>
     </div>
 </div>
