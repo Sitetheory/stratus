@@ -195,6 +195,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     title = moduleName + '_component'
     uid: string
     dev = !!cookie('env')
+    debug: true
     editor: 'froala'|'angular-editor'|'quill' = this.dev ? 'froala' : 'angular-editor'
 
     // Registry Attributes
@@ -943,7 +944,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // ngOnChanges() {
     //     // Display Inputs
-    //     if (!cookie('env')) {
+    //     if (!this.dev) {
     //         return
     //     }
     //     console.log('inputs:', {
@@ -1081,7 +1082,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     trigger(name: string, data: any, callee: TriggerInterface) {
-        console.log('editor.trigger:', name, callee)
+        if (this.dev && this.debug) {
+            console.log('editor.trigger:', name, callee)
+        }
         if (name === 'media-library') {
             this.openMediaDialog(callee)
         } else if (name === 'code-view') {
@@ -1112,7 +1115,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // Refresh Component
             that.refresh()
             // Display output if one exists
-            if (cookie('env') && result) {
+            if (this.dev && result) {
                 console.log('media dialog result:', result)
             }
         })
@@ -1143,7 +1146,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // }
             this.refresh()
             // Display output if one exists
-            if (cookie('env') && result) {
+            if (this.dev && result) {
                 console.log('code view dialog result:', result)
             }
         })

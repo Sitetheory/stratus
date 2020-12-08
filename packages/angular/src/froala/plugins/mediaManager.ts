@@ -21,6 +21,7 @@ FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
 export class InputButtonPlugin implements TriggerInterface {
     // Local
     uid: string
+    snapshot: any
 
     // Settings
     debug = false
@@ -65,29 +66,56 @@ export class InputButtonPlugin implements TriggerInterface {
         if (!instance) {
             return
         }
+        // FIXME: The snapshot is specific to Froala
+        // Get snapshot before passing off event
+        this.updateSnapshot()
         instance.trigger(this.eventName, null, this)
     }
 
     trigger(name: string, data: any, callee: TriggerInterface) {
         // This allows  us to handle data on the return
         if (this.debug) {
-            console.log(`${this.name}.trigger:`, name, data, callee)
+            console.log(`${this.name}.trigger():`, name, data, callee)
         }
         // This checks the data and inserts it on the cursor
         if (!_.isString(data)) {
-            console.warn(`${this.name}.trigger:`, data, 'is not a data string.')
+            console.warn(`${this.name}.trigger():`, data, 'is not a data string.')
             return
         }
         if (!this.editor) {
-            console.warn(`${this.name}.trigger: unable to inject html without a set editor.`)
+            console.warn(`${this.name}.trigger(): unable to inject html without a set editor.`)
             return
         }
+        // FIXME: This is specific to the media-insert plugin
         if (name !== 'media-insert') {
-            console.warn(`${this.name}.trigger:`, name, 'event is not supported.')
+            console.warn(`${this.name}.trigger():`, name, 'event is not supported.')
             return
         }
-        // this tells Froala to insert our data on the cursor
+        // FIXME: Everything below is specific to the Froala API
+        if (!this.restoreSnapshot()) {
+            return
+        }
+        // Insert our data into Froala on the caret
         this.editor.html.insert(data)
+        // Update snapshot for next insert
+        this.updateSnapshot()
+    }
+
+    restoreSnapshot(): boolean {
+        if (!this.snapshot) {
+            console.warn(`${this.name}.restoreSnapshot(): unable to restore editor session without a snapshot.`)
+            return false
+        }
+        // Get focus back to the editor
+        this.editor.events.focus()
+        // Restore last snapshot
+        this.editor.snapshot.restore(this.snapshot)
+        return true
+    }
+
+    updateSnapshot() {
+        // FIXME: This is specific to the Froala API
+        this.snapshot = this.editor.snapshot.get()
     }
 }
 
@@ -165,29 +193,21 @@ FroalaEditor.RegisterQuickInsertButton('media', {
     // Tooltip.
     title: 'Insert Media',
 
-    // Input Button
-    inputButton: null,
-
-    // Console Messages
-    debug: true,
-
     // Callback for the button.
     callback: function mediaManagerCallback () {
-        this.inputButton = this.inputButton || new InputButtonPlugin({
+        const debug = false
+        const inputButton = new InputButtonPlugin({
             name: 'Media Manager',
             eventName: 'media-library',
             // Contextual `this` is equivalent to the editor instance
             editor: this,
-            debug: this.debug
+            debug
         })
         if (!this.el) {
             console.warn('mediaManager.onClick(): unable to find element')
             return
         }
-        if (this.debug) {
-            this.html.insert('<i>current cursor location!</i>')
-        }
-        this.inputButton.onClick(this.el)
+        inputButton.onClick(this.el)
     },
 
     // Save changes to undo stack.
