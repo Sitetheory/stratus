@@ -25,11 +25,11 @@ import '@stratusjs/map/map.component'
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
-// const moduleName = 'property'
+const moduleName = 'map'
 const componentName = 'map'
 // There is not a very consistent way of pathing in Stratus at the moment
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
-const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
 export type IdxMapScope = IdxComponentScope & {
     listId: string
@@ -119,7 +119,7 @@ Stratus.Components.IdxMap = {
                 JSON.parse($attrs.markerClickHighlight) : false
             $scope.markerPrice = $attrs.markerPrice && isJSON($attrs.markerPrice) ?
                 JSON.parse($attrs.markerPrice) : false
-            $scope.markerIcon = $attrs.markerIcon || ($scope.markerPrice ? `${localDir}/images/map-marker-black.png` : null)
+            $scope.markerIcon = $attrs.markerIcon || ($scope.markerPrice ? `${localDir}images/map-marker-black.png` : null)
             $scope.markerIconLabelOriginX = $attrs.markerIconLabelOriginX || ($scope.markerPrice ? 33 : null)
             $scope.markerIconLabelOriginY = $attrs.markerIconLabelOriginX || ($scope.markerPrice ? 13 : null)
             $scope.markerIconHover = $attrs.markerIconHover || null

@@ -42,7 +42,7 @@ import 'stratus.directives.src'
 
 // Component Preload
 import '@stratusjs/idx/property/details.component'
-import '@stratusjs/idx/map.component'
+import '@stratusjs/idx/map/map.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
