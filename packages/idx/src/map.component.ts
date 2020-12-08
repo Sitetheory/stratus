@@ -54,6 +54,8 @@ export type IdxMapScope = IdxComponentScope & {
     markerPrice: boolean
     markerIcon: string
     markerIconHover: string
+    markerIconLabelOriginX?: number
+    markerIconLabelOriginY?: number
 
     getGoogleMapsKey(): string | null
     getShortCurrency(value: number, characterLimit?: number): string
@@ -78,6 +80,8 @@ Stratus.Components.IdxMap = {
         markerPrice: '@',
         markerIcon: '@',
         markerIconHover: '@',
+        markerIconLabelOriginX: '@',
+        markerIconLabelOriginY: '@',
         fullHeight: '@',
         fullHeightMinusElements: '@',
         referenceParent: '@',
@@ -116,6 +120,8 @@ Stratus.Components.IdxMap = {
             $scope.markerPrice = $attrs.markerPrice && isJSON($attrs.markerPrice) ?
                 JSON.parse($attrs.markerPrice) : false
             $scope.markerIcon = $attrs.markerIcon || ($scope.markerPrice ? `${localDir}/images/map-marker-black.png` : null)
+            $scope.markerIconLabelOriginX = $attrs.markerIconLabelOriginX || ($scope.markerPrice ? 33 : null)
+            $scope.markerIconLabelOriginY = $attrs.markerIconLabelOriginX || ($scope.markerPrice ? 13 : null)
             $scope.markerIconHover = $attrs.markerIconHover || null
             $scope.fullHeight = $attrs.fullHeight || null
             $scope.fullHeightMinusElements = $attrs.fullHeightMinusElements || null
