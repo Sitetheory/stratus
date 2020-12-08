@@ -59,11 +59,14 @@ export interface MarkerSettings {
     label?: string | google.maps.MarkerLabel
     clickable?: boolean
     options?: google.maps.MarkerOptions
+    collisionBehavior?: 'REQUIRED' | 'OPTIONAL_AND_HIDES_LOWER_PRIORITY' | 'REQUIRED_AND_HIDES_OPTIONAL'
+    zIndex?: number
 
     // Custom option
     // content?: string
     click?: MarkerSettingsClick | ((marker: google.maps.Marker, options: MarkerSettings) => any)
 }
+
 
 class Watcher {
     // Watcher
@@ -235,6 +238,8 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
     @Input() center: google.maps.LatLng | google.maps.LatLngLiteral = {lat: 37.4220656, lng: -122.0862784}
     @Input() defaultIcon: string | google.maps.Icon | google.maps.Symbol
     @Input() defaultIconHover: string | google.maps.Icon | google.maps.Symbol
+    @Input() defaultIconLabelOriginX: number
+    @Input() defaultIconLabelOriginY: number
     options: google.maps.MapOptions = {
         mapTypeId: this.mapType,
         center: this.center,
@@ -244,6 +249,7 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         disableDoubleClickZoom: this.disableDoubleClickZoom,
     }
     protected storedMarkers: google.maps.Marker[] = []
+    private highestMarkerZIndex = 0
     // Debounce holders
     private resizeDebounce: lodashDebounce
     private fitMarkerBoundsDebounce: lodashDebounce
@@ -430,6 +436,20 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         if (!_.isNumber(this.zoom)) {
             this.zoom = Number.parseInt(this.zoom, 10)
         }
+        if (
+            _.isString(this.defaultIconLabelOriginX) &&
+            !isNaN(parseFloat(this.defaultIconLabelOriginX as unknown as string)) &&
+            isFinite(this.defaultIconLabelOriginX)
+        ) {
+            this.defaultIconLabelOriginX = Number.parseInt(this.defaultIconLabelOriginX as string, 10)
+        }
+        if (
+            _.isString(this.defaultIconLabelOriginY) &&
+            !isNaN(parseFloat(this.defaultIconLabelOriginY as unknown as string)) &&
+            isFinite(this.defaultIconLabelOriginY)
+        ) {
+            this.defaultIconLabelOriginY = Number.parseInt(this.defaultIconLabelOriginY as string, 10)
+        }
 
         // Sanitize Booleans
         if (!_.isBoolean(this.zoomControl)) {
@@ -605,25 +625,61 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
         this.map.panTo(position)
     }
 
+    public getHighestMarkerZIndex() {
+        // if we haven't previously got the highest zIndex
+        // save it as no need to do it multiple times
+        if (this.highestMarkerZIndex === 0) {
+            let tempZIndex
+            this.storedMarkers.forEach((marker) => {
+                tempZIndex = marker.getZIndex()
+                if (tempZIndex > this.highestMarkerZIndex) {
+                    this.highestMarkerZIndex = tempZIndex
+                }
+            })
+        }
+        return this.highestMarkerZIndex
+
+    }
+
     public addMarker(marker: MarkerSettings | google.maps.Marker) {
         let realMarker: google.maps.Marker
         if (marker instanceof google.maps.Marker) {
             realMarker = marker as google.maps.Marker
         } else {
             marker.icon = marker.icon || this.defaultIcon
+            if (
+                _.isString(marker.icon) &&
+                _.isNumber(this.defaultIconLabelOriginX) &&
+                _.isNumber(this.defaultIconLabelOriginY)
+            ) {
+                marker.icon = {
+                    url: marker.icon,
+                    labelOrigin: new google.maps.Point(this.defaultIconLabelOriginX, this.defaultIconLabelOriginY)
+                }
+            }
             realMarker = new google.maps.Marker(marker)
             if (marker.hasOwnProperty('options')) {
                 realMarker.setOptions(marker.options)
             }
 
             // Only can add hover event if in MarkerSettings or defaulted
-            // marker.iconHover = marker.iconHover || this.defaultIconHover
-            if (marker.iconHover || this.defaultIconHover) {
+            marker.iconHover = marker.iconHover || this.defaultIconHover
+            if (marker.iconHover) {
+                if (
+                    _.isString(marker.iconHover) &&
+                    _.isNumber(this.defaultIconLabelOriginX) &&
+                    _.isNumber(this.defaultIconLabelOriginY)
+                ) {
+                    marker.iconHover = {
+                        url: marker.iconHover,
+                        labelOrigin: new google.maps.Point(this.defaultIconLabelOriginX, this.defaultIconLabelOriginY)
+                    }
+                }
                 realMarker.addListener('mouseover', () => {
-                    realMarker.setIcon(marker.iconHover || this.defaultIconHover)
+                    realMarker.setIcon(marker.iconHover)
                 })
                 realMarker.addListener('mouseout', () => {
-                    realMarker.setIcon(marker.icon || this.defaultIcon)
+                    realMarker.setIcon(marker.icon)
                 })
             }
             // Only can add click event if in MarkerSettings
@@ -631,6 +687,16 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
                 this.mapClick(realMarker, marker as MarkerSettings)
             })
         }
+
+        // Add Checks to keep hover over on top
+        realMarker.set('originalZIndex', realMarker.getZIndex())
+        realMarker.addListener('mouseover', () => {
+            realMarker.setZIndex(this.getHighestMarkerZIndex()+1)
+        })
+        realMarker.addListener('mouseout', () => {
+            realMarker.setZIndex(realMarker.get('originalZIndex'))
+        })
+
         realMarker.setMap(this.map)
         this.storedMarkers.push(realMarker)
     }
@@ -641,6 +707,10 @@ export class MapComponent extends RootComponent implements OnInit, AfterViewInit
             marker.setMap(null)
         })
         this.storedMarkers = []
+    }
+
+    public googleMaps() {
+        return google.maps
     }
 
     mapClick(marker: google.maps.Marker, markerSetting: MarkerSettings) {

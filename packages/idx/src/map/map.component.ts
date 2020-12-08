@@ -25,11 +25,11 @@ import '@stratusjs/map/map.component'
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
-// const moduleName = 'property'
+const moduleName = 'map'
 const componentName = 'map'
 // There is not a very consistent way of pathing in Stratus at the moment
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
-const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
+// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
 
 export type IdxMapScope = IdxComponentScope & {
     listId: string
@@ -54,6 +54,8 @@ export type IdxMapScope = IdxComponentScope & {
     markerPrice: boolean
     markerIcon: string
     markerIconHover: string
+    markerIconLabelOriginX?: number
+    markerIconLabelOriginY?: number
 
     getGoogleMapsKey(): string | null
     getShortCurrency(value: number, characterLimit?: number): string
@@ -78,6 +80,8 @@ Stratus.Components.IdxMap = {
         markerPrice: '@',
         markerIcon: '@',
         markerIconHover: '@',
+        markerIconLabelOriginX: '@',
+        markerIconLabelOriginY: '@',
         fullHeight: '@',
         fullHeightMinusElements: '@',
         referenceParent: '@',
@@ -115,7 +119,9 @@ Stratus.Components.IdxMap = {
                 JSON.parse($attrs.markerClickHighlight) : false
             $scope.markerPrice = $attrs.markerPrice && isJSON($attrs.markerPrice) ?
                 JSON.parse($attrs.markerPrice) : false
-            $scope.markerIcon = $attrs.markerIcon || null
+            $scope.markerIcon = $attrs.markerIcon || ($scope.markerPrice ? `${localDir}images/map-marker-black.png` : null)
+            $scope.markerIconLabelOriginX = $attrs.markerIconLabelOriginX || ($scope.markerPrice ? 33 : null)
+            $scope.markerIconLabelOriginY = $attrs.markerIconLabelOriginX || ($scope.markerPrice ? 13 : null)
             $scope.markerIconHover = $attrs.markerIconHover || null
             $scope.fullHeight = $attrs.fullHeight || null
             $scope.fullHeightMinusElements = $attrs.fullHeightMinusElements || null
@@ -154,6 +160,7 @@ Stratus.Components.IdxMap = {
         $ctrl.prepareMapMarkers = (source: IdxListScope<Member | Property>): void => {
             // console.log('checking $scope.collection.models', $scope.collection.models)
             const markers: MarkerSettings[] = []
+            let zIndexCounter = 100
             source.getPageModels().forEach((model) => {
                 // console.log('looping listing', listing)
                 if (
@@ -204,8 +211,14 @@ Stratus.Components.IdxMap = {
                     ) {
                         // FIXME the format will need to change depending on the number range.
                         // We'll want to only use '0.0a' when there is 5 charcters
-                        marker.label = $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                        // marker.label = $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                        marker.label = {
+                            color: 'white',
+                            text: $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                        }
                         // console.log('has price label of', marker.label)
+                        marker.collisionBehavior = 'REQUIRED_AND_HIDES_OPTIONAL'
+                        marker.zIndex = zIndexCounter--
                     }
                     markers.push(marker)
                 }

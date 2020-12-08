@@ -19,7 +19,7 @@ import '@stratusjs/idx/listTrac'
 // Stratus Dependencies
 import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
-import {IdxMapScope} from '@stratusjs/idx/map.component'
+import {IdxMapScope} from '@stratusjs/idx/map/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 // import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
