@@ -90,10 +90,10 @@
                data-ng-click="openPrice=!openPrice">
                 <span data-ng-show="options.query.where.ListPriceMin == null && options.query.where.ListPriceMax == null">Any Price</span>
                 <span data-ng-show="options.query.where.ListPriceMin != null || options.query.where.ListPriceMax != null">
-                    <span data-ng-show="options.query.where.ListPriceMin != null">$<span data-ng-bind="options.query.where.ListPriceMin"></span></span>
+                    <span data-ng-show="options.query.where.ListPriceMin != null"><span data-ng-bind="options.query.where.ListPriceMin | numeral:{format:'$0[.]0a'} | uppercase"></span></span>
                     <span data-ng-show="options.query.where.ListPriceMin == null">No Min</span>
                     &nbsp;&ndash;&nbsp;
-                    <span data-ng-show="options.query.where.ListPriceMax != null">$<span data-ng-bind="options.query.where.ListPriceMax"></span></span>
+                    <span data-ng-show="options.query.where.ListPriceMax != null"><span data-ng-bind="options.query.where.ListPriceMax | numeral:{format:'$0[.]0a'} | uppercase"></span></span>
 
 
                     <span data-ng-show="options.query.where.ListPriceMax == null">No Max</span>
