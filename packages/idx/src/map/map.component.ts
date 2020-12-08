@@ -7,7 +7,7 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import numeral from 'numeral'
+// import numeral from 'numeral'
 
 // Services
 import '@stratusjs/angularjs/services/model'
@@ -17,6 +17,7 @@ import {cookie} from '@stratusjs/core/environment'
 import {isJSON} from '@stratusjs/core/misc'
 import {IdxComponentScope, IdxEmitter, IdxListScope, IdxService, Member, Property} from '@stratusjs/idx/idx'
 import {MapComponent, MarkerSettings} from '@stratusjs/map/map.component'
+import {numeralFormat} from '@stratusjs/angularjs-extras/filters/numeral'
 
 // Component Preload
 // tslint:disable-next-line:no-duplicate-imports
@@ -58,7 +59,6 @@ export type IdxMapScope = IdxComponentScope & {
     markerIconLabelOriginY?: number
 
     getGoogleMapsKey(): string | null
-    getShortCurrency(value: number, maxDecimals?: number, format?: string): string
     mapInitialize(map: MapComponent): void
     mapUpdate(): void
 }
@@ -216,7 +216,7 @@ Stratus.Components.IdxMap = {
                             color: 'white',
                             // text: $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
                             // providing format to reduce processing
-                            text: $scope.getShortCurrency(model.ClosePrice || model.ListPrice, 1, '$0[.]0a')
+                            text: numeralFormat(model.ClosePrice || model.ListPrice, 1, '$0[.]0a').toUpperCase()
                         }
                         // console.log('has price label of', marker.label)
                         marker.collisionBehavior = 'REQUIRED_AND_HIDES_OPTIONAL'
@@ -262,38 +262,6 @@ Stratus.Components.IdxMap = {
 
         $scope.getGoogleMapsKey = (): string | null => {
             return $scope.googleMapsKey || Idx.getGoogleMapsKey()
-        }
-
-        $scope.getShortCurrency = (value: number, maxDecimals: number = 1, format?: string): string => {
-            if (!format) {
-                /*switch (characterLimit) {
-                    case 7:
-                    default:
-                        // 0 - 999 (0a = $999)
-                        // 1000 - 999999 (0.0a = $1m)
-                        // 1000000 - 99994999 (0.00a = $99.99m)
-                        // 99995000 + (0.0a = $999.9m)
-                        if (value > 99994999) {
-                            format = '0.0'
-                        } else if (value > 999999) {
-                            format = '0.00'
-                        } else if (value > 999) {
-                            format = '0.0'
-                        } else {
-                            format = '0'
-                        }
-                }*/
-                format = '$0'
-                if (maxDecimals > 0) {
-                    format += '[.]0'
-                    for (let i = 1; i < maxDecimals; i++) {
-                        format += '[0]'
-                    }
-                }
-                format += 'a'
-            }
-
-            return numeral(value).format(format).toUpperCase()
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
