@@ -58,7 +58,7 @@ export type IdxMapScope = IdxComponentScope & {
     markerIconLabelOriginY?: number
 
     getGoogleMapsKey(): string | null
-    getShortCurrency(value: number, characterLimit?: number): string
+    getShortCurrency(value: number, maxDecimals?: number, format?: string): string
     mapInitialize(map: MapComponent): void
     mapUpdate(): void
 }
@@ -214,7 +214,9 @@ Stratus.Components.IdxMap = {
                         // marker.label = $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
                         marker.label = {
                             color: 'white',
-                            text: $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                            // text: $scope.getShortCurrency(model.ClosePrice || model.ListPrice)
+                            // providing format to reduce processing
+                            text: $scope.getShortCurrency(model.ClosePrice || model.ListPrice, 1, '$0[.]0a')
                         }
                         // console.log('has price label of', marker.label)
                         marker.collisionBehavior = 'REQUIRED_AND_HIDES_OPTIONAL'
@@ -262,27 +264,36 @@ Stratus.Components.IdxMap = {
             return $scope.googleMapsKey || Idx.getGoogleMapsKey()
         }
 
-        $scope.getShortCurrency = (value: number, characterLimit: number = 7): string => {
-            let format
-            switch (characterLimit) {
-                case 7:
-                default:
-                    // 0 - 999 (0a = $999)
-                    // 1000 - 999999 (0.0a = $1m)
-                    // 1000000 - 99994999 (0.00a = $99.99m)
-                    // 99995000 + (0.0a = $999.9m)
-                    if (value > 99994999) {
-                        format = '0.0a'
-                    } else if (value > 999999) {
-                        format = '0.00a'
-                    } else if (value > 999) {
-                        format = '0.0a'
-                    } else {
-                        format = '0a'
+        $scope.getShortCurrency = (value: number, maxDecimals: number = 1, format?: string): string => {
+            if (!format) {
+                /*switch (characterLimit) {
+                    case 7:
+                    default:
+                        // 0 - 999 (0a = $999)
+                        // 1000 - 999999 (0.0a = $1m)
+                        // 1000000 - 99994999 (0.00a = $99.99m)
+                        // 99995000 + (0.0a = $999.9m)
+                        if (value > 99994999) {
+                            format = '0.0'
+                        } else if (value > 999999) {
+                            format = '0.00'
+                        } else if (value > 999) {
+                            format = '0.0'
+                        } else {
+                            format = '0'
+                        }
+                }*/
+                format = '$0'
+                if (maxDecimals > 0) {
+                    format += '[.]0'
+                    for (let i = 1; i < maxDecimals; i++) {
+                        format += '[0]'
                     }
+                }
+                format += 'a'
             }
 
-            return '$' + numeral(value).format(format).toUpperCase()
+            return numeral(value).format(format).toUpperCase()
         }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
