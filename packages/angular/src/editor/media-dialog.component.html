@@ -24,11 +24,10 @@
             -->
         </ng-container>
     </mat-grid-list>
-    <!-- TODO: Set the paginator settings according to the meta data coming from the XHR payloads -->
-    <!--
-    <mat-paginator [length]="100"
-                   [pageSize]="10"
-                   [pageSizeOptions]="[5, 10, 25, 100]">
+    <!-- Pagination is based on the latest Convoy Meta -->
+    <mat-paginator [length]="(!meta || !meta.pagination) ? mediaEntities.length : (meta.pagination.countTotal || mediaEntities.length)"
+                   [pageSize]="(!meta || !meta.pagination) ? limit : (meta.pagination.limit || limit)"
+                   [pageSizeOptions]="[5, 10, 25, 50, 100]"
+                   (page)="onPage($event)">
     </mat-paginator>
-    -->
 </div>

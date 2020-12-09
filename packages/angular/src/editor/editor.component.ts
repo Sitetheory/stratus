@@ -46,9 +46,11 @@ import {
 import _ from 'lodash'
 
 // Angular Editor Dependencies
+/* *
 import {
     AngularEditorConfig
 } from '@kolkov/angular-editor'
+/* */
 
 // Quill Dependencies
 // import Quill from 'quill'
@@ -196,7 +198,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     uid: string
     dev = !!cookie('env')
     debug: true
-    editor: 'froala'|'angular-editor'|'quill' = this.dev ? 'froala' : 'angular-editor'
+    editor: 'froala'|'angular-editor'|'quill' = 'froala'
 
     // Registry Attributes
     @Input() target: string
@@ -250,6 +252,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Child Components
     // quill: Quill
+    /* *
     editorConfig: AngularEditorConfig = {
         editable: true,
         spellcheck: true,
@@ -352,6 +355,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             ]
         ],
     }
+    /* */
 
     // Froala 2 Buttons (For Reference)
     // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
@@ -364,7 +368,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Froala Configuration
     froalaConfig: LooseObject = {
-        // key: 'LGnD1KNZf1CPBYCAZB-8F3UDSLLSG1VFf1A3C2==',
+        key: 'DUA2yE1F1A1A4B2C2pZGCTRSAPJWTLPLZHTQQe1JGZxC4B3A3C2B5B1A1E4G1B3==',
         codeBeautifierOptions: {
             end_with_newline: true,
             indent_inner_html: true,
