@@ -39,7 +39,7 @@
                        data-ng-model="options.query.where.Location"
                        data-ng-blur="searchProperties()"
                        type="text"
-                       length="22"
+                       size="22"
                        maxlength="250"
                        data-ng-keyup="$event.keyCode == 13 && searchProperties()"
                        autocomplete="off"
@@ -90,10 +90,10 @@
                data-ng-click="openPrice=!openPrice">
                 <span data-ng-show="options.query.where.ListPriceMin == null && options.query.where.ListPriceMax == null">Any Price</span>
                 <span data-ng-show="options.query.where.ListPriceMin != null || options.query.where.ListPriceMax != null">
-                    <span data-ng-show="options.query.where.ListPriceMin != null">$<span data-ng-bind="options.query.where.ListPriceMin"></span></span>
+                    <span data-ng-show="options.query.where.ListPriceMin != null"><span data-ng-bind="options.query.where.ListPriceMin | numeral:{format:'$0[.]0a'} | uppercase"></span></span>
                     <span data-ng-show="options.query.where.ListPriceMin == null">No Min</span>
                     &nbsp;&ndash;&nbsp;
-                    <span data-ng-show="options.query.where.ListPriceMax != null">$<span data-ng-bind="options.query.where.ListPriceMax"></span></span>
+                    <span data-ng-show="options.query.where.ListPriceMax != null"><span data-ng-bind="options.query.where.ListPriceMax | numeral:{format:'$0[.]0a'} | uppercase"></span></span>
 
 
                     <span data-ng-show="options.query.where.ListPriceMax == null">No Max</span>
@@ -106,12 +106,24 @@
                 <span>$</span>
                 <md-input-container class="md-block minimal">
                     <label>Min Price</label>
-                    <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMin" data-ng-blur="searchProperties()" type="text" maxlength="11" size="11" autocomplete="off">
+                    <input
+                            type="text" maxlength="13" size="13" autocomplete="off"
+                            stratus-string-to-number="comma"
+                            data-ng-model="options.query.where.ListPriceMin"
+                            data-ng-blur="!options.query.where.ListPriceMin ? options.query.where.ListPriceMin = null : true ; searchProperties()"
+                            data-ng-keyup="$event.keyCode == 13 && $event.target.blur()"
+                    >
                 </md-input-container>
                 <span>$</span>
                 <md-input-container class="md-block minimal">
                     <label>Max Price</label>
-                    <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" data-ng-blur="searchProperties()" type="text" maxlength="11" size="11" autocomplete="off">
+                    <input
+                            type="text" maxlength="13" size="13" autocomplete="off"
+                            stratus-string-to-number="comma"
+                            data-ng-model="options.query.where.ListPriceMax"
+                            data-ng-blur="!options.query.where.ListPriceMax ? options.query.where.ListPriceMax = null : true ; searchProperties()"
+                            data-ng-keyup="$event.keyCode == 13 && $event.target.blur()"
+                    >
                 </md-input-container>
             </div>
             <div class="click-out" data-ng-show="openPrice == true" data-ng-click="openPrice = false"></div>
