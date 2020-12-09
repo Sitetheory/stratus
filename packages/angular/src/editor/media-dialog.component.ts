@@ -19,8 +19,14 @@ import {
     MAT_DIALOG_DATA,
     MatDialogRef
 } from '@angular/material/dialog'
+import {
+    PageEvent
+} from '@angular/material/paginator'
 
 // RXJS
+import {
+    Observable
+} from 'rxjs'
 import {
     debounceTime,
     finalize,
@@ -42,6 +48,7 @@ import {
     LooseObject
 } from '@stratusjs/core/misc'
 import {Model} from '@stratusjs/angularjs/services/model'
+import {TriggerInterface} from '@stratusjs/angular/core/trigger.interface'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
@@ -71,14 +78,25 @@ export class MediaDialogComponent implements OnInit {
 
     // TODO: Move this to its own AutoComplete Component
     // AutoComplete Data
-    mediaEntities: any[]
+    apiBase = '/Api/Media'
+    mediaEntities: any[] = []
     dialogMediaForm: FormGroup
     isMediaLoading = true
     lastMediaQuery: string
 
+    // Pagination Data
+    meta: LooseObject
+    pageEvent: PageEvent
+    limit = 20
+
     // Model Settings
     model: Model
     property: string
+
+    // Event Settings
+    editor: TriggerInterface
+    eventManager: TriggerInterface
+    eventInsert = true
 
     // UI Settings
     selected: Array<number> = []
@@ -109,6 +127,11 @@ export class MediaDialogComponent implements OnInit {
         // Hoist Data
         this.model = this.data.model
         this.property = this.data.property
+        this.editor = this.data.editor
+        this.eventManager = this.data.eventManager
+        if (_.isBoolean(this.data.eventInsert)) {
+            this.eventInsert = this.data.eventInsert
+        }
 
         // TODO: Move this to its own AutoComplete Component
         // AutoComplete Logic
@@ -124,28 +147,16 @@ export class MediaDialogComponent implements OnInit {
                     // this.isMediaLoading = true
                 }),
                 switchMap((value: any) => {
-                        if (_.isString(value)) {
-                            this.lastMediaQuery = `/Api/Media?q=${value}`
-                        }
-                        this.isMediaLoading = true
-                        return this.backend.get(this.lastMediaQuery)
-                            .pipe(
-                                finalize(() => this.isMediaLoading = false),
-                            )
+                        return this.getQuery(value)
                     }
                 )
             )
             .subscribe((response: HttpResponse<any>) => this.processMedia(response))
 
         // Initialize Media Query with starter data
-        this.lastMediaQuery = `/Api/Media?q=`
-        this.backend.get(this.lastMediaQuery)
-            .pipe(
-                finalize(() => this.isMediaLoading = false),
-            )
-            .subscribe(
-                (response: HttpResponse<any>) => this.processMedia(response)
-            )
+        this.getQuery().subscribe(
+            (response: HttpResponse<any>) => this.processMedia(response)
+        )
 
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
@@ -167,12 +178,41 @@ export class MediaDialogComponent implements OnInit {
         this.refresh()
     }
 
+    onPage(event: PageEvent): void {
+        this.pageEvent = event
+        this.getQuery(this.lastMediaQuery).subscribe(
+            (response: HttpResponse<any>) => this.processMedia(response)
+        )
+    }
+
+    getQueryUrl(query?: string): string {
+        let limit = this.limit
+        let paging = 1
+        if (this.pageEvent) {
+            limit = this.pageEvent.pageSize
+            paging = this.pageEvent.pageIndex + 1
+        }
+        query = (_.isString(query) && !_.isEmpty(query)) ? `"${query}"` : ''
+        return `${this.apiBase}?limit=${limit}&p=${paging}&q=${query}`
+    }
+
+    getQuery(query?: string): Observable<HttpResponse<any>> {
+        this.lastMediaQuery = query
+        this.isMediaLoading = true
+        return this.backend.get(this.getQueryUrl(query))
+            .pipe(
+                finalize(() => this.isMediaLoading = false),
+            )
+    }
+
     processMedia(response: HttpResponse<any>): any[] {
         if (!response.ok || response.status !== 200 || _.isEmpty(response.body)) {
+            this.meta = {}
             this.mediaEntities = []
             this.refresh()
             return this.mediaEntities
         }
+        this.meta = _.get(response.body, 'meta') || {}
         const payload = _.get(response.body, 'payload') || response.body
         if (_.isEmpty(payload) || !Array.isArray(payload)) {
             this.mediaEntities = []
@@ -192,10 +232,28 @@ export class MediaDialogComponent implements OnInit {
         }
         const imageElement = `<img data-stratus-src src="${media.thumbSrc}" alt="${media.name || media.filename}">`
         this.selected.push(media.id)
-        this.model.set(
-            this.property,
-            this.model.get(this.property) + imageElement
-        )
+        // Add element to the end of the model property
+        if (!this.eventInsert) {
+            if (!(this.model instanceof Model)) {
+                console.warn('media-dialog: event manager not available.')
+                return
+            }
+            if (! _.isString(this.property)) {
+                console.warn('media-dialog: event manager not available.')
+                return
+            }
+            console.warn('media-dialog: disabling eventInsert is not recommended.')
+            this.model.set(
+                this.property,
+                this.model.get(this.property) + imageElement
+            )
+            return
+        }
+        if (!this.eventManager) {
+            console.warn('media-dialog: event manager is not set.')
+            return
+        }
+        this.eventManager.trigger('media-insert', imageElement, this.editor)
     }
 
     isSelected(media: Media) : boolean {
@@ -208,6 +266,9 @@ export class MediaDialogComponent implements OnInit {
 
 // Data Types
 export interface MediaDialogData {
+    editor: TriggerInterface
+    eventManager: TriggerInterface
+    eventInsert: boolean
     form: FormGroup,
     model: Model,
     property: string

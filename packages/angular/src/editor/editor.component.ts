@@ -46,9 +46,11 @@ import {
 import _ from 'lodash'
 
 // Angular Editor Dependencies
+/* *
 import {
     AngularEditorConfig
 } from '@kolkov/angular-editor'
+/* */
 
 // Quill Dependencies
 // import Quill from 'quill'
@@ -152,7 +154,7 @@ import 'froala-spell-checker'
 // import 'froala-word-paste'
 
 // Froala Custom Plugins
-// import '@stratusjs/angular/froala/plugins/image_manager'
+import '@stratusjs/angular/froala/plugins/mediaManager'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
@@ -195,7 +197,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     title = moduleName + '_component'
     uid: string
     dev = !!cookie('env')
-    editor: 'froala'|'angular-editor'|'quill' = this.dev ? 'froala' : 'angular-editor'
+    debug: true
+    editor: 'froala'|'angular-editor'|'quill' = 'froala'
 
     // Registry Attributes
     @Input() target: string
@@ -249,6 +252,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Child Components
     // quill: Quill
+    /* *
     editorConfig: AngularEditorConfig = {
         editable: true,
         spellcheck: true,
@@ -351,6 +355,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             ]
         ],
     }
+    /* */
 
     // Froala 2 Buttons (For Reference)
     // 'insertOrderedList', 'insertUnorderedList', 'createLink', 'table'
@@ -363,7 +368,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Froala Configuration
     froalaConfig: LooseObject = {
-        // key: 'LGnD1KNZf1CPBYCAZB-8F3UDSLLSG1VFf1A3C2==',
+        key: 'DUA2yE1F1A1A4B2C2pZGCTRSAPJWTLPLZHTQQe1JGZxC4B3A3C2B5B1A1E4G1B3==',
         codeBeautifierOptions: {
             end_with_newline: true,
             indent_inner_html: true,
@@ -460,6 +465,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'imageUpload',
             'imageByURL',
             // 'imageManager'
+            'mediaManager'
         ],
         imageManagerPageSize: 20,
         imageManagerScrollOffset: 10,
@@ -476,7 +482,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'class', 'id', 'style'
         ],
         pasteDeniedTags: [],
-        pastePlain: false,
+        pastePlain: true,
         pluginsEnabled: [
             'align',
             'charCounter',
@@ -502,6 +508,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'lineHeight',
             'link',
             'lists',
+            'mediaManager',
             'paragraphFormat',
             'paragraphStyle',
             'quickInsert',
@@ -512,8 +519,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'video',
             'wordPaste',
         ],
+        quickInsertButtons: [
+            // 'image',
+            'media',
+            'video',
+            'embedly',
+            'table',
+            'ul',
+            'ol',
+            'hr'
+        ],
+        scrollableContainer: Stratus.Environment.get('viewPort') || 'body',
         spellcheck: true,
-        toolbarSticky: false,
+        toolbarSticky: true,
         toolbarButtons: {
             moreText: {
                 buttons: [
@@ -552,6 +570,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreRich: {
                 buttons: [
                     'insertLink',
+                    'mediaManager',
                     'insertImage',
                     'insertVideo',
                     'insertTable',
@@ -621,6 +640,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreRich: {
                 buttons: [
                     'insertLink',
+                    'mediaManager',
                     'insertImage',
                     'insertVideo',
                     'insertTable',
@@ -689,6 +709,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             moreRich: {
                 buttons: [
                     'insertLink',
+                    'mediaManager',
                     'insertImage',
                     'insertVideo',
                     'insertTable',
@@ -927,7 +948,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // ngOnChanges() {
     //     // Display Inputs
-    //     if (!cookie('env')) {
+    //     if (!this.dev) {
     //         return
     //     }
     //     console.log('inputs:', {
@@ -1065,19 +1086,24 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     trigger(name: string, data: any, callee: TriggerInterface) {
-        console.log('editor.trigger:', name, callee)
+        if (this.dev && this.debug) {
+            console.log('editor.trigger:', name, callee)
+        }
         if (name === 'media-library') {
-            this.openMediaDialog()
+            this.openMediaDialog(callee)
         } else if (name === 'code-view') {
             this.openCodeViewDialog()
         }
         // callee.trigger('editor', null, this)
     }
 
-    public openMediaDialog(): void {
+    public openMediaDialog(callee: TriggerInterface): void {
         const dialogRef = this.dialog.open(MediaDialogComponent, {
             width: '1000px',
             data: {
+                editor: this,
+                eventManager: callee,
+                // eventInsert: false,
                 form: this.form,
                 model: this.model,
                 property: this.property
@@ -1093,7 +1119,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // Refresh Component
             that.refresh()
             // Display output if one exists
-            if (cookie('env') && result) {
+            if (this.dev && result) {
                 console.log('media dialog result:', result)
             }
         })
@@ -1124,7 +1150,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // }
             this.refresh()
             // Display output if one exists
-            if (cookie('env') && result) {
+            if (this.dev && result) {
                 console.log('code view dialog result:', result)
             }
         })

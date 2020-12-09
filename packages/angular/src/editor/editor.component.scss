@@ -26,3 +26,16 @@
     }
   }
 }
+
+// This fixes the sticky toolbar if nested in md-tabs
+@mixin tab-transform-unset {
+  md-tab-content {
+    transform: unset;
+  }
+}
+md-tabs {
+  md-tabs-content-wrapper {
+    @include tab-transform-unset;
+  }
+  @include tab-transform-unset;
+}

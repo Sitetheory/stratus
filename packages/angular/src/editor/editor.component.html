@@ -30,12 +30,14 @@
 
     <ng-container *ngIf="styled && editor == 'froala'">
         <!-- Media Selector -->
+        <!--
         <p>
             <a mat-raised-button
                (click)="openMediaDialog()">
                 Add Media
             </a>
         </p>
+        -->
         <!-- Froala Editor -->
         <textarea [froalaEditor]="froalaConfig" formControlName="dataString"></textarea>
         <!--
@@ -53,12 +55,14 @@
             </a>
         </p>
         <!-- Angular Editor -->
+        <!--
         <angular-editor formControlName="dataString"
                         [id]="'angular-editor-'+uid"
                         [config]="editorConfig"
                         (blur)="onBlur($event)"
                         (focus)="onFocus($event)">
         </angular-editor>
+        -->
     </ng-container>
 
     <ng-container *ngIf="styled && editor == 'quill'">
