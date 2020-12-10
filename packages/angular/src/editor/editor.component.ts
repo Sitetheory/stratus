@@ -370,6 +370,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     froalaConfig: LooseObject = {
         attribution: false,
         key: Stratus.Environment.get('froalaKey'),
+        zIndex: 9999,
         codeBeautifierOptions: {
             end_with_newline: true,
             indent_inner_html: true,
