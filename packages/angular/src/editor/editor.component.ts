@@ -368,7 +368,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
 
     // Froala Configuration
     froalaConfig: LooseObject = {
-        key: 'DUA2yE1F1A1A4B2C2pZGCTRSAPJWTLPLZHTQQe1JGZxC4B3A3C2B5B1A1E4G1B3==',
+        attribution: false,
+        key: Stratus.Environment.get('froalaKey'),
         codeBeautifierOptions: {
             end_with_newline: true,
             indent_inner_html: true,
@@ -479,7 +480,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // imageManagerPreloader: '/images/loader.gif',
         multiLine: true,
         pasteDeniedAttrs: [
-            // 'class', 'id', 'style'
+            'class',
+            'id',
+            'style',
+            'ng-.*'
         ],
         pasteDeniedTags: [],
         pastePlain: true,
