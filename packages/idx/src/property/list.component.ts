@@ -182,8 +182,8 @@ Stratus.Components.IdxPropertyList = {
 
             // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
             $scope.orderOptions = $scope.orderOptions || {
-                'Price (high to low)': '-BestPrice',
-                'Price (low to high)': 'BestPrice',
+                'Highest Price': '-BestPrice',
+                'Lowest Price': 'BestPrice',
                 'Recently Updated': '-ModificationTimestamp',
                 'Recently Sold': '-CloseDate',
                 Status: ['Status', '-BestPrice']
