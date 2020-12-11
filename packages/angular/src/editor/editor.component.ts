@@ -469,6 +469,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'imageManager'
             'mediaManager'
         ],
+        imageUpload: true,
+        imageUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
         imageManagerPageSize: 20,
         imageManagerScrollOffset: 10,
         imageManagerLoadMethod: 'GET',
@@ -749,7 +751,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'videoByURL',
             'videoEmbed',
             // 'videoUpload',
-        ]
+        ],
+        videoUpload: true,
+        videoUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
     }
 
     constructor(
@@ -929,22 +933,26 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // tslint:disable-next-line:no-conditional-assignment
         while (imgMatch = imgRegex.exec(data)) {
             const src: string = imgMatch[0]
+            // This skips elements with the entire image data in the src
+            if (src.includes('data:image')) {
+                continue
+            }
             // This skips image sizing for elements without lazy loading
             // TODO: Enable this after things are normalized
             // if (!src.includes('stratus-src')) {
-            //     return
+            //     continue
             // }
             const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
             const srcMatch: RegExpExecArray = srcRegex.exec(src)
             if (srcMatch === null) {
-                console.error('Unable to find file name for image src:', src)
-                return
+                console.warn('Unable to find file name for image src:', src)
+                continue
             }
             // This removes image sizing from elements without lazy loading
             // TODO: Disable this after things are normalized
             if (!src.includes('stratus-src')) {
                 data = data.replace(src, `${srcMatch[1]}.${srcMatch[3]}`)
-                return
+                continue
             }
             data = data.replace(src, `${srcMatch[1]}-${size}.${srcMatch[3]}`)
         }
