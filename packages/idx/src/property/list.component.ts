@@ -61,7 +61,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     preferredStatus: 'Closed' | 'Leased' | 'Rented'
     detailsTemplate?: string
     query: CompileFilterOptions
-    orderOptions: object | any // TODO need to specify
+    orderOptions: {[key:string]: string[]}
     googleApiKey?: string
     contactName: string
     contactEmail?: string
@@ -71,6 +71,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     instancePath: string
     mapMarkers: MarkerSettings[]
 
+    getOrderName(): string
     getStreetAddress(property: Property): string
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
@@ -182,10 +183,10 @@ Stratus.Components.IdxPropertyList = {
 
             // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
             $scope.orderOptions = $scope.orderOptions || {
-                'Highest Price': '-BestPrice',
-                'Lowest Price': 'BestPrice',
-                'Recently Updated': '-ModificationTimestamp',
-                'Recently Sold': '-CloseDate',
+                'Highest Price': ['-BestPrice'],
+                'Lowest Price': ['BestPrice'],
+                'Recently Updated': ['-ModificationTimestamp'],
+                'Recently Sold': ['-CloseDate'],
                 Status: ['Status', '-BestPrice']
             }
 
@@ -463,6 +464,24 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.order = order
             await $scope.searchProperties(null, true, true)
             Idx.emit('orderChanged', $scope, _.clone(order))
+        }
+
+        $scope.getOrderName = (): string => {
+            let name
+            if (
+                $scope.query.order !== '' &&
+                !_.isEmpty($scope.query.order)
+            ) {
+                for (const orderName in $scope.orderOptions ) {
+                    if (
+                        $scope.orderOptions.hasOwnProperty(orderName) &&
+                        _.isEqual($scope.orderOptions[orderName], $scope.query.order)
+                    ) {
+                        name = orderName
+                    }
+                }
+            }
+            return name
         }
 
         /**

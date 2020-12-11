@@ -3,7 +3,7 @@
         <div class="sort-options-container" data-ng-if="collection.meta.data.totalRecords">
             <md-menu data-md-position-mode="target-right target" data-md-offset="0 30">
                 <div class=" options-button" data-ng-click="$mdMenu.open()" aria-label="Sort Options">
-                    <i class="arrow small down grey"></i> <span class="options-name"><a href="">Sort Options</a></span>
+                    <i class="arrow small down grey"></i> <span class="options-name"><a href="" data-ng-bind="getOrderName() || 'Sort Options'"></a></span>
                 </div>
                 <md-menu-content data-ng-click="$mdMenu.close()">
                     <md-menu-item data-ng-repeat="(name, order) in orderOptions">
