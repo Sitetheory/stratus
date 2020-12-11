@@ -176,7 +176,10 @@ FroalaEditor.DEFAULTS.imageInsertButtons.push('mediaManager'),
         focus: !1,
         modal: !0,
         callback() {
-            console.log('clicked:', this.mediaManager)
+            const debug = false
+            if (debug) {
+                console.log('clicked:', this.mediaManager)
+            }
             this.mediaManager.onClick()
         },
         plugin: 'mediaManager',

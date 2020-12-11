@@ -17,9 +17,61 @@
                      [ngClass]="{'selected' : isSelected(mediaEntity)}"
                      (click)="select(mediaEntity)">
             </mat-grid-tile>
+            <mat-grid-tile *ngIf="mediaEntity.thumbSrc === null
+                                  && mediaEntity.mime === 'video'">
+                <ng-container *ngIf="mediaEntity.service === 'vimeo'
+                                     && mediaEntity.meta
+                                     && mediaEntity.meta.thumbnail_large">
+                    <img [src]="mediaEntity.meta.thumbnail_large"
+                         [alt]="mediaEntity.name"
+                         [style.cursor]="'pointer'"
+                         [ngClass]="{'selected' : isSelected(mediaEntity)}"
+                         (click)="select(mediaEntity)">
+                </ng-container>
+                <ng-container *ngIf="mediaEntity.service === 'youtube'
+                                     && mediaEntity.serviceMediaId">
+                    <img [src]="'https://img.youtube.com/vi/' + mediaEntity.serviceMediaId + '/0.jpg'"
+                         [alt]="mediaEntity.name"
+                         [style.cursor]="'pointer'"
+                         [ngClass]="{'selected' : isSelected(mediaEntity)}"
+                         (click)="select(mediaEntity)">
+                </ng-container>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="mediaEntity.thumbSrc === null
+                                  && _.startsWith(mediaEntity.mime, 'audio')">
+                <!-- TODO: make this a local file -->
+                <img src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-audio.png"
+                     [alt]="mediaEntity.name"
+                     [style.cursor]="'pointer'"
+                     [ngClass]="{'selected' : isSelected(mediaEntity)}"
+                     (click)="select(mediaEntity)">
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="mediaEntity.thumbSrc === null
+                                  && mediaEntity.mime === 'application/pdf'">
+                <!-- TODO: make this a local file -->
+                <img src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-pdf.png"
+                     [alt]="mediaEntity.name"
+                     [style.cursor]="'pointer'"
+                     [ngClass]="{'selected' : isSelected(mediaEntity)}"
+                     (click)="select(mediaEntity)">
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="mediaEntity.thumbSrc === null
+                                  && mediaEntity.mime === 'application/msword'">
+                <!-- TODO: make this a local file -->
+                <img src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-doc.png"
+                     [alt]="mediaEntity.name"
+                     [style.cursor]="'pointer'"
+                     [ngClass]="{'selected' : isSelected(mediaEntity)}"
+                     (click)="select(mediaEntity)">
+            </mat-grid-tile>
+            <!-- Note: This shows info for entities that don't have a proper display -->
             <!--
-            <mat-grid-tile *ngIf="mediaEntity.thumbSrc !== null">
-                <span [innerText]="mediaEntity | json"></span>
+            <mat-grid-tile *ngIf="mediaEntity.thumbSrc === null
+                                  && !_.startsWith(mediaEntity.mime, 'audio')
+                                  && !['application/pdf', 'application/msword', 'video'].includes(mediaEntity.mime)">
+                <span [innerText]="mediaEntity.id"></span>&nbsp;
+                <span [innerText]="mediaEntity.mime|json"></span>&nbsp;
+                <span [innerText]="mediaEntity.service|json"></span>
             </mat-grid-tile>
             -->
         </ng-container>

@@ -230,7 +230,11 @@ export class MediaDialogComponent implements OnInit {
         if (_.isUndefined(media)) {
             return
         }
-        const imageElement = `<img data-stratus-src src="${media.thumbSrc}" alt="${media.name || media.filename}">`
+        const mediaElement = this.createEmbed(media)
+        if (!mediaElement) {
+            console.warn(`media-dialog: unable to build html for media id: ${media.id}`)
+            return
+        }
         this.selected.push(media.id)
         // Add element to the end of the model property
         if (!this.eventInsert) {
@@ -245,7 +249,7 @@ export class MediaDialogComponent implements OnInit {
             console.warn('media-dialog: disabling eventInsert is not recommended.')
             this.model.set(
                 this.property,
-                this.model.get(this.property) + imageElement
+                this.model.get(this.property) + mediaElement
             )
             return
         }
@@ -253,7 +257,7 @@ export class MediaDialogComponent implements OnInit {
             console.warn('media-dialog: event manager is not set.')
             return
         }
-        this.eventManager.trigger('media-insert', imageElement, this.editor)
+        this.eventManager.trigger('media-insert', mediaElement, this.editor)
     }
 
     isSelected(media: Media) : boolean {
@@ -261,6 +265,40 @@ export class MediaDialogComponent implements OnInit {
             return
         }
         return _.includes(this.selected, media.id)
+    }
+
+    createEmbed (media: Media) {
+        if (_.startsWith(media.mime, 'image')) {
+            return `<img src="${media.thumbSrc}" alt="${media.name || media.filename} ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
+        }
+        if (media.mime === 'video') {
+            if (media.embed) {
+                return media.embed
+            }
+            if (!media.serviceMediaId) {
+                console.warn(`media-dialog: unable to find serviceMediaId for video with media id: ${media.id}`)
+                return null
+            }
+            if (media.service === 'vimeo') {
+                return `<iframe src="https://player.vimeo.com/video/${media.serviceMediaId}" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" frameborder="0"></iframe>`
+            }
+            if (media.service === 'youtube') {
+                return `<iframe src="https://www.youtube.com/embed/${media.serviceMediaId}" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" frameborder="0"></iframe>`
+            }
+            console.warn(`media-dialog: unsupported service: ${media.service} for media id: ${media.id}`)
+            return null
+        }
+        if (_.startsWith(media.mime, 'audio')) {
+            return `<audio controls><source src=${media.url}" type="${media.mime}">Your browser does not support the audio element.</audio>`
+        }
+        if (media.mime === 'application/pdf') {
+            return `<iframe src="${media.url}" width="100%"></iframe>`
+        }
+        if (media.mime === 'application/msword') {
+            return `<iframe src="${media.url}" width="100%"></iframe>`
+        }
+        console.warn(`media-dialog: unsupported mime type: ${media.mime} for media id: ${media.id}`)
+        return null
     }
 }
 
