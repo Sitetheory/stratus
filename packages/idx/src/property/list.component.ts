@@ -190,14 +190,6 @@ Stratus.Components.IdxPropertyList = {
                 $ctrl.defaultQuery.Order = $scope.query.order
             }
 
-            // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
-            /*$scope.orderOptions = $scope.orderOptions || {
-                'Highest Price': ['-BestPrice'],
-                'Lowest Price': ['BestPrice'],
-                'Recently Updated': ['-ModificationTimestamp'],
-                'Recently Sold': ['-CloseDate'],
-                Status: ['Status', '-BestPrice']
-            }*/
             $scope.orderOptions = $scope.orderOptions || [
                 {name: 'Highest Price', value: ['-BestPrice']},
                 {name: 'Lowest Price', value: ['BestPrice']},
@@ -485,9 +477,32 @@ Stratus.Components.IdxPropertyList = {
         $scope.getOrderOptions = (): OrderOptions => {
             const options: OrderOptions = {}
             $scope.orderOptions.forEach((orderOption) => {
-                // TODO check if value belongs
-                options[orderOption.name] = orderOption.value
+                // FIXME these are hard coded checks if Sold
+                switch (orderOption.name) {
+                    case 'Recently Sold': {
+                        if (
+                            $scope.query.where.Status &&
+                            $scope.query.where.Status.includes('Closed')
+                        ) {
+                            options[orderOption.name] = orderOption.value
+                        }
+                        break
+                    }
+                    case 'Status': {
+                        if (
+                            $scope.query.where.Status &&
+                            $scope.query.where.Status.length > 1
+                        ) {
+                            options[orderOption.name] = orderOption.value
+                        }
+                        break
+                    }
+                    default: {
+                        options[orderOption.name] = orderOption.value
+                    }
+                }
             })
+
             return options
         }
 
