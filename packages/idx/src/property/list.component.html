@@ -6,7 +6,7 @@
                     <i class="arrow small down grey"></i> <span class="options-name"><a href="" data-ng-bind="getOrderName() || 'Sort Options'"></a></span>
                 </div>
                 <md-menu-content data-ng-click="$mdMenu.close()">
-                    <md-menu-item data-ng-repeat="(name, order) in orderOptions">
+                    <md-menu-item data-ng-repeat="(name, order) in getOrderOptions()">
                         <md-button data-ng-click="orderChange(order, $event)" data-ng-bind="::name" aria-label="{{::name}}"></md-button>
                     </md-menu-item>
                 </md-menu-content>

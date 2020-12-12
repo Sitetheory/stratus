@@ -51,6 +51,14 @@ const moduleName = 'property'
 const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+type OrderOptions = {
+    [key:string]: string[]
+}
+type OrderOption = {
+    name: string,
+    value: string[]
+}
+
 export type IdxPropertyListScope = IdxListScope<Property> & {
     urlLoad: boolean
     searchOnLoad: boolean
@@ -61,7 +69,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     preferredStatus: 'Closed' | 'Leased' | 'Rented'
     detailsTemplate?: string
     query: CompileFilterOptions
-    orderOptions: {[key:string]: string[]}
+    orderOptions: OrderOption[]
     googleApiKey?: string
     contactName: string
     contactEmail?: string
@@ -72,6 +80,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     mapMarkers: MarkerSettings[]
 
     getOrderName(): string
+    getOrderOptions(): {[key:string]: string[]}
     getStreetAddress(property: Property): string
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
@@ -182,13 +191,20 @@ Stratus.Components.IdxPropertyList = {
             }
 
             // TODO need to make an additional section to only include ''Recently Sold' when solds are selected (low priority)
-            $scope.orderOptions = $scope.orderOptions || {
+            /*$scope.orderOptions = $scope.orderOptions || {
                 'Highest Price': ['-BestPrice'],
                 'Lowest Price': ['BestPrice'],
                 'Recently Updated': ['-ModificationTimestamp'],
                 'Recently Sold': ['-CloseDate'],
                 Status: ['Status', '-BestPrice']
-            }
+            }*/
+            $scope.orderOptions = $scope.orderOptions || [
+                {name: 'Highest Price', value: ['-BestPrice']},
+                {name: 'Lowest Price', value: ['BestPrice']},
+                {name: 'Recently Updated', value: ['-ModificationTimestamp']},
+                {name: 'Recently Sold', value: ['-CloseDate']},
+                {name: 'Status', value: ['Status', '-BestPrice']}
+            ]
 
             $scope.googleApiKey = $attrs.googleApiKey || null
             $scope.contactName = $attrs.contactName || null
@@ -466,18 +482,28 @@ Stratus.Components.IdxPropertyList = {
             Idx.emit('orderChanged', $scope, _.clone(order))
         }
 
+        $scope.getOrderOptions = (): OrderOptions => {
+            const options: OrderOptions = {}
+            $scope.orderOptions.forEach((orderOption) => {
+                // TODO check if value belongs
+                options[orderOption.name] = orderOption.value
+            })
+            return options
+        }
+
         $scope.getOrderName = (): string => {
             let name
             if (
                 $scope.query.order !== '' &&
                 !_.isEmpty($scope.query.order)
             ) {
-                for (const orderName in $scope.orderOptions ) {
+                for (const index in $scope.orderOptions ) {
                     if (
-                        $scope.orderOptions.hasOwnProperty(orderName) &&
-                        _.isEqual($scope.orderOptions[orderName], $scope.query.order)
+                        $scope.orderOptions.hasOwnProperty(index) &&
+                        _.isEqual($scope.orderOptions[index].value, $scope.query.order)
                     ) {
-                        name = orderName
+                        name = $scope.orderOptions[index].name
+                        break
                     }
                 }
             }
