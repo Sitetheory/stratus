@@ -370,6 +370,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     froalaConfig: LooseObject = {
         attribution: false,
         key: Stratus.Environment.get('froalaKey'),
+        zIndex: 9999,
         codeBeautifierOptions: {
             end_with_newline: true,
             indent_inner_html: true,
@@ -392,7 +393,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             tabMode: 'space',
             tabSize: 4
         },
+        fileInsertButtons: [
+            'fileBack',
+            '|'
+        ],
         fileUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
+        fontFamily: {
+            'Arial,Helvetica,sans-serif': 'Arial',
+            'Georgia,serif': 'Georgia',
+            'Impact,Charcoal,sans-serif': 'Impact',
+            'Tahoma,Geneva,sans-serif': 'Tahoma',
+            '"Times New Roman",Times,serif': 'Times New Roman',
+            'Verdana,Geneva,sans-serif': 'Verdana'
+        },
         htmlAllowedAttrs: [
             'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
             'allowtransparency', 'alt', 'aria-.*', 'async', 'autocomplete', 'autofocus',
@@ -428,8 +441,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             '.fa', '.fr-emoticon', '.fr-inner', 'path', 'line', 'hr', 'div'
         ],
         htmlAllowedStyleProps: [
-            // 'font-family', 'font-size', 'background', 'color', 'width',
-            // 'text-align', 'vertical-align', 'background-color'
+            'font-family', 'font-size', 'background', 'color',
+            'width', 'min-width', 'height', 'min-height',
+            'text-align', 'vertical-align', 'background-color'
         ],
         htmlAllowedTags: [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
@@ -456,18 +470,23 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'wbr'
         ],
         htmlRemoveTags: [
-            // 'script', 'style', 'base'
+            'script',
+            'style',
+            'base'
         ],
         htmlSimpleAmpersand: false,
         htmlUntouched: true,
         imageInsertButtons: [
             'imageBack',
             '|',
-            // 'imageUpload',
+            'imageUpload',
             'imageByURL',
             // 'imageManager'
-            'mediaManager'
+            // 'mediaManager'
         ],
+        imageUpload: true,
+        imageUploadRemoteUrls: true,
+        imageUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
         imageManagerPageSize: 20,
         imageManagerScrollOffset: 10,
         imageManagerLoadMethod: 'GET',
@@ -479,6 +498,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // imageManagerDeleteURL: '/Api/MediaSrc',
         // imageManagerPreloader: '/images/loader.gif',
         multiLine: true,
+        paragraphStyles: {
+            'fr-text-gray': 'Gray',
+            'fr-text-bordered': 'Bordered',
+            'fr-text-spaced': 'Spaced',
+            'fr-text-uppercase': 'Uppercase',
+            // TODO: Move Button
+            btn: 'Button',
+            header: 'Header',
+            title: 'Title',
+            'alt-title': 'Alt Title (over)',
+            subtitle: 'Subtitle',
+            pullout: 'Pullout Quote',
+        },
         pasteDeniedAttrs: [
             'class',
             'id',
@@ -552,7 +584,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'inlineClass',
                     'inlineStyle',
                     'clearFormatting'
-                ]
+                ],
+                buttonsVisible: 2
             },
             moreParagraph: {
                 buttons: [
@@ -569,7 +602,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'outdent',
                     'indent',
                     'quote'
-                ]
+                ],
+                buttonsVisible: 2
             },
             moreRich: {
                 buttons: [
@@ -584,7 +618,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'embedly',
                     'insertFile',
                     'insertHR'
-                ]
+                ],
+                buttonsVisible: 2
             },
             moreMisc: {
                 buttons: [
@@ -747,8 +782,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             '|',
             'videoByURL',
             'videoEmbed',
-            // 'videoUpload',
-        ]
+            'videoUpload',
+        ],
+        videoUpload: true,
+        videoUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY')
     }
 
     constructor(
@@ -928,22 +965,26 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // tslint:disable-next-line:no-conditional-assignment
         while (imgMatch = imgRegex.exec(data)) {
             const src: string = imgMatch[0]
+            // This skips elements with the entire image data in the src
+            if (src.includes('data:image')) {
+                continue
+            }
             // This skips image sizing for elements without lazy loading
             // TODO: Enable this after things are normalized
             // if (!src.includes('stratus-src')) {
-            //     return
+            //     continue
             // }
             const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
             const srcMatch: RegExpExecArray = srcRegex.exec(src)
             if (srcMatch === null) {
-                console.error('Unable to find file name for image src:', src)
-                return
+                console.warn('Unable to find file name for image src:', src)
+                continue
             }
             // This removes image sizing from elements without lazy loading
             // TODO: Disable this after things are normalized
             if (!src.includes('stratus-src')) {
                 data = data.replace(src, `${srcMatch[1]}.${srcMatch[3]}`)
-                return
+                continue
             }
             data = data.replace(src, `${srcMatch[1]}-${size}.${srcMatch[3]}`)
         }
