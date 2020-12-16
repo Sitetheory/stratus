@@ -22,6 +22,9 @@ import {
 import {
     PageEvent
 } from '@angular/material/paginator'
+import {
+    MatSnackBar
+} from '@angular/material/snack-bar'
 
 // RXJS
 import {
@@ -101,11 +104,15 @@ export class MediaDialogComponent implements OnInit {
     // UI Settings
     selected: Array<number> = []
 
+    // Insert Settings
+    embedly = true
+
     constructor(
         public dialogRef: MatDialogRef<MediaDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: MediaDialogData,
         private fb: FormBuilder,
         private backend: BackendService,
+        private snackBar: MatSnackBar,
         private ref: ChangeDetectorRef
     ) {
         // Manually render upon data change
@@ -232,7 +239,12 @@ export class MediaDialogComponent implements OnInit {
         }
         const mediaElement = this.createEmbed(media)
         if (!mediaElement) {
-            console.warn(`media-dialog: unable to build html for media id: ${media.id}`)
+            console.warn(`media-dialog: unable to build embed for Media ID: ${media.id}`)
+            this.snackBar.open(`Unable to build embed for Media ID: ${media.id}.`, 'dismiss', {
+                duration: 5000,
+                horizontalPosition: 'right',
+                verticalPosition: 'bottom'
+            })
             return
         }
         this.selected.push(media.id)
@@ -269,33 +281,101 @@ export class MediaDialogComponent implements OnInit {
 
     createEmbed (media: Media) {
         if (_.startsWith(media.mime, 'image')) {
-            return `<img src="${media.thumbSrc}" alt="${media.name || media.filename} ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
+            if (!media.thumbSrc || (media.service === 'directlink' && !media.file)) {
+                console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
+                return null
+            }
+            return `<img src="${media.thumbSrc||media.file}" alt="${media.name || media.filename} ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
         }
         if (media.mime === 'video') {
-            if (media.embed) {
-                return media.embed
+            const iframeAttributes = 'width="100%" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true" webkitAllowFullScreen="" mozAllowFullScreen=""'
+            // Handle Facebook videos first, since they're quite odd
+            if (media.service === 'facebook') {
+                const mediaUrl = media.url||media.file
+                if (!mediaUrl) {
+                    // Use the embed code if we can't standardize.
+                    if (media.embed) {
+                        return media.embed
+                    }
+                    console.warn(`media-dialog: unable to find url for video with media id: ${media.id}`)
+                    return null
+                }
+                if (this.embedly) {
+                    return `<div class="fr-embedly"
+                                 data-original-embed="<a href='${mediaUrl}' data-card-branding='0' class='embedly-card'></a>"
+                                 style="height: 998px;">
+                                 <a href="${mediaUrl}" data-card-branding="0" class="embedly-card"></a>
+                             </div>`
+                }
+                return `<iframe src="https://www.facebook.com/plugins/video.php?href=${mediaUrl}" ${iframeAttributes}></iframe>`
             }
             if (!media.serviceMediaId) {
+                // Use the embed code if we can't standardize.
+                if (media.embed) {
+                    return media.embed
+                }
                 console.warn(`media-dialog: unable to find serviceMediaId for video with media id: ${media.id}`)
                 return null
             }
             if (media.service === 'vimeo') {
-                return `<iframe src="https://player.vimeo.com/video/${media.serviceMediaId}" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" frameborder="0"></iframe>`
+                if (this.embedly) {
+                    return `<div class="fr-embedly"
+                                data-original-embed="<a href='https://vimeo.com/${media.serviceMediaId}' data-card-branding='0' class='embedly-card'></a>"
+                                style="height: 370px;">
+                                <a href="https://vimeo.com/${media.serviceMediaId}" data-card-branding="0" class="embedly-card"></a>
+                            </div>`
+                }
+                return `<iframe src="https://player.vimeo.com/video/${media.serviceMediaId}" ${iframeAttributes}></iframe>`
             }
             if (media.service === 'youtube') {
-                return `<iframe src="https://www.youtube.com/embed/${media.serviceMediaId}" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="" frameborder="0"></iframe>`
+                if (this.embedly) {
+                    return `<div class="fr-embedly"
+                                 data-original-embed="<a href='https://www.youtube.com/watch?v=${media.serviceMediaId}' data-card-branding='0' class='embedly-card'></a>"
+                                 style="height: 370px;">
+                                <a href="https://www.youtube.com/watch?v=${media.serviceMediaId}" data-card-branding="0" class="embedly-card"></a>
+                            </div>`
+                }
+                return `<iframe src="https://www.youtube.com/embed/${media.serviceMediaId}" ${iframeAttributes}></iframe>`
             }
             console.warn(`media-dialog: unsupported service: ${media.service} for media id: ${media.id}`)
             return null
         }
         if (_.startsWith(media.mime, 'audio')) {
-            return `<audio controls><source src=${media.url}" type="${media.mime}">Your browser does not support the audio element.</audio>`
+            if (!media.url) {
+                console.warn(`media-dialog: unable to determine audio source for media id: ${media.id}`)
+                return null
+            }
+            return `<audio controls><source src="https://${media.url}" type="${media.mime}">Your browser does not support the audio element.</audio>`
         }
         if (media.mime === 'application/pdf') {
-            return `<iframe src="${media.url}" width="100%"></iframe>`
+            if (!media.url) {
+                console.warn(`media-dialog: unable to determine PDF source for media id: ${media.id}`)
+                return null
+            }
+            if (this.embedly) {
+                return `<div class="fr-embedly"
+                             data-original-embed="<a href='https://${media.url}' data-card-branding='0' class='embedly-card'></a>"
+                             style="height: 71px;">
+                             <a href="https://${media.url}" data-card-branding="0" class="embedly-card"></a>
+                         </div>`
+            }
+            // This works, but lags Froala...
+            return `<iframe src="https://docs.google.com/viewer?url=${media.url}&embedded=true" style="min-height: 500px;" width="100%"></iframe>`
         }
         if (media.mime === 'application/msword') {
-            return `<iframe src="${media.url}" width="100%"></iframe>`
+            if (!media.url) {
+                console.warn(`media-dialog: unable to determine Word Document source for media id: ${media.id}`)
+                return null
+            }
+            if (this.embedly) {
+                return `<div class="fr-embedly"
+                             data-original-embed="<a href='https://${media.url}' data-card-branding='0' class='embedly-card'></a>"
+                             style="height: 71px;">
+                             <a href="https://${media.url}" data-card-branding="0" class="embedly-card"></a>
+                         </div>`
+            }
+            // This works, but lags Froala...
+            return `<iframe src="https://docs.google.com/viewer?url=${media.url}&embedded=true" style="min-height: 500px;" width="100%"></iframe>`
         }
         console.warn(`media-dialog: unsupported mime type: ${media.mime} for media id: ${media.id}`)
         return null

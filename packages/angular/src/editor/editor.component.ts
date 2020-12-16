@@ -393,7 +393,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             tabMode: 'space',
             tabSize: 4
         },
+        fileInsertButtons: [
+            'fileBack',
+            '|'
+        ],
         fileUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
+        fontFamily: {
+            'Arial,Helvetica,sans-serif': 'Arial',
+            'Georgia,serif': 'Georgia',
+            'Impact,Charcoal,sans-serif': 'Impact',
+            'Tahoma,Geneva,sans-serif': 'Tahoma',
+            '"Times New Roman",Times,serif': 'Times New Roman',
+            'Verdana,Geneva,sans-serif': 'Verdana'
+        },
         htmlAllowedAttrs: [
             'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
             'allowtransparency', 'alt', 'aria-.*', 'async', 'autocomplete', 'autofocus',
@@ -429,8 +441,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             '.fa', '.fr-emoticon', '.fr-inner', 'path', 'line', 'hr', 'div'
         ],
         htmlAllowedStyleProps: [
-            // 'font-family', 'font-size', 'background', 'color', 'width',
-            // 'text-align', 'vertical-align', 'background-color'
+            'font-family', 'font-size', 'background', 'color',
+            'width', 'min-width', 'height', 'min-height',
+            'text-align', 'vertical-align', 'background-color'
         ],
         htmlAllowedTags: [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
@@ -457,19 +470,22 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'wbr'
         ],
         htmlRemoveTags: [
-            // 'script', 'style', 'base'
+            'script',
+            'style',
+            'base'
         ],
         htmlSimpleAmpersand: false,
         htmlUntouched: true,
         imageInsertButtons: [
             'imageBack',
             '|',
-            // 'imageUpload',
+            'imageUpload',
             'imageByURL',
             // 'imageManager'
-            'mediaManager'
+            // 'mediaManager'
         ],
         imageUpload: true,
+        imageUploadRemoteUrls: true,
         imageUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
         imageManagerPageSize: 20,
         imageManagerScrollOffset: 10,
@@ -482,6 +498,19 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // imageManagerDeleteURL: '/Api/MediaSrc',
         // imageManagerPreloader: '/images/loader.gif',
         multiLine: true,
+        paragraphStyles: {
+            'fr-text-gray': 'Gray',
+            'fr-text-bordered': 'Bordered',
+            'fr-text-spaced': 'Spaced',
+            'fr-text-uppercase': 'Uppercase',
+            // TODO: Move Button
+            btn: 'Button',
+            header: 'Header',
+            title: 'Title',
+            'alt-title': 'Alt Title (over)',
+            subtitle: 'Subtitle',
+            pullout: 'Pullout Quote',
+        },
         pasteDeniedAttrs: [
             'class',
             'id',
@@ -555,7 +584,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'inlineClass',
                     'inlineStyle',
                     'clearFormatting'
-                ]
+                ],
+                buttonsVisible: 2
             },
             moreParagraph: {
                 buttons: [
@@ -572,7 +602,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'outdent',
                     'indent',
                     'quote'
-                ]
+                ],
+                buttonsVisible: 2
             },
             moreRich: {
                 buttons: [
@@ -587,7 +618,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                     'embedly',
                     'insertFile',
                     'insertHR'
-                ]
+                ],
+                buttonsVisible: 2
             },
             moreMisc: {
                 buttons: [
@@ -750,10 +782,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             '|',
             'videoByURL',
             'videoEmbed',
-            // 'videoUpload',
+            'videoUpload',
         ],
         videoUpload: true,
-        videoUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
+        videoUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY')
     }
 
     constructor(
