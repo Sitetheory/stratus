@@ -11,8 +11,15 @@
           margin: 5px;
         }
       }
-      .selected {
+      img.selected {
         opacity: 0.5;
+      }
+      .media-card {
+        max-width: 400px;
+      }
+      .media-header-image {
+        //background-image: url('');
+        background-size: cover;
       }
     }
   }

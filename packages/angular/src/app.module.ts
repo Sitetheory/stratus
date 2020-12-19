@@ -31,6 +31,9 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 // Material Modules
 import {MaterialModules} from '@stratusjs/angular/material'
 
+// Angular Packages
+import {FlexLayoutModule} from '@angular/flex-layout'
+
 // Base Components
 import {BaseComponent} from '@stratusjs/angular/base/base.component'
 
@@ -359,6 +362,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         BrowserModule,
         BrowserAnimationsModule,
         // CodeEditorModule.forRoot(),
+        FlexLayoutModule,
         FormsModule,
         FroalaEditorModule.forRoot(),
         FroalaViewModule.forRoot(),
