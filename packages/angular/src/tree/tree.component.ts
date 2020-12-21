@@ -401,7 +401,8 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             if (!_.has(this.metaMap, modelId)) {
                 this.metaMap[modelId] = {
                     id: modelId,
-                    expanded: false
+                    // TODO: This is the default setting for the UI and should be a component setting
+                    expanded: true
                 }
             }
             if (!_.has(this.treeMap, modelId)) {

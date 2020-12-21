@@ -103,9 +103,11 @@ import {
 } from 'ts-transformer-keys'
 import {LooseObject} from '@stratusjs/core/misc'
 
-// CodeMirror
+// Froala External Requirements (Before Plugins are Loaded)
 import 'codemirror'
 import 'codemirror/mode/xml/xml'
+import 'html2pdf'
+import 'font-awesome'
 
 // Froala Plugins
 import 'froala-plugins'
@@ -366,6 +368,71 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         'insertTable', '|', 'undo', 'redo', 'removeFormat', 'wordPaste', 'help', 'html', 'fullscreen'
     ]
 
+    froalaStandardButtons = {
+        moreText: [
+            'bold',
+            'italic',
+            'underline',
+            'strikeThrough',
+            'subscript',
+            'superscript',
+            // FIXME: The vertical lines don't work
+            // '|',
+            'fontFamily',
+            'fontSize',
+            'textColor',
+            'backgroundColor',
+            // FIXME: The vertical lines don't work
+            // '|',
+            'inlineClass',
+            'inlineStyle',
+            // FIXME: The vertical lines don't work
+            // '|',
+            'clearFormatting'
+        ],
+        moreParagraph: [
+            'alignLeft',
+            'alignCenter',
+            'alignRight',
+            'alignJustify',
+            'indent',
+            'outdent',
+            'paragraphFormat',
+            'paragraphStyle',
+            // 'formatOLSimple',
+            'formatOL',
+            'formatUL',
+            'quote',
+            'lineHeight'
+        ],
+        moreRich: [
+            'insertLink',
+            'insertImage',
+            'insertVideo',
+            'insertFile',
+            'insertTable',
+            'insertHR',
+            'specialCharacters',
+            // FIXME: The free version is lacking and will require custom `fontAwesomeSets` to remove PRO icons
+            // 'fontAwesome',
+            'emoticons',
+            'embedly'
+        ],
+        moreMisc: [
+            'undo',
+            'redo',
+            'fullscreen',
+            'html',
+            'print',
+            // FIXME: This plugin doesn't detect the window.html2pdf, likely due to timing issues
+            // 'getPDF',
+            // FIXME: This icon never appears
+            'spellChecker',
+            'selectAll',
+            'help'
+        ],
+    }
+
     // Froala Configuration
     froalaConfig: LooseObject = {
         attribution: false,
@@ -384,6 +451,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         },
         // FIXME: The CodeView Plugin gives the following error when initializing CodeMirror.
         // FIXME: TypeError: c.opts.codeMirror.fromTextArea is not a function
+        // TODO: Check if this is a timing issue
+        // TODO: https://froala.com/wysiwyg-editor/examples/code-mirror/
         codeMirror: false,
         codeMirrorOptions: {
             indentWithTabs: false,
@@ -395,7 +464,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         },
         fileInsertButtons: [
             'fileBack',
-            '|'
+            '|',
+            'mediaManager'
         ],
         fileUploadURL: 'https://app.sitetheory.io/?session=' + cookie('SITETHEORY'),
         fontFamily: {
@@ -479,10 +549,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         imageInsertButtons: [
             'imageBack',
             '|',
+            'mediaManager',
             'imageUpload',
             'imageByURL',
             // 'imageManager'
-            // 'mediaManager'
         ],
         imageUpload: true,
         imageUploadRemoteUrls: true,
@@ -499,10 +569,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // imageManagerPreloader: '/images/loader.gif',
         multiLine: true,
         paragraphStyles: {
-            'fr-text-gray': 'Gray',
-            'fr-text-bordered': 'Bordered',
-            'fr-text-spaced': 'Spaced',
-            'fr-text-uppercase': 'Uppercase',
+            // 'fr-text-gray': 'Gray',
+            // 'fr-text-bordered': 'Bordered',
+            // 'fr-text-spaced': 'Spaced',
+            // 'fr-text-uppercase': 'Uppercase',
             // TODO: Move Button
             btn: 'Button',
             header: 'Header',
@@ -525,19 +595,22 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'codeBeautifier',
             'codeView',
             'colors',
+            // 'cryptojs',
             'draggable',
             'embedly',
             'emoticons',
             'entities',
             'file',
-            // 'fontAwesome',
+            'fontAwesome',
             'fontFamily',
             'fontSize',
-            // 'fullscreen',
+            // 'forms',
+            'fullscreen',
+            'help',
             'image',
-            // 'imageTUI',
+            // TODO: Install & Configure: https://froala.com/wysiwyg-editor/examples/tui-advanced-image-editor/
+            'imageTUI',
             // 'imageManager',
-            // 'imageManagerCustom',
             'inlineStyle',
             'inlineClass',
             'lineBreaker',
@@ -547,18 +620,22 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'mediaManager',
             'paragraphFormat',
             'paragraphStyle',
+            'print',
             'quickInsert',
             'quote',
             'save',
+            'specialCharacters',
+            'spellChecker',
             'table',
+            // 'trimVideo',
             'url',
             'video',
             'wordPaste',
         ],
         quickInsertButtons: [
-            // 'image',
-            'media',
+            'image',
             'video',
+            'media',
             'embedly',
             'table',
             'ul',
@@ -570,209 +647,59 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         toolbarSticky: true,
         toolbarButtons: {
             moreText: {
-                buttons: [
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikeThrough',
-                    'subscript',
-                    'superscript',
-                    'fontFamily',
-                    'fontSize',
-                    'textColor',
-                    'backgroundColor',
-                    'inlineClass',
-                    'inlineStyle',
-                    'clearFormatting'
-                ],
-                buttonsVisible: 2
+                buttons: this.froalaStandardButtons.moreText,
+                buttonsVisible: 6
             },
             moreParagraph: {
-                buttons: [
-                    'alignLeft',
-                    'alignCenter',
-                    'formatOLSimple',
-                    'alignRight',
-                    'alignJustify',
-                    'formatOL',
-                    'formatUL',
-                    'paragraphFormat',
-                    'paragraphStyle',
-                    'lineHeight',
-                    'outdent',
-                    'indent',
-                    'quote'
-                ],
-                buttonsVisible: 2
+                buttons: this.froalaStandardButtons.moreParagraph,
+                buttonsVisible: 8
             },
             moreRich: {
-                buttons: [
-                    'insertLink',
-                    'mediaManager',
-                    'insertImage',
-                    'insertVideo',
-                    'insertTable',
-                    'emoticons',
-                    // 'fontAwesome',
-                    'specialCharacters',
-                    'embedly',
-                    'insertFile',
-                    'insertHR'
-                ],
-                buttonsVisible: 2
+                buttons: this.froalaStandardButtons.moreRich,
+                buttonsVisible: 5
             },
             moreMisc: {
-                buttons: [
-                    'undo',
-                    'redo',
-                    // 'fullscreen',
-                    'print',
-                    // 'getPDF',
-                    'spellChecker',
-                    // 'selectAll',
-                    'html',
-                    'help'
-                ],
+                buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
-                buttonsVisible: 2
+                buttonsVisible: 4
             }
         },
         // A MD sized screen will show the default toolbarButtons
         // toolbarButtonsMD: null,
         toolbarButtonsSM: {
             moreText: {
-                buttons: [
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikeThrough',
-                    'subscript',
-                    'superscript',
-                    'fontFamily',
-                    'fontSize',
-                    'textColor',
-                    'backgroundColor',
-                    'inlineClass',
-                    'inlineStyle',
-                    'clearFormatting'
-                ],
+                buttons: this.froalaStandardButtons.moreText,
                 buttonsVisible: 2
             },
             moreParagraph: {
-                buttons: [
-                    'alignLeft',
-                    'alignCenter',
-                    'formatOLSimple',
-                    'alignRight',
-                    'alignJustify',
-                    'formatOL',
-                    'formatUL',
-                    'paragraphFormat',
-                    'paragraphStyle',
-                    'lineHeight',
-                    'outdent',
-                    'indent',
-                    'quote'
-                ],
-                buttonsVisible: 2
+                buttons: this.froalaStandardButtons.moreParagraph,
+                buttonsVisible: 3
             },
             moreRich: {
-                buttons: [
-                    'insertLink',
-                    'mediaManager',
-                    'insertImage',
-                    'insertVideo',
-                    'insertTable',
-                    'emoticons',
-                    // 'fontAwesome',
-                    'specialCharacters',
-                    'embedly',
-                    'insertFile',
-                    'insertHR'
-                ],
-                buttonsVisible: 2
+                buttons: this.froalaStandardButtons.moreRich,
+                buttonsVisible: 3
             },
             moreMisc: {
-                buttons: [
-                    'undo',
-                    'redo',
-                    // 'fullscreen',
-                    'print',
-                    // 'getPDF',
-                    'spellChecker',
-                    // 'selectAll',
-                    'html',
-                    'help'
-                ],
+                buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
-                buttonsVisible: 2
+                buttonsVisible: 4
             }
         },
         toolbarButtonsXS: {
             moreText: {
-                buttons: [
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strikeThrough',
-                    'subscript',
-                    'superscript',
-                    'fontFamily',
-                    'fontSize',
-                    'textColor',
-                    'backgroundColor',
-                    'inlineClass',
-                    'inlineStyle',
-                    'clearFormatting'
-                ],
+                buttons: this.froalaStandardButtons.moreText,
                 buttonsVisible: 0
             },
             moreParagraph: {
-                buttons: [
-                    'alignLeft',
-                    'alignCenter',
-                    'formatOLSimple',
-                    'alignRight',
-                    'alignJustify',
-                    'formatOL',
-                    'formatUL',
-                    'paragraphFormat',
-                    'paragraphStyle',
-                    'lineHeight',
-                    'outdent',
-                    'indent',
-                    'quote'
-                ],
+                buttons: this.froalaStandardButtons.moreParagraph,
                 buttonsVisible: 0
             },
             moreRich: {
-                buttons: [
-                    'insertLink',
-                    'mediaManager',
-                    'insertImage',
-                    'insertVideo',
-                    'insertTable',
-                    'emoticons',
-                    // 'fontAwesome',
-                    'specialCharacters',
-                    'embedly',
-                    'insertFile',
-                    'insertHR'
-                ],
+                buttons: this.froalaStandardButtons.moreRich,
                 buttonsVisible: 0
             },
             moreMisc: {
-                buttons: [
-                    'undo',
-                    'redo',
-                    // 'fullscreen',
-                    'print',
-                    // 'getPDF',
-                    'spellChecker',
-                    // 'selectAll',
-                    'html',
-                    'help'
-                ],
+                buttons: this.froalaStandardButtons.moreMisc,
                 align: 'right',
                 buttonsVisible: 2
             }
@@ -780,6 +707,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         videoInsertButtons: [
             'videoBack',
             '|',
+            'mediaManager',
             'videoByURL',
             'videoEmbed',
             'videoUpload',

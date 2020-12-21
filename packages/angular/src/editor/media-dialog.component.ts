@@ -288,15 +288,15 @@ export class MediaDialogComponent implements OnInit {
             return `<img src="${media.thumbSrc||media.file}" alt="${media.name || media.filename} ${media.mime !== 'image/gif' ? 'data-stratus-src' : ''}">`
         }
         if (media.mime === 'video') {
+            // Use the embed code if we can't standardize.
+            if (media.embed) {
+                return media.embed
+            }
             const iframeAttributes = 'width="100%" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true" webkitAllowFullScreen="" mozAllowFullScreen=""'
             // Handle Facebook videos first, since they're quite odd
             if (media.service === 'facebook') {
                 const mediaUrl = media.url||media.file
                 if (!mediaUrl) {
-                    // Use the embed code if we can't standardize.
-                    if (media.embed) {
-                        return media.embed
-                    }
                     console.warn(`media-dialog: unable to find url for video with media id: ${media.id}`)
                     return null
                 }
@@ -310,10 +310,6 @@ export class MediaDialogComponent implements OnInit {
                 return `<iframe src="https://www.facebook.com/plugins/video.php?href=${mediaUrl}" ${iframeAttributes}></iframe>`
             }
             if (!media.serviceMediaId) {
-                // Use the embed code if we can't standardize.
-                if (media.embed) {
-                    return media.embed
-                }
                 console.warn(`media-dialog: unable to find serviceMediaId for video with media id: ${media.id}`)
                 return null
             }
@@ -345,7 +341,12 @@ export class MediaDialogComponent implements OnInit {
                 console.warn(`media-dialog: unable to determine audio source for media id: ${media.id}`)
                 return null
             }
-            return `<audio controls><source src="https://${media.url}" type="${media.mime}">Your browser does not support the audio element.</audio>`
+            return `<audio controls>
+                        <source src="https://${media.url}" type="${media.mime}">
+                        <p>
+                            Your browser doesn't support HTML5 audio, but you can <a href="https://${media.url}">download the audio here</a>.
+                        </p>
+                    </audio>`
         }
         if (media.mime === 'application/pdf') {
             if (!media.url) {
