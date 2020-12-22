@@ -588,7 +588,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'ng-.*'
         ],
         pasteDeniedTags: [],
-        pastePlain: true,
+        pastePlain: false,
         pluginsEnabled: [
             'align',
             'charCounter',
