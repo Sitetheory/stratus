@@ -42,7 +42,7 @@ export function cookie(name: any, value?: any, expires?: any, path?: any, domain
         data += 'domain=' + request.domain + ';'
     }
     data += `secure=${request.secure === false ? 'false' : 'true'};`
-    data += `sameSite=${request.sameSite || 'None'};`
+    data += `sameSite=${request.sameSite || 'Lax'};`
     console.log('new cookie:', data)
     document.cookie = data
 }
