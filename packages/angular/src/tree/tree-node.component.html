@@ -55,7 +55,7 @@
     <!-- Route Display -->
     <small [class.route-none]="!node.model.get('route')"
            [class.type-none]="!node.model.get('content.contentType.iconResourcePath')">
-        {{node.model.get('route') || 'No route set!'}}
+        {{node.model.get('url') || node.model.get('route') || 'No route set!'}}
     </small>
 
     <!-- create drop list -->
