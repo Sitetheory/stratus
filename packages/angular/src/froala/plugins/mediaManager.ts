@@ -171,7 +171,7 @@ FroalaEditor.PLUGINS.mediaManager = function mediaManager (editor: any) {
 // Insert Plugin to Image Insert
 FroalaEditor.DEFAULTS.imageInsertButtons.push('mediaManager'),
     FroalaEditor.RegisterCommand('mediaManager', {
-        title: 'Insert Media',
+        title: 'Insert from Media Library',
         undo: !1,
         focus: !1,
         modal: !0,
@@ -194,7 +194,7 @@ FroalaEditor.RegisterQuickInsertButton('media', {
     icon: 'mediaManager',
 
     // Tooltip.
-    title: 'Insert Media',
+    title: 'Insert from Media Library',
 
     // Callback for the button.
     callback: function mediaManagerCallback () {

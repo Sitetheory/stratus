@@ -589,6 +589,7 @@ exports.dist = parallel(
     // distStratus
 )
 
+// Compilation Shortcuts
 exports.compileCSS = parallel(
     series(cleanLESS, compileLESS),
     series(cleanSASS, compileSASS),
@@ -596,3 +597,11 @@ exports.compileCSS = parallel(
 )
 exports.compileSass = series(cleanSASS, compileSASS)
 exports.compileTypeScript = series(cleanTypeScript, compileTypeScript)
+
+// Compress Shortcuts
+exports.compressJavaScript = parallel(
+    series(cleanMangle, compressMangle),
+    series(cleanPreserve, compressPreserve),
+)
+exports.compressCSS = series(cleanCSS, compressCSS)
+exports.compressTemplate = series(cleanTemplate, compressTemplate)

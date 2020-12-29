@@ -101,7 +101,7 @@
 
                         <!-- Title & Route Display -->
                         <!--<span [class.selected-item]="isSelected(model)">-->
-                        {{model.version.title}}
+                        {{(model && model.version) ? model.version.title : 'Untitled'}}
                         <small *ngIf="model.routing.length">
                             {{'/' + model.routing[0].url}}
                         </small>

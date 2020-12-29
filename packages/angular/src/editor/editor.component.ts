@@ -114,7 +114,7 @@ import 'froala-plugins'
 import 'froala-embedly'
 import 'froala-font-awesome'
 import 'froala-image-tui'
-import 'froala-spell-checker'
+// import 'froala-spell-checker'
 
 // Froala Individual Plugins
 // import 'froala-align'
@@ -403,7 +403,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'formatOL',
             'formatUL',
             'quote',
-            'lineHeight'
+            // 'lineHeight'
         ],
         moreRich: [
             'insertLink',
@@ -415,7 +415,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'specialCharacters',
             // FIXME: The free version is lacking and will require custom `fontAwesomeSets` to remove PRO icons
             // 'fontAwesome',
-            'emoticons',
+            // 'emoticons',
             'embedly'
         ],
         moreMisc: [
@@ -427,7 +427,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // FIXME: This plugin doesn't detect the window.html2pdf, likely due to timing issues
             // 'getPDF',
             // FIXME: This icon never appears
-            'spellChecker',
+            // 'spellChecker',
             'selectAll',
             'help'
         ],
@@ -598,7 +598,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // 'cryptojs',
             'draggable',
             'embedly',
-            'emoticons',
+            // 'emoticons',
             'entities',
             'file',
             'fontAwesome',
@@ -614,7 +614,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'inlineStyle',
             'inlineClass',
             'lineBreaker',
-            'lineHeight',
+            // 'lineHeight',
             'link',
             'lists',
             'mediaManager',
@@ -625,7 +625,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'quote',
             'save',
             'specialCharacters',
-            'spellChecker',
+            // 'spellChecker',
             'table',
             // 'trimVideo',
             'url',
@@ -648,7 +648,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         toolbarButtons: {
             moreText: {
                 buttons: this.froalaStandardButtons.moreText,
-                buttonsVisible: 6
+                buttonsVisible: 0
             },
             moreParagraph: {
                 buttons: this.froalaStandardButtons.moreParagraph,
@@ -669,11 +669,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         toolbarButtonsSM: {
             moreText: {
                 buttons: this.froalaStandardButtons.moreText,
-                buttonsVisible: 2
+                buttonsVisible: 3
             },
             moreParagraph: {
                 buttons: this.froalaStandardButtons.moreParagraph,
-                buttonsVisible: 3
+                buttonsVisible: 0
             },
             moreRich: {
                 buttons: this.froalaStandardButtons.moreRich,
@@ -747,7 +747,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             `${froalaDir}css/third_party/embedly${!this.dev ? '.min' : ''}.css`,
             `${froalaDir}css/third_party/font_awesome${!this.dev ? '.min' : ''}.css`,
             `${froalaDir}css/third_party/image_tui${!this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/third_party/spell_checker${!this.dev ? '.min' : ''}.css`
+            // `${froalaDir}css/third_party/spell_checker${!this.dev ? '.min' : ''}.css`
         ]).then(() => {
             this.styled = true
             this.refresh()
