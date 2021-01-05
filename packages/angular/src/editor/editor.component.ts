@@ -510,11 +510,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'textarea', 'a', 'iframe', 'object', 'video', 'style', 'script',
             '.fa', '.fr-emoticon', '.fr-inner', 'path', 'line', 'hr', 'div'
         ],
-        htmlAllowedStyleProps: [
-            'font-family', 'font-size', 'background', 'color',
-            'width', 'min-width', 'height', 'min-height',
-            'text-align', 'vertical-align', 'background-color'
-        ],
+        htmlAllowedStyleProps: ['*'],
         htmlAllowedTags: [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
             'b', 'base', 'bdi', 'bdo', 'blockquote', 'br', 'button',
