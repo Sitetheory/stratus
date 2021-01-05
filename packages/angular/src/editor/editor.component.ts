@@ -583,7 +583,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'data-.*',
             'ng-.*'
         ],
-        pasteDeniedTags: [],
+        pasteDeniedTags: [
+            'form', 'input', 'label',
+        ],
         pastePlain: false,
         pluginsEnabled: [
             'align',
