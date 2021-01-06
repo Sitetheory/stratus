@@ -510,11 +510,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'textarea', 'a', 'iframe', 'object', 'video', 'style', 'script',
             '.fa', '.fr-emoticon', '.fr-inner', 'path', 'line', 'hr', 'div'
         ],
-        htmlAllowedStyleProps: [
-            'font-family', 'font-size', 'background', 'color',
-            'width', 'min-width', 'height', 'min-height',
-            'text-align', 'vertical-align', 'background-color'
-        ],
+        htmlAllowedStyleProps: ['*'],
         htmlAllowedTags: [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
             'b', 'base', 'bdi', 'bdo', 'blockquote', 'br', 'button',
@@ -541,7 +537,6 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         htmlRemoveTags: [
             'script',
-            'style',
             'base'
         ],
         htmlSimpleAmpersand: false,
@@ -582,12 +577,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             pullout: 'Pullout Quote',
         },
         pasteDeniedAttrs: [
-            'class',
-            'id',
+            // 'class',
+            // 'id',
             'style',
+            'data-.*',
             'ng-.*'
         ],
-        pasteDeniedTags: [],
+        pasteDeniedTags: [
+            'form', 'input', 'label',
+        ],
         pastePlain: false,
         pluginsEnabled: [
             'align',
@@ -730,6 +728,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         // Initialization
         this.uid = _.uniqueId(`sa_${moduleName}_component_`)
         Stratus.Instances[this.uid] = this
+
+        // FIXME: Event for code view is 'codeView.update'
 
         // SVG Icons
         // iconRegistry.addSvgIcon(
