@@ -535,10 +535,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'var', 'video',
             'wbr'
         ],
-        htmlRemoveTags: [
-            'script',
-            'base'
-        ],
+        htmlRemoveTags: [],
         htmlSimpleAmpersand: false,
         htmlUntouched: true,
         imageInsertButtons: [
