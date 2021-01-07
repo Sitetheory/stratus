@@ -486,8 +486,13 @@ export class Collection<T = LooseObject> extends EventManager {
         return _.find(this.models, _.isFunction(predicate) ? predicate : (model: Model) => model.get('id') === predicate)
     }
 
+    map(predicate: string) {
+        // return _.filter(_.map(this.models, model => model instanceof Model ? model.get(predicate) : null), model => !!model)
+        return _.map(this.models, model => model instanceof Model ? model.get(predicate) : null)
+    }
+
     pluck(attribute: string) {
-        return _.map(this.models, element => element instanceof Model ? element.pluck(attribute) : null)
+        return _.map(this.models, model => model instanceof Model ? model.pluck(attribute) : null)
     }
 
     exists(attribute: string) {
