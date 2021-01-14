@@ -185,6 +185,7 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
                 // level: node.model.data.nestParent === null ? 'top' : 'child',
                 content: node.model.data.content || null,
                 url: node.model.data.url || null,
+                browserTarget: node.model.data.browserTarget || null,
                 priority: node.model.data.priority || 0,
                 model: node.model || null,
                 collection: this.tree.collection || null,
@@ -206,7 +207,8 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
                 'name',
                 'content',
                 'url',
-                'priority'
+                'priority',
+                'browserTarget'
             ]
             // Persist to Model
             attrs.forEach(attr => {

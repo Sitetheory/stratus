@@ -533,7 +533,16 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track',
             'u', 'ul',
             'var', 'video',
-            'wbr'
+            'wbr',
+            // SVG Exclusive Tags
+            'animate', 'animateMotion', 'animateTransform', 'circle', 'clipPath', 'defs', 'desc', 'discard', 'ellipse',
+            'feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+            'feDisplacementMap', 'feDistantLight', 'feDropShadow', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
+            'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset',
+            'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence',
+            'filter', 'foreignObject', 'g', 'image', 'line', 'linearGradient', 'marker', 'mask', 'metadata', 'mpath',
+            'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch',
+            'symbol', 'text', 'textPath', 'tspan', 'unknown', 'use', 'view',
         ],
         htmlRemoveTags: [],
         htmlSimpleAmpersand: false,

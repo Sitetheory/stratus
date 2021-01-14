@@ -120,6 +120,11 @@
         </a>
     </mat-form-field>
 
+    <mat-checkbox [(ngModel)]="browserTarget"
+                  (ngModelChange)="onBrowserTargetChange($event)">
+        Open in new window
+    </mat-checkbox>
+
     <!-- Target Display -->
     <!--
     <h4>Linked To:</h4>
