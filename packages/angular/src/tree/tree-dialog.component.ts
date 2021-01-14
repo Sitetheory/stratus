@@ -58,6 +58,7 @@ import {
     ConfirmDialogComponent
 } from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
 import { moveItemInArray } from '@angular/cdk/drag-drop'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Data Types
 export interface DialogData {
@@ -71,9 +72,10 @@ export interface DialogData {
     content: any
     url: string
     model: Model
-    collection: any
+    collection: Collection
     parent: any
     nestParent: any
+    browserTarget: string // '_blank' or null
 }
 
 // Local Setup
@@ -125,6 +127,9 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
     isContentLoaded = false
     lastContentSelectorQuery: string
     basicContentSelectorQuery = '/Api/Content?options[isContent]=null&options[isCollection]=null&options[showRoutable]=true&options[showRouting]=true&q='
+
+    // Normalized Data
+    browserTarget: boolean
 
     // filteredParentOptions: any[]
     // dialogParentForm: FormGroup
@@ -288,6 +293,10 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         // FIXME: We have to go in this roundabout way to force changes to be detected since the
         // Dialog Sub-Components don't seem to have the right timing for ngOnInit
         // this.refresh()
+    }
+
+    onBrowserTargetChange($event: any): void {
+        this.data.browserTarget = this.browserTarget ? '_blank' : null
     }
 
     displayContentText(content: ContentEntity) {
