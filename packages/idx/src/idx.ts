@@ -216,6 +216,7 @@ export interface WhereOptions extends LooseObject {
     City?: string,
     PostalCode?: string[] | string,
     CityRegion?: string[] | string,
+    CountyOrParish?: string[] | string,
     MLSAreaMajor?: string[] | string,
     ListPriceMin?: number | any,
     ListPriceMax?: number | any,
@@ -224,6 +225,7 @@ export interface WhereOptions extends LooseObject {
     Location?: string,
     Neighborhood?: string[] | string,
     AgentLicense?: string[] | string, // Converts on server to multiple checks
+    OfficeNumber?: string[] | string, // Converts on server to multiple checks
     OpenHouseOnly?: boolean, // Filters by only those with OpenHouses attached
 
     // Member
@@ -568,7 +570,8 @@ const angularJsService = (
         PostalCode: [],
         // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
         CityRegion: [],
-        AgentLicense: []
+        AgentLicense: [],
+        OfficeNumber: []
     }
     let idxServicesEnabled: number[] = []
     let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
@@ -1531,6 +1534,9 @@ const angularJsService = (
                 apiField: 'BedroomsTotal'
             },
             AgentLicense: {
+                type: 'stringIncludesArray'
+            },
+            OfficeNumber: {
                 type: 'stringIncludesArray'
             },
             // Filters by only listings with OpenHouses
@@ -2639,6 +2645,7 @@ const angularJsService = (
             _.isEmpty(options.where.Neighborhood) &&
             _.isEmpty(options.where.Location) &&
             _.isEmpty(options.where.AgentLicense) &&
+            _.isEmpty(options.where.OfficeNumber) &&
             _.isEmpty(options.where.City) &&
             _.isEmpty(options.where.CityRegion) &&
             _.isEmpty(options.where.CountyOrParish) &&
