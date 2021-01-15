@@ -28,7 +28,7 @@
             <md-icon class="search-icon"
                      data-ng-click="searchProperties()"
                      data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)"
-                     md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/search.svg' | assetPath }}"></md-icon>
+                     md-svg-src="{{ localDir + 'images/icons/actionButtons/search.svg' }}"></md-icon>
             <md-input-container
                     class="md-block minimal"
                     data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)">
@@ -61,7 +61,7 @@
             </div>
             <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate -->
             <!-- NOTE: three of these get cleared as arrays -->
-            <a class="custom-clear" data-ng-if="(options.query.where.Location.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)" data-ng-click="options.query.where.Location = ''; options.query.where.City = ''; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.PostalCode = []; searchProperties()"><md-icon md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/clear.svg' | assetPath }}"></md-icon></a>
+            <a class="custom-clear" data-ng-if="(options.query.where.Location.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)" data-ng-click="options.query.where.Location = ''; options.query.where.City = ''; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.PostalCode = []; searchProperties()"><md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon></a>
 
 
 
@@ -98,7 +98,7 @@
 
                     <span data-ng-show="options.query.where.ListPriceMax == null">No Max</span>
                 </span>
-                <md-icon md-svg-src="{{ 'sitetheorycore/images/dropDownFat.svg' | assetPath }}"></md-icon>
+                <md-icon md-svg-src="{{ localDir + 'images/dropDownFat.svg' }}"></md-icon>
             </a>
 
             <div class="price-dropdown" data-ng-class="{'open-price' : openPrice == true}">
@@ -153,7 +153,7 @@
         <div class="search-more-filters" data-ng-init="advancedFiltersStatus = false">
             <a class="open-filters-link"
                data-ng-click="advancedFiltersStatus=!advancedFiltersStatus">
-                <md-icon md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/filters.svg' | assetPath }}"></md-icon>
+                <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span data-ng-show="advancedFiltersStatus != true">More </span><span data-ng-show="advancedFiltersStatus == true">Less </span><span class="optional-btn-text">Filters</span></span>
             </a>
         </div>
@@ -172,7 +172,7 @@
             <!-- Close Button -->
             <button type="button" class="btn-close" data-ng-click="advancedFiltersStatus=!advancedFiltersStatus">
                 <span class="sr-only">Close Dialogue</span>
-                <md-icon md-svg-src="{{ 'sitetheorycore/images/icons/actionButtons/close.svg' | assetPath }}" aria-hidden="true"></md-icon>
+                <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/close.svg' }}" aria-hidden="true"></md-icon>
             </button>
 
 

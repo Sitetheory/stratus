@@ -1,0 +1,11 @@
+<svg viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linear-gradient-icon-clear">
+            <stop class="stop1" stop-color="#666666" offset="0%"></stop>
+            <stop class="stop2" stop-color="#666666" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="icon-clear" class="action-button" fill="url(#linear-gradient-icon-clear)">
+        <path  d="M27.949,25.014 L32.006,20.957 L29.148,18.099 L25.091,22.156 L21.034,18.099 L18.176,20.957 L22.233,25.014 L18.176,29.071 L21.034,31.929 L25.091,27.872 L29.148,31.929 L32.006,29.071 L27.949,25.014 L27.949,25.014 Z M25,3 C12.85,3 3,12.85 3,25 C3,37.15 12.85,47 25,47 C37.15,47 47,37.15 47,25 C47,12.85 37.15,3 25,3 L25,3 Z M25,43.333 C14.875,43.333 6.667,35.125 6.667,25 C6.667,14.875 14.875,6.667 25,6.667 C35.125,6.667 43.333,14.875 43.333,25 C43.333,35.125 35.125,43.333 25,43.333 L25,43.333 Z"></path>
+    </g>
+</svg>
