@@ -172,7 +172,7 @@
                     </md-checkbox>
                 </div>
                 <md-checkbox
-                        data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                        data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
                         data-ng-model="options.query.where.OpenHouseOnly"
                         aria-label="Open Houses Only"
                         data-layout="row"
@@ -239,8 +239,28 @@
                         data-delete-hint="Press delete to remove License"
                 ></md-chips>
             </div>
-
             <div class="agent-specs-border dotted-spaced-underline"></div>
+
+            <!-- TODO As with agent above, this -could- later be replace with a Office look up widget -->
+            <h3>Office</h3>
+            <div class="office-specs"
+                 data-layout="row"
+                 data-layout-align="left"
+                 aria-label="Office Specs">
+                <md-chips
+                        class="office-number font-secondary"
+                        aria-label="Office Number(s) to Search"
+                        data-ng-model="options.query.where.OfficeNumber"
+                        data-md-enable-chip-edit="true"
+                        data-md-add-on-blur="true"
+                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                        data-placeholder="Office Number"
+                        data-secondary-placeholder="+Number"
+                        data-delete-button-label="Remove Number"
+                        data-delete-hint="Press delete to remove Number"
+                ></md-chips>
+            </div>
+            <div class="office-specs-border dotted-spaced-underline"></div>
 
             <h3>Display Options</h3>
 
