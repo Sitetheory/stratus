@@ -22,7 +22,8 @@ import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
 // Component Preload
-// import '@stratusjs/idx/member/list.component'
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/member/list.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
