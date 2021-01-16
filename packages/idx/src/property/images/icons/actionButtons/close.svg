@@ -1,0 +1,16 @@
+<svg viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>close</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linear-gradient-icon-close">
+            <stop class="stop1" stop-color="#666666" offset="0%"></stop>
+            <stop class="stop2" stop-color="#666666" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="btn-close" class="action-button" stroke="#999999" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Oval-15" stroke-width="2" cx="25" cy="25" r="23"></circle>
+        <path d="M17,17 L32.5563492,32.5563492" id="line-left"  stroke-width="2" stroke-linecap="square"></path>
+        <path d="M32.5563492,17 L17,32.5563492" id="line-right" stroke-width="2" stroke-linecap="square"></path>
+    </g>
+</svg>
+
+

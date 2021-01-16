@@ -90,6 +90,7 @@ Stratus.Components.IdxPropertySearch = {
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope._ = _
         Stratus.Instances[$scope.elementId] = $scope
+        $scope.localDir = localDir
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
