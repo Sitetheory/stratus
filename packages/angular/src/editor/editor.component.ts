@@ -476,6 +476,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             '"Times New Roman",Times,serif': 'Times New Roman',
             'Verdana,Geneva,sans-serif': 'Verdana'
         },
+        heightMax: window.innerHeight || document.documentElement.clientHeight || 500,
         htmlAllowedAttrs: [
             'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
             'allowtransparency', 'alt', 'aria-.*', 'async', 'autocomplete', 'autofocus',
@@ -583,14 +584,15 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             pullout: 'Pullout Quote',
         },
         pasteDeniedAttrs: [
-            // 'class',
-            // 'id',
+            'id',
+            'class',
             'style',
             'data-.*',
             'ng-.*'
         ],
         pasteDeniedTags: [
             'form', 'input', 'label',
+            'style'
         ],
         pastePlain: false,
         pluginsEnabled: [

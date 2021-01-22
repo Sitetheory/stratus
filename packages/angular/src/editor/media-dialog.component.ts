@@ -280,6 +280,9 @@ export class MediaDialogComponent implements OnInit {
     }
 
     createEmbed (media: Media) {
+        if (media._embedCode) {
+            return media._embedCode
+        }
         if (_.startsWith(media.mime, 'image')) {
             if (!media.thumbSrc || (media.service === 'directlink' && !media.file)) {
                 console.warn(`media-dialog: unable to determine image source for media id: ${media.id}`)
@@ -295,7 +298,7 @@ export class MediaDialogComponent implements OnInit {
             const iframeAttributes = 'width="100%" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true" webkitAllowFullScreen="" mozAllowFullScreen=""'
             // Handle Facebook videos first, since they're quite odd
             if (media.service === 'facebook') {
-                const mediaUrl = media.url||media.file
+                const mediaUrl = media.url || media.file
                 if (!mediaUrl) {
                     console.warn(`media-dialog: unable to find url for video with media id: ${media.id}`)
                     return null

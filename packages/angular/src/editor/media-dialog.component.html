@@ -63,17 +63,20 @@
                         </ng-container>
                     </mat-card-subtitle>
                 </mat-card-header>
-                <ng-container *ngIf="mediaEntity.thumbSrc !== null">
+                <ng-container *ngIf="mediaEntity._thumbSrc">
                     <img mat-card-image
-                         [src]="mediaEntity.thumbSrc"
+                         class="generic-thumb basic-image"
+                         [src]="mediaEntity.mime !== 'image/gif' ? mediaEntity._thumbSrc : mediaEntity._directUrl"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="mediaEntity.thumbSrc === null
+                <ng-container *ngIf="!mediaEntity._thumbSrc
                                       && mediaEntity.mime === 'video'">
                     <ng-container *ngIf="mediaEntity.service === 'vimeo'">
                         <ng-container *ngIf="mediaEntity.meta && mediaEntity.meta.thumbnail_large; else basicVimeoButton">
+                            <!-- [src]="mediaEntity.meta.thumbnail_large || '/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png'" -->
                             <img mat-card-image
+                                 class="vimeo"
                                  [src]="mediaEntity.meta.thumbnail_large"
                                  [alt]="mediaEntity.name"
                                  [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -83,6 +86,7 @@
                             <!-- Generic Video Image -->
                             <!-- TODO: make this a local file -->
                             <img mat-card-image
+                                 class="vimeo basic-image"
                                  src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
                                  style="background: #4e4e4e;"
                                  [alt]="mediaEntity.name"
@@ -92,6 +96,7 @@
                     <ng-container *ngIf="mediaEntity.service === 'youtube'">
                         <ng-container *ngIf="mediaEntity.serviceMediaId; else basicYoutubeButton">
                             <img mat-card-image
+                                 class="youtube"
                                  [src]="'https://img.youtube.com/vi/' + mediaEntity.serviceMediaId + '/hqdefault.jpg'"
                                  [alt]="mediaEntity.name"
                                  [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -101,6 +106,7 @@
                             <!-- Generic Video Image -->
                             <!-- TODO: make this a local file -->
                             <img mat-card-image
+                                 class="youtube basic-image"
                                  src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
                                  style="background: #4e4e4e;"
                                  [alt]="mediaEntity.name"
@@ -112,6 +118,7 @@
                         <!-- Generic Video Image -->
                         <!-- TODO: make this a local file -->
                         <img mat-card-image
+                             class="facebook-video basic-image"
                              src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
                              style="background: #4e4e4e;"
                              [alt]="mediaEntity.name"
@@ -121,42 +128,47 @@
                         <!-- Generic Video Image -->
                         <!-- TODO: make this a local file -->
                         <img mat-card-image
+                             class="generic-video basic-image"
                              src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeIcons/media-icon-video.png"
                              style="background: #4e4e4e;"
                              [alt]="mediaEntity.name"
                              [ngClass]="{'selected' : isSelected(mediaEntity)}">
                     </ng-container>
                 </ng-container>
-                <ng-container *ngIf="mediaEntity.thumbSrc === null
+                <ng-container *ngIf="!mediaEntity._thumbSrc
                                       && _.startsWith(mediaEntity.mime, 'audio')">
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
+                         class="generic-audio"
                          src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-audio.png"
                          style="background: #4e4e4e;"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="mediaEntity.thumbSrc === null
+                <ng-container *ngIf="!mediaEntity._thumbSrc
                                       && mediaEntity.mime === 'application/pdf'">
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
+                         class="generic-pdf basic-image"
                          src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-pdf.png"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="mediaEntity.thumbSrc === null
+                <ng-container *ngIf="!mediaEntity._thumbSrc
                                       && mediaEntity.mime === 'application/msword'">
                     <!-- TODO: make this a local file -->
                     <img mat-card-image
+                         class="generic-word basic-image"
                          src="/assets/1/0/bundles/sitetheorymedia/images/mediaTypeGraphics/media-graphic-doc.png"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
                 </ng-container>
-                <ng-container *ngIf="mediaEntity.thumbSrc === null
+                <ng-container *ngIf="!mediaEntity._thumbSrc
                                       && mediaEntity.service === 'directlink'
                                       && mediaEntity.file">
                     <!-- In some cases, there are external images with a service of 'directlink' -->
                     <img mat-card-image
+                         class="direct-link"
                          [src]="mediaEntity.file"
                          [alt]="mediaEntity.name"
                          [ngClass]="{'selected' : isSelected(mediaEntity)}">
@@ -164,13 +176,18 @@
 
                 <!-- Note: This shows info for entities that don't have a proper display -->
                 <!--
-                <ng-container *ngIf="mediaEntity.thumbSrc === null
+                <ng-container *ngIf="!mediaEntity._thumbSrc
                                       && !_.startsWith(mediaEntity.mime, 'audio')
-                                      && !['application/pdf', 'application/msword', 'video'].includes(mediaEntity.mime)"
-                                      && !(mediaEntity.service === 'directlink' && mediaEntity.file)>
-                    <span [innerText]="mediaEntity.id"></span>&nbsp;
-                    <span [innerText]="mediaEntity.mime|json"></span>&nbsp;
-                    <span [innerText]="mediaEntity.service|json"></span>
+                                      && !['application/pdf', 'application/msword', 'video'].includes(mediaEntity.mime)
+                                      && !(mediaEntity.service === 'directlink' && mediaEntity.file)">
+                    <mat-card-content>
+                        <p>
+                            ID: <span [innerText]="mediaEntity.id"></span>
+                        </p>
+                        <p>
+                            Service: <span [innerText]="mediaEntity.service|json"></span>
+                        </p>
+                    </mat-card-content>
                 </ng-container>
                 -->
                 <!--
