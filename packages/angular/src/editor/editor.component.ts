@@ -587,7 +587,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'id',
             'class',
             'style',
+            'dir',
             'data-.*',
+            'aria-.*',
             'ng-.*'
         ],
         pasteDeniedTags: [
