@@ -41,8 +41,9 @@
 						<span data-ng-if="::openHouse.OpenHouseEndTime"> —
 							<span data-ng-bind="::openHouse.OpenHouseEndTime | moment:{unix:false,format:'h:mm a'}"></span>
 						</span>
-                        <span data-ng-if="::openHouse._unmapped.OpenHouseType && openHouse._unmapped.OpenHouseType === 'Virtual' && openHouse._unmapped.VirtualOpenHouseURL" aria-label="Virtual Open House">
-                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank">Virtual Open House</a>
+                        <!-- openHouse._unmapped.OpenHouseType && openHouse._unmapped.OpenHouseType === 'Virtual' -->
+                        <span data-ng-if="::openHouse._unmapped.VirtualOpenHouseURL" aria-label="Virtual Open House">
+                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank" data-ng-bind="::(openHouse._unmapped.VirtualOpenHouseURLLinkText || 'Virtual Open House')"></a>
                         </span>
 						<span data-ng-if="::openHouse.ShowingAgentFirstName">
 							with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
