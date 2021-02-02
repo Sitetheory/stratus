@@ -92,7 +92,7 @@
                             <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </span>
                         <span data-ng-if="::model.data.OnMarketDate">
-                            Listed on
+                            <br>Listed on
                             <span data-ng-bind="::model.data.OnMarketDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </span>
                         <span data-ng-if="::model.data.CloseDate && model.data.ClosePrice && model.data.ListPrice">
