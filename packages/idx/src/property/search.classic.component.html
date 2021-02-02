@@ -107,6 +107,18 @@
                         </md-checkbox>
                     </div>
 
+                    <div data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
+                        <!-- 'Openhouses Only' is only allowed when more filters are supplied due to speed restrictions -->
+                        <md-checkbox
+                                class="show-open-houses"
+                                data-ng-model="options.query.where.OpenHouseOnly"
+                                aria-label="Open Houses Only"
+                                data-md-prevent-menu-close
+                        >
+                            Open Houses Only
+                        </md-checkbox>
+                    </div>
+
                     <div class="sale-status-border dotted-spaced-underline"></div>
 
                     <!--
