@@ -134,7 +134,7 @@
                             Lot: <span data-ng-bind="::model.data.LotSizeAcres"></span> Acres
                         </li>
                         <li data-ng-if="!model.data.LotSizeArea && model.data.LotSizeSquareFeet && model.data.LotSizeSquareFeet > 0" aria-label="Lot Size Square Feet">
-                            Lot: <span data-ng-bind="::model.data.LotSizeSquareFeet"></span> SqFt
+                            Lot: <span data-ng-bind="::model.data.LotSizeSquareFeet | number"></span> SqFt
                         </li>
                         <li data-ng-if="::model.data.PoolPrivateYN">
                             With Pool
@@ -220,8 +220,9 @@
                                         </span>
                                         <span data-ng-if="::openHouse.OpenHouseStatus && openHouse.OpenHouseStatus !== 'Active'"> (<span data-ng-bind="::openHouse.OpenHouseStatus"></span>)</span>
                                         <br/>
-                                        <span data-ng-if="::openHouse._unmapped.OpenHouseType && openHouse._unmapped.OpenHouseType === 'Virtual' && openHouse._unmapped.VirtualOpenHouseURL" aria-label="Virtual Open House">
-                                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank">Virtual Open House</a>
+                                        <!-- openHouse._unmapped.OpenHouseType && openHouse._unmapped.OpenHouseType === 'Virtual' -->
+                                        <span data-ng-if="::openHouse._unmapped.VirtualOpenHouseURL" aria-label="Virtual Open House">
+                                            <a data-ng-href="{{::openHouse._unmapped.VirtualOpenHouseURL}}" target="_blank" data-ng-bind="::(openHouse._unmapped.VirtualOpenHouseURLLinkText || 'Virtual Open House')"></a>
                                         </span>
                                         <span data-ng-if="::openHouse.ShowingAgentFirstName" aria-label="Open House Shown by Agent">
                                             with <span data-ng-bind="::openHouse.ShowingAgentFirstName"></span> <span data-ng-bind="::openHouse.ShowingAgentLastName"></span>
@@ -304,19 +305,19 @@
                             <div class="section-name">Agent</div>
                             <div class="sub-detail" data-ng-if="getListAgentName()">
                                 <span class="item-label">Listing Agent: </span>
-                                <span data-ng-bind="::getListAgentName()"></span><span data-ng-if="::model.data.ListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.ListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.ListOfficeName" aria-label="Listing Office">, <span data-ng-bind="::model.data.ListOfficeName"></span></span>
+                                <span data-ng-bind="::getListAgentName()"></span><span data-ng-if="::model.data.ListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.ListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.ListAgentKey && !model.data.ListAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.ListAgentKey"></span>)</span><span data-ng-if="::model.data.ListOfficeName" aria-label="Listing Office">, <span data-ng-bind="::model.data.ListOfficeName"></span></span>
                             </div>
                             <div class="sub-detail" data-ng-if="getCoListAgentName()">
                                 <span class="item-label">Co-Listing Agent: </span>
-                                <span data-ng-bind="::getCoListAgentName()"></span><span data-ng-if="::model.data.CoListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoListOfficeName" aria-label="Co-Listing Office">, <span data-ng-bind="::model.data.CoListOfficeName"></span></span>
+                                <span data-ng-bind="::getCoListAgentName()"></span><span data-ng-if="::model.data.CoListAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoListAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoListAgentKey && !model.data.CoListAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.CoListAgentKey"></span>)</span><span data-ng-if="::model.data.CoListOfficeName" aria-label="Co-Listing Office">, <span data-ng-bind="::model.data.CoListOfficeName"></span></span>
                             </div>
                             <div class="sub-detail" data-ng-if="getBuyerAgentName()">
                                 <span class="item-label">Buyer Agent: </span>
-                                <span data-ng-bind="::getBuyerAgentName()"></span><span data-ng-if="::model.data.BuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.BuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.BuyerOfficeName" aria-label="Buyer Office">, <span data-ng-bind="::model.data.BuyerOfficeName"></span></span>
+                                <span data-ng-bind="::getBuyerAgentName()"></span><span data-ng-if="::model.data.BuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.BuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.BuyerAgentKey && !model.data.BuyerAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.BuyerAgentKey"></span>)</span><span data-ng-if="::model.data.BuyerOfficeName" aria-label="Buyer Office">, <span data-ng-bind="::model.data.BuyerOfficeName"></span></span>
                             </div>
                             <div class="sub-detail" data-ng-if="getCoBuyerAgentName()">
                                 <span class="item-label">Co-Buyer Agent: </span>
-                                <span data-ng-bind="::getCoBuyerAgentName()"></span><span data-ng-if="::model.data.CoBuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoBuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoBuyerOfficeName" aria-label="Co-Buyer Office">, <span data-ng-bind="::model.data.CoBuyerOfficeName"></span></span>
+                                <span data-ng-bind="::getCoBuyerAgentName()"></span><span data-ng-if="::model.data.CoBuyerAgentStateLicense"> (DRE# <span data-ng-bind="::model.data.CoBuyerAgentStateLicense"></span>)</span><span data-ng-if="::model.data.CoBuyerAgentKey && !model.data.CoBuyerAgentStateLicense"> (Agent # <span data-ng-bind="::model.data.CoBuyerAgentKey"></span>)</span><span data-ng-if="::model.data.CoBuyerOfficeName" aria-label="Co-Buyer Office">, <span data-ng-bind="::model.data.CoBuyerOfficeName"></span></span>
                             </div>
                         </div>
                     </div>

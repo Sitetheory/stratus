@@ -34,8 +34,8 @@
                     data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)">
                 <label>City, Neighborhood, Zip</label>
 
-                <!-- TODO: the ng-keyup should not be setting: && options.query.where.Location (seems useless???)  -->
-                <input id="filterLocation"
+                <!-- TODO: the ng-keyup should not be setting: && options.query.where.Location (seems useless???) (this TODO needs further explaination)  -->
+                <input
                        data-ng-model="options.query.where.Location"
                        data-ng-blur="searchProperties()"
                        type="text"
@@ -59,9 +59,16 @@
                         data-ng-bind="(options.query.where.City.length && (options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length) ? ', ' : '') + _.join(_.union(options.query.where.CountyOrParish, options.query.where.MLSAreaMajor, options.query.where.PostalCode), ', ')"
                 ></span>
             </div>
-            <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate -->
+            <!-- TODO: We cannot currently get focus to work because we can't find the element: data-ng-click="angular.element('#filterLocation').focus()". In the future it would be nice to populate. FIX: Element doesn't not exist on load, should possibly be given as a widget option when Element is ready with relying on id. -->
+            <!-- NOTE: We shouldn't supply ids unless they are given a unique number at the end as HTML does not allow duplicate ids -->
             <!-- NOTE: three of these get cleared as arrays -->
-            <a class="custom-clear" data-ng-if="(options.query.where.Location.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)" data-ng-click="options.query.where.Location = ''; options.query.where.City = ''; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.PostalCode = []; searchProperties()"><md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon></a>
+            <a
+                    class="custom-clear"
+                    data-ng-if="(options.query.where.Location.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)"
+                    data-ng-click="options.query.where.Location = ''; options.query.where.City = ''; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.PostalCode = []; searchProperties()"
+            >
+                <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon>
+            </a>
 
 
 
