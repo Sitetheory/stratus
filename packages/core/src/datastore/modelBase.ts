@@ -189,9 +189,9 @@ export class ModelBase<T = LooseObject> extends EventManager {
             _.forEach(attr, (v: any, k: any) => {
                 this.temps[k] = v
             })
-        } else {
-            this.temps[attr] = value
+            return
         }
+        this.temps[attr] = value
     }
 
     add(attr: any, value: any) {
