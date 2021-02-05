@@ -1553,11 +1553,13 @@ Stratus.Internals.LoadImage = (obj: any) => {
             // find a size
             size = size || 'hq'
 
-            // if (!cookie('env')) {
+            // if (cookie('env')) {
             //     console.log(
             //         'size:', size,
             //         // 'greatest width:', greatestWidth,
             //         'width:', width,
+            //         'hd:', hd,
+            //         'pixelRatio:', Stratus.Environment.get('devicePixelRatio'),
             //         'el:', el
             //     )
             // }
@@ -1574,9 +1576,20 @@ Stratus.Internals.LoadImage = (obj: any) => {
         // Change Source to right size (get the base and extension and ignore
         // size)
         const srcOrigin: string = src
+        // FIXME: This regex has targeting issues if the url has an extension after a ?, like ?v=100.jpg
         const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
         const srcMatch: RegExpExecArray = srcRegex.exec(src)
         if (srcMatch !== null) {
+            // if (cookie('env')
+            //     // @ts-ignore
+            //     && _.contains(src, 'BM-33IrvingAve-SitePlan-Print-R1%20copy')
+            // ) {
+            //     console.log(
+            //         'el:', el,
+            //         'src:', src,
+            //         'srcMatch:', srcMatch
+            //     )
+            // }
             src = `${srcMatch[1]}-${size}.${srcMatch[3]}`
         } else {
             console.error('Unable to find file name for image src:', el)

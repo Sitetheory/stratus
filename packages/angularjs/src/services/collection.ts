@@ -91,6 +91,9 @@ export interface CollectionModelOptions extends ModelOptions {
 
     // This forces a save (intended for use without autoSave enabled)
     save?: boolean
+
+    // This triggers the collection add event
+    trigger?: boolean
 }
 
 export const CollectionOptionKeys = keys<CollectionOptions>()
@@ -469,6 +472,9 @@ export class Collection<T = LooseObject> extends EventManager {
             this.models.unshift(target)
         } else {
             this.models.push(target)
+        }
+        if (options.trigger) {
+            this.trigger('add', target)
         }
         this.throttleTrigger('change')
         return target
