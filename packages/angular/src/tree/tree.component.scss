@@ -8,6 +8,22 @@
       display: none;
     }
   }
+  .position {
+    &-absolute {
+      position: absolute;
+    }
+  }
+  // SVG Colors
+  .svg-grey {
+    svg g {
+      fill: #666666;
+    }
+  }
+  .visibility-off {
+    svg g {
+      fill: #FF5B3A;
+    }
+  }
   .full {
     &-width {
       width: 100%;
@@ -51,6 +67,22 @@
     //justify-content: space-between;
     //box-sizing: border-box;
     cursor: move;
+    a, mat-button, mat-icon-button {
+      cursor: pointer;
+    }
+    // only show certain elements on hover
+    .hover {
+      &-box:hover ~ .hover-show {
+        display: unset;
+      }
+      &-show {
+        display: none;
+        &:hover {
+          display: unset;
+        }
+      }
+    }
+
     .tree-node { // be explicit for child padding
       padding-left: 40px;
       //border-left: dashed 1px #222222;
@@ -195,7 +227,10 @@
       padding: 0 5px;
     }
   }
-  .visibility-off svg g {
-    fill: #FF5B3A;
+  // SVG Colors
+  .svg-grey {
+    svg g {
+      fill: #666666;
+    }
   }
 }

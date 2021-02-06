@@ -134,12 +134,16 @@
     -->
 
     <!-- Priority Control - deprecated once we have proper DnD for child links -->
+    <!--
     <h4 *ngIf="data.nestParent !== null">
         Priority:
     </h4>
+    -->
+    <!--
     <mat-form-field class="form-field"
                     *ngIf="data.nestParent !== null">
         <input matInput type="number" placeholder="Priority" [(ngModel)]="data.priority">
+    -->
 <!--        <span [textContent]="data.priority || 'None set!'"></span>-->
 <!--        <a mat-button matSuffix mat-icon-button aria-label="Increase Priority"-->
 <!--                (click)="data.priority = data.priority + 1">-->
@@ -149,7 +153,9 @@
 <!--                (click)="data.priority = data.priority - 1">-->
 <!--            <mat-icon>expand_more</mat-icon>-->
 <!--        </a>-->
+    <!--
     </mat-form-field>
+    -->
 
     <!-- Level Selector -->
 <!--    <h4><label id="link-level-label">Link Level:</label></h4>-->
@@ -195,18 +201,27 @@
     </h4>
 
     <a mat-button
-            (click)="destroy()">
-        <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>
+       class="svg-grey"
+       (click)="destroy()">
+       <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">
+            Delete
+        </mat-icon>
     </a>
     <a mat-button
-            [class.visibility-off]="data.model.get('status') === 0"
-            (click)="toggleStatus()">
-        <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">Visibility</mat-icon>
+       class="svg-grey"
+       [class.visibility-off]="data.model.get('status') === 0"
+       (click)="toggleStatus()">
+        <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">
+            Visibility
+        </mat-icon>
     </a>
     <a mat-button
-            [disabled]="!data.id"
-            (click)="data.collection.add({name:'Untitled Child', parent: data.parent, nestParent: {id: data.id}}, {save: true})">
-        Add Child
+       class="svg-grey"
+       [disabled]="!data.id"
+       (click)="addChild()">
+        <mat-icon svgIcon="tree_add" aria-hidden="false" aria-label="Add Child">
+            Add Child
+        </mat-icon>
     </a>
 
     <mat-divider></mat-divider>

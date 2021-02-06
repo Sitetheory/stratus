@@ -10,24 +10,41 @@
 
     <!-- use a disabled button to provide padding for tree leaf -->
     <a mat-icon-button
-            *ngIf="!hasChild(node)"
-            disabled></a>
+       class="hover-box"
+       *ngIf="!hasChild(node)"
+       disabled>
+    </a>
 
     <!-- use a regular button to control expandable nodes -->
     <a mat-icon-button
-            *ngIf="hasChild(node)"
-            (click)="toggleExpandedClick(node)"
-            (dblclick)="toggleExpandedDblClick(node)"
-            [attr.aria-label]="'toggle ' + getName(node)">
+       class="hover-box"
+       *ngIf="hasChild(node)"
+        (click)="toggleExpandedClick(node)"
+        (dblclick)="toggleExpandedDblClick(node)"
+        [attr.aria-label]="'toggle ' + getName(node)">
         <mat-icon class="mat-icon-rtl-mirror">
             {{isExpanded(node) ? 'expand_more' : 'chevron_right'}}
         </mat-icon>
     </a>
 
+    <!-- Content Type Icon -->
+    <mat-icon class="type-icon hover-box"
+              aria-hidden="true"
+              *ngIf="node.model.get('content.contentType.iconResourcePath')"
+              [svgIcon]="getSvg('/assets/1/0/bundles/' + node.model.get('content.contentType.iconResourcePath')) | async">
+    </mat-icon>
+
+    <!-- Default Content Type Icon -->
+    <mat-icon class="type-icon hover-box"
+              aria-hidden="true"
+              *ngIf="!node.model.get('content.contentType.iconResourcePath')"
+              [svgIcon]="getSvg('/assets/1/0/bundles/sitetheorycore/images/menuTypeIcon/default.svg') | async">
+    </mat-icon>
+
     <!-- clickable name is also the drag handle -->
     <!-- cdkDragHandle -->
     <span cdkDragPlaceholder
-          class="node-name"
+          class="node-name hover-box"
           [attr.data-id]="node.id"
           [attr.id]="'node-'+node.id"
           [class.visibility-off]="node.model.get('status') === 0"
@@ -36,27 +53,46 @@
           (dblclick)="openDialogDblClick(node)"></span>
 
     <!-- drag preview is all that is viewable when dragging -->
-<!--    <span cdkDragPreview-->
-<!--          [innerHTML]="getDragPreview(node)"-->
-<!--          class="tree-node-drag-preview"></span>-->
+    <!--<span cdkDragPreview-->
+    <!--      class="hover-box"-->
+    <!--      [innerHTML]="getDragPreview(node)"-->
+    <!--      class="tree-node-drag-preview"></span>-->
 
     <!-- drag placeholder is displayed in place of the element being dragged -->
-<!--    <span cdkDragPlaceholder-->
-<!--          [innerHTML]="getDragPreview(node)"-->
-<!--          class="tree-node-drag-placeholder"></span>-->
-
-    <!-- Content Type Icon -->
-    <mat-icon class="type-icon"
-              aria-hidden="true"
-              *ngIf="node.model.get('content.contentType.iconResourcePath')"
-              [svgIcon]="getSvg('/assets/1/0/bundles/' + node.model.get('content.contentType.iconResourcePath')) | async">
-    </mat-icon>
+    <!--<span cdkDragPlaceholder-->
+    <!--      class="hover-box"-->
+    <!--      [innerHTML]="getDragPreview(node)"-->
+    <!--      class="tree-node-drag-placeholder"></span>-->
 
     <!-- Route Display -->
-    <small [class.route-none]="!node.model.get('route')"
+    <small class="hover-box"
+           [class.route-none]="!node.model.get('route')"
            [class.type-none]="!node.model.get('content.contentType.iconResourcePath')">
         {{node.model.get('url') || node.model.get('route') || 'No route set!'}}
     </small>
+
+    <span class="hover-show position-absolute svg-grey">
+        <a mat-button
+           (click)="destroy()">
+            <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">
+                Delete
+            </mat-icon>
+        </a>
+        <a mat-button
+           [class.visibility-off]="node.model.get('status') === 0"
+           (click)="toggleStatus()">
+            <mat-icon svgIcon="tree_visibility" aria-hidden="false" aria-label="Toggle Visibility">
+                Visibility
+            </mat-icon>
+        </a>
+        <a mat-button
+           [disabled]="!node.model.id"
+           (click)="addChild()">
+            <mat-icon svgIcon="tree_add" aria-hidden="false" aria-label="Add Child">
+                Add Child
+            </mat-icon>
+        </a>
+    </span>
 
     <!-- create drop list -->
     <!-- FIXME: enabling [cdkDropListSortingDisabled]="true" allows parent drops with ease, but no sorting information -->

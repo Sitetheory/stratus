@@ -12,8 +12,11 @@ import {
 import {
     MatDialog
 } from '@angular/material/dialog'
+import {
+    MatDialogRef
+} from '@angular/material/dialog/dialog-ref'
 
-// Tree Imports
+// Components
 import {
     Node,
     TreeComponent
@@ -22,6 +25,14 @@ import {
     DialogData,
     TreeDialogComponent
 } from '@stratusjs/angular/tree/tree-dialog.component'
+import {
+    ConfirmDialogComponent
+} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
+
+// Services
+import {
+    Model
+} from '@stratusjs/angularjs/services/model'
 
 // External
 import _ from 'lodash'
@@ -112,6 +123,9 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
 
         // Force UI Redraw
         this.refresh()
+
+        // Handle Post-Persist
+        this.onPostPersist()
     }
 
     ngOnDestroy() {
@@ -132,65 +146,106 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
         this.ref.reattach()
     }
 
-    public getName(node: Node): string {
-        if (!node.model || !node.model.get || !node.model.get('name')) {
-            return 'Untitled'
-        }
-        return node.model.get('name')
-    }
-
-    public getDragPreview(node: Node): string {
-        return `name: ${this.getName(node)}<br>children: ${node.children ? node.children.length : 0}`
-    }
-
-    public toggleExpanded(node: Node): void {
-        if (!node.meta) {
-            console.error('node meta not found:', node)
+    public onPostPersist() {
+        if (!this.node) {
             return
         }
-        node.meta.expanded = !node.meta.expanded
+        if (!this.node.model) {
+            return
+        }
+        if (!this.node.model.meta.get('postPersist')) {
+            return
+        }
+        // console.log('onPostPersist:', this)
+        this.node.model.meta.set('postPersist', false)
+        this.openDialog()
+    }
+
+    public destroy(): MatDialogRef<ConfirmDialogComponent, any> {
+        const dialog = this.dialog
+            .open(ConfirmDialogComponent, {
+                maxWidth: '400px',
+                data: {
+                    title: 'Delete MenuLink',
+                    message: 'Are you sure you want to do this?'
+                }
+            })
+        dialog
+            .afterClosed()
+            .subscribe((dialogResult: boolean) => {
+                if (!dialogResult) {
+                    return
+                }
+                if (!this.node || !this.node.model) {
+                    return
+                }
+                this.node.model.destroy()
+            })
+        return dialog
+    }
+
+    public getName(): string {
+        if (!this.node.model || !this.node.model.get || !this.node.model.get('name')) {
+            return 'Untitled'
+        }
+        return this.node.model.get('name')
+    }
+
+    public getDragPreview(): string {
+        return `name: ${this.getName()}<br>children: ${this.node.children ? this.node.children.length : 0}`
+    }
+
+    public toggleExpanded(): void {
+        if (!this.node.meta) {
+            console.error('node meta not found:', this.node)
+            return
+        }
+        this.node.meta.expanded = !this.node.meta.expanded
         this.refresh()
     }
 
-    public toggleExpandedClick(node: Node): void {
+    public toggleExpandedClick(): void {
         this.isSingleClick = true
         setTimeout(() => {
             if (!this.isSingleClick) {
                 return
             }
-            this.toggleExpanded(node)
+            this.toggleExpanded()
         }, this.tree.dblClickWait)
     }
 
-    public toggleExpandedDblClick(node: Node): void {
+    public toggleExpandedDblClick(): void {
         this.isSingleClick = false
-        this.toggleExpanded(node)
+        this.toggleExpanded()
     }
 
-    public openDialog(node: Node): void {
-        if (!node.model || !_.has(node.model, 'data')) {
+    // TODO: Move things like toggle to this TreeNodeComponent, so it can be used in the template as well as the Dialog
+    public openDialog(): void {
+        if (!this.node.model || !_.has(this.node.model, 'data')) {
             return
         }
         const dialogRef = this.dialog.open(TreeDialogComponent, {
             width: '400px',
             autoFocus: true,
+            disableClose: true,
             restoreFocus: false,
             data: {
                 tree: this.tree,
+                treeNode: this,
                 backend: this.tree.backend,
                 iconRegistry: this.tree.iconRegistry,
-                id: node.model.data.id || null,
-                name: node.model.data.name || '',
-                target: node.model.data.url ? 'url' : 'content',
-                // level: node.model.data.nestParent === null ? 'top' : 'child',
-                content: node.model.data.content || null,
-                url: node.model.data.url || null,
-                browserTarget: node.model.data.browserTarget || null,
-                priority: node.model.data.priority || 0,
-                model: node.model || null,
+                id: this.node.model.data.id || null,
+                name: this.node.model.data.name || '',
+                target: this.node.model.data.url ? 'url' : 'content',
+                // level: this.node.model.data.nestParent === null ? 'top' : 'child',
+                content: this.node.model.data.content || null,
+                url: this.node.model.data.url || null,
+                browserTarget: this.node.model.data.browserTarget || null,
+                // priority: this.node.model.data.priority || 0,
+                model: this.node.model || null,
                 collection: this.tree.collection || null,
-                parent: node.model.data.parent || null,
-                nestParent: node.model.data.nestParent || null,
+                parent: this.node.model.data.parent || null,
+                nestParent: this.node.model.data.nestParent || null,
             }
         })
         this.refresh()
@@ -218,38 +273,75 @@ export class TreeNodeComponent implements OnInit, OnDestroy {
                 // Normalize Content
                 if ('content' === attr) {
                     const value = _.get(result, attr)
-                    node.model.set(attr, !value ? null : {id: _.get(value, 'id')})
+                    this.node.model.set(attr, !value ? null : {id: _.get(value, 'id')})
                     return
                 }
-                node.model.set(attr, _.get(result, attr))
+                this.node.model.set(attr, _.get(result, attr))
             })
             // Refresh Component
             that.refresh()
             // Refresh Parent Tree
             that.tree.refresh()
             // Start XHR
-            node.model.save()
+            this.node.model.save()
             // Enable Listeners
             this.tree.unsettled = false
         })
     }
 
-    public openDialogClick(node: Node): void {
+    public openDialogClick(): void {
         this.isSingleClick = true
         setTimeout(() => {
             if (!this.isSingleClick) {
                 return
             }
-            this.openDialog(node)
+            this.openDialog()
         }, this.tree.dblClickWait)
     }
 
-    public openDialogDblClick(node: Node): void {
+    public openDialogDblClick(): void {
         this.isSingleClick = false
-        this.openDialog(node)
+        this.openDialog()
     }
 
     public getSvg(url: string, options?: IconOptions): Observable<string> {
         return this.tree.getSvg(url, options)
+    }
+
+    public toggleStatus(): void {
+        if (!this.node || !this.node.model) {
+            return
+        }
+        const model = this.node.model
+        model.set('status', model.get('status') ? 0 : 1)
+        model.save()
+    }
+
+    // TODO: Have this spawn off a new Tree Dialog with a new function addChild() on the TreeDialogComponent Class
+    // TODO: Use the tree map to call node.openDialog after creating the new item
+    public addChild(): void {
+        let priority = _.max(
+            this.tree.collection.models.filter(
+                (model: Model) => {
+                    const nestParent = model.get('nestParent')
+                    if (!nestParent) {
+                        return false
+                    }
+                    return nestParent.id === this.node.id
+                }
+            ).map((model: Model) => model.get('priority'))
+        ) || -1
+        priority++
+        this.tree.collection.add({
+            name:'Untitled Child',
+            parent: this.node.model.data.parent,
+            nestParent: {
+                id: this.node.model.data.id
+            },
+            priority
+        }, {
+            save: true,
+            trigger: true
+        })
     }
 }
