@@ -11,10 +11,12 @@ import {
     FormGroup
 } from '@angular/forms'
 
+// Angular CDK
+import {moveItemInArray} from '@angular/cdk/drag-drop'
+
 // Angular Material
 import {
     MAT_DIALOG_DATA,
-    MatDialog,
     MatDialogRef
 } from '@angular/material/dialog'
 import {
@@ -45,6 +47,7 @@ import {Model} from '@stratusjs/angularjs/services/model'
 // Services
 import {HttpResponse} from '@angular/common/http'
 import {BackendService} from '@stratusjs/angular/backend.service'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 // Interfaces
 import {Convoy} from '@stratusjs/angular/data/convoy.interface'
@@ -55,14 +58,13 @@ import {
     TreeComponent
 } from '@stratusjs/angular/tree/tree.component'
 import {
-    ConfirmDialogComponent
-} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
-import { moveItemInArray } from '@angular/cdk/drag-drop'
-import {Collection} from '@stratusjs/angularjs/services/collection'
+    TreeNodeComponent
+} from '@stratusjs/angular/tree/tree-node.component'
 
 // Data Types
 export interface DialogData {
     tree: TreeComponent
+    treeNode: TreeNodeComponent
     backend: BackendService
     iconRegistry: MatIconRegistry
     id: number
@@ -111,6 +113,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
 
     // Root Component
     tree: TreeComponent
+    treeNode: TreeNodeComponent
 
     // Services
     backend: BackendService
@@ -140,7 +143,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         public dialogRef: MatDialogRef<TreeDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
         private fb: FormBuilder,
-        private dialog: MatDialog,
+        // private dialog: MatDialog,
         private ref: ChangeDetectorRef
     ) {
         // Manually render upon data change
@@ -171,6 +174,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
 
         // Hoist Components
         this.tree = this.data.tree
+        this.treeNode = this.data.treeNode
 
         // Hoist Services
         this.backend = this.data.backend
@@ -343,34 +347,23 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
         return this.filteredContent
     }
 
-    public destroy() {
-        this.dialog
-            .open(ConfirmDialogComponent, {
-                maxWidth: '400px',
-                data: {
-                    title: 'Delete MenuLink',
-                    message: 'Are you sure you want to do this?'
-                }
-            })
-            .afterClosed().subscribe((dialogResult: boolean) => {
+    public destroy(): void {
+        this.treeNode.destroy()
+            .afterClosed()
+            .subscribe((dialogResult: boolean) => {
                 if (!dialogResult) {
                     return
                 }
-                if (!this.data || !this.data.model) {
-                    return
-                }
-                this.data.model.destroy()
                 this.onCancelClick()
             })
     }
 
-    public toggleStatus() {
-        if (!this.data || !this.data.model) {
-            return
-        }
-        const model = this.data.model
-        model.set('status', model.get('status') ? 0 : 1)
-        model.save()
+    public toggleStatus(): void {
+        this.treeNode.toggleStatus()
+    }
+
+    public addChild(): void {
+        this.treeNode.addChild()
     }
 
     public isSelected(content: ContentEntity) {

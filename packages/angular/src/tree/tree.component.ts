@@ -53,6 +53,7 @@ import {cookie} from '@stratusjs/core/environment'
 
 // Core Classes
 import {EventManager} from '@stratusjs/core/events/eventManager'
+import {EventBase} from '@stratusjs/core/events/eventBase'
 
 // AngularJS Classes
 import {
@@ -72,6 +73,7 @@ import '@stratusjs/angularjs/services/model'
 
 import { DOCUMENT } from '@angular/common'
 import {IconOptions} from '@angular/material/icon/icon-registry'
+import {TreeNodeComponent} from '@stratusjs/angular/tree/tree-node.component'
 
 // Data Types
 export interface NodeMeta {
@@ -253,6 +255,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
         // TODO: Make this into a single service
         _.forEach({
             tree_check: '/assets/1/0/bundles/sitetheorycore/images/icons/check.svg',
+            tree_add: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add.svg',
             tree_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
             tree_visibility: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/visibility.svg',
         }, (value, key) => this.iconRegistry.addSvgIcon(key, this.sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
@@ -275,6 +278,43 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
                 }
                 data.on('change', onDataChange)
                 onDataChange()
+                // Handle Additions to Collection
+                data.on('add', (event: EventBase, model: Model) => {
+                    // TODO: This should hook into the collection, so that every collection.add results in a Dialog Opening.
+                    let modelCompleted = false
+                    const onModelChange = () => {
+                        // FIXME: This is always true, even if the XHR hasn't completed.
+                        if (!model.completed) {
+                            return
+                        }
+                        // Force singleton
+                        if (modelCompleted) {
+                            return
+                        }
+                        modelCompleted = true
+                        // console.log('model completed:', model)
+                        // console.log('model node:', this.treeMap[model.getIdentifier()])
+                        // Handle Post-Persist Options
+                        if (!(model.getIdentifier() in this.treeMap)) {
+                            // Hook to be handled by TreeNodeComponent
+                            // console.log('postPersist:', model)
+                            model.meta.set('postPersist', true)
+                            return
+                        }
+                        const node = this.treeMap[model.getIdentifier()]
+                        if (!node.meta.component || !(node.meta.component instanceof TreeNodeComponent)) {
+                            // Hook to be handled by TreeNodeComponent
+                            // console.log('postPersist:', model)
+                            model.meta.set('postPersist', true)
+                            return
+                        }
+                        // Since the Node is available, create the dialog
+                        // console.log('direct dialog:', model)
+                        node.meta.component.openDialog()
+                    }
+                    model.on('change', onModelChange)
+                    onModelChange()
+                })
             })
 
         // Handling Pipes with Promises
