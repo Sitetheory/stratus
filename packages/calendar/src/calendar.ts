@@ -40,7 +40,6 @@ import '@stratusjs/calendar/iCal'
 // import {Model} from '@stratusjs/angularjs/services/model'
 // import {Collection} from '@stratusjs/angularjs/services/collection'
 // import {Registry} from '@stratusjs/angularjs/services/registry'
-
 // Components
 import * as fullCalendarCustomViewPlugin from '@stratusjs/calendar/customView'
 
@@ -226,14 +225,13 @@ Stratus.Components.Calendar = {
 
         // Fetch a ics source via URL and load into rendered fullcalendar
         $scope.addEventICSSource = async (url: any) => {
-            let fullUrl: any = url
             // TODO handle bad fetch softly (throw)
-            // If pulling externally, we'll use cors-anywhere.herokuapp.com for now
-            if (fullUrl.startsWith('http')) {
+            // FIXME cors-anywhere.herokuapp.com is no longer accepting all traffic anymore. disabling until there is another solution
+            /*if (fullUrl.startsWith('http')) {
                 fullUrl = `https://cors-anywhere.herokuapp.com/${url}`
-            }
+            }*/
 
-            const response: any = await $http.get(fullUrl)
+            const response: any = await $http.get(url)
             if (cookie('env')) {
                 console.log('fetched the events from:', url)
             }
