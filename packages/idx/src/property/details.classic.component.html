@@ -88,7 +88,7 @@
                             <br><span data-ng-bind="::model.data.BathroomsPartial"></span> Partial Baths
                         </span>
                         <span data-ng-if="::model.data.CloseDate && Idx.getFriendlyStatus(model.data) == 'Closed'">
-                            <span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
+                            <br><span data-ng-bind="::Idx.getFriendlyStatus(model.data, preferredStatus)"></span> on
                             <span data-ng-bind="::model.data.CloseDate | moment:{unix:false,format:'MMM Do YYYY'}"></span>
                         </span>
                         <span data-ng-if="::model.data.OnMarketDate">
