@@ -8,13 +8,16 @@ import FroalaEditor from 'froala-editor'
 
 // Plugin Options
 FroalaEditor.DEFAULTS = Object.assign(FroalaEditor.DEFAULTS, {
-    endpoint: '/Api/Media'
+    // endpoint: '/Api/Foo'
 })
 
 /**
  * @param editor The Froala instance
+ *
+ * Note: This is a basic button stub using the universal input button
+ *       that will be expanded upon as I build out the menu properly.
  */
-FroalaEditor.PLUGINS.mediaManager = function mediaManager (editor: any) {
+FroalaEditor.PLUGINS.menuButton = function menuButton (editor: any) {
     let inputButton: InputButtonPlugin
 
     const debug = false
@@ -22,8 +25,8 @@ FroalaEditor.PLUGINS.mediaManager = function mediaManager (editor: any) {
     // When the plugin is initialized,this will be called.
     function _init() {
         inputButton = new InputButtonPlugin({
-            name: 'Media Manager',
-            eventName: 'media-library',
+            name: 'Menu Button',
+            eventName: 'menu-button',
             editor,
             debug
         })
@@ -44,7 +47,7 @@ FroalaEditor.PLUGINS.mediaManager = function mediaManager (editor: any) {
 
     function onClick() {
         if (!editor.el) {
-            console.warn('mediaManager.onClick(): unable to find element')
+            console.warn('menuButton.onClick(): unable to find element')
             return
         }
         inputButton.onClick(editor.el)
@@ -61,45 +64,46 @@ FroalaEditor.PLUGINS.mediaManager = function mediaManager (editor: any) {
 }
 
 // Insert Plugin to Image Insert
-FroalaEditor.DEFAULTS.imageInsertButtons.push('mediaManager'),
-    FroalaEditor.RegisterCommand('mediaManager', {
-        title: 'Insert from Media Library',
+FroalaEditor.DEFAULTS.menuButtons.push('menuButton'),
+    FroalaEditor.RegisterCommand('menuButton', {
+        title: 'Insert from Menu Button',
         undo: false,
         focus: false,
-        modal: true,
+        modal: false,
+        refreshAfterCallback: true,
         callback() {
             const debug = false
             if (debug) {
-                console.log('clicked:', this.mediaManager)
+                console.log('clicked:', this.menuButton)
             }
-            this.mediaManager.onClick()
+            this.menuButton.onClick()
         },
-        plugin: 'mediaManager',
+        plugin: 'menuButton',
     }),
-    FroalaEditor.DefineIcon('mediaManager', {NAME: 'folder', SVG_KEY: 'imageManager'}),
-    FroalaEditor.DefineIcon('mediaManagerInsert', {NAME: 'plus', SVG_KEY: 'add'}),
-    FroalaEditor.DefineIcon('mediaManagerDelete', {NAME: 'trash', SVG_KEY: 'remove'})
+    FroalaEditor.DefineIcon('menuButton', {NAME: 'folder', SVG_KEY: 'imageManager'}),
+    FroalaEditor.DefineIcon('menuButtonInsert', {NAME: 'plus', SVG_KEY: 'add'}),
+    FroalaEditor.DefineIcon('menuButtonDelete', {NAME: 'trash', SVG_KEY: 'remove'})
 
 // Define a quick insert button
-FroalaEditor.RegisterQuickInsertButton('media', {
+FroalaEditor.RegisterQuickInsertButton('menu', {
     // Icon name.
-    icon: 'mediaManager',
+    icon: 'menuButton',
 
     // Tooltip.
-    title: 'Insert from Media Library',
+    title: 'Insert from Menu Button',
 
     // Callback for the button.
-    callback: function mediaManagerCallback () {
+    callback: function menuButtonCallback () {
         const debug = false
         const inputButton = new InputButtonPlugin({
-            name: 'Media Manager',
-            eventName: 'media-library',
+            name: 'Menu Button',
+            eventName: 'menu-button',
             // Contextual `this` is equivalent to the editor instance
             editor: this,
             debug
         })
         if (!this.el) {
-            console.warn('mediaManager.onClick(): unable to find element')
+            console.warn('menuButton.onClick(): unable to find element')
             return
         }
         inputButton.onClick(this.el)
