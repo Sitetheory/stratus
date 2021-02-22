@@ -157,6 +157,7 @@ import 'froala-image-tui'
 
 // Froala Custom Plugins
 import '@stratusjs/angular/froala/plugins/mediaManager'
+// import '@stratusjs/angular/froala/plugins/menuButton'
 
 // Local Setup
 const installDir = '/assets/1/0/bundles'
@@ -419,6 +420,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'embedly'
         ],
         moreMisc: [
+            // 'menuButton',
             'undo',
             'redo',
             'fullscreen',
@@ -478,38 +480,48 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         },
         heightMax: window.innerHeight || document.documentElement.clientHeight || 500,
         htmlAllowedAttrs: [
-            'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
-            'allowtransparency', 'alt', 'aria-.*', 'async', 'autocomplete', 'autofocus',
-            'autoplay', 'autosave',
-            'background', 'bgcolor', 'border',
-            'charset', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'color',
-            'cols', 'colspan', 'content', 'contenteditable', 'contextmenu', 'controls',
-            'coords',
-            'data', 'data-.*', 'datetime', 'default', 'defer', 'dir', 'dirname',
-            'disabled', 'download', 'draggable', 'dropzone',
-            'enctype',
-            'for', 'form', 'formaction', 'frameborder',
-            'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'http-equiv',
-            'icon', 'id', 'ismap', 'itemprop',
-            'keytype', 'kind',
-            'label', 'lang', 'language', 'list', 'loop', 'low',
-            'max', 'maxlength', 'media', 'method', 'min', 'mozallowfullscreen', 'multiple',
-            'muted',
-            'name', 'novalidate',
-            'open', 'optimum',
-            'pattern', 'ping', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate',
-            'radiogroup', 'readonly', 'rel', 'required', 'reversed', 'rows', 'rowspan',
-            'sandbox', 'scope', 'scoped', 'scrolling', 'seamless', 'selected', 'shape',
-            'size', 'sizes', 'span', 'src', 'srcdoc', 'srclang', 'srcset', 'start', 'step',
-            'summary', 'spellcheck', 'style',
-            'tabindex', 'target', 'title', 'type', 'translate',
-            'usemap',
-            'value', 'valign',
-            'webkitallowfullscreen', 'width', 'wrap'
+            '.*'
+            // 'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
+            // 'allowtransparency', 'alt', 'aria-.*', 'async', 'autocomplete', 'autofocus',
+            // 'autoplay', 'autosave',
+            // 'background', 'bgcolor', 'border',
+            // 'charset', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'color',
+            // 'cols', 'colspan', 'content', 'contenteditable', 'contextmenu', 'controls',
+            // 'coords',
+            // 'data', 'data-.*', 'datetime', 'default', 'defer', 'dir', 'dirname',
+            // 'disabled', 'download', 'draggable', 'dropzone',
+            // 'enctype',
+            // 'for', 'form', 'formaction', 'frameborder',
+            // 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'http-equiv',
+            // 'icon', 'id', 'ismap', 'itemprop',
+            // 'keytype', 'kind',
+            // 'label', 'lang', 'language', 'list', 'loop', 'low',
+            // 'max', 'maxlength', 'media', 'method', 'min', 'mozallowfullscreen', 'multiple',
+            // 'muted',
+            // 'name', 'novalidate',
+            // 'open', 'optimum',
+            // 'pattern', 'ping', 'placeholder', 'playsinline', 'poster', 'preload', 'pubdate',
+            // 'radiogroup', 'readonly', 'rel', 'required', 'reversed', 'rows', 'rowspan',
+            // 'sandbox', 'scope', 'scoped', 'scrolling', 'seamless', 'selected', 'shape',
+            // 'size', 'sizes', 'span', 'src', 'srcdoc', 'srclang', 'srcset', 'start', 'step',
+            // 'summary', 'spellcheck', 'style',
+            // 'tabindex', 'target', 'title', 'type', 'translate',
+            // 'usemap',
+            // 'value', 'valign',
+            // 'webkitallowfullscreen', 'width', 'wrap'
         ],
         htmlAllowedEmptyTags: [
             'textarea', 'a', 'iframe', 'object', 'video', 'style', 'script',
-            '.fa', '.fr-emoticon', '.fr-inner', 'path', 'line', 'hr', 'div'
+            '.fa', '.fr-emoticon', '.fr-inner', 'path', 'line', 'hr', 'div',
+            // SVG Exclusive Tags
+            'animate', 'animateMotion', 'animateTransform', 'circle', 'clipPath', 'defs', 'desc', 'discard', 'ellipse',
+            'feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting',
+            'feDisplacementMap', 'feDistantLight', 'feDropShadow', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG',
+            'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset',
+            'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence',
+            'filter', 'foreignObject', 'g', 'image', 'line', 'linearGradient', 'marker', 'mask', 'metadata', 'mpath',
+            'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch',
+            'symbol', 'text', 'textPath', 'tspan', 'unknown', 'use', 'view',
         ],
         htmlAllowedStyleProps: ['*'],
         htmlAllowedTags: [
@@ -626,6 +638,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'link',
             'lists',
             'mediaManager',
+            // 'menuButton',
             'paragraphFormat',
             'paragraphStyle',
             'print',
