@@ -523,7 +523,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch',
             'symbol', 'text', 'textPath', 'tspan', 'unknown', 'use', 'view',
         ],
-        htmlAllowedStyleProps: ['*'],
+        htmlAllowedStyleProps: ['.*'],
         htmlAllowedTags: [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
             'b', 'base', 'bdi', 'bdo', 'blockquote', 'br', 'button',
