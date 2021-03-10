@@ -12,8 +12,7 @@ import * as angular from 'angular'
 import 'angular-material'
 
 // Services
-// TODO: We don't need to force the stripe import here if the StripeService below is used
-import '@stratusjs/stripe/stripe'
+import '@stratusjs/stripe/stripe' // Ensures the files loads, rather than the TYPE
 // tslint:disable-next-line:no-duplicate-imports
 import {StripeService} from '@stratusjs/stripe/stripe'
 
@@ -21,6 +20,7 @@ import {StripeService} from '@stratusjs/stripe/stripe'
 // import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, ObjectWithFunctions} from '@stratusjs/core/misc'
+import {Model} from '@stratusjs/angularjs/services/model'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -53,7 +53,10 @@ export type StripePaymentMethodScope = angular.IScope & ObjectWithFunctions & {
     }
     initialized: boolean
     cardComplete: boolean
+    cardSaved: boolean
     formPending: boolean
+
+    paymentMethodApiPath: string
 }
 
 Stratus.Components.StripePaymentMethod = {
@@ -89,6 +92,7 @@ Stratus.Components.StripePaymentMethod = {
         let card: stripe.elements.Element = null
         $scope.initialized = false
         $scope.cardComplete = false
+        $scope.cardSaved = false
         $scope.formPending = false
         // TODO Add an option for dispalying an existing card/info (to update)
         $scope.detailedBillingInfo = $attrs.detailedBillingInfo && isJSON($attrs.detailedBillingInfo) ?
@@ -96,6 +100,8 @@ Stratus.Components.StripePaymentMethod = {
         $scope.billingInfo = {
             address: {}
         }
+
+        $scope.paymentMethodApiPath = 'PaymentMethod' // FIXME allow this to be customizable
 
         /**
          * On load, attempt to prepare and render the Card element
@@ -201,12 +207,25 @@ Stratus.Components.StripePaymentMethod = {
                 return
             }
 
-            if (setupIntent.status === 'succeeded') {
+            if (
+                setupIntent.status === 'succeeded'
+                && _.isString(setupIntent.payment_method)
+            ) {
                 // The setup has succeeded.
-                // TODO Display a success message?
-                // TODO Send setupIntent.payment_method to your server to save the card to a Customer as default
-                // (or not as default?)
-                // $scope.formPending = false
+                // Send setupIntent.payment_method to your server to save the card to a Customer as default
+                const model = new Model({
+                    target: $scope.paymentMethodApiPath
+                })
+                model.data = {
+                    payment_method: setupIntent.payment_method
+                }
+                await model.save()
+                // TODO check if Sitetheory refreshed
+                // hide form and Display a success message
+                $scope.$applyAsync(() => {
+                    $scope.cardSaved = true
+                    $scope.formPending = false
+                })
                 console.log('success', setupIntent)
             } else {
                 // handle everything else

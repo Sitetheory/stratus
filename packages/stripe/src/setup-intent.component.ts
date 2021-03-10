@@ -21,6 +21,7 @@ import '@stratusjs/stripe/stripe'
 // import {isJSON} from '@stratusjs/core/misc'
 // import {cookie} from '@stratusjs/core/environment'
 import {
+    isJSON,
     // isJSON,
     ObjectWithFunctions
 } from '@stratusjs/core/misc'
@@ -42,8 +43,12 @@ export type StripeSetupIntentScope = angular.IScope & ObjectWithFunctions & {
     localDir: string
     initialized: boolean
 
+    detailedBillingInfo: boolean,
+
     newPaymentMethodPrompt: boolean
     newPaymentMethodPending: boolean
+
+    paymentMethodApiPath: string
 
     addPaymentMethod(): Promise<void>
     inputPaymentMethod(clientSecret: string, publishKey: string, ev?: any): void
@@ -53,8 +58,8 @@ Stratus.Components.StripeSetupIntent = {
     bindings: {
         // Basic Control for Designers
         elementId: '@',
-        // The CustomerId Secret.
-        // customerId: '@',
+        // When true, Requests for Name + Address to be added
+        detailedBillingInfo: '@',
     },
     controller(
         $attrs: angular.IAttributes,
@@ -77,6 +82,10 @@ Stratus.Components.StripeSetupIntent = {
         $scope.newPaymentMethodPrompt = false
         $scope.newPaymentMethodPending = false
 
+        $scope.detailedBillingInfo = $attrs.detailedBillingInfo && isJSON($attrs.detailedBillingInfo) ?
+            JSON.parse($attrs.detailedBillingInfo) : false
+        $scope.paymentMethodApiPath = 'PaymentMethod' // FIXME allow this to be customizable
+
         /**
          * On load, attempt to prepare and render the Card element
          */
@@ -87,50 +96,52 @@ Stratus.Components.StripeSetupIntent = {
             })
         }
 
-        $scope.addPaymentMethod = async (): Promise<void> => {
-            console.log('running addPaymentMethod')
-            let clientSecret = ''
-            let publishKey = ''
-            $scope.$applyAsync(() => {
-                $scope.newPaymentMethodPending = true
-            })
-            const model = new Model({
-                target: 'PaymentMethod'
-            })
-            await model.save()
-            console.log('model', model)
-            if (
-                Object.prototype.hasOwnProperty.call(model, 'meta') &&
-                Object.prototype.hasOwnProperty.call(model.meta, 'data') &&
-                Object.prototype.hasOwnProperty.call(model.meta.data, 'clientSecret') &&
-                Object.prototype.hasOwnProperty.call(model.meta.data, 'publishKey') &&
-                !_.isEmpty(model.meta.data.clientSecret) &&
-                !_.isEmpty(model.meta.data.publishKey)
-            ) {
-                clientSecret = model.meta.data.clientSecret
-                publishKey = model.meta.data.publishKey
-            }
-            // TODO check status
+        $scope.addPaymentMethod = async (ev?: any): Promise<void> => {
+            if (!$scope.newPaymentMethodPending && !$scope.newPaymentMethodPrompt) {
+                console.log('running addPaymentMethod')
+                let clientSecret = ''
+                let publishKey = ''
+                $scope.$applyAsync(() => {
+                    $scope.newPaymentMethodPending = true
+                })
+                const model = new Model({
+                    target: $scope.paymentMethodApiPath
+                })
+                await model.save()
+                console.log('model', model)
+                if (
+                    Object.prototype.hasOwnProperty.call(model, 'meta') &&
+                    Object.prototype.hasOwnProperty.call(model.meta, 'data') &&
+                    Object.prototype.hasOwnProperty.call(model.meta.data, 'clientSecret') &&
+                    Object.prototype.hasOwnProperty.call(model.meta.data, 'publishKey') &&
+                    !_.isEmpty(model.meta.data.clientSecret) &&
+                    !_.isEmpty(model.meta.data.publishKey)
+                ) {
+                    clientSecret = model.meta.data.clientSecret
+                    publishKey = model.meta.data.publishKey
+                }
+                // TODO check status
 
-            if (
-                !_.isEmpty(clientSecret) &&
-                !_.isEmpty(publishKey)
-            ) {
-                // $scope.templatePaymentMethod = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
-                /*$scope.templatePaymentMethod = $sce.trustAsHtml(
-                    `<stratus-stripe-payment-method data-client-secret="${$scope.clientSecret}"
-                     data-publish-key="${$scope.publishKey}"></stratus-stripe-payment-method>`
-                )*/
-                //
-                // $scope.paymentEl.innerHTML = `<stratus-stripe-payment-method data-client-secret="${$scope.clientSecret}"
-                // data-publish-key="${$scope.publishKey}"></stratus-stripe-payment-method>`
-                // Been unable to get Stratus to render added Components, so we're working with a popup dialog instead
-                $scope.newPaymentMethodPrompt = true
-                $scope.inputPaymentMethod(clientSecret, publishKey)
+                if (
+                    !_.isEmpty(clientSecret) &&
+                    !_.isEmpty(publishKey)
+                ) {
+                    // $scope.templatePaymentMethod = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
+                    /*$scope.templatePaymentMethod = $sce.trustAsHtml(
+                        `<stratus-stripe-payment-method data-client-secret="${$scope.clientSecret}"
+                         data-publish-key="${$scope.publishKey}"></stratus-stripe-payment-method>`
+                    )*/
+                    //
+                    // $scope.paymentEl.innerHTML = `<stratus-stripe-payment-method data-client-secret="${$scope.clientSecret}"
+                    // data-publish-key="${$scope.publishKey}"></stratus-stripe-payment-method>`
+                    // Been unable to get Stratus to render added Components, so we're working with a popup dialog instead
+                    $scope.newPaymentMethodPrompt = true
+                    $scope.inputPaymentMethod(clientSecret, publishKey, ev)
+                }
+                $scope.$applyAsync(() => {
+                    $scope.newPaymentMethodPending = false
+                })
             }
-            $scope.$applyAsync(() => {
-                $scope.newPaymentMethodPending = false
-            })
             return
         }
 
@@ -142,10 +153,12 @@ Stratus.Components.StripeSetupIntent = {
             // Opening a popup will load the propertyDetails and adjust the hashbang URL
             const templateOptions: {
                 // 'element-id': string,
+                'detailed-billing-info'?: string,
                 'client-secret': string,
                 'publish-key': string
             } = {
                 // 'element-id': 'property_detail_popup_' + model.ListingKey,
+                'detailed-billing-info': $scope.detailedBillingInfo ? 'true' : 'false',
                 'client-secret': clientSecret,
                 'publish-key': publishKey
             }
@@ -210,6 +223,6 @@ Stratus.Components.StripeSetupIntent = {
     // template: '<md-button data-ng-click="addPaymentMethod()">Add Payment Method</md-button>'
     // template: ($scope: StripeSetupIntentScope): string => $scope.template
     template:
-        '<md-button data-ng-click="addPaymentMethod()" data-ng-disabled="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</md-button>'
+        '<md-button data-ng-click="addPaymentMethod($event)" data-ng-disabled="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</md-button>'
     // '<div data-ng-if="!newPaymentMethodPrompt" data-ng-bind-html="templatePaymentMethod"></div>'
 }
