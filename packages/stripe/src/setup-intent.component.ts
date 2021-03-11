@@ -18,11 +18,8 @@ import '@stratusjs/stripe/stripe'
 // import {StripeService} from '@stratusjs/stripe/stripe'
 
 // Stratus Dependencies
-// import {isJSON} from '@stratusjs/core/misc'
-// import {cookie} from '@stratusjs/core/environment'
 import {
     isJSON,
-    // isJSON,
     ObjectWithFunctions
 } from '@stratusjs/core/misc'
 // import {Collection} from '@stratusjs/angularjs/services/collection'
@@ -215,14 +212,9 @@ Stratus.Components.StripeSetupIntent = {
          * Destroy this widget
          */
         $scope.remove = (): void => {
-            // console.log('destroying swiper widget... after destroying, still doenst work')
-            // delete $ctrl.swiper
+            // delete Stripe Elements?
         }
     },
-    // templateUrl: (): string => `${localDir}${componentName}.component${min}.html`
-    // template: '<md-button data-ng-click="addPaymentMethod()">Add Payment Method</md-button>'
-    // template: ($scope: StripeSetupIntentScope): string => $scope.template
     template:
         '<md-button data-ng-click="addPaymentMethod($event)" data-ng-disabled="newPaymentMethodPending || newPaymentMethodPrompt">Add Payment Method</md-button>'
-    // '<div data-ng-if="!newPaymentMethodPrompt" data-ng-bind-html="templatePaymentMethod"></div>'
 }

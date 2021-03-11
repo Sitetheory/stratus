@@ -17,7 +17,6 @@ import '@stratusjs/stripe/stripe' // Ensures the files loads, rather than the TY
 import {StripeService} from '@stratusjs/stripe/stripe'
 
 // Stratus Dependencies
-// import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {isJSON, ObjectWithFunctions} from '@stratusjs/core/misc'
 import {Model} from '@stratusjs/angularjs/services/model'
@@ -225,8 +224,9 @@ Stratus.Components.StripePaymentMethod = {
                 $scope.$applyAsync(() => {
                     $scope.cardSaved = true
                     $scope.formPending = false
+                    // Reload any collections listing PMs
+                    Stripe.fetchCollections()
                 })
-                console.log('success', setupIntent)
             } else {
                 // handle everything else
                 $scope.$applyAsync(() => {
@@ -244,8 +244,7 @@ Stratus.Components.StripePaymentMethod = {
          * Destroy this widget
          */
         $scope.remove = (): void => {
-            // console.log('destroying swiper widget... after destroying, still doenst work')
-            // delete $ctrl.swiper
+            // delete Stripe Elements?
         }
     },
     templateUrl: (): string => `${localDir}${componentName}.component${min}.html`
