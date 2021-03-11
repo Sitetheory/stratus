@@ -52,7 +52,7 @@ const componentName = 'list'
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 type OrderOptions = {
-    [key:string]: string[]
+    [key: string]: string[]
 }
 type OrderOption = {
     name: string,
@@ -80,7 +80,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     mapMarkers: MarkerSettings[]
 
     getOrderName(): string
-    getOrderOptions(): {[key:string]: string[]}
+    getOrderOptions(): { [key: string]: string[] }
     getStreetAddress(property: Property): string
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
@@ -110,6 +110,10 @@ Stratus.Components.IdxPropertyList = {
         googleApiKey: '@',
         orderOptions: '@',
         query: '@',
+        queryOrder: '@',
+        queryPerPage: '@',
+        queryService: '@',
+        queryWhere: '@',
         searchOnLoad: '@',
         template: '@',
         urlLoad: '@'
@@ -161,17 +165,21 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsTemplate = $attrs.detailsTemplate || null
             $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
-            // TODO added backwards compatible options <--> query parameter until the next version
-            $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) :
-                $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+            $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
-            $scope.query.service = $scope.query.service || []
+            $scope.query.service = $attrs.queryService && isJSON($attrs.queryService) ?
+                JSON.parse($attrs.queryService) : $scope.query.service || []
             // If string, check if a json and parse first. Otherwise be null or what it is
-            $scope.query.order = $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ?
-                JSON.parse($scope.query.order) : $scope.query.order || null
+            $scope.query.order =
+                $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
+                $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
             $scope.query.page = $scope.query.page || null // will be set by Service
-            $scope.query.perPage = $scope.query.perPage || 25
+            $scope.query.perPage = $scope.query.perPage ||
+                ($attrs.queryPerPage && _.isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
+                ($attrs.queryPerPage && _.isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
+                25
+            $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
             $scope.query.images = $scope.query.images || {limit: 1}
 
             if (_.isArray($scope.query.where)) {
@@ -512,7 +520,7 @@ Stratus.Components.IdxPropertyList = {
                 $scope.query.order !== '' &&
                 !_.isEmpty($scope.query.order)
             ) {
-                for (const index in $scope.orderOptions ) {
+                for (const index in $scope.orderOptions) {
                     if (
                         $scope.orderOptions.hasOwnProperty(index) &&
                         _.isEqual($scope.orderOptions[index].value, $scope.query.order)

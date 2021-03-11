@@ -1,0 +1,34 @@
+@white-color: #fff;
+stratus-stripe-payment-method-list {
+  md-card.payment-method-container {
+    position: relative;
+    md-card-content {
+      animation: background-color 2s ease-out both;
+      -webkit-animation: background-color 2s ease-out both;
+      background-color: @white-color;
+      padding-top: 20px;
+    }
+    .action-buttons {
+      position: absolute;
+      animation: opacity 0.3s ease-out both;
+      -webkit-animation: opacity 0.3s ease-out both;
+      opacity: 0;
+      top: 4px;
+      &.save-button {
+        right: 28px;
+      }
+      &.delete-button {
+        right: 2px;
+      }
+    }
+    &:hover {
+      .action-buttons.delete-button {
+        opacity: 1;
+      }
+    }
+    .no-results {
+      text-align: center;
+      padding-bottom: 10px;
+    }
+  }
+}

@@ -1,5 +1,5 @@
-// Idx Service
-// @stratusjs/idx/idx
+// Stripe Service
+// @stratusjs/stripe/stripe
 
 // Runtime
 // import _ from 'lodash'
@@ -18,6 +18,7 @@ import * as angular from 'angular'
 // import {isJSON, LooseObject} from '@stratusjs/core/misc'
 // import {cookie} from '@stratusjs/core/environment'
 import {AnyFunction, ObjectWithFunctions} from '@stratusjs/core/misc'
+import {Collection} from '@stratusjs/angularjs/services/collection'
 
 
 // Environment
@@ -27,13 +28,16 @@ import {AnyFunction, ObjectWithFunctions} from '@stratusjs/core/misc'
 
 
 export type StripeService = ObjectWithFunctions & {
-    [key: string]: AnyFunction // | IdxSharedValue
+    [key: string]: AnyFunction
     elements: (key: string) => Promise<stripe.elements.Elements>
     confirmCardSetup: (
         clientSecret: string,
         data?: stripe.ConfirmCardSetupData,
         options?: stripe.ConfirmCardSetupOptions,
     ) => Promise<stripe.SetupIntentResponse>
+
+    registerCollection: (collection: Collection) => void
+    fetchCollections: () => void
 
     // Variables
     // sharedValues: IdxSharedValue
@@ -72,6 +76,7 @@ const angularJsService = (
 
     let publishKey = ''
     const Stripe: StripeVariables = {}
+    const collections: Collection[] = []
     let initializing = false
     let initialized = false
 
@@ -134,10 +139,23 @@ const angularJsService = (
         return Stripe.stripe.confirmCardSetup(clientSecret, data, options)
     }
 
+    function registerCollection(collection: Collection) {
+        collections.push(collection)
+    }
+
+    function fetchCollections() {
+        collections.forEach((collection) => {
+            collection.fetch()
+            console.log('refetching this collection')
+        })
+    }
+
     return {
         elements,
         initialize,
-        confirmCardSetup
+        confirmCardSetup,
+        registerCollection,
+        fetchCollections
     }
 }
 

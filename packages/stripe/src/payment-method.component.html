@@ -1,5 +1,5 @@
 <div id="{{ elementId }}">
-    <md-content data-layout-padding>
+    <md-content data-layout-padding data-ng-show="!cardSaved">
         <!-- TODO add a form to collect Billing info for the card as an option -->
         <div data-ng-if="detailedBillingInfo" class="billing-info">
             <md-input-container class="md-block">
@@ -13,6 +13,10 @@
             <md-input-container class="md-block">
                 <label>Address</label>
                 <input data-ng-model="billingInfo.address.line1" data-ng-disabled="!isEditable()">
+            </md-input-container>
+            <md-input-container class="md-block">
+                <label>Address 2</label>
+                <input data-ng-model="billingInfo.address.line2" data-ng-disabled="!isEditable()">
             </md-input-container>
             <md-input-container class="md-block">
                 <label>City</label>
@@ -34,5 +38,10 @@
         <div id="{{ elementId+'-errors' }}" class="card-errors" role="alert"></div>
         <button data-ng-on-click="saveCard()" data-ng-disabled="!isSubmittable()">Save Payment Method</button>
         <md-progress-linear ng-if="formPending" md-mode="indeterminate"></md-progress-linear>
+    </md-content>
+    <md-content data-layout-padding data-ng-show="cardSaved">
+        <p>
+            Payment Method Saved
+        </p>
     </md-content>
 </div>
