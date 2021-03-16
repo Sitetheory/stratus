@@ -35,7 +35,7 @@
         <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
         <!-- [cdkDragDisabled]="_.get(selectedModel, 'status') < 1" -->
         <div cdkDrag class="selected-list-row selected-box"
-             [ngClass]="(!_.get(selectedModel, 'status') || _.get(selectedModel, 'status') < 1) ? 'inactive' : 'active'"
+             [ngClass]="{'active': (_.get(selectedModel, 'status') == 1), 'inactive' : (_.get(selectedModel, 'status') != 1), 'published': (_.get(selectedModel, 'version.published') == 1), 'unpublished': (_.get(selectedModel, 'version.published') != 1)}"
              *ngFor="let selectedModel of dataSub | async">
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
             <div class="selected-list-container">
@@ -86,7 +86,7 @@
                         </mat-icon>
                         <span class="comment content-type-name font-body"
                               [ngClass]="((_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) | lowercase) + '-color'"
-                              [textContent]="(_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ((!_.get(selectedModel, 'status') || _.get(selectedModel, 'status') < 1) ? ' (hidden)' : '')">
+                              [textContent]="(_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ((_.get(selectedModel, 'status') != 1) ? ' (hidden)' : '') + ((_.get(selectedModel, 'version.published') != 1) ? ' (unpublished)' : '')">
                         </span>
                     </div>
 
