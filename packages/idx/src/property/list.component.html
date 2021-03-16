@@ -14,10 +14,10 @@
         </div>
     </div>
 
-    <div class="list-container clearfix">
+    <div class="list-container clearfix" data-ng-class="'grid-' + displayPerRow">
         <md-progress-linear ng-if="collection.pending" md-mode="indeterminate"></md-progress-linear>
         <div data-ng-if="collection.completed && !collection.pending && collection.models.length === 0" class="no-results">
-            We didn’t find any properties that fit your criteria. You might want to try a broader search.
+            We didn’t find any properties that fit your criteria.<span ng-if=""> You might want to try a broader search.</span>
         </div>
         <div data-ng-repeat="property in collection.models | limitTo:query.perPage:(query.page-1)*query.perPage" id="{{::elementId}}_{{::property._id}}"
              class="property-container" aria-labelledby="{{::elementId}}_{{::property._id}}_address" data-ng-cloak
@@ -80,7 +80,7 @@
     </div>
     <!-- TODO GoogleMaps key. -->
     <!--stratus-idx-map data-list-id="property-list-39407"></stratus-idx-map-->
-    <div class="pager-container clearfix">
+    <div class="pager-container clearfix" data-ng-if="displayPager">
         <div class="pager-section" data-ng-if="collection.meta.data.totalPages >= 2">
             <div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
                 <span data-ng-bind="query.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
