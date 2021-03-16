@@ -119,6 +119,7 @@ Stratus.Components.IdxPropertyList = {
         urlLoad: '@',
         displayPerRow: '@',
         displayPager: '@',
+        displayLegal: '@',
     },
     controller(
         $anchorScroll: angular.IAnchorScrollService,
