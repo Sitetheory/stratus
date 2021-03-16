@@ -116,7 +116,10 @@ Stratus.Components.IdxPropertyList = {
         queryWhere: '@',
         searchOnLoad: '@',
         template: '@',
-        urlLoad: '@'
+        urlLoad: '@',
+        displayPerRow: '@',
+        displayPager: '@',
+        displayLegal: '@',
     },
     controller(
         $anchorScroll: angular.IAnchorScrollService,
@@ -181,6 +184,10 @@ Stratus.Components.IdxPropertyList = {
                 25
             $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
             $scope.query.images = $scope.query.images || {limit: 1}
+            $scope.displayPerRow = $attrs.displayPerRow || 2
+            $scope.displayPager =
+                $attrs.displayPager ? (isJSON($attrs.displayPager) ? JSON.parse($attrs.displayPager) :
+                $attrs.displayPager) : true
 
             if (_.isArray($scope.query.where)) {
                 delete $scope.query.where
