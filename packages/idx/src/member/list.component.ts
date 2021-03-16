@@ -388,7 +388,7 @@ Stratus.Components.IdxMemberList = {
          * TODO move this to it's own directive/service
          */
         $scope.variableInject =
-            async (member: { MemberFullName: string, MemberFirstName: string, MemberLastName: string } | any): Promise<void> => {
+            async (member: Member): Promise<void> => {
                 $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
                 Object.keys($scope.variableSyncing).forEach(elementId => {
                     // promises.push(
@@ -423,6 +423,12 @@ Stratus.Components.IdxMemberList = {
                             // let firstName = nameArray.shift()
                             const lastName = nameArray.join(' ')
                             varElement.val(lastName)
+                        } else if ($scope.variableSyncing[elementId] === 'OfficeNumber') {
+                            if (Object.prototype.hasOwnProperty.call(member, 'OfficeMlsId')) {
+                                varElement.val(member.OfficeMlsId)
+                            } else if (Object.prototype.hasOwnProperty.call(member, 'OfficeKey')) {
+                                varElement.val(member.OfficeKey)
+                            }
                         }
 
                         // varElement.val(member.MemberFullName)

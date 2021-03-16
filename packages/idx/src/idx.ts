@@ -418,6 +418,11 @@ export interface Office extends LooseObject {
 export interface Member extends LooseObject {
     id: string
     MemberKey: string
+    MemberFullName?: string
+    MemberFirstName?: string
+    MemberLastName?: string
+    OfficeKey: string
+    OfficeMlsId?: string
 
     _unmapped?: {
         [key: string]: unknown
@@ -2741,6 +2746,7 @@ const angularJsService = (
             'MemberMlsAccessYN',
             'MemberType',
             'OfficeKey',
+            'OfficeMlsId',
             'OfficeName',
             'OriginatingSystemName',
             'SourceSystemName'

@@ -218,7 +218,8 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
                     agent_lname: 'MemberLastName',
                     agent_license: 'MemberStateLicense',
                     office_name: 'OfficeName',
-                    office_id: 'OfficeKey'
+                    // office_id: 'OfficeKey'
+                    office_id: 'OfficeNumber'
                 })
                 // 'page-title': true,//update the page title
             }
