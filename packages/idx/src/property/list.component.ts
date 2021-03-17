@@ -97,6 +97,7 @@ Stratus.Components.IdxPropertyList = {
     bindings: {
         uid: '@',
         elementId: '@',
+        initNow: '=',
         tokenUrl: '@',
         detailsLinkPopup: '@',
         detailsLinkUrl: '@',
@@ -119,7 +120,6 @@ Stratus.Components.IdxPropertyList = {
         urlLoad: '@',
         displayPerRow: '@',
         displayPager: '@',
-        displayLegal: '@',
     },
     controller(
         $anchorScroll: angular.IAnchorScrollService,
@@ -151,9 +151,7 @@ Stratus.Components.IdxPropertyList = {
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
-        $ctrl.$onInit = async () => {
-            $scope.Idx = Idx
-            $scope.collection = new Collection<Property>({})
+        const init = async () => {
             /**
              * Allow query to be loaded initially from the URL
              */
@@ -176,7 +174,7 @@ Stratus.Components.IdxPropertyList = {
             // If string, check if a json and parse first. Otherwise be null or what it is
             $scope.query.order =
                 $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
-                $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
+                    $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
             $scope.query.page = $scope.query.page || null // will be set by Service
             $scope.query.perPage = $scope.query.perPage ||
                 ($attrs.queryPerPage && _.isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
@@ -187,7 +185,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.displayPerRow = $attrs.displayPerRow || 2
             $scope.displayPager =
                 $attrs.displayPager ? (isJSON($attrs.displayPager) ? JSON.parse($attrs.displayPager) :
-                $attrs.displayPager) : true
+                    $attrs.displayPager) : true
 
             if (_.isArray($scope.query.where)) {
                 delete $scope.query.where
@@ -260,6 +258,34 @@ Stratus.Components.IdxPropertyList = {
             }
 
             Idx.emit('init', $scope)
+        }
+
+        // Initialization by Event
+        $ctrl.$onInit = () => {
+            $scope.Idx = Idx
+            $scope.collection = new Collection<Property>({})
+
+            let initNow = true
+            if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
+                // TODO: This needs better logic to determine what is acceptably initialized
+                initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
+            }
+
+            if (initNow) {
+                init()
+                return
+            }
+
+            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+                // console.log('CAROUSEL initNow called later')
+                if (initNowCtrl !== true) {
+                    return
+                }
+                if (!$scope.initialized) {
+                    init()
+                }
+                $ctrl.stopWatchingInitNow()
+            })
         }
 
         $scope.$watch('collection.models', () => { // models?: []
