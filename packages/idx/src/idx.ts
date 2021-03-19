@@ -19,6 +19,7 @@ import '@stratusjs/idx/listTrac'
 // Stratus Dependencies
 import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
+import {IdxDisclaimerScope} from '@stratusjs/idx/disclaimer/disclaimer.component'
 import {IdxMapScope} from '@stratusjs/idx/map/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
@@ -88,6 +89,8 @@ export interface IdxService {
         $scope: IdxDetailsScope
     ): void
 
+    registerDisclaimerInstance(uid: string, $scope: IdxDisclaimerScope): void
+
     registerListInstance(
         uid: string,
         moduleName: 'member' | 'office' | 'property',
@@ -156,6 +159,9 @@ export interface IdxService {
 
     tokenKeepAuth(keepAlive?: boolean): IPromise<void>
 
+    getLastQueryTime(): Date|null
+
+    getLastSessionTime(): Date|null
 }
 
 export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
@@ -418,6 +424,11 @@ export interface Office extends LooseObject {
 export interface Member extends LooseObject {
     id: string
     MemberKey: string
+    MemberFullName?: string
+    MemberFirstName?: string
+    MemberLastName?: string
+    OfficeKey: string
+    OfficeMlsId?: string
 
     _unmapped?: {
         [key: string]: unknown
@@ -579,6 +590,9 @@ const angularJsService = (
     let refreshLoginTimer: any // Timeout object
     let defaultPageTitle: string
     const instance: {
+        disclaimer: {
+            [uid: string]: IdxDisclaimerScope
+        }
         map: {
             [uid: string]: IdxMapScope
         }
@@ -598,6 +612,7 @@ const angularJsService = (
             search: { [uid: string]: IdxSearchScope }
         }
     } = {
+        disclaimer: {},
         map: {},
         member: {
             details: {},
@@ -618,6 +633,9 @@ const angularJsService = (
 
     /** type {{List: Object<[String]>, Search: Object<[String]>}} */
     const instanceLink: {
+        Disclaimer: {
+            [uid: string]: string[]
+        }
         List: {
             [uid: string]: string[]
         }
@@ -628,6 +646,7 @@ const angularJsService = (
             [uid: string]: string[]
         }
     } = {
+        Disclaimer: {},
         List: {},
         Map: {},
         Search: {}
@@ -680,14 +699,16 @@ const angularJsService = (
      * type {{whereFilter: {}, pages: Array<Number>, perPage: number}}
      */
     const lastQueries: {
-        whereFilter: object | any,
-        pages: number[],
+        whereFilter: object | any
+        pages: number[]
         perPage: number
         order?: string | string[]
+        time?: Date
     } = {
         whereFilter: {},
         pages: [],
-        perPage: 0
+        perPage: 0,
+        time: null
     }
 
     // TODO infer the emit type
@@ -850,6 +871,21 @@ const angularJsService = (
         instance.map[uid] = $scope
         if (!Object.prototype.hasOwnProperty.call(instanceLink.Map, uid)) {
             instanceLink.Map[uid] = []
+        }
+    }
+
+    /**
+     * Add Disclaimer instance to the service
+     * @param uid - The elementId of a widget
+     * @param $scope - angular scope
+     */
+    function registerDisclaimerInstance(uid: string, $scope: IdxDisclaimerScope): void {
+        if (!Object.prototype.hasOwnProperty.call(instance, 'disclaimer')) {
+            instance.disclaimer = {}
+        }
+        instance.disclaimer[uid] = $scope
+        if (!Object.prototype.hasOwnProperty.call(instanceLink.Disclaimer, uid)) {
+            instanceLink.Disclaimer[uid] = []
         }
     }
 
@@ -2242,6 +2278,20 @@ const angularJsService = (
     }
 
     /**
+     * Return the last time a Search was sent in
+     */
+    function getLastQueryTime(): Date|null {
+        return lastQueries.time
+    }
+
+    /**
+     * Return the last time a Token was refreshed
+     */
+    function getLastSessionTime(): Date|null {
+        return session.lastCreated
+    }
+
+    /**
      * Process the currently set options and update the URL with what should be known
      * TODO define defaultOptions
      */
@@ -2462,6 +2512,8 @@ const angularJsService = (
         lastQueries.perPage = options.perPage
         lastQueries.pages.push(options.page)
         // console.log('lastQueries:', lastQueries);
+        // set last query time
+        lastQueries.time = new Date()
 
         return collection
     }
@@ -2552,6 +2604,8 @@ const angularJsService = (
                     $scope.$applyAsync()
                 })
         }
+        // set last query time
+        lastQueries.time = new Date()
 
         return $scope[modelVarName]
     }
@@ -2741,6 +2795,7 @@ const angularJsService = (
             'MemberMlsAccessYN',
             'MemberType',
             'OfficeKey',
+            'OfficeMlsId',
             'OfficeName',
             'OriginatingSystemName',
             'SourceSystemName'
@@ -3003,6 +3058,8 @@ const angularJsService = (
         getFullStatus,
         getGoogleMapsKey,
         getIdxServices,
+        getLastQueryTime,
+        getLastSessionTime,
         getListInstance,
         getListInstanceLinks,
         getMLSVariables,
@@ -3013,6 +3070,7 @@ const angularJsService = (
         getUrlOptionsPath,
         on,
         registerDetailsInstance,
+        registerDisclaimerInstance,
         registerListInstance,
         registerMapInstance,
         registerSearchInstance,

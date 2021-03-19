@@ -24,7 +24,10 @@
 						Office: <span data-ng-bind="::member.OfficeName"></span>
 					</span>
 					<span class="member-office-key" data-ng-if="::member.OfficeKey">
-						Office ID: <span data-ng-bind="::member.OfficeKey"></span>
+						Office Key: <span data-ng-bind="::member.OfficeKey"></span>
+					</span>
+                    <span class="member-office-key" data-ng-if="::member.OfficeMlsId">
+						Office MlsId: <span data-ng-bind="::member.OfficeMlsId"></span>
 					</span>
 					<span class="member-status" data-ng-if="::member.MemberStatus">
 						Member Status: <span data-ng-bind="::member.MemberStatus"></span>
@@ -35,6 +38,6 @@
 				</div>
 			</md-list-item>
 		</md-list>
-		<div class="disclaimer-container" data-ng-if="collection.completed" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+        <stratus-idx-disclaimer data-ng-if="collection.completed"></stratus-idx-disclaimer>
 	</div>
 </div>

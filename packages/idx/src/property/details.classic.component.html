@@ -249,7 +249,12 @@
             <iframe data-ng-src="{{::getGoogleMapEmbed()}}" class="google-map-embed"></iframe>
 		</div>
 
-		<div class="disclaimer details-container dotted-spaced-underline underline-top" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+		<!--div class="disclaimer details-container dotted-spaced-underline underline-top" data-ng-bind-html="::getMLSDisclaimer(true)"></div-->
+        <stratus-idx-disclaimer
+                class="details-container dotted-spaced-underline underline-top"
+                data-service="{{::options.service}}"
+                data-modification-timestamp="::model.data.ModificationTimestamp"
+        ></stratus-idx-disclaimer>
 	</div>
 
 	<div data-ng-if="model.data.length == 0 || model.error" class="error details-container">

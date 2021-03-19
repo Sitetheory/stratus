@@ -15,7 +15,8 @@ import 'angular-material'
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
-    CompileFilterOptions, IdxEmitter,
+    CompileFilterOptions,
+    IdxEmitter,
     IdxSearchScope,
     IdxService,
     MLSService,
@@ -63,6 +64,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
 Stratus.Components.IdxPropertySearch = {
     bindings: {
         elementId: '@',
+        initNow: '=',
         tokenUrl: '@',
         tokenOnLoad: '@',
         listId: '@',
@@ -104,8 +106,7 @@ Stratus.Components.IdxPropertySearch = {
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
-        $ctrl.$onInit = async () => {
-            $scope.Idx = Idx
+        const init = async () => {
             $scope.widgetName = $attrs.widgetName || ''
             $scope.listId = $attrs.listId || null
             $scope.listInitialized = false
@@ -235,6 +236,33 @@ Stratus.Components.IdxPropertySearch = {
 
             // await $scope.variableSync() sync is moved to teh timeout above so it can still work with List widgets
             Idx.emit('init', $scope)
+        }
+
+        // Initialization by Event
+        $ctrl.$onInit = () => {
+            $scope.Idx = Idx
+
+            let initNow = true
+            if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
+                // TODO: This needs better logic to determine what is acceptably initialized
+                initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
+            }
+
+            if (initNow) {
+                init()
+                return
+            }
+
+            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+                // console.log('CAROUSEL initNow called later')
+                if (initNowCtrl !== true) {
+                    return
+                }
+                if (!$scope.initialized) {
+                    init()
+                }
+                $ctrl.stopWatchingInitNow()
+            })
         }
 
         $scope.$watch('options.query.where.ListingType', () => {

@@ -7,7 +7,6 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import moment from 'moment'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -25,6 +24,7 @@ import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
 import '@stratusjs/idx/member/details.component'
+import '@stratusjs/idx/disclaimer/disclaimer.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -273,25 +273,6 @@ Stratus.Components.IdxMemberList = {
             Idx.emit('orderChanged', $scope, _.clone(order))
         }
 
-        /**
-         * Display an MLS' required legal disclaimer
-         * @param html - if output should be HTML safe
-         */
-        $scope.getMLSDisclaimer = (html?: boolean): string => {
-            let disclaimer = ''
-            Idx.getMLSVariables($scope.options.service || null).forEach((service: { disclaimer: string }) => {
-                if (disclaimer) {
-                    disclaimer += '<br>'
-                }
-                disclaimer += service.disclaimer
-            })
-            if ($scope.collection.meta.data.fetchDate) {
-                disclaimer = `Last checked ${moment($scope.collection.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
-            }
-
-            return html ? $sce.trustAsHtml(disclaimer) : disclaimer
-        }
-
         $scope.highlightModel = (model: Member, timeout?: number): void => {
             timeout = timeout || 0
             model._unmapped = model._unmapped || {}
@@ -388,7 +369,7 @@ Stratus.Components.IdxMemberList = {
          * TODO move this to it's own directive/service
          */
         $scope.variableInject =
-            async (member: { MemberFullName: string, MemberFirstName: string, MemberLastName: string } | any): Promise<void> => {
+            async (member: Member): Promise<void> => {
                 $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
                 Object.keys($scope.variableSyncing).forEach(elementId => {
                     // promises.push(
@@ -423,6 +404,12 @@ Stratus.Components.IdxMemberList = {
                             // let firstName = nameArray.shift()
                             const lastName = nameArray.join(' ')
                             varElement.val(lastName)
+                        } else if ($scope.variableSyncing[elementId] === 'OfficeNumber') {
+                            if (Object.prototype.hasOwnProperty.call(member, 'OfficeMlsId')) {
+                                varElement.val(member.OfficeMlsId)
+                            } else if (Object.prototype.hasOwnProperty.call(member, 'OfficeKey')) {
+                                varElement.val(member.OfficeKey)
+                            }
                         }
 
                         // varElement.val(member.MemberFullName)
