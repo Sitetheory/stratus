@@ -39,7 +39,10 @@
 
 
 	</div>
-	<div data-ng-if="collection.completed && collection.models.length !== 0" class="disclaimer details-container dotted-spaced-underline underline-top" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+    <stratus-idx-disclaimer
+            data-ng-if="collection.completed && collection.models.length !== 0"
+            class="disclaimer details-container dotted-spaced-underline underline-top"
+    ></stratus-idx-disclaimer>
 
 	<div data-ng-if="(!collection.pending && collection.models.length == 0) || collection.error" class="error details-container">
 		Sorry, the member you requested could not be found. Perhaps there was an error and trying again will solve the

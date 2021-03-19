@@ -1,6 +1,6 @@
-// IdxPropertyDetailsSubSection Component
-// @stratusjs/idx/property/details-sub-section.component
-// <stratus-idx-property-details-sub-section>
+// IdxMap Component
+// @stratusjs/idx/map/map.component
+// <stratus-idx-map>
 // --------------
 
 // Runtime

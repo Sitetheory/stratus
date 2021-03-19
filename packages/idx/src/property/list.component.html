@@ -78,10 +78,8 @@
             </md-card>
         </div>
     </div>
-    <!-- TODO GoogleMaps key. -->
-    <!--stratus-idx-map data-list-id="property-list-39407"></stratus-idx-map-->
-    <div class="pager-container clearfix">
-        <div class="pager-section" data-ng-if="displayPager && collection.meta.data.totalPages >= 2">
+    <div class="pager-container clearfix" data-ng-if="displayPager && collection.meta.data.totalPages >= 2">
+        <div class="pager-section">
             <div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
                 <span data-ng-bind="query.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
                 Pages
@@ -98,5 +96,5 @@
             </a>
         </div>
     </div>
-    <div class="disclaimer-container" data-ng-if="collection.completed" data-ng-bind-html="disclaimerHTML" aria-label="Disclaimers"></div>
+    <stratus-idx-disclaimer></stratus-idx-disclaimer>
 </div>

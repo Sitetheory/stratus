@@ -366,11 +366,11 @@
         </div>
 
         <div class="disclaimer-container details-container static-element">
-            <div class="disclaimer"
-                 data-ng-class="{'border-top': (contact || Idx.sharedValues.contact)}"
-                 data-ng-bind-html="disclaimerHTML"
-                 aria-label="Disclaimer"
-            ></div>
+            <stratus-idx-disclaimer
+                    data-service="{{::options.service}}"
+                    data-modification-timestamp="::model.data.ModificationTimestamp"
+                    data-ng-class="{'border-top': (contact || Idx.sharedValues.contact)}"
+            ></stratus-idx-disclaimer>
         </div>
     </div>
     <div data-ng-if="model.data.length == 0 || model.error" class="error details-container">

@@ -7,7 +7,7 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import moment from 'moment'
+// import moment from 'moment'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -46,6 +46,7 @@ import 'stratus.filters.moment'
 
 // Component Preload
 import '@stratusjs/idx/property/details-sub-section.component'
+import '@stratusjs/idx/disclaimer/disclaimer.component'
 // tslint:disable-next-line:no-duplicate-imports
 import {SubSectionOptions} from '@stratusjs/idx/property/details-sub-section.component'
 // tslint:disable-next-line:no-duplicate-imports
@@ -65,8 +66,6 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
     pageTitle: string
     options: any // TODO ned to specify
     defaultListOptions: object
-    disclaimerString: string
-    disclaimerHTML: any
     images: object[]
     contact?: object | any
     contactUrl?: string
@@ -80,7 +79,6 @@ export type IdxPropertyDetailsScope = IdxDetailsScope<Property> & {
 
     fetchProperty(): Promise<void>
     getFullAddress(encode?: boolean): string
-    getMLSDisclaimer(html?: boolean): string
     getPublicRemarksHTML(): any
     getSlideshowImages(): SlideImage[]
     getStreetAddress(): string
@@ -165,9 +163,6 @@ Stratus.Components.IdxPropertyDetails = {
             // The List's default query is needed to avoid showing the entire Query in the URL
             $scope.defaultListOptions = $attrs.defaultListOptions && isJSON($attrs.defaultListOptions) ?
                 JSON.parse($attrs.defaultListOptions) : {}
-
-            $scope.disclaimerString = 'Loading...'
-            $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
 
             $scope.images = []
             $scope.contact = null
@@ -1247,7 +1242,6 @@ Stratus.Components.IdxPropertyDetails = {
                 data &&
                 data.hasOwnProperty('_ServiceId')
             ) {
-                $ctrl.processMLSDisclaimer()
                 // Check if empty
                 Idx.devLog('Loaded Details Data:', data)
                 // prepare the images provided
@@ -1443,36 +1437,6 @@ Stratus.Components.IdxPropertyDetails = {
          * Display an MLS' Name
          */
         $scope.getMLSName = (): string => $ctrl.mlsVariables.name
-
-        /**
-         * Process an MLS' required legal disclaimer to later display
-         * @param html - if output should be HTML safe
-         */
-        $ctrl.processMLSDisclaimer = (html?: boolean): string => {
-            const mlsVars = $scope.getMLSVariables()
-
-            let disclaimer = mlsVars.disclaimer
-
-            if ($scope.model.data.ModificationTimestamp) {
-                disclaimer = `Listing last updated ${moment($scope.model.data.ModificationTimestamp).format('M/D/YY h:mm a')}. ${disclaimer}`
-            }
-            if (mlsVars.fetchTime.Property) {
-                disclaimer = `Last checked ${moment(mlsVars.fetchTime.Property).format('M/D/YY h:mm a')}. ${disclaimer}`
-            } else if ($scope.model.meta.data.fetchDate) {
-                disclaimer = `Last checked ${moment($scope.model.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
-            }
-
-            $scope.disclaimerString = disclaimer
-            $scope.disclaimerHTML = $sce.trustAsHtml(disclaimer)
-
-            return html ? $scope.disclaimerHTML : $scope.disclaimerString
-        }
-
-        /**
-         * Display an MLS' required legal disclaimer
-         * @param html - if output should be HTML safe
-         */
-        $scope.getMLSDisclaimer = (html?: boolean): string => html ? $scope.disclaimerHTML : $scope.disclaimerString
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
 

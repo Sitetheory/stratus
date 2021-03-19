@@ -7,7 +7,7 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import moment from 'moment'
+// import moment from 'moment'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -41,6 +41,7 @@ import {cookie} from '@stratusjs/core/environment'
 import 'stratus.directives.src'
 
 // Component Preload
+import '@stratusjs/idx/disclaimer/disclaimer.component'
 import '@stratusjs/idx/property/details.component'
 import '@stratusjs/idx/map/map.component'
 
@@ -74,8 +75,6 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     contactName: string
     contactEmail?: string
     contactPhone: string
-    disclaimerString: string
-    disclaimerHTML: any
     instancePath: string
     mapMarkers: MarkerSettings[]
 
@@ -216,9 +215,6 @@ Stratus.Components.IdxPropertyList = {
             $scope.contactEmail = $attrs.contactEmail || null
             $scope.contactPhone = $attrs.contactPhone || null
 
-            $scope.disclaimerString = 'Loading...'
-            $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
-
             $scope.mapMarkers = []
 
             // Register this List with the Property service
@@ -290,8 +286,6 @@ Stratus.Components.IdxPropertyList = {
 
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
-                $ctrl.processMLSDisclaimer() // TODO force reset with true?
-
                 Idx.emit('collectionUpdated', $scope, $scope.collection)
             }
         })
@@ -618,36 +612,6 @@ Stratus.Components.IdxPropertyList = {
             }
             return name
         }
-
-        /**
-         * Process an MLS' required legal disclaimer to later display
-         * @param reset - set true to force reset
-         * TODO Idx needs to supply MLSVariables interface
-         */
-        $ctrl.processMLSDisclaimer = (reset?: boolean): void => {
-            const services: MLSService[] = $scope.getMLSVariables(reset)
-            let disclaimer = ''
-            services.forEach(service => {
-                if (disclaimer) {
-                    disclaimer += '<br>'
-                }
-                if (service.fetchTime.Property) {
-                    disclaimer += `Last checked ${moment(service.fetchTime.Property).format('M/D/YY h:mm a')}. `
-                } else if ($scope.collection.meta.data.fetchDate) {
-                    disclaimer += `Last checked ${moment($scope.collection.meta.data.fetchDate).format('M/D/YY')}. `
-                }
-                disclaimer += service.disclaimer
-            })
-
-            $scope.disclaimerString = disclaimer
-            $scope.disclaimerHTML = $sce.trustAsHtml(disclaimer)
-        }
-
-        /**
-         * Display an MLS' required legal disclaimer
-         * @param html - if output should be HTML safe
-         */
-        $scope.getMLSDisclaimer = (html?: boolean): string => html ? $ctrl.disclaimerHTML : $ctrl.disclaimerString
 
         $scope.highlightModel = (model: Property, timeout?: number): void => {
             timeout = timeout || 0

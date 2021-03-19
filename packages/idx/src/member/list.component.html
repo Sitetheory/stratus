@@ -45,6 +45,7 @@
 			</md-list-item>
 		</md-list>
 		<!-- TODO pagination -->
-		<div class="disclaimer-container" data-ng-if="collection.completed" data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+		<div class="disclaimer-container"  data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+        <stratus-idx-disclaimer data-ng-if="collection.completed"></stratus-idx-disclaimer>
 	</div>
 </div>

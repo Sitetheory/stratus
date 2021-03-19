@@ -7,7 +7,6 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import moment from 'moment'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -188,23 +187,6 @@ Stratus.Components.IdxMemberDetails = {
          * Display an MLS' Name
          */
         $scope.getMLSName = (): string => Idx.getMLSVariables($scope.model.data._ServiceId)[0].name // FIXME more checks need to happen here
-
-        /**
-         * Display an MLS' required legal disclaimer
-         * @param html - if output should be HTML safe
-         */
-        $scope.getMLSDisclaimer = (html?: boolean): string => {
-            // FIXME more checks need to happen here
-            let disclaimer = Idx.getMLSVariables($scope.collection.models[0]._ServiceId)[0].disclaimer
-            if ($scope.collection.models[0].ModificationTimestamp) {
-                disclaimer = `Member last updated ${moment($scope.collection.models[0].ModificationTimestamp).format('M/D/YY HH:mm a')}. ${disclaimer}`
-            }
-            if ($scope.collection.models[0].fetchDate) {
-                disclaimer = `Last checked ${moment($scope.model.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
-            }
-
-            return html ? $sce.trustAsHtml(disclaimer) : disclaimer
-        }
 
         $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
 

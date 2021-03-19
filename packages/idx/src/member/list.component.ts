@@ -7,7 +7,6 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import moment from 'moment'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -25,6 +24,7 @@ import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
 import '@stratusjs/idx/member/details.component'
+import '@stratusjs/idx/disclaimer/disclaimer.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -271,25 +271,6 @@ Stratus.Components.IdxMemberList = {
             $scope.options.order = order
             await $scope.searchMembers(null, true, true)
             Idx.emit('orderChanged', $scope, _.clone(order))
-        }
-
-        /**
-         * Display an MLS' required legal disclaimer
-         * @param html - if output should be HTML safe
-         */
-        $scope.getMLSDisclaimer = (html?: boolean): string => {
-            let disclaimer = ''
-            Idx.getMLSVariables($scope.options.service || null).forEach((service: { disclaimer: string }) => {
-                if (disclaimer) {
-                    disclaimer += '<br>'
-                }
-                disclaimer += service.disclaimer
-            })
-            if ($scope.collection.meta.data.fetchDate) {
-                disclaimer = `Last checked ${moment($scope.collection.meta.data.fetchDate).format('M/D/YY')}. ${disclaimer}`
-            }
-
-            return html ? $sce.trustAsHtml(disclaimer) : disclaimer
         }
 
         $scope.highlightModel = (model: Member, timeout?: number): void => {
