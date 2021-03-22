@@ -119,6 +119,7 @@ Stratus.Components.IdxPropertyList = {
         urlLoad: '@',
         displayPerRow: '@',
         displayPager: '@',
+        hideDisclaimer: '@',
     },
     controller(
         $anchorScroll: angular.IAnchorScrollService,
@@ -185,6 +186,8 @@ Stratus.Components.IdxPropertyList = {
             $scope.displayPager =
                 $attrs.displayPager ? (isJSON($attrs.displayPager) ? JSON.parse($attrs.displayPager) :
                     $attrs.displayPager) : true
+            $scope.hideDisclaimer = $attrs.hideDisclaimer && isJSON($attrs.hideDisclaimer) ?
+                JSON.parse($attrs.hideDisclaimer) : false
 
             if (_.isArray($scope.query.where)) {
                 delete $scope.query.where
