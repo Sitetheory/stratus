@@ -77,6 +77,8 @@ export interface IdxService {
     ): Promise<Model<Property>>
 
     // Instance Methods
+    getDisclaimerInstance(disclaimerUid?: string): {[uid: string]: IdxDisclaimerScope} | null
+
     getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxComponentScope | null
 
     getListInstanceLinks(listUid: string, listType?: string): (IdxPropertySearchScope | IdxMapScope | IdxComponentScope)[]
@@ -949,6 +951,17 @@ const angularJsService = (
             })
         }
         return linkedSearches
+    }
+
+    /**
+     * Return a Disclaimer scope
+     * @param disclaimerUid? - uid of Disclaimer
+     */
+    function getDisclaimerInstance(disclaimerUid?: string): {[uid: string]: IdxDisclaimerScope} | null {
+        return disclaimerUid ? (
+            Object.prototype.hasOwnProperty.call(instance.disclaimer, disclaimerUid) ?
+                {[instance.disclaimer[disclaimerUid].elementId]: instance.disclaimer[disclaimerUid]} : null
+        ) : instance.disclaimer
     }
 
     /**
@@ -3053,6 +3066,7 @@ const angularJsService = (
         emitManual,
         getContactVariables,
         getDefaultWhereOptions,
+        getDisclaimerInstance,
         getFriendlyStatus,
         getFullAddress,
         getFullStatus,
