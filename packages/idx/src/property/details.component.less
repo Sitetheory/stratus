@@ -469,20 +469,17 @@ stratus-idx-property-details {
 
     /* Disclaimer Section */
     &.disclaimer-container {
-      padding-top: 0;
+      /* padding-top: 0; */
       background: #fff;
       color: #666;
-      font-size: 13px;
       stratus-idx-disclaimer {
-        display: block;
-        padding-top: 60px;
-        &.border-top {
+        &.border-top .disclaimer-outer-container {
           border-top: 1px solid rgba(0, 0, 0, 0.15);
         }
-        .mls-service-logo {
-          display: block;
-          max-width: 80px;
-          margin-top: 20px;
+        .disclaimer-outer-container {
+          /* padding-top: 60px;
+          margin-top: 0; */
+          font-size: 13px;
         }
       }
     }

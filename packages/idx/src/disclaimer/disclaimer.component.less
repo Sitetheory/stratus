@@ -1,0 +1,30 @@
+/*
+Nothing should be outside 'stratus-idx-disclaimer' or it will leak into other modules
+z-index can cause a bleeding effect on popups (z-index 100 equates to the top most item for angular, use the lowest number possible and work up)
+*/
+stratus-idx-disclaimer {
+  /* Padding and margin should not directly be added in this location as only .disclaimer-outer-container gets hidden when needed */
+  display: block;
+  clear: both;
+  &.border-top .disclaimer-outer-container {
+    border-top: 1px solid rgba(0, 0, 0, 0.25);
+  }
+  .disclaimer-outer-container {
+    /* margin-top: 20px;
+    padding-top: 20px; */
+    font-size: 12px;
+    .disclaimer-container {
+      /* Individual MLS' will each have a separate .disclaimer-container */
+      .mls-service-logo {
+        /* In future, Logos will be maintained outside of the disclaimer text (not here) */
+        display: block;
+        max-width: 80px;
+        margin-top: 20px;
+      }
+    }
+    .mls-logos-container {
+      /* In future, Logos will be consolidated all here instead of .disclaimer-container */
+      display: none;
+    }
+  }
+}
