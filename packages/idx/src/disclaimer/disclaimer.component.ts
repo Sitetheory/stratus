@@ -13,19 +13,17 @@ import '@stratusjs/angularjs/services/model'
 
 // Stratus Dependencies
 import {isJSON} from '@stratusjs/core/misc'
+import {cookie} from '@stratusjs/core/environment'
 import {IdxComponentScope, IdxEmitter, IdxService, MLSService} from '@stratusjs/idx/idx'
 import moment from 'moment'
 
-// Component Preload
-
 // Environment
-// const min = !cookie('env') ? '.min' : ''
+const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
-// const moduleName = 'disclaimer'
+const moduleName = 'disclaimer'
 const componentName = 'disclaimer'
 // There is not a very consistent way of pathing in Stratus at the moment
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
-// const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/`
+const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
 export type IdxDisclaimerScope = IdxComponentScope & {
     initialized: boolean
@@ -72,6 +70,7 @@ Stratus.Components.IdxDisclaimer = {
         // FIXME if type !'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse', revert to Property
         // FIXME can later use this for last time checks
         $scope.alwaysShow = typeof $attrs.hideOnDuplicate === 'undefined'
+        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         /**
          * All actions that happen first when the component loads
@@ -240,5 +239,5 @@ Stratus.Components.IdxDisclaimer = {
         $scope.remove = (): void => {
         }
     },
-    template: '<div id="{{::elementId}}" data-ng-cloak data-ng-show="disclaimerHTML && !hideMe" data-ng-bind-html="disclaimerHTML" aria-label="Disclaimers"></div>'
+    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="disclaimerHTML && !hideMe" aria-label="Disclaimers"><div class="disclaimer-container" data-ng-bind-html="disclaimerHTML"></div><div class="mls-logos-container" aria-label="Future Updates Coming"></div></div>'
 }
