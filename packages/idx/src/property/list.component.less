@@ -80,19 +80,6 @@ stratus-idx-property-list {
     max-width: 50%;
   }
 
-  /* Property List */
-  .list-container {
-    margin: 10px -8px 0;
-
-    /* Details button */
-
-    .property-button-container {
-      .button {
-        margin: 0 auto;
-      }
-    }
-  }
-
   /* Property */
   .property-container {
     position: relative;
@@ -256,6 +243,110 @@ stratus-idx-property-list {
     }
   }
 
+  /* Property List */
+  .list-container {
+    margin: 10px -8px 0;
+
+    /* Details button */
+    .property-button-container {
+      .button {
+        margin: 0 auto;
+      }
+    }
+
+    /* Structure */
+    &.three-per-row {
+      .property-container {
+        width: 33.333%;
+
+        @media (max-width: 999px) {
+          width: 50%;
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        @media (max-width: 600px) {
+          width: 100%;
+        }
+        &:nth-child(2n),
+        &:nth-child(2n) + .property-container {
+          clear: unset;
+        }
+        &:nth-child(3n) {
+          clear: right;
+        }
+        &:nth-child(3n) + .property-container {
+          clear: left;
+        }
+
+        @media (max-width: 999px) {
+          &:nth-child(3n),
+          &:nth-child(3n) + .property-container {
+            clear: unset;
+          }
+          &:nth-child(2n) {
+            clear: right;
+          }
+          &:nth-child(2n) + .property-container {
+            clear: left;
+          }
+        }
+
+        @media (max-width: 600px) {
+          &:nth-child(2n),
+          &:nth-child(2n) + .property-container {
+            clear: unset;
+          }
+        }
+      }
+    }
+    &.four-per-row {
+      .property-container {
+        width: 25%;
+
+        @media (max-width: 959px) {
+          width: 50%;
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        @media (max-width: 600px) {
+          width: 100%;
+        }
+        &:nth-child(2n),
+        &:nth-child(2n) + .property-container {
+          clear: unset;
+        }
+        &:nth-child(4n) {
+          clear: right;
+        }
+        &:nth-child(4n) + .property-container {
+          clear: left;
+        }
+
+        @media (max-width: 959px) {
+          &:nth-child(4n),
+          &:nth-child(4n) + .property-container {
+            clear: unset;
+          }
+          &:nth-child(2n) {
+            clear: right;
+          }
+          &:nth-child(2n) + .property-container {
+            clear: left;
+          }
+        }
+
+        @media (max-width: 600px) {
+          &:nth-child(2n),
+          &:nth-child(2n) + .property-container {
+            clear: unset;
+          }
+        }
+      }
+    }
+  }
+
   /* List Pager */
   .pager-container {
     margin: 20px 0;
@@ -314,98 +405,6 @@ stratus-idx-property-list {
     padding-top: 20px;
     text-transform: none;
     letter-spacing: normal;
-  }
-
-  /* Structure */
-  &.three-per-row {
-    .property-container {
-      width: 33.333%;
-
-      @media (max-width: 999px) {
-        width: 50%;
-        padding-left: 0;
-        padding-right: 0;
-      }
-
-      @media (max-width: 600px) {
-        width: 100%;
-      }
-      &:nth-child(2n),
-      &:nth-child(2n) + .property-container {
-        clear: unset;
-      }
-      &:nth-child(3n) {
-        clear: right;
-      }
-      &:nth-child(3n) + .property-container {
-        clear: left;
-      }
-
-      @media (max-width: 999px) {
-        &:nth-child(3n),
-        &:nth-child(3n) + .property-container {
-          clear: unset;
-        }
-        &:nth-child(2n) {
-          clear: right;
-        }
-        &:nth-child(2n) + .property-container {
-          clear: left;
-        }
-      }
-
-      @media (max-width: 600px) {
-        &:nth-child(2n),
-        &:nth-child(2n) + .property-container {
-          clear: unset;
-        }
-      }
-    }
-  }
-  &.four-per-row {
-    .property-container {
-      width: 25%;
-
-      @media (max-width: 959px) {
-        width: 50%;
-        padding-left: 0;
-        padding-right: 0;
-      }
-
-      @media (max-width: 600px) {
-        width: 100%;
-      }
-      &:nth-child(2n),
-      &:nth-child(2n) + .property-container {
-        clear: unset;
-      }
-      &:nth-child(4n) {
-        clear: right;
-      }
-      &:nth-child(4n) + .property-container {
-        clear: left;
-      }
-
-      @media (max-width: 959px) {
-        &:nth-child(4n),
-        &:nth-child(4n) + .property-container {
-          clear: unset;
-        }
-        &:nth-child(2n) {
-          clear: right;
-        }
-        &:nth-child(2n) + .property-container {
-          clear: left;
-        }
-      }
-
-      @media (max-width: 600px) {
-        &:nth-child(2n),
-        &:nth-child(2n) + .property-container {
-          clear: unset;
-        }
-      }
-    }
   }
 }
 
