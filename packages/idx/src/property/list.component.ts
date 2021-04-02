@@ -748,9 +748,10 @@ Stratus.Components.IdxPropertyList = {
             }
         }
 
-        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+        $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.remove = (): void => {
+            // TODO need to destroy any attached widgets
         }
     },
     templateUrl: ($attrs: angular.IAttributes): string => `${localDir}${$attrs.template || componentName}.component${min}.html`

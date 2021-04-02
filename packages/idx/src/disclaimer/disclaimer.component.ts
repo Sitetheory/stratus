@@ -27,6 +27,7 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
 
 export type IdxDisclaimerScope = IdxComponentScope & {
     initialized: boolean
+    onWatchers: (() => void)[]
 
     service?: number | number[]
     type: 'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse'
@@ -65,6 +66,7 @@ Stratus.Components.IdxDisclaimer = {
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.initialized = false
+        $scope.onWatchers = []
         $scope.service = $attrs.service && isJSON($attrs.service) ? JSON.parse($attrs.service) : []
         $scope.type = $attrs.type ? JSON.parse($attrs.type) : 'Property'
         // FIXME if type !'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse', revert to Property
@@ -88,6 +90,11 @@ Stratus.Components.IdxDisclaimer = {
                     $scope.processMLSDisclaimer()
                     $scope.initialized = true
                 }
+                // This only gets called once
+                Idx.on('Idx', 'fetchTimeUpdate', (scope: null, serviceId, modelName, fetchTime) => {
+                    $scope.processMLSDisclaimer(true)
+                    // console.log('Fetch Times have updated!!!', serviceId, modelName, fetchTime)
+                })
             })
             Idx.on('Idx', 'sessionRefresh', () => {
                 $scope.processMLSDisclaimer(true)
@@ -234,9 +241,12 @@ Stratus.Components.IdxDisclaimer = {
          */
         $scope.getMLSDisclaimer = (html?: boolean): string|any => html ? $scope.disclaimerHTML : $scope.disclaimerString
 
-        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+        $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.remove = (): void => {
+            // TODO need to remove all on events/watchers. remove isn't being hit
+            // console.log('This Disclaimer widget is getting killed')
+            $scope.onWatchers.forEach(killOnWatcher => killOnWatcher())
         }
     },
     template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="disclaimerHTML && !hideMe" aria-label="Disclaimers"><div class="disclaimer-container" data-ng-bind-html="disclaimerHTML"></div><div class="mls-logos-container" aria-label="Future Updates Coming"></div></div>'
