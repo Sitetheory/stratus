@@ -298,6 +298,7 @@ export interface MLSService {
     logo?: string
     logoSmall?: string
     logoMedium?: string
+    logoLarge?: string
 }
 
 export interface WidgetContact {
@@ -1301,11 +1302,14 @@ const angularJsService = (
         // TODO save collection.header.get('x-fetch-time') to MLSVariables
         const fetchTime = apiFetch.header.get('x-fetch-time')
         if (fetchTime) {
-            const oldTime = session.services[serviceId].fetchTime[modelName].getTime()
+            const oldTime = session.services[serviceId].fetchTime[modelName]
             session.services[serviceId].fetchTime[modelName] = new Date(fetchTime)
             // TODO check differences or old vs new and push emit
 
-            if (oldTime !== session.services[serviceId].fetchTime[modelName].getTime()) {
+            if (
+                !(_.isDate(oldTime) && _.isDate(session.services[serviceId].fetchTime[modelName])) ||
+                oldTime.getTime() !== session.services[serviceId].fetchTime[modelName].getTime()
+            ) {
                 // Only emit if there is a new time set
                 emitManual('fetchTimeUpdate', 'Idx', null, serviceId, modelName, session.services[serviceId].fetchTime[modelName])
             }

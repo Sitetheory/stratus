@@ -25,6 +25,24 @@ const componentName = 'disclaimer'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+export interface CleanService {
+    id: number
+    name: string
+    disclaimerString: string
+    disclaimerHTML: any
+    fetchTime: {
+        Property: Date | null
+        Media: Date | null
+        Member: Date | null
+        Office: Date | null
+        OpenHouse: Date | null
+    }
+    logo?: string
+    logoSmall?: string
+    logoMedium?: string
+    logoLarge?: string
+}
+
 export type IdxDisclaimerScope = IdxComponentScope & {
     initialized: boolean
     onWatchers: (() => void)[]
@@ -38,6 +56,7 @@ export type IdxDisclaimerScope = IdxComponentScope & {
     hideMe: boolean
     disclaimerString: string
     disclaimerHTML: any
+    idxService: CleanService[]
 
     getMLSDisclaimer(html?: boolean): string | any
     getMLSVariables(reset?: boolean): MLSService[]
@@ -68,6 +87,7 @@ Stratus.Components.IdxDisclaimer = {
         $scope.initialized = false
         $scope.onWatchers = []
         $scope.service = $attrs.service && isJSON($attrs.service) ? JSON.parse($attrs.service) : []
+        $scope.idxService = []
         $scope.type = $attrs.type ? JSON.parse($attrs.type) : 'Property'
         // FIXME if type !'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse', revert to Property
         // FIXME can later use this for last time checks
@@ -212,26 +232,47 @@ Stratus.Components.IdxDisclaimer = {
          */
         $scope.processMLSDisclaimer = (reset?: boolean): void => {
             const services: MLSService[] = $scope.getMLSVariables(reset)
-            let disclaimer = ''
+            $scope.idxService = []
+            let disclaimerComplete = ''
             services.forEach(service => {
-                if (disclaimer) {
-                    disclaimer += '<br>'
-                }
+                let singleDisclaimer = ''
+
                 if (service.fetchTime[$scope.type]) {
-                    disclaimer += `Last checked ${moment(service.fetchTime[$scope.type]).format('M/D/YY h:mm a')}. `
+                    singleDisclaimer += `Last checked ${moment(service.fetchTime[$scope.type]).format('M/D/YY h:mm a')}. `
+                    // disclaimerComplete += `Last checked ${moment(service.fetchTime[$scope.type]).format('M/D/YY h:mm a')}. `
                 } else if (Idx.getLastSessionTime()) {
-                    disclaimer += `Last checked ${moment(Idx.getLastSessionTime()).format('M/D/YY')}. `
+                    singleDisclaimer += `Last checked ${moment(Idx.getLastSessionTime()).format('M/D/YY')}. `
+                    // disclaimerComplete += `Last checked ${moment(Idx.getLastSessionTime()).format('M/D/YY')}. `
                 }
                 if ($ctrl.modificationTimestamp) {
-                    disclaimer += `Listing last updated ${moment($ctrl.modificationTimestamp).format('M/D/YY h:mm a')}. `
+                    singleDisclaimer += `Listing last updated ${moment($ctrl.modificationTimestamp).format('M/D/YY h:mm a')}. `
+                    // disclaimerComplete += `Listing last updated ${moment($ctrl.modificationTimestamp).format('M/D/YY h:mm a')}. `
                 } /*else {
                     console.log('no mod time!')
                 }*/
-                disclaimer += service.disclaimer
+                singleDisclaimer += service.disclaimer
+                // disclaimerComplete += service.disclaimer
+                if (disclaimerComplete) {
+                    disclaimerComplete += '<br>'
+                }
+                disclaimerComplete += singleDisclaimer // TODO removing soon
+                // TODO above was old process. New process below
+
+                $scope.idxService.push({
+                    id: service.id,
+                    name: service.name,
+                    disclaimerString: singleDisclaimer,
+                    disclaimerHTML: $sce.trustAsHtml(singleDisclaimer),
+                    fetchTime: service.fetchTime,
+                    logo: service.logo,
+                    logoSmall: service.logoSmall,
+                    logoMedium: service.logoMedium,
+                    logoLarge: service.logoLarge,
+                })
             })
 
-            $scope.disclaimerString = disclaimer
-            $scope.disclaimerHTML = $sce.trustAsHtml(disclaimer)
+            $scope.disclaimerString = disclaimerComplete
+            $scope.disclaimerHTML = $sce.trustAsHtml(disclaimerComplete)
             // console.log('processMLSDisclaimer $scope.hideOnDuplicate is', $scope.hideOnDuplicate)
         }
 
@@ -249,5 +290,5 @@ Stratus.Components.IdxDisclaimer = {
             $scope.onWatchers.forEach(killOnWatcher => killOnWatcher())
         }
     },
-    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="disclaimerHTML && !hideMe" aria-label="Disclaimers"><div class="disclaimer-container" data-ng-bind-html="disclaimerHTML"></div><div class="mls-logos-container" aria-label="Future Updates Coming"></div></div>'
+    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="disclaimerHTML && !hideMe" aria-label="Disclaimers"><div class="disclaimer-container" data-ng-repeat="service in idxService" data-ng-bind-html="service.disclaimerHTML"></div><div class="mls-logos-container" aria-label="Future Updates Coming"></div></div>'
 }
