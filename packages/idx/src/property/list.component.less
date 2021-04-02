@@ -60,6 +60,7 @@ stratus-idx-property-list {
 
   /* Sort Options Button */
   .sort-options-container {
+    margin: 10px 0 0;
     float: right;
     .options-button,
     .options-button a {
@@ -72,6 +73,9 @@ stratus-idx-property-list {
   }
 
   /* Filters */
+  .search-full {
+    border: 1px solid #DDD;
+  }
   .search-mini {
     max-width: 50%;
   }
@@ -81,170 +85,170 @@ stratus-idx-property-list {
     margin: 10px -8px 0;
 
     /* Details button */
+
     .property-button-container {
       .button {
         margin: 0 auto;
       }
     }
-
-    /* Property */
-    .property-container {
-      position: relative;
-      padding-bottom: 24px;
-      margin-bottom: 16px;
-      text-align: center;
-      float: left;
-      width: 100%;
-      @media @desktop-only {
-        width: 50%;
-        &:nth-child(2n) {
-          clear: right;
-        }
-        &:nth-child(2n) + .property-container {
-          clear: left;
-        }
+  }
+  /* Property */
+  .property-container {
+    position: relative;
+    padding-bottom: 24px;
+    margin-bottom: 16px;
+    text-align: center;
+    float: left;
+    width: 100%;
+    @media @desktop-only {
+      width: 50%;
+      &:nth-child(2n) {
+        clear: right;
       }
-      md-card {
-        &.property-item {
-          box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
-          transition: background-color linear 1000ms;
+      &:nth-child(2n) + .property-container {
+        clear: left;
+      }
+    }
+    md-card {
+      &.property-item {
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.15);
+        transition: background-color linear 1000ms;
 
-          /* IDX Image */
-          .property-image {
-            position: relative;
-            background: #000;
-            .image-wrapper {
-              background-position: center;
-              background-repeat: no-repeat;
-              background-size: cover;
+        /* IDX Image */
+        .property-image {
+          position: relative;
+          background: #000;
+          .image-wrapper {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+          img {
+            width: 100%;
+          }
+          a {
+            &,
+            * {
+              transition: all 0.2s ease-out;
+              -webkit-transition: all 0.2s ease-out;
             }
-            img {
-              width: 100%;
+
+            display: block;
+            position: relative;
+            .btn {
+              transform: translate(-50%, -50%) scale(0.5);
+              -webkit-transform: translate(-50%, -50%) scale(0.5);
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              opacity: 0;
+              color: #fff;
+              z-index: 1;
+              background: none;
+              border: 1px solid #fff;
+              //&:hover {
+              //  transform: translate(-50%,-50%) scale(1);
+              //  -webkit-transform: translate(-50%,-50%) scale(1);
+              //  color: #222;
+              //  background: #FFF;
+              //}
+            }
+          }
+          &:hover a {
+            .image-wrapper {
+              opacity: 0.3;
+            }
+            .btn {
+              transform: translate(-50%, -50%) scale(1);
+              -webkit-transform: translate(-50%, -50%) scale(1);
+              opacity: 1;
+            }
+          }
+          .property-status {
+            z-index: 1;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            display: table;
+            margin: 0 auto;
+            padding: 2px 4px 2px 5px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.4;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #fff;
+          }
+        }
+        .property-content {
+          padding: 40px;
+          .status-price-container .property-price {
+            float: right;
+            font-size: 14px;
+            font-weight: normal;
+            color: #333;
+            text-align: right;
+          }
+
+          /* Property Address */
+          .property-address {
+            margin: 0 0 24px;
+            padding: 0 0 24px;
+            h4 {
+              margin: 0;
+              min-width: 160px;
+              font-size: 14px;
+              text-transform: uppercase;
+              color: #222;
+              letter-spacing: 1px;
+              .city {
+                margin-top: 10px;
+                font-size: 10px;
+                letter-spacing: 1px;
+                display: block;
+              }
             }
             a {
-              &,
-              * {
-                transition: all 0.2s ease-out;
-                -webkit-transition: all 0.2s ease-out;
-              }
-
-              display: block;
-              position: relative;
-              .btn {
-                transform: translate(-50%, -50%) scale(0.5);
-                -webkit-transform: translate(-50%, -50%) scale(0.5);
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                opacity: 0;
-                color: #fff;
-                z-index: 1;
-                background: none;
-                border: 1px solid #fff;
-                //&:hover {
-                //  transform: translate(-50%,-50%) scale(1);
-                //  -webkit-transform: translate(-50%,-50%) scale(1);
-                //  color: #222;
-                //  background: #FFF;
-                //}
-              }
-            }
-            &:hover a {
-              .image-wrapper {
-                opacity: 0.3;
-              }
-              .btn {
-                transform: translate(-50%, -50%) scale(1);
-                -webkit-transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-              }
-            }
-            .property-status {
-              z-index: 1;
-              position: absolute;
-              right: 10px;
-              top: 10px;
-              display: table;
-              margin: 0 auto;
-              padding: 2px 4px 2px 5px;
-              font-size: 10px;
               font-weight: bold;
-              text-transform: uppercase;
-              letter-spacing: 1px;
-              line-height: 1.4;
-              text-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-              background-color: rgba(0, 0, 0, 0.6);
-              color: #fff;
+              color: #222;
+              &:hover {
+                color: #666;
+              }
             }
           }
-          .property-content {
-            padding: 40px;
-            .status-price-container .property-price {
-              float: right;
-              font-size: 14px;
-              font-weight: normal;
-              color: #333;
-              text-align: right;
+          .property-data {
+            padding: 0;
+            font-size: 13px;
+            line-height: 2;
+            .property-type > span {
+              /* \0a is for '&nbsp', which is need if this the template is minified and spans spaces are removed */
+              &::after {
+                display: inline;
+                content: '\0a|\0a';
+                padding: 0 2px;
+              }
+              &:last-child::after {
+                content: '';
+              }
             }
+          }
 
-            /* Property Address */
-            .property-address {
-              margin: 0 0 24px;
-              padding: 0 0 24px;
-              h4 {
-                margin: 0;
-                min-width: 160px;
-                font-size: 14px;
-                text-transform: uppercase;
-                color: #222;
-                letter-spacing: 1px;
-                .city {
-                  margin-top: 10px;
-                  font-size: 10px;
-                  letter-spacing: 1px;
-                  display: block;
-                }
-              }
-              a {
-                font-weight: bold;
-                color: #222;
-                &:hover {
-                  color: #666;
-                }
-              }
-            }
-            .property-data {
-              padding: 0;
-              font-size: 13px;
-              line-height: 2;
-              .property-type > span {
-                /* \0a is for '&nbsp', which is need if this the template is minified and spans spaces are removed */
-                &::after {
-                  display: inline;
-                  content: '\0a|\0a';
-                  padding: 0 2px;
-                }
-                &:last-child::after {
-                  content: '';
-                }
-              }
-            }
-
-            /* MLS service + number */
-            .mls-service-name {
-              position: absolute;
-              left: 0;
-              bottom: 0;
-              width: 100%;
-              font-size: 11px;
-              line-height: 1.8;
-              text-align: center;
-              color: #888;
-            }
+          /* MLS service + number */
+          .mls-service-name {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            font-size: 11px;
+            line-height: 1.8;
+            text-align: center;
+            color: #888;
           }
-          &.highlight {
-            background-color: rgba(0, 0, 0, 0.12);
-          }
+        }
+        &.highlight {
+          background-color: rgba(0, 0, 0, 0.12);
         }
       }
     }
@@ -302,12 +306,100 @@ stratus-idx-property-list {
     }
   }
 
-  /* Disclaimer */
-  stratus-idx-disclaimer .disclaimer-outer-container {
-    margin-top: 20px;
-    padding-top: 20px;
+}
+/* Disclaimer */
+stratus-idx-disclaimer .disclaimer-outer-container {
+  margin-top: 20px;
+  padding-top: 20px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* Structure */
+.three-per-row  {
+  .property-container {
+    width: 33.333%;
+    @media (max-width:999px) {
+      width: 50%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    @media (max-width:600px) {
+      width: 100%;
+    }
+    &:nth-child(2n),
+    &:nth-child(2n) + .property-container {
+      clear: unset;
+    }
+    &:nth-child(3n) {
+      clear: right;
+    }
+    &:nth-child(3n) + .property-container {
+      clear: left;
+    }
+    @media (max-width:999px) {
+      &:nth-child(3n),
+      &:nth-child(3n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(2n) {
+        clear: right;
+      }
+      &:nth-child(2n) + .property-container {
+        clear: left;
+      }
+    }
+    @media (max-width:600px) {
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+    }
   }
 }
+.four-per-row {
+  .property-container {
+    width: 25%;
+    @media (max-width:959px) {
+      width: 50%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+    @media (max-width:600px) {
+      width: 100%;
+    }
+    &:nth-child(2n),
+    &:nth-child(2n) + .property-container {
+      clear: unset;
+    }
+    &:nth-child(4n) {
+      clear: right;
+    }
+    &:nth-child(4n) + .property-container {
+      clear: left;
+    }
+    @media (max-width:959px) {
+      &:nth-child(4n),
+      &:nth-child(4n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(2n) {
+        clear: right;
+      }
+      &:nth-child(2n) + .property-container {
+        clear: left;
+      }
+    }
+    @media (max-width:600px) {
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+    }
+
+  }
+}
+
 
 /* Dialog box */
 .stratus-idx-property-list-dialog {
