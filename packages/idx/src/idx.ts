@@ -295,10 +295,12 @@ export interface MLSService {
         OpenHouse: Date | null
     }
     analyticsEnabled: string[]
-    logo?: string
-    logoSmall?: string
-    logoMedium?: string
-    logoLarge?: string
+    logo: {
+        default?: string
+        small?: string
+        medium?: string
+        large?: string
+    }
 }
 
 export interface WidgetContact {
@@ -1122,6 +1124,14 @@ const angularJsService = (
                     service.analyticsEnabled === null
                 ) {
                     service.analyticsEnabled = []
+                }
+                if (
+                    !Object.prototype.hasOwnProperty.call(service, 'logo') ||
+                    service.logo === null
+                ) {
+                    service.logo = {
+                        default: null
+                    }
                 }
                 session.services[service.id] = service
                 session.lastCreated = new Date(service.created)// The object is a String being converted to Date
@@ -2128,7 +2138,8 @@ const angularJsService = (
                         name: session.services[serviceId].name,
                         disclaimer: session.services[serviceId].disclaimer,
                         fetchTime: session.services[serviceId].fetchTime,
-                        analyticsEnabled: session.services[serviceId].analyticsEnabled
+                        analyticsEnabled: session.services[serviceId].analyticsEnabled,
+                        logo: session.services[serviceId].logo
                     })
                 }
             })
@@ -2140,7 +2151,8 @@ const angularJsService = (
                         name: service.name,
                         disclaimer: service.disclaimer,
                         fetchTime: service.fetchTime,
-                        analyticsEnabled: service.analyticsEnabled
+                        analyticsEnabled: service.analyticsEnabled,
+                        logo: service.logo
                     })
                 }
             })

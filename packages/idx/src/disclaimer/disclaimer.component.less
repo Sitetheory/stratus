@@ -10,21 +10,22 @@ stratus-idx-disclaimer {
     border-top: 1px solid rgba(0, 0, 0, 0.25);
   }
   .disclaimer-outer-container {
-    /* margin-top: 20px;
-    padding-top: 20px; */
     font-size: 12px;
     .disclaimer-container {
       /* Individual MLS' will each have a separate .disclaimer-container */
       .mls-service-logo {
-        /* In future, Logos will be maintained outside of the disclaimer text (not here) */
+        /* In future, Logos will be maintained outside of the disclaimer text (not here) TODO remove this section */
         display: block;
         max-width: 80px;
         margin-top: 20px;
       }
     }
     .mls-logos-container {
-      /* In future, Logos will be consolidated all here instead of .disclaimer-container */
-      display: none;
+      .mls-service-logo {
+        display: block;
+        max-width: 80px;
+        margin-top: 20px;
+      }
     }
   }
 }
