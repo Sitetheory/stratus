@@ -77,6 +77,8 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     contactPhone: string
     instancePath: string
     mapMarkers: MarkerSettings[]
+    displayPerRow: number,
+    displayPerRowText: string,
 
     getOrderName(): string
     getOrderOptions(): { [key: string]: string[] }
@@ -118,6 +120,7 @@ Stratus.Components.IdxPropertyList = {
         template: '@',
         urlLoad: '@',
         displayPerRow: '@',
+        displayPerRowText: '@',
         displayPager: '@',
         hideDisclaimer: '@',
     },
@@ -146,6 +149,8 @@ Stratus.Components.IdxPropertyList = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        $scope.displayPerRow = 2
+        $scope.displayPerRowText = 'two'
 
         /**
          * All actions that happen first when the component loads
@@ -182,7 +187,18 @@ Stratus.Components.IdxPropertyList = {
                 25
             $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
             $scope.query.images = $scope.query.images || {limit: 1}
-            $scope.displayPerRow = $attrs.displayPerRow || 2
+
+            // Handle row displays
+            if ($attrs.displayPerRowText && _.isString($attrs.displayPerRowText)) {
+                $scope.displayPerRowText = $attrs.displayPerRowText
+                $scope.displayPerRow = $scope.displayPerRowText === 'one' ? 1 : $scope.displayPerRowText === 'two' ? 2 :
+                    $scope.displayPerRowText === 'three' ? 3 : $scope.displayPerRowText === 'four' ? 4 : 2
+            } else if ($attrs.displayPerRow && (_.isString($attrs.displayPerRow) || _.isNumber($attrs.displayPerRow))) {
+                $scope.displayPerRow = _.isString($attrs.displayPerRow) ? parseInt($attrs.displayPerRow, 10) : $attrs.displayPerRow
+                $scope.displayPerRowText = $scope.displayPerRow === 1 ? 'one' : $scope.displayPerRow === 2 ? 'two' :
+                    $scope.displayPerRow === 3 ? 'three' : $scope.displayPerRow === 4 ? 'four' : 'two'
+            }
+
             $scope.displayPager =
                 $attrs.displayPager ? (isJSON($attrs.displayPager) ? JSON.parse($attrs.displayPager) :
                     $attrs.displayPager) : true
