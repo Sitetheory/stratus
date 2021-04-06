@@ -68,6 +68,8 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     detailsLinkUrl: string
     detailsLinkTarget: 'popup' | '_self' | '_blank'
     detailsHideVariables?: string[]
+    advancedSearchUrl: string,
+    advancedSearchLinkName: string,
     preferredStatus: 'Closed' | 'Leased' | 'Rented'
     detailsTemplate?: string
     query: CompileFilterOptions
@@ -163,6 +165,8 @@ Stratus.Components.IdxPropertyList = {
          * TODO: Will need to allow setting a custom path of views outside the library directory.
          */
         detailsTemplate: '@',
+        advancedSearchUrl: '@',
+        advancedSearchLinkName: '@',
         /**
          * Type: string
          * Default: 'Closed'
@@ -309,6 +313,9 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
                 JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
+            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || true
+            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || 'Advanced Search'
+
             $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}

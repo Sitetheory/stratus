@@ -95,6 +95,13 @@
                 <i class="arrow small right"></i>
             </a>
         </div>
+        <div class="search-more-filters advanced-search-link" data-ng-if="advancedSearchUrl">
+            <a class="open-filters-link"
+               data-ng-href="advancedSearchUrl">
+                <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
+                <span class="btn-text"><span ng-bind="advancedSearchLinkName"></span>
+            </a>
+        </div>
     </div>
     <stratus-idx-disclaimer data-init-now="collection.completed" data-hide-on-duplicate="{{hideDisclaimer}}"></stratus-idx-disclaimer>
 </div>
