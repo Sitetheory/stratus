@@ -25,8 +25,14 @@ const componentName = 'disclaimer'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
+export interface CleanService extends MLSService {
+    disclaimerString?: string
+    disclaimerHTML?: any
+}
+
 export type IdxDisclaimerScope = IdxComponentScope & {
     initialized: boolean
+    onWatchers: (() => void)[]
 
     service?: number | number[]
     type: 'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse'
@@ -35,10 +41,8 @@ export type IdxDisclaimerScope = IdxComponentScope & {
 
     alwaysShow: boolean
     hideMe: boolean
-    disclaimerString: string
-    disclaimerHTML: any
+    idxService: CleanService[]
 
-    getMLSDisclaimer(html?: boolean): string | any
     getMLSVariables(reset?: boolean): MLSService[]
     processMLSDisclaimer(reset?: boolean): void
 }
@@ -65,7 +69,9 @@ Stratus.Components.IdxDisclaimer = {
         Stratus.Instances[$ctrl.uid] = $scope
         $scope.elementId = $attrs.elementId || $ctrl.uid
         $scope.initialized = false
+        $scope.onWatchers = []
         $scope.service = $attrs.service && isJSON($attrs.service) ? JSON.parse($attrs.service) : []
+        $scope.idxService = []
         $scope.type = $attrs.type ? JSON.parse($attrs.type) : 'Property'
         // FIXME if type !'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse', revert to Property
         // FIXME can later use this for last time checks
@@ -77,9 +83,6 @@ Stratus.Components.IdxDisclaimer = {
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         const init = async () => {
-            $scope.disclaimerString = 'Loading...'
-            $scope.disclaimerHTML = $sce.trustAsHtml(`<span>${$scope.disclaimerString}</span>`)
-
             // Register this Disclaimer with the IDX service
             Idx.registerDisclaimerInstance($scope.elementId, $scope)
 
@@ -88,6 +91,11 @@ Stratus.Components.IdxDisclaimer = {
                     $scope.processMLSDisclaimer()
                     $scope.initialized = true
                 }
+                // This only gets called once
+                Idx.on('Idx', 'fetchTimeUpdate', (scope: null, serviceId, modelName, fetchTime) => {
+                    $scope.processMLSDisclaimer(true)
+                    // console.log('Fetch Times have updated!!!', serviceId, modelName, fetchTime)
+                })
             })
             Idx.on('Idx', 'sessionRefresh', () => {
                 $scope.processMLSDisclaimer(true)
@@ -205,39 +213,43 @@ Stratus.Components.IdxDisclaimer = {
          */
         $scope.processMLSDisclaimer = (reset?: boolean): void => {
             const services: MLSService[] = $scope.getMLSVariables(reset)
-            let disclaimer = ''
+            $scope.idxService = []
+            let disclaimerComplete = ''
             services.forEach(service => {
-                if (disclaimer) {
-                    disclaimer += '<br>'
-                }
+                let singleDisclaimer = ''
+
                 if (service.fetchTime[$scope.type]) {
-                    disclaimer += `Last checked ${moment(service.fetchTime[$scope.type]).format('M/D/YY h:mm a')}. `
+                    singleDisclaimer += `Last checked ${moment(service.fetchTime[$scope.type]).format('M/D/YY h:mm a')}. `
                 } else if (Idx.getLastSessionTime()) {
-                    disclaimer += `Last checked ${moment(Idx.getLastSessionTime()).format('M/D/YY')}. `
+                    singleDisclaimer += `Last checked ${moment(Idx.getLastSessionTime()).format('M/D/YY')}. `
                 }
                 if ($ctrl.modificationTimestamp) {
-                    disclaimer += `Listing last updated ${moment($ctrl.modificationTimestamp).format('M/D/YY h:mm a')}. `
+                    singleDisclaimer += `Listing last updated ${moment($ctrl.modificationTimestamp).format('M/D/YY h:mm a')}. `
                 } /*else {
                     console.log('no mod time!')
                 }*/
-                disclaimer += service.disclaimer
-            })
+                singleDisclaimer += service.disclaimer
+                // disclaimerComplete += service.disclaimer
+                if (disclaimerComplete) {
+                    disclaimerComplete += '<br>'
+                }
+                disclaimerComplete += singleDisclaimer // TODO removing soon
+                // TODO above was old process. New process below
 
-            $scope.disclaimerString = disclaimer
-            $scope.disclaimerHTML = $sce.trustAsHtml(disclaimer)
-            // console.log('processMLSDisclaimer $scope.hideOnDuplicate is', $scope.hideOnDuplicate)
+                const cleanService: CleanService = service
+                cleanService.disclaimerString = singleDisclaimer
+                cleanService.disclaimerHTML = $sce.trustAsHtml(singleDisclaimer)
+                $scope.idxService.push(cleanService)
+            })
         }
 
-        /**
-         * Display an MLS' required legal disclaimer
-         * @param html - if output should be HTML safe
-         */
-        $scope.getMLSDisclaimer = (html?: boolean): string|any => html ? $scope.disclaimerHTML : $scope.disclaimerString
-
-        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+        $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.remove = (): void => {
+            // TODO need to remove all on events/watchers. remove isn't being hit
+            // console.log('This Disclaimer widget is getting killed')
+            $scope.onWatchers.forEach(killOnWatcher => killOnWatcher())
         }
     },
-    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="disclaimerHTML && !hideMe" aria-label="Disclaimers"><div class="disclaimer-container" data-ng-bind-html="disclaimerHTML"></div><div class="mls-logos-container" aria-label="Future Updates Coming"></div></div>'
+    template: '<div id="{{::elementId}}" class="disclaimer-outer-container" data-ng-cloak data-ng-show="idxService.length > 0 && !hideMe" aria-label="Disclaimers"><div class="disclaimer-container" data-ng-repeat="service in idxService" data-ng-bind-html="service.disclaimerHTML"></div><div class="mls-logos-container" aria-label="Logos"><img class="mls-service-logo" data-ng-show="service.logo.default" data-ng-repeat="service in idxService" aria-label="{{service.name}}" data-ng-src="{{service.logo.medium || service.logo.default}}"></div></div>'
 }

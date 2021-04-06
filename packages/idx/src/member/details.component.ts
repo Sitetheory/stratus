@@ -188,7 +188,7 @@ Stratus.Components.IdxMemberDetails = {
          */
         $scope.getMLSName = (): string => Idx.getMLSVariables($scope.model.data._ServiceId)[0].name // FIXME more checks need to happen here
 
-        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+        $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.remove = (): void => {
         }

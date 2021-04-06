@@ -134,7 +134,7 @@ export interface IdxService {
         uid: string,
         emitterName: string,
         callback: IdxEmitter
-    ): void
+    ): () => void
 
     getFriendlyStatus(property: Property): string // TODO replace with property object
     getFullAddress(property: Property, encode?: boolean): string
@@ -171,7 +171,7 @@ export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
     localDir: string
     Idx: IdxService
 
-    on(emitterName: string, callback: IdxEmitter): void
+    on(emitterName: string, callback: IdxEmitter): () => void
     remove(): void
 }
 
@@ -280,21 +280,27 @@ export interface CompileFilterOptions extends LooseObject {
 }
 
 export interface MLSService {
-    id: number,
-    name: string,
-    disclaimer: string,
-    token?: string,
-    created?: string,
-    ttl?: number,
-    host?: string,
+    id: number
+    name: string
+    disclaimer: string
+    token?: string
+    created?: string
+    ttl?: number
+    host?: string
     fetchTime: {
-        Property: Date | null,
-        Media: Date | null,
-        Member: Date | null,
-        Office: Date | null,
+        Property: Date | null
+        Media: Date | null
+        Member: Date | null
+        Office: Date | null
         OpenHouse: Date | null
-    },
+    }
     analyticsEnabled: string[]
+    logo: {
+        default?: string
+        small?: string
+        medium?: string
+        large?: string
+    }
 }
 
 export interface WidgetContact {
@@ -656,16 +662,17 @@ const angularJsService = (
 
     const instanceOnEmitters: {
         [emitterUid: string]: {
-            [onMethodName: string]: IdxEmitter[]
-            init?: IdxEmitterInit[]
-            sessionInit?: IdxEmitterSessionInit[]
-            collectionUpdated?: IdxEmitterCollectionUpdated[]
-            pageChanged?: IdxEmitterPageChanged[]
-            pageChanging?: IdxEmitterPageChanging[]
-            orderChanged?: IdxEmitterOrderChanged[]
-            orderChanging?: IdxEmitterOrderChanging[]
-            searched?: IdxEmitterSearched[]
-            searching?: IdxEmitterSearching[]
+            // [onMethodName: string]: IdxEmitter[]
+            [onMethodName: string]: {[uid: string]: IdxEmitter}
+            init?: {[uid: string]: IdxEmitterInit}
+            sessionInit?: {[uid: string]: IdxEmitterSessionInit}
+            collectionUpdated?: {[uid: string]: IdxEmitterCollectionUpdated}
+            pageChanged?: {[uid: string]: IdxEmitterPageChanged}
+            pageChanging?: {[uid: string]: IdxEmitterPageChanging}
+            orderChanged?: {[uid: string]: IdxEmitterOrderChanged}
+            orderChanging?: {[uid: string]: IdxEmitterOrderChanging}
+            searched?: {[uid: string]: IdxEmitterSearched}
+            searching?: {[uid: string]: IdxEmitterSearching}
         }
     } = {
         /*idx_property_list_7: {
@@ -728,12 +735,11 @@ const angularJsService = (
         $scope: IdxComponentScope,
         var1?: any, var2?: any, var3?: any
     ) {
-        // console.log(uid, $scope, 'is emitting', emitterName)
         if (
             Object.prototype.hasOwnProperty.call(instanceOnEmitters, uid) &&
             Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)
         ) {
-            instanceOnEmitters[uid][emitterName].forEach((emitter) => {
+            Object.values(instanceOnEmitters[uid][emitterName]).forEach((emitter) => {
                 emitter($scope, var1, var2, var3)
             })
         }
@@ -741,7 +747,27 @@ const angularJsService = (
         if (emitterName === 'init') {
             // Let's prep the requests for 'init' so they immediate call if this scope has already init
             instanceOnEmitters[uid] = instanceOnEmitters[uid] || {}
-            instanceOnEmitters[uid][emitterName] = instanceOnEmitters[uid][emitterName] || []
+            instanceOnEmitters[uid][emitterName] = instanceOnEmitters[uid][emitterName] || {}
+        }
+    }
+
+    /**
+     * Removes a registered on emitter watcher
+     * @param emitterName - Id of on scope requesting event updates
+     * @param emitterId - The source of emitting id
+     * @param onId - Id of on scope requesting event updates
+     */
+    function removeOnManual(
+        emitterName: string,
+        emitterId: string,
+        onId: string,
+    ) {
+        if (
+            Object.prototype.hasOwnProperty.call(instanceOnEmitters, emitterId) &&
+            Object.prototype.hasOwnProperty.call(instanceOnEmitters[emitterId], emitterName) &&
+            Object.prototype.hasOwnProperty.call(instanceOnEmitters[emitterId][emitterName], onId)
+        ) {
+            delete instanceOnEmitters[emitterId][emitterName][onId]
         }
     }
 
@@ -779,9 +805,11 @@ const angularJsService = (
             instanceOnEmitters[uid] = {}
         }
         if (!Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)) {
-            instanceOnEmitters[uid][emitterName] = []
+            instanceOnEmitters[uid][emitterName] = {}
         }
-        instanceOnEmitters[uid][emitterName].push(callback)
+        const onId = _.uniqueId() // TODO make a named connection to the requesting scope??
+        instanceOnEmitters[uid][emitterName][onId] = callback
+        return (): void => {removeOnManual(uid, emitterName, onId)}
     }
 
     /**
@@ -1097,6 +1125,14 @@ const angularJsService = (
                 ) {
                     service.analyticsEnabled = []
                 }
+                if (
+                    !Object.prototype.hasOwnProperty.call(service, 'logo') ||
+                    service.logo === null
+                ) {
+                    service.logo = {
+                        default: null
+                    }
+                }
                 session.services[service.id] = service
                 session.lastCreated = new Date(service.created)// The object is a String being converted to Date
                 session.lastTtl = service.ttl
@@ -1269,6 +1305,27 @@ const angularJsService = (
         }, (session.lastTtl - 15) * 1000) // 15 seconds before the token expires
     }
 
+    function updateFetchTime(
+        apiFetch: Collection | Model,
+        modelName: 'Property' | 'Media' | 'Member' | 'Office' | 'OpenHouse',
+        serviceId: number): void {
+        // TODO save collection.header.get('x-fetch-time') to MLSVariables
+        const fetchTime = apiFetch.header.get('x-fetch-time')
+        if (fetchTime) {
+            const oldTime = session.services[serviceId].fetchTime[modelName]
+            session.services[serviceId].fetchTime[modelName] = new Date(fetchTime)
+            // TODO check differences or old vs new and push emit
+
+            if (
+                !(_.isDate(oldTime) && _.isDate(session.services[serviceId].fetchTime[modelName])) ||
+                oldTime.getTime() !== session.services[serviceId].fetchTime[modelName].getTime()
+            ) {
+                // Only emit if there is a new time set
+                emitManual('fetchTimeUpdate', 'Idx', null, serviceId, modelName, session.services[serviceId].fetchTime[modelName])
+            }
+        }
+    }
+
     /**
      * Model constructor helper that will help properly create a new Model.
      * Will do nothing else.
@@ -1360,10 +1417,11 @@ const angularJsService = (
                         })
                         .then(() => {
                             // TODO save collection.header.get('x-fetch-time') to MLSVariables
-                            const fetchTime = collection.header.get('x-fetch-time')
+                            /*const fetchTime = collection.header.get('x-fetch-time')
                             if (fetchTime) {
                                 session.services[collection.serviceId].fetchTime[modelName] = new Date(fetchTime)
-                            }
+                            }*/
+                            updateFetchTime(collection, modelName, collection.serviceId)
                             const countRecords = collection.header.get('x-total-count')
                             if (countRecords) {
                                 totalCount += parseInt(countRecords, 10)
@@ -1443,10 +1501,11 @@ const angularJsService = (
                         resolve(modelInjectProperty<T>([newModel.data], {
                             _ServiceId: newModel.serviceId
                         }))
-                        const fetchTime = newModel.header.get('x-fetch-time')
+                        /*const fetchTime = newModel.header.get('x-fetch-time')
                         if (fetchTime) {
                             session.services[newModel.serviceId].fetchTime[modelName] = new Date(fetchTime)
-                        }
+                        }*/
+                        updateFetchTime(newModel, modelName, newModel.serviceId)
                     })
             })
         )
@@ -2079,7 +2138,8 @@ const angularJsService = (
                         name: session.services[serviceId].name,
                         disclaimer: session.services[serviceId].disclaimer,
                         fetchTime: session.services[serviceId].fetchTime,
-                        analyticsEnabled: session.services[serviceId].analyticsEnabled
+                        analyticsEnabled: session.services[serviceId].analyticsEnabled,
+                        logo: session.services[serviceId].logo
                     })
                 }
             })
@@ -2091,7 +2151,8 @@ const angularJsService = (
                         name: service.name,
                         disclaimer: service.disclaimer,
                         fetchTime: service.fetchTime,
-                        analyticsEnabled: service.analyticsEnabled
+                        analyticsEnabled: service.analyticsEnabled,
+                        logo: service.logo
                     })
                 }
             })

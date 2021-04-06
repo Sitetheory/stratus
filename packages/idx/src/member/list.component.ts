@@ -432,7 +432,7 @@ Stratus.Components.IdxMemberList = {
                 // await $q.all(promises)
             }
 
-        $scope.on = (emitterName: string, callback: IdxEmitter): void => Idx.on($scope.elementId, emitterName, callback)
+        $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.remove = (): void => {
         }
