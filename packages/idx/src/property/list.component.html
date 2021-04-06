@@ -97,7 +97,7 @@
         </div>
         <div class="search-more-filters advanced-search-link" data-ng-if="advancedSearchUrl">
             <a class="open-filters-link"
-               data-ng-href="advancedSearchUrl">
+               data-ng-href="{{ advancedSearchUrl }}">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span ng-bind="advancedSearchLinkName"></span>
             </a>
