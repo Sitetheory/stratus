@@ -69,12 +69,9 @@
             >
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon>
             </a>
-
-
-
         </div>
 
-        <div class="search-input search-buy-rent">
+        <div class="search-input search-buy-rent" data-ng-if="searchType == 'advanced'">
             <div class="toggle-switch" aria-label="Listings to Buy or Rent" data-layout="row" data-layout-align="center center">
                 <div class="option-choice buy" data-ng-class="{inactive: options.forRent}" data-flex>
                     Buy
@@ -92,7 +89,7 @@
             </div>
         </div>
 
-        <div class="search-input search-price">
+        <div class="search-input search-price" data-ng-if="searchType != 'simple'">
             <a class="open-price-link"
                data-ng-click="openPrice=!openPrice">
                 <span data-ng-show="options.query.where.ListPriceMin == null && options.query.where.ListPriceMax == null">Any Price</span>
@@ -135,7 +132,7 @@
             </div>
             <div class="click-out" data-ng-show="openPrice == true" data-ng-click="openPrice = false"></div>
         </div>
-        <div class="search-input search-beds">
+        <div class="search-input search-beds" data-ng-if="searchType != 'simple'">
             <md-input-container class="md-block minimal">
                 <label>0+ Beds</label>
                 <md-select data-ng-model="options.query.where.Bedrooms" data-ng-change="searchProperties()">
@@ -146,7 +143,7 @@
                 </md-select>
             </md-input-container>
         </div>
-        <div class="search-input search-baths">
+        <div class="search-input search-baths" data-ng-if="searchType != 'simple'">
             <md-input-container class="md-block minimal">
                 <label>0+ Baths</label>
                 <md-select data-ng-model="options.query.where.Bathrooms" data-ng-change="searchProperties()">
@@ -157,11 +154,19 @@
                 </md-select>
             </md-input-container>
         </div>
-        <div class="search-more-filters" data-ng-init="advancedFiltersStatus = false">
+        <div class="search-more-filters" data-ng-init="advancedFiltersStatus = false" data-ng-if="searchType == 'advanced'">
             <a class="open-filters-link"
                data-ng-click="advancedFiltersStatus=!advancedFiltersStatus">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
                 <span class="btn-text"><span data-ng-show="advancedFiltersStatus != true">More </span><span data-ng-show="advancedFiltersStatus == true">Less </span><span class="optional-btn-text">Filters</span></span>
+            </a>
+        </div>
+
+        <div class="search-more-filters" data-ng-if="searchType != 'advanced' && advancedSearchUrl">
+            <a class="open-filters-link"
+               data-ng-href="advancedSearchUrl">
+                <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
+                <span class="btn-text"><span ng-bind="advancedSearchLinkName"></span>
             </a>
         </div>
 
@@ -173,7 +178,9 @@
     </div>
 
     <!-- More Filters -->
-    <div class="stratus-idx-property-search-menu" data-ng-class="{'open-filters' : advancedFiltersStatus == true}">
+    <div class="stratus-idx-property-search-menu"
+         data-ng-class="{'open-filters' : advancedFiltersStatus == true}"
+         data-ng-if="searchType == 'advanced'">
         <div class="more-filters" data-stratus-full-height="true" data-full-height-minus-elements='[".demo-switcher-bar", ".header-common-parent", ".search-filter-top", ".sf-toolbarreset"]'>
 
             <!-- Close Button -->
