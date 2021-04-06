@@ -44,6 +44,10 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     listId: string
     listInitialized: boolean
     listLinkUrl: string
+    // Can be 'simple' (location only), 'basic' (beds/baths, price, etc), 'advanced' (dropdown filters)
+    searchType: string
+    advancedSearchUrl: boolean
+    advancedSearchLinkName: string
     listLinkTarget: string
     // options: object | any // TODO need to specify
     options: {
@@ -70,6 +74,9 @@ Stratus.Components.IdxPropertySearch = {
         listId: '@',
         listLinkUrl: '@',
         listLinkTarget: '@',
+        searchType: '@',
+        advancedSearchUrl: '@',
+        advancedSearchLinkName: '@',
         options: '@',
         template: '@',
         variableSync: '@',
@@ -112,7 +119,9 @@ Stratus.Components.IdxPropertySearch = {
             $scope.listInitialized = false
             $scope.listLinkUrl = $attrs.listLinkUrl || '/property/list'
             $scope.listLinkTarget = $attrs.listLinkTarget || '_self'
-
+            $scope.searchType = $attrs.searchType || 'advanced'
+            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || true
+            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || 'Advanced Search'
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
 
             $scope.filterMenu = null
