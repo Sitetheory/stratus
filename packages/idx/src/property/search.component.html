@@ -142,7 +142,7 @@
                 </md-select>
             </md-input-container>
         </div>
-        <div class="search-input search-baths" data-ng-if="searchType !== 'simple'">
+        <div class="search-input search-baths" data-ng-if="searchType != 'simple'">
             <md-input-container class="md-block minimal">
                 <label>0+ Baths</label>
                 <md-select data-ng-model="options.query.where.Bathrooms" data-ng-change="searchProperties()">
@@ -179,12 +179,12 @@
     <!-- More Filters -->
     <div class="stratus-idx-property-search-menu"
          data-ng-class="{'open-filters' : advancedFiltersStatus}"
-         data-ng-if="searchType === 'advanced'"
+         data-ng-if="searchType == 'advanced'"
     >
         <div class="more-filters" data-stratus-full-height="true" data-full-height-minus-elements='[".demo-switcher-bar", ".header-common-parent", ".search-filter-top", ".sf-toolbarreset"]'>
 
             <!-- Close Button -->
-            <button type="button" class="btn-close" data-ng-click="advancedFiltersStatus =! advancedFiltersStatus">
+            <button type="button" class="btn-close" data-ng-click="advancedFiltersStatus = !advancedFiltersStatus">
                 <span class="sr-only">Close Dialogue</span>
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/close.svg' }}" aria-hidden="true"></md-icon>
             </button>
