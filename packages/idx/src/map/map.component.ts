@@ -65,7 +65,6 @@ export type IdxMapScope = IdxComponentScope & {
 
 Stratus.Components.IdxMap = {
     bindings: {
-        instancePath: '@',
         googleMapsKey: '@',
         listId: '@',
         mapType: '@',
