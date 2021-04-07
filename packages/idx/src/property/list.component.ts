@@ -65,7 +65,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     searchOnLoad: boolean
     detailsLinkPopup: boolean
     detailsLinkUrl: string
-    detailsLinkTarget: '_self' | '_blank'
+    detailsLinkTarget: 'popup' | '_self' | '_blank'
     detailsHideVariables?: string[]
     preferredStatus: 'Closed' | 'Leased' | 'Rented'
     detailsTemplate?: string
@@ -162,10 +162,13 @@ Stratus.Components.IdxPropertyList = {
              */
             $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
             $scope.searchOnLoad = $attrs.searchOnLoad && isJSON($attrs.searchOnLoad) ? JSON.parse($attrs.searchOnLoad) : true
-            $scope.detailsLinkPopup = $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ?
-                JSON.parse($attrs.detailsLinkPopup) : true
             $scope.detailsLinkUrl = $attrs.detailsLinkUrl || ''
-            $scope.detailsLinkTarget = $attrs.detailsLinkTarget || '_self'
+            $scope.detailsLinkTarget = $attrs.detailsLinkTarget || 'popup' // Popup by default
+            $scope.detailsLinkPopup =
+                // If detailsLinkPopup manually set, we'll use that.
+                $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ? JSON.parse($attrs.detailsLinkPopup) :
+                    // Otherwise, well check if detailsLinkTarget if using 'popup' or something else
+                    $scope.detailsLinkTarget === 'popup'
             $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
                 JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
