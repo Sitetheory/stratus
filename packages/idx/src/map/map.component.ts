@@ -1,7 +1,8 @@
-// IdxMap Component
-// @stratusjs/idx/map/map.component
-// <stratus-idx-map>
-// --------------
+/**
+ * @file IdxMap Component @stratusjs/idx/map/map.component
+ * @example <stratus-idx-map>
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Map
+ */
 
 // Runtime
 import _ from 'lodash'
@@ -64,26 +65,124 @@ export type IdxMapScope = IdxComponentScope & {
 }
 
 Stratus.Components.IdxMap = {
+    /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Map */
     bindings: {
-        googleMapsKey: '@',
+        /**
+         * Type: string
+         * Id of Idx List widget to attach to and render the available collection from. The counterpart List widget's
+         * `element-id` must be defined and the same as this `list-id` (See Property List). Multiple Map widgets may
+         * attach to the same List widget but, this Map widget may only display a single collection at this time.
+         */
         listId: '@',
+        /**
+         * Type: string
+         * Client will need to provide a Google Maps Api key with Javascript access. Without a provided key, the map
+         * will default into 'Development Mode' and be known to the user that it's just for testing right now.
+         */
+        googleMapsKey: '@',
+        /**
+         * Type: string
+         * Set type of tiles displayed on the Map.
+         * Options: 'roadmap', 'hybrid', 'satellite', 'terrain'
+         */
         mapType: '@',
-        template: '@',
-        zoom: '@',
-        zoomControl: '@',
-        scrollwheel: '@',
+        /**
+         * Type: string
+         * Set a height for the displayed map. Suggested to pixel sizes such as `500px`.
+         * If not set, map relies on default css auto loaded.
+         */
         height: '@',
+        /**
+         * Type: string
+         * Set a width for the displayed map. Suggested to sizes such as `100%`.
+         * If not set, map relies on default css auto loaded.
+         */
         width: '@',
-        markerClickScroll: '@',
-        markerClickHighlight: '@',
-        markerPrice: '@',
-        markerIcon: '@',
-        markerIconHover: '@',
-        markerIconLabelOriginX: '@',
-        markerIconLabelOriginY: '@',
+        /**
+         * Type: boolean
+         * Default: false
+         * Set the map to retain 100% height of parent element (window/document by default)
+         */
         fullHeight: '@',
+        /**
+         * Type: string[]
+         * Set the map to retain 100% height of parent element (window/document by default). Also removes from itself
+         * the height of specified surrounding elements to maintain a proper. E.g.: `["#header-container",]` to have a
+         * 100% page height map minus the height of a header and toolbar.
+         */
         fullHeightMinusElements: '@',
+        /**
+         * Type: string
+         * Default: 'document'
+         * For use with automatic sizing, what element should be referred to when process the full-height of a page.
+         * Possible options being `document`, `window`, and any document query selector, e.g. `#body-container`
+         */
         referenceParent: '@',
+        /**
+         * Type: number
+         * Default: 18
+         * Set the zoom level that the Map starts at.
+         */
+        zoom: '@',
+        /**
+         * Type: boolean
+         * Default: true
+         * Set to display the Zoom controls on the map.
+         */
+        zoomControl: '@',
+        /**
+         * Type: boolean
+         * Default: false
+         * Set if the user can adjust the Map zoom level via the mouse scrollwheel.
+         */
+        scrollwheel: '@',
+        /**
+         * Type: boolean
+         * Default: false
+         * Upon clicking a marker, attempt to scroll to the listing on the page.
+         */
+        markerClickScroll: '@',
+        /**
+         * Type: boolean
+         * Default: false
+         * Upon clicking a marker, attempt to highlight the lighting on the page momentarily.
+         */
+        markerClickHighlight: '@',
+        /**
+         * Type: boolean
+         * Default: false
+         * Enables Property Prices to be shown on the page atop markers.
+         */
+        markerPrice: '@',
+        /**
+         * Type: string
+         * Set a default marker icon, providing a url path to the image.
+         */
+        markerIcon: '@',
+        /**
+         * Type: string
+         * Set a default marker icon on mouse hover-over, providing a url path to the image. By default there is none.
+         * FIXME This is currently buggy if the mouse is moving too fast.
+         */
+        markerIconHover: '@',
+        /**
+         * Type: number
+         * When supplying a custom icon with a label, sets a position of position of the text, starting left on the x axis
+         */
+        markerIconLabelOriginX: '@',
+        /**
+         * Type: number
+         * When supplying a custom icon with a label, sets a position of position of the text, starting top on the y axis
+         */
+        markerIconLabelOriginY: '@',
+        /**
+         * Type: string
+         * Default: 'map'
+         * The file name in which is loaded for the view of the widget. The name will automatically be appended with
+         * '.component.min.html'. The default is 'map.component.html' / 'map'.
+         * TODO: Will need to allow setting a custom path of views outside the library directory.
+         */
+        template: '@',
     },
     controller(
         // $anchorScroll: angular.IAnchorScrollService,
