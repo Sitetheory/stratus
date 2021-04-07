@@ -52,18 +52,20 @@ stratus-idx-property-search,
       font-size: 11px;
       letter-spacing: 1px;
       width: 120px;
-      color: #666;
+      color: #666 !important;
+      background: none !important;
+      border: none !important;
       &,
       &:link,
       &:active,
       &:visited,
       &:hover {
-        border: none;
-        background: none;
+        border: none !important;
+        background: none !important;
       }
       &.active,
       &:hover {
-        color: #111;
+        color: #111 !important;
       }
     }
     &::after {
@@ -130,6 +132,7 @@ stratus-idx-property-search,
     z-index: 3;
     text-align: left;
     background: #fff;
+    border: 1px solid rgba(0,0,0,.1);
     > .search-input > md-input-container.minimal {
       // stylelint-disable-next-line no-descending-specificity
       &:first-child {
