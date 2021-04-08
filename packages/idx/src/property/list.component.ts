@@ -1,7 +1,8 @@
-// IdxPropertyList Component
-// @stratusjs/idx/property/list.component
-// <stratus-idx-property-list>
-// --------------
+/**
+ * @file IdxPropertyList Component @stratusjs/idx/property/list.component
+ * @example <stratus-idx-property-list>
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Property_List
+ */
 
 // Runtime
 import _ from 'lodash'
@@ -95,34 +96,170 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
 }
 
 Stratus.Components.IdxPropertyList = {
+    /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Property_List */
     bindings: {
+        /** @deprecated */
         uid: '@',
+        /**
+         * Type: string
+         * To be targeted and controllable with the Search widget, a `element-id` must be defined. This value will be
+         * the same as the Search widget's `list-id` (See Property Search). Multiple Search widgets may attach to the
+         * same List widget but, a Search widget may only control a single List widget.
+         */
         elementId: '@',
+        /**
+         * Type: boolean
+         * Two-way bound option. When needing to provide data/options to this widget in an async environment, this
+         * initialization can be delayed by supplying a bound variable to notify when the data is ready.
+         * @example `init-now="model.completed"`
+         */
         initNow: '=',
+        /**
+         * Type: string
+         * To determine what datasources the Idx widgets are able to pull from and their temporary credentials, a
+         * `token-url` directs to the location that manages this widget's subscription and provides what Idx servers it
+         * has access to.
+         */
         tokenUrl: '@',
-        detailsLinkPopup: '@',
-        detailsLinkUrl: '@',
-        detailsLinkTarget: '@',
-        detailsHideVariables: '@',
-        detailsTemplate: '@',
-        preferredStatus: '@',
-        contactEmail: '@',
-        contactName: '@',
-        contactPhone: '@',
+        /**
+         * Type: string
+         * For map support, client will need to provide a Google Maps Api key. With current functionality, just the free
+         * api key with iFrame support will do.
+         */
         googleApiKey: '@',
-        orderOptions: '@',
-        query: '@',
-        queryOrder: '@',
-        queryPerPage: '@',
-        queryService: '@',
-        queryWhere: '@',
-        searchOnLoad: '@',
+        /**
+         * Type: boolean
+         * Default: true
+         * By default, will have a dialog popup of a Listing displayed onto the current page when a listing is clicked.
+         * If set to false, will load a new dedicated window with search options to load details for the selected listing.
+         * Further controlled and overwritten with `details-link-url` and `details-link-target`
+         */
+        detailsLinkPopup: '@',
+        /**
+         * Type: string
+         * If ever opening a listing not as a popup, will define the URL path to the Details widget.
+         */
+        detailsLinkUrl: '@',
+        /**
+         * Type: string
+         * Default: 'popup'
+         * If ever opening a listing not as a popup, will define how to open the page as a normal link. Any usable HTML
+         * '_target' attribute such as '_self' or '_blank'.
+         * Will define how to open a listing. Any usable HTML 'target' attribute such as 'popup', 'self' or
+         * 'blank'. Being '_self' or '_blank' will automatically disable `details-link-popup` above.
+         */
+        detailsLinkTarget: '@',
+        /**
+         * Type: string[]
+         * Hide specific Details of Listings when using the Popup.
+         */
+        detailsHideVariables: '@',
+        /**
+         * Type: string
+         * Default: 'details'
+         * The file name in which is loaded for the view of the Details widget. The name will automatically be appended
+         * with '.component.min.html'. The default is `'details.component.html'` / `'details'`. This view only  is used
+         * if a popup appears rather than loading the Details widget on a fresh page.
+         * TODO: Will need to allow setting a custom path of views outside the library directory.
+         */
+        detailsTemplate: '@',
+        /**
+         * Type: string
+         * Default: 'Closed'
+         * The displayed status name of 'Closed' (sold/leased/auctioned) listings by default will be 'Closed'. Update this
+         * option to make use of a different term in both the list and popup Details.
+         */
+        preferredStatus: '@',
+        /**
+         * Type: string
+         * If used, expects a string to identify the name of a point of contact. (such as office or person). Parameter
+         * will be passed to any Details popups.
+         */
+        contactName: '@',
+        /**
+         * Type: string
+         * If used, expects full email address to publicly display and generate a clickable link for. Parameter will
+         * be passed to any Details popups.
+         */
+        contactEmail: '@',
+        /**
+         * Type: string
+         * If used, expects normalize phone number to publicly display and generate a tap-able link for. Parameter will
+         * be passed to any Details popups.
+         */
+        contactPhone: '@',
+        /**
+         * Type: string
+         * Default: 'list'
+         * The file name in which is loaded for the view of the widget. The name will automatically be appended with
+         * `'.component.min.html'`. The default is `'list.component.html'` / `'list'`.
+         * TODO: Will need to allow setting a custom path of views outside the library directory.
+         */
         template: '@',
+        /**
+         * Type: json
+         * The possible orders displayed as a user selectable option.
+         * Defaults to
+         * {
+         *  'Price (high to low)': '-ListPrice',
+         *  'Price (low to high)': 'ListPrice'
+         * }
+         */
+        orderOptions: '@',
+        /**
+         * Type: boolean
+         * Default: true
+         * Allow query to be loaded initially from the URL. Disable this for times you don't want a url to either control
+         * the displayed listings (or be able to share a defined search URL).
+         */
         urlLoad: '@',
-        displayPerRow: '@',
-        displayPerRowText: '@',
-        displayPager: '@',
+        /**
+         * Type: boolean
+         * Default: true
+         * On widget load, immediately attempt to search for and display the current query results. Disable this for times
+         * that you wish to not populate results until a user performs an action such as clicking a button.
+         */
+        searchOnLoad: '@',
+        /**
+         * Type: json
+         * In place of `query` above, individual query properties may also be added to where`, `service`, `per-page` and `order`
+         * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#query-options
+         */
+        query: '@',
+        /** Type: string */
+        queryOrder: '@',
+        /** Type: number Default: 25 */
+        queryPerPage: '@',
+        /** Type: number[] */
+        queryService: '@',
+        /** Type: json */
+        queryWhere: '@',
+        /**
+         * Type: boolean
+         * Default: false
+         * When enabled, will attempt to hide the disclaimer within this List, so long as the IDX used's disclaimer is
+         * detected else on the page via the stratusIdxDisclaimer widget.
+         * @see Docs coming soon
+         */
         hideDisclaimer: '@',
+        /**
+         * Type: number
+         * Default: 2
+         * Set the number of rows to display in a List (if the template supports this option). This updates the textual option
+         */
+        displayPerRow: '@',
+        /**
+         * Type: string
+         * Default: 'two'
+         * Set the number of rows to display in a List (if the template supports this option). This updates the numeral option
+         */
+        displayPerRowText: '@',
+        /**
+         * Type: boolean
+         * Default: true
+         * @deprecated Pager already gets hidden so long as correct number of results is requested
+         */
+        displayPager: '@',
     },
     controller(
         $anchorScroll: angular.IAnchorScrollService,
