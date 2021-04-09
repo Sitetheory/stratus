@@ -1,23 +1,21 @@
 
-<div id="{{elementId}}" class="idx-search-component search-full"
+<div id="{{elementId}}"
+     class="idx-search-component search-full"
      data-ng-cloak
-     data-ng-init="advancedFiltersStatus = 'closed'; openPrice = false"
-     data-ng-class="[{'filters-open' : advancedFiltersStatus == 'open'}, {'filters-closed' : advancedFiltersStatus == 'closed'}]">
-
+     data-ng-class="{'filters-open': $parent.advancedFiltersStatus, 'filters-closed': !$parent.advancedFiltersStatus}"
+>
     <h2 data-ng-show="widgetName" data-ng-bind="widgetName"></h2>
     <!--<div class="search-header">-->
         <!--<h4>Search Filters</h4>-->
         <!--<div class="basic-advanced">-->
-            <!--<a class="close-filters-link border-default border-default-right" data-ng-click="advancedFiltersStatus = 'closed'">Basic</a>-->
-            <!--<a class="open-filters-link" data-ng-click="advancedFiltersStatus = 'open'">Advanced</a>-->
+            <!--<a class="close-filters-link border-default border-default-right" data-ng-click="$parent.advancedFiltersStatus = false">Basic</a>-->
+            <!--<a class="open-filters-link" data-ng-click="$parent.advancedFiltersStatus = true">Advanced</a>-->
         <!--</div>-->
     <!--</div>-->
 
     <div class="search-row search-basic clearfix">
-
-        <div
-                class="search-input search-location"
-                data-ng-class="{'location-input-active' :!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)}">
+        <div class="search-input search-location"
+             data-ng-class="{'location-input-active' :!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)}">
 
             <!-- If there are preset filters like City, MLS Area, Postal Code, which are subsets of Location, then we
             will show that we are filtering by those, and we will not show the Location field. They remain in the filter
@@ -28,7 +26,8 @@
             <md-icon class="search-icon"
                      data-ng-click="searchProperties()"
                      data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)"
-                     md-svg-src="{{ localDir + 'images/icons/actionButtons/search.svg' }}"></md-icon>
+                     md-svg-src="{{ localDir + 'images/icons/actionButtons/search.svg' }}"
+            ></md-icon>
             <md-input-container
                     class="md-block minimal"
                     data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)">
@@ -154,11 +153,11 @@
                 </md-select>
             </md-input-container>
         </div>
-        <div class="search-more-filters" data-ng-init="advancedFiltersStatus = false" data-ng-if="searchType == 'advanced'">
+        <div class="search-more-filters" data-ng-if="searchType == 'advanced'">
             <a class="open-filters-link"
-               data-ng-click="advancedFiltersStatus=!advancedFiltersStatus">
+               data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
-                <span class="btn-text"><span data-ng-show="advancedFiltersStatus != true">More </span><span data-ng-show="advancedFiltersStatus == true">Less </span><span class="optional-btn-text">Filters</span></span>
+                <span class="btn-text"><span data-ng-show="!$parent.advancedFiltersStatus">More </span><span data-ng-show="$parent.advancedFiltersStatus">Less </span><span class="optional-btn-text">Filters</span></span>
             </a>
         </div>
 
@@ -166,7 +165,7 @@
             <a class="open-filters-link"
                data-ng-href="advancedSearchUrl">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
-                <span class="btn-text"><span ng-bind="advancedSearchLinkName"></span>
+                <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span>
             </a>
         </div>
 
@@ -179,12 +178,13 @@
 
     <!-- More Filters -->
     <div class="stratus-idx-property-search-menu"
-         data-ng-class="{'open-filters' : advancedFiltersStatus == true}"
-         data-ng-if="searchType == 'advanced'">
+         data-ng-class="{'open-filters' : $parent.advancedFiltersStatus}"
+         data-ng-if="searchType == 'advanced'"
+    >
         <div class="more-filters" data-stratus-full-height="true" data-full-height-minus-elements='[".demo-switcher-bar", ".header-common-parent", ".search-filter-top", ".sf-toolbarreset"]'>
 
             <!-- Close Button -->
-            <button type="button" class="btn-close" data-ng-click="advancedFiltersStatus=!advancedFiltersStatus">
+            <button type="button" class="btn-close" data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus">
                 <span class="sr-only">Close Dialogue</span>
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/close.svg' }}" aria-hidden="true"></md-icon>
             </button>
@@ -389,6 +389,6 @@
             <!--</div>-->
 
         </div>
-        <div class="click-out" data-ng-show="advancedFiltersStatus == true" data-ng-click="advancedFiltersStatus = false"></div>
+        <div class="click-out" data-ng-show="$parent.advancedFiltersStatus" data-ng-click="$parent.advancedFiltersStatus = false"></div>
     </div>
 </div>
