@@ -612,11 +612,18 @@ Stratus.Components.IdxPropertyList = {
                 }
 
                 Idx.emit('searching', $scope, _.clone($scope.query))
+                // We need to forcibly ensure that the collection is found to be pending in some cases
+                if($scope.collection) {
+                    $scope.$applyAsync(() => {
+                        $scope.collection.pending = true
+                    })
+                }
 
                 try {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
                     const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                    // $applyAsync will automatically be applied
                     Idx.emit('searched', $scope, _.clone($scope.query))
                     resolve(results)
                 } catch (e) {
