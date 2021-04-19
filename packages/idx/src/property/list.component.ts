@@ -68,6 +68,8 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     detailsLinkUrl: string
     detailsLinkTarget: 'popup' | '_self' | '_blank'
     detailsHideVariables?: string[]
+    advancedSearchUrl: string,
+    advancedSearchLinkName: string,
     preferredStatus: 'Closed' | 'Leased' | 'Rented'
     detailsTemplate?: string
     query: CompileFilterOptions
@@ -163,6 +165,18 @@ Stratus.Components.IdxPropertyList = {
          * TODO: Will need to allow setting a custom path of views outside the library directory.
          */
         detailsTemplate: '@',
+        /**
+         * Type: string
+         * Default: ''
+         * A link to another dedicated advanced search page (used when this is a module)
+         */
+        advancedSearchUrl: '@',
+        /**
+         * Type: string
+         * Default: 'Advanced Search'
+         * An alternative name for the advanced search button.
+         */
+        advancedSearchLinkName: '@',
         /**
          * Type: string
          * Default: 'Closed'
@@ -286,8 +300,12 @@ Stratus.Components.IdxPropertyList = {
             Idx.setTokenURL($attrs.tokenUrl)
         }
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+
+        $scope.preferredStatus = 'Closed'
         $scope.displayPerRow = 2
         $scope.displayPerRowText = 'two'
+        $scope.advancedSearchUrl = ''
+        $scope.advancedSearchLinkName = 'Advanced Search'
 
         /**
          * All actions that happen first when the component loads
@@ -309,7 +327,9 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
                 JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
-            $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
+            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || $scope.advancedSearchUrl
+            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
+            $scope.preferredStatus = $attrs.preferredStatus || $scope.preferredStatus // Closed is most compatible
 
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}

@@ -49,7 +49,6 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     // Href to a url
     advancedSearchUrl: string
     advancedSearchLinkName: string
-    //
     advancedFiltersStatus: boolean
     openPrice: boolean
     listLinkTarget: string
@@ -132,7 +131,6 @@ Stratus.Components.IdxPropertySearch = {
             $scope.advancedSearchUrl = $attrs.advancedSearchUrl ||  $scope.advancedSearchUrl
             $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
-
             $scope.filterMenu = null
             $scope.options.forRent = false
 
