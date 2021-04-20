@@ -47,7 +47,7 @@
                             <div aria-label="Address" id="{{::elementId}}_{{::property._id}}_address">
                                 <h4>
                                     <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}" data-ng-bind="::getStreetAddress(property)"></a>
-                                    <br>
+                                    <br/>
                                     <span class="city" data-ng-bind="::property.City"></span>
                                 </h4>
                             </div>
@@ -102,7 +102,7 @@
                     <a class="open-filters-link"
                        data-ng-href="{{ advancedSearchUrl }}">
                         <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
-                        <span class="btn-text"><span ng-bind="advancedSearchLinkName"></span></span>
+                        <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
                     </a>
                 </div>
             </div>
