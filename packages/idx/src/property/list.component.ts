@@ -62,7 +62,7 @@ type OrderOption = {
 }
 
 export type IdxPropertyListScope = IdxListScope<Property> & {
-    listInitialized: boolean
+    initialized: boolean
     tokenLoaded: boolean
     urlLoad: boolean
     searchOnLoad: boolean
@@ -294,7 +294,7 @@ Stratus.Components.IdxPropertyList = {
             _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
          */
         $scope.localDir = localDir
-        $scope.listInitialized = false
+        $scope.initialized = false
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
             $scope.tokenLoaded = true
@@ -436,6 +436,7 @@ Stratus.Components.IdxPropertyList = {
                 await $scope.searchProperties(searchQuery, false, false)
             }
 
+            $scope.initialized = true
             Idx.emit('init', $scope)
         }
 
@@ -456,7 +457,6 @@ Stratus.Components.IdxPropertyList = {
             }
 
             $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
-                // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
                 }
