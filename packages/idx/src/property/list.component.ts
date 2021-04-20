@@ -62,6 +62,8 @@ type OrderOption = {
 }
 
 export type IdxPropertyListScope = IdxListScope<Property> & {
+    listInitialized: boolean
+    tokenLoaded: boolean
     urlLoad: boolean
     searchOnLoad: boolean
     detailsLinkPopup: boolean
@@ -100,8 +102,6 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
 Stratus.Components.IdxPropertyList = {
     /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Property_List */
     bindings: {
-        /** @deprecated */
-        uid: '@',
         /**
          * Type: string
          * To be targeted and controllable with the Search widget, a `element-id` must be defined. This value will be
@@ -169,12 +169,14 @@ Stratus.Components.IdxPropertyList = {
          * Type: string
          * Default: ''
          * A link to another dedicated advanced search page (used when this is a module)
+         * TODO: wiki update
          */
         advancedSearchUrl: '@',
         /**
          * Type: string
          * Default: 'Advanced Search'
          * An alternative name for the advanced search button.
+         * TODO: wiki update
          */
         advancedSearchLinkName: '@',
         /**
@@ -291,27 +293,27 @@ Stratus.Components.IdxPropertyList = {
         /*$ctrl.uid = $attrs.uid && !_.isEmpty($attrs.uid) ? $attrs.uid :
             _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
          */
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Instances[$scope.elementId] = $scope
-        $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
         $scope.localDir = localDir
+        $scope.listInitialized = false
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
+            $scope.tokenLoaded = true
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
-
-        $scope.preferredStatus = 'Closed'
-        $scope.displayPerRow = 2
-        $scope.displayPerRowText = 'two'
-        $scope.advancedSearchUrl = ''
-        $scope.advancedSearchLinkName = 'Advanced Search'
 
         /**
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         const init = async () => {
+            $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+            $scope.elementId = $attrs.elementId || $ctrl.uid
+            Stratus.Instances[$scope.elementId] = $scope
+            $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
+            if (!$scope.tokenLoaded && $attrs.tokenUrl) {
+                Idx.setTokenURL($attrs.tokenUrl)
+            }
+            Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+
             /**
              * Allow query to be loaded initially from the URL
              */
@@ -327,9 +329,9 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
                 JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
-            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || $scope.advancedSearchUrl
-            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
-            $scope.preferredStatus = $attrs.preferredStatus || $scope.preferredStatus // Closed is most compatible
+            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || ''
+            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || 'Advanced Search'
+            $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
@@ -349,6 +351,8 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.images = $scope.query.images || {limit: 1}
 
             // Handle row displays
+            $scope.displayPerRow = 2
+            $scope.displayPerRowText = 'two'
             if ($attrs.displayPerRowText && _.isString($attrs.displayPerRowText)) {
                 $scope.displayPerRowText = $attrs.displayPerRowText
                 $scope.displayPerRow = $scope.displayPerRowText === 'one' ? 1 : $scope.displayPerRowText === 'two' ? 2 :
