@@ -5,13 +5,13 @@
      data-ng-class="{'filters-open': $parent.advancedFiltersStatus, 'filters-closed': !$parent.advancedFiltersStatus}"
 >
     <h2 data-ng-show="widgetName" data-ng-bind="widgetName"></h2>
-    <!--<div class="search-header">-->
-        <!--<h4>Search Filters</h4>-->
-        <!--<div class="basic-advanced">-->
-            <!--<a class="close-filters-link border-default border-default-right" data-ng-click="$parent.advancedFiltersStatus = false">Basic</a>-->
-            <!--<a class="open-filters-link" data-ng-click="$parent.advancedFiltersStatus = true">Advanced</a>-->
-        <!--</div>-->
-    <!--</div>-->
+    <!-- div class="search-header">
+        <h4>Search Filters</h4>
+        <div class="basic-advanced">
+            <a class="close-filters-link border-default border-default-right" data-ng-click="$parent.advancedFiltersStatus = false">Basic</a>
+            <a class="open-filters-link" data-ng-click="$parent.advancedFiltersStatus = true">Advanced</a>
+        </div>
+    </div -->
 
     <div class="search-row search-basic clearfix">
         <div class="search-input search-location"
@@ -165,7 +165,7 @@
             <a class="open-filters-link"
                data-ng-href="{{ advancedSearchUrl }}">
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/filters.svg' }}"></md-icon>
-                <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span>
+                <span class="btn-text"><span data-ng-bind="advancedSearchLinkName"></span></span>
             </a>
         </div>
 
