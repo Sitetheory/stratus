@@ -33,7 +33,8 @@
                     data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)">
                 <label>City, Neighborhood, Zip</label>
 
-                <!-- TODO: the ng-keyup should not be setting: && options.query.where.Location (seems useless???) (this TODO needs further explaination)  -->
+                <!-- NOTE: the ng-keyup should not be setting: && options.query.where.Location (seems useless???) -->
+                <!-- NOTE: ng-keyup will run $event.keyCode == 13 && searchProperties(). If $event.keyCode is not Enter, searchProperties() cannot be reached -->
                 <input
                        data-ng-model="options.query.where.Location"
                        data-ng-blur="searchProperties()"
