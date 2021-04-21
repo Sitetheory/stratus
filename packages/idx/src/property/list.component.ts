@@ -434,8 +434,10 @@ Stratus.Components.IdxPropertyList = {
                 await $scope.searchProperties(searchQuery, false, false)
             }
 
-            $scope.initialized = true
-            Idx.emit('init', $scope)
+            $scope.$applyAsync(() => {
+                $scope.initialized = true
+                Idx.emit('init', $scope)
+            })
         }
 
         // Initialization by Event
