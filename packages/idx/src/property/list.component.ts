@@ -1,7 +1,7 @@
 /**
  * @file IdxPropertyList Component @stratusjs/idx/property/list.component
  * @example <stratus-idx-property-list>
- * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Property_List
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-List-Widget
  */
 
 // Runtime
@@ -100,7 +100,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
 }
 
 Stratus.Components.IdxPropertyList = {
-    /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Property_List */
+    /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-List-Widget#Widget_Parameters */
     bindings: {
         /**
          * Type: string
@@ -169,14 +169,12 @@ Stratus.Components.IdxPropertyList = {
          * Type: string
          * Default: ''
          * A link to another dedicated advanced search page (used when this is a module)
-         * TODO: wiki update
          */
         advancedSearchUrl: '@',
         /**
          * Type: string
          * Default: 'Advanced Search'
          * An alternative name for the advanced search button.
-         * TODO: wiki update
          */
         advancedSearchLinkName: '@',
         /**
@@ -239,7 +237,7 @@ Stratus.Components.IdxPropertyList = {
         /**
          * Type: json
          * In place of `query` above, individual query properties may also be added to where`, `service`, `per-page` and `order`
-         * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#query-options
+         * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Query_Options
          */
         query: '@',
         /** Type: string */
