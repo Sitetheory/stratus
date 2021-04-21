@@ -1,7 +1,7 @@
 /**
  * @file IdxPropertyList Component @stratusjs/idx/property/list.component
  * @example <stratus-idx-property-list>
- * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Property_List
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-List-Widget
  */
 
 // Runtime
@@ -62,6 +62,8 @@ type OrderOption = {
 }
 
 export type IdxPropertyListScope = IdxListScope<Property> & {
+    initialized: boolean
+    tokenLoaded: boolean
     urlLoad: boolean
     searchOnLoad: boolean
     detailsLinkPopup: boolean
@@ -98,10 +100,8 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
 }
 
 Stratus.Components.IdxPropertyList = {
-    /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Property_List */
+    /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-List-Widget#Widget_Parameters */
     bindings: {
-        /** @deprecated */
-        uid: '@',
         /**
          * Type: string
          * To be targeted and controllable with the Search widget, a `element-id` must be defined. This value will be
@@ -237,7 +237,7 @@ Stratus.Components.IdxPropertyList = {
         /**
          * Type: json
          * In place of `query` above, individual query properties may also be added to where`, `service`, `per-page` and `order`
-         * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#query-options
+         * @see https://github.com/Sitetheory/stratus/wiki/Idx-Package-Usage#Query_Options
          */
         query: '@',
         /** Type: string */
@@ -291,27 +291,27 @@ Stratus.Components.IdxPropertyList = {
         /*$ctrl.uid = $attrs.uid && !_.isEmpty($attrs.uid) ? $attrs.uid :
             _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
          */
-        $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
-        $scope.elementId = $attrs.elementId || $ctrl.uid
-        Stratus.Instances[$scope.elementId] = $scope
-        $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
         $scope.localDir = localDir
+        $scope.initialized = false
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
+            $scope.tokenLoaded = true
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
-
-        $scope.preferredStatus = 'Closed'
-        $scope.displayPerRow = 2
-        $scope.displayPerRowText = 'two'
-        $scope.advancedSearchUrl = ''
-        $scope.advancedSearchLinkName = 'Advanced Search'
 
         /**
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
         const init = async () => {
+            $ctrl.uid = _.uniqueId(_.camelCase(packageName) + '_' + _.camelCase(moduleName) + '_' + _.camelCase(componentName) + '_')
+            $scope.elementId = $attrs.elementId || $ctrl.uid
+            Stratus.Instances[$scope.elementId] = $scope
+            $scope.instancePath = `Stratus.Instances.${$scope.elementId}`
+            if (!$scope.tokenLoaded && $attrs.tokenUrl) {
+                Idx.setTokenURL($attrs.tokenUrl)
+            }
+            Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+
             /**
              * Allow query to be loaded initially from the URL
              */
@@ -327,9 +327,9 @@ Stratus.Components.IdxPropertyList = {
             $scope.detailsHideVariables = $attrs.detailsHideVariables && isJSON($attrs.detailsHideVariables) ?
                 JSON.parse($attrs.detailsHideVariables) : []
             $scope.detailsTemplate = $attrs.detailsTemplate || null
-            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || $scope.advancedSearchUrl
-            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
-            $scope.preferredStatus = $attrs.preferredStatus || $scope.preferredStatus // Closed is most compatible
+            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || ''
+            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || 'Advanced Search'
+            $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
             // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
@@ -349,6 +349,8 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.images = $scope.query.images || {limit: 1}
 
             // Handle row displays
+            $scope.displayPerRow = 2
+            $scope.displayPerRowText = 'two'
             if ($attrs.displayPerRowText && _.isString($attrs.displayPerRowText)) {
                 $scope.displayPerRowText = $attrs.displayPerRowText
                 $scope.displayPerRow = $scope.displayPerRowText === 'one' ? 1 : $scope.displayPerRowText === 'two' ? 2 :
@@ -432,6 +434,7 @@ Stratus.Components.IdxPropertyList = {
                 await $scope.searchProperties(searchQuery, false, false)
             }
 
+            $scope.initialized = true
             Idx.emit('init', $scope)
         }
 
@@ -452,7 +455,6 @@ Stratus.Components.IdxPropertyList = {
             }
 
             $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
-                // console.log('CAROUSEL initNow called later')
                 if (initNowCtrl !== true) {
                     return
                 }
@@ -612,11 +614,18 @@ Stratus.Components.IdxPropertyList = {
                 }
 
                 Idx.emit('searching', $scope, _.clone($scope.query))
+                // We need to forcibly ensure that the collection is found to be pending in some cases
+                if($scope.collection) {
+                    $scope.$applyAsync(() => {
+                        $scope.collection.pending = true
+                    })
+                }
 
                 try {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
                     const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                    // $applyAsync will automatically be applied
                     Idx.emit('searched', $scope, _.clone($scope.query))
                     resolve(results)
                 } catch (e) {
