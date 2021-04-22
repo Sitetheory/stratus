@@ -1,7 +1,8 @@
-// IdxPropertySearch Component
-// @stratusjs/idx/property/search.component
-// <stratus-idx-property-search>
-// --------------
+/**
+ * @file IdxPropertySearch Component @stratusjs/idx/property/search.component
+ * @example <stratus-idx-property-search>
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-Search-Widget
+ */
 
 // Runtime
 import _ from 'lodash'
@@ -45,9 +46,12 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     listInitialized: boolean
     listLinkUrl: string
     // Can be 'simple' (location only), 'basic' (beds/baths, price, etc), 'advanced' (dropdown filters)
-    searchType: string
-    advancedSearchUrl: boolean
+    searchType: 'simple' | 'basic' | 'advanced'
+    // Href to a url
+    advancedSearchUrl: string
     advancedSearchLinkName: string
+    advancedFiltersStatus: boolean
+    openPrice: boolean
     listLinkTarget: string
     // options: object | any // TODO need to specify
     options: {
@@ -66,20 +70,78 @@ export type IdxPropertySearchScope = IdxSearchScope & {
 }
 
 Stratus.Components.IdxPropertySearch = {
+    /** @see https://github.com/Sitetheory/stratus/wiki/Idx-Property-Search-Widget#Widget_Parameters */
     bindings: {
+        // TODO doc
         elementId: '@',
+        /**
+         * Type: boolean
+         * Two-way bound option. When needing to provide data/options to this widget in an async environment, this
+         * initialization can be delayed by supplying a bound variable to notify when the data is ready.
+         * @example `init-now="model.completed"`
+         */
         initNow: '=',
+        /**
+         * Type: string
+         * To determine what datasources the Idx widgets are able to pull from and their temporary credentials, a
+         * `token-url` directs to the location that manages this widget's subscription and provides what Idx servers it
+         * has access to.
+         */
         tokenUrl: '@',
+        // TODO doc
         tokenOnLoad: '@',
+        /**
+         * Type: string
+         * Id of Property List widget to attach and control. The counterpart Property List widget's `element-id` must be
+         * defined and the same as this `list-id` (See Property List). Multiple Search widgets may attach to the same
+         * List widget but, a Search widget may only control a single List widget.
+         */
         listId: '@',
+        /**
+         * Type: string
+         * Default: '/property/list'
+         * If a List widget does not share the same page as this Search widget or they are not connected via
+         * `list-id`/`element-id`, searching will instead load a new page to where ever the List widget may be found
+         * (Url provided here).
+         */
         listLinkUrl: '@',
+        /**
+         * Type: string
+         * Default: '_self'
+         * Combined with `list-link-url`, if ever searching on another page, this will define how to open the page as a
+         * normal link. Any usable HTML <b>'_target'</b> attribute such as '_self' or '_blank'.
+         */
         listLinkTarget: '@',
+        // TODO
         searchType: '@',
+        /**
+         * Type: string
+         * A link to another dedicated advanced search page (used when this is a module)
+         */
         advancedSearchUrl: '@',
+        /**
+         * Type: string
+         * Default: 'Advanced Search'
+         * An alternative name for the advanced search button.
+         */
         advancedSearchLinkName: '@',
-        options: '@',
+        /**
+         * Type: string
+         * Default: 'search'
+         * The file name in which is loaded for the view of the widget. The name will automatically be appended with
+         * '.component.min.html'. The default is 'search.component.html'.
+         * @TODO Will need to allow setting a custom path of views outside the library directory.
+         */
         template: '@',
+        /**
+         * Type: json
+         * Additional advanced parameters that may control what the Search interface displays. Only parameter used at this time is selection
+         * @TODO
+         */
+        options: '@',
+        // TODO
         variableSync: '@',
+        // TODO
         widgetName: '@'
     },
     controller(
@@ -106,6 +168,11 @@ Stratus.Components.IdxPropertySearch = {
 
         Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
+        // Default values
+        $scope.openPrice = false
+        $scope.advancedFiltersStatus = false
+        $scope.advancedSearchUrl = ''
+        $scope.advancedSearchLinkName = 'Advanced Search'
         // Used by template
         $scope.$mdConstant = $mdConstant
 
@@ -120,10 +187,9 @@ Stratus.Components.IdxPropertySearch = {
             $scope.listLinkUrl = $attrs.listLinkUrl || '/property/list'
             $scope.listLinkTarget = $attrs.listLinkTarget || '_self'
             $scope.searchType = $attrs.searchType || 'advanced'
-            $scope.advancedSearchUrl = $attrs.advancedSearchUrl || true
-            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || 'Advanced Search'
+            $scope.advancedSearchUrl = $attrs.advancedSearchUrl ||  $scope.advancedSearchUrl
+            $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
-
             $scope.filterMenu = null
             $scope.options.forRent = false
 
