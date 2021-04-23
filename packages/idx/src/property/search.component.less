@@ -2,8 +2,9 @@
 search.filter.component.less and admin/search.component.less should be copies of each other for ease of development
 Nothing should be outside 'stratus-idx-property-search'/'.md-panel.stratus-idx-property-search-menu' or it will leak into other modules
 */
-stratus-idx-property-search,
-.md-panel.stratus-idx-property-search-menu {
+
+stratus-idx-property-search[data-list-id ^="property-list"],
+.md-panel#stratus-idx-property-search-menu {
   position: relative;
   .click-out {
     position: fixed;
@@ -41,77 +42,6 @@ stratus-idx-property-search,
       }
     }
   }
-  .custom-toggle {
-    display: table;
-    position: relative;
-    margin-bottom: 30px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-    .md-button {
-      margin: 0;
-      text-transform: uppercase;
-      font-size: 11px;
-      letter-spacing: 1px;
-      width: 120px;
-      color: #666;
-      &,
-      &:link,
-      &:active,
-      &:visited,
-      &:hover {
-        border: none;
-        background: none;
-      }
-      &.active,
-      &:hover {
-        color: #111;
-      }
-    }
-    &::after {
-      position: absolute;
-      left: 0;
-      width: 50%;
-      bottom: 0;
-      display: block;
-      content: '';
-      border-top: 2px solid #111;
-    }
-
-    @keyframes customToggleLeft {
-      0% {
-        left: 50%;
-        width: 50%;
-      }
-      30% {
-        left: 0;
-        width: 10%;
-      }
-      100% {
-        left: 0;
-        width: 50%;
-      }
-    }
-
-    @keyframes customToggleRight {
-      0% {
-        left: 0;
-        width: 50%;
-      }
-      30% {
-        left: 90%;
-        width: 10%;
-      }
-      100% {
-        left: 50%;
-        width: 50%;
-      }
-    }
-    &.active-left::after {
-      animation: customToggleLeft 1.5s ease both;
-    }
-    &.active-right::after {
-      animation: customToggleRight 1.5s ease both;
-    }
-  }
 
   /* md-input-container adds a ton of spacing by default. This will remove it */
   md-input-container.minimal,
@@ -130,6 +60,7 @@ stratus-idx-property-search,
     z-index: 3;
     text-align: left;
     background: #fff;
+    border: 1px solid rgba(0,0,0,.1);
     > .search-input > md-input-container.minimal {
       // stylelint-disable-next-line no-descending-specificity
       &:first-child {
@@ -387,9 +318,10 @@ stratus-idx-property-search,
   //  }
   //}
 }
-.stratus-idx-property-search-menu {
+stratus-idx-property-search[data-list-id ^="property-list"] #stratus-idx-property-search-menu {
   position: relative;
   z-index: -1000;
+
   .more-filters {
     transition: all 0.3s ease-out;
     -webkit-transition: all 0.3s ease-out;
@@ -482,6 +414,78 @@ stratus-idx-property-search,
       @media (max-width: 768px) {
         transform: translateX(0);
       }
+    }
+  }
+  .custom-toggle {
+    display: table;
+    position: relative;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    .md-button {
+      margin: 0;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+      width: 120px;
+      color: #666;
+      background: none;
+      border: none;
+      &,
+      &:link,
+      &:active,
+      &:visited,
+      &:hover {
+        border: none;
+        background: none;
+      }
+      &.active,
+      &:hover {
+        color: #111;
+      }
+    }
+    &::after {
+      position: absolute;
+      left: 0;
+      width: 50%;
+      bottom: 0;
+      display: block;
+      content: '';
+      border-top: 2px solid #111;
+    }
+    @keyframes customToggleLeft {
+      0% {
+        left: 50%;
+        width: 50%;
+      }
+      30% {
+        left: 0;
+        width: 10%;
+      }
+      100% {
+        left: 0;
+        width: 50%;
+      }
+    }
+
+    @keyframes customToggleRight {
+      0% {
+        left: 0;
+        width: 50%;
+      }
+      30% {
+        left: 90%;
+        width: 10%;
+      }
+      100% {
+        left: 50%;
+        width: 50%;
+      }
+    }
+    &.active-left::after {
+      animation: customToggleLeft 1.5s ease both;
+    }
+    &.active-right::after {
+      animation: customToggleRight 1.5s ease both;
     }
   }
 }
