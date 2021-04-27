@@ -489,8 +489,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             // get spliced into the `pasteDeniedAttrs`, so the whitelist can overwrite the
             // blacklist.
             // '.*'
-            // 'aria-.*',
-            // 'data-.*',
+            // Regex Options
+            'aria-.+',
+            'data-.+',
+            // Common Attributes
             'accept', 'accept-charset', 'accesskey', 'action', 'align', 'allowfullscreen',
             'allowtransparency', 'alt', 'async', 'autocomplete', 'autofocus',
             'autoplay', 'autosave',
@@ -521,47 +523,47 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'webkitallowfullscreen', 'width', 'wrap',
             // XML Attributes (Required for outer SVG Tag)
             'xmlns',
-            // 'xmlns:xlink',
+            'xmlns:xlink',
             // SVG Attributes - pulled from: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute
-            // 'accent-height', 'accumulate', 'additive', 'alignment-baseline', 'alphabetic', 'amplitude', 'arabic-form', 'ascent',
+            'accent-height', 'accumulate', 'additive', 'alignment-baseline', 'alphabetic', 'amplitude', 'arabic-form', 'ascent',
             'attributeName', 'attributeType', 'azimuth',
-            // 'baseFrequency', 'baseline-shift', 'baseProfile', 'bbox', 'begin', 'bias', 'by',
-            // 'calcMode', 'cap-height', 'class', 'clip', 'clipPathUnits', 'clip-path', 'clip-rule', 'color', 'color-interpolation',
-            // 'color-interpolation-filters', 'color-profile', 'color-rendering', 'contentScriptType', 'contentStyleType', 'crossorigin',
+            'baseFrequency', 'baseline-shift', 'baseProfile', 'bbox', 'begin', 'bias', 'by',
+            'calcMode', 'cap-height', 'clip', 'clipPathUnits', 'clip-path', 'clip-rule', 'color-interpolation',
+            'color-interpolation-filters', 'color-profile', 'color-rendering', 'contentScriptType', 'contentStyleType', 'crossorigin',
             'cursor', 'cx', 'cy',
-            // 'd', 'decelerate', 'descent', 'diffuseConstant', 'direction', 'display', 'divisor', 'dominant-baseline', 'dur', 'dx', 'dy',
-            // 'edgeMode', 'elevation', 'enable-background', 'end', 'exponent', 'externalResourcesRequired',
-            // 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterRes', 'filterUnits', 'flood-color', 'flood-opacity', 'font-family',
-            // 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'format', 'from',
+            'd', 'decelerate', 'descent', 'diffuseConstant', 'direction', 'display', 'divisor', 'dominant-baseline', 'dur', 'dx', 'dy',
+            'edgeMode', 'elevation', 'enable-background', 'end', 'exponent', 'externalResourcesRequired',
+            'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterRes', 'filterUnits', 'flood-color', 'flood-opacity', 'font-family',
+            'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'format', 'from',
             'fr', 'fx', 'fy',
-            // 'g1', 'g2', 'glyph-name', 'glyph-orientation-horizontal', 'glyph-orientation-vertical', 'glyphRef', 'gradientTransform',
+            'g1', 'g2', 'glyph-name', 'glyph-orientation-horizontal', 'glyph-orientation-vertical', 'glyphRef', 'gradientTransform',
             'gradientUnits',
-            // 'hanging', 'height', 'href', 'hreflang', 'horiz-adv-x', 'horiz-origin-x',
-            // 'id', 'ideographic', 'image-rendering', 'in', 'in2', 'intercept',
-            // 'k', 'k1', 'k2', 'k3', 'k4', 'kernelMatrix', 'kernelUnitLength', 'kerning', 'keyPoints', 'keySplines', 'keyTimes',
-            // 'lang', 'lengthAdjust', 'letter-spacing', 'lighting-color', 'limitingConeAngle', 'local',
-            // 'marker-end', 'marker-mid', 'marker-start', 'markerHeight', 'markerUnits', 'markerWidth', 'mask', 'maskContentUnits',
-            // 'maskUnits', 'mathematical', 'max', 'media', 'method', 'min', 'mode',
-            'name', 'numOctaves',
-            // 'offset', 'opacity', 'operator', 'order', 'orient', 'orientation', 'origin', 'overflow', 'overline-position',
-            // 'overline-thickness',
-            // 'panose-1', 'paint-order', 'path', 'pathLength', 'patternContentUnits', 'patternTransform', 'patternUnits', 'ping',
-            // 'pointer-events', 'points', 'pointsAtX', 'pointsAtY', 'pointsAtZ', 'preserveAlpha', 'preserveAspectRatio', 'primitiveUnits',
-            // 'r', 'radius', 'referrerPolicy', 'refX', 'refY', 'rel', 'rendering-intent', 'repeatCount', 'repeatDur', 'requiredExtensions',
+            'hanging', 'horiz-adv-x', 'horiz-origin-x',
+            'ideographic', 'image-rendering', 'in', 'in2', 'intercept',
+            'k', 'k1', 'k2', 'k3', 'k4', 'kernelMatrix', 'kernelUnitLength', 'kerning', 'keyPoints', 'keySplines', 'keyTimes',
+            'lengthAdjust', 'letter-spacing', 'lighting-color', 'limitingConeAngle', 'local',
+            'marker-end', 'marker-mid', 'marker-start', 'markerHeight', 'markerUnits', 'markerWidth', 'mask', 'maskContentUnits',
+            'maskUnits', 'mathematical', 'mode',
+            'numOctaves',
+            'offset', 'opacity', 'operator', 'order', 'orient', 'orientation', 'origin', 'overflow', 'overline-position',
+            'overline-thickness',
+            'panose-1', 'paint-order', 'path', 'pathLength', 'patternContentUnits', 'patternTransform', 'patternUnits', 'pointer-events',
+            'points', 'pointsAtX', 'pointsAtY', 'pointsAtZ', 'preserveAlpha', 'preserveAspectRatio', 'primitiveUnits',
+            'r', 'radius', 'referrerPolicy', 'refX', 'refY', 'rendering-intent', 'repeatCount', 'repeatDur', 'requiredExtensions',
             'requiredFeatures', 'restart', 'result', 'rotate', 'rx', 'ry',
-            // 'scale', 'seed', 'shape-rendering', 'slope', 'spacing', 'specularConstant', 'specularExponent', 'speed', 'spreadMethod',
-            // 'startOffset', 'stdDeviation', 'stemh', 'stemv', 'stitchTiles', 'stop-color', 'stop-opacity', 'strikethrough-position',
-            // 'strikethrough-thickness', 'string', 'stroke', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin',
-            // 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'style', 'surfaceScale', 'systemLanguage',
-            // 'tabindex', 'tableValues', 'target', 'targetX', 'targetY', 'text-anchor', 'text-decoration', 'text-rendering', 'textLength',
-            // 'to', 'transform', 'transform-origin', 'type',
-            // 'u1', 'u2', 'underline-position', 'underline-thickness', 'unicode', 'unicode-bidi', 'unicode-range', 'units-per-em',
-            // 'v-alphabetic', 'v-hanging', 'v-ideographic', 'v-mathematical', 'values', 'vector-effect', 'version', 'vert-adv-y',
-            // 'vert-origin-x', 'vert-origin-y', 'viewBox', 'viewTarget', 'visibility',
-            // 'width', 'widths', 'word-spacing', 'writing-mode',
-            // 'x', 'x-height', 'x1', 'x2', 'xChannelSelector',
-            // // 'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show',
-            // // 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space',
+            'scale', 'seed', 'shape-rendering', 'slope', 'spacing', 'specularConstant', 'specularExponent', 'speed', 'spreadMethod',
+            'startOffset', 'stdDeviation', 'stemh', 'stemv', 'stitchTiles', 'stop-color', 'stop-opacity', 'strikethrough-position',
+            'strikethrough-thickness', 'string', 'stroke', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin',
+            'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'surfaceScale', 'systemLanguage',
+            'tableValues', 'targetX', 'targetY', 'text-anchor', 'text-decoration', 'text-rendering', 'textLength', 'to', 'transform',
+            'transform-origin',
+            'u1', 'u2', 'underline-position', 'underline-thickness', 'unicode', 'unicode-bidi', 'unicode-range', 'units-per-em',
+            'v-alphabetic', 'v-hanging', 'v-ideographic', 'v-mathematical', 'values', 'vector-effect', 'version', 'vert-adv-y',
+            'vert-origin-x', 'vert-origin-y', 'viewBox', 'viewTarget', 'visibility',
+            'widths', 'word-spacing', 'writing-mode',
+            'x', 'x-height', 'x1', 'x2', 'xChannelSelector',
+            'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show',
+            'xlink:title', 'xlink:type', 'xml:base', 'xml:lang', 'xml:space',
             'y', 'y1', 'y2', 'yChannelSelector',
             'z', 'zoomAndPan'
         ],
@@ -580,11 +582,11 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch',
             'symbol', 'text', 'textPath', 'tspan', 'unknown', 'use', 'view',
         ],
-        // htmlAllowedStyleProps: [
-        //     '.*',
-        //     // 'font-family', 'font-size', 'background', 'color', 'width',
-        //     // 'text-align', 'vertical-align', 'background-color'
-        // ],
+        htmlAllowedStyleProps: [
+            '.+',
+            // 'font-family', 'font-size', 'background', 'color', 'width',
+            // 'text-align', 'vertical-align', 'background-color'
+        ],
         htmlAllowedTags: [
             'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio',
             'b', 'base', 'bdi', 'bdo', 'blockquote', 'br', 'button',
@@ -661,9 +663,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'class',
             'style',
             'dir',
-            'data-.*',
-            'aria-.*',
-            'ng-.*'
+            'data-.+',
+            'aria-.+',
+            'ng-.+'
         ],
         pasteDeniedTags: [
             'form', 'input', 'label',
@@ -946,6 +948,25 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 )
             }
         )
+        if (this.dev) {
+            this.listDuplicates(this.froalaConfig)
+        }
+    }
+
+    listDuplicates(data: LooseObject) : LooseObject {
+        _.forEach(data, (value, key) => {
+            if (!_.isArray(value)) {
+                return
+            }
+            const catalog: LooseObject = {}
+            value.forEach((e: string) => catalog[e] = (catalog[e] || 0) + 1)
+            const duplicates: Array<any> = _.filter(_.map(catalog, ((v, k) => v > 1 ? k : null)))
+            if (!duplicates.length) {
+                return
+            }
+            console.warn('Froala Config:', key, 'has duplicates:', duplicates)
+        })
+        return data
     }
 
     normalizeIn(data?: string): string {
@@ -974,6 +995,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         }
         const imgRegex: RegExp = /<img([\w\W]+?)>/gi
         let imgMatch: RegExpExecArray
+        // console.log('imgRegex:', data, imgRegex)
         // tslint:disable-next-line:no-conditional-assignment
         while (imgMatch = imgRegex.exec(data)) {
             const src: string = imgMatch[0]
@@ -983,7 +1005,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             }
             // This skips image sizing for elements without lazy loading
             // TODO: Enable this after things are normalized
-            // if (!src.includes('stratus-src')) {
+            // if (!src.includes('data-stratus-src')) {
             //     continue
             // }
             const srcRegex: RegExp = /^(.+?)(-[A-Z]{2})?\.(?=[^.]*$)(.+)/gi
@@ -994,7 +1016,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             }
             // This removes image sizing from elements without lazy loading
             // TODO: Disable this after things are normalized
-            if (!src.includes('stratus-src')) {
+            if (!src.includes('data-stratus-src')) {
                 data = data.replace(src, `${srcMatch[1]}.${srcMatch[3]}`)
                 continue
             }
