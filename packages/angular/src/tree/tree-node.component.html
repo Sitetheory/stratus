@@ -73,6 +73,13 @@
 
     <span class="hover-show position-absolute svg-grey">
         <a mat-button
+           (click)="openDialogClick(node)"
+           (dblclick)="openDialogDblClick(node)">
+            <mat-icon svgIcon="tree_edit" aria-hidden="false" aria-label="Edit Item">
+                Edit
+            </mat-icon>
+        </a>
+        <a mat-button
            (click)="destroy()">
             <mat-icon svgIcon="tree_delete" aria-hidden="false" aria-label="Delete Item">
                 Delete

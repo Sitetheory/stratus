@@ -257,6 +257,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
             tree_check: '/assets/1/0/bundles/sitetheorycore/images/icons/check.svg',
             tree_add: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/add.svg',
             tree_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
+            tree_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg',
             tree_visibility: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/visibility.svg',
         }, (value, key) => this.iconRegistry.addSvgIcon(key, this.sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
