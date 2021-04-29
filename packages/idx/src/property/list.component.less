@@ -7,6 +7,144 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
+
+
+/* Structure */
+.three-per-row {
+  .property-container {
+    width: 33.333%;
+
+    @media (max-width: 999px) {
+      width: 50%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    @media (max-width: 600px) {
+      width: 100%;
+    }
+    &:nth-child(2n),
+    &:nth-child(2n) + .property-container {
+      clear: unset;
+    }
+    &:nth-child(3n) {
+      clear: right;
+    }
+    &:nth-child(3n) + .property-container {
+      clear: left;
+    }
+
+    @media (max-width: 999px) {
+      &:nth-child(3n),
+      &:nth-child(3n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(2n) {
+        clear: right;
+      }
+      &:nth-child(2n) + .property-container {
+        clear: left;
+      }
+    }
+
+    @media (max-width: 600px) {
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+    }
+  }
+}
+.four-per-row {
+  .property-container {
+    width: 25%;
+
+    @media (max-width: 959px) {
+      width: 50%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    @media (max-width: 600px) {
+      width: 100%;
+    }
+    &:nth-child(2n),
+    &:nth-child(2n) + .property-container {
+      clear: unset;
+    }
+    &:nth-child(4n) {
+      clear: right;
+    }
+    &:nth-child(4n) + .property-container {
+      clear: left;
+    }
+
+    @media (max-width: 959px) {
+      &:nth-child(4n),
+      &:nth-child(4n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(2n) {
+        clear: right;
+      }
+      &:nth-child(2n) + .property-container {
+        clear: left;
+      }
+    }
+
+    @media (max-width: 600px) {
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+    }
+  }
+}
+.five-per-row {
+  .property-container {
+    width: 20%;
+
+    @media (max-width: 959px) {
+      width: 50%;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    @media (max-width: 600px) {
+      width: 100%;
+    }
+    &:nth-child(2n),
+    &:nth-child(2n) + .property-container {
+      clear: unset;
+    }
+    &:nth-child(5n) {
+      clear: right;
+    }
+    &:nth-child(5n) + .property-container {
+      clear: left;
+    }
+
+    @media (max-width: 959px) {
+      &:nth-child(5n),
+      &:nth-child(5n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(2n) {
+        clear: right;
+      }
+      &:nth-child(2n) + .property-container {
+        clear: left;
+      }
+    }
+
+    @media (max-width: 600px) {
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+    }
+  }
+}
 stratus-idx-property-list {
   .no-results {
     padding: 200px 40px 0;
@@ -248,104 +386,14 @@ stratus-idx-property-list {
     margin: 10px -8px 0;
 
     /* Details button */
+
     .property-button-container {
       .button {
         margin: 0 auto;
       }
     }
-
-    /* Structure */
-    &.three-per-row {
-      .property-container {
-        width: 33.333%;
-
-        @media (max-width: 999px) {
-          width: 50%;
-          padding-left: 0;
-          padding-right: 0;
-        }
-
-        @media (max-width: 600px) {
-          width: 100%;
-        }
-        &:nth-child(2n),
-        &:nth-child(2n) + .property-container {
-          clear: unset;
-        }
-        &:nth-child(3n) {
-          clear: right;
-        }
-        &:nth-child(3n) + .property-container {
-          clear: left;
-        }
-
-        @media (max-width: 999px) {
-          &:nth-child(3n),
-          &:nth-child(3n) + .property-container {
-            clear: unset;
-          }
-          &:nth-child(2n) {
-            clear: right;
-          }
-          &:nth-child(2n) + .property-container {
-            clear: left;
-          }
-        }
-
-        @media (max-width: 600px) {
-          &:nth-child(2n),
-          &:nth-child(2n) + .property-container {
-            clear: unset;
-          }
-        }
-      }
-    }
-    &.four-per-row {
-      .property-container {
-        width: 25%;
-
-        @media (max-width: 959px) {
-          width: 50%;
-          padding-left: 0;
-          padding-right: 0;
-        }
-
-        @media (max-width: 600px) {
-          width: 100%;
-        }
-        &:nth-child(2n),
-        &:nth-child(2n) + .property-container {
-          clear: unset;
-        }
-        &:nth-child(4n) {
-          clear: right;
-        }
-        &:nth-child(4n) + .property-container {
-          clear: left;
-        }
-
-        @media (max-width: 959px) {
-          &:nth-child(4n),
-          &:nth-child(4n) + .property-container {
-            clear: unset;
-          }
-          &:nth-child(2n) {
-            clear: right;
-          }
-          &:nth-child(2n) + .property-container {
-            clear: left;
-          }
-        }
-
-        @media (max-width: 600px) {
-          &:nth-child(2n),
-          &:nth-child(2n) + .property-container {
-            clear: unset;
-          }
-        }
-      }
-    }
   }
+
 
   /* List Pager */
   .pager-container {
