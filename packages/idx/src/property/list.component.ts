@@ -45,8 +45,6 @@ import 'stratus.directives.src'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
 import '@stratusjs/idx/property/details.component'
 import '@stratusjs/idx/map/map.component'
-import {languages} from "monaco-editor";
-import json = languages.json;
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -226,12 +224,6 @@ Stratus.Components.IdxPropertyList = {
         /**
          * Type: boolean
          * Default: true
-         * By default, it will display the sort dropdown.
-         */
-        displayOrderOptions: '@',
-        /**
-         * Type: boolean
-         * Default: true
          * Allow query to be loaded initially from the URL. Disable this for times you don't want a url to either control
          * the displayed listings (or be able to share a defined search URL).
          */
@@ -265,6 +257,12 @@ Stratus.Components.IdxPropertyList = {
          * @see Docs coming soon
          */
         hideDisclaimer: '@',
+        /**
+         * Type: boolean
+         * Default: true
+         * By default, it will display the sort dropdown.
+         */
+        displayOrderOptions: '@',
         /**
          * Type: number
          * Default: 2
@@ -370,6 +368,8 @@ Stratus.Components.IdxPropertyList = {
                     $scope.displayPerRow === 3 ? 'three' : $scope.displayPerRow === 4 ? 'four' : 'two'
             }
 
+            $scope.displayOrderOptions = $attrs.displayOrderOptions && isJSON($attrs.displayOrderOptions) ?
+                JSON.parse($attrs.displayOrderOptions) : true
             $scope.displayPager =
                 $attrs.displayPager ? (isJSON($attrs.displayPager) ? JSON.parse($attrs.displayPager) :
                     $attrs.displayPager) : true
@@ -399,7 +399,6 @@ Stratus.Components.IdxPropertyList = {
                 {name: 'Recently Sold', value: ['-CloseDate']},
                 {name: 'Status', value: ['Status', '-BestPrice']}
             ]
-            $scope.displayOrderOptions = $attrs.displayOrderOptions && isJSON($attrs.displayOrderOptions) ? JSON.parse($attrs.displayOrderOptions) : true
 
             $scope.googleApiKey = $attrs.googleApiKey || null
             $scope.contactName = $attrs.contactName || null
