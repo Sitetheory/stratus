@@ -45,6 +45,8 @@ import 'stratus.directives.src'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
 import '@stratusjs/idx/property/details.component'
 import '@stratusjs/idx/map/map.component'
+import {languages} from "monaco-editor";
+import json = languages.json;
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -76,6 +78,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     detailsTemplate?: string
     query: CompileFilterOptions
     orderOptions: OrderOption[]
+    displayOrderOptions: boolean
     googleApiKey?: string
     contactName: string
     contactEmail?: string
@@ -220,6 +223,12 @@ Stratus.Components.IdxPropertyList = {
          * }
          */
         orderOptions: '@',
+        /**
+         * Type: boolean
+         * Default: true
+         * By default, it will display the sort dropdown.
+         */
+        displayOrderOptions: '@',
         /**
          * Type: boolean
          * Default: true
@@ -390,6 +399,7 @@ Stratus.Components.IdxPropertyList = {
                 {name: 'Recently Sold', value: ['-CloseDate']},
                 {name: 'Status', value: ['Status', '-BestPrice']}
             ]
+            $scope.displayOrderOptions = (!$attrs.displayOrderOptions || $attrs.displayOrderOptions === 'false') ? false : true
 
             $scope.googleApiKey = $attrs.googleApiKey || null
             $scope.contactName = $attrs.contactName || null

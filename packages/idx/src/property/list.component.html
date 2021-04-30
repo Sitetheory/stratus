@@ -1,7 +1,7 @@
 <div id="{{elementId}}" class="property-list" data-ng-cloak>
     <md-progress-linear data-ng-if="!initialized" md-mode="indeterminate"></md-progress-linear>
     <div data-ng-if="initialized">
-        <div class="header-section clearfix">
+        <div class="header-section clearfix" data-ng-if="displayOrderOptions">
             <div class="sort-options-container" data-ng-if="collection.meta.data.totalRecords">
                 <md-menu data-md-position-mode="target-right target" data-md-offset="0 30">
                     <div class=" options-button" data-ng-click="$mdMenu.open()" aria-label="Sort Options">
