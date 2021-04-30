@@ -7,6 +7,8 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
+
+
 stratus-idx-property-list {
   .no-results {
     padding: 200px 40px 0;
@@ -78,6 +80,144 @@ stratus-idx-property-list {
   }
   .search-mini {
     max-width: 50%;
+  }
+
+
+  /* Structure */
+  .three-per-row {
+    .property-container {
+      width: 33.333%;
+
+      @media (max-width: 999px) {
+        width: 50%;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      @media (max-width: 600px) {
+        width: 100%;
+      }
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(3n) {
+        clear: right;
+      }
+      &:nth-child(3n) + .property-container {
+        clear: left;
+      }
+
+      @media (max-width: 999px) {
+        &:nth-child(3n),
+        &:nth-child(3n) + .property-container {
+          clear: unset;
+        }
+        &:nth-child(2n) {
+          clear: right;
+        }
+        &:nth-child(2n) + .property-container {
+          clear: left;
+        }
+      }
+
+      @media (max-width: 600px) {
+        &:nth-child(2n),
+        &:nth-child(2n) + .property-container {
+          clear: unset;
+        }
+      }
+    }
+  }
+  .four-per-row {
+    .property-container {
+      width: 25%;
+
+      @media (max-width: 959px) {
+        width: 50%;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      @media (max-width: 600px) {
+        width: 100%;
+      }
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(4n) {
+        clear: right;
+      }
+      &:nth-child(4n) + .property-container {
+        clear: left;
+      }
+
+      @media (max-width: 959px) {
+        &:nth-child(4n),
+        &:nth-child(4n) + .property-container {
+          clear: unset;
+        }
+        &:nth-child(2n) {
+          clear: right;
+        }
+        &:nth-child(2n) + .property-container {
+          clear: left;
+        }
+      }
+
+      @media (max-width: 600px) {
+        &:nth-child(2n),
+        &:nth-child(2n) + .property-container {
+          clear: unset;
+        }
+      }
+    }
+  }
+  .five-per-row {
+    .property-container {
+      width: 20%;
+
+      @media (max-width: 959px) {
+        width: 50%;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      @media (max-width: 600px) {
+        width: 100%;
+      }
+      &:nth-child(2n),
+      &:nth-child(2n) + .property-container {
+        clear: unset;
+      }
+      &:nth-child(5n) {
+        clear: right;
+      }
+      &:nth-child(5n) + .property-container {
+        clear: left;
+      }
+
+      @media (max-width: 959px) {
+        &:nth-child(5n),
+        &:nth-child(5n) + .property-container {
+          clear: unset;
+        }
+        &:nth-child(2n) {
+          clear: right;
+        }
+        &:nth-child(2n) + .property-container {
+          clear: left;
+        }
+      }
+
+      @media (max-width: 600px) {
+        &:nth-child(2n),
+        &:nth-child(2n) + .property-container {
+          clear: unset;
+        }
+      }
+    }
   }
 
   /* Property */
@@ -248,104 +388,14 @@ stratus-idx-property-list {
     margin: 10px -8px 0;
 
     /* Details button */
+
     .property-button-container {
       .button {
         margin: 0 auto;
       }
     }
-
-    /* Structure */
-    &.three-per-row {
-      .property-container {
-        width: 33.333%;
-
-        @media (max-width: 999px) {
-          width: 50%;
-          padding-left: 0;
-          padding-right: 0;
-        }
-
-        @media (max-width: 600px) {
-          width: 100%;
-        }
-        &:nth-child(2n),
-        &:nth-child(2n) + .property-container {
-          clear: unset;
-        }
-        &:nth-child(3n) {
-          clear: right;
-        }
-        &:nth-child(3n) + .property-container {
-          clear: left;
-        }
-
-        @media (max-width: 999px) {
-          &:nth-child(3n),
-          &:nth-child(3n) + .property-container {
-            clear: unset;
-          }
-          &:nth-child(2n) {
-            clear: right;
-          }
-          &:nth-child(2n) + .property-container {
-            clear: left;
-          }
-        }
-
-        @media (max-width: 600px) {
-          &:nth-child(2n),
-          &:nth-child(2n) + .property-container {
-            clear: unset;
-          }
-        }
-      }
-    }
-    &.four-per-row {
-      .property-container {
-        width: 25%;
-
-        @media (max-width: 959px) {
-          width: 50%;
-          padding-left: 0;
-          padding-right: 0;
-        }
-
-        @media (max-width: 600px) {
-          width: 100%;
-        }
-        &:nth-child(2n),
-        &:nth-child(2n) + .property-container {
-          clear: unset;
-        }
-        &:nth-child(4n) {
-          clear: right;
-        }
-        &:nth-child(4n) + .property-container {
-          clear: left;
-        }
-
-        @media (max-width: 959px) {
-          &:nth-child(4n),
-          &:nth-child(4n) + .property-container {
-            clear: unset;
-          }
-          &:nth-child(2n) {
-            clear: right;
-          }
-          &:nth-child(2n) + .property-container {
-            clear: left;
-          }
-        }
-
-        @media (max-width: 600px) {
-          &:nth-child(2n),
-          &:nth-child(2n) + .property-container {
-            clear: unset;
-          }
-        }
-      }
-    }
   }
+
 
   /* List Pager */
   .pager-container {
@@ -369,8 +419,7 @@ stratus-idx-property-list {
       .pager-button {
         margin-right: 5px;
         float: left;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        border: 1px solid rgba(0,0,0,.2);
         padding: 14px;
         outline: none;
         > .arrow {
@@ -384,11 +433,10 @@ stratus-idx-property-list {
           }
         }
         &.disabled {
-          background-color: #fff;
-          border-color: #eee;
+          &,
           &:hover {
-            background-color: #fff;
-            border-color: #eee;
+            background: none;
+            border: 1px solid rgba(0,0,0,.1);
           }
           > .arrow,
           > .arrow:hover {
@@ -396,6 +444,12 @@ stratus-idx-property-list {
           }
         }
       }
+    }
+    .search-more-filters {
+      float: left;
+      border: 1px solid rgba(0,0,0,.2);
+      padding: 13px;
+      font-size: 11px;
     }
   }
 
