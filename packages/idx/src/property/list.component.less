@@ -7,8 +7,6 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
-
-
 stratus-idx-property-list {
   .no-results {
     padding: 200px 40px 0;
@@ -497,10 +495,4 @@ stratus-idx-property-list {
       }
     }
   }
-}
-
-/* This will only affect pages directly from SitetheoryPropertyBundle-PropertyFilter */
-body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
-  background: rgba(255, 255, 255, 1);
-  opacity: 0.9;
 }
