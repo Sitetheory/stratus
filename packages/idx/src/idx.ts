@@ -2500,6 +2500,13 @@ const angularJsService = (
         // the page on doesn't have listings in buffer
         if (collection.models.length < (options.page * options.perPage)) {
             // need to fetch more
+            // Ensure the changes update on the DOM to see that the list is now pending
+            collection.pending = true
+            Object.keys(instance[moduleName].list).forEach(listName => {
+                // instance.List[listName].$digest(); // Digest to ensure the DOM/$watch updates with new model data
+                instance[moduleName].list[listName].$applyAsync() // Digest to ensure the DOM/$watch updates with new model data
+            })
+
             // need to also have all previous pages to ensure that sorting is correct (need to track previous pages loaded)
             if (
                 options.page > 1 &&

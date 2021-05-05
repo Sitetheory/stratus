@@ -7,8 +7,6 @@ FIXME we CANNOT rely of media queries, it needs to know the sizing of the elemen
 @tablet: ~"(max-width: 959px)";
 @phone: ~"(max-width: 600px)";
 @desktop-only: ~"(min-width: 600px)";
-
-
 stratus-idx-property-list {
   .no-results {
     padding: 200px 40px 0;
@@ -81,7 +79,6 @@ stratus-idx-property-list {
   .search-mini {
     max-width: 50%;
   }
-
 
   /* Structure */
   .three-per-row {
@@ -396,7 +393,6 @@ stratus-idx-property-list {
     }
   }
 
-
   /* List Pager */
   .pager-container {
     margin: 20px 0;
@@ -419,7 +415,7 @@ stratus-idx-property-list {
       .pager-button {
         margin-right: 5px;
         float: left;
-        border: 1px solid rgba(0,0,0,.2);
+        border: 1px solid rgba(0, 0, 0, 0.2);
         padding: 14px;
         outline: none;
         > .arrow {
@@ -436,7 +432,7 @@ stratus-idx-property-list {
           &,
           &:hover {
             background: none;
-            border: 1px solid rgba(0,0,0,.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
           }
           > .arrow,
           > .arrow:hover {
@@ -447,7 +443,7 @@ stratus-idx-property-list {
     }
     .search-more-filters {
       float: left;
-      border: 1px solid rgba(0,0,0,.2);
+      border: 1px solid rgba(0, 0, 0, 0.2);
       padding: 13px;
       font-size: 11px;
     }
@@ -497,10 +493,4 @@ stratus-idx-property-list {
       }
     }
   }
-}
-
-/* This will only affect pages directly from SitetheoryPropertyBundle-PropertyFilter */
-body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
-  background: rgba(255, 255, 255, 1);
-  opacity: 0.9;
 }
