@@ -622,7 +622,8 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         ],
         htmlRemoveTags: [],
         htmlSimpleAmpersand: false,
-        htmlUntouched: true,
+        // FIXME: This setting breaks the unordered and ordered list buttons.
+        // htmlUntouched: true,
         imageInsertButtons: [
             'imageBack',
             '|',
@@ -1003,6 +1004,10 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             if (src.includes('data:image')) {
                 continue
             }
+            // TODO: Analyze whether we will need to ensure `data-stratus-src` is available for all Sitetheory Assets.
+            // if (src.includes('cdn.sitetheory.io')) {
+            //     console.log('sitetheory image:', src)
+            // }
             // This skips image sizing for elements without lazy loading
             // TODO: Enable this after things are normalized
             // if (!src.includes('data-stratus-src')) {
