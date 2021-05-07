@@ -21,7 +21,7 @@ const htmlmin = require('gulp-htmlmin')
 // Interpreters
 const babel = require('gulp-babel')
 const less = require('gulp-less')
-const sass = require('gulp-sass')
+const sass = require('gulp-dart-sass')
 const coffee = require('gulp-coffee')
 const sourcemaps = require('gulp-sourcemaps')
 const ts = require('gulp-typescript')
