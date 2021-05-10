@@ -30,10 +30,10 @@
                 <md-card class="property-item" data-ng-class="{highlight: property._unmapped._highlight}">
                     <div class="property-image">
                         <div class="property-status font-body" data-ng-bind="::Idx.getFriendlyStatus(property, preferredStatus)" aria-label="Status"></div>
+                        <div class="button btn" data-ng-href="{{::getDetailsURL(property)}}">
+                            Details
+                        </div>
                         <a data-ng-click="displayModelDetails(property, $event)" data-ng-href="{{::getDetailsURL(property)}}">
-                            <div class="button btn" data-ng-href="{{::getDetailsURL(property)}}">
-                                Details
-                            </div>
                             <div class="image-wrapper"
                                  data-stratus-src-version="{{::(property.Images[0].Lazy == 'stratus-src' ? 'best' : 'false')}}"
                                  data-stratus-src="{{::property.Images[0].MediaURL}}"

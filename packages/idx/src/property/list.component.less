@@ -244,6 +244,25 @@ stratus-idx-property-list {
         .property-image {
           position: relative;
           background: #000;
+          .btn {
+            transform: translate(-50%, -50%) scale(0.5);
+            -webkit-transform: translate(-50%, -50%) scale(0.5);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 1;
+            opacity: 0;
+            padding: 6px 8px;
+            color: #fff;
+            background: none;
+            border: 1px solid #fff;
+            &:hover {
+              transform: translate(-50%,-50%) scale(1);
+              -webkit-transform: translate(-50%,-50%) scale(1);
+              color: #222;
+              background: #FFF;
+            }
+          }
           .image-wrapper {
             background-position: center;
             background-repeat: no-repeat;
@@ -261,24 +280,6 @@ stratus-idx-property-list {
 
             display: block;
             position: relative;
-            .btn {
-              transform: translate(-50%, -50%) scale(0.5);
-              -webkit-transform: translate(-50%, -50%) scale(0.5);
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              opacity: 0;
-              color: #fff;
-              z-index: 1;
-              background: none;
-              border: 1px solid #fff;
-              //&:hover {
-              //  transform: translate(-50%,-50%) scale(1);
-              //  -webkit-transform: translate(-50%,-50%) scale(1);
-              //  color: #222;
-              //  background: #FFF;
-              //}
-            }
           }
           &:hover a {
             .image-wrapper {
@@ -360,7 +361,6 @@ stratus-idx-property-list {
               }
             }
           }
-
           /* MLS service + number */
           .mls-service-name {
             position: absolute;
@@ -415,7 +415,7 @@ stratus-idx-property-list {
       .pager-button {
         margin-right: 5px;
         float: left;
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(0,0,0,.2);
         padding: 14px;
         outline: none;
         > .arrow {
@@ -432,7 +432,7 @@ stratus-idx-property-list {
           &,
           &:hover {
             background: none;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0,0,0,.1);
           }
           > .arrow,
           > .arrow:hover {
@@ -443,9 +443,19 @@ stratus-idx-property-list {
     }
     .search-more-filters {
       float: left;
-      border: 1px solid rgba(0, 0, 0, 0.2);
-      padding: 13px;
-      font-size: 11px;
+      a {
+        display: block;
+        border: 1px solid rgba(0,0,0,.2);
+        padding: 13px;
+        font-size: 11px;
+        &:hover {
+          color: #FFF;
+          background: #222;
+          svg g {
+            fill: #FFF;
+          }
+        }
+      }
     }
   }
 
@@ -493,4 +503,10 @@ stratus-idx-property-list {
       }
     }
   }
+}
+
+/* This will only affect pages directly from SitetheoryPropertyBundle-PropertyFilter */
+body[class^="SitetheoryPropertyBundle-PropertyFilter"] .md-dialog-backdrop {
+  background: rgba(255, 255, 255, 1);
+  opacity: 0.9;
 }
