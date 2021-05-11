@@ -86,6 +86,10 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     displayPerRow: number,
     displayPerRowText: string,
 
+    getDetailsURL(property: Property): string
+    getGoogleMapsKey(): string | null
+    getMLSName(serviceId: number): string
+    getMLSVariables(reset?: boolean): MLSService[]
     getOrderName(): string
     getOrderOptions(): { [key: string]: string[] }
     getStreetAddress(property: Property): string
@@ -516,6 +520,13 @@ Stratus.Components.IdxPropertyList = {
             updateUrl?: boolean
         ): Promise<Collection<Property>> =>
             $q(async (resolve: any) => {
+                if ($scope.collection.pending) {
+                    // Do do anything if the collection isn't ready yet
+                    // revert to last query as this never fired
+                    $scope.query = $ctrl.lastQuery
+                    resolve([])
+                    return
+                }
                 query = query || _.clone($scope.query) || {}
                 query.where = query.where || {}
                 // console.log('searchProperties has query', _.clone(query))
@@ -650,6 +661,10 @@ Stratus.Components.IdxPropertyList = {
          * @param ev - Click event
          */
         $scope.pageChange = async (pageNumber: number, ev?: any): Promise<void> => {
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                return
+            }
             Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
             if (ev) {
                 ev.preventDefault()
@@ -665,6 +680,10 @@ Stratus.Components.IdxPropertyList = {
          * @param ev - Click event
          */
         $scope.pageNext = async (ev?: any): Promise<void> => {
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                return
+            }
             if (!$scope.query.page) {
                 $scope.query.page = 1
             }
@@ -681,6 +700,10 @@ Stratus.Components.IdxPropertyList = {
          * @param ev - Click event
          */
         $scope.pagePrevious = async (ev?: any): Promise<void> => {
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                return
+            }
             if (!$scope.query.page) {
                 $scope.query.page = 1
             }
@@ -699,6 +722,11 @@ Stratus.Components.IdxPropertyList = {
          * @param ev - Click event
          */
         $scope.orderChange = async (order: string | string[], ev?: any): Promise<void> => {
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                // TODO set old Order back?
+                return
+            }
             Idx.emit('orderChanging', $scope, _.clone(order))
             if (ev) {
                 ev.preventDefault()
