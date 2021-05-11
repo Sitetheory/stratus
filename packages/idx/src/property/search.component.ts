@@ -17,6 +17,7 @@ import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
 import {
     CompileFilterOptions,
+    IdxComponentScope,
     IdxEmitter,
     IdxSearchScope,
     IdxService,
@@ -67,6 +68,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     setQuery: (newQuery?: CompileFilterOptions) => void
     setWhere: (newWhere?: WhereOptions) => void
     setWhereDefaults: () => void
+    throttledSearch: () => void
 }
 
 Stratus.Components.IdxPropertySearch = {
@@ -660,7 +662,7 @@ Stratus.Components.IdxPropertySearch = {
          * TODO await until search is complete?
          */
         $scope.searchProperties = (): void => {
-            let listScope
+            let listScope: IdxPropertyListScope | IdxComponentScope
             if ($scope.listId) {
                 listScope = Idx.getListInstance($scope.listId)
             }
@@ -675,7 +677,13 @@ Stratus.Components.IdxPropertySearch = {
                 }*/
                 // FIXME need to ensure only where options
                 // console.log('but suppose to send', _.clone($scope.options.query))
-                listScope.searchProperties($scope.options.query, true)
+                // listScope.searchProperties($scope.options.query, true)
+                // only allow a query every second
+                if (!$scope.throttledSearch) {
+                    $scope.throttledSearch =
+                        _.throttle(() => {listScope.searchProperties($scope.options.query, true)}, 600, { trailing: false })
+                }
+                $scope.throttledSearch()
             } else {
                 Idx.setUrlOptions('Search', $scope.options.query.where) // TODO may need to set Page and stuff?
                 $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
