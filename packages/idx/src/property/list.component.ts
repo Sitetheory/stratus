@@ -89,6 +89,7 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     getOrderName(): string
     getOrderOptions(): { [key: string]: string[] }
     getStreetAddress(property: Property): string
+    hasQueryChanged(): boolean
     pageChange(pageNumber: number, ev?: any): Promise<void>
     pageNext(ev?: any): Promise<void>
     pagePrevious(ev?: any): Promise<void>
@@ -387,6 +388,7 @@ Stratus.Components.IdxPropertyList = {
             $scope.query.where = _.extend(Idx.getDefaultWhereOptions(), startingQuery || {})
 
             $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
+            $ctrl.lastQuery = {}
             // Need to include Order
             if ($scope.query.order) {
                 $ctrl.defaultQuery.Order = $scope.query.order
@@ -500,6 +502,8 @@ Stratus.Components.IdxPropertyList = {
             $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
+        $scope.hasQueryChanged = (): boolean => !_.isEqual(_.clone($ctrl.lastQuery), _.clone($scope.query))
+
         /**
          * Functionality called when a search widget runs a query after the page has loaded
          * may update the URL query, so it may not be ideal to use on page load
@@ -545,19 +549,19 @@ Stratus.Components.IdxPropertyList = {
 
                 // Check and remove incompatible where combinations. Basically if Location or neighborhood are used, remove the others
                 if (!_.isEmpty(query.where.Location)) {
-                    delete query.where.Neighborhood
-                    delete query.where.UnparsedAddress
-                    delete query.where.City
-                    delete query.where.CityRegion
-                    delete query.where.PostalCode
-                    delete query.where.MLSAreaMajor
+                    query.where.City = ''
+                    query.where.UnparsedAddress = ''
+                    query.where.Neighborhood = []
+                    query.where.CityRegion = []
+                    query.where.PostalCode = []
+                    query.where.MLSAreaMajor = []
                 }
                 if (!_.isEmpty(query.where.Neighborhood)) {
-                    delete query.where.UnparsedAddress
-                    delete query.where.City
-                    delete query.where.CityRegion
-                    delete query.where.PostalCode
-                    delete query.where.MLSAreaMajor
+                    query.where.City = ''
+                    query.where.UnparsedAddress = ''
+                    query.where.CityRegion = []
+                    query.where.PostalCode = []
+                    query.where.MLSAreaMajor = []
                 }
 
                 // Page checks
@@ -611,30 +615,32 @@ Stratus.Components.IdxPropertyList = {
                     // service does not affect URLs as it's a page specific thing
                     $scope.query.service = query.service
                 }
+                if ($scope.hasQueryChanged()) {
+                    // console.log('setting this URL', _.clone(urlWhere))
+                    // console.log('$scope.query.where ending with', _.clone($scope.query.where))
+                    // Set the URL query
+                    Idx.setUrlOptions('Search', urlWhere)
+                    // TODO need to avoid adding default variables to URL (Status/order/etc)
 
-                // console.log('setting this URL', _.clone(urlWhere))
-                // console.log('$scope.query.where ending with', _.clone($scope.query.where))
-                // Set the URL query
-                Idx.setUrlOptions('Search', urlWhere)
-                // TODO need to avoid adding default variables to URL (Status/order/etc)
+                    if (updateUrl) {
+                        // console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
+                        // Display the URL query in the address bar
+                        Idx.refreshUrlOptions($ctrl.defaultQuery)
+                    }
 
-                if (updateUrl) {
-                    // console.log('$ctrl.defaultQuery being set', $ctrl.defaultQuery)
-                    // Display the URL query in the address bar
-                    Idx.refreshUrlOptions($ctrl.defaultQuery)
-                }
+                    Idx.emit('searching', $scope, _.clone($scope.query))
 
-                Idx.emit('searching', $scope, _.clone($scope.query))
-
-                try {
-                    // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
-                    // Grab the new property listings
-                    const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
-                    // $applyAsync will automatically be applied
-                    Idx.emit('searched', $scope, _.clone($scope.query))
-                    resolve(results)
-                } catch (e) {
-                    console.error('Unable to fetchProperties:', e)
+                    try {
+                        // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
+                        // Grab the new property listings
+                        const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
+                        $ctrl.lastQuery = _.clone($scope.query)
+                        // $applyAsync will automatically be applied
+                        Idx.emit('searched', $scope, _.clone($scope.query))
+                        resolve(results)
+                    } catch (e) {
+                        console.error('Unable to fetchProperties:', e)
+                    }
                 }
             })
 
