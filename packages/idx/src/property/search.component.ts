@@ -65,10 +65,21 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
 
     // Functions
+    arrayIntersect: (itemArray: any[], array: any[]) => boolean
+    getInput: (elementId: string) => JQLite
+    getMLSVariables: (reset?: boolean) => MLSService[]
+    inArray: (item: any, array: any[]) => boolean
+    searchProperties: () => void
+    selectDefaultListingType: (listingGroup?: string) => void
     setQuery: (newQuery?: CompileFilterOptions) => void
     setWhere: (newWhere?: WhereOptions) => void
     setWhereDefaults: () => void
+    showInlinePopup: (ev: any, menuElement: string) => void
     throttledSearch: () => void
+    toggleArrayElement: (item: any, array: any[]) => void
+    updateNestedPathValue: (currentNest: object | any, pathPieces: object | any, value: any) => Promise<string | any>
+    updateScopeValuePath: (scopeVarPath: string, value: any) => Promise<string | any>
+    variableSync: () => Promise<void>
 }
 
 Stratus.Components.IdxPropertySearch = {
@@ -451,7 +462,7 @@ Stratus.Components.IdxPropertySearch = {
         /**
          * Get the Input element of a specified ID
          */
-        $scope.getInput = (elementId: string): any => angular.element(document.getElementById(elementId))
+        $scope.getInput = (elementId: string): JQLite => angular.element(document.getElementById(elementId))
 
         /**
          * Sync Gutensite form variables to a Stratus scope
@@ -504,6 +515,7 @@ Stratus.Components.IdxPropertySearch = {
 
         /**
          * If element exists in Array shortcut helper
+         * TODO move to global reference
          */
         $scope.inArray = (item: any, array: any[]): boolean => {
             if (!_.isArray(array)) {
@@ -513,6 +525,9 @@ Stratus.Components.IdxPropertySearch = {
             return (array.indexOf(item) !== -1)
         }
 
+        /**
+         * TODO move to global reference
+         */
         $scope.arrayIntersect = (itemArray: any[], array: any[]): boolean => {
             if (
                 !_.isArray(array) ||
@@ -527,6 +542,7 @@ Stratus.Components.IdxPropertySearch = {
 
         /**
          * Add or remove a certain element from an array
+         * TODO move to global reference
          */
         $scope.toggleArrayElement = (item: any, array: any[]): void => {
             array = array || []
