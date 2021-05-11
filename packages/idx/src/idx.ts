@@ -581,6 +581,8 @@ const angularJsService = (
     }
     // Blank options to initialize arrays
     const defaultWhereOptions: WhereOptions = {
+        City: '', // Added as default so search and manipulate
+        Location: '', // Added as default so search and manipulate
         Status: [],
         ListingType: [],
         CountyOrParish: [],
