@@ -65,21 +65,21 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
 
     // Functions
-    arrayIntersect: (itemArray: any[], array: any[]) => boolean
-    getInput: (elementId: string) => JQLite
-    getMLSVariables: (reset?: boolean) => MLSService[]
-    inArray: (item: any, array: any[]) => boolean
-    searchProperties: () => void
-    selectDefaultListingType: (listingGroup?: string) => void
-    setQuery: (newQuery?: CompileFilterOptions) => void
-    setWhere: (newWhere?: WhereOptions) => void
-    setWhereDefaults: () => void
-    showInlinePopup: (ev: any, menuElement: string) => void
-    throttledSearch: () => void
-    toggleArrayElement: (item: any, array: any[]) => void
-    updateNestedPathValue: (currentNest: object | any, pathPieces: object | any, value: any) => Promise<string | any>
-    updateScopeValuePath: (scopeVarPath: string, value: any) => Promise<string | any>
-    variableSync: () => Promise<void>
+    arrayIntersect(itemArray: any[], array: any[]): boolean
+    getInput(elementId: string): JQLite
+    getMLSVariables(reset?: boolean): MLSService[]
+    inArray(item: any, array: any[]): boolean
+    searchProperties(): void
+    selectDefaultListingType(listingGroup?: string): void
+    setQuery(newQuery?: CompileFilterOptions): void
+    setWhere(newWhere?: WhereOptions): void
+    setWhereDefaults(): void
+    showInlinePopup(ev: any, menuElement: string): void
+    throttledSearch(): void
+    toggleArrayElement(item: any, array: any[]): void
+    updateNestedPathValue(currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any>
+    updateScopeValuePath(scopeVarPath: string, value: any): Promise<string | any>
+    variableSync(): Promise<void>
 }
 
 Stratus.Components.IdxPropertySearch = {
