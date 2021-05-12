@@ -17,7 +17,12 @@ import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {
+    AnyFunction,
+    isJSON,
+    LooseObject,
+    ObjectWithFunctions
+} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxDisclaimerScope} from '@stratusjs/idx/disclaimer/disclaimer.component'
 import {IdxMapScope} from '@stratusjs/idx/map/map.component'
@@ -31,13 +36,6 @@ import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 // const min = !cookie('env') ? '.min' : ''
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
-
-export type AnyFunction = (...args: any) => any
-
-/** Allow an Object to contain any number of unspecified functions, useful in $scope */
-export interface ObjectWithFunctions {
-    [key: string]: AnyFunction
-}
 
 export interface IdxService {
     [key: string]: AnyFunction | IdxSharedValue
