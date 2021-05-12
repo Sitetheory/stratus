@@ -3,7 +3,7 @@ search.filter.component.less and admin/search.component.less should be copies of
 Nothing should be outside 'stratus-idx-property-search'/'.md-panel.stratus-idx-property-search-menu' or it will leak into other modules
 */
 
-stratus-idx-property-search[data-list-id ^="property-list"],
+stratus-idx-property-search[data-list-id^="property-list"],
 .md-panel#stratus-idx-property-search-menu {
   position: relative;
   .click-out {
@@ -60,7 +60,7 @@ stratus-idx-property-search[data-list-id ^="property-list"],
     z-index: 3;
     text-align: left;
     background: #fff;
-    border: 1px solid rgba(0,0,0,.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     > .search-input > md-input-container.minimal {
       // stylelint-disable-next-line no-descending-specificity
       &:first-child {
@@ -112,6 +112,7 @@ stratus-idx-property-search[data-list-id ^="property-list"],
         @media (max-width: 1100px) {
           width: 30%;
         }
+
         @media (max-width: 959px) {
           width: unset;
           border: none;
@@ -189,6 +190,9 @@ stratus-idx-property-search[data-list-id ^="property-list"],
           &:hover svg g {
             fill: #000;
           }
+        }
+        .location-input.md-input-focused ~ .custom-clear {
+          display: none;
         }
       }
       &.search-beds,
@@ -318,10 +322,9 @@ stratus-idx-property-search[data-list-id ^="property-list"],
   //  }
   //}
 }
-stratus-idx-property-search[data-list-id ^="property-list"] #stratus-idx-property-search-menu {
+stratus-idx-property-search[data-list-id^="property-list"] #stratus-idx-property-search-menu {
   position: relative;
   z-index: -1000;
-
   .more-filters {
     transition: all 0.3s ease-out;
     -webkit-transition: all 0.3s ease-out;
@@ -452,6 +455,7 @@ stratus-idx-property-search[data-list-id ^="property-list"] #stratus-idx-propert
       content: '';
       border-top: 2px solid #111;
     }
+
     @keyframes customToggleLeft {
       0% {
         left: 50%;
