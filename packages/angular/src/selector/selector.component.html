@@ -25,6 +25,7 @@
 
  <!-- [ngStyle]="{'display': styled ? 'inherit' : 'none'}" -->
  <div class="selected-list" *ngIf="styled">
+
     <!-- FIXME: I will probably have to move the ngIf above to the div below -->
     <div class="selected-list-header border-default border-default-bottom" *ngIf="!empty; else emptyList">
         <h3 [textContent]="'Selected ' + (type || 'Items')"></h3>
@@ -50,12 +51,7 @@
                     <div class="image position-all"
                          *ngIf="has(selectedModel, 'version.images') || has(selectedModel, 'version.shellImages')"
                          stratus-src
-                         [ngStyle]="{'background': 'url(' + (_.get(selectedModel, 'version.images[0].src') || _.get(selectedModel, 'version.shellImages[0].src')) + ') no-repeat center center', 'background-size': 'cover'}">
-                    </div>
-
-                    <div class="image position-all"
-                         *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.shellImages') && has(selectedModel, 'version.videos')"
-                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.videos[0].src') + ') no-repeat center center', 'background-size': 'cover'}">
+                         [ngStyle]="{'background': 'url(' + (_.get(selectedModel, 'version.bestImage._thumbSrc') || _.get(selectedModel, 'version.shellImages[0].src')) + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
@@ -89,8 +85,7 @@
                               [textContent]="(_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ((_.get(selectedModel, 'status') != 1) ? ' (hidden)' : '') + ((_.get(selectedModel, 'version.published') != 1) ? ' (unpublished)' : '')">
                         </span>
                     </div>
-
-                    <h3 [innerHTML]="_.get(selectedModel, 'version.title') || _.get(selectedModel, 'version.name') || _.get(selectedModel, 'name') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>
+                    <h3 [innerHTML]="_.get(selectedModel, 'version.bestIdentifier')"></h3>
                     <!-- TODO: make this clickable in new window -->
                     <span class="routing"
                           [textContent]="(has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : null) || _.get(selectedModel, 'description') || ''">
