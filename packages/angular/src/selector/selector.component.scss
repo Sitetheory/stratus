@@ -171,7 +171,8 @@ sa-selector {
   .column-image {
     width: 15%;
     padding-right: 10px;
-    .image {
+    .image,
+    .no-image-icon {
       margin-right: 10px;
     }
   }
