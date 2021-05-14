@@ -48,10 +48,17 @@
                         <!--<img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">-->
                     <!--</div>-->
 
+                    <!-- This only shows the bestImage if this isn't a Video, since images for Videos are not hosted by us, thus cannot lazy load a proper size -->
                     <div class="image position-all"
-                         *ngIf="has(selectedModel, 'version.images') || has(selectedModel, 'version.shellImages')"
+                         *ngIf="has(selectedModel, 'version.bestImage._thumbSrc') && !has(selectedModel, 'version.videos')"
                          stratus-src
-                         [ngStyle]="{'background': 'url(' + (_.get(selectedModel, 'version.bestImage._thumbSrc') || _.get(selectedModel, 'version.shellImages[0].src')) + ') no-repeat center center', 'background-size': 'cover'}">
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.bestImage._thumbSrc') + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
+
+                    <!-- This is here because images for Videos are not hosted by us, so we cannot include stratus-src with it -->
+                    <div class="image position-all"
+                         *ngIf="!has(selectedModel, 'version.bestImage._thumbSrc') && has(selectedModel, 'version.videos')"
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.videos[0].src') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
                     <!-- Icon for items with no image -->
@@ -85,7 +92,9 @@
                               [textContent]="(_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ((_.get(selectedModel, 'status') != 1) ? ' (hidden)' : '') + ((_.get(selectedModel, 'version.published') != 1) ? ' (unpublished)' : '')">
                         </span>
                     </div>
-                    <h3 [innerHTML]="_.get(selectedModel, 'version.bestIdentifier')"></h3>
+
+                    <!-- This include fallbacks in case a version is not present -->
+                    <h3 [innerHTML]="_.get(selectedModel, 'version.bestIdentifier') || _.get(selectedModel, 'name') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>
                     <!-- TODO: make this clickable in new window -->
                     <span class="routing"
                           [textContent]="(has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : null) || _.get(selectedModel, 'description') || ''">
