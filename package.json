@@ -96,6 +96,7 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "codelyzer": "^5.2.1",
+    "codemirror": "^5.61.0",
     "del": "^5.0.0",
     "dropzone": "^5.7.1",
     "froala-editor": "^3.2.3",
