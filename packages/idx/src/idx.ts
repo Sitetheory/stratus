@@ -232,6 +232,7 @@ export interface WhereOptions extends LooseObject {
     Neighborhood?: string[] | string,
     AgentLicense?: string[] | string, // Converts on server to multiple checks
     OfficeNumber?: string[] | string, // Converts on server to multiple checks
+    OfficeName?: string[] | string, // Converts on server to multiple checks
     OpenHouseOnly?: boolean, // Filters by only those with OpenHouses attached
 
     // Member
@@ -245,7 +246,6 @@ export interface WhereOptions extends LooseObject {
     OfficeKey?: string,
     OfficeNationalAssociationId?: string,
     OfficeStatus?: string,
-    OfficeName?: string,
 }
 
 export interface CompileFilterOptions extends LooseObject {
@@ -539,6 +539,25 @@ export interface Property extends LooseObject {
         CoordinateModificationTimestamp?: Date
         _highlight?: boolean
     }
+}
+
+interface SearchObject {
+    type: 'valueEquals' | // Input is a string, needs to equal another string or number field
+        'stringLike' | // Input is a string, needs to be similar to another string field
+        'stringLikeArray' | // Input is a string or array, one of which needs to be found similar to db string field
+        'stringIncludesArray' | // Input is a string or array, one of which needs to be found equal to db string field
+        'stringIncludesArrayAlternative' | // Input is a string or array, one of which needs to be found equal to db string field
+        'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
+        'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
+        'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
+    apiField?: string, // Used if the widgetField name is different from the field in database
+    andOr?: Array<{
+        apiField: string,
+        type: 'valueEquals'
+            | 'stringLike'
+            | 'stringLikeArray'
+            | 'stringIncludesArray'
+    }>
 }
 
 export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
@@ -1584,121 +1603,14 @@ const angularJsService = (
 
     /**
      * @param where - {WhereOptions}
+     * @param searchPossibilities List of Fields we can search for within the Widget's URL and option on List pages
+     * The key is the field that the Widget accepts/expects
+     * The apiField is the key that the microIdx can accept
      */
-    function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
+    function compileGenericWhereFilter(where: WhereOptions, searchPossibilities: { [key: string]: SearchObject }): MongoWhereQuery {
         const whereQuery: MongoWhereQuery = {}
         // andStatement is the collection of query's nested in an And filter
         const andStatement: MongoWhereQuery[] = [] // TS detecting [] as string[] otherwise
-
-        interface SearchObject {
-            type: 'valueEquals' | // Input is a string, needs to equal another string or number field
-                'stringLike' | // Input is a string, needs to be similar to another string field
-                'stringLikeArray' | // Input is a string or array, one of which needs to be found similar to db string field
-                'stringIncludesArray' | // Input is a string or array, one of which needs to be found equal to db string field
-                'stringIncludesArrayAlternative' | // Input is a string or array, one of which needs to be found equal to db string field
-                'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
-                'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
-                'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
-            apiField?: string, // Used if the widgetField name is different from the field in database
-            andOr?: Array<{
-                apiField: string,
-                type: 'valueEquals'
-                    | 'stringLike'
-                    | 'stringLikeArray'
-                    | 'stringIncludesArray'
-            }>
-        }
-
-        /**
-         * List of Fields we can search for within the Widget's URL and option on List pages
-         * The key is the field that the Widget accepts/expects
-         * The apiField is the key that the microIdx can accept
-         */
-        const searchPossibilities: { [key: string]: SearchObject } = {
-            ListingKey: {
-                type: 'valueEquals'
-            },
-            ListingId: {
-                type: 'valueEquals'
-            },
-            ListingType: {
-                type: 'stringIncludesArray'
-            },
-            Status: {
-                type: 'stringIncludesArray'
-            },
-            ListPriceMin: {
-                type: 'numberEqualGreater',
-                apiField: 'ListPrice'
-            },
-            ListPriceMax: {
-                type: 'numberEqualLess',
-                apiField: 'ListPrice'
-            },
-            Bathrooms: {
-                type: 'numberEqualGreater'
-            },
-            Bedrooms: {
-                type: 'numberEqualGreater',
-                apiField: 'BedroomsTotal'
-            },
-            AgentLicense: {
-                type: 'stringIncludesArray'
-            },
-            OfficeNumber: {
-                type: 'stringIncludesArray'
-            },
-            // Filters by only listings with OpenHouses
-            OpenHouseOnly: {
-                type: 'valueEquals'
-            },
-            // TODO: replace this with a generic API field that supports all MLS (which may not have
-            // TODO: Unparsed Address but instead have StreetName, StreetNumber, etc.
-            UnparsedAddress: {
-                type: 'stringLike'
-            },
-            City: {
-                type: 'stringLike'
-            },
-            PostalCode: {
-                type: 'stringIncludesArray'
-            },
-            CountyOrParish: {
-                // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                type: 'stringLikeArray'
-            },
-            MLSAreaMajor: {
-                // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                type: 'stringLikeArray'
-            },
-            CityRegion: {
-                // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                type: 'stringIncludesArray'
-            },
-            Location: {
-                type: 'andOr',
-                andOr: [
-                    {apiField: 'City', type: 'stringLikeArray'},
-                    {apiField: 'CityRegion', type: 'stringLikeArray'},
-                    {apiField: 'CountyOrParish', type: 'stringLikeArray'},
-                    {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
-                    {apiField: 'PostalCode', type: 'stringLikeArray'},
-                    // TODO: in the future we should pass in a new defined field like Address (that will
-                    // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
-                    // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
-                    // TODO: and all those are LIKE (but all must match LIKE)
-                    {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
-                ]
-            },
-            Neighborhood: {
-                type: 'andOr',
-                andOr: [
-                    {apiField: 'CityRegion', type: 'stringLikeArray'},
-                    {apiField: 'CountyOrParish', type: 'stringLikeArray'},
-                    {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
-                ]
-            }
-        }
 
         // The type of search functions used by the above options
         // TODO since is still not fully optimized, but it's now much clean to look at and works faster
@@ -1852,72 +1764,156 @@ const angularJsService = (
             whereQuery.and = andStatement
         }
 
-
         return whereQuery
+    }
+
+    /**
+     * @param where - {WhereOptions}
+     */
+    function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
+        return compileGenericWhereFilter(
+            where,
+            {
+                ListingKey: {
+                    type: 'valueEquals'
+                },
+                ListingId: {
+                    type: 'valueEquals'
+                },
+                ListingType: {
+                    type: 'stringIncludesArray'
+                },
+                Status: {
+                    type: 'stringIncludesArray'
+                },
+                ListPriceMin: {
+                    type: 'numberEqualGreater',
+                    apiField: 'ListPrice'
+                },
+                ListPriceMax: {
+                    type: 'numberEqualLess',
+                    apiField: 'ListPrice'
+                },
+                Bathrooms: {
+                    type: 'numberEqualGreater'
+                },
+                Bedrooms: {
+                    type: 'numberEqualGreater',
+                    apiField: 'BedroomsTotal'
+                },
+                AgentLicense: {
+                    type: 'stringIncludesArray'
+                },
+                OfficeNumber: {
+                    type: 'stringIncludesArray'
+                },
+                OfficeName: {
+                    type: 'stringLikeArray'
+                },
+                // Filters by only listings with OpenHouses
+                OpenHouseOnly: {
+                    type: 'valueEquals'
+                },
+                // TODO: replace this with a generic API field that supports all MLS (which may not have
+                // TODO: Unparsed Address but instead have StreetName, StreetNumber, etc.
+                UnparsedAddress: {
+                    type: 'stringLike'
+                },
+                City: {
+                    type: 'stringLike'
+                },
+                PostalCode: {
+                    type: 'stringIncludesArray'
+                },
+                CountyOrParish: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringLikeArray'
+                },
+                MLSAreaMajor: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringLikeArray'
+                },
+                CityRegion: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringIncludesArray'
+                },
+                Location: {
+                    type: 'andOr',
+                    andOr: [
+                        {apiField: 'City', type: 'stringLikeArray'},
+                        {apiField: 'CityRegion', type: 'stringLikeArray'},
+                        {apiField: 'CountyOrParish', type: 'stringLikeArray'},
+                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
+                        {apiField: 'PostalCode', type: 'stringLikeArray'},
+                        // TODO: in the future we should pass in a new defined field like Address (that will
+                        // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
+                        // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
+                        // TODO: and all those are LIKE (but all must match LIKE)
+                        {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
+                    ]
+                },
+                Neighborhood: {
+                    type: 'andOr',
+                    andOr: [
+                        {apiField: 'CityRegion', type: 'stringLikeArray'},
+                        {apiField: 'CountyOrParish', type: 'stringLikeArray'},
+                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
+                    ]
+                }
+            }
+            )
     }
 
     /**
      * @param where - {WhereOptions}
      */
     function compileMemberWhereFilter(where: WhereOptions): MongoWhereQuery {
-        const whereQuery: MongoWhereQuery = {}
-        // MemberKey
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberKey') && where.MemberKey !== '') {
-            whereQuery.MemberKey = where.MemberKey
-        }
-        // MemberStateLicense
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberStateLicense') && where.MemberStateLicense !== '') {
-            whereQuery.MemberStateLicense = where.MemberStateLicense
-        }
-        // MemberNationalAssociationId
-        if (
-            Object.prototype.hasOwnProperty.call(where, 'MemberNationalAssociationId') &&
-            where.MemberNationalAssociationId !== ''
-        ) {
-            whereQuery.MemberNationalAssociationId = where.MemberNationalAssociationId
-        }
-        // MemberStatus
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberStatus') && where.MemberStatus !== '') {
-            whereQuery.MemberStatus = where.MemberStatus
-        }
-        // MemberFullName
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberFullName') && where.MemberFullName !== '') {
-            whereQuery.MemberFullName = {
-                like: where.MemberFullName,
-                options: 'i'
+        return compileGenericWhereFilter(
+            where,
+            {
+                MemberKey: {
+                    type: 'valueEquals'
+                },
+                MemberStateLicense: {
+                    type: 'valueEquals'
+                },
+                MemberNationalAssociationId: {
+                    type: 'valueEquals'
+                },
+                MemberStatus: {
+                    type: 'valueEquals'
+                },
+                MemberFullName: {
+                    type: 'stringLike'
+                }
             }
-        }
-        return whereQuery
+        )
     }
 
     /**
      * @param where - {WhereOptions}
      */
     function compileOfficeWhereFilter(where: WhereOptions): MongoWhereQuery {
-        const whereQuery: MongoWhereQuery = {}
-        // OfficeKey
-        if (Object.prototype.hasOwnProperty.call(where, 'OfficeKey') && where.OfficeKey !== '') {
-            whereQuery.OfficeKey = where.OfficeKey
-        }
-        // OfficeNationalAssociationId
-        if (
-            Object.prototype.hasOwnProperty.call(where, 'OfficeNationalAssociationId') &&
-            where.OfficeNationalAssociationId !== ''
-        ) {
-            whereQuery.OfficeNationalAssociationId = where.OfficeNationalAssociationId
-        }
-        // OfficeStatus
-        if (Object.prototype.hasOwnProperty.call(where, 'OfficeStatus') && where.OfficeStatus !== '') {
-            whereQuery.OfficeStatus = where.OfficeStatus
-        }
-        // OfficeName
-        if (Object.prototype.hasOwnProperty.call(where, 'OfficeName') && where.OfficeName !== '') {
-            whereQuery.OfficeName = {
-                like: where.OfficeName,
-                options: 'i'
+        return compileGenericWhereFilter(
+            where,
+            {
+                OfficeKey: {
+                    type: 'valueEquals'
+                },
+                OfficeNationalAssociationId: {
+                    type: 'valueEquals'
+                },
+                OfficeStatus: {
+                    type: 'valueEquals'
+                },
+                OfficeNumber: {
+                    type: 'stringIncludesArray'
+                },
+                OfficeName: {
+                    type: 'stringLikeArray'
+                }
             }
-        }
-        return whereQuery
+        )
     }
 
     /**
