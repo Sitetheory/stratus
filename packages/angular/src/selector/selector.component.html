@@ -36,7 +36,7 @@
         <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
         <!-- [cdkDragDisabled]="_.get(selectedModel, 'status') < 1" -->
         <div cdkDrag class="selected-list-row selected-box"
-             [ngClass]="{'active': (_.get(selectedModel, 'status') == 1), 'inactive' : (_.get(selectedModel, 'status') != 1), 'published': (_.get(selectedModel, 'version.published') == 1), 'unpublished': (_.get(selectedModel, 'version.published') != 1)}"
+             [ngClass]="{'active': _.get(selectedModel, 'status') === 1, 'inactive' : _.get(selectedModel, 'status') !== 1, 'published': _.get(selectedModel, 'version.published') === 1, 'unpublished': _.get(selectedModel, 'version.published') !== 1}"
              *ngFor="let selectedModel of dataSub | async">
             <div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>
             <div class="selected-list-container">
@@ -51,7 +51,7 @@
                     <!-- This only shows the bestImage if this isn't a Video, since images for Videos are not hosted by us, thus cannot lazy load a proper size -->
                     <div class="image position-all"
                          *ngIf="has(selectedModel, 'version.bestImage._thumbSrc') && !has(selectedModel, 'version.videos')"
-                         stratus-src
+                         data-stratus-src
                          [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'version.bestImage._thumbSrc') + ') no-repeat center center', 'background-size': 'cover'}">
                     </div>
 
@@ -63,7 +63,7 @@
 
                     <!-- Icon for items with no image -->
                     <div class="no-image-icon position-all"
-                         *ngIf="!has(selectedModel, 'version.images') && !has(selectedModel, 'version.videos') && !has(selectedModel, 'version.shellImages')"
+                         *ngIf="!has(selectedModel, 'version.bestImage._thumbSrc') && !has(selectedModel, 'version.videos')"
                          [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
 
                         <mat-icon class="content-type-icon position-center"
@@ -89,7 +89,7 @@
                         </mat-icon>
                         <span class="comment content-type-name font-body"
                               [ngClass]="((_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) | lowercase) + '-color'"
-                              [textContent]="(_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ((_.get(selectedModel, 'status') != 1) ? ' (hidden)' : '') + ((_.get(selectedModel, 'version.published') != 1) ? ' (unpublished)' : '')">
+                              [textContent]="(_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ((_.get(selectedModel, 'status') !== 1) ? ' (hidden)' : '') + ((_.get(selectedModel, 'version.published') !== 1) ? ' (unpublished)' : '')">
                         </span>
                     </div>
 

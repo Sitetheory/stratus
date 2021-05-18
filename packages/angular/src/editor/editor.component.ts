@@ -822,7 +822,6 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 buttonsVisible: 2
             }
         },
-        useClasses: false,
         videoInsertButtons: [
             'videoBack',
             '|',
