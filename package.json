@@ -99,7 +99,7 @@
     "codemirror": "^5.61.0",
     "del": "^5.0.0",
     "dropzone": "^5.7.1",
-    "froala-editor": "^3.2.3",
+    "froala-editor": "^3.2.7",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-clean-css": "^4.2.0",
