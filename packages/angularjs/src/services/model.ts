@@ -955,10 +955,14 @@ export class Model<T = LooseObject> extends ModelBase<T> {
     }
 
     destroy(): Promise<any> {
-        // TODO: Add a confirmation option here
-        if (!this.getIdentifier()) {
+        // TODO: Add a delete confirmation dialog option
+        if (this.isNew()) {
             return new Promise((resolve, reject) => {
-                reject('Unable to delete (non-persisted) model without id.')
+                this.throttleTrigger('change')
+                if (this.collection) {
+                    this.collection.remove(this)
+                }
+                resolve(this.data)
             })
         }
         return this.sync('DELETE', {})
