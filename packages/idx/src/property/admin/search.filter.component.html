@@ -246,7 +246,7 @@
             <div class="office-specs"
                  data-layout="row"
                  data-layout-align="left"
-                 aria-label="Office Specs">
+            >
                 <md-chips
                         class="office-number font-secondary"
                         aria-label="Office Number(s) to Search"
@@ -258,6 +258,25 @@
                         data-secondary-placeholder="+Number"
                         data-delete-button-label="Remove Number"
                         data-delete-hint="Press delete to remove Number"
+                ></md-chips>
+            </div>
+            <div class="office-specs-border dotted-spaced-underline"></div>
+
+            <div class="office-specs"
+                 data-layout="row"
+                 data-layout-align="left"
+            >
+                <md-chips
+                        class="office-name font-secondary"
+                        aria-label="Office Names(s) to Search"
+                        data-ng-model="options.query.where.OfficeName"
+                        data-md-enable-chip-edit="true"
+                        data-md-add-on-blur="true"
+                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                        data-placeholder="Office Name"
+                        data-secondary-placeholder="+Office"
+                        data-delete-button-label="Remove Office"
+                        data-delete-hint="Press delete to remove Office"
                 ></md-chips>
             </div>
             <div class="office-specs-border dotted-spaced-underline"></div>
