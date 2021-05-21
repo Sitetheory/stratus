@@ -1808,7 +1808,7 @@ const angularJsService = (
                     type: 'stringIncludesArray'
                 },
                 OfficeName: {
-                    type: 'stringLikeArray'
+                    type: 'stringIncludesArray'
                 },
                 // Filters by only listings with OpenHouses
                 OpenHouseOnly: {
@@ -1910,7 +1910,7 @@ const angularJsService = (
                     type: 'stringIncludesArray'
                 },
                 OfficeName: {
-                    type: 'stringLikeArray'
+                    type: 'stringIncludesArray'
                 }
             }
         )
