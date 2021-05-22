@@ -610,7 +610,8 @@ const angularJsService = (
         // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
         CityRegion: [],
         AgentLicense: [],
-        OfficeNumber: []
+        OfficeNumber: [],
+        OfficeName: []
     }
     let idxServicesEnabled: number[] = []
     let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
