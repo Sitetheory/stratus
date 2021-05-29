@@ -2046,6 +2046,11 @@ const angularJsService = (
                         } else {
                             includeItem.scope.fields = option.fields
                         }
+                    } else if (
+                        Object.prototype.hasOwnProperty.call(option, 'limit') &&
+                        _.isNumber(option.limit)
+                    ) {
+                        includeItem.scope.limit = option.limit
                     }
                 }
 
