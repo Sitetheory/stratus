@@ -229,6 +229,12 @@ Stratus.Components.IdxPropertyList = {
         /**
          * Type: boolean
          * Default: true
+         * By default, it will display the sort dropdown.
+         */
+        displayOrderOptions: '@',
+        /**
+         * Type: boolean
+         * Default: true
          * Allow query to be loaded initially from the URL. Disable this for times you don't want a url to either control
          * the displayed listings (or be able to share a defined search URL).
          */
@@ -262,12 +268,6 @@ Stratus.Components.IdxPropertyList = {
          * @see Docs coming soon
          */
         hideDisclaimer: '@',
-        /**
-         * Type: boolean
-         * Default: true
-         * By default, it will display the sort dropdown.
-         */
-        displayOrderOptions: '@',
         /**
          * Type: number
          * Default: 2
@@ -405,6 +405,7 @@ Stratus.Components.IdxPropertyList = {
                 {name: 'Recently Sold', value: ['-CloseDate']},
                 {name: 'Status', value: ['Status', '-BestPrice']}
             ]
+            $scope.displayOrderOptions = (!$attrs.displayOrderOptions || $attrs.displayOrderOptions === 'false') ? false : true
 
             $scope.googleApiKey = $attrs.googleApiKey || null
             $scope.contactName = $attrs.contactName || null
