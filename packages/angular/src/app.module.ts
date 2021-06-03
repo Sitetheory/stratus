@@ -41,6 +41,7 @@ import {BaseComponent} from '@stratusjs/angular/base/base.component'
 import {ConfirmDialogComponent} from '@stratusjs/angular/confirm-dialog/confirm-dialog.component'
 import {EditorComponent} from '@stratusjs/angular/editor/editor.component'
 import {MapComponent} from '@stratusjs/map/map.component'
+import {MediaSelectorComponent} from '@stratusjs/angular/media-selector/media-selector.component'
 import {SelectorComponent} from '@stratusjs/angular/selector/selector.component'
 import {TreeComponent} from '@stratusjs/angular/tree/tree.component'
 import {TreeDialogComponent} from '@stratusjs/angular/tree/tree-dialog.component'
@@ -121,11 +122,9 @@ import {
     MediaDialogComponent
 } from '@stratusjs/angular/editor/media-dialog.component'
 import {
-    FroalaEditorModule
-} from '@stratusjs/angular/froala/editor/froala-editor.module'
-import {
+    FroalaEditorModule,
     FroalaViewModule
-} from '@stratusjs/angular/froala/view/froala-view.module'
+} from 'angular-froala-wysiwyg'
 
 // Quill Plugins
 // import {QuillInputButtonPlugin} from '@stratusjs/angular/editor/quill-input-button.plugin'
@@ -385,6 +384,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         EditorComponent,
         MapComponent,
         MediaDialogComponent,
+        MediaSelectorComponent,
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,
@@ -398,6 +398,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
         EditorComponent,
         MapComponent,
         MediaDialogComponent,
+        MediaSelectorComponent,
         SelectorComponent,
         TreeComponent,
         TreeDialogComponent,
@@ -416,6 +417,7 @@ export class AppModule {
         'sa-base': BaseComponent,
         'sa-editor': EditorComponent,
         'sa-map': MapComponent,
+        'sa-media-selector': MediaSelectorComponent,
         'sa-selector': SelectorComponent,
         'sa-tree': TreeComponent
     }

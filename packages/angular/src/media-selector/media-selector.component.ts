@@ -1,21 +1,16 @@
 // Angular Core
 import {
-    // ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
     ElementRef,
-    Input,
-    // OnChanges,
-    // OnInit,
-    // Output,
-    // SecurityContext
+    Input
 } from '@angular/core'
 import {FormControl} from '@angular/forms'
 
 // CDK
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop'
 
-// External
+// RXJS
 import {
     Observable,
     Subject,
@@ -27,8 +22,6 @@ import {
 import {DomSanitizer} from '@angular/platform-browser'
 import {MatIconRegistry} from '@angular/material/icon'
 import {IconOptions} from '@angular/material/icon/icon-registry'
-
-// RXJS
 
 // External Dependencies
 import {Stratus} from '@stratusjs/runtime/stratus'
@@ -53,7 +46,7 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 // Local Setup
 const installDir = '/assets/1/0/bundles'
 const systemDir = '@stratusjs/angular'
-const moduleName = 'selector'
+const moduleName = 'media-selector'
 
 // Directory Template
 const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].replace(/[^/]*$/, '')}`
@@ -61,16 +54,10 @@ const localDir = `${installDir}/${boot.configuration.paths[`${systemDir}/*`].rep
 // Utility Functions
 const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(_.get(object, path))
 
-// export interface Model {
-//     completed: boolean;
-//     data: object;
-// }
-
 /**
- * @title AutoComplete Selector with Drag&Drop Sorting
+ * @title Media Selector with Drag & Drop Uploads and Sorting
  */
 @Component({
-    // selector: 'sa-selector-component',
     selector: `sa-${moduleName}`,
     templateUrl: `${localDir}/${moduleName}/${moduleName}.component.html`,
     // FIXME: This doesn't work, as it seems Angular attempts to use a System.js import instead of their own, so it will
@@ -81,7 +68,7 @@ const has = (object: object, path: string) => _.has(object, path) && !_.isEmpty(
     // changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class SelectorComponent extends RootComponent { // implements OnInit, OnChanges {
+export class MediaSelectorComponent extends RootComponent { // implements OnInit, OnChanges {
 
     // Basic Component Settings
     title = moduleName + '_component'
@@ -122,7 +109,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
     subscriber: Subscriber<any>
     // Note: It may be better to LifeCycle::tick(), but this works for now
 
-    // API Connectivity for Selector
+    // API Connectivity for Media Selector
     // filteredModels: Observable<[]>;
     // filteredModels: any;
 
@@ -153,8 +140,8 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
 
         // SVG Icons
         _.forEach({
-            selector_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
-            selector_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg'
+            media_selector_delete: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/delete.svg',
+            media_selector_edit: '/assets/1/0/bundles/sitetheorycore/images/icons/actionButtons/edit.svg'
         }, (value, key) => iconRegistry.addSvgIcon(key, sanitizer.bypassSecurityTrustResourceUrl(value)).getNamedSvgIcon(key))
 
         // TODO: Assess & Possibly Remove when the System.js ecosystem is complete
@@ -171,7 +158,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
             })
 
         // Hydrate Root App Inputs
-        this.hydrate(elementRef, sanitizer, keys<SelectorComponent>())
+        this.hydrate(elementRef, sanitizer, keys<MediaSelectorComponent>())
 
         // Data Connections
         this.fetchData()
@@ -194,41 +181,7 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
                 data.on('change', onDataChange)
                 onDataChange()
             })
-
-        // AutoComplete Binding
-        // this.filteredModels = this.selectCtrl.valueChanges
-        //     .pipe(
-        //         startWith(''),
-        //         map(value => this._filterModels(value))
-        //     );
-
-        // console.info('constructor!');
     }
-
-    // ngOnInit() {
-    //     console.info('selector.ngOnInit')
-    // }
-
-    // ngOnChanges() {
-    //     // Display Inputs
-    //     if (!cookie('env')) {
-    //         return
-    //     }
-    //     console.log('inputs:', {
-    //         target: this.target,
-    //         targetSuffix: this.targetSuffix,
-    //         id: this.id,
-    //         manifest: this.manifest,
-    //         decouple: this.decouple,
-    //         direct: this.direct,
-    //         api: this.api,
-    //         urlRoot: this.urlRoot,
-    //     })
-    // }
-
-    // ngDoCheck(): void {
-    //     console.info('ngDoCheck:', this.dataSub);
-    // }
 
     public refresh() {
         if (!this.ref) {
@@ -343,44 +296,6 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         return models
     }
 
-    // selectedModel (observer: any) : any {
-    //     if (!this.data) {
-    //         this.fetchData().then(function (data: any) {
-    //             observer.next(data)
-    //         });
-    //     }
-    //     // data.on('change', () => observer.next(that.dataRef()));
-    //     observer.next()
-    // }
-
-    // async selectedModelFetch(observer: any): Promise<[]> {
-    //     const that = this;
-    //     return new Promise(function (resolve, reject) {
-    //         if (that.model) {
-    //             resolve(that.dataRef());
-    //             return;
-    //         }
-    //         that.fetchData()
-    //             .then(function (data: any) {
-    //                 if (!data.completed) {
-    //                     console.error('still waiting on XHR!');
-    //                     // return;
-    //                 }
-    //                 resolve(that.dataRef());
-    //             })
-    //             .catch(function (err: any) {
-    //                 console.error("unable to fetch model:", err);
-    //                 reject(err)
-    //             });
-    //     });
-    // }
-
-    // private _filterModels(value: string): any {
-    //     // return await this.collection.filterAsync(value);
-    //     // return await [];
-    //     return [];
-    // }
-
     onDataChange() {
         // FIXME: This is not in use due to contextual issues.
         this.prioritize()
@@ -430,21 +345,8 @@ export class SelectorComponent extends RootComponent { // implements OnInit, OnC
         if (!options) {
             options = {}
         }
-        const uid = this.svgIcons[url] = _.uniqueId('selector_svg')
+        const uid = this.svgIcons[url] = _.uniqueId('media_selector_svg')
         this.iconRegistry.addSvgIcon(uid, this.sanitizer.bypassSecurityTrustResourceUrl(url), options)
         return uid
     }
-
-    // findImage(model: any): string {
-    //     const mime = _.get(model, 'version.images[0].mime');
-    //     if (mime === undefined) {
-    //         return '';
-    //     }
-    //     if (mime.indexOf('image') !== -1) {
-    //         return _.get(model, 'version.images[0].src') || _.get(model, 'version.shellImages[0].src') || '';
-    //     } else if (mime.indexOf('video') !== -1) {
-    //         return _.get(model, 'version.images[0].meta.thumbnail_small') || '';
-    //     }
-    //     return '';
-    // }
 }

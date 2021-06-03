@@ -1,5 +1,14 @@
 <mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
 
+<!--
+<div class="editor-component"
+     [attr.data-uid]="uid">
+    <ng-container *ngIf="styled && editor == 'froala'">
+        <textarea [froalaEditor]="froalaConfig" [(ngModel)]="dataString"></textarea>
+    </ng-container>
+</div>
+-->
+
 <div class="editor-component"
      [formGroup]="form"
      [attr.data-uid]="uid">
