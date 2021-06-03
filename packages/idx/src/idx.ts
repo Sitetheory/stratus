@@ -1851,6 +1851,7 @@ const angularJsService = (
                         // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
                         // TODO: and all those are LIKE (but all must match LIKE)
                         {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
+                        {apiField: 'ListingId', type: 'stringIncludesArray'},
                     ]
                 },
                 Neighborhood: {
