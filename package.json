@@ -93,6 +93,7 @@
     "@types/vfile-message": "^2.0.0",
     "@typescript-eslint/typescript-estree": "^2.27.0",
     "ace-builds": "^1.4.12",
+    "angular-froala-wysiwyg": "^3.2.7",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "codelyzer": "^5.2.1",

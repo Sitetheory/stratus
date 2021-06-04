@@ -232,7 +232,7 @@ export class TreeComponent extends RootComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // Initialization
-        this.uid = _.uniqueId(`sa_${moduleName}_component_`)
+        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
 
         // Hydrate Root App Inputs

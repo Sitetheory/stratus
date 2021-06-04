@@ -152,7 +152,7 @@ export class TreeDialogComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // Initialization
-        this.uid = _.uniqueId(`sa_${moduleName}_component_`)
+        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
 
         // Dependencies

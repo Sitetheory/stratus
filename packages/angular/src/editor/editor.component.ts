@@ -158,6 +158,7 @@ import 'froala-image-tui'
 
 // Froala Custom Plugins
 import '@stratusjs/angular/froala/plugins/mediaManager'
+import {FroalaEditorDirective} from 'angular-froala-wysiwyg'
 // import '@stratusjs/angular/froala/plugins/menuButton'
 
 // Local Setup
@@ -253,9 +254,13 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         dataString: new FormControl(),
     })
     dataChangeLog: string[] = []
+    dataString = ''
 
     // Child Components
+    froalaEditorDirective: FroalaEditorDirective
     // quill: Quill
+
+    // Angular Editor Config
     /* *
     editorConfig: AngularEditorConfig = {
         editable: true,
@@ -437,15 +442,28 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
     }
 
     // Froala Configuration
-    froalaConfig: LooseObject = {
+    froalaConfig = {
         attribution: false,
         key: Stratus.Environment.get('froalaKey'),
         zIndex: 9999,
-        // events: {
-        //     'paste.afterCleanup' (clipboardHTML: any) {
-        //         console.log('paste.afterCleanup:', this, clipboardHTML)
-        //     }
-        // },
+        events: {
+            initialized: (froalaEditorDirective: FroalaEditorDirective) => {
+                // console.log('initialized:', editor.html.get(), editor, froalaEditorDirective)
+                this.froalaEditorDirective = froalaEditorDirective
+            },
+            // bound to Froala Editor
+            // contentChanged () {
+            //     const editor = this
+            //     console.log('contentChanged:', editor.html.get())
+            // },
+            // bound to EditorComponent
+            // contentChanged: (...args: Array<any>) => {
+            //     console.log('contentChanged:', this, args)
+            // },
+            // 'paste.afterCleanup' (clipboardHTML: any) {
+            //     console.log('paste.afterCleanup:', this, clipboardHTML)
+            // }
+        },
         codeBeautifierOptions: {
             end_with_newline: true,
             indent_inner_html: true,
@@ -653,6 +671,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             'path', 'pattern', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg', 'switch',
             'symbol', 'text', 'textPath', 'tspan', 'unknown', 'use', 'view',
         ],
+        // @ts-ignore
         htmlRemoveTags: [],
         htmlSimpleAmpersand: false,
         // FIXME: This setting breaks the unordered and ordered list buttons.
@@ -822,6 +841,9 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 buttonsVisible: 2
             }
         },
+        // This needs to remain false, or inline styles will be converted to froala classes.
+        // FIXME: Allowing this field causes cascading issues in persistence and UI functionality
+        useClasses: true,
         videoInsertButtons: [
             'videoBack',
             '|',
@@ -846,7 +868,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         super()
 
         // Initialization
-        this.uid = _.uniqueId(`sa_${moduleName}_component_`)
+        this.uid = _.uniqueId(`sa_${_.snakeCase(moduleName)}_component_`)
         Stratus.Instances[this.uid] = this
 
         // FIXME: Event for code view is 'codeView.update'
@@ -863,7 +885,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             `${localDir}${moduleName}/${moduleName}.component${!this.dev ? '.min' : ''}.css`,
             `${codeMirrorDir}lib/codemirror.css`,
             `${froalaDir}css/froala_editor.pkgd${!this.dev ? '.min' : ''}.css`,
-            `${froalaDir}css/froala_style${!this.dev ? '.min' : ''}.css`,
+            // `${froalaDir}css/froala_style${!this.dev ? '.min' : ''}.css`,
             `${froalaDir}css/third_party/embedly${!this.dev ? '.min' : ''}.css`,
             `${froalaDir}css/third_party/font_awesome${!this.dev ? '.min' : ''}.css`,
             `${froalaDir}css/third_party/image_tui${!this.dev ? '.min' : ''}.css`,
@@ -975,10 +997,26 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
                 // but something this simple could be used for simple UX purposes down the road.
                 // this.dataChangeLog.push(value)
 
+                // If `useClasses: false`, this uses the innerHTML instead of the form output
+                // to avoid the fr-original-style attributes being persisted into the models.
+                let innerHTML = null
+                if (!this.froalaConfig.useClasses
+                    && this.froalaEditorDirective
+                    // @ts-ignore
+                    && this.froalaEditorDirective.getEditor()
+                    // @ts-ignore
+                    && this.froalaEditorDirective.getEditor().el
+                    // @ts-ignore
+                    && this.froalaEditorDirective.getEditor().el.innerHTML
+                ) {
+                    // @ts-ignore
+                    innerHTML = this.froalaEditorDirective.getEditor().el.innerHTML
+                }
+
                 // Save the qualified change!
                 this.model.set(
                     this.property,
-                    this.normalizeOut(value)
+                    this.normalizeOut(innerHTML || value)
                 )
             }
         )
@@ -1016,6 +1054,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             return ''
         }
         if (!_.isString(data)) {
+            // TODO: look into either piping the data here to remove `fr-original-style`
             return data
         }
         return this.changeImgSize(data, 'xs')
@@ -1126,6 +1165,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!this.subscriber) {
             return
         }
+        const prevString = this.dataString
         const dataString = this.dataRef()
         if (!dataString) {
             setTimeout(() => {
@@ -1133,7 +1173,14 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
             }, 500)
             return
         }
-        // console.log('pushed value to subscriber.')
+        if (!this.froalaConfig.useClasses) {
+            if (prevString === this.dataString) {
+                return
+            }
+            if (this.dev) {
+                console.log('changed value pushed to subscriber:', prevString, this.dataString)
+            }
+        }
         this.subscriber.next(dataString)
         // TODO: Add a returned Promise to ensure async/await can use this defer directly.
     }
@@ -1142,7 +1189,7 @@ export class EditorComponent extends RootComponent implements OnInit, TriggerInt
         if (!this.model) {
             return ''
         }
-        return this.normalizeIn(
+        return this.dataString = this.normalizeIn(
             this.model.get(this.property)
         )
     }
