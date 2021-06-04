@@ -66,7 +66,6 @@ export type IdxPropertySearchScope = IdxSearchScope & {
 
     // Functions
     arrayIntersect(itemArray: any[], array: any[]): boolean
-    getInput(elementId: string): JQLite
     getMLSVariables(reset?: boolean): MLSService[]
     inArray(item: any, array: any[]): boolean
     searchProperties(): void
@@ -77,8 +76,6 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     showInlinePopup(ev: any, menuElement: string): void
     throttledSearch(): void
     toggleArrayElement(item: any, array: any[]): void
-    updateNestedPathValue(currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any>
-    updateScopeValuePath(scopeVarPath: string, value: any): Promise<string | any>
     variableSync(): Promise<void>
 }
 
@@ -390,79 +387,6 @@ Stratus.Components.IdxPropertySearch = {
             }
 
         }
-        /* */
-
-        /**
-         * Update a scope nest variable from a given string path.
-         * Works with updateNestedPathValue
-         */
-        $scope.updateScopeValuePath = async (scopeVarPath: string, value: any): Promise<string | any> => {
-            if (
-                value == null ||
-                value === 'null' ||
-                value === ''
-            ) {
-                return false
-            }
-            // console.log('Update updateScopeValuePath', scopeVarPath, 'to', value, typeof value)
-            const scopePieces = scopeVarPath.split('.')
-            return $scope.updateNestedPathValue($scope, scopePieces, value)
-        }
-
-        /**
-         * Nests further into a string path to update a value
-         * Works from updateScopeValuePath
-         */
-        $scope.updateNestedPathValue = async (currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any> => {
-            const currentPiece = pathPieces.shift()
-            if (
-                // Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
-                currentPiece
-            ) {
-                // console.log('checking piece', currentPiece, 'in', currentNest)
-                if (pathPieces[0]) {
-                    return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
-                } else if (
-                    Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
-                    (!_.isArray(currentNest[currentPiece]) && _.isArray(value))
-                ) {
-                    console.warn('updateNestedPathValue couldn\'t connect', currentPiece, ' as value given is array, but value stored is not: ', _.clone(currentNest), 'It may need to be initialized first (as an array)')
-                } else {
-                    if (_.isArray(currentNest[currentPiece]) && !_.isArray(value) && !isJSON(value)) {
-                        // console.log('checking if this was an array', _.clone(value))
-                        value = value === '' ? [] : value.split(',')
-                    }/* else if (
-                        _.isString(value) &&
-                        (value[0] === '[' || value[0] === '{') &&
-                        isJSON(value)
-                    ) {
-                        value = JSON.parse(value)
-                        console.log('converted', value, 'to object')
-                    }*/
-                    // console.log(currentPiece, 'updated to ', value)
-                    // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
-                    // This is mostly just to allow a whole object to be passed in and saved
-                    if (
-                        _.isObject(currentNest[currentPiece]) ||
-                        isJSON(value)
-                    ) {
-                        // console.log('parsing', _.clone(value))
-                        currentNest[currentPiece] = JSON.parse(value)
-                    } else {
-                        currentNest[currentPiece] = value
-                    }
-                    return value
-                }
-            } else {
-                console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', _.clone(currentNest), 'It may need to be initialized first')
-                return null
-            }
-        }
-
-        /**
-         * Get the Input element of a specified ID
-         */
-        $scope.getInput = (elementId: string): JQLite => angular.element(document.getElementById(elementId))
 
         /**
          * Sync Gutensite form variables to a Stratus scope
@@ -475,13 +399,13 @@ Stratus.Components.IdxPropertySearch = {
             Object.keys($scope.variableSyncing).forEach((elementId: string) => {
                 promises.push(
                     $q(async (resolve: void | any) => {
-                        const varElement = $scope.getInput(elementId)
+                        const varElement = Idx.getInput(elementId)
                         if (varElement) {
                             // console.log('got input', varElement, _.clone(varElement.val()))
                             // Form Input exists
                             const scopeVarPath = $scope.variableSyncing[elementId]
                             // convert into a real var path and set the initial value from the exiting form value
-                            await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
+                            await Idx.updateScopeValuePath($scope, scopeVarPath, varElement.val())
                             $scope.setWhere($scope.options.query.where) // ensure the basic items are always set
 
                             // Creating watcher to update the input when the scope changes

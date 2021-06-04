@@ -5,7 +5,7 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import {IPromise} from 'angular'
+import {IPromise, IScope} from 'angular'
 
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
@@ -162,6 +162,14 @@ export interface IdxService {
     getLastQueryTime(): Date|null
 
     getLastSessionTime(): Date|null
+
+    // Scope helpers
+
+    getInput(elementId: string): JQLite
+
+    updateNestedPathValue(currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any>
+
+    updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any>
 }
 
 export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
@@ -3128,6 +3136,83 @@ const angularJsService = (
         return googleMapsKey
     }
 
+    /**
+     * Get the Input element of a specified ID
+     */
+    function getInput(elementId: string): JQLite {
+        return angular.element(document.getElementById(elementId))
+    }
+
+    /**
+     * Update a scope nest variable from a given string path.
+     * Works with updateNestedPathValue
+     */
+    async function updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any> {
+        if (
+            value == null ||
+            value === 'null' ||
+            value === ''
+        ) {
+            return false
+        }
+        // console.log('Update updateScopeValuePath', scopeVarPath, 'to', value, typeof value)
+        const scopePieces = scopeVarPath.split('.')
+        return updateNestedPathValue(scope, scopePieces, value)
+    }
+
+    /**
+     * Nests further into a string path to update a value
+     * Works from updateScopeValuePath
+     */
+    async function updateNestedPathValue(currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any> {
+        const currentPiece = pathPieces.shift()
+        if (
+            // Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
+            currentPiece
+        ) {
+            // console.log('checking piece', currentPiece, 'in', currentNest)
+            if (pathPieces[0]) {
+                return updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
+            } else if (
+                Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
+                (!_.isArray(currentNest[currentPiece]) && _.isArray(value))
+            ) {
+                console.warn(
+                    'updateNestedPathValue couldn\'t connect', currentPiece, ' as value given is array, but value stored is not: ',
+                    _.clone(currentNest), 'It may need to be initialized first (as an array)'
+                )
+            } else {
+                if (_.isArray(currentNest[currentPiece]) && !_.isArray(value) && !isJSON(value)) {
+                    // console.log('checking if this was an array', _.clone(value))
+                    value = value === '' ? [] : value.split(',')
+                }/* else if (
+                        _.isString(value) &&
+                        (value[0] === '[' || value[0] === '{') &&
+                        isJSON(value)
+                    ) {
+                        value = JSON.parse(value)
+                        console.log('converted', value, 'to object')
+                    }*/
+                // console.log(currentPiece, 'updated to ', value)
+                // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
+                // This is mostly just to allow a whole object to be passed in and saved
+                if (
+                    _.isObject(currentNest[currentPiece]) ||
+                    isJSON(value)
+                ) {
+                    // console.log('parsing', _.clone(value))
+                    currentNest[currentPiece] = JSON.parse(value)
+                } else {
+                    currentNest[currentPiece] = value
+                }
+                return value
+            }
+        } else {
+            console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', _.clone(currentNest), 'It may need to be initialized first')
+            return null
+        }
+    }
+
     return {
         fetchMembers,
         fetchOffices,
@@ -3144,6 +3229,7 @@ const angularJsService = (
         getFullStatus,
         getGoogleMapsKey,
         getIdxServices,
+        getInput,
         getLastQueryTime,
         getLastSessionTime,
         getListInstance,
@@ -3167,6 +3253,8 @@ const angularJsService = (
         sharedValues,
         tokenKeepAuth,
         refreshUrlOptions,
+        updateNestedPathValue,
+        updateScopeValuePath,
         unregisterDetailsInstance
     }
 }

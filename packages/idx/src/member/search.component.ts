@@ -104,46 +104,6 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         }
 
         /**
-         * Update a scope nest variable from a given string path.
-         * Works with updateNestedPathValue
-         */
-        $scope.updateScopeValuePath = async (scopeVarPath: string, value: any): Promise<string | any> => {
-            // console.log('Update', scopeVarPath, 'to', value, typeof value)
-            const scopePieces = scopeVarPath.split('.')
-            return $scope.updateNestedPathValue($scope, scopePieces, value)
-        }
-
-        /**
-         * Nests further into a string path to update a value
-         * Works from updateScopeValuePath
-         */
-        $scope.updateNestedPathValue = async (currentNest: object | any, pathPieces: any[], value: any): Promise<string | any> => {
-            const currentPiece = pathPieces.shift()
-            if (
-                currentPiece &&
-                Object.prototype.hasOwnProperty.call(currentNest, currentPiece)
-            ) {
-                if (pathPieces[0]) {
-                    return $scope.updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
-                } else {
-                    if (_.isArray(currentNest[currentPiece]) && !_.isArray(value)) {
-                        value = value === '' ? [] : value.split(',')
-                    }
-                    // console.log(currentPiece, 'updated to ', value)
-                    currentNest[currentPiece] = value
-                    return value
-                }
-            } else {
-                return null
-            }
-        }
-
-        /**
-         * Get the Input element of a specified ID
-         */
-        $scope.getInput = (elementId: string): any => angular.element(document.getElementById(elementId))
-
-        /**
          * Sync Gutensite form variables to a Stratus scope
          * TODO move this to it's own directive/service
          */
@@ -155,12 +115,12 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
             Object.keys($scope.variableSyncing).forEach((elementId: string) => {
                 promises.push(
                     $q(async (resolve: void | any) => {
-                        const varElement = $scope.getInput(elementId)
+                        const varElement = Idx.getInput(elementId)
                         if (varElement) {
                             // Form Input exists
                             const scopeVarPath = $scope.variableSyncing[elementId]
                             // convert into a real var path and set the intial value from the exiting form value
-                            await $scope.updateScopeValuePath(scopeVarPath, varElement.val())
+                            await Idx.updateScopeValuePath($scope, scopeVarPath, varElement.val())
 
                             // Creating watcher to update the input when the scope changes
                             $scope.$watch(
