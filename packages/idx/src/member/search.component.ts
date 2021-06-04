@@ -17,7 +17,7 @@ import '@stratusjs/idx/idx'
 import {IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {isJSON} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
@@ -33,10 +33,16 @@ const componentName = 'search'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxMemberSearchScope = IdxSearchScope & LooseObject & { // FIXME do not extend LooseObject
+export type IdxMemberSearchScope = IdxSearchScope & {
+    options: object | any // FIXME
+    variableSyncing: object | any // FIXME
+
+    displayMemberSelector(): void
+    searchMembers(): void
+    variableSync(): Promise<void>
 }
 
-Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or IdxMemberSearch
+Stratus.Components.IdxMemberSearch = {
     bindings: {
         elementId: '@',
         tokenUrl: '@',
@@ -260,6 +266,7 @@ Stratus.Components.IdxMemberSearch = {  // FIXME should be just MemberSearch or 
         $scope.on = (emitterName: string, callback: IdxEmitter) => Idx.on($scope.elementId, emitterName, callback)
 
         $scope.remove = (): void => {
+            // TODO remove this instance
         }
 
     },
