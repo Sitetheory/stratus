@@ -616,7 +616,7 @@ Stratus.Components.IdxPropertySearch = {
             newQuery.where = newQuery.where || {}
             // getDefaultWhereOptions returns the set a required WhereOptions with initialized arrays
             // $scope.options.query = _.extend(Idx.getDefaultWhereOptions(), newQuery)
-            $scope.options.query = _.clone(newQuery)
+            $scope.options.query = _.cloneDeep(newQuery)
             $scope.setWhere($scope.options.query.where)
             // console.log('setQuery $scope.options.query to ', _.clone($scope.options.query))
         }

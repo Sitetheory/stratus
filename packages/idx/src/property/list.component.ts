@@ -523,7 +523,7 @@ Stratus.Components.IdxPropertyList = {
                 if ($scope.collection.pending) {
                     // Do do anything if the collection isn't ready yet
                     // revert to last query as this never fired
-                    $scope.query = $ctrl.lastQuery
+                    $scope.query = _.cloneDeep($ctrl.lastQuery)
                     resolve([])
                     return
                 }
@@ -645,7 +645,7 @@ Stratus.Components.IdxPropertyList = {
                         // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                         // Grab the new property listings
                         const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
-                        $ctrl.lastQuery = _.clone($scope.query)
+                        $ctrl.lastQuery = _.cloneDeep($scope.query)
                         // $applyAsync will automatically be applied
                         Idx.emit('searched', $scope, _.clone($scope.query))
                         resolve(results)
