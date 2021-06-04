@@ -1,7 +1,8 @@
-// IdxMemberSearch Component
-// @stratusjs/idx/member/search.component
-// <stratus-idx-member-search>
-// --------------
+/**
+ * @file IdxMemberSearch Component @stratusjs/idx/member/search.component
+ * @example <stratus-idx-member-search>
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Member-Search-Widget
+ */
 
 // Runtime
 import _ from 'lodash'
@@ -44,6 +45,7 @@ export type IdxMemberSearchScope = IdxSearchScope & {
 
 Stratus.Components.IdxMemberSearch = {
     bindings: {
+        // TODO doc
         elementId: '@',
         tokenUrl: '@',
         listId: '@',
