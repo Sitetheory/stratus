@@ -778,7 +778,11 @@ const angularJsService = (
             Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)
         ) {
             Object.values(instanceOnEmitters[uid][emitterName]).forEach((emitter) => {
-                emitter($scope, var1, var2, var3)
+                try {
+                    emitter($scope, var1, var2, var3)
+                } catch (e) {
+                    console.error(e, 'issue sending back emitter on', uid, emitterName, emitter)
+                }
             })
         }
 
