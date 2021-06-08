@@ -1,7 +1,8 @@
-// IdxMemberList Component
-// @stratusjs/idx/member/list.component
-// <stratus-idx-member-list>
-// --------------
+/**
+ * @file IdxMemberList Component @stratusjs/idx/member/list.component
+ * @example <stratus-idx-member-list>
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Member-List-Widget
+ */
 
 // Runtime
 import _ from 'lodash'
@@ -15,7 +16,13 @@ import 'angular-sanitize'
 // Services
 import '@stratusjs/idx/idx'
 // tslint:disable-next-line:no-duplicate-imports
-import {IdxEmitter, IdxListScope, IdxService, Member} from '@stratusjs/idx/idx'
+import {
+    CompileFilterOptions,
+    IdxEmitter,
+    IdxListScope,
+    IdxService,
+    Member
+} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
 import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as Class
@@ -34,11 +41,25 @@ const componentName = 'list'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxMemberListScope = IdxListScope<Member> & LooseObject & { // FIXME do not extend LooseObject
+export type IdxMemberListScope = IdxListScope<Member> & {
+    options: CompileFilterOptions // FIXME rename to query
+    query: CompileFilterOptions
+
+    detailsLinkPopup: boolean
+    detailsLinkUrl: string
+    detailsLinkTarget: 'popup' | '_self' | '_blank'
+    googleApiKey?: string
+
+    variableSyncing?: LooseObject
+
+    displayModelDetails(model: Member, ev?: any): void
+    injectMemberDetails(member: any): Promise<void>
+    variableInject(member: Member): Promise<void>
 }
 
 Stratus.Components.IdxMemberList = {
     bindings: {
+        // TODO wiki docs
         elementId: '@',
         tokenUrl: '@',
         detailsLinkPopup: '@',
@@ -125,7 +146,7 @@ Stratus.Components.IdxMemberList = {
               }
             } */
 
-            await $scope.searchMembers(urlOptions.Search, true, false)
+            await $scope.search(urlOptions.Search, true, false)
             Idx.emit('init', $scope)
         }
 
@@ -158,7 +179,11 @@ Stratus.Components.IdxMemberList = {
          * may update the URL options, so it may not be ideal to use on page load
          * TODO Idx needs to export search options interface
          */
-        $scope.searchMembers = async (options?: object | any, refresh?: boolean, updateUrl?: boolean): Promise<Collection> =>
+        $scope.search = $scope.searchMembers = async (
+            options?: CompileFilterOptions, // FIXME rename to query
+            refresh?: boolean,
+            updateUrl?: boolean
+        ): Promise<Collection<Member>> =>
             $q(async (resolve: any) => {
                 options = options || {}
                 updateUrl = updateUrl === false ? updateUrl : true
@@ -168,9 +193,9 @@ Stratus.Components.IdxMemberList = {
                     $scope.options.page = 1
                 }
                 // If search options sent, update the Widget. Otherwise use the widgets current where settings
-                if (Object.keys(options).length > 0) {
+                if (Object.keys(options.where).length > 0) {
                     delete ($scope.options.where)
-                    $scope.options.where = options
+                    $scope.options.where = options.where
                     if ($scope.options.where.Page) {
                         $scope.options.page = $scope.options.where.Page
                         delete ($scope.options.where.Page)
@@ -222,13 +247,19 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.pageChange = async (pageNumber: number, ev?: any): Promise<void> => {
-            Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                return
+            }
+            // Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
+            Idx.emit('pageChanging', $scope, _.clone($scope.options.page))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.page = pageNumber
-            await $scope.searchMembers()
-            Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
+            await $scope.search()
+            // Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
+            Idx.emit('pageChanged', $scope, _.clone($scope.options.page))
         }
 
         /**
@@ -236,10 +267,17 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.pageNext = async (ev?: any): Promise<void> => {
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                return
+            }
             if (!$scope.options.page) {
                 $scope.options.page = 1
             }
             if ($scope.collection.completed && $scope.options.page < $scope.collection.meta.data.totalPages) {
+                if (_.isString($scope.options.page)) {
+                    $scope.options.page = parseInt($scope.options.page, 10)
+                }
                 await $scope.pageChange($scope.options.page + 1, ev)
             }
         }
@@ -249,11 +287,18 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.pagePrevious = async (ev?: any): Promise<void> => {
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                return
+            }
             if (!$scope.options.page) {
                 $scope.options.page = 1
             }
             if ($scope.collection.completed && $scope.options.page > 1) {
-                const prev = parseInt($scope.options.page, 10) - 1 || 1
+                if (_.isString($scope.options.page)) {
+                    $scope.options.page = parseInt($scope.options.page, 10)
+                }
+                const prev = $scope.options.page - 1 || 1
                 await $scope.pageChange(prev, ev)
             }
         }
@@ -264,12 +309,17 @@ Stratus.Components.IdxMemberList = {
          * @param ev - Click event
          */
         $scope.orderChange = async (order: string | string[], ev?: any): Promise<void> => {
+            if ($scope.collection.pending) {
+                // Do do anything if the collection isn't ready yet
+                // TODO set old Order back?
+                return
+            }
             Idx.emit('orderChanging', $scope, _.clone(order))
             if (ev) {
                 ev.preventDefault()
             }
             $scope.options.order = order
-            await $scope.searchMembers(null, true, true)
+            await $scope.search(null, true, true)
             Idx.emit('orderChanged', $scope, _.clone(order))
         }
 
@@ -360,11 +410,6 @@ Stratus.Components.IdxMemberList = {
         }
 
         /**
-         * Get the Input element of a specified ID
-         */
-        $scope.getInput = (elementId: string): any => angular.element(document.getElementById(elementId))
-
-        /**
          * Sync Gutensite form variables to a Stratus scope
          * TODO move this to it's own directive/service
          */
@@ -374,7 +419,7 @@ Stratus.Components.IdxMemberList = {
                 Object.keys($scope.variableSyncing).forEach(elementId => {
                     // promises.push(
                     // $q(async function (resolve, reject) {
-                    const varElement = $scope.getInput(elementId)
+                    const varElement = Idx.getInput(elementId)
                     if (varElement) {
                         // Form Input exists
 

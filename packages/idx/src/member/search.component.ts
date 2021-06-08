@@ -18,7 +18,7 @@ import '@stratusjs/idx/idx'
 import {IdxEmitter, IdxSearchScope, IdxService} from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
-import {isJSON} from '@stratusjs/core/misc'
+import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 
@@ -36,10 +36,9 @@ const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packag
 
 export type IdxMemberSearchScope = IdxSearchScope & {
     options: object | any // FIXME
-    variableSyncing: object | any // FIXME
+    variableSyncing: LooseObject
 
     displayMemberSelector(): void
-    searchMembers(): void
     variableSync(): Promise<void>
 }
 
@@ -151,14 +150,14 @@ Stratus.Components.IdxMemberSearch = {
          * Call a List widget to perform a search
          * TODO await until complete?
          */
-        $scope.searchMembers = (): void => {
-            let listScope
+        $scope.search = $scope.searchMembers = (): void => {
+            let listScope: IdxMemberListScope
             if ($scope.listId) {
-                listScope = Idx.getListInstance($scope.listId, 'Member')
+                listScope = Idx.getListInstance($scope.listId, 'Member') as IdxMemberListScope
             }
             if (listScope) {
                 $scope.options.query.Page = 1
-                listScope.searchMembers($scope.options.query, true)
+                listScope.search($scope.options.query, true)
                 // TODO open popup
             } else {
                 // IDX.setUrlOptions('Search', $scope.options.query)
@@ -257,7 +256,7 @@ Stratus.Components.IdxMemberSearch = {
                 !listScope &&
                 $scope.listId
             ) {
-                listScope = Idx.getListInstance($scope.listId) as IdxMemberListScope
+                listScope = Idx.getListInstance($scope.listId, 'Member') as IdxMemberListScope
             }
             if (listScope) {
                 // $scope.setQuery(listScope.query)

@@ -68,7 +68,6 @@ export type IdxPropertySearchScope = IdxSearchScope & {
     arrayIntersect(itemArray: any[], array: any[]): boolean
     getMLSVariables(reset?: boolean): MLSService[]
     inArray(item: any, array: any[]): boolean
-    searchProperties(): void
     selectDefaultListingType(listingGroup?: string): void
     setQuery(newQuery?: CompileFilterOptions): void
     setWhere(newWhere?: WhereOptions): void
@@ -601,7 +600,7 @@ Stratus.Components.IdxPropertySearch = {
          * Call a List widget to perform a search
          * TODO await until search is complete?
          */
-        $scope.searchProperties = (): void => {
+        $scope.search = $scope.searchProperties = (): void => {
             let listScope: IdxPropertyListScope | IdxComponentScope
             if ($scope.listId) {
                 listScope = Idx.getListInstance($scope.listId)
@@ -617,11 +616,11 @@ Stratus.Components.IdxPropertySearch = {
                 }*/
                 // FIXME need to ensure only where options
                 // console.log('but suppose to send', _.clone($scope.options.query))
-                // listScope.searchProperties($scope.options.query, true)
+                // listScope.search($scope.options.query, true)
                 // only allow a query every second
                 if (!$scope.throttledSearch) {
                     $scope.throttledSearch =
-                        _.throttle(() => {listScope.searchProperties($scope.options.query, true)}, 600, { trailing: false })
+                        _.throttle(() => {listScope.search($scope.options.query, true)}, 600, { trailing: false })
                 }
                 $scope.throttledSearch()
             } else {

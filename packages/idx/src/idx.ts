@@ -28,6 +28,7 @@ import {IdxDisclaimerScope} from '@stratusjs/idx/disclaimer/disclaimer.component
 import {IdxMapScope} from '@stratusjs/idx/map/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
+import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 // import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
 // import {IdxMapScope} from '@stratusjs/idx/map.component'
 
@@ -77,7 +78,7 @@ export interface IdxService {
     // Instance Methods
     getDisclaimerInstance(disclaimerUid?: string): {[uid: string]: IdxDisclaimerScope} | null
 
-    getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxComponentScope | null
+    getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxMemberListScope | IdxComponentScope | null
 
     getListInstanceLinks(listUid: string, listType?: string): (IdxPropertySearchScope | IdxMapScope | IdxComponentScope)[]
 
@@ -188,10 +189,17 @@ export type IdxDetailsScope<T = LooseObject> = IdxComponentScope & {
 export type IdxListScope<T = LooseObject> = IdxComponentScope & {
     collection: Collection<T>
 
+    search(query?: CompileFilterOptions, refresh?: boolean, updateUrl?: boolean): Promise<Collection<T>>
+
+    orderChange(order: string | string[], ev?: any): Promise<void>
+    pageChange(pageNumber: number, ev?: any): Promise<void>
+    pageNext(ev?: any): Promise<void>
+    pagePrevious(ev?: any): Promise<void>
+
     displayModelDetails(model: T, ev?: any): void
     getPageModels(): T[]
-    highlightModel(model: T, timeout?: number): void
     scrollToModel(model: T): void
+    highlightModel(model: T, timeout?: number): void
     unhighlightModel(model: T): void
 }
 
@@ -200,6 +208,7 @@ export type IdxSearchScope = IdxComponentScope & {
     listInitialized: boolean
 
     refreshSearchWidgetOptions(listScope?: IdxListScope): void
+    search(): void
 }
 
 export interface UrlsOptionsObject {

@@ -94,15 +94,11 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     getOrderOptions(): { [key: string]: string[] }
     getStreetAddress(property: Property): string
     hasQueryChanged(): boolean
-    pageChange(pageNumber: number, ev?: any): Promise<void>
-    pageNext(ev?: any): Promise<void>
-    pagePrevious(ev?: any): Promise<void>
-    orderChange(order: string | string[], ev?: any): Promise<void>
-    searchProperties(
+    /*searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
         updateUrl?: boolean
-    ): Promise<Collection<Property>>
+    ): Promise<Collection<Property>>*/
 }
 
 Stratus.Components.IdxPropertyList = {
@@ -446,7 +442,7 @@ Stratus.Components.IdxPropertyList = {
                 // delete searchQuery.where.Page
                 // delete searchQuery.where.Order
                 // console.log('about to searchProperties for', _.clone(searchQuery))
-                await $scope.searchProperties(searchQuery, false, false)
+                await $scope.search(searchQuery, false, false)
             }
 
             $scope.$applyAsync(() => {
@@ -514,7 +510,7 @@ Stratus.Components.IdxPropertyList = {
          * TODO Idx needs to export search query interface
          * Returns Collection<Property>
          */
-        $scope.searchProperties = async (
+        $scope.search = $scope.searchProperties = async (
             query?: CompileFilterOptions,
             refresh?: boolean,
             updateUrl?: boolean
@@ -670,8 +666,9 @@ Stratus.Components.IdxPropertyList = {
                 ev.preventDefault()
             }
             $scope.query.page = pageNumber
+            // Need scroll options
             $anchorScroll($scope.elementId) // Scroll to the top again
-            await $scope.searchProperties()
+            await $scope.search()
             Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
         }
 
@@ -732,7 +729,7 @@ Stratus.Components.IdxPropertyList = {
                 ev.preventDefault()
             }
             $scope.query.order = order
-            await $scope.searchProperties(null, true, true)
+            await $scope.search(null, true, true)
             Idx.emit('orderChanged', $scope, _.clone(order))
         }
 
