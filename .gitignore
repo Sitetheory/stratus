@@ -89,6 +89,8 @@ packages/angularjs-extras/src/directives/froala.js
 packages/angularjs-extras/src/directives/froala.js.map
 packages/angularjs-extras/src/directives/fullHeight.js
 packages/angularjs-extras/src/directives/fullHeight.js.map
+packages/angularjs-extras/src/directives/maxLength.js
+packages/angularjs-extras/src/directives/maxLength.js.map
 packages/angularjs-extras/src/directives/trigger.js
 packages/angularjs-extras/src/directives/trigger.js.map
 packages/angularjs-extras/src/filter/numeral.js
