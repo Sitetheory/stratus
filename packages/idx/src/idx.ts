@@ -168,6 +168,10 @@ export interface IdxService {
 
     getInput(elementId: string): JQLite
 
+    getNestedPathValue(currentNest: object | any, pathPieces: string[]): any
+
+    getScopeValuePath(scope: IScope, scopeVarPath: string): any
+
     updateNestedPathValue(currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any>
 
     updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any>
@@ -209,6 +213,11 @@ export type IdxSearchScope = IdxComponentScope & {
 
     refreshSearchWidgetOptions(listScope?: IdxListScope): void
     search(): void
+}
+
+export type SelectionGroup = {
+    name: string
+    group: string[]
 }
 
 export interface UrlsOptionsObject {
@@ -437,6 +446,8 @@ interface MongoFilterQuery {
 export interface Office extends LooseObject {
     id: string
     OfficeKey: string
+    OfficeMlsId?: string
+    _OfficeNumber?: string
 
     _unmapped?: {
         [key: string]: unknown
@@ -450,6 +461,7 @@ export interface Member extends LooseObject {
     MemberFullName?: string
     MemberFirstName?: string
     MemberLastName?: string
+    _MemberNumber?: string
     OfficeKey: string
     OfficeMlsId?: string
 
@@ -1933,7 +1945,7 @@ const angularJsService = (
                     type: 'stringIncludesArray'
                 },
                 OfficeName: {
-                    type: 'stringIncludesArray'
+                    type: 'stringLikeArray'
                 }
             }
         )
@@ -2076,7 +2088,9 @@ const angularJsService = (
                     }
                 }
 
-                includes.push(includeItem)
+                if (option !== false) {
+                    includes.push(includeItem)
+                }
             }
         })
 
@@ -2950,11 +2964,13 @@ const angularJsService = (
         options.fields = options.fields || [
             '_id',
             'OfficeKey',
+            'OfficeMlsId',
             'OfficeName',
             'OfficeNationalAssociationId',
             'OfficeStatus',
             'OfficePhone',
             'OfficeAddress1',
+            'OfficeCity',
             'OfficePostalCode',
             'OfficeBrokerKey'
         ]
@@ -3156,6 +3172,23 @@ const angularJsService = (
         return angular.element(document.getElementById(elementId))
     }
 
+    function getScopeValuePath(scope: IScope, scopeVarPath: string): any {
+        // console.log('Update getScopeValuePath', scopeVarPath)
+        const scopePieces = scopeVarPath.split('.')
+        return getNestedPathValue(scope, scopePieces)
+    }
+
+    function getNestedPathValue(currentNest: object | any, pathPieces: string[]): any {
+        const currentPiece = pathPieces.shift()
+        if (pathPieces[0]) {
+            return getNestedPathValue(currentNest[currentPiece], pathPieces)
+        } else if ( Object.prototype.hasOwnProperty.call(currentNest, currentPiece)) {
+            return currentNest[currentPiece]
+        } else {
+            return null
+        }
+    }
+
     /**
      * Update a scope nest variable from a given string path.
      * Works with updateNestedPathValue
@@ -3210,13 +3243,16 @@ const angularJsService = (
                 // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
                 // This is mostly just to allow a whole object to be passed in and saved
                 if (
-                    _.isObject(currentNest[currentPiece]) ||
-                    isJSON(value)
+                    !_.isArray(value) &&
+                    (
+                        _.isObject(currentNest[currentPiece]) ||
+                        isJSON(value)
+                    )
                 ) {
                     // console.log('parsing', _.clone(value))
                     currentNest[currentPiece] = JSON.parse(value)
                 } else {
-                    currentNest[currentPiece] = value
+                    currentNest[currentPiece] = _.clone(value)
                 }
                 return value
             }
@@ -3243,11 +3279,13 @@ const angularJsService = (
         getGoogleMapsKey,
         getIdxServices,
         getInput,
+        getScopeValuePath,
         getLastQueryTime,
         getLastSessionTime,
         getListInstance,
         getListInstanceLinks,
         getMLSVariables,
+        getNestedPathValue,
         getOptionsFromUrl,
         getSearchInstanceLinks,
         getStreetAddress,

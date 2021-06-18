@@ -328,65 +328,91 @@
                 >
                     Open Houses Only
                 </md-checkbox>
+
+            </div>
+
+            <div data-ng-if="options.officeGroups.length">
+                <h4>Preset Filters</h4>
+                <div class="search-input" data-ng-if="options.officeGroups.length">
+                    <!--h5>Office</h5-->
+                    <md-chips
+                            class="office-groups font-secondary"
+                            aria-label="Office"
+                            data-ng-model="options.officeGroups"
+                            data-md-enable-chip-edit="false"
+                            readonly="true"
+                            data-md-removable="true"
+                            data-delete-button-label="Remove Office"
+                            data-delete-hint="Press delete to remove Office"
+                            data-md-on-remove="validateOfficeGroups(true)"
+                    >
+                        <md-chip-template>
+                            <!-- add to enable editing: data-ng-click="displayOfficeGroupSelector(null, $index, $event)" -->
+                            <span>{{$chip.name}}</span>
+                        </md-chip-template>
+                    </md-chips>
+                </div>
             </div>
 
             <!-- Preset Filters: these are currently subsets of Location and they swap out so aren't needed right now -->
-            <!--<div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">-->
-                <!--<h4>Preset Filters</h4>-->
-                <!--<div class="specific-filters" aria-label="Specific Areas">-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.City.length">-->
-                        <!--<md-input-container class="md-block minimal">-->
-                            <!--<label>City</label>-->
-                            <!--<input data-ng-model="options.query.where.City"-->
-                                   <!--type="text"-->
-                                   <!--maxlength="250"-->
-                                   <!--autocomplete="off">-->
-                        <!--</md-input-container>-->
-                    <!--</div>-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.CountyOrParish.length">-->
-                        <!--<md-chips-->
-                                <!--class="area-id font-secondary"-->
-                                <!--aria-label="Counties to Limit"-->
-                                <!--data-ng-model="options.query.where.CountyOrParish"-->
-                                <!--data-md-enable-chip-edit="true"-->
-                                <!--data-md-add-on-blur="true"-->
-                                <!--data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"-->
-                                <!--data-placeholder="County"-->
-                                <!--data-secondary-placeholder="+County"-->
-                                <!--data-delete-button-label="Remove County"-->
-                                <!--data-delete-hint="Press delete to remove County"-->
-                        <!--&gt;</md-chips>-->
-                    <!--</div>-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.MLSAreaMajor.length">-->
-                        <!--<md-chips-->
-                                <!--class="area-id font-secondary"-->
-                                <!--aria-label="Neighborhoods to Limit"-->
-                                <!--data-ng-model="options.query.where.MLSAreaMajor"-->
-                                <!--data-md-enable-chip-edit="true"-->
-                                <!--data-md-add-on-blur="true"-->
-                                <!--data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"-->
-                                <!--data-placeholder="Neighborhood"-->
-                                <!--data-secondary-placeholder="+Neighborhood"-->
-                                <!--data-delete-button-label="Remove Neighborhood"-->
-                                <!--data-delete-hint="Press delete to remove Neighborhood"-->
-                        <!--&gt;</md-chips>-->
-                    <!--</div>-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.PostalCode.length">-->
-                        <!--<md-chips-->
-                                <!--class="postal-code font-secondary"-->
-                                <!--aria-label="Postal Code(s) to Limit"-->
-                                <!--data-ng-model="options.query.where.PostalCode"-->
-                                <!--data-md-enable-chip-edit="true"-->
-                                <!--data-md-add-on-blur="true"-->
-                                <!--data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"-->
-                                <!--data-placeholder="Postal Code"-->
-                                <!--data-secondary-placeholder="+PostalCode"-->
-                                <!--data-delete-button-label="Remove Postal Code"-->
-                                <!--data-delete-hint="Press delete to remove Postal Code"-->
-                        <!--&gt;</md-chips>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
+            <!--
+            <div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
+                <h4>Preset Filters</h4>
+                <div class="specific-filters" aria-label="Specific Areas">
+                    <div class="search-input" data-ng-if="options.query.where.City.length">
+                        <md-input-container class="md-block minimal">
+                            <label>City</label>
+                            <input data-ng-model="options.query.where.City"
+                                   type="text"
+                                   maxlength="250"
+                                   autocomplete="off">
+                        </md-input-container>
+                    </div>
+                    <div class="search-input" data-ng-if="options.query.where.CountyOrParish.length">
+                        <md-chips
+                                class="area-id font-secondary"
+                                aria-label="Counties to Limit"
+                                data-ng-model="options.query.where.CountyOrParish"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="County"
+                                data-secondary-placeholder="+County"
+                                data-delete-button-label="Remove County"
+                                data-delete-hint="Press delete to remove County"
+                        ></md-chips>
+                    </div>
+                    <div class="search-input" data-ng-if="options.query.where.MLSAreaMajor.length">
+                        <md-chips
+                                class="area-id font-secondary"
+                                aria-label="Neighborhoods to Limit"
+                                data-ng-model="options.query.where.MLSAreaMajor"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Neighborhood"
+                                data-secondary-placeholder="+Neighborhood"
+                                data-delete-button-label="Remove Neighborhood"
+                                data-delete-hint="Press delete to remove Neighborhood"
+                        ></md-chips>
+                    </div>
+                    <div class="search-input" data-ng-if="options.query.where.PostalCode.length">
+                        <md-chips
+                                class="postal-code font-secondary"
+                                aria-label="Postal Code(s) to Limit"
+                                data-ng-model="options.query.where.PostalCode"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Postal Code"
+                                data-secondary-placeholder="+PostalCode"
+                                data-delete-button-label="Remove Postal Code"
+                                data-delete-hint="Press delete to remove Postal Code"
+                        ></md-chips>
+                    </div>
+                </div>
+            </div>
+            -->
 
         </div>
         <div class="click-out" data-ng-show="$parent.advancedFiltersStatus" data-ng-click="$parent.advancedFiltersStatus = false"></div>

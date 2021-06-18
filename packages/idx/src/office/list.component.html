@@ -1,0 +1,58 @@
+<div id="{{::elementId}}" data-ng-cloak>
+	<div class="header-section">
+		<div class="pager-section">
+			<div class="pager-button {{query.page > 1 && collection.completed ? '' : 'disabled'}}" data-ng-click="pagePrevious($event)" aria-label="Previous Page">
+				<i class="arrow small left"></i>
+			</div>
+			<div class="pager-button {{query.page < collection.meta.data.totalPages && collection.completed ? '' : 'disabled'}}" data-ng-click="pageNext($event)" aria-label="Next Page">
+				<i class="arrow small right"></i>
+			</div>
+            <div class="pager-count" data-ng-if="collection.meta.data.totalRecords">
+                <span data-ng-bind="query.page"></span>/<span data-ng-bind="collection.meta.data.totalPages"></span>
+                Pages
+                <span class="pager-totals">
+                ( <span data-ng-bind="collection.meta.data.totalRecords"></span> offices )
+                </span>
+            </div>
+		</div>
+
+		<!--div class="sort-options-container" data-ng-if="collection.meta.data.totalRecords">
+			<md-menu data-md-position-mode="target-right target" data-md-offset="0 30">
+				<div class=" options-button" data-ng-mouseenter="$mdMenu.open()" aria-label="Sort Options">
+					<i class="arrow small down grey"></i> <span class="options-name"><a href="">Sort Options</a></span>
+				</div>
+				<md-menu-content data-ng-mouseleave="$mdMenu.close()">
+					<md-menu-item data-ng-repeat="(name, order) in orderOptions">
+						<md-button data-ng-click="orderChange(order, $event)" data-ng-bind="::name" aria-label="{{::name}}"></md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
+		</div-->
+	</div>
+
+	<div class="list-container">
+		<md-list>
+			<md-list-item class="md-1-line office-container" ng-if="collection.pending">
+				<md-progress-circular md-mode="indeterminate"></md-progress-circular>
+			</md-list-item>
+			<md-list-item class="md-1-line office-container" data-ng-repeat="office in collection.models | limitTo:options.perPage:(options.page-1)*options.perPage" id="{{::elementId}}_{{::office._id}}" data-ng-cloak>
+				<div data-ng-bind="::office.OfficeName"></div>
+				<div class="id" data-ng-if="::office.OfficeMlsId">&nbsp-
+					<span data-ng-bind="::office.OfficeMlsId"></span>
+				</div>
+                <div class="id" data-ng-if="::office.OfficeKey && !office.OfficeMlsId">&nbsp-
+                    <span data-ng-bind="::office.OfficeKey"></span>
+                </div>
+                <div class="md-secondary city" data-ng-if="::office.OfficeCity">City:
+                    <span data-ng-bind="::office.OfficeCity"></span>
+                </div>
+				<div class="md-secondary office-license" data-ng-if="::office.OfficeCorporateLicense">License:
+					<span data-ng-bind="::office.OfficeCorporateLicense"></span>
+				</div>
+			</md-list-item>
+		</md-list>
+		<!-- TODO pagination -->
+		<div class="disclaimer-container"  data-ng-bind-html="::getMLSDisclaimer(true)"></div>
+        <stratus-idx-disclaimer data-ng-if="collection.completed"></stratus-idx-disclaimer>
+	</div>
+</div>

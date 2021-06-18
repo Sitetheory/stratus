@@ -153,7 +153,7 @@ Stratus.Components.IdxMemberSearch = {
         $scope.search = $scope.searchMembers = (): void => {
             let listScope: IdxMemberListScope
             if ($scope.listId) {
-                listScope = Idx.getListInstance($scope.listId, 'Member') as IdxMemberListScope
+                listScope = Idx.getListInstance($scope.listId, 'member') as IdxMemberListScope
             }
             if (listScope) {
                 $scope.options.query.Page = 1

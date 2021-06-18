@@ -340,7 +340,6 @@ Stratus.Components.IdxPropertyList = {
             $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
-            // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
             $scope.query.service = $attrs.queryService && isJSON($attrs.queryService) ?
                 JSON.parse($attrs.queryService) : $scope.query.service || []

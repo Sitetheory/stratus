@@ -22,6 +22,7 @@ import {
     IdxSearchScope,
     IdxService,
     MLSService,
+    SelectionGroup,
     WhereOptions
 } from '@stratusjs/idx/idx'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
@@ -32,6 +33,11 @@ import {cookie} from '@stratusjs/core/environment'
 // FIXME should we be renaming the old 'stratus.directives' variables to something else now that we're @stratusjs?
 import 'stratus.directives.stringToNumber'
 import 'stratus.filters.numeral'
+
+// Component Preload
+// tslint:disable-next-line:no-duplicate-imports
+import '@stratusjs/idx/office/search.component'
+import '@stratusjs/idx/office/list.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
@@ -60,12 +66,15 @@ export type IdxPropertySearchScope = IdxSearchScope & {
         query: CompileFilterOptions
         selection: object | any // TODO need to specify
         forRent: boolean
+        agentGroups: SelectionGroup[]
+        officeGroups: SelectionGroup[]
     }
     variableSyncing: object | any
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
 
     // Functions
     arrayIntersect(itemArray: any[], array: any[]): boolean
+    displayOfficeGroupSelector(searchTerm?: string, editIndex?: number, ev?: any): void
     getMLSVariables(reset?: boolean): MLSService[]
     inArray(item: any, array: any[]): boolean
     selectDefaultListingType(listingGroup?: string): void
@@ -148,6 +157,10 @@ Stratus.Components.IdxPropertySearch = {
          * @TODO
          */
         options: '@',
+        /** Type: SelectionGroup[] */
+        optionsAgentGroups: '@',
+        /** Type: SelectionGroup[] */
+        optionsOfficeGroups: '@',
         // TODO
         variableSync: '@',
         // TODO
@@ -157,6 +170,7 @@ Stratus.Components.IdxPropertySearch = {
         $attrs: angular.IAttributes,
         $q: angular.IQService,
         $mdConstant: any, // mdChips item
+        $mdDialog: angular.material.IDialogService,
         $mdPanel: angular.material.IPanelService,
         // $scope: object | any, // angular.IScope breaks references so far
         $scope: IdxPropertySearchScope,
@@ -200,7 +214,15 @@ Stratus.Components.IdxPropertySearch = {
             $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
             $scope.filterMenu = null
-            $scope.options.forRent = false
+            $scope.options.forRent = $scope.options.forRent || false
+            $scope.options.agentGroups = $scope.options.agentGroups || []
+            // $scope.options.officeGroups = $scope.options.officeGroups || []
+
+            $scope.options.officeGroups =
+                $scope.options.officeGroups && _.isString($scope.options.officeGroups) && isJSON($scope.options.officeGroups)
+                    ? JSON.parse($scope.options.officeGroups) :
+                    $attrs.optionsOfficeGroups && isJSON($attrs.optionsOfficeGroups) ?
+                        JSON.parse($attrs.optionsOfficeGroups) : $scope.options.officeGroups || []
 
             // Set default queries
             $scope.options.query = $scope.options.query || {}
@@ -628,6 +650,107 @@ Stratus.Components.IdxPropertySearch = {
                 $window.open($scope.listLinkUrl + '#!/' + Idx.getUrlOptionsPath(), $scope.listLinkTarget)
             }
         }
+
+        /**
+         * Either popup or load a new page with the
+         */
+        $scope.displayOfficeGroupSelector = (searchTerm?: string, editIndex?: number, ev?: any): void => {
+            if (ev) {
+                ev.preventDefault()
+                // ev.stopPropagation()
+            }
+            // console.log('displayOfficeGroupSelector', searchTerm, editIndex)
+            let searchOnLoad = false
+            let options = {
+                query: {}
+            }
+            if (!_.isEmpty(searchTerm) && _.isString(searchTerm)) {
+                options = {
+                    query: {
+                        where: {
+                            OfficeName: searchTerm
+                        }
+                    }
+                }
+                searchOnLoad = true
+            }
+            if (!_.isNumber(editIndex)) {
+                editIndex = $scope.options.officeGroups.length
+            }
+
+            const template =
+                '<md-dialog aria-label="Property Office Group Selector" class="transparent">' +
+                '<md-button style="text-align: center" data-ng-click="close()">Close and Accept</md-button>' +
+                '<stratus-idx-office-search' +
+                ' data-template="search.group-selector"' +
+                ` data-list-id="office-group-selector-${$scope.elementId}"` +
+                ` data-options='${JSON.stringify(options)}'` +
+                ` data-sync-instance="${$scope.elementId}"` + // search needs to update this scope
+                ` data-sync-instance-variable="options.officeGroups"` + // search needs find this variable in this scope to update
+                ` data-sync-instance-variable-index="${editIndex}"` +
+                '></stratus-idx-office-search>' +
+                '<stratus-idx-office-list' +
+                ` data-element-id="office-group-selector-${$scope.elementId}"` +
+                ' data-template="list.empty"' +
+                ` data-search-on-load="${searchOnLoad}"` +
+                ` data-query='${JSON.stringify(options.query)}'` +
+                ` data-query-service="${$scope.options.query.service}"` +
+                '></stratus-idx-office-list>' +
+                '</md-dialog>'
+
+            $mdDialog.show({
+                template,
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: true,
+                fullscreen: true, // Only for -xs, -sm breakpoints.
+                // bindToController: true,
+                controllerAs: 'ctrl',
+                // tslint:disable-next-line:no-shadowed-variable
+                controller: ($scope: any, $mdDialog: any) => { // shadowing is needed for inline controllers
+                    const dc = this
+
+                    dc.$onInit = () => {
+                        dc.close = close
+                    }
+
+                    function close() {
+                        // console.log('closing mdPanel')
+                        if ($mdDialog) {
+                            $mdDialog.hide()
+                        }
+                    }
+
+                    $scope.close = close
+                }
+            })
+                .then(() => {
+                }, () => {
+                    $scope.validateOfficeGroups()
+                    // IDX.setUrlOptions('Listing', {})
+                    // IDX.refreshUrlOptions($ctrl.defaultOptions)
+                    // Revery page title back to what it was
+                    // IDX.setPageTitle()
+                    // Let's destroy it to save memory
+                    // $timeout(IDX.unregisterDetailsInstance('property_member_detail_popup'), 10)
+                })
+        }
+
+        $scope.validateOfficeGroups = (search?: boolean): void => {
+            $scope.options.officeGroups = $scope.options.officeGroups.filter((selection) => {
+                return (!_.isEmpty(selection.name) && !_.isEmpty(selection.group))
+            })
+            const officeNumbers: string[] = []
+            $scope.options.query.where.OfficeNumber = [] as string[]
+            $scope.options.officeGroups.forEach((selection) => {
+                officeNumbers.push(...selection.group)
+            })
+            $scope.options.query.where.OfficeNumber = officeNumbers
+            if (search) {
+                $scope.search()
+            }
+        }
+
 
         /**
          * Have the widget options refreshed form the Widget's end
