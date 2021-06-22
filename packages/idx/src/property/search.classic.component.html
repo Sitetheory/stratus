@@ -6,7 +6,7 @@
                 <!-- TODO: add Address -->
                 <label>City, Neighborhood, Zip, Address</label>
                 <input data-ng-model="options.query.where.Location" type="text" maxlength="250"
-                       data-ng-keyup="$event.keyCode == 13 && options.query.where.Location && searchProperties()"
+                       data-ng-keyup="$event.keyCode == 13 && options.query.where.Location && search()"
                        autocomplete="off"
                 >
             </md-input-container>
@@ -234,7 +234,7 @@
                     <div class="sale-status-border dotted-spaced-underline"></div>
 
                     <div data-layout="row" data-layout-align="space-around center">
-                        <a class="btn" data-ng-click="searchProperties();filterMenu.close();">Search</a>
+                        <a class="btn" data-ng-click="search();filterMenu.close();">Search</a>
                     </div>
 
                 </div>
@@ -248,6 +248,6 @@
     </div>
 
     <div class="search-row" data-layout="row" data-layout-align="space-around center">
-        <a class="btn btn-submit" data-ng-click="searchProperties()">Search Now</a>
+        <a class="btn btn-submit" data-ng-click="search()">Search Now</a>
     </div>
 </div>

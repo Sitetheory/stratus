@@ -94,15 +94,11 @@ export type IdxPropertyListScope = IdxListScope<Property> & {
     getOrderOptions(): { [key: string]: string[] }
     getStreetAddress(property: Property): string
     hasQueryChanged(): boolean
-    pageChange(pageNumber: number, ev?: any): Promise<void>
-    pageNext(ev?: any): Promise<void>
-    pagePrevious(ev?: any): Promise<void>
-    orderChange(order: string | string[], ev?: any): Promise<void>
-    searchProperties(
+    /*searchProperties(
         query?: CompileFilterOptions,
         refresh?: boolean,
         updateUrl?: boolean
-    ): Promise<Collection<Property>>
+    ): Promise<Collection<Property>>*/
 }
 
 Stratus.Components.IdxPropertyList = {
@@ -344,7 +340,6 @@ Stratus.Components.IdxPropertyList = {
             $scope.preferredStatus = $attrs.preferredStatus || 'Closed' // Closed is most compatible
 
             $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
-            // $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
 
             $scope.query.service = $attrs.queryService && isJSON($attrs.queryService) ?
                 JSON.parse($attrs.queryService) : $scope.query.service || []
@@ -446,7 +441,7 @@ Stratus.Components.IdxPropertyList = {
                 // delete searchQuery.where.Page
                 // delete searchQuery.where.Order
                 // console.log('about to searchProperties for', _.clone(searchQuery))
-                await $scope.searchProperties(searchQuery, false, false)
+                await $scope.search(searchQuery, false, false)
             }
 
             $scope.$applyAsync(() => {
@@ -514,7 +509,7 @@ Stratus.Components.IdxPropertyList = {
          * TODO Idx needs to export search query interface
          * Returns Collection<Property>
          */
-        $scope.searchProperties = async (
+        $scope.search = $scope.searchProperties = async (
             query?: CompileFilterOptions,
             refresh?: boolean,
             updateUrl?: boolean
@@ -523,7 +518,7 @@ Stratus.Components.IdxPropertyList = {
                 if ($scope.collection.pending) {
                     // Do do anything if the collection isn't ready yet
                     // revert to last query as this never fired
-                    $scope.query = $ctrl.lastQuery
+                    $scope.query = _.cloneDeep($ctrl.lastQuery)
                     resolve([])
                     return
                 }
@@ -645,7 +640,7 @@ Stratus.Components.IdxPropertyList = {
                         // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                         // Grab the new property listings
                         const results = await Idx.fetchProperties($scope, 'collection', $scope.query, refresh)
-                        $ctrl.lastQuery = _.clone($scope.query)
+                        $ctrl.lastQuery = _.cloneDeep($scope.query)
                         // $applyAsync will automatically be applied
                         Idx.emit('searched', $scope, _.clone($scope.query))
                         resolve(results)
@@ -670,8 +665,9 @@ Stratus.Components.IdxPropertyList = {
                 ev.preventDefault()
             }
             $scope.query.page = pageNumber
+            // Need scroll options
             $anchorScroll($scope.elementId) // Scroll to the top again
-            await $scope.searchProperties()
+            await $scope.search()
             Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
         }
 
@@ -732,7 +728,7 @@ Stratus.Components.IdxPropertyList = {
                 ev.preventDefault()
             }
             $scope.query.order = order
-            await $scope.searchProperties(null, true, true)
+            await $scope.search(null, true, true)
             Idx.emit('orderChanged', $scope, _.clone(order))
         }
 

@@ -5,7 +5,7 @@
 import _ from 'lodash'
 import {Stratus} from '@stratusjs/runtime/stratus'
 import * as angular from 'angular'
-import {IPromise} from 'angular'
+import {IPromise, IScope} from 'angular'
 
 // Services
 import '@stratusjs/angularjs/services/model' // Needed as $provider
@@ -17,12 +17,18 @@ import {Collection} from '@stratusjs/angularjs/services/collection' // Needed as
 import '@stratusjs/idx/listTrac'
 
 // Stratus Dependencies
-import {isJSON, LooseObject} from '@stratusjs/core/misc'
+import {
+    AnyFunction,
+    isJSON,
+    LooseObject,
+    ObjectWithFunctions
+} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 import {IdxDisclaimerScope} from '@stratusjs/idx/disclaimer/disclaimer.component'
 import {IdxMapScope} from '@stratusjs/idx/map/map.component'
 import {IdxPropertyListScope} from '@stratusjs/idx/property/list.component'
 import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
+import {IdxMemberListScope} from '@stratusjs/idx/member/list.component'
 // import {IdxPropertyDetailsScope} from '@stratusjs/idx/property/details.component'
 // import {IdxMapScope} from '@stratusjs/idx/map.component'
 
@@ -31,13 +37,6 @@ import {IdxPropertySearchScope} from '@stratusjs/idx/property/search.component'
 // const min = !cookie('env') ? '.min' : ''
 // There is not a very consistent way of pathing in Stratus at the moment
 // const localDir = `/${boot.bundle}node_modules/@stratusjs/${packageName}/src/${moduleName}/`
-
-export type AnyFunction = (...args: any) => any
-
-/** Allow an Object to contain any number of unspecified functions, useful in $scope */
-export interface ObjectWithFunctions {
-    [key: string]: AnyFunction
-}
 
 export interface IdxService {
     [key: string]: AnyFunction | IdxSharedValue
@@ -79,7 +78,7 @@ export interface IdxService {
     // Instance Methods
     getDisclaimerInstance(disclaimerUid?: string): {[uid: string]: IdxDisclaimerScope} | null
 
-    getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxComponentScope | null
+    getListInstance(listUid: string, listType?: string): IdxPropertyListScope | IdxMemberListScope | IdxComponentScope | null
 
     getListInstanceLinks(listUid: string, listType?: string): (IdxPropertySearchScope | IdxMapScope | IdxComponentScope)[]
 
@@ -164,6 +163,18 @@ export interface IdxService {
     getLastQueryTime(): Date|null
 
     getLastSessionTime(): Date|null
+
+    // Scope helpers
+
+    getInput(elementId: string): JQLite
+
+    getNestedPathValue(currentNest: object | any, pathPieces: string[]): any
+
+    getScopeValuePath(scope: IScope, scopeVarPath: string): any
+
+    updateNestedPathValue(currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any>
+
+    updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any>
 }
 
 export type IdxComponentScope = angular.IScope & ObjectWithFunctions & {
@@ -182,10 +193,17 @@ export type IdxDetailsScope<T = LooseObject> = IdxComponentScope & {
 export type IdxListScope<T = LooseObject> = IdxComponentScope & {
     collection: Collection<T>
 
+    search(query?: CompileFilterOptions, refresh?: boolean, updateUrl?: boolean): Promise<Collection<T>>
+
+    orderChange(order: string | string[], ev?: any): Promise<void>
+    pageChange(pageNumber: number, ev?: any): Promise<void>
+    pageNext(ev?: any): Promise<void>
+    pagePrevious(ev?: any): Promise<void>
+
     displayModelDetails(model: T, ev?: any): void
     getPageModels(): T[]
-    highlightModel(model: T, timeout?: number): void
     scrollToModel(model: T): void
+    highlightModel(model: T, timeout?: number): void
     unhighlightModel(model: T): void
 }
 
@@ -194,6 +212,12 @@ export type IdxSearchScope = IdxComponentScope & {
     listInitialized: boolean
 
     refreshSearchWidgetOptions(listScope?: IdxListScope): void
+    search(): void
+}
+
+export type SelectionGroup = {
+    name: string
+    group: string[]
 }
 
 export interface UrlsOptionsObject {
@@ -234,6 +258,7 @@ export interface WhereOptions extends LooseObject {
     Neighborhood?: string[] | string,
     AgentLicense?: string[] | string, // Converts on server to multiple checks
     OfficeNumber?: string[] | string, // Converts on server to multiple checks
+    OfficeName?: string[] | string, // Converts on server to multiple checks
     OpenHouseOnly?: boolean, // Filters by only those with OpenHouses attached
 
     // Member
@@ -247,7 +272,6 @@ export interface WhereOptions extends LooseObject {
     OfficeKey?: string,
     OfficeNationalAssociationId?: string,
     OfficeStatus?: string,
-    OfficeName?: string,
 }
 
 export interface CompileFilterOptions extends LooseObject {
@@ -422,6 +446,8 @@ interface MongoFilterQuery {
 export interface Office extends LooseObject {
     id: string
     OfficeKey: string
+    OfficeMlsId?: string
+    _OfficeNumber?: string
 
     _unmapped?: {
         [key: string]: unknown
@@ -435,6 +461,7 @@ export interface Member extends LooseObject {
     MemberFullName?: string
     MemberFirstName?: string
     MemberLastName?: string
+    _MemberNumber?: string
     OfficeKey: string
     OfficeMlsId?: string
 
@@ -543,6 +570,25 @@ export interface Property extends LooseObject {
     }
 }
 
+interface SearchObject {
+    type: 'valueEquals' | // Input is a string, needs to equal another string or number field
+        'stringLike' | // Input is a string, needs to be similar to another string field
+        'stringLikeArray' | // Input is a string or array, one of which needs to be found similar to db string field
+        'stringIncludesArray' | // Input is a string or array, one of which needs to be found equal to db string field
+        'stringIncludesArrayAlternative' | // Input is a string or array, one of which needs to be found equal to db string field
+        'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
+        'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
+        'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
+    apiField?: string, // Used if the widgetField name is different from the field in database
+    andOr?: Array<{
+        apiField: string,
+        type: 'valueEquals'
+            | 'stringLike'
+            | 'stringLikeArray'
+            | 'stringIncludesArray'
+    }>
+}
+
 export type IdxEmitter = (source: IdxComponentScope, var1?: any, var2?: any, var3?: any) => any
 export type IdxEmitterInit = IdxEmitter & ((source: IdxComponentScope) => any)
 export type IdxEmitterSessionInit = IdxEmitter & ((source: null) => any)
@@ -593,7 +639,8 @@ const angularJsService = (
         // NOTE: at this point we don't know if CityRegion is used (or how it differs from MLSAreaMajor)
         CityRegion: [],
         AgentLicense: [],
-        OfficeNumber: []
+        OfficeNumber: [],
+        OfficeName: []
     }
     let idxServicesEnabled: number[] = []
     let tokenRefreshURL = '/ajax/request?class=property.token_auth&method=getToken'
@@ -743,7 +790,11 @@ const angularJsService = (
             Object.prototype.hasOwnProperty.call(instanceOnEmitters[uid], emitterName)
         ) {
             Object.values(instanceOnEmitters[uid][emitterName]).forEach((emitter) => {
-                emitter($scope, var1, var2, var3)
+                try {
+                    emitter($scope, var1, var2, var3)
+                } catch (e) {
+                    console.error(e, 'issue sending back emitter on', uid, emitterName, emitter)
+                }
             })
         }
 
@@ -1586,121 +1637,14 @@ const angularJsService = (
 
     /**
      * @param where - {WhereOptions}
+     * @param searchPossibilities List of Fields we can search for within the Widget's URL and option on List pages
+     * The key is the field that the Widget accepts/expects
+     * The apiField is the key that the microIdx can accept
      */
-    function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
+    function compileGenericWhereFilter(where: WhereOptions, searchPossibilities: { [key: string]: SearchObject }): MongoWhereQuery {
         const whereQuery: MongoWhereQuery = {}
         // andStatement is the collection of query's nested in an And filter
         const andStatement: MongoWhereQuery[] = [] // TS detecting [] as string[] otherwise
-
-        interface SearchObject {
-            type: 'valueEquals' | // Input is a string, needs to equal another string or number field
-                'stringLike' | // Input is a string, needs to be similar to another string field
-                'stringLikeArray' | // Input is a string or array, one of which needs to be found similar to db string field
-                'stringIncludesArray' | // Input is a string or array, one of which needs to be found equal to db string field
-                'stringIncludesArrayAlternative' | // Input is a string or array, one of which needs to be found equal to db string field
-                'numberEqualGreater' | // Input is a string/number, needs to equal or greater than another number field
-                'numberEqualLess' | // Input is a string/number, needs to equal or less than another number field
-                'andOr', // Input is a string/number, needs to evaluate on any of the supplied statements contained
-            apiField?: string, // Used if the widgetField name is different from the field in database
-            andOr?: Array<{
-                apiField: string,
-                type: 'valueEquals'
-                    | 'stringLike'
-                    | 'stringLikeArray'
-                    | 'stringIncludesArray'
-            }>
-        }
-
-        /**
-         * List of Fields we can search for within the Widget's URL and option on List pages
-         * The key is the field that the Widget accepts/expects
-         * The apiField is the key that the microIdx can accept
-         */
-        const searchPossibilities: { [key: string]: SearchObject } = {
-            ListingKey: {
-                type: 'valueEquals'
-            },
-            ListingId: {
-                type: 'valueEquals'
-            },
-            ListingType: {
-                type: 'stringIncludesArray'
-            },
-            Status: {
-                type: 'stringIncludesArray'
-            },
-            ListPriceMin: {
-                type: 'numberEqualGreater',
-                apiField: 'ListPrice'
-            },
-            ListPriceMax: {
-                type: 'numberEqualLess',
-                apiField: 'ListPrice'
-            },
-            Bathrooms: {
-                type: 'numberEqualGreater'
-            },
-            Bedrooms: {
-                type: 'numberEqualGreater',
-                apiField: 'BedroomsTotal'
-            },
-            AgentLicense: {
-                type: 'stringIncludesArray'
-            },
-            OfficeNumber: {
-                type: 'stringIncludesArray'
-            },
-            // Filters by only listings with OpenHouses
-            OpenHouseOnly: {
-                type: 'valueEquals'
-            },
-            // TODO: replace this with a generic API field that supports all MLS (which may not have
-            // TODO: Unparsed Address but instead have StreetName, StreetNumber, etc.
-            UnparsedAddress: {
-                type: 'stringLike'
-            },
-            City: {
-                type: 'stringLike'
-            },
-            PostalCode: {
-                type: 'stringIncludesArray'
-            },
-            CountyOrParish: {
-                // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                type: 'stringLikeArray'
-            },
-            MLSAreaMajor: {
-                // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                type: 'stringLikeArray'
-            },
-            CityRegion: {
-                // Note: only 'in' seems to work as a replacement for inq when nested in another object
-                type: 'stringIncludesArray'
-            },
-            Location: {
-                type: 'andOr',
-                andOr: [
-                    {apiField: 'City', type: 'stringLikeArray'},
-                    {apiField: 'CityRegion', type: 'stringLikeArray'},
-                    {apiField: 'CountyOrParish', type: 'stringLikeArray'},
-                    {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
-                    {apiField: 'PostalCode', type: 'stringLikeArray'},
-                    // TODO: in the future we should pass in a new defined field like Address (that will
-                    // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
-                    // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
-                    // TODO: and all those are LIKE (but all must match LIKE)
-                    {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
-                ]
-            },
-            Neighborhood: {
-                type: 'andOr',
-                andOr: [
-                    {apiField: 'CityRegion', type: 'stringLikeArray'},
-                    {apiField: 'CountyOrParish', type: 'stringLikeArray'},
-                    {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
-                ]
-            }
-        }
 
         // The type of search functions used by the above options
         // TODO since is still not fully optimized, but it's now much clean to look at and works faster
@@ -1854,72 +1798,157 @@ const angularJsService = (
             whereQuery.and = andStatement
         }
 
-
         return whereQuery
+    }
+
+    /**
+     * @param where - {WhereOptions}
+     */
+    function compilePropertyWhereFilter(where: WhereOptions): MongoWhereQuery {
+        return compileGenericWhereFilter(
+            where,
+            {
+                ListingKey: {
+                    type: 'valueEquals'
+                },
+                ListingId: {
+                    type: 'valueEquals'
+                },
+                ListingType: {
+                    type: 'stringIncludesArray'
+                },
+                Status: {
+                    type: 'stringIncludesArray'
+                },
+                ListPriceMin: {
+                    type: 'numberEqualGreater',
+                    apiField: 'ListPrice'
+                },
+                ListPriceMax: {
+                    type: 'numberEqualLess',
+                    apiField: 'ListPrice'
+                },
+                Bathrooms: {
+                    type: 'numberEqualGreater'
+                },
+                Bedrooms: {
+                    type: 'numberEqualGreater',
+                    apiField: 'BedroomsTotal'
+                },
+                AgentLicense: {
+                    type: 'stringIncludesArray'
+                },
+                OfficeNumber: {
+                    type: 'stringIncludesArray'
+                },
+                OfficeName: {
+                    type: 'stringIncludesArray'
+                },
+                // Filters by only listings with OpenHouses
+                OpenHouseOnly: {
+                    type: 'valueEquals'
+                },
+                // TODO: replace this with a generic API field that supports all MLS (which may not have
+                // TODO: Unparsed Address but instead have StreetName, StreetNumber, etc.
+                UnparsedAddress: {
+                    type: 'stringLike'
+                },
+                City: {
+                    type: 'stringLike'
+                },
+                PostalCode: {
+                    type: 'stringIncludesArray'
+                },
+                CountyOrParish: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringLikeArray'
+                },
+                MLSAreaMajor: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringLikeArray'
+                },
+                CityRegion: {
+                    // Note: only 'in' seems to work as a replacement for inq when nested in another object
+                    type: 'stringIncludesArray'
+                },
+                Location: {
+                    type: 'andOr',
+                    andOr: [
+                        {apiField: 'City', type: 'stringLikeArray'},
+                        {apiField: 'CityRegion', type: 'stringLikeArray'},
+                        {apiField: 'CountyOrParish', type: 'stringLikeArray'},
+                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'},
+                        {apiField: 'PostalCode', type: 'stringLikeArray'},
+                        // TODO: in the future we should pass in a new defined field like Address (that will
+                        // TODO: search UnparsedAddress if it exists for the service, OR the API will parse
+                        // TODO: it into StreetNumber, StreetName, StreetSuffix, depending on what's provided
+                        // TODO: and all those are LIKE (but all must match LIKE)
+                        {apiField: 'UnparsedAddress', type: 'stringLikeArray'},
+                        {apiField: 'ListingId', type: 'stringIncludesArray'},
+                    ]
+                },
+                Neighborhood: {
+                    type: 'andOr',
+                    andOr: [
+                        {apiField: 'CityRegion', type: 'stringLikeArray'},
+                        {apiField: 'CountyOrParish', type: 'stringLikeArray'},
+                        {apiField: 'MLSAreaMajor', type: 'stringLikeArray'}
+                    ]
+                }
+            }
+            )
     }
 
     /**
      * @param where - {WhereOptions}
      */
     function compileMemberWhereFilter(where: WhereOptions): MongoWhereQuery {
-        const whereQuery: MongoWhereQuery = {}
-        // MemberKey
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberKey') && where.MemberKey !== '') {
-            whereQuery.MemberKey = where.MemberKey
-        }
-        // MemberStateLicense
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberStateLicense') && where.MemberStateLicense !== '') {
-            whereQuery.MemberStateLicense = where.MemberStateLicense
-        }
-        // MemberNationalAssociationId
-        if (
-            Object.prototype.hasOwnProperty.call(where, 'MemberNationalAssociationId') &&
-            where.MemberNationalAssociationId !== ''
-        ) {
-            whereQuery.MemberNationalAssociationId = where.MemberNationalAssociationId
-        }
-        // MemberStatus
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberStatus') && where.MemberStatus !== '') {
-            whereQuery.MemberStatus = where.MemberStatus
-        }
-        // MemberFullName
-        if (Object.prototype.hasOwnProperty.call(where, 'MemberFullName') && where.MemberFullName !== '') {
-            whereQuery.MemberFullName = {
-                like: where.MemberFullName,
-                options: 'i'
+        return compileGenericWhereFilter(
+            where,
+            {
+                MemberKey: {
+                    type: 'valueEquals'
+                },
+                MemberStateLicense: {
+                    type: 'valueEquals'
+                },
+                MemberNationalAssociationId: {
+                    type: 'valueEquals'
+                },
+                MemberStatus: {
+                    type: 'valueEquals'
+                },
+                MemberFullName: {
+                    type: 'stringLike'
+                }
             }
-        }
-        return whereQuery
+        )
     }
 
     /**
      * @param where - {WhereOptions}
      */
     function compileOfficeWhereFilter(where: WhereOptions): MongoWhereQuery {
-        const whereQuery: MongoWhereQuery = {}
-        // OfficeKey
-        if (Object.prototype.hasOwnProperty.call(where, 'OfficeKey') && where.OfficeKey !== '') {
-            whereQuery.OfficeKey = where.OfficeKey
-        }
-        // OfficeNationalAssociationId
-        if (
-            Object.prototype.hasOwnProperty.call(where, 'OfficeNationalAssociationId') &&
-            where.OfficeNationalAssociationId !== ''
-        ) {
-            whereQuery.OfficeNationalAssociationId = where.OfficeNationalAssociationId
-        }
-        // OfficeStatus
-        if (Object.prototype.hasOwnProperty.call(where, 'OfficeStatus') && where.OfficeStatus !== '') {
-            whereQuery.OfficeStatus = where.OfficeStatus
-        }
-        // OfficeName
-        if (Object.prototype.hasOwnProperty.call(where, 'OfficeName') && where.OfficeName !== '') {
-            whereQuery.OfficeName = {
-                like: where.OfficeName,
-                options: 'i'
+        return compileGenericWhereFilter(
+            where,
+            {
+                OfficeKey: {
+                    type: 'valueEquals'
+                },
+                OfficeNationalAssociationId: {
+                    type: 'valueEquals'
+                },
+                OfficeStatus: {
+                    type: 'valueEquals'
+                },
+                OfficeNumber: {
+                    type: 'stringIncludesArray'
+                },
+                OfficeName: {
+                    type: 'stringLikeArray'
+                }
             }
-        }
-        return whereQuery
+        )
     }
 
     /**
@@ -2051,10 +2080,17 @@ const angularJsService = (
                         } else {
                             includeItem.scope.fields = option.fields
                         }
+                    } else if (
+                        Object.prototype.hasOwnProperty.call(option, 'limit') &&
+                        _.isNumber(option.limit)
+                    ) {
+                        includeItem.scope.limit = option.limit
                     }
                 }
 
-                includes.push(includeItem)
+                if (option !== false) {
+                    includes.push(includeItem)
+                }
             }
         })
 
@@ -2928,11 +2964,13 @@ const angularJsService = (
         options.fields = options.fields || [
             '_id',
             'OfficeKey',
+            'OfficeMlsId',
             'OfficeName',
             'OfficeNationalAssociationId',
             'OfficeStatus',
             'OfficePhone',
             'OfficeAddress1',
+            'OfficeCity',
             'OfficePostalCode',
             'OfficeBrokerKey'
         ]
@@ -3127,6 +3165,103 @@ const angularJsService = (
         return googleMapsKey
     }
 
+    /**
+     * Get the Input element of a specified ID
+     */
+    function getInput(elementId: string): JQLite {
+        return angular.element(document.getElementById(elementId))
+    }
+
+    function getScopeValuePath(scope: IScope, scopeVarPath: string): any {
+        // console.log('Update getScopeValuePath', scopeVarPath)
+        const scopePieces = scopeVarPath.split('.')
+        return getNestedPathValue(scope, scopePieces)
+    }
+
+    function getNestedPathValue(currentNest: object | any, pathPieces: string[]): any {
+        const currentPiece = pathPieces.shift()
+        if (pathPieces[0]) {
+            return getNestedPathValue(currentNest[currentPiece], pathPieces)
+        } else if ( Object.prototype.hasOwnProperty.call(currentNest, currentPiece)) {
+            return currentNest[currentPiece]
+        } else {
+            return null
+        }
+    }
+
+    /**
+     * Update a scope nest variable from a given string path.
+     * Works with updateNestedPathValue
+     */
+    async function updateScopeValuePath(scope: IScope, scopeVarPath: string, value: any): Promise<string | any> {
+        if (
+            value == null ||
+            value === 'null' ||
+            value === ''
+        ) {
+            return false
+        }
+        // console.log('Update updateScopeValuePath', scopeVarPath, 'to', value, typeof value)
+        const scopePieces = scopeVarPath.split('.')
+        return updateNestedPathValue(scope, scopePieces, value)
+    }
+
+    /**
+     * Nests further into a string path to update a value
+     * Works from updateScopeValuePath
+     */
+    async function updateNestedPathValue(currentNest: object | any, pathPieces: object | any, value: any): Promise<string | any> {
+        const currentPiece = pathPieces.shift()
+        if (
+            // Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
+            currentPiece
+        ) {
+            // console.log('checking piece', currentPiece, 'in', currentNest)
+            if (pathPieces[0]) {
+                return updateNestedPathValue(currentNest[currentPiece], pathPieces, value)
+            } else if (
+                Object.prototype.hasOwnProperty.call(currentNest, currentPiece) &&
+                (!_.isArray(currentNest[currentPiece]) && _.isArray(value))
+            ) {
+                console.warn(
+                    'updateNestedPathValue couldn\'t connect', currentPiece, ' as value given is array, but value stored is not: ',
+                    _.clone(currentNest), 'It may need to be initialized first (as an array)'
+                )
+            } else {
+                if (_.isArray(currentNest[currentPiece]) && !_.isArray(value) && !isJSON(value)) {
+                    // console.log('checking if this was an array', _.clone(value))
+                    value = value === '' ? [] : value.split(',')
+                }/* else if (
+                        _.isString(value) &&
+                        (value[0] === '[' || value[0] === '{') &&
+                        isJSON(value)
+                    ) {
+                        value = JSON.parse(value)
+                        console.log('converted', value, 'to object')
+                    }*/
+                // console.log(currentPiece, 'updated to ', value)
+                // FIXME need to checks the typeof currentNest[currentPiece] and convert value to that type.
+                // This is mostly just to allow a whole object to be passed in and saved
+                if (
+                    !_.isArray(value) &&
+                    (
+                        _.isObject(currentNest[currentPiece]) ||
+                        isJSON(value)
+                    )
+                ) {
+                    // console.log('parsing', _.clone(value))
+                    currentNest[currentPiece] = JSON.parse(value)
+                } else {
+                    currentNest[currentPiece] = _.clone(value)
+                }
+                return value
+            }
+        } else {
+            console.warn('updateNestedPathValue couldn\'t find', currentPiece, 'in', _.clone(currentNest), 'It may need to be initialized first')
+            return null
+        }
+    }
+
     return {
         fetchMembers,
         fetchOffices,
@@ -3143,11 +3278,14 @@ const angularJsService = (
         getFullStatus,
         getGoogleMapsKey,
         getIdxServices,
+        getInput,
+        getScopeValuePath,
         getLastQueryTime,
         getLastSessionTime,
         getListInstance,
         getListInstanceLinks,
         getMLSVariables,
+        getNestedPathValue,
         getOptionsFromUrl,
         getSearchInstanceLinks,
         getStreetAddress,
@@ -3166,6 +3304,8 @@ const angularJsService = (
         sharedValues,
         tokenKeepAuth,
         refreshUrlOptions,
+        updateNestedPathValue,
+        updateScopeValuePath,
         unregisterDetailsInstance
     }
 }

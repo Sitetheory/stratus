@@ -1,7 +1,7 @@
 /**
- * @file IdxMemberList Component @stratusjs/idx/member/list.component
- * @example <stratus-idx-member-list>
- * @see https://github.com/Sitetheory/stratus/wiki/Idx-Member-List-Widget
+ * @file IdxOfficeList Component @stratusjs/idx/office/list.component
+ * @example <stratus-idx-office-list>
+ * @see https://github.com/Sitetheory/stratus/wiki/Idx-Office-List-Widget
  */
 
 // Runtime
@@ -21,7 +21,7 @@ import {
     IdxEmitter,
     IdxListScope,
     IdxService,
-    Member
+    Office
 } from '@stratusjs/idx/idx'
 
 // Stratus Dependencies
@@ -30,19 +30,22 @@ import {isJSON, LooseObject} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Component Preload
-import '@stratusjs/idx/member/details.component'
+// import '@stratusjs/idx/office/details.component'
 import '@stratusjs/idx/disclaimer/disclaimer.component'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const packageName = 'idx'
-const moduleName = 'member'
+const moduleName = 'office'
 const componentName = 'list'
 // There is not a very consistent way of pathing in Stratus at the moment
 const localDir = `${Stratus.BaseUrl}${Stratus.DeploymentPath}@stratusjs/${packageName}/src/${moduleName}/`
 
-export type IdxMemberListScope = IdxListScope<Member> & {
-    options: CompileFilterOptions // FIXME rename to query
+export type IdxOfficeListScope = IdxListScope<Office> & {
+    // options: CompileFilterOptions // FIXME rename to query
+    initialized: boolean
+    urlLoad: boolean
+    searchOnLoad: boolean
     query: CompileFilterOptions
 
     detailsLinkPopup: boolean
@@ -52,21 +55,24 @@ export type IdxMemberListScope = IdxListScope<Member> & {
 
     variableSyncing?: LooseObject
 
-    displayModelDetails(model: Member, ev?: any): void
-    injectMemberDetails(member: any): Promise<void>
-    variableInject(member: Member): Promise<void>
+    displayModelDetails(model: Office, ev?: any): void
+    variableInject(member: Office): Promise<void>
 }
 
-Stratus.Components.IdxMemberList = {
+Stratus.Components.IdxOfficeList = {
     bindings: {
         // TODO wiki docs
         elementId: '@',
         tokenUrl: '@',
+        urlLoad: '@',
+        searchOnLoad: '@',
         detailsLinkPopup: '@',
         detailsLinkUrl: '@',
         detailsLinkTarget: '@',
         orderOptions: '@',
-        options: '@',
+        query: '@',
+        /** Type: number[] */
+        queryService: '@',
         template: '@',
         variableSync: '@'
     },
@@ -77,7 +83,7 @@ Stratus.Components.IdxMemberList = {
         $mdDialog: angular.material.IDialogService,
         $timeout: angular.ITimeoutService,
         $sce: angular.ISCEService,
-        $scope: IdxMemberListScope,
+        $scope: IdxOfficeListScope,
         $window: angular.IWindowService,
         Idx: IdxService,
     ) {
@@ -89,37 +95,46 @@ Stratus.Components.IdxMemberList = {
         if ($attrs.tokenUrl) {
             Idx.setTokenURL($attrs.tokenUrl)
         }
-        Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
+        // Stratus.Internals.CssLoader(`${localDir}${$attrs.template || componentName}.component${min}.css`)
 
         /**
          * All actions that happen first when the component loads
          * Needs to be placed in a function, as the functions below need to the initialized first
          */
-        $ctrl.$onInit = async () => {
+        const init = async () => {
             /**
              * Allow options to be loaded initially from the URL
              */
-            $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : true
+            $scope.urlLoad = $attrs.urlLoad && isJSON($attrs.urlLoad) ? JSON.parse($attrs.urlLoad) : false
+            $scope.searchOnLoad = $attrs.searchOnLoad && isJSON($attrs.searchOnLoad) ? JSON.parse($attrs.searchOnLoad) : false
             $scope.detailsLinkPopup = $attrs.detailsLinkPopup && isJSON($attrs.detailsLinkPopup) ?
                 JSON.parse($attrs.detailsLinkPopup) : true
-            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || '/property/member/details'
+            $scope.detailsLinkUrl = $attrs.detailsLinkUrl || '/property/office/details'
             $scope.detailsLinkTarget = $attrs.detailsLinkTarget || '_self'
 
-            $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+            $scope.query = $attrs.query && isJSON($attrs.query) ? JSON.parse($attrs.query) : {}
+            $scope.query.service = $attrs.queryService && isJSON($attrs.queryService) ?
+                JSON.parse($attrs.queryService) : $scope.query.service || []
 
-            $scope.options.order = $scope.options.order || null// will be set by Service
-            $scope.options.page = $scope.options.page || null// will be set by Service
-            $scope.options.perPage = $scope.options.perPage || 25
-            $scope.options.images = $scope.options.images || {limit: 1}
+            $scope.query.order =
+                $scope.query.order && _.isString($scope.query.order) && isJSON($scope.query.order) ? JSON.parse($scope.query.order) :
+                    $attrs.queryOrder && isJSON($attrs.queryOrder) ? JSON.parse($attrs.queryOrder) : $scope.query.order || null
+            $scope.query.page = $scope.query.page || null// will be set by Service
+            $scope.query.perPage = $scope.query.perPage ||
+                ($attrs.queryPerPage && _.isString($attrs.queryPerPage) ? parseInt($attrs.queryPerPage, 10) : null) ||
+                ($attrs.queryPerPage && _.isNumber($attrs.queryPerPage) ? $attrs.queryPerPage : null) ||
+                25
 
-            $scope.options.where = $scope.options.where || {}
+            $scope.query.where = $attrs.queryWhere && isJSON($attrs.queryWhere) ? JSON.parse($attrs.queryWhere) : $scope.query.where || []
             // Fixme, sometimes it's just MemberMlsAccessYN ....
-            // $scope.options.where.MemberStatus = $scope.options.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
+            // $scope.query.where.MemberStatus = $scope.query.where.MemberStatus || {inq: ['Active', 'Yes', 'TRUE']}
 
-            // $scope.options.where.MemberKey = $scope.options.where.MemberKey || '91045'
-            // $scope.options.where.AgentLicense = $scope.options.where.AgentLicense || []*/
+            // $scope.query.where.MemberKey = $scope.query.where.MemberKey || '91045'
+            // $scope.query.where.AgentLicense = $scope.query.where.AgentLicense || []*/
 
-            $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.options.where))// Extend/clone doesn't work for arrays
+            $ctrl.defaultOptions = JSON.parse(JSON.stringify($scope.query.where))// Extend/clone doesn't work for arrays
+            $ctrl.defaultQuery = JSON.parse(JSON.stringify($scope.query.where)) // Extend/clone doesn't work for arrays
+            // $ctrl.lastQuery = {}
 
             /* $scope.orderOptions = $scope.orderOptions || {
               'Price (high to low)': '-ListPrice',
@@ -131,10 +146,11 @@ Stratus.Components.IdxMemberList = {
             // Register this List with the Property service
             Idx.registerListInstance($scope.elementId, moduleName, $scope)
 
-            const urlOptions: { Search?: any } = {}
+            // const urlOptions: { Search?: any } = {}
+            // const urlQuery: { Search?: any } = {}
             /* if ($scope.urlLoad) {
               // first set the UrlOptions via defaults (cloning so it can't be altered)
-              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultOptions)))
+              Idx.setUrlOptions('Search', JSON.parse(JSON.stringify($ctrl.defaultQuery)))
               // Load Options from the provided URL settings
               urlOptions = Idx.getOptionsFromUrl()
               // If a specific listing is provided, be sure to pop it up as well
@@ -146,31 +162,68 @@ Stratus.Components.IdxMemberList = {
               }
             } */
 
-            await $scope.search(urlOptions.Search, true, false)
-            Idx.emit('init', $scope)
+            // if ($scope.urlLoad) {
+            // await $scope.search(urlQuery.Search, true, false)
+            // }
+
+            if ($scope.searchOnLoad) {
+                await $scope.search($scope.query, false, false)
+            }
+
+            $scope.$applyAsync(() => {
+                $scope.initialized = true
+                Idx.emit('init', $scope)
+            })
+        }
+
+        // Initialization by Event
+        $ctrl.$onInit = () => {
+            $scope.Idx = Idx
+            $scope.collection = new Collection<Office>({})
+
+            let initNow = true
+            if (Object.prototype.hasOwnProperty.call($attrs.$attr, 'initNow')) {
+                // TODO: This needs better logic to determine what is acceptably initialized
+                initNow = isJSON($attrs.initNow) ? JSON.parse($attrs.initNow) : false
+            }
+
+            if (initNow) {
+                init()
+                return
+            }
+
+            $ctrl.stopWatchingInitNow = $scope.$watch('$ctrl.initNow', (initNowCtrl: boolean) => {
+                if (initNowCtrl !== true) {
+                    return
+                }
+                if (!$scope.initialized) {
+                    init()
+                }
+                $ctrl.stopWatchingInitNow()
+            })
         }
 
         $scope.$watch('collection.models', () => { // models?: []
             if ($scope.collection.completed) {
-                Idx.emit('collectionUpdated', $scope, $scope.collection)
+                Idx.emit('collectionUpdated', $scope, _.clone($scope.collection))
             }
         })
 
-        $scope.getPageModels = (): Member[] => {
+        $scope.getPageModels = (): Office[] => {
             // console.log('checking $scope.collection.models', $scope.collection.models)
-            const members: Member[] = []
+            const offices: Office[] = []
             // only get the page's models, not every single model in collection
-            const models = $scope.collection.models as Member[]
+            const models = $scope.collection.models as Office[]
             models.slice(
                 ($scope.query.perPage * ($scope.query.page - 1)), // 20 * (1 - 1) = 0. 20 * (2 - 1) = 20
                 ($scope.query.perPage * $scope.query.page) // e.g. 20 * 1 = 20. 20 * 2 = 40
             ).forEach((member) => {
-                members.push(member)
+                offices.push(member)
             })
-            return members
+            return offices
         }
 
-        $scope.scrollToModel = (model: Member): void => {
+        $scope.scrollToModel = (model: Office): void => {
             $anchorScroll(`${$scope.elementId}_${model._id}`)
         }
 
@@ -179,61 +232,112 @@ Stratus.Components.IdxMemberList = {
          * may update the URL options, so it may not be ideal to use on page load
          * TODO Idx needs to export search options interface
          */
-        $scope.search = $scope.searchMembers = async (
-            options?: CompileFilterOptions, // FIXME rename to query
+        $scope.search = async (
+            query?: CompileFilterOptions, // FIXME rename to query
             refresh?: boolean,
             updateUrl?: boolean
-        ): Promise<Collection<Member>> =>
+        ): Promise<Collection<Office>> =>
             $q(async (resolve: any) => {
-                options = options || {}
+                query = query || {}
                 updateUrl = updateUrl === false ? updateUrl : true
+                // console.log('searching for', _.clone(query))
 
                 // If refreshing, reset to page 1
-                if (refresh) {
-                    $scope.options.page = 1
-                }
-                // If search options sent, update the Widget. Otherwise use the widgets current where settings
-                if (Object.keys(options.where).length > 0) {
-                    delete ($scope.options.where)
-                    $scope.options.where = options.where
-                    if ($scope.options.where.Page) {
-                        $scope.options.page = $scope.options.where.Page
-                        delete ($scope.options.where.Page)
+                /*if (refresh) {
+                    $scope.query.page = 1
+                }*/
+                // If search query sent, update the Widget. Otherwise use the widgets current where settings
+                if (Object.keys(query.where).length > 0) {
+                    // delete ($scope.query.where)
+                    $scope.query.where = query.where
+                    /*if ($scope.query.where.Page) {
+                        $scope.query.page = $scope.query.where.Page
+                        delete ($scope.query.where.Page)
                     }
-                    if ($scope.options.where.Order) {
-                        $scope.options.order = $scope.options.where.Order
-                        delete ($scope.options.where.Order)
-                    }
-                } else {
-                    options = $scope.options.where || {}
-                }
-                // If a different page, set it in the URL
-                if ($scope.options.page) {
-                    options.Page = $scope.options.page
+                    if ($scope.query.where.Order) {
+                        $scope.query.order = $scope.query.where.Order
+                        delete ($scope.query.where.Order)
+                    }*/
+                } /*else {
+                    urlWhere = $scope.query.where || {}
+                }*/
+                /* If a different page, set it in the URL
+                if ($scope.query.page) {
+                    query.Page = $scope.query.page
                 }
                 // Don't add Page/1 to the URL
-                if (options.Page <= 1) {
-                    delete (options.Page)
+                if (query.Page <= 1) {
+                    delete (query.Page)
+                }*/
+                // console.log('searching now for', _.clone(query))
+
+                // Page checks
+                // If a different page, set it in the URL
+                // If Page was placed in the where query, let's move it
+                if (query.where.page) {
+                    query.page = query.where.page
+                    delete query.where.page
                 }
-                if ($scope.options.order && $scope.options.order.length > 0) {
-                    options.Order = $scope.options.order
+                if (query.where.Page) {
+                    query.page = query.where.Page
+                    delete query.where.Page
                 }
+                if (query.page) {
+                    $scope.query.page = query.page
+                }
+                // If refreshing, reset to page 1
+                if (refresh) {
+                    $scope.query.page = 1
+                }
+                /*if ($scope.query.page) {
+                    urlWhere.Page = $scope.query.page
+                }
+                // Don't add Page/1 to the URL
+                if (urlWhere.Page <= 1) {
+                    delete (urlWhere.Page)
+                }*/
+
+                // If Order was placed in the where query, let's move it
+                if (query.where.order) {
+                    query.order = query.where.order
+                    delete query.where.order
+                }
+                if (query.where.Order) {
+                    query.order = query.where.Order
+                    delete query.where.Order
+                }
+                if (query.order) {
+                    $scope.query.order = query.order
+                    // delete ($scope.query.where.Order)
+                }
+                /*if ($scope.query.order && $scope.query.order.length > 0) {
+                    query.Order = $scope.query.order
+                }*/
 
                 // Set the URL options
                 // Idx.setUrlOptions('Search', options)
 
                 // Display the URL options in the address bar
                 /* if (updateUrl) {
-                  Idx.refreshUrlOptions($ctrl.defaultOptions)
+                  Idx.refreshUrlOptions($ctrl.defaultQuery)
                 } */
+
+                if (
+                    query.hasOwnProperty('service') &&
+                    !_.isNil(query.service)
+                ) {
+                    // service does not affect URLs as it's a page specific thing
+                    $scope.query.service = query.service
+                }
                 Idx.emit('searching', $scope, _.clone($scope.query))
 
                 // Grab the new member listings
-                // console.log('fetching members:', $scope.options)
+                // console.log('fetching members:', $scope.query)
                 try {
                     // resolve(Idx.fetchProperties($scope, 'collection', $scope.query, refresh))
                     // Grab the new property listings
-                    const results = await Idx.fetchMembers($scope, 'collection', $scope.options, refresh)
+                    const results = await Idx.fetchOffices($scope, 'collection', $scope.query, refresh)
+                    $ctrl.lastQuery = _.cloneDeep($scope.query)
                     Idx.emit('searched', $scope, _.clone($scope.query))
                     resolve(results)
                 } catch (e) {
@@ -252,14 +356,14 @@ Stratus.Components.IdxMemberList = {
                 return
             }
             // Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
-            Idx.emit('pageChanging', $scope, _.clone($scope.options.page))
+            Idx.emit('pageChanging', $scope, _.clone($scope.query.page))
             if (ev) {
                 ev.preventDefault()
             }
-            $scope.options.page = pageNumber
+            $scope.query.page = pageNumber
             await $scope.search()
             // Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
-            Idx.emit('pageChanged', $scope, _.clone($scope.options.page))
+            Idx.emit('pageChanged', $scope, _.clone($scope.query.page))
         }
 
         /**
@@ -271,14 +375,14 @@ Stratus.Components.IdxMemberList = {
                 // Do do anything if the collection isn't ready yet
                 return
             }
-            if (!$scope.options.page) {
-                $scope.options.page = 1
+            if (!$scope.query.page) {
+                $scope.query.page = 1
             }
-            if ($scope.collection.completed && $scope.options.page < $scope.collection.meta.data.totalPages) {
-                if (_.isString($scope.options.page)) {
-                    $scope.options.page = parseInt($scope.options.page, 10)
+            if ($scope.collection.completed && $scope.query.page < $scope.collection.meta.data.totalPages) {
+                if (_.isString($scope.query.page)) {
+                    $scope.query.page = parseInt($scope.query.page, 10)
                 }
-                await $scope.pageChange($scope.options.page + 1, ev)
+                await $scope.pageChange($scope.query.page + 1, ev)
             }
         }
 
@@ -291,14 +395,14 @@ Stratus.Components.IdxMemberList = {
                 // Do do anything if the collection isn't ready yet
                 return
             }
-            if (!$scope.options.page) {
-                $scope.options.page = 1
+            if (!$scope.query.page) {
+                $scope.query.page = 1
             }
-            if ($scope.collection.completed && $scope.options.page > 1) {
-                if (_.isString($scope.options.page)) {
-                    $scope.options.page = parseInt($scope.options.page, 10)
+            if ($scope.collection.completed && $scope.query.page > 1) {
+                if (_.isString($scope.query.page)) {
+                    $scope.query.page = parseInt($scope.query.page, 10)
                 }
-                const prev = $scope.options.page - 1 || 1
+                const prev = $scope.query.page - 1 || 1
                 await $scope.pageChange(prev, ev)
             }
         }
@@ -318,12 +422,12 @@ Stratus.Components.IdxMemberList = {
             if (ev) {
                 ev.preventDefault()
             }
-            $scope.options.order = order
+            $scope.query.order = order
             await $scope.search(null, true, true)
             Idx.emit('orderChanged', $scope, _.clone(order))
         }
 
-        $scope.highlightModel = (model: Member, timeout?: number): void => {
+        $scope.highlightModel = (model: Office, timeout?: number): void => {
             timeout = timeout || 0
             model._unmapped = model._unmapped || {}
             $scope.$applyAsync(() => {
@@ -336,7 +440,7 @@ Stratus.Components.IdxMemberList = {
             }
         }
 
-        $scope.unhighlightModel = (model: Member): void => {
+        $scope.unhighlightModel = (model: Office): void => {
             if (model) {
                 model._unmapped = model._unmapped || {}
                 $scope.$applyAsync(() => {
@@ -350,7 +454,7 @@ Stratus.Components.IdxMemberList = {
          * @param model - details object
          * @param ev - Click event
          */
-        $scope.displayModelDetails = (model: Member, ev?: any): void => {
+        $scope.displayModelDetails = (model: Office, ev?: any): void => {
             if (ev) {
                 ev.preventDefault()
                 // ev.stopPropagation()
@@ -393,7 +497,7 @@ Stratus.Components.IdxMemberList = {
                     .then(() => {
                     }, () => {
                         // Idx.setUrlOptions('Listing', {})
-                        // Idx.refreshUrlOptions($ctrl.defaultOptions)
+                        // Idx.refreshUrlOptions($ctrl.defaultQuery)
                         // Revery page title back to what it was
                         Idx.setPageTitle()
                         // Let's destroy it to save memory
@@ -404,17 +508,12 @@ Stratus.Components.IdxMemberList = {
             }
         }
 
-        $scope.injectMemberDetails = async (member: any): Promise<void> => {
-            // console.log('will add these details to a form', model)
-            await $scope.variableInject(member)
-        }
-
         /**
          * Sync Gutensite form variables to a Stratus scope
          * TODO move this to it's own directive/service
          */
         $scope.variableInject =
-            async (member: Member): Promise<void> => {
+            async (member: Office): Promise<void> => {
                 $scope.variableSyncing = $attrs.variableSync && isJSON($attrs.variableSync) ? JSON.parse($attrs.variableSync) : {}
                 Object.keys($scope.variableSyncing).forEach(elementId => {
                     // promises.push(

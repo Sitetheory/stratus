@@ -241,12 +241,35 @@
             </div>
             <div class="agent-specs-border dotted-spaced-underline"></div>
 
-            <!-- TODO As with agent above, this -could- later be replace with a Office look up widget -->
+            <!-- Office look up widget replaces office id-->
             <h3>Office</h3>
             <div class="office-specs"
                  data-layout="row"
                  data-layout-align="left"
-                 aria-label="Office Specs">
+            >
+                <md-chips
+                        class="office-groups font-secondary"
+                        aria-label="Office"
+                        data-ng-model="options.officeGroups"
+                        data-md-enable-chip-edit="true"
+                        data-placeholder="Office"
+                        data-secondary-placeholder="+Office"
+                        data-delete-button-label="Remove Office"
+                        data-delete-hint="Press delete to remove Office"
+                        data-md-transform-chip="displayOfficeGroupSelector($chip, null, $event)"
+                        data-md-on-remove="validateOfficeGroups()"
+                >
+                    <md-chip-template>
+                        <span data-ng-click="displayOfficeGroupSelector(null, $index, $event)">{{$chip.name}}</span>
+                    </md-chip-template>
+                </md-chips>
+            </div>
+            <div class="office-specs-border dotted-spaced-underline"></div>
+
+            <!--div class="office-specs"
+                 data-layout="row"
+                 data-layout-align="left"
+            >
                 <md-chips
                         class="office-number font-secondary"
                         aria-label="Office Number(s) to Search"
@@ -261,6 +284,25 @@
                 ></md-chips>
             </div>
             <div class="office-specs-border dotted-spaced-underline"></div>
+
+            <div class="office-specs"
+                 data-layout="row"
+                 data-layout-align="left"
+            >
+                <md-chips
+                        class="office-name font-secondary"
+                        aria-label="Office Names(s) to Search"
+                        data-ng-model="options.query.where.OfficeName"
+                        data-md-enable-chip-edit="true"
+                        data-md-add-on-blur="true"
+                        data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                        data-placeholder="Office Name"
+                        data-secondary-placeholder="+Office"
+                        data-delete-button-label="Remove Office"
+                        data-delete-hint="Press delete to remove Office"
+                ></md-chips>
+            </div>
+            <div class="office-specs-border dotted-spaced-underline"></div-->
 
             <h3>Display Options</h3>
 
@@ -302,6 +344,6 @@
 
     <!-- Preview Results will not appear if a list isn't defined -->
     <div class="search-row" data-layout="row" data-layout-align="space-around left" data-ng-if="listId">
-        <button type="button" class="btn btn-submit" data-ng-click="searchProperties()">Preview Results</button>
+        <button type="button" class="btn btn-submit" data-ng-click="search()">Preview Results</button>
     </div>
 </div>

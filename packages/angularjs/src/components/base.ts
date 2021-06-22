@@ -6,10 +6,7 @@ import {Stratus} from '@stratusjs/runtime/stratus'
 
 // Libraries
 import _ from 'lodash'
-import angular from 'angular'
-// tslint:disable-next-line:no-duplicate-imports
-import 'angular'
-import 'jquery'
+import * as angular from 'angular'
 
 // Angular 1 Modules
 import 'angular-material'
@@ -18,8 +15,6 @@ import 'angular-material'
 import '@stratusjs/angularjs/services/model'
 import '@stratusjs/angularjs/services/collection'
 import '@stratusjs/angularjs/services/registry'
-
-// Services
 // tslint:disable-next-line:no-duplicate-imports
 import {Model} from '@stratusjs/angularjs/services/model'
 // tslint:disable-next-line:no-duplicate-imports
@@ -28,12 +23,25 @@ import {Collection} from '@stratusjs/angularjs/services/collection'
 import {Registry} from '@stratusjs/angularjs/services/registry'
 
 // Stratus Utilities
+import {
+    ObjectWithFunctions
+} from '@stratusjs/core/misc'
 import {cookie} from '@stratusjs/core/environment'
 
 // Environment
 const min = !cookie('env') ? '.min' : ''
 const name = 'base'
 const localPath = '@stratusjs/angularjs/src/components'
+
+// This is a typed scope for the component below
+export type BaseScope = angular.IScope & ObjectWithFunctions & {
+    initialized: boolean
+    model: Model
+    collection: Collection
+    registry: Registry
+
+    initialize(): void
+}
 
 // This component is just a simple base.
 Stratus.Components.Base = {
@@ -71,8 +79,8 @@ Stratus.Components.Base = {
         options: '<'
     },
     controller(
-        $scope: angular.IScope & any,
-        $attrs: angular.IAttributes & any
+        $scope: BaseScope,
+        $attrs: angular.IAttributes
     ) {
         // Initialize
         const $ctrl = this
@@ -99,7 +107,7 @@ Stratus.Components.Base = {
         }
 
         // Symbiotic Data Connectivity
-        $scope.$watch('$ctrl.ngModel', (data: any) => {
+        $scope.$watch('$ctrl.ngModel', (data: Model) => {
             if (data instanceof Model && data !== $scope.model) {
                 $scope.model = data
             } else if (data instanceof Collection && data !== $scope.collection) {

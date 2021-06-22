@@ -23,7 +23,7 @@
             <!-- TODO: add a "search" icon that shows up ONLY when the location field is clickable and enterable. It should NOT show up with the preset-location text is showing up because it is confusing and makes a person feel like they should be able to click and edit. -->
             <!-- NOTE: some of these fields are arrays -->
             <md-icon class="search-icon"
-                     data-ng-click="searchProperties()"
+                     data-ng-click="search()"
                      data-ng-if="!(options.query.where.City || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)"
                      md-svg-src="{{ localDir + 'images/icons/actionButtons/search.svg' }}"
             ></md-icon>
@@ -33,14 +33,14 @@
                 <label>City, Neighborhood, Zip</label>
 
                 <!-- NOTE: the ng-keyup should not be setting: && options.query.where.Location (seems useless???) -->
-                <!-- NOTE: ng-keyup will run $event.keyCode == 13 && searchProperties(). If $event.keyCode is not Enter, searchProperties() cannot be reached -->
+                <!-- NOTE: ng-keyup will run $event.keyCode == 13 && search(). If $event.keyCode is not Enter, search() cannot be reached -->
                 <input
                        data-ng-model="options.query.where.Location"
-                       data-ng-blur="searchProperties()"
+                       data-ng-blur="search()"
                        type="text"
                        size="22"
                        maxlength="250"
-                       data-ng-keyup="$event.keyCode == 13 && searchProperties()"
+                       data-ng-keyup="$event.keyCode == 13 && search()"
                        autocomplete="off"
                 >
             </md-input-container>
@@ -64,7 +64,7 @@
             <a
                     class="custom-clear"
                     data-ng-if="(options.query.where.Location.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length)"
-                    data-ng-click="options.query.where.Location = ''; options.query.where.City = ''; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.PostalCode = []; searchProperties()"
+                    data-ng-click="options.query.where.Location = ''; options.query.where.City = ''; options.query.where.CountyOrParish = []; options.query.where.MLSAreaMajor = []; options.query.where.PostalCode = []; search()"
             >
                 <md-icon md-svg-src="{{ localDir + 'images/icons/actionButtons/clear.svg' }}"></md-icon>
             </a>
@@ -78,7 +78,7 @@
 
                 <md-switch
                         data-ng-model="options.forRent"
-                        data-ng-change="selectDefaultListingType(); searchProperties()"
+                        data-ng-change="selectDefaultListingType(); search()"
                         aria-label="Buy or Rent"
                 >
                 </md-switch>
@@ -113,7 +113,7 @@
                             type="text" maxlength="13" size="13" autocomplete="off"
                             stratus-string-to-number="comma"
                             data-ng-model="options.query.where.ListPriceMin"
-                            data-ng-blur="!options.query.where.ListPriceMin ? options.query.where.ListPriceMin = null : true ; searchProperties()"
+                            data-ng-blur="!options.query.where.ListPriceMin ? options.query.where.ListPriceMin = null : true ; search()"
                             data-ng-keyup="$event.keyCode == 13 && $event.target.blur()"
                     >
                 </md-input-container>
@@ -124,7 +124,7 @@
                             type="text" maxlength="13" size="13" autocomplete="off"
                             stratus-string-to-number="comma"
                             data-ng-model="options.query.where.ListPriceMax"
-                            data-ng-blur="!options.query.where.ListPriceMax ? options.query.where.ListPriceMax = null : true ; searchProperties()"
+                            data-ng-blur="!options.query.where.ListPriceMax ? options.query.where.ListPriceMax = null : true ; search()"
                             data-ng-keyup="$event.keyCode == 13 && $event.target.blur()"
                     >
                 </md-input-container>
@@ -134,7 +134,7 @@
         <div class="search-input search-beds" data-ng-if="searchType != 'simple'">
             <md-input-container class="md-block minimal">
                 <label>0+ Beds</label>
-                <md-select data-ng-model="options.query.where.Bedrooms" data-ng-change="searchProperties()">
+                <md-select data-ng-model="options.query.where.Bedrooms" data-ng-change="search()">
                     <md-option>0+ Beds</md-option>
                     <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
                         {{option.name}} Beds
@@ -145,7 +145,7 @@
         <div class="search-input search-baths" data-ng-if="searchType != 'simple'">
             <md-input-container class="md-block minimal">
                 <label>0+ Baths</label>
-                <md-select data-ng-model="options.query.where.Bathrooms" data-ng-change="searchProperties()">
+                <md-select data-ng-model="options.query.where.Bathrooms" data-ng-change="search()">
                     <md-option>0+ Baths</md-option>
                     <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
                         {{option.name}} Baths
@@ -171,7 +171,7 @@
 
         <!-- NO LONGER NEEDED because ng-change gives instant results -->
         <!--<div class="submit-row">-->
-            <!--<a class="btn btn-submit" data-ng-click="searchProperties()">Search</a>-->
+            <!--<a class="btn btn-submit" data-ng-click="search()">Search</a>-->
         <!--</div>-->
 
     </div>
@@ -213,12 +213,12 @@
                 <span>$</span>
                 <md-input-container class="md-block minimal">
                     <label>Min Price</label>
-                    <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMin" data-ng-blur="searchProperties()" type="text" maxlength="12" size="12" autocomplete="off">
+                    <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMin" data-ng-blur="search()" type="text" maxlength="12" size="12" autocomplete="off">
                 </md-input-container>
                 <span>$</span>
                 <md-input-container class="md-block minimal">
                     <label>Max Price</label>
-                    <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" data-ng-blur="searchProperties()" type="text" maxlength="12" size="12" autocomplete="off">
+                    <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" data-ng-blur="search()" type="text" maxlength="12" size="12" autocomplete="off">
                 </md-input-container>
             </div>
 
@@ -226,7 +226,7 @@
             <div class="beds-baths">
                 <md-input-container class="md-block minimal">
                     <label>0+ Beds</label>
-                    <md-select data-ng-model="options.query.where.Bedrooms" data-ng-change="searchProperties()">
+                    <md-select data-ng-model="options.query.where.Bedrooms" data-ng-change="search()">
                         <md-option>0+ Beds</md-option>
                         <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
                             {{option.name}} Beds
@@ -235,7 +235,7 @@
                 </md-input-container>
                 <md-input-container class="md-block minimal">
                     <label>0+ Baths</label>
-                    <md-select data-ng-model="options.query.where.Bathrooms" data-ng-change="searchProperties()">
+                    <md-select data-ng-model="options.query.where.Bathrooms" data-ng-change="search()">
                         <md-option>0+ Baths</md-option>
                         <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
                             {{option.name}} Baths
@@ -274,7 +274,7 @@
             <div class="listing-types" aria-label="Listing Types">
                 <md-checkbox
                     data-ng-repeat="listType in ::options.selection.ListingType.All"
-                    data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType); searchProperties()"
+                    data-ng-click="toggleArrayElement(listType.value, options.query.where.ListingType); search()"
                     data-ng-show="options.forRent === listType.lease && options.selection.ListingType.group[listType.group]"
                     data-ng-checked="inArray(listType.value, options.query.where.ListingType)"
                     data-md-prevent-menu-close
@@ -290,13 +290,13 @@
 
                 <md-checkbox
                         data-ng-checked="inArray('Active', options.query.where.Status)"
-                        data-ng-click="toggleArrayElement('Active', options.query.where.Status); searchProperties()"
+                        data-ng-click="toggleArrayElement('Active', options.query.where.Status); search()"
                         data-md-prevent-menu-close
                         aria-label="For Sale">
                         For Sale
                 </md-checkbox>
                 <md-checkbox
-                        data-ng-click="toggleArrayElement('Closed', options.query.where.Status); searchProperties()"
+                        data-ng-click="toggleArrayElement('Closed', options.query.where.Status); search()"
                         data-md-prevent-menu-close
                         aria-label="Sold">
                         Sold
@@ -305,7 +305,7 @@
                         class="show-under-contract"
                         data-ng-show="!options.forRent && (inArray('Active', options.query.where.Status) || inArray('Contract', options.query.where.Status))"
                         data-ng-checked="inArray('Contract', options.query.where.Status)"
-                        data-ng-click="toggleArrayElement('Contract', options.query.where.Status); searchProperties()"
+                        data-ng-click="toggleArrayElement('Contract', options.query.where.Status); search()"
                         aria-label="Under Contract"
                         data-md-prevent-menu-close
                 >
@@ -315,78 +315,104 @@
 
             <div
                     class="extras"
-                    data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
+                    data-ng-show="options.query.where.Neighborhood.length || options.query.where.Location.length || options.query.where.AgentLicense.length || options.query.where.OfficeNumber.length || options.query.where.OfficeName.length || options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length"
             >
                 <h4>Extras</h4>
                 <!-- 'Openhouses Only' is only allowed when more filters are supplied due to speed restrictions -->
                 <md-checkbox
                         class="show-open-houses"
                         data-ng-model="options.query.where.OpenHouseOnly"
-                        data-ng-change="searchProperties()"
+                        data-ng-change="search()"
                         aria-label="Open Houses Only"
                         data-md-prevent-menu-close
                 >
                     Open Houses Only
                 </md-checkbox>
+
+            </div>
+
+            <div data-ng-if="options.officeGroups.length">
+                <h4>Preset Filters</h4>
+                <div class="search-input" data-ng-if="options.officeGroups.length">
+                    <!--h5>Office</h5-->
+                    <md-chips
+                            class="office-groups font-secondary"
+                            aria-label="Office"
+                            data-ng-model="options.officeGroups"
+                            data-md-enable-chip-edit="false"
+                            readonly="true"
+                            data-md-removable="true"
+                            data-delete-button-label="Remove Office"
+                            data-delete-hint="Press delete to remove Office"
+                            data-md-on-remove="validateOfficeGroups(true)"
+                    >
+                        <md-chip-template>
+                            <!-- add to enable editing: data-ng-click="displayOfficeGroupSelector(null, $index, $event)" -->
+                            <span>{{$chip.name}}</span>
+                        </md-chip-template>
+                    </md-chips>
+                </div>
             </div>
 
             <!-- Preset Filters: these are currently subsets of Location and they swap out so aren't needed right now -->
-            <!--<div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">-->
-                <!--<h4>Preset Filters</h4>-->
-                <!--<div class="specific-filters" aria-label="Specific Areas">-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.City.length">-->
-                        <!--<md-input-container class="md-block minimal">-->
-                            <!--<label>City</label>-->
-                            <!--<input data-ng-model="options.query.where.City"-->
-                                   <!--type="text"-->
-                                   <!--maxlength="250"-->
-                                   <!--autocomplete="off">-->
-                        <!--</md-input-container>-->
-                    <!--</div>-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.CountyOrParish.length">-->
-                        <!--<md-chips-->
-                                <!--class="area-id font-secondary"-->
-                                <!--aria-label="Counties to Limit"-->
-                                <!--data-ng-model="options.query.where.CountyOrParish"-->
-                                <!--data-md-enable-chip-edit="true"-->
-                                <!--data-md-add-on-blur="true"-->
-                                <!--data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"-->
-                                <!--data-placeholder="County"-->
-                                <!--data-secondary-placeholder="+County"-->
-                                <!--data-delete-button-label="Remove County"-->
-                                <!--data-delete-hint="Press delete to remove County"-->
-                        <!--&gt;</md-chips>-->
-                    <!--</div>-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.MLSAreaMajor.length">-->
-                        <!--<md-chips-->
-                                <!--class="area-id font-secondary"-->
-                                <!--aria-label="Neighborhoods to Limit"-->
-                                <!--data-ng-model="options.query.where.MLSAreaMajor"-->
-                                <!--data-md-enable-chip-edit="true"-->
-                                <!--data-md-add-on-blur="true"-->
-                                <!--data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"-->
-                                <!--data-placeholder="Neighborhood"-->
-                                <!--data-secondary-placeholder="+Neighborhood"-->
-                                <!--data-delete-button-label="Remove Neighborhood"-->
-                                <!--data-delete-hint="Press delete to remove Neighborhood"-->
-                        <!--&gt;</md-chips>-->
-                    <!--</div>-->
-                    <!--<div class="search-input" data-ng-if="options.query.where.PostalCode.length">-->
-                        <!--<md-chips-->
-                                <!--class="postal-code font-secondary"-->
-                                <!--aria-label="Postal Code(s) to Limit"-->
-                                <!--data-ng-model="options.query.where.PostalCode"-->
-                                <!--data-md-enable-chip-edit="true"-->
-                                <!--data-md-add-on-blur="true"-->
-                                <!--data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"-->
-                                <!--data-placeholder="Postal Code"-->
-                                <!--data-secondary-placeholder="+PostalCode"-->
-                                <!--data-delete-button-label="Remove Postal Code"-->
-                                <!--data-delete-hint="Press delete to remove Postal Code"-->
-                        <!--&gt;</md-chips>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
+            <!--
+            <div data-ng-if="options.query.where.City.length || options.query.where.CountyOrParish.length || options.query.where.MLSAreaMajor.length || options.query.where.PostalCode.length">
+                <h4>Preset Filters</h4>
+                <div class="specific-filters" aria-label="Specific Areas">
+                    <div class="search-input" data-ng-if="options.query.where.City.length">
+                        <md-input-container class="md-block minimal">
+                            <label>City</label>
+                            <input data-ng-model="options.query.where.City"
+                                   type="text"
+                                   maxlength="250"
+                                   autocomplete="off">
+                        </md-input-container>
+                    </div>
+                    <div class="search-input" data-ng-if="options.query.where.CountyOrParish.length">
+                        <md-chips
+                                class="area-id font-secondary"
+                                aria-label="Counties to Limit"
+                                data-ng-model="options.query.where.CountyOrParish"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="County"
+                                data-secondary-placeholder="+County"
+                                data-delete-button-label="Remove County"
+                                data-delete-hint="Press delete to remove County"
+                        ></md-chips>
+                    </div>
+                    <div class="search-input" data-ng-if="options.query.where.MLSAreaMajor.length">
+                        <md-chips
+                                class="area-id font-secondary"
+                                aria-label="Neighborhoods to Limit"
+                                data-ng-model="options.query.where.MLSAreaMajor"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Neighborhood"
+                                data-secondary-placeholder="+Neighborhood"
+                                data-delete-button-label="Remove Neighborhood"
+                                data-delete-hint="Press delete to remove Neighborhood"
+                        ></md-chips>
+                    </div>
+                    <div class="search-input" data-ng-if="options.query.where.PostalCode.length">
+                        <md-chips
+                                class="postal-code font-secondary"
+                                aria-label="Postal Code(s) to Limit"
+                                data-ng-model="options.query.where.PostalCode"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Postal Code"
+                                data-secondary-placeholder="+PostalCode"
+                                data-delete-button-label="Remove Postal Code"
+                                data-delete-hint="Press delete to remove Postal Code"
+                        ></md-chips>
+                    </div>
+                </div>
+            </div>
+            -->
 
         </div>
         <div class="click-out" data-ng-show="$parent.advancedFiltersStatus" data-ng-click="$parent.advancedFiltersStatus = false"></div>

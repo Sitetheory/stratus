@@ -1,0 +1,47 @@
+<div id="{{elementId}}" class="search-group-selector search-mini" data-layout="row"  data-ng-cloak>
+    <div data-ng-if="initialized">
+        <div class="search-row">
+            <div class="search-input">
+                <md-input-container class="md-block minimal">
+                    <label>Search Office Name</label>
+                    <input data-ng-model="options.query.where.OfficeName" type="text" maxlength="75"
+                           data-ng-keyup="$event.keyCode == 13 && options.query.where.OfficeName && search()"
+                           autocomplete="false"
+                    >
+                </md-input-container>
+            </div>
+        </div>
+
+        <div class="search-row" data-layout="row" data-layout-align="space-around center">
+            <md-button class="button" data-ng-click="search()">Lookup</md-button>
+        </div>
+
+        <!-- TODO working on selector tool -->
+        <!-- FIXME choose a service... right now defining manually -->
+        <!--stratus-idx-office-list
+                data-element-id="{{listId}}"
+                data-template="list.empty"
+                data-query-service="1"
+        ></stratus-idx-office-list-->
+        <md-input-container class="md-block minimal">
+            <label>Group Name</label>
+            <input data-ng-model="selectionGroup.name" type="text" maxlength="30"
+                   autocomplete="false"
+            >
+        </md-input-container>
+        <md-chips ng-model="selectionGroup.group" readonly="true" md-removable="true" md-on-remove="toggleSelected($chip, true)">
+            <md-chip-template>
+                {{$chip}}
+            </md-chip-template>
+        </md-chips>
+
+        <div>
+            <div class="selectables" data-ng-repeat="item in itemsSelectable">
+                <md-checkbox ng-checked="item.selected" ng-click="toggleSelected(item.listing._OfficeNumber)">
+                    {{ item.listing.OfficeName }} - {{ item.listing.OfficeMlsId || item.listing.OfficeKey }}
+                </md-checkbox>
+            </div>
+            <stratus-idx-disclaimer></stratus-idx-disclaimer>
+        </div>
+    </div>
+</div>
