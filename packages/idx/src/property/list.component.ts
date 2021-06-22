@@ -400,7 +400,6 @@ Stratus.Components.IdxPropertyList = {
                 {name: 'Recently Sold', value: ['-CloseDate']},
                 {name: 'Status', value: ['Status', '-BestPrice']}
             ]
-            $scope.displayOrderOptions = (!$attrs.displayOrderOptions || $attrs.displayOrderOptions === 'false') ? false : true
 
             $scope.googleApiKey = $attrs.googleApiKey || null
             $scope.contactName = $attrs.contactName || null
