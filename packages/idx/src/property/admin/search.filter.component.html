@@ -320,21 +320,23 @@
                     </md-input-container>
                 </div>
                 <div class="search-input" data-layout="row">
-                    <md-input-container flex>
+                    <md-input-container class="md-block minimal">
                         <label>Restrict Data Source</label>
-                        <!-- Multiple fields disabled for now as pagination is broken -->
+                        <!-- Multiple fields are enabled even though there is a known paging bug, because there are use cases where someone wants to show past solds that include their own exclusives and total pages can be increased -->
                         <md-select
                                 data-ng-model="options.query.service"
                                 placeholder="Restrict Data Source"
                                 aria-label="Restricted Data Source Displayed"
                                 md-select-only-option
                                 required
+                                multiple
                         >
                             <md-option data-ng-repeat="mls in getMLSVariables()" data-ng-value="mls.id">
                                 {{mls.name}}
                             </md-option>
                         </md-select>
                     </md-input-container>
+                    <div class="disclaimer" ng-if="options.query.service.length > 1">NOTE: Our component can display multiple data sources in the same feed, but we do not fully support this yet because there is a complex logic problem with mixing the data across multiple pages (sometimes the same property appears twice). However there are cases where you may want to show all your own "Exclusive" previously sold properties along side your MLS sold properties, so since this is a limited number of properties, it could be displayed all on one page (go to the advanced tab and increase items per page to the maximum to avoid paging).</div>
                 </div>
             </div>
 
