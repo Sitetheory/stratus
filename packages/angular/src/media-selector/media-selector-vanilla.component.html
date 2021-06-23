@@ -1,0 +1,147 @@
+<!-- !model.completed || model.saving -->
+<mat-progress-bar mode="indeterminate" *ngIf="!styled"></mat-progress-bar>
+
+<!-- This shows up if the list is empty -->
+<ng-template #emptyList>
+    <div class="media-selected-list-header border-default border-default-bottom">
+        <h3 [textContent]="'Selected ' + (type || 'Items')"></h3>
+    </div>
+    <div class="media-selected-message-box">
+        Nothing has been selected.
+    </div>
+</ng-template>
+
+
+<!-- [ngStyle]="{'display': styled ? 'inherit' : 'none'}" -->
+<div class="media-selector" *ngIf="styled">
+
+    <!-- FIXME: I will probably have to move the ngIf above to the div below -->
+    <div class="media-selected-list-header border-default border-default-bottom" *ngIf="!empty; else emptyList">
+        <h3 [textContent]="'Selected ' + (type || 'Items')"></h3>
+        <p class="note">Drag to reorder</p>
+    </div>
+    <div cdkDropList cdkDropListOrientation="horizontal"
+         class="media-selected-list"
+         (cdkDropListDropped)="drop($event)">
+        <!--<span class="selectedModels" style="display: none" [textContent]="dataSub | async | json"></span>-->
+        <!--<span class="selectedModels" style="display: none" *ngIf="log('selector.ngIf:', dataSub | async)"></span>-->
+        <div cdkDrag class="media-selected-box"
+             [cdkDragDisabled]="_.get(selectedModel, 'status') < 1"
+             [ngClass]="{'disabled': _.get(selectedModel, 'status') < 1}"
+             *ngFor="let selectedModel of dataSub | async">
+            <!--<div class="custom-ghost-placeholder" *cdkDragPlaceholder></div>-->
+            <div class="media-selected-list-container full-width full-height">
+                <div class="column-image position-anchor full-width full-height"
+                     [matTooltip]="selectedModel.name"
+                     matTooltipPosition="above"
+                     [attr.aria-label]="selectedModel.name">
+
+                    <!--<div class="image" no-flex stratus-src-->
+                    <!--[ngStyle]="{'background': 'url(' + findImage(selectedModel) + ') no-repeat center center', 'background-size': 'cover'}"-->
+                    <!--&gt;-->
+                    <!--<img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">-->
+                    <!--</div>-->
+
+                    <!-- This only shows the bestImage if this isn't a Video, since images for Videos are not hosted by us, thus cannot lazy load a proper size -->
+                    <div class="image position-all full-width full-height"
+                         *ngIf="has(selectedModel, '_thumbSrc') && !has(selectedModel, 'service')"
+                         data-stratus-src
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, '_thumbSrc') + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
+
+                    <!-- The services below are not hosted by us, so we cannot include stratus-src with it -->
+
+                    <!-- Vimeo Service -->
+                    <div class="image position-all full-width full-height"
+                         *ngIf="!has(selectedModel, '_thumbSrc') && has(selectedModel, 'service') && _.get(selectedModel, 'service') === 'vimeo'"
+                         [ngStyle]="{'background': 'url(' + _.get(selectedModel, 'meta.thumbnail_medium') + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
+
+                    <!-- Youtube Service -->
+                    <div class="image position-all full-width full-height"
+                         *ngIf="!has(selectedModel, '_thumbSrc') && has(selectedModel, 'service') && _.get(selectedModel, 'service') === 'youtube'"
+                         [ngStyle]="{'background': 'url(' + 'https://img.youtube.com/vi/' + _.get(selectedModel, 'serviceMediaId') + '/0.jpg' + ') no-repeat center center', 'background-size': 'cover'}">
+                    </div>
+
+                    <!-- Icon for items with no image -->
+                    <!-- !has(service) || service not in ['vimeo', 'youtube']-->
+                    <div class="no-image-icon position-all full-width full-height"
+                         *ngIf="!has(selectedModel, '_thumbSrc') && !has(selectedModel, 'service')"
+                         [ngClass]="_.get(selectedModel, 'contentType.class') + '-background-color'">
+
+                        <mat-icon class="content-type-icon position-center"
+                                  [svgIcon]="getSvg('/assets/1/0/bundles/' + (_.get(selectedModel, 'contentType.iconResourcePath') || _.get(selectedModel, 'iconResourcePath'))) | async">
+                            Icon
+                        </mat-icon>
+                    </div>
+
+                    <!-- Shapeholder -->
+                    <img class="shapeholder" src="/assets/1/0/bundles/sitetheorycore/images/shapeholder-square.png">
+
+                    <!--(click)="remove(selectedModel)"-->
+                    <!--(click)="mediaDetails(selectedModel)"-->
+                </div>
+
+                <!--<div class="column-title">-->
+                <!--    &lt;!&ndash; has(selectedModel, 'iconResourcePath') || has(selectedModel, 'contentType.iconResourcePath') &ndash;&gt;-->
+                <!--    <div class="content-type" *ngIf="has(selectedModel, 'contentType.iconResourcePath')">-->
+                <!--        &lt;!&ndash;-->
+                <!--        I disabled the position-center class on this one as it causes the icon-->
+                <!--        to break away from the div and float to the top of the selector container-->
+                <!--        &ndash;&gt;-->
+                <!--        <mat-icon class="content-type-icon"-->
+                <!--                  [svgIcon]="getSvg('/assets/1/0/bundles/' + _.get(selectedModel, 'contentType.iconResourcePath')) | async">-->
+                <!--            ContentType Icon-->
+                <!--        </mat-icon>-->
+                <!--        <span class="comment content-type-name font-body"-->
+                <!--              [ngClass]="((_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) | lowercase) + '-color'"-->
+                <!--              [textContent]="(_.get(selectedModel, 'contentType.name') || _.get(selectedModel, 'name')) + ((_.get(selectedModel, 'status') !== 1) ? ' (hidden)' : '') + ((_.get(selectedModel, 'version.published') !== 1) ? ' (unpublished)' : '')">-->
+                <!--        </span>-->
+                <!--    </div>-->
+
+                <!--    &lt;!&ndash; This include fallbacks in case a version is not present &ndash;&gt;-->
+                <!--    <h3 [innerHTML]="_.get(selectedModel, 'version.bestIdentifier') || _.get(selectedModel, 'name') || (_.get(selectedModel, 'contentType.controller') === 'Content\\Module' ? _.get(selectedModel, 'version.internalIdentifier') : 'Untitled ' + _.get(selectedModel, 'contentType.name') + ' (' + _.get(selectedModel, 'id') + ')')"></h3>-->
+                <!--    &lt;!&ndash; TODO: make this clickable in new window &ndash;&gt;-->
+                <!--    <span class="routing"-->
+                <!--          [textContent]="(has(selectedModel, 'routing') ? '/' + _.get(selectedModel, 'routing[0].url') : null) || _.get(selectedModel, 'description') || ''">-->
+                <!--    </span>-->
+                <!--</div>-->
+                <!--<div class="column-action">-->
+                <!--    <a mat-button-->
+                <!--       [matTooltip]="'Delete ' + target"-->
+                <!--       aria-label="Delete Item"-->
+                <!--       class="btn btn-delete"-->
+                <!--       (click)="remove(selectedModel)">-->
+                <!--        <mat-icon svgIcon="media_selector_delete" aria-hidden="false" aria-label="Delete Item">Delete</mat-icon>-->
+                <!--    </a>-->
+                <!--    <a mat-button-->
+                <!--       *ngIf="has(selectedModel, 'contentType.editUrl')"-->
+                <!--       [matTooltip]="'Edit ' + target"-->
+                <!--       aria-label="Edit Item in New Window"-->
+                <!--       class="btn btn-edit"-->
+                <!--       (click)="goToUrl(selectedModel, '_blank');">-->
+                <!--        <mat-icon svgIcon="media_selector_edit" aria-hidden="false" aria-label="Edit Item">Edit</mat-icon>-->
+                <!--    </a>-->
+                <!--</div>-->
+            </div>
+        </div>
+        <div class="media-selected-box">
+            <a class="position-anchor accent-background-hover border-default border-default-all color-primary"
+               [matTooltip]="(libraryDisplay ? 'Open' : 'Close') + ' Media Library'"
+               (click)="toggleLibrary()"
+               [ngClass]="{'library-toggle-open': libraryDisplay}">
+                <mat-icon class="position-center"
+                          *ngIf="!libraryDisplay"
+                          svgIcon="media_selector_add"
+                          aria-hidden="false"
+                          aria-label="Add">
+                    Add
+                </mat-icon>
+                <div class="btn-text small-all-caps position-center"
+                     *ngIf="libraryDisplay">
+                    Close Library
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
