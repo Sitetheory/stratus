@@ -1812,7 +1812,7 @@ const angularJsService = (
                     type: 'valueEquals'
                 },
                 ListingId: {
-                    type: 'valueEquals'
+                    type: 'stringIncludesArray'
                 },
                 ListingType: {
                     type: 'stringIncludesArray'
