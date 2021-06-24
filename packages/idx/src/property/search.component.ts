@@ -661,16 +661,16 @@ Stratus.Components.IdxPropertySearch = {
             }
             // console.log('displayOfficeGroupSelector', searchTerm, editIndex)
             let searchOnLoad = false
-            let options = {
-                query: {}
+            const options: {
+                query: CompileFilterOptions
+            } = {
+                query: {
+                    perPage: 100
+                }
             }
             if (!_.isEmpty(searchTerm) && _.isString(searchTerm)) {
-                options = {
-                    query: {
-                        where: {
-                            OfficeName: searchTerm
-                        }
-                    }
+                options.query.where = {
+                    OfficeName: searchTerm
                 }
                 searchOnLoad = true
             }
