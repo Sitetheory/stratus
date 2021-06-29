@@ -181,7 +181,7 @@
          data-ng-class="{'open-filters' : $parent.advancedFiltersStatus}"
          data-ng-if="searchType == 'advanced'"
     >
-        <div class="more-filters" data-stratus-full-height="true" data-full-height-minus-elements='[".demo-switcher-bar", ".header-common-parent", ".search-filter-top", ".sf-toolbarreset"]'>
+        <div class="more-filters" data-stratus-full-height="{{ displayFilterFullHeight }}" data-full-height-minus-elements='[".demo-switcher-bar", ".header-common-parent", ".search-filter-top", ".sf-toolbarreset"]'>
 
             <!-- Close Button -->
             <button type="button" class="btn-close" data-ng-click="$parent.advancedFiltersStatus = !$parent.advancedFiltersStatus">
