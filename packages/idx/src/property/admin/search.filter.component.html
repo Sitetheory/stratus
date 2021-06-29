@@ -83,42 +83,62 @@
 
             <!-- FIXME alignment problems due to sitetheory css: https://app.asana.com/0/1154407311832843/1155341970037633 -->
             <h3>Specs</h3>
-            <div class="property-specs" data-layout="row">
-                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                    <md-input-container class="md-block minimal">
-                        <label>Min Price</label>
-                        <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
-                    </md-input-container>
+            <div class="property-specs">
+                <div data-layout="row">
+                    <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                        <md-input-container class="md-block minimal">
+                            <label>Min Price</label>
+                            <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMin" type="text" maxlength="11" size="8" autocomplete="off">
+                        </md-input-container>
+                    </div>
+                    <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                        <md-input-container class="md-block minimal">
+                            <label>Max Price</label>
+                            <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
+                        </md-input-container>
+                    </div>
+                    <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                        <md-input-container class="md-block minimal">
+                            <label>Beds</label>
+                            <md-select data-ng-model="options.query.where.Bedrooms">
+                                <md-option></md-option>
+                                <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
+                                    {{option.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <div class="search-input" data-flex="50" data-flex-gt-sm="25">
+                        <md-input-container class="md-block minimal">
+                            <label>Baths</label>
+                            <md-select data-ng-model="options.query.where.Bathrooms">
+                                <md-option></md-option>
+                                <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
+                                    {{option.name}}
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
                 </div>
-                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                    <md-input-container class="md-block minimal">
-                        <label>Max Price</label>
-                        <input stratus-string-to-number="comma" data-ng-model="options.query.where.ListPriceMax" type="text" maxlength="11" size="8" autocomplete="off">
-                    </md-input-container>
-                </div>
-                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                    <md-input-container class="md-block minimal">
-                        <label>Beds</label>
-                        <md-select data-ng-model="options.query.where.Bedrooms">
-                            <md-option></md-option>
-                            <md-option data-ng-repeat="option in options.selection.Bedrooms" data-ng-value="option.value">
-                                {{option.name}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
-                </div>
-                <div class="search-input" data-flex="50" data-flex-gt-sm="25">
-                    <md-input-container class="md-block minimal">
-                        <label>Baths</label>
-                        <md-select data-ng-model="options.query.where.Bathrooms">
-                            <md-option></md-option>
-                            <md-option data-ng-repeat="option in options.selection.Bathrooms" data-ng-value="option.value">
-                                {{option.name}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
+
+                <div data-layout="row">
+                    <div class="search-input" data-flex>
+                        <md-chips
+                                class="listing-id font-secondary"
+                                aria-label="Specific Listing Ids"
+                                data-ng-model="options.query.where.ListingId"
+                                data-md-enable-chip-edit="true"
+                                data-md-add-on-blur="true"
+                                data-md-separator-keys="[$mdConstant.KEY_CODE.ENTER, $mdConstant.KEY_CODE.COMMA]"
+                                data-placeholder="Listing Id"
+                                data-secondary-placeholder="+Listing Id"
+                                data-delete-button-label="Remove Listing Id"
+                                data-delete-hint="Press delete to remove Listing Id"
+                        ></md-chips>
+                    </div>
                 </div>
             </div>
+
 
             <div class="toggle-switch"
                  data-layout="row"

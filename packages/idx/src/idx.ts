@@ -241,7 +241,7 @@ export interface WhereOptions extends LooseObject {
 
     // Property
     ListingKey?: string,
-    ListingId?: string,
+    ListingId?: string[] | string,
     ListingType?: string[] | string,
     Status?: string[] | string,
     UnparsedAddress?: string,
@@ -631,6 +631,7 @@ const angularJsService = (
         UnparsedAddress: '', // Added as default so search and manipulate
         Location: '', // Added as default so search and manipulate
         Status: [],
+        ListingId: [],
         ListingType: [],
         CountyOrParish: [],
         MLSAreaMajor: [],
