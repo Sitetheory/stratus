@@ -51,6 +51,7 @@ Stratus.Directives.FullHeight = (
 ) => ({
     restrict: 'A',
     scope: {
+        stratusFullHeight: '@',
         fullHeightMinusElements: '@',
         fullHeightReferenceParent: '@',
     },
@@ -69,6 +70,8 @@ Stratus.Directives.FullHeight = (
         $scope.fullHeightMinusElementNames = []
 
         $scope.init = () => {
+            $scope.fullHeight = $attrs.stratusFullHeight && isJSON($attrs.stratusFullHeight) ? JSON.parse($attrs.stratusFullHeight) : true
+
             // Sizing Options
             if ($attrs.fullHeightReferenceParent && _.isString($attrs.fullHeightReferenceParent)) {
                 $scope.referenceParent = $attrs.fullHeightReferenceParent
@@ -80,24 +83,25 @@ Stratus.Directives.FullHeight = (
             const fullHeightMinusElementNames = $scope.fullHeightMinusElements && isJSON($scope.fullHeightMinusElements) ?
                 JSON.parse($scope.fullHeightMinusElements) : null
             if (_.isArray(fullHeightMinusElementNames)) {
-                $scope.fullHeight = true
+                // $scope.fullHeight = true
                 $scope.fullHeightMinusElementNames = fullHeightMinusElementNames
             }
             $scope.initialized = true
 
-            $timeout(() => {
-                // DOM has finished rendering
-                $scope.updateWidgetSize()
-            })
-            $timeout(() => {
-                    // Dually again to ensure we get the right size of something
+            if ($scope.fullHeight) {
+                $timeout(() => {
+                    // DOM has finished rendering
                     $scope.updateWidgetSize()
-                },
-                1500
-            )
-
-            // Update the size every time the window resizes
-            $window.addEventListener('resize', $scope.updateWidgetSize)
+                })
+                $timeout(() => {
+                        // Dually again to ensure we get the right size of something
+                        $scope.updateWidgetSize()
+                    },
+                    1500
+                )
+                // Update the size every time the window resizes
+                $window.addEventListener('resize', $scope.updateWidgetSize)
+            }
         }
 
         $scope.decodeHTML = (html: string) => {

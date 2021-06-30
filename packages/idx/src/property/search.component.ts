@@ -69,6 +69,7 @@ export type IdxPropertySearchScope = IdxSearchScope & {
         agentGroups: SelectionGroup[]
         officeGroups: SelectionGroup[]
     }
+    displayFilterFullHeight: boolean
     variableSyncing: object | any
     filterMenu?: any // angular.material.IPanelRef // disabled because we need to set reposition()
 
@@ -161,6 +162,12 @@ Stratus.Components.IdxPropertySearch = {
         optionsAgentGroups: '@',
         /** Type: SelectionGroup[] */
         optionsOfficeGroups: '@',
+        /**
+         * Type: boolean
+         * Whether to ensure the Filter menu is full height. Only Available if template allows and set to advanced
+         * @TODO add to wiki
+         */
+        displayFilterFullHeight: '@',
         // TODO
         variableSync: '@',
         // TODO
@@ -213,6 +220,8 @@ Stratus.Components.IdxPropertySearch = {
             $scope.advancedSearchUrl = $attrs.advancedSearchUrl ||  $scope.advancedSearchUrl
             $scope.advancedSearchLinkName = $attrs.advancedSearchLinkName || $scope.advancedSearchLinkName
             $scope.options = $attrs.options && isJSON($attrs.options) ? JSON.parse($attrs.options) : {}
+            $scope.displayFilterFullHeight = $attrs.displayFilterFullHeight && isJSON($attrs.displayFilterFullHeight) ?
+                JSON.parse($attrs.displayFilterFullHeight) : false
             $scope.filterMenu = null
             $scope.options.forRent = $scope.options.forRent || false
             $scope.options.agentGroups = $scope.options.agentGroups || []
@@ -661,16 +670,16 @@ Stratus.Components.IdxPropertySearch = {
             }
             // console.log('displayOfficeGroupSelector', searchTerm, editIndex)
             let searchOnLoad = false
-            let options = {
-                query: {}
+            const options: {
+                query: CompileFilterOptions
+            } = {
+                query: {
+                    perPage: 100
+                }
             }
             if (!_.isEmpty(searchTerm) && _.isString(searchTerm)) {
-                options = {
-                    query: {
-                        where: {
-                            OfficeName: searchTerm
-                        }
-                    }
+                options.query.where = {
+                    OfficeName: searchTerm
                 }
                 searchOnLoad = true
             }
